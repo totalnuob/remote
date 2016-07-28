@@ -1,0 +1,14 @@
+package kz.nicnbk.service.api.m2s2;
+
+import kz.nicnbk.service.api.base.BaseService;
+import kz.nicnbk.service.dto.m2s2.RealEstateMeetingMemoDto;
+
+/**
+ * Created by magzumov on 19.07.2016.
+ */
+public interface REMeetingMemoService extends BaseService {
+
+    Long save(RealEstateMeetingMemoDto memoDto);
+
+    RealEstateMeetingMemoDto get(Long id);
+}

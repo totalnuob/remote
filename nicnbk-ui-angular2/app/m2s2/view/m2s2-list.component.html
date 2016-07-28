@@ -1,0 +1,149 @@
+<div class="container">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="dropdown pull-right">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">Create
+                        <span class="caret"></span></button>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                        <li role="presentation">
+                            <a [routerLink]="['/m2s2/pe/edit/', 0]" role="menuitem" tabindex="-1" >Private Equity</a></li>
+                        <li role="presentation">
+                            <a [routerLink]="['/m2s2/re/edit/', 0]" role="menuitem" tabindex="-1" >Real Estate</a></li>
+                        <li role="presentation">
+                            <a [routerLink]="['/m2s2/hf/edit/', 0]" role="menuitem" tabindex="-1" >Hedge Fund</a></li>
+                        <li role="presentation" class="divider"></li>
+                        <li role="presentation">
+                            <a [routerLink]="['/m2s2/general/edit/', 0]" role="menuitem" tabindex="-1" >General</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <br/>
+        <div class="jumbotron">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="firmName">Meeting Type</label>
+                                <select class="form-control" id="meetingType" >
+                                    <option value="NONE">---</option>
+                                    <option *ngFor = "let type of meetingTypes" [value]="type.code">{{type.nameEn}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="firmName">Memo Type</label>
+                                <select class="form-control" id="memoType" >
+                                    <option value="NONE">---</option>
+                                    <option *ngFor = "let type of memoTypes" [value]="type.code">{{type.nameEn}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="fromDateDTPickeer">From</label>
+                            <div class='input-group date col-md-3' id='fromDateDTPickeer' style="width: 100%">
+                                <input type='text' class="form-control" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="untilDateDTPickeer">To</label>
+                            <div class='input-group date col-md-3' id='untilDateDTPickeer' style="width: 100%">
+                                <input type='text' class="form-control" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                            </div>
+                        </div>
+                        <!--<script th:inline="javascript" type="text/javascript">-->
+                            <!--$(function () {-->
+                                <!--$('#fromDateDTPickeer').datetimepicker({-->
+                                    <!--//defaultDate: new Date(),-->
+                                    <!--format: 'DD-MM-YYYY'-->
+                                <!--});-->
+                                <!--$('#untilDateDTPickeer').datetimepicker({-->
+                                    <!--//defaultDate: new Date(),-->
+                                    <!--format: 'DD-MM-YYYY'-->
+                                <!--});-->
+                            <!--});-->
+                        <!--</script>-->
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="fundName">Fund</label>
+                                <input type="text" class="form-control" id="fundName" placeholder="Enter fund name..."/>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="firmName">Firm</label>
+                                <input type="text" class="form-control" id="firmName" placeholder="Enter firm name..."/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-success pull-right">Search</button>
+                    </div>
+                </div>
+        </div>
+        <div>
+            <label>Total found: <span>?</span></label>
+        </div>
+        <!--<div class="row pull-right">-->
+            <!--<ul class="pagination">-->
+                <!--<li><a>&laquo;</a></li>-->
+                <!--<li>-->
+                    <!--<a/>-->
+                <!--</li>-->
+                <!--<li><a>&raquo;</a></li>-->
+            <!--</ul>-->
+        <!--</div>-->
+        <table class = "table table-hover">
+            <thead>
+            <tr>
+                <th>TYPE</th>
+                <th>MEETING/CALL</th>
+                <th>FIRM</th>
+                <th>FUND</th>
+                <th>DATE</th>
+                <th>AUTHOR</th>
+                <th>ACTIONS</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr *ngFor = "let memo of memoList">
+                <td width="5%"></td>
+                <td width="10%" ></td>
+                <td width="30%"><a></a></td>
+                <td width="30%"><a></a></td>
+                <!--<td width="10%" th:text="${memoItem.meetingDate}"></td>-->
+                <td width="10%"><a></a></td>
+                <td width="10%"></td>
+                <td width="5%">
+                    <!--<a th:href="@{/m2s2/deleteMemo/{id}(id=${memoItem.id})}" onclick="return confirm('Are you sure?')"><i class="glyphicon glyphicon-trash"></i></a>-->
+                    <a onclick="alert('To delete this memo, please call #115');"><i class="glyphicon glyphicon-trash"></i></a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <!--<div class="row pull-right">-->
+            <!--<ul class="pagination" th:if="${searchResult.showPageFrom} > 0">-->
+                <!--<li><a th:href="@{/m2s2/memos(page=${searchResult.showPageFrom} - 1)} + ${searchResult.searchParams}" th:if="${searchResult.showPageFrom &gt; 1}">&laquo;</a></li>-->
+                <!--<li th:each="i : ${#numbers.sequence(searchResult.showPageFrom, searchResult.showPageTo)}" th:class="${i == searchResult.currentPage} ? active : ''">-->
+                    <!--<a th:href="@{/m2s2/memos(page=${i})} + ${searchResult.searchParams}" th:text="${i}"/>-->
+                <!--</li>-->
+                <!--<li><a th:href="@{/m2s2/memos(page=${searchResult.showPageTo} + 1)} + ${searchResult.searchParams}" th:if="${searchResult.showPageTo &lt; searchResult.totalPages}">&raquo;</a></li>-->
+            <!--</ul>-->
+        <!--</div>-->
+    </div>
+</div>

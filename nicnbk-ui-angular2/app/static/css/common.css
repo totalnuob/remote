@@ -1,0 +1,56 @@
+/* disable shifting when scroll bards is added */
+html {
+    overflow-y: scroll;
+}
+/* overwrite bootstrap labels font-weight (font-weight: 700) */
+label {
+    font-weight: normal !important;
+}
+
+/**/
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}
+
+/* bootstrap row spacing*/
+.top-buffer { margin-top:10px; }
+
+.nopadding {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.withpadding {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.Absolute-Center {
+    margin: auto;
+    position: absolute;
+    top: 0; left: 0; bottom: 0; right: 0;
+}
+
+.Absolute-Center.is-Responsive {
+    width: 50%;
+    height: 50%;
+    min-width: 200px;
+    max-width: 400px;
+    padding: 40px;
+}

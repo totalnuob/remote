@@ -1,0 +1,54 @@
+<html>
+<head>
+    <base href="/">
+    <title>NIC System</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- BOOTSTRAP -->
+    <!--js-->
+    <script src="app/static/js/jquery.min.js"></script> <!-- bootstrap requires jQuery -->
+    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- css-->
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css"/>
+
+
+    <!-- TODO: refactor as angular2 -->
+    <!-- datetimepicker -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
+
+
+<!-- TODO: move to components -->
+
+    <script src="app/static/js/star-rating/star-rating.min.js"></script>
+    <link rel="stylesheet" href="app/static/css/star-rating/star-rating.min.css"/>
+    <link rel="stylesheet" href="app/static/css/star-rating/theme-krajee-fa.min.css"/>
+    <link rel="stylesheet" href="app/static/css/star-rating/theme-krajee-svg.min.css"/>
+    <link rel="stylesheet" href="app/static/css/star-rating/theme-krajee-uni.min.css"/>
+
+    <script src="app/static/js/jquery.hotkeys.js"></script>
+    <script src="app/static/js/bootstrap/bootstrap-wysiwyg.js"></script>
+
+
+
+<!-- Common styles for application -->
+    <link rel="stylesheet" href="app/static/css/common.css"/>
+
+    <!-- 1. Load libraries -->
+    <!-- Polyfill(s) for older browsers -->
+    <script src="node_modules/core-js/client/shim.min.js"></script>
+    <script src="node_modules/zone.js/dist/zone.js"></script>
+    <script src="node_modules/reflect-metadata/Reflect.js"></script>
+    <script src="node_modules/systemjs/dist/system.src.js"></script>
+    <!-- 2. Configure SystemJS -->
+    <script src="systemjs.config.js"></script>
+    <script>
+        System.import('app').catch(function(err){ console.error(err); });
+    </script>
+</head>
+<!-- 3. Display the application -->
+<body>
+<app-main>Loading...</app-main>
+</body>
+</html>

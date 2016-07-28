@@ -1,0 +1,18 @@
+package kz.nicnbk.repo.model.common;
+
+import kz.nicnbk.repo.model.base.BaseTypeEntityImpl;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+/**
+ * Created by magzumov on 04.07.2016.
+ */
+
+@Entity
+@Table(name = "currency")
+public class Currency extends BaseTypeEntityImpl{
+
+    // TODO: refactor
+    public static final String CURR1 = "CURR1";
+}

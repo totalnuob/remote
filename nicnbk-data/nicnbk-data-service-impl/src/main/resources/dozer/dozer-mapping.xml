@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings xmlns="http://dozer.sourceforge.net"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+    <configuration>
+        <stop-on-errors>true</stop-on-errors>
+        <date-format>dd-MM-yyyy</date-format>
+        <wildcard>true</wildcard>
+    </configuration>
+
+    <mapping>
+        <class-a>kz.nicnbk.service.dto.news.NewsDto</class-a>
+        <class-b>kz.nicnbk.repo.model.news.News</class-b>
+        <field-exclude>
+            <a>type</a>
+            <b>type</b>
+        </field-exclude>
+    </mapping>
+
+    <mapping>
+        <class-a>kz.nicnbk.service.dto.m2s2.MeetingMemoDto</class-a>
+        <class-b>kz.nicnbk.repo.model.m2s2.MeetingMemo</class-b>
+        <field-exclude>
+            <a>meetingType</a>
+            <b>meetingType</b>
+        </field-exclude>
+        <!--<field-exclude>-->
+            <!--<a>memoType</a>-->
+            <!--<b>memoType</b>-->
+        <!--</field-exclude>-->
+        <field-exclude>
+            <a>arrangedBy</a>
+            <b>arrangedBy</b>
+        </field-exclude>
+        <field-exclude>
+            <a>strategies</a>
+            <b>strategies</b>
+        </field-exclude>
+        <field-exclude>
+            <a>geographies</a>
+            <b>geographies</b>
+        </field-exclude>
+        <field-exclude>
+            <a>attendeesNIC</a>
+            <b>attendeesNIC</b>
+        </field-exclude>
+    </mapping>
+
+    <mapping>
+        <class-a>kz.nicnbk.service.dto.m2s2.FundMeetingMemoDto</class-a>
+        <class-b>kz.nicnbk.repo.model.m2s2.FundMeetingMemo</class-b>
+        <field-exclude>
+            <a>fundSizeCurrency</a>
+            <b>fundSizeCurrency</b>
+        </field-exclude>
+    </mapping>
+
+    <mapping>
+        <class-a>kz.nicnbk.service.dto.files.FilesDto</class-a>
+        <class-b>kz.nicnbk.repo.model.files.Files</class-b>
+        <field-exclude>
+            <a>type</a>
+            <b>type</b>
+        </field-exclude>
+    </mapping>
+
+</mappings>

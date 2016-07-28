@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+    <FILES_TYPE ID="1" CODE="TEST_TYPE" NAME_EN="TEST TYPE" NAME_RU="TEST TYPE" NAME_KZ="TEST TYPE"/>
+
+    <FILES ID="101" TYPE_ID="1" FILENAME="filename" SIZE="100" MIMETYPE="txt mime" INSERTED="2016-07-04"/>
+
+    <!--CLEAN TO AVOID FOREIGN KEY CONSTRAINT ON DATABASE SETUP -->
+    <MEMO_FILES/>
+</dataset>
