@@ -191,9 +191,13 @@ export class PrivateEquityMemoEditComponent extends MemoComponent implements OnI
             .subscribe(
                 response  => {
                     this.successMessage = "Successfully saved.";
+                    this.errorMessage = null;
                 },
                 //error =>  this.errorMessage = <any>error
-                error =>  this.errorMessage = "Error saving memo"
+                error =>  {
+                    this.errorMessage = "Error saving memo";
+                    this.successMessage = null;
+                }
             );
     }
 

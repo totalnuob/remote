@@ -190,9 +190,13 @@ export class RealEstateMemoEditComponent extends MemoComponent implements OnInit
             .subscribe(
                 response  => {
                     this.successMessage = "Successfully saved.";
+                    this.errorMessage = null;
                 },
                 //error =>  this.errorMessage = <any>error
-                error =>  this.errorMessage = "Error saving memo"
+                error =>  {
+                    this.errorMessage = "Error saving memo";
+                    this.successMessage = null;
+                }
             );
     }
 
