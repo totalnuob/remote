@@ -10,7 +10,6 @@ import kz.nicnbk.service.dto.m2s2.MemoPagedSearchResult;
 import kz.nicnbk.service.dto.m2s2.MemoSearchParams;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 
 /**
  * Created by magzumov on 19.07.2016.
@@ -31,7 +30,6 @@ public class MeetingMemoSearchTest extends CommonTest{
     @Test
     @DatabaseSetup({"classpath:datasets/m2s2/meeting_memo_search.xml"})
     public void testSearchEmpty(){
-        System.out.println(repository.findAll(new PageRequest(0, 20)).getTotalElements());
         MemoPagedSearchResult result = service.search(null);
         assert (result.getMemos().size() == 5);
     }

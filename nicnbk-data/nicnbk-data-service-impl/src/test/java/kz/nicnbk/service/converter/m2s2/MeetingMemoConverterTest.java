@@ -137,9 +137,12 @@ public class MeetingMemoConverterTest {
     private boolean checkEquals(MeetingMemo entity, MeetingMemoDto dto){
 
         return entity.getId().longValue() == dto.getId().longValue() &&
-                entity.getMeetingType().getCode().equals(dto.getMeetingType()) &&
-                //entity.getMemoType().getCode().equals(dto.getMemoType()) &&
+                (entity.getMeetingType() != null ?
+                        entity.getMeetingType().getCode().equals(dto.getMeetingType()) : true) &&
                 entity.getMeetingDate().getTime() == dto.getMeetingDate().getTime();
+
+        // lazy loading
+                //entity.getMemoType().getCode().equals(dto.getMemoType()) &&
                 //entity.getArrangedBy().getCode().equals(dto.getArrangedBy()) &&
                 //entity.getAttendeesNIC().size() > 0 &&
                 //entity.getAttendeesNIC().size() == dto.getAttendeesNIC().size() &&

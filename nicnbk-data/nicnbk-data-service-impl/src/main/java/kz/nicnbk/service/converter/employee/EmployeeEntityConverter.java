@@ -11,13 +11,4 @@ import org.springframework.stereotype.Component;
 @Component
 public class EmployeeEntityConverter extends BaseDozerEntityConverter<Employee, EmployeeDto> {
 
-    @Override
-    public Class<Employee> getEntityClass() {
-        return Employee.class;
-    }
-
-    @Override
-    public Class<EmployeeDto> getDtoClass() {
-        return EmployeeDto.class;
-    }
 }

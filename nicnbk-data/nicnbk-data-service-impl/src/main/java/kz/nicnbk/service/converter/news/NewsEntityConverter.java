@@ -33,14 +33,4 @@ public class NewsEntityConverter extends BaseDozerEntityConverter<News, NewsDto>
         dto.setType(entity.getType().getCode());
         return dto;
     }
-
-    @Override
-    public Class<News> getEntityClass() {
-        return News.class;
-    }
-
-    @Override
-    public Class<NewsDto> getDtoClass() {
-        return NewsDto.class;
-    }
 }

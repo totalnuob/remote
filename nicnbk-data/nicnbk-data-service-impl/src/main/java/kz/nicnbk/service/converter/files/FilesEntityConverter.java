@@ -33,14 +33,4 @@ public class FilesEntityConverter extends BaseDozerEntityConverter<Files, FilesD
         dto.setType(entity.getType().getCode());
         return dto;
     }
-
-    @Override
-    public Class<Files> getEntityClass() {
-        return Files.class;
-    }
-
-    @Override
-    public Class<FilesDto> getDtoClass() {
-        return FilesDto.class;
-    }
 }
