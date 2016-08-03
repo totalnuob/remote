@@ -12,7 +12,7 @@ import javax.persistence.*;
 @MappedSuperclass
 public class FundMeetingMemo extends MeetingMemo{
 
-    private String fundName;
+//    private String fundName;
     private Boolean currentlyFundRaising;
     private String closingSchedule;
     private Boolean openingSoon;
@@ -21,16 +21,7 @@ public class FundMeetingMemo extends MeetingMemo{
     private Currency fundSizeCurrency;
     private Double preInvested;
     private Boolean suitable;
-    private String nonsuitableDescription;
-
-    @Column(name="fund_name", length = DataConstraints.C_TYPE_ENTITY_NAME)
-    public String getFundName() {
-        return fundName;
-    }
-
-    public void setFundName(String fundName) {
-        this.fundName = fundName;
-    }
+    private String nonsuitableReason;
 
     @Column(name="currently_fund_raising")
     public Boolean getCurrentlyFundRaising() {
@@ -105,11 +96,11 @@ public class FundMeetingMemo extends MeetingMemo{
     }
 
     @Column(name="nonsuitable_desc", length = DataConstraints.C_TYPE_ENTITY_DESCRIPTION_LONG)
-    public String getNonsuitableDescription() {
-        return nonsuitableDescription;
+    public String getNonsuitableReason() {
+        return nonsuitableReason;
     }
 
-    public void setNonsuitableDescription(String nonsuitableDescription) {
-        this.nonsuitableDescription = nonsuitableDescription;
+    public void setNonsuitableReason(String nonsuitableReason) {
+        this.nonsuitableReason = nonsuitableReason;
     }
 }

@@ -13,8 +13,8 @@ import javax.persistence.Table;
 //@DiscriminatorValue(value = "3")
 public class RealEstateMeetingMemo extends FundMeetingMemo {
 
-    private String GPAndTeamNotes;
-    private Short GPAndTeamScore;
+    private String teamNotes;
+    private Short teamScore;
     private String trackRecordNotes;
     private Short trackRecordScore;
     private String strategyNotes;
@@ -29,21 +29,21 @@ public class RealEstateMeetingMemo extends FundMeetingMemo {
     }
 
     @Column(name="team_notes", columnDefinition = "TEXT")
-    public String getGPAndTeamNotes() {
-        return GPAndTeamNotes;
+    public String getTeamNotes() {
+        return teamNotes;
     }
 
-    public void setGPAndTeamNotes(String GPAndTeamNotes) {
-        this.GPAndTeamNotes = GPAndTeamNotes;
+    public void setTeamNotes(String teamNotes) {
+        this.teamNotes = teamNotes;
     }
 
     @Column(name="team_score")
-    public Short getGPAndTeamScore() {
-        return GPAndTeamScore;
+    public Short getTeamScore() {
+        return teamScore;
     }
 
-    public void setGPAndTeamScore(Short GPAndTeamScore) {
-        this.GPAndTeamScore = GPAndTeamScore;
+    public void setTeamScore(Short teamScore) {
+        this.teamScore = teamScore;
     }
 
     @Column(name="track_record_notes", columnDefinition = "TEXT")

@@ -61,7 +61,7 @@ public class MeetingMemoConverterTest {
         //memoType.setCode("GENERAL");
         //entity.setMemoType(memoType);
 
-        entity.setOtherPartyName("Other party name");
+        entity.setFirmName("Other party name");
         entity.setPurpose("Purpose");
         entity.setMeetingDate(new Date());
         entity.setMeetingLocation("Location");
@@ -77,8 +77,8 @@ public class MeetingMemoConverterTest {
         attendees.add(employee);
         entity.setAttendeesNIC(attendees);
 
-        entity.setAttendeesNICDescription("Attendees NIC Desc");
-        entity.setAttendeesOtherDescription("Attendees other desc");
+        entity.setAttendeesNICOther("Attendees NIC Desc");
+        entity.setAttendeesOther("Attendees other desc");
         entity.setAuthor("author");
 
         Set<Geography> geographies = new HashSet<>();
@@ -101,7 +101,7 @@ public class MeetingMemoConverterTest {
         dto.setId(123L);
         dto.setMeetingType("MEETING");
         //dto.setMemoType("GENERAL");
-        dto.setOtherPartyName("Other party name");
+        dto.setFirmName("Other party name");
         dto.setPurpose("Purpose");
         dto.setMeetingDate(new Date());
         dto.setMeetingLocation("Location");
@@ -115,8 +115,8 @@ public class MeetingMemoConverterTest {
         attendees.add(employeeDto);
         dto.setAttendeesNIC(attendees);
 
-        dto.setAttendeesNICDescription("Attendees NIC Desc");
-        dto.setAttendeesOtherDescription("Attendees other desc");
+        dto.setAttendeesNICOther("Attendees NIC Desc");
+        dto.setAttendeesOther("Attendees other desc");
         dto.setAuthor("author");
 
         Set<BaseDictionaryDto> geographies = new HashSet<>();

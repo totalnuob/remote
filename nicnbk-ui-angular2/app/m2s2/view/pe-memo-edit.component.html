@@ -16,18 +16,13 @@
             </div>
         </div>
     </div>
-        <input type="hidden" name="memoId" />
-        <input type="hidden" id="memoType" name="memoType" />
         <div class="row top-buffer" >
             <div class="col-md-12">
                 <div class="col-md-2">
-                    <a class="btn btn-default pull-left">Back</a>
+                    <a [routerLink]="['/m2s2/list/']" class="btn btn-default pull-left">Back</a>
                 </div>
                 <div class="col-md-2">
                     <label class="checkbox-inline">
-                        <!--<input type="radio" name="meetingType" id="meetingTypeMeeting" value="MEETING"-->
-                               <!--[(ngModel)] = "memo.meetingType"/>-->
-
                         <input type="radio" [ngModel]="{checked: memo.meetingType == 'MEETING'}"
                                (ngModelChange)="memo.meetingType='MEETING'"  name="meetingType" value="MEETING">
                         <span>Meeting</span>
@@ -44,7 +39,8 @@
                     </label>
                 </div>
                 <div class="col-md-6">
-                    <input id="firmName" class="form-control" placeholder="Enter firm..." maxlength="250"/>
+                    <input id="firmName" class="form-control" placeholder="Enter firm..." maxlength="250"
+                        [(ngModel)]="memo.firmName"/>
                 </div>
             </div>
         </div>
@@ -52,12 +48,12 @@
             <div class="col-md-12">
                 <label class="control-label col-md-1">&nbsp;</label>
                 <div class="col-md-5">
-                    <input type="text" placeholder="Fund name... " class="form-control" id="companyName"
-                           name="companyName" maxlength="250"/>
+                    <input type="text" placeholder="Fund name... " class="form-control" id="fundName"
+                           [(ngModel)]="memo.fundName" name="fundName" maxlength="250"/>
                 </div>
                 <div class="col-md-2">
                     <div class='input-group date col-md-2' id='meetingDate' style="width: 100%">
-                        <input type="text" class="form-control" />
+                        <input type="text" class="form-control" id="meetingDateValue" [(ngModel)]="memo.meetingDate"/>
                         <span class="input-group-addon">
                             <span class="glyphicon glyphicon-calendar"></span>
                         </span>
@@ -65,7 +61,7 @@
                 </div>
                 <div class="col-md-2">
                     <div class='input-group datetime col-md-3' id='meetingTime' style="width: 100%">
-                        <input type='text' class="form-control"/>
+                        <input type='text' class="form-control" [(ngModel)]="memo.meetingTime"/>
                         <span class="input-group-addon">
                             <span class="glyphicon glyphicon-time"></span>
                         </span>
@@ -86,7 +82,6 @@
                         <div class="col-md-3">
                             <select id="arrangedBySelect" class="form-control" [(ngModel)]="memo.arrangedBy"
                                     (ngModelChange)="changeArrangedBy()">
-                                <option value="NONE">---</option>
                                 <option value="NIC">NIC</option>
                                 <option value="GP">GP</option>
                                 <option value="OTHER">Other</option>
@@ -101,33 +96,44 @@
                     <div class="row top-buffer">
                         <label class="control-label col-md-3">Purpose:</label>
                         <div class="col-md-9">
-                            <textarea spellcheck="false"  type="text" class="form-control" id="purpose" maxlength="1000"></textarea>
+                            <textarea spellcheck="false"  type="text" class="form-control" id="purpose" maxlength="1000"
+                                      [(ngModel)]="memo.purpose"></textarea>
                         </div>
                     </div>
                     <div class="row top-buffer">
                         <label class="control-label col-md-3">Attendees (NIC):</label>
-                        <div class="col-md-3">
-                            <select id="attendeesNICSelect" class="form-control" multiple="multiple">
-                                <option> ???</option>
+                        <div class="col-md-6">
+                            <!--<select id="attendeesNICSelect" class="form-control" multiple="multiple">-->
                                 <!--<option value="NA">NA</option>-->
                                 <!--<option value="GB">GB</option>-->
                                 <!--<option value="KZ">KZ</option>-->
                                 <!--<option value="AK">AK</option>-->
                                 <!--<option value="TT">TT</option>-->
-                            </select>
+                            <!--</select>-->
+
+                            <ng-select #attendeesSelect [initData]="memo.attendeesNIC"
+                                       [multiple]="true"
+                                       [items]="attendeesList"
+                                       (data)="refreshAttendeesNIC($event)"
+                                       (selected)="selected($event)"
+                                       (removed)="removed($event)"
+                                       placeholder="No attendee selected"></ng-select>
                         </div>
                     </div>
+
+
                     <div class="row top-buffer">
                         <div class="col-md-3">&nbsp;</div>
                         <div class="col-md-9">
                             <textarea spellcheck="false"  type="text" placeholder="Other NIC attendees..." class="form-control"
-                                      maxlength="1000" id="attendeesNIC" ></textarea>
+                                      maxlength="1000" id="attendeesNIC" [(ngModel)]="memo.attendeesNICOther"></textarea>
                         </div>
                     </div>
                     <div class="row top-buffer">
                         <label class="control-label col-md-3" for="attendeesDescription">Attendees (Other Party):</label>
                         <div class="col-md-9">
-                            <textarea spellcheck="false"  type="text" class="form-control" id="attendeesDescription" maxlength="1000" ></textarea>
+                            <textarea spellcheck="false"  type="text" class="form-control" id="attendeesDescription" maxlength="1000"
+                                      [(ngModel)]="memo.attendeesOther"></textarea>
                         </div>
                     </div>
                 </div>
@@ -135,56 +141,6 @@
                     <div class="row top-buffer">
                         <div class="col-md-12">
                             <canvas id="myChart"></canvas>
-                            <!--<script th:inline="javascript">-->
-                                <!--var ctx = document.getElementById("myChart");-->
-
-                                <!--var scores = new Array();-->
-                                <!--scores.push(Number([[${memo.teamScore}]]));-->
-                                <!--scores.push(Number([[${memo.trackRecordScore}]]));-->
-                                <!--scores.push(Number([[${memo.strategyScore}]]));-->
-
-                                <!--var labels = ["GP and Team", "Track Record", "Strategy"];-->
-                                <!--if($('#memoType').val() === "HF"){-->
-                                    <!--labels = ["Mgnmt and Team", "Strategy and Investment", "Portfolio"];-->
-                                <!--}-->
-
-                                <!--var data = {-->
-                                    <!--labels: labels,-->
-                                    <!--datasets: [-->
-                                        <!--{-->
-                                            <!--label: "",-->
-                                            <!--backgroundColor: "rgba(255,99,132,0.2)",-->
-                                            <!--borderColor: "rgba(255,99,132,1)",-->
-                                            <!--pointBackgroundColor: "rgba(255,99,132,1)",-->
-                                            <!--pointBorderColor: "#fff",-->
-                                            <!--pointHoverBackgroundColor: "#fff",-->
-                                            <!--pointHoverBorderColor: "rgba(255,99,132,1)",-->
-                                            <!--// playing with lines-->
-                                            <!--borderDash: [15, 2],-->
-                                            <!--data: scores //[4, 3, 2]-->
-                                        <!--}-->
-                                    <!--]-->
-                                <!--};-->
-                                <!--var myRadarChart = new Chart(ctx, {-->
-                                    <!--type: 'radar',-->
-                                    <!--data: data,-->
-                                    <!--options: {-->
-                                        <!--legend:{-->
-                                            <!--display: false-->
-                                        <!--},-->
-                                        <!--scale: {-->
-                                            <!--ticks: {-->
-                                                <!--//beginAtZero: true,-->
-                                                <!--min: 0,-->
-                                                <!--max: 5-->
-                                            <!--},-->
-                                            <!--gridLines: {-->
-                                                <!--color: "#8A9396"-->
-                                            <!--}-->
-                                        <!--}-->
-                                    <!--}-->
-                                <!--});-->
-                            <!--</script>-->
                         </div>
                     </div>
                 </div>
@@ -201,8 +157,7 @@
                     <label class="col-md-2">Score:<span id="averageScore"></span></label>
                     <label class="col-md-2">Conviction:</label>
                     <div class="col-md-2">
-                        <select id="conviction" class="form-control">
-                            <option value="0">---</option>
+                        <select id="conviction" class="form-control" [(ngModel)]="memo.conviction">
                             <option value="1">1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
@@ -218,24 +173,23 @@
             <div class="col-md-12">
                 <!--<label class="checkbox-inline col-md-2">&nbsp;</label>-->
                 <label class="checkbox-inline col-md-2">
-                    <input  type="checkbox" id="currentlyFundRaising" onclick="changeCurrentlyFundRaising(this)"
-                            />
+                    <input  type="checkbox" id="currentlyFundRaising" [(ngModel)]="memo.currentlyFundRaising"/>
                     <span>Currently fund-raising</span>
                 </label>
                 <label for="closingSchedule" class="col-md-1">Closing schedule</label>
                 <div class="col-md-2">
-                    <!--<input disabled="true" class="form-control col-md-1" id="closingSchedule" th:field="${memo.closingSchedule}"/>-->
-                    <select id="closingSchedule" class="form-control">
-                        <option value="NONE">---</option>
+                    <select id="closingSchedule" class="form-control" [disabled]="!memo.currentlyFundRaising"
+                            [(ngModel)]="memo.closingSchedule">
+                        <option *ngFor="let item of closingScheduleList" [value]="item.code">{{item.nameEn}}</option>
                     </select>
                 </div>
                 <label for="size" class="col-md-1">Size, mn</label>
                 <div class="col-md-2">
-                    <input class="form-control" id="size"/>
+                    <input class="form-control" id="size" [(ngModel)]="memo.fundSize"/>
                 </div>
                 <div class="col-md-2">
-                    <select id="sizeCurrency" class="form-control">
-                        <option value="NONE">---</option>
+                    <select id="sizeCurrency" class="form-control" [(ngModel)] = "memo.fundSizeCurrency">
+                        <option *ngFor="let item of currencyList" [value]="item.code">{{item.nameEn}}</option>
                     </select>
                     <!--<input class="form-control" id="size" th:field="${memo.sizeCurrency}"/>-->
                 </div>
@@ -252,7 +206,7 @@
                 <div class="col-md-5">&nbsp;</div>
                 <label for="preinvested" class="col-md-1">Predecessor fund invested %</label>
                 <div class="col-md-2">
-                    <input class="form-control" id="preinvested"/>
+                    <input class="form-control" id="preinvested" [(ngModel)]="memo.preInvested"/>
                 </div>
             </div>
         </div>
@@ -261,27 +215,45 @@
             <div class="col-md-12">
                 <!--<label class="checkbox-inline col-md-2">&nbsp;</label>-->
                 <label class="checkbox-inline col-md-2">
-                    <input type="checkbox" id="openingSoon" onclick="changeOpeningSoon(this)" />
+                    <input type="checkbox" id="openingSoon" [(ngModel)] = "memo.openingSoon" />
                     <span>Opening soon</span>
                 </label>
                 <label for="openingSchedule" class="col-md-1">Opening schedule</label>
                 <div class="col-md-2">
                     <!--<input disabled="true" class="form-control" id="openingSchedule" th:field="${memo.openingSchedule}"/>-->
-                    <select id="openingSchedule" class="form-control">
-                        <option value="NONE">---</option>
+                    <select id="openingSchedule" class="form-control" [disabled]="!memo.openingSoon" [(ngModel)]="memo.openingSchedule">
+                        <option *ngFor="let item of openingScheduleList" [value]="item.code">{{item.nameEn}}</option>
                     </select>
                 </div>
-                <label for="strategy" class="col-md-1">Strategy</label>
+                <label class="col-md-1">Strategy</label>
                 <div class="col-md-2">
-                    <select class="form-control" id="strategy">
-                        <option value="NONE">---</option>
-                    </select>
+                    <!--<select class="form-control" id="strategy" [(ngModel)]="memo.strategy">-->
+                        <!--<option *ngFor="let item of strategyList" [value]="item.code">{{item.nameEn}}</option>-->
+                    <!--</select>-->
+                    <ng-select #strategySelect [initData]="memo.strategies"
+                               [multiple]="true"
+                               [items]="strategyList"
+                               (data)="refreshStrategy($event)"
+                               (selected)="selected($event)"
+                               (removed)="removed($event)"
+                               placeholder="No strategy selected"></ng-select>
                 </div>
-                <label for="geographySelect" class="col-md-1">Geography</label>
+                <label class="col-md-1">Geography</label>
                 <div class="col-md-2">
-                    <select id="geographySelect" class="form-control" multiple="multiple">
-                        <option value="NONE">---</option>
-                    </select>
+                    <!--<select id="geographySelect" class="form-control" multiple="multiple">-->
+                        <!--<option value="NA">North America</option>-->
+                        <!--<option value="EUR">Europe</option>-->
+                        <!--<option value="ASIA">Asia</option>-->
+                        <!--<option value="ROW">Row</option>-->
+                        <!--&lt;!&ndash;<option *ngFor="let item of geographyList" [value]="item.code">{{item.nameEn}}</option>&ndash;&gt;-->
+                    <!--</select>-->
+                    <ng-select #geographySelect [data]="memo.geographies"
+                               [multiple]="true"
+                               [items]="geographyList"
+                               (data)="refreshGeography($event)"
+                               (selected)="selected($event)"
+                               (removed)="removed($event)"
+                               placeholder="No geography selected"></ng-select>
                 </div>
             </div>
         </div>
@@ -290,22 +262,23 @@
                 <label class="col-md-2">Suitability(Y/N)</label>
                 <div class="col-md-1">
                     <label class="checkbox-inline">
-                        <input type="radio" name="suitability" id="suitabilityNo" onclick="changeSuitability('NO')"
-                               value="NO"/>
+                        <input type="radio" name="suitability" id="suitabilityNo" [ngModel]="{checked: memo.suitable == false}"
+                               (ngModelChange)="memo.suitable=false" value="false"/>
                         <span>N</span>
                     </label>
                 </div>
                 <div class="col-md-1">
                     <label class="checkbox-inline">
-                        <input type="radio" name="suitability" id="suitabilityYes" onclick="changeSuitability('YES')"
-                               value="YES"/>
+                        <input type="radio" name="suitability" id="suitabilityYes" [ngModel]="{checked: memo.suitable == true}"
+                               (ngModelChange)="memo.suitable=true; memo.nonsuitableReason='';" value="true"/>
                         <span>Y</span>
                     </label>
                 </div>
                 <div class="col-md-1">&nbsp;</div>
                 <label for="nonsuitableReason" class="col-md-1">If No, why</label>
                 <div class="col-md-5">
-                    <textarea spellcheck="false"  class="form-control col-md-4" id="nonsuitableReason" maxlength="1000"></textarea>
+                    <textarea spellcheck="false"  class="form-control col-md-4" id="nonsuitableReason" maxlength="1000"
+                        [disabled]="memo.suitable" [(ngModel)]="memo.nonsuitableReason"></textarea>
                 </div>
             </div>
         </div>
@@ -317,8 +290,13 @@
                     </div>
                     <div class="col-md-5">&nbsp;</div>
                     <div class="col-md-1">
-                        <select id="teamScore" class="form-control" onchange="updateScore();">
-                            <option value="0">---</option>
+                        <select id="teamScore" class="form-control" (ngModelChange)="updateScore($event)"
+                            [(ngModel)]="memo.teamScore">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
                         </select>
                     </div>
                 </div>
@@ -326,7 +304,7 @@
         </div>
         <div class="row top-buffer">
             <div class="col-md-12 nopadding">
-                <textarea spellcheck="false"  class="form-control"></textarea>
+                <textarea spellcheck="false"  class="form-control" [(ngModel)]="memo.teamNotes"></textarea>
             </div>
         </div>
         <div class="row top-buffer">
@@ -336,8 +314,8 @@
                 </div>
                 <div class="col-md-5">&nbsp;</div>
                 <div class="col-md-1">
-                    <select id="trackRecordScore" class="form-control" onchange="updateScore();">
-                        <option value="0">---</option>
+                    <select id="trackRecordScore" class="form-control" (ngModelChange)="updateScore()"
+                            [(ngModel)]="memo.trackRecordScore">
                         <option value="1">1</option>
                         <option value="2">2</option>
                         <option value="3">3</option>
@@ -349,7 +327,7 @@
         </div>
         <div class="row top-buffer">
             <div class="col-md-12 nopadding">
-                <textarea spellcheck="false"  class="form-control"></textarea>
+                <textarea spellcheck="false"  class="form-control" [(ngModel)]="memo.trackRecordNotes"></textarea>
             </div>
         </div>
         <div class="row top-buffer">
@@ -359,8 +337,8 @@
                 </div>
                 <div class="col-md-5">&nbsp;</div>
                 <div class="col-md-1">
-                    <select id="strategyScore" class="form-control" onchange="updateScore();">
-                        <option value="0">---</option>
+                    <select id="strategyScore" class="form-control" (ngModelChange)="updateScore()"
+                            [(ngModel)]="memo.strategyScore">
                         <option value="1">1</option>
                         <option value="2">2</option>
                         <option value="3">3</option>
@@ -372,7 +350,7 @@
         </div>
         <div class="row top-buffer">
             <div class="col-md-12 nopadding">
-                <textarea spellcheck="false"  class="form-control"></textarea>
+                <textarea spellcheck="false"  class="form-control" [(ngModel)]="memo.strategyNotes"></textarea>
             </div>
         </div>
         <div class="row top-buffer">
@@ -385,7 +363,7 @@
         </div>
         <div class="row top-buffer">
             <div class="col-md-12 nopadding">
-                <textarea spellcheck="false"  class="form-control"></textarea>
+                <textarea spellcheck="false"  class="form-control" [(ngModel)]="memo.otherNotes"></textarea>
             </div>
         </div>
         <div class="row top-buffer">
@@ -406,49 +384,49 @@
         </div>
         <div class="row top-buffer">
             <div class="col-md-6 nopadding">
-                <textarea spellcheck="false"  class="form-control"></textarea>
+                <textarea spellcheck="false"  class="form-control" [(ngModel)]="memo.nicFollowups"></textarea>
             </div>
             <div class="col-md-6 nopadding">
-                <textarea spellcheck="false"  class="form-control"></textarea>
+                <textarea spellcheck="false"  class="form-control" [(ngModel)]="memo.otherPartyFollowups"></textarea>
             </div>
         </div>
         <br/>
         <div class="row top-buffer">
-            <div class="col-md-6">
-                <div class="jumbotron" style="padding-top: 5px; padding-bottom: 5px;">
-                    <label>ATTACHMENTS</label>
-                    <div class="row">
-                        <label class="btn btn-primary col-md-3" for="attachmentFile">
-                            <input id="attachmentFile" name="attachmentFile" type="file" style="display:none;"
-                                   onchange="$('#attachment-file-info').html($(this).val());var text = $('#attachment-file-info').html();text = text.substring(text.lastIndexOf('\\') + 1, text.length);$('#attachment-file-info').html(text);"/>
-                            Add
-                        </label>
-                        <div class="col-md-1">
-                            <span class='label label-info' id="attachment-file-info"></span>
-                        </div>
-                    </div>
-                    <br/>
-                    <div class="row">
-                        <div *ngFor="let attachment of attachments">
-                            <a>link</a>&nbsp;
-                            <a onclick="return confirm('Are you sure want to delete attachment?')">
-                                <i class="glyphicon glyphicon-trash"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <!--<div class="col-md-6">-->
+                <!--<div class="jumbotron" style="padding-top: 5px; padding-bottom: 5px;">-->
+                    <!--<label>ATTACHMENTS</label>-->
+                    <!--<div class="row">-->
+                        <!--<label class="btn btn-primary col-md-3" for="attachmentFile">-->
+                            <!--<input id="attachmentFile" name="attachmentFile" type="file" style="display:none;"-->
+                                   <!--onchange="$('#attachment-file-info').html($(this).val());var text = $('#attachment-file-info').html();text = text.substring(text.lastIndexOf('\\') + 1, text.length);$('#attachment-file-info').html(text);"/>-->
+                            <!--Add-->
+                        <!--</label>-->
+                        <!--<div class="col-md-1">-->
+                            <!--<span class='label label-info' id="attachment-file-info"></span>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<br/>-->
+                    <!--<div class="row">-->
+                        <!--<div *ngFor="let attachment of attachments">-->
+                            <!--<a>link</a>&nbsp;-->
+                            <!--<a onclick="return confirm('Are you sure want to delete attachment?')">-->
+                                <!--<i class="glyphicon glyphicon-trash"></i>-->
+                            <!--</a>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
             <div class="col-md-6">
                 <label class="col-md-2">Author:</label>
                 <div class="col-md-4">
                     <input type="text" placeholder="Your name... " class="form-control col-md-2" id="author"
-                           name="author" maxlength="250"/>
+                           name="author" maxlength="250" [(ngModel)]="memo.author"/>
                 </div>
             </div>
         </div>
         <div class="row top-buffer">
             <div class="col-md-12">
-                <button type="submit" class="btn btn-success pull-right" name="saveMemo">Save</button>
+                <button type="button" class="btn btn-success pull-right" name="saveMemo" (click)="save()">Save</button>
             </div>
         </div>
 </div>

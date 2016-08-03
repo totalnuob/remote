@@ -1,12 +1,13 @@
 import {Component, OnInit} from '@angular/core';
 import {LookupService} from "../common/lookup.service";
-import {News} from "./news";
+import {News} from "./model/news";
+import {NewsService} from "./news.service";
 
 declare var $: any
 
 @Component({
     selector: 'news-create',
-    templateUrl: `app/news/news-edit.component.html`
+    templateUrl: `app/news/view/news-edit.component.html`
 })
 export class NewsEditComponent implements OnInit{
     newsTypes = [];
@@ -17,7 +18,8 @@ export class NewsEditComponent implements OnInit{
     errorMessage: string;
 
     constructor(
-        private lookupService: LookupService
+        private lookupService: LookupService,
+        private newsService: NewsService
     ){}
 
     ngOnInit(){
@@ -41,13 +43,14 @@ export class NewsEditComponent implements OnInit{
         // TODO: remove jQuery
         this.newsItem.content = $("#editor").html();
 
-        alert(this.newsItem.id);
-        alert(this.newsItem.type);
-        alert(this.newsItem.header);
-        alert(this.newsItem.source);
-        alert(this.newsItem.content);
-
-        this.successMessage = "Successfully saved.";
+        this.newsService.save(this.newsItem)
+            .subscribe(
+                response  => {
+                    //console.log(response);
+                    this.successMessage = "Successfully saved.";
+                },
+                error =>  this.errorMessage = <any>error
+            );
     }
 
     loadLookups(){

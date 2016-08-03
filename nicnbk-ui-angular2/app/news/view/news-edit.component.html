@@ -23,7 +23,6 @@
             <div class="alert alert-danger" *ngIf="errorMessage != null">{{errorMessage}}</div>
         </div>
     </div>
-    <form role="form" action="#" method="post" id="newsSubmissionForm" >
         <input type="hidden" id="newsItemId" [(ngModel)] = "newsItem.id"/>
         <div class="row">
             <div class="col-md-12">
@@ -54,7 +53,6 @@
             </div>
         </div>
         <input type="hidden" id="newsContent" [(ngModel)]="newsItem.content"/>
-    </form>
     <br/>
     <div class="row">
         <div class="btn-toolbar" data-role="editor-toolbar" data-target="#editor">

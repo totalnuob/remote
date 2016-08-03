@@ -46,6 +46,7 @@ public class MemoFilesRepositoryTest {
 
     @Test
     @DatabaseSetup("classpath:datasets/m2s2/memo_files_get.xml")
+    //@DatabaseTearDown("classpath:datasets/m2s2/memo_files_get_teardown.xml")
     public void testMemoFilesRepoGetFilesByMemoId(){
         List<MemoFiles> memoFilesList = repository.getFilesByMemoId(112L);
         assert (memoFilesList.size() == 1);
@@ -53,6 +54,7 @@ public class MemoFilesRepositoryTest {
 
     @Test
     @DatabaseSetup("classpath:datasets/m2s2/memo_files_get.xml")
+    //@DatabaseTearDown("classpath:datasets/m2s2/memo_files_get_teardown.xml")
     public void testMemoFilesRepoGetFilesByFileId(){
         MemoFiles memoFile = repository.getFilesByFileId(131L);
         assert (memoFile != null);

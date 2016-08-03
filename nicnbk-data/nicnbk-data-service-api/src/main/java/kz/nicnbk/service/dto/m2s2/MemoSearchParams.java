@@ -96,8 +96,8 @@ public class MemoSearchParams implements BaseParams {
     public boolean isEmpty(){
         return StringUtils.isEmpty(this.firmName) && StringUtils.isEmpty(this.fundName) &&
                 this.fromDate == null && this.toDate == null &&
-                (StringUtils.isEmpty(this.meetingType) || this.meetingType.equals("NONE")) &&
-                memoType == null;
+                (StringUtils.isEmpty(this.meetingType) || this.meetingType.equals(StringUtils.VALUE_NONE)) &&
+                (memoType == null || memoType.intValue() == 0);
     }
 
     public String getSearchParamsAsString(){

@@ -73,11 +73,11 @@ public class PEMeetingMemoRepositoryTest {
 
         Set<Strategy> strategies = new HashSet<>();
         Strategy strategy = new Strategy();
-        strategy.setId(6);
+        strategy.setId(1);
         strategies.add(strategy);
         entity.setStrategies(strategies);
 
-        entity.setGPAndTeamNotes("GP AND NOTES");
+        entity.setTeamNotes("GP AND NOTES");
 
         Long id = repository.save(entity).getId();
         assert (id > 0);
@@ -103,5 +103,70 @@ public class PEMeetingMemoRepositoryTest {
     public void testGetLazy(){
         PrivateEquityMeetingMemo entity = repository.findOne(192L);
         assert(entity != null && entity.getId() == 192);
+    }
+
+    @Test
+    @DatabaseSetup("classpath:datasets/m2s2/pe_memo_save.xml")
+    public void testStrategiesSave(){
+        PrivateEquityMeetingMemo entity = new PrivateEquityMeetingMemo();
+
+//        MemoType memoType = new MemoType();
+//        memoType.setId(2);
+//        entity.setMemoType(memoType);
+
+        MeetingType meetingType = new MeetingType();
+        meetingType.setId(2);
+        entity.setMeetingType(meetingType);
+
+        entity.setMeetingDate(new Date());
+
+        MeetingArrangedBy arrangedBy = new MeetingArrangedBy();
+        arrangedBy.setId(3);
+        entity.setArrangedBy(arrangedBy);
+
+        Set<Employee> employees = new HashSet<>();
+        Employee employee = new Employee();
+        employee.setId(101L);
+        employees.add(employee);
+        entity.setAttendeesNIC(employees);
+
+        Currency currency = new Currency();
+        currency.setId(4);
+        entity.setFundSizeCurrency(currency);
+
+        Set<Geography> geographies = new HashSet<>();
+        Geography geography = new Geography();
+        geography.setId(5);
+        geographies.add(geography);
+        entity.setGeographies(geographies);
+
+        Set<Strategy> strategies = new HashSet<>();
+        Strategy strategy1 = new Strategy();
+        strategy1.setId(1);
+        strategies.add(strategy1);
+        Strategy strategy2 = new Strategy();
+        strategy2.setId(2);
+        strategies.add(strategy2);
+        entity.setStrategies(strategies);
+
+        entity.setTeamNotes("GP AND NOTES");
+
+        Long id = repository.save(entity).getId();
+
+
+        // TODO: refactor as independent test (check from DB?)
+        PrivateEquityMeetingMemo retrieved = repository.getFullEagerById(id);
+        assert(retrieved.getStrategies().size() == 2);
+
+        strategies = new HashSet<>();
+        strategy1 = new Strategy();
+        strategy1.setId(3);
+        strategies.add(strategy1);
+        entity.setStrategies(strategies);
+        id = repository.save(entity).getId();
+
+        retrieved = repository.getFullEagerById(id);
+        assert(retrieved.getStrategies().size() == 1);
+
     }
 }

@@ -2,6 +2,7 @@ package kz.nicnbk.repo.model.employee;
 
 import kz.nicnbk.repo.model.base.CreateUpdateBaseEntity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.util.Date;
@@ -19,6 +20,7 @@ public class Employee extends CreateUpdateBaseEntity {
     private String patronymic;
     private Date birthDate;
 
+    @Column(name="lastname")
     public String getLastName() {
         return lastName;
     }
@@ -27,6 +29,7 @@ public class Employee extends CreateUpdateBaseEntity {
         this.lastName = lastName;
     }
 
+    @Column(name="firstname")
     public String getFirstName() {
         return firstName;
     }
@@ -35,6 +38,7 @@ public class Employee extends CreateUpdateBaseEntity {
         this.firstName = firstName;
     }
 
+    @Column(name="patronymic")
     public String getPatronymic() {
         return patronymic;
     }
@@ -43,6 +47,7 @@ public class Employee extends CreateUpdateBaseEntity {
         this.patronymic = patronymic;
     }
 
+    @Column(name="birthdate")
     public Date getBirthDate() {
         return birthDate;
     }

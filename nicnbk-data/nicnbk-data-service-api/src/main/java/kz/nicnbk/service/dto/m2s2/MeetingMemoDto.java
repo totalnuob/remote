@@ -5,6 +5,7 @@ import kz.nicnbk.common.service.model.BaseEntityDto;
 import kz.nicnbk.repo.model.m2s2.MeetingMemo;
 import kz.nicnbk.service.dto.employee.EmployeeDto;
 import kz.nicnbk.service.dto.files.FilesDto;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 import java.util.Set;
@@ -18,16 +19,20 @@ public class MeetingMemoDto extends BaseEntityDto<MeetingMemo> {
     private int memoType;
 
     private String meetingType;
-    private String otherPartyName;
+    private String firmName;
+    private String fundName;
+
+    @DateTimeFormat(pattern="dd-MM-yyyy")
     private Date meetingDate;
+
     private String meetingTime;
     private String arrangedBy;
     private String arrangedByDescription;
     private String meetingLocation;
     private String purpose;
     private Set<EmployeeDto> attendeesNIC;
-    private String attendeesNICDescription;
-    private String attendeesOtherDescription;
+    private String attendeesNICOther;
+    private String attendeesOther;
     private Set<FilesDto> files;
 
     // TODO: TEMP in place of authentication
@@ -36,6 +41,10 @@ public class MeetingMemoDto extends BaseEntityDto<MeetingMemo> {
     // TODO: refactor?
     private Set<BaseDictionaryDto> strategies;
     private Set<BaseDictionaryDto> geographies;
+
+    // TODO: apply inheritance similar to entity classes
+    @DateTimeFormat(pattern="dd-MM-yyyy")
+    private Date creationDate;
 
     public int getMemoType() {
         return memoType;
@@ -53,12 +62,20 @@ public class MeetingMemoDto extends BaseEntityDto<MeetingMemo> {
         this.meetingType = meetingType;
     }
 
-    public String getOtherPartyName() {
-        return otherPartyName;
+    public String getFirmName() {
+        return firmName;
     }
 
-    public void setOtherPartyName(String otherPartyName) {
-        this.otherPartyName = otherPartyName;
+    public void setFirmName(String firmName) {
+        this.firmName = firmName;
+    }
+
+    public String getFundName() {
+        return fundName;
+    }
+
+    public void setFundName(String fundName) {
+        this.fundName = fundName;
     }
 
     public Date getMeetingDate() {
@@ -117,20 +134,20 @@ public class MeetingMemoDto extends BaseEntityDto<MeetingMemo> {
         this.attendeesNIC = attendeesNIC;
     }
 
-    public String getAttendeesNICDescription() {
-        return attendeesNICDescription;
+    public String getAttendeesNICOther() {
+        return attendeesNICOther;
     }
 
-    public void setAttendeesNICDescription(String attendeesNICDescription) {
-        this.attendeesNICDescription = attendeesNICDescription;
+    public void setAttendeesNICOther(String attendeesNICOther) {
+        this.attendeesNICOther = attendeesNICOther;
     }
 
-    public String getAttendeesOtherDescription() {
-        return attendeesOtherDescription;
+    public String getAttendeesOther() {
+        return attendeesOther;
     }
 
-    public void setAttendeesOtherDescription(String attendeesOtherDescription) {
-        this.attendeesOtherDescription = attendeesOtherDescription;
+    public void setAttendeesOther(String attendeesOther) {
+        this.attendeesOther = attendeesOther;
     }
 
     public String getAuthor() {
@@ -163,5 +180,13 @@ public class MeetingMemoDto extends BaseEntityDto<MeetingMemo> {
 
     public void setFiles(Set<FilesDto> files) {
         this.files = files;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
     }
 }

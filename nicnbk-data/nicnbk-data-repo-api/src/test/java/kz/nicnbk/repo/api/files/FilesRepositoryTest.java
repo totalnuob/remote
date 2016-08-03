@@ -43,7 +43,7 @@ public class FilesRepositoryTest {
         entity.setSize(100L);
 
         FilesType filesType = new FilesType();
-        filesType.setId(11);
+        filesType.setId(1);
         entity.setType(filesType);
 
         Long id = filesRepository.save(entity).getId();

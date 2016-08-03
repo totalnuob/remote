@@ -5,7 +5,7 @@ package kz.nicnbk.service.dto.m2s2;
  */
 public class FundMeetingMemoDto extends MeetingMemoDto {
 
-    private String fundName;
+    //private String fundName;
     private Boolean currentlyFundRaising;
     private String closingSchedule;
     private Boolean openingSoon;
@@ -14,15 +14,15 @@ public class FundMeetingMemoDto extends MeetingMemoDto {
     private String fundSizeCurrency;
     private Double preInvested;
     private Boolean suitable;
-    private String nonsuitableDescription;
+    private String nonsuitableReason;
 
-    public String getFundName() {
-        return fundName;
-    }
-
-    public void setFundName(String fundName) {
-        this.fundName = fundName;
-    }
+//    public String getFundName() {
+//        return fundName;
+//    }
+//
+//    public void setFundName(String fundName) {
+//        this.fundName = fundName;
+//    }
 
     public Boolean getCurrentlyFundRaising() {
         return currentlyFundRaising;
@@ -88,11 +88,11 @@ public class FundMeetingMemoDto extends MeetingMemoDto {
         this.suitable = suitable;
     }
 
-    public String getNonsuitableDescription() {
-        return nonsuitableDescription;
+    public String getNonsuitableReason() {
+        return nonsuitableReason;
     }
 
-    public void setNonsuitableDescription(String nonsuitableDescription) {
-        this.nonsuitableDescription = nonsuitableDescription;
+    public void setNonsuitableReason(String nonsuitableReason) {
+        this.nonsuitableReason = nonsuitableReason;
     }
 }

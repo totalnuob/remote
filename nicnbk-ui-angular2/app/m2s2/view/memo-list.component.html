@@ -7,14 +7,14 @@
                         <span class="caret"></span></button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                         <li role="presentation">
-                            <a [routerLink]="['/m2s2/pe/edit/', 0]" role="menuitem" tabindex="-1" >Private Equity</a></li>
+                            <a [routerLink]="['/m2s2/edit/2/', 0]" role="menuitem" tabindex="-1" >Private Equity</a></li>
                         <li role="presentation">
-                            <a [routerLink]="['/m2s2/re/edit/', 0]" role="menuitem" tabindex="-1" >Real Estate</a></li>
+                            <a [routerLink]="['/m2s2/edit/4/', 0]" role="menuitem" tabindex="-1" >Real Estate</a></li>
                         <li role="presentation">
-                            <a [routerLink]="['/m2s2/hf/edit/', 0]" role="menuitem" tabindex="-1" >Hedge Fund</a></li>
+                            <a [routerLink]="['/m2s2/edit/3/', 0]" role="menuitem" tabindex="-1" >Hedge Fund</a></li>
                         <li role="presentation" class="divider"></li>
                         <li role="presentation">
-                            <a [routerLink]="['/m2s2/general/edit/', 0]" role="menuitem" tabindex="-1" >General</a></li>
+                            <a [routerLink]="['/m2s2/edit/1/', 0]" role="menuitem" tabindex="-1" >General</a></li>
                     </ul>
                 </div>
             </div>
@@ -26,7 +26,7 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label for="firmName">Meeting Type</label>
-                                <select class="form-control" id="meetingType" >
+                                <select class="form-control" id="meetingType" [(ngModel)]="searchParams.meetingType">
                                     <option value="NONE">---</option>
                                     <option *ngFor = "let type of meetingTypes" [value]="type.code">{{type.nameEn}}</option>
                                 </select>
@@ -35,8 +35,8 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label for="firmName">Memo Type</label>
-                                <select class="form-control" id="memoType" >
-                                    <option value="NONE">---</option>
+                                <select class="form-control" id="memoType" [(ngModel)]="searchParams.memoType">
+                                    <option value="0">---</option>
                                     <option *ngFor = "let type of memoTypes" [value]="type.code">{{type.nameEn}}</option>
                                 </select>
                             </div>
@@ -44,7 +44,7 @@
                         <div class="col-md-3">
                             <label for="fromDateDTPickeer">From</label>
                             <div class='input-group date col-md-3' id='fromDateDTPickeer' style="width: 100%">
-                                <input type='text' class="form-control" />
+                                <input type='text' class="form-control" id="fromDate" />
                                         <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
                                         </span>
@@ -53,7 +53,7 @@
                         <div class="col-md-3">
                             <label for="untilDateDTPickeer">To</label>
                             <div class='input-group date col-md-3' id='untilDateDTPickeer' style="width: 100%">
-                                <input type='text' class="form-control" />
+                                <input type='text' class="form-control" id="toDate"/>
                                         <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
                                         </span>
@@ -77,21 +77,23 @@
                     <div class="col-md-12">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="fundName">Fund</label>
-                                <input type="text" class="form-control" id="fundName" placeholder="Enter fund name..."/>
+                                <label for="firmName">Firm</label>
+                                <input type="text" class="form-control" id="firmName" placeholder="Enter firm name..."
+                                    [(ngModel)]="searchParams.firmName"/>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="firmName">Firm</label>
-                                <input type="text" class="form-control" id="firmName" placeholder="Enter firm name..."/>
+                                    <label for="fundName">Fund</label>
+                                <input type="text" class="form-control" id="fundName" placeholder="Enter fund name..."
+                                       [(ngModel)]="searchParams.fundName" [disabled]="searchParams.memoType == 'GENERAL'"/>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <button type="submit" class="btn btn-success pull-right">Search</button>
+                        <button type="button" class="btn btn-success pull-right" (click)="search()">Search</button>
                     </div>
                 </div>
         </div>
@@ -122,13 +124,13 @@
 
             <tbody>
             <tr *ngFor = "let memo of memoList">
-                <td width="5%"></td>
-                <td width="10%" ></td>
-                <td width="30%"><a></a></td>
-                <td width="30%"><a></a></td>
+                <td width="5%">{{memo.memoType}}</td>
+                <td width="10%" >{{memo.meetingType}}</td>
+                <td width="30%"><a [routerLink]="['/m2s2/edit/', memo.memoType, memo.id]">{{memo.firmName}}</a></td>
+                <td width="30%"><a [routerLink]="['/m2s2/edit/', memo.memoType, memo.id]">{{memo.fundName}}</a></td>
                 <!--<td width="10%" th:text="${memoItem.meetingDate}"></td>-->
-                <td width="10%"><a></a></td>
-                <td width="10%"></td>
+                <td width="10%">{{memo.meetingDate}}</td>
+                <td width="10%">{{memo.author}}</td>
                 <td width="5%">
                     <!--<a th:href="@{/m2s2/deleteMemo/{id}(id=${memoItem.id})}" onclick="return confirm('Are you sure?')"><i class="glyphicon glyphicon-trash"></i></a>-->
                     <a onclick="alert('To delete this memo, please call #115');"><i class="glyphicon glyphicon-trash"></i></a>

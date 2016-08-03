@@ -9,7 +9,7 @@ public class GeneralMeetingMemoDto extends MeetingMemoDto{
     private String topic2;
     private String topic3;
     private String otherNotes;
-    private String NICFollowups;
+    private String nicFollowups;
     private String otherPartyFollowups;
 
     public String getTopic1() {
@@ -44,12 +44,12 @@ public class GeneralMeetingMemoDto extends MeetingMemoDto{
         this.otherNotes = otherNotes;
     }
 
-    public String getNICFollowups() {
-        return NICFollowups;
+    public String getNicFollowups() {
+        return nicFollowups;
     }
 
-    public void setNICFollowups(String NICFollowups) {
-        this.NICFollowups = NICFollowups;
+    public void setNicFollowups(String nicFollowups) {
+        this.nicFollowups = nicFollowups;
     }
 
     public String getOtherPartyFollowups() {

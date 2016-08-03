@@ -1,7 +1,7 @@
 import { Component, AfterViewInit, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ROUTER_DIRECTIVES } from '@angular/router';
-import {News} from "./news";
-import {NEWS} from "./mock-news";
+import {News} from "./model/news";
+import {NEWS} from "./model/mock-news";
 import {NewsService} from "./news.service";
 import {NEWS_PAGE_SIZE} from "./news.constants";
 
@@ -9,7 +9,7 @@ import {NEWS_PAGE_SIZE} from "./news.constants";
 
 @Component({
     selector: 'news-list',
-    templateUrl: `app/news/news-list.component.html`,
+    templateUrl: `app/news/view/news-list.component.html`,
     styleUrls: [
 
         // TODO: load here, not in index.html

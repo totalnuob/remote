@@ -36,7 +36,7 @@ public class MemoServiceREST {
         return searchResult;
     }
 
-    @RequestMapping(value = "/get/{type}/{memoId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/get/{type}/{memoId}", method = RequestMethod.GET)
     public MeetingMemoDto get(@PathVariable int type, @PathVariable long memoId){
         switch (type){
             case MeetingMemo.GENERAL_DISCRIMINATOR:
@@ -56,32 +56,39 @@ public class MemoServiceREST {
     @RequestMapping(value = "/PE/save", method = RequestMethod.POST)
     public ResponseEntity<?>  save(@RequestBody PrivateEquityMeetingMemoDto memoDto){
         Long id = PEmemoService.save(memoDto);
+        // TODO: response
+        memoDto.setId(id);
 
         HttpHeaders httpHeaders = new HttpHeaders();
-        return new ResponseEntity<>(null, httpHeaders, HttpStatus.OK);
+        return new ResponseEntity<>(memoDto, httpHeaders, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/HF/save", method = RequestMethod.POST)
     public ResponseEntity<?>  save(@RequestBody HedgeFundsMeetingMemoDto memoDto){
         Long id = HFmemoService.save(memoDto);
+        // TODO: response
+        memoDto.setId(id);
 
         HttpHeaders httpHeaders = new HttpHeaders();
-        return new ResponseEntity<>(null, httpHeaders, HttpStatus.OK);
+        return new ResponseEntity<>(memoDto, httpHeaders, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/RE/save", method = RequestMethod.POST)
     public ResponseEntity<?>  save(@RequestBody RealEstateMeetingMemoDto memoDto){
         Long id = REmemoService.save(memoDto);
-
+        // TODO: response
+        memoDto.setId(id);
         HttpHeaders httpHeaders = new HttpHeaders();
-        return new ResponseEntity<>(null, httpHeaders, HttpStatus.OK);
+        return new ResponseEntity<>(memoDto, httpHeaders, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/GN/save", method = RequestMethod.POST)
     public ResponseEntity<?>  save(@RequestBody GeneralMeetingMemoDto memoDto){
         Long id = generalMemoService.save(memoDto);
+        // TODO: response
+        memoDto.setId(id);
 
         HttpHeaders httpHeaders = new HttpHeaders();
-        return new ResponseEntity<>(null, httpHeaders, HttpStatus.OK);
+        return new ResponseEntity<>(memoDto, httpHeaders, HttpStatus.OK);
     }
 }

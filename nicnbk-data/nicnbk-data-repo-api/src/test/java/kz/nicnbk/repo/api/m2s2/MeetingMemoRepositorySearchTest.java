@@ -35,6 +35,7 @@ public class MeetingMemoRepositorySearchTest {
 
     @Test
     @DatabaseSetup("classpath:datasets/m2s2/meeting_memo_get.xml")
+    //@DatabaseTearDown("classpath:datasets/m2s2/meeting_memo_get_teardown.xml")
     public void testMeetingMemoRepoFindAllByDateDesc(){
         int pageNumber = 0;
         int pageSize = 2;
@@ -47,6 +48,7 @@ public class MeetingMemoRepositorySearchTest {
 
     @Test
     @DatabaseSetup("classpath:datasets/m2s2/meeting_memo_get.xml")
+    //@DatabaseTearDown("classpath:datasets/m2s2/meeting_memo_get_teardown.xml")
     public void testMeetingMemoRepoFindWithoutDates(){
         int pageNumber = 0;
         int pageSize = 2;
@@ -62,6 +64,7 @@ public class MeetingMemoRepositorySearchTest {
 
     @Test
     @DatabaseSetup("classpath:datasets/m2s2/meeting_memo_get.xml")
+    //@DatabaseTearDown("classpath:datasets/m2s2/meeting_memo_get_teardown.xml")
     public void testMeetingMemoRepoFindBothDates(){
         int pageNumber = 0;
         int pageSize = 2;

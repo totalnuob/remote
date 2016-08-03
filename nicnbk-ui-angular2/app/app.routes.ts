@@ -4,7 +4,7 @@ import {NewsListComponent} from './news/news-list.component';
 import {NewsEditComponent} from "./news/news-edit.component";
 import {NewsViewComponent} from "./news/news-view.component";
 
-import {M2S2ListComponent} from "./m2s2/m2s2-list.component";
+import {MemoListComponent} from "./m2s2/memo-list.component";
 import {PrivateEquityMemoEditComponent} from "./m2s2/pe-memo-edit.component";
 import {HedgeFundsMemoEditComponent} from "./m2s2/hf-memo-edit.component";
 import {RealEstateMemoEditComponent} from "./m2s2/re-memo-edit.component";
@@ -16,6 +16,7 @@ const routes: RouterConfig = [
         redirectTo: '/news/list',
         pathMatch: 'full'
     },
+    /* NEWS ***************************************/
     {
         path: 'news/list',
         component: NewsListComponent
@@ -28,24 +29,26 @@ const routes: RouterConfig = [
         path: 'news/view/:id',
         component: NewsViewComponent
     },
+
+    /* M2S2 ****************************************/
     {
         path: 'm2s2/list',
-        component: M2S2ListComponent
+        component: MemoListComponent
     },
     {
-        path: 'm2s2/pe/edit/:id',
+        path: 'm2s2/edit/2/:id',
         component: PrivateEquityMemoEditComponent
     },
     {
-        path: 'm2s2/hf/edit/:id',
+        path: 'm2s2/edit/3/:id',
         component: HedgeFundsMemoEditComponent
     },
     {
-        path: 'm2s2/re/edit/:id',
+        path: 'm2s2/edit/4/:id',
         component: RealEstateMemoEditComponent
     },
     {
-        path: 'm2s2/general/edit/:id',
+        path: 'm2s2/edit/1/:id',
         component: GeneralMemoEditComponent
     }
 

@@ -48,7 +48,9 @@ public class NewsServiceREST {
     public ResponseEntity<?> save(@RequestBody NewsDto newsDto){
         Long id = newsService.save(newsDto);
         HttpHeaders httpHeaders = new HttpHeaders();
-        return new ResponseEntity<>(null, httpHeaders, HttpStatus.CREATED);
+        // TODO: response
+        newsDto.setId(id);
+        return new ResponseEntity<>(newsDto, httpHeaders, HttpStatus.CREATED);
     }
 
     @RequestMapping(value="/get/{id}", method = RequestMethod.GET)

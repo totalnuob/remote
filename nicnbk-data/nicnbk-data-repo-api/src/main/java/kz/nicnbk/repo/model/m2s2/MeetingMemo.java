@@ -33,7 +33,9 @@ public class MeetingMemo extends CreateUpdateBaseEntity{
     private MeetingType meetingType;
 
     /* Meeting/call with whom */
-    private String otherPartyName;
+    private String firmName;
+
+    private String fundName;
 
     private Date meetingDate;
 
@@ -49,9 +51,9 @@ public class MeetingMemo extends CreateUpdateBaseEntity{
 
     private Set<Employee> attendeesNIC;
 
-    private String attendeesNICDescription;
+    private String attendeesNICOther;
 
-    private String attendeesOtherDescription;
+    private String attendeesOther;
 
     // TODO: TEMP in place of authentication
     private String author;
@@ -93,12 +95,12 @@ public class MeetingMemo extends CreateUpdateBaseEntity{
     }
 
     @Column(name="other_party", length = DataConstraints.C_TYPE_ENTITY_NAME)
-    public String getOtherPartyName() {
-        return otherPartyName;
+    public String getFirmName() {
+        return firmName;
     }
 
-    public void setOtherPartyName(String otherPartyName) {
-        this.otherPartyName = otherPartyName;
+    public void setFirmName(String firmName) {
+        this.firmName = firmName;
     }
 
     @Column(name="meeting_date")
@@ -176,22 +178,22 @@ public class MeetingMemo extends CreateUpdateBaseEntity{
     }
 
     @Column(name="attendees_nic_desc", length = DataConstraints.C_TYPE_ENTITY_DESCRIPTION_SHORT)
-    public String getAttendeesNICDescription() {
-        return attendeesNICDescription;
+    public String getAttendeesNICOther() {
+        return attendeesNICOther;
     }
 
-    public void setAttendeesNICDescription(String attendeesNICDescription) {
-        this.attendeesNICDescription = attendeesNICDescription;
+    public void setAttendeesNICOther(String attendeesNICOther) {
+        this.attendeesNICOther = attendeesNICOther;
     }
 
 
     @Column(name="attendees_other_desc", length = DataConstraints.C_TYPE_ENTITY_DESCRIPTION_SHORT)
-    public String getAttendeesOtherDescription() {
-        return attendeesOtherDescription;
+    public String getAttendeesOther() {
+        return attendeesOther;
     }
 
-    public void setAttendeesOtherDescription(String attendeesOtherDescription) {
-        this.attendeesOtherDescription = attendeesOtherDescription;
+    public void setAttendeesOther(String attendeesOther) {
+        this.attendeesOther = attendeesOther;
     }
 
 
@@ -234,5 +236,14 @@ public class MeetingMemo extends CreateUpdateBaseEntity{
 
     public void setGeographies(Set<Geography> geographies) {
         this.geographies = geographies;
+    }
+
+    @Column(name="fund_name", length = DataConstraints.C_TYPE_ENTITY_NAME)
+    public String getFundName() {
+        return fundName;
+    }
+
+    public void setFundName(String fundName) {
+        this.fundName = fundName;
     }
 }

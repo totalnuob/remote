@@ -45,7 +45,7 @@ public class PrivateEquityMemoConverterTest {
         dto.setId(1112L);
         dto.setCurrentlyFundRaising(true);
         dto.setFundName("Test fund name");
-        dto.setFundSizeCurrency(Currency.CURR1);
+        dto.setFundSizeCurrency(Currency.USD);
         dto.setFundSize(100200d);
         dto.setConviction((short)3);
         return dto;
@@ -57,7 +57,7 @@ public class PrivateEquityMemoConverterTest {
         entity.setFundName("Test fund name");
         entity.setCurrentlyFundRaising(true);
         Currency currency = new Currency();
-        currency.setCode(Currency.CURR1);
+        currency.setCode(Currency.USD);
         entity.setFundSizeCurrency(currency);
         entity.setFundSize(100300d);
         entity.setConviction((short)4);

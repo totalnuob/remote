@@ -1,13 +1,13 @@
 import {Component} from '@angular/core';
 import {ActivatedRoute, ROUTER_DIRECTIVES} from '@angular/router';
 
-import {News} from "./news";
+import {News} from "./model/news";
 import {NewsService} from "./news.service";
 
 
 @Component({
     selector: 'news-view',
-    templateUrl: `app/news/news-view.component.html`,
+    templateUrl: `app/news/view/news-view.component.html`,
     directives: [ROUTER_DIRECTIVES],
 })
 export class NewsViewComponent{

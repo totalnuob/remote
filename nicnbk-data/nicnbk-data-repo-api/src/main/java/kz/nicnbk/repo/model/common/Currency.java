@@ -14,5 +14,6 @@ import javax.persistence.Table;
 public class Currency extends BaseTypeEntityImpl{
 
     // TODO: refactor
-    public static final String CURR1 = "CURR1";
+    public static final String USD = "USD";
+    public static final String EUR = "EUR";
 }

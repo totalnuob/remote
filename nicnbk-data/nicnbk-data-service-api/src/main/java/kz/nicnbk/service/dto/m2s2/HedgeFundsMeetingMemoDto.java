@@ -12,7 +12,7 @@ public class HedgeFundsMeetingMemoDto extends FundMeetingMemoDto {
     private String strategyNotes;
     private Short strategyScore;
     private String otherNotes;
-    private String NICFollowups;
+    private String nicFollowups;
     private String otherPartyFollowups;
     private Short conviction;
 
@@ -72,12 +72,12 @@ public class HedgeFundsMeetingMemoDto extends FundMeetingMemoDto {
         this.otherNotes = otherNotes;
     }
 
-    public String getNICFollowups() {
-        return NICFollowups;
+    public String getNicFollowups() {
+        return nicFollowups;
     }
 
-    public void setNICFollowups(String NICFollowups) {
-        this.NICFollowups = NICFollowups;
+    public void setNicFollowups(String nicFollowups) {
+        this.nicFollowups = nicFollowups;
     }
 
     public String getOtherPartyFollowups() {

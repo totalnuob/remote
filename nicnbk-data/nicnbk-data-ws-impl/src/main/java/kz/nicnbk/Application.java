@@ -3,9 +3,12 @@ package kz.nicnbk;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+
+import java.text.SimpleDateFormat;
 
 /**
  * Spring boot main application.
@@ -25,9 +28,17 @@ public class Application {
         return new WebMvcConfigurerAdapter() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/news/get/**").allowedOrigins("http://localhost:3001");
-                registry.addMapping("/news/load/**").allowedOrigins("http://localhost:3001");
+                registry.addMapping("/news/**").allowedOrigins("http://localhost:3001");
+                registry.addMapping("/m2s2/**").allowedOrigins("http://localhost:3001");
+                registry.addMapping("/employee/**").allowedOrigins("http://localhost:3001");
             }
         };
+    }
+
+    @Bean
+    public Jackson2ObjectMapperBuilder jacksonBuilder() {
+        Jackson2ObjectMapperBuilder b = new Jackson2ObjectMapperBuilder();
+        b.indentOutput(true).dateFormat(new SimpleDateFormat("dd-MM-yyyy"));
+        return b;
     }
 }

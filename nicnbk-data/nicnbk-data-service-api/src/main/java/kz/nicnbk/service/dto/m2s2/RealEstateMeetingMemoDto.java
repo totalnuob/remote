@@ -5,31 +5,31 @@ package kz.nicnbk.service.dto.m2s2;
  */
 public class RealEstateMeetingMemoDto extends FundMeetingMemoDto {
 
-    private String GPAndTeamNotes;
-    private Short GPAndTeamScore;
+    private String teamNotes;
+    private Short teamScore;
     private String trackRecordNotes;
     private Short trackRecordScore;
     private String strategyNotes;
     private Short strategyScore;
     private String otherNotes;
-    private String NICFollowups;
+    private String nicFollowups;
     private String otherPartyFollowups;
     private Short conviction;
 
-    public String getGPAndTeamNotes() {
-        return GPAndTeamNotes;
+    public String getTeamNotes() {
+        return teamNotes;
     }
 
-    public void setGPAndTeamNotes(String GPAndTeamNotes) {
-        this.GPAndTeamNotes = GPAndTeamNotes;
+    public void setTeamNotes(String teamNotes) {
+        this.teamNotes = teamNotes;
     }
 
-    public Short getGPAndTeamScore() {
-        return GPAndTeamScore;
+    public Short getTeamScore() {
+        return teamScore;
     }
 
-    public void setGPAndTeamScore(Short GPAndTeamScore) {
-        this.GPAndTeamScore = GPAndTeamScore;
+    public void setTeamScore(Short teamScore) {
+        this.teamScore = teamScore;
     }
 
     public String getTrackRecordNotes() {
@@ -72,12 +72,12 @@ public class RealEstateMeetingMemoDto extends FundMeetingMemoDto {
         this.otherNotes = otherNotes;
     }
 
-    public String getNICFollowups() {
-        return NICFollowups;
+    public String getNicFollowups() {
+        return nicFollowups;
     }
 
-    public void setNICFollowups(String NICFollowups) {
-        this.NICFollowups = NICFollowups;
+    public void setNicFollowups(String nicFollowups) {
+        this.nicFollowups = nicFollowups;
     }
 
     public String getOtherPartyFollowups() {
