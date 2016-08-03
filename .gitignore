@@ -8,5 +8,3 @@ target/
 /nicnbk-ui-angular2/dist/
 /nicnbk-ui-angular2/node_modules/
 /nicnbk-ui-angular2/typings/
-
-#/nicnbk-ui-angular2/npm-debug.*
