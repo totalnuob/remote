@@ -7,7 +7,9 @@ import {CommonService} from "../common/common.service";
 
 @Injectable()
 export class EmployeeService extends CommonService{
-    constructor (private http: Http) {}
+    constructor (private http: Http) {
+        super();
+    }
 
     private EMPLOYEE_BASE_URL = DATA_APP_URL + "employee/";
     private EMPLOYEE_FINDALL_URL = this.EMPLOYEE_BASE_URL + "findAll/";

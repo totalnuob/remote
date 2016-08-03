@@ -4,7 +4,7 @@ import {REMemo} from "./model/re-memo";
 import {SELECT_DIRECTIVES, SelectComponent} from "ng2-select";
 import {MemoService} from "./memo.service";
 import {ActivatedRoute, ROUTER_DIRECTIVES} from '@angular/router';
-import {SelectItem} from "ng2-select/ng2-select";
+//import {SelectItem} from "ng2-select/ng2-select";
 import {MemoComponent} from "../common/view.component";
 import {EmployeeService} from "../employee/employee.service";
 
@@ -33,9 +33,9 @@ export class RealEstateMemoEditComponent extends MemoComponent implements OnInit
     @ViewChild('geographySelect')
     private geographySelect: SelectComponent;
 
-    public strategyList: Array<SelectItem> = [];
-    public geographyList: Array<SelectItem> = [];
-    public attendeesList: Array<SelectItem> = [];
+    public strategyList: Array<any> = [];
+    public geographyList: Array<any> = [];
+    public attendeesList: Array<any> = [];
 
     closingScheduleList = [];
     openingScheduleList = [];
@@ -47,6 +47,8 @@ export class RealEstateMemoEditComponent extends MemoComponent implements OnInit
         private memoService: MemoService,
         private route: ActivatedRoute
     ){
+        super();
+
         // load strategies
         this.lookupService.getREStrategies().then(
             data => {

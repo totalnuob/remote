@@ -6,7 +6,6 @@ import {DATA_APP_URL} from "../common/common.service.constants";
 import {CommonService} from "../common/common.service";
 import {Memo} from "./model/memo";
 
-
 @Injectable()
 export class MemoService extends CommonService{
 
@@ -20,7 +19,7 @@ export class MemoService extends CommonService{
     private MEMO_SEARCH_URL = this.MEMO_BASE_URL + "search/";
     private MEMO_GET_URL = this.MEMO_BASE_URL + "get/";
 
-    constructor (private http: Http) {}
+    constructor (private http: Http) {super();}
 
     search(searchParam){
         let body = JSON.stringify(searchParam);
@@ -57,7 +56,7 @@ export class MemoService extends CommonService{
             .catch(this.handleError);
     }
 
-    get(type, id): Observable<Memo> {
+    get(type, id): Observable<any> {
         // TODO: check type and id
 
         return this.http.get(this.MEMO_GET_URL + type + "/" + id)

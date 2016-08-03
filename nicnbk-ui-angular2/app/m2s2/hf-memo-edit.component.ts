@@ -5,7 +5,7 @@ import {SELECT_DIRECTIVES, SelectComponent} from "ng2-select";
 import {MemoService} from "./memo.service";
 import {ActivatedRoute, ROUTER_DIRECTIVES} from '@angular/router';
 import {Lookup} from "../common/lookup";
-import {SelectItem} from "ng2-select/ng2-select";
+//import {SelectItem} from "ng2-select/ng2-select";
 import {MemoComponent} from "../common/view.component";
 import {EmployeeService} from "../employee/employee.service";
 
@@ -34,9 +34,9 @@ export class HedgeFundsMemoEditComponent extends MemoComponent implements OnInit
     @ViewChild('geographySelect')
     private geographySelect: SelectComponent;
 
-    public strategyList: Array<SelectItem> = [];
-    public geographyList: Array<SelectItem> = [];
-    public attendeesList: Array<SelectItem> = [];
+    public strategyList: Array<any> = [];
+    public geographyList: Array<any> = [];
+    public attendeesList: Array<any> = [];
 
     closingScheduleList = [];
     openingScheduleList = [];
@@ -48,6 +48,7 @@ export class HedgeFundsMemoEditComponent extends MemoComponent implements OnInit
         private memoService: MemoService,
         private route: ActivatedRoute
     ){
+        super();
         // load strategies
         this.lookupService.getHFStrategies().then(
             data => {
@@ -204,17 +205,17 @@ export class HedgeFundsMemoEditComponent extends MemoComponent implements OnInit
     updateScore(){
 
         // TODO: fix select bind - ngModel
-        this.memo.teamScore = $('#teamScore').val();
-        this.memo.trackRecordScore = $('#trackRecordScore').val();
+        this.memo.managementAndTeamScore = $('#managementAndTeamScore').val();
+        this.memo.portfolioScore = $('#portfolioScore').val();
         this.memo.strategyScore = $('#strategyScore').val();
 
-        var totalScore = Number(this.memo.teamScore) + Number(this.memo.trackRecordScore) + Number(this.memo.strategyScore);
+        var totalScore = Number(this.memo.managementAndTeamScore) + Number(this.memo.portfolioScore) + Number(this.memo.strategyScore);
         var rounded = Math.round( (totalScore/3) * 10 ) / 10;
         $("#averageScore").text(rounded);
 
         var scores = new Array();
-        scores.push(Number(this.memo.teamScore));
-        scores.push(Number(this.memo.trackRecordScore));
+        scores.push(Number(this.memo.managementAndTeamScore));
+        scores.push(Number(this.memo.portfolioScore));
         scores.push(Number(this.memo.strategyScore));
         this.setUpRadarChart($('#myChart'), scores);
 
@@ -222,8 +223,8 @@ export class HedgeFundsMemoEditComponent extends MemoComponent implements OnInit
 
     initRadarChart(){
         var scores = new Array();
-        scores.push(Number(this.memo.teamScore));
-        scores.push(Number(this.memo.trackRecordScore));
+        scores.push(Number(this.memo.managementAndTeamScore));
+        scores.push(Number(this.memo.portfolioScore));
         scores.push(Number(this.memo.strategyScore));
         this.setUpRadarChart($('#myChart'), scores);
     }

@@ -6,6 +6,8 @@ import {MemoService} from "./memo.service";
 import {MemoComponent} from "../common/view.component";
 import {Memo} from "./model/memo";
 
+declare var $:any
+
 @Component({
     selector: 'm2s2-list',
     templateUrl: `app/m2s2/view/memo-list.component.html`,
@@ -25,7 +27,9 @@ export class MemoListComponent  extends MemoComponent implements OnInit{
     constructor(
         private lookupService: LookupService,
         private memoService: MemoService
-    ){}
+    ){
+        super();
+    }
 
     ngOnInit():any {
         // TODO: exclude jQuery

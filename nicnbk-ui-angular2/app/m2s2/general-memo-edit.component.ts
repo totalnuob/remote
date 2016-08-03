@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild  } from '@angular/core';
 import {ActivatedRoute, ROUTER_DIRECTIVES} from '@angular/router';
 import {SELECT_DIRECTIVES, SelectComponent} from "ng2-select";
+//import {SelectItem} from "ng2-select/ng2-select";
 import {GeneralMemo} from "./model/general-memo";
 import {MemoComponent} from "../common/view.component";
 import {MemoService} from "./memo.service";
@@ -25,13 +26,14 @@ export class GeneralMemoEditComponent extends MemoComponent implements OnInit{
     @ViewChild('attendeesSelect')
     private attendeesSelect: SelectComponent;
 
-    public attendeesList: Array<SelectItem> = [];
+    public attendeesList: Array<any> = [];
 
     constructor(
         private employeeService: EmployeeService,
         private memoService: MemoService,
         private route: ActivatedRoute
     ){
+        super();
         // TODO: refactor as findAll ??? or load cash
         this.employeeService.getAll().then(
             data => {
