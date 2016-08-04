@@ -1,6 +1,6 @@
 import {Lookup} from "../common/lookup";
 
-export class MemoComponent {
+export class CommonComponent {
     successMessage: string;
     errorMessage: string;
 
@@ -13,5 +13,13 @@ export class MemoComponent {
             dtoList.push(lookup);
         }
         return dtoList;
+    }
+
+    range(min, max){
+        let array = [];
+        for(var i = min; i <= max; i++ ){
+            array.push(i);
+        }
+        return array;
     }
 }

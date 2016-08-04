@@ -98,17 +98,17 @@
                 </div>
         </div>
         <div>
-            <label>Total found: <span>?</span></label>
+            <label>Total found: <span>{{memoSearchResult?.totalElements > 0 ?  memoSearchResult?.totalElements : 0}}</span></label>
         </div>
-        <!--<div class="row pull-right">-->
-            <!--<ul class="pagination">-->
-                <!--<li><a>&laquo;</a></li>-->
-                <!--<li>-->
-                    <!--<a/>-->
-                <!--</li>-->
-                <!--<li><a>&raquo;</a></li>-->
-            <!--</ul>-->
-        <!--</div>-->
+        <div class="row pull-right">
+            <ul class="pagination" *ngIf="memoSearchResult?.showPageFrom > 0">
+                <li><a *ngIf="memoSearchResult?.showPageFrom > 1" (click)="search(memoSearchResult.showPageFrom - 1)">&laquo;</a></li>
+                <li *ngFor="let i of range(memoSearchResult.showPageFrom, memoSearchResult.showPageTo)" [class.active]="i == memoSearchResult.currentPage">
+                    <a (click)="search(i)">{{i}}</a>
+                </li>
+                <li><a *ngIf="memoSearchResult.showPageTo < memoSearchResult.totalPages" (click)="search(memoSearchResult.showPageTo + 1)">&raquo;</a></li>
+            </ul>
+        </div>
         <table class = "table table-hover">
             <thead>
             <tr>
@@ -138,14 +138,14 @@
             </tr>
             </tbody>
         </table>
-        <!--<div class="row pull-right">-->
-            <!--<ul class="pagination" th:if="${searchResult.showPageFrom} > 0">-->
-                <!--<li><a th:href="@{/m2s2/memos(page=${searchResult.showPageFrom} - 1)} + ${searchResult.searchParams}" th:if="${searchResult.showPageFrom &gt; 1}">&laquo;</a></li>-->
-                <!--<li th:each="i : ${#numbers.sequence(searchResult.showPageFrom, searchResult.showPageTo)}" th:class="${i == searchResult.currentPage} ? active : ''">-->
-                    <!--<a th:href="@{/m2s2/memos(page=${i})} + ${searchResult.searchParams}" th:text="${i}"/>-->
-                <!--</li>-->
-                <!--<li><a th:href="@{/m2s2/memos(page=${searchResult.showPageTo} + 1)} + ${searchResult.searchParams}" th:if="${searchResult.showPageTo &lt; searchResult.totalPages}">&raquo;</a></li>-->
-            <!--</ul>-->
-        <!--</div>-->
+        <div class="row pull-right">
+            <ul class="pagination" *ngIf="memoSearchResult?.showPageFrom > 0">
+                <li><a *ngIf="memoSearchResult?.showPageFrom > 1" (click)="search(memoSearchResult.showPageFrom - 1)">&laquo;</a></li>
+                <li *ngFor="let i of range(memoSearchResult.showPageFrom, memoSearchResult.showPageTo)" [class.active]="i == memoSearchResult.currentPage">
+                    <a (click)="search(i)">{{i}}</a>
+                </li>
+                <li><a *ngIf="memoSearchResult.showPageTo < memoSearchResult.totalPages" (click)="search(memoSearchResult.showPageTo + 1)">&raquo;</a></li>
+            </ul>
+        </div>
     </div>
 </div>

@@ -3,7 +3,7 @@ import {ActivatedRoute, ROUTER_DIRECTIVES} from '@angular/router';
 import {SELECT_DIRECTIVES, SelectComponent} from "ng2-select";
 //import {SelectItem} from "ng2-select/ng2-select";
 import {GeneralMemo} from "./model/general-memo";
-import {MemoComponent} from "../common/view.component";
+import {CommonComponent} from "../common/view.component";
 import {MemoService} from "./memo.service";
 import {EmployeeService} from "../employee/employee.service";
 
@@ -17,7 +17,7 @@ declare var Chart: any;
     directives: [SELECT_DIRECTIVES, ROUTER_DIRECTIVES],
     providers: [],
 })
-export class GeneralMemoEditComponent extends MemoComponent implements OnInit{
+export class GeneralMemoEditComponent extends CommonComponent implements OnInit{
 
     private sub: any;
     private memoIdParam: number;

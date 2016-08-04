@@ -5,7 +5,7 @@ import {SELECT_DIRECTIVES, SelectComponent} from "ng2-select";
 import {MemoService} from "./memo.service";
 import {ActivatedRoute, ROUTER_DIRECTIVES} from '@angular/router';
 //import {SelectItem} from "ng2-select/ng2-select";
-import {MemoComponent} from "../common/view.component";
+import {CommonComponent} from "../common/view.component";
 import {EmployeeService} from "../employee/employee.service";
 
 declare var $:any
@@ -18,7 +18,7 @@ declare var Chart: any;
     directives: [SELECT_DIRECTIVES, ROUTER_DIRECTIVES],
     providers: [],
 })
-export class RealEstateMemoEditComponent extends MemoComponent implements OnInit{
+export class RealEstateMemoEditComponent extends CommonComponent implements OnInit{
 
     private sub: any;
     private memoIdParam: number;
@@ -63,7 +63,7 @@ export class RealEstateMemoEditComponent extends MemoComponent implements OnInit
                             memo => {
                                 // TODO: check response memo
                                 this.memo = memo;
-                                console.log(this.memo);
+                                //console.log(this.memo);
 
                                 // preselect memo strategies
                                 if(this.memo.strategies) {

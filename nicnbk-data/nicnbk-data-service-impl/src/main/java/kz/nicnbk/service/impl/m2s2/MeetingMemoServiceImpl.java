@@ -109,9 +109,9 @@ public class MeetingMemoServiceImpl implements MeetingMemoService {
         if(memoPage != null) {
             result.setTotalElements(memoPage.getTotalElements());
             if(memoPage.getTotalElements() > 0) {
-                result.setShowPageFrom(PaginationUtils.getShowPageFrom(DEFAULT_PAGES_PER_VIEW, page));
+                result.setShowPageFrom(PaginationUtils.getShowPageFrom(DEFAULT_PAGES_PER_VIEW, page + 1));
                 result.setShowPageTo(PaginationUtils.getShowPageTo(DEFAULT_PAGES_PER_VIEW,
-                        page, result.getShowPageFrom(), memoPage.getTotalPages()));
+                        page + 1, result.getShowPageFrom(), memoPage.getTotalPages()));
             }
             result.setTotalPages(memoPage.getTotalPages());
             result.setCurrentPage(page + 1);

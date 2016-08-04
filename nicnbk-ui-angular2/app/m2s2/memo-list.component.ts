@@ -3,8 +3,9 @@ import { ROUTER_DIRECTIVES } from '@angular/router';
 import {LookupService} from "../common/lookup.service";
 import {MemoSearchParams} from "./model/memo-search-params";
 import {MemoService} from "./memo.service";
-import {MemoComponent} from "../common/view.component";
+import {CommonComponent} from "../common/view.component";
 import {Memo} from "./model/memo";
+import {MemoSearchResults} from "./model/memo-search-results";
 
 declare var $:any
 
@@ -15,7 +16,7 @@ declare var $:any
     directives: [ROUTER_DIRECTIVES],
     providers: [],
 })
-export class MemoListComponent  extends MemoComponent implements OnInit{
+export class MemoListComponent  extends CommonComponent implements OnInit{
 
     searchParams = new MemoSearchParams;
 
@@ -23,6 +24,9 @@ export class MemoListComponent  extends MemoComponent implements OnInit{
     meetingTypes = [];
 
     memoList: Memo[];
+
+    memoSearchResult: MemoSearchResults;
+
 
     constructor(
         private lookupService: LookupService,
@@ -58,17 +62,23 @@ export class MemoListComponent  extends MemoComponent implements OnInit{
         this.lookupService.getMeetingTypes().then(meetingTypes => this.meetingTypes = meetingTypes);
     }
 
-    search(){
+    search(page){
+
+        // TODO: as parameter?
+        this.searchParams.pageSize = 10;
+
+        if(page > 0) {
+            this.searchParams.page = page;
+        }
+
         this.searchParams.fromDate = $('#fromDate').val();
         this.searchParams.toDate = $('#toDate').val();
 
         this.memoService.search(this.searchParams)
             .subscribe(
                 searchResult  => {
-                    console.log(searchResult);
                     this.memoList = searchResult.memos;
-                    console.log(this.memoList);
-                    //this.successMessage = "Successfully saved.";
+                    this.memoSearchResult = searchResult;
                 },
                 error =>  this.errorMessage = <any>error
             );
