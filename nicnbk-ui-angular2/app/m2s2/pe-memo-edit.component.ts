@@ -50,44 +50,10 @@ export class PrivateEquityMemoEditComponent extends MemoComponent implements OnI
     ){
         super();
 
-        // load strategies
-        this.lookupService.getPEStrategies().then(
-            data => {
-                data.forEach(element => {
-                    this.strategyList.push({ id: element.code, text: element.nameEn});
-                });
-            }
-        );
-        // load geographies
-        this.lookupService.getGeographies().then(
-            data => {
-                data.forEach(element => {
-                    this.geographyList.push({ id: element.code, text: element.nameEn});
-                });
-            }
-        );
+        // loadLookups
+        this.loadLookups();
 
-
-        // TODO: refactor as findAll ??? or load cash
-        this.employeeService.getAll().then(
-            data => {
-                data.forEach(element => {
-                    this.attendeesList.push({ id: element.id, text: element.lastName});
-                });
-                //console.log(this.strategyList);
-            }
-        );
-        //this.employeeService.findAll()
-        //    .subscribe(
-        //        data => {
-        //            data.forEach(element => {
-        //                this.attendeesList.push({ id: element.id, text: element.lastName});
-        //
-        //            });
-        //            console.log(this.attendeesList);
-        //        },
-        //        error =>  this.errorMessage = <any>error);
-
+        // parse params and load data
         this.sub = this.route
             .params
             .subscribe(params => {
@@ -161,7 +127,6 @@ export class PrivateEquityMemoEditComponent extends MemoComponent implements OnI
 
     ngOnInit() {
 
-
         // TODO: exclude jQuery
         // datetimepicker
         $('#meetingDate').datetimepicker({
@@ -169,12 +134,8 @@ export class PrivateEquityMemoEditComponent extends MemoComponent implements OnI
             format: 'DD-MM-YYYY'
         });
 
-        // load lookups
-        this.loadLookups();
-
         // init chart
         this.initRadarChart();
-
     }
 
     save(){
@@ -279,7 +240,47 @@ export class PrivateEquityMemoEditComponent extends MemoComponent implements OnI
     loadLookups(){
         this.lookupService.getClosingSchedules().then(data => this.closingScheduleList = data);
         this.lookupService.getOpeningScheduleList().then(data => this.openingScheduleList = data);
-        this.lookupService.getCurrencyList().then(data => this.currencyList = data);
+
+        // load strategies
+        this.lookupService.getPEStrategies()
+            .subscribe(
+                data => {
+                    data.forEach(element => {
+                        this.strategyList.push({ id: element.code, text: element.nameEn});
+                    });
+                },
+                error =>  this.errorMessage = <any>error
+            );
+        // load geographies
+        this.lookupService.getGeographies()
+            .subscribe(
+            data => {
+                data.forEach(element => {
+                    this.geographyList.push({ id: element.code, text: element.nameEn});
+                });
+            },
+            error =>  this.errorMessage = <any>error
+        );
+        // load currencies
+        this.lookupService.getCurrencyList()
+            .subscribe(
+                data => {
+                    data.forEach(element => {
+                        this.currencyList.push({ id: element.code, text: element.nameEn});
+                    });
+                },
+                error =>  this.errorMessage = <any>error
+        );
+
+        this.employeeService.findAll()
+            .subscribe(
+                data => {
+                    data.forEach(element => {
+                        this.attendeesList.push({ id: element.id, text: element.firstName + " " + element.lastName[0] + "."});
+
+                    });
+                },
+                error =>  this.errorMessage = <any>error);
     }
 
 

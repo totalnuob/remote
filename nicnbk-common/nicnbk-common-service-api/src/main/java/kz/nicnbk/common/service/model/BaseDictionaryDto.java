@@ -4,10 +4,19 @@ package kz.nicnbk.common.service.model;
  * Created by magzumov on 08.07.2016.
  */
 public class BaseDictionaryDto implements BaseDto{
+    //private int id;
     private String code;
     private String nameEn;
     private String nameRu;
     private String nameKz;
+
+//    public int getId() {
+//        return id;
+//    }
+//
+//    public void setId(int id) {
+//        this.id = id;
+//    }
 
     public String getCode() {
         return code;

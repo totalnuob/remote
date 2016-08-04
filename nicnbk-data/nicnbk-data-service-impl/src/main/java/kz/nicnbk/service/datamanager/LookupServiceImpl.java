@@ -1,5 +1,7 @@
 package kz.nicnbk.service.datamanager;
 
+import kz.nicnbk.common.service.model.BaseDictionaryDto;
+import kz.nicnbk.repo.api.lookup.CurrencyRepository;
 import kz.nicnbk.repo.api.lookup.GeographyRepository;
 import kz.nicnbk.repo.api.lookup.StrategyRepository;
 import kz.nicnbk.repo.model.base.BaseTypeEntity;
@@ -16,19 +18,24 @@ import kz.nicnbk.repo.model.news.NewsType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by magzumov on 07.07.2016.
  */
 @Service
-public class LookupTypeServiceImpl implements LookupTypeService {
+public class LookupServiceImpl implements LookupService {
 
     @Autowired
     private GeographyRepository geographyRepository;
 
     @Autowired
     private StrategyRepository strategyRepository;
+
+    @Autowired
+    private CurrencyRepository currencyRepository;
 
     @Override
     public <T extends BaseTypeEntity> T findByTypeAndCode(Class<T> clazz, String code) {
@@ -117,19 +124,12 @@ public class LookupTypeServiceImpl implements LookupTypeService {
             }
         }
         if(clazz.getSimpleName().equals("Currency")){
-            if(code.equals(Currency.USD)){
-                Currency currency = new Currency();
-                currency.setId(1);
-                currency.setCode(Currency.USD);
-                return (T) currency;
-            }
-        }
-        if(clazz.getSimpleName().equals("Currency")){
-            if(code.equals(Currency.EUR)){
-                Currency currency = new Currency();
-                currency.setId(2);
-                currency.setCode(Currency.EUR);
-                return (T) currency;
+            Iterator<Currency> iterator = currencyRepository.findAll().iterator();
+            while(iterator.hasNext()){
+                Currency currency = iterator.next();
+                if(currency.getCode().equals(code)){
+                    return (T) currency;
+                };
             }
         }
 
@@ -164,4 +164,64 @@ public class LookupTypeServiceImpl implements LookupTypeService {
         }
         return null;
     }
+
+    @Override
+    public List<BaseDictionaryDto> getCurrencies(){
+        List<BaseDictionaryDto> dtoList = new ArrayList<>();
+        Iterator<Currency> iterator = this.currencyRepository.findAll().iterator();
+        while(iterator.hasNext()){
+            Currency currency = iterator.next();
+            BaseDictionaryDto geographyDto = disassemble(currency);
+            dtoList.add(geographyDto);
+        }
+        return dtoList;
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getPrivateEquityStrategies(){
+        return getStrategies(Strategy.TYPE_PRIVATE_EQUITY);
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getHedgeFundsStrategy(){
+        return getStrategies(Strategy.TYPE_PHEDGE_FUNDS);
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getRealEstateStrategies(){
+        return getStrategies(Strategy.TYPE_REAL_ESTATE);
+    }
+
+    private List<BaseDictionaryDto> getStrategies(int group){
+        List<BaseDictionaryDto> dtoList = new ArrayList<>();
+        List<Strategy> entityList = this.strategyRepository.findByGroupType(group);
+        if(entityList != null) {
+            for (Strategy entity : entityList) {
+                BaseDictionaryDto dto = disassemble(entity);
+                dtoList.add(dto);
+            }
+        }
+        return dtoList;
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getGeographies(){
+        List<BaseDictionaryDto> dtoList = new ArrayList<>();
+        Iterator<Geography> iterator = this.geographyRepository.findAll().iterator();
+        while(iterator.hasNext()){
+            Geography entity = iterator.next();
+            BaseDictionaryDto geographyDto = disassemble(entity);
+            dtoList.add(geographyDto);
+        }
+        return dtoList;
+    }
+
+    // TODO: refactor as common lookup converter
+    private BaseDictionaryDto disassemble(BaseTypeEntity entity){
+        BaseDictionaryDto dto = new BaseDictionaryDto();
+        dto.setCode(entity.getCode());
+        dto.setNameEn(entity.getNameEn());
+        return dto;
+    }
+
 }

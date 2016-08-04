@@ -6,7 +6,7 @@ import kz.nicnbk.repo.model.common.Currency;
 import kz.nicnbk.repo.model.common.Geography;
 import kz.nicnbk.repo.model.common.Strategy;
 import kz.nicnbk.repo.model.m2s2.FundMeetingMemo;
-import kz.nicnbk.service.datamanager.LookupTypeService;
+import kz.nicnbk.service.datamanager.LookupService;
 import kz.nicnbk.service.dto.m2s2.FundMeetingMemoDto;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -19,7 +19,7 @@ import java.util.Set;
 public abstract class FundMeetingMemoConverter<E extends FundMeetingMemo, DTO extends FundMeetingMemoDto> extends CommonMeetingMemoConverter<E, DTO> {
 
     @Autowired
-    private LookupTypeService lookupTypeService;
+    private LookupService lookupService;
 
     protected void assembleFundNonmappedFields(E entity, DTO dto){
 
@@ -28,14 +28,14 @@ public abstract class FundMeetingMemoConverter<E extends FundMeetingMemo, DTO ex
 
         // set currency
         if(StringUtils.isNotEmpty(dto.getFundSizeCurrency())) {
-            Currency currency = lookupTypeService.findByTypeAndCode(Currency.class, dto.getFundSizeCurrency());
+            Currency currency = lookupService.findByTypeAndCode(Currency.class, dto.getFundSizeCurrency());
             entity.setFundSizeCurrency(currency);
         }
         // strategies
         Set<Strategy> strategies = new HashSet<>();
         if(dto.getStrategies() != null){
             for(BaseDictionaryDto strategyDto: dto.getStrategies()){
-                Strategy strategy = lookupTypeService.findByTypeAndCode(Strategy.class, strategyDto.getCode());
+                Strategy strategy = lookupService.findByTypeAndCode(Strategy.class, strategyDto.getCode());
                 strategies.add(strategy);
             }
         }
@@ -45,7 +45,7 @@ public abstract class FundMeetingMemoConverter<E extends FundMeetingMemo, DTO ex
         Set<Geography> geographies = new HashSet<>();
         if(dto.getGeographies() != null){
             for(BaseDictionaryDto geographyDto: dto.getGeographies()){
-                Geography geography = lookupTypeService.findByTypeAndCode(Geography.class, geographyDto.getCode());
+                Geography geography = lookupService.findByTypeAndCode(Geography.class, geographyDto.getCode());
                 geographies.add(geography);
             }
         }

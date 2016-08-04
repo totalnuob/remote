@@ -1,18 +1,21 @@
-INSERT INTO strategy(id, code, name_en, name_ru, name_kz) VALUES(1, 'MEGA_CUP', 'MEGA_CUP', '', '' );
-INSERT INTO strategy(id, code, name_en, name_ru, name_kz) VALUES(2, 'MID_CUP', 'MID_CUP', '', '' );
-INSERT INTO strategy(id, code, name_en, name_ru, name_kz) VALUES(3, 'SM_CUP', 'SM_CUP', '', '' );
-INSERT INTO strategy(id, code, name_en, name_ru, name_kz) VALUES(4, 'CREDIT', 'CREDIT', '', '' );
-INSERT INTO strategy(id, code, name_en, name_ru, name_kz) VALUES(5, 'MULTI', 'MULTI', '', '' );
-INSERT INTO strategy(id, code, name_en, name_ru, name_kz) VALUES(6, 'OTHER', 'OTHER', '', '' );
+INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(1, 'MEGA_CUP', 'Mega/Large Cup Buyout', '', '', 1);
+INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(2, 'MID_CUP', 'Mid Cup Buyout', '', '' , 1);
+INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(3, 'SM_CUP', 'Small Cup Buyout', '', '' , 1);
+INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(4, 'CREDIT', 'Credit', '', '' , 1);
+INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(5, 'MULTI', 'Multi', '', '' , 1);
+INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(6, 'OTHER', 'Other', '', '' , 1);
 
-INSERT INTO strategy(id, code, name_en, name_ru, name_kz) VALUES(7, 'CORE', 'Core', '', '' );
-INSERT INTO strategy(id, code, name_en, name_ru, name_kz) VALUES(8, 'CORE+', 'Core+', '', '' );
-INSERT INTO strategy(id, code, name_en, name_ru, name_kz) VALUES(9, 'VAL_ADD', 'Value Added', '', '' );
-INSERT INTO strategy(id, code, name_en, name_ru, name_kz) VALUES(10, 'OPPORTUN', 'opportunistic', '', '' );
+INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(21, 'EQUITY', 'Equity', '', '', 2);
+INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(22, 'EVENT', 'Event Driven', '', '', 2);
+INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(23, 'REL_VAL', 'Relative Value', '', '', 2);
+INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(24, 'MACRO', 'Macro', '', '' , 2);
+INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(25, 'CREDIT', 'Credit', '', '', 2);
+INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(26, 'COMMOD', 'Commodities', '', '', 2);
+INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(27, 'MULTI', 'Multi', '', '' , 2);
 
-INSERT INTO strategy(id, code, name_en, name_ru, name_kz) VALUES(11, 'EQUITY', 'Equity', '', '' );
-INSERT INTO strategy(id, code, name_en, name_ru, name_kz) VALUES(12, 'EVENT', 'Event Driven', '', '' );
-INSERT INTO strategy(id, code, name_en, name_ru, name_kz) VALUES(13, 'REL_VAL', 'Relative Value', '', '' );
-INSERT INTO strategy(id, code, name_en, name_ru, name_kz) VALUES(14, 'MACRO', 'Macro', '', '' );
-INSERT INTO strategy(id, code, name_en, name_ru, name_kz) VALUES(15, 'CREDIT', 'Credit', '', '' );
-INSERT INTO strategy(id, code, name_en, name_ru, name_kz) VALUES(16, 'COMMOD', 'Commodities', '', '' );
+INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(41, 'CORE', 'Core', '', '', 3);
+INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(42, 'CORE+', 'Core+', '', '', 3 );
+INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(43, 'VAL_ADD', 'Value Added', '', '', 3);
+INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(44, 'OPPORTUN', 'Opportunistic', '', '', 3 );
+INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(45, 'MULTI', 'Multi', '', '' , 3);
+INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(46, 'OTHER', 'Other', '', '' , 3);

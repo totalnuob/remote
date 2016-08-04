@@ -107,7 +107,7 @@
                     </div>
                     <div class="row top-buffer">
                         <label class="control-label col-md-3">Attendees (NIC):</label>
-                        <div class="col-md-6">
+                        <div class="col-md-6" *ngIf="attendeesList?.length > 0">
                             <!--<select id="attendeesNICSelect" class="form-control" multiple="multiple">-->
                                 <!--<option value="NA">NA</option>-->
                                 <!--<option value="GB">GB</option>-->
@@ -231,7 +231,7 @@
                     </select>
                 </div>
                 <label class="col-md-1">Strategy</label>
-                <div class="col-md-2">
+                <div class="col-md-2" *ngIf="strategyList?.length > 0">
                     <!--<select class="form-control" id="strategy" [(ngModel)]="memo.strategy">-->
                         <!--<option *ngFor="let item of strategyList" [value]="item.code">{{item.nameEn}}</option>-->
                     <!--</select>-->
@@ -244,7 +244,7 @@
                                placeholder="No strategy selected"></ng-select>
                 </div>
                 <label class="col-md-1">Geography</label>
-                <div class="col-md-2">
+                <div class="col-md-2" *ngIf="geographyList?.length > 0">
                     <!--<select id="geographySelect" class="form-control" multiple="multiple">-->
                         <!--<option value="NA">North America</option>-->
                         <!--<option value="EUR">Europe</option>-->

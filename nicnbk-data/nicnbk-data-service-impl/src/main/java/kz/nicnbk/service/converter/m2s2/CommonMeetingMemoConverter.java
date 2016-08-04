@@ -6,7 +6,7 @@ import kz.nicnbk.repo.model.m2s2.MeetingArrangedBy;
 import kz.nicnbk.repo.model.m2s2.MeetingMemo;
 import kz.nicnbk.repo.model.m2s2.MeetingType;
 import kz.nicnbk.service.converter.dozer.BaseDozerEntityConverter;
-import kz.nicnbk.service.datamanager.LookupTypeService;
+import kz.nicnbk.service.datamanager.LookupService;
 import kz.nicnbk.service.dto.employee.EmployeeDto;
 import kz.nicnbk.service.dto.m2s2.MeetingMemoDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +20,12 @@ import java.util.Set;
 public abstract class CommonMeetingMemoConverter<E extends MeetingMemo, DTO extends MeetingMemoDto> extends BaseDozerEntityConverter<E, DTO> {
 
     @Autowired
-    private LookupTypeService lookupTypeService;
+    private LookupService lookupService;
 
     protected void assembleNonmappedFields(E entity, DTO dto){
         // meetingType
         if(StringUtils.isNotEmpty(dto.getMeetingType())) {
-            MeetingType meetingType = lookupTypeService.findByTypeAndCode(MeetingType.class, dto.getMeetingType());
+            MeetingType meetingType = lookupService.findByTypeAndCode(MeetingType.class, dto.getMeetingType());
             entity.setMeetingType(meetingType);
         }
     }
@@ -33,7 +33,7 @@ public abstract class CommonMeetingMemoConverter<E extends MeetingMemo, DTO exte
     protected void assembleLazyNonmappedFields(E entity, DTO dto){
         // arranged by
         if(StringUtils.isNotEmpty(dto.getArrangedBy())){
-            MeetingArrangedBy arrangedBy = lookupTypeService.findByTypeAndCode(MeetingArrangedBy.class, dto.getArrangedBy());
+            MeetingArrangedBy arrangedBy = lookupService.findByTypeAndCode(MeetingArrangedBy.class, dto.getArrangedBy());
             entity.setArrangedBy(arrangedBy);
         }
         // attendees

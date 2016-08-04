@@ -15,8 +15,6 @@ export class EmployeeService extends CommonService{
     private EMPLOYEE_FINDALL_URL = this.EMPLOYEE_BASE_URL + "findAll/";
 
     findAll(): Observable<any[]> {
-        //return Promise.resolve(NEWS);
-
         return this.http.get(this.EMPLOYEE_FINDALL_URL)
             .map(this.extractDataList)
             .catch(this.handleError);
