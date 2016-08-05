@@ -1,5 +1,5 @@
 export class Lookup{
-    //id: number;
+    id: number;
     code: string;
     nameRu: string;
     nameEn: string;

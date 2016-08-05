@@ -51,7 +51,7 @@ export class MemoListComponent  extends CommonComponent implements OnInit{
         this.loadLookups();
 
         // find all
-        this.search();
+        this.search(0);
     }
 
     loadLookups(){

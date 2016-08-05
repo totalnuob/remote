@@ -9,6 +9,9 @@ import {PrivateEquityMemoEditComponent} from "./m2s2/pe-memo-edit.component";
 import {HedgeFundsMemoEditComponent} from "./m2s2/hf-memo-edit.component";
 import {RealEstateMemoEditComponent} from "./m2s2/re-memo-edit.component";
 import {GeneralMemoEditComponent} from "./m2s2/general-memo-edit.component";
+import {LoginComponent} from "./authentication/login.component";
+
+import {AuthGuard} from "./auth.guard.service";
 
 const routes: RouterConfig = [
     {
@@ -16,40 +19,53 @@ const routes: RouterConfig = [
         redirectTo: '/news/list',
         pathMatch: 'full'
     },
+    /* LOGIN ***************************************/
+    {
+        path: 'login',
+        component: LoginComponent
+    },
     /* NEWS ***************************************/
     {
         path: 'news/list',
-        component: NewsListComponent
+        component: NewsListComponent,
+        canActivate: [AuthGuard]
     },
     {
         path: 'news/edit',
-        component: NewsEditComponent
+        component: NewsEditComponent,
+        canActivate: [AuthGuard]
     },
     {
         path: 'news/view/:id',
-        component: NewsViewComponent
+        component: NewsViewComponent,
+        canActivate: [AuthGuard]
     },
 
     /* M2S2 ****************************************/
     {
         path: 'm2s2/list',
-        component: MemoListComponent
+        component: MemoListComponent,
+        canActivate: [AuthGuard]
     },
     {
         path: 'm2s2/edit/2/:id',
-        component: PrivateEquityMemoEditComponent
+        component: PrivateEquityMemoEditComponent,
+        canActivate: [AuthGuard]
     },
     {
         path: 'm2s2/edit/3/:id',
-        component: HedgeFundsMemoEditComponent
+        component: HedgeFundsMemoEditComponent,
+        canActivate: [AuthGuard]
     },
     {
         path: 'm2s2/edit/4/:id',
-        component: RealEstateMemoEditComponent
+        component: RealEstateMemoEditComponent,
+        canActivate: [AuthGuard]
     },
     {
         path: 'm2s2/edit/1/:id',
-        component: GeneralMemoEditComponent
+        component: GeneralMemoEditComponent,
+        canActivate: [AuthGuard]
     }
 
 ];

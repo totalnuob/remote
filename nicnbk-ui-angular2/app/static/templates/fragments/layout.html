@@ -8,7 +8,7 @@
     <div class="header">
         <div class="container">
             <ul>
-                <li style="float:right"><a href="#">
+                <li style="float:right"><a (click)="logout()">
                     <h5><span class="glyphicon glyphicon-off"></span></h5></a></li>
                 <li style="float:right"><a href="#">
                     <h5><span class="glyphicon glyphicon-user"></span></h5></a></li>
@@ -67,10 +67,10 @@
                             Monitoring <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href="/monitoring/portfolio">NIC Portfolio</a></li>
-                            <li><a href="/monitoring/liquidPortfolio">Liquid Portfolio</a></li>
-                            <li><a href="/monitoring/privateEquity">Private Equity Portfolio</a></li>
-                            <li><a href="/monitoring/hedgeFunds">Hedge Funds Portfolio</a></li>
+                            <li><a href="#">NIC Portfolio</a></li>
+                            <li><a href="#">Liquid Portfolio</a></li>
+                            <li><a href="#">Private Equity Portfolio</a></li>
+                            <li><a href="#">Hedge Funds Portfolio</a></li>
                         </ul>
                     </li>
                     <li>
@@ -80,7 +80,7 @@
                         <!--<a th:href="@{/risks}">Risk Management</a></li>-->
                         <ul class="dropdown-menu">
                             <!--<li><a th:href="@{/risks/macroMonitor}">Macro Monitor</a></li>-->
-                            <li><a href="/risks/axiomaReporting">Axioma Reporting</a></li>
+                            <li><a href="#">Axioma Reporting</a></li>
                             <!--<li><a href="#">Risk</a></li>-->
                         </ul>
                     </li>
@@ -107,5 +107,6 @@
     </div>
 
     <router-outlet></router-outlet>
+    <div class="copyrightText">&copy; 2016 NIC</div>
 </body>
 </html>

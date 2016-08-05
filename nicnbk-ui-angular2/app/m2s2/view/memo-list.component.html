@@ -109,7 +109,7 @@
                 <li><a *ngIf="memoSearchResult.showPageTo < memoSearchResult.totalPages" (click)="search(memoSearchResult.showPageTo + 1)">&raquo;</a></li>
             </ul>
         </div>
-        <table class = "table table-hover">
+        <table class="table table-hover">
             <thead>
             <tr>
                 <th>TYPE</th>
@@ -132,7 +132,6 @@
                 <td width="10%">{{memo.meetingDate}}</td>
                 <td width="10%">{{memo.author}}</td>
                 <td width="5%">
-                    <!--<a th:href="@{/m2s2/deleteMemo/{id}(id=${memoItem.id})}" onclick="return confirm('Are you sure?')"><i class="glyphicon glyphicon-trash"></i></a>-->
                     <a onclick="alert('To delete this memo, please call #115');"><i class="glyphicon glyphicon-trash"></i></a>
                 </td>
             </tr>

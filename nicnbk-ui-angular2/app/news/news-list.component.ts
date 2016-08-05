@@ -4,6 +4,7 @@ import {News} from "./model/news";
 import {NEWS} from "./model/mock-news";
 import {NewsService} from "./news.service";
 import {NEWS_PAGE_SIZE} from "./news.constants";
+import {AuthenticationService} from "../authentication/authentication.service";
 
 //declare var $: any
 
@@ -19,7 +20,7 @@ import {NEWS_PAGE_SIZE} from "./news.constants";
         //`app/static/css/star-rating/theme-krajee-uni.min.css`
     ],
     directives: [ROUTER_DIRECTIVES],
-    providers: [],
+    providers: [AuthenticationService],
     changeDetection: ChangeDetectionStrategy.Default // TODO: change to OnPush ??
 })
 export class NewsListComponent implements OnInit, AfterViewInit{
@@ -34,6 +35,12 @@ export class NewsListComponent implements OnInit, AfterViewInit{
 
     constructor(
       private newsService: NewsService){}
+
+    ngOnInit(){
+
+        // load news
+        this.loadNews();
+    }
 
     getPage(category){
         if(category in this.pageMap){
@@ -76,7 +83,6 @@ export class NewsListComponent implements OnInit, AfterViewInit{
     }
 
     loadNews(){
-        //this.newsService.loadNews().then(newsList => this.newsList = newsList);
 
         this.newsService.loadNews()
             .subscribe(
@@ -94,11 +100,6 @@ export class NewsListComponent implements OnInit, AfterViewInit{
                 newsItem => this.selectedNews = newsItem,
                 error => this.errorMessage = <any>error
             );
-    }
-
-    ngOnInit(){
-        // load news
-        this.loadNews();
     }
 
     ngAfterViewInit():any {

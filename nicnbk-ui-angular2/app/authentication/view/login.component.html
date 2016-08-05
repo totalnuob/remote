@@ -1,0 +1,27 @@
+<div class="container">
+    <div class="row">
+        <div class="Absolute-Center is-Responsive">
+        <!--<div class="col-md-4 col-md-offset-4">-->
+            <div *ngIf="false">
+                Invalid username and password.
+            </div>
+            <div *ngIf="false">
+                You have been logged out.
+            </div>
+            <div class="form-group input-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                <input class="form-control" type="text" name="username" placeholder="username"
+                    [(ngModel)]="user.username"/>
+            </div>
+            <div class="form-group input-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                <input class="form-control" type="password" name="password" placeholder="password"
+                       [(ngModel)]="user.password"/>
+            </div>
+            <div><button type="button" class="btn btn-def btn-block" (click)="login()">Sign In</button></div>
+
+            <br/>
+            <div class="copyrightText">&copy; 2016 NIC</div>
+        </div>
+    </div>
+</div>

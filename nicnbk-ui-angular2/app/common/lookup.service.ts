@@ -22,7 +22,7 @@ export class LookupService extends CommonService{
     // TODO: common lookup service passing lookup name ???
 
     constructor(private http: Http){
-
+        super();
     }
 
     getNewsTypes(){
