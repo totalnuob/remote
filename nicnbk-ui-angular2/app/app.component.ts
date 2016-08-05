@@ -50,5 +50,10 @@ export class AppComponent {
         localStorage.removeItem("user");
         this._router.navigate(['login']);
     }
+
+    // TODO: refactor
+    showMenu(){
+        return localStorage.getItem("user") != null;
+    }
 }
 

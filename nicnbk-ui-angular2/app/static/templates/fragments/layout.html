@@ -35,7 +35,7 @@
             </div>
         </div>
         <br/>
-        <div class="container">
+        <div class="container" *ngIf="showMenu()">
             <div class="row">
                 <div class="col-md-3 pull-right">
                     <div id="custom-search-input">
@@ -53,7 +53,7 @@
             <hr/>
         </div>
     </div>
-    <div class="container">
+    <div class="container" *ngIf="showMenu()">
         <nav class="navbar navbar-default">
             <div class="container-fluid">
                 <div class="navbar-header">
@@ -107,6 +107,7 @@
     </div>
 
     <router-outlet></router-outlet>
-    <div class="copyrightText">&copy; 2016 NIC</div>
+
+    <!--<div class="copyrightText">&copy; 2016 NIC</div>-->
 </body>
 </html>
