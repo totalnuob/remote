@@ -110,11 +110,15 @@ export class GeneralMemoEditComponent extends CommonComponent implements OnInit{
                 response  => {
                     this.successMessage = "Successfully saved.";
                     this.errorMessage = null;
+                    // TODO: rafactor?
+                    $('html, body').animate({ scrollTop: 0 }, 'fast');
                 },
                 //error =>  this.errorMessage = <any>error
                 error =>  {
                     this.errorMessage = "Error saving memo";
                     this.successMessage = null;
+                    // TODO: rafactor?
+                    $('html, body').animate({ scrollTop: 0 }, 'fast');
                 }
             );
 

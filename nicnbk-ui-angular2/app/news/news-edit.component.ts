@@ -48,8 +48,18 @@ export class NewsEditComponent implements OnInit{
                 response  => {
                     //console.log(response);
                     this.successMessage = "Successfully saved.";
+                    this.errorMessage = null;
+
+                    // TODO: rafactor?
+                    $('html, body').animate({ scrollTop: 0 }, 'fast');
                 },
-                error =>  this.errorMessage = <any>error
+                error =>  {
+                    this.successMessage = null;
+                    this.errorMessage = <any>error;
+
+                    // TODO: rafactor?
+                    $('html, body').animate({ scrollTop: 0 }, 'fast');
+                }
             );
     }
 
