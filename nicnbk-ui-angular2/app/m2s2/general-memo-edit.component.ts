@@ -6,7 +6,7 @@ import {GeneralMemo} from "./model/general-memo";
 import {CommonComponent} from "../common/common.component";
 import {MemoService} from "./memo.service";
 import {EmployeeService} from "../employee/employee.service";
-import {MemoAttachmentDownloaderComponent} from "./download.component";
+import {MemoAttachmentDownloaderComponent} from "./memo-attachment-downloader.component";
 
 declare var $:any
 declare var Chart: any;

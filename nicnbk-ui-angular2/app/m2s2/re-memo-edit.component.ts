@@ -7,7 +7,7 @@ import {ActivatedRoute, ROUTER_DIRECTIVES} from '@angular/router';
 //import {SelectItem} from "ng2-select/ng2-select";
 import {CommonComponent} from "../common/common.component";
 import {EmployeeService} from "../employee/employee.service";
-import {MemoAttachmentDownloaderComponent} from "./download.component";
+import {MemoAttachmentDownloaderComponent} from "./memo-attachment-downloader.component";
 
 declare var $:any
 declare var Chart: any;

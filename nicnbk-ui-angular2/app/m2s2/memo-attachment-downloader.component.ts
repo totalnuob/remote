@@ -16,9 +16,6 @@ declare var saveAs: any; // file-saver
 
 export class MemoAttachmentDownloaderComponent  extends CommonService{
 
-    constructor (
-    ){}
-
     @Input()
     private fileId: number;
     @Input()
@@ -26,7 +23,9 @@ export class MemoAttachmentDownloaderComponent  extends CommonService{
 
     public pending:boolean = false;
 
-    constructor() {}
+    constructor() {
+        super();
+    }
 
     public download() {
 

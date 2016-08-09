@@ -3,7 +3,7 @@ import { ROUTER_DIRECTIVES } from '@angular/router';
 import {LookupService} from "../common/lookup.service";
 import {MemoSearchParams} from "./model/memo-search-params";
 import {MemoService} from "./memo.service";
-import {CommonComponent} from "../common/view.component";
+import {CommonComponent} from "../common/common.component";
 import {Memo} from "./model/memo";
 import {MemoSearchResults} from "./model/memo-search-results";
 
@@ -80,7 +80,7 @@ export class MemoListComponent  extends CommonComponent implements OnInit{
                     this.memoList = searchResult.memos;
                     this.memoSearchResult = searchResult;
                 },
-                error =>  this.errorMessage = <any>error
+                error =>  this.errorMessage = "Failed to search memos."
             );
     }
 

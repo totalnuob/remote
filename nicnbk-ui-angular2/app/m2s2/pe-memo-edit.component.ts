@@ -8,7 +8,7 @@ import {Lookup} from "../common/lookup";
 import {EmployeeService} from "../employee/employee.service";
 
 import {FileUploadService} from "../upload/file.upload.service";
-import {MemoAttachmentDownloaderComponent} from "./download.component";
+import {MemoAttachmentDownloaderComponent} from "./memo-attachment-downloader.component";
 import {CommonComponent} from "../common/common.component";
 
 declare var $:any

@@ -66,7 +66,7 @@ export class MemoService extends CommonService{
             .catch(this.handleError);
     }
 
-    private postFiles(memoId, params, files){
+    postFiles(memoId, params, files){
         return this.uploadService.postFiles(this.MEMO_ATTACHMENT_UPLOAD_URL + memoId, [], files);
     }
 
