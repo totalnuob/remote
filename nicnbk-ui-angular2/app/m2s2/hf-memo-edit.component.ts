@@ -6,8 +6,9 @@ import {MemoService} from "./memo.service";
 import {ActivatedRoute, ROUTER_DIRECTIVES} from '@angular/router';
 import {Lookup} from "../common/lookup";
 //import {SelectItem} from "ng2-select/ng2-select";
-import {CommonComponent} from "../common/view.component";
+import {CommonComponent} from "../common/common.component";
 import {EmployeeService} from "../employee/employee.service";
+import {MemoAttachmentDownloaderComponent} from "./download.component";
 
 declare var $:any
 declare var Chart: any;
@@ -16,14 +17,17 @@ declare var Chart: any;
     selector: 'pe-memo-edit',
     templateUrl: `app/m2s2/view/hf-memo-edit.component.html`,
     styleUrls: [],
-    directives: [SELECT_DIRECTIVES, ROUTER_DIRECTIVES],
+    directives: [SELECT_DIRECTIVES, ROUTER_DIRECTIVES, MemoAttachmentDownloaderComponent],
     providers: [],
 })
 export class HedgeFundsMemoEditComponent extends CommonComponent implements OnInit{
 
     private sub: any;
     private memoIdParam: number;
+
     memo = new HFMemo;
+
+    public uploadFiles: Array<any> = [];
 
     @ViewChild('attendeesSelect')
     private attendeesSelect: SelectComponent;
@@ -64,46 +68,59 @@ export class HedgeFundsMemoEditComponent extends CommonComponent implements OnIn
                             memo => {
                                 // TODO: check response memo
                                 this.memo = memo;
-                                //console.log(this.memo);
 
                                 // preselect memo strategies
-                                if(this.memo.strategies) {
-                                    this.memo.strategies.forEach(element => {
-                                        for (var i = 0; i < this.strategyList.length; i++) {
-                                            var option = this.strategyList[i];
-                                            if (element.code === option.id) {
-                                                this.strategySelect.active.push(option);
-                                            }
-                                        }
-                                    });
-                                }
+                                this.preselectStrategies();
+
                                 // preselect memo geographies
-                                if(this.memo.geographies) {
-                                    this.memo.geographies.forEach(element => {
-                                        for (var i = 0; i < this.geographyList.length; i++) {
-                                            var option = this.geographyList[i];
-                                            if (element.code === option.id) {
-                                                this.geographySelect.active.push(option);
-                                            }
-                                        }
-                                    });
-                                }
+                                this.preselectGeographies();
+
                                 // preselect memo attendees
-                                if(this.memo.attendeesNIC) {
-                                    this.memo.attendeesNIC.forEach(element => {
-                                        for (var i = 0; i < this.attendeesList.length; i++) {
-                                            var option = this.attendeesList[i];
-                                            if (element.id === option.id) {
-                                                this.attendeesSelect.active.push(option);
-                                            }
-                                        }
-                                    });
-                                }
+                                this.preselectAttendeesNIC();
                             },
-                            error => this.errorMessage = <any>error
+                            error => this.errorMessage = "Error loading memo"
                         );
                 }
             });
+    }
+
+    preselectStrategies(){
+        if(this.memo.strategies) {
+            this.memo.strategies.forEach(element => {
+                for (var i = 0; i < this.strategyList.length; i++) {
+                    var option = this.strategyList[i];
+                    if (element.code === option.id) {
+                        this.strategySelect.active.push(option);
+                    }
+                }
+            });
+        }
+    }
+
+    preselectAttendeesNIC(){
+        if(this.memo.attendeesNIC) {
+            this.memo.attendeesNIC.forEach(element => {
+                for (var i = 0; i < this.attendeesList.length; i++) {
+                    var option = this.attendeesList[i];
+                    if (element.id === option.id) {
+                        this.attendeesSelect.active.push(option);
+                    }
+                }
+            });
+        }
+    }
+
+    preselectGeographies(){
+        if(this.memo.geographies) {
+            this.memo.geographies.forEach(element => {
+                for (var i = 0; i < this.geographyList.length; i++) {
+                    var option = this.geographyList[i];
+                    if (element.code === option.id) {
+                        this.geographySelect.active.push(option);
+                    }
+                }
+            });
+        }
     }
 
     public selected(value:any):void {
@@ -144,8 +161,6 @@ export class HedgeFundsMemoEditComponent extends CommonComponent implements OnIn
         // TODO: ngModel date
         this.memo.meetingDate = $('#meetingDateValue').val();
 
-        //console.log(this.memo);
-
         //TODO: refactor ?
         this.memo.strategies = this.convertToServiceModel(this.memo.strategies);
         this.memo.geographies = this.convertToServiceModel(this.memo.geographies);
@@ -153,21 +168,77 @@ export class HedgeFundsMemoEditComponent extends CommonComponent implements OnIn
         this.memoService.saveHF(this.memo)
             .subscribe(
                 response  => {
-                    this.successMessage = "Successfully saved.";
-                    this.errorMessage = null;
+                    this.memo.id = response.entityId;
 
-                    // TODO: rafactor?
-                    $('html, body').animate({ scrollTop: 0 }, 'fast');
+                    if(this.uploadFiles.length > 0) {
+
+                        // TODO: refactor
+                        this.memoService.postFiles(this.memo.id, [], this.uploadFiles).subscribe(
+                            res => {
+                                // clear upload files list on view
+                                this.uploadFiles.length = 0;
+
+                                // update files list with new files
+                                if(!this.memo.files){ // no files existed
+                                    this.memo.files = [];
+                                }
+                                for (var i = 0; i < res.length; i++) {
+                                    this.memo.files.push(res[i]);
+                                }
+
+                                this.postAction("Successfully saved.", null);
+                            },
+                            error => {
+                                // TODO: don't save memo?
+
+                                this.postAction(null, "Error uploading attachments.");
+                            });
+                    }else{
+                        this.postAction("Successfully saved.", null);
+                    }
                 },
                 //error =>  this.errorMessage = <any>error
                 error =>  {
-                    this.errorMessage = "Error saving memo";
-                    this.successMessage = null;
-
-                    // TODO: rafactor?
-                    $('html, body').animate({ scrollTop: 0 }, 'fast');
+                    this.postAction(null, "Error saving memo.");
                 }
             );
+    }
+
+    postAction(successMessage, errorMessage){
+        this.successMessage = successMessage;
+        this.errorMessage = errorMessage;
+
+        // TODO: non jQuery
+        $('html, body').animate({ scrollTop: 0 }, 'fast');
+    }
+
+    deleteAttachment(fileId){
+        var confirmed = window.confirm("Are you sure want to delete");
+        if(confirmed) {
+            this.memoService.deleteAttachment(this.memo.id, fileId)
+                .subscribe(
+                    response => {
+                        for(var i = this.memo.files.length - 1; i >= 0; i--) {
+                            if(this.memo.files[i].id === fileId) {
+                                this.memo.files.splice(i, 1);
+                            }
+                        }
+
+                        this.postAction("Attachment deleted.", null);
+                    },
+                    error => {
+                        this.postAction(null, "Failed to delete attachment");
+                    }
+                );
+        }
+    }
+
+    onFileChange(event) {
+        var files = event.srcElement.files;
+        this.uploadFiles.length = 0;
+        for (let i = 0; i < files.length; i++) {
+            this.uploadFiles.push(files[i]);
+        }
     }
 
     changeArrangedBy(){
@@ -280,6 +351,7 @@ export class HedgeFundsMemoEditComponent extends CommonComponent implements OnIn
                 error =>  this.errorMessage = <any>error
         );
 
+        // load employees
         this.employeeService.findAll()
             .subscribe(
                 data => {

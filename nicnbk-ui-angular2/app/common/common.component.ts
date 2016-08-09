@@ -1,9 +1,9 @@
 import {Lookup} from "../common/lookup";
 
 export class CommonComponent {
+
     successMessage: string;
     errorMessage: string;
-
 
     convertToServiceModel(list){
         var dtoList = [];

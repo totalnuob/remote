@@ -18,6 +18,7 @@ import {RealEstateMemoEditComponent} from "./m2s2/re-memo-edit.component";
 import {MemoService} from "./m2s2/memo.service";
 import {LoginComponent} from "./authentication/login.component";
 import {AuthGuard} from "./auth.guard.service";
+import {FileUploadService} from "./upload/file.upload.service";
 
 @Component({
     selector: 'app-main',
@@ -31,7 +32,8 @@ import {AuthGuard} from "./auth.guard.service";
         MemoService,
         NewsService,
         LookupService,
-        EmployeeService
+        EmployeeService,
+        FileUploadService
     ],
     precompile: [
         LoginComponent,

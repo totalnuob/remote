@@ -33,6 +33,9 @@ public class FileServiceImpl implements FileService {
         Long fileId = filesRepository.save(filesConverter.assemble(fileDto)).getId();
 
         // save file contents
+
+        // TODO: get catalog from file type !
+
         String path = filePathResolver.resolveDirectory(fileId, catalog);
         File file = new File(path);
         file.mkdirs();
@@ -52,6 +55,14 @@ public class FileServiceImpl implements FileService {
         Files file = filesRepository.findOne(fileId);
         if(file != null){
             return filesConverter.disassemble(file);
+        }
+        return null;
+    }
+
+    private String getFileCatalog(Long fileId) {
+        Files file = filesRepository.findOne(fileId);
+        if(file != null && file.getType() != null){
+            return file.getType().getCatalog();
         }
         return null;
     }
@@ -83,15 +94,17 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public boolean delete(Long fileId) {
+
         // TODO: handle possible errors
 
-        String type = getFileInfo(fileId).getType();
+        //String type = getFileInfo(fileId).getType();
+        String catalog = getFileCatalog(fileId);
 
         // delete file info
         filesRepository.delete(fileId);
 
         // delete file bytes
-        String path = filePathResolver.resolveAbsoluteFilePath(fileId, type);
+        String path = filePathResolver.resolveAbsoluteFilePath(fileId, catalog  );
         File file = new File(path);
         boolean deleted = file.delete();
 

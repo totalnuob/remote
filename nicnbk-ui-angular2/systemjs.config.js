@@ -9,14 +9,18 @@
         '@angular':                   'node_modules/@angular',
         'angular2-in-memory-web-api': 'node_modules/angular2-in-memory-web-api',
         'rxjs':                       'node_modules/rxjs',
-        'ng2-select': 'node_modules/ng2-select'
+        'ng2-select':                 'node_modules/ng2-select',
+        //'file-saver':                 'node_modules/file-saver'
+        //'ng2-file-upload':                 'node_modules/ng2-file-upload'
     };
     // packages tells the System loader how to load when no filename and/or no extension
     var packages = {
         'app':                        { main: 'main.js',  defaultExtension: 'js' },
         'rxjs':                       { defaultExtension: 'js' },
         'angular2-in-memory-web-api': { main: 'index.js', defaultExtension: 'js' },
-        'ng2-select':                 {main:'ng2-select.js', defaultExtension: 'js'}
+        'ng2-select':                 {main:'ng2-select.js', defaultExtension: 'js'},
+        //'file-saver':                 {main: 'FileSaver.js', defaultExtension: 'js'}
+    //'ng2-file-upload':                {main: 'ng2-file-upload.js', defaultExtension: 'js'}
     };
     var ngPackageNames = [
         'common',

@@ -28,4 +28,8 @@ public interface MeetingMemoService extends BaseService {
     boolean deleteAttachment(Long memoId, Long fileId);
 
     Set<FilesDto> getAttachments(Long memoId);
+
+    Set<FilesDto> saveAttachments(Long memoId, Set<FilesDto> attachments);
+
+
 }

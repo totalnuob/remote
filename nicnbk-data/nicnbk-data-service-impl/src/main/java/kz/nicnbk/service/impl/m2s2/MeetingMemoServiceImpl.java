@@ -21,6 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -49,15 +50,13 @@ public class MeetingMemoServiceImpl implements MeetingMemoService {
         Long memoId = memoRepository.save(memo).getId();
 
         // save files
-        if(memoDto.getFiles() != null && !memoDto.getFiles().isEmpty()){
-            for(FilesDto filesDto: memoDto.getFiles()){
-                Long fileId = fileService.save(filesDto, FileTypeLookup.MEMO_ATTACHMENT.getCode());
-                MemoFiles memoFiles = new MemoFiles(memoId, fileId);
-                memoFilesRepository.save(memoFiles);
-            }
-        }
-
-        //TODO: delete files?
+//        if(memoDto.getFiles() != null && !memoDto.getFiles().isEmpty()){
+//            for(FilesDto filesDto: memoDto.getFiles()){
+//                Long fileId = fileService.save(filesDto, FileTypeLookup.MEMO_ATTACHMENT.getCode());
+//                MemoFiles memoFiles = new MemoFiles(memoId, fileId);
+//                memoFilesRepository.save(memoFiles);
+//            }
+//        }
 
         return memoId;
     }
@@ -136,7 +135,8 @@ public class MeetingMemoServiceImpl implements MeetingMemoService {
             memoFilesRepository.delete(entity);
             // delete file
             boolean deleted = fileService.delete(fileId);
-            return true;
+
+            return deleted;
         }
         return false;
     }
@@ -154,5 +154,27 @@ public class MeetingMemoServiceImpl implements MeetingMemoService {
             }
         }
         return files;
+    }
+
+    @Override
+    public Set<FilesDto> saveAttachments(Long memoId, Set<FilesDto> attachments) {
+        Set<FilesDto> dtoSet = new HashSet<>();
+        if(attachments != null){
+            Iterator<FilesDto> iterator = attachments.iterator();
+            while(iterator.hasNext()){
+                FilesDto filesDto = iterator.next();
+                if(filesDto.getId() == null){
+                    Long fileId = fileService.save(filesDto, FileTypeLookup.MEMO_ATTACHMENT.getCatalog());
+                    MemoFiles memoFiles = new MemoFiles(memoId, fileId);
+                    memoFilesRepository.save(memoFiles);
+
+                    FilesDto newFileDto = new FilesDto();
+                    newFileDto.setId(fileId);
+                    newFileDto.setFileName(filesDto.getFileName());
+                    dtoSet.add(newFileDto);
+                }
+            }
+        }
+        return dtoSet;
     }
 }

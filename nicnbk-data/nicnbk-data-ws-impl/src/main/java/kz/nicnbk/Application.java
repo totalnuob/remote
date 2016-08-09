@@ -28,10 +28,10 @@ public class Application {
         return new WebMvcConfigurerAdapter() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/news/**").allowedOrigins("http://localhost:3001");
-                registry.addMapping("/m2s2/**").allowedOrigins("http://localhost:3001");
-                registry.addMapping("/employee/**").allowedOrigins("http://localhost:3001");
-                registry.addMapping("/lookup/**").allowedOrigins("http://localhost:3001");
+                registry.addMapping("/news/**").allowedOrigins("http://localhost:3000");
+                registry.addMapping("/m2s2/**").allowedOrigins("http://localhost:3000");
+                registry.addMapping("/employee/**").allowedOrigins("http://localhost:3000");
+                registry.addMapping("/lookup/**").allowedOrigins("http://localhost:3000");
             }
         };
     }

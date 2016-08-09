@@ -3,9 +3,10 @@ import {ActivatedRoute, ROUTER_DIRECTIVES} from '@angular/router';
 import {SELECT_DIRECTIVES, SelectComponent} from "ng2-select";
 //import {SelectItem} from "ng2-select/ng2-select";
 import {GeneralMemo} from "./model/general-memo";
-import {CommonComponent} from "../common/view.component";
+import {CommonComponent} from "../common/common.component";
 import {MemoService} from "./memo.service";
 import {EmployeeService} from "../employee/employee.service";
+import {MemoAttachmentDownloaderComponent} from "./download.component";
 
 declare var $:any
 declare var Chart: any;
@@ -14,14 +15,17 @@ declare var Chart: any;
     selector: 'pe-memo-edit',
     templateUrl: `app/m2s2/view/general-memo-edit.component.html`,
     styleUrls: [],
-    directives: [SELECT_DIRECTIVES, ROUTER_DIRECTIVES],
+    directives: [SELECT_DIRECTIVES, ROUTER_DIRECTIVES, MemoAttachmentDownloaderComponent],
     providers: [],
 })
 export class GeneralMemoEditComponent extends CommonComponent implements OnInit{
 
     private sub: any;
     private memoIdParam: number;
+
     memo = new GeneralMemo;
+
+    public uploadFiles: Array<any> = [];
 
     @ViewChild('attendeesSelect')
     private attendeesSelect: SelectComponent;
@@ -34,15 +38,9 @@ export class GeneralMemoEditComponent extends CommonComponent implements OnInit{
         private route: ActivatedRoute
     ){
         super();
-        // TODO: refactor as findAll ??? or load cash
-        this.employeeService.getAll().then(
-            data => {
-                data.forEach(element => {
-                    this.attendeesList.push({ id: element.id, text: element.lastName});
-                });
-                //console.log(this.strategyList);
-            }
-        );
+
+        // loadLookups
+        this.loadLookups();
 
         this.sub = this.route
             .params
@@ -54,24 +52,27 @@ export class GeneralMemoEditComponent extends CommonComponent implements OnInit{
                             memo => {
                                 // TODO: check response memo
                                 this.memo = memo;
-                                //console.log(this.memo);
 
                                 // preselect memo attendees
-                                if(this.memo.attendeesNIC) {
-                                    this.memo.attendeesNIC.forEach(element => {
-                                        for (var i = 0; i < this.attendeesList.length; i++) {
-                                            var option = this.attendeesList[i];
-                                            if (element.id === option.id) {
-                                                this.attendeesSelect.active.push(option);
-                                            }
-                                        }
-                                    });
-                                }
+                                this.preselectAttendeesNIC();
                             },
-                            error => this.errorMessage = "Error loading info"
+                            error => this.errorMessage = "Error loading memo"
                         );
                 }
             });
+    }
+
+    preselectAttendeesNIC(){
+        if(this.memo.attendeesNIC) {
+            this.memo.attendeesNIC.forEach(element => {
+                for (var i = 0; i < this.attendeesList.length; i++) {
+                    var option = this.attendeesList[i];
+                    if (element.id === option.id) {
+                        this.attendeesSelect.active.push(option);
+                    }
+                }
+            });
+        }
     }
 
     ngOnInit():any {
@@ -104,24 +105,81 @@ export class GeneralMemoEditComponent extends CommonComponent implements OnInit{
         // TODO: ngModel date
         this.memo.meetingDate = $('#meetingDateValue').val();
 
-        console.log(this.memo);
         this.memoService.saveGeneral(this.memo)
             .subscribe(
                 response  => {
-                    this.successMessage = "Successfully saved.";
-                    this.errorMessage = null;
-                    // TODO: rafactor?
-                    $('html, body').animate({ scrollTop: 0 }, 'fast');
+                    this.memo.id = response.entityId;
+
+                    if(this.uploadFiles.length > 0) {
+
+                        // TODO: refactor
+                        this.memoService.postFiles(this.memo.id, [], this.uploadFiles).subscribe(
+                            res => {
+                                // clear upload files list on view
+                                this.uploadFiles.length = 0;
+
+                                // update files list with new files
+                                if(!this.memo.files){ // no files existed
+                                    this.memo.files = [];
+                                }
+                                for (var i = 0; i < res.length; i++) {
+                                    this.memo.files.push(res[i]);
+                                }
+
+                                this.postAction("Successfully saved.", null);
+                            },
+                            error => {
+                                // TODO: don't save memo?
+
+                                this.postAction(null, "Error uploading attachments.");
+                            });
+                    }else{
+                        this.postAction("Successfully saved.", null);
+                    }
                 },
                 //error =>  this.errorMessage = <any>error
                 error =>  {
-                    this.errorMessage = "Error saving memo";
-                    this.successMessage = null;
-                    // TODO: rafactor?
-                    $('html, body').animate({ scrollTop: 0 }, 'fast');
+                    this.postAction(null, "Error saving memo.");
                 }
             );
 
+    }
+
+    postAction(successMessage, errorMessage){
+        this.successMessage = successMessage;
+        this.errorMessage = errorMessage;
+
+        // TODO: non jQuery
+        $('html, body').animate({ scrollTop: 0 }, 'fast');
+    }
+
+    deleteAttachment(fileId){
+        var confirmed = window.confirm("Are you sure want to delete");
+        if(confirmed) {
+            this.memoService.deleteAttachment(this.memo.id, fileId)
+                .subscribe(
+                    response => {
+                        for(var i = this.memo.files.length - 1; i >= 0; i--) {
+                            if(this.memo.files[i].id === fileId) {
+                                this.memo.files.splice(i, 1);
+                            }
+                        }
+
+                        this.postAction("Attachment deleted.", null);
+                    },
+                    error => {
+                        this.postAction(null, "Failed to delete attachment");
+                    }
+                );
+        }
+    }
+
+    onFileChange(event) {
+        var files = event.srcElement.files;
+        this.uploadFiles.length = 0;
+        for (let i = 0; i < files.length; i++) {
+            this.uploadFiles.push(files[i]);
+        }
     }
 
     changeArrangedBy(){
@@ -131,6 +189,16 @@ export class GeneralMemoEditComponent extends CommonComponent implements OnInit{
     }
 
     loadLookups(){
+        // load employees
+        this.employeeService.findAll()
+            .subscribe(
+                data => {
+                    data.forEach(element => {
+                        this.attendeesList.push({ id: element.id, text: element.firstName + " " + element.lastName[0] + "."});
+
+                    });
+                },
+                error =>  this.errorMessage = <any>error);
     }
 
 

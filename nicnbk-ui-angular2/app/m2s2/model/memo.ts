@@ -24,4 +24,6 @@ export class Memo{
 
     creationDate: string;
 
+    files: any[];
+
 }

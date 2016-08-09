@@ -46,6 +46,10 @@ const routes: RouterConfig = [
         path: 'm2s2/list',
         component: MemoListComponent,
         canActivate: [AuthGuard]
+    },{
+        path: 'm2s2/edit/1/:id',
+        component: GeneralMemoEditComponent,
+        canActivate: [AuthGuard]
     },
     {
         path: 'm2s2/edit/2/:id',
@@ -60,11 +64,6 @@ const routes: RouterConfig = [
     {
         path: 'm2s2/edit/4/:id',
         component: RealEstateMemoEditComponent,
-        canActivate: [AuthGuard]
-    },
-    {
-        path: 'm2s2/edit/1/:id',
-        component: GeneralMemoEditComponent,
         canActivate: [AuthGuard]
     }
 

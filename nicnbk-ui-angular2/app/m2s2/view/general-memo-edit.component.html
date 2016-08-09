@@ -219,31 +219,41 @@
     </div>
     <br/>
     <div class="row top-buffer">
-        <!--<div class="col-md-6">-->
-        <!--<div class="jumbotron" style="padding-top: 5px; padding-bottom: 5px;">-->
-        <!--<label>ATTACHMENTS</label>-->
-        <!--<div class="row">-->
-        <!--<label class="btn btn-primary col-md-3" for="attachmentFile">-->
-        <!--<input id="attachmentFile" name="attachmentFile" type="file" style="display:none;"-->
-        <!--onchange="$('#attachment-file-info').html($(this).val());var text = $('#attachment-file-info').html();text = text.substring(text.lastIndexOf('\\') + 1, text.length);$('#attachment-file-info').html(text);"/>-->
-        <!--Add-->
-        <!--</label>-->
-        <!--<div class="col-md-1">-->
-        <!--<span class='label label-info' id="attachment-file-info"></span>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--<br/>-->
-        <!--<div class="row">-->
-        <!--<div *ngFor="let attachment of attachments">-->
-        <!--<a>link</a>&nbsp;-->
-        <!--<a onclick="return confirm('Are you sure want to delete attachment?')">-->
-        <!--<i class="glyphicon glyphicon-trash"></i>-->
-        <!--</a>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</div>-->
-        <div class="col-md-6">
+        <div class="col-md-12">
+            <div class="jumbotron" style="padding-top: 5px; padding-bottom: 5px;">
+                <div class="row">
+                    <label>ATTACHMENTS</label>
+                </div>
+
+                <div class="row">
+                    <label class="btn btn-primary col-md-1" for="attachmentFile">
+                        <input type="file" id="attachmentFile" (change)="onFileChange($event)" name="file" multiple style="display:none;"/>
+                        Add
+                    </label>
+
+                    <div class="col-md-6">
+                        <div class="row" *ngFor="let newFile of uploadFiles" class="label label-info" style="display: table;">
+                            <span>{{newFile.name}}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" *ngIf="memo?.files?.length > 0">
+                    <div *ngFor="let attachment of memo.files">
+                        <memo-attachment-downloader fileId="{{attachment.id}}"
+                                                    fileName="{{attachment?.fileName}}">
+
+                        </memo-attachment-downloader>
+
+                        <a (click)="deleteAttachment(attachment.id)">
+                            <i class="glyphicon glyphicon-trash"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12">
             <label class="col-md-2">Author:</label>
             <div class="col-md-4">
                 <input type="text" placeholder="Your name... " class="form-control col-md-2" id="author"
