@@ -73,7 +73,7 @@ public class MeetingMemoConverterTest {
 
         Set<Employee> attendees = new HashSet<>();
         Employee employee = new Employee();
-        employee.setId(1234L);
+        employee.setId(1L);
         attendees.add(employee);
         entity.setAttendeesNIC(attendees);
 

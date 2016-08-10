@@ -58,6 +58,7 @@ public class PrivateEquityMemoConverterTest {
         entity.setCurrentlyFundRaising(true);
         Currency currency = new Currency();
         currency.setCode(Currency.USD);
+        currency.setId(1);
         entity.setFundSizeCurrency(currency);
         entity.setFundSize(100300d);
         entity.setConviction((short)4);

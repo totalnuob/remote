@@ -52,22 +52,22 @@ public class PEMeetingMemoRepositoryTest {
         entity.setMeetingDate(new Date());
 
         MeetingArrangedBy arrangedBy = new MeetingArrangedBy();
-        arrangedBy.setId(3);
+        arrangedBy.setId(1);
         entity.setArrangedBy(arrangedBy);
 
         Set<Employee> employees = new HashSet<>();
         Employee employee = new Employee();
-        employee.setId(101L);
+        employee.setId(1L);
         employees.add(employee);
         entity.setAttendeesNIC(employees);
 
         Currency currency = new Currency();
-        currency.setId(4);
+        currency.setId(1);
         entity.setFundSizeCurrency(currency);
 
         Set<Geography> geographies = new HashSet<>();
         Geography geography = new Geography();
-        geography.setId(5);
+        geography.setId(1);
         geographies.add(geography);
         entity.setGeographies(geographies);
 
@@ -121,22 +121,22 @@ public class PEMeetingMemoRepositoryTest {
         entity.setMeetingDate(new Date());
 
         MeetingArrangedBy arrangedBy = new MeetingArrangedBy();
-        arrangedBy.setId(3);
+        arrangedBy.setId(1);
         entity.setArrangedBy(arrangedBy);
 
         Set<Employee> employees = new HashSet<>();
         Employee employee = new Employee();
-        employee.setId(101L);
+        employee.setId(1L);
         employees.add(employee);
         entity.setAttendeesNIC(employees);
 
         Currency currency = new Currency();
-        currency.setId(4);
+        currency.setId(1);
         entity.setFundSizeCurrency(currency);
 
         Set<Geography> geographies = new HashSet<>();
         Geography geography = new Geography();
-        geography.setId(5);
+        geography.setId(1);
         geographies.add(geography);
         entity.setGeographies(geographies);
 
