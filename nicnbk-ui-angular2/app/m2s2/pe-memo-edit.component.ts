@@ -232,7 +232,8 @@ export class PrivateEquityMemoEditComponent extends CommonComponent implements O
     }
 
     onFileChange(event) {
-        var files = event.srcElement.files;
+        var target = event.target || event.srcElement;
+        var files = target.files;
         this.uploadFiles.length = 0;
         for (let i = 0; i < files.length; i++) {
             this.uploadFiles.push(files[i]);

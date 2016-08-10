@@ -238,8 +238,8 @@ export class RealEstateMemoEditComponent extends CommonComponent implements OnIn
     }
 
     onFileChange(event) {
-        var files = event.srcElement.files;
-        this.uploadFiles.length = 0;
+        var target = event.target || event.srcElement;
+        var files = target.files;
         for (let i = 0; i < files.length; i++) {
             this.uploadFiles.push(files[i]);
         }
