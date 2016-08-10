@@ -31,7 +31,7 @@ export class FileUploadService {
                 //this.progressObserver.next(this.progress);
             };
             xhr.open('POST', url, true);
-            xhr.setRequestHeader('X-PINGOTHER', 'pingpong');
+            xhr.setRequestHeader('X-PREFLIGHT', 'preflight');
             //xhr.setRequestHeader("Content-type", "multipart/form-data");
             xhr.send(formData);
         });
