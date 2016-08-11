@@ -12,7 +12,6 @@ import {AuthenticationService} from "../authentication/authentication.service";
     selector: 'news-list',
     templateUrl: `app/news/view/news-list.component.html`,
     styleUrls: [
-
         // TODO: load here, not in index.html
         //`app/static/css/star-rating/star-rating.min.css`,
         //`app/static/css/star-rating/theme-krajee-fa.min.css`,

@@ -32,6 +32,7 @@ public class Application {
                 registry.addMapping("/m2s2/**").allowedOrigins("http://localhost:3000");
                 registry.addMapping("/employee/**").allowedOrigins("http://localhost:3000");
                 registry.addMapping("/lookup/**").allowedOrigins("http://localhost:3000");
+                registry.addMapping("/bt/**").allowedOrigins("http://localhost:3000");
             }
         };
     }

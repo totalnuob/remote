@@ -16,6 +16,9 @@ import {PrivateEquityMemoEditComponent} from "./m2s2/pe-memo-edit.component";
 import {HedgeFundsMemoEditComponent} from "./m2s2/hf-memo-edit.component";
 import {RealEstateMemoEditComponent} from "./m2s2/re-memo-edit.component";
 import {MemoService} from "./m2s2/memo.service";
+import {TripMemoListComponent} from "./tripMemo/trip-memo-list.component";
+import {TripMemoService} from "./tripMemo/trip-memo.service";
+import {TripMemoEditComponent} from "./tripMemo/trip-memo-edit.component";
 import {LoginComponent} from "./authentication/login.component";
 import {AuthGuard} from "./auth.guard.service";
 import {FileUploadService} from "./upload/file.upload.service";
@@ -30,6 +33,7 @@ import {FileUploadService} from "./upload/file.upload.service";
     providers: [
         AuthGuard,
         MemoService,
+        TripMemoService,
         NewsService,
         LookupService,
         EmployeeService,
@@ -38,7 +42,7 @@ import {FileUploadService} from "./upload/file.upload.service";
     precompile: [
         LoginComponent,
         NewsListComponent, NewsEditComponent, NewsViewComponent,
-        MemoListComponent,
+        MemoListComponent, TripMemoListComponent, TripMemoEditComponent,
         GeneralMemoEditComponent, PrivateEquityMemoEditComponent, HedgeFundsMemoEditComponent, RealEstateMemoEditComponent
     ]
 })

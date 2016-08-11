@@ -9,6 +9,10 @@ import {PrivateEquityMemoEditComponent} from "./m2s2/pe-memo-edit.component";
 import {HedgeFundsMemoEditComponent} from "./m2s2/hf-memo-edit.component";
 import {RealEstateMemoEditComponent} from "./m2s2/re-memo-edit.component";
 import {GeneralMemoEditComponent} from "./m2s2/general-memo-edit.component";
+
+import {TripMemoListComponent} from "./tripMemo/trip-memo-list.component";
+import {TripMemoEditComponent} from "./tripMemo/trip-memo-edit.component";
+
 import {LoginComponent} from "./authentication/login.component";
 
 import {AuthGuard} from "./auth.guard.service";
@@ -46,7 +50,8 @@ const routes: RouterConfig = [
         path: 'm2s2/list',
         component: MemoListComponent,
         canActivate: [AuthGuard]
-    },{
+    },
+    {
         path: 'm2s2/edit/1/:id',
         component: GeneralMemoEditComponent,
         canActivate: [AuthGuard]
@@ -65,8 +70,29 @@ const routes: RouterConfig = [
         path: 'm2s2/edit/4/:id',
         component: RealEstateMemoEditComponent,
         canActivate: [AuthGuard]
-    }
+    },
+    {
+        path: 'm2s2/edit/1/:id',
+        component: GeneralMemoEditComponent,
+        canActivate: [AuthGuard]
+    },
 
+    /* TripMemo *************************************/
+    {
+        path: 'bt/list',
+        component: TripMemoListComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'bt/edit',
+        component: TripMemoEditComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'bt/edit/:id',
+        component: TripMemoEditComponent,
+        canActivate: [AuthGuard]
+    }
 ];
 
 export const appRouterProviders = [
