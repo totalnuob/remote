@@ -25,7 +25,7 @@ export class HedgeFundsMemoEditComponent extends CommonComponent implements OnIn
     private sub: any;
     private memoIdParam: number;
 
-    private visible;
+    private visible = false;
 
     memo = new HFMemo;
 
@@ -74,8 +74,6 @@ export class HedgeFundsMemoEditComponent extends CommonComponent implements OnIn
                                 // untoggle funds details if fundname is not empty
                                 if(this.memo.fundName != null && this.memo.fundName != "") {
                                     this.visible = true;
-                                } else {
-                                    this.visible = false;
                                 }
 
                                 // preselect memo strategies

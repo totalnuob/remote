@@ -23,8 +23,6 @@ export class GeneralMemoEditComponent extends CommonComponent implements OnInit{
     private sub: any;
     private memoIdParam: number;
 
-    public visible;
-
     memo = new GeneralMemo;
 
     public uploadFiles: Array<any> = [];
@@ -54,13 +52,6 @@ export class GeneralMemoEditComponent extends CommonComponent implements OnInit{
                             memo => {
                                 // TODO: check response memo
                                 this.memo = memo;
-
-                                // untoggle funds details if fundname is not empty
-                                if(this.memo.fundName != null && this.memo.fundName != "") {
-                                    this.visible = true;
-                                } else {
-                                    this.visible = false;
-                                }
 
                                 // preselect memo attendees
                                 this.preselectAttendeesNIC();
@@ -107,10 +98,6 @@ export class GeneralMemoEditComponent extends CommonComponent implements OnInit{
 
     public refreshAttendeesNIC(value:any):void {
         this.memo.attendeesNIC = value;
-    }
-
-    toggle() {
-        this.visible = !this.visible;
     }
 
     save(){

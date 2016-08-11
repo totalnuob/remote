@@ -133,21 +133,16 @@
             </div>
         </div>
     </div>
-    <a (click)="toggle()">Fund details {{ visible ? '&#9660;' : '&#9658;' }}</a>
 
-    <div [hidden]="!visible">
-        <div class="row top-buffer">
-            <label class="control-label col-md-3" for="fundName">Fund Name:</label>
-            <div class="col-md-9">
-                <input type="text" placeholder="Fund name... " class="form-control" id="fundName"
-                       [(ngModel)]="memo.fundName" name="fundName" maxlength="250"/>
-            </div>
+    <div class="row top-buffer">
+        <label class="control-label col-md-3" for="fundName">Fund Name:</label>
+        <div class="col-md-9">
+            <input type="text" placeholder="Fund name... " class="form-control" id="fundName"
+                   [(ngModel)]="memo.fundName" name="fundName" maxlength="250"/>
         </div>
     </div>
-    <!--<div class="row top-buffer">-->
 
-    <!--</div>-->
-    <hr style="border-top: 1px solid #B5AEAE"/>
+    <div class="row top-buffer"></div>
 
     <div class="row top-buffer">
         <div class="col-md-12" style="background-color:#5bc0de;">

@@ -26,7 +26,7 @@ export class RealEstateMemoEditComponent extends CommonComponent implements OnIn
 
     public uploadFiles: Array<any> = [];
 
-    private visible;
+    private visible = false;
 
     memo = new REMemo;
 
@@ -80,8 +80,6 @@ export class RealEstateMemoEditComponent extends CommonComponent implements OnIn
                                 // untoggle funds details if fundname is not empty
                                 if(this.memo.fundName != null && this.memo.fundName != "") {
                                     this.visible = true;
-                                } else {
-                                    this.visible = false;
                                 }
 
                                 // preselect memo attendees

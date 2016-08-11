@@ -28,7 +28,7 @@ export class PrivateEquityMemoEditComponent extends CommonComponent implements O
 
     public uploadFiles: Array<any> = [];
 
-    public visible;
+    public visible = false;
 
     memo = new PEMemo;
 
@@ -75,8 +75,6 @@ export class PrivateEquityMemoEditComponent extends CommonComponent implements O
                                 // untoggle funds details if fundname is not empty
                                 if(this.memo.fundName != null && this.memo.fundName != "") {
                                     this.visible = true;
-                                } else {
-                                    this.visible = false;
                                 }
 
                                 // preselect memo strategies
