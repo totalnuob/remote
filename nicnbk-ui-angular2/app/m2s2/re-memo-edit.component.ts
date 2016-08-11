@@ -26,6 +26,8 @@ export class RealEstateMemoEditComponent extends CommonComponent implements OnIn
 
     public uploadFiles: Array<any> = [];
 
+    private visible;
+
     memo = new REMemo;
 
     @ViewChild('attendeesSelect')
@@ -74,6 +76,13 @@ export class RealEstateMemoEditComponent extends CommonComponent implements OnIn
 
                                 // preselect memo geographies
                                 this.preselectGeographies();
+
+                                // untoggle funds details if fundname is not empty
+                                if(this.memo.fundName != null && this.memo.fundName != "") {
+                                    this.visible = true;
+                                } else {
+                                    this.visible = false;
+                                }
 
                                 // preselect memo attendees
                                 this.preselectAttendeesNIC();
@@ -152,12 +161,18 @@ export class RealEstateMemoEditComponent extends CommonComponent implements OnIn
             format: 'DD-MM-YYYY'
         });
 
+
+
         // load lookups
         this.loadLookups();
 
         // init chart
         this.initRadarChart();
 
+    }
+
+    toggle() {
+        this.visible = !this.visible;
     }
 
     save(){

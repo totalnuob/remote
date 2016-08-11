@@ -25,6 +25,8 @@ export class HedgeFundsMemoEditComponent extends CommonComponent implements OnIn
     private sub: any;
     private memoIdParam: number;
 
+    private visible;
+
     memo = new HFMemo;
 
     public uploadFiles: Array<any> = [];
@@ -68,6 +70,13 @@ export class HedgeFundsMemoEditComponent extends CommonComponent implements OnIn
                             memo => {
                                 // TODO: check response memo
                                 this.memo = memo;
+
+                                // untoggle funds details if fundname is not empty
+                                if(this.memo.fundName != null && this.memo.fundName != "") {
+                                    this.visible = true;
+                                } else {
+                                    this.visible = false;
+                                }
 
                                 // preselect memo strategies
                                 this.preselectStrategies();
@@ -155,6 +164,10 @@ export class HedgeFundsMemoEditComponent extends CommonComponent implements OnIn
         // init chart
         this.initRadarChart();
 
+    }
+
+    toggle() {
+        this.visible = !this.visible;
     }
 
     save(){

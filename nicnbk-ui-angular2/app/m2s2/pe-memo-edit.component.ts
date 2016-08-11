@@ -28,6 +28,8 @@ export class PrivateEquityMemoEditComponent extends CommonComponent implements O
 
     public uploadFiles: Array<any> = [];
 
+    public visible;
+
     memo = new PEMemo;
 
     @ViewChild('attendeesSelect')
@@ -69,6 +71,13 @@ export class PrivateEquityMemoEditComponent extends CommonComponent implements O
                             memo => {
                                 // TODO: check response memo
                                 this.memo = memo;
+
+                                // untoggle funds details if fundname is not empty
+                                if(this.memo.fundName != null && this.memo.fundName != "") {
+                                    this.visible = true;
+                                } else {
+                                    this.visible = false;
+                                }
 
                                 // preselect memo strategies
                                 this.preselectStrategies();
@@ -154,6 +163,10 @@ export class PrivateEquityMemoEditComponent extends CommonComponent implements O
 
         // init chart
         this.initRadarChart();
+    }
+
+    toggle() {
+        this.visible = !this.visible;
     }
 
     save(){

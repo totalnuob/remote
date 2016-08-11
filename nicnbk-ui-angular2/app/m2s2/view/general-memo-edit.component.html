@@ -38,18 +38,14 @@
                     <span>Call</span>
                 </label>
             </div>
-            <div class="col-md-6">
-                <input id="firmName" class="form-control" placeholder="Enter firm..." maxlength="250"
-                       [(ngModel)]="memo.firmName"/>
-            </div>
         </div>
     </div>
     <div class="row top-buffer" >
         <div class="col-md-12">
             <label class="control-label col-md-1">&nbsp;</label>
             <div class="col-md-5">
-                <input type="text" placeholder="Fund name... " class="form-control" id="fundName"
-                       [(ngModel)]="memo.fundName" name="fundName" maxlength="250"/>
+                <input id="firmName" class="form-control" placeholder="Enter firm..." maxlength="250"
+                       [(ngModel)]="memo.firmName"/>
             </div>
             <div class="col-md-2">
                 <div class='input-group date col-md-2' id='meetingDate' style="width: 100%">
@@ -137,13 +133,27 @@
             </div>
         </div>
     </div>
-    <!--<hr style="border-top: 1px solid #B5AEAE"/>-->
+    <a (click)="toggle()">Fund details {{ visible ? '&#9660;' : '&#9658;' }}</a>
+
+    <div [hidden]="!visible">
+        <div class="row top-buffer">
+            <label class="control-label col-md-3" for="fundName">Fund Name:</label>
+            <div class="col-md-9">
+                <input type="text" placeholder="Fund name... " class="form-control" id="fundName"
+                       [(ngModel)]="memo.fundName" name="fundName" maxlength="250"/>
+            </div>
+        </div>
+    </div>
+    <!--<div class="row top-buffer">-->
+
+    <!--</div>-->
+    <hr style="border-top: 1px solid #B5AEAE"/>
 
     <div class="row top-buffer">
         <div class="col-md-12" style="background-color:#5bc0de;">
             <div>
                 <div class="col-md-6">
-                    <span>TOPIC 2</span>
+                    <span>TOPIC 1</span>
                 </div>
                 <div class="col-md-5">&nbsp;</div>
             </div>
