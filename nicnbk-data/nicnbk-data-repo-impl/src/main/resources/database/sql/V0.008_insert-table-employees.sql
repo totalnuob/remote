@@ -21,3 +21,7 @@ INSERT INTO employees(id, inserted, inserted_by, updated, updated_by, birthdate,
 VALUES(9, '2016-08-02 10:00:00', null, null, null, null, 'Nazira', 'Medeuova', null );
 INSERT INTO employees(id, inserted, inserted_by, updated, updated_by, birthdate, firstname, lastname, patronymic)
 VALUES(10, '2016-08-02 10:00:00', null, null, null, null, 'Assel', 'Ospanova', null );
+
+-- deleted
+INSERT INTO employees(id, inserted, inserted_by, updated, updated_by, birthdate, firstname, lastname, patronymic)
+VALUES(11, '2016-08-02 10:00:00', null, null, null, null, 'Kuanysh', 'Zhamishev', null );

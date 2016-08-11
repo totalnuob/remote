@@ -133,7 +133,7 @@ public class MeetingMemo extends CreateUpdateBaseEntity{
         this.arrangedBy = arrangedBy;
     }
 
-    @Column(name="arrangedby_desc", length = DataConstraints.C_TYPE_ENTITY_DESCRIPTION_SHORT)
+    @Column(name="arrangedby_desc", length = DataConstraints.C_TYPE_ENTITY_DESCRIPTION_LONG)
     public String getArrangedByDescription() {
         return arrangedByDescription;
     }
@@ -142,7 +142,7 @@ public class MeetingMemo extends CreateUpdateBaseEntity{
         this.arrangedByDescription = arrangedByDescription;
     }
 
-    @Column(name="meeting_location", length = DataConstraints.C_TYPE_ENTITY_DESCRIPTION_SHORT)
+    @Column(name="meeting_location", length = DataConstraints.C_TYPE_ENTITY_DESCRIPTION_LONG)
     public String getMeetingLocation() {
         return meetingLocation;
     }
@@ -152,7 +152,7 @@ public class MeetingMemo extends CreateUpdateBaseEntity{
     }
 
 
-    @Column(name="purpose", length = DataConstraints.C_TYPE_ENTITY_DESCRIPTION_SHORT)
+    @Column(name="purpose", length = DataConstraints.C_TYPE_ENTITY_DESCRIPTION_LONG)
     public String getPurpose() {
         return purpose;
     }
@@ -177,7 +177,7 @@ public class MeetingMemo extends CreateUpdateBaseEntity{
         this.attendeesNIC = attendeesNIC;
     }
 
-    @Column(name="attendees_nic_desc", length = DataConstraints.C_TYPE_ENTITY_DESCRIPTION_SHORT)
+    @Column(name="attendees_nic_desc", length = DataConstraints.C_TYPE_ENTITY_DESCRIPTION_LONG)
     public String getAttendeesNICOther() {
         return attendeesNICOther;
     }
@@ -187,7 +187,7 @@ public class MeetingMemo extends CreateUpdateBaseEntity{
     }
 
 
-    @Column(name="attendees_other_desc", length = DataConstraints.C_TYPE_ENTITY_DESCRIPTION_SHORT)
+    @Column(name="attendees_other_desc", length = DataConstraints.C_TYPE_ENTITY_DESCRIPTION_LONG)
     public String getAttendeesOther() {
         return attendeesOther;
     }

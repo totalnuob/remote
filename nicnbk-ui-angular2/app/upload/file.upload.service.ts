@@ -31,8 +31,8 @@ export class FileUploadService {
                 //this.progressObserver.next(this.progress);
             };
             xhr.open('POST', url, true);
+            // add custom header for preflight CORS call
             xhr.setRequestHeader('X-PREFLIGHT', 'preflight');
-            //xhr.setRequestHeader("Content-type", "multipart/form-data");
             xhr.send(formData);
         });
     }
