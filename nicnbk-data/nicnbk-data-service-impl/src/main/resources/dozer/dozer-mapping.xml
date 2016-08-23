@@ -46,6 +46,10 @@
             <a>attendeesNIC</a>
             <b>attendeesNIC</b>
         </field-exclude>
+        <field-exclude>
+            <a>tags</a>
+            <b>tags</b>
+        </field-exclude>
     </mapping>
 
     <mapping>

@@ -58,6 +58,8 @@ public class MeetingMemo extends CreateUpdateBaseEntity{
     // TODO: TEMP in place of authentication
     private String author;
 
+    private String tags;
+
 
     // TODO: refactor?
     private Set<Strategy> strategies;
@@ -245,5 +247,14 @@ public class MeetingMemo extends CreateUpdateBaseEntity{
 
     public void setFundName(String fundName) {
         this.fundName = fundName;
+    }
+
+    @Column(name="tags", columnDefinition="TEXT")
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
     }
 }

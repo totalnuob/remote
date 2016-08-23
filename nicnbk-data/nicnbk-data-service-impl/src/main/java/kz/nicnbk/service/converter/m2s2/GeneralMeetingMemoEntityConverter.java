@@ -15,6 +15,7 @@ public class GeneralMeetingMemoEntityConverter extends CommonMeetingMemoConverte
     public GeneralMeetingMemo assemble(GeneralMeetingMemoDto dto){
         GeneralMeetingMemo entity = super.assemble(dto);
         assembleNonmappedFields(entity, dto);
+        assembleLazyNonmappedFields(entity, dto);
         return entity;
     }
 
@@ -22,6 +23,7 @@ public class GeneralMeetingMemoEntityConverter extends CommonMeetingMemoConverte
     public GeneralMeetingMemoDto disassemble(GeneralMeetingMemo entity){
         GeneralMeetingMemoDto dto = super.disassemble(entity);
         disassembleNonmappedFields(dto, entity);
+        disassembleLazyNonmappedFields(dto, entity);
         return dto;
     }
 }

@@ -1,0 +1,7 @@
+### webpack
+
+npm install webpack -g
+// TODO: npm install --save-dev webpack@1.13.1
+
+npm install --save-dev ts-loader@0.8.2
+

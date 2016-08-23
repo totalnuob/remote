@@ -1,0 +1,147 @@
+<div class="container">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="dropdown pull-right">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">Create
+                        <span class="bootstrapCaret"></span></button>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                        <li role="presentation">
+                            <a [routerLink] ="['/bt/edit']" role="menuitem" tabindex="-1">General</a>
+                        </li>
+                        <!--<li role="presentation">-->
+                        <!--<a role="menuitem" tabindex="-1" th:href="@{/m2s2/memoEdit/RE/0}">Real Estate</a></li>-->
+                        <!--<li role="presentation">-->
+                        <!--<a role="menuitem" tabindex="-1" th:href="@{/m2s2/memoEdit/HF/0}">Hedge Fund</a></li>-->
+                        <!--<li role="presentation" class="divider"></li>-->
+                        <!--<li role="presentation"><a role="menuitem" tabindex="-1"  th:href="@{/m2s2/memoEdit/GM/0}">General</a></li>-->
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <br/>
+        <div class="jumbotron">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="tripType">Trip Type</label>
+                            <select class="form-control" id="tripType" [(ngModel)]="searchParams.tripType">
+                                <option value="NONE">---</option>
+                                <option value="BUSINESS_TRIP">BUSINESS TRIP</option>
+                                <option value="TRAINING">TRAINING</option>
+                                <option value="CONFERENCE">CONFERENCE</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="fromDateDTPickeer">From</label>
+                        <div class='input-group date col-md-3' id='fromDateDTPickeer' style="width: 100%">
+                            <input type='text' class="form-control" id="fromDate"/>
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="untilDateDTPickeer">To</label>
+                        <div class='input-group date col-md-3' id='untilDateDTPickeer' style="width: 100%">
+                            <input type='text' class="form-control" id="toDate"/>
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="organization">Organization</label>
+                            <input type="text" class="form-control" id="organization" placeholder="Enter organization name..."
+                                   [(ngModel)]="searchParams.organization"/>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="location">Location</label>
+                            <input type="text" class="form-control" id="location" placeholder="Enter location..."
+                                   [(ngModel)]="searchParams.location"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="status">Status</label>
+                            <select class="form-control" id="status" [(ngModel)]="searchParams.status" >
+                                <option value="NONE">---</option>
+                                <option value="APPROVED">APPROVED</option>
+                                <option value="TRAINING">REJECTED</option>
+                                <option value="CONSIDERATION">UNDER CONSIDERATION</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <button type="button" class="btn btn-success pull-right" (click)="search()">Search</button>
+                </div>
+            </div>
+        </div>
+        <div>
+            <label>Total found: <span>{{tripMemoSearchResult?.totalElements > 0 ?  tripMemoSearchResult?.totalElements : 0}}</span></label>
+        </div>
+        <div class="row pull-right">
+            <ul class="pagination" *ngIf="tripMemoSearchResult?.showPageFrom > 0">
+                <li><a *ngIf="tripMemoSearchResult?.showPageFrom > 1" (click)="search(tripMemoSearchResult.showPageFrom - 1)">&laquo;</a></li>
+                <li *ngFor="let i of range(tripMemoSearchResult.showPageFrom, tripMemoSearchResult.showPageTo)" [class.active]="i == tripMemoSearchResult.currentPage">
+                    <a (click)="search(i)">{{i}}</a>
+                </li>
+                <li><a *ngIf="tripMemoSearchResult.showPageTo < tripMemoSearchResult.totalPages" (click)="search(tripMemoSearchResult.showPageTo + 1)">&raquo;</a></li>
+            </ul>
+        </div>
+        <table class = "table table-hover">
+            <thead>
+            <tr>
+                <th>REPORT TYPE</th>
+                <th>ORGANIZATION</th>
+                <th>LOCATION</th>
+                <th>DATE FROM</th>
+                <th>DATE TO</th>
+                <th>AUTHOR</th>
+                <th>STATUS</th>
+                <th>ACTIONS</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr *ngFor="let tripMemo of tripMemoList">
+                <td width="5%">{{tripMemo.tripType}}</td>
+                <td width="5%"><a [routerLink]="['/bt/edit', tripMemo.id]">{{tripMemo.organization}}</a></td>
+                <td width="5%">{{tripMemo.location}}</td>
+                <td width="15%">{{tripMemo.meetingDateStart}}</td>
+                <td width="15%">{{tripMemo.meetingDateEnd}}</td>
+                <td width="10%">{{tripMemo.author}}</td>
+                <td width="10%">{{tripMemo.status}}</td>
+                <td width="5%">
+                    <a onclick="alert('To delete this memo, please call #115');"><i class="glyphicon glyphicon-trash"></i></a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="row pull-right">
+            <ul class="pagination" *ngIf="tripMemoSearchResult?.showPageFrom > 0">
+                <li><a *ngIf="tripMemoSearchResult?.showPageFrom > 1" (click)="search(tripMemoSearchResult.showPageFrom - 1)">&laquo;</a></li>
+                <li *ngFor="let i of range(tripMemoSearchResult.showPageFrom, tripMemoSearchResult.showPageTo)" [class.active]="i == tripMemoSearchResult.currentPage">
+                    <a (click)="search(i)">{{i}}</a>
+                </li>
+                <li><a *ngIf="tripMemoSearchResult.showPageTo < tripMemoSearchResult.totalPages" (click)="search(tripMemoSearchResult.showPageTo + 1)">&raquo;</a></li>
+            </ul>
+        </div>
+    </div>
+</div>

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -73,47 +74,63 @@ public class MemoServiceREST {
     @RequestMapping(value = "/PE/save", method = RequestMethod.POST)
     public ResponseEntity<?>  save(@RequestBody PrivateEquityMeetingMemoDto memoDto){
         Long id = PEmemoService.save(memoDto);
+
         // TODO: response
-        memoDto.setId(id);
 
         HttpHeaders httpHeaders = new HttpHeaders();
         EntitySaveResponse response = new EntitySaveResponse();
         response.setEntityId(id);
+        if(memoDto.getId() == null){
+            response.setCreationDate(new Date());
+        }
+        memoDto.setId(id);
         return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/HF/save", method = RequestMethod.POST)
     public ResponseEntity<?>  save(@RequestBody HedgeFundsMeetingMemoDto memoDto){
         Long id = HFmemoService.save(memoDto);
+
         // TODO: response
-        memoDto.setId(id);
 
         HttpHeaders httpHeaders = new HttpHeaders();
         EntitySaveResponse response = new EntitySaveResponse();
         response.setEntityId(id);
+        if(memoDto.getId() == null){
+            response.setCreationDate(new Date());
+        }
+        memoDto.setId(id);
         return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/RE/save", method = RequestMethod.POST)
     public ResponseEntity<?>  save(@RequestBody RealEstateMeetingMemoDto memoDto){
         Long id = REmemoService.save(memoDto);
+
         // TODO: response
-        memoDto.setId(id);
         HttpHeaders httpHeaders = new HttpHeaders();
         EntitySaveResponse response = new EntitySaveResponse();
         response.setEntityId(id);
+        if(memoDto.getId() == null){
+            response.setCreationDate(new Date());
+        }
+        memoDto.setId(id);
         return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/GN/save", method = RequestMethod.POST)
     public ResponseEntity<?>  save(@RequestBody GeneralMeetingMemoDto memoDto){
         Long id = generalMemoService.save(memoDto);
+
         // TODO: response
-        memoDto.setId(id);
 
         HttpHeaders httpHeaders = new HttpHeaders();
         EntitySaveResponse response = new EntitySaveResponse();
         response.setEntityId(id);
+        if(memoDto.getId() == null){
+            response.setCreationDate(new Date());
+        }
+        memoDto.setId(id);
         return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
     }
 

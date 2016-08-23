@@ -11,6 +11,7 @@ import kz.nicnbk.service.dto.employee.EmployeeDto;
 import kz.nicnbk.service.dto.m2s2.MeetingMemoDto;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,6 +28,11 @@ public abstract class CommonMeetingMemoConverter<E extends MeetingMemo, DTO exte
         if(StringUtils.isNotEmpty(dto.getMeetingType())) {
             MeetingType meetingType = lookupService.findByTypeAndCode(MeetingType.class, dto.getMeetingType());
             entity.setMeetingType(meetingType);
+        }
+
+        // tags
+        if(dto.getTags() != null && dto.getTags().length > 0){
+             entity.setTags(Arrays.toString(dto.getTags()));
         }
     }
 
@@ -53,6 +59,16 @@ public abstract class CommonMeetingMemoConverter<E extends MeetingMemo, DTO exte
         // meetingType
         if(entity.getMeetingType() != null){
             dto.setMeetingType(entity.getMeetingType().getCode());
+        }
+
+        // tags
+        if(entity.getTags() != null){
+            String[] tags = entity.getTags().replace("[", "").replace("]", "").split(", ");
+            String[] result = new String[tags.length];
+            for (int i = 0; i < result.length; i++) {
+                result[i] = tags[i];
+            }
+            dto.setTags(result);
         }
     }
 

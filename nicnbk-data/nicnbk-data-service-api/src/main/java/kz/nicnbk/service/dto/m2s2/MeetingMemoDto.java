@@ -35,6 +35,8 @@ public class MeetingMemoDto extends BaseEntityDto<MeetingMemo> {
     private String attendeesOther;
     private Set<FilesDto> files;
 
+    private String[] tags;
+
     // TODO: TEMP in place of authentication
     private String author;
 
@@ -180,6 +182,14 @@ public class MeetingMemoDto extends BaseEntityDto<MeetingMemo> {
 
     public void setFiles(Set<FilesDto> files) {
         this.files = files;
+    }
+
+    public String[] getTags() {
+        return tags;
+    }
+
+    public void setTags(String[] tags) {
+        this.tags = tags;
     }
 
     public Date getCreationDate() {
