@@ -67,10 +67,10 @@
                             Monitoring <span class="bootstrapCaret"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href="#">NIC Portfolio</a></li>
-                            <li><a href="#">Liquid Portfolio</a></li>
-                            <li><a href="#">Private Equity Portfolio</a></li>
-                            <li><a href="#">Hedge Funds Portfolio</a></li>
+                            <li><a [routerLink]="['/monitoring/portfolio']" data-toggle="tooltip" title="Monitoring NIC Portfolio">NIC Portfolio</a></li>
+                            <li><a [routerLink]="['/monitoring/liq']" data-toggle="tooltip" title="Monitoring Liquid Portfolio">Liquid Portfolio</a></li>
+                            <li><a [routerLink]="['/monitoring/pe']" data-toggle="tooltip" title="Monitoring Private Equity Portfolio">Private Equity Portfolio</a></li>
+                            <li><a [routerLink]="['/monitoring/hf']" data-toggle="tooltip" title="Monitoring Hedge Funds Portfolio">Hedge Funds Portfolio</a></li>
                         </ul>
                     </li>
                     <li>
@@ -79,12 +79,12 @@
                         </a>
                         <!--<a th:href="@{/risks}">Risk Management</a></li>-->
                         <ul class="dropdown-menu">
-                            <!--<li><a th:href="@{/risks/macroMonitor}">Macro Monitor</a></li>-->
-                            <li><a href="#">Axioma Reporting</a></li>
+                            <!--<li><a [routerLink]="['/monitoring/mm']" data-toggle="tooltip" title="Macro Monitor">Macro Monitor</a></li>-->
+                            <li><a [routerLink]="['/monitoring/axioma']" data-toggle="tooltip" title="Axioma Reporting">Axioma Reporting</a></li>
                             <!--<li><a href="#">Risk</a></li>-->
                         </ul>
                     </li>
-                    <li><a href="#">Macro Monitor</a></li>
+                    <li><a [routerLink]="['/monitoring/mm']" data-toggle="tooltip" title="Macro Monitor">Macro Monitor</a></li>
                     <li><a [routerLink]="['/m2s2/list']" data-toggle="tooltip" title="Meeting Memo Scoring System">M2S2</a></li>
                     <li class="dropdown">
                         <!--<a th:href="@{/pe}">Private Equity</a>-->

@@ -22,6 +22,13 @@ import {TripMemoListComponent} from "./tripMemo/trip-memo-list.component";
 import {TripMemoEditComponent} from "./tripMemo/trip-memo-edit.component";
 import {MemoAttachmentDownloaderComponent} from "./m2s2/memo-attachment-downloader.component";
 
+import {MonitoringPortfolioComponent} from "./monitoring/monitoring-portfolio.component";
+import {MonitoringHedgeFundsComponent} from "./monitoring/monitoring-hedge-funds.component";
+import {MonitoringLiquidPortfolioComponent} from "./monitoring/monitoring-liquid-portfolio.component";
+import {MonitoringPrivateEquityComponent} from "./monitoring/monitoring-private-equity.component";
+import {MonitoringMacroMonitorComponent} from "./monitoring/monitoring-macro-monitor.component";
+import {MonitoringAxiomaReportingComponent} from "./monitoring/monitoring-axioma-reporting.component";
+
 @NgModule({
     imports: [
         BrowserModule,
@@ -40,7 +47,8 @@ import {MemoAttachmentDownloaderComponent} from "./m2s2/memo-attachment-download
         NewsListComponent, NewsEditComponent, NewsViewComponent,
         MemoListComponent,
         GeneralMemoEditComponent, PrivateEquityMemoEditComponent, HedgeFundsMemoEditComponent, RealEstateMemoEditComponent,
-        TripMemoListComponent, TripMemoEditComponent
+        TripMemoListComponent, TripMemoEditComponent, MonitoringAxiomaReportingComponent, MonitoringHedgeFundsComponent, MonitoringLiquidPortfolioComponent,
+        MonitoringMacroMonitorComponent, MonitoringPortfolioComponent, MonitoringPrivateEquityComponent
     ],
     bootstrap: [ AppComponent ]
 })

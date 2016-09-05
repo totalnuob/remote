@@ -13,10 +13,17 @@ import {GeneralMemoEditComponent} from "./m2s2/general-memo-edit.component";
 
 import {TripMemoListComponent} from "./tripMemo/trip-memo-list.component";
 import {TripMemoEditComponent} from "./tripMemo/trip-memo-edit.component";
+import {MonitoringPortfolioComponent} from "./monitoring/monitoring-portfolio.component";
+import {MonitoringHedgeFundsComponent} from "./monitoring/monitoring-hedge-funds.component";
+import {MonitoringLiquidPortfolioComponent} from "./monitoring/monitoring-liquid-portfolio.component";
+import {MonitoringPrivateEquityComponent} from "./monitoring/monitoring-private-equity.component";
+import {MonitoringMacroMonitorComponent} from "./monitoring/monitoring-macro-monitor.component";
+import {MonitoringAxiomaReportingComponent} from "./monitoring/monitoring-axioma-reporting.component";
 
 import {LoginComponent} from "./authentication/login.component";
 
 import {AuthGuard} from "./auth.guard.service";
+
 
 const routes: Routes  = [
     {
@@ -93,7 +100,39 @@ const routes: Routes  = [
         path: 'bt/edit/:id',
         component: TripMemoEditComponent,
         canActivate: [AuthGuard]
-    }
+    },
+
+    /* Monitoring ************************************/
+    {
+        path: 'monitoring/portfolio',
+        component: MonitoringPortfolioComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'monitoring/hf',
+        component: MonitoringHedgeFundsComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'monitoring/liq',
+        component: MonitoringLiquidPortfolioComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'monitoring/pe',
+        component: MonitoringPrivateEquityComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'monitoring/mm',
+        component: MonitoringMacroMonitorComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'monitoring/axioma',
+        component: MonitoringAxiomaReportingComponent,
+        canActivate: [AuthGuard]
+    },
 ];
 
 export const appRouterProviders = RouterModule.forRoot(routes);
