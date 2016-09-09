@@ -29,6 +29,8 @@ public class MemoSearchParams implements BaseParams {
     private int page;
     private int pageSize;
 
+    private String[] tags;
+
     public String getMeetingType() {
         return meetingType;
     }
@@ -91,6 +93,14 @@ public class MemoSearchParams implements BaseParams {
 
     public void setPageSize(int pageSize) {
         this.pageSize = pageSize;
+    }
+
+    public String[] getTags() {
+        return tags;
+    }
+
+    public void setTags(String[] tags) {
+        this.tags = tags;
     }
 
     public boolean isEmpty(){

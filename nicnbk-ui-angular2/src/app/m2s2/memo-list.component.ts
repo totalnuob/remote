@@ -28,6 +28,26 @@ export class MemoListComponent  extends CommonComponent implements OnInit{
 
     memoSearchResult: MemoSearchResults;
 
+    advancedSearch = false;
+
+    options = {
+        placeholder: "+ tag",
+        secondaryPlaceholder: "Enter search tag",
+        separatorKeys: [188, 191], // exclude coma from tag content
+        maxItems: 10
+    }
+
+    public onItemAdded(item) {
+        this.searchParams.tags.push(item);
+    }
+
+    public onItemRemoved(item) {
+        for(var i = this.searchParams.tags.length - 1; i >= 0; i--) {
+            if(this.searchParams.tags[i] === item) {
+                this.searchParams.tags.splice(i, 1);
+            }
+        }
+    }
 
     constructor(
         private lookupService: LookupService,
@@ -51,6 +71,10 @@ export class MemoListComponent  extends CommonComponent implements OnInit{
         // load lookups
         this.loadLookups();
 
+        if(this.searchParams.tags == null) {
+            this.searchParams.tags = [];
+        }
+
         // find all
         this.search(0);
     }
@@ -65,8 +89,9 @@ export class MemoListComponent  extends CommonComponent implements OnInit{
 
     search(page){
 
+        console.log(this.searchParams);
         // TODO: as parameter?
-        this.searchParams.pageSize = 10;
+        this.searchParams.pageSize = 20;
 
         if(page > 0) {
             this.searchParams.page = page;
@@ -83,6 +108,10 @@ export class MemoListComponent  extends CommonComponent implements OnInit{
                 },
                 error =>  this.errorMessage = "Failed to search memos."
             );
+    }
+
+    toggle(){
+        this.advancedSearch = !this.advancedSearch;
     }
 
     // TODO: get lookup values from cache

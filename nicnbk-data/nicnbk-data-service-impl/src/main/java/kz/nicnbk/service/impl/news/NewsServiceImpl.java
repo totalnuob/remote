@@ -83,7 +83,7 @@ public class NewsServiceImpl implements NewsService {
     public List<NewsDto> loadNewsShort(String type, int page, int pageSize){
         List<NewsDto> newsItems = new ArrayList<>();
         Page<News> entityPage = newsRepository.findByType(type, new PageRequest(page, pageSize,
-                new Sort(Sort.Direction.DESC, "id")));
+                new Sort(Sort.Direction.DESC, "creationDate")));
         if(entityPage != null && entityPage.getContent() != null){
             for(News entity: entityPage.getContent()){
                 newsItems.add(newsConverter.disassemble(entity));

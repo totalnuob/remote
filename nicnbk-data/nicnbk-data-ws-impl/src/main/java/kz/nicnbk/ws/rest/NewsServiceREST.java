@@ -24,24 +24,30 @@ public class NewsServiceREST {
     @Autowired
     private NewsService newsService;
 
+
+//    Cache-control: no-cache
+//    Cache-control: no-store
+//    Pragma: no-cache
+//    Expires: 0
+
     @RequestMapping(value = "/load", method = RequestMethod.GET)
-    public List<NewsDto> getNewsShort(){
+    public ResponseEntity<?> getNewsShort(){
         List<NewsDto> news = newsService.loadNewsShort(DEFAULT_PAGE_SIZE);
-        return news;
+        return new ResponseEntity<>(news, getHeaders(), HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/load/{pageSize}", method = RequestMethod.GET)
-    public List<NewsDto> getNewsShort(@PathVariable Integer pageSize){
+    public ResponseEntity<?> getNewsShort(@PathVariable Integer pageSize){
 
         List<NewsDto> news = newsService.loadNewsShort(pageSize);
-        return news;
+        return new ResponseEntity<>(news, getHeaders(), HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/load/{pageSize}/{newsType}/{page}", method = RequestMethod.GET)
-    public List<NewsDto> getNewsShort(@PathVariable Integer pageSize, @PathVariable String newsType, @PathVariable Integer page){
+    public ResponseEntity<?> getNewsShort(@PathVariable Integer pageSize, @PathVariable String newsType, @PathVariable Integer page){
 
         List<NewsDto> news = newsService.loadNewsShort(newsType, page, Math.min(pageSize, MAX_PAGE_SIZE));
-        return news;
+        return new ResponseEntity<>(news, getHeaders(), HttpStatus.CREATED);
     }
 
     @RequestMapping(value="/save", method = RequestMethod.POST)
@@ -57,6 +63,15 @@ public class NewsServiceREST {
     public NewsDto get(@PathVariable Long id){
         NewsDto newsDto = this.newsService.get(id);
         return newsDto;
+    }
+
+    private HttpHeaders getHeaders(){
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("Cache-control", "no-cache");
+        httpHeaders.add("Cache-control", "no-store");
+        httpHeaders.add("Pragma", "no-cache");
+        httpHeaders.add("Expires", "0");
+        return httpHeaders;
     }
 
 }
