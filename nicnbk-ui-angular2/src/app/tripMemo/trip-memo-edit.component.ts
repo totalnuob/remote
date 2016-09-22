@@ -88,8 +88,6 @@ export class TripMemoEditComponent extends CommonComponent implements OnInit{
             format: 'DD-MM-YYYY'
         });
 
-        // load lookups
-        this.loadLookups();
     }
 
     public selected(value:any):void {
