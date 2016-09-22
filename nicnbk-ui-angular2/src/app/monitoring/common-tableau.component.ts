@@ -1,4 +1,7 @@
+
+
 export class CommonTableau {
+
     public tableau_func() {
         (function() {
             window.tableau = window.tableau || {},

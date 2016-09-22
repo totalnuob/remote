@@ -3,6 +3,8 @@ import {ActivatedRoute, ROUTER_DIRECTIVES} from "@angular/router";
 import {CommonComponent} from "../common/common.component";
 import {CommonTableau} from "./common-tableau.component";
 
+import '../../../public/js/viz_v1.js';
+
 @Component({
     selector: 'monitoring-macro-monitor',
     templateUrl: 'view/monitoring-macro-monitor.component.html',

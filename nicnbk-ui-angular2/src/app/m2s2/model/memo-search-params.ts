@@ -7,5 +7,6 @@ export class MemoSearchParams{
     fundName: string;
     page: number;
     pageSize: number;
+    tags: string[];
 
 }
