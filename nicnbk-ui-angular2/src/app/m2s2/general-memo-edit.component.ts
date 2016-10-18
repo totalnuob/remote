@@ -1,13 +1,11 @@
-import { Component, OnInit, ViewChild  } from '@angular/core';
-import {ActivatedRoute, ROUTER_DIRECTIVES} from '@angular/router';
-import {SELECT_DIRECTIVES, SelectComponent} from "ng2-select";
+import { Component,NgModule, OnInit, ViewChild  } from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+
 import {GeneralMemo} from "./model/general-memo";
 import {CommonComponent} from "../common/common.component";
 import {MemoService} from "./memo.service";
 import {EmployeeService} from "../employee/employee.service";
 import {MemoAttachmentDownloaderComponent} from "./memo-attachment-downloader.component";
-
-import { TagInput } from 'ng2-tag-input';
 
 declare var $:any
 declare var Chart: any;
@@ -16,8 +14,10 @@ declare var Chart: any;
     selector: 'pe-memo-edit',
     templateUrl: './view/general-memo-edit.component.html',
     styleUrls: [],
-    directives: [SELECT_DIRECTIVES, ROUTER_DIRECTIVES, TagInput],
     providers: [],
+})
+@NgModule({
+    imports: []
 })
 export class GeneralMemoEditComponent extends CommonComponent implements OnInit{
 
@@ -29,7 +29,7 @@ export class GeneralMemoEditComponent extends CommonComponent implements OnInit{
     public uploadFiles: Array<any> = [];
 
     @ViewChild('attendeesSelect')
-    private attendeesSelect: SelectComponent;
+    private attendeesSelect;
 
     public attendeesList: Array<any> = [];
 

@@ -1,16 +1,13 @@
-import { Component, OnInit, ViewChild  } from '@angular/core';
+import { Component,NgModule, OnInit, ViewChild  } from '@angular/core';
 import {LookupService} from "../common/lookup.service";
 import {PEMemo} from "./model/pe-memo";
-import {SELECT_DIRECTIVES, SelectComponent} from "ng2-select";
 import {MemoService} from "./memo.service";
-import {ActivatedRoute, ROUTER_DIRECTIVES} from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
 import {Lookup} from "../common/lookup";
 import {EmployeeService} from "../employee/employee.service";
 
 import {FileUploadService} from "../upload/file.upload.service";
 import {CommonComponent} from "../common/common.component";
-
-import { TagInput } from 'ng2-tag-input';
 
 declare var $:any
 declare var Chart: any;
@@ -19,8 +16,10 @@ declare var Chart: any;
     selector: 'pe-memo-edit',
     templateUrl: './view/pe-memo-edit.component.html',
     styleUrls: [],
-    directives: [SELECT_DIRECTIVES, ROUTER_DIRECTIVES,TagInput ],
     providers: [],
+})
+@NgModule({
+    imports: []
 })
 export class PrivateEquityMemoEditComponent extends CommonComponent implements OnInit{
 
@@ -34,13 +33,13 @@ export class PrivateEquityMemoEditComponent extends CommonComponent implements O
     public memo = new PEMemo;
 
     @ViewChild('attendeesSelect')
-    private attendeesSelect: SelectComponent;
+    private attendeesSelect;
 
     @ViewChild('strategySelect')
-    private strategySelect: SelectComponent;
+    private strategySelect;
 
     @ViewChild('geographySelect')
-    private geographySelect: SelectComponent;
+    private geographySelect;
 
     public strategyList: Array<any> = [];
     public geographyList: Array<any> = [];

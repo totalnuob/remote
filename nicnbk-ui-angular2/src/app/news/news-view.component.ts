@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {ActivatedRoute, ROUTER_DIRECTIVES} from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
 
 import {News} from "./model/news";
 import {NewsService} from "./news.service";
@@ -8,7 +8,6 @@ import {NewsService} from "./news.service";
 @Component({
     selector: 'news-view',
     templateUrl: './view/news-view.component.html',
-    directives: [ROUTER_DIRECTIVES],
 })
 export class NewsViewComponent{
     private selectedId: number;

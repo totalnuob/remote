@@ -1,0 +1,184 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="dropdown pull-right">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">New
+                    <span class="bootstrapCaret"></span></button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                    <li role="presentation">
+                        <a [routerLink]="['/hf/fundProfile']" role="menuitem" tabindex="-1" >Fund</a></li>
+                    <li role="presentation">
+                        <a [routerLink]="['/hf/managerProfile']" role="menuitem" tabindex="-1" >Manager</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <br/>
+
+    <div class="jumbotron">
+        <br/>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-9">
+                    <div class="form-group">
+                        <label for="fundName">Fund or Manager</label>
+                        <input type="text" class="form-control" id="fundName"
+                        placeholder="Enter fund or manager..."
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="strategy">Strategy</label>
+                        <select class="form-control" id="strategy">
+                            <option value="0">---</option>
+                            <option *ngFor = "let item of strategyList" [value]="item.code">{{item.nameEn}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="status">Status</label>
+                        <select class="form-control" id="status">
+                            <option value="0">---</option>
+                            <option *ngFor = "let item of statusList" [value]="item.code">{{item.nameEn}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <button type="button" class="btn btn-success pull-right" (click)="search()">Search</button>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <label>Total found: <span>-0-</span></label>
+    </div>
+    <!--<div class="row pull-right">-->
+        <!--<ul class="pagination" *ngIf="memoSearchResult?.showPageFrom > 0">-->
+            <!--<li><a *ngIf="memoSearchResult?.showPageFrom > 1" (click)="search(memoSearchResult.showPageFrom - 1)">&laquo;</a></li>-->
+            <!--<li *ngFor="let i of range(memoSearchResult.showPageFrom, memoSearchResult.showPageTo)" [class.active]="i == memoSearchResult.currentPage">-->
+                <!--<a (click)="search(i)">{{i}}</a>-->
+            <!--</li>-->
+            <!--<li><a *ngIf="memoSearchResult.showPageTo < memoSearchResult.totalPages" (click)="search(memoSearchResult.showPageTo + 1)">&raquo;</a></li>-->
+        <!--</ul>-->
+    <!--</div>-->
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>&nbsp;</th>
+            <th>FUND</th>
+            <th>MANAGER</th>
+            <th>STRATEGY</th>
+            <th>LOCATION</th>
+            <th>UPDATED</th>
+            <th>ACTIONS</th>
+        </tr>
+        </thead>
+
+        <tbody>
+
+        <tr>
+            <td width="5%"></td>
+            <td width="30%"><a> Grosvenor Investment GIP</a></td>
+            <td width="30%"><a >Grosvenor Capital Management</a></td>
+            <!--<td width="10%" th:text="${memoItem.meetingDate}"></td>-->
+            <td width="10%">Multi</td>
+            <td width="10%">Chicago, US</td>
+            <td width="10%">10/10/2016</td>
+            <td width="5%">
+                <a><i class="glyphicon glyphicon-search"></i></a>
+                <a><i class="glyphicon glyphicon-file"></i></a>
+                <a><i class="glyphicon glyphicon-plus"></i></a>
+            </td>
+        </tr>
+        <tr>
+            <td width="5%"></td>
+            <td width="30%"><a> Grosvenor Investment GIP</a></td>
+            <td width="30%"><a >Grosvenor Capital Management</a></td>
+            <!--<td width="10%" th:text="${memoItem.meetingDate}"></td>-->
+            <td width="10%">Multi</td>
+            <td width="10%">Chicago, US</td>
+            <td width="10%">10/10/2016</td>
+            <td width="5%">
+                <a><i class="glyphicon glyphicon-search"></i></a>
+                <a><i class="glyphicon glyphicon-file"></i></a>
+                <a><i class="glyphicon glyphicon-plus"></i></a>
+            </td>
+        </tr>
+        <tr>
+            <td width="5%"></td>
+            <td width="30%"><a> Grosvenor Investment GIP</a></td>
+            <td width="30%"><a >Grosvenor Capital Management</a></td>
+            <!--<td width="10%" th:text="${memoItem.meetingDate}"></td>-->
+            <td width="10%">Multi</td>
+            <td width="10%">Chicago, US</td>
+            <td width="10%">10/10/2016</td>
+            <td width="5%">
+                <a><i class="glyphicon glyphicon-search"></i></a>
+                <a><i class="glyphicon glyphicon-file"></i></a>
+                <a><i class="glyphicon glyphicon-plus"></i></a>
+            </td>
+        </tr>
+        <tr>
+            <td width="5%"></td>
+            <td width="30%"><a> Grosvenor Investment GIP</a></td>
+            <td width="30%"><a >Grosvenor Capital Management</a></td>
+            <!--<td width="10%" th:text="${memoItem.meetingDate}"></td>-->
+            <td width="10%">Multi</td>
+            <td width="10%">Chicago, US</td>
+            <td width="10%">10/10/2016</td>
+            <td width="5%">
+                <a><i class="glyphicon glyphicon-search"></i></a>
+                <a><i class="glyphicon glyphicon-file"></i></a>
+                <a><i class="glyphicon glyphicon-plus"></i></a>
+            </td>
+        </tr>
+        <tr>
+            <td width="5%"></td>
+            <td width="30%"><a> Grosvenor Investment GIP</a></td>
+            <td width="30%"><a >Grosvenor Capital Management</a></td>
+            <!--<td width="10%" th:text="${memoItem.meetingDate}"></td>-->
+            <td width="10%">Multi</td>
+            <td width="10%">Chicago, US</td>
+            <td width="10%">10/10/2016</td>
+            <td width="5%">
+                <a><i class="glyphicon glyphicon-search"></i></a>
+                <a><i class="glyphicon glyphicon-file"></i></a>
+                <a><i class="glyphicon glyphicon-plus"></i></a>
+            </td>
+        </tr>
+
+        <tr *ngFor = "let fund of fundList">
+            <td width="5%"></td>
+            <td width="30%"><a ></a></td>
+            <td width="30%"><a ></a></td>
+            <!--<td width="10%" th:text="${memoItem.meetingDate}"></td>-->
+            <td width="10%"></td>
+            <td width="10%"></td>
+            <td width="10%"></td>
+            <td width="5%">
+                <a><i class="glyphicon glyphicon-search"></i></a>
+                <a><i class="glyphicon glyphicon-file"></i></a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <!--<div class="row pull-right">-->
+        <!--<ul class="pagination" *ngIf="memoSearchResult?.showPageFrom > 0">-->
+            <!--<li><a *ngIf="memoSearchResult?.showPageFrom > 1" (click)="search(memoSearchResult.showPageFrom - 1)">&laquo;</a></li>-->
+            <!--<li *ngFor="let i of range(memoSearchResult.showPageFrom, memoSearchResult.showPageTo)" [class.active]="i == memoSearchResult.currentPage">-->
+                <!--<a (click)="search(i)">{{i}}</a>-->
+            <!--</li>-->
+            <!--<li><a *ngIf="memoSearchResult.showPageTo < memoSearchResult.totalPages" (click)="search(memoSearchResult.showPageTo + 1)">&raquo;</a></li>-->
+        <!--</ul>-->
+    <!--</div>-->
+</div>

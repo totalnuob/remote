@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
-import {  FORM_PROVIDERS } from '@angular/common';
+import { Component, NgModule } from '@angular/core';
+import { } from '@angular/common';
 
-import { ROUTER_DIRECTIVES, Router } from '@angular/router';
-import {HTTP_PROVIDERS} from '@angular/http';
+import { Router } from '@angular/router';
+import {} from '@angular/http';
 
 import './rxjs-operators';
 
@@ -33,10 +33,9 @@ import {TextareaAutosize} from "./common/textarea-autosize.directive";
         '../../public/css/header.css', '../../public/css/footer.css',
         '../../public/css/common.css'
     ],
-    directives: [ROUTER_DIRECTIVES, TextareaAutosize],
     providers: [
-        FORM_PROVIDERS, // fixes 'No provider for RadioControlRegistry!'
-        HTTP_PROVIDERS,
+        //FORM_PROVIDERS, // fixes 'No provider for RadioControlRegistry!'
+        //HTTP_PROVIDERS,
         AuthGuard,
         MemoService,
         TripMemoService,
@@ -45,6 +44,9 @@ import {TextareaAutosize} from "./common/textarea-autosize.directive";
         EmployeeService,
         FileUploadService
     ]
+})
+@NgModule({
+    imports: [TextareaAutosize]
 })
 export class AppComponent {
 

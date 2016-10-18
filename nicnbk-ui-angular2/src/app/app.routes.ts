@@ -23,6 +23,13 @@ import {MonitoringAxiomaReportingComponent} from "./monitoring/monitoring-axioma
 import {LoginComponent} from "./authentication/login.component";
 
 import {AuthGuard} from "./auth.guard.service";
+import {HFDashboardComponent} from "./hf/hf.dashboard.component";
+import {HFFundSearchComponent} from "./hf/hf.fund-search.component";
+import {HFFundSelectionComponent} from "./hf/hf.fund-selection.component";
+import {HFPortfolioComponent} from "./hf/hf.portfolio.component";
+import {HFReportComponent} from "./hf/hf.report.component";
+import {HFFundProfileComponent} from "./hf/hf.fund-profile.component";
+import {HFManagerProfileComponent} from "./hf/hf.manager-profile.component.ts";
 
 
 const routes: Routes  = [
@@ -131,6 +138,42 @@ const routes: Routes  = [
     {
         path: 'monitoring/axioma',
         component: MonitoringAxiomaReportingComponent,
+        canActivate: [AuthGuard]
+    },
+    /* Hedge Funds ************************************/
+    {
+        path: 'hf/dashboard',
+        component: HFDashboardComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'hf/fundSearch',
+        component: HFFundSearchComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'hf/fundSelection',
+        component: HFFundSelectionComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'hf/portfolio',
+        component: HFPortfolioComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'hf/report',
+        component: HFReportComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'hf/fundProfile',
+        component: HFFundProfileComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'hf/managerProfile',
+        component: HFManagerProfileComponent,
         canActivate: [AuthGuard]
     },
 ];

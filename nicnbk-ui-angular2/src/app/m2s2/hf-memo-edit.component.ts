@@ -1,16 +1,14 @@
-import { Component, OnInit, ViewChild, AfterViewInit  } from '@angular/core';
+import { Component,NgModule, OnInit, ViewChild, AfterViewInit  } from '@angular/core';
 import {LookupService} from "../common/lookup.service";
 import {HFMemo} from "./model/hf-memo";
-import {SELECT_DIRECTIVES, SelectComponent} from "ng2-select";
+
 import {MemoService} from "./memo.service";
-import {ActivatedRoute, ROUTER_DIRECTIVES} from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
 import {Lookup} from "../common/lookup";
 //import {SelectItem} from "ng2-select/ng2-select";
 import {CommonComponent} from "../common/common.component";
 import {EmployeeService} from "../employee/employee.service";
 import {MemoAttachmentDownloaderComponent} from "./memo-attachment-downloader.component";
-
-import { TagInput } from 'ng2-tag-input';
 
 declare var $:any
 declare var Chart: any;
@@ -19,8 +17,10 @@ declare var Chart: any;
     selector: 'pe-memo-edit',
     templateUrl: './view/hf-memo-edit.component.html',
     styleUrls: [],
-    directives: [SELECT_DIRECTIVES, ROUTER_DIRECTIVES, TagInput],
     providers: [],
+})
+@NgModule({
+    imports: []
 })
 export class HedgeFundsMemoEditComponent extends CommonComponent implements OnInit{
 
@@ -34,13 +34,13 @@ export class HedgeFundsMemoEditComponent extends CommonComponent implements OnIn
     public uploadFiles: Array<any> = [];
 
     @ViewChild('attendeesSelect')
-    private attendeesSelect: SelectComponent;
+    private attendeesSelect;
 
     @ViewChild('strategySelect')
-    private strategySelect: SelectComponent;
+    private strategySelect;
 
     @ViewChild('geographySelect')
-    private geographySelect: SelectComponent;
+    private geographySelect;
 
     public strategyList: Array<any> = [];
     public geographyList: Array<any> = [];

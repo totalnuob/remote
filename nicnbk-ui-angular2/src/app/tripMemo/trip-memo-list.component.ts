@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {ROUTER_DIRECTIVES} from '@angular/router';
-import { FORM_DIRECTIVES } from '@angular/common';
+import {} from '@angular/router';
+import { } from '@angular/common';
 
 import {LookupService} from "../common/lookup.service";
 import {TripMemoSearchParams} from "./model/trip-memo-search-params";
@@ -15,7 +15,6 @@ declare var $:any
     selector: 'trip-memo-list',
     templateUrl: 'view/trip-memo-list.component.html',
     styleUrls: [],
-    directives: [ROUTER_DIRECTIVES, FORM_DIRECTIVES],
     providers: [],
 })
 export class TripMemoListComponent extends CommonComponent implements OnInit {

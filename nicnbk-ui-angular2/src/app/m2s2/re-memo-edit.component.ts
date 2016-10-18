@@ -1,13 +1,11 @@
-import { Component, OnInit, ViewChild, AfterViewInit  } from '@angular/core';
+import { Component, NgModule, OnInit, ViewChild, AfterViewInit  } from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+
 import {LookupService} from "../common/lookup.service";
 import {REMemo} from "./model/re-memo";
-import {SELECT_DIRECTIVES, SelectComponent} from "ng2-select";
 import {MemoService} from "./memo.service";
-import {ActivatedRoute, ROUTER_DIRECTIVES} from '@angular/router';
-//import {SelectItem} from "ng2-select/ng2-select";
 import {CommonComponent} from "../common/common.component";
 import {EmployeeService} from "../employee/employee.service";
-import { TagInput } from 'ng2-tag-input';
 
 declare var $:any
 declare var Chart: any;
@@ -16,8 +14,10 @@ declare var Chart: any;
     selector: 're-memo-edit',
     templateUrl: './view/re-memo-edit.component.html',
     styleUrls: [],
-    directives: [SELECT_DIRECTIVES, ROUTER_DIRECTIVES, TagInput ],
     providers: [],
+})
+@NgModule({
+    imports: []
 })
 export class RealEstateMemoEditComponent extends CommonComponent implements OnInit{
 
@@ -31,13 +31,13 @@ export class RealEstateMemoEditComponent extends CommonComponent implements OnIn
     memo = new REMemo;
 
     @ViewChild('attendeesSelect')
-    private attendeesSelect: SelectComponent;
+    private attendeesSelect;
 
     @ViewChild('strategySelect')
-    private strategySelect: SelectComponent;
+    private strategySelect;
 
     @ViewChild('geographySelect')
-    private geographySelect: SelectComponent;
+    private geographySelect;
 
     public strategyList: Array<any> = [];
     public geographyList: Array<any> = [];
