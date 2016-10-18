@@ -102,8 +102,7 @@
                     </div>
                     <div class="row top-buffer">
                         <label class="control-label col-md-3">Attendees (NIC):</label>
-                        <div class="col-md-6" *ngIf="attendeesList.length > 0">
-
+                        <div class="col-md-6" *ngIf="attendeesList?.length > 0">
                             <ng-select #attendeesSelect [initData]="memo.attendeesNIC"
                                        [multiple]="true"
                                        [items]="attendeesList"
@@ -238,8 +237,9 @@
                                    (selected)="selected($event)"
                                    (removed)="removed($event)"
                                    placeholder="No strategy selected"></ng-select>
+
                     </div>
-                    <label class="col-md-1">Geography</label>
+                   <label class="col-md-1">Geography</label>
                     <div class="col-md-2"  *ngIf="geographyList?.length > 0">
                         <!--<select id="geographySelect" class="form-control" multiple="multiple">-->
                             <!--<option value="NA">North America</option>-->
@@ -248,13 +248,14 @@
                             <!--<option value="ROW">Row</option>-->
                             <!--&lt;!&ndash;<option *ngFor="let item of geographyList" [value]="item.code">{{item.nameEn}}</option>&ndash;&gt;-->
                         <!--</select>-->
-                        <ng-select #geographySelect [data]="memo.geographies"
+                        <ng-select #geographySelect [initData]="memo.geographies"
                                    [multiple]="true"
                                    [items]="geographyList"
                                    (data)="refreshGeography($event)"
                                    (selected)="selected($event)"
                                    (removed)="removed($event)"
                                    placeholder="No geography selected"></ng-select>
+
                     </div>
                 </div>
             </div>
@@ -439,7 +440,7 @@
 
             <div class="col-md-12">
                 <div class="col-md-4">
-                    <tag-input [ngModel]="memo.tags" ngDefaultControl
+                    <tag-input [(ngModel)]='memo.tags' ngDefaultControl
                                (onRemove)="onItemRemoved($event)"
                                (onAdd)="onItemAdded($event)"
                                [placeholder]="options.placeholder"

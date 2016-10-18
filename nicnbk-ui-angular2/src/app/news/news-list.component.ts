@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
-import { ROUTER_DIRECTIVES } from '@angular/router';
+import { } from '@angular/router';
 import {News} from "./model/news";
 import {NEWS} from "./model/mock-news";
 import {NewsService} from "./news.service";
@@ -19,7 +19,6 @@ declare var $: any
         //'../../../public/css/star-rating/theme-krajee-svg.min.css',
         //'../../../public/css/star-rating/theme-krajee-uni.min.css',
     ],
-    directives: [ROUTER_DIRECTIVES],
     providers: [AuthenticationService],
     changeDetection: ChangeDetectionStrategy.Default // TODO: change to OnPush ??
 })

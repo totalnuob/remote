@@ -1,6 +1,6 @@
-import {Component, OnInit, ViewChild} from "@angular/core";
-import {ActivatedRoute, ROUTER_DIRECTIVES} from "@angular/router";
-import {SELECT_DIRECTIVES, SelectComponent} from "ng2-select";
+import {Component,NgModule, OnInit, ViewChild} from "@angular/core";
+import {ActivatedRoute} from "@angular/router";
+import { SelectComponent} from "ng2-select";
 import {TripMemo} from "./model/trip-memo";
 import {CommonComponent} from "../common/common.component";
 import {TripMemoService} from "./trip-memo.service";
@@ -14,8 +14,10 @@ declare var Chart: any;
     selector: 'trip-memo-edit',
     templateUrl: 'view/trip-memo-edit.component.html',
     styleUrls: [],
-    directives: [SELECT_DIRECTIVES, ROUTER_DIRECTIVES, MemoAttachmentDownloaderComponent],
     providers: [],
+})
+@NgModule({
+    imports: [MemoAttachmentDownloaderComponent]
 })
 export class TripMemoEditComponent extends CommonComponent implements OnInit{
 

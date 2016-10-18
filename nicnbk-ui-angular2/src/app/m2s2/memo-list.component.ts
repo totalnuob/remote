@@ -1,5 +1,5 @@
 import { Component, OnInit  } from '@angular/core';
-import { ROUTER_DIRECTIVES } from '@angular/router';
+import { } from '@angular/router';
 import {LookupService} from "../common/lookup.service";
 import {MemoSearchParams} from "./model/memo-search-params";
 import {MemoService} from "./memo.service";
@@ -14,7 +14,6 @@ var moment = require("moment");
 @Component({
     selector: 'm2s2-list',
     templateUrl: './view/memo-list.component.html',
-    directives: [ROUTER_DIRECTIVES],
     providers: [],
 })
 export class MemoListComponent  extends CommonComponent implements OnInit{

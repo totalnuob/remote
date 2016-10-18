@@ -1,11 +1,10 @@
 import {Component, ElementRef} from '@angular/core';
-import { ROUTER_DIRECTIVES} from '@angular/router';
+import { } from '@angular/router';
 import {AuthenticationService, User} from './authentication.service'
 
 @Component({
     selector: 'login-form',
     providers: [AuthenticationService],
-    directives: [ROUTER_DIRECTIVES],
     templateUrl: './view/login.component.html',
     styleUrls: ['../../../public/css/footer.css']
 })

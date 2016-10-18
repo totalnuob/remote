@@ -1,6 +1,7 @@
 package kz.nicnbk.service.impl.files;
 
 import kz.nicnbk.common.service.util.HashUtils;
+import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.api.files.FilesRepository;
 import kz.nicnbk.repo.model.files.Files;
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
@@ -99,6 +100,10 @@ public class FileServiceImpl implements FileService {
 
         //String type = getFileInfo(fileId).getType();
         String catalog = getFileCatalog(fileId);
+
+        if(StringUtils.isEmpty(catalog)){
+            return false;
+        }
 
         // delete file info
         filesRepository.delete(fileId);
