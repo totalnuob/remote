@@ -5,7 +5,7 @@ import { HttpModule } from '@angular/http';
 import { FormsModule } from '@angular/forms';
 
 import {SelectModule} from 'ng2-select';
-import { TagInputModule } from 'ng2-tag-input';
+//import { TagInputModule } from 'ng2-tag-input';
 
 import { appRouterProviders } from './app.routes';
 import {AuthGuard} from "./auth.guard.service";

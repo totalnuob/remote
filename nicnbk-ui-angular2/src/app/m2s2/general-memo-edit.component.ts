@@ -118,6 +118,11 @@ export class GeneralMemoEditComponent extends CommonComponent implements OnInit{
             format: 'DD-MM-YYYY'
         });
 
+        $('#timePicker').datetimepicker({
+            format: 'LT'
+        })
+
+
     }
 
     public selected(value:any):void {
@@ -136,6 +141,7 @@ export class GeneralMemoEditComponent extends CommonComponent implements OnInit{
 
         // TODO: ngModel date
         this.memo.meetingDate = $('#meetingDateValue').val();
+        this.memo.meetingTime = $('#meetingTimeValue').val();
 
         this.memoService.saveGeneral(this.memo)
             .subscribe(

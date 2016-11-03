@@ -1,9 +1,13 @@
 <div class="container">
     <div class="row top-buffer" >
         <div class="col-md-12">
-            <h4><span>Trip Memo</span></h4>
+            <ol class="breadcrumb">
+                <li><a [routerLink]="['/bt/list']">Business Trips</a></li>
+                <li class="active">General</li>
+            </ol>
         </div>
     </div>
+
     <div class="row top-buffer" >
         <div class="col-md-12">
             <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span></div>
@@ -14,50 +18,49 @@
             <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span></div>
         </div>
     </div>
-    <div class="row top-buffer" >
-        <div class="col-md-2">
-            <a [routerLink]="['/bt/list/']" class="btn btn-default pull-left">Back</a>
-        </div>
-    </div>
-    <div class="row top-buffer" >
-        <div class="col-md-12">
-            <div class="col-md-2">
-                <label class="checkbox-inline">
-                    <input type="radio" [ngModel]="tripMemo.tripType"
-                           (ngModelChange)="tripMemo.tripType='BUSINESS_TRIP'" name="tripType" value="BUSINESS_TRIP">
-                    <span>Business Trip</span>
-                </label>
-            </div>
-            <div class="col-md-2">
-                <label class="checkbox-inline">
-                <input type="radio" [ngModel]="tripMemo.tripType"
-                       (ngModelChange)="tripMemo.tripType='TRAINING'" name="tripType" value="TRAINING">
-                <span>Training</span>
-                </label>
-            </div>
-            <div class="col-md-2">
-                <label class="checkbox-inline">
-                <input type="radio" [ngModel]="tripMemo.tripType"
-                       (ngModelChange)="tripMemo.tripType='CONFERENCE'" name="tripType" value="CONFERENCE">
-                <span>Conference</span>
-                </label>
-            </div>
 
-            <div class="col-md-3">
-                <div class='input-group date col-md-2' id='meetingDate1' style="width: 100%">
-                    <input type='text' class="form-control" id="meetingDateValue" [(ngModel)]="tripMemo.meetingDateStart"/>
-                    <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar">Start date</span>
-                    </span>
-                </div>
+    <!--<div class="row top-buffer" >-->
+        <!--<div class="col-md-2">-->
+            <!--<a [routerLink]="['/bt/list/']" class="btn btn-default pull-left">Back</a>-->
+        <!--</div>-->
+    <!--</div>-->
+    <div class="row top-buffer">
+        <div class="col-md-2">
+            <label class="checkbox-inline">
+                <input type="radio" [ngModel]="tripMemo.tripType"
+                       (ngModelChange)="tripMemo.tripType='BUSINESS TRIP'" name="tripType" value="BUSINESS TRIP">
+                <span>Business Trip</span>
+            </label>
+        </div>
+        <div class="col-md-2">
+            <label class="checkbox-inline">
+            <input type="radio" [ngModel]="tripMemo.tripType"
+                   (ngModelChange)="tripMemo.tripType='TRAINING'" name="tripType" value="TRAINING">
+            <span>Training</span>
+            </label>
+        </div>
+        <div class="col-md-2">
+            <label class="checkbox-inline">
+            <input type="radio" [ngModel]="tripMemo.tripType"
+                   (ngModelChange)="tripMemo.tripType='CONFERENCE'" name="tripType" value="CONFERENCE">
+            <span>Conference</span>
+            </label>
+        </div>
+
+        <div class="col-md-3">
+            <div class='input-group date col-md-2' id='meetingDate1' style="width: 100%">
+                <input type='text' class="form-control" id="meetingDateValue" [(ngModel)]="tripMemo.meetingDateStart"/>
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar">Start date</span>
+                </span>
             </div>
-            <div class="col-md-3">
-                <div class='input-group date col-md-2' id='meetingDate2' style="width: 100%">
-                    <input type='text' class="form-control" id="meetingDateValue2" [(ngModel)]="tripMemo.meetingDateEnd"/>
-                    <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar">End date</span>
-                    </span>
-                </div>
+        </div>
+        <div class="col-md-3">
+            <div class='input-group date col-md-2' id='meetingDate2' style="width: 100%">
+                <input type='text' class="form-control" id="meetingDateValue2" [(ngModel)]="tripMemo.meetingDateEnd"/>
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar">End date</span>
+                </span>
             </div>
         </div>
     </div>
@@ -111,36 +114,34 @@
 
         </div>
     </div>
-    <div class="row top-buffer">
-        <div class="col-md-12" style="background-color:#5bc0de;">
-            <div>
-                <div class="col-md-2">
-                    <span>Description</span>
-                </div>
-                <div class="col-md-9">&nbsp;</div>
 
+    <div class="row top-buffer withpadding">
+        <div class="col-md-12" style="background-color:#5bc0de;">
+            <div class="col-md-6">
+                <span>Description</span>
             </div>
+            <div class="col-md-5">&nbsp;</div>
         </div>
     </div>
+
     <div class="row top-buffer">
-        <div class="col-md-12 nopadding">
+        <div class="col-md-12">
             <textarea type="text" class="form-control" rows="10" [(ngModel)]="tripMemo.description"></textarea>
         </div>
     </div>
     <br/>
     <div class="row top-buffer">
-        <div class="col-md-12">
+        <div class="col-md-6">
             <div class="jumbotron" style="padding-top: 5px; padding-bottom: 5px;">
                 <div class="row">
                     <label>ATTACHMENTS</label>
                 </div>
 
                 <div class="row">
-                    <label class="btn btn-primary col-md-1" for="attachmentFile">
+                    <label class="btn btn-primary col-md-2" for="attachmentFile">
                         <input type="file" id="attachmentFile" (change)="onFileChange($event)" name="file" multiple style="display:none;"/>
                         Add
                     </label>
-
                     <div class="col-md-6">
                         <div class="row" *ngFor="let newFile of uploadFiles" class="label label-info" style="display: table;">
                             <span>{{newFile.name}}</span>
@@ -161,6 +162,7 @@
                     </div>
                 </div>
             </div>
+        </div>
         <div class="col-md-6">
             <label class="col-md-2">Author:</label>
             <div class="col-md-4">

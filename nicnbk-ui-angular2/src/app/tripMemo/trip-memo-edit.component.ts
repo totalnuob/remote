@@ -60,7 +60,7 @@ export class TripMemoEditComponent extends CommonComponent implements OnInit{
                             error => this.errorMessage = "Error loading trip memo"
                         );
                 }else{
-                    this.tripMemo.tripType = "BUSINESS_TRIP";
+                    this.tripMemo.tripType = "BUSINESS TRIP";
                 }
             });
     }
