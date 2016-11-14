@@ -18,7 +18,7 @@ import {MonitoringHedgeFundsComponent} from "./monitoring/monitoring-hedge-funds
 import {MonitoringLiquidPortfolioComponent} from "./monitoring/monitoring-liquid-portfolio.component";
 import {MonitoringPrivateEquityComponent} from "./monitoring/monitoring-private-equity.component";
 import {MonitoringMacroMonitorComponent} from "./monitoring/monitoring-macro-monitor.component";
-import {MonitoringAxiomaReportingComponent} from "./monitoring/monitoring-axioma-reporting.component";
+import {RiskManagementAxiomaReportingComponent} from "./riskmanagement/riskmanagement-axioma-reporting.component";
 
 import {LoginComponent} from "./authentication/login.component";
 
@@ -137,7 +137,7 @@ const routes: Routes  = [
     },
     {
         path: 'monitoring/axioma',
-        component: MonitoringAxiomaReportingComponent,
+        component: RiskManagementAxiomaReportingComponent,
         canActivate: [AuthGuard]
     },
     /* Hedge Funds ************************************/
