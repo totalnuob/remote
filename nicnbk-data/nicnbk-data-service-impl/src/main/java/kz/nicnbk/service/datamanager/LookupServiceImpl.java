@@ -1,14 +1,14 @@
 package kz.nicnbk.service.datamanager;
 
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
-import kz.nicnbk.repo.api.lookup.CurrencyRepository;
-import kz.nicnbk.repo.api.lookup.GeographyRepository;
-import kz.nicnbk.repo.api.lookup.StrategyRepository;
+import kz.nicnbk.repo.api.lookup.*;
 import kz.nicnbk.repo.model.base.BaseTypeEntity;
+import kz.nicnbk.repo.model.common.Country;
 import kz.nicnbk.repo.model.common.Currency;
 import kz.nicnbk.repo.model.common.Geography;
 import kz.nicnbk.repo.model.common.Strategy;
 import kz.nicnbk.repo.model.files.FilesType;
+import kz.nicnbk.repo.model.hf.*;
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.repo.model.lookup.MeetingTypeLookup;
 import kz.nicnbk.repo.model.lookup.NewsTypeLookup;
@@ -36,6 +36,38 @@ public class LookupServiceImpl implements LookupService {
 
     @Autowired
     private CurrencyRepository currencyRepository;
+
+    @Autowired
+    private ManagerTypeRepository managerTypeRepository;
+
+    @Autowired
+    private ManagerStatusRepository managerStatusRepository;
+
+    @Autowired
+    private CountryRepository countryRepository;
+
+    @Autowired
+    private LegalStructureRepository legalStructureRepository;
+
+    @Autowired
+    private SubscriptionFrequencyRepository subscriptionFrequencyRepository;
+
+    @Autowired
+    private ManagementFeeTypeRepository managementFeeTypeRepository;
+
+    @Autowired
+    private PerformanceFeeTypeRepository performanceFeeTypeRepository;
+
+    @Autowired
+    private PerformanceFeePayFrequencyRepository performanceFeePayFrequencyRepository;
+
+    @Autowired
+    private RedemptionFrequencyTypeRepository redemptionFrequencyTypeRepository;
+
+    @Autowired
+    private RedemptionNotificationPeriodRepository redemptionNotificationPeriodRepository;
+
+
 
     @Override
     public <T extends BaseTypeEntity> T findByTypeAndCode(Class<T> clazz, String code) {
@@ -162,6 +194,108 @@ public class LookupServiceImpl implements LookupService {
             }
 
         }
+
+        if(clazz.getSimpleName().equals("ManagerType")){
+            Iterator<ManagerType> iterator = managerTypeRepository.findAll().iterator();
+            while(iterator.hasNext()){
+                ManagerType managerType = iterator.next();
+                if(managerType.getCode().equals(code)){
+                    return (T) managerType;
+                };
+            }
+
+        }
+
+        if(clazz.getSimpleName().equals("FundStatus")){
+            Iterator<FundStatus> iterator = managerStatusRepository.findAll().iterator();
+            while(iterator.hasNext()){
+                FundStatus type = iterator.next();
+                if(type.getCode().equals(code)){
+                    return (T) type;
+                };
+            }
+        }
+
+        if(clazz.getSimpleName().equals("Country")){
+            Iterator<Country> iterator = countryRepository.findAll().iterator();
+            while(iterator.hasNext()){
+                Country type = iterator.next();
+                if(type.getCode().equals(code)){
+                    return (T) type;
+                };
+            }
+        }
+
+        if(clazz.getSimpleName().equals("LegalStructure")){
+            Iterator<LegalStructure> iterator = legalStructureRepository.findAll().iterator();
+            while(iterator.hasNext()){
+                LegalStructure type = iterator.next();
+                if(type.getCode().equals(code)){
+                    return (T) type;
+                };
+            }
+        }
+
+        if(clazz.getSimpleName().equals("SubscriptionFrequency")){
+            Iterator<SubscriptionFrequency> iterator = this.subscriptionFrequencyRepository.findAll().iterator();
+            while(iterator.hasNext()){
+                SubscriptionFrequency type = iterator.next();
+                if(type.getCode().equals(code)){
+                    return (T) type;
+                };
+            }
+        }
+
+        if(clazz.getSimpleName().equals("ManagementFeeType")){
+            Iterator<ManagementFeeType> iterator = this.managementFeeTypeRepository.findAll().iterator();
+            while(iterator.hasNext()){
+                ManagementFeeType type = iterator.next();
+                if(type.getCode().equals(code)){
+                    return (T) type;
+                };
+            }
+        }
+
+        if(clazz.getSimpleName().equals("PerformanceFeeType")){
+            Iterator<PerformanceFeeType> iterator = this.performanceFeeTypeRepository.findAll().iterator();
+            while(iterator.hasNext()){
+                PerformanceFeeType type = iterator.next();
+                if(type.getCode().equals(code)){
+                    return (T) type;
+                };
+            }
+        }
+
+        if(clazz.getSimpleName().equals("PerformanceFeePayFrequencyType")){
+            Iterator<PerformanceFeePayFrequencyType> iterator = this.performanceFeePayFrequencyRepository.findAll().iterator();
+            while(iterator.hasNext()){
+                PerformanceFeePayFrequencyType type = iterator.next();
+                if(type.getCode().equals(code)){
+                    return (T) type;
+                };
+            }
+        }
+
+        if(clazz.getSimpleName().equals("RedemptionFrequencyType")){
+            Iterator<RedemptionFrequencyType> iterator = this.redemptionFrequencyTypeRepository.findAll().iterator();
+            while(iterator.hasNext()){
+                RedemptionFrequencyType type = iterator.next();
+                if(type.getCode().equals(code)){
+                    return (T) type;
+                };
+            }
+        }
+
+        if(clazz.getSimpleName().equals("RedemptionNotificationPeriodType")){
+            Iterator<RedemptionNotificationPeriodType> iterator = this.redemptionNotificationPeriodRepository.findAll().iterator();
+            while(iterator.hasNext()){
+                RedemptionNotificationPeriodType type = iterator.next();
+                if(type.getCode().equals(code)){
+                    return (T) type;
+                };
+            }
+        }
+
         return null;
     }
 

@@ -1,0 +1,2 @@
+INSERT INTO hf_redemption_freq_type(id, code, name_en, name_ru, name_kz) VALUES(1, 'TYPE1', 'Type 1', '', '');
+INSERT INTO hf_redemption_freq_type(id, code, name_en, name_ru, name_kz) VALUES(2, 'TYPE2', 'Type 2', '', '');

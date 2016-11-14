@@ -100,4 +100,154 @@ export class LookupService extends CommonService{
             .map(this.extractDataList)
             .catch(this.handleError);
     }
+
+    getManagerTypes(){
+        var list = [];
+        var lookup = new Lookup;
+        lookup.code = 'FOF';
+        lookup.nameEn = "Fund of Funds";
+        list.push(lookup);
+
+        lookup = new Lookup;
+        lookup.code = 'MANAGER';
+        lookup.nameEn = "Manager Fund";
+        list.push(lookup);
+
+        return Promise.resolve(list);
+    }
+
+    getManagerStatuses(){
+        var list = [];
+        var lookup = new Lookup;
+        lookup.code = 'OPEN_ALL';
+        lookup.nameEn = "Open to all";
+        list.push(lookup);
+
+        lookup = new Lookup;
+        lookup.code = 'CLOSED';
+        lookup.nameEn = "Closed";
+        list.push(lookup);
+
+        return Promise.resolve(list);
+    }
+
+    getLegalStructures(){
+        var list = [];
+        var lookup = new Lookup;
+        lookup.code = 'LLP';
+        lookup.nameEn = "Limited Liability Partnership";
+        list.push(lookup);
+
+        lookup = new Lookup;
+        lookup.code = 'LLC';
+        lookup.nameEn = "Limited Liability Company";
+        list.push(lookup);
+
+        return Promise.resolve(list);
+    }
+
+    getDomicileCountries(){
+        var list = [];
+        var lookup = new Lookup;
+        lookup.code = 'US';
+        lookup.nameEn = "United States";
+        list.push(lookup);
+
+        lookup = new Lookup;
+        lookup.code = 'UK';
+        lookup.nameEn = "United Kingdom";
+        list.push(lookup);
+
+        return Promise.resolve(list);
+    }
+
+    getManagementFeeTypes(){
+        var list = [];
+        var lookup = new Lookup;
+        lookup.code = 'TYPE1';
+        lookup.nameEn = "Mng Fee Type 1";
+        list.push(lookup);
+
+        lookup = new Lookup;
+        lookup.code = 'TYPE2';
+        lookup.nameEn = "Mng Fee Type 2";
+        list.push(lookup);
+
+        return Promise.resolve(list);
+    }
+
+    getPerformanceFeeTypes(){
+        var list = [];
+        var lookup = new Lookup;
+        lookup.code = 'TYPE1';
+        lookup.nameEn = "Perf Fee Type 1";
+        list.push(lookup);
+
+        lookup = new Lookup;
+        lookup.code = 'TYPE2';
+        lookup.nameEn = "Perf Fee Type 2";
+        list.push(lookup);
+
+        return Promise.resolve(list);
+    }
+
+    getPerformanceFeePayFrequencyTypes(){
+        var list = [];
+        var lookup = new Lookup;
+        lookup.code = 'TYPE1';
+        lookup.nameEn = "Perf Fee Pay Freq Type 1";
+        list.push(lookup);
+
+        lookup = new Lookup;
+        lookup.code = 'TYPE2';
+        lookup.nameEn = "Perf Fee Pay Freq Type 2";
+        list.push(lookup);
+
+        return Promise.resolve(list);
+    }
+
+    getRedemptionFrequencyTypes(){
+        var list = [];
+        var lookup = new Lookup;
+        lookup.code = 'TYPE1';
+        lookup.nameEn = "Redemption Freq Type 1";
+        list.push(lookup);
+
+        lookup = new Lookup;
+        lookup.code = 'TYPE2';
+        lookup.nameEn = "Redemption Freq Type 2";
+        list.push(lookup);
+
+        return Promise.resolve(list);
+    }
+
+    getRedemptionNotificationPeriodTypes(){
+        var list = [];
+        var lookup = new Lookup;
+        lookup.code = 'TYPE1';
+        lookup.nameEn = "Notif Period Type 1";
+        list.push(lookup);
+
+        lookup = new Lookup;
+        lookup.code = 'TYPE2';
+        lookup.nameEn = "Notif Period Type 2";
+        list.push(lookup);
+
+        return Promise.resolve(list);
+    }
+
+    getSubscriptionFrequencyTypes(){
+        var list = [];
+        var lookup = new Lookup;
+        lookup.code = 'TYPE1';
+        lookup.nameEn = "Subscription Type 1";
+        list.push(lookup);
+
+        lookup = new Lookup;
+        lookup.code = 'TYPE2';
+        lookup.nameEn = "Subscription Type 2";
+        list.push(lookup);
+
+        return Promise.resolve(list);
+    }
 }

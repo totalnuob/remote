@@ -3,7 +3,7 @@ import { } from '@angular/router';
 import {LookupService} from "../common/lookup.service";
 import {MemoSearchParams} from "./model/memo-search-params";
 import {MemoService} from "./memo.service";
-import {CommonComponent} from "../common/common.component";
+import {CommonFormViewComponent} from "../common/common.component";
 import {Memo} from "./model/memo";
 import {MemoSearchResults} from "./model/memo-search-results";
 
@@ -16,7 +16,7 @@ var moment = require("moment");
     templateUrl: './view/memo-list.component.html',
     providers: [],
 })
-export class MemoListComponent  extends CommonComponent implements OnInit{
+export class MemoListComponent  extends CommonFormViewComponent implements OnInit{
 
     searchParams = new MemoSearchParams;
 

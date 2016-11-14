@@ -70,4 +70,87 @@
         </field-exclude>
     </mapping>
 
+    <!-- HEDGE FUNDS-->
+    <mapping>
+        <class-a>kz.nicnbk.service.dto.hf.HFManagerDto</class-a>
+        <class-b>kz.nicnbk.repo.model.hf.HFManager</class-b>
+        <field-exclude>
+            <a>managerType</a>
+            <b>managerType</b>
+        </field-exclude>
+        <field-exclude>
+            <a>strategy</a>
+            <b>strategy</b>
+        </field-exclude>
+        <!--<field-exclude>-->
+            <!--<a>status</a>-->
+            <!--<b>status</b>-->
+        <!--</field-exclude>-->
+        <!--<field-exclude>-->
+            <!--<a>legalStructure</a>-->
+            <!--<b>legalStructure</b>-->
+        <!--</field-exclude>-->
+        <field-exclude>
+            <a>domicileCountry</a>
+            <b>domicileCountry</b>
+        </field-exclude>
+    </mapping>
+
+    <mapping>
+        <class-a>kz.nicnbk.service.dto.hf.HedgeFundDto</class-a>
+        <class-b>kz.nicnbk.repo.model.hf.HedgeFund</class-b>
+        <field-exclude>
+            <a>strategy</a>
+            <b>strategy</b>
+        </field-exclude>
+        <field-exclude>
+            <a>geography</a>
+            <b>geography</b>
+        </field-exclude>
+        <field-exclude>
+            <a>shareClassCurrency</a>
+            <b>shareClassCurrency</b>
+        </field-exclude>
+        <field-exclude>
+            <a>status</a>
+            <b>status</b>
+        </field-exclude>
+        <field-exclude>
+            <a>legalStructure</a>
+            <b>legalStructure</b>
+        </field-exclude>
+        <field-exclude>
+            <a>domicileCountry</a>
+            <b>domicileCountry</b>
+        </field-exclude>
+        <field-exclude>
+            <a>investmentCurrency</a>
+            <b>investmentCurrency</b>
+        </field-exclude>
+        <field-exclude>
+            <a>subscriptionFrequency</a>
+            <b>subscriptionFrequency</b>
+        </field-exclude>
+        <field-exclude>
+            <a>managementFeeType</a>
+            <b>managementFeeType</b>
+        </field-exclude>
+        <field-exclude>
+            <a>performanceFeeType</a>
+            <b>performanceFeeType</b>
+        </field-exclude>
+        <field-exclude>
+            <a>performanceFeePayFrequency</a>
+            <b>performanceFeePayFrequency</b>
+        </field-exclude>
+        <field-exclude>
+            <a>redemptionFrequency</a>
+            <b>redemptionFrequency</b>
+        </field-exclude>
+        <field-exclude>
+            <a>redemptionNotificationPeriod</a>
+            <b>redemptionNotificationPeriod</b>
+        </field-exclude>
+    </mapping>
+
 </mappings>

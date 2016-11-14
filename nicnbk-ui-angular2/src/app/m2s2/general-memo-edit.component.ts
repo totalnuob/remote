@@ -2,7 +2,7 @@ import { Component,NgModule, OnInit, ViewChild  } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 
 import {GeneralMemo} from "./model/general-memo";
-import {CommonComponent} from "../common/common.component";
+import {CommonFormViewComponent} from "../common/common.component";
 import {MemoService} from "./memo.service";
 import {EmployeeService} from "../employee/employee.service";
 import {MemoAttachmentDownloaderComponent} from "./memo-attachment-downloader.component";
@@ -19,7 +19,7 @@ declare var Chart: any;
 @NgModule({
     imports: []
 })
-export class GeneralMemoEditComponent extends CommonComponent implements OnInit{
+export class GeneralMemoEditComponent extends CommonFormViewComponent implements OnInit{
 
     private sub: any;
     private memoIdParam: number;

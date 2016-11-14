@@ -7,7 +7,8 @@ import {Lookup} from "../common/lookup";
 import {EmployeeService} from "../employee/employee.service";
 
 import {FileUploadService} from "../upload/file.upload.service";
-import {CommonComponent} from "../common/common.component";
+import {CommonFormViewComponent} from "../common/common.component";
+import {SaveResponse} from "../common/save-response.";
 
 declare var $:any
 declare var Chart: any;
@@ -21,7 +22,7 @@ declare var Chart: any;
 @NgModule({
     imports: []
 })
-export class PrivateEquityMemoEditComponent extends CommonComponent implements OnInit{
+export class PrivateEquityMemoEditComponent extends CommonFormViewComponent implements OnInit{
 
     public sub: any;
     public memoIdParam: number;
@@ -225,7 +226,7 @@ export class PrivateEquityMemoEditComponent extends CommonComponent implements O
 
         this.memoService.savePE(this.memo)
             .subscribe(
-                response  => {
+                (response: SaveResponse)  => {
                     this.memo.id = response.entityId;
                     this.memo.creationDate = response.creationDate;
 

@@ -5,7 +5,7 @@ import { } from '@angular/common';
 import {LookupService} from "../common/lookup.service";
 import {TripMemoSearchParams} from "./model/trip-memo-search-params";
 import {TripMemoService} from "./trip-memo.service";
-import {CommonComponent} from "../common/common.component";
+import {CommonFormViewComponent} from "../common/common.component";
 import {TripMemo} from "./model/trip-memo";
 import {TripMemoSearchResults} from "./model/trip-memo-search-results";
 
@@ -17,7 +17,7 @@ declare var $:any
     styleUrls: [],
     providers: [],
 })
-export class TripMemoListComponent extends CommonComponent implements OnInit {
+export class TripMemoListComponent extends CommonFormViewComponent implements OnInit {
     searchParams = new TripMemoSearchParams;
 
     tripMemoSearchResult: TripMemoSearchResults;

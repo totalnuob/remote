@@ -6,7 +6,7 @@ import {MemoService} from "./memo.service";
 import {ActivatedRoute} from '@angular/router';
 import {Lookup} from "../common/lookup";
 //import {SelectItem} from "ng2-select/ng2-select";
-import {CommonComponent} from "../common/common.component";
+import {CommonFormViewComponent} from "../common/common.component";
 import {EmployeeService} from "../employee/employee.service";
 import {MemoAttachmentDownloaderComponent} from "./memo-attachment-downloader.component";
 
@@ -22,7 +22,7 @@ declare var Chart: any;
 @NgModule({
     imports: []
 })
-export class HedgeFundsMemoEditComponent extends CommonComponent implements OnInit{
+export class HedgeFundsMemoEditComponent extends CommonFormViewComponent implements OnInit{
 
     private sub: any;
     private memoIdParam: number;

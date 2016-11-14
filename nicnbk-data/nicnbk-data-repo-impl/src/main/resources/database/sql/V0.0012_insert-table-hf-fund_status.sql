@@ -1,0 +1,2 @@
+INSERT INTO hf_fund_status(id, code, name_en, name_ru, name_kz) VALUES(1, 'OPEN_ALL', 'Open to all', '', '');
+INSERT INTO hf_fund_status(id, code, name_en, name_ru, name_kz) VALUES(2, 'CLOSED', 'Closed', '', '');

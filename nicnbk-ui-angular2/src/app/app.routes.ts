@@ -167,12 +167,19 @@ const routes: Routes  = [
         canActivate: [AuthGuard]
     },
     {
-        path: 'hf/fundProfile',
+        // existing fund
+        path: 'hf/fundProfile/:id',
         component: HFFundProfileComponent,
         canActivate: [AuthGuard]
     },
     {
-        path: 'hf/managerProfile',
+        // new fund
+        path: 'hf/fundProfile/:id/:managerId',
+        component: HFFundProfileComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'hf/managerProfile/:id',
         component: HFManagerProfileComponent,
         canActivate: [AuthGuard]
     },

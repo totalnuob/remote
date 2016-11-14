@@ -1,6 +1,8 @@
 import {Lookup} from "../common/lookup";
 
-export class CommonComponent {
+declare var $:any
+
+export class CommonFormViewComponent {
 
     successMessage: string;
     errorMessage: string;
@@ -30,5 +32,13 @@ export class CommonComponent {
                 break;
             }
         }
+    }
+
+    postAction(successMessage, errorMessage){
+        this.successMessage = successMessage;
+        this.errorMessage = errorMessage;
+
+        // TODO: non jQuery
+        $('html, body').animate({ scrollTop: 0 }, 'fast');
     }
 }

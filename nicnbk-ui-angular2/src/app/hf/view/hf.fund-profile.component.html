@@ -1,4 +1,17 @@
 <div class="container">
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+            </div>
+        </div>
+    </div>
+
     <ul class="nav nav-tabs">
         <li class="active">
             <a data-toggle="tab" href="#overview">OVERVIEW</a>
@@ -19,135 +32,483 @@
             <br/>
             <div class="row">
                 <div class="col-md-9">
-                    <h3>Grosvenor Capital Management</h3>
+                    <input type="text" class="form-control" placeholder="Enter fund name..."
+                           [(ngModel)]="fund.name"/>
                 </div>
             </div>
             <br/>
 
-            <!--LEFT -->
-            <div>
-                <table class=" col-md-4 table-striped table-condensed">
+            <!-- LEFT PANEL -->
+            <div class="col-md-4">
+                <div class="row">
+                    <table class=" table-striped table-condensed">
+                        <h4>Manager Details</h4>
+                        <tr>
+                            <td class="col-md-1">Manager Name</td>
+                            <td class="col-md-3">
+                                <a [routerLink]="['/hf/managerProfile/', fund?.manager?.id]">{{fund?.manager?.name}}</a></td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-1">Manager Type</td>
+                            <td class="col-md-3">{{fund?.manager?.type}}</td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-1">Manager Strategy</td>
+                            <td class="col-md-3">{{fund?.manager?.strategy}}</td>
+                        </tr>
+                        <!--<tr>-->
+                        <!--<td class="col-md-1">Status</td>-->
+                        <!--<td class="col-md-3">{{fund?.manager?.status}}</td>-->
+                        <!--</tr>-->
+                        <tr>
+                            <td class="col-md-1">Inception</td>
+                            <td class="col-md-3">{{fund?.manager?.inception}}
+                            </td>
+                        </tr>
+                        <!--<tr>-->
+                        <!--<td class="col-md-1">Legal Structure</td>-->
+                        <!--<td class="col-md-3">{{fund?.manager?.legalStructure}}</td>-->
+                        <!--</tr>-->
+                        <tr>
+                            <td class="col-md-1">Domicile Country</td>
+                            <td class="col-md-3">{{fund?.manager?.domicileStructure}}</td>
+                        </tr>
+                        <!--</table>-->
 
+                        <!--<div class=" col-md-1">&nbsp;</div>-->
+                        <!--<table class=" col-md-6 table-striped table-condensed">-->
+                        <!--<h4>Contacts</h4>-->
+                        <!--<tr>-->
+                        <!--<td class="col-md-1">Manager Name</td>-->
+                        <!--<td class="col-md-3">Gorsvenor Capital Management</td>-->
+                        <!--</tr>-->
+                        <tr>
+                            <td class="col-md-1">Fund Managers</td>
+                            <td class="col-md-3"></td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-1">Headquarters</td>
+                            <td class="col-md-3"></td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-1">Contact person</td>
+                            <td class="col-md-3"></td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-1">Telephone</td>
+                            <td class="col-md-3"></td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-1">Fax</td>
+                            <td class="col-md-3"></td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-1">Website</td>
+                            <td class="col-md-3"></td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-1">Email</td>
+                            <td class="col-md-3"></td>
+                        </tr>
+                    <!--</table>-->
+                <!--</div>-->
+                <!--<div class="row">-->
+                    <!--<table class=" table-striped table-condensed">-->
+                        <h4>Fund Strategy</h4>
+                        <tr>
+                            <td class="col-md-4" colspan="2">
+                                <textarea style="width: 100%" [(ngModel)]="fund.strategyDescription"></textarea>
+                            </td>
+                        </tr>
+                    <!--</table>-->
+                <!--</div>-->
+
+                <!--<div class="row">-->
+                    <!--<table class="table-striped table-condensed">-->
+                        <tr>
+                            <td class="col-md-1">Fund size</td>
+                            <td class="col-md-3">
+                                <input type="text" [(ngModel)]="fund.size"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-1">Status</td>
+                            <td class="col-md-3">
+                                <select style="width: 100%" [(ngModel)]="fund.status">
+                                    <option value="0">---</option>
+                                    <option *ngFor="let item of fundStatusLookup" [value]="item.code">{{item.nameEn}}</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-1">Strategy</td>
+                            <td class="col-md-3">
+                                <select style="width: 100%" [(ngModel)]="fund.strategy">
+                                    <option value="0">---</option>
+                                    <option *ngFor="let item of strategyLookup" [value]="item.code">{{item.nameEn}}</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-1">Geography</td>
+                            <td class="col-md-3">
+                                <select style="width: 100%" [(ngModel)]="fund.geography">
+                                    <option value="0">---</option>
+                                    <option *ngFor="let item of geographyLookup" [value]="item.code">{{item.nameEn}}</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-1">Share Class Currency</td>
+                            <td class="col-md-3">
+                                <select style="width: 100%" [(ngModel)]="fund.shareClassCurrency">
+                                    <option value="0">---</option>
+                                    <option *ngFor="let item of currencyLookup" [value]="item.code">{{item.nameEn}}</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-1">Inception Date</td>
+                            <td class="col-md-3">
+                                <input type="text" [(ngModel)]="fund.inception"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-1">Legal Structure</td>
+                            <td class="col-md-3">
+                                <select style="width: 100%" [(ngModel)]="fund.legalStructure">
+                                    <option value="0">---</option>
+                                    <option *ngFor="let item of legalStructureLookup" [value]="item.code">{{item.nameEn}}</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-1">Domicile Country</td>
+                            <td class="col-md-3">
+                                <select style="width: 100%" [(ngModel)]="fund.domicileCountry">
+                                    <option value="0">---</option>
+                                    <option *ngFor="let item of domicileCountryLookup" [value]="item.code">{{item.nameEn}}</option>
+                                </select>
+                            </td>
+                        </tr>
+                    <!--</table>-->
+                <!--</div>-->
+                <!--<div class="row">-->
+                    <!--<table class="table-striped table-condensed">-->
+                        <h4>Subscriptions</h4>
+                        <tr>
+                            <td class="col-md-1">Min Investment</td>
+                            <td class="col-md-3"><input type="text" [(ngModel)]="fund.minInvestment"/></td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-1">Currency</td>
+                            <td class="col-md-3">
+                                <select style="width: 100%" [(ngModel)]="fund.investmentCurrency">
+                                    <option value="0">---</option>
+                                    <option *ngFor="let item of currencyLookup" [value]="item.code">{{item.nameEn}}</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-1">Frequency</td>
+                            <td class="col-md-3">
+                                <select style="width: 100%" [(ngModel)]="fund.subscriptionFrequency">
+                                    <option value="0">---</option>
+                                    <option *ngFor="let item of subscriptionFrequencyTypeLookup" [value]="item.code">{{item.nameEn}}</option>
+                                </select></td>
+                        </tr>
+
+                        <h4>Fees</h4>
+                        <tr>
+                            <td class="col-md-1">Management Fee Type</td>
+                            <td class="col-md-3">
+                                <select style="width: 100%" [(ngModel)]="fund.managementFeeType">
+                                    <option value="0">---</option>
+                                    <option *ngFor="let item of managementFeeTypeLookup" [value]="item.code">{{item.nameEn}}</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-1">Management Fee</td>
+                            <td class="col-md-3"><input type="text" [(ngModel)]="fund.managementFee"/></td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-1">Performance Fee Type</td>
+                            <td class="col-md-3">
+                                <select style="width: 100%" [(ngModel)]="fund.performanceFeeType">
+                                    <option value="0">---</option>
+                                    <option *ngFor="let item of performanceFeeTypeLookup" [value]="item.code">{{item.nameEn}}</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-1">Performance Fee</td>
+                            <td class="col-md-3"><input type="text" [(ngModel)]="fund.performanceFee"/></td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-1">Performance Fee Pay Freq</td>
+                            <td class="col-md-3">
+                                <select style="width: 100%" [(ngModel)]="fund.performanceFeePayFrequency">
+                                    <option value="0">---</option>
+                                    <option *ngFor="let item of performanceFeePayFrequencyLookup" [value]="item.code">{{item.nameEn}}</option>
+                                </select>
+                            </td>
+                        </tr>
+
+                        <h4>Redemptions</h4>
+                        <tr>
+                            <td class="col-md-1">Frequency</td>
+                            <td class="col-md-3">
+                                <select style="width: 100%" [(ngModel)]="fund.redemptionFrequency">
+                                    <option value="0">---</option>
+                                    <option *ngFor="let item of redemptionFrequencyLookup" [value]="item.code">{{item.nameEn}}</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-1">Notification Period</td>
+                            <td class="col-md-3">
+                                <select style="width: 100%" [(ngModel)]="fund.redemptionNotificationPeriod">
+                                    <option value="0">---</option>
+                                    <option *ngFor="let item of redemptionNotificationPeriodLookup" [value]="item.code">{{item.nameEn}}</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- RIGHT PANEL -->
+            <div class="col-md-8">
+                <table class="table table-striped table-bordered table-hover table-condensed">
+                    <!--<h4>Contacts</h4>-->
                     <!--<tr>-->
                     <!--<td class="col-md-1">Manager Name</td>-->
                     <!--<td class="col-md-3">Gorsvenor Capital Management</td>-->
                     <!--</tr>-->
                     <tr>
-                        <td class="col-md-1">Manager Type</td>
-                        <td class="col-md-3">
-                            <select style="width: 100%">
-                                <option value="0">---</option>
-                                <option value="0">Fund of funds</option>
-                                <option value="0">Hedge Fund</option>
-                            </select>
-                        </td>
+                        <td>&nbsp;</td>
+                        <td>{{currentYear - 9}}</td>
+                        <td>{{currentYear - 8}}</td>
+                        <td>{{currentYear - 7}}</td>
+                        <td>{{currentYear - 6}}</td>
+                        <td>{{currentYear - 5}}</td>
+                        <td>{{currentYear - 4}}</td>
+                        <td>{{currentYear - 3}}</td>
+                        <td>{{currentYear - 2}}</td>
+                        <td>{{currentYear - 1}}</td>
+                        <td>{{currentYear}}</td>
                     </tr>
-                    <tr>
-                        <td class="col-md-1">Strategy</td>
-                        <td class="col-md-3">
-                            <select style="width: 100%">
-                                <option value="0">---</option>
-                                <option value="0">option 1</option>
-                                <option value="0">option 2</option>
-                                <option value="0">option 3</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-1">Manager Type</td>
-                        <td class="col-md-3">
-                            <select style="width: 100%">
-                                <option value="0">---</option>
-                                <option value="0">option 1</option>
-                                <option value="0">option 2</option>
-                                <option value="0">option 3</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-1">Status</td>
-                        <td class="col-md-3">
-                            <select style="width: 100%">
-                                <option value="0">---</option>
-                                <option value="0">option 1</option>
-                                <option value="0">option 2</option>
-                                <option value="0">option 3</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-1">Inception</td>
-                        <td class="col-md-3">2012
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-1">Legal Structure</td>
-                        <td class="col-md-3">
-                            <select style="width: 100%">
-                                <option value="0">---</option>
-                                <option value="0">option 1</option>
-                                <option value="0">option 2</option>
-                                <option value="0">option 3</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-1">Domicile Country</td>
-                        <td class="col-md-3">
-                            <select style="width: 100%">
-                                <option value="0">---</option>
-                                <option value="0">option 1</option>
-                                <option value="0">option 2</option>
-                                <option value="0">option 3</option>
-                            </select>
-                        </td>
-                    </tr>
+                    <tbody>
+                        <tr>
+                            <td>Jan</td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                        </tr>
+                        <tr>
+                            <td>Feb</td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                        </tr>
+                        <tr>
+                            <td>Mar</td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                        </tr>
+                        <tr>
+                            <td>Apr</td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                        </tr>
+                        <tr>
+                            <td>May</td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                        </tr>
+                        <tr>
+                            <td>Jun</td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                        </tr>
+                        <tr>
+                            <td>Jul</td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                        </tr>
+                        <tr>
+                            <td>Aug</td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                        </tr>
+                        <tr>
+                            <td>Sep</td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                        </tr>
+                        <tr>
+                            <td>Oct</td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                        </tr>
+                        <tr>
+                            <td>Nov</td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                        </tr>
+                        <tr>
+                            <td>Dec</td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                            <td><input size="2" type="text"/></td>
+                        </tr>
 
-                    <h4>Contacts</h4>
+                    </tbody>
+                </table>
+
+                <table class="table table-striped table-bordered table-hover table-condensed">
+                    <!--<h4>Contacts</h4>-->
                     <!--<tr>-->
                     <!--<td class="col-md-1">Manager Name</td>-->
                     <!--<td class="col-md-3">Gorsvenor Capital Management</td>-->
                     <!--</tr>-->
                     <tr>
-                        <td class="col-md-1">Fund Managers</td>
-                        <td class="col-md-3">
-                        </td>
+                        <td>&nbsp;</td>
+                        <td>{{currentYear - 9}}</td>
+                        <td>{{currentYear - 8}}</td>
+                        <td>{{currentYear - 7}}</td>
+                        <td>{{currentYear - 6}}</td>
+                        <td>{{currentYear - 5}}</td>
+                        <td>{{currentYear - 4}}</td>
+                        <td>{{currentYear - 3}}</td>
+                        <td>{{currentYear - 2}}</td>
+                        <td>{{currentYear - 1}}</td>
+                        <td>{{currentYear}}</td>
                     </tr>
-                    <tr>
-                        <td class="col-md-1">Headquarters</td>
-                        <td class="col-md-3">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-1">Telephone</td>
-                        <td class="col-md-3">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-1">Fax</td>
-                        <td class="col-md-3">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-1">Website</td>
-                        <td class="col-md-3">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-1">Contact person</td>
-                        <td class="col-md-3">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-1">Email</td>
-                        <td class="col-md-3">
-                        </td>
+                    <tr *ngFor="let item of fund.calculatedValues">
+                        <td>{{item.name}}</td>
+                        <td><input size="2" type="text" [(ngModel)]="item.year1"/></td>
+                        <td><input size="2" type="text" [(ngModel)]="item.year2"/></td>
+                        <td><input size="2" type="text" [(ngModel)]="item.year3"/></td>
+                        <td><input size="2" type="text" [(ngModel)]="item.year4"/></td>
+                        <td><input size="2" type="text" [(ngModel)]="item.year5"/></td>
+                        <td><input size="2" type="text" [(ngModel)]="item.year6"/></td>
+                        <td><input size="2" type="text" [(ngModel)]="item.year7"/></td>
+                        <td><input size="2" type="text" [(ngModel)]="item.year8"/></td>
+                        <td><input size="2" type="text" [(ngModel)]="item.year9"/></td>
+                        <td><input size="2" type="text" [(ngModel)]="item.year10"/></td>
                     </tr>
                 </table>
             </div>
 
-            <!--RIGHT   -->
-            <div></div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-1 pull-right">
+                        <button class="btn btn-success" (click)="save()">SAVE</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <hr style="border-top: 1px solid #B5AEAE"/>
+                </div>
+            </div>
+
 
         </div>
         <div id="idd" class="tab-pane fade">

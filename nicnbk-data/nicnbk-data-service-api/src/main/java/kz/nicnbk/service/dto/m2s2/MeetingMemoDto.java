@@ -1,7 +1,7 @@
 package kz.nicnbk.service.dto.m2s2;
 
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
-import kz.nicnbk.common.service.model.BaseEntityDto;
+import kz.nicnbk.common.service.model.HistoryBaseEntityDto;
 import kz.nicnbk.repo.model.m2s2.MeetingMemo;
 import kz.nicnbk.service.dto.employee.EmployeeDto;
 import kz.nicnbk.service.dto.files.FilesDto;
@@ -13,7 +13,7 @@ import java.util.Set;
 /**
  * Created by magzumov on 08.07.2016.
  */
-public class MeetingMemoDto extends BaseEntityDto<MeetingMemo> {
+public class MeetingMemoDto extends HistoryBaseEntityDto<MeetingMemo> {
 
     //private String memoType;
     private int memoType;
