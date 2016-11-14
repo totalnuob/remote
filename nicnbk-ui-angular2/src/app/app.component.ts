@@ -20,6 +20,7 @@ import {FileUploadService} from "./upload/file.upload.service";
 import '../../public/css/ng2-select.css';
 import '../../public/js/chart.min.js';
 import '../../public/js/bootstrap-datetimepicker.min.js';
+import '../../public/css/bootstrap/bootstrap-datetimepicker.min.css';
 import '../../public/js/viz_v1.js';
 
 import {TextareaAutosize} from "./common/textarea-autosize.directive";

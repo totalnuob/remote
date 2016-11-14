@@ -35,7 +35,7 @@ import {HFManagerProfileComponent} from "./hf/hf.manager-profile.component.ts";
 const routes: Routes  = [
     {
         path: '',
-        redirectTo: '/news/list',
+        redirectTo: '/news',
         pathMatch: 'full'
     },
     /* LOGIN ***************************************/
@@ -45,7 +45,7 @@ const routes: Routes  = [
     },
     /* NEWS ***************************************/
     {
-        path: 'news/list',
+        path: 'news',
         component: NewsListComponent,
         canActivate: [AuthGuard]
     },
@@ -62,7 +62,7 @@ const routes: Routes  = [
 
     /* M2S2 ****************************************/
     {
-        path: 'm2s2/list',
+        path: 'm2s2',
         component: MemoListComponent,
         canActivate: [AuthGuard]
     },
@@ -94,7 +94,7 @@ const routes: Routes  = [
 
     /* TripMemo *************************************/
     {
-        path: 'bt/list',
+        path: 'bt',
         component: TripMemoListComponent,
         canActivate: [AuthGuard]
     },

@@ -97,6 +97,7 @@ export class HedgeFundsMemoEditComponent extends CommonComponent implements OnIn
                             memo => {
                                 // TODO: check response memo
                                 this.memo = memo;
+                                this.initRadarChart();
 
                                 if(this.memo.tags == null) {
                                     this.memo.tags = [];
@@ -196,6 +197,11 @@ export class HedgeFundsMemoEditComponent extends CommonComponent implements OnIn
             format: 'DD-MM-YYYY'
         });
 
+        $('#timePicker').datetimepicker({
+            //defaultDate: new Date(),
+            format: 'LT'
+        });
+
         // init chart
         this.initRadarChart();
 
@@ -208,7 +214,7 @@ export class HedgeFundsMemoEditComponent extends CommonComponent implements OnIn
     save(){
         // TODO: ngModel date
         this.memo.meetingDate = $('#meetingDateValue').val();
-
+        this.memo.meetingTime = $('#meetingTimeValue').val();
         //TODO: refactor ?
         this.memo.strategies = this.convertToServiceModel(this.memo.strategies);
         this.memo.geographies = this.convertToServiceModel(this.memo.geographies);
@@ -321,12 +327,20 @@ export class HedgeFundsMemoEditComponent extends CommonComponent implements OnIn
         scores.push(Number(this.memo.managementAndTeamScore));
         scores.push(Number(this.memo.portfolioScore));
         scores.push(Number(this.memo.strategyScore));
+
+        //initializing average score for memos. if new memo skip
+        if(this.memo.managementAndTeamScore != null) {
+            var totalScore = Number(this.memo.portfolioScore) + Number(this.memo.strategyScore) + Number(this.memo.managementAndTeamScore);
+            var rounded = Math.round((totalScore / 3) * 10) / 10;
+            $("#averageScore").text(rounded);
+        }
+
         this.setUpRadarChart($('#myChart'), scores);
     }
 
     setUpRadarChart(ctx, scores){
 
-        var labels = ["GP and Team", "Track Record", "Strategy"];
+        var labels = ["Management and Team", "Portfolio", "Strategy"];
 
         var data = {
             labels: labels,
