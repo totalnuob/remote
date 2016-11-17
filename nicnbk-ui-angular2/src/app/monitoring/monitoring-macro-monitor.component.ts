@@ -52,14 +52,51 @@ export class MonitoringMacroMonitorComponent extends GoogleChartComponent  {
         colorFormatter.addRange(1, 2, 'white', '#B41F27');
         colorFormatter.addRange(2, 3, 'white', '#CC312B');
         colorFormatter.addRange(3, 4, 'white', '#E86753');
-        colorFormatter.addRange(4, 5, 'black', '#FCB4A5');
-        colorFormatter.addRange(5, 6, 'black', '#B9D7B7');
+        colorFormatter.addRange(4, 5, 'black', '#FCB4A5'); // pink
+        colorFormatter.addRange(5, 6, 'black', '#B9D7B7'); // green
         colorFormatter.addRange(6, 7, 'black', '#74AF72');
         colorFormatter.addRange(7, 8, 'white', '#428F4A');
         colorFormatter.addRange(8, 9, 'white', '#297839');
         colorFormatter.addRange(9, 10, 'white', '#09622A');
         for(var i = 1; i <= this.dates.length; i++){
             colorFormatter.format(data, i);
+        }
+
+        // SET FORMAT FOR GDP ROW (index =10)
+        for(var i = 1; i <= this.dates.length; i++){
+            var bgColor = '#9C0824';
+            var textColor = 'white';
+            var value = data.getValue(10, i);
+            if(value >= 0 && value < 0.3){
+                bgColor = '#B41F27';
+                textColor = 'white';
+            }else if(value >= 0.3 && value < 0.6){
+                bgColor = '#CC312B';
+                textColor = 'white';
+            }else if(value >= 0.6 && value < 0.9){
+                bgColor = '#E86753';
+                textColor = 'white';
+            }else if(value >= 1.2 && value < 1.5){
+                bgColor = '#FCB4A5';
+                textColor = 'black';
+            }else if(value >= 1.5 && value < 1.8){
+                bgColor = '#B9D7B7';
+                textColor = 'black';
+            }else if(value >= 1.8 && value < 2.1){
+                bgColor = '#74AF72';
+                textColor = 'black';
+            }else if(value >= 2.1 && value < 2.4){
+                bgColor = '#428F4A';
+                textColor = 'white';
+            }else if(value >= 2.4 && value < 2.7){
+                bgColor = '#297839';
+                textColor = 'white';
+            }
+            else if(value >= 2.7 ){
+                bgColor = '#09622A';
+                textColor = 'white';
+            }
+            data.setProperty(10, i, 'style', 'background-color:' + bgColor + '; color: ' + textColor);
         }
 
         var chart = this.createTableChart(document.getElementById('table'));

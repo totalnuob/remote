@@ -312,7 +312,7 @@ export class MonitoringHedgeFundsComponent extends GoogleChartComponent {
 
     drawActualAllocationsChart(){
         var data = google.visualization.arrayToDataTable([
-            ['Task', 'Hours per Day'],
+            ['Strategy', 'Percent'],
             ["Credit",0.29],
             ["Relative Value",0.11],
             ["Multi-Strategy",0.04],
