@@ -92,6 +92,7 @@ export class RealEstateMemoEditComponent extends CommonComponent implements OnIn
                             memo => {
                                 // TODO: check response memo
                                 this.memo = memo;
+                                this.initRadarChart();
 
                                 if(this.memo.tags == null) {
                                     this.memo.tags = [];
@@ -182,8 +183,6 @@ export class RealEstateMemoEditComponent extends CommonComponent implements OnIn
     }
 
     ngOnInit() {
-
-
         // TODO: exclude jQuery
         // datetimepicker
         $('#meetingDate').datetimepicker({
@@ -191,8 +190,12 @@ export class RealEstateMemoEditComponent extends CommonComponent implements OnIn
             format: 'DD-MM-YYYY'
         });
 
+        $('#timePicker').datetimepicker({
+            format: 'LT'
+        })
+
         // load lookups
-        this.loadLookups();
+        //this.loadLookups();
 
         // init chart
         this.initRadarChart();
@@ -206,6 +209,7 @@ export class RealEstateMemoEditComponent extends CommonComponent implements OnIn
     save(){
         // TODO: ngModel date
         this.memo.meetingDate = $('#meetingDateValue').val();
+        this.memo.meetingTime = $('#meetingTimeValue').val();
 
         //console.log(this.memo);
 
@@ -319,6 +323,14 @@ export class RealEstateMemoEditComponent extends CommonComponent implements OnIn
         scores.push(Number(this.memo.teamScore));
         scores.push(Number(this.memo.trackRecordScore));
         scores.push(Number(this.memo.strategyScore));
+
+        //initializing average score for memos. if new memo skip
+        if(this.memo.teamScore != null) {
+            var totalScore = Number(this.memo.teamScore) + Number(this.memo.trackRecordScore) + Number(this.memo.strategyScore);
+            var rounded = Math.round((totalScore / 3) * 10) / 10;
+            $("#averageScore").text(rounded);
+        }
+
         this.setUpRadarChart($('#myChart'), scores);
     }
 

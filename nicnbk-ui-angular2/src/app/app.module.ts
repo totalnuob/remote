@@ -5,7 +5,7 @@ import { HttpModule } from '@angular/http';
 import { FormsModule } from '@angular/forms';
 
 import {SelectModule} from 'ng2-select';
-import { TagInputModule } from 'ng2-tag-input';
+//import { TagInputModule } from 'ng2-tag-input';
 
 import { appRouterProviders } from './app.routes';
 import {AuthGuard} from "./auth.guard.service";
@@ -30,7 +30,7 @@ import {MonitoringHedgeFundsComponent} from "./monitoring/monitoring-hedge-funds
 import {MonitoringLiquidPortfolioComponent} from "./monitoring/monitoring-liquid-portfolio.component";
 import {MonitoringPrivateEquityComponent} from "./monitoring/monitoring-private-equity.component";
 import {MonitoringMacroMonitorComponent} from "./monitoring/monitoring-macro-monitor.component";
-import {MonitoringAxiomaReportingComponent} from "./monitoring/monitoring-axioma-reporting.component";
+import {RiskManagementAxiomaReportingComponent} from "./riskmanagement/riskmanagement-axioma-reporting.component";
 import {HFDashboardComponent} from "./hf/hf.dashboard.component";
 import {HFFundSearchComponent} from "./hf/hf.fund-search.component";
 import {HFFundSelectionComponent} from "./hf/hf.fund-selection.component";
@@ -60,7 +60,7 @@ import {HFManagerProfileComponent} from "./hf/hf.manager-profile.component.ts";
         MemoListComponent,
         MemoAttachmentDownloaderComponent,
         GeneralMemoEditComponent, PrivateEquityMemoEditComponent, HedgeFundsMemoEditComponent, RealEstateMemoEditComponent,
-        TripMemoListComponent, TripMemoEditComponent, MonitoringAxiomaReportingComponent, MonitoringHedgeFundsComponent, MonitoringLiquidPortfolioComponent,
+        TripMemoListComponent, TripMemoEditComponent, RiskManagementAxiomaReportingComponent, MonitoringHedgeFundsComponent, MonitoringLiquidPortfolioComponent,
         MonitoringMacroMonitorComponent, MonitoringPortfolioComponent, MonitoringPrivateEquityComponent,
         HFDashboardComponent, HFFundSearchComponent, HFFundSelectionComponent, HFPortfolioComponent, HFReportComponent,
         HFFundProfileComponent, HFManagerProfileComponent

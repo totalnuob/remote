@@ -1,7 +1,10 @@
 <div class="container">
     <div class="row top-buffer" >
         <div class="col-md-12">
-            <h4><span>General Meeting Memo</span></h4>
+            <ol class="breadcrumb">
+                <li><a [routerLink]="['/m2s2']">Meeting Memo</a></li>
+                <li class="active">General</li>
+            </ol>
         </div>
     </div>
     <div class="row top-buffer" >
@@ -16,60 +19,73 @@
             </div>
         </div>
     </div>
-    <div class="row top-buffer" >
+    <div class="row top-buffer">
         <div class="col-md-12">
-            <div class="col-md-2">
-                <a [routerLink]="['/m2s2/list/']" class="btn btn-default pull-left">Back</a>
-            </div>
-            <div class="col-md-2">
+            <!--<div class="col-md-2">-->
+                <!--<a [routerLink]="['/m2s2/list/']" class="btn btn-default pull-left">Back</a>-->
+            <!--</div>-->
+            <div class="col-md-3">
                 <label class="checkbox-inline">
-                    <input type="radio" [ngModel]="memo.meetingType"
-                           (ngModelChange)="memo.meetingType='MEETING'"  name="meetingType" value="MEETING">
+                    <input type="radio" [ngModel]="memo.meetingType" (ngModelChange)="memo.meetingType='MEETING'"  name="meetingType" value="MEETING">
                     <span>Meeting</span>
                 </label>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
                 <label class="checkbox-inline">
-                    <!--<input type="radio" name="meetingType" id="meetingTypeCall" value="CALL"/>-->
-                    <!--<span>Call</span>-->
-
-                    <input type="radio" [ngModel]="memo.meetingType"
-                           (ngModelChange)="memo.meetingType='CALL'; memo.meetingLocation='';"  name="meetingType" value="CALL">
+                    <input type="radio" [ngModel]="memo.meetingType" (ngModelChange)="memo.meetingType='CALL'; memo.meetingLocation='';"  name="meetingType" value="CALL">
                     <span>Call</span>
                 </label>
             </div>
-            <div class="col-md-6">
-                <input id="firmName" class="form-control" placeholder="Enter firm..." maxlength="250"
-                       [(ngModel)]="memo.firmName"/>
+        </div>
+    </div>
+    <!--<div class="btn-group"  data-toggle="buttons">-->
+        <!--<label class="btn btn-primary active">-->
+            <!--<input type="radio" [(ngModel)]="memo.meetingType" name="meetingType" value="MEETING">Meeting</label>-->
+        <!--<label class="btn btn-primary">-->
+            <!--<input type="radio" [(ngModel)]="memo.meetingType" name="meetingType" value="CALL">Call</label>-->
+    <!--</div>-->
+    <!--<div class="row top-buffer">-->
+        <!--<label class="control-label col-md-2">&nbsp;</label>-->
+    <!--</div>-->
+    <div class="row top-buffer">
+        <div class="col-md-12">
+            <div class="row top-buffer">
+                <label class="control-label col-md-2">Firm name:</label>
+                <div class="col-md-4">
+                    <input id="firmName" class="form-control" placeholder="Enter firm..." maxlength="250"
+                           [(ngModel)]="memo.firmName"/>
+                </div>
             </div>
         </div>
     </div>
     <div class="row top-buffer" >
         <div class="col-md-12">
-            <label class="control-label col-md-1">&nbsp;</label>
-            <div class="col-md-5">
-                <input type="text" placeholder="Fund name... " class="form-control" id="fundName"
-                       [(ngModel)]="memo.fundName" name="fundName" maxlength="250"/>
-            </div>
-            <div class="col-md-2">
-                <div class='input-group date col-md-2' id='meetingDate' style="width: 100%">
-                    <input type="text" class="form-control" id="meetingDateValue" [(ngModel)]="memo.meetingDate"/>
-                        <span class="input-group-addon">
-                            <span class="glyphicon glyphicon-calendar"></span>
-                        </span>
+            <div class="row top-buffer" >
+                <label class="control-label col-md-2">Fund name:</label>
+                <div class="col-md-4">
+                    <input type="text" placeholder="Enter fund... " class="form-control" id="fundName"
+                           [(ngModel)]="memo.fundName" name="fundName" maxlength="250"/>
                 </div>
-            </div>
-            <div class="col-md-2">
-                <div class='input-group datetime col-md-3' id='meetingTime' style="width: 100%">
-                    <input type='text' class="form-control" [(ngModel)]="memo.meetingTime"/>
-                        <span class="input-group-addon">
-                            <span class="glyphicon glyphicon-time"></span>
-                        </span>
+                <div class="col-md-2">
+                    <div class='input-group date col-md-2' id='meetingDate' style="width: 100%">
+                        <input type="text" class="form-control" id="meetingDateValue" [(ngModel)]="memo.meetingDate"/>
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-2">
-                <input type="text" id="meetingLocation" placeholder="Enter location..." [(ngModel)] = "memo.meetingLocation"
-                       [disabled]="memo.meetingType != 'MEETING'" class="form-control col-md-2" maxlength="250"/>
+                <div class="col-md-2">
+                    <div class='input-group datetime col-md-3' id='timePicker' style="width: 100%">
+                        <input type='text' class="form-control" id="meetingTimeValue" [(ngModel)]="memo.meetingTime"/>
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-time"></span>
+                            </span>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <input type="text" id="meetingLocation" placeholder="Enter location..." [(ngModel)] = "memo.meetingLocation"
+                           [disabled]="memo.meetingType != 'MEETING'" class="form-control col-md-2" maxlength="250"/>
+                </div>
             </div>
         </div>
     </div>
@@ -141,7 +157,7 @@
     </div>
     <!--<hr style="border-top: 1px solid #B5AEAE"/>-->
 
-    <div class="row top-buffer">
+    <div class="row top-buffer withpadding">
         <div class="col-md-12" style="background-color:#5bc0de;">
             <div>
                 <div class="col-md-6">
@@ -151,12 +167,12 @@
             </div>
         </div>
     </div>
-    <div class="row top-buffer">
+    <div class="row top-buffer withpadding">
         <div class="col-md-12 nopadding">
             <textarea autosize spellcheck="false"  class="form-control" [(ngModel)]="memo.topic1"></textarea>
         </div>
     </div>
-    <div class="row top-buffer">
+    <div class="row top-buffer withpadding">
         <div class="col-md-12" style="background-color:#5bc0de;">
             <div class="col-md-6">
                 <span>TOPIC 2</span>
@@ -164,12 +180,12 @@
             <div class="col-md-6">&nbsp;</div>
         </div>
     </div>
-    <div class="row top-buffer">
+    <div class="row top-buffer withpadding">
         <div class="col-md-12 nopadding">
             <textarea autosize spellcheck="false"  class="form-control" [(ngModel)]="memo.topic2"></textarea>
         </div>
     </div>
-    <div class="row top-buffer">
+    <div class="row top-buffer withpadding">
         <div class="col-md-12" style="background-color:#5bc0de;">
             <div class="col-md-6">
                 <span>TOPIC 3</span>
@@ -177,12 +193,12 @@
             <div class="col-md-6">&nbsp;</div>
         </div>
     </div>
-    <div class="row top-buffer">
+    <div class="row top-buffer withpadding">
         <div class="col-md-12 nopadding">
             <textarea autosize spellcheck="false"  class="form-control" [(ngModel)]="memo.topic3"></textarea>
         </div>
     </div>
-    <div class="row top-buffer">
+    <div class="row top-buffer withpadding">
         <div class="col-md-12" style="background-color:#5bc0de;">
             <div class="col-md-2">
                 <span>OTHER INFO</span>
@@ -190,12 +206,12 @@
             <div class="col-md-10">&nbsp;</div>
         </div>
     </div>
-    <div class="row top-buffer">
+    <div class="row top-buffer withpadding">
         <div class="col-md-12 nopadding">
             <textarea autosize spellcheck="false"  class="form-control" [(ngModel)]="memo.otherNotes"></textarea>
         </div>
     </div>
-    <div class="row top-buffer">
+    <div class="row top-buffer withpadding">
         <div class="col-md-12" style="background-color:#5bc0de;">
             <div class="col-md-2">
                 <span>FOLLOW-UPS</span>
@@ -203,7 +219,7 @@
             <div class="col-md-10">&nbsp;</div>
         </div>
     </div>
-    <div class="row top-buffer">
+    <div class="row top-buffer withpadding">
         <div class="col-md-6">
             <label>NIC</label>
         </div>
@@ -211,7 +227,7 @@
             <label>OTHER</label>
         </div>
     </div>
-    <div class="row top-buffer">
+    <div class="row top-buffer withpadding">
         <div class="col-md-6 nopadding">
             <textarea autosize spellcheck="false"  class="form-control" [(ngModel)]="memo.nicFollowups"></textarea>
         </div>

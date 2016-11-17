@@ -18,7 +18,7 @@ import {MonitoringHedgeFundsComponent} from "./monitoring/monitoring-hedge-funds
 import {MonitoringLiquidPortfolioComponent} from "./monitoring/monitoring-liquid-portfolio.component";
 import {MonitoringPrivateEquityComponent} from "./monitoring/monitoring-private-equity.component";
 import {MonitoringMacroMonitorComponent} from "./monitoring/monitoring-macro-monitor.component";
-import {MonitoringAxiomaReportingComponent} from "./monitoring/monitoring-axioma-reporting.component";
+import {RiskManagementAxiomaReportingComponent} from "./riskmanagement/riskmanagement-axioma-reporting.component";
 
 import {LoginComponent} from "./authentication/login.component";
 
@@ -35,7 +35,7 @@ import {HFManagerProfileComponent} from "./hf/hf.manager-profile.component.ts";
 const routes: Routes  = [
     {
         path: '',
-        redirectTo: '/news/list',
+        redirectTo: '/news',
         pathMatch: 'full'
     },
     /* LOGIN ***************************************/
@@ -45,7 +45,7 @@ const routes: Routes  = [
     },
     /* NEWS ***************************************/
     {
-        path: 'news/list',
+        path: 'news',
         component: NewsListComponent,
         canActivate: [AuthGuard]
     },
@@ -62,7 +62,7 @@ const routes: Routes  = [
 
     /* M2S2 ****************************************/
     {
-        path: 'm2s2/list',
+        path: 'm2s2',
         component: MemoListComponent,
         canActivate: [AuthGuard]
     },
@@ -94,7 +94,7 @@ const routes: Routes  = [
 
     /* TripMemo *************************************/
     {
-        path: 'bt/list',
+        path: 'bt',
         component: TripMemoListComponent,
         canActivate: [AuthGuard]
     },
@@ -137,7 +137,7 @@ const routes: Routes  = [
     },
     {
         path: 'monitoring/axioma',
-        component: MonitoringAxiomaReportingComponent,
+        component: RiskManagementAxiomaReportingComponent,
         canActivate: [AuthGuard]
     },
     /* Hedge Funds ************************************/

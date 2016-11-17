@@ -1,7 +1,13 @@
-### webpack
-
-npm install webpack -g
-// TODO: npm install --save-dev webpack@1.13.1
-
-npm install --save-dev ts-loader@0.8.2
+1. download source code
+2. import into Intellij
+3. install nodejs
+4. make sure npm version is 3.x.x
+if not, update running:  npm install npm@latest -g
+5. configure application.properties
+5.1 set database for data-ws-impl: edit file application.properties
+5.2 set attachments folder path for data-ws-impl: edit file application.properties
+6. run data-ws-impl.jar
+7. after tables are created, run sql scripts to populate data
+from nicnbk-data-repo-impl resource/database.sql
+7. run front-end angular app: from angular2 home directory 'npm run start'
 
