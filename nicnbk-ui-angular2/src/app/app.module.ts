@@ -38,6 +38,8 @@ import {HFPortfolioComponent} from "./hf/hf.portfolio.component";
 import {HFReportComponent} from "./hf/hf.report.component";
 import {HFFundProfileComponent} from "./hf/hf.fund-profile.component";
 import {HFManagerProfileComponent} from "./hf/hf.manager-profile.component.ts";
+import {MonitoringPrivateEquityFundComponent} from "./monitoring/monitoring-private-equity-fund.component";
+import {MonitoringHedgeFunds2Component} from "./monitoring/monitoring-hedge-funds-2.component";
 
 @NgModule({
     imports: [
@@ -61,7 +63,9 @@ import {HFManagerProfileComponent} from "./hf/hf.manager-profile.component.ts";
         MemoAttachmentDownloaderComponent,
         GeneralMemoEditComponent, PrivateEquityMemoEditComponent, HedgeFundsMemoEditComponent, RealEstateMemoEditComponent,
         TripMemoListComponent, TripMemoEditComponent, RiskManagementAxiomaReportingComponent, MonitoringHedgeFundsComponent, MonitoringLiquidPortfolioComponent,
-        MonitoringMacroMonitorComponent, MonitoringPortfolioComponent, MonitoringPrivateEquityComponent,
+        MonitoringMacroMonitorComponent, MonitoringPortfolioComponent, MonitoringPrivateEquityComponent, MonitoringPrivateEquityFundComponent,
+        MonitoringHedgeFunds2Component,
+
         HFDashboardComponent, HFFundSearchComponent, HFFundSelectionComponent, HFPortfolioComponent, HFReportComponent,
         HFFundProfileComponent, HFManagerProfileComponent
     ],

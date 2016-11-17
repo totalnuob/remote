@@ -30,6 +30,8 @@ import {HFPortfolioComponent} from "./hf/hf.portfolio.component";
 import {HFReportComponent} from "./hf/hf.report.component";
 import {HFFundProfileComponent} from "./hf/hf.fund-profile.component";
 import {HFManagerProfileComponent} from "./hf/hf.manager-profile.component.ts";
+import {MonitoringPrivateEquityFundComponent} from "./monitoring/monitoring-private-equity-fund.component";
+import {MonitoringHedgeFunds2Component} from "./monitoring/monitoring-hedge-funds-2.component";
 
 
 const routes: Routes  = [
@@ -138,6 +140,16 @@ const routes: Routes  = [
     {
         path: 'monitoring/axioma',
         component: RiskManagementAxiomaReportingComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'monitoring/peFund',
+        component: MonitoringPrivateEquityFundComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'monitoring/hf2',
+        component: MonitoringHedgeFunds2Component,
         canActivate: [AuthGuard]
     },
     /* Hedge Funds ************************************/
