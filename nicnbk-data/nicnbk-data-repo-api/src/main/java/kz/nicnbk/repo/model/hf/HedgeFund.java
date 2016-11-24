@@ -1,9 +1,7 @@
 package kz.nicnbk.repo.model.hf;
 
 import kz.nicnbk.repo.model.base.CreateUpdateBaseEntity;
-import kz.nicnbk.repo.model.common.Country;
 import kz.nicnbk.repo.model.common.Currency;
-import kz.nicnbk.repo.model.common.Geography;
 import kz.nicnbk.repo.model.common.Strategy;
 
 import javax.persistence.*;
@@ -17,25 +15,49 @@ import javax.persistence.*;
 public class HedgeFund extends CreateUpdateBaseEntity {
     private String name;
     private HFManager manager;
-    private String strategyDescription;
-    private String size;
-    private FundStatus status;
-    private Strategy strategy;
-    private Geography geography;
-    private Currency shareClassCurrency;
+    private String summary;
     private String inception;
-    private LegalStructure legalStructure;
-    private Country domicileCountry;
-    private String minInvestment;
-    private Currency investmentCurrency;
-    private SubscriptionFrequency subscriptionFrequency;
-    private ManagementFeeType managementFeeType;
+    private Double AUMAmount;
+    private String AUMDigit;
+    private Currency AUMCurrency;
+    private Strategy strategy;
+
+    private String leverage;
+
+    private FundStatus status;
     private String managementFee;
-    private PerformanceFeeType performanceFeeType;
     private String performanceFee;
-    private PerformanceFeePayFrequencyType performanceFeePayFrequency;
-    private RedemptionFrequencyType redemptionFrequency;
-    private RedemptionNotificationPeriodType redemptionNotificationPeriod;
+    private String redemptionFee;
+    private String minInitialInvestment;
+    private String minSubsInvestment;
+    private SubscriptionFrequency subscriptionFrequency;
+    private RedemptionFrequency redemptionFrequency;
+    private RedemptionNotificationPeriod redemptionNoticePeriod;
+    private String sidePocket;
+    private String gates;
+
+    private String liquidityPercent;
+    private String liquidityPeriod;
+
+    private String concentrationTop5;
+    private String concentrationTop10;
+    private String concentrationTop20;
+
+    //private Set<Substrategy> strategyBreakdownList;
+    //private investorBaseList;
+    //managerList;
+    //returns;
+
+    // ALbourne ratings
+    private String ALBIDDAnalystAssessment;
+    private String ALBConviction;
+    private String ALBExpectedAlpha;
+    private String ALBExpectedBeta;
+    private String ALBExpectedRisk;
+    private String ALBStrategyInvestmentProcess;
+    private String ALBManagementTeam;
+    private String ALBRiskProcess;
+
 
     @Column (name = "name")
     public String getName() {
@@ -56,32 +78,50 @@ public class HedgeFund extends CreateUpdateBaseEntity {
         this.manager = manager;
     }
 
-    @Column (name = "strategy_desc")
-    public String getStrategyDescription() {
-        return strategyDescription;
+    @Column (name = "summary", columnDefinition = "TEXT")
+    public String getSummary() {
+        return summary;
     }
 
-    public void setStrategyDescription(String strategyDescription) {
-        this.strategyDescription = strategyDescription;
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
 
-    @Column (name = "size")
-    public String getSize() {
-        return size;
+    @Column (name = "inception")
+    public String getInception() {
+        return inception;
     }
 
-    public void setSize(String size) {
-        this.size = size;
+    public void setInception(String inception) {
+        this.inception = inception;
+    }
+
+    @Column (name = "aum_amount")
+    public Double getAUMAmount() {
+        return AUMAmount;
+    }
+
+    public void setAUMAmount(Double AUMAmount) {
+        this.AUMAmount = AUMAmount;
+    }
+
+    @Column (name = "aum_digit")
+    public String getAUMDigit() {
+        return AUMDigit;
+    }
+
+    public void setAUMDigit(String AUMDigit) {
+        this.AUMDigit = AUMDigit;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "status_id")
-    public FundStatus getStatus() {
-        return status;
+    @JoinColumn(name = "aum_currency_id")
+    public Currency getAUMCurrency() {
+        return AUMCurrency;
     }
 
-    public void setStatus(FundStatus status) {
-        this.status = status;
+    public void setAUMCurrency(Currency AUMCurrency) {
+        this.AUMCurrency = AUMCurrency;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -94,72 +134,68 @@ public class HedgeFund extends CreateUpdateBaseEntity {
         this.strategy = strategy;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "geography_id")
-    public Geography getGeography() {
-        return geography;
+    @Column (name = "leverage")
+    public String getLeverage() {
+        return leverage;
     }
 
-    public void setGeography(Geography geography) {
-        this.geography = geography;
-    }
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "share_class_currency_id")
-    public Currency getShareClassCurrency() {
-        return shareClassCurrency;
-    }
-
-    public void setShareClassCurrency(Currency shareClassCurrency) {
-        this.shareClassCurrency = shareClassCurrency;
-    }
-
-    @Column(name = "inception")
-    public String getInception() {
-        return inception;
-    }
-
-    public void setInception(String inception) {
-        this.inception = inception;
+    public void setLeverage(String leverage) {
+        this.leverage = leverage;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "legal_structure_id")
-    public LegalStructure getLegalStructure() {
-        return legalStructure;
+    @JoinColumn(name = "status_id")
+    public FundStatus getStatus() {
+        return status;
     }
 
-    public void setLegalStructure(LegalStructure legalStructure) {
-        this.legalStructure = legalStructure;
+    public void setStatus(FundStatus status) {
+        this.status = status;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "domicile_country_id")
-    public Country getDomicileCountry() {
-        return domicileCountry;
+    @Column (name = "mng_fee")
+    public String getManagementFee() {
+        return managementFee;
     }
 
-    public void setDomicileCountry(Country domicileCountry) {
-        this.domicileCountry = domicileCountry;
+    public void setManagementFee(String managementFee) {
+        this.managementFee = managementFee;
     }
 
-    @Column(name = "min_investment")
-    public String getMinInvestment() {
-        return minInvestment;
+    @Column (name = "perform_fee")
+    public String getPerformanceFee() {
+        return performanceFee;
     }
 
-    public void setMinInvestment(String minInvestment) {
-        this.minInvestment = minInvestment;
+    public void setPerformanceFee(String performanceFee) {
+        this.performanceFee = performanceFee;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "invest_currency_id")
-    public Currency getInvestmentCurrency() {
-        return investmentCurrency;
+    @Column (name = "redemption_fee")
+    public String getRedemptionFee() {
+        return redemptionFee;
     }
 
-    public void setInvestmentCurrency(Currency investmentCurrency) {
-        this.investmentCurrency = investmentCurrency;
+    public void setRedemptionFee(String redemptionFee) {
+        this.redemptionFee = redemptionFee;
+    }
+
+    @Column (name = "min_init_investment")
+    public String getMinInitialInvestment() {
+        return minInitialInvestment;
+    }
+
+    public void setMinInitialInvestment(String minInitialInvestment) {
+        this.minInitialInvestment = minInitialInvestment;
+    }
+
+    @Column (name = "min_subs_investment")
+    public String getMinSubsInvestment() {
+        return minSubsInvestment;
+    }
+
+    public void setMinSubsInvestment(String minSubsInvestment) {
+        this.minSubsInvestment = minSubsInvestment;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -173,70 +209,157 @@ public class HedgeFund extends CreateUpdateBaseEntity {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "mng_fee_id")
-    public ManagementFeeType getManagementFeeType() {
-        return managementFeeType;
-    }
-
-    public void setManagementFeeType(ManagementFeeType managementFeeType) {
-        this.managementFeeType = managementFeeType;
-    }
-
-    @Column(name = "mng_fee")
-    public String getManagementFee() {
-        return managementFee;
-    }
-
-    public void setManagementFee(String managementFee) {
-        this.managementFee = managementFee;
-    }
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "perform_fee_id")
-    public PerformanceFeeType getPerformanceFeeType() {
-        return performanceFeeType;
-    }
-
-    public void setPerformanceFeeType(PerformanceFeeType performanceFeeType) {
-        this.performanceFeeType = performanceFeeType;
-    }
-
-    @Column(name = "perform_fee")
-    public String getPerformanceFee() {
-        return performanceFee;
-    }
-
-    public void setPerformanceFee(String performanceFee) {
-        this.performanceFee = performanceFee;
-    }
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "perform_fee_freq_id")
-    public PerformanceFeePayFrequencyType getPerformanceFeePayFrequency() {
-        return performanceFeePayFrequency;
-    }
-
-    public void setPerformanceFeePayFrequency(PerformanceFeePayFrequencyType performanceFeePayFrequency) {
-        this.performanceFeePayFrequency = performanceFeePayFrequency;
-    }
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "redemption_freq_id")
-    public RedemptionFrequencyType getRedemptionFrequency() {
+    public RedemptionFrequency getRedemptionFrequency() {
         return redemptionFrequency;
     }
 
-    public void setRedemptionFrequency(RedemptionFrequencyType redemptionFrequency) {
+    public void setRedemptionFrequency(RedemptionFrequency redemptionFrequency) {
         this.redemptionFrequency = redemptionFrequency;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "redemption_notif_period_id")
-    public RedemptionNotificationPeriodType getRedemptionNotificationPeriod() {
-        return redemptionNotificationPeriod;
+    @JoinColumn(name = "redemption_notice_id")
+    public RedemptionNotificationPeriod getRedemptionNoticePeriod() {
+        return redemptionNoticePeriod;
     }
 
-    public void setRedemptionNotificationPeriod(RedemptionNotificationPeriodType redemptionNotificationPeriod) {
-        this.redemptionNotificationPeriod = redemptionNotificationPeriod;
+    public void setRedemptionNoticePeriod(RedemptionNotificationPeriod redemptionNoticePeriod) {
+        this.redemptionNoticePeriod = redemptionNoticePeriod;
+    }
+
+    @Column (name = "sidepocket")
+    public String getSidePocket() {
+        return sidePocket;
+    }
+
+    public void setSidePocket(String sidePocket) {
+        this.sidePocket = sidePocket;
+    }
+
+    @Column (name = "gates")
+    public String getGates() {
+        return gates;
+    }
+
+    public void setGates(String gates) {
+        this.gates = gates;
+    }
+
+    @Column (name = "liquidity_percent")
+    public String getLiquidityPercent() {
+        return liquidityPercent;
+    }
+
+    public void setLiquidityPercent(String liquidityPercent) {
+        this.liquidityPercent = liquidityPercent;
+    }
+
+    @Column (name = "liquidity_period")
+    public String getLiquidityPeriod() {
+        return liquidityPeriod;
+    }
+
+    public void setLiquidityPeriod(String liquidityPeriod) {
+        this.liquidityPeriod = liquidityPeriod;
+    }
+
+    @Column (name = "concentration_top5")
+    public String getConcentrationTop5() {
+        return concentrationTop5;
+    }
+
+    public void setConcentrationTop5(String concentrationTop5) {
+        this.concentrationTop5 = concentrationTop5;
+    }
+
+    @Column (name = "concentration_top10")
+    public String getConcentrationTop10() {
+        return concentrationTop10;
+    }
+
+    public void setConcentrationTop10(String concentrationTop10) {
+        this.concentrationTop10 = concentrationTop10;
+    }
+
+    @Column (name = "concentration_top20")
+    public String getConcentrationTop20() {
+        return concentrationTop20;
+    }
+
+    public void setConcentrationTop20(String concentrationTop20) {
+        this.concentrationTop20 = concentrationTop20;
+    }
+
+    @Column (name = "alb_idd_aa")
+    public String getALBIDDAnalystAssessment() {
+        return ALBIDDAnalystAssessment;
+    }
+
+    public void setALBIDDAnalystAssessment(String ALBIDDAnalystAssessment) {
+        this.ALBIDDAnalystAssessment = ALBIDDAnalystAssessment;
+    }
+
+    @Column (name = "alb_conviction")
+    public String getALBConviction() {
+        return ALBConviction;
+    }
+
+    public void setALBConviction(String ALBConviction) {
+        this.ALBConviction = ALBConviction;
+    }
+
+    @Column (name = "alb_exp_alpha")
+    public String getALBExpectedAlpha() {
+        return ALBExpectedAlpha;
+    }
+
+    public void setALBExpectedAlpha(String ALBExpectedAlpha) {
+        this.ALBExpectedAlpha = ALBExpectedAlpha;
+    }
+
+    @Column (name = "alb_exp_beta")
+    public String getALBExpectedBeta() {
+        return ALBExpectedBeta;
+    }
+
+    public void setALBExpectedBeta(String ALBExpectedBeta) {
+        this.ALBExpectedBeta = ALBExpectedBeta;
+    }
+
+    @Column (name = "alb_exp_risk")
+    public String getALBExpectedRisk() {
+        return ALBExpectedRisk;
+    }
+
+    public void setALBExpectedRisk(String ALBExpectedRisk) {
+        this.ALBExpectedRisk = ALBExpectedRisk;
+    }
+
+    @Column (name = "alb_strategy_invest")
+    public String getALBStrategyInvestmentProcess() {
+        return ALBStrategyInvestmentProcess;
+    }
+
+    public void setALBStrategyInvestmentProcess(String ALBStrategyInvestmentProcess) {
+        this.ALBStrategyInvestmentProcess = ALBStrategyInvestmentProcess;
+    }
+
+    @Column (name = "alb_mng_team")
+    public String getALBManagementTeam() {
+        return ALBManagementTeam;
+    }
+
+    public void setALBManagementTeam(String ALBManagementTeam) {
+        this.ALBManagementTeam = ALBManagementTeam;
+    }
+
+    @Column (name = "alb_risk_process")
+    public String getALBRiskProcess() {
+        return ALBRiskProcess;
+    }
+
+    public void setALBRiskProcess(String ALBRiskProcess) {
+        this.ALBRiskProcess = ALBRiskProcess;
     }
 }

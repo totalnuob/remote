@@ -3,7 +3,6 @@ package kz.nicnbk.service.dto.hf;
 import kz.nicnbk.common.service.model.HistoryBaseEntityDto;
 import kz.nicnbk.repo.model.hf.HedgeFund;
 
-import java.util.Date;
 import java.util.Set;
 
 /**
@@ -12,39 +11,54 @@ import java.util.Set;
 public class HedgeFundDto2 extends HistoryBaseEntityDto<HedgeFund> {
 
     private String name;
-    private HFFirmDto firm;
+    private HFFirmDto manager;
     private String summary;
-    private Date inception;
-    private Double aum;
-    private String aumCurrency;
-    private String leverage;
-    private String status;
+    private String inception;
+    private Double AUMAmount;
+    private String AUMDigit;
+    private String AUMCurrency;
+    private String strategy;
 
-    // fees
+    private String leverage;
+
+    private String status;
     private String managementFee;
     private String performanceFee;
     private String redemptionFee;
-
-    private Double minInitialInvestment;
-    private Double minSubsInvestment;
-    private String investmentCurrency;
-
+    private String minInitialInvestment;
+    private String minSubsInvestment;
     private String subscriptionFrequency;
     private String redemptionFrequency;
     private String redemptionNoticePeriod;
     private String sidePocket;
     private String gates;
 
-    //private  liquidity;
+    private String liquidityPercent;
+    private String liquidityPeriod;
 
-    private Double concentrationTop5;
-    private Double concentrationTop10;
-    private Double concentrationTop20;
+    private String concentrationTop5;
+    private String concentrationTop10;
+    private String concentrationTop20;
+
+    //private Set<Substrategy> strategyBreakdownList;
+    //private investorBaseList;
+    //managerList;
+    //returns;
+
+    // ALbourne ratings
+    private String ALBIDDAnalystAssessment;
+    private String ALBConviction;
+    private String ALBExpectedAlpha;
+    private String ALBExpectedBeta;
+    private String ALBExpectedRisk;
+    private String ALBStrategyInvestmentProcess;
+    private String ALBManagementTeam;
+    private String ALBRiskProcess;
 
     private Set<ManagerDto> managers;
-
     private Set<RatingDto> albourneRatings;
     private Set<ReturnDto> returns;
+
 
     public String getName() {
         return name;
@@ -54,12 +68,12 @@ public class HedgeFundDto2 extends HistoryBaseEntityDto<HedgeFund> {
         this.name = name;
     }
 
-    public HFFirmDto getFirm() {
-        return firm;
+    public HFFirmDto getManager() {
+        return manager;
     }
 
-    public void setFirm(HFFirmDto firm) {
-        this.firm = firm;
+    public void setManager(HFFirmDto manager) {
+        this.manager = manager;
     }
 
     public String getSummary() {
@@ -70,28 +84,44 @@ public class HedgeFundDto2 extends HistoryBaseEntityDto<HedgeFund> {
         this.summary = summary;
     }
 
-    public Date getInception() {
+    public String getInception() {
         return inception;
     }
 
-    public void setInception(Date inception) {
+    public void setInception(String inception) {
         this.inception = inception;
     }
 
-    public Double getAum() {
-        return aum;
+    public Double getAUMAmount() {
+        return AUMAmount;
     }
 
-    public void setAum(Double aum) {
-        this.aum = aum;
+    public void setAUMAmount(Double AUMAmount) {
+        this.AUMAmount = AUMAmount;
     }
 
-    public String getAumCurrency() {
-        return aumCurrency;
+    public String getAUMDigit() {
+        return AUMDigit;
     }
 
-    public void setAumCurrency(String aumCurrency) {
-        this.aumCurrency = aumCurrency;
+    public void setAUMDigit(String AUMDigit) {
+        this.AUMDigit = AUMDigit;
+    }
+
+    public String getAUMCurrency() {
+        return AUMCurrency;
+    }
+
+    public void setAUMCurrency(String AUMCurrency) {
+        this.AUMCurrency = AUMCurrency;
+    }
+
+    public String getStrategy() {
+        return strategy;
+    }
+
+    public void setStrategy(String strategy) {
+        this.strategy = strategy;
     }
 
     public String getLeverage() {
@@ -134,28 +164,20 @@ public class HedgeFundDto2 extends HistoryBaseEntityDto<HedgeFund> {
         this.redemptionFee = redemptionFee;
     }
 
-    public Double getMinInitialInvestment() {
+    public String getMinInitialInvestment() {
         return minInitialInvestment;
     }
 
-    public void setMinInitialInvestment(Double minInitialInvestment) {
+    public void setMinInitialInvestment(String minInitialInvestment) {
         this.minInitialInvestment = minInitialInvestment;
     }
 
-    public Double getMinSubsInvestment() {
+    public String getMinSubsInvestment() {
         return minSubsInvestment;
     }
 
-    public void setMinSubsInvestment(Double minSubsInvestment) {
+    public void setMinSubsInvestment(String minSubsInvestment) {
         this.minSubsInvestment = minSubsInvestment;
-    }
-
-    public String getInvestmentCurrency() {
-        return investmentCurrency;
-    }
-
-    public void setInvestmentCurrency(String investmentCurrency) {
-        this.investmentCurrency = investmentCurrency;
     }
 
     public String getSubscriptionFrequency() {
@@ -198,28 +220,108 @@ public class HedgeFundDto2 extends HistoryBaseEntityDto<HedgeFund> {
         this.gates = gates;
     }
 
-    public Double getConcentrationTop5() {
+    public String getLiquidityPercent() {
+        return liquidityPercent;
+    }
+
+    public void setLiquidityPercent(String liquidityPercent) {
+        this.liquidityPercent = liquidityPercent;
+    }
+
+    public String getLiquidityPeriod() {
+        return liquidityPeriod;
+    }
+
+    public void setLiquidityPeriod(String liquidityPeriod) {
+        this.liquidityPeriod = liquidityPeriod;
+    }
+
+    public String getConcentrationTop5() {
         return concentrationTop5;
     }
 
-    public void setConcentrationTop5(Double concentrationTop5) {
+    public void setConcentrationTop5(String concentrationTop5) {
         this.concentrationTop5 = concentrationTop5;
     }
 
-    public Double getConcentrationTop10() {
+    public String getConcentrationTop10() {
         return concentrationTop10;
     }
 
-    public void setConcentrationTop10(Double concentrationTop10) {
+    public void setConcentrationTop10(String concentrationTop10) {
         this.concentrationTop10 = concentrationTop10;
     }
 
-    public Double getConcentrationTop20() {
+    public String getConcentrationTop20() {
         return concentrationTop20;
     }
 
-    public void setConcentrationTop20(Double concentrationTop20) {
+    public void setConcentrationTop20(String concentrationTop20) {
         this.concentrationTop20 = concentrationTop20;
+    }
+
+    public String getALBIDDAnalystAssessment() {
+        return ALBIDDAnalystAssessment;
+    }
+
+    public void setALBIDDAnalystAssessment(String ALBIDDAnalystAssessment) {
+        this.ALBIDDAnalystAssessment = ALBIDDAnalystAssessment;
+    }
+
+    public String getALBConviction() {
+        return ALBConviction;
+    }
+
+    public void setALBConviction(String ALBConviction) {
+        this.ALBConviction = ALBConviction;
+    }
+
+    public String getALBExpectedAlpha() {
+        return ALBExpectedAlpha;
+    }
+
+    public void setALBExpectedAlpha(String ALBExpectedAlpha) {
+        this.ALBExpectedAlpha = ALBExpectedAlpha;
+    }
+
+    public String getALBExpectedBeta() {
+        return ALBExpectedBeta;
+    }
+
+    public void setALBExpectedBeta(String ALBExpectedBeta) {
+        this.ALBExpectedBeta = ALBExpectedBeta;
+    }
+
+    public String getALBExpectedRisk() {
+        return ALBExpectedRisk;
+    }
+
+    public void setALBExpectedRisk(String ALBExpectedRisk) {
+        this.ALBExpectedRisk = ALBExpectedRisk;
+    }
+
+    public String getALBStrategyInvestmentProcess() {
+        return ALBStrategyInvestmentProcess;
+    }
+
+    public void setALBStrategyInvestmentProcess(String ALBStrategyInvestmentProcess) {
+        this.ALBStrategyInvestmentProcess = ALBStrategyInvestmentProcess;
+    }
+
+    public String getALBManagementTeam() {
+        return ALBManagementTeam;
+    }
+
+    public void setALBManagementTeam(String ALBManagementTeam) {
+        this.ALBManagementTeam = ALBManagementTeam;
+    }
+
+    public String getALBRiskProcess() {
+        return ALBRiskProcess;
+    }
+
+    public void setALBRiskProcess(String ALBRiskProcess) {
+        this.ALBRiskProcess = ALBRiskProcess;
     }
 
     public Set<ManagerDto> getManagers() {

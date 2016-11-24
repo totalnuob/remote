@@ -1,11 +1,9 @@
 package kz.nicnbk.service.api.hf;
 
 import kz.nicnbk.service.api.base.BaseService;
-import kz.nicnbk.service.dto.hf.HedgeFundDto;
+import kz.nicnbk.service.dto.hf.HedgeFundDto2;
 import kz.nicnbk.service.dto.hf.HedgeFundSearchParams;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -13,13 +11,13 @@ import java.util.Set;
  */
 public interface HedgeFundService extends BaseService {
 
-    Long save(HedgeFundDto hedgeFundDto);
+    Long save(HedgeFundDto2 hedgeFundDto);
 
-    HedgeFundDto get(Long id);
+    HedgeFundDto2 get(Long id);
 
-    Set<HedgeFundDto> loadManagerFunds(Long managerId);
+    Set<HedgeFundDto2> loadManagerFunds(Long managerId);
 
-    Set<HedgeFundDto> findByName(HedgeFundSearchParams searchParams);
+    Set<HedgeFundDto2> findByName(HedgeFundSearchParams searchParams);
 
 
 }

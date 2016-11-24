@@ -8,10 +8,11 @@
   INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(21, 'EQUITY', 'Equity', '', '', 2);
   INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(22, 'EVENT', 'Event Driven', '', '', 2);
   INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(23, 'REL_VAL', 'Relative Value', '', '', 2);
-  INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(24, 'MACRO', 'Macro', '', '' , 2);
+  INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(24, 'MACRO', 'Macro/Directional', '', '' , 2);
   INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(25, 'CREDIT', 'Credit', '', '', 2);
   INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(26, 'COMMOD', 'Commodities', '', '', 2);
-  INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(27, 'MULTI', 'Multi', '', '' , 2);
+  INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(27, 'MULTI', 'Multistrategy', '', '' , 2);
+  INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(28, 'LONGBIAS', 'Long Biaseed', '', '' , 2);
 
   INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(41, 'CORE', 'Core', '', '', 3);
   INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(42, 'CORE+', 'Core+', '', '', 3 );

@@ -3,6 +3,7 @@ package kz.nicnbk.ws.rest;
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.service.datamanager.LookupService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,6 +30,12 @@ public class LookupServiceREST {
     @RequestMapping(value = "/HFStrategy", method = RequestMethod.GET)
     public List<BaseDictionaryDto> getHFStrategies(){
         List<BaseDictionaryDto> lookups = this.lookupService.getHedgeFundsStrategy();
+        return lookups;
+    }
+
+    @RequestMapping(value = "/HFSubStrategy/{strategy}", method = RequestMethod.GET)
+    public List<BaseDictionaryDto> getHFSubStrategies(@PathVariable String strategy){
+        List<BaseDictionaryDto> lookups = this.lookupService.getHedgeFundsSubStrategy(strategy);
         return lookups;
     }
 

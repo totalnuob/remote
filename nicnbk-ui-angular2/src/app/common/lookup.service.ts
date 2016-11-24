@@ -9,7 +9,7 @@ import {Observable} from "rxjs/Observable";
 import {CommonService} from "./common.service";
 import {PE_STRATEGIES_URL} from "./lookup.service.url";
 import {RE_STRATEGIES_URL} from "./lookup.service.url";
-import {HF_STRATEGIES_URL} from "./lookup.service.url";
+import {HF_STRATEGIES_URL, HF_SUBSTRATEGIES_URL} from "./lookup.service.url";
 import {GEOGRAPHIES_URL} from "./lookup.service.url";
 import {CURRENCIES_URL} from "./lookup.service.url";
 
@@ -91,6 +91,12 @@ export class LookupService extends CommonService{
 
     getHFStrategies(){
         return this.http.get(HF_STRATEGIES_URL)
+            .map(this.extractDataList)
+            .catch(this.handleError);
+    }
+
+    getHFSubStrategies(strategy){
+        return this.http.get(HF_SUBSTRATEGIES_URL + strategy)
             .map(this.extractDataList)
             .catch(this.handleError);
     }

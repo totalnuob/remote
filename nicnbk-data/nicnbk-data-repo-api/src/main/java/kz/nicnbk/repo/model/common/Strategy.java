@@ -16,7 +16,7 @@ public class Strategy extends BaseTypeEntityImpl {
 
     // TODO: refactor as lookup/ entity
     public static final int TYPE_PRIVATE_EQUITY = 1;
-    public static final int TYPE_PHEDGE_FUNDS = 2;
+    public static final int TYPE_HEDGE_FUNDS = 2;
     public static final int TYPE_REAL_ESTATE = 3;
 
     // TODO: typed entity (lookup)

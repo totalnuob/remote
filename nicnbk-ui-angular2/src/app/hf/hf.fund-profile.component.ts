@@ -8,6 +8,10 @@ import {SaveResponse} from "../common/save-response.";
 import {HedgeFundService} from "./hf.fund.service";
 import {HFManager} from "./model/hf.manager";
 import {HFManagerService} from "./hf.manager.service";
+import {AlbourneService} from "./hf.albourne.service";
+import {GoogleChartComponent} from "../google-chart/google-chart.component";
+
+declare var google:any;
 
 @Component({
     selector: 'hf-fund-profile',
@@ -17,9 +21,8 @@ import {HFManagerService} from "./hf.manager.service";
     ],
     providers: []
 })
-export class HFFundProfileComponent extends CommonFormViewComponent {
+export class HFFundProfileComponent extends GoogleChartComponent {
 
-    private currentYear = new Date().getFullYear();
     private fund = new HedgeFund();
 
     public sub: any;
@@ -27,28 +30,36 @@ export class HFFundProfileComponent extends CommonFormViewComponent {
     public managerIdParam: number;
 
     strategyLookup = [];
+    substrategyLookup = [];
     geographyLookup = [];
     fundStatusLookup = [];
     currencyLookup = [];
-    legalStructureLookup = [];
-    domicileCountryLookup = [];
 
-    subscriptionFrequencyTypeLookup = [];
-    managementFeeTypeLookup = [];
-    performanceFeeTypeLookup = [];
-    performanceFeePayFrequencyLookup = [];
+    subscriptionFrequencyLookup = [];
     redemptionFrequencyLookup = [];
     redemptionNotificationPeriodLookup = [];
+
+    albourneRatingLookup: any;
 
 
     constructor(
         private lookupService: LookupService,
         private route: ActivatedRoute,
         private fundService: HedgeFundService,
-        private managerService: HFManagerService
+        private managerService: HFManagerService,
+        private albourneService: AlbourneService
     ) {
 
         super();
+
+        this.fund.ALBIDDAnalystAssessment = 'B';
+        this.fund.ALBConviction = '5';
+        this.fund.ALBExpectedAlpha = 'M';
+        this.fund.ALBExpectedBeta = 'V';
+        this.fund.ALBExpectedRisk = 'M';
+        this.fund.ALBStrategyInvestmentProcess = 'B';
+        this.fund.ALBManagementTeam = 'A';
+        this.fund.ALBRiskProcess = 'A';
 
         // loadLookups
         this.loadLookups();
@@ -115,21 +126,26 @@ export class HFFundProfileComponent extends CommonFormViewComponent {
 
     }
 
+
+    drawGraph(){
+        this.drawSubstrategiesChart();
+    }
+
     save(){
         console.log(this.fund);
 
-        this.fundService.save(this.fund)
-            .subscribe(
-                (response: SaveResponse)  => {
-                    this.fund.id = response.entityId;
-                    this.fund.creationDate = response.creationDate;
-
-                    this.postAction("Successfully saved.", null);
-                },
-                error =>  {
-                    this.postAction(null, "Error saving manager profile.");
-                }
-            );
+        //this.fundService.save(this.fund)
+        //    .subscribe(
+        //        (response: SaveResponse)  => {
+        //            this.fund.id = response.entityId;
+        //            this.fund.creationDate = response.creationDate;
+        //
+        //            this.postAction("Successfully saved.", null);
+        //        },
+        //        error =>  {
+        //            this.postAction(null, "Error saving manager profile.");
+        //        }
+        //    );
     }
 
     loadLookups(){
@@ -173,22 +189,22 @@ export class HFFundProfileComponent extends CommonFormViewComponent {
         this.lookupService.getManagerStatuses().then(data => this.fundStatusLookup = data);
 
         // legal structure
-        this.lookupService.getLegalStructures().then(data => this.legalStructureLookup = data);
+        //this.lookupService.getLegalStructures().then(data => this.legalStructureLookup = data);
 
         // domicile country
-        this.lookupService.getDomicileCountries().then(data => this.domicileCountryLookup = data);
+        //this.lookupService.getDomicileCountries().then(data => this.domicileCountryLookup = data);
 
         // subscription frequency
-        this.lookupService.getSubscriptionFrequencyTypes().then(data => this.subscriptionFrequencyTypeLookup = data);
+        this.lookupService.getSubscriptionFrequencyTypes().then(data => this.subscriptionFrequencyLookup = data);
 
         // management fee type
-        this.lookupService.getManagementFeeTypes().then(data => this.managementFeeTypeLookup = data);
+        //this.lookupService.getManagementFeeTypes().then(data => this.managementFeeTypeLookup = data);
 
         // performance fee type
-        this.lookupService.getPerformanceFeeTypes().then(data => this.performanceFeeTypeLookup = data);
+        //this.lookupService.getPerformanceFeeTypes().then(data => this.performanceFeeTypeLookup = data);
 
         // performance fee pay freq
-        this.lookupService.getPerformanceFeePayFrequencyTypes().then(data => this.performanceFeePayFrequencyLookup = data);
+        //this.lookupService.getPerformanceFeePayFrequencyTypes().then(data => this.performanceFeePayFrequencyLookup = data);
 
         // redemption frequency
         this.lookupService.getRedemptionFrequencyTypes().then(data => this.redemptionFrequencyLookup = data);
@@ -197,5 +213,197 @@ export class HFFundProfileComponent extends CommonFormViewComponent {
         // redemption notification period
         this.lookupService.getRedemptionNotificationPeriodTypes().then(data => this.redemptionNotificationPeriodLookup = data);
 
+        this.albourneRatingLookup = this.albourneService.getIDDAnalysisAssessmentLookup();
+        console.log(this.albourneRatingLookup);
+
+    }
+
+    addStrategyBreakdown(){
+        this.fund.strategyBreakdownList.push({name: "", value: ""});
+        //console.log(this.strategyBreakdownList);
+    }
+
+    removeStrategyBreakdown(item){
+
+        // TODO: pass index instead of item ?
+        //console.log(item);
+        for(var i = this.fund.strategyBreakdownList.length; i--;) {
+            if(this.fund.strategyBreakdownList[i] === item) {
+                this.fund.strategyBreakdownList.splice(i, 1);
+            }
+        }
+    }
+
+    addFundManager(){
+        this.fund.managerList.push({name: "", description: "", since: ""});
+    }
+
+    removeFundManager(item){
+        //console.log(item);
+        for(var i = this.fund.managerList.length; i--;) {
+            if(this.fund.managerList[i] === item) {
+                this.fund.managerList.splice(i, 1);
+            }
+        }
+    }
+
+    addReturn(){
+        this.fund.returns.push({year: "", jan: "", feb: "", mar: "", apr: "", may: "", jun: "", jul: "", aug: "", sep: "", oct: "", nov: "", dec: ""});
+    }
+
+    removeReturn(item){
+        //console.log(item);
+        for(var i = this.fund.returns.length; i--;) {
+            if(this.fund.returns[i] === item) {
+                this.fund.returns.splice(i, 1);
+            }
+        }
+    }
+
+    strategyChanged(){
+        //alert(this.fund.strategy);
+
+        // TODO: check if substrategies entered, if so as confirmation
+        this.loadSubstrategies();
+    }
+
+    loadSubstrategies(){
+
+        //substrategy
+        this.lookupService.getHFSubStrategies(this.fund.strategy)
+            .subscribe(
+                data => {
+                    //data.forEach(element => {
+                    //    this.strategyLookup.push({ id: element.code, value: element.nameEn});
+                    //});
+                    this.substrategyLookup = data;
+                },
+                error =>  this.errorMessage = <any>error
+            );
+    }
+
+    addInvestorBase(){
+        this.fund.investBaseList.push({name: "", value: ""});
+    }
+
+    removeInvestorBase(item){
+        for(var i = this.fund.investBaseList.length; i--;) {
+            if(this.fund.investBaseList[i] === item) {
+                this.fund.investBaseList.splice(i, 1);
+            }
+        }
+    }
+
+    //public getAlbourneRatingColor(type, value){
+    //    return this.albourneService.getDescriptionByValue(type, value).color;
+    //}
+    //getAlbourneRatingText(type, value){
+    //    return this.albourneService.getDescriptionByValue(type, value).text;
+    //}
+
+    getAlbourneRatingText(type) {
+        if (type === 'IDD_AA') {
+            //return this.albourneRatingLookup.IDD_AA this.fund.ALBIDDAnalystAssessment
+            return this.getAlbourneRatingTextFromList(this.albourneRatingLookup.IDD_AA, this.fund.ALBIDDAnalystAssessment);
+        } else if (type === 'CONVICTION') {
+            return this.getAlbourneRatingTextFromList(this.albourneRatingLookup.CONVICTION, this.fund.ALBConviction);
+        } else if (type === 'EXPECTED_ALPHA') {
+            return this.getAlbourneRatingTextFromList(this.albourneRatingLookup.EXPECTED_ALPHA, this.fund.ALBExpectedAlpha);
+        } else if (type === 'EXPECTED_BETA') {
+            return this.getAlbourneRatingTextFromList(this.albourneRatingLookup.EXPECTED_BETA, this.fund.ALBExpectedBeta);
+        } else if (type === 'EXPECTED_RISK') {
+            return this.getAlbourneRatingTextFromList(this.albourneRatingLookup.EXPECTED_RISK, this.fund.ALBExpectedRisk);
+        } else if (type === 'STRATEGY_INVESTMENT') {
+            return this.getAlbourneRatingTextFromList(this.albourneRatingLookup.STRATEGY_INVESTMENT, this.fund.ALBStrategyInvestmentProcess);
+        } else if (type === 'MNG_TEAM') {
+            return this.getAlbourneRatingTextFromList(this.albourneRatingLookup.MNG_TEAM, this.fund.ALBManagementTeam);
+        } else if (type === 'RISK_PROCESS') {
+            return this.getAlbourneRatingTextFromList(this.albourneRatingLookup.RISK_PROCESS, this.fund.ALBRiskProcess);
+        }
+    }
+
+        private getAlbourneRatingTextFromList(list, value){
+        for(var i = 0;i < list.length; i++){
+            if(list[i].value === value){
+                return list[i].text;
+            }
+        }
+    }
+
+    getAlbourneRatingColor(type){
+        if (type === 'IDD_AA') {
+            return this.getAlbourneRatingColorFromList(this.albourneRatingLookup.IDD_AA, this.fund.ALBIDDAnalystAssessment);
+        } else if (type === 'CONVICTION') {
+            return this.getAlbourneRatingColorFromList(this.albourneRatingLookup.CONVICTION, this.fund.ALBConviction);
+        } else if (type === 'EXPECTED_ALPHA') {
+            return this.getAlbourneRatingColorFromList(this.albourneRatingLookup.EXPECTED_ALPHA, this.fund.ALBExpectedAlpha);
+        } else if (type === 'EXPECTED_BETA') {
+            return this.getAlbourneRatingColorFromList(this.albourneRatingLookup.EXPECTED_BETA, this.fund.ALBExpectedBeta);
+        } else if (type === 'EXPECTED_RISK') {
+            return this.getAlbourneRatingColorFromList(this.albourneRatingLookup.EXPECTED_RISK, this.fund.ALBExpectedRisk);
+        } else if (type === 'STRATEGY_INVESTMENT') {
+            return this.getAlbourneRatingColorFromList(this.albourneRatingLookup.STRATEGY_INVESTMENT, this.fund.ALBStrategyInvestmentProcess);
+        } else if (type === 'MNG_TEAM') {
+            return this.getAlbourneRatingColorFromList(this.albourneRatingLookup.MNG_TEAM, this.fund.ALBManagementTeam);
+        } else if (type === 'RISK_PROCESS') {
+            return this.getAlbourneRatingColorFromList(this.albourneRatingLookup.RISK_PROCESS, this.fund.ALBRiskProcess);
+        }
+    }
+
+    private getAlbourneRatingColorFromList(list, value){
+        for(var i = 0;i < list.length; i++){
+            if(list[i].value === value){
+                return list[i].color;
+            }
+        }
+    }
+
+
+    drawSubstrategiesChart(){
+        var data = google.visualization.arrayToDataTable(this.getStrategyBreakdownRowData());
+
+        var options = {
+            title: 'Strategy breakdown',
+            legend: {position: 'left'},
+            chartArea: {
+                height: '80%',
+                top: '10%'
+            }
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('strategyBreakdownChart'));
+        chart.draw(data, options);
+    }
+
+    getStrategyBreakdownRowData(){
+        var list = [['Type', '%']];
+        for(var i = 0; i < this.fund.strategyBreakdownList.length; i++){
+            list.push([this.fund.strategyBreakdownList[i].name, Number(this.fund.strategyBreakdownList[i].value)]);
+        }
+        console.log(list);
+        return list;
+    }
+
+    calculateReturnsYTD(returnRecord){
+        var ytd = (
+        this.getReturnValue(Number(returnRecord.jan)) + this.getReturnValue(Number(returnRecord.feb)) +
+        this.getReturnValue(Number(returnRecord.mar)) + this.getReturnValue(Number(returnRecord.apr)) +
+        this.getReturnValue(Number(returnRecord.may)) + this.getReturnValue(Number(returnRecord.jun)) +
+        this.getReturnValue(Number(returnRecord.jul)) + this.getReturnValue(Number(returnRecord.aug)) +
+        this.getReturnValue(Number(returnRecord.sep)) + this.getReturnValue(Number(returnRecord.oct)) +
+        this.getReturnValue(Number(returnRecord.nov)) + this.getReturnValue(Number(returnRecord.dec))
+        );
+        if(ytd == 0){
+            return "";
+        }
+        return ytd;
+    }
+
+    private getReturnValue(value){
+        if(value == null || value === 'undefined' || value === ''){
+            return 0;
+        }else{
+            return Number(value);
+        }
     }
 }

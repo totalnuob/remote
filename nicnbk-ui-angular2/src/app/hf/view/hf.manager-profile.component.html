@@ -43,15 +43,15 @@
                             </select>
                         </td>
                     </tr>
-                    <tr>
-                        <td class="col-md-1">Strategy</td>
-                        <td class="col-md-3">
-                            <select style="width: 100%" [(ngModel)]="manager.strategy">
-                                <option value="0">---</option>
-                                <option *ngFor="let item of strategyLookup" [value]="item.code">{{item.nameEn}}</option>
-                            </select>
-                        </td>
-                    </tr>
+                    <!--<tr>-->
+                        <!--<td class="col-md-1">Strategy</td>-->
+                        <!--<td class="col-md-3">-->
+                            <!--<select style="width: 100%" [(ngModel)]="manager.strategy">-->
+                                <!--<option value="0">-&#45;&#45;</option>-->
+                                <!--<option *ngFor="let item of strategyLookup" [value]="item.code">{{item.nameEn}}</option>-->
+                            <!--</select>-->
+                        <!--</td>-->
+                    <!--</tr>-->
                     <!--<tr>-->
                         <!--<td class="col-md-1">Status</td>-->
                         <!--<td class="col-md-3">-->
@@ -77,18 +77,18 @@
                         <!--</td>-->
                     <!--</tr>-->
                     <tr>
+                        <td class="col-md-1">AUM </td>
+                        <td class="col-md-3">
+                            <input type="text" [(ngModel)]="manager.aum"/>
+                        </td>
+                    </tr>
+                    <tr>
                         <td class="col-md-1">Domicile Country</td>
                         <td class="col-md-3">
                             <select style="width: 100%" [(ngModel)]="manager.domicileCountry">
                                 <option value="0">---</option>
                                 <option *ngFor="let item of domicileCountryLookup" [value]="item.code">{{item.nameEn}}</option>
                             </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-1">AUM </td>
-                        <td class="col-md-3">
-                            <input type="text" [(ngModel)]="manager.aum"/>
                         </td>
                     </tr>
                 </table>

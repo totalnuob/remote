@@ -37,464 +37,508 @@
                 </div>
             </div>
             <br/>
-
-            <!-- LEFT PANEL -->
-            <div class="col-md-4">
-                <div class="row">
-                    <table class=" table-striped table-condensed">
-                        <h4>Manager Details</h4>
-                        <tr>
-                            <td class="col-md-1">Manager Name</td>
-                            <td class="col-md-3">
-                                <a [routerLink]="['/hf/managerProfile/', fund?.manager?.id]">{{fund?.manager?.name}}</a></td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-1">Manager Type</td>
-                            <td class="col-md-3">{{fund?.manager?.type}}</td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-1">Manager Strategy</td>
-                            <td class="col-md-3">{{fund?.manager?.strategy}}</td>
-                        </tr>
-                        <!--<tr>-->
-                        <!--<td class="col-md-1">Status</td>-->
-                        <!--<td class="col-md-3">{{fund?.manager?.status}}</td>-->
-                        <!--</tr>-->
-                        <tr>
-                            <td class="col-md-1">Inception</td>
-                            <td class="col-md-3">{{fund?.manager?.inception}}
-                            </td>
-                        </tr>
-                        <!--<tr>-->
-                        <!--<td class="col-md-1">Legal Structure</td>-->
-                        <!--<td class="col-md-3">{{fund?.manager?.legalStructure}}</td>-->
-                        <!--</tr>-->
-                        <tr>
-                            <td class="col-md-1">Domicile Country</td>
-                            <td class="col-md-3">{{fund?.manager?.domicileStructure}}</td>
-                        </tr>
-                        <!--</table>-->
-
-                        <!--<div class=" col-md-1">&nbsp;</div>-->
-                        <!--<table class=" col-md-6 table-striped table-condensed">-->
-                        <!--<h4>Contacts</h4>-->
-                        <!--<tr>-->
-                        <!--<td class="col-md-1">Manager Name</td>-->
-                        <!--<td class="col-md-3">Gorsvenor Capital Management</td>-->
-                        <!--</tr>-->
-                        <tr>
-                            <td class="col-md-1">Fund Managers</td>
-                            <td class="col-md-3"></td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-1">Headquarters</td>
-                            <td class="col-md-3"></td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-1">Contact person</td>
-                            <td class="col-md-3"></td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-1">Telephone</td>
-                            <td class="col-md-3"></td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-1">Fax</td>
-                            <td class="col-md-3"></td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-1">Website</td>
-                            <td class="col-md-3"></td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-1">Email</td>
-                            <td class="col-md-3"></td>
-                        </tr>
-                    <!--</table>-->
-                <!--</div>-->
-                <!--<div class="row">-->
-                    <!--<table class=" table-striped table-condensed">-->
-                        <h4>Fund Strategy</h4>
-                        <tr>
-                            <td class="col-md-4" colspan="2">
-                                <textarea style="width: 100%" [(ngModel)]="fund.strategyDescription"></textarea>
-                            </td>
-                        </tr>
-                    <!--</table>-->
-                <!--</div>-->
-
-                <!--<div class="row">-->
-                    <!--<table class="table-striped table-condensed">-->
-                        <tr>
-                            <td class="col-md-1">Fund size</td>
-                            <td class="col-md-3">
-                                <input type="text" [(ngModel)]="fund.size"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-1">Status</td>
-                            <td class="col-md-3">
-                                <select style="width: 100%" [(ngModel)]="fund.status">
-                                    <option value="0">---</option>
-                                    <option *ngFor="let item of fundStatusLookup" [value]="item.code">{{item.nameEn}}</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-1">Strategy</td>
-                            <td class="col-md-3">
-                                <select style="width: 100%" [(ngModel)]="fund.strategy">
-                                    <option value="0">---</option>
-                                    <option *ngFor="let item of strategyLookup" [value]="item.code">{{item.nameEn}}</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-1">Geography</td>
-                            <td class="col-md-3">
-                                <select style="width: 100%" [(ngModel)]="fund.geography">
-                                    <option value="0">---</option>
-                                    <option *ngFor="let item of geographyLookup" [value]="item.code">{{item.nameEn}}</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-1">Share Class Currency</td>
-                            <td class="col-md-3">
-                                <select style="width: 100%" [(ngModel)]="fund.shareClassCurrency">
-                                    <option value="0">---</option>
-                                    <option *ngFor="let item of currencyLookup" [value]="item.code">{{item.nameEn}}</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-1">Inception Date</td>
-                            <td class="col-md-3">
-                                <input type="text" [(ngModel)]="fund.inception"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-1">Legal Structure</td>
-                            <td class="col-md-3">
-                                <select style="width: 100%" [(ngModel)]="fund.legalStructure">
-                                    <option value="0">---</option>
-                                    <option *ngFor="let item of legalStructureLookup" [value]="item.code">{{item.nameEn}}</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-1">Domicile Country</td>
-                            <td class="col-md-3">
-                                <select style="width: 100%" [(ngModel)]="fund.domicileCountry">
-                                    <option value="0">---</option>
-                                    <option *ngFor="let item of domicileCountryLookup" [value]="item.code">{{item.nameEn}}</option>
-                                </select>
-                            </td>
-                        </tr>
-                    <!--</table>-->
-                <!--</div>-->
-                <!--<div class="row">-->
-                    <!--<table class="table-striped table-condensed">-->
-                        <h4>Subscriptions</h4>
-                        <tr>
-                            <td class="col-md-1">Min Investment</td>
-                            <td class="col-md-3"><input type="text" [(ngModel)]="fund.minInvestment"/></td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-1">Currency</td>
-                            <td class="col-md-3">
-                                <select style="width: 100%" [(ngModel)]="fund.investmentCurrency">
-                                    <option value="0">---</option>
-                                    <option *ngFor="let item of currencyLookup" [value]="item.code">{{item.nameEn}}</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-1">Frequency</td>
-                            <td class="col-md-3">
-                                <select style="width: 100%" [(ngModel)]="fund.subscriptionFrequency">
-                                    <option value="0">---</option>
-                                    <option *ngFor="let item of subscriptionFrequencyTypeLookup" [value]="item.code">{{item.nameEn}}</option>
-                                </select></td>
-                        </tr>
-
-                        <h4>Fees</h4>
-                        <tr>
-                            <td class="col-md-1">Management Fee Type</td>
-                            <td class="col-md-3">
-                                <select style="width: 100%" [(ngModel)]="fund.managementFeeType">
-                                    <option value="0">---</option>
-                                    <option *ngFor="let item of managementFeeTypeLookup" [value]="item.code">{{item.nameEn}}</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-1">Management Fee</td>
-                            <td class="col-md-3"><input type="text" [(ngModel)]="fund.managementFee"/></td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-1">Performance Fee Type</td>
-                            <td class="col-md-3">
-                                <select style="width: 100%" [(ngModel)]="fund.performanceFeeType">
-                                    <option value="0">---</option>
-                                    <option *ngFor="let item of performanceFeeTypeLookup" [value]="item.code">{{item.nameEn}}</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-1">Performance Fee</td>
-                            <td class="col-md-3"><input type="text" [(ngModel)]="fund.performanceFee"/></td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-1">Performance Fee Pay Freq</td>
-                            <td class="col-md-3">
-                                <select style="width: 100%" [(ngModel)]="fund.performanceFeePayFrequency">
-                                    <option value="0">---</option>
-                                    <option *ngFor="let item of performanceFeePayFrequencyLookup" [value]="item.code">{{item.nameEn}}</option>
-                                </select>
-                            </td>
-                        </tr>
-
-                        <h4>Redemptions</h4>
-                        <tr>
-                            <td class="col-md-1">Frequency</td>
-                            <td class="col-md-3">
-                                <select style="width: 100%" [(ngModel)]="fund.redemptionFrequency">
-                                    <option value="0">---</option>
-                                    <option *ngFor="let item of redemptionFrequencyLookup" [value]="item.code">{{item.nameEn}}</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-1">Notification Period</td>
-                            <td class="col-md-3">
-                                <select style="width: 100%" [(ngModel)]="fund.redemptionNotificationPeriod">
-                                    <option value="0">---</option>
-                                    <option *ngFor="let item of redemptionNotificationPeriodLookup" [value]="item.code">{{item.nameEn}}</option>
-                                </select>
-                            </td>
-                        </tr>
-                    </table>
+            <div class="row">
+                <div class="col-md-12">
+                    <textarea class="form-control" rows="5" placeholder="Enter fund summary..."
+                              [(ngModel)]="fund.summary"></textarea>
                 </div>
             </div>
 
-            <!-- RIGHT PANEL -->
-            <div class="col-md-8">
-                <table class="table table-striped table-bordered table-hover table-condensed">
-                    <!--<h4>Contacts</h4>-->
-                    <!--<tr>-->
-                    <!--<td class="col-md-1">Manager Name</td>-->
-                    <!--<td class="col-md-3">Gorsvenor Capital Management</td>-->
-                    <!--</tr>-->
-                    <tr>
-                        <td>&nbsp;</td>
-                        <td>{{currentYear - 9}}</td>
-                        <td>{{currentYear - 8}}</td>
-                        <td>{{currentYear - 7}}</td>
-                        <td>{{currentYear - 6}}</td>
-                        <td>{{currentYear - 5}}</td>
-                        <td>{{currentYear - 4}}</td>
-                        <td>{{currentYear - 3}}</td>
-                        <td>{{currentYear - 2}}</td>
-                        <td>{{currentYear - 1}}</td>
-                        <td>{{currentYear}}</td>
-                    </tr>
-                    <tbody>
-                        <tr>
-                            <td>Jan</td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
+            <br/>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="row">
+                        <br/>
+                        <table class="table table-hover table-responsive table-condensed">
+                            <tr>
+                                <td>Inception date</td>
+                                <td>
+                                    <input type="text" class="form-control" [(ngModel)]="fund.inception"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Firm AUM</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Fund AUM</td>
+                                <td>
+                                    <input type="text" class="form-control" style="display:inline; width: 30%" [(ngModel)]="fund.AUMAmount"/>
+                                    <select class="form-control" style="display:inline; width: 25%" [(ngModel)]="fund.AUMDigit">
+                                        <option value="MLN">M</option>
+                                        <option value="BLN">B</option>
+                                    </select>
+                                    <select class="form-control" style="display:inline; width: 35%" [(ngModel)]="fund.AUMCurrency">
+                                        <option value="-">--</option>
+                                        <option *ngFor="let currency of currencyLookup">{{currency.code}}</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Strategy</td>
+                                <td>
+                                    <select class="form-control" style="width: 100%" [(ngModel)]="fund.strategy" (ngModelChange)="strategyChanged()">
+                                        <option value="-">---</option>
+                                        <option *ngFor="let item of strategyLookup" [value]="item.code">{{item.nameEn}}</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Num Months</td>
+                                <td>{{fund.numMonths}}</td>
+                            </tr>
+                            <tr>
+                                <td>Num Positive Months</td>
+                                <td>{{fund.numPositiveMonths}}</td>
+                            </tr>
+                            <tr>
+                                <td>Num Negative Months</td>
+                                <td>{{fund.numNegativeMonths}}</td>
+                            </tr>
+                            <tr>
+                                <td>Return Since Inception</td>
+                                <td>{{fund.returnSinceInception}}</td>
+                            </tr>
+                            <tr>
+                                <td>Annualized Return</td>
+                                <td>{{fund.annualizedReturn}}</td>
+                            </tr>
+                            <tr>
+                                <td>YTD</td>
+                                <td>{{fund.YTD}}</td>
+                            </tr>
+                            <tr>
+                                <td>Beta</td>
+                                <td>{{fund.beta}}</td>
+                            </tr>
+                            <tr>
+                                <td>Annual Volatility</td>
+                                <td>{{fund.annualVolatility}}</td>
+                            </tr>
+                            <tr>
+                                <td>Worst Drawdown</td>
+                                <td>{{fund.worstDrawdown}}</td>
+                            </tr>
+                            <tr>
+                                <td>Sharpe Ratio</td>
+                                <td>{{fund.sharpeRatio}}</td>
+                            </tr>
+                            <tr>
+                                <td>Sortino Ratio</td>
+                                <td>{{fund.sortinoRatio}}</td>
+                            </tr>
+                            <tr>
+                                <td>Levarage</td>
+                                <td><input type="text" class="form-control" [(ngModel)]="fund.leverage"/></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <br/>
+                    <div class="row">
+                        <table>
+                            <tr>
+                                <td colspan="2">Fees & terms</td>
+                            </tr>
+                            <tr>
+                                <td width="60%">Status</td>
+                                <td width="40%">
+                                    <select class="form-control" style="width: 100%" [(ngModel)]="fund.status">
+                                        <option value="0">---</option>
+                                        <option *ngFor="let item of fundStatusLookup" [value]="item.code">{{item.nameEn}}</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Management Fee</td>
+                                <td>
+                                    <input type="text" class="form-control" [(ngModel)]="fund.managementFee"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Performance Fee</td>
+                                <td><input type="text" class="form-control" [(ngModel)]="fund.performanceFee"/></td>
+                            </tr>
+                            <tr>
+                                <td>Redemption Fee</td>
+                                <td><input type="text" class="form-control" [(ngModel)]="fund.redemptionFee"/></td>
+                            </tr>
+                            <tr>
+                                <td>Min initial Investment</td>
+                                <td><input type="text" class="form-control" [(ngModel)]="fund.minInitialInvestment"/></td>
+                            </tr>
+                            <tr>
+                                <td>Minimum Subs Investment</td>
+                                <td><input type="text" class="form-control" [(ngModel)]="fund.minSubsInvestment"/></td>
+                            </tr>
+                            <tr>
+                                <td>Subscription Frequency</td>
+                                <td>
+                                    <select class="form-control" style="width: 100%" [(ngModel)]="fund.subscriptionFrequency">
+                                        <option value="0">---</option>
+                                        <option *ngFor="let item of subscriptionFrequencyLookup" [value]="item.code">{{item.nameEn}}</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Redemption Frequency</td>
+                                <td>
+                                    <select class="form-control" style="width: 100%" [(ngModel)]="fund.redemptionFrequency">
+                                        <option value="0">---</option>
+                                        <option *ngFor="let item of redemptionFrequencyLookup" [value]="item.code">{{item.nameEn}}</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Redemption Notice Period</td>
+                                <td>
+                                    <select class="form-control" style="width: 100%" [(ngModel)]="fund.redemptionNoticePeriod">
+                                        <option value="0">---</option>
+                                        <option *ngFor="let item of redemptionNotificationPeriodLookup" [value]="item.code">{{item.nameEn}}</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Side Pocket</td>
+                                <td>
+                                    <select class="form-control" style="width: 100%" [(ngModel)]="fund.sidePocket">
+                                        <option value="0">---</option>
+                                        <option value="YES">Yes</option>
+                                        <option value="NO">No</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Gates</td>
+                                <td><input type="text" class="form-control" [(ngModel)]="fund.gates"/></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="col-md-1">&nbsp;</div>
+
+                <div class="col-md-3">
+                    <div class="row">
+                        <br/>
+                        <table class="table table-hover table-responsive table-condensed table-bordered">
+                        <!--<tr *ngFor="let strategy of strategyBreakDownList">-->
+                            <!--<td></td>-->
+                        <!--</tr>-->
+                        <thead>
+                            <tr>
+                                <td colspan="3">Strategy Breakdown &nbsp;
+                                    <button class="btn btn-xs btn-primary" type="button" (click)="addStrategyBreakdown()"
+                                            [disabled]="fund.strategy == null || fund.strategy === '-'">
+                                        <span role="button" class="glyphicon glyphicon-plus"></span>
+                                    </button>
+                                    <button class="btn btn-xs btn-success" type="button" (click)="drawGraph()"
+                                            [disabled]="fund.strategy == null || fund.strategy === '-'">
+                                        <span role="button" class="glyphicon glyphicon-refresh"></span>
+                                    </button>
+                                </td>
+                            </tr>
+                        </thead>
+                        <tr *ngFor="let item of fund.strategyBreakdownList">
+                            <td width="70%">
+                                <!--<input type="text" class="form-control" [(ngModel)]="item.name"/>-->
+                                <select class="form-control" style="width: 100%" [(ngModel)]="item.name">
+                                    <option value="0">---</option>
+                                    <option *ngFor="let item of substrategyLookup" [value]="item.nameEn">{{item.nameEn}}</option>
+                                </select>
+                            </td>
+                            <td width="30%">
+                                <input type="text" class="form-control" [(ngModel)]="item.value"/>
+                            </td>
+                            <td>
+                                <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeStrategyBreakdown(item)">
+                                    <span class="glyphicon glyphicon-minus"></span>
+                                </button>
+                            </td>
                         </tr>
+                    </table>
+                    </div>
+
+                    <br/>
+                    <div class="row">
+                        <table class="table table-hover table-responsive table-condensed">
+                            <thead>
+                                <tr>
+                                    <td colspan="3">Investor base &nbsp;
+                                        <button class="btn-xs btn-primary" type="button" (click)="addInvestorBase()">
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </thead>
                         <tr>
-                            <td>Feb</td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
+                            <td>Category</td>
+                            <td>Fund</td>
                         </tr>
-                        <tr>
-                            <td>Mar</td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                        </tr>
-                        <tr>
-                            <td>Apr</td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                        </tr>
-                        <tr>
-                            <td>May</td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                        </tr>
-                        <tr>
-                            <td>Jun</td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                        </tr>
-                        <tr>
-                            <td>Jul</td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                        </tr>
-                        <tr>
-                            <td>Aug</td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                        </tr>
-                        <tr>
-                            <td>Sep</td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                        </tr>
-                        <tr>
-                            <td>Oct</td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                        </tr>
-                        <tr>
-                            <td>Nov</td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                        </tr>
-                        <tr>
-                            <td>Dec</td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
-                            <td><input size="2" type="text"/></td>
+                        <tr *ngFor="let item of fund.investBaseList">
+                            <td width="70%">
+                                <input type="text" class="form-control"[(ngModel)]="item.name"/>
+                            </td>
+                            <td width="30%">
+                                <input type="text" class="form-control"[(ngModel)]="item.value"/>
+                            </td>
+                            <td>
+                                <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeInvestorBase(item)">
+                                    <span class="glyphicon glyphicon-minus"></span>
+                                </button>
+                            </td>
                         </tr>
 
-                    </tbody>
-                </table>
+                    </table>
+                    </div>
 
-                <table class="table table-striped table-bordered table-hover table-condensed">
-                    <!--<h4>Contacts</h4>-->
-                    <!--<tr>-->
-                    <!--<td class="col-md-1">Manager Name</td>-->
-                    <!--<td class="col-md-3">Gorsvenor Capital Management</td>-->
-                    <!--</tr>-->
-                    <tr>
-                        <td>&nbsp;</td>
-                        <td>{{currentYear - 9}}</td>
-                        <td>{{currentYear - 8}}</td>
-                        <td>{{currentYear - 7}}</td>
-                        <td>{{currentYear - 6}}</td>
-                        <td>{{currentYear - 5}}</td>
-                        <td>{{currentYear - 4}}</td>
-                        <td>{{currentYear - 3}}</td>
-                        <td>{{currentYear - 2}}</td>
-                        <td>{{currentYear - 1}}</td>
-                        <td>{{currentYear}}</td>
-                    </tr>
-                    <tr *ngFor="let item of fund.calculatedValues">
-                        <td>{{item.name}}</td>
-                        <td><input size="2" type="text" [(ngModel)]="item.year1"/></td>
-                        <td><input size="2" type="text" [(ngModel)]="item.year2"/></td>
-                        <td><input size="2" type="text" [(ngModel)]="item.year3"/></td>
-                        <td><input size="2" type="text" [(ngModel)]="item.year4"/></td>
-                        <td><input size="2" type="text" [(ngModel)]="item.year5"/></td>
-                        <td><input size="2" type="text" [(ngModel)]="item.year6"/></td>
-                        <td><input size="2" type="text" [(ngModel)]="item.year7"/></td>
-                        <td><input size="2" type="text" [(ngModel)]="item.year8"/></td>
-                        <td><input size="2" type="text" [(ngModel)]="item.year9"/></td>
-                        <td><input size="2" type="text" [(ngModel)]="item.year10"/></td>
+                    <br/>
+                    <div class="row">
+                        <table class="">
+                            <tr>
+                                <td colspan="2">Liquidity</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="text" class="form-control" [(ngModel)]="fund.liquidityPercent"/>
+                                </td>
+                                <td> &nbsp; </td>
+                                <td>
+                                    <input type="text" class="form-control" [(ngModel)]="fund.liquidityPeriod"/>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <br/>
+                    <div class="row">
+                        <table class="table table-responsive table-hover">
+                            <tr>
+                                <td colspan="2">Concentration</td>
+                            </tr>
+                            <tr>
+                                <td>Top 5</td>
+                                <td>
+                                    <input type="text" class="form-control" [(ngModel)]="fund.concentrationTop5"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Top 10</td>
+                                <td>
+                                    <input type="text" class="form-control" [(ngModel)]="fund.concentrationTop10"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Top 20</td>
+                                <td>
+                                    <input type="text" class="form-control" [(ngModel)]="fund.concentrationTop20"/>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!--<div class="col-md-1">&nbsp;</div>-->
+
+                <div class="col-md-4">
+                    <div id="strategyBreakdownChart"></div>
+                </div>
+            </div>
+
+            <div class="row">
+                <br/>
+                <table class="table table-hover table-responsive table-condensed table-bordered">
+                    <thead>
+                        <tr>
+                            <td colspan="2">Fund Managers &nbsp;
+                                <button class="btn-xs btn-primary" type="button" (click)="addFundManager()">
+                                    <span class="glyphicon glyphicon-plus" align="right"></span>
+                                </button>
+                            </td>
+                        </tr>
+                    </thead>
+                    <tr *ngFor="let manager of fund.managerList">
+                        <td width="20%">
+                            <input type="text" class="form-control" [(ngModel)]="manager.name" placeholder="Name..."/>
+                        </td>
+                        <td width="50%">
+                            <input type="text" class="form-control"[(ngModel)]="manager.description" placeholder="Description..."/>
+                        </td>
+                        <td width="20%">
+                            <input type="text" class="form-control"[(ngModel)]="manager.since" placeholder="Since..."/>
+                        </td>
+                        <td>
+                            <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeFundManager(manager)">
+                                <span class="glyphicon glyphicon-minus"></span>
+                            </button>
+                        </td>
                     </tr>
                 </table>
             </div>
 
+            <br/>
+            <div class="row">
+                <div class="col-md-6">
+                    <table class="table table-responsive table-hover">
+                    <tr>
+                        <td width="40%">IDD Analyst Assessment</td>
+                        <td width="15%" style="font-weight: bold">
+                            <select class="form-control" style="width: 100%" [(ngModel)]="fund.ALBIDDAnalystAssessment" [style.background-color]="getAlbourneRatingColor('IDD_AA')">
+                                <option value="0">---</option>
+                                <option *ngFor="let item of albourneRatingLookup.IDD_AA" [value]="item.value">{{item.value}}</option>
+                            </select>
+                        </td>
+                        <td width="45%">{{getAlbourneRatingText('IDD_AA')}}</td>
+                    </tr>
+                    <tr>
+                        <td>Conviction</td>
+                        <!--<td style="font-weight: bold" [style.background-color]="getAlbourneRatingColor('CONVICTION', fund.ALBConviction)">{{fund.ALBConviction}}</td>-->
+                        <!--<td>{{getAlbourneRatingText('CONVICTION', fund.ALBConviction)}}</td>-->
+                        <td style="font-weight: bold" >
+                            <select class="form-control" style="width: 100%" [(ngModel)]="fund.ALBConviction" [style.background-color]="getAlbourneRatingColor('CONVICTION')">
+                                <option value="0">---</option>
+                                <option *ngFor="let item of albourneRatingLookup.CONVICTION" [value]="item.value">{{item.value}}</option>
+                            </select>
+                        </td>
+                        <td>{{getAlbourneRatingText('CONVICTION')}}</td>
+                    </tr>
+                    <tr>
+                        <td>Expected Alpha</td>
+                        <!--<td style="font-weight: bold" [style.background-color]="getAlbourneRatingColor('EXPECTED_ALPHA', fund.ALBExpectedAlpha)">{{fund.ALBExpectedAlpha}}</td>-->
+                        <!--<td>{{getAlbourneRatingText('EXPECTED_ALPHA', fund.ALBExpectedAlpha)}}</td>-->
+                        <td style="font-weight: bold" >
+                            <!--{{fund.ALBIDDAnalystAssessment}}-->
+                            <select class="form-control" style="width: 100%" [(ngModel)]="fund.ALBExpectedAlpha" [style.background-color]="getAlbourneRatingColor('EXPECTED_ALPHA')">
+                                <option value="0">---</option>
+                                <option *ngFor="let item of albourneRatingLookup.EXPECTED_ALPHA" [value]="item.value">{{item.value}}</option>
+                            </select>
+                        </td>
+                        <td>{{getAlbourneRatingText('EXPECTED_ALPHA')}}</td>
+                    </tr>
+                    <tr>
+                        <td>Expected Beta</td>
+                        <!--<td style="font-weight: bold" [style.background-color]="getAlbourneRatingColor('EXPECTED_BETA', fund.ALBExpectedBeta)">{{fund.ALBExpectedBeta}}</td>-->
+                        <!--<td>{{getAlbourneRatingText('EXPECTED_BETA', fund.ALBExpectedBeta)}}</td>-->
+                        <td style="font-weight: bold" >
+                            <!--{{fund.ALBIDDAnalystAssessment}}-->
+                            <select class="form-control" style="width: 100%" [(ngModel)]="fund.ALBExpectedBeta" [style.background-color]="getAlbourneRatingColor('EXPECTED_BETA')">
+                                <option value="0">---</option>
+                                <option *ngFor="let item of albourneRatingLookup.EXPECTED_BETA" [value]="item.value">{{item.value}}</option>
+                            </select>
+                        </td>
+                        <td>{{getAlbourneRatingText('EXPECTED_BETA')}}</td>
+                    </tr>
+                    <tr>
+                        <td>Expected Risk</td>
+                        <!--<td style="font-weight: bold" [style.background-color]="getAlbourneRatingColor('EXPECTED_RISK', fund.ALBExpectedRisk)">{{fund.ALBExpectedRisk}}</td>-->
+                        <!--<td>{{getAlbourneRatingText('EXPECTED_RISK', fund.ALBExpectedRisk)}}</td>-->
+                        <td style="font-weight: bold" >
+                            <!--{{fund.ALBIDDAnalystAssessment}}-->
+                            <select class="form-control" style="width: 100%" [(ngModel)]="fund.ALBExpectedRisk" [style.background-color]="getAlbourneRatingColor('EXPECTED_RISK')">
+                                <option value="0">---</option>
+                                <option *ngFor="let item of albourneRatingLookup.EXPECTED_RISK" [value]="item.value">{{item.value}}</option>
+                            </select>
+                        </td>
+                        <td>{{getAlbourneRatingText('EXPECTED_RISK')}}</td>
+                    </tr>
+                    <tr>
+                        <td>Strategy & Investment Process</td>
+                        <!--<td style="font-weight: bold" [style.background-color]="getAlbourneRatingColor('STRATEGY_INVESTMENT', fund.ALBStrategyInvestmentProcess)">{{fund.ALBStrategyInvestmentProcess}}</td>-->
+                        <!--<td>{{getAlbourneRatingText('STRATEGY_INVESTMENT', fund.ALBStrategyInvestmentProcess)}}</td>-->
+                        <td style="font-weight: bold" >
+                            <!--{{fund.ALBIDDAnalystAssessment}}-->
+                            <select class="form-control" style="width: 100%" [(ngModel)]="fund.ALBStrategyInvestmentProcess" [style.background-color]="getAlbourneRatingColor('STRATEGY_INVESTMENT')">
+                                <option value="0">---</option>
+                                <option *ngFor="let item of albourneRatingLookup.STRATEGY_INVESTMENT" [value]="item.value">{{item.value}}</option>
+                            </select>
+                        </td>
+                        <td>{{getAlbourneRatingText('STRATEGY_INVESTMENT')}}</td>
+                    </tr>
+                    <tr>
+                        <td>Management & Team</td>
+                        <!--<td style="font-weight: bold" [style.background-color]="getAlbourneRatingColor('MNG_TEAM', fund.ALBManagementTeam)">{{fund.ALBManagementTeam}}</td>-->
+                        <!--<td>{{getAlbourneRatingText('MNG_TEAM', fund.ALBManagementTeam)}}</td>-->
+                        <td style="font-weight: bold" >
+                            <!--{{fund.ALBIDDAnalystAssessment}}-->
+                            <select class="form-control" style="width: 100%" [(ngModel)]="fund.ALBManagementTeam" [style.background-color]="getAlbourneRatingColor('MNG_TEAM')">
+                                <option value="0">---</option>
+                                <option *ngFor="let item of albourneRatingLookup.MNG_TEAM" [value]="item.value">{{item.value}}</option>
+                            </select>
+                        </td>
+                        <td>{{getAlbourneRatingText('MNG_TEAM')}}</td>
+                    </tr>
+                    <tr>
+                        <td>Risk Process</td>
+                        <!--<td style="font-weight: bold" [style.background-color]="getAlbourneRatingColor('RISK_PROCESS', fund.ALBRiskProcess)">{{fund.ALBRiskProcess}}</td>-->
+                        <!--<td>{{getAlbourneRatingText('RISK_PROCESS', fund.ALBRiskProcess)}}</td>-->
+                        <td style="font-weight: bold" >
+                            <!--{{fund.ALBIDDAnalystAssessment}}-->
+                            <select class="form-control" style="width: 100%" [(ngModel)]="fund.ALBRiskProcess" [style.background-color]="getAlbourneRatingColor('RISK_PROCESS')">
+                                <option value="0">---</option>
+                                <option *ngFor="let item of albourneRatingLookup.RISK_PROCESS" [value]="item.value">{{item.value}}</option>
+                            </select>
+                        </td>
+                        <td>{{getAlbourneRatingText('RISK_PROCESS')}}</td>
+                    </tr>
+                </table>
+                </div>
+            </div>
+
+            <br/>
+            <div class="row">
+                <div class="col-md-11">
+                    <table class="table table-responsive table-hover table-bordered">
+                    <thead>
+                        <tr style="font-weight: bold; background-color: lightcyan">
+                            <td>Year</td>
+                            <td>Jan</td>
+                            <td>Feb</td>
+                            <td>Mar</td>
+                            <td>Apr</td>
+                            <td>May</td>
+                            <td>Jun</td>
+                            <td>Jul</td>
+                            <td>Aug</td>
+                            <td>Sep</td>
+                            <td>Oct</td>
+                            <td>Nov</td>
+                            <td>Dec</td>
+                            <td>YTD</td>
+                            <td></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let return of fund.returns">
+                            <td><input type="text" size="4" class="form-control"[(ngModel)]="return.year"/></td>
+                            <td><input type="text" size="2" class="form-control"[(ngModel)]="return.jan" (ngModelChange)="calculateReturnsYTD(return)"/></td>
+                            <td><input type="text" size="2" class="form-control"[(ngModel)]="return.feb"/></td>
+                            <td><input type="text" size="2" class="form-control"[(ngModel)]="return.mar"/></td>
+                            <td><input type="text" size="2" class="form-control"[(ngModel)]="return.apr"/></td>
+                            <td><input type="text" size="2" class="form-control"[(ngModel)]="return.may"/></td>
+                            <td><input type="text" size="2" class="form-control"[(ngModel)]="return.jun"/></td>
+                            <td><input type="text" size="2" class="form-control"[(ngModel)]="return.jul"/></td>
+                            <td><input type="text" size="2" class="form-control"[(ngModel)]="return.aug"/></td>
+                            <td><input type="text" size="2" class="form-control"[(ngModel)]="return.sep"/></td>
+                            <td><input type="text" size="2" class="form-control"[(ngModel)]="return.oct"/></td>
+                            <td><input type="text" size="2" class="form-control"[(ngModel)]="return.nov"/></td>
+                            <td><input type="text" size="2" class="form-control"[(ngModel)]="return.dec"/></td>
+                            <td><input type="text" readonly size="2" class="form-control" [value]="calculateReturnsYTD(return)"/></td>
+                            <td><button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeReturn(return)">
+                                <span class="glyphicon glyphicon-minus"></span>
+                            </button></td>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+
+                <div class="col-md-1">
+                    <button class="btn-xs btn-primary" type="button" (click)="addReturn()">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </button>
+                </div>
+            </div>
+
+            <br/>
             <div class="row">
                 <div class="col-md-12">
                     <div class="col-md-1 pull-right">
@@ -508,7 +552,6 @@
                     <hr style="border-top: 1px solid #B5AEAE"/>
                 </div>
             </div>
-
 
         </div>
         <div id="idd" class="tab-pane fade">

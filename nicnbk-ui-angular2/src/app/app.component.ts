@@ -27,6 +27,7 @@ import {TextareaAutosize} from "./common/textarea-autosize.directive";
 import {HFManagerService} from "./hf/hf.manager.service";
 import {HedgeFundService} from "./hf/hf.fund.service";
 import {RiskManagementReportService} from "./riskmanagement/riskmanagement.report.service";
+import {AlbourneService} from "./hf/hf.albourne.service";
 
 //import '../../public/js/jquery.ns-autogrow.min.js';
 
@@ -49,7 +50,8 @@ import {RiskManagementReportService} from "./riskmanagement/riskmanagement.repor
         FileUploadService,
         HFManagerService,
         HedgeFundService,
-        RiskManagementReportService
+        RiskManagementReportService,
+        AlbourneService
     ]
 })
 @NgModule({

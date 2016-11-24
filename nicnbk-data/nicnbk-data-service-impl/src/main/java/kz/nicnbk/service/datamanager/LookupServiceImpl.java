@@ -3,10 +3,7 @@ package kz.nicnbk.service.datamanager;
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.repo.api.lookup.*;
 import kz.nicnbk.repo.model.base.BaseTypeEntity;
-import kz.nicnbk.repo.model.common.Country;
-import kz.nicnbk.repo.model.common.Currency;
-import kz.nicnbk.repo.model.common.Geography;
-import kz.nicnbk.repo.model.common.Strategy;
+import kz.nicnbk.repo.model.common.*;
 import kz.nicnbk.repo.model.files.FilesType;
 import kz.nicnbk.repo.model.hf.*;
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
@@ -33,6 +30,9 @@ public class LookupServiceImpl implements LookupService {
 
     @Autowired
     private StrategyRepository strategyRepository;
+
+    @Autowired
+    private SubstrategyRepository substrategyRepository;
 
     @Autowired
     private CurrencyRepository currencyRepository;
@@ -318,7 +318,12 @@ public class LookupServiceImpl implements LookupService {
 
     @Override
     public List<BaseDictionaryDto> getHedgeFundsStrategy(){
-        return getStrategies(Strategy.TYPE_PHEDGE_FUNDS);
+        return getStrategies(Strategy.TYPE_HEDGE_FUNDS);
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getHedgeFundsSubStrategy(String strategy){
+        return getSubStrategies(strategy);
     }
 
     @Override
@@ -331,6 +336,18 @@ public class LookupServiceImpl implements LookupService {
         List<Strategy> entityList = this.strategyRepository.findByGroupType(group);
         if(entityList != null) {
             for (Strategy entity : entityList) {
+                BaseDictionaryDto dto = disassemble(entity);
+                dtoList.add(dto);
+            }
+        }
+        return dtoList;
+    }
+
+    private List<BaseDictionaryDto> getSubStrategies(String strategyCode){
+        List<BaseDictionaryDto> dtoList = new ArrayList<>();
+        List<Substrategy> entityList = this.substrategyRepository.findByStrategy(strategyCode);
+        if(entityList != null) {
+            for (Substrategy entity : entityList) {
                 BaseDictionaryDto dto = disassemble(entity);
                 dtoList.add(dto);
             }

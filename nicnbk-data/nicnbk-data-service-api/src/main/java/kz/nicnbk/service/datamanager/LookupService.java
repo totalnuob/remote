@@ -15,6 +15,7 @@ public interface LookupService extends BaseService {
 
     List<BaseDictionaryDto> getPrivateEquityStrategies();
     List<BaseDictionaryDto> getHedgeFundsStrategy();
+    List<BaseDictionaryDto> getHedgeFundsSubStrategy(String strategy);
     List<BaseDictionaryDto> getRealEstateStrategies();
 
     List<BaseDictionaryDto> getGeographies();
