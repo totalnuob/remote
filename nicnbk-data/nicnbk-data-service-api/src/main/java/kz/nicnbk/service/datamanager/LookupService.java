@@ -20,4 +20,6 @@ public interface LookupService extends BaseService {
     List<BaseDictionaryDto> getGeographies();
 
     List<BaseDictionaryDto> getCurrencies();
+
+    List<BaseDictionaryDto> getPEIndustry();
 }

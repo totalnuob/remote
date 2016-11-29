@@ -4,6 +4,7 @@ import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.repo.api.lookup.CurrencyRepository;
 import kz.nicnbk.repo.api.lookup.GeographyRepository;
 import kz.nicnbk.repo.api.lookup.StrategyRepository;
+import kz.nicnbk.repo.api.pe.lookup.IndustryRepository;
 import kz.nicnbk.repo.model.base.BaseTypeEntity;
 import kz.nicnbk.repo.model.common.Currency;
 import kz.nicnbk.repo.model.common.Geography;
@@ -15,6 +16,8 @@ import kz.nicnbk.repo.model.lookup.NewsTypeLookup;
 import kz.nicnbk.repo.model.m2s2.MeetingArrangedBy;
 import kz.nicnbk.repo.model.m2s2.MeetingType;
 import kz.nicnbk.repo.model.news.NewsType;
+import kz.nicnbk.repo.model.pe.common.Industry;
+import org.jsoup.Connection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +39,9 @@ public class LookupServiceImpl implements LookupService {
 
     @Autowired
     private CurrencyRepository currencyRepository;
+
+    @Autowired
+    private IndustryRepository industryRepository;
 
     @Override
     public <T extends BaseTypeEntity> T findByTypeAndCode(Class<T> clazz, String code) {
@@ -162,6 +168,17 @@ public class LookupServiceImpl implements LookupService {
             }
 
         }
+
+        if(clazz.getSimpleName().equals("Industry")) {
+            Iterator<Industry> iterator = industryRepository.findAll().iterator();
+            while(iterator.hasNext()){
+                Industry industry = iterator.next();
+                if(industry.getCode().equals(code)) {
+                    return (T) industry;
+                }
+            }
+        }
+
         return null;
     }
 
@@ -212,6 +229,18 @@ public class LookupServiceImpl implements LookupService {
             Geography entity = iterator.next();
             BaseDictionaryDto geographyDto = disassemble(entity);
             dtoList.add(geographyDto);
+        }
+        return dtoList;
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getPEIndustry(){
+        List<BaseDictionaryDto> dtoList = new ArrayList<>();
+        Iterator<Industry> iterator = this.industryRepository.findAll().iterator();
+        while(iterator.hasNext()){
+            Industry entity = iterator.next();
+            BaseDictionaryDto industryDto = disassemble(entity);
+            dtoList.add(industryDto);
         }
         return dtoList;
     }

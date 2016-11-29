@@ -49,4 +49,10 @@ public class LookupServiceREST {
         List<BaseDictionaryDto> lookups = this.lookupService.getCurrencies();
         return lookups;
     }
+
+    @RequestMapping(value = "/PEIndustry", method = RequestMethod.GET)
+    public List<BaseDictionaryDto> getPEIndustry(){
+        List<BaseDictionaryDto> lookups = this.lookupService.getPEIndustry();
+        return lookups;
+    }
 }

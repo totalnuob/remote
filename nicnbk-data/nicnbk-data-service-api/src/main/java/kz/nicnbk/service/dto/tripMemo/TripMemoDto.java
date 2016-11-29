@@ -1,7 +1,7 @@
-package kz.nicnbk.service.dto.tripMemo;
+package kz.nicnbk.service.dto.tripmemo;
 
 import kz.nicnbk.common.service.model.BaseEntityDto;
-import kz.nicnbk.repo.model.tripMemo.TripMemo;
+import kz.nicnbk.repo.model.tripmemo.TripMemo;
 import kz.nicnbk.service.dto.employee.EmployeeDto;
 import kz.nicnbk.service.dto.files.FilesDto;
 import org.springframework.format.annotation.DateTimeFormat;

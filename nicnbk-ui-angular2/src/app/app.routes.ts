@@ -30,6 +30,9 @@ import {HFPortfolioComponent} from "./hf/hf.portfolio.component";
 import {HFReportComponent} from "./hf/hf.report.component";
 import {HFFundProfileComponent} from "./hf/hf.fund-profile.component";
 import {HFManagerProfileComponent} from "./hf/hf.manager-profile.component.ts";
+import {PeFundProfileComponent} from "./pe/pe.fund-profile.component";
+import {PeFirmProfileComponent} from "./pe/pe.firm-profile.component";
+import {PeFirmSearchComponent} from "./pe/pe.firm-search.component";
 
 
 const routes: Routes  = [
@@ -174,6 +177,32 @@ const routes: Routes  = [
     {
         path: 'hf/managerProfile',
         component: HFManagerProfileComponent,
+        canActivate: [AuthGuard]
+    },
+    /* Private Equity ************************************/
+    {
+        path: 'pe/fundProfile',
+        component: PeFundProfileComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'pe/firmProfile',
+        component: PeFirmProfileComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'pe/firmProfile/:id',
+        component: PeFirmProfileComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'pe/fundProfile/:id/:firmId',
+        component: PeFundProfileComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'pe/firmSearch',
+        component: PeFirmSearchComponent,
         canActivate: [AuthGuard]
     },
 ];

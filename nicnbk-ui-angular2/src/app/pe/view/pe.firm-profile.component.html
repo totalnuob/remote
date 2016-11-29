@@ -1,0 +1,201 @@
+<div class="container">
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+            </div>
+        </div>
+    </div>
+    <ul class="nav nav-tabs">
+        <li class="active">
+            <a data-toggle="tab" href="#overview">OVERVIEW</a>
+        </li>
+        <!--<li>-->
+            <!--<a data-toggle="tab" href="#meetings_calls">MEETINGS/CALLS</a>-->
+        <!--</li>-->
+    </ul>
+    <br/>
+    <div class="tab-content">
+        <div id="overview" class="tab-pane fade in active">
+            <div class="row">
+                <div class="col-md-1">
+                    <label><b>GP Name</b></label>
+                </div>
+                <div class="col-md-8">
+                    <input type="text" class="form-control" placeholder="Enter firm name..." [(ngModel)]="firm.firmName"/>
+                </div>
+            </div>
+            <br/>
+            <div class="row withpadding">
+                <table class=" col-md-4 table-striped table-condensed">
+                    <tr>
+                        <td class="col-md-2">Firm inception</td>
+                        <td class="col-md-3">
+                            <input style="width: 100%" type="text" [(ngModel)]="firm.foundedYear"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-1">AUM (mln)</td>
+                        <td class="col-md-3">
+                            <input style="width: 100%" type="text" [(ngModel)]="firm.aum"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-1">Strategy</td>
+                        <td class="col-md-3" *ngIf="strategyList?.length > 0">
+                            <!--<input style="width: 100%" type="text"/>-->
+                            <ng-select #strategySelect [initData]="firm.strategy"
+                                       [multiple]="true"
+                                       [items]="strategyList"
+                                       (data)="refreshStrategy($event)"
+                                       (selected)="selected($event)"
+                                       (removed)="removed($event)"
+                                       placeholder="No strategy selected"></ng-select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-1">Industry Focus</td>
+                        <td class="col-md-3" *ngIf="industryList?.length > 0">
+                            <ng-select #industrySelect [initData]="firm.industryFocus"
+                                       [multiple]="true"
+                                       [items]="industryList"
+                                       (data)="refreshIndustry($event)"
+                                       (selected)="selected($event)"
+                                       (removed)="removed($event)"
+                                       placeholder="No industry selected"></ng-select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-1">Geography Focus</td>
+                        <td class="col-md-3" *ngIf="geographyList?.length > 0">
+                            <ng-select #geographySelect [initData]="firm.geographyFocus"
+                                       [multiple]="true"
+                                       [items]="geographyList"
+                                       (data)="refreshGeography($event)"
+                                       (selected)="selected($event)"
+                                       (removed)="removed($event)"
+                                       placeholder="No geography selected"></ng-select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-1">Investment team size</td>
+                        <td class="col-md-3">
+                            <input style="width: 100%" type="text" [(ngModel)]="firm.invTeamSize"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-1">Operations team size</td>
+                        <td class="col-md-3">
+                            <input style="width: 100%" type="text" [(ngModel)]="firm.opsTeamSize"/>
+                        </td>
+                    </tr>
+                </table>
+                <div class=" col-md-1">&nbsp;</div>
+                <table class=" col-md-4 table-striped table-condensed">
+                    <!--<h4>Contacts</h4>-->
+                    <!--<tr>-->
+                    <!--<td class="col-md-1">Manager Name</td>-->
+                    <!--<td class="col-md-3">Gorsvenor Capital Management</td>-->
+                    <!--</tr>-->
+                    <tr>
+                        <td class="col-md-1">Peers</td>
+                        <td class="col-md-5">
+                            <input style="width: 100%" type="text"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-1">Locations</td>
+                        <td class="col-md-5">
+                            <input style="width: 100%" type="text"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-1">Headquarters</td>
+                        <td class="col-md-5">
+                            <input style="width: 100%" type="text"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-1">Telephone</td>
+                        <td class="col-md-3">
+                            <input style="width: 100%" type="text"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-1">Fax</td>
+                        <td class="col-md-3">
+                            <input style="width: 100%" type="text"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-1">Website</td>
+                        <td class="col-md-3">
+                            <input style="width: 100%" type="text"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-1">Contact person</td>
+                        <td class="col-md-3">
+                            <input style="width: 100%" type="text"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-1">Email</td>
+                        <td class="col-md-3">
+                            <input style="width: 100%" type="text"/>
+                        </td>
+                    </tr>
+                </table>
+                <div class="row">
+                    <div class="col-md-1 pull-right">
+                        <button class="btn btn-success"  (click)="save()">SAVE</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class=" col-md-3">&nbsp;</div>
+            <div class="row">
+                <hr style="border-top: 1px solid #B5AEAE"/>
+                <div class="col-md-9">
+                    <h3>Funds</h3>
+                </div>
+                <div class="col-md-1 pull-right">
+                    <button class="btn btn-primary" [disabled]="firm.id == 0 || firm.id == null" (click)="createFund()">ADD</button>
+                </div>
+                <table class="table-striped">
+                    <thead>
+                    <th>&nbsp;</th>
+                    <th>FUND</th>
+                    <th>STRATEGY</th>
+                    <th>LOCATION</th>
+                    <th>UPDATED</th>
+                    <th>ACTIONS</th>
+                    </thead>
+                    <tbody>
+
+                    <tr *ngFor="let fund of foundFundsList">
+                        <td width="5%"></td>
+                        <td width="30%"><a [routerLink]="['/pe/fundProfile/',fund.id, firm.id]">{{fund.fundName}}</a></td>
+                        <!--<td width="10%" th:text="${memoItem.meetingDate}"></td>-->
+                        <td width="10%"></td>
+                        <td width="10%"></td>
+                        <td width="10%"></td>
+                        <td width="5%">
+                            <a><i class="glyphicon glyphicon-search"></i></a>
+                            <a><i class="glyphicon glyphicon-file"></i></a>
+                            <a><i class="glyphicon glyphicon-plus"></i></a>
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div id="meetings_calls" class="tab-pane fade in active"></div>
+    </div>
+</div>

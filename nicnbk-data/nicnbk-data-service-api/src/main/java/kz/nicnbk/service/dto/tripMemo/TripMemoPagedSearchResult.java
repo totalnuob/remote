@@ -1,4 +1,4 @@
-package kz.nicnbk.service.dto.tripMemo;
+package kz.nicnbk.service.dto.tripmemo;
 
 import kz.nicnbk.common.service.model.BaseResult;
 import java.util.List;

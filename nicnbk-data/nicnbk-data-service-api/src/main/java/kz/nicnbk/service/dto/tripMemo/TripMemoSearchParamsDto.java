@@ -1,7 +1,7 @@
-package kz.nicnbk.service.dto.tripMemo;
+package kz.nicnbk.service.dto.tripmemo;
 
 import kz.nicnbk.common.service.util.StringUtils;
-import kz.nicnbk.service.api.tripMemo.TripMemoService;
+import kz.nicnbk.service.api.tripmemo.TripMemoService;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.text.SimpleDateFormat;

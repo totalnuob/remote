@@ -12,6 +12,7 @@ import {RE_STRATEGIES_URL} from "./lookup.service.url";
 import {HF_STRATEGIES_URL} from "./lookup.service.url";
 import {GEOGRAPHIES_URL} from "./lookup.service.url";
 import {CURRENCIES_URL} from "./lookup.service.url";
+import {PE_INDUSTRY_FOCUS_URL} from "./lookup.service.url";
 
 
 @Injectable()
@@ -97,6 +98,12 @@ export class LookupService extends CommonService{
 
     getGeographies(){
         return this.http.get(GEOGRAPHIES_URL)
+            .map(this.extractDataList)
+            .catch(this.handleError);
+    }
+
+    getPEIndustryFocus(){
+        return this.http.get(PE_INDUSTRY_FOCUS_URL)
             .map(this.extractDataList)
             .catch(this.handleError);
     }

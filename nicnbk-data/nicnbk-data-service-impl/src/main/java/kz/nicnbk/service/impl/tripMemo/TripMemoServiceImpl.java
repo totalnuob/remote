@@ -1,19 +1,19 @@
-package kz.nicnbk.service.impl.tripMemo;
+package kz.nicnbk.service.impl.tripmemo;
 
 import kz.nicnbk.common.service.util.PaginationUtils;
 import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.api.tripMemo.TripMemoFilesRepository;
 import kz.nicnbk.repo.api.tripMemo.TripMemoRepository;
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
-import kz.nicnbk.repo.model.tripMemo.TripMemo;
-import kz.nicnbk.repo.model.tripMemo.TripMemoFiles;
+import kz.nicnbk.repo.model.tripmemo.TripMemo;
+import kz.nicnbk.repo.model.tripmemo.TripMemoFiles;
 import kz.nicnbk.service.api.files.FileService;
-import kz.nicnbk.service.api.tripMemo.TripMemoService;
-import kz.nicnbk.service.converter.tripMemo.TripMemoEntityConverter;
+import kz.nicnbk.service.api.tripmemo.TripMemoService;
+import kz.nicnbk.service.converter.tripmemo.TripMemoEntityConverter;
 import kz.nicnbk.service.dto.files.FilesDto;
-import kz.nicnbk.service.dto.tripMemo.TripMemoDto;
-import kz.nicnbk.service.dto.tripMemo.TripMemoPagedSearchResult;
-import kz.nicnbk.service.dto.tripMemo.TripMemoSearchParamsDto;
+import kz.nicnbk.service.dto.tripmemo.TripMemoDto;
+import kz.nicnbk.service.dto.tripmemo.TripMemoPagedSearchResult;
+import kz.nicnbk.service.dto.tripmemo.TripMemoSearchParamsDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

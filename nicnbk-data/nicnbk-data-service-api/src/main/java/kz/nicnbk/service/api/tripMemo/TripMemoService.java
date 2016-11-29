@@ -1,12 +1,11 @@
-package kz.nicnbk.service.api.tripMemo;
+package kz.nicnbk.service.api.tripmemo;
 
 import kz.nicnbk.service.api.base.BaseService;
 import kz.nicnbk.service.dto.files.FilesDto;
-import kz.nicnbk.service.dto.tripMemo.TripMemoDto;
-import kz.nicnbk.service.dto.tripMemo.TripMemoPagedSearchResult;
-import kz.nicnbk.service.dto.tripMemo.TripMemoSearchParamsDto;
+import kz.nicnbk.service.dto.tripmemo.TripMemoDto;
+import kz.nicnbk.service.dto.tripmemo.TripMemoPagedSearchResult;
+import kz.nicnbk.service.dto.tripmemo.TripMemoSearchParamsDto;
 
-import java.util.List;
 import java.util.Set;
 
 /**
