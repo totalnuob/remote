@@ -1,4 +1,3 @@
-import {LegalEntity} from "../../common/model/legal-entity";
 import {PeFirm} from "./pe.firm";
 
 export class PeFund {
