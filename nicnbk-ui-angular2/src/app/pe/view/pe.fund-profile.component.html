@@ -55,16 +55,16 @@
                 <table class=" col-md-4 table-striped table-condensed">
                     <tr>
                         <td class="col-md-1">Strategy focus</td>
-                        <td class="col-md-3">{{fund?.firm?.strategy}}</td>
+                        <td class="col-md-3">{{firmStrategyList.toString()}}</td>
                     </tr>
 
                     <tr>
                         <td class="col-md-1">Industry focus</td>
-                        <td class="col-md-3">{{fund?.firm?.industryFocus}}</td>
+                        <td class="col-md-3">{{firmIndustryList.toString()}}</td>
                     </tr>
                     <tr>
                         <td class="col-md-1">Geography focus</td>
-                        <td class="col-md-3">{{fund?.firm?.geographyFocus}}</td>
+                        <td class="col-md-3">{{firmGeographyList.toString()}}</td>
                     </tr>
                 </table>
             </div>
@@ -108,7 +108,6 @@
                         <td class="col-md-1">Management fee</td>
                         <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.managementFee"/></td>
                     </tr>
-
                     <tr>
                         <td class="col-md-1">Management fee commentary</td>
                         <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.managementFeeCommentary"/></td>
@@ -162,7 +161,8 @@
             </div>
             </div>
 
-            <div class="row">
+            <div [hidden]="visible">
+                <div class="row">
                 <h4>Key fund statistics</h4>
                 <table class=" col-md-4 table-striped table-condensed">
                     <tr>
@@ -174,10 +174,10 @@
                         <td class="col-md-1">Number of investments</td>
                         <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.numberOfInvestments"/></td>
                     </tr>
-                    <!--<tr>-->
-                        <!--<td class="col-md-1">Fund size</td>-->
-                        <!--<td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.fundSize"/></td>-->
-                    <!--</tr>-->
+                    <tr>
+                        <td class="col-md-1">Fund size</td>
+                        <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.fundSize"/></td>
+                    </tr>
                     <tr>
                         <td class="col-md-1">Invested amount</td>
                         <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.investedAmount"/></td>
@@ -215,13 +215,16 @@
                     </tr>
                 </table>
             </div>
+            </div>
 
             <div [hidden]="!visible">
                 <div class="row">
                 <h4>Fund strategy</h4>
                 <table class=" col-md-4 table-striped table-condensed">
-                    <td class="col-md-1">Fund strategy comment</td>
-                    <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.strategyComments"/></td>
+                    <tr>
+                        <td class="col-md-1">Fund strategy comment</td>
+                        <td class="col-md-3"><textarea   spellcheck="false"  class="form-control" [(ngModel)]="fund.strategyComments"></textarea></td>
+                    </tr>
                 </table>
             </div>
             </div>
@@ -235,7 +238,8 @@
                     </tr>
                     <tr>
                         <td class="col-md-1">Fund term</td>
-                        <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.fundTerm"/></td>
+                        <td class="col-md-2"><input style="width: 100%" type="text" [(ngModel)]="fund.fundTerm"/></td>
+                        <td class="col-md-1"><input style="width: 100%" type="text" [(ngModel)]="fund.fundTermCommentary" placeholder="Comment"/></td>
                     </tr>
                     <tr>
                         <td class="col-md-1">Target inv. size range</td>

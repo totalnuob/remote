@@ -1,6 +1,6 @@
-  INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(1, 'MEGA_CUP', 'Mega/Large Cup Buyout', '', '', 1);
-  INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(2, 'MID_CUP', 'Mid Cup Buyout', '', '' , 1);
-  INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(3, 'SM_CUP', 'Small Cup Buyout', '', '' , 1);
+  INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(1, 'MEGA_CAP', 'Mega/Large Cap Buyout', '', '', 1);
+  INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(2, 'MID_CAP', 'Mid Cap Buyout', '', '' , 1);
+  INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(3, 'SM_CAP', 'Small Cap Buyout', '', '' , 1);
   INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(4, 'CREDIT', 'Credit', '', '' , 1);
   INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(5, 'MULTI', 'Multi', '', '' , 1);
   INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(6, 'OTHER', 'Other', '', '' , 1);

@@ -7,6 +7,8 @@ import {PeFirm} from "./model/pe.firm";
 import {PeFundService} from "./pe.fund.service";
 import {SaveResponse} from "../common/save-response";
 import {LookupService} from "../common/lookup.service";
+import any = jasmine.any;
+import Any = jasmine.Any;
 
 declare var $:any
 
@@ -31,6 +33,11 @@ export class PeFundProfileComponent extends CommonComponent implements OnInit{
     public strategyList: Array<any> = [];
     public industryList: Array<any> = [];
     public geographyList: Array<any> = [];
+
+    public firmStrategyList: Array<Any> = [];
+    public firmIndustryList: Array<any> = [];
+    public firmGeographyList: Array<any> = [];
+
 
     public sub:any;
     public fundIdParam: number;
@@ -89,12 +96,14 @@ export class PeFundProfileComponent extends CommonComponent implements OnInit{
                             },
                             error => this.errorMessage = "Error loading manager profile"
                         );
-                }else if(this.firmIdParam > 0){
+                }
+                if(this.firmIdParam > 0){
                     this.firmService.get(this.firmIdParam)
                         .subscribe(
                             (data: PeFirm) => {
                                 if(data && data.id > 0) {
                                     this.fund.firm = data;
+                                    this.preselectFirmStrategyGeographyIndustry();
                                 }else{
                                     // TODO: handle error
                                     this.errorMessage = "Error loading fund manager info.";
@@ -214,6 +223,23 @@ export class PeFundProfileComponent extends CommonComponent implements OnInit{
                         this.strategySelect.active.push(option);
                     }
                 }
+            });
+        }
+    }
+    preselectFirmStrategyGeographyIndustry(){
+        if(this.fund.firm.strategy) {
+            this.fund.firm.strategy.forEach(element => {
+                this.firmStrategyList.push(element.nameEn.toString());
+            });
+        }
+        if(this.fund.firm.industryFocus) {
+            this.fund.firm.industryFocus.forEach(element => {
+                this.firmIndustryList.push(element.nameEn.toString());
+            });
+        }
+        if(this.fund.firm.geographyFocus) {
+            this.fund.firm.geographyFocus.forEach(element => {
+                this.firmGeographyList.push(element.nameEn.toString());
             });
         }
     }

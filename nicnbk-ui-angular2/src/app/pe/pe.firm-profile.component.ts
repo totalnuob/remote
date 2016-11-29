@@ -66,7 +66,7 @@ export class PeFirmProfileComponent extends CommonComponent {
                     this.firmService.get(this.firmIdParam)
                         .subscribe(
                             data => {
-                                console.log(data);
+                                //console.log(data);
 
                                 //TODO: check response memo
                                 this.firm = data;
