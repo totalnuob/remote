@@ -1,0 +1,234 @@
+<div class="container">
+    <!--<div class="row">-->
+        <!--<div class="col-md-2">-->
+            <!--<select (ngModelChange)="redraw()" [(ngModel)]="tableDate" id="tableDate" class="form-control">-->
+                <!--<option *ngFor="let item of getAllDates()" [value]="item">{{item}}</option>-->
+            <!--</select>-->
+        <!--</div>-->
+    <!--</div>-->
+    <div class="row">
+        <div class="col-md-12">
+            <div  style="background-color:#548ec1; color:white; font-size: medium; font-weight: bold">Tarragon portfolio update as of November, 2016</div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-4">
+                <div id="summary">
+                    <table class="table table-hover table-responsive" style="font-size: smaller">
+                        <thead style="background-color: #8eb5d6; color: white;" >
+                        <th style="text-align:center">in M$</th>
+                        <th style="text-align:center">Tranche A</th>
+                        <th style="text-align:center">Tranche B</th>
+                        <th style="text-align:center">Total</th>
+                        </thead>
+                        <tr>
+                            <td>Size</td>
+                            <td>225</td>
+                            <td>375</td>
+                            <td>600</td>
+                        </tr>
+                        <tr>
+                            <td>Committed Amount</td>
+                            <td>100</td>
+                            <td>146</td>
+                            <td>246</td>
+                        </tr>
+                        <tr>
+                            <td>Invested Amount</td>
+                            <td>42</td>
+                            <td>4</td>
+                            <td>46</td>
+                        </tr>
+                        <tr>
+                            <td>Distributed Amount</td>
+                            <td>4</td>
+                            <td>-</td>
+                            <td>4</td>
+                        </tr>
+                        <tr>
+                            <td># of Investments</td>
+                            <td>13</td>
+                            <td>4*</td>
+                            <td>17</td>
+                        </tr>
+                        <tr>
+                            <td valign="center" align="center" rowspan="3">Portfolio Performance</td>
+                            <td>IRR</td>
+                            <td></td>
+                            <td>6.9%</td>
+                        </tr>
+                        <tr>
+                            <td>TVPI</td>
+                            <td></td>
+                            <td>1.02x</td>
+                        </tr>
+                        <tr>
+                            <td>DPI</td>
+                            <td></td>
+                            <td>1.08x</td>
+                        </tr>
+                    </table>
+                </div>
+                <div id="portfolioPerformance">
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div id="vintageDiversification">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div  style="background-color:#548ec1; color:white; font-size: medium; font-weight: bold">Portfolio diversification, by committed amount</div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-4">
+                <!--<h4>Geographic diversification</h4>--><div id="geographicDiversification">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <!--<h4>Strategy diversification</h4>-->
+                <div id="strategyDiversification">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <!--<h4>Diversification by type of investments</h4>-->
+                <div id="diversificationByInvestments">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div style="background-color:#548ec1; color:white; font-size: medium; font-weight: bold">Portfolio exposure, by NAV*</div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-4">
+                <!--<h4>Geographic exposure</h4>-->
+                <div id="geographicExposure">
+                </div>
+            </div>
+            <div class="col-md-8">
+                <!--<h4>Sector exposure</h4>-->
+                <div id="sectorExposure">
+                </div>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <div class="row">
+        <div class="col-md-12">
+            <div style="background-color:#548ec1; color:white; font-size: medium; font-weight: bold">Portfolio Description</div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <!--<h4>Portfolio description</h4>-->
+            <div id="portfolioDescription">
+                <table class="table table-hover table-bordered table-responsive" style="font-size: smaller">
+                    <thead style="background-color: #548ec1; color: white;" >
+                        <th style="text-align:center">Strategy</th>
+                        <th style="text-align:center">Investment</th>
+                        <th style="text-align:center">Vintage</th>
+                        <th style="text-align:center">Fund size</th>
+                        <th style="text-align:center">Committed</th>
+                        <th style="text-align:center">Contributed</th>
+                        <th style="text-align:center">Distributed</th>
+                        <th style="text-align:center">MV</th>
+                        <th style="text-align:center">IRR</th>
+                        <th style="text-align:center">DPI</th>
+                        <th style="text-align:center">TVPI</th>
+                        <th style="text-align:center">GP</th>
+                        <!--<th>Description</th>-->
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="12" align="center" style="background-color: #548ec1; color: white">Tranche A</td>
+                        </tr>
+                        <tr *ngFor="let row of getTrancheAInvestments()">
+                            <td *ngIf="row[0] != null " [attr.rowspan]="row[12]">{{row[0]}}</td>
+                            <td><b>{{row[1]}}</b></td>
+                            <td>{{row[2]}}</td>
+                            <td>{{row[3]}}</td>
+                            <td>{{row[4]}}</td>
+                            <td>{{row[5]}}</td>
+                            <td>{{row[6]}}</td>
+                            <td>{{row[7]}}</td>
+                            <td>{{row[8]}}</td>
+                            <td>{{row[9]}}</td>
+                            <td>{{row[10]}}</td>
+                            <td>{{row[11]}}</td>
+                            <!--<td>Targeting control investments in lower middle-market U.S. businesses and consistent focus on undermanaged businesses in core sectors of expertise</td>-->
+                        </tr>
+                        <tr style="background-color: darkgrey">
+                            <td> Total for Tranche A</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>100</td>
+                            <td>42</td>
+                            <td>4</td>
+                            <td>41</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td colspan="12" align="center" style="background-color: #548ec1; color: white">Tranche B</td>
+                        </tr>
+                        <tr *ngFor="let row of getTrancheBInvestments()">
+                            <td *ngIf="row[0] != null " [attr.rowspan]="row[12]">{{row[0]}}</td>
+                            <td><b>{{row[1]}}</b></td>
+                            <td>{{row[2]}}</td>
+                            <td>{{row[3]}}</td>
+                            <td>{{row[4]}}</td>
+                            <td>{{row[5]}}</td>
+                            <td>{{row[6]}}</td>
+                            <td>{{row[7]}}</td>
+                            <td>{{row[8]}}</td>
+                            <td>{{row[9]}}</td>
+                            <td>{{row[10]}}</td>
+                            <td>{{row[11]}}</td>
+                            <!--<td>Targeting control investments in lower middle-market U.S. businesses and consistent focus on undermanaged businesses in core sectors of expertise</td>-->
+                        </tr>
+                        <tr style="background-color: darkgrey">
+                            <td> Total for Tranche B</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>146</td>
+                            <td>4</td>
+                            <td></td>
+                            <td>3</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr style="background-color: #585757; color: white">
+                            <td> Total for Tarragon</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>246</td>
+                            <td>46</td>
+                            <td>4</td>
+                            <td>43</td>
+                            <td>6.87%</td>
+                            <td>&nbsp;</td>
+                            <td>1.02x</td>
+                            <td>&nbsp;</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

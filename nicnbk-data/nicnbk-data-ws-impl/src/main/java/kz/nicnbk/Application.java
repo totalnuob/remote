@@ -41,6 +41,8 @@ public class Application {
                         "http://app.nicnbk.kz:8080", "http://app.nicnbk.kz");
                 registry.addMapping("/pe/**").allowedOrigins("http://localhost:8080", "http://localhost:8088",
                         "http://app.nicnbk.kz:8080", "http://app.nicnbk.kz");
+                registry.addMapping("/riskManagement/**").allowedOrigins("http://localhost:8080", "http://localhost:8088",
+                        "http://app.nicnbk.kz:8080", "http://app.nicnbk.kz");
             }
         };
     }

@@ -1,16 +1,82 @@
 <div class="container">
-    <h4><small>login: user pass: Qwerty123</small></h4>
+    <!--<h4><small>login: user pass: Qwerty123</small></h4>-->
+    <!--<div class="row">-->
+        <!--<div class="col-md-12">-->
+            <!--<div class='tableauPlaceholder' style='width: 100%; height: 1936px;'>-->
+                <!--<object class='tableauViz' width='100%' height='1936' style='display:none;'>-->
+                    <!--<param name='host_url' value='http%3A%2F%2F192.168.111.36%2F' />-->
+                    <!--<param name='site_root' value='' />-->
+                    <!--<param name='name' value='NIC_HF&#47;HFPortfolio' />-->
+                    <!--<param name='tabs' value='yes' />-->
+                    <!--<param name='toolbar' value='no' />-->
+                    <!--<param name='showShareOptions' value='false' />-->
+                <!--</object>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+    <div class="row">
+        <div class="col-md-2">
+            <select (ngModelChange)="redraw()" [(ngModel)]="tableDate" id="tableDate" class="form-control">
+                <option *ngFor="let item of getAllDates()" [value]="item">{{item}}</option>
+            </select>
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-12">
-            <div class='tableauPlaceholder' style='width: 100%; height: 1936px;'>
-                <object class='tableauViz' width='100%' height='1936' style='display:none;'>
-                    <param name='host_url' value='http%3A%2F%2F192.168.111.36%2F' />
-                    <param name='site_root' value='' />
-                    <param name='name' value='NIC_HF&#47;HFPortfolio' />
-                    <param name='tabs' value='yes' />
-                    <param name='toolbar' value='no' />
-                    <param name='showShareOptions' value='false' />
-                </object>
+            <div class="col-md-6">
+                <div id="value_nav">
+                </div>
+            </div>
+            <div class="col-md-6" rowspan="2">
+                <div id="nav">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-6">
+                <div id="value_performance">
+                </div>
+            </div>
+            <div class="col-md-6">&nbsp;</div>
+        </div>
+    </div>
+
+    <br/>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-6">
+                <h4>Performance Monthly</h4>
+                <div id="performance_monthly">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h4>Performance Cumulative</h4>
+                <div id="performance_cumulative">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <br/>
+    <div class="row">
+        <div class="col-md-12">
+            <div id="holdings">
+            </div>
+        </div>
+    </div>
+
+    <br/>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-6">
+                <div id="target_allocations">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div id="actual_allocations">
+                </div>
             </div>
         </div>
     </div>

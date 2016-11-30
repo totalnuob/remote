@@ -99,6 +99,7 @@ export class PrivateEquityMemoEditComponent extends CommonComponent implements O
                             memo => {
                                 // TODO: check response memo
                                 this.memo = memo;
+                                this.initRadarChart();
 
                                 if(this.memo.tags == null) {
                                     this.memo.tags = [];
@@ -124,10 +125,12 @@ export class PrivateEquityMemoEditComponent extends CommonComponent implements O
                     // TODO: default value for radio buttons?
                     this.memo.meetingType = "MEETING";
                     this.memo.suitable = false;
-
+                    this.memo.currentlyFundRaising = true;
+                    this.memo.openingSoon = false;
                     this.memo.tags = [];
                 }
             });
+
     }
 
     preselectStrategies(){
@@ -189,8 +192,6 @@ export class PrivateEquityMemoEditComponent extends CommonComponent implements O
     }
 
     ngOnInit() {
-
-
         // TODO: exclude jQuery
         // datetimepicker
         $('#meetingDate').datetimepicker({
@@ -198,7 +199,12 @@ export class PrivateEquityMemoEditComponent extends CommonComponent implements O
             format: 'DD-MM-YYYY'
         });
 
-        // init chart
+        $('#timePicker').datetimepicker({
+            format: 'LT'
+        })
+
+        // init chart also moved to constructor
+        // due to that scores array is still empty when ngOnInit called
         this.initRadarChart();
     }
 
@@ -209,6 +215,7 @@ export class PrivateEquityMemoEditComponent extends CommonComponent implements O
     save(){
         // TODO: ngModel date
         this.memo.meetingDate = $('#meetingDateValue').val();
+        this.memo.meetingTime = $('#meetingTimeValue').val();
 
         console.log(this.memo);
 
@@ -323,7 +330,15 @@ export class PrivateEquityMemoEditComponent extends CommonComponent implements O
         scores.push(Number(this.memo.teamScore));
         scores.push(Number(this.memo.trackRecordScore));
         scores.push(Number(this.memo.strategyScore));
-        this.setUpRadarChart($('#myChart'), scores);
+
+        //initializing average score for memos. if new memo skip
+        if(this.memo.teamScore != null) {
+            var totalScore = Number(this.memo.teamScore) + Number(this.memo.trackRecordScore) + Number(this.memo.strategyScore);
+            var rounded = Math.round((totalScore / 3) * 10) / 10;
+            $("#averageScore").text(rounded);
+        }
+
+        this.setUpRadarChart($('#myChart'), scores );
     }
 
     setUpRadarChart(ctx, scores){
@@ -427,5 +442,18 @@ export class PrivateEquityMemoEditComponent extends CommonComponent implements O
 
     setNonSuitable(){
         this.memo.suitable = false;
+    }
+
+    setCurrentlyFundRaising() {
+        this.memo.currentlyFundRaising = true;
+        this.memo.openingSoon = false;
+        this.memo.openingSchedule = null;
+    }
+
+    setOpeningSoon() {
+        this.memo.openingSoon = true;
+        this.memo.currentlyFundRaising = false;
+        this.memo.closingSchedule = null;
+
     }
 }

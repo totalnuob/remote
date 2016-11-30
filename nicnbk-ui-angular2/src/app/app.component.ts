@@ -19,10 +19,13 @@ import {FileUploadService} from "./upload/file.upload.service";
 // TODO: importing in component makes available for other components
 import '../../public/css/ng2-select.css';
 import '../../public/js/chart.min.js';
+import '../../public/js/google-charts/loader.js';
 import '../../public/js/bootstrap-datetimepicker.min.js';
+import '../../public/css/bootstrap/bootstrap-datetimepicker.min.css';
 import '../../public/js/viz_v1.js';
 
 import {TextareaAutosize} from "./common/textarea-autosize.directive";
+import {RiskManagementReportService} from "./riskmanagement/riskmanagement.report.service";
 
 //import '../../public/js/jquery.ns-autogrow.min.js';
 
@@ -42,7 +45,8 @@ import {TextareaAutosize} from "./common/textarea-autosize.directive";
         NewsService,
         LookupService,
         EmployeeService,
-        FileUploadService
+        FileUploadService,
+        RiskManagementReportService
     ]
 })
 @NgModule({
