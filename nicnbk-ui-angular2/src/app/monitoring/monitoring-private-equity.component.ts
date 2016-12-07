@@ -245,13 +245,14 @@ export class MonitoringPrivateEquityComponent extends GoogleChartComponent {
     drawExposureBySector(){
         var data = google.visualization.arrayToDataTable([
             ['Sector', 'Amount'],
-            ["Industrials",228912.039],
-            ["Materials",98490.56986],
-            ["Consumer Discretionary",1113256.905],
-            ["Health Care",773940.7435],
-            ["Consumer Staples",95467.86741],
-            ["Financials",193948.2598],
-            ["Information Technology",234379.8736]
+            ["Industrials",1887826.61],
+            ["Materials",1206084.496],
+            ["Consumer Discretionary",4650664.284],
+            ["Health Care",1511992.057],
+            ["Consumer Staples",94041.67209],
+            ["Financials",191050.8651],
+            ["Information Technology",230878.4706],
+            ["Energy",666676.9288]
         ]);
 
         var options = {
@@ -348,7 +349,8 @@ export class MonitoringPrivateEquityComponent extends GoogleChartComponent {
         ["Jun-16",21365316],
         ["Jul-16",28882486],
         ["Aug-16",36981406],
-        ["Sep-16",46115007]
+        ["Sep-16",46115007],
+        ["Oct-16",57581011]
     ];
 
     private commitments = [
@@ -363,14 +365,15 @@ export class MonitoringPrivateEquityComponent extends GoogleChartComponent {
             ["Jun-16",163026975.2],
             ["Jul-16",161849170.1],
             ["Aug-16",188941388.1],
-            ["Sep-16",188941388.1]
+            ["Sep-16",188941388.1],
+            ["Oct-16",188186946.8]
     ];
 
     private irr = [
         ["Dec-15", -0.061680851],
         ["Mar-16", 0.048384799],
         ["Jun-16", 0.106167063],
-        ["Sep-16", 0.1033865]
+        ["Sep-16", 0.174491026],
     ];
 
     private holdingsA = [
@@ -448,7 +451,20 @@ export class MonitoringPrivateEquityComponent extends GoogleChartComponent {
         ["30.09.2016",["OSI Group, LLC","USD","North America","Co/Direct Investment",7500000,2016,15000000,7500000,0,7500000,7500000,0,0,1]],
         ["30.09.2016",["CapitalSouth Partners Florida Sidecar Fund II, L.P.","USD","North America","Mezzanine",8179978,2016,44000000,8179977.99,0,8179977.99,8241054,61076.01,0.007466525,1.007466525]],
         ["30.09.2016",["Capitala Private Credit Fund V, L.P.","USD","North America","Mezzanine",4298487,2016,28700000,5600,0,5600,0,-5600,-1,0]],
-        ["30.09.2016",["Total Tranche A","","","",0,0,0,40923880.2,2785108.35,38021443.42,40445628,2424184.58,0.063758352,0]]
+        ["30.09.2016",["Total Tranche A","","","",0,0,0,40923880.2,2785108.35,38021443.42,40445628,2424184.58,0.063758352,0]],
+        ["31.10.2016",["Saw Mill Capital Partners II, L.P.","USD","North America","Buyout",10000000,2015,108744444,1018829,274710,744119,788241,44122,0.05929428,1.04330658]],
+        ["31.10.2016",["BCP Energy Services Fund, L.P.","USD","North America","Buyout",10000000,2015,694500000,3996934,42303,3880105,3720076,-160029,-0.041243472,0.941316269]],
+        ["31.10.2016",["ADT Security","USD","North America","Co/Direct Investment",7500000,2016,15000000000,7502524.1,0,7502524.1,7590687,88162.9,0.011751099,1.011751099]],
+        ["31.10.2016",["Bridgepoint Development Capital III, L.P.","GBP**","Western Europe","Buyout",6666667,2016,500000000,0,0,0,0,0,0,0]],
+        ["31.10.2016",["OHA Strategic Credit Fund II, LP.","USD","Global","Distressed Debt",10000000,2016,2055820000,0,0,0,0,0,0,0]],
+        ["31.10.2016",["PDC Opportunities V LP","USD","Global","Special Situations",5000000,2016,269773377,3862406.1,522142.92,3276273.26,4181326,905052.74,0.276244583,1.217756186]],
+        ["31.10.2016",["HL Secondary Investment SPV-9 LP","USD","North America","Growth Equity",7113753,2016,106652968,5576209,2052359,3523850,4449388,925538,0.262649659,1.16597979]],
+        ["31.10.2016",["OSI Group, LLC","USD","North America","Co/Direct Investment",7500000,2016,15000000,7500000,0,7500000,7500000,0,0,1]],
+        ["31.10.2016",["CapitalSouth Partners Florida Sidecar Fund II, L.P.","USD","North America","Mezzanine",8179978,2016,44000000,8179977.99,0,8179977.99,8241054,61076.01,0.007466525,1.007466525]],
+        ["31.10.2016",["Capitala Private Credit Fund V, L.P.","USD","North America","Mezzanine",4304087,2016,28700000,859697.38,0,865297,859697,-5600,-0.006471766,0.999999558]],
+        ["31.10.2016",["Cridiron Capital Fund III, L.P.","USD","North America","Corporate Finance/Buyout",10000000,2015,785000000,0,0,0,0,0,0,0]],
+        ["31.10.2016",["Jimmy John's LLC","USD","North America","Co/Direct Investment",7500000,2016,100000000,7500000,0,7500000,7500000,0,0,1]],
+        ["31.10.2016",["Total Tranche A","","","",0,0,0,49504662.58,3505067.35,45858241.42,48157199,2298957.58,0.05013183,0]]
     ];
 
     private holdingsB = [
@@ -499,7 +515,10 @@ export class MonitoringPrivateEquityComponent extends GoogleChartComponent {
         ["30.09.2016",["Blackstone Capital Partners VII, L.P.","USD","Global","Buyout",55375000,2015,17500000000,304479.98,0,304479.98,0,-304479.98,-1,0]],
         ["30.09.2016",["Warburg Pincus Private Equity XII, L.P.","USD","Global","Special Situations",21000000,2015,13250000000,2341500,0,2341500,2026958,-314542,-0.134333547,0.865666453]],
         ["30.09.2016",["Advent GPE VIII, L.P.","USD","Global","Buyout",30000000,2016,12000000000,630000,0,630000,302162,-327838,-0.520377778,0.479622222]],
-        ["30.09.2016",["Total Tranche B","","","",0,0,0,3275979.98,0,3275979.98,2329120,-946859.98,-0.289031064,0]]
+        ["30.09.2016",["Total Tranche B","","","",0,0,0,3275979.98,0,3275979.98,2329120,-946859.98,-0.289031064,0]],
+        ["31.10.2016",["Warburg Pincus Private Equity XII, L.P.","USD","Global","Special Situations",21000000,2015,13250000000,2341500,0,2341500,2026958,-314542,-0.134333547,0.865666453]],
+        ["31.10.2016",["Advent GPE VIII, L.P.","USD","Global","Buyout",30000000,2016,12000000000,630000,0,630000,480070,-149930,-0.237984127,0.762015873]],
+        ["31.10.2016",["Total Tranche B","","","",0,0,0,3593591.25,0,3593591.25,2621767,-971824.25,-0.270432607,0]]
     ];
 
     private cashFlow = [
@@ -580,7 +599,23 @@ export class MonitoringPrivateEquityComponent extends GoogleChartComponent {
         ["BCP Energy Services Fund, L.P.","03.11.2015","Call","Capital Call",-276316,"Actual","23.11.2015","USD",-276316,"USD","Capital call for United WELD Holdings, LP",1],
         ["BCP Energy Services Fund, L.P.","03.11.2015","Call","Management Fee",-196453,"Actual","23.11.2015","USD",-196453,"USD","Management fees",1],
         ["BCP Energy Services Fund, L.P.","03.11.2015","Call","Partnership Expenses",-105712,"Actual","23.11.2015","USD",-105712,"USD","Partnership expenses (Organizational, Operational, Placement, Travel and Admin)",1],
-        ["BCP Energy Services Fund, L.P.","03.11.2015","Call","Late Closing Interest - Contribution",-74526,"Actual","23.11.2015","USD",-74526,"USD","Late Closing Interest Expense",1]
+        ["BCP Energy Services Fund, L.P.","03.11.2015","Call","Late Closing Interest - Contribution",-74526,"Actual","23.11.2015","USD",-74526,"USD","Late Closing Interest Expense",1],
+        ["Saw Mill Capital Partners II, L.P.","31/10/2016","Distribution","Late Closing Interest - Distribution",1975,"Actual","10/28/2016","USD",1975,"USD","Subsequent close interest",1],
+        ["Saw Mill Capital Partners II, L.P.","31/10/2016","Distribution","Recallable Return of Capital",72813,"Actual","10/28/2016","USD",72813,"USD","Return of Capital called due to subsequent close",1],
+        ["BCP Energy Services Fund, L.P.","21/10/2016","Call","Capital Call",-217990,"Actual","10/10/2016","USD",-217990,"USD","Investment in United WELD Holdings, LP",1],
+        ["Blackstone Capital Partners VII, L.P.","21/10/2016","Call","Capital Call",-89932.89,"Actual","10/17/2016","USD",-89932.89,"USD","Investment is Primexx Energy Partners",1],
+        ["Blackstone Capital Partners VII, L.P.","21/10/2016","Call","Partnership Expenses",-60603.82,"Actual","10/17/2016","USD",-60603.82,"USD","Partnership Expenses",1],
+        ["Blackstone Capital Partners VII, L.P.","21/10/2016","Call","Partnership Expenses (outside commitment)",-13941.68,"Actual","10/17/2016","USD",-13941.68,"USD","Organizational expenses",1],
+        ["Blackstone Capital Partners VII, L.P.","21/10/2016","Call","Cost Basis Adjustment",-13941.68,"Actual","10/17/2016","USD",-13941.68,"USD","Organizational expenses",1],
+        ["BCP Energy Services Fund, L.P.","21/10/2016","Call","Partnership Expenses",-7199,"Actual","10/10/2016","USD",-7199,"USD","Partnership Expenses",1],
+        ["BCP Energy Services Fund, L.P.","21/10/2016","Distribution","Realized Gain/Loss",3036,"Actual","10/10/2016","USD",3036,"USD","Gain on sale of assets to the Executive Fund",1],
+        ["BCP Energy Services Fund, L.P.","21/10/2016","Distribution","Recallable Return of Capital",40807,"Actual","10/10/2016","USD",40807,"USD","Recallable Return of Capital - Investment in the Fund",1],
+        ["Jimmy John's","19/10/2016","Call","Capital Call",-7500000,"Actual","11/8/2016","USD",-7500000,"USD","Initial Capital Call",1],
+        ["Secondary Investment SPV-9, L.P.","19/10/2016","Distribution","Recallable Return of Capital",633650,"Actual","10/20/2016","USD",633650,"USD","Proceeds from underlying investments",1],
+        ["Blackstone Capital Partners VII, L.P.","17/10/2016","Call","Cost Basis Adjustment",-173046.88,"Actual","10/10/2016","USD",-173046.88,"USD","Mgmt Fee for October 1 - December 31, 2016",1],
+        ["Blackstone Capital Partners VII, L.P.","17/10/2016","Call","Management Fee (outside commitment)",-173046.88,"Actual","10/10/2016","USD",-173046.88,"USD","Mgmt Fee for October 1 - December 31, 2016",1],
+        ["Capitala Private Credit Fund V, L.P.","14/10/2016","Call","Capital Call",-429848.69,"Actual","10/4/2016","USD",-429848.69,"USD","Capital Call to originate investments",1],
+        ["Capitala Private Credit Fund V, L.P.","3/10/2016","Call","Capital Call",-429848.69,"Actual","9/23/2016","USD",-429848.69,"USD","Capital call for initial capitalization of the fund",1]
     ];
 
 }

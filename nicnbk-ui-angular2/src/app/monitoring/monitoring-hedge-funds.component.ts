@@ -388,7 +388,8 @@ export class MonitoringHedgeFundsComponent extends GoogleChartComponent {
         ["Jun-16",141459937],
         ["Jul-16",142025472],
         ["Aug-16",143248121],
-        ["Sep-16",143491005]
+        ["Sep-16",143491005],
+        ["Oct-16",143595932],
     ];
 
     private performance = [
@@ -479,7 +480,11 @@ export class MonitoringHedgeFundsComponent extends GoogleChartComponent {
         ["Sep-16","MTD",0.0012,0.0056],
         ["Sep-16","QTD",0.0136,0.0253],
         ["Sep-16","YTD",-0.0126,-0.0011],
-        ["Sep-16","CUMULATIVE",-0.0517,-0.0319]
+        ["Sep-16","CUMULATIVE",-0.0517,-0.0319],
+        ["Oct-16","MTD",0.0003,-0.0018],
+        ["Oct-16","QTD",0.0003,-0.0018],
+        ["Oct-16","YTD",-0.0112,-0.0038],
+        ["Oct-16","CUMULATIVE",-0.0504,-0.0345]
     ];
 
     private holdings = [
@@ -515,6 +520,38 @@ export class MonitoringHedgeFundsComponent extends GoogleChartComponent {
         ["30.09.2016","N/A","Uninvested","Cash",0.0014833254353332,0.0000000000000000,0.0000000000000000],
         ["30.09.2016","N/A","Uninvested","Expenses",-0.0000959886262043,0.0000000000000000,-0.0000778658276596],
         ["30.09.2016","N/A","Uninvested","Management Fees",-0.0010010859473951,0.0000000000000000,-0.0005031082157971],
-        ["30.09.2016","N/A","Uninvested","Net Rec/(Pay)",0.0408194711664073,0.0000000000000000,0.0000000000000000]
+        ["30.09.2016","N/A","Uninvested","Net Rec/(Pay)",0.0408194711664073,0.0000000000000000,0.0000000000000000],
+        ["31.10.16","CVI Intl Credit Ltd","Credit","Long-Biased Credit",0.082237534,0.017,0.001398038],
+        ["31.10.16","Anchorage Cap Ltd","Credit","Long/Short Credit",0.043061304,0.006199999,0.00026698],
+        ["31.10.16","Chenavari Struct Cred Ltd","Credit","Structured Credit",0.072781482,0.014200001,0.001033497],
+        ["31.10.16","Prosiris Gbl Opp Fund Ltd","Credit","Structured Credit",0.033043706,0.007599999,0.000251132],
+        ["31.10.16","Argentiere Enhanced Ltd","Relative Value","Option Volatility Arbitrage",0.026500052,-0.0062,-0.0001643],
+        ["31.10.16","Argentiere Ltd","Relative Value","Option Volatility Arbitrage",0.006809667,-0.003900005,-2.65577E-05],
+        ["31.10.16","Ionic Vol Arb Fund II Ltd","Relative Value","Option Volatility Arbitrage",0.025675254,-0.0021,-5.3918E-05],
+        ["31.10.16","Whitebox Asymm Opp Ltd","Relative Value","Diversified Relative Value",0.050154935,0.027099999,0.001359199],
+        ["31.10.16","Myriad Opportunities Ltd","Multi-Strategy","Multi-Strategy",0.042587966,0.003000001,0.000127764],
+        ["31.10.16","MTP Energy Corp and Ltd","Event Driven","Diversified Event Driven",0.024932772,0.012699999,0.000316646],
+        ["31.10.16","York Euro Opp Unit Trust","Event Driven","Diversified Event Driven",0.052470592,-0.004,-0.000209882],
+        ["31.10.16","Basswood Enhanced LS Ltd","Equities","Long-Biased Hedged Equities",0.021947103,0.025000003,0.000548678],
+        ["31.10.16","Discovery Gbl Opp Ltd","Equities","Long-Biased Hedged Equities",0.032377435,-0.0046,-0.000148936],
+        ["31.10.16","Hitchwood Ltd","Equities","Long-Biased Hedged Equities",0.035054969,-0.036799999,-0.001290023],
+        ["31.10.16","Incline Global ELS Ltd","Equities","Long-Biased Hedged Equities",0.024600054,-0.0329,-0.000809342],
+        ["31.10.16","Lagunita Ltd","Equities","Long-Biased Hedged Equities",0.011002871,-0.112299998,-0.001235622],
+        ["31.10.16","Atlas Enhanced Fund Ltd","Equities","Less-Correlated Hedged Equities",0.038313804,-0.0035,-0.000134098],
+        ["31.10.16","Blue Mtn LS Equity Ltd","Equities","Less-Correlated Hedged Equities",0.029995805,0.008499998,0.000254964],
+        ["31.10.16","Nipun Capital Ltd","Equities","Less-Correlated Hedged Equities",0.022552212,0.022199999,0.000500659],
+        ["31.10.16","Passport Global LS Ltd","Equities","Less-Correlated Hedged Equities",0.028225679,-0.028216251,-0.000796423],
+        ["31.10.16","Ren Inst Div Alpha LP","Equities","Less-Correlated Hedged Equities",0.024378889,-0.0042,-0.000102391],
+        ["31.10.16","Trian Partners Ltd","Equities","Activists",0.042917542,-0.0023,-9.87104E-05],
+        ["31.10.16","Atreaus Overseas Fund Ltd","Macro","Discretionary",0.026376913,-0.002899999,-7.6493E-05],
+        ["31.10.16","Element Capital Ltd","Macro","Discretionary",0.032813586,-0.017930958,-0.000588379],
+        ["31.10.16","Graticule Asia Macro Ltd","Macro","Discretionary",0.044016536,0.0008,3.52132E-05],
+        ["31.10.16","MKP Opportunity Ltd","Macro","Discretionary",0.0292424,0.0189,0.000552681],
+        ["31.10.16","GCM COM Ltd","Commodities","Discretionary",0.022978556,0.001294445,2.97445E-05],
+        ["31.10.16","N/A","Uninvested","Bank Loans",0,0,-9.97117E-05],
+        ["31.10.16","N/A","Uninvested","Cash",0.013034944,0,0],
+        ["31.10.16","N/A","Uninvested","Expenses",-0.000171696,0,-7.67704E-05],
+        ["31.10.16","N/A","Uninvested","Management Fees",-6.32108E-07,0,-0.000500405],
+        ["31.10.16","N/A","Uninvested","Net Rec/(Pay)",0.001320208,0,0]
     ];
 }
