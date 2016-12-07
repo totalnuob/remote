@@ -140,7 +140,7 @@ public class Firm extends CreateUpdateBaseEntity{
         this.geographyFocus = geographyFocus;
     }
 
-//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "firm")
+//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "firm", cascade = CascadeType.ALL)
 //    public Set<Fund> getFunds() {
 //        return funds;
 //    }

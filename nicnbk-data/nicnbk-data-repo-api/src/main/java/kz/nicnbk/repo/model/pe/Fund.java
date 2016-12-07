@@ -26,14 +26,15 @@ public class Fund extends CreateUpdateBaseEntity {
     private int fundSize;
     private float targetSize;
     private float hardCap;
+    private String targetHardCapComment;
     private float gpCommitment;
     private float managementFee;
-    private String managementFeeCommentary;
+    private String managementFeeComment;
     private float carriedInterest;
     private float hurdleRate;
     private Set<Industry> industry;
     private Set<Strategy> strategy;
-    private String strategyComments;
+    private String strategyComment;
     private Set<Geography> geography;
 
     //KEY FUND STATISTICS
@@ -53,7 +54,7 @@ public class Fund extends CreateUpdateBaseEntity {
     // Descriptive data
     private float investmentPeriod;
     private float fundTerm;
-    private String fundTermCommentary;
+    private String fundTermComment;
     private float targetInvSizeRange;
     private float targetEvRange;
     private float targetNumberOfInv1;
@@ -137,6 +138,15 @@ public class Fund extends CreateUpdateBaseEntity {
         this.hardCap = hardCap;
     }
 
+    @Column(name = "target_hard_cap_comment")
+    public String getTargetHardCapComment() {
+        return targetHardCapComment;
+    }
+
+    public void setTargetHardCapComment(String targetHardCapComment) {
+        this.targetHardCapComment = targetHardCapComment;
+    }
+
     @Column(name = "gp_commitment")
     public float getGpCommitment() {
         return gpCommitment;
@@ -156,12 +166,12 @@ public class Fund extends CreateUpdateBaseEntity {
     }
 
     @Column(name = "management_fee_commentary")
-    public String getManagementFeeCommentary() {
-        return managementFeeCommentary;
+    public String getManagementFeeComment() {
+        return managementFeeComment;
     }
 
-    public void setManagementFeeCommentary(String managementFeeCommentary) {
-        this.managementFeeCommentary = managementFeeCommentary;
+    public void setManagementFeeComment(String managementFeeComment) {
+        this.managementFeeComment = managementFeeComment;
     }
 
     @Column(name = "carried_interest")
@@ -211,12 +221,12 @@ public class Fund extends CreateUpdateBaseEntity {
     }
 
     @Column(name = "strategy_comments", columnDefinition = "TEXT")
-    public String getStrategyComments() {
-        return strategyComments;
+    public String getStrategyComment() {
+        return strategyComment;
     }
 
-    public void setStrategyComments(String strategyComments) {
-        this.strategyComments = strategyComments;
+    public void setStrategyComment(String strategyComments) {
+        this.strategyComment = strategyComments;
     }
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -364,12 +374,12 @@ public class Fund extends CreateUpdateBaseEntity {
 
 
     @Column(name = "fund_term_commentary")
-    public String getFundTermCommentary() {
-        return fundTermCommentary;
+    public String getFundTermComment() {
+        return fundTermComment;
     }
 
-    public void setFundTermCommentary(String fundTermCommentary) {
-        this.fundTermCommentary = fundTermCommentary;
+    public void setFundTermComment(String fundTermComment) {
+        this.fundTermComment = fundTermComment;
     }
 
     @Column(name = "traget_inv_size_range")
@@ -485,7 +495,6 @@ public class Fund extends CreateUpdateBaseEntity {
     public void setStrategyStructureRisks(String strategyStructureRisks) {
         this.strategyStructureRisks = strategyStructureRisks;
     }
-
 
     @Column(name = "performance_merits", columnDefinition = "TEXT")
     public String getPerformanceMerits() {

@@ -12,6 +12,6 @@ import org.springframework.data.repository.query.Param;
  */
 public interface FundRepository extends PagingAndSortingRepository<Fund, Long> {
 
-    @Query("select fund from Fund fund where fund.firm.id=:firmId")
+    @Query("select fund from Fund fund where fund.firm.id=:firmId ORDER BY fund.vintage ASC")
     Page<Fund> findByFirmId(@Param("firmId") Long firmId, Pageable pageable);
 }

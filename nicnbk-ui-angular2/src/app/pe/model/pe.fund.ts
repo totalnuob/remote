@@ -9,14 +9,15 @@ export class PeFund {
     fundSize: number;
     targetSize: number;
     hardCap: number;
+    targetHardCapComment: string;
     gpCommitment: number;
     managementFee: number;
-    managementFeeCommentary;
+    managementFeeComment;
     carriedInterest: number;
     hurdleRate: number;
     industry: any[];
     strategy: any[];
-    strategyComments: string;
+    strategyComment: string;
     geography: any[];
 
     numberOfInvestments: number;
@@ -33,7 +34,7 @@ export class PeFund {
 
     investmentPeriod: number;
     fundTerm: number;
-    fundTermCommentary: string;
+    fundTermComment: string;
     targetInvSizeRange: number;
     targetEvRange: number;
     targetNumberOfInv1: number;

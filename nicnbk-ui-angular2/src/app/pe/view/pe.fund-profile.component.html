@@ -1,6 +1,15 @@
 <div class="container">
     <div class="row top-buffer" >
         <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li><a [routerLink]="['/pe/firmSearch']">Private Equity</a></li>
+                <li><a [routerLink]="['/pe/firmProfile',fund?.firm?.id]">Firm profile</a></li>
+                <li class="active">Fund profile</li>
+            </ol>
+        </div>
+    </div>
+    <div class="row top-buffer" >
+        <div class="col-md-12">
             <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
             </div>
         </div>
@@ -95,10 +104,11 @@
                         <td class="col-md-1">Fund size</td>
                         <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.fundSize"/></td>
                     </tr>
-
                     <tr>
                         <td class="col-md-1">Target size / Hard cap</td>
-                        <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.targetSize"/></td>
+                        <td class="col-md-3">
+                            <input style="width: 30%" type="text" [(ngModel)]="fund.targetSize"/><input style="width: 70%" type="text" [(ngModel)]="fund.targetHardCapComment" placeholder="Comment"/>
+                        </td>
                     </tr>
                     <tr>
                         <td class="col-md-1">GP commitment</td>
@@ -109,8 +119,8 @@
                         <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.managementFee"/></td>
                     </tr>
                     <tr>
-                        <td class="col-md-1">Management fee commentary</td>
-                        <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.managementFeeCommentary"/></td>
+                        <td class="col-md-1">Management fee comment</td>
+                        <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.managementFeeComment"/></td>
                     </tr>
                 </table>
                 <table class=" col-md-4 table-striped table-condensed">
@@ -223,7 +233,7 @@
                 <table class=" col-md-4 table-striped table-condensed">
                     <tr>
                         <td class="col-md-1">Fund strategy comment</td>
-                        <td class="col-md-3"><textarea   spellcheck="false"  class="form-control" [(ngModel)]="fund.strategyComments"></textarea></td>
+                        <td class="col-md-3"><textarea   spellcheck="false"  class="form-control" [(ngModel)]="fund.strategyComment"></textarea></td>
                     </tr>
                 </table>
             </div>
@@ -238,8 +248,9 @@
                     </tr>
                     <tr>
                         <td class="col-md-1">Fund term</td>
-                        <td class="col-md-2"><input style="width: 100%" type="text" [(ngModel)]="fund.fundTerm"/></td>
-                        <td class="col-md-1"><input style="width: 100%" type="text" [(ngModel)]="fund.fundTermCommentary" placeholder="Comment"/></td>
+                        <td class="col-md-3">
+                            <input style="width: 30%" type="text" [(ngModel)]="fund.fundTerm"/><input style="width: 70%" type="text" [(ngModel)]="fund.fundTermComment" placeholder="Comment"/>
+                        </td>
                     </tr>
                     <tr>
                         <td class="col-md-1">Target inv. size range</td>
@@ -253,13 +264,15 @@
                     </tr>
                     <tr>
                         <td class="col-md-1">Target number of inv.</td>
-                        <td class="col-md-1"><input style="width: 100%" type="text" [(ngModel)]="fund.targetNumberOfInv1"/></td>
-                        <td class="col-md-1"><input style="width: 100%" type="text" [(ngModel)]="fund.targetNumberOfInv2"/></td>
+                        <td class="col-md-3">
+                            <input style="width: 30%" type="text" [(ngModel)]="fund.targetNumberOfInv1"/><input style="width: 70%" type="text" [(ngModel)]="fund.targetNumberOfInv2"/>
+                        </td>
                     </tr>
                     <tr>
                         <td class="col-md-1">Expected annual number of inv.</td>
-                        <td class="col-md-1"><input style="width: 100%" type="text" [(ngModel)]="fund.expAnnualNumberOfInv1"/></td>
-                        <td class="col-md-1"><input style="width: 100%" type="text" [(ngModel)]="fund.expAnnualNumberOfInv2"/></td>
+                        <td class="col-md-3">
+                            <input style="width: 30%" type="text" [(ngModel)]="fund.expAnnualNumberOfInv1"/><input style="width: 70%" type="text" [(ngModel)]="fund.expAnnualNumberOfInv2"/>
+                        </td>
                     </tr>
                 </table>
             </div>

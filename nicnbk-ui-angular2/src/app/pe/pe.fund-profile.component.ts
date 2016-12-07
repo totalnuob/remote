@@ -8,7 +8,6 @@ import {PeFundService} from "./pe.fund.service";
 import {SaveResponse} from "../common/save-response";
 import {LookupService} from "../common/lookup.service";
 import any = jasmine.any;
-import Any = jasmine.Any;
 
 declare var $:any
 
@@ -34,7 +33,7 @@ export class PeFundProfileComponent extends CommonComponent implements OnInit{
     public industryList: Array<any> = [];
     public geographyList: Array<any> = [];
 
-    public firmStrategyList: Array<Any> = [];
+    public firmStrategyList: Array<any> = [];
     public firmIndustryList: Array<any> = [];
     public firmGeographyList: Array<any> = [];
 

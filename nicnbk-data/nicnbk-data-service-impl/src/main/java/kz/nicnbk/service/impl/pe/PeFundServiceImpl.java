@@ -40,7 +40,7 @@ public class PeFundServiceImpl implements PeFundService {
 
     @Override
     public Set<PeFundDto> loadFirmFunds(Long firmId) {
-        Page<Fund> page = this.repository.findByFirmId(firmId, new PageRequest(0,10, new Sort(Sort.Direction.DESC, "id")));
+        Page<Fund> page = this.repository.findByFirmId(firmId, new PageRequest(0,10, new Sort(Sort.Direction.ASC, "vintage")));
         return this.converter.disassembleSet(page.getContent());
     }
 }

@@ -24,14 +24,15 @@ public class PeFundDto extends HistoryBaseEntityDto<Fund> {
     private int fundSize;
     private float targetSize;
     private float hardCap;
+    private String targetHardCapComment;
     private float gpCommitment;
     private float managementFee;
-    private String managementFeeCommentary;
+    private String managementFeeComment;
     private float carriedInterest;
     private float hurdleRate;
     private Set<BaseDictionaryDto> industry;
     private Set<BaseDictionaryDto> strategy;
-    private String strategyComments;
+    private String strategyComment;
     private Set<BaseDictionaryDto> geography;
 
     //KEY FUND STATISTICS
@@ -51,7 +52,7 @@ public class PeFundDto extends HistoryBaseEntityDto<Fund> {
     // Descriptive data
     private float investmentPeriod;
     private float fundTerm;
-    private String fundTermCommentary;
+    private String fundTermComment;
     private float targetInvSizeRange;
     private float targetEvRange;
     private float targetNumberOfInv1;
@@ -127,6 +128,14 @@ public class PeFundDto extends HistoryBaseEntityDto<Fund> {
         this.hardCap = hardCap;
     }
 
+    public String getTargetHardCapComment() {
+        return targetHardCapComment;
+    }
+
+    public void setTargetHardCapComment(String targetHardCapComment) {
+        this.targetHardCapComment = targetHardCapComment;
+    }
+
     public float getGpCommitment() {
         return gpCommitment;
     }
@@ -143,12 +152,12 @@ public class PeFundDto extends HistoryBaseEntityDto<Fund> {
         this.managementFee = managementFee;
     }
 
-    public String getManagementFeeCommentary() {
-        return managementFeeCommentary;
+    public String getManagementFeeComment() {
+        return managementFeeComment;
     }
 
-    public void setManagementFeeCommentary(String managementFeeCommentary) {
-        this.managementFeeCommentary = managementFeeCommentary;
+    public void setManagementFeeComment(String managementFeeComment) {
+        this.managementFeeComment = managementFeeComment;
     }
 
     public float getCarriedInterest() {
@@ -183,12 +192,12 @@ public class PeFundDto extends HistoryBaseEntityDto<Fund> {
         this.strategy = strategy;
     }
 
-    public String getStrategyComments() {
-        return strategyComments;
+    public String getStrategyComment() {
+        return strategyComment;
     }
 
-    public void setStrategyComments(String strategyComments) {
-        this.strategyComments = strategyComments;
+    public void setStrategyComment(String strategyComment) {
+        this.strategyComment = strategyComment;
     }
 
     public Set<BaseDictionaryDto> getGeography() {
@@ -311,12 +320,12 @@ public class PeFundDto extends HistoryBaseEntityDto<Fund> {
         this.fundTerm = fundTerm;
     }
 
-    public String getFundTermCommentary() {
-        return fundTermCommentary;
+    public String getFundTermComment() {
+        return fundTermComment;
     }
 
-    public void setFundTermCommentary(String fundTermCommentary) {
-        this.fundTermCommentary = fundTermCommentary;
+    public void setFundTermComment(String fundTermComment) {
+        this.fundTermComment = fundTermComment;
     }
 
     public float getTargetInvSizeRange() {

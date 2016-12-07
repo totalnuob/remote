@@ -35,6 +35,7 @@ import {MonitoringHedgeFunds2Component} from "./monitoring/monitoring-hedge-fund
 import {PeFundProfileComponent} from "./pe/pe.fund-profile.component";
 import {PeFirmProfileComponent} from "./pe/pe.firm-profile.component";
 import {PeFirmSearchComponent} from "./pe/pe.firm-search.component";
+import {PeFundReportComponent} from "./pe/pe.fund-report.component";
 
 
 const routes: Routes  = [
@@ -215,6 +216,11 @@ const routes: Routes  = [
     {
         path: 'pe/firmSearch',
         component: PeFirmSearchComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'pe/fundReport/:id',
+        component: PeFundReportComponent,
         canActivate: [AuthGuard]
     },
 ];

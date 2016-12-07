@@ -1,6 +1,14 @@
 <div class="container">
     <div class="row top-buffer" >
         <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li><a [routerLink]="['/pe/firmSearch']">Private Equity</a></li>
+                <li class="active">Firm profile</li>
+            </ol>
+        </div>
+    </div>
+    <div class="row top-buffer" >
+        <div class="col-md-12">
             <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
             </div>
         </div>
@@ -171,18 +179,18 @@
                     <thead>
                     <th>&nbsp;</th>
                     <th>FUND</th>
+                    <th>STATUS</th>
+                    <th>VINTAGE</th>
                     <th>STRATEGY</th>
-                    <th>LOCATION</th>
                     <th>UPDATED</th>
                     <th>ACTIONS</th>
                     </thead>
                     <tbody>
-
                     <tr *ngFor="let fund of foundFundsList">
                         <td width="5%"></td>
-                        <td width="30%"><a [routerLink]="['/pe/fundProfile/',fund.id, firm.id]">{{fund.fundName}}</a></td>
-                        <!--<td width="10%" th:text="${memoItem.meetingDate}"></td>-->
-                        <td width="10%"></td>
+                        <td width="20%"><a [routerLink]="['/pe/fundProfile/',fund.id, firm.id]">{{fund.fundName}}</a></td>
+                        <td width="5%">{{fund.status}}</td>
+                        <td width="5%">{{fund.vintage}}</td>
                         <td width="10%"></td>
                         <td width="10%"></td>
                         <td width="5%">
@@ -191,7 +199,6 @@
                             <a><i class="glyphicon glyphicon-plus"></i></a>
                         </td>
                     </tr>
-
                     </tbody>
                 </table>
             </div>
