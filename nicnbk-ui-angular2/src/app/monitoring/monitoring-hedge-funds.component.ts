@@ -390,6 +390,7 @@ export class MonitoringHedgeFundsComponent extends GoogleChartComponent {
         ["Aug-16",143248121],
         ["Sep-16",143491005],
         ["Oct-16",143595932],
+        ["Nov-16",144883268]
     ];
 
     private performance = [
@@ -484,7 +485,11 @@ export class MonitoringHedgeFundsComponent extends GoogleChartComponent {
         ["Oct-16","MTD",0.0003,-0.0018],
         ["Oct-16","QTD",0.0003,-0.0018],
         ["Oct-16","YTD",-0.0112,-0.0038],
-        ["Oct-16","CUMULATIVE",-0.0504,-0.0345]
+        ["Oct-16","CUMULATIVE",-0.0504,-0.0345],
+        ["Nov-16","MTD",0.0090,-0.0018],
+        ["Nov-16","QTD",0.0093,-0.0018],
+        ["Nov-16","YTD",-0.0023,-0.0038],
+        ["Nov-16","CUMULATIVE",-0.0419,-0.0345]
     ];
 
     private holdings = [

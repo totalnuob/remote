@@ -17,6 +17,7 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
     //ngAfterViewInit():void {
     //    this.tableau_func()
     //}
+    private tableDate;
 
     constructor(
     ) {
@@ -24,8 +25,10 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
     }
 
     drawGraph(){
-        $("#tableDate").val($("#tableDate option:last").val());
         var tableDate = this.getAllDates()[this.getAllDates().length - 1];
+
+        //$("#tableDate").val($("#tableDate option:last").val());
+        this.tableDate = tableDate;
         this.drawTables(tableDate);
 
         this.drawReturnsLineCharts(null);
@@ -226,8 +229,8 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
     drawBondsBySectorChart(){
         var data = google.visualization.arrayToDataTable([
             ['Secotr', '%'],
-            ['Energy', 0.04],
-            ['Financial', 0.96],
+            ['Energy', 0.00],
+            ['Financial', 1.00],
         ]);
 
         var options = {
@@ -282,15 +285,15 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
     }
 
     private nav = [
-        ["Sep-16",105939320.8,145406608.8,180764953.4,105447406.3,1251970.865,61795069.63,614968977.1],
-        ["Oct-16",91022227.5,237796146.12,119768433.5,105493262.5,1246973.3,26006836.6,607250213.4],
-
+        ["Sep-16",105939320,145406608,180764953,105447406,1251970,61795069,614968977],
+        ["Oct-16",91022227,237796146,119768433,105493262,1246973,26006836,607250213],
+        ["Nov-16",56068270,253124756,111749442,100499500,1999277,26075274,594189386],
     ];
 
     private performance = [
         ["Sep-16",0.82,0.94,1.11,0.79,0.75,1.03],
         ["Oct-16",0.42,2.10,1.19,0.89,0.74,1.39],
-
+        ["Nov-16",0.86,0.75,1.2,0.83,0.77,1.16]
     ];
 
     private getRowDataReturnsYTD(date){
@@ -693,18 +696,58 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
             ["Oct-16", ["US45950KBQ22","INTL FINANCE CORP","SUPRANATIONAL","23.11.2016",50000000,101.28,50688437.5,-0.012440758,-630000,974687.5,0.019228991]],
             ["Oct-16", ["US298785GE09","EUROPEAN INVESTMENT BANK","SUPRANATIONAL","15.12.2016",50000000,101.065,50546562.5,-0.010181566,-514500,807375,0.015972896]],
             ["Oct-16", ["US4581X0CB23","INTER-AMERICAN DEVEL BK","SUPRANATIONAL","15.11.2016",5000000,100.075,5006545.14,-0.00071946,-3600,35531.94333,0.007097098]],
+            ["Nov-16", ["US50064FAF18","REPUBLIC OF KOREA","GOVTS","07.12.2016",6000000,103.647,6254695,-0.032967669,-205020,50375.83333,0.008054083]],
+            ["Nov-16", ["US912796KP37","TREASURY BILL","GOVTS","23.03.2017",50000000,99.75177222,49875886.11,0.000823322,41063.89,41063.89,0.000823322]],
+            ["Nov-16", ["US50050HAE62","KOOKMIN BANK","CORPS","14.07.2017",5000000,99.88,4995805.56,0.000170204,850,189530.55,0.037937936]],
+            ["Nov-16", ["USJ46186AT93","MIZUHO BANK LTD","CORPS","25.09.2017",21000000,100,21000000,-0.0005,-10500,332670.195,0.015841438]],
+            ["Nov-16", ["US05574LTV08 ","BNP PARIBAS","CORPS","12.12.2016",8040000,100.234,8066879.06,-0.001945448,-15678,63621.2,0.007886718]],
+            ["Nov-16", ["US78010UNX18","ROYAL BANK OF CANADA","CORPS","23.01.2017",10000000,100.211,10022766.67,-0.00160661,-16100,20566.66,0.002051994]],
+            ["Nov-16", ["US06366QW868","BANK OF MONTREAL","CORPS","11.01.2017",17925000,101.105,18248795.21,-0.008703823,-157740,98687.08,0.005407868]],
+            ["Nov-16", ["US064159AM82","BANK OF NOVA SCOTIA","CORPS","12.01.2017",20000000,101.145,20370666.67,-0.008977211,-181600,110233.33,0.005411376]],
+            ["Nov-16", ["XS1437622548","BANK OF CHINA/LUXEMBOURG","CORPS","12.07.2019",10000000,99.93,9993000,-0.002341639,-23400,42225,0.004225458]],
+            ["Nov-16", ["US46623EKG34","JPMORGAN CHASE & CO","CORPS","15.08.2021",15000000,100.5,15088387.5,-0.021791045,-328500,-246262.5,-0.016321327]],
+            ["Nov-16", ["US06738EAN58","BARCLAYS PLC","CORPS","12.01.2026",11200000,103.35,11667755.56,-0.03194001,-369712,-290767.56,-0.024920608]],
+            ["Nov-16", ["US06738EAN58","BARCLAYS PLC","CORPS","12.01.2026",5000000,103.55,5219427.08,-0.033809754,-175050,-140414.58,-0.026902297]],
+            ["Nov-16", ["US06738EAN58","BARCLAYS PLC","CORPS","12.01.2026",5000000,104.65,5281718.75,-0.0439656,-230050,-202706.25,-0.038378842]],
+            ["Nov-16", ["XS1395052639","STANDARD CHARTERED PLC","CORPS","12.04.2026",2000000,104.43,2127300,-0.051747582,-108080,-138680,-0.065190617]],
+            ["Nov-16", ["US06120TAA60","BANK OF CHINA","CORPS","13.11.2024",3000000,108.75,3321666.67,-0.047926437,-156360,-213443.34,-0.064257905]],
+            ["Nov-16", ["US89114QBN79","TORONTO-DOMINION BANK","CORPS","06.09.2018",10000000,100,10014902.78,-0.00344,-34400,-20302.78,-0.002027257]],
+            ["Nov-16", ["US172967JE29","CITIGROUP INC","CORPS","24.11.2017",30000000,100.4,30340458.33,-0.00060757,-18300,29491.67,0.000972025]],
+            ["Nov-16", ["XS1395052639","STANDARD CHARTERED PLC","CORPS","12.04.2026",5000000,103.59,5182312.5,-0.044058307,-228200,-210762.5,-0.040669585]],
+            ["Nov-16", ["XS1395052639","STANDARD CHARTERED PLC","CORPS","12.04.2026",5000000,103.57,5181312.5,-0.043873709,-227200,-209762.5,-0.040484433]],
+            ["Nov-16", ["US06738EAN58","BARCLAYS PLC","CORPS","12.01.2026",6000000,103.35,6271000,-0.03194001,-198060,-176185,-0.0280952]],
+            ["Nov-16", ["US46625HJG65","JPMORGAN CHASE & CO","CORPS","25.01.2018",25000000,100.49,25230000,-0.002796298,-70250,-36500,-0.00144669]],
+            ["Nov-16", ["US06738EAN58","BARCLAYS PLC","CORPS","12.01.2026",10000000,103.63,10502756.94,-0.034555631,-358100,-344731.94,-0.032822995]],
+            ["Nov-16", ["US06738EAN58","BARCLAYS PLC","CORPS","12.01.2026",5000000,103.63,5251378.47,-0.034555631,-179050,-172365.97,-0.032822995]],
+            ["Nov-16", ["XS1395052639","STANDARD CHARTERED PLC","CORPS","12.04.2026",10000000,103.6499992,10393125,-0.044611667,-462399.92,-450025,-0.043300259]],
+            ["Nov-16", ["XS1395052639","STANDARD CHARTERED PLC","CORPS","12.04.2026",12400000,103.8,12907470,-0.045992293,-591976,-578026,-0.044782285]],
+            ["Nov-16", ["XS0755979753","DEVELOPMENT BK OF JAPAN","AGENCIES","13.03.2017",16000000,100.201,16112160,-0.001217553,-19520,183813.3333,0.011408361]],
+            ["Nov-16", ["XS0735390303","TOKYO METROPOLITAN GOVT","AGENCIES","27.01.2017",8200000,100.655,8403616.25,-0.005553624,-45838,82287,0.009791856]],
+            ["Nov-16", ["XS0735390303","TOKYO METROPOLITAN GOVT","AGENCIES","27.01.2017",11670000,100.555,11801020.06,-0.004564666,-53565.3,57056.5775,0.004834885]],
+            ["Nov-16", ["XS0285449368","DEVELOPMENT BK OF JAPAN","AGENCIES","01.02.2017",5000000,103.7,5206354.17,-0.028486017,-147700,35234.02444,0.006767504]],
+            ["Nov-16", ["XS0789060653","TOKYO METROPOLITAN GOVT","AGENCIES","08.06.2017",5000000,100.72,5099923.61,-0.005371326,-27050,-8334.721111,-0.001634284]],
+            ["Nov-16", ["XS0789060653","TOKYO METROPOLITAN GOVT","AGENCIES","08.06.2017",20000000,100.45,20359305.56,-0.00269786,-54200,7049.995556,0.000346279]],
+            ["Nov-16", ["XS1383319461","DEXIA CREDIT LOCAL","AGENCIES","23.03.2018",20000000,100,20000000,0.00197,39400,84925.82222,0.004246291]],
+            ["Nov-16", ["US500769FZ20","KFW","AGENCIES","15.12.2016",25000000,99.97,25047621.53,0.000270081,6750,96159.72,0.003839076]],
+            ["Nov-16", ["US45950KBQ22","INTL FINANCE CORP","SUPRANATIONAL","23.11.2016",50000000,101.28,50688437.5,-0.012954186,-656000,975250,0.019240088]],
+            ["Nov-16", ["US298785GE09","EUROPEAN INVESTMENT BANK","SUPRANATIONAL","15.12.2016",50000000,101.065,50546562.5,-0.010478405,-529500,820500,0.016232558]]
         ];
         //if(date == null){
         //    return positions;
         //}
 
         var monthPositions = [];
-        var month = date.substring(3,5);
         for(var i = 0; i < positions.length; i++){
-            if(typeof positions[i][0] === 'string' && (positions[i][0] + "").substring(3,5) === month){
+            if(positions[i][0] === date){
                 monthPositions.push(positions[i][1]);
             }
         }
+        //var month = date.substring(3,5);
+        //for(var i = 0; i < positions.length; i++){
+        //    if(typeof positions[i][0] === 'string' && (positions[i][0] + "").substring(3,5) === month){
+        //        monthPositions.push(positions[i][1]);
+        //    }
+        //}
         return monthPositions;
     }
 
