@@ -80,8 +80,8 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
             ["NIC Total", NAVarray[1]],
             ["Liquid Portfolio", NAVarray[2]],
             ["NICK Master Fund", NAVarray[3]],
-            ["Hedge Funds Portfolio", NAVarray[4]],
-            ["Private Equity Portfolio", NAVarray[5]],
+            ["Hedge Funds Portfolio", NAVarray[5]],
+            ["Private Equity Portfolio", NAVarray[4]],
             ["NICK Master Fund Cash", NAVarray[6]]
         ]);
         return data;
@@ -313,9 +313,9 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
         var data = google.visualization.arrayToDataTable(
             [
                 ["Allocation", "%"],
-                ["Private Equity",6],
+                ["Private Equity",7],
                 ["Hedge Funds",18],
-                ["Liquid portfolio", 76],
+                ["Liquid portfolio", 75],
                 ["Real Estate",0],
                 ["Infrastructure ",0],
                 ["Public Equity",0]
@@ -420,7 +420,8 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
         ["Jun-16",800253478,637271323,162982154,21365316,141459937,156901],
         ["Jul-16",801305788,630241088,171064700,28882486,142025472,156742],
         ["Aug-16",803435223,623049078,180386145,36981406,143248121,156618],
-        ["Sep-16",804756535,614994068,189762468,46115007,143491005,156456]
+        ["Sep-16",804756535,614994068,189762468,46115007,143491005,156456],
+        ["Oct-16",805554825,604231637,201323187,57581011,143595932,146244]
     ];
 
     private performance = [
@@ -489,7 +490,10 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
         ["Aug-16","YTD",0.0060,0.0095,0.0584,-0.0138,-0.0091,-0.1270,0.0046,0.0380,-0.0066,0],
         ["Sep-16","MTD",0.0016,0.0007,0.0176,0.0012,0.0049,-0.0010,0.0009,0,0.0056,0],
         ["Sep-16","QTD",0.0056,0.0029,0.0146,0.0136,0.0155,-0.0028,0.0013,0,0.0253,0],
-        ["Sep-16","YTD",0.0116,0.0102,0.0770,-0.0126,-0.0042,-0.1279,0.0054,0.0380,-0.0011,0]
+        ["Sep-16","YTD",0.0116,0.0102,0.0770,-0.0126,-0.0042,-0.1279,0.0054,0.0380,-0.0011,0],
+        ["Oct-16","MTD",0.000948059,0.001458104,-0.003643586,0.000310251,-0.000704331,-0.065264996,0.000603965,0,-0.001779918,0],
+        ["Oct-16","QTD",0.000948059,0.001458104,-0.003643586,0.000310251,-0.000704331,-0.065264996,0.000603965,0,-0.001779918,0],
+        ["Oct-16","YTD",0.008693605,0.011654748,0.073078718,-0.011213943,0.004535928,-0.185257219,0.006027404,0.037959089,-0.003803904,0]
     ];
 
     private publicMarketsPerformance = [
@@ -506,11 +510,9 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
             ["Jun-16",0.0009,-0.0128,0.0020,0.0256],
             ["Jul-16",0.0356,0.0415,0.0145,0.0061],
             ["Aug-16",-0.0012,-0.0013,0.0016,-0.0033],
-            ["Sep-16",-0.0012,0.0036,0.0055,0.0026]
+            ["Sep-16",-0.0012,0.0036,0.0055,0.0026],
+            ["Oct-16",-0.0194,-0.0201,-0.0057,-0.0173]
     ];
-
-
-
 
 
     //private setStaticColumns(tableChart){

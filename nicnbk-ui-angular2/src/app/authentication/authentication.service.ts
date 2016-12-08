@@ -38,5 +38,6 @@ export class AuthenticationService {
 }
 
 var users = [
-    new User('nician','VeKMazVa#@!')
+    new User('nician','VeKMazVa#@!'),
+    new User('birtanov', '123456'),
 ];

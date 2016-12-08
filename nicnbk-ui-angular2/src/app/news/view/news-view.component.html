@@ -1,7 +1,10 @@
 <div class="container">
-    <div class="row">
+    <div class="row top-buffer" >
         <div class="col-md-12">
-            <a [routerLink]="['/news/list']" class="btn btn-default btn-sm pull-left">Back</a>
+            <ol class="breadcrumb">
+                <li><a [routerLink]="['/news']">News</a></li>
+                <li class="active">{{newsItem.type}}</li>
+            </ol>
         </div>
     </div>
     <br/>
