@@ -38,9 +38,9 @@ export class HFFundProfileComponent extends GoogleChartComponent {
     subscriptionFrequencyLookup = [];
     redemptionFrequencyLookup = [];
     redemptionNotificationPeriodLookup = [];
+    sidePocketLookup = [];
 
     albourneRatingLookup: any;
-
 
     constructor(
         private lookupService: LookupService,
@@ -51,15 +51,6 @@ export class HFFundProfileComponent extends GoogleChartComponent {
     ) {
 
         super();
-
-        this.fund.ALBIDDAnalystAssessment = 'B';
-        this.fund.ALBConviction = '5';
-        this.fund.ALBExpectedAlpha = 'M';
-        this.fund.ALBExpectedBeta = 'V';
-        this.fund.ALBExpectedRisk = 'M';
-        this.fund.ALBStrategyInvestmentProcess = 'B';
-        this.fund.ALBManagementTeam = 'A';
-        this.fund.ALBRiskProcess = 'A';
 
         // loadLookups
         this.loadLookups();
@@ -97,6 +88,18 @@ export class HFFundProfileComponent extends GoogleChartComponent {
                             (data: HedgeFund) => {
                                 if(data && data.id > 0) {
                                     this.fund = data;
+                                    if(this.fund.strategy != null){
+                                        this.loadSubstrategies();
+                                    }
+                                    if(this.fund.strategyBreakdownList == null){
+                                        this.fund.strategyBreakdownList = [];
+                                    }
+                                    if(this.fund.investorBaseList == null){
+                                        this.fund.investorBaseList = [];
+                                    }
+                                    if(this.fund.managers == null){
+                                        this.fund.managers = [];
+                                    }
                                 }else{
                                     // TODO: handle error
                                     this.errorMessage = "Error loading fund profile.";
@@ -134,18 +137,18 @@ export class HFFundProfileComponent extends GoogleChartComponent {
     save(){
         console.log(this.fund);
 
-        //this.fundService.save(this.fund)
-        //    .subscribe(
-        //        (response: SaveResponse)  => {
-        //            this.fund.id = response.entityId;
-        //            this.fund.creationDate = response.creationDate;
-        //
-        //            this.postAction("Successfully saved.", null);
-        //        },
-        //        error =>  {
-        //            this.postAction(null, "Error saving manager profile.");
-        //        }
-        //    );
+        this.fundService.save(this.fund)
+            .subscribe(
+                (response: SaveResponse)  => {
+                    this.fund.id = response.entityId;
+                    this.fund.creationDate = response.creationDate;
+
+                    this.postAction("Successfully saved.", null);
+                },
+                error =>  {
+                    this.postAction(null, "Error saving manager profile.");
+                }
+            );
     }
 
     loadLookups(){
@@ -174,7 +177,7 @@ export class HFFundProfileComponent extends GoogleChartComponent {
                 error =>  this.errorMessage = <any>error
             );
 
-        // share class currency
+        // currency
         this.lookupService.getCurrencyList()
             .subscribe(
                 data => {
@@ -186,7 +189,14 @@ export class HFFundProfileComponent extends GoogleChartComponent {
         // TODO: load from DB
 
         // status
-        this.lookupService.getManagerStatuses().then(data => this.fundStatusLookup = data);
+        this.lookupService.getHedgeFundStatuses()
+            .subscribe(
+                data => {
+                    this.fundStatusLookup = data;
+                },
+                error =>  this.errorMessage = <any>error
+            );
+        //this.lookupService.getManagerStatuses().then(data => this.fundStatusLookup = data);
 
         // legal structure
         //this.lookupService.getLegalStructures().then(data => this.legalStructureLookup = data);
@@ -195,23 +205,43 @@ export class HFFundProfileComponent extends GoogleChartComponent {
         //this.lookupService.getDomicileCountries().then(data => this.domicileCountryLookup = data);
 
         // subscription frequency
-        this.lookupService.getSubscriptionFrequencyTypes().then(data => this.subscriptionFrequencyLookup = data);
-
-        // management fee type
-        //this.lookupService.getManagementFeeTypes().then(data => this.managementFeeTypeLookup = data);
-
-        // performance fee type
-        //this.lookupService.getPerformanceFeeTypes().then(data => this.performanceFeeTypeLookup = data);
-
-        // performance fee pay freq
-        //this.lookupService.getPerformanceFeePayFrequencyTypes().then(data => this.performanceFeePayFrequencyLookup = data);
+        this.lookupService.getSubscriptionFrequencies()
+            .subscribe(
+                data => {
+                    this.subscriptionFrequencyLookup = data;
+                },
+                error =>  this.errorMessage = <any>error
+            );
+        //this.lookupService.getSubscriptionFrequencyTypes().then(data => this.subscriptionFrequencyLookup = data);
 
         // redemption frequency
-        this.lookupService.getRedemptionFrequencyTypes().then(data => this.redemptionFrequencyLookup = data);
+        this.lookupService.getRedemptionFrequencies()
+            .subscribe(
+                data => {
+                    this.redemptionFrequencyLookup = data;
+                },
+                error =>  this.errorMessage = <any>error
+            );
+        //this.lookupService.getRedemptionFrequencyTypes().then(data => this.redemptionFrequencyLookup = data);
 
 
         // redemption notification period
-        this.lookupService.getRedemptionNotificationPeriodTypes().then(data => this.redemptionNotificationPeriodLookup = data);
+        this.lookupService.getRedemptionNoticePeriods()
+            .subscribe(
+                data => {
+                    this.redemptionNotificationPeriodLookup = data;
+                },
+                error =>  this.errorMessage = <any>error
+            );
+        //this.lookupService.getRedemptionNotificationPeriodTypes().then(data => this.redemptionNotificationPeriodLookup = data);
+
+        this.lookupService.getSidePocketLookup()
+            .subscribe(
+                data => {
+                    this.sidePocketLookup = data;
+                },
+                error =>  this.errorMessage = <any>error
+            );
 
         this.albourneRatingLookup = this.albourneService.getIDDAnalysisAssessmentLookup();
         console.log(this.albourneRatingLookup);
@@ -219,7 +249,7 @@ export class HFFundProfileComponent extends GoogleChartComponent {
     }
 
     addStrategyBreakdown(){
-        this.fund.strategyBreakdownList.push({name: "", value: ""});
+        this.fund.strategyBreakdownList.push({name: "", value: "", code: ""});
         //console.log(this.strategyBreakdownList);
     }
 
@@ -235,14 +265,14 @@ export class HFFundProfileComponent extends GoogleChartComponent {
     }
 
     addFundManager(){
-        this.fund.managerList.push({name: "", description: "", since: ""});
+        this.fund.managers.push({name: "", description: "", since: ""});
     }
 
     removeFundManager(item){
         //console.log(item);
-        for(var i = this.fund.managerList.length; i--;) {
-            if(this.fund.managerList[i] === item) {
-                this.fund.managerList.splice(i, 1);
+        for(var i = this.fund.managers.length; i--;) {
+            if(this.fund.managers[i] === item) {
+                this.fund.managers.splice(i, 1);
             }
         }
     }
@@ -283,70 +313,64 @@ export class HFFundProfileComponent extends GoogleChartComponent {
     }
 
     addInvestorBase(){
-        this.fund.investBaseList.push({name: "", value: ""});
+        this.fund.investorBaseList.push({category: "", fund: ""});
     }
 
     removeInvestorBase(item){
-        for(var i = this.fund.investBaseList.length; i--;) {
-            if(this.fund.investBaseList[i] === item) {
-                this.fund.investBaseList.splice(i, 1);
+        for(var i = this.fund.investorBaseList.length; i--;) {
+            if(this.fund.investorBaseList[i] === item) {
+                this.fund.investorBaseList.splice(i, 1);
             }
         }
     }
 
-    //public getAlbourneRatingColor(type, value){
-    //    return this.albourneService.getDescriptionByValue(type, value).color;
-    //}
-    //getAlbourneRatingText(type, value){
-    //    return this.albourneService.getDescriptionByValue(type, value).text;
-    //}
 
     getAlbourneRatingText(type) {
         if (type === 'IDD_AA') {
             //return this.albourneRatingLookup.IDD_AA this.fund.ALBIDDAnalystAssessment
-            return this.getAlbourneRatingTextFromList(this.albourneRatingLookup.IDD_AA, this.fund.ALBIDDAnalystAssessment);
+            return this.getAlbourneRatingTextFromList(this.albourneRatingLookup.IDD_AA, this.fund.albourneIddAnalysisAssessment);
         } else if (type === 'CONVICTION') {
-            return this.getAlbourneRatingTextFromList(this.albourneRatingLookup.CONVICTION, this.fund.ALBConviction);
+            return this.getAlbourneRatingTextFromList(this.albourneRatingLookup.CONVICTION, this.fund.albourneConviction);
         } else if (type === 'EXPECTED_ALPHA') {
-            return this.getAlbourneRatingTextFromList(this.albourneRatingLookup.EXPECTED_ALPHA, this.fund.ALBExpectedAlpha);
+            return this.getAlbourneRatingTextFromList(this.albourneRatingLookup.EXPECTED_ALPHA, this.fund.albourneExpectedAlpha);
         } else if (type === 'EXPECTED_BETA') {
-            return this.getAlbourneRatingTextFromList(this.albourneRatingLookup.EXPECTED_BETA, this.fund.ALBExpectedBeta);
+            return this.getAlbourneRatingTextFromList(this.albourneRatingLookup.EXPECTED_BETA, this.fund.albourneExpectedBeta);
         } else if (type === 'EXPECTED_RISK') {
-            return this.getAlbourneRatingTextFromList(this.albourneRatingLookup.EXPECTED_RISK, this.fund.ALBExpectedRisk);
+            return this.getAlbourneRatingTextFromList(this.albourneRatingLookup.EXPECTED_RISK, this.fund.alalbournebExpectedRisk);
         } else if (type === 'STRATEGY_INVESTMENT') {
-            return this.getAlbourneRatingTextFromList(this.albourneRatingLookup.STRATEGY_INVESTMENT, this.fund.ALBStrategyInvestmentProcess);
+            return this.getAlbourneRatingTextFromList(this.albourneRatingLookup.STRATEGY_INVESTMENT, this.fund.albourneStrategyInvestmentProcess);
         } else if (type === 'MNG_TEAM') {
-            return this.getAlbourneRatingTextFromList(this.albourneRatingLookup.MNG_TEAM, this.fund.ALBManagementTeam);
+            return this.getAlbourneRatingTextFromList(this.albourneRatingLookup.MNG_TEAM, this.fund.albourneManagementTeam);
         } else if (type === 'RISK_PROCESS') {
-            return this.getAlbourneRatingTextFromList(this.albourneRatingLookup.RISK_PROCESS, this.fund.ALBRiskProcess);
+            return this.getAlbourneRatingTextFromList(this.albourneRatingLookup.RISK_PROCESS, this.fund.albourneRiskProcess);
         }
     }
 
-        private getAlbourneRatingTextFromList(list, value){
-        for(var i = 0;i < list.length; i++){
-            if(list[i].value === value){
-                return list[i].text;
-            }
+    private getAlbourneRatingTextFromList(list, value){
+    for(var i = 0;i < list.length; i++){
+        if(list[i].value === value){
+            return list[i].text;
         }
+    }
     }
 
     getAlbourneRatingColor(type){
         if (type === 'IDD_AA') {
-            return this.getAlbourneRatingColorFromList(this.albourneRatingLookup.IDD_AA, this.fund.ALBIDDAnalystAssessment);
+            return this.getAlbourneRatingColorFromList(this.albourneRatingLookup.IDD_AA, this.fund.albourneIddAnalysisAssessment);
         } else if (type === 'CONVICTION') {
-            return this.getAlbourneRatingColorFromList(this.albourneRatingLookup.CONVICTION, this.fund.ALBConviction);
+            return this.getAlbourneRatingColorFromList(this.albourneRatingLookup.CONVICTION, this.fund.albourneConviction);
         } else if (type === 'EXPECTED_ALPHA') {
-            return this.getAlbourneRatingColorFromList(this.albourneRatingLookup.EXPECTED_ALPHA, this.fund.ALBExpectedAlpha);
+            return this.getAlbourneRatingColorFromList(this.albourneRatingLookup.EXPECTED_ALPHA, this.fund.albourneExpectedAlpha);
         } else if (type === 'EXPECTED_BETA') {
-            return this.getAlbourneRatingColorFromList(this.albourneRatingLookup.EXPECTED_BETA, this.fund.ALBExpectedBeta);
+            return this.getAlbourneRatingColorFromList(this.albourneRatingLookup.EXPECTED_BETA, this.fund.albourneExpectedBeta);
         } else if (type === 'EXPECTED_RISK') {
-            return this.getAlbourneRatingColorFromList(this.albourneRatingLookup.EXPECTED_RISK, this.fund.ALBExpectedRisk);
+            return this.getAlbourneRatingColorFromList(this.albourneRatingLookup.EXPECTED_RISK, this.fund.alalbournebExpectedRisk);
         } else if (type === 'STRATEGY_INVESTMENT') {
-            return this.getAlbourneRatingColorFromList(this.albourneRatingLookup.STRATEGY_INVESTMENT, this.fund.ALBStrategyInvestmentProcess);
+            return this.getAlbourneRatingColorFromList(this.albourneRatingLookup.STRATEGY_INVESTMENT, this.fund.albourneStrategyInvestmentProcess);
         } else if (type === 'MNG_TEAM') {
-            return this.getAlbourneRatingColorFromList(this.albourneRatingLookup.MNG_TEAM, this.fund.ALBManagementTeam);
+            return this.getAlbourneRatingColorFromList(this.albourneRatingLookup.MNG_TEAM, this.fund.albourneManagementTeam);
         } else if (type === 'RISK_PROCESS') {
-            return this.getAlbourneRatingColorFromList(this.albourneRatingLookup.RISK_PROCESS, this.fund.ALBRiskProcess);
+            return this.getAlbourneRatingColorFromList(this.albourneRatingLookup.RISK_PROCESS, this.fund.albourneRiskProcess);
         }
     }
 
@@ -378,9 +402,8 @@ export class HFFundProfileComponent extends GoogleChartComponent {
     getStrategyBreakdownRowData(){
         var list = [['Type', '%']];
         for(var i = 0; i < this.fund.strategyBreakdownList.length; i++){
-            list.push([this.fund.strategyBreakdownList[i].name, Number(this.fund.strategyBreakdownList[i].value)]);
+            list.push([this.fund.strategyBreakdownList[i].code, Number(this.fund.strategyBreakdownList[i].value)]);
         }
-        console.log(list);
         return list;
     }
 

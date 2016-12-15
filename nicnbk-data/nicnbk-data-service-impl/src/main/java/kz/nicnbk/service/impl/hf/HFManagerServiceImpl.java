@@ -5,6 +5,7 @@ import kz.nicnbk.repo.model.hf.HFManager;
 import kz.nicnbk.service.api.hf.HFManagerService;
 import kz.nicnbk.service.api.hf.HedgeFundService;
 import kz.nicnbk.service.converter.hf.HFManagerEntityConverter;
+import kz.nicnbk.service.dto.hf.HFFirmDto;
 import kz.nicnbk.service.dto.hf.HFManagerDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,20 +26,20 @@ public class HFManagerServiceImpl implements HFManagerService {
     private HedgeFundService fundService;
 
     @Override
-    public Long save(HFManagerDto managerDto) {
-        HFManager entity = converter.assemble(managerDto);
+    public Long save(HFFirmDto firmDto) {
+        HFManager entity = converter.assemble(firmDto);
         Long id = repository.save(entity).getId();
         return id;
     }
 
     @Override
-    public HFManagerDto get(Long id) {
+    public HFFirmDto get(Long id) {
         HFManager entity = this.repository.findOne(id);
-        HFManagerDto managerDto = this.converter.disassemble(entity);
+        HFFirmDto firmDto = this.converter.disassemble(entity);
 
         // load funds
-        managerDto.setFunds(this.fundService.loadManagerFunds(id));
+        //firmDto.setFunds(this.fundService.loadManagerFunds(id));
 
-        return managerDto;
+        return firmDto;
     }
 }

@@ -1,6 +1,7 @@
 package kz.nicnbk.service.api.hf;
 
 import kz.nicnbk.service.api.base.BaseService;
+import kz.nicnbk.service.dto.hf.HFFirmDto;
 import kz.nicnbk.service.dto.hf.HFManagerDto;
 
 /**
@@ -8,7 +9,7 @@ import kz.nicnbk.service.dto.hf.HFManagerDto;
  */
 public interface HFManagerService extends BaseService {
 
-    Long save(HFManagerDto managerDto);
+    Long save(HFFirmDto firmDto);
 
-    HFManagerDto get(Long id);
+    HFFirmDto get(Long id);
 }

@@ -38,14 +38,14 @@ public class HedgeFundEntityConverter extends BaseDozerEntityConverter<HedgeFund
         }
 
         // AUM currency
-        if(StringUtils.isNotEmpty(dto.getAUMCurrency())) {
-            Currency currency = lookupService.findByTypeAndCode(Currency.class, dto.getAUMCurrency());
-            entity.setAUMCurrency(currency);
+        if(StringUtils.isNotEmpty(dto.getAumCurrency())) {
+            Currency currency = lookupService.findByTypeAndCode(Currency.class, dto.getAumCurrency());
+            entity.setAumCurrency(currency);
         }
 
         //status
         if(StringUtils.isNotEmpty(dto.getStatus())) {
-            FundStatus status = lookupService.findByTypeAndCode(FundStatus.class, dto.getStatus());
+            HedgeFundStatus status = lookupService.findByTypeAndCode(HedgeFundStatus.class, dto.getStatus());
             entity.setStatus(status);
         }
 
@@ -63,9 +63,15 @@ public class HedgeFundEntityConverter extends BaseDozerEntityConverter<HedgeFund
         }
 
         // redemption notice period
-        if(StringUtils.isNotEmpty(dto.getRedemptionNoticePeriod())) {
+        if(StringUtils.isNotEmpty(dto.getRedemptionNotificationPeriod())) {
             RedemptionNotificationPeriod frequency = lookupService.findByTypeAndCode(RedemptionNotificationPeriod.class, dto.getSubscriptionFrequency());
-            entity.setRedemptionNoticePeriod(frequency);
+            entity.setRedemptionNotificationPeriod(frequency);
+        }
+
+        // side pocket
+        if(StringUtils.isNotEmpty(dto.getSidePocket())){
+            HedgeFundSidePocket lookupValue = lookupService.findByTypeAndCode(HedgeFundSidePocket.class, dto.getSidePocket());
+            entity.setSidePocket(lookupValue);
         }
 
 
@@ -83,8 +89,8 @@ public class HedgeFundEntityConverter extends BaseDozerEntityConverter<HedgeFund
         }
 
         // AUM currency
-        if(entity.getAUMCurrency() != null){
-            dto.setAUMCurrency(entity.getAUMCurrency().getCode());
+        if(entity.getAumCurrency() != null){
+            dto.setAumCurrency(entity.getAumCurrency().getCode());
         }
 
         // status
@@ -104,8 +110,13 @@ public class HedgeFundEntityConverter extends BaseDozerEntityConverter<HedgeFund
         }
 
         // redemption notice period
-        if(entity.getRedemptionNoticePeriod() != null){
-            dto.setRedemptionNoticePeriod(entity.getRedemptionNoticePeriod().getCode());
+        if(entity.getRedemptionNotificationPeriod() != null){
+            dto.setRedemptionNotificationPeriod(entity.getRedemptionNotificationPeriod().getCode());
+        }
+
+        // side pocket
+        if(entity.getSidePocket() != null){
+            dto.setSidePocket(entity.getSidePocket().getCode());
         }
 
 

@@ -3,6 +3,7 @@ package kz.nicnbk.repo.model.hf;
 import kz.nicnbk.repo.model.base.CreateUpdateBaseEntity;
 import kz.nicnbk.repo.model.base.DataConstraints;
 import kz.nicnbk.repo.model.common.Country;
+import kz.nicnbk.repo.model.common.Currency;
 import kz.nicnbk.repo.model.common.Strategy;
 
 import javax.persistence.*;
@@ -14,14 +15,15 @@ import javax.persistence.*;
 @Entity
 @Table(name = "hf_manager")
 public class HFManager extends CreateUpdateBaseEntity {
+
+    // TODO: rename table and class
+
     private String name;
     private ManagerType managerType;
-    private Strategy strategy;
-//    private FundStatus status;
     private String inception;
-//    private LegalStructure legalStructure;
-    private Country domicileCountry;
     private String AUM;
+    private String AUMDigit;
+    private Currency AUMCurrency;
 
     private String fundManagers;
     private String headquarters;
@@ -30,6 +32,13 @@ public class HFManager extends CreateUpdateBaseEntity {
     private String fax;
     private String website;
     private String email;
+
+
+    //    private Strategy strategy;
+//    private HedgeFundStatus status;
+//    private String inception;
+//    private LegalStructure legalStructure;
+//    private Country domicileCountry;
 
     @Column(name="name")
     public String getName() {
@@ -50,26 +59,6 @@ public class HFManager extends CreateUpdateBaseEntity {
         this.managerType = managerType;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "strategy_id")
-    public Strategy getStrategy() {
-        return strategy;
-    }
-
-    public void setStrategy(Strategy strategy) {
-        this.strategy = strategy;
-    }
-
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "status_id")
-//    public FundStatus getStatus() {
-//        return status;
-//    }
-//
-//    public void setStatus(FundStatus status) {
-//        this.status = status;
-//    }
-
     @Column(name="inception")
     public String getInception() {
         return inception;
@@ -79,26 +68,6 @@ public class HFManager extends CreateUpdateBaseEntity {
         this.inception = inception;
     }
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "legal_structure_id")
-//    public LegalStructure getLegalStructure() {
-//        return legalStructure;
-//    }
-//
-//    public void setLegalStructure(LegalStructure legalStructure) {
-//        this.legalStructure = legalStructure;
-//    }
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "domicile_country_id")
-    public Country getDomicileCountry() {
-        return domicileCountry;
-    }
-
-    public void setDomicileCountry(Country domicileCountry) {
-        this.domicileCountry = domicileCountry;
-    }
-
     @Column(name="aum")
     public String getAUM() {
         return AUM;
@@ -106,6 +75,25 @@ public class HFManager extends CreateUpdateBaseEntity {
 
     public void setAUM(String AUM) {
         this.AUM = AUM;
+    }
+
+    @Column(name="aum_digit")
+    public String getAUMDigit() {
+        return AUMDigit;
+    }
+
+    public void setAUMDigit(String AUMDigit) {
+        this.AUMDigit = AUMDigit;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "aum_currency_id")
+    public Currency getAUMCurrency() {
+        return AUMCurrency;
+    }
+
+    public void setAUMCurrency(Currency AUMCurrency) {
+        this.AUMCurrency = AUMCurrency;
     }
 
 
@@ -136,6 +124,7 @@ public class HFManager extends CreateUpdateBaseEntity {
         this.contactPerson = contactPerson;
     }
 
+    @Column(name="telephone", length = DataConstraints.C_TYPE_ENTITY_NAME)
     public String getTelephone() {
         return telephone;
     }
@@ -144,6 +133,7 @@ public class HFManager extends CreateUpdateBaseEntity {
         this.telephone = telephone;
     }
 
+    @Column(name="fax", length = DataConstraints.C_TYPE_ENTITY_NAME)
     public String getFax() {
         return fax;
     }
@@ -152,6 +142,7 @@ public class HFManager extends CreateUpdateBaseEntity {
         this.fax = fax;
     }
 
+    @Column(name="website", length = DataConstraints.C_TYPE_ENTITY_NAME)
     public String getWebsite() {
         return website;
     }
@@ -160,6 +151,7 @@ public class HFManager extends CreateUpdateBaseEntity {
         this.website = website;
     }
 
+    @Column(name="email", length = DataConstraints.C_TYPE_ENTITY_NAME)
     public String getEmail() {
         return email;
     }
@@ -167,4 +159,46 @@ public class HFManager extends CreateUpdateBaseEntity {
     public void setEmail(String email) {
         this.email = email;
     }
+
+
+
+    //    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "strategy_id")
+//    public Strategy getStrategy() {
+//        return strategy;
+//    }
+//
+//    public void setStrategy(Strategy strategy) {
+//        this.strategy = strategy;
+//    }
+
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "status_id")
+//    public HedgeFundStatus getStatus() {
+//        return status;
+//    }
+//
+//    public void setStatus(HedgeFundStatus status) {
+//        this.status = status;
+//    }
+
+    //    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "legal_structure_id")
+//    public LegalStructure getLegalStructure() {
+//        return legalStructure;
+//    }
+//
+//    public void setLegalStructure(LegalStructure legalStructure) {
+//        this.legalStructure = legalStructure;
+//    }
+
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "domicile_country_id")
+//    public Country getDomicileCountry() {
+//        return domicileCountry;
+//    }
+//
+//    public void setDomicileCountry(Country domicileCountry) {
+//        this.domicileCountry = domicileCountry;
+//    }
 }

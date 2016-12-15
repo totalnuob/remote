@@ -36,7 +36,6 @@ public class HedgeFundServiceREST {
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public ResponseEntity<?>  save(@RequestBody HedgeFundDto2 hedgeFundDto) {
         Long id = this.service.save(hedgeFundDto);
-
         HttpHeaders httpHeaders = new HttpHeaders();
         EntitySaveResponse response = new EntitySaveResponse();
         response.setEntityId(id);

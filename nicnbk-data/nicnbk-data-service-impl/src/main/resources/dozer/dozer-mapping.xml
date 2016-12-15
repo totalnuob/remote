@@ -72,15 +72,15 @@
 
     <!-- HEDGE FUNDS-->
     <mapping>
-        <class-a>kz.nicnbk.service.dto.hf.HFManagerDto</class-a>
+        <class-a>kz.nicnbk.service.dto.hf.HFFirmDto</class-a>
         <class-b>kz.nicnbk.repo.model.hf.HFManager</class-b>
         <field-exclude>
             <a>managerType</a>
             <b>managerType</b>
         </field-exclude>
         <field-exclude>
-            <a>strategy</a>
-            <b>strategy</b>
+            <a>aumCurrency</a>
+            <b>AUMCurrency</b>
         </field-exclude>
         <!--<field-exclude>-->
             <!--<a>status</a>-->
@@ -97,8 +97,16 @@
     </mapping>
 
     <mapping>
-        <class-a>kz.nicnbk.service.dto.hf.HedgeFundDto</class-a>
+        <class-a>kz.nicnbk.service.dto.hf.HedgeFundDto2</class-a>
         <class-b>kz.nicnbk.repo.model.hf.HedgeFund</class-b>
+        <field-exclude>
+            <a>aumCurrency</a>
+            <b>aumCurrency</b>
+        </field-exclude>
+        <field-exclude>
+            <a>status</a>
+            <b>status</b>
+        </field-exclude>
         <field-exclude>
             <a>strategy</a>
             <b>strategy</b>
@@ -108,40 +116,8 @@
             <b>geography</b>
         </field-exclude>
         <field-exclude>
-            <a>shareClassCurrency</a>
-            <b>shareClassCurrency</b>
-        </field-exclude>
-        <field-exclude>
-            <a>status</a>
-            <b>status</b>
-        </field-exclude>
-        <field-exclude>
-            <a>legalStructure</a>
-            <b>legalStructure</b>
-        </field-exclude>
-        <field-exclude>
-            <a>domicileCountry</a>
-            <b>domicileCountry</b>
-        </field-exclude>
-        <field-exclude>
-            <a>investmentCurrency</a>
-            <b>investmentCurrency</b>
-        </field-exclude>
-        <field-exclude>
             <a>subscriptionFrequency</a>
             <b>subscriptionFrequency</b>
-        </field-exclude>
-        <field-exclude>
-            <a>managementFeeType</a>
-            <b>managementFeeType</b>
-        </field-exclude>
-        <field-exclude>
-            <a>performanceFeeType</a>
-            <b>performanceFeeType</b>
-        </field-exclude>
-        <field-exclude>
-            <a>performanceFeePayFrequency</a>
-            <b>performanceFeePayFrequency</b>
         </field-exclude>
         <field-exclude>
             <a>redemptionFrequency</a>
@@ -150,6 +126,10 @@
         <field-exclude>
             <a>redemptionNotificationPeriod</a>
             <b>redemptionNotificationPeriod</b>
+        </field-exclude>
+        <field-exclude>
+            <a>sidePocket</a>
+            <b>sidePocket</b>
         </field-exclude>
     </mapping>
 

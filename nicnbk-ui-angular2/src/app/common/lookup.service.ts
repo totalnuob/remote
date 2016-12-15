@@ -11,7 +11,11 @@ import {PE_STRATEGIES_URL} from "./lookup.service.url";
 import {RE_STRATEGIES_URL} from "./lookup.service.url";
 import {HF_STRATEGIES_URL, HF_SUBSTRATEGIES_URL} from "./lookup.service.url";
 import {GEOGRAPHIES_URL} from "./lookup.service.url";
-import {CURRENCIES_URL} from "./lookup.service.url";
+import {CURRENCIES_URL, HEDGE_FUND_STATUS_URL} from "./lookup.service.url";
+import {SUBSCRIPTION_FREQUENCY_URL} from "./lookup.service.url";
+import {REDEMPTION_FREQUENCY_URL} from "./lookup.service.url";
+import {REDEMPTION_NOTICE_PERIOD_URL} from "./lookup.service.url";
+import {SIDE_POCKET_URL} from "./lookup.service.url";
 
 
 @Injectable()
@@ -122,6 +126,36 @@ export class LookupService extends CommonService{
         return Promise.resolve(list);
     }
 
+    getHedgeFundStatuses(){
+        return this.http.get(HEDGE_FUND_STATUS_URL)
+            .map(this.extractDataList)
+            .catch(this.handleError);
+    }
+
+    getSubscriptionFrequencies(){
+        return this.http.get(SUBSCRIPTION_FREQUENCY_URL)
+            .map(this.extractDataList)
+            .catch(this.handleError);
+    }
+
+    getRedemptionFrequencies(){
+        return this.http.get(REDEMPTION_FREQUENCY_URL)
+            .map(this.extractDataList)
+            .catch(this.handleError);
+    }
+
+    getRedemptionNoticePeriods(){
+        return this.http.get(REDEMPTION_NOTICE_PERIOD_URL)
+            .map(this.extractDataList)
+            .catch(this.handleError);
+    }
+
+    getSidePocketLookup(){
+        return this.http.get(SIDE_POCKET_URL)
+            .map(this.extractDataList)
+            .catch(this.handleError);
+    }
+
     getManagerStatuses(){
         var list = [];
         var lookup = new Lookup;
@@ -167,50 +201,6 @@ export class LookupService extends CommonService{
         return Promise.resolve(list);
     }
 
-    getManagementFeeTypes(){
-        var list = [];
-        var lookup = new Lookup;
-        lookup.code = 'TYPE1';
-        lookup.nameEn = "Mng Fee Type 1";
-        list.push(lookup);
-
-        lookup = new Lookup;
-        lookup.code = 'TYPE2';
-        lookup.nameEn = "Mng Fee Type 2";
-        list.push(lookup);
-
-        return Promise.resolve(list);
-    }
-
-    getPerformanceFeeTypes(){
-        var list = [];
-        var lookup = new Lookup;
-        lookup.code = 'TYPE1';
-        lookup.nameEn = "Perf Fee Type 1";
-        list.push(lookup);
-
-        lookup = new Lookup;
-        lookup.code = 'TYPE2';
-        lookup.nameEn = "Perf Fee Type 2";
-        list.push(lookup);
-
-        return Promise.resolve(list);
-    }
-
-    getPerformanceFeePayFrequencyTypes(){
-        var list = [];
-        var lookup = new Lookup;
-        lookup.code = 'TYPE1';
-        lookup.nameEn = "Perf Fee Pay Freq Type 1";
-        list.push(lookup);
-
-        lookup = new Lookup;
-        lookup.code = 'TYPE2';
-        lookup.nameEn = "Perf Fee Pay Freq Type 2";
-        list.push(lookup);
-
-        return Promise.resolve(list);
-    }
 
     getRedemptionFrequencyTypes(){
         var list = [];

@@ -63,12 +63,12 @@
                             <tr>
                                 <td>Fund AUM</td>
                                 <td>
-                                    <input type="text" class="form-control" style="display:inline; width: 30%" [(ngModel)]="fund.AUMAmount"/>
-                                    <select class="form-control" style="display:inline; width: 25%" [(ngModel)]="fund.AUMDigit">
+                                    <input type="text" class="form-control" style="display:inline; width: 30%" [(ngModel)]="fund.aum"/>
+                                    <select class="form-control" style="display:inline; width: 25%" [(ngModel)]="fund.aumDigit">
                                         <option value="MLN">M</option>
                                         <option value="BLN">B</option>
                                     </select>
-                                    <select class="form-control" style="display:inline; width: 35%" [(ngModel)]="fund.AUMCurrency">
+                                    <select class="form-control" style="display:inline; width: 35%" [(ngModel)]="fund.aumCurrency">
                                         <option value="-">--</option>
                                         <option *ngFor="let currency of currencyLookup">{{currency.code}}</option>
                                     </select>
@@ -192,7 +192,7 @@
                             <tr>
                                 <td>Redemption Notice Period</td>
                                 <td>
-                                    <select class="form-control" style="width: 100%" [(ngModel)]="fund.redemptionNoticePeriod">
+                                    <select class="form-control" style="width: 100%" [(ngModel)]="fund.redemptionNotificationPeriod">
                                         <option value="0">---</option>
                                         <option *ngFor="let item of redemptionNotificationPeriodLookup" [value]="item.code">{{item.nameEn}}</option>
                                     </select>
@@ -203,8 +203,7 @@
                                 <td>
                                     <select class="form-control" style="width: 100%" [(ngModel)]="fund.sidePocket">
                                         <option value="0">---</option>
-                                        <option value="YES">Yes</option>
-                                        <option value="NO">No</option>
+                                        <option *ngFor="let item of sidePocketLookup" [value]="item.code">{{item.nameEn}}</option>
                                     </select>
                                 </td>
                             </tr>
@@ -222,9 +221,6 @@
                     <div class="row">
                         <br/>
                         <table class="table table-hover table-responsive table-condensed table-bordered">
-                        <!--<tr *ngFor="let strategy of strategyBreakDownList">-->
-                            <!--<td></td>-->
-                        <!--</tr>-->
                         <thead>
                             <tr>
                                 <td colspan="3">Strategy Breakdown &nbsp;
@@ -239,12 +235,13 @@
                                 </td>
                             </tr>
                         </thead>
-                        <tr *ngFor="let item of fund.strategyBreakdownList">
+                        <div *ngIf="fund.strategyBreakdownList != null">
+                        <tr  *ngFor="let item of fund.strategyBreakdownList">
                             <td width="70%">
                                 <!--<input type="text" class="form-control" [(ngModel)]="item.name"/>-->
-                                <select class="form-control" style="width: 100%" [(ngModel)]="item.name">
+                                <select class="form-control" style="width: 100%" [(ngModel)]="item.code">
                                     <option value="0">---</option>
-                                    <option *ngFor="let item of substrategyLookup" [value]="item.nameEn">{{item.nameEn}}</option>
+                                    <option *ngFor="let item of substrategyLookup" [value]="item.code">{{item.nameEn}}</option>
                                 </select>
                             </td>
                             <td width="30%">
@@ -256,6 +253,7 @@
                                 </button>
                             </td>
                         </tr>
+                        </div>
                     </table>
                     </div>
 
@@ -275,12 +273,13 @@
                             <td>Category</td>
                             <td>Fund</td>
                         </tr>
-                        <tr *ngFor="let item of fund.investBaseList">
+                        <div *ngIf="fund.investorBaseList != null">
+                        <tr *ngFor="let item of fund.investorBaseList">
                             <td width="70%">
-                                <input type="text" class="form-control"[(ngModel)]="item.name"/>
+                                <input type="text" class="form-control"[(ngModel)]="item.category"/>
                             </td>
                             <td width="30%">
-                                <input type="text" class="form-control"[(ngModel)]="item.value"/>
+                                <input type="text" class="form-control"[(ngModel)]="item.fund"/>
                             </td>
                             <td>
                                 <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeInvestorBase(item)">
@@ -288,6 +287,7 @@
                                 </button>
                             </td>
                         </tr>
+                        </div>
 
                     </table>
                     </div>
@@ -357,7 +357,7 @@
                             </td>
                         </tr>
                     </thead>
-                    <tr *ngFor="let manager of fund.managerList">
+                    <tr *ngFor="let manager of fund.managers">
                         <td width="20%">
                             <input type="text" class="form-control" [(ngModel)]="manager.name" placeholder="Name..."/>
                         </td>
@@ -365,7 +365,7 @@
                             <input type="text" class="form-control"[(ngModel)]="manager.description" placeholder="Description..."/>
                         </td>
                         <td width="20%">
-                            <input type="text" class="form-control"[(ngModel)]="manager.since" placeholder="Since..."/>
+                            <input type="text" class="form-control"[(ngModel)]="manager.started" placeholder="Since..."/>
                         </td>
                         <td>
                             <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeFundManager(manager)">
@@ -383,7 +383,7 @@
                     <tr>
                         <td width="40%">IDD Analyst Assessment</td>
                         <td width="15%" style="font-weight: bold">
-                            <select class="form-control" style="width: 100%" [(ngModel)]="fund.ALBIDDAnalystAssessment" [style.background-color]="getAlbourneRatingColor('IDD_AA')">
+                            <select class="form-control" style="width: 100%" [(ngModel)]="fund.albourneIddAnalysisAssessment" [style.background-color]="getAlbourneRatingColor('IDD_AA')">
                                 <option value="0">---</option>
                                 <option *ngFor="let item of albourneRatingLookup.IDD_AA" [value]="item.value">{{item.value}}</option>
                             </select>
@@ -395,7 +395,7 @@
                         <!--<td style="font-weight: bold" [style.background-color]="getAlbourneRatingColor('CONVICTION', fund.ALBConviction)">{{fund.ALBConviction}}</td>-->
                         <!--<td>{{getAlbourneRatingText('CONVICTION', fund.ALBConviction)}}</td>-->
                         <td style="font-weight: bold" >
-                            <select class="form-control" style="width: 100%" [(ngModel)]="fund.ALBConviction" [style.background-color]="getAlbourneRatingColor('CONVICTION')">
+                            <select class="form-control" style="width: 100%" [(ngModel)]="fund.albourneConviction" [style.background-color]="getAlbourneRatingColor('CONVICTION')">
                                 <option value="0">---</option>
                                 <option *ngFor="let item of albourneRatingLookup.CONVICTION" [value]="item.value">{{item.value}}</option>
                             </select>
@@ -408,7 +408,7 @@
                         <!--<td>{{getAlbourneRatingText('EXPECTED_ALPHA', fund.ALBExpectedAlpha)}}</td>-->
                         <td style="font-weight: bold" >
                             <!--{{fund.ALBIDDAnalystAssessment}}-->
-                            <select class="form-control" style="width: 100%" [(ngModel)]="fund.ALBExpectedAlpha" [style.background-color]="getAlbourneRatingColor('EXPECTED_ALPHA')">
+                            <select class="form-control" style="width: 100%" [(ngModel)]="fund.albourneExpectedAlpha" [style.background-color]="getAlbourneRatingColor('EXPECTED_ALPHA')">
                                 <option value="0">---</option>
                                 <option *ngFor="let item of albourneRatingLookup.EXPECTED_ALPHA" [value]="item.value">{{item.value}}</option>
                             </select>
@@ -421,7 +421,7 @@
                         <!--<td>{{getAlbourneRatingText('EXPECTED_BETA', fund.ALBExpectedBeta)}}</td>-->
                         <td style="font-weight: bold" >
                             <!--{{fund.ALBIDDAnalystAssessment}}-->
-                            <select class="form-control" style="width: 100%" [(ngModel)]="fund.ALBExpectedBeta" [style.background-color]="getAlbourneRatingColor('EXPECTED_BETA')">
+                            <select class="form-control" style="width: 100%" [(ngModel)]="fund.albourneExpectedBeta" [style.background-color]="getAlbourneRatingColor('EXPECTED_BETA')">
                                 <option value="0">---</option>
                                 <option *ngFor="let item of albourneRatingLookup.EXPECTED_BETA" [value]="item.value">{{item.value}}</option>
                             </select>
@@ -434,7 +434,7 @@
                         <!--<td>{{getAlbourneRatingText('EXPECTED_RISK', fund.ALBExpectedRisk)}}</td>-->
                         <td style="font-weight: bold" >
                             <!--{{fund.ALBIDDAnalystAssessment}}-->
-                            <select class="form-control" style="width: 100%" [(ngModel)]="fund.ALBExpectedRisk" [style.background-color]="getAlbourneRatingColor('EXPECTED_RISK')">
+                            <select class="form-control" style="width: 100%" [(ngModel)]="fund.alalbournebExpectedRisk" [style.background-color]="getAlbourneRatingColor('EXPECTED_RISK')">
                                 <option value="0">---</option>
                                 <option *ngFor="let item of albourneRatingLookup.EXPECTED_RISK" [value]="item.value">{{item.value}}</option>
                             </select>
@@ -447,7 +447,7 @@
                         <!--<td>{{getAlbourneRatingText('STRATEGY_INVESTMENT', fund.ALBStrategyInvestmentProcess)}}</td>-->
                         <td style="font-weight: bold" >
                             <!--{{fund.ALBIDDAnalystAssessment}}-->
-                            <select class="form-control" style="width: 100%" [(ngModel)]="fund.ALBStrategyInvestmentProcess" [style.background-color]="getAlbourneRatingColor('STRATEGY_INVESTMENT')">
+                            <select class="form-control" style="width: 100%" [(ngModel)]="fund.albourneStrategyInvestmentProcess" [style.background-color]="getAlbourneRatingColor('STRATEGY_INVESTMENT')">
                                 <option value="0">---</option>
                                 <option *ngFor="let item of albourneRatingLookup.STRATEGY_INVESTMENT" [value]="item.value">{{item.value}}</option>
                             </select>
@@ -460,7 +460,7 @@
                         <!--<td>{{getAlbourneRatingText('MNG_TEAM', fund.ALBManagementTeam)}}</td>-->
                         <td style="font-weight: bold" >
                             <!--{{fund.ALBIDDAnalystAssessment}}-->
-                            <select class="form-control" style="width: 100%" [(ngModel)]="fund.ALBManagementTeam" [style.background-color]="getAlbourneRatingColor('MNG_TEAM')">
+                            <select class="form-control" style="width: 100%" [(ngModel)]="fund.albourneManagementTeam" [style.background-color]="getAlbourneRatingColor('MNG_TEAM')">
                                 <option value="0">---</option>
                                 <option *ngFor="let item of albourneRatingLookup.MNG_TEAM" [value]="item.value">{{item.value}}</option>
                             </select>
@@ -473,7 +473,7 @@
                         <!--<td>{{getAlbourneRatingText('RISK_PROCESS', fund.ALBRiskProcess)}}</td>-->
                         <td style="font-weight: bold" >
                             <!--{{fund.ALBIDDAnalystAssessment}}-->
-                            <select class="form-control" style="width: 100%" [(ngModel)]="fund.ALBRiskProcess" [style.background-color]="getAlbourneRatingColor('RISK_PROCESS')">
+                            <select class="form-control" style="width: 100%" [(ngModel)]="fund.albourneRiskProcess" [style.background-color]="getAlbourneRatingColor('RISK_PROCESS')">
                                 <option value="0">---</option>
                                 <option *ngFor="let item of albourneRatingLookup.RISK_PROCESS" [value]="item.value">{{item.value}}</option>
                             </select>

@@ -119,6 +119,8 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
 
                                 // preselect memo attendees
                                 this.preselectAttendeesNIC();
+
+                                $('input[type=text], textarea').autogrow({vertical: true, horizontal: false});
                             },
                             error => this.errorMessage = "Error loading memo"
                         );

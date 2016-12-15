@@ -8,9 +8,9 @@ export class HedgeFund extends LegalEntity{
 
     summary: string;
     inception: string;
-    AUMAmount: number;
-    AUMDigit: string;
-    AUMCurrency: string;
+    aum: number;
+    aumDigit: string;
+    aumCurrency: string;
     strategy: string;
 
     numMonths: string;
@@ -46,20 +46,19 @@ export class HedgeFund extends LegalEntity{
     concentrationTop20: string;
 
     strategyBreakdownList = [];
-    investBaseList = [];
-    managerList = [];
+    investorBaseList = [];
+    managers = [];
     returns = [];
 
-
     // ALbourne ratings
-    ALBIDDAnalystAssessment: string;
-    ALBConviction: string;
-    ALBExpectedAlpha: string;
-    ALBExpectedBeta: string;
-    ALBExpectedRisk: string;
-    ALBStrategyInvestmentProcess: string;
-    ALBManagementTeam: string;
-    ALBRiskProcess: string;
+    albourneIddAnalysisAssessment: string;
+    albourneConviction: string;
+    albourneExpectedAlpha: string;
+    albourneExpectedBeta: string;
+    alalbournebExpectedRisk: string;
+    albourneStrategyInvestmentProcess: string;
+    albourneManagementTeam: string;
+    albourneRiskProcess: string;
 
 
 }

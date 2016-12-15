@@ -21,4 +21,11 @@ public interface LookupService extends BaseService {
     List<BaseDictionaryDto> getGeographies();
 
     List<BaseDictionaryDto> getCurrencies();
+
+    List<BaseDictionaryDto> getHedgeFundStatuses();
+    List<BaseDictionaryDto> getSubscriptionFrequencies();
+    List<BaseDictionaryDto> getRedemptionFrequencies();
+    List<BaseDictionaryDto> getRedemptionNoticePeriods();
+    List<BaseDictionaryDto> getSidePockets();
+
 }

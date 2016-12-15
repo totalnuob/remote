@@ -10,7 +10,7 @@ import javax.persistence.Table;
  */
 
 @Entity
-@Table(name="hf_fund_status")
-public class FundStatus extends BaseTypeEntityImpl {
+@Table(name="hf_sidepocket")
+public class HedgeFundSidePocket extends BaseTypeEntityImpl {
 
 }

@@ -5,12 +5,10 @@ import {HedgeFund} from "./hf.fund";
 export class HFManager extends LegalEntity{
 
     managerType: string;
-    strategy: string;
-    status: string;
     inception: number;
-    legalStructure: string;
-    domicileCountry: string;
     aum: string;
+    aumDigit; string;
+    aumCurrency: string;
 
     fundManagers: string;
     headquarters: string;

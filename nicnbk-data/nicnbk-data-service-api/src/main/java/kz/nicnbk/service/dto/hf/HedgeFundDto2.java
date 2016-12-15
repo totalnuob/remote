@@ -3,6 +3,7 @@ package kz.nicnbk.service.dto.hf;
 import kz.nicnbk.common.service.model.HistoryBaseEntityDto;
 import kz.nicnbk.repo.model.hf.HedgeFund;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -14,9 +15,9 @@ public class HedgeFundDto2 extends HistoryBaseEntityDto<HedgeFund> {
     private HFFirmDto manager;
     private String summary;
     private String inception;
-    private Double AUMAmount;
-    private String AUMDigit;
-    private String AUMCurrency;
+    private Double aum;
+    private String aumDigit;
+    private String aumCurrency;
     private String strategy;
 
     private String leverage;
@@ -29,7 +30,7 @@ public class HedgeFundDto2 extends HistoryBaseEntityDto<HedgeFund> {
     private String minSubsInvestment;
     private String subscriptionFrequency;
     private String redemptionFrequency;
-    private String redemptionNoticePeriod;
+    private String redemptionNotificationPeriod;
     private String sidePocket;
     private String gates;
 
@@ -42,23 +43,24 @@ public class HedgeFundDto2 extends HistoryBaseEntityDto<HedgeFund> {
 
     //private Set<Substrategy> strategyBreakdownList;
     //private investorBaseList;
-    //managerList;
     //returns;
 
     // ALbourne ratings
-    private String ALBIDDAnalystAssessment;
-    private String ALBConviction;
-    private String ALBExpectedAlpha;
-    private String ALBExpectedBeta;
-    private String ALBExpectedRisk;
-    private String ALBStrategyInvestmentProcess;
-    private String ALBManagementTeam;
-    private String ALBRiskProcess;
+    private String albourneIddAnalysisAssessment;
+    private String albourneConviction;
+    private String albourneExpectedAlpha;
+    private String albourneExpectedBeta;
+    private String alalbournebExpectedRisk;
+    private String albourneStrategyInvestmentProcess;
+    private String albourneManagementTeam;
+    private String albourneRiskProcess;
 
     private Set<ManagerDto> managers;
     private Set<RatingDto> albourneRatings;
     private Set<ReturnDto> returns;
 
+    private List<SubstrategyBreakdownDto> strategyBreakdownList;
+    private List<InvestorBaseDto> investorBaseList;
 
     public String getName() {
         return name;
@@ -92,28 +94,28 @@ public class HedgeFundDto2 extends HistoryBaseEntityDto<HedgeFund> {
         this.inception = inception;
     }
 
-    public Double getAUMAmount() {
-        return AUMAmount;
+    public Double getAum() {
+        return aum;
     }
 
-    public void setAUMAmount(Double AUMAmount) {
-        this.AUMAmount = AUMAmount;
+    public void setAum(Double aum) {
+        this.aum = aum;
     }
 
-    public String getAUMDigit() {
-        return AUMDigit;
+    public String getAumDigit() {
+        return aumDigit;
     }
 
-    public void setAUMDigit(String AUMDigit) {
-        this.AUMDigit = AUMDigit;
+    public void setAumDigit(String aumDigit) {
+        this.aumDigit = aumDigit;
     }
 
-    public String getAUMCurrency() {
-        return AUMCurrency;
+    public String getAumCurrency() {
+        return aumCurrency;
     }
 
-    public void setAUMCurrency(String AUMCurrency) {
-        this.AUMCurrency = AUMCurrency;
+    public void setAumCurrency(String aumCurrency) {
+        this.aumCurrency = aumCurrency;
     }
 
     public String getStrategy() {
@@ -196,12 +198,12 @@ public class HedgeFundDto2 extends HistoryBaseEntityDto<HedgeFund> {
         this.redemptionFrequency = redemptionFrequency;
     }
 
-    public String getRedemptionNoticePeriod() {
-        return redemptionNoticePeriod;
+    public String getRedemptionNotificationPeriod() {
+        return redemptionNotificationPeriod;
     }
 
-    public void setRedemptionNoticePeriod(String redemptionNoticePeriod) {
-        this.redemptionNoticePeriod = redemptionNoticePeriod;
+    public void setRedemptionNotificationPeriod(String redemptionNotificationPeriod) {
+        this.redemptionNotificationPeriod = redemptionNotificationPeriod;
     }
 
     public String getSidePocket() {
@@ -260,68 +262,68 @@ public class HedgeFundDto2 extends HistoryBaseEntityDto<HedgeFund> {
         this.concentrationTop20 = concentrationTop20;
     }
 
-    public String getALBIDDAnalystAssessment() {
-        return ALBIDDAnalystAssessment;
+    public String getAlbourneIddAnalysisAssessment() {
+        return albourneIddAnalysisAssessment;
     }
 
-    public void setALBIDDAnalystAssessment(String ALBIDDAnalystAssessment) {
-        this.ALBIDDAnalystAssessment = ALBIDDAnalystAssessment;
+    public void setAlbourneIddAnalysisAssessment(String albourneIddAnalysisAssessment) {
+        this.albourneIddAnalysisAssessment = albourneIddAnalysisAssessment;
     }
 
-    public String getALBConviction() {
-        return ALBConviction;
+    public String getAlbourneConviction() {
+        return albourneConviction;
     }
 
-    public void setALBConviction(String ALBConviction) {
-        this.ALBConviction = ALBConviction;
+    public void setAlbourneConviction(String albourneConviction) {
+        this.albourneConviction = albourneConviction;
     }
 
-    public String getALBExpectedAlpha() {
-        return ALBExpectedAlpha;
+    public String getAlbourneExpectedAlpha() {
+        return albourneExpectedAlpha;
     }
 
-    public void setALBExpectedAlpha(String ALBExpectedAlpha) {
-        this.ALBExpectedAlpha = ALBExpectedAlpha;
+    public void setAlbourneExpectedAlpha(String albourneExpectedAlpha) {
+        this.albourneExpectedAlpha = albourneExpectedAlpha;
     }
 
-    public String getALBExpectedBeta() {
-        return ALBExpectedBeta;
+    public String getAlbourneExpectedBeta() {
+        return albourneExpectedBeta;
     }
 
-    public void setALBExpectedBeta(String ALBExpectedBeta) {
-        this.ALBExpectedBeta = ALBExpectedBeta;
+    public void setAlbourneExpectedBeta(String albourneExpectedBeta) {
+        this.albourneExpectedBeta = albourneExpectedBeta;
     }
 
-    public String getALBExpectedRisk() {
-        return ALBExpectedRisk;
+    public String getAlalbournebExpectedRisk() {
+        return alalbournebExpectedRisk;
     }
 
-    public void setALBExpectedRisk(String ALBExpectedRisk) {
-        this.ALBExpectedRisk = ALBExpectedRisk;
+    public void setAlalbournebExpectedRisk(String alalbournebExpectedRisk) {
+        this.alalbournebExpectedRisk = alalbournebExpectedRisk;
     }
 
-    public String getALBStrategyInvestmentProcess() {
-        return ALBStrategyInvestmentProcess;
+    public String getAlbourneStrategyInvestmentProcess() {
+        return albourneStrategyInvestmentProcess;
     }
 
-    public void setALBStrategyInvestmentProcess(String ALBStrategyInvestmentProcess) {
-        this.ALBStrategyInvestmentProcess = ALBStrategyInvestmentProcess;
+    public void setAlbourneStrategyInvestmentProcess(String albourneStrategyInvestmentProcess) {
+        this.albourneStrategyInvestmentProcess = albourneStrategyInvestmentProcess;
     }
 
-    public String getALBManagementTeam() {
-        return ALBManagementTeam;
+    public String getAlbourneManagementTeam() {
+        return albourneManagementTeam;
     }
 
-    public void setALBManagementTeam(String ALBManagementTeam) {
-        this.ALBManagementTeam = ALBManagementTeam;
+    public void setAlbourneManagementTeam(String albourneManagementTeam) {
+        this.albourneManagementTeam = albourneManagementTeam;
     }
 
-    public String getALBRiskProcess() {
-        return ALBRiskProcess;
+    public String getAlbourneRiskProcess() {
+        return albourneRiskProcess;
     }
 
-    public void setALBRiskProcess(String ALBRiskProcess) {
-        this.ALBRiskProcess = ALBRiskProcess;
+    public void setAlbourneRiskProcess(String albourneRiskProcess) {
+        this.albourneRiskProcess = albourneRiskProcess;
     }
 
     public Set<ManagerDto> getManagers() {
@@ -346,5 +348,21 @@ public class HedgeFundDto2 extends HistoryBaseEntityDto<HedgeFund> {
 
     public void setReturns(Set<ReturnDto> returns) {
         this.returns = returns;
+    }
+
+    public List<SubstrategyBreakdownDto> getStrategyBreakdownList() {
+        return strategyBreakdownList;
+    }
+
+    public void setStrategyBreakdownList(List<SubstrategyBreakdownDto> strategyBreakdownList) {
+        this.strategyBreakdownList = strategyBreakdownList;
+    }
+
+    public List<InvestorBaseDto> getInvestorBaseList() {
+        return investorBaseList;
+    }
+
+    public void setInvestorBaseList(List<InvestorBaseDto> investorBaseList) {
+        this.investorBaseList = investorBaseList;
     }
 }

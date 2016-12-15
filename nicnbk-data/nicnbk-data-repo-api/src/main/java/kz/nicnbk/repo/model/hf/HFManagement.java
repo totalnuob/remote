@@ -1,15 +1,24 @@
-package kz.nicnbk.service.dto.hf;
+package kz.nicnbk.repo.model.hf;
 
-import kz.nicnbk.common.service.model.BaseDto;
+import kz.nicnbk.repo.model.base.BaseEntity;
+import kz.nicnbk.repo.model.base.CreateUpdateBaseEntity;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * Created by timur on 27.10.2016.
  */
-public class ManagerDto implements BaseDto {
+
+@Entity
+@Table(name = "hf_management")
+public class HFManagement extends BaseEntity {
     private String name;
     private String description;
     private String started;
 
+    @Column(name = "name")
     public String getName() {
         return name;
     }
@@ -18,6 +27,7 @@ public class ManagerDto implements BaseDto {
         this.name = name;
     }
 
+    @Column (name = "description")
     public String getDescription() {
         return description;
     }
@@ -26,6 +36,7 @@ public class ManagerDto implements BaseDto {
         this.description = description;
     }
 
+    @Column (name = "started")
     public String getStarted() {
         return started;
     }

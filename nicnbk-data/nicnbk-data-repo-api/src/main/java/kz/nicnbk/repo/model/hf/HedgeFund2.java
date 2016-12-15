@@ -25,7 +25,7 @@
 //    private Double aum;
 //    private Currency aumCurrency;
 //    private String leverage;
-//    private FundStatus status;
+//    private HedgeFundStatus status;
 //
 //    // fees
 //    private String managementFee;
@@ -120,11 +120,11 @@
 //        this.leverage = leverage;
 //    }
 //
-//    public FundStatus getStatus() {
+//    public HedgeFundStatus getStatus() {
 //        return status;
 //    }
 //
-//    public void setStatus(FundStatus status) {
+//    public void setStatus(HedgeFundStatus status) {
 //        this.status = status;
 //    }
 //
@@ -192,11 +192,11 @@
 //        this.redemptionFrequency = redemptionFrequency;
 //    }
 //
-//    public RedemptionNotificationPeriod getRedemptionNoticePeriod() {
+//    public RedemptionNotificationPeriod getRedemptionNotificationPeriod() {
 //        return redemptionNoticePeriod;
 //    }
 //
-//    public void setRedemptionNoticePeriod(RedemptionNotificationPeriod redemptionNoticePeriod) {
+//    public void setRedemptionNotificationPeriod(RedemptionNotificationPeriod redemptionNoticePeriod) {
 //        this.redemptionNoticePeriod = redemptionNoticePeriod;
 //    }
 //

@@ -38,6 +38,9 @@ public class LookupServiceImpl implements LookupService {
     private CurrencyRepository currencyRepository;
 
     @Autowired
+    private HedgeFundStatusRepository hedgeFundStatusRepository;
+
+    @Autowired
     private ManagerTypeRepository managerTypeRepository;
 
     @Autowired
@@ -62,11 +65,13 @@ public class LookupServiceImpl implements LookupService {
     private PerformanceFeePayFrequencyRepository performanceFeePayFrequencyRepository;
 
     @Autowired
-    private RedemptionFrequencyTypeRepository redemptionFrequencyTypeRepository;
+    private RedemptionFrequencyRepository redemptionFrequencyRepository;
 
     @Autowired
     private RedemptionNotificationPeriodRepository redemptionNotificationPeriodRepository;
 
+    @Autowired
+    private HedgeFundSidePocketRepository hedgeFundSidePocketRepository;
 
 
     @Override
@@ -206,10 +211,10 @@ public class LookupServiceImpl implements LookupService {
 
         }
 
-        if(clazz.getSimpleName().equals("FundStatus")){
-            Iterator<FundStatus> iterator = managerStatusRepository.findAll().iterator();
+        if(clazz.getSimpleName().equals("HedgeFundStatus")){
+            Iterator<HedgeFundStatus> iterator = managerStatusRepository.findAll().iterator();
             while(iterator.hasNext()){
-                FundStatus type = iterator.next();
+                HedgeFundStatus type = iterator.next();
                 if(type.getCode().equals(code)){
                     return (T) type;
                 };
@@ -276,20 +281,40 @@ public class LookupServiceImpl implements LookupService {
             }
         }
 
-        if(clazz.getSimpleName().equals("RedemptionFrequencyType")){
-            Iterator<RedemptionFrequencyType> iterator = this.redemptionFrequencyTypeRepository.findAll().iterator();
+        if(clazz.getSimpleName().equals("RedemptionFrequency")){
+            Iterator<RedemptionFrequency> iterator = this.redemptionFrequencyRepository.findAll().iterator();
             while(iterator.hasNext()){
-                RedemptionFrequencyType type = iterator.next();
+                RedemptionFrequency type = iterator.next();
                 if(type.getCode().equals(code)){
                     return (T) type;
                 };
             }
         }
 
-        if(clazz.getSimpleName().equals("RedemptionNotificationPeriodType")){
-            Iterator<RedemptionNotificationPeriodType> iterator = this.redemptionNotificationPeriodRepository.findAll().iterator();
+        if(clazz.getSimpleName().equals("RedemptionNotificationPeriod")){
+            Iterator<RedemptionNotificationPeriod> iterator = this.redemptionNotificationPeriodRepository.findAll().iterator();
             while(iterator.hasNext()){
-                RedemptionNotificationPeriodType type = iterator.next();
+                RedemptionNotificationPeriod type = iterator.next();
+                if(type.getCode().equals(code)){
+                    return (T) type;
+                };
+            }
+        }
+
+        if(clazz.getSimpleName().equals("HedgeFundSidePocket")){
+            Iterator<HedgeFundSidePocket> iterator = this.hedgeFundSidePocketRepository.findAll().iterator();
+            while(iterator.hasNext()){
+                HedgeFundSidePocket type = iterator.next();
+                if(type.getCode().equals(code)){
+                    return (T) type;
+                };
+            }
+        }
+
+        if(clazz.getSimpleName().equals("Substrategy")){
+            Iterator<Substrategy> iterator = this.substrategyRepository.findAll().iterator();
+            while(iterator.hasNext()){
+                Substrategy type = iterator.next();
                 if(type.getCode().equals(code)){
                     return (T) type;
                 };
@@ -307,6 +332,66 @@ public class LookupServiceImpl implements LookupService {
             Currency currency = iterator.next();
             BaseDictionaryDto geographyDto = disassemble(currency);
             dtoList.add(geographyDto);
+        }
+        return dtoList;
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getHedgeFundStatuses() {
+        List<BaseDictionaryDto> dtoList = new ArrayList<>();
+        Iterator<HedgeFundStatus> iterator = this.hedgeFundStatusRepository.findAll().iterator();
+        while(iterator.hasNext()){
+            HedgeFundStatus entity = iterator.next();
+            BaseDictionaryDto dto = disassemble(entity);
+            dtoList.add(dto);
+        }
+        return dtoList;
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getSubscriptionFrequencies() {
+        List<BaseDictionaryDto> dtoList = new ArrayList<>();
+        Iterator<SubscriptionFrequency> iterator = this.subscriptionFrequencyRepository.findAll().iterator();
+        while(iterator.hasNext()){
+            SubscriptionFrequency entity = iterator.next();
+            BaseDictionaryDto dto = disassemble(entity);
+            dtoList.add(dto);
+        }
+        return dtoList;
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getRedemptionFrequencies() {
+        List<BaseDictionaryDto> dtoList = new ArrayList<>();
+        Iterator<RedemptionFrequency> iterator = this.redemptionFrequencyRepository.findAll().iterator();
+        while(iterator.hasNext()){
+            RedemptionFrequency entity = iterator.next();
+            BaseDictionaryDto dto = disassemble(entity);
+            dtoList.add(dto);
+        }
+        return dtoList;
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getRedemptionNoticePeriods() {
+        List<BaseDictionaryDto> dtoList = new ArrayList<>();
+        Iterator<RedemptionNotificationPeriod> iterator = this.redemptionNotificationPeriodRepository.findAll().iterator();
+        while(iterator.hasNext()){
+            RedemptionNotificationPeriod entity = iterator.next();
+            BaseDictionaryDto dto = disassemble(entity);
+            dtoList.add(dto);
+        }
+        return dtoList;
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getSidePockets() {
+        List<BaseDictionaryDto> dtoList = new ArrayList<>();
+        Iterator<HedgeFundSidePocket> iterator = this.hedgeFundSidePocketRepository.findAll().iterator();
+        while(iterator.hasNext()){
+            HedgeFundSidePocket entity = iterator.next();
+            BaseDictionaryDto dto = disassemble(entity);
+            dtoList.add(dto);
         }
         return dtoList;
     }

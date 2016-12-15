@@ -79,18 +79,26 @@
                     <tr>
                         <td class="col-md-1">AUM </td>
                         <td class="col-md-3">
-                            <input type="text" [(ngModel)]="manager.aum"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-1">Domicile Country</td>
-                        <td class="col-md-3">
-                            <select style="width: 100%" [(ngModel)]="manager.domicileCountry">
-                                <option value="0">---</option>
-                                <option *ngFor="let item of domicileCountryLookup" [value]="item.code">{{item.nameEn}}</option>
+                            <input type="text" class="form-control" style="display:inline; width: 30%" [(ngModel)]="manager.aum"/>
+                            <select class="form-control" style="display:inline; width: 25%" [(ngModel)]="manager.aumDigit">
+                                <option value="MLN">M</option>
+                                <option value="BLN">B</option>
+                            </select>
+                            <select class="form-control" style="display:inline; width: 35%" [(ngModel)]="manager.aumCurrency">
+                                <option value="-">--</option>
+                                <option *ngFor="let currency of currencyLookup">{{currency.code}}</option>
                             </select>
                         </td>
                     </tr>
+                    <!--<tr>-->
+                        <!--<td class="col-md-1">Domicile Country</td>-->
+                        <!--<td class="col-md-3">-->
+                            <!--<select style="width: 100%" [(ngModel)]="manager.domicileCountry">-->
+                                <!--<option value="0">-&#45;&#45;</option>-->
+                                <!--<option *ngFor="let item of domicileCountryLookup" [value]="item.code">{{item.nameEn}}</option>-->
+                            <!--</select>-->
+                        <!--</td>-->
+                    <!--</tr>-->
                 </table>
                 <div class=" col-md-1">&nbsp;</div>
                 <table class=" col-md-6 table-striped table-condensed">

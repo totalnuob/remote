@@ -3,6 +3,7 @@ package kz.nicnbk.service.api.hf;
 import kz.nicnbk.service.api.base.BaseService;
 import kz.nicnbk.service.dto.hf.HedgeFundDto2;
 import kz.nicnbk.service.dto.hf.HedgeFundSearchParams;
+import kz.nicnbk.service.dto.hf.HedgeFundSubstrategyDto;
 
 import java.util.Set;
 
@@ -18,6 +19,4 @@ public interface HedgeFundService extends BaseService {
     Set<HedgeFundDto2> loadManagerFunds(Long managerId);
 
     Set<HedgeFundDto2> findByName(HedgeFundSearchParams searchParams);
-
-
 }

@@ -5,6 +5,7 @@ import kz.nicnbk.repo.model.common.Currency;
 import kz.nicnbk.repo.model.common.Strategy;
 
 import javax.persistence.*;
+import java.util.Set;
 
 /**
  * Created by magzumov on 04.07.2016.
@@ -17,14 +18,14 @@ public class HedgeFund extends CreateUpdateBaseEntity {
     private HFManager manager;
     private String summary;
     private String inception;
-    private Double AUMAmount;
+    private Double AUM;
     private String AUMDigit;
-    private Currency AUMCurrency;
+    private Currency aumCurrency;
     private Strategy strategy;
 
     private String leverage;
 
-    private FundStatus status;
+    private HedgeFundStatus status;
     private String managementFee;
     private String performanceFee;
     private String redemptionFee;
@@ -32,8 +33,8 @@ public class HedgeFund extends CreateUpdateBaseEntity {
     private String minSubsInvestment;
     private SubscriptionFrequency subscriptionFrequency;
     private RedemptionFrequency redemptionFrequency;
-    private RedemptionNotificationPeriod redemptionNoticePeriod;
-    private String sidePocket;
+    private RedemptionNotificationPeriod redemptionNotificationPeriod;
+    private HedgeFundSidePocket sidePocket;
     private String gates;
 
     private String liquidityPercent;
@@ -45,19 +46,18 @@ public class HedgeFund extends CreateUpdateBaseEntity {
 
     //private Set<Substrategy> strategyBreakdownList;
     //private investorBaseList;
-    //managerList;
+    private Set<HFManagement> managers;
     //returns;
 
     // ALbourne ratings
-    private String ALBIDDAnalystAssessment;
-    private String ALBConviction;
-    private String ALBExpectedAlpha;
-    private String ALBExpectedBeta;
-    private String ALBExpectedRisk;
-    private String ALBStrategyInvestmentProcess;
-    private String ALBManagementTeam;
-    private String ALBRiskProcess;
-
+    private String albourneIddAnalysisAssessment;
+    private String albourneConviction;
+    private String albourneExpectedAlpha;
+    private String albourneExpectedBeta;
+    private String alalbournebExpectedRisk;
+    private String albourneStrategyInvestmentProcess;
+    private String albourneManagementTeam;
+    private String albourneRiskProcess;
 
     @Column (name = "name")
     public String getName() {
@@ -97,12 +97,12 @@ public class HedgeFund extends CreateUpdateBaseEntity {
     }
 
     @Column (name = "aum_amount")
-    public Double getAUMAmount() {
-        return AUMAmount;
+    public Double getAUM() {
+        return AUM;
     }
 
-    public void setAUMAmount(Double AUMAmount) {
-        this.AUMAmount = AUMAmount;
+    public void setAUM(Double AUM) {
+        this.AUM = AUM;
     }
 
     @Column (name = "aum_digit")
@@ -116,12 +116,12 @@ public class HedgeFund extends CreateUpdateBaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "aum_currency_id")
-    public Currency getAUMCurrency() {
-        return AUMCurrency;
+    public Currency getAumCurrency() {
+        return aumCurrency;
     }
 
-    public void setAUMCurrency(Currency AUMCurrency) {
-        this.AUMCurrency = AUMCurrency;
+    public void setAumCurrency(Currency aumCurrency) {
+        this.aumCurrency = aumCurrency;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -145,11 +145,11 @@ public class HedgeFund extends CreateUpdateBaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "status_id")
-    public FundStatus getStatus() {
+    public HedgeFundStatus getStatus() {
         return status;
     }
 
-    public void setStatus(FundStatus status) {
+    public void setStatus(HedgeFundStatus status) {
         this.status = status;
     }
 
@@ -220,20 +220,21 @@ public class HedgeFund extends CreateUpdateBaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "redemption_notice_id")
-    public RedemptionNotificationPeriod getRedemptionNoticePeriod() {
-        return redemptionNoticePeriod;
+    public RedemptionNotificationPeriod getRedemptionNotificationPeriod() {
+        return redemptionNotificationPeriod;
     }
 
-    public void setRedemptionNoticePeriod(RedemptionNotificationPeriod redemptionNoticePeriod) {
-        this.redemptionNoticePeriod = redemptionNoticePeriod;
+    public void setRedemptionNotificationPeriod(RedemptionNotificationPeriod redemptionNotificationPeriod) {
+        this.redemptionNotificationPeriod = redemptionNotificationPeriod;
     }
 
-    @Column (name = "sidepocket")
-    public String getSidePocket() {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sidepocket_id")
+    public HedgeFundSidePocket getSidePocket() {
         return sidePocket;
     }
 
-    public void setSidePocket(String sidePocket) {
+    public void setSidePocket(HedgeFundSidePocket sidePocket) {
         this.sidePocket = sidePocket;
     }
 
@@ -292,74 +293,90 @@ public class HedgeFund extends CreateUpdateBaseEntity {
     }
 
     @Column (name = "alb_idd_aa")
-    public String getALBIDDAnalystAssessment() {
-        return ALBIDDAnalystAssessment;
+    public String getAlbourneIddAnalysisAssessment() {
+        return albourneIddAnalysisAssessment;
     }
 
-    public void setALBIDDAnalystAssessment(String ALBIDDAnalystAssessment) {
-        this.ALBIDDAnalystAssessment = ALBIDDAnalystAssessment;
+    public void setAlbourneIddAnalysisAssessment(String albourneIddAnalysisAssessment) {
+        this.albourneIddAnalysisAssessment = albourneIddAnalysisAssessment;
     }
 
     @Column (name = "alb_conviction")
-    public String getALBConviction() {
-        return ALBConviction;
+    public String getAlbourneConviction() {
+        return albourneConviction;
     }
 
-    public void setALBConviction(String ALBConviction) {
-        this.ALBConviction = ALBConviction;
+    public void setAlbourneConviction(String albourneConviction) {
+        this.albourneConviction = albourneConviction;
     }
 
     @Column (name = "alb_exp_alpha")
-    public String getALBExpectedAlpha() {
-        return ALBExpectedAlpha;
+    public String getAlbourneExpectedAlpha() {
+        return albourneExpectedAlpha;
     }
 
-    public void setALBExpectedAlpha(String ALBExpectedAlpha) {
-        this.ALBExpectedAlpha = ALBExpectedAlpha;
+    public void setAlbourneExpectedAlpha(String albourneExpectedAlpha) {
+        this.albourneExpectedAlpha = albourneExpectedAlpha;
     }
 
     @Column (name = "alb_exp_beta")
-    public String getALBExpectedBeta() {
-        return ALBExpectedBeta;
+    public String getAlbourneExpectedBeta() {
+        return albourneExpectedBeta;
     }
 
-    public void setALBExpectedBeta(String ALBExpectedBeta) {
-        this.ALBExpectedBeta = ALBExpectedBeta;
+    public void setAlbourneExpectedBeta(String albourneExpectedBeta) {
+        this.albourneExpectedBeta = albourneExpectedBeta;
     }
 
     @Column (name = "alb_exp_risk")
-    public String getALBExpectedRisk() {
-        return ALBExpectedRisk;
+    public String getAlalbournebExpectedRisk() {
+        return alalbournebExpectedRisk;
     }
 
-    public void setALBExpectedRisk(String ALBExpectedRisk) {
-        this.ALBExpectedRisk = ALBExpectedRisk;
+    public void setAlalbournebExpectedRisk(String alalbournebExpectedRisk) {
+        this.alalbournebExpectedRisk = alalbournebExpectedRisk;
     }
 
     @Column (name = "alb_strategy_invest")
-    public String getALBStrategyInvestmentProcess() {
-        return ALBStrategyInvestmentProcess;
+    public String getAlbourneStrategyInvestmentProcess() {
+        return albourneStrategyInvestmentProcess;
     }
 
-    public void setALBStrategyInvestmentProcess(String ALBStrategyInvestmentProcess) {
-        this.ALBStrategyInvestmentProcess = ALBStrategyInvestmentProcess;
+    public void setAlbourneStrategyInvestmentProcess(String albourneStrategyInvestmentProcess) {
+        this.albourneStrategyInvestmentProcess = albourneStrategyInvestmentProcess;
     }
 
     @Column (name = "alb_mng_team")
-    public String getALBManagementTeam() {
-        return ALBManagementTeam;
+    public String getAlbourneManagementTeam() {
+        return albourneManagementTeam;
     }
 
-    public void setALBManagementTeam(String ALBManagementTeam) {
-        this.ALBManagementTeam = ALBManagementTeam;
+    public void setAlbourneManagementTeam(String albourneManagementTeam) {
+        this.albourneManagementTeam = albourneManagementTeam;
     }
 
     @Column (name = "alb_risk_process")
-    public String getALBRiskProcess() {
-        return ALBRiskProcess;
+    public String getAlbourneRiskProcess() {
+        return albourneRiskProcess;
     }
 
-    public void setALBRiskProcess(String ALBRiskProcess) {
-        this.ALBRiskProcess = ALBRiskProcess;
+    public void setAlbourneRiskProcess(String albourneRiskProcess) {
+        this.albourneRiskProcess = albourneRiskProcess;
+    }
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
+    @JoinTable(
+            name="hf_fund_management",
+            joinColumns=
+            @JoinColumn(name="fund_id", referencedColumnName="ID"),
+            inverseJoinColumns=
+            @JoinColumn(name="management_id", referencedColumnName="ID")
+    )
+    public Set<HFManagement> getManagers() {
+        return managers;
+    }
+
+    public void setManagers(Set<HFManagement> managers) {
+        this.managers = managers;
     }
 }

@@ -56,4 +56,34 @@ public class LookupServiceREST {
         List<BaseDictionaryDto> lookups = this.lookupService.getCurrencies();
         return lookups;
     }
+
+    @RequestMapping(value = "/HedgeFundStatus", method = RequestMethod.GET)
+    public List<BaseDictionaryDto> getHedgeFundStatuses(){
+        List<BaseDictionaryDto> lookups = this.lookupService.getHedgeFundStatuses();
+        return lookups;
+    }
+
+    @RequestMapping(value = "/SubscriptionFrequency", method = RequestMethod.GET)
+    public List<BaseDictionaryDto> getSubscriptionFrequencies(){
+        List<BaseDictionaryDto> lookups = this.lookupService.getSubscriptionFrequencies();
+        return lookups;
+    }
+
+    @RequestMapping(value = "/RedemptionFrequency", method = RequestMethod.GET)
+    public List<BaseDictionaryDto> getRedemptionFrequencies(){
+        List<BaseDictionaryDto> lookups = this.lookupService.getRedemptionFrequencies();
+        return lookups;
+    }
+
+    @RequestMapping(value = "/RedemptionNoticePeriods", method = RequestMethod.GET)
+    public List<BaseDictionaryDto> getRedemptionNOticePeriods(){
+        List<BaseDictionaryDto> lookups = this.lookupService.getRedemptionNoticePeriods();
+        return lookups;
+    }
+
+    @RequestMapping(value = "/SidePocket", method = RequestMethod.GET)
+    public List<BaseDictionaryDto> getSidePockets(){
+        List<BaseDictionaryDto> lookups = this.lookupService.getSidePockets();
+        return lookups;
+    }
 }

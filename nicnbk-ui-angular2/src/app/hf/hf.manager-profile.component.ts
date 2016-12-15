@@ -26,6 +26,7 @@ export class HFManagerProfileComponent extends CommonFormViewComponent{
     managerTypeLookup = [];
     strategyLookup = [];
     statusLookup = [];
+    currencyLookup = [];
     legalStructureLookup = [];
     domicileCountryLookup = [];
 
@@ -102,6 +103,17 @@ export class HFManagerProfileComponent extends CommonFormViewComponent{
                     //    this.strategyLookup.push({ id: element.code, value: element.nameEn});
                     //});
                     this.strategyLookup = data;
+                },
+                error =>  this.errorMessage = <any>error
+            );
+
+        this.lookupService.getCurrencyList()
+            .subscribe(
+                data => {
+                    //data.forEach(element => {
+                    //    this.strategyLookup.push({ id: element.code, value: element.nameEn});
+                    //});
+                    this.currencyLookup = data;
                 },
                 error =>  this.errorMessage = <any>error
             );
