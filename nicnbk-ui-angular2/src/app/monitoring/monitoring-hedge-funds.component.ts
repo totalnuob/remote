@@ -53,11 +53,18 @@ export class MonitoringHedgeFundsComponent extends GoogleChartComponent {
     // PORTFOLIO ---------------------------------------------------------
     drawPortfolioTable(tableDate){
         var data = new google.visualization.DataTable();
+        var formatter = new google.visualization.NumberFormat({
+            prefix:'$ ',
+            groupingSymbol: ' ',
+            fractionDigits: 0
+        })
         data.addColumn("string", "");
         data.addColumn("number", "");
         data.addRows([
             ["Hedge Funds Portfolio", this.getPortfolioByDate(tableDate)]
         ]);
+
+        formatter.format(data,1);
 
         var options = {
             showRowNumber: false,
@@ -85,12 +92,21 @@ export class MonitoringHedgeFundsComponent extends GoogleChartComponent {
     // PERFORMANCE --------------------------------------------------------
     drawPerformanceTable(tableDate){
         var data = new google.visualization.DataTable();
+        var formatter = new google.visualization.NumberFormat({
+            pattern: '#.##%',
+            negativeColor: 'red',
+        })
         data.addColumn("string", "");
         data.addColumn("number", "MTD");
         data.addColumn("number", "QTD");
         data.addColumn("number", "YTD");
         data.addColumn("number", "CUMULATIVE");
         data.addRows(this.getPerformanceRowData(tableDate));
+
+        formatter.format(data,1);
+        formatter.format(data,2);
+        formatter.format(data,3);
+        formatter.format(data,4);
 
         var options = {
             showRowNumber: false,
@@ -107,25 +123,25 @@ export class MonitoringHedgeFundsComponent extends GoogleChartComponent {
     }
 
     private getPerformanceRowData(date){
-        console.log(date);
         var performance = [];
         var portfolio = ["Hedge Funds Portfolio", 0, 0, 0, 0];
         var HFRIFOF = ["HFRIFOF Index", 0, 0, 0, 0];
-        for(var i = 0; i < this.performance.length; i++){
-            if(this.performance[i][0] === date){
-                if(this.performance[i][1] === "MTD"){
-                    portfolio[1] = this.performance[i][2];
-                    HFRIFOF[1] = this.performance[i][3];
-                }else if(this.performance[i][1] === "QTD"){
-                    portfolio[2] = this.performance[i][2];
-                    HFRIFOF[2] = this.performance[i][3];
-                }else if(this.performance[i][1] === "YTD"){
-                    portfolio[3] = this.performance[i][2];
-                    HFRIFOF[3] = this.performance[i][3];
-                }else if(this.performance[i][1] === "CUMULATIVE"){
-                    portfolio[4] = this.performance[i][2];
-                    HFRIFOF[4] = this.performance[i][3];
-                }
+        for(var i = 0; i < this.performanceMTD.length; i++){
+            if(this.performanceMTD[i][0] === date) {
+                portfolio[1] = this.performanceMTD[i][1];
+                HFRIFOF[1] = this.performanceMTD[i][2];
+            }
+            if(this.performanceQTD[i][0] === date) {
+                portfolio[2] = this.performanceQTD[i][1];
+                HFRIFOF[2] = this.performanceQTD[i][2];
+            }
+            if(this.performanceYTD[i][0] === date) {
+                portfolio[3] = this.performanceYTD[i][1];
+                HFRIFOF[3] = this.performanceYTD[i][2];
+            }
+            if(this.performanceCUMUL[i][0] === date) {
+                portfolio[4] = this.performanceCUMUL[i][1];
+                HFRIFOF[4] = this.performanceCUMUL[i][2];
             }
         }
         performance.push(portfolio);
@@ -145,7 +161,10 @@ export class MonitoringHedgeFundsComponent extends GoogleChartComponent {
             width: '100%',
             height: '100%',
             'allowHtml': true,
-            cssClassNames: {}
+            cssClassNames: {},
+            vAxis:{
+                format:'$#',
+            }
         };
 
         var chart = this.createLineChart(document.getElementById('nav'));
@@ -164,50 +183,66 @@ export class MonitoringHedgeFundsComponent extends GoogleChartComponent {
 
     drawPerformanceMonthly(){
         var data = new google.visualization.DataTable();
+        var formatter = new google.visualization.NumberFormat({
+            pattern: '#.##%'
+        });
         data.addColumn("string", "Date");
         data.addColumn("number", "Singularity");
         data.addColumn("number", "HFRIFOF");
-        data.addRows(this.getPerformanceMonthlyRowData());
+        data.addRows(this.performanceMTD);
+        formatter.format(data, 1);
+        formatter.format(data, 2);
 
         var options = {
             showRowNumber: false,
             width: '100%',
             height: '100%',
             'allowHtml': true,
-            cssClassNames: {}
+            cssClassNames: {},
+            vAxis: {
+                format: '#.##%'
+            }
         };
 
         var chart = this.createLineChart(document.getElementById('performance_monthly'));
         chart.draw(data, options);
     }
 
-    private getPerformanceMonthlyRowData(){
-        var performance = [];
-        for(var i = 0; i < this.performance.length; i++){
-            if(this.performance[i][1] === "MTD"){
-                var item = [];
-                item.push(this.performance[i][0]);
-                item.push(this.performance[i][2]);
-                item.push(this.performance[i][3]);
-                performance.push(item);
-            }
-        }
-        return performance;
-    }
+    //private getPerformanceMonthlyRowData(){
+    //    var performance = [];
+    //    for(var i = 0; i < this.performance.length; i++){
+    //        if(this.performance[i][1] === "MTD"){
+    //            var item = [];
+    //            item.push(this.performance[i][0]);
+    //            item.push(this.performance[i][2]);
+    //            item.push(this.performance[i][3]);
+    //            performance.push(item);
+    //        }
+    //    }
+    //    return performance;
+    //}
 
     drawPerformanceCumulative(){
         var data = new google.visualization.DataTable();
+        var formatter = new google.visualization.NumberFormat({
+            pattern: '#.##%'
+        });
         data.addColumn("string", "Date");
         data.addColumn("number", "Singularity");
         data.addColumn("number", "HFRIFOF");
-        data.addRows(this.getPerformanceCumulativeRowData());
+        data.addRows(this.performanceCUMUL);
+        formatter.format(data, 1);
+        formatter.format(data, 2);
 
         var options = {
             showRowNumber: false,
             width: '100%',
             height: '100%',
             'allowHtml': true,
-            cssClassNames: {}
+            cssClassNames: {},
+            vAxis: {
+                format: '#.##%'
+            }
         };
 
         var chart = this.createLineChart(document.getElementById('performance_cumulative'));
@@ -215,31 +250,38 @@ export class MonitoringHedgeFundsComponent extends GoogleChartComponent {
 
     }
 
-    private getPerformanceCumulativeRowData(){
-        var performance = [];
-        for(var i = 0; i < this.performance.length; i++){
-            if(this.performance[i][1] === "CUMULATIVE"){
-                var item = [];
-                item.push(this.performance[i][0]);
-                item.push(this.performance[i][2]);
-                item.push(this.performance[i][3]);
-                performance.push(item);
-            }
-        }
-        return performance;
-    }
+    //private getPerformanceCumulativeRowData(){
+    //    var performance = [];
+    //    for(var i = 0; i < this.performance.length; i++){
+    //        if(this.performance[i][1] === "CUMULATIVE"){
+    //            var item = [];
+    //            item.push(this.performance[i][0]);
+    //            item.push(this.performance[i][2]);
+    //            item.push(this.performance[i][3]);
+    //            performance.push(item);
+    //        }
+    //    }
+    //    return performance;
+    //}
 
     // HOLDINGS ---------------------------------------------------------------------
 
     drawHoldings(date){
         var data = new google.visualization.DataTable();
+        var formatter = new google.visualization.NumberFormat({
+            pattern: '#.##%',
+            negativeColor: 'red'
+        });
         data.addColumn("string", "Fund");
         data.addColumn("string", "Strategy");
         data.addColumn("string", "Substrategy");
-        data.addColumn("number", "Month Opening Allocation Percent");
-        data.addColumn("number", "RoR Percent");
-        data.addColumn("number", "CtoR Percent");
+        data.addColumn("number", "Month Opening Allocation");
+        data.addColumn("number", "RoR");
+        data.addColumn("number", "Contribution to return");
         data.addRows(this.getHoldingsRowData(date));
+        formatter.format(data, 3);
+        formatter.format(data, 4);
+        formatter.format(data, 5);
 
         var options = {
             showRowNumber: false,
@@ -264,7 +306,6 @@ export class MonitoringHedgeFundsComponent extends GoogleChartComponent {
                 holdingsArray.push(item);
             }
         }
-        console.log(holdingsArray);
         return holdingsArray;
     }
 
@@ -276,10 +317,15 @@ export class MonitoringHedgeFundsComponent extends GoogleChartComponent {
 
     drawTargetAllocationsTable(){
         var data = new google.visualization.DataTable();
-        data.addColumn("string", "Strategy");
+        var formatter = new google.visualization.NumberFormat({
+            pattern: '#.##%'
+        });
+        data.addColumn("string", "Strategy");;
         data.addColumn("number", "MIN");
         data.addColumn("number", "MAX");
         data.addRows(this.getTargetAllocationRowTata());
+        formatter.format(data, 1);
+        formatter.format(data, 2);
 
         var options = {
             showRowNumber: false,
@@ -333,8 +379,6 @@ export class MonitoringHedgeFundsComponent extends GoogleChartComponent {
     }
 
 
-
-
     private getMonthNumber(fullName){
         var monthName = fullName.split("-")[0];
         if(monthName.toUpperCase() === "JAN"){
@@ -378,118 +422,94 @@ export class MonitoringHedgeFundsComponent extends GoogleChartComponent {
         ["Aug-15",73806138],
         ["Sep-15",145584323],
         ["Oct-15",145761377],
-        ["Nov-15",146039154],
+        ["Nov-15",146039155],
         ["Dec-15",145224471],
-        ["Jan-16",141704890],
+        ["Jan-16",141704891],
         ["Feb-16",139490031],
-        ["Mar-16",139660777],
-        ["Apr-16",140717168],
-        ["May-16",141900131],
-        ["Jun-16",141459937],
-        ["Jul-16",142025472],
-        ["Aug-16",143248121],
-        ["Sep-16",143491005],
-        ["Oct-16",143595932],
-        ["Nov-16",144883268]
+        ["Mar-16",139681370],
+        ["Apr-16",140746692],
+        ["May-16",141913168],
+        ["Jun-16",141467836],
+        ["Jul-16",142059717],
+        ["Aug-16",143313959],
+        ["Sep-16",143551395],
+        ["Oct-16",143604313],
+        ["Nov-16",145390374]
+    ];
+    private performanceMTD = [
+        ["Aug-15",-0.01591816,-0.019957404],
+        ["Sep-15",-0.021651089,-0.018256459],
+        ["Oct-15",0.001216165,0.008536239],
+        ["Nov-15",0.0019057,0.002995519],
+        ["Dec-15",-0.005578531,-0.004217693],
+        ["Jan-16",-0.024235447,-0.026557043],
+        ["Feb-16",-0.015630089,-0.012014742],
+        ["Mar-16",0.001371704,0.007343589],
+        ["Apr-16",0.007626801,0.005214134],
+        ["May-16",0.008287768,0.005026068],
+        ["Jun-16",-0.00313806,-0.00465344],
+        ["Jul-16",0.004183856,0.015049556],
+        ["Aug-16",0.008828977,0.004426052],
+        ["Sep-16",0.001656754,0.004389658],
+        ["Oct-16",0.000368635,-0.00254192],
+        ["Nov-16",0.012437377,0.002976088]
     ];
 
-    private performance = [
-        ["Dec-14","MTD",0,0],
-        ["Dec-14","QTD",0,0],
-        ["Dec-14","YTD",0,0],
-        ["Dec-14","CUMULATIVE",0,0],
-        ["Jan-15","MTD",0,0.0013],
-        ["Jan-15","QTD",0,0.0013],
-        ["Jan-15","YTD",0,0.0013],
-        ["Jan-15","CUMULATIVE",0,0],
-        ["Feb-15","MTD",0,0.0169],
-        ["Feb-15","QTD",0,0.0183],
-        ["Feb-15","YTD",0,0.0183],
-        ["Feb-15","CUMULATIVE",0,0],
-        ["Mar-15","MTD",0,0.0066],
-        ["Mar-15","QTD",0,0.0250],
-        ["Mar-15","YTD",0,0.0250],
-        ["Mar-15","CUMULATIVE",0,0],
-        ["Apr-15","MTD",0,0.0025],
-        ["Apr-15","QTD",0,0.0025],
-        ["Apr-15","YTD",0,0.0275],
-        ["Apr-15","CUMULATIVE",0,0],
-        ["May-15","MTD",0,0.0080],
-        ["May-15","QTD",0,0.0105],
-        ["May-15","YTD",0,0.0533],
-        ["May-15","CUMULATIVE",0,0],
-        ["Jun-15","MTD",0,0.0060],
-        ["Jun-15","QTD",0,0.0166],
-        ["Jun-15","YTD",0,0.0419],
-        ["Jun-15","CUMULATIVE",0,0],
-        ["Jul-15","MTD",0,0.0039],
-        ["Jul-15","QTD",0,0.0039],
-        ["Jul-15","YTD",0,0.0460],
-        ["Jul-15","CUMULATIVE",0,0],
-        ["Aug-15","MTD",-0.0159,-0.0200],
-        ["Aug-15","QTD",-0.0159,-0.0161],
-        ["Aug-15","YTD",-0.0159,0.0251],
-        ["Aug-15","CUMULATIVE",-0.0159,-0.0200],
-        ["Sep-15","MTD",-0.0217,-0.0183],
-        ["Sep-15","QTD",-0.0372,-0.0341],
-        ["Sep-15","YTD",-0.0372,0.0125],
-        ["Sep-15","CUMULATIVE",-0.0372,-0.0378],
-        ["Oct-15","MTD",0.0012,0.0085],
-        ["Oct-15","QTD",0.0012,0.0085],
-        ["Oct-15","YTD",-0.0361,0.0150],
-        ["Oct-15","CUMULATIVE",-0.0361,-0.0296],
-        ["Nov-15","MTD",0.0019,0.0030],
-        ["Nov-15","QTD",0.0031,0.0116],
-        ["Nov-15","YTD",-0.0342,0.0180],
-        ["Nov-15","CUMULATIVE",-0.0342,-0.0267],
-        ["Dec-15","MTD",-0.0056,-0.0042],
-        ["Dec-15","QTD",-0.0025,0.0073],
-        ["Dec-15","YTD",-0.0396,0.0137],
-        ["Dec-15","CUMULATIVE",-0.0396,-0.0308],
-        ["Jan-16","MTD",-0.0242,-0.0253],
-        ["Jan-16","QTD",-0.0242,-0.0253],
-        ["Jan-16","YTD",-0.0242,-0.0253],
-        ["Jan-16","CUMULATIVE",-0.0629,-0.0550],
-        ["Feb-16","MTD",-0.0156,-0.0116],
-        ["Feb-16","QTD",-0.0395,-0.0366],
-        ["Feb-16","YTD",-0.0395,-0.0366],
-        ["Feb-16","CUMULATIVE",-0.0775,-0.0659],
-        ["Mar-16","MTD",0.0012,0.0060],
-        ["Mar-16","QTD",-0.0383,-0.0308],
-        ["Mar-16","YTD",-0.0383,-0.0308],
-        ["Mar-16","CUMULATIVE",-0.0764,-0.0604],
-        ["Apr-16","MTD",0.0074,0.0047],
-        ["Apr-16","QTD",0.0074,0.0047],
-        ["Apr-16","YTD",-0.0312,-0.0266],
-        ["Apr-16","CUMULATIVE",-0.0696,-0.0566],
-        ["May-16","MTD",0.0084,0.0061],
-        ["May-16","QTD",0.0160,0.0109],
-        ["May-16","YTD",-0.0229,-0.0207],
-        ["May-16","CUMULATIVE",-0.0616,-0.0509],
-        ["Jun-16","MTD",-0.0031,-0.0043],
-        ["Jun-16","QTD",0.0129,0.0061],
-        ["Jun-16","YTD",-0.0259,-0.0256],
-        ["Jun-16","CUMULATIVE",-0.0645,-0.0556],
-        ["Jul-16","MTD",0.0040,0.0146],
-        ["Jul-16","QTD",0.0040,0.0146],
-        ["Jul-16","YTD",-0.0220,-0.0121],
-        ["Jul-16","CUMULATIVE",-0.0608,-0.0425],
-        ["Aug-16","MTD",0.0084,0.0044],
-        ["Aug-16","QTD",0.0124,0.0196],
-        ["Aug-16","YTD",-0.0138,-0.0066],
-        ["Aug-16","CUMULATIVE",-0.0529,-0.0366],
-        ["Sep-16","MTD",0.0012,0.0056],
-        ["Sep-16","QTD",0.0136,0.0253],
-        ["Sep-16","YTD",-0.0126,-0.0011],
-        ["Sep-16","CUMULATIVE",-0.0517,-0.0319],
-        ["Oct-16","MTD",0.0003,-0.0018],
-        ["Oct-16","QTD",0.0003,-0.0018],
-        ["Oct-16","YTD",-0.0112,-0.0038],
-        ["Oct-16","CUMULATIVE",-0.0504,-0.0345],
-        ["Nov-16","MTD",0.0090,-0.0018],
-        ["Nov-16","QTD",0.0093,-0.0018],
-        ["Nov-16","YTD",-0.0023,-0.0038],
-        ["Nov-16","CUMULATIVE",-0.0419,-0.0345]
+    private performanceQTD = [
+        ["Aug-15",-0.01591816,-0.016235499],
+        ["Sep-15",-0.037224604,-0.034195555],
+        ["Oct-15",0.001216165,0.008536239],
+        ["Nov-15",0.003124183,0.011557329],
+        ["Dec-15",-0.002471777,0.00729089],
+        ["Jan-16",-0.024235447,-0.026557043],
+        ["Feb-16",-0.039486734,-0.038252708],
+        ["Mar-16",-0.038169194,-0.031190031],
+        ["Apr-16",0.007626801,0.005214134],
+        ["May-16",0.015977779,0.010266408],
+        ["Jun-16",0.01278958,0.005565194],
+        ["Jul-16",0.004183856,0.015049556],
+        ["Aug-16",0.013049772,0.019542218],
+        ["Sep-16",0.014728146,0.02401766],
+        ["Oct-16",0.000368635,-0.00254192],
+        ["Nov-16",0.012810597,0.000426603]
+    ];
+
+    private performanceYTD = [
+        ["Aug-15",-0.01591816,0.024937035],
+        ["Sep-15",-0.037224604,0.006225314],
+        ["Oct-15",-0.03605371,0.014814694],
+        ["Nov-15",-0.034216718,0.017854591],
+        ["Dec-15",-0.03960437,0.013561592],
+        ["Jan-16",-0.024235447,-0.026557043],
+        ["Feb-16",-0.039486734,-0.038252708],
+        ["Mar-16",-0.038169194,-0.031190031],
+        ["Apr-16",-0.030833502,-0.026138527],
+        ["May-16",-0.022801274,-0.021243833],
+        ["Jun-16",-0.025867782,-0.025798416],
+        ["Jul-16",-0.021792154,-0.011137115],
+        ["Aug-16",-0.013155579,-0.006760357],
+        ["Sep-16",-0.01152062,-0.002400374],
+        ["Oct-16",-0.011156233,-0.004936192],
+        ["Nov-16",0.00114239,-0.001974795]
+    ];
+
+    private performanceCUMUL = [
+        ["Aug-15",-0.01591816,-0.019957404],
+        ["Sep-15",-0.037224604,-0.037849511],
+        ["Oct-15",-0.03605371,-0.029636364],
+        ["Nov-15",-0.034216718,-0.026729621],
+        ["Dec-15",-0.03960437,-0.030834577],
+        ["Jan-16",-0.062879988,-0.056572745],
+        ["Feb-16",-0.077527257,-0.06790778],
+        ["Mar-16",-0.076261897,-0.061062878],
+        ["Apr-16",-0.069216731,-0.056167134],
+        ["May-16",-0.061502614,-0.051423366],
+        ["Jun-16",-0.064447675,-0.05583751],
+        ["Jul-16",-0.060533459,-0.041628284],
+        ["Aug-16",-0.052238931,-0.037386481],
+        ["Sep-16",-0.050668724,-0.033160937],
+        ["Oct-16",-0.050318767,-0.035618564],
+        ["Nov-16",-0.038507224,-0.03274848]
     ];
 
     private holdings = [
@@ -557,6 +577,39 @@ export class MonitoringHedgeFundsComponent extends GoogleChartComponent {
         ["31.10.16","N/A","Uninvested","Cash",0.013034944,0,0],
         ["31.10.16","N/A","Uninvested","Expenses",-0.000171696,0,-7.67704E-05],
         ["31.10.16","N/A","Uninvested","Management Fees",-6.32108E-07,0,-0.000500405],
-        ["31.10.16","N/A","Uninvested","Net Rec/(Pay)",0.001320208,0,0]
+        ["31.10.16","N/A","Uninvested","Net Rec/(Pay)",0.001320208,0,0],
+        ["30.11.16","Canyon Opp Cred GRF Ltd","Credit","Long-Biased Credit",0.058744294,0.0114,0.000669685],
+        ["30.11.16","CVI Intl Credit Ltd","Credit","Long-Biased Credit",0.083560101,0.011,0.000919161],
+        ["30.11.16","Anchorage Cap Ltd","Credit","Long/Short Credit",0.043300581,0.002900001,0.000125572],
+        ["30.11.16","Chenavari Struct Cred Ltd","Credit","Structured Credit",0.073747891,0.002200001,0.000162245],
+        ["30.11.16","Prosiris Gbl Opp Fund Ltd","Credit","Structured Credit",0.033425798,0.005800001,0.00019387],
+        ["30.11.16","Argentiere Enhanced Ltd","Relative Value","Option Volatility Arbitrage",0.026310749,-0.029799999,-0.00078406],
+        ["30.11.16","Argentiere Ltd","Relative Value","Option Volatility Arbitrage",0.006777562,-0.019700003,-0.000133518],
+        ["30.11.16","Ionic Vol Arb Fund II Ltd","Relative Value","Option Volatility Arbitrage",0.025609348,0.046000001,0.00117803],
+        ["30.11.16","Whitebox Asymm Opp Ltd","Relative Value","Diversified Relative Value",0.051622305,0.0257,0.001326693],
+        ["30.11.16","Myriad Opportunities Ltd","Multi-Strategy","Multi-Strategy",0.042693745,0.000900001,3.84244E-05],
+        ["30.11.16","MTP Energy Corp and Ltd","Event Driven","Diversified Event Driven",0.025233655,-0.000700002,-1.76636E-05],
+        ["30.11.16","York Euro Opp Unit Trust","Event Driven","Diversified Event Driven",0.052256732,-0.009982604,-0.000521658],
+        ["30.11.16","Basswood Enhanced LS Ltd","Equities","Long-Biased Hedged Equities",0.022510514,0.096799999,0.002179018],
+        ["30.11.16","Discovery Gbl Opp Ltd","Equities","Long-Biased Hedged Equities",0.032170155,0.0922,0.002966088],
+        ["30.11.16","Hitchwood Ltd","Equities","Long-Biased Hedged Equities",0.03375091,-0.024199999,-0.000816772],
+        ["30.11.16","Incline Global ELS Ltd","Equities","Long-Biased Hedged Equities",0.023783568,0.0127,0.000302051],
+        ["30.11.16","Lagunita Ltd","Equities","Long-Biased Hedged Equities",0.009766659,0.079800001,0.000779379],
+        ["30.11.16","Atlas Enhanced Fund Ltd","Equities","Less-Correlated Hedged Equities",0.038143009,-0.0111,-0.000423387],
+        ["30.11.16","Blue Mtn LS Equity Ltd","Equities","Less-Correlated Hedged Equities",0.030241936,0.0073,0.000220766],
+        ["30.11.16","Nipun Capital Ltd","Equities","Less-Correlated Hedged Equities",0.023044988,0.0032,7.3744E-05],
+        ["30.11.16","Passport Global LS Ltd","Equities","Less-Correlated Hedged Equities",0.027393323,-0.026999999,-0.00073962],
+        ["30.11.16","Ren Inst Div Alpha LP","Equities","Less-Correlated Hedged Equities",0.024269079,-0.049000001,-0.001189185],
+        ["30.11.16","Trian Partners Ltd","Equities","Activists",0.042806019,0.0528,0.002260158],
+        ["30.11.16","Atreaus Overseas Fund Ltd","Macro","Discretionary",0.026298726,0.0323,0.000849449],
+        ["30.11.16","Element Capital Ltd","Macro","Discretionary",0.032222709,0.038540112,0.001241867],
+        ["30.11.16","Graticule Asia Macro Ltd","Macro","Discretionary",0.044036134,0.0247,0.001087693],
+        ["30.11.16","MKP Opportunity Ltd","Macro","Discretionary",0.02977137,0.036900001,0.001098564],
+        ["30.11.16","GCM COM Ltd","Commodities","Discretionary",0.023007207,0.000146716,3.37553E-06],
+        ["30.11.16","N/A","Uninvested","Bank Loans",-0.014637858,0,-1.77949E-05],
+        ["30.11.16","N/A","Uninvested","Cash",0.00056954,0,0],
+        ["30.11.16","N/A","Uninvested","Expenses",-5.93704E-05,0,-8.15956E-05],
+        ["30.11.16","N/A","Uninvested","Management Fees",-0.000500882,0,-0.000513201],
+        ["30.11.16","N/A","Uninvested","Net Rec/(Pay)",0.028129501,0,0]
     ];
 }
