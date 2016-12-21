@@ -21,7 +21,7 @@ public class PeFundDto extends HistoryBaseEntityDto<Fund> {
     private String status;
     private String fundCurrency;
     private int vintage;
-    private int fundSize;
+    private float fundSize;
     private float targetSize;
     private float hardCap;
     private String targetHardCapComment;
@@ -104,11 +104,11 @@ public class PeFundDto extends HistoryBaseEntityDto<Fund> {
         this.vintage = vintage;
     }
 
-    public int getFundSize() {
+    public float getFundSize() {
         return fundSize;
     }
 
-    public void setFundSize(int fundSize) {
+    public void setFundSize(float fundSize) {
         this.fundSize = fundSize;
     }
 

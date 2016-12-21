@@ -23,7 +23,7 @@ public class Fund extends CreateUpdateBaseEntity {
     private String status;
     private Currency fundCurrency;
     private int vintage;
-    private int fundSize;
+    private float fundSize;
     private float targetSize;
     private float hardCap;
     private String targetHardCapComment;
@@ -112,11 +112,11 @@ public class Fund extends CreateUpdateBaseEntity {
     }
 
     @Column(name = "fund_size")
-    public int getFundSize() {
+    public float getFundSize() {
         return fundSize;
     }
 
-    public void setFundSize(int fundSize) {
+    public void setFundSize(float fundSize) {
         this.fundSize = fundSize;
     }
 

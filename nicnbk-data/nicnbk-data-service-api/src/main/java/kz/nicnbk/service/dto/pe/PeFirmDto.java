@@ -16,7 +16,7 @@ import java.util.Set;
 public class PeFirmDto extends HistoryBaseEntityDto<Firm> {
     private String firmName;
     private int foundedYear;
-    private int aum;
+    private float aum;
     private int invTeamSize;
     private int opsTeamSize;
     private String locations;
@@ -45,11 +45,11 @@ public class PeFirmDto extends HistoryBaseEntityDto<Firm> {
         this.foundedYear = foundedYear;
     }
 
-    public int getAum() {
+    public float getAum() {
         return aum;
     }
 
-    public void setAum(int aum) {
+    public void setAum(float aum) {
         this.aum = aum;
     }
 
