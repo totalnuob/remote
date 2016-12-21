@@ -73,8 +73,14 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
     // NAV ------------------------------
     getNAVData(tableDate){
         var data = new google.visualization.DataTable();
+        var formatter = new google.visualization.NumberFormat({
+            prefix:'$ ',
+            groupingSymbol: ' ',
+            fractionDigits: 0
+        });
         data.addColumn("string", "");
         data.addColumn("number", "");
+
         var NAVarray = this.getNAVByDate(tableDate);
         data.addRows([
             ["NIC Total", NAVarray[1]],
@@ -84,6 +90,7 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
             ["Private Equity Portfolio", NAVarray[4]],
             ["NICK Master Fund Cash", NAVarray[6]]
         ]);
+        formatter.format(data,1);
         return data;
     }
 
@@ -114,6 +121,10 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
 
     getPortfolioPerformanceData(tableDate){
         var data = new google.visualization.DataTable();
+        var formatter = new google.visualization.NumberFormat({
+            pattern:'#.##%',
+            negativeColor: 'red'
+        });
         data.addColumn("string", "");
         data.addColumn("number", "MTD");
         data.addColumn("number", "QTD");
@@ -127,6 +138,9 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
             ["Hedge Funds Portfolio", performanceArray[0][5], performanceArray[1][5], performanceArray[2][5]],
             ["Private Equity Portfolio", performanceArray[0][4], performanceArray[1][4], performanceArray[1][4]]
         ]);
+        formatter.format(data, 1);
+        formatter.format(data, 2);
+        formatter.format(data, 3);
         return data;
     }
 
@@ -157,6 +171,10 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
     getBenchmarkPerformanceData(tableDate){
 
         var data = new google.visualization.DataTable();
+        var formatter = new google.visualization.NumberFormat({
+            pattern:'#.##%',
+            negativeColor: 'red'
+        });
         data.addColumn("string", "");
         data.addColumn("number", "MTD");
         data.addColumn("number", "QTD");
@@ -169,6 +187,9 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
             ["US 6m T-bills1", performanceArray[0][8], performanceArray[1][8], performanceArray[2][8]],
             ["HFRI FoF indez", performanceArray[0][10], performanceArray[1][10], performanceArray[2][10]]
         ]);
+        formatter.format(data,1);
+        formatter.format(data,2);
+        formatter.format(data,3);
         return data;
     }
 
@@ -188,6 +209,9 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
     // ALTERNATIVE PERFORMANCE -----------------
     drawAlternativePerformanceChart(type){
         var data = new google.visualization.DataTable();
+        var formatter = new google.visualization.NumberFormat({
+            pattern:'#.##%'
+        });
         data.addColumn("string", "Date");
         data.addColumn("number", this.getLabelsByType(type, 0));
         data.addColumn("number", this.getLabelsByType(type, 1));
@@ -195,13 +219,19 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
         var compareValue = this.getPerformanceWithBenchmarks(type);
         data.addRows(compareValue);
 
+        formatter.format(data, 1);
+        formatter.format(data, 2);
+
         var options = {
             chart: {
                 title: "Alternative portfolio performance",
                 subtitle: "monthly",
                 legend: { position: 'top' },
                 width: 600,
-                height: 500
+                height: 500,
+            },
+            vAxis: {
+                format: '#.##%',
             },
             showRowNumber: false,
             width: '100%',
@@ -333,6 +363,9 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
     // PUBLIC PERFORMANCE ----------------------
     drawPublicPerformanceChart(){
         var data = new google.visualization.DataTable();
+        var formatter = new google.visualization.NumberFormat({
+            pattern:'#.##%'
+        });
         data.addColumn("string", "Date");
         data.addColumn("number", "S&P500 Index");
         data.addColumn("number", "MSCI World Index");
@@ -341,13 +374,19 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
 
         var benchmarks = this.getPublicPerformance();
         data.addRows(benchmarks);
-
+        formatter.format(data,1);
+        formatter.format(data,2);
+        formatter.format(data,3);
+        formatter.format(data,4);
         var options = {
             chart: {
                 title: "Public markets performance",
                 legend: { position: 'top' },
                 width: 600,
                 height: 500
+            },
+            vAxis: {
+                format: '#.##%',
             },
             showRowNumber: false,
             width: '100%',

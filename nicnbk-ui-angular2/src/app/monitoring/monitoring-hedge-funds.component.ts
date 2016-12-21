@@ -57,7 +57,7 @@ export class MonitoringHedgeFundsComponent extends GoogleChartComponent {
             prefix:'$ ',
             groupingSymbol: ' ',
             fractionDigits: 0
-        })
+        });
         data.addColumn("string", "");
         data.addColumn("number", "");
         data.addRows([
