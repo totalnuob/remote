@@ -1,8 +1,10 @@
 package kz.nicnbk.service.dto.hf;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import kz.nicnbk.common.service.model.HistoryBaseEntityDto;
 import kz.nicnbk.repo.model.hf.HedgeFund;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -15,6 +17,7 @@ public class HedgeFundDto2 extends HistoryBaseEntityDto<HedgeFund> {
     private HFFirmDto manager;
     private String summary;
     private String inception;
+    private Date inceptionDate;
     private Double aum;
     private String aumDigit;
     private String aumCurrency;
@@ -55,12 +58,14 @@ public class HedgeFundDto2 extends HistoryBaseEntityDto<HedgeFund> {
     private String albourneManagementTeam;
     private String albourneRiskProcess;
 
+    private Boolean GCMApproved;
+    private Boolean NICApproved;
+
     private Set<ManagerDto> managers;
-    private Set<RatingDto> albourneRatings;
-    private Set<ReturnDto> returns;
 
     private List<SubstrategyBreakdownDto> strategyBreakdownList;
     private List<InvestorBaseDto> investorBaseList;
+    private List<ReturnDto> returns;
 
     public String getName() {
         return name;
@@ -334,19 +339,11 @@ public class HedgeFundDto2 extends HistoryBaseEntityDto<HedgeFund> {
         this.managers = managers;
     }
 
-    public Set<RatingDto> getAlbourneRatings() {
-        return albourneRatings;
-    }
-
-    public void setAlbourneRatings(Set<RatingDto> albourneRatings) {
-        this.albourneRatings = albourneRatings;
-    }
-
-    public Set<ReturnDto> getReturns() {
+    public List<ReturnDto> getReturns() {
         return returns;
     }
 
-    public void setReturns(Set<ReturnDto> returns) {
+    public void setReturns(List<ReturnDto> returns) {
         this.returns = returns;
     }
 
@@ -364,5 +361,31 @@ public class HedgeFundDto2 extends HistoryBaseEntityDto<HedgeFund> {
 
     public void setInvestorBaseList(List<InvestorBaseDto> investorBaseList) {
         this.investorBaseList = investorBaseList;
+    }
+
+    public Date getInceptionDate() {
+        return inceptionDate;
+    }
+
+    public void setInceptionDate(Date inceptionDate) {
+        this.inceptionDate = inceptionDate;
+    }
+
+    @JsonProperty("GCMApproved")
+    public Boolean getGCMApproved() {
+        return GCMApproved;
+    }
+
+    public void setGCMApproved(Boolean GCMApproved) {
+        this.GCMApproved = GCMApproved;
+    }
+
+    @JsonProperty("NICApproved")
+    public Boolean getNICApproved() {
+        return NICApproved;
+    }
+
+    public void setNICApproved(Boolean NICApproved) {
+        this.NICApproved = NICApproved;
     }
 }

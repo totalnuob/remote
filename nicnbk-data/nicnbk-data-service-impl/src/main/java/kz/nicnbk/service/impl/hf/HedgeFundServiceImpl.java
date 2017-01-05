@@ -3,6 +3,7 @@ package kz.nicnbk.service.impl.hf;
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.repo.api.hf.HedgeFundRepository;
 import kz.nicnbk.repo.model.hf.HedgeFund;
+import kz.nicnbk.service.api.hf.HedgeFundReturnService;
 import kz.nicnbk.service.api.hf.HedgeFundService;
 import kz.nicnbk.service.api.hf.HedgeFundSubstrategyService;
 import kz.nicnbk.service.api.hf.InvestorBaseService;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -36,9 +38,15 @@ public class HedgeFundServiceImpl implements HedgeFundService {
     @Autowired
     private InvestorBaseService investorBaseService;
 
+    @Autowired
+    private HedgeFundReturnService hedgeFundReturnService;
+
     @Override
     public Long save(HedgeFundDto2 hedgeFundDto) {
         HedgeFund entity = converter.assemble(hedgeFundDto);
+        if(hedgeFundDto.getId() != null){
+            entity.setUpdateDate(new Date());
+        }
         Long id = repository.save(entity).getId();
 
         // dekete substrategies
@@ -60,12 +68,24 @@ public class HedgeFundServiceImpl implements HedgeFundService {
         }
 
         // delete investor base
-        deleted = this.hedgeFundSubstrategyService.deleteByFundId(id);
+        deleted = this.investorBaseService.deleteByFundId(id);
 
         // save investor base
         if(hedgeFundDto.getInvestorBaseList() != null){
             for(InvestorBaseDto dto: hedgeFundDto.getInvestorBaseList()){
+                dto.setHedgeFund(hedgeFundDto);
                 this.investorBaseService.save(dto);
+            }
+        }
+
+        // delete returns
+        deleted = this.hedgeFundReturnService.deleteByFundId(id);
+
+        // save investor base
+        if(hedgeFundDto.getReturns() != null){
+            for(ReturnDto dto: hedgeFundDto.getReturns()){
+                dto.setFund(hedgeFundDto);
+                this.hedgeFundReturnService.save(dto);
             }
         }
 
@@ -75,12 +95,12 @@ public class HedgeFundServiceImpl implements HedgeFundService {
     }
 
     @Override
-    public HedgeFundDto2 get(Long id) {
-        HedgeFund entity = this.repository.findOne(id);
+    public HedgeFundDto2 get(Long fundId) {
+        HedgeFund entity = this.repository.findOne(fundId);
         HedgeFundDto2 fundDto = this.converter.disassemble(entity);
 
         // substrategy breakdown
-        List<HedgeFundSubstrategyDto> substrategyDtoList = this.hedgeFundSubstrategyService.findByFundId(id);
+        List<HedgeFundSubstrategyDto> substrategyDtoList = this.hedgeFundSubstrategyService.findByFundId(fundId);
         if(substrategyDtoList != null) {
             List<SubstrategyBreakdownDto> substrategyBreakdownDtoList = new ArrayList<>();
             for (HedgeFundSubstrategyDto entityDto : substrategyDtoList) {
@@ -91,14 +111,23 @@ public class HedgeFundServiceImpl implements HedgeFundService {
             }
             fundDto.setStrategyBreakdownList(substrategyBreakdownDtoList);
         }
+
+        // investor base
+        List<InvestorBaseDto> investorBaseList = this.investorBaseService.findByFundId(fundId);
+        fundDto.setInvestorBaseList(investorBaseList);
+
+        // returns
+        List<ReturnDto> returnsList = this.hedgeFundReturnService.findByFundId(fundId);
+        fundDto.setReturns(returnsList);
+
         return fundDto;
     }
 
     @Override
-    public Set<HedgeFundDto2> loadManagerFunds(Long managerId) {
+    public List<HedgeFundDto2> loadManagerFunds(Long managerId) {
         Page<HedgeFund> page = repository.findByManager(managerId,
                 new PageRequest(0, 10, new Sort(Sort.Direction.DESC, "id")));
-        return this.converter.disassembleSet(page.getContent());
+        return this.converter.disassembleList(page.getContent());
     }
 
     @Override

@@ -12,7 +12,7 @@
   INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(25, 'CREDIT', 'Credit', '', '', 2);
   INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(26, 'COMMOD', 'Commodities', '', '', 2);
   INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(27, 'MULTI', 'Multistrategy', '', '' , 2);
-  INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(28, 'LONGBIAS', 'Long Biaseed', '', '' , 2);
+  INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(28, 'LONGBIAS', 'Long Biased', '', '' , 2);
 
   INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(41, 'CORE', 'Core', '', '', 3);
   INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type) VALUES(42, 'CORE+', 'Core+', '', '', 3 );

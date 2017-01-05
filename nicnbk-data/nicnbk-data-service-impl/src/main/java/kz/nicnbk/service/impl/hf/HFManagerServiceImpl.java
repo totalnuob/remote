@@ -38,7 +38,7 @@ public class HFManagerServiceImpl implements HFManagerService {
         HFFirmDto firmDto = this.converter.disassemble(entity);
 
         // load funds
-        //firmDto.setFunds(this.fundService.loadManagerFunds(id));
+        firmDto.setFunds(this.fundService.loadManagerFunds(id));
 
         return firmDto;
     }

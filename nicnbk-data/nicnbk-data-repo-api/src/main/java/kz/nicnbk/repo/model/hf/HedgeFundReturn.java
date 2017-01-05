@@ -1,13 +1,19 @@
-package kz.nicnbk.service.dto.hf;
+package kz.nicnbk.repo.model.hf;
 
-import kz.nicnbk.common.service.model.BaseDto;
+import kz.nicnbk.repo.model.base.BaseEntity;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.persistence.*;
 import java.util.Date;
 
 /**
- * Created by timur on 27.10.2016.
+ * Created by magzumov on 15.12.2016.
  */
-public class ReturnDto implements BaseDto{
+@Entity(name="hf_returns")
+public class HedgeFundReturn extends BaseEntity {
+
+    //private Date period;
+    //private Double value;
 
     private int year;
     private Double january;
@@ -22,9 +28,21 @@ public class ReturnDto implements BaseDto{
     private Double october;
     private Double november;
     private Double december;
-    private HedgeFundDto2 fund;
+    private HedgeFund fund;
+
+//    @Column(name="period")
+//    @Temporal(TemporalType.DATE)
+//    @DateTimeFormat(pattern="dd-MM-yyyy")
+//    public Date getPeriod() {
+//        return period;
+//    }
+//
+//    public void setPeriod(Date period) {
+//        this.period = period;
+//    }
 
 
+    @Column(name="year", nullable = false)
     public int getYear() {
         return year;
     }
@@ -129,16 +147,22 @@ public class ReturnDto implements BaseDto{
         this.december = december;
     }
 
-    public HedgeFundDto2 getFund() {
+//    @Column(name="value")
+//    public Double getValue() {
+//        return value;
+//    }
+//
+//    public void setValue(Double value) {
+//        this.value = value;
+//    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="fund_id", nullable = false)
+    public HedgeFund getFund() {
         return fund;
     }
 
-    public void setFund(HedgeFundDto2 fund) {
+    public void setFund(HedgeFund fund) {
         this.fund = fund;
-    }
-
-    public void setFundId(Long id){
-        this.fund = new HedgeFundDto2();
-        this.fund.setId(id);
     }
 }

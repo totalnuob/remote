@@ -8,6 +8,7 @@ export class HedgeFund extends LegalEntity{
 
     summary: string;
     inception: string;
+    inceptionDate: string;
     aum: number;
     aumDigit: string;
     aumCurrency: string;

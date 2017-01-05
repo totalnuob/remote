@@ -1,6 +1,4 @@
 import { Component } from '@angular/core';
-import {HFManager} from "./model/hf.manager";
-import {LegalEntity} from "../common/model/legal-entity";
 import {HedgeFundService} from "./hf.fund.service";
 import {HedgeFund} from "./model/hf.fund";
 import {CommonFormViewComponent} from "../common/common.component";
@@ -32,6 +30,7 @@ export class HFFundSearchComponent extends CommonFormViewComponent{
         this.fundService.search(this.searchParams)
             .subscribe(
                 searchResult  => {
+                    console.log(searchResult);
                     this.foundEntities = searchResult;
                 },
                 error =>  this.errorMessage = "Failed to search memos."

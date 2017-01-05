@@ -6,6 +6,7 @@ import kz.nicnbk.repo.model.common.Strategy;
 import kz.nicnbk.repo.model.hf.*;
 import kz.nicnbk.service.converter.dozer.BaseDozerEntityConverter;
 import kz.nicnbk.service.datamanager.LookupService;
+import kz.nicnbk.service.dto.hf.HFFirmDto;
 import kz.nicnbk.service.dto.hf.HedgeFundDto2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -64,7 +65,7 @@ public class HedgeFundEntityConverter extends BaseDozerEntityConverter<HedgeFund
 
         // redemption notice period
         if(StringUtils.isNotEmpty(dto.getRedemptionNotificationPeriod())) {
-            RedemptionNotificationPeriod frequency = lookupService.findByTypeAndCode(RedemptionNotificationPeriod.class, dto.getSubscriptionFrequency());
+            RedemptionNotificationPeriod frequency = lookupService.findByTypeAndCode(RedemptionNotificationPeriod.class, dto.getRedemptionNotificationPeriod());
             entity.setRedemptionNotificationPeriod(frequency);
         }
 
@@ -119,6 +120,23 @@ public class HedgeFundEntityConverter extends BaseDozerEntityConverter<HedgeFund
             dto.setSidePocket(entity.getSidePocket().getCode());
         }
 
+        // manager
+        if(entity.getManager().getAUMCurrency() != null){
+            if(dto.getManager() != null){
+                dto.getManager().setAumCurrency(entity.getManager().getAUMCurrency().getCode());
+            }
+        }
+//        HFFirmDto firmDto = new HFFirmDto();
+//        if(entity.getManager().getAUM() != null){
+//            firmDto.setAum(entity.getManager().getAUM());
+//        }
+//        if(entity.getManager().getAUMDigit() != null){
+//            firmDto.setAumDigit(entity.getManager().getAUMDigit());
+//        }
+//        if(entity.getManager().getAUMCurrency() != null){
+//            firmDto.setAumCurrency(entity.getManager().getAUMCurrency().getCode());
+//        }
+//        dto.setManager(firmDto);
 
         return dto;
     }

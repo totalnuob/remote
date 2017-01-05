@@ -22,9 +22,9 @@
             <div class="col-md-12">
                 <div class="col-md-9">
                     <div class="form-group">
-                        <label for="fundName">Fund or Manager</label>
+                        <label for="fundName">Fund name</label>
                         <input type="text" class="form-control" id="fundName" [(ngModel)]="searchParams.name"
-                        placeholder="Enter fund or manager..."
+                        placeholder="Enter fund name..."
                         />
                     </div>
                 </div>
@@ -60,7 +60,7 @@
     </div>
 
     <div>
-        <label>Total found: <span>{{foundEntities?.length4}}</span></label>
+        <label>Total found: <span>{{foundEntities?.length}}</span></label>
     </div>
     <!--<div class="row pull-right">-->
         <!--<ul class="pagination" *ngIf="memoSearchResult?.showPageFrom > 0">-->
@@ -90,7 +90,6 @@
             <td width="5%"></td>
             <td width="30%"><a [routerLink]="['/hf/fundProfile/', fund.id]">{{fund.name}}</a></td>
             <td width="30%"><a [routerLink]="['/hf/managerProfile/', fund.manager.id]">{{fund.manager.name}}</a></td>
-            <!--<td width="10%" th:text="${memoItem.meetingDate}"></td>-->
             <td width="10%"></td>
             <td width="10%"></td>
             <td width="10%"></td>

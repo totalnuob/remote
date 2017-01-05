@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 
 import {HFManager} from "./model/hf.manager";
@@ -7,6 +7,12 @@ import {CommonFormViewComponent} from "../common/common.component";
 import {HFManagerService} from "./hf.manager.service";
 import {SaveResponse} from "../common/save-response.";
 import {HedgeFund} from "./model/hf.fund";
+import {MemoSearchParams} from "../m2s2/model/memo-search-params";
+import {MemoService} from "../m2s2/memo.service";
+import {Memo} from "../m2s2/model/memo";
+import {MemoSearchResults} from "../m2s2/model/memo-search-results";
+
+declare var $:any
 
 @Component({
     selector: 'hf-manager-profile',
@@ -16,7 +22,12 @@ import {HedgeFund} from "./model/hf.fund";
     ],
     providers: []
 })
-export class HFManagerProfileComponent extends CommonFormViewComponent{
+export class HFManagerProfileComponent extends CommonFormViewComponent implements OnInit{
+
+    searchParams = new MemoSearchParams();
+    memoList: Memo[];
+    memoSearchResult: MemoSearchResults;
+    meetingTypes = [];
 
     private manager = new HFManager();
 
@@ -34,6 +45,7 @@ export class HFManagerProfileComponent extends CommonFormViewComponent{
         private lookupService: LookupService,
         private managerService: HFManagerService,
         private route: ActivatedRoute,
+        private memoService: MemoService,
         private router: Router
     ) {
 
@@ -41,6 +53,11 @@ export class HFManagerProfileComponent extends CommonFormViewComponent{
 
         // loadLookups
         this.loadLookups();
+
+        // TODO: wait/sync on lookup loading
+        // TODO: sync on subscribe results
+        //this.waitSleep(700);
+
 
         // parse params and load data
         this.sub = this.route
@@ -54,29 +71,34 @@ export class HFManagerProfileComponent extends CommonFormViewComponent{
                                 console.log(data);
                                 // TODO: check response memo
                                 this.manager = data;
-
-                                //this.manager.funds = [];
-                                //var fund = new HedgeFund();
-                                //fund.name = "ABC";
-                                //this.manager.funds.push(fund);
                             },
                             error => this.errorMessage = "Error loading manager profile"
                         );
                 }else{
-
                 }
             });
 
     }
 
     save(){
-        console.log(this.manager);
+        this.errorMessage = null;
+        this.successMessage = null;
+
+        this.manager.inceptionDate = $('#inceptionDateValue').val();
+
+        //console.log(this.manager);
+
+        if(!this.validate()){
+            return;
+        }
 
         this.managerService.save(this.manager)
             .subscribe(
                 (response: SaveResponse)  => {
                     this.manager.id = response.entityId;
-                    this.manager.creationDate = response.creationDate;
+                    if(this.manager.id == null) {
+                        this.manager.creationDate = response.creationDate;
+                    }
 
                     this.postAction("Successfully saved.", null);
                 },
@@ -86,9 +108,59 @@ export class HFManagerProfileComponent extends CommonFormViewComponent{
             );
     }
 
+    validate(){
+        if(this.manager.name == null || this.manager.name.trim() == ''){
+            this.errorMessage = "Manager name required.";
+            return false;
+        }
+
+        return true;
+    }
+
     createFund(){
         // TODO: navigate to component
         this.router.navigate(['/hf/fundProfile/0/' + this.manager.id], { relativeTo: this.route });
+    }
+
+    ngOnInit():any {
+        // TODO: exclude jQuery
+        // datetimepicker
+        $('#inceptionDate').datetimepicker({
+            //defaultDate: new Date(),
+            format: 'DD-MM-YYYY'
+        });
+
+        $('#fromDate').datetimepicker({
+            //defaultDate: new Date(),
+            format: 'DD-MM-YYYY'
+        });
+
+        $('#toDate').datetimepicker({
+            //defaultDate: new Date(),
+            format: 'DD-MM-YYYY'
+        });
+    }
+
+    search(page){
+        //console.log(this.searchParams);
+        //// TODO: as parameter?
+        //this.searchParams.pageSize = 20;
+        //
+        //if(page > 0) {
+        //    this.searchParams.page = page;
+        //}
+        //
+        //this.searchParams.fromDate = $('#fromDate').val();
+        //this.searchParams.toDate = $('#toDate').val();
+        //
+        //this.memoService.search(this.searchParams)
+        //    .subscribe(
+        //        searchResult  => {
+        //            this.memoList = searchResult.memos;
+        //            this.memoSearchResult = searchResult;
+        //        },
+        //        error =>  this.errorMessage = "Failed to search memos."
+        //    );
     }
 
     loadLookups(){
@@ -110,10 +182,14 @@ export class HFManagerProfileComponent extends CommonFormViewComponent{
         this.lookupService.getCurrencyList()
             .subscribe(
                 data => {
-                    //data.forEach(element => {
-                    //    this.strategyLookup.push({ id: element.code, value: element.nameEn});
-                    //});
                     this.currencyLookup = data;
+
+
+                    // TODO: wait/sync on lookup loading
+                    // TODO: sync on subscribe results
+                    if(this.manager.id == null){
+                        this.manager.aumCurrency = 'USD';
+                    }
                 },
                 error =>  this.errorMessage = <any>error
             );
@@ -121,12 +197,16 @@ export class HFManagerProfileComponent extends CommonFormViewComponent{
         // status
         this.lookupService.getManagerStatuses().then(data => this.statusLookup = data);
 
-        // legal structure
-        this.lookupService.getLegalStructures().then(data => this.legalStructureLookup = data);
+        // memo types
+        this.lookupService.getMeetingTypes().then(meetingTypes => this.meetingTypes = meetingTypes);
 
-        // domicile country
-        this.lookupService.getDomicileCountries().then(data => this.domicileCountryLookup = data);
+    }
 
-
+    getStrategyName(code){
+        for(var i = 0; i < this.strategyLookup.length; i++){
+            if(this.strategyLookup[i].code === code){
+                return this.strategyLookup[i].nameEn;
+            }
+        }
     }
 }

@@ -53,6 +53,11 @@ INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES
 INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES(308, 'M_MULTI', 'Multi-Strategy - Directional', '', '', 24);
 
 
+INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES(601, 'LS_CREDIT', 'Long/Short Credit', '', '', 25);
+INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES(602, 'LB_CREDIT', 'Long-biased Credit', '', '', 25);
+INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES(603, 'STRUC_CRED', 'Structured Credit', '', '', 25);
+
+
 INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES(401, 'MULTI_DIV', 'Multi-Strategy Diversified', '', '', 27);
 INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES(402, 'MULTI_OPP', 'Multi-Strategy Opportunistic', '', '', 27);
 

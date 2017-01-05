@@ -3,8 +3,10 @@ package kz.nicnbk.repo.model.hf;
 import kz.nicnbk.repo.model.base.CreateUpdateBaseEntity;
 import kz.nicnbk.repo.model.common.Currency;
 import kz.nicnbk.repo.model.common.Strategy;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.Set;
 
 /**
@@ -18,7 +20,10 @@ public class HedgeFund extends CreateUpdateBaseEntity {
     private HFManager manager;
     private String summary;
     private String inception;
-    private Double AUM;
+
+    private Date inceptionDate;
+
+    private String AUM;
     private String AUMDigit;
     private Currency aumCurrency;
     private Strategy strategy;
@@ -59,6 +64,9 @@ public class HedgeFund extends CreateUpdateBaseEntity {
     private String albourneManagementTeam;
     private String albourneRiskProcess;
 
+    private Boolean GCMApproved;
+    private Boolean NICApproved;
+
     @Column (name = "name")
     public String getName() {
         return name;
@@ -96,12 +104,24 @@ public class HedgeFund extends CreateUpdateBaseEntity {
         this.inception = inception;
     }
 
+
+    @Column(name="inception_date")
+    @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern="dd-MM-yyyy")
+    public Date getInceptionDate() {
+        return inceptionDate;
+    }
+
+    public void setInceptionDate(Date inceptionDate) {
+        this.inceptionDate = inceptionDate;
+    }
+
     @Column (name = "aum_amount")
-    public Double getAUM() {
+    public String getAUM() {
         return AUM;
     }
 
-    public void setAUM(Double AUM) {
+    public void setAUM(String AUM) {
         this.AUM = AUM;
     }
 
@@ -378,5 +398,23 @@ public class HedgeFund extends CreateUpdateBaseEntity {
 
     public void setManagers(Set<HFManagement> managers) {
         this.managers = managers;
+    }
+
+    @Column (name = "gcm_approved")
+    public Boolean getGCMApproved() {
+        return GCMApproved;
+    }
+
+    public void setGCMApproved(Boolean GCMApproved) {
+        this.GCMApproved = GCMApproved;
+    }
+
+    @Column (name = "nic_approved")
+    public Boolean getNICApproved() {
+        return NICApproved;
+    }
+
+    public void setNICApproved(Boolean NICApproved) {
+        this.NICApproved = NICApproved;
     }
 }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 
 import {HedgeFund} from "./model/hf.fund";
@@ -12,6 +12,7 @@ import {AlbourneService} from "./hf.albourne.service";
 import {GoogleChartComponent} from "../google-chart/google-chart.component";
 
 declare var google:any;
+declare var $:any
 
 @Component({
     selector: 'hf-fund-profile',
@@ -21,7 +22,7 @@ declare var google:any;
     ],
     providers: []
 })
-export class HFFundProfileComponent extends GoogleChartComponent {
+export class HFFundProfileComponent extends GoogleChartComponent implements OnInit{
 
     private fund = new HedgeFund();
 
@@ -42,6 +43,10 @@ export class HFFundProfileComponent extends GoogleChartComponent {
 
     albourneRatingLookup: any;
 
+    chart;
+
+    uploadedReturns;
+
     constructor(
         private lookupService: LookupService,
         private route: ActivatedRoute,
@@ -55,6 +60,10 @@ export class HFFundProfileComponent extends GoogleChartComponent {
         // loadLookups
         this.loadLookups();
 
+        // TODO: wait/sync on lookup loading
+        // TODO: sync on subscribe results
+        this.waitSleep(500);
+
         // parse params and load data
         this.sub = this.route
             .params
@@ -64,23 +73,6 @@ export class HFFundProfileComponent extends GoogleChartComponent {
 
 
                 this.fund.manager = new HFManager();
-
-                //this.fund.calculatedValues = [];
-                //var item = {'name': 'Return', 'item.year1': '1.01',
-                //    'item.year2': '1.01',
-                //    'item.year3': '1.01',
-                //    'item.year4': '1.01',
-                //    'item.year5': '1.01',
-                //    'item.year6': '1.01',
-                //    'item.year7': '1.01',
-                //    'item.year8': '1.01',
-                //    'item.year9': '1.01',
-                //    'item.year10': '1.01'};
-                //this.fund.calculatedValues.push(item);
-                //this.fund.calculatedValues.push(item);
-                //this.fund.calculatedValues.push(item);
-                //this.fund.calculatedValues.push(item);
-                //this.fund.calculatedValues.push(item);
 
                 if(this.fundIdParam > 0) {
                     this.fundService.get(this.fundIdParam)
@@ -93,12 +85,17 @@ export class HFFundProfileComponent extends GoogleChartComponent {
                                     }
                                     if(this.fund.strategyBreakdownList == null){
                                         this.fund.strategyBreakdownList = [];
+                                    }else{
+                                        //this.drawGraph();
                                     }
                                     if(this.fund.investorBaseList == null){
                                         this.fund.investorBaseList = [];
                                     }
                                     if(this.fund.managers == null){
                                         this.fund.managers = [];
+                                    }
+                                    if(this.fund.returns == null){
+                                        this.fund.returns = [];
                                     }
                                 }else{
                                     // TODO: handle error
@@ -129,13 +126,31 @@ export class HFFundProfileComponent extends GoogleChartComponent {
 
     }
 
-
     drawGraph(){
         this.drawSubstrategiesChart();
     }
 
+
+    ngOnInit():any {
+
+        super.ngOnInit();
+
+        // TODO: exclude jQuery
+        // datetimepicker
+        $('#inceptionDate').datetimepicker({
+            //defaultDate: new Date(),
+            format: 'DD-MM-YYYY'
+        });
+    }
+
     save(){
-        console.log(this.fund);
+
+        this.fund.inceptionDate = $('#inceptionDateValue').val();
+        //console.log(this.fund);
+
+        if(!this.validate()){
+            return;
+        }
 
         this.fundService.save(this.fund)
             .subscribe(
@@ -149,6 +164,21 @@ export class HFFundProfileComponent extends GoogleChartComponent {
                     this.postAction(null, "Error saving manager profile.");
                 }
             );
+    }
+
+    validate(){
+
+        if(this.fund.manager == null || this.fund.manager.id == null){
+            this.errorMessage = "Fund manager required.";
+            return false;
+        }
+
+        if(this.fund.name == null || this.fund.name.trim() === ''){
+            this.errorMessage = "Fund name required.";
+            return false;
+        }
+
+        return true;
     }
 
     loadLookups(){
@@ -166,22 +196,28 @@ export class HFFundProfileComponent extends GoogleChartComponent {
             );
 
         // geography
-        this.lookupService.getGeographies()
-            .subscribe(
-                data => {
-                    //data.forEach(element => {
-                    //    this.strategyLookup.push({ id: element.code, value: element.nameEn});
-                    //});
-                    this.geographyLookup = data;
-                },
-                error =>  this.errorMessage = <any>error
-            );
+        //this.lookupService.getGeographies()
+        //    .subscribe(
+        //        data => {
+        //            //data.forEach(element => {
+        //            //    this.strategyLookup.push({ id: element.code, value: element.nameEn});
+        //            //});
+        //            this.geographyLookup = data;
+        //        },
+        //        error =>  this.errorMessage = <any>error
+        //    );
 
         // currency
         this.lookupService.getCurrencyList()
             .subscribe(
                 data => {
                     this.currencyLookup = data;
+
+                    // TODO: wait/sync on lookup loading
+                    // TODO: sync on subscribe results
+                    if(this.fund.id == null){
+                        this.fund.aumCurrency = 'USD';
+                    }
                 },
                 error =>  this.errorMessage = <any>error
             );
@@ -244,7 +280,7 @@ export class HFFundProfileComponent extends GoogleChartComponent {
             );
 
         this.albourneRatingLookup = this.albourneService.getIDDAnalysisAssessmentLookup();
-        console.log(this.albourneRatingLookup);
+        //console.log(this.albourneRatingLookup);
 
     }
 
@@ -278,7 +314,7 @@ export class HFFundProfileComponent extends GoogleChartComponent {
     }
 
     addReturn(){
-        this.fund.returns.push({year: "", jan: "", feb: "", mar: "", apr: "", may: "", jun: "", jul: "", aug: "", sep: "", oct: "", nov: "", dec: ""});
+        this.fund.returns.push({year: "", january: "", february: "", march: "", april: "", may: "", june: "", july: "", august: "", september: "", october: "", november: "", december: ""});
     }
 
     removeReturn(item){
@@ -307,8 +343,9 @@ export class HFFundProfileComponent extends GoogleChartComponent {
                     //    this.strategyLookup.push({ id: element.code, value: element.nameEn});
                     //});
                     this.substrategyLookup = data;
+                    this.drawGraph();
                 },
-                error =>  this.errorMessage = <any>error
+                error =>  {this.errorMessage = <any>error}
             );
     }
 
@@ -382,7 +419,6 @@ export class HFFundProfileComponent extends GoogleChartComponent {
         }
     }
 
-
     drawSubstrategiesChart(){
         var data = google.visualization.arrayToDataTable(this.getStrategyBreakdownRowData());
 
@@ -392,41 +428,115 @@ export class HFFundProfileComponent extends GoogleChartComponent {
             chartArea: {
                 height: '80%',
                 top: '10%'
-            }
+            },
+            sliceVisibilityThreshold: 0
         };
 
-        var chart = new google.visualization.PieChart(document.getElementById('strategyBreakdownChart'));
-        chart.draw(data, options);
+        this.chart = new google.visualization.PieChart(document.getElementById('strategyBreakdownChart'));
+        this.chart.draw(data, options);
     }
 
     getStrategyBreakdownRowData(){
+
+        //console.log(this.substrategyLookup);
+
         var list = [['Type', '%']];
         for(var i = 0; i < this.fund.strategyBreakdownList.length; i++){
-            list.push([this.fund.strategyBreakdownList[i].code, Number(this.fund.strategyBreakdownList[i].value)]);
+            list.push([this.getSubstrategyName(this.fund.strategyBreakdownList[i].code), Number(this.fund.strategyBreakdownList[i].value)]);
         }
         return list;
     }
 
+    getSubstrategyName(code){
+        for(var i = 0; i < this.substrategyLookup.length; i++){
+            if(this.substrategyLookup[i].code === code){
+                return this.substrategyLookup[i].nameEn;
+            }
+        }
+    }
+
     calculateReturnsYTD(returnRecord){
-        var ytd = (
-        this.getReturnValue(Number(returnRecord.jan)) + this.getReturnValue(Number(returnRecord.feb)) +
-        this.getReturnValue(Number(returnRecord.mar)) + this.getReturnValue(Number(returnRecord.apr)) +
-        this.getReturnValue(Number(returnRecord.may)) + this.getReturnValue(Number(returnRecord.jun)) +
-        this.getReturnValue(Number(returnRecord.jul)) + this.getReturnValue(Number(returnRecord.aug)) +
-        this.getReturnValue(Number(returnRecord.sep)) + this.getReturnValue(Number(returnRecord.oct)) +
-        this.getReturnValue(Number(returnRecord.nov)) + this.getReturnValue(Number(returnRecord.dec))
-        );
+        var ytd = this.getReturnValue(returnRecord.january) + this.getReturnValue(returnRecord.february) +
+        this.getReturnValue(returnRecord.march) + this.getReturnValue(returnRecord.april) +
+        this.getReturnValue(returnRecord.may) + this.getReturnValue(returnRecord.june) +
+        this.getReturnValue(returnRecord.july) + this.getReturnValue(returnRecord.august) +
+        this.getReturnValue(returnRecord.september) + this.getReturnValue(returnRecord.october) +
+        this.getReturnValue(returnRecord.november) + this.getReturnValue(returnRecord.december);
+
         if(ytd == 0){
             return "";
         }
-        return ytd;
+        return ytd.toFixed(4);
     }
 
     private getReturnValue(value){
         if(value == null || value === 'undefined' || value === ''){
             return 0;
         }else{
-            return Number(value);
+            return parseFloat(value);
+        }
+    }
+
+    parseReturns(){
+        var returns = [];
+        var rows = this.uploadedReturns.split("\n");
+
+        for(var i = 0; i < rows.length; i++){
+            var row = rows[i].split(";");
+            var month = row[0].split(".")[1];
+            var year = row[0].split(".")[2];
+            var returnRow = this.findReturnByYear(returns, year);
+            if(returnRow == null){
+                var newRow = {year: year, january: "", february: "", march: "", april: "", may: "", june: "", july: "",
+                        august: "", september: "", october: "", november: "", december: ""};
+                //set return
+                this.setReturnValue(newRow, month, row[1]);
+                returns.push(newRow);
+            }else{
+                //set return
+                this.setReturnValue(returnRow, month, row[1]);
+            }
+        }
+
+        Array.prototype.push.apply(this.fund.returns,returns);
+
+    }
+
+    private findReturnByYear(returns, year){
+        for(var i = 0; i < returns.length; i++){
+            if(returns[i].year === year){
+                return returns[i];
+            }
+        }
+        return null;
+    }
+
+    private setReturnValue(returnObject, month, value) {
+        value = parseFloat(value.replace(",","."));
+        if (month == '01') {
+            returnObject.january = value;
+        } else if (month == '02') {
+            returnObject.february = value;
+        } else if (month == '03') {
+            returnObject.march = value;
+        } else if (month == '04') {
+            returnObject.april = value;
+        } else if (month == '05') {
+            returnObject.may = value;
+        } else if (month == '06') {
+            returnObject.june = value;
+        } else if (month == '07') {
+            returnObject.july = value;
+        } else if (month == '08') {
+            returnObject.august = value;
+        } else if (month == '09') {
+            returnObject.september = value;
+        } else if (month == '10') {
+            returnObject.october = value;
+        } else if (month == '11') {
+            returnObject.november = value;
+        } else if (month == '12') {
+            returnObject.december = value;
         }
     }
 }

@@ -1,6 +1,6 @@
 package kz.nicnbk.repo.api.hf;
 
-import kz.nicnbk.repo.model.hf.HedgeFundSubstrategy;
+import kz.nicnbk.repo.model.hf.HedgeFundReturn;
 import kz.nicnbk.repo.model.hf.InvestorBase;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -9,14 +9,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-public interface InvestorBaseRepository extends PagingAndSortingRepository<InvestorBase, Long> {
+public interface HedgeFundReturnRepository extends PagingAndSortingRepository<HedgeFundReturn, Long> {
 
-    @Query("SELECT e from hf_investor_base e where e.hedgeFund.id=?1")
-    List<InvestorBase> getEntitiesByFundId(Long fundId);
+    @Query("SELECT e from hf_returns e where e.fund.id=?1")
+    List<HedgeFundReturn> getEntitiesByFundId(Long fundId);
 
 
     @Modifying
     @Transactional
-    @Query("DELETE from hf_investor_base e where e.hedgeFund.id=?1")
+    @Query("DELETE from hf_returns e where e.fund.id=?1")
     void deleteByFundId(Long fundId);
 }

@@ -5,8 +5,10 @@ import kz.nicnbk.repo.model.base.DataConstraints;
 import kz.nicnbk.repo.model.common.Country;
 import kz.nicnbk.repo.model.common.Currency;
 import kz.nicnbk.repo.model.common.Strategy;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * Created by magzumov on 04.07.2016.
@@ -21,9 +23,11 @@ public class HFManager extends CreateUpdateBaseEntity {
     private String name;
     private ManagerType managerType;
     private String inception;
+    private Date inceptionDate;
     private String AUM;
     private String AUMDigit;
     private Currency AUMCurrency;
+    private Boolean meetingsInThePast;
 
     private String fundManagers;
     private String headquarters;
@@ -68,6 +72,17 @@ public class HFManager extends CreateUpdateBaseEntity {
         this.inception = inception;
     }
 
+    @Column(name="inception_date")
+    @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern="dd-MM-yyyy")
+    public Date getInceptionDate() {
+        return inceptionDate;
+    }
+
+    public void setInceptionDate(Date inceptionDate) {
+        this.inceptionDate = inceptionDate;
+    }
+
     @Column(name="aum")
     public String getAUM() {
         return AUM;
@@ -86,7 +101,7 @@ public class HFManager extends CreateUpdateBaseEntity {
         this.AUMDigit = AUMDigit;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "aum_currency_id")
     public Currency getAUMCurrency() {
         return AUMCurrency;
@@ -160,7 +175,14 @@ public class HFManager extends CreateUpdateBaseEntity {
         this.email = email;
     }
 
+    @Column(name="meetings_in_past")
+    public Boolean getMeetingsInThePast() {
+        return meetingsInThePast;
+    }
 
+    public void setMeetingsInThePast(Boolean meetingsInThePast) {
+        this.meetingsInThePast = meetingsInThePast;
+    }
 
     //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "strategy_id")

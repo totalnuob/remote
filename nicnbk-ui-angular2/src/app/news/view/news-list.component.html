@@ -266,32 +266,32 @@
             $(".rating").rating({min:1, max:10, step:1, size:'xs', showClear: false, showCaption: false});
         </script>
         <div class="modal fade" id="newsModal" role="dialog">
-            <div class="modal-dialog" style="overflow-y: scroll; max-height:85%;  margin-top: 50px; margin-bottom:50px;">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h3 class="modal-title" >{{selectedNews.header}}</h3>
-                        <h4>
-                            <small>{{selectedNews.source}}</small>
-                        </h4>
-                    </div>
-                    <div class="modal-body">
-                        <p [innerHTML]="selectedNews.content"></p>
-                    </div>
-                    <div class="modal-footer">
-                        <!--<div class="row">-->
+                <div class="modal-dialog" style="overflow-y: scroll; max-height:85%;  margin-top: 50px; margin-bottom:50px;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h3 class="modal-title" >{{selectedNews.header}}</h3>
+                            <h4>
+                                <small>{{selectedNews.source}}</small>
+                            </h4>
+                        </div>
+                        <div class="modal-body">
+                            <p [innerHTML]="selectedNews.content"></p>
+                        </div>
+                        <div class="modal-footer">
+                            <!--<div class="row">-->
                             <!--<div class="col-md-2">-->
-                                <!--<input id="modal_rating_stars" name="rating_stars" type="number" class="rating"/>-->
+                            <!--<input id="modal_rating_stars" name="rating_stars" type="number" class="rating"/>-->
                             <!--</div>-->
                             <!--<script>-->
-                                <!--// with plugin options-->
-                                <!--$("#modal_rating_stars").rating({min:1, max:10, step:1, size:'xs', showClear: false, showCaption: false});-->
+                            <!--// with plugin options-->
+                            <!--$("#modal_rating_stars").rating({min:1, max:10, step:1, size:'xs', showClear: false, showCaption: false});-->
                             <!--</script>-->
-                        <!--</div>-->
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <!--</div>-->
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
                     </div>
                 </div>
-            </div>
         </div>
     </div>
 </div>

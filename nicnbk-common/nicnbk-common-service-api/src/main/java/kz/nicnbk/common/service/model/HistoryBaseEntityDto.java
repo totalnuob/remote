@@ -11,11 +11,21 @@ public abstract class HistoryBaseEntityDto<T extends HistoryBaseEntity> extends 
 
     private Date creationDate;
 
+    private Date updateDate;
+
     public Date getCreationDate() {
         return creationDate;
     }
 
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public Date getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(Date updateDate) {
+        this.updateDate = updateDate;
     }
 }

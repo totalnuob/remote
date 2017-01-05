@@ -40,6 +40,8 @@ public class HFManagerServiceREST {
         response.setEntityId(id);
         if(firmDto.getId() == null){
             response.setCreationDate(new Date());
+        }else{
+            response.setCreationDate(firmDto.getCreationDate());
         }
         //managerDto.setId(id);
         return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);

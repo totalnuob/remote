@@ -6,6 +6,7 @@ export class HFManager extends LegalEntity{
 
     managerType: string;
     inception: number;
+    inceptionDate: string;
     aum: string;
     aumDigit; string;
     aumCurrency: string;

@@ -1,7 +1,11 @@
 package kz.nicnbk.service.dto.hf;
 
 import kz.nicnbk.common.service.model.HistoryBaseEntityDto;
+import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.model.hf.HFManager;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by timur on 27.10.2016.
@@ -9,10 +13,15 @@ import kz.nicnbk.repo.model.hf.HFManager;
 public class HFFirmDto extends HistoryBaseEntityDto<HFManager> {
     private String name;
     private String managerType;
+
     private String inception;
-    private Double aum;
+    private Date inceptionDate;
+
+    private String aum;
     private String aumDigit;
     private String aumCurrency;
+
+    private Boolean meetingsInThePast;
 
     private String fundManagers;
     private String headquarters;
@@ -21,6 +30,8 @@ public class HFFirmDto extends HistoryBaseEntityDto<HFManager> {
     private String fax;
     private String website;
     private String email;
+
+    private List<HedgeFundDto2> funds;
 
     public String getName() {
         return name;
@@ -46,11 +57,11 @@ public class HFFirmDto extends HistoryBaseEntityDto<HFManager> {
         this.inception = inception;
     }
 
-    public Double getAum() {
+    public String getAum() {
         return aum;
     }
 
-    public void setAum(Double aum) {
+    public void setAum(String aum) {
         this.aum = aum;
     }
 
@@ -124,5 +135,45 @@ public class HFFirmDto extends HistoryBaseEntityDto<HFManager> {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public List<HedgeFundDto2> getFunds() {
+        return funds;
+    }
+
+    public void setFunds(List<HedgeFundDto2> funds) {
+        this.funds = funds;
+    }
+
+    public Date getInceptionDate() {
+        return inceptionDate;
+    }
+
+    public void setInceptionDate(Date inceptionDate) {
+        this.inceptionDate = inceptionDate;
+    }
+
+    public Boolean getMeetingsInThePast() {
+        return meetingsInThePast;
+    }
+
+    public void setMeetingsInThePast(Boolean meetingsInThePast) {
+        this.meetingsInThePast = meetingsInThePast;
+    }
+
+    public String getAumText(){
+        String AUMText = "";
+        if(StringUtils.isNotEmpty(this.aum)){
+            AUMText += this.aum;
+            if(StringUtils.isNotEmpty(this.aumDigit)){
+                AUMText += " " + this.aumDigit;
+            }
+            if(StringUtils.isNotEmpty(this.aumCurrency)){
+                AUMText += " " + this.aumCurrency;
+            }
+            return AUMText;
+        }else{
+            return null;
+        }
     }
 }
