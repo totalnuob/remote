@@ -21,18 +21,17 @@
         </div>
     </div>
 
-    <ul class="nav nav-tabs">
+    <ul class="nav nav-tabs" id="tabs">
         <li class="active">
             <a data-toggle="tab" href="#overview">OVERVIEW</a>
         </li>
         <li>
-            <a data-toggle="tab" href="#idd">IDD</a>
+            <a data-toggle="tab" href="#performance">PERFORMANCE</a>
         </li>
         <li>
-            <a data-toggle="tab" href="#odd">ODD</a>
+            <a data-toggle="tab" href="#cashflow">CASHFLOW</a>
         </li>
     </ul>
-
     <div class="tab-content withpadding">
         <div id="overview" class="tab-pane fade in active">
             <br/>
@@ -173,13 +172,52 @@
 
             <div [hidden]="visible">
                 <div class="row">
+                    <div class="col-md-1">
+                        <label><b>Vintage</b></label>
+                    </div>
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" placeholder="Enter vintage"
+                               [(ngModel)]="fund.vintage"/>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-md-2">
+                        <label><b>Upload Cash Flows</b></label>
+                    </div>
+                    <div class="col-md-1">
+                        <a class="btn btn-info btn-sm" data-toggle="modal"
+                           data-target="#cfInputModal">
+                            <span class="glyphicon glyphicon-circle-arrow-up"></span>
+                        </a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2" *ngIf="numOfRows != null">
+                        {{numOfRows}} rows uploaded
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="modal fade" id="cfInputModal" role="dialog">
+                        <div class="modal-dialog" style="overflow-y: scroll; max-height:85%; margin-top: 50px; margin-bottom: 50px;">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <textarea class="form-control" [(ngModel)]="uploadedCf"></textarea>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+                                    <button type="button" class="btn btn-default pull-left" (click)="parse()" data-dismiss="modal" >Add</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
                 <h4>Key fund statistics</h4>
                 <table class=" col-md-4 table-striped table-condensed">
-                    <tr>
-                        <td class="col-md-1">Vintage</td>
-                        <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.vintage"/></td>
-                    </tr>
-
                     <tr>
                         <td class="col-md-1">Number of investments</td>
                         <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.numberOfInvestments"/></td>
@@ -370,14 +408,84 @@
             </div>
         </div>
 
-        <div id="idd" class="tab-pane fade">
-            Investment Due Diligence
+        <div id="performance" class="tab-pane fade">
+            <br>
+            <br>
+            <div class="row">
+                <div style="text-align: center">
+                    <h4>{{fund.fundName}} Historical Investment Performance</h4>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table table-hover table-responsive" style="font-size: smaller">
+                        <tr>
+                            <th>Company</th>
+                            <th>Cash invested</th>
+                            <th>Realized Proceeds</th>
+                            <th>Unrealized Value</th>
+                            <th>Total Value</th>
+                            <th>Multiple</th>
+                            <th>Gross IRR</th>
+                            <th>Net IRR</th>
+                        </tr>
+                        <tr *ngFor="let performance of fund.fundCompanyPerformance">
+                            <td><input style="width: 100%" type="text" [(ngModel)]="performance.companyName" /></td>
+                            <td><input style="width: 100%" type="text" [(ngModel)]="performance.invested"/></td>
+                            <td><input style="width: 100%" type="text" [(ngModel)]="performance.realized"/></td>
+                            <td><input style="width: 100%" type="text" [(ngModel)]="performance.unrealized"/></td>
+                            <td><input style="width: 100%" type="text" [(ngModel)]="performance.totalValue"/></td>
+                            <td><input style="width: 100%" type="text" [(ngModel)]="performance.multiple"/></td>
+                            <td><input style="width: 100%" type="text" [(ngModel)]="performance.grossIrr"/></td>
+                            <td><input style="width: 100%" type="text" [(ngModel)]="performance.netIrr"/></td>
+                        </tr>
+                        <!--<tr>-->
+                            <!--<td>ACR Logistics</td>-->
+                            <!--<td>46 500 000</td>-->
+                            <!--<td>540 523 074</td>-->
+                            <!--<td>-</td>-->
+                            <!--<td>540 523 074</td>-->
+                            <!--<td>11.6x</td>-->
+                            <!--<td>284.1%</td>-->
+                            <!--<td>-</td>-->
+                        <!--</tr>-->
+                    </table>
+                </div>
+            </div>
         </div>
-        <div id="odd" class="tab-pane fade">
-            Operational Due Diligence
-        </div>
-        <div id="quant_dd" class="tab-pane fade">
-            Quantitative Due Diligence
+        <div id="cashflow" class="tab-pane fade">
+            <br>
+            <br>
+            <div class="row">
+                <div style="text-align: center">
+                    <h4>{{fund.fundName}} Cashflow</h4>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table table-hover table-responsive" style="font-size: smaller">
+                        <tr>
+                            <th>Company name</th>
+                            <th>Date of transaction</th>
+                            <th>Amount invested</th>
+                            <th>Amount realized</th>
+                            <th>Unrealized Value</th>
+                            <th>Gross Cash Flow</th>
+                        </tr>
+                        <tr *ngFor="let cf of fund.cashflow">
+                            <td><input style="width: 100%" type="text" [(ngModel)]="cf.companyName" /></td>
+                            <td><input style="width: 100%" type="text" [(ngModel)]="cf.date"/></td>
+                            <td><input style="width: 100%" type="text" [(ngModel)]="cf.invested"/></td>
+                            <td><input style="width: 100%" type="text" [(ngModel)]="cf.realized"/></td>
+                            <td><input style="width: 100%" type="text" [(ngModel)]="cf.unrealized"/></td>
+                            <td><input style="width: 100%" type="text" [(ngModel)]="cf.grossCF"/></td>
+                        </tr>
+                        <button type="button" class="btn-xs btn-primary" style="display: inline-block" (click)="addRow()"><span class="glyphicon glyphicon-plus"></span></button>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>

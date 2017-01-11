@@ -2,14 +2,12 @@ package kz.nicnbk.service.dto.pe;
 
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.common.service.model.HistoryBaseEntityDto;
-import kz.nicnbk.repo.model.common.Currency;
-import kz.nicnbk.repo.model.common.Geography;
 import kz.nicnbk.repo.model.pe.Benchmark;
 import kz.nicnbk.repo.model.pe.Firm;
 import kz.nicnbk.repo.model.pe.Fund;
-import kz.nicnbk.repo.model.pe.common.Industry;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -71,6 +69,10 @@ public class PeFundDto extends HistoryBaseEntityDto<Fund> {
     private String strategyStructureRisks;
     private String performanceMerits;
     private String performanceRisks;
+
+    //cashflows
+    private List<PeCashflowDto> cashflow;
+    private List<PeFundCompaniesPerformanceDto> fundCompanyPerformance;
 
     public String getFundName() {
         return fundName;
@@ -439,4 +441,21 @@ public class PeFundDto extends HistoryBaseEntityDto<Fund> {
     public void setPerformanceRisks(String performanceRisks) {
         this.performanceRisks = performanceRisks;
     }
+
+    public List<PeCashflowDto> getCashflow() {
+        return cashflow;
+    }
+
+    public void setCashflow(List<PeCashflowDto> cashflow) {
+        this.cashflow = cashflow;
+    }
+
+    public List<PeFundCompaniesPerformanceDto> getFundCompanyPerformance() {
+        return fundCompanyPerformance;
+    }
+
+    public void setFundCompanyPerformance(List<PeFundCompaniesPerformanceDto> fundCompanyPerformance) {
+        this.fundCompanyPerformance = fundCompanyPerformance;
+    }
+
 }

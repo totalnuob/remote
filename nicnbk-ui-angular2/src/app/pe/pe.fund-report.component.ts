@@ -122,42 +122,42 @@ export class PeFundReportComponent extends GoogleChartComponent {
 
     drawGraph(){
 
-        var irrData = google.visualization.arrayToDataTable([
-            ['Fund', 'Platinum', 'CA mid cap buyout'],
-            ['Fund I', 61.9, 13],
-            ['Fund II', 13.9, 6.83],
-            ['Fund III', 40.1, 7.54],
-        ]);
-
-        var tvpiData = google.visualization.arrayToDataTable([
-            ['Fund', 'Platinum', 'CA mid cap buyout'],
-            ['Fund I', 2.56, 1.69],
-            ['Fund II', 1.62, 1.3],
-            ['Fund III', 1.58, 1.11],
-        ]);
+        //var irrData = google.visualization.arrayToDataTable([
+        //    ['Fund', 'Platinum', 'CA mid cap buyout'],
+        //    ['Fund I', 61.9, 13],
+        //    ['Fund II', 13.9, 6.83],
+        //    ['Fund III', 40.1, 7.54],
+        //]);
+        //
+        //var tvpiData = google.visualization.arrayToDataTable([
+        //    ['Fund', 'Platinum', 'CA mid cap buyout'],
+        //    ['Fund I', 2.56, 1.69],
+        //    ['Fund II', 1.62, 1.3],
+        //    ['Fund III', 1.58, 1.11],
+        //]);
 
         //console.log(this.openFund);
-        //var irrData = new google.visualization.DataTable();
-        //irrData.addColumn('string', 'Fund');
-        //irrData.addColumn('number', this.openFund.firm.firmName);
-        //irrData.addColumn('number', 'CA');
-        //
-        //for(var i = 0; i < this.fundsList.length; i++) {
-        //    if(this.fundsList[i].status == 'Closed'){
-        //        irrData.addRow([this.fundsList[i].fundName, this.fundsList[i].netIrr, 30]);
-        //    }
-        //}
-        //
-        //var tvpiData = new google.visualization.DataTable();
-        //tvpiData.addColumn('string', 'Fund');
-        //tvpiData.addColumn('number', this.openFund.firm.firmName);
-        //tvpiData.addColumn('number', 'CA');
-        //
-        //for(var i = 0; i < this.fundsList.length; i++) {
-        //    if(this.fundsList[i].status == 'Closed'){
-        //        tvpiData.addRow([this.fundsList[i].fundName, this.fundsList[i].netTvpi, 1]);
-        //    }
-        //}
+        var irrData = new google.visualization.DataTable();
+        irrData.addColumn('string', 'Fund');
+        irrData.addColumn('number', this.openFund.firm.firmName);
+        irrData.addColumn('number', 'CA');
+
+        for(var i = 0; i < this.fundsList.length; i++) {
+            if(this.fundsList[i].status == 'Closed'){
+                irrData.addRow([this.fundsList[i].fundName, this.fundsList[i].netIrr, 30]);
+            }
+        }
+
+        var tvpiData = new google.visualization.DataTable();
+        tvpiData.addColumn('string', 'Fund');
+        tvpiData.addColumn('number', this.openFund.firm.firmName);
+        tvpiData.addColumn('number', 'CA');
+
+        for(var i = 0; i < this.fundsList.length; i++) {
+            if(this.fundsList[i].status == 'Closed'){
+                tvpiData.addRow([this.fundsList[i].fundName, this.fundsList[i].netTvpi, 1]);
+            }
+        }
 
         this.drawBarChart('bar-chart-1', irrData, 'NET IRR');
         this.drawBarChart('bar-chart-2', tvpiData, 'NET TVPI');
@@ -177,5 +177,4 @@ export class PeFundReportComponent extends GoogleChartComponent {
 
         chart.draw(data, options);
     }
-
 }

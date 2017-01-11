@@ -55,4 +55,7 @@ export class PeFund {
     firm: PeFirm;
     id: number;
     creationDate: string;
+
+    cashflow = [];
+    fundCompanyPerformance = [];
 }

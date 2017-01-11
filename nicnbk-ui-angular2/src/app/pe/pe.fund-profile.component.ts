@@ -44,6 +44,9 @@ export class PeFundProfileComponent extends CommonComponent implements OnInit{
 
     private visible = false;
 
+    uploadedCf;
+    numOfRows;
+
     constructor(
         private lookupService: LookupService,
         private firmService: PeFirmService,
@@ -86,6 +89,10 @@ export class PeFundProfileComponent extends CommonComponent implements OnInit{
                                     //untoggle funds details if status is open
                                     if(this.fund.status == 'Open'){
                                         this.visible = true;
+                                    }
+                                    console.log(this.fund.fundCompanyPerformance);
+                                    if(this.fund.cashflow == null){
+                                        this.fund.cashflow = [];
                                     }
 
                                 }else{
@@ -283,5 +290,24 @@ export class PeFundProfileComponent extends CommonComponent implements OnInit{
         } else {
             this.visible = false;
         }
+    }
+
+    addRow(){
+        console.log(this.fund.cashflow);
+        this.fund.cashflow.push({companyName:"", date:"",invested:"", realized:"", unrealized:"", grossCF:"", irr:""});
+    }
+
+    parse(){
+        var cf = [];
+        var rows = this.uploadedCf.split("\n");
+
+        for(var i = 0; i < rows.length; i++){
+            var row = rows[i].split(",");
+            if(row[0] != "") {
+                this.fund.cashflow.push({companyName: row[0], date: row[1], invested: row[2], realized: row[3], unrealized: row[4], grossCF: row[5]});
+            }
+        }
+        this.numOfRows = rows.length;
+        $('#tabs a:last').tab('show');
     }
 }
