@@ -28,19 +28,14 @@ public class Application {
         return new WebMvcConfigurerAdapter() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-
-                registry.addMapping("/news/**").allowedOrigins("http://localhost:8080", "http://localhost:8088",
-                        "http://app.nicnbk.kz:8080", "http://app.nicnbk.kz");
-                registry.addMapping("/m2s2/**").allowedOrigins("http://localhost:8080", "http://localhost:8088",
-                        "http://app.nicnbk.kz:8080", "http://app.nicnbk.kz");
-                registry.addMapping("/employee/**").allowedOrigins("http://localhost:8080", "http://localhost:8088",
-                        "http://app.nicnbk.kz:8080", "http://app.nicnbk.kz");
-                registry.addMapping("/lookup/**").allowedOrigins("http://localhost:8080", "http://localhost:8088",
-                        "http://app.nicnbk.kz:8080", "http://app.nicnbk.kz");
-                registry.addMapping("/bt/**").allowedOrigins("http://localhost:8080", "http://localhost:8088",
-                        "http://app.nicnbk.kz:8080", "http://app.nicnbk.kz");
-                registry.addMapping("/riskManagement/**").allowedOrigins("http://localhost:8080", "http://localhost:8088",
-                        "http://app.nicnbk.kz:8080", "http://app.nicnbk.kz");
+                registry.addMapping("/**");
+//                registry.addMapping("/news/**").allowedOrigins("http://localhost", "http://10.10.163.45","http://app.nicnbk.kz");
+//                registry.addMapping("/m2s2/**").allowedOrigins("http://localhost", "http://10.10.163.45", "http://app.nicnbk.kz");
+//                registry.addMapping("/employee/**").allowedOrigins("http://localhost", "http://10.10.163.45", "http://app.nicnbk.kz");
+//                registry.addMapping("/lookup/**").allowedOrigins("http://localhost", "http://10.10.163.45", "http://app.nicnbk.kz");
+//                registry.addMapping("/bt/**").allowedOrigins("http://localhost", "http://10.10.163.45", "http://app.nicnbk.kz");
+//                registry.addMapping("/hf/**").allowedOrigins("http://localhost", "http://10.10.163.45", "http://app.nicnbk.kz");
+//                registry.addMapping("/riskManagement/**").allowedOrigins("http://localhost", "http://10.10.163.45", "http://app.nicnbk.kz");
             }
         };
     }

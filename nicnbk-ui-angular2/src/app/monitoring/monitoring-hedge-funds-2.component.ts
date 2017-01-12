@@ -1,6 +1,6 @@
 import {Component, AfterViewInit, ViewChild} from "@angular/core";
 import {ActivatedRoute} from "@angular/router";
-import {CommonComponent} from "../common/common.component";
+import {CommonFormViewComponent} from "../common/common.component";
 import {CommonTableau} from "./common-tableau.component";
 import {GoogleChartComponent} from "../google-chart/google-chart.component";
 
@@ -72,10 +72,10 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
     drawAllocationByStrategy(){
         var data = google.visualization.arrayToDataTable([
             ['Element', 'Contribution to Return'],
-            ['Equities', 30.80],            // RGB value
-            ['Credit', 29.28],            // English color name
+            ['Relative Value', 110.2],
+            ['Equities', 30.80],
+            ['Credit', 29.28],
             ['Macro', 13.23],
-            ['Relative Value', 110.2], // CSS-style declaration
             ['Event Driven', 7.75],
             ['Multi-Strategy', 4.27],
             ['Commodities', 2.30],

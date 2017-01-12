@@ -1,0 +1,2 @@
+INSERT INTO legal_structure(id, code, name_en, name_ru, name_kz) VALUES(1, 'LLP', 'Limited Liability Partnership', '', '');
+INSERT INTO legal_structure(id, code, name_en, name_ru, name_kz) VALUES(2, 'LLC', 'Limited Liability Company', '', '');

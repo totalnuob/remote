@@ -4,7 +4,7 @@ import {ActivatedRoute} from '@angular/router';
 import {LookupService} from "../common/lookup.service";
 import {REMemo} from "./model/re-memo";
 import {MemoService} from "./memo.service";
-import {CommonComponent} from "../common/common.component";
+import {CommonFormViewComponent} from "../common/common.component";
 import {EmployeeService} from "../employee/employee.service";
 
 declare var $:any
@@ -19,7 +19,7 @@ declare var Chart: any;
 @NgModule({
     imports: []
 })
-export class RealEstateMemoEditComponent extends CommonComponent implements OnInit{
+export class RealEstateMemoEditComponent extends CommonFormViewComponent implements OnInit{
 
     private sub: any;
     private memoIdParam: number;
@@ -193,6 +193,8 @@ export class RealEstateMemoEditComponent extends CommonComponent implements OnIn
         $('#timePicker').datetimepicker({
             format: 'LT'
         })
+
+        $('input[type=text], textarea').autogrow();
 
         // load lookups
         //this.loadLookups();
