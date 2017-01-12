@@ -75,4 +75,6 @@ label {
 
 .hfReturns {
     font-size: smaller !important;
+    padding: 0px !important;
+    text-align: center !important;
 }

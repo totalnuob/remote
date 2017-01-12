@@ -6,9 +6,6 @@ import kz.nicnbk.repo.model.base.BaseTypeEntity;
 import kz.nicnbk.repo.model.common.*;
 import kz.nicnbk.repo.model.files.FilesType;
 import kz.nicnbk.repo.model.hf.*;
-import kz.nicnbk.repo.model.lookup.FileTypeLookup;
-import kz.nicnbk.repo.model.lookup.MeetingTypeLookup;
-import kz.nicnbk.repo.model.lookup.NewsTypeLookup;
 import kz.nicnbk.repo.model.m2s2.MeetingArrangedBy;
 import kz.nicnbk.repo.model.m2s2.MeetingType;
 import kz.nicnbk.repo.model.news.NewsType;
@@ -73,6 +70,17 @@ public class LookupServiceImpl implements LookupService {
     @Autowired
     private HedgeFundSidePocketRepository hedgeFundSidePocketRepository;
 
+    @Autowired
+    private NewsTypeRepository newsTypeRepository;
+
+    @Autowired
+    private MeetingTypeRepository meetingTypeRepository;
+
+    @Autowired
+    private MeetingArrangedByRepository meetingArrangedByRepository;
+
+    @Autowired
+    private FilesTypeRepository filesTypeRepository;
 
     @Override
     public <T extends BaseTypeEntity> T findByTypeAndCode(Class<T> clazz, String code) {
@@ -83,246 +91,49 @@ public class LookupServiceImpl implements LookupService {
             return null;
         }
 
-        if(clazz.getSimpleName().equals("NewsType")){
-            if(code.equals(NewsTypeLookup.GENERAL.getCode())){
-                NewsType newsType = new NewsType();
-                newsType.setId(1);
-                newsType.setCode("GENERAL");
-                return (T) newsType;
-            }
-            if(code.equals(NewsTypeLookup.PRIVATE_EQUITY.getCode())){
-                NewsType newsType = new NewsType();
-                newsType.setId(2);
-                newsType.setCode("PE");
-                return (T) newsType;
-            }
-            if(code.equals(NewsTypeLookup.HEDGE_FUNDS.getCode())){
-                NewsType newsType = new NewsType();
-                newsType.setId(3);
-                newsType.setCode("HF");
-                return (T) newsType;
-            }
-            if(code.equals(NewsTypeLookup.SOVEREIGN_WEALTH_FUNDS
-                    .getCode())){
-                NewsType newsType = new NewsType();
-                newsType.setId(4);
-                newsType.setCode("SWF");
-                return (T) newsType;
-            }
-            if(code.equals(NewsTypeLookup.REAL_ESTATE
-                    .getCode())){
-                NewsType newsType = new NewsType();
-                newsType.setId(5);
-                newsType.setCode("RE");
-                return (T) newsType;
-            }
-            if(code.equals(NewsTypeLookup.RISK_MANAGEMENT
-                    .getCode())){
-                NewsType newsType = new NewsType();
-                newsType.setId(6);
-                newsType.setCode("RM");
-                return (T) newsType;
-            }
-        }
-
-        if(clazz.getSimpleName().equals("MeetingType")){
-            if(code.equals(MeetingTypeLookup.MEETING.getCode())){
-                MeetingType meetingType = new MeetingType();
-                meetingType.setId(1);
-                meetingType.setCode(MeetingTypeLookup.MEETING.getCode());
-                return (T) meetingType;
-            }
-            if(code.equals(MeetingTypeLookup.CALL.getCode())){
-                MeetingType meetingType = new MeetingType();
-                meetingType.setId(2);
-                meetingType.setCode(MeetingTypeLookup.CALL.getCode());
-                return (T) meetingType;
-            }
-        }
-
-        if(clazz.getSimpleName().equals("MeetingArrangedBy")){
-            if(code.equals(MeetingArrangedBy.BY_NIC)){
-                MeetingArrangedBy arrangedBy = new MeetingArrangedBy();
-                arrangedBy.setId(1);
-                arrangedBy.setCode(MeetingArrangedBy.BY_NIC);
-                return (T) arrangedBy;
-            }
-            if(code.equals(MeetingArrangedBy.BY_GP)){
-                MeetingArrangedBy arrangedBy = new MeetingArrangedBy();
-                arrangedBy.setId(2);
-                arrangedBy.setCode(MeetingArrangedBy.BY_GP);
-                return (T) arrangedBy;
-            }
-            if(code.equals(MeetingArrangedBy.BY_OTHER)){
-                MeetingArrangedBy arrangedBy = new MeetingArrangedBy();
-                arrangedBy.setId(3);
-                arrangedBy.setCode(MeetingArrangedBy.BY_OTHER);
-                return (T) arrangedBy;
-            }
-        }
-        if(clazz.getSimpleName().equals("Currency")){
-            Iterator<Currency> iterator = currencyRepository.findAll().iterator();
-            while(iterator.hasNext()){
-                Currency currency = iterator.next();
-                if(currency.getCode().equals(code)){
-                    return (T) currency;
-                };
-            }
-        }
-
-        if(clazz.getSimpleName().equals("FilesType")){
-            if(code.equals(FileTypeLookup.MEMO_ATTACHMENT.getCode())){
-                FilesType filesType = new FilesType();
-                filesType.setId(1);
-                filesType.setCode(FileTypeLookup.MEMO_ATTACHMENT.getCode());
-                return (T) filesType;
-            }
-        }
-
-        if(clazz.getSimpleName().equals("Strategy")){
-            Iterator<Strategy> iterator = strategyRepository.findAll().iterator();
-            while(iterator.hasNext()){
-                Strategy strategy = iterator.next();
-                if(strategy.getCode().equals(code)){
-                    return (T) strategy;
-                };
-            }
-
-        }
-        if(clazz.getSimpleName().equals("Geography")){
-            Iterator<Geography> iterator = geographyRepository.findAll().iterator();
-            while(iterator.hasNext()){
-                Geography geography = iterator.next();
-                if(geography.getCode().equals(code)){
-                    return (T) geography;
-                };
-            }
-
-        }
-
-        if(clazz.getSimpleName().equals("ManagerType")){
-            Iterator<ManagerType> iterator = managerTypeRepository.findAll().iterator();
-            while(iterator.hasNext()){
-                ManagerType managerType = iterator.next();
-                if(managerType.getCode().equals(code)){
-                    return (T) managerType;
-                };
-            }
-
-        }
-
-        if(clazz.getSimpleName().equals("HedgeFundStatus")){
-            Iterator<HedgeFundStatus> iterator = managerStatusRepository.findAll().iterator();
-            while(iterator.hasNext()){
-                HedgeFundStatus type = iterator.next();
-                if(type.getCode().equals(code)){
-                    return (T) type;
-                };
-            }
-        }
-
-        if(clazz.getSimpleName().equals("Country")){
-            Iterator<Country> iterator = countryRepository.findAll().iterator();
-            while(iterator.hasNext()){
-                Country type = iterator.next();
-                if(type.getCode().equals(code)){
-                    return (T) type;
-                };
-            }
-        }
-
-        if(clazz.getSimpleName().equals("LegalStructure")){
-            Iterator<LegalStructure> iterator = legalStructureRepository.findAll().iterator();
-            while(iterator.hasNext()){
-                LegalStructure type = iterator.next();
-                if(type.getCode().equals(code)){
-                    return (T) type;
-                };
-            }
-        }
-
-        if(clazz.getSimpleName().equals("SubscriptionFrequency")){
-            Iterator<SubscriptionFrequency> iterator = this.subscriptionFrequencyRepository.findAll().iterator();
-            while(iterator.hasNext()){
-                SubscriptionFrequency type = iterator.next();
-                if(type.getCode().equals(code)){
-                    return (T) type;
-                };
-            }
-        }
-
-        if(clazz.getSimpleName().equals("ManagementFeeType")){
-            Iterator<ManagementFeeType> iterator = this.managementFeeTypeRepository.findAll().iterator();
-            while(iterator.hasNext()){
-                ManagementFeeType type = iterator.next();
-                if(type.getCode().equals(code)){
-                    return (T) type;
-                };
-            }
-        }
-
-        if(clazz.getSimpleName().equals("PerformanceFeeType")){
-            Iterator<PerformanceFeeType> iterator = this.performanceFeeTypeRepository.findAll().iterator();
-            while(iterator.hasNext()){
-                PerformanceFeeType type = iterator.next();
-                if(type.getCode().equals(code)){
-                    return (T) type;
-                };
-            }
-        }
-
-        if(clazz.getSimpleName().equals("PerformanceFeePayFrequencyType")){
-            Iterator<PerformanceFeePayFrequencyType> iterator = this.performanceFeePayFrequencyRepository.findAll().iterator();
-            while(iterator.hasNext()){
-                PerformanceFeePayFrequencyType type = iterator.next();
-                if(type.getCode().equals(code)){
-                    return (T) type;
-                };
-            }
-        }
-
-        if(clazz.getSimpleName().equals("RedemptionFrequency")){
-            Iterator<RedemptionFrequency> iterator = this.redemptionFrequencyRepository.findAll().iterator();
-            while(iterator.hasNext()){
-                RedemptionFrequency type = iterator.next();
-                if(type.getCode().equals(code)){
-                    return (T) type;
-                };
-            }
-        }
-
-        if(clazz.getSimpleName().equals("RedemptionNotificationPeriod")){
-            Iterator<RedemptionNotificationPeriod> iterator = this.redemptionNotificationPeriodRepository.findAll().iterator();
-            while(iterator.hasNext()){
-                RedemptionNotificationPeriod type = iterator.next();
-                if(type.getCode().equals(code)){
-                    return (T) type;
-                };
-            }
-        }
-
-        if(clazz.getSimpleName().equals("HedgeFundSidePocket")){
-            Iterator<HedgeFundSidePocket> iterator = this.hedgeFundSidePocketRepository.findAll().iterator();
-            while(iterator.hasNext()){
-                HedgeFundSidePocket type = iterator.next();
-                if(type.getCode().equals(code)){
-                    return (T) type;
-                };
-            }
-        }
-
-        if(clazz.getSimpleName().equals("Substrategy")){
-            Iterator<Substrategy> iterator = this.substrategyRepository.findAll().iterator();
-            while(iterator.hasNext()){
-                Substrategy type = iterator.next();
-                if(type.getCode().equals(code)){
-                    return (T) type;
-                };
-            }
+        if(clazz.equals(NewsType.class)){
+            return (T) this.newsTypeRepository.findByCode(code);
+        }else if(clazz.equals(MeetingType.class)){
+            return (T) this.meetingTypeRepository.findByCode(code);
+        }else if(clazz.equals(MeetingArrangedBy.class)){
+            return (T) this.meetingArrangedByRepository.findByCode(code);
+        }else if(clazz.equals(Currency.class)){
+            return (T) this.currencyRepository.findByCode(code);
+        }else if(clazz.equals(FilesType.class)){
+            return (T) this.filesTypeRepository.findByCode(code);
+        }else if(clazz.equals(Strategy.class)){
+            return (T) this.strategyRepository.findByCode(code);
+        }else if(clazz.equals(Geography.class)){
+            return (T) this.geographyRepository.findByCode(code);
+        }else if(clazz.equals(ManagerType.class)){
+            return (T) this.managerTypeRepository.findByCode(code);
+        }else if(clazz.equals(HedgeFundStatus.class)){
+            return (T) this.managerStatusRepository.findByCode(code);
+        }else if(clazz.equals(Country.class)){
+            return (T) this.countryRepository.findByCode(code);
+        }else if(clazz.equals(LegalStructure.class)){
+            return (T) this.legalStructureRepository.findByCode(code);
+        }else if(clazz.equals(SubscriptionFrequency.class)){
+            return (T) this.subscriptionFrequencyRepository.findByCode(code);
+        }else if(clazz.equals(ManagementFeeType.class)){
+            return (T) this.managementFeeTypeRepository.findByCode(code);
+        }else if(clazz.equals(PerformanceFeeType.class)){
+            return (T) this.performanceFeeTypeRepository.findByCode(code);
+        }else if(clazz.equals(PerformanceFeePayFrequencyType.class)){
+            return (T) this.performanceFeePayFrequencyRepository.findByCode(code);
+        }else if(clazz.equals(RedemptionFrequency.class)){
+            return (T) this.redemptionFrequencyRepository.findByCode(code);
+        }else if(clazz.equals(RedemptionNotificationPeriod.class)){
+            return (T) this.redemptionNotificationPeriodRepository.findByCode(code);
+        }else if(clazz.equals(HedgeFundSidePocket.class)){
+            return (T) this.hedgeFundSidePocketRepository.findByCode(code);
+        }else if(clazz.equals(Substrategy.class)){
+            return (T) this.substrategyRepository.findByCode(code);
         }
 
         return null;
     }
+
 
     @Override
     public List<BaseDictionaryDto> getCurrencies(){
@@ -402,12 +213,12 @@ public class LookupServiceImpl implements LookupService {
     }
 
     @Override
-    public List<BaseDictionaryDto> getHedgeFundsStrategy(){
+    public List<BaseDictionaryDto> getHedgeFundsStrategies(){
         return getStrategies(Strategy.TYPE_HEDGE_FUNDS);
     }
 
     @Override
-    public List<BaseDictionaryDto> getHedgeFundsSubStrategy(String strategy){
+    public List<BaseDictionaryDto> getHedgeFundsSubStrategies(String strategy){
         return getSubStrategies(strategy);
     }
 

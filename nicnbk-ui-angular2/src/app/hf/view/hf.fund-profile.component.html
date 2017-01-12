@@ -63,6 +63,10 @@
                                 </td>
                             </tr>
                             <tr>
+                                <td>Firm Name</td>
+                                <td><a [routerLink]="['/hf/managerProfile/', fund.manager.id]">{{fund.manager.name}}</a></td>
+                            </tr>
+                            <tr>
                                 <td>Firm AUM</td>
                                 <td>{{fund.manager.aumText}}</td>
                             </tr>
@@ -104,11 +108,11 @@
                             </tr>
                             <tr>
                                 <td>Return Since Inception</td>
-                                <td>{{fund.returnSinceInception}}</td>
+                                <td>{{fund.returnSinceInception}}{{fund.returnSinceInception != null ? ' %' : ''}}</td>
                             </tr>
                             <tr>
                                 <td>Annualized Return</td>
-                                <td>{{fund.annualizedReturn}}</td>
+                                <td>{{fund.annualizedReturn}}{{fund.annualizedReturn != null ? ' %' : ''}} </td>
                             </tr>
                             <tr>
                                 <td>YTD</td>
@@ -120,11 +124,14 @@
                             </tr>
                             <tr>
                                 <td>Annual Volatility</td>
-                                <td>{{fund.annualVolatility}}</td>
+                                <td>{{fund.annualVolatility}}{{fund.annualVolatility != null ? ' %' : ''}}</td>
                             </tr>
                             <tr>
                                 <td>Worst Drawdown</td>
-                                <td>{{fund.worstDrawdown}}</td>
+                                <td>
+                                    {{fund.worstDrawdown != null ? '- ' + fund.worstDrawdown + ' %' : ''}}
+                                    {{fund.worstDrawdownPeriod != null ? '(' + fund.worstDrawdownPeriod + ')': ''}}
+                                </td>
                             </tr>
                             <tr>
                                 <td>Sharpe Ratio</td>
@@ -614,10 +621,17 @@
                             <!--<h3 class="modal-title" >HEADER</h3>-->
                         </div>
                         <div class="modal-body">
+                            <div class="alert alert-danger" *ngIf="returnUploadErrorMessage != null"><span>{{returnUploadErrorMessage}}</span></div>
+                            <div class="alert alert-info" *ngIf="returnUploadSuccessMessage != null"><span>{{returnUploadSuccessMessage}}</span></div>
+                            <br/>
+                            <div>Format: <span style="font-weight: bold">date [tab] return</span></div>
+                            <div>
+                                Date format: <span style="font-weight: bold">dd.mm.yyyy</span>
+                            </div>
                             <textarea class="form-control" [(ngModel)]="uploadedReturns"></textarea>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-default pull-left" data-dismiss="modal" (click)='closeReturnsModal()'>Close</button>
                             <button type="button" class="btn btn-success pull-right" (click)="parseReturns()">Add</button>
                         </div>
                     </div>

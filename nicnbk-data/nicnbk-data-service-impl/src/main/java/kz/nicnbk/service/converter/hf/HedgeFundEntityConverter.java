@@ -6,8 +6,7 @@ import kz.nicnbk.repo.model.common.Strategy;
 import kz.nicnbk.repo.model.hf.*;
 import kz.nicnbk.service.converter.dozer.BaseDozerEntityConverter;
 import kz.nicnbk.service.datamanager.LookupService;
-import kz.nicnbk.service.dto.hf.HFFirmDto;
-import kz.nicnbk.service.dto.hf.HedgeFundDto2;
+import kz.nicnbk.service.dto.hf.HedgeFundDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,13 +20,13 @@ import java.util.Set;
  */
 
 @Component
-public class HedgeFundEntityConverter extends BaseDozerEntityConverter<HedgeFund, HedgeFundDto2> {
+public class HedgeFundEntityConverter extends BaseDozerEntityConverter<HedgeFund, HedgeFundDto> {
 
     @Autowired
     private LookupService lookupService;
 
     @Override
-    public HedgeFund assemble(HedgeFundDto2 dto){
+    public HedgeFund assemble(HedgeFundDto dto){
         HedgeFund entity = super.assemble(dto);
 
         // manager
@@ -49,7 +48,6 @@ public class HedgeFundEntityConverter extends BaseDozerEntityConverter<HedgeFund
             HedgeFundStatus status = lookupService.findByTypeAndCode(HedgeFundStatus.class, dto.getStatus());
             entity.setStatus(status);
         }
-
 
         // subscription frequency
         if(StringUtils.isNotEmpty(dto.getSubscriptionFrequency())) {
@@ -75,14 +73,12 @@ public class HedgeFundEntityConverter extends BaseDozerEntityConverter<HedgeFund
             entity.setSidePocket(lookupValue);
         }
 
-
-
         return entity;
     }
 
     @Override
-    public HedgeFundDto2 disassemble(HedgeFund entity){
-        HedgeFundDto2 dto = super.disassemble(entity);
+    public HedgeFundDto disassemble(HedgeFund entity){
+        HedgeFundDto dto = super.disassemble(entity);
 
         // strategy
         if(entity.getStrategy() != null){
@@ -98,7 +94,6 @@ public class HedgeFundEntityConverter extends BaseDozerEntityConverter<HedgeFund
         if(entity.getStatus() != null){
             dto.setStatus(entity.getStatus().getCode());
         }
-
 
         // subscription frequency
         if(entity.getSubscriptionFrequency() != null){
@@ -126,6 +121,13 @@ public class HedgeFundEntityConverter extends BaseDozerEntityConverter<HedgeFund
                 dto.getManager().setAumCurrency(entity.getManager().getAUMCurrency().getCode());
             }
         }
+
+        // update and create date
+        // TODO: for all entities
+        if(entity.getUpdateDate() == null){
+            dto.setUpdateDate(entity.getCreationDate());
+        }
+
 //        HFFirmDto firmDto = new HFFirmDto();
 //        if(entity.getManager().getAUM() != null){
 //            firmDto.setAum(entity.getManager().getAUM());
@@ -141,8 +143,8 @@ public class HedgeFundEntityConverter extends BaseDozerEntityConverter<HedgeFund
         return dto;
     }
 
-    public List<HedgeFundDto2> disassembleList(List<HedgeFund> entities){
-        List<HedgeFundDto2> dtoList = new ArrayList<>();
+    public List<HedgeFundDto> disassembleList(List<HedgeFund> entities){
+        List<HedgeFundDto> dtoList = new ArrayList<>();
         if(entities != null){
             for(HedgeFund entity: entities){
                 dtoList.add(disassemble(entity));
@@ -151,8 +153,8 @@ public class HedgeFundEntityConverter extends BaseDozerEntityConverter<HedgeFund
         return dtoList;
     }
 
-    public Set<HedgeFundDto2> disassembleSet(List<HedgeFund> entities){
-        Set<HedgeFundDto2> dtoSet = new HashSet<>();
+    public Set<HedgeFundDto> disassembleSet(List<HedgeFund> entities){
+        Set<HedgeFundDto> dtoSet = new HashSet<>();
         if(entities != null){
             for(HedgeFund entity: entities){
                 dtoSet.add(disassemble(entity));

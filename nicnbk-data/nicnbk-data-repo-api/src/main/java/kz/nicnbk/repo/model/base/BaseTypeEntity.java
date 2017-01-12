@@ -18,6 +18,12 @@ public abstract class BaseTypeEntity implements Identity<Integer>, Serializable 
 
     private String nameKz;
 
+    BaseTypeEntity(){}
+
+    BaseTypeEntity(Integer id){
+        this.id = id;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Integer getId() {

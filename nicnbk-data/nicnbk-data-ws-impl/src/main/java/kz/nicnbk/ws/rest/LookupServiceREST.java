@@ -29,13 +29,13 @@ public class LookupServiceREST {
 
     @RequestMapping(value = "/HFStrategy", method = RequestMethod.GET)
     public List<BaseDictionaryDto> getHFStrategies(){
-        List<BaseDictionaryDto> lookups = this.lookupService.getHedgeFundsStrategy();
+        List<BaseDictionaryDto> lookups = this.lookupService.getHedgeFundsStrategies();
         return lookups;
     }
 
     @RequestMapping(value = "/HFSubStrategy/{strategy}", method = RequestMethod.GET)
     public List<BaseDictionaryDto> getHFSubStrategies(@PathVariable String strategy){
-        List<BaseDictionaryDto> lookups = this.lookupService.getHedgeFundsSubStrategy(strategy);
+        List<BaseDictionaryDto> lookups = this.lookupService.getHedgeFundsSubStrategies(strategy);
         return lookups;
     }
 

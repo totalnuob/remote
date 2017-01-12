@@ -34,15 +34,15 @@
 
             <div class="row">
                 <table class=" col-md-4 table-striped table-condensed">
-                    <tr>
-                        <td class="col-md-1">Manager Type</td>
-                        <td class="col-md-3">
-                            <select style="width: 100%" class="form-control" [(ngModel)]="manager.managerType">
-                                <option value="0">---</option>
-                                <option *ngFor="let item of managerTypeLookup" [value]="item.code">{{item.nameEn}}</option>
-                            </select>
-                        </td>
-                    </tr>
+                    <!--<tr>-->
+                        <!--<td class="col-md-1">Manager Type</td>-->
+                        <!--<td class="col-md-3">-->
+                            <!--<select style="width: 100%" class="form-control" [(ngModel)]="manager.managerType">-->
+                                <!--<option value="0">-&#45;&#45;</option>-->
+                                <!--<option *ngFor="let item of managerTypeLookup" [value]="item.code">{{item.nameEn}}</option>-->
+                            <!--</select>-->
+                        <!--</td>-->
+                    <!--</tr>-->
                     <!--<tr>-->
                         <!--<td class="col-md-1">Strategy</td>-->
                         <!--<td class="col-md-3">-->
@@ -74,9 +74,9 @@
 
                             <div class='input-group date col-md-2' id='inceptionDate' style="width: 100%">
                                 <input type="text" class="form-control" id="inceptionDateValue" [(ngModel)]="manager.inceptionDate"/>
-                            <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-calendar"></span>
-                            </span>
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
                             </div>
 
                         </td>
@@ -210,9 +210,7 @@
                             <td width="10%">{{fund.inceptionDate}}</td>
                             <td width="10%">{{fund.updateDate}}</td>
                             <td width="5%">
-                                <a><i class="glyphicon glyphicon-search"></i></a>
                                 <a><i class="glyphicon glyphicon-file"></i></a>
-                                <a><i class="glyphicon glyphicon-plus"></i></a>
                             </td>
                         </tr>
 
@@ -234,18 +232,18 @@
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <label for="fromDateDTPickeer">From</label>
-                            <div class='input-group date col-md-3' id='fromDateDTPickeer' style="width: 100%">
-                                <input type='text' class="form-control" id="fromDate" />
+                            <label for="fromDate">From</label>
+                            <div class='input-group date col-md-3' id='fromDate' style="width: 100%">
+                                <input type='text' class="form-control" id="fromDateValue" />
                                         <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
                                         </span>
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <label for="untilDateDTPickeer">To</label>
-                            <div class='input-group date col-md-3' id='untilDateDTPickeer' style="width: 100%">
-                                <input type='text' class="form-control" id="toDate"/>
+                            <label for="toDate">To</label>
+                            <div class='input-group date col-md-3' id='toDate' style="width: 100%">
+                                <input type='text' class="form-control" id="toDateValue"/>
                                 <span class="input-group-addon">
                                     <span class="glyphicon glyphicon-calendar"></span>
                                 </span>

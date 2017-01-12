@@ -6,4 +6,5 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  * Created by magzumov on 02.08.2016.
  */
 public interface RedemptionFrequencyRepository extends PagingAndSortingRepository<RedemptionFrequency, Long> {
+    RedemptionFrequency findByCode(String code);
 }

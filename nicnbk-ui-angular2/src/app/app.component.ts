@@ -29,7 +29,7 @@ import {HedgeFundService} from "./hf/hf.fund.service";
 import {RiskManagementReportService} from "./riskmanagement/riskmanagement.report.service";
 import {AlbourneService} from "./hf/hf.albourne.service";
 
-//import '../../public/js/jquery.ns-autogrow.min.js';
+import '../../public/js/jquery.ns-autogrow.min.js';
 
 @Component({
     selector: 'app-main',

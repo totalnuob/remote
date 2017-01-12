@@ -119,8 +119,6 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
 
                                 // preselect memo attendees
                                 this.preselectAttendeesNIC();
-
-                                $('input[type=text], textarea').autogrow({vertical: true, horizontal: false});
                             },
                             error => this.errorMessage = "Error loading memo"
                         );
@@ -205,6 +203,8 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
         $('#timePicker').datetimepicker({
             format: 'LT'
         })
+
+        $('input[type=text], textarea').autogrow();
 
         // init chart also moved to constructor
         // due to that scores array is still empty when ngOnInit called

@@ -139,6 +139,8 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
             //defaultDate: new Date(),
             format: 'DD-MM-YYYY'
         });
+
+        $('input[type=text], textarea').autogrow();
     }
 
     search(page){

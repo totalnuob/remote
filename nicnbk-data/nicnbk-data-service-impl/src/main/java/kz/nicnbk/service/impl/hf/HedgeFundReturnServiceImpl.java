@@ -36,7 +36,7 @@ public class HedgeFundReturnServiceImpl implements HedgeFundReturnService {
         } catch(Exception ex){
             // TODO: log exception
             ex.printStackTrace();
-            return 0L;
+            return null;
         }
     }
 

@@ -46,6 +46,8 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
     chart;
 
     uploadedReturns;
+    returnUploadErrorMessage;
+    returnUploadSuccessMessage;
 
     constructor(
         private lookupService: LookupService,
@@ -99,7 +101,7 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
                                     }
                                 }else{
                                     // TODO: handle error
-                                    this.errorMessage = "Error loading fund profile.";
+                                    this.errorMessage = "Error loading fund profile";
                                 }
                             },
                             error => this.errorMessage = "Error loading manager profile"
@@ -112,7 +114,7 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
                                     this.fund.manager = data;
                                 }else{
                                     // TODO: handle error
-                                    this.errorMessage = "Error loading fund manager info.";
+                                    this.errorMessage = "Error loading fund manager info";
                                 }
                             },
                             error => this.errorMessage = "Error loading manager profile"
@@ -141,6 +143,8 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
             //defaultDate: new Date(),
             format: 'DD-MM-YYYY'
         });
+
+        $('input[type=text], textarea').autogrow();
     }
 
     save(){
@@ -149,35 +153,55 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
         //console.log(this.fund);
 
         if(!this.validate()){
+            //this.postAction(null, "Error saving fund profile.");
             return;
         }
 
+        //console.log(this.fund.returns);
         this.fundService.save(this.fund)
             .subscribe(
                 (response: SaveResponse)  => {
                     this.fund.id = response.entityId;
                     this.fund.creationDate = response.creationDate;
 
-                    this.postAction("Successfully saved.", null);
+                    this.postAction("Successfully saved", null);
                 },
                 error =>  {
-                    this.postAction(null, "Error saving manager profile.");
+                    this.postAction(null, "Error saving fund profile");
                 }
             );
     }
 
     validate(){
 
+        // Check required fields
         if(this.fund.manager == null || this.fund.manager.id == null){
-            this.errorMessage = "Fund manager required.";
+            this.postAction(null, "Fund manager required");
             return false;
         }
 
         if(this.fund.name == null || this.fund.name.trim() === ''){
-            this.errorMessage = "Fund name required.";
+            this.postAction(null, "Fund name required");
             return false;
         }
 
+        // check returns
+        if(!this.checkReturns()){
+            return false;
+        }
+        return true;
+    }
+
+    checkReturns(){
+        // check duplicate years
+        var set = Object.create(null);
+        for(var i = 0; i < this.fund.returns.length; i++){
+            if (this.fund.returns[i].year in set) {
+                this.postAction(null, "Invalid returns: duplicate years");
+                return false;
+            }
+            set[this.fund.returns[i].year] = true;
+        }
         return true;
     }
 
@@ -482,7 +506,20 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
         var rows = this.uploadedReturns.split("\n");
 
         for(var i = 0; i < rows.length; i++){
-            var row = rows[i].split(";");
+            if(rows[i].trim() === ""){
+                continue;
+            }
+            var row = rows[i].split("\t");
+            if(row.length != 2){
+                this.returnUploadSuccessMessage = null;
+                this.returnUploadErrorMessage = "Invalid returns format";
+                return;
+            }
+            if(row[0] == null || row[0] === 'undefined' || row[0].split(".").length != 3){
+                this.returnUploadSuccessMessage = null;
+                this.returnUploadErrorMessage = "Invalid return format - date";
+                return;
+            }
             var month = row[0].split(".")[1];
             var year = row[0].split(".")[2];
             var returnRow = this.findReturnByYear(returns, year);
@@ -500,6 +537,15 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
 
         Array.prototype.push.apply(this.fund.returns,returns);
 
+        this.returnUploadErrorMessage = null;
+        this.returnUploadSuccessMessage = "Returns added";
+
+    }
+
+    closeReturnsModal(){
+        this.uploadedReturns = "";
+        this.returnUploadSuccessMessage = null;
+        this.returnUploadErrorMessage = null;
     }
 
     private findReturnByYear(returns, year){

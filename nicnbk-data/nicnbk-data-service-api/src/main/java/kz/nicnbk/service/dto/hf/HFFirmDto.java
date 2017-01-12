@@ -31,7 +31,7 @@ public class HFFirmDto extends HistoryBaseEntityDto<HFManager> {
     private String website;
     private String email;
 
-    private List<HedgeFundDto2> funds;
+    private List<HedgeFundDto> funds;
 
     public String getName() {
         return name;
@@ -137,11 +137,11 @@ public class HFFirmDto extends HistoryBaseEntityDto<HFManager> {
         this.email = email;
     }
 
-    public List<HedgeFundDto2> getFunds() {
+    public List<HedgeFundDto> getFunds() {
         return funds;
     }
 
-    public void setFunds(List<HedgeFundDto2> funds) {
+    public void setFunds(List<HedgeFundDto> funds) {
         this.funds = funds;
     }
 

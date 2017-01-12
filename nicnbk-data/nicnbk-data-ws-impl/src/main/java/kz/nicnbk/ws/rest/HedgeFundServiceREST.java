@@ -1,7 +1,8 @@
 package kz.nicnbk.ws.rest;
 
 import kz.nicnbk.service.api.hf.HedgeFundService;
-import kz.nicnbk.service.dto.hf.HedgeFundDto2;
+import kz.nicnbk.service.dto.hf.HedgeFundDto;
+import kz.nicnbk.service.dto.hf.HedgeFundPagedSearchResult;
 import kz.nicnbk.service.dto.hf.HedgeFundSearchParams;
 import kz.nicnbk.ws.model.EntitySaveResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,8 @@ public class HedgeFundServiceREST {
     private HedgeFundService service;
 
     @RequestMapping(value = "/get/{id}", method = RequestMethod.GET)
-    public HedgeFundDto2 get(@PathVariable long id){
-        HedgeFundDto2 hedgeFundDto = this.service.get(id);
+    public HedgeFundDto get(@PathVariable long id){
+        HedgeFundDto hedgeFundDto = this.service.get(id);
         if(hedgeFundDto == null){
 
         }
@@ -34,7 +35,7 @@ public class HedgeFundServiceREST {
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public ResponseEntity<?>  save(@RequestBody HedgeFundDto2 hedgeFundDto) {
+    public ResponseEntity<?>  save(@RequestBody HedgeFundDto hedgeFundDto) {
         Long id = this.service.save(hedgeFundDto);
         HttpHeaders httpHeaders = new HttpHeaders();
         EntitySaveResponse response = new EntitySaveResponse();
@@ -50,7 +51,7 @@ public class HedgeFundServiceREST {
 
     // TODO: search result & search params
     @RequestMapping(value = "/search", method = RequestMethod.POST)
-    public Set<HedgeFundDto2> search(@RequestBody HedgeFundSearchParams searchParams){
+    public HedgeFundPagedSearchResult search(@RequestBody HedgeFundSearchParams searchParams){
         return this.service.findByName(searchParams);
     }
 }

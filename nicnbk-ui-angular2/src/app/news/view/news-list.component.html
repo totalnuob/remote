@@ -30,6 +30,9 @@
         <li>
             <a data-toggle="tab" href="#risk_management">RISK MANAGEMENT</a>
         </li>
+        <li>
+            <a data-toggle="tab" href="#national_bank">NATIONAL BANK</a>
+        </li>
     </ul>
     <div class="tab-content">
         <div id="general" class="tab-pane fade in active">
@@ -257,6 +260,45 @@
                 <div id="moreBtn_risk_management">
                     <button class="btn btn-default" (click)="loadMore('RM')" *ngIf="isShowMoreButton('RM')">More</button>
                     <div *ngIf="!isShowMoreButton('RM')">No more posts to show</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="national_bank" class="tab-pane fade">
+            <div id="national_bank_content">
+                <div class="row withpadding" *ngFor = "let news of newsList" >
+                    <div class="col-md-12" *ngIf = "news.type == 'NBRK'">
+                        <div class="row">
+                            <a [routerLink]="['/news/view/', news.id]"><h4>{{news.header}}</h4></a>
+                        </div>
+                        <div class="row">
+                            <h4><small>{{news.source}}</small></h4>
+                        </div>
+                        <div class="row">
+                            <p>{{news.shortContent}}</p>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-1">
+                                <a class="btn btn-info btn-sm" data-toggle="modal"
+                                   (click) = "getNewsById(news.id)" data-target="#newsModal">view</a>
+                            </div>
+                            <div class="col-md-2 pull-right">
+                                <!--<input name="rating_stars" type="number" class="rating"/>-->
+                            </div>
+                        </div>
+                        <div class="row">
+                            <hr style="border-top: 1px solid #B5AEAE"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div id="loadmoreajaxloader_national_bank" style="display:none;" class="center-block">
+                    <!--<img src="app/static/img/ajax-loader.gif" height="42" width="42"/>-->
+                </div>
+                <div id="moreBtn_national_bank">
+                    <button class="btn btn-default" (click)="loadMore('NBRK')" *ngIf="isShowMoreButton('NBRK')">More</button>
+                    <div *ngIf="!isShowMoreButton('NBRK')">No more posts to show</div>
                 </div>
             </div>
         </div>

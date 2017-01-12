@@ -1,7 +1,6 @@
 package kz.nicnbk.service.dto.hf;
 
 import kz.nicnbk.common.service.model.BaseDto;
-import kz.nicnbk.repo.model.hf.HedgeFund;
 
 /**
  * Created by magzumov on 15.12.2016.
@@ -9,7 +8,7 @@ import kz.nicnbk.repo.model.hf.HedgeFund;
 public class InvestorBaseDto implements BaseDto {
     private String category;
     private String fund;
-    private HedgeFundDto2 hedgeFund;
+    private HedgeFundDto hedgeFund;
 
     public String getCategory() {
         return category;
@@ -27,11 +26,11 @@ public class InvestorBaseDto implements BaseDto {
         this.fund = fund;
     }
 
-    public HedgeFundDto2 getHedgeFund() {
+    public HedgeFundDto getHedgeFund() {
         return hedgeFund;
     }
 
-    public void setHedgeFund(HedgeFundDto2 hedgeFund) {
+    public void setHedgeFund(HedgeFundDto hedgeFund) {
         this.hedgeFund = hedgeFund;
     }
 }

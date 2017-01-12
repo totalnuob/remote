@@ -8,15 +8,15 @@ import kz.nicnbk.common.service.model.BaseEntityDto;
  */
 public class HedgeFundSubstrategyDto extends BaseEntityDto<kz.nicnbk.repo.model.hf.HedgeFundSubstrategy> {
 
-    private HedgeFundDto2 fund;
+    private HedgeFundDto fund;
     private BaseDictionaryDto substrategy;
     private Double value;
 
-    public HedgeFundDto2 getFund() {
+    public HedgeFundDto getFund() {
         return fund;
     }
 
-    public void setFund(HedgeFundDto2 fund) {
+    public void setFund(HedgeFundDto fund) {
         this.fund = fund;
     }
 

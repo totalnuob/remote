@@ -97,7 +97,7 @@
     </mapping>
 
     <mapping>
-        <class-a>kz.nicnbk.service.dto.hf.HedgeFundDto2</class-a>
+        <class-a>kz.nicnbk.service.dto.hf.HedgeFundDto</class-a>
         <class-b>kz.nicnbk.repo.model.hf.HedgeFund</class-b>
         <field-exclude>
             <a>aumCurrency</a>

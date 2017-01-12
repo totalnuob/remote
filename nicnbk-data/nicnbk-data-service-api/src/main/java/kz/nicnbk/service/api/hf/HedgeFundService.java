@@ -1,9 +1,9 @@
 package kz.nicnbk.service.api.hf;
 
 import kz.nicnbk.service.api.base.BaseService;
-import kz.nicnbk.service.dto.hf.HedgeFundDto2;
+import kz.nicnbk.service.dto.hf.HedgeFundDto;
+import kz.nicnbk.service.dto.hf.HedgeFundPagedSearchResult;
 import kz.nicnbk.service.dto.hf.HedgeFundSearchParams;
-import kz.nicnbk.service.dto.hf.HedgeFundSubstrategyDto;
 
 import java.util.List;
 import java.util.Set;
@@ -13,11 +13,17 @@ import java.util.Set;
  */
 public interface HedgeFundService extends BaseService {
 
-    Long save(HedgeFundDto2 hedgeFundDto);
+    /* Number of pages per view */
+    int DEFAULT_PAGES_PER_VIEW = 5;
 
-    HedgeFundDto2 get(Long id);
+    /* Number of elements per page */
+    int DEFAULT_PAGE_SIZE = 20;
 
-    List<HedgeFundDto2> loadManagerFunds(Long managerId);
+    Long save(HedgeFundDto hedgeFundDto);
 
-    Set<HedgeFundDto2> findByName(HedgeFundSearchParams searchParams);
+    HedgeFundDto get(Long id);
+
+    List<HedgeFundDto> loadManagerFunds(Long managerId);
+
+    HedgeFundPagedSearchResult findByName(HedgeFundSearchParams searchParams);
 }

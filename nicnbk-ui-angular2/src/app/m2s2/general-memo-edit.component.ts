@@ -7,6 +7,8 @@ import {MemoService} from "./memo.service";
 import {EmployeeService} from "../employee/employee.service";
 import {MemoAttachmentDownloaderComponent} from "./memo-attachment-downloader.component";
 
+import {InputTextareaModule} from 'primeng/primeng';
+
 declare var $:any
 declare var Chart: any;
 
@@ -122,6 +124,7 @@ export class GeneralMemoEditComponent extends CommonFormViewComponent implements
             format: 'LT'
         })
 
+        $('input[type=text], textarea').autogrow();
 
     }
 

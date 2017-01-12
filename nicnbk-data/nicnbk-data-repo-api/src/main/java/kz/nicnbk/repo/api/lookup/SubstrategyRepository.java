@@ -14,4 +14,6 @@ public interface SubstrategyRepository extends PagingAndSortingRepository<Substr
 
     @Query("select substrategy from Substrategy substrategy where substrategy.strategy.code=:strategyCode ")
     List<Substrategy> findByStrategy(@Param("strategyCode") String strategyCode);
+
+    Substrategy findByCode(String code);
 }

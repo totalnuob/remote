@@ -194,6 +194,8 @@ export class RealEstateMemoEditComponent extends CommonFormViewComponent impleme
             format: 'LT'
         })
 
+        $('input[type=text], textarea').autogrow();
+
         // load lookups
         //this.loadLookups();
 

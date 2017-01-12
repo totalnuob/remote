@@ -8,4 +8,5 @@ import java.util.List;
  * Created by magzumov on 02.08.2016.
  */
 public interface ManagerTypeRepository extends PagingAndSortingRepository<ManagerType, Long> {
+    ManagerType findByCode(String code);
 }

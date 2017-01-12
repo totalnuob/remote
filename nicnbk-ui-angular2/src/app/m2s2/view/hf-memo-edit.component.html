@@ -100,7 +100,7 @@
                         </select>
                     </div>
                     <div class="col-md-6">
-                            <textarea autosize spellcheck="false" class="form-control"
+                            <textarea spellcheck="false" class="form-control"
                                       [disabled]="memo.arrangedBy != 'OTHER'" id="arrengedByDescription" maxlength="250"
                                       [(ngModel)]="memo.arrangedByDescription"></textarea>
                     </div>
@@ -108,7 +108,7 @@
                 <div class="row top-buffer">
                     <label class="control-label col-md-3">Purpose:</label>
                     <div class="col-md-9">
-                        <textarea autosize spellcheck="false"  type="text" class="form-control" id="purpose" maxlength="1000"
+                        <textarea spellcheck="false"  type="text" class="form-control" id="purpose" maxlength="1000"
                                   [(ngModel)]="memo.purpose"></textarea>
                     </div>
                 </div>
@@ -137,14 +137,14 @@
                 <div class="row top-buffer">
                     <div class="col-md-3">&nbsp;</div>
                     <div class="col-md-9">
-                        <textarea autosize spellcheck="false"  type="text" placeholder="Other NIC attendees..." class="form-control"
+                        <textarea spellcheck="false"  type="text" placeholder="Other NIC attendees..." class="form-control"
                                   maxlength="1000" id="attendeesNIC" [(ngModel)]="memo.attendeesNICOther"></textarea>
                     </div>
                 </div>
                 <div class="row top-buffer">
                     <label class="control-label col-md-3" for="attendeesDescription">Attendees (Other Party):</label>
                     <div class="col-md-9">
-                        <textarea autosize spellcheck="false"  type="text" class="form-control" id="attendeesDescription" maxlength="1000"
+                        <textarea spellcheck="false"  type="text" class="form-control" id="attendeesDescription" maxlength="1000"
                                   [(ngModel)]="memo.attendeesOther"></textarea>
                     </div>
                 </div>
@@ -290,7 +290,7 @@
                 <div class="col-md-1">&nbsp;</div>
                 <label for="nonsuitableReason" class="col-md-1">If No, why</label>
                 <div class="col-md-5">
-                    <textarea autosize spellcheck="false"  class="form-control col-md-4" id="nonsuitableReason" maxlength="1000"
+                    <textarea spellcheck="false"  class="form-control col-md-4" id="nonsuitableReason" maxlength="1000"
                         [disabled]="memo.suitable" [(ngModel)]="memo.nonsuitableReason"></textarea>
                 </div>
             </div>
@@ -321,7 +321,7 @@
         </div>
     <div class="row top-buffer withpadding">
         <div class="col-md-12 nopadding">
-            <textarea autosize spellcheck="false"  class="form-control" [(ngModel)]="memo.managementAndTeamNotes"></textarea>
+            <textarea spellcheck="false"  class="form-control" [(ngModel)]="memo.managementAndTeamNotes"></textarea>
         </div>
     </div>
     <div class="row top-buffer withpadding">
@@ -344,7 +344,7 @@
     </div>
     <div class="row top-buffer withpadding">
         <div class="col-md-12 nopadding">
-            <textarea autosize spellcheck="false"  class="form-control" [(ngModel)]="memo.strategyNotes"></textarea>
+            <textarea spellcheck="false"  class="form-control" [(ngModel)]="memo.strategyNotes"></textarea>
         </div>
     </div>
     <div class="row top-buffer withpadding">
@@ -367,7 +367,7 @@
     </div>
     <div class="row top-buffer withpadding">
         <div class="col-md-12 nopadding">
-            <textarea autosize spellcheck="false"  class="form-control" [(ngModel)]="memo.portfolioNotes"></textarea>
+            <textarea spellcheck="false"  class="form-control" [(ngModel)]="memo.portfolioNotes"></textarea>
         </div>
     </div>
     <div class="row top-buffer withpadding">
@@ -380,7 +380,7 @@
     </div>
     <div class="row top-buffer withpadding">
         <div class="col-md-12 nopadding">
-            <textarea autosize spellcheck="false"  class="form-control" [(ngModel)]="memo.otherNotes"></textarea>
+            <textarea spellcheck="false"  class="form-control" [(ngModel)]="memo.otherNotes"></textarea>
         </div>
     </div>
     <div class="row top-buffer withpadding">
@@ -401,10 +401,10 @@
     </div>
     <div class="row top-buffer withpadding">
         <div class="col-md-6 nopadding">
-            <textarea autosize spellcheck="false"  class="form-control" [(ngModel)]="memo.nicFollowups"></textarea>
+            <textarea spellcheck="false"  class="form-control" [(ngModel)]="memo.nicFollowups"></textarea>
         </div>
         <div class="col-md-6 nopadding">
-            <textarea autosize spellcheck="false"  class="form-control" [(ngModel)]="memo.otherPartyFollowups"></textarea>
+            <textarea spellcheck="false"  class="form-control" [(ngModel)]="memo.otherPartyFollowups"></textarea>
         </div>
     </div>
     <br/>

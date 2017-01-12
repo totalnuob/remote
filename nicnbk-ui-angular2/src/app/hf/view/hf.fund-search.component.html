@@ -60,25 +60,24 @@
     </div>
 
     <div>
-        <label>Total found: <span>{{foundEntities?.length}}</span></label>
+        <label>Total found: <span>{{searchResult?.totalElements > 0 ?  searchResult?.totalElements : 0}}</span></label>
     </div>
-    <!--<div class="row pull-right">-->
-        <!--<ul class="pagination" *ngIf="memoSearchResult?.showPageFrom > 0">-->
-            <!--<li><a *ngIf="memoSearchResult?.showPageFrom > 1" (click)="search(memoSearchResult.showPageFrom - 1)">&laquo;</a></li>-->
-            <!--<li *ngFor="let i of range(memoSearchResult.showPageFrom, memoSearchResult.showPageTo)" [class.active]="i == memoSearchResult.currentPage">-->
-                <!--<a (click)="search(i)">{{i}}</a>-->
-            <!--</li>-->
-            <!--<li><a *ngIf="memoSearchResult.showPageTo < memoSearchResult.totalPages" (click)="search(memoSearchResult.showPageTo + 1)">&raquo;</a></li>-->
-        <!--</ul>-->
-    <!--</div>-->
+    <div class="row pull-right">
+        <ul class="pagination" *ngIf="searchResult?.showPageFrom > 0">
+            <li><a *ngIf="searchResult?.showPageFrom > 1" (click)="search(searchResult.showPageFrom - 1)">&laquo;</a></li>
+            <li *ngFor="let i of range(searchResult.showPageFrom, searchResult.showPageTo)" [class.active]="i == searchResult.currentPage">
+                <a (click)="search(i - 1)">{{i}}</a>
+            </li>
+            <li><a *ngIf="searchResult.showPageTo < searchResult.totalPages" (click)="search(searchResult.showPageTo + 1)">&raquo;</a></li>
+        </ul>
+    </div>
     <table class="table table-hover">
         <thead>
         <tr>
             <th>&nbsp;</th>
             <th>FUND</th>
             <th>MANAGER</th>
-            <th>STRATEGY</th>
-            <th>LOCATION</th>
+            <th>INCEPTION</th>
             <th>UPDATED</th>
             <th>ACTIONS</th>
         </tr>
@@ -90,11 +89,9 @@
             <td width="5%"></td>
             <td width="30%"><a [routerLink]="['/hf/fundProfile/', fund.id]">{{fund.name}}</a></td>
             <td width="30%"><a [routerLink]="['/hf/managerProfile/', fund.manager.id]">{{fund.manager.name}}</a></td>
-            <td width="10%"></td>
-            <td width="10%"></td>
-            <td width="10%"></td>
+            <td width="10%">{{fund.inceptionDate}}</td>
+            <td width="10%">{{fund.updateDate}}</td>
             <td width="5%">
-                <a><i class="glyphicon glyphicon-search"></i></a>
                 <a><i class="glyphicon glyphicon-file"></i></a>
             </td>
         </tr>
