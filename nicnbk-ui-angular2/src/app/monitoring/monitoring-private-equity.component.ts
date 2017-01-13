@@ -51,12 +51,18 @@ export class MonitoringPrivateEquityComponent extends GoogleChartComponent {
     // VALUE TABLES --------------------------------
     drawValuesTable(tableDate){
         var data = new google.visualization.DataTable();
+        var formatter = new google.visualization.NumberFormat({
+            prefix:'$ ',
+            groupingSymbol: ' ',
+            fractionDigits: 0
+        });
         data.addColumn("string", "");
         data.addColumn("number", "");
         data.addRows([
             ["Private Equity Portfolio", this.getNAVByDate(tableDate)],
             ["Commitment", this.getCommitmentByDate(tableDate)]
         ]);
+        formatter.format(data,1);
 
         var options = {
             showRowNumber: false,
@@ -91,15 +97,22 @@ export class MonitoringPrivateEquityComponent extends GoogleChartComponent {
     // IRR LINE CHART ------------------------------
     drawIRR(){
         var data = new google.visualization.DataTable();
+        var formatter = new google.visualization.NumberFormat({
+            pattern:'#.##%'
+        });
         data.addColumn("string", "Date");
         data.addColumn("number", "IRR");
         data.addRows(this.getIRRRowData());
+        formatter.format(data, 1);
 
         var options = {
             showRowNumber: false,
             width: '100%',
             height: '100%',
             'allowHtml': true,
+            vAxis: {
+                format: '#.##%',
+            },
             cssClassNames: {}
         };
 

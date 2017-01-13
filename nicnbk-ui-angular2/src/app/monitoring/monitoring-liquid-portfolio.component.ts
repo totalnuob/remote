@@ -55,6 +55,11 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
     // NAV TABLE ---------------------------------------
     private getNAVData(tableDate){
         var data = new google.visualization.DataTable();
+        var formatter = new google.visualization.NumberFormat({
+            prefix:'$ ',
+            groupingSymbol: ' ',
+            fractionDigits: 0
+        });
         data.addColumn("string", "");
         data.addColumn("number", "");
         var NAVarray = this.getNAVByDate(tableDate);
@@ -67,6 +72,7 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
             ["Cash", NAVarray[6]],
             ["Total", NAVarray[7]]
         ]);
+        formatter.format(data, 1);
         return data;
     }
 
@@ -140,16 +146,24 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
 
     drawReturnsYTD(date){
         var data = new google.visualization.DataTable();
+        var formatter = new google.visualization.NumberFormat({
+            pattern:'#.##%'
+        });
         data.addColumn("string", "Date");
         data.addColumn("number", "Portfolio");
         data.addColumn("number", "ML 6m T Bills");
         data.addRows(this.getRowDataReturnsYTD(date));
+        formatter.format(data, 1);
+        formatter.format(data, 2);
 
         var options = {
             showRowNumber: false,
             width: '100%',
             height: '100%',
             'allowHtml': true,
+            vAxis: {
+                format: '#.##%',
+            },
             cssClassNames: {}
         };
 
@@ -159,16 +173,24 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
 
     drawReturnsSinceInception(date){
         var data = new google.visualization.DataTable();
+        var formatter = new google.visualization.NumberFormat({
+            pattern:'#.##%'
+        });
         data.addColumn("string", "Date");
         data.addColumn("number", "ML 6m T Bills");
         data.addColumn("number", "Portfolio");
         data.addRows(this.getRowDataReturnsSinceInception(date));
+        formatter.format(data, 1);
+        formatter.format(data, 2);
 
         var options = {
             showRowNumber: false,
             width: '100%',
             height: '100%',
             'allowHtml': true,
+            vAxis: {
+                format: '#.##%',
+            },
             cssClassNames: {}
         };
 
