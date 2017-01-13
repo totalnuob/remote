@@ -11,6 +11,7 @@ import {MemoSearchParams} from "../m2s2/model/memo-search-params";
 import {MemoService} from "../m2s2/memo.service";
 import {Memo} from "../m2s2/model/memo";
 import {MemoSearchResults} from "../m2s2/model/memo-search-results";
+import {Subscription} from 'rxjs';
 
 declare var $:any
 
@@ -28,6 +29,7 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
     memoList: Memo[];
     memoSearchResult: MemoSearchResults;
     meetingTypes = [];
+    busy: Subscription;
 
     private manager = new HFManager();
 
@@ -52,7 +54,7 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
         super();
 
         // loadLookups
-        this.loadLookups();
+        this.busy = this.loadLookups();
 
         // TODO: wait/sync on lookup loading
         // TODO: sync on subscribe results
@@ -65,7 +67,7 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
             .subscribe(params => {
                 this.managerIdParam = +params['id'];
                 if(this.managerIdParam > 0) {
-                    this.managerService.get(this.managerIdParam)
+                    this.busy = this.managerService.get(this.managerIdParam)
                         .subscribe(
                             data => {
                                 console.log(data);
@@ -123,6 +125,9 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
     }
 
     ngOnInit():any {
+
+        this.postAction(null, null);
+
         // TODO: exclude jQuery
         // datetimepicker
         $('#inceptionDate').datetimepicker({

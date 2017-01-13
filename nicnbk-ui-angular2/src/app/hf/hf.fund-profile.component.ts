@@ -11,6 +11,8 @@ import {HFManagerService} from "./hf.manager.service";
 import {AlbourneService} from "./hf.albourne.service";
 import {GoogleChartComponent} from "../google-chart/google-chart.component";
 
+import {Subscription} from 'rxjs';
+
 declare var google:any;
 declare var $:any
 
@@ -29,6 +31,8 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
     public sub: any;
     public fundIdParam: number;
     public managerIdParam: number;
+
+    busy: Subscription;
 
     strategyLookup = [];
     substrategyLookup = [];
@@ -60,11 +64,7 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
         super();
 
         // loadLookups
-        this.loadLookups();
-
-        // TODO: wait/sync on lookup loading
-        // TODO: sync on subscribe results
-        this.waitSleep(500);
+        this.sub = this.loadLookups();
 
         // parse params and load data
         this.sub = this.route
@@ -77,7 +77,7 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
                 this.fund.manager = new HFManager();
 
                 if(this.fundIdParam > 0) {
-                    this.fundService.get(this.fundIdParam)
+                    this.busy = this.fundService.get(this.fundIdParam)
                         .subscribe(
                             (data: HedgeFund) => {
                                 if(data && data.id > 0) {
@@ -137,6 +137,8 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
 
         super.ngOnInit();
 
+        this.postAction(null, null);
+
         // TODO: exclude jQuery
         // datetimepicker
         $('#inceptionDate').datetimepicker({
@@ -144,7 +146,7 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
             format: 'DD-MM-YYYY'
         });
 
-        $('input[type=text], textarea').autogrow();
+        //$('input[type=text], textarea').autogrow({vertical: true, horizontal: false});
     }
 
     save(){

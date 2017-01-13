@@ -71,7 +71,8 @@
             <li><a *ngIf="searchResult.showPageTo < searchResult.totalPages" (click)="search(searchResult.showPageTo + 1)">&raquo;</a></li>
         </ul>
     </div>
-    <table class="table table-hover">
+    <div style="position: relative">
+        <table [ngBusy]="busy" class="table table-hover">
         <thead>
         <tr>
             <th>&nbsp;</th>
@@ -97,6 +98,8 @@
         </tr>
         </tbody>
     </table>
+
+    </div>
     <!--<div class="row pull-right">-->
         <!--<ul class="pagination" *ngIf="memoSearchResult?.showPageFrom > 0">-->
             <!--<li><a *ngIf="memoSearchResult?.showPageFrom > 1" (click)="search(memoSearchResult.showPageFrom - 1)">&laquo;</a></li>-->

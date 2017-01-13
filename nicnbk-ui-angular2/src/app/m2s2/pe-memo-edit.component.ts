@@ -9,6 +9,7 @@ import {EmployeeService} from "../employee/employee.service";
 import {FileUploadService} from "../upload/file.upload.service";
 import {CommonFormViewComponent} from "../common/common.component";
 import {SaveResponse} from "../common/save-response.";
+import {Subscription} from 'rxjs';
 
 declare var $:any
 declare var Chart: any;
@@ -26,6 +27,7 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
 
     public sub: any;
     public memoIdParam: number;
+    busy: Subscription;
 
     public uploadFiles: Array<any> = [];
 
@@ -79,15 +81,13 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
         super();
 
         // loadLookups
-        this.loadLookups();
+        this.sub = this.loadLookups();
 
 
 
         // TODO: wait/sync on lookup loading
         // TODO: sync on subscribe results
-        this.waitSleep(700);
-
-
+        //this.waitSleep(700);
 
         // parse params and load data
         this.sub = this.route
@@ -95,7 +95,7 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
             .subscribe(params => {
                 this.memoIdParam = +params['id'];
                 if(this.memoIdParam > 0) {
-                    this.memoService.get(2, this.memoIdParam)
+                    this.busy = this.memoService.get(2, this.memoIdParam)
                         .subscribe(
                             memo => {
                                 // TODO: check response memo
@@ -119,6 +119,8 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
 
                                 // preselect memo attendees
                                 this.preselectAttendeesNIC();
+
+                                $('input[type=text], textarea').autogrow({vertical: true, horizontal: false});
                             },
                             error => this.errorMessage = "Error loading memo"
                         );
@@ -193,6 +195,9 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
     }
 
     ngOnInit() {
+
+        this.postAction(null, null);
+
         // TODO: exclude jQuery
         // datetimepicker
         $('#meetingDate').datetimepicker({
@@ -204,7 +209,7 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
             format: 'LT'
         })
 
-        $('input[type=text], textarea').autogrow();
+        $('input[type=text], textarea').autogrow({vertical: true, horizontal: false});
 
         // init chart also moved to constructor
         // due to that scores array is still empty when ngOnInit called
@@ -216,6 +221,7 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
     }
 
     save(){
+
         // TODO: ngModel date
         this.memo.meetingDate = $('#meetingDateValue').val();
         this.memo.meetingTime = $('#meetingTimeValue').val();

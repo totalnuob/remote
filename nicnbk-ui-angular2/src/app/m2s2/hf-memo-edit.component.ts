@@ -9,6 +9,7 @@ import {Lookup} from "../common/lookup";
 import {CommonFormViewComponent} from "../common/common.component";
 import {EmployeeService} from "../employee/employee.service";
 import {MemoAttachmentDownloaderComponent} from "./memo-attachment-downloader.component";
+import {Subscription} from 'rxjs';
 
 declare var $:any
 declare var Chart: any;
@@ -26,6 +27,7 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
 
     private sub: any;
     private memoIdParam: number;
+    busy: Subscription;
 
     private visible = false;
 
@@ -78,12 +80,12 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
         super();
 
         // loadLookups
-        this.loadLookups();
+        this.sub = this.loadLookups();
 
 
         // TODO: wait/sync on lookup loading
         // TODO: sync on subscribe results
-        this.waitSleep(700);
+        //this.waitSleep(700);
 
 
         // parse params and load data
@@ -92,7 +94,7 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
             .subscribe(params => {
                 this.memoIdParam = +params['id'];
                 if(this.memoIdParam > 0) {
-                    this.memoService.get(3, this.memoIdParam)
+                    this.busy = this.memoService.get(3, this.memoIdParam)
                         .subscribe(
                             memo => {
                                 // TODO: check response memo
@@ -188,6 +190,8 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
     }
 
     ngOnInit() {
+
+        this.postAction(null, null);
 
 
         // TODO: exclude jQuery

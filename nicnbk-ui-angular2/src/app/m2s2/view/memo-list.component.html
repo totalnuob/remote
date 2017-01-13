@@ -118,51 +118,53 @@
         <div>
             <label>Total found: <span>{{memoSearchResult?.totalElements > 0 ?  memoSearchResult?.totalElements : 0}}</span></label>
         </div>
-        <div class="row pull-right">
-            <ul class="pagination" *ngIf="memoSearchResult?.showPageFrom > 0">
-                <li><a *ngIf="memoSearchResult?.showPageFrom > 1" (click)="search(memoSearchResult.showPageFrom - 1)">&laquo;</a></li>
-                <li *ngFor="let i of range(memoSearchResult.showPageFrom, memoSearchResult.showPageTo)" [class.active]="i == memoSearchResult.currentPage">
-                    <a (click)="search(i)">{{i}}</a>
-                </li>
-                <li><a *ngIf="memoSearchResult.showPageTo < memoSearchResult.totalPages" (click)="search(memoSearchResult.showPageTo + 1)">&raquo;</a></li>
-            </ul>
-        </div>
-        <table class="table table-hover">
-            <thead>
-            <tr>
-                <th>TYPE</th>
-                <th>MEETING/CALL</th>
-                <th>FIRM</th>
-                <th>FUND</th>
-                <th>DATE</th>
-                <th>AUTHOR</th>
-                <th>ACTIONS</th>
-            </tr>
-            </thead>
+        <div class="row withpadding" style="position: relative; min-height: 80px;">
+            <div class="row pull-right">
+                <ul class="pagination" *ngIf="memoSearchResult?.showPageFrom > 0">
+                    <li><a *ngIf="memoSearchResult?.showPageFrom > 1" (click)="search(memoSearchResult.showPageFrom - 1)">&laquo;</a></li>
+                    <li *ngFor="let i of range(memoSearchResult.showPageFrom, memoSearchResult.showPageTo)" [class.active]="i == memoSearchResult.currentPage">
+                        <a (click)="search(i)">{{i}}</a>
+                    </li>
+                    <li><a *ngIf="memoSearchResult.showPageTo < memoSearchResult.totalPages" (click)="search(memoSearchResult.showPageTo + 1)">&raquo;</a></li>
+                </ul>
+            </div>
+            <table [ngBusy]="busy" class="table table-hover">
+                <thead>
+                <tr>
+                    <th>TYPE</th>
+                    <th>MEETING/CALL</th>
+                    <th>FIRM</th>
+                    <th>FUND</th>
+                    <th>DATE</th>
+                    <th>AUTHOR</th>
+                    <th>ACTIONS</th>
+                </tr>
+                </thead>
 
-            <tbody>
-            <tr *ngFor = "let memo of memoList">
-                <td width="5%">{{getMemoTypeName(memo.memoType)}}</td>
-                <td width="10%" >{{memo.meetingType}}</td>
-                <td width="30%"><a [routerLink]="['/m2s2/edit/', memo.memoType, memo.id]">{{memo.firmName}}</a></td>
-                <td width="30%"><a [routerLink]="['/m2s2/edit/', memo.memoType, memo.id]">{{memo.fundName}}</a></td>
-                <!--<td width="10%" th:text="${memoItem.meetingDate}"></td>-->
-                <td width="10%">{{memo.meetingDate}}</td>
-                <td width="10%">{{memo.author}}</td>
-                <td width="5%">
-                    <a><i class="glyphicon glyphicon-trash"></i></a>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-        <div class="row pull-right">
-            <ul class="pagination" *ngIf="memoSearchResult?.showPageFrom > 0">
-                <li><a *ngIf="memoSearchResult?.showPageFrom > 1" (click)="search(memoSearchResult.showPageFrom - 1)">&laquo;</a></li>
-                <li *ngFor="let i of range(memoSearchResult.showPageFrom, memoSearchResult.showPageTo)" [class.active]="i == memoSearchResult.currentPage">
-                    <a (click)="search(i)">{{i}}</a>
-                </li>
-                <li><a *ngIf="memoSearchResult.showPageTo < memoSearchResult.totalPages" (click)="search(memoSearchResult.showPageTo + 1)">&raquo;</a></li>
-            </ul>
+                <tbody>
+                <tr *ngFor = "let memo of memoList">
+                    <td width="5%">{{getMemoTypeName(memo.memoType)}}</td>
+                    <td width="10%" >{{memo.meetingType}}</td>
+                    <td width="30%"><a [routerLink]="['/m2s2/edit/', memo.memoType, memo.id]">{{memo.firmName}}</a></td>
+                    <td width="30%"><a [routerLink]="['/m2s2/edit/', memo.memoType, memo.id]">{{memo.fundName}}</a></td>
+                    <!--<td width="10%" th:text="${memoItem.meetingDate}"></td>-->
+                    <td width="10%">{{memo.meetingDate}}</td>
+                    <td width="10%">{{memo.author}}</td>
+                    <td width="5%">
+                        <a><i class="glyphicon glyphicon-trash"></i></a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="row pull-right">
+                <ul class="pagination" *ngIf="memoSearchResult?.showPageFrom > 0">
+                    <li><a *ngIf="memoSearchResult?.showPageFrom > 1" (click)="search(memoSearchResult.showPageFrom - 1)">&laquo;</a></li>
+                    <li *ngFor="let i of range(memoSearchResult.showPageFrom, memoSearchResult.showPageTo)" [class.active]="i == memoSearchResult.currentPage">
+                        <a (click)="search(i)">{{i}}</a>
+                    </li>
+                    <li><a *ngIf="memoSearchResult.showPageTo < memoSearchResult.totalPages" (click)="search(memoSearchResult.showPageTo + 1)">&raquo;</a></li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>

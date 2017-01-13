@@ -7,6 +7,8 @@ import {CommonFormViewComponent} from "../common/common.component";
 import {Memo} from "./model/memo";
 import {MemoSearchResults} from "./model/memo-search-results";
 
+import {Subscription} from 'rxjs';
+
 declare var $:any
 
 var moment = require("moment");
@@ -19,6 +21,7 @@ var moment = require("moment");
 export class MemoListComponent  extends CommonFormViewComponent implements OnInit{
 
     searchParams = new MemoSearchParams;
+    busy: Subscription;
 
     memoTypes = [];
     meetingTypes = [];
@@ -99,7 +102,7 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
         this.searchParams.fromDate = $('#fromDate').val();
         this.searchParams.toDate = $('#toDate').val();
 
-        this.memoService.search(this.searchParams)
+        this.busy = this.memoService.search(this.searchParams)
             .subscribe(
                 searchResult  => {
                     this.memoList = searchResult.memos;

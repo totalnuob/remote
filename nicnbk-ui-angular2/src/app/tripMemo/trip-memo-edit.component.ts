@@ -6,6 +6,7 @@ import {CommonFormViewComponent} from "../common/common.component";
 import {TripMemoService} from "./trip-memo.service";
 import {EmployeeService} from "../employee/employee.service";
 import {MemoAttachmentDownloaderComponent} from "../m2s2/memo-attachment-downloader.component";
+import {Subscription} from 'rxjs';
 
 declare var $:any
 declare var Chart: any;
@@ -24,6 +25,7 @@ export class TripMemoEditComponent extends CommonFormViewComponent implements On
     private sub: any;
     private tripMemoIdParam: number;
     tripMemo = new TripMemo;
+    busy: Subscription;
 
     public uploadFiles: Array<any> = [];
 
@@ -40,14 +42,14 @@ export class TripMemoEditComponent extends CommonFormViewComponent implements On
         super();
 
         //loadLookups
-        this.loadLookups();
+        this.sub = this.loadLookups();
 
         this.sub = this.route
             .params
             .subscribe(params => {
                 this.tripMemoIdParam = +params['id'];
                 if(this.tripMemoIdParam > 0) {
-                    this.tripMemoService.get(this.tripMemoIdParam)
+                    this.busy = this.tripMemoService.get(this.tripMemoIdParam)
                         .subscribe(
                             tripMemo => {
                                 // TODO: check response memo
@@ -78,6 +80,9 @@ export class TripMemoEditComponent extends CommonFormViewComponent implements On
         }
     }
     ngOnInit(): any {
+
+        this.postAction(null, null);
+
         // TODO: exclude jQuery
         // datetimepicker
         $('#meetingDate1').datetimepicker({

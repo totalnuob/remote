@@ -5,11 +5,14 @@ import {CommonFormViewComponent} from "../common/common.component";
 import {HedgeFundSearchParams} from "./model/hf.search-params";
 import {HedgeFundSearchResults} from "./model/fund-search-results";
 
+import {Subscription} from 'rxjs';
+
 @Component({
     selector: 'hf-fund-search',
     templateUrl: 'view/hf.fund-search.component.html',
     styleUrls: [
         //'../../../public/css/...',
+        '../../../node_modules/angular2-busy/build/style/busy.css'
     ],
     providers: []
 })
@@ -18,6 +21,8 @@ export class HFFundSearchComponent extends CommonFormViewComponent{
     foundEntities: HedgeFund[];
     searchParams = new HedgeFundSearchParams;
     searchResult = new HedgeFundSearchResults();
+
+    busy: Subscription;
 
     constructor(
         private fundService: HedgeFundService
@@ -37,7 +42,7 @@ export class HFFundSearchComponent extends CommonFormViewComponent{
             this.searchParams.page = page;
         }
 
-        this.fundService.search(this.searchParams)
+        this.busy = this.fundService.search(this.searchParams)
             .subscribe(
                 searchResult  => {
                     //console.log(searchResult);

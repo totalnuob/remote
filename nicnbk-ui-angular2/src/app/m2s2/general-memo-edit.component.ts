@@ -6,8 +6,7 @@ import {CommonFormViewComponent} from "../common/common.component";
 import {MemoService} from "./memo.service";
 import {EmployeeService} from "../employee/employee.service";
 import {MemoAttachmentDownloaderComponent} from "./memo-attachment-downloader.component";
-
-import {InputTextareaModule} from 'primeng/primeng';
+import {Subscription} from 'rxjs';
 
 declare var $:any
 declare var Chart: any;
@@ -25,6 +24,7 @@ export class GeneralMemoEditComponent extends CommonFormViewComponent implements
 
     private sub: any;
     private memoIdParam: number;
+    busy: Subscription;
 
     memo = new GeneralMemo;
 
@@ -62,19 +62,19 @@ export class GeneralMemoEditComponent extends CommonFormViewComponent implements
         super();
 
         // loadLookups
-        this.loadLookups();
+        this.sub = this.loadLookups();
 
 
         // TODO: wait/sync on lookup loading
         // TODO: sync on subscribe results
-        this.waitSleep(700);
+        //this.waitSleep(700);
 
         this.sub = this.route
             .params
             .subscribe(params => {
                 this.memoIdParam = +params['id'];
                 if(this.memoIdParam > 0) {
-                    this.memoService.get(1, this.memoIdParam)
+                    this.busy = this.memoService.get(1, this.memoIdParam)
                         .subscribe(
                             memo => {
                                 // TODO: check response memo
@@ -112,6 +112,8 @@ export class GeneralMemoEditComponent extends CommonFormViewComponent implements
     }
 
     ngOnInit():any {
+
+        this.postAction(null, null);
 
         // TODO: exclude jQuery
         // datetimepicker
