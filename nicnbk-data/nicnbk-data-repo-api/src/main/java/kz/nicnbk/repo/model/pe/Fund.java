@@ -23,15 +23,15 @@ public class Fund extends CreateUpdateBaseEntity {
     private String status;
     private Currency fundCurrency;
     private int vintage;
-    private float fundSize;
-    private float targetSize;
-    private float hardCap;
+    private double fundSize;
+    private double targetSize;
+    private double hardCap;
     private String targetHardCapComment;
-    private float gpCommitment;
-    private float managementFee;
+    private double gpCommitment;
+    private double managementFee;
     private String managementFeeComment;
-    private float carriedInterest;
-    private float hurdleRate;
+    private double carriedInterest;
+    private double hurdleRate;
     private Set<Industry> industry;
     private Set<Strategy> strategy;
     private String strategyComment;
@@ -39,28 +39,28 @@ public class Fund extends CreateUpdateBaseEntity {
 
     //KEY FUND STATISTICS
     private int numberOfInvestments;
-    private float investedAmount;
-    private float realized;
-    private float unrealized;
-    private float dpi;
-    private float netIrr;
-    private float netTvpi; // MOIC
-    private float grossIrr;
-    private float grossTvpi;
+    private double investedAmount;
+    private double realized;
+    private double unrealized;
+    private double dpi;
+    private double netIrr;
+    private double netTvpi; // MOIC
+    private double grossIrr;
+    private double grossTvpi;
     private Date asOfDate;
     private Benchmark benchmark;
     private Firm firm;
 
     // Descriptive data
-    private float investmentPeriod;
-    private float fundTerm;
+    private double investmentPeriod;
+    private double fundTerm;
     private String fundTermComment;
-    private float targetInvSizeRange;
-    private float targetEvRange;
-    private float targetNumberOfInv1;
-    private float targetNumberOfInv2;
-    private float expAnnualNumberOfInv1;
-    private float expAnnualNumberOfInv2;
+    private double targetInvSizeRange;
+    private double targetEvRange;
+    private double targetNumberOfInv1;
+    private double targetNumberOfInv2;
+    private double expAnnualNumberOfInv1;
+    private double expAnnualNumberOfInv2;
 
     //Targeted Closing Information
     private Date firstClose;
@@ -112,29 +112,29 @@ public class Fund extends CreateUpdateBaseEntity {
     }
 
     @Column(name = "fund_size")
-    public float getFundSize() {
+    public double getFundSize() {
         return fundSize;
     }
 
-    public void setFundSize(float fundSize) {
+    public void setFundSize(double fundSize) {
         this.fundSize = fundSize;
     }
 
     @Column(name = "target_size")
-    public float getTargetSize() {
+    public double getTargetSize() {
         return targetSize;
     }
 
-    public void setTargetSize(float targetSize) {
+    public void setTargetSize(double targetSize) {
         this.targetSize = targetSize;
     }
 
     @Column(name = "hard_cap")
-    public float getHardCap() {
+    public double getHardCap() {
         return hardCap;
     }
 
-    public void setHardCap(float hardCap) {
+    public void setHardCap(double hardCap) {
         this.hardCap = hardCap;
     }
 
@@ -148,20 +148,20 @@ public class Fund extends CreateUpdateBaseEntity {
     }
 
     @Column(name = "gp_commitment")
-    public float getGpCommitment() {
+    public double getGpCommitment() {
         return gpCommitment;
     }
 
-    public void setGpCommitment(float gpCommitment) {
+    public void setGpCommitment(double gpCommitment) {
         this.gpCommitment = gpCommitment;
     }
 
     @Column(name = "management_fee")
-    public float getManagementFee() {
+    public double getManagementFee() {
         return managementFee;
     }
 
-    public void setManagementFee(float managementFee) {
+    public void setManagementFee(double managementFee) {
         this.managementFee = managementFee;
     }
 
@@ -175,20 +175,20 @@ public class Fund extends CreateUpdateBaseEntity {
     }
 
     @Column(name = "carried_interest")
-    public float getCarriedInterest() {
+    public double getCarriedInterest() {
         return carriedInterest;
     }
 
-    public void setCarriedInterest(float carriedInterest) {
+    public void setCarriedInterest(double carriedInterest) {
         this.carriedInterest = carriedInterest;
     }
 
     @Column(name = "hurdle_rate")
-    public float getHurdleRate() {
+    public double getHurdleRate() {
         return hurdleRate;
     }
 
-    public void setHurdleRate(float hurdleRate) {
+    public void setHurdleRate(double hurdleRate) {
         this.hurdleRate = hurdleRate;
     }
 
@@ -253,74 +253,74 @@ public class Fund extends CreateUpdateBaseEntity {
     }
 
     @Column(name = "invested_amount")
-    public float getInvestedAmount() {
+    public double getInvestedAmount() {
         return investedAmount;
     }
 
-    public void setInvestedAmount(float investedAmount) {
+    public void setInvestedAmount(double investedAmount) {
         this.investedAmount = investedAmount;
     }
 
     @Column(name = "realized_amount")
-    public float getRealized() {
+    public double getRealized() {
         return realized;
     }
 
-    public void setRealized(float realized) {
+    public void setRealized(double realized) {
         this.realized = realized;
     }
 
     @Column(name = "unrealized_amount")
-    public float getUnrealized() {
+    public double getUnrealized() {
         return unrealized;
     }
 
-    public void setUnrealized(float unrealized) {
+    public void setUnrealized(double unrealized) {
         this.unrealized = unrealized;
     }
 
     @Column(name = "dpi")
-    public float getDpi() {
+    public double getDpi() {
         return dpi;
     }
 
-    public void setDpi(float dpi) {
+    public void setDpi(double dpi) {
         this.dpi = dpi;
     }
 
     @Column(name = "net_irr")
-    public float getNetIrr() {
+    public double getNetIrr() {
         return netIrr;
     }
 
-    public void setNetIrr(float netIrr) {
+    public void setNetIrr(double netIrr) {
         this.netIrr = netIrr;
     }
 
     @Column(name = "net_tvpi")
-    public float getNetTvpi() {
+    public double getNetTvpi() {
         return netTvpi;
     }
 
-    public void setNetTvpi(float netTvpi) {
+    public void setNetTvpi(double netTvpi) {
         this.netTvpi = netTvpi;
     }
 
     @Column(name = "gross_irr")
-    public float getGrossIrr() {
+    public double getGrossIrr() {
         return grossIrr;
     }
 
-    public void setGrossIrr(float gross_irr) {
+    public void setGrossIrr(double gross_irr) {
         this.grossIrr = gross_irr;
     }
 
     @Column(name = "gross_tvpi")
-    public float getGrossTvpi() {
+    public double getGrossTvpi() {
         return grossTvpi;
     }
 
-    public void setGrossTvpi(float grossTvpi) {
+    public void setGrossTvpi(double grossTvpi) {
         this.grossTvpi = grossTvpi;
     }
 
@@ -354,21 +354,21 @@ public class Fund extends CreateUpdateBaseEntity {
     }
 
     @Column(name = "investment_period")
-    public float getInvestmentPeriod() {
+    public double getInvestmentPeriod() {
         return investmentPeriod;
     }
 
-    public void setInvestmentPeriod(float investmentPeriod) {
+    public void setInvestmentPeriod(double investmentPeriod) {
         this.investmentPeriod = investmentPeriod;
     }
 
 
     @Column(name = "fund_term")
-    public float getFundTerm() {
+    public double getFundTerm() {
         return fundTerm;
     }
 
-    public void setFundTerm(float fundTerm) {
+    public void setFundTerm(double fundTerm) {
         this.fundTerm = fundTerm;
     }
 
@@ -383,57 +383,57 @@ public class Fund extends CreateUpdateBaseEntity {
     }
 
     @Column(name = "traget_inv_size_range")
-    public float getTargetInvSizeRange() {
+    public double getTargetInvSizeRange() {
         return targetInvSizeRange;
     }
 
-    public void setTargetInvSizeRange(float targetInvSizeRange) {
+    public void setTargetInvSizeRange(double targetInvSizeRange) {
         this.targetInvSizeRange = targetInvSizeRange;
     }
 
     @Column(name = "target_ev_range")
-    public float getTargetEvRange() {
+    public double getTargetEvRange() {
         return targetEvRange;
     }
 
-    public void setTargetEvRange(float targetEvRange) {
+    public void setTargetEvRange(double targetEvRange) {
         this.targetEvRange = targetEvRange;
     }
 
     @Column(name = "target_number_of_inv_lower_bound")
-    public float getTargetNumberOfInv1() {
+    public double getTargetNumberOfInv1() {
         return targetNumberOfInv1;
     }
 
-    public void setTargetNumberOfInv1(float targetNumberOfInv1) {
+    public void setTargetNumberOfInv1(double targetNumberOfInv1) {
         this.targetNumberOfInv1 = targetNumberOfInv1;
     }
 
     @Column(name = "target_number_of_inv_upper_bound")
-    public float getTargetNumberOfInv2() {
+    public double getTargetNumberOfInv2() {
         return targetNumberOfInv2;
     }
 
-    public void setTargetNumberOfInv2(float targetNumberOfInv2) {
+    public void setTargetNumberOfInv2(double targetNumberOfInv2) {
         this.targetNumberOfInv2 = targetNumberOfInv2;
     }
 
 
     @Column(name = "expected_annual_number_of_inv_lower_bound")
-    public float getExpAnnualNumberOfInv1() {
+    public double getExpAnnualNumberOfInv1() {
         return expAnnualNumberOfInv1;
     }
 
-    public void setExpAnnualNumberOfInv1(float expAnnualNumberOfInv1) {
+    public void setExpAnnualNumberOfInv1(double expAnnualNumberOfInv1) {
         this.expAnnualNumberOfInv1 = expAnnualNumberOfInv1;
     }
 
     @Column(name = "expected_annual_number_of_inv_upper_bound")
-    public float getExpAnnualNumberOfInv2() {
+    public double getExpAnnualNumberOfInv2() {
         return expAnnualNumberOfInv2;
     }
 
-    public void setExpAnnualNumberOfInv2(float expAnnualNumberOfInv2) {
+    public void setExpAnnualNumberOfInv2(double expAnnualNumberOfInv2) {
         this.expAnnualNumberOfInv2 = expAnnualNumberOfInv2;
     }
 

@@ -19,15 +19,15 @@ public class PeFundDto extends HistoryBaseEntityDto<Fund> {
     private String status;
     private String fundCurrency;
     private int vintage;
-    private float fundSize;
-    private float targetSize;
-    private float hardCap;
+    private double fundSize;
+    private double targetSize;
+    private double hardCap;
     private String targetHardCapComment;
-    private float gpCommitment;
-    private float managementFee;
+    private double gpCommitment;
+    private double managementFee;
     private String managementFeeComment;
-    private float carriedInterest;
-    private float hurdleRate;
+    private double carriedInterest;
+    private double hurdleRate;
     private Set<BaseDictionaryDto> industry;
     private Set<BaseDictionaryDto> strategy;
     private String strategyComment;
@@ -35,28 +35,28 @@ public class PeFundDto extends HistoryBaseEntityDto<Fund> {
 
     //KEY FUND STATISTICS
     private int numberOfInvestments;
-    private float investedAmount;
-    private float realized;
-    private float unrealized;
-    private float dpi;
-    private float netIrr;
-    private float netTvpi; // MOIC
-    private float grossIrr;
-    private float grossTvpi;
+    private double investedAmount;
+    private double realized;
+    private double unrealized;
+    private double dpi;
+    private double netIrr;
+    private double netTvpi; // MOIC
+    private double grossIrr;
+    private double grossTvpi;
     private Date asOfDate;
     private Benchmark benchmark;
     private Firm firm;
 
     // Descriptive data
-    private float investmentPeriod;
-    private float fundTerm;
+    private double investmentPeriod;
+    private double fundTerm;
     private String fundTermComment;
-    private float targetInvSizeRange;
-    private float targetEvRange;
-    private float targetNumberOfInv1;
-    private float targetNumberOfInv2;
-    private float expAnnualNumberOfInv1;
-    private float expAnnualNumberOfInv2;
+    private double targetInvSizeRange;
+    private double targetEvRange;
+    private double targetNumberOfInv1;
+    private double targetNumberOfInv2;
+    private double expAnnualNumberOfInv1;
+    private double expAnnualNumberOfInv2;
 
     //Targeted Closing Information
     private Date firstClose;
@@ -71,7 +71,8 @@ public class PeFundDto extends HistoryBaseEntityDto<Fund> {
     private String performanceRisks;
 
     //cashflows
-    private List<PeCashflowDto> cashflow;
+    private List<PeGrossCashflowDto> grossCashflow;
+    private List<PeNetCashflowDto> netCashflow;
     private List<PeFundCompaniesPerformanceDto> fundCompanyPerformance;
 
     public String getFundName() {
@@ -106,27 +107,27 @@ public class PeFundDto extends HistoryBaseEntityDto<Fund> {
         this.vintage = vintage;
     }
 
-    public float getFundSize() {
+    public double getFundSize() {
         return fundSize;
     }
 
-    public void setFundSize(float fundSize) {
+    public void setFundSize(double fundSize) {
         this.fundSize = fundSize;
     }
 
-    public float getTargetSize() {
+    public double getTargetSize() {
         return targetSize;
     }
 
-    public void setTargetSize(float targetSize) {
+    public void setTargetSize(double targetSize) {
         this.targetSize = targetSize;
     }
 
-    public float getHardCap() {
+    public double getHardCap() {
         return hardCap;
     }
 
-    public void setHardCap(float hardCap) {
+    public void setHardCap(double hardCap) {
         this.hardCap = hardCap;
     }
 
@@ -138,19 +139,19 @@ public class PeFundDto extends HistoryBaseEntityDto<Fund> {
         this.targetHardCapComment = targetHardCapComment;
     }
 
-    public float getGpCommitment() {
+    public double getGpCommitment() {
         return gpCommitment;
     }
 
-    public void setGpCommitment(float gpCommitment) {
+    public void setGpCommitment(double gpCommitment) {
         this.gpCommitment = gpCommitment;
     }
 
-    public float getManagementFee() {
+    public double getManagementFee() {
         return managementFee;
     }
 
-    public void setManagementFee(float managementFee) {
+    public void setManagementFee(double managementFee) {
         this.managementFee = managementFee;
     }
 
@@ -162,19 +163,19 @@ public class PeFundDto extends HistoryBaseEntityDto<Fund> {
         this.managementFeeComment = managementFeeComment;
     }
 
-    public float getCarriedInterest() {
+    public double getCarriedInterest() {
         return carriedInterest;
     }
 
-    public void setCarriedInterest(float carriedInterest) {
+    public void setCarriedInterest(double carriedInterest) {
         this.carriedInterest = carriedInterest;
     }
 
-    public float getHurdleRate() {
+    public double getHurdleRate() {
         return hurdleRate;
     }
 
-    public void setHurdleRate(float hurdleRate) {
+    public void setHurdleRate(double hurdleRate) {
         this.hurdleRate = hurdleRate;
     }
 
@@ -218,67 +219,67 @@ public class PeFundDto extends HistoryBaseEntityDto<Fund> {
         this.numberOfInvestments = numberOfInvestments;
     }
 
-    public float getInvestedAmount() {
+    public double getInvestedAmount() {
         return investedAmount;
     }
 
-    public void setInvestedAmount(float investedAmount) {
+    public void setInvestedAmount(double investedAmount) {
         this.investedAmount = investedAmount;
     }
 
-    public float getRealized() {
+    public double getRealized() {
         return realized;
     }
 
-    public void setRealized(float realized) {
+    public void setRealized(double realized) {
         this.realized = realized;
     }
 
-    public float getUnrealized() {
+    public double getUnrealized() {
         return unrealized;
     }
 
-    public void setUnrealized(float unrealized) {
+    public void setUnrealized(double unrealized) {
         this.unrealized = unrealized;
     }
 
-    public float getDpi() {
+    public double getDpi() {
         return dpi;
     }
 
-    public void setDpi(float dpi) {
+    public void setDpi(double dpi) {
         this.dpi = dpi;
     }
 
-    public float getNetIrr() {
+    public double getNetIrr() {
         return netIrr;
     }
 
-    public void setNetIrr(float netIrr) {
+    public void setNetIrr(double netIrr) {
         this.netIrr = netIrr;
     }
 
-    public float getNetTvpi() {
+    public double getNetTvpi() {
         return netTvpi;
     }
 
-    public void setNetTvpi(float netTvpi) {
+    public void setNetTvpi(double netTvpi) {
         this.netTvpi = netTvpi;
     }
 
-    public float getGrossIrr() {
+    public double getGrossIrr() {
         return grossIrr;
     }
 
-    public void setGrossIrr(float grossIrr) {
+    public void setGrossIrr(double grossIrr) {
         this.grossIrr = grossIrr;
     }
 
-    public float getGrossTvpi() {
+    public double getGrossTvpi() {
         return grossTvpi;
     }
 
-    public void setGrossTvpi(float grossTvpi) {
+    public void setGrossTvpi(double grossTvpi) {
         this.grossTvpi = grossTvpi;
     }
 
@@ -306,19 +307,19 @@ public class PeFundDto extends HistoryBaseEntityDto<Fund> {
         this.firm = firm;
     }
 
-    public float getInvestmentPeriod() {
+    public double getInvestmentPeriod() {
         return investmentPeriod;
     }
 
-    public void setInvestmentPeriod(float investmentPeriod) {
+    public void setInvestmentPeriod(double investmentPeriod) {
         this.investmentPeriod = investmentPeriod;
     }
 
-    public float getFundTerm() {
+    public double getFundTerm() {
         return fundTerm;
     }
 
-    public void setFundTerm(float fundTerm) {
+    public void setFundTerm(double fundTerm) {
         this.fundTerm = fundTerm;
     }
 
@@ -330,51 +331,51 @@ public class PeFundDto extends HistoryBaseEntityDto<Fund> {
         this.fundTermComment = fundTermComment;
     }
 
-    public float getTargetInvSizeRange() {
+    public double getTargetInvSizeRange() {
         return targetInvSizeRange;
     }
 
-    public void setTargetInvSizeRange(float targetInvSizeRange) {
+    public void setTargetInvSizeRange(double targetInvSizeRange) {
         this.targetInvSizeRange = targetInvSizeRange;
     }
 
-    public float getTargetEvRange() {
+    public double getTargetEvRange() {
         return targetEvRange;
     }
 
-    public void setTargetEvRange(float targetEvRange) {
+    public void setTargetEvRange(double targetEvRange) {
         this.targetEvRange = targetEvRange;
     }
 
-    public float getTargetNumberOfInv1() {
+    public double getTargetNumberOfInv1() {
         return targetNumberOfInv1;
     }
 
-    public void setTargetNumberOfInv1(float targetNumberOfInv1) {
+    public void setTargetNumberOfInv1(double targetNumberOfInv1) {
         this.targetNumberOfInv1 = targetNumberOfInv1;
     }
 
-    public float getTargetNumberOfInv2() {
+    public double getTargetNumberOfInv2() {
         return targetNumberOfInv2;
     }
 
-    public void setTargetNumberOfInv2(float targetNumberOfInv2) {
+    public void setTargetNumberOfInv2(double targetNumberOfInv2) {
         this.targetNumberOfInv2 = targetNumberOfInv2;
     }
 
-    public float getExpAnnualNumberOfInv1() {
+    public double getExpAnnualNumberOfInv1() {
         return expAnnualNumberOfInv1;
     }
 
-    public void setExpAnnualNumberOfInv1(float expAnnualNumberOfInv1) {
+    public void setExpAnnualNumberOfInv1(double expAnnualNumberOfInv1) {
         this.expAnnualNumberOfInv1 = expAnnualNumberOfInv1;
     }
 
-    public float getExpAnnualNumberOfInv2() {
+    public double getExpAnnualNumberOfInv2() {
         return expAnnualNumberOfInv2;
     }
 
-    public void setExpAnnualNumberOfInv2(float expAnnualNumberOfInv2) {
+    public void setExpAnnualNumberOfInv2(double expAnnualNumberOfInv2) {
         this.expAnnualNumberOfInv2 = expAnnualNumberOfInv2;
     }
 
@@ -442,12 +443,12 @@ public class PeFundDto extends HistoryBaseEntityDto<Fund> {
         this.performanceRisks = performanceRisks;
     }
 
-    public List<PeCashflowDto> getCashflow() {
-        return cashflow;
+    public List<PeGrossCashflowDto> getGrossCashflow() {
+        return grossCashflow;
     }
 
-    public void setCashflow(List<PeCashflowDto> cashflow) {
-        this.cashflow = cashflow;
+    public void setGrossCashflow(List<PeGrossCashflowDto> grossCashflow) {
+        this.grossCashflow = grossCashflow;
     }
 
     public List<PeFundCompaniesPerformanceDto> getFundCompanyPerformance() {
@@ -456,6 +457,14 @@ public class PeFundDto extends HistoryBaseEntityDto<Fund> {
 
     public void setFundCompanyPerformance(List<PeFundCompaniesPerformanceDto> fundCompanyPerformance) {
         this.fundCompanyPerformance = fundCompanyPerformance;
+    }
+
+    public List<PeNetCashflowDto> getNetCashflow() {
+        return netCashflow;
+    }
+
+    public void setNetCashflow(List<PeNetCashflowDto> netCashflow) {
+        this.netCashflow = netCashflow;
     }
 
 }

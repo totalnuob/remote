@@ -19,15 +19,24 @@ public class PeFirmDto extends HistoryBaseEntityDto<Firm> {
     private float aum;
     private int invTeamSize;
     private int opsTeamSize;
-    private String locations;
-    private Set<Firm> peers;
+//    private Set<Firm> peers;
     private Set<BaseDictionaryDto> strategy;
     private Set<BaseDictionaryDto> industryFocus;
     private Set<BaseDictionaryDto> geographyFocus;
-    private Set<PeFundDto> funds;
+//    private Set<PeFundDto> funds;
 
-    private Set<FirmAddress> address;
-    private Set<Contacts> contacts;
+//    private Set<FirmAddress> address;
+//    private Set<Contacts> contacts;
+
+    private String peers;
+    private String locations;
+    private String headquarters;
+    private String telephone;
+    private String fax;
+    private String website;
+    private String contactPerson;
+    private String email;
+
 
     public String getFirmName() {
         return firmName;
@@ -77,13 +86,13 @@ public class PeFirmDto extends HistoryBaseEntityDto<Firm> {
         this.locations = locations;
     }
 
-    public Set<Firm> getPeers() {
-        return peers;
-    }
-
-    public void setPeers(Set<Firm> peers) {
-        this.peers = peers;
-    }
+//    public Set<Firm> getPeers() {
+//        return peers;
+//    }
+//
+//    public void setPeers(Set<Firm> peers) {
+//        this.peers = peers;
+//    }
 
     public Set<BaseDictionaryDto> getStrategy() {
         return strategy;
@@ -109,27 +118,84 @@ public class PeFirmDto extends HistoryBaseEntityDto<Firm> {
         this.geographyFocus = geographyFocus;
     }
 
-    public Set<PeFundDto> getFunds() {
-        return funds;
+//    public Set<PeFundDto> getFunds() {
+//        return funds;
+//    }
+//
+//    public void setFunds(Set<PeFundDto> funds) {
+//        this.funds = funds;
+//    }
+
+//    public Set<FirmAddress> getAddress() {
+//        return address;
+//    }
+//
+//    public void setAddress(Set<FirmAddress> address) {
+//        this.address = address;
+//    }
+//
+//    public Set<Contacts> getContacts() {
+//        return contacts;
+//    }
+//
+//    public void setContacts(Set<Contacts> contacts) {
+//        this.contacts = contacts;
+//    }
+
+
+    public String getPeers() {
+        return peers;
     }
 
-    public void setFunds(Set<PeFundDto> funds) {
-        this.funds = funds;
+    public void setPeers(String peers) {
+        this.peers = peers;
     }
 
-    public Set<FirmAddress> getAddress() {
-        return address;
+    public String getHeadquarters() {
+        return headquarters;
     }
 
-    public void setAddress(Set<FirmAddress> address) {
-        this.address = address;
+    public void setHeadquarters(String headquarters) {
+        this.headquarters = headquarters;
     }
 
-    public Set<Contacts> getContacts() {
-        return contacts;
+    public String getTelephone() {
+        return telephone;
     }
 
-    public void setContacts(Set<Contacts> contacts) {
-        this.contacts = contacts;
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
+    }
+
+    public String getFax() {
+        return fax;
+    }
+
+    public void setFax(String fax) {
+        this.fax = fax;
+    }
+
+    public String getWebsite() {
+        return website;
+    }
+
+    public void setWebsite(String website) {
+        this.website = website;
+    }
+
+    public String getContactPerson() {
+        return contactPerson;
+    }
+
+    public void setContactPerson(String contactPerson) {
+        this.contactPerson = contactPerson;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

@@ -44,6 +44,7 @@ import {PeFirmSearchComponent} from "./pe/pe.firm-search.component";
 import {PeFundReportComponent} from "./pe/pe.fund-report.component";
 import {MonitoringPrivateEquityFundComponent} from "./monitoring/monitoring-private-equity-fund.component";
 import {MonitoringHedgeFunds2Component} from "./monitoring/monitoring-hedge-funds-2.component";
+import {BusyModule} from "angular2-busy/index"
 
 @NgModule({
     imports: [
@@ -51,7 +52,8 @@ import {MonitoringHedgeFunds2Component} from "./monitoring/monitoring-hedge-fund
         FormsModule, HttpModule,
         SelectModule,
         //TagInputModule,
-        appRouterProviders
+        appRouterProviders,
+        BusyModule
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA], // for custom elements like ng-select
     providers: [

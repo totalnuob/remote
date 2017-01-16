@@ -7,7 +7,8 @@ import {PeFirm} from "./model/pe.firm";
 import {PeFundService} from "./pe.fund.service";
 import {SaveResponse} from "../common/save-response";
 import {LookupService} from "../common/lookup.service";
-import any = jasmine.any;
+
+import {Subscription} from 'rxjs';
 
 declare var $:any
 
@@ -44,8 +45,12 @@ export class PeFundProfileComponent extends CommonComponent implements OnInit{
 
     private visible = false;
 
-    uploadedCf;
-    numOfRows;
+    busy: Subscription;
+
+    uploadedGrossCf;
+    numOfRows1;
+    uploadedNetCf;
+    numOfRows2;
 
     constructor(
         private lookupService: LookupService,
@@ -71,7 +76,7 @@ export class PeFundProfileComponent extends CommonComponent implements OnInit{
                 this.fund.firm = new PeFirm();
 
                 if(this.fundIdParam > 0){
-                    this.fundService.get(this.fundIdParam)
+                    this.busy = this.fundService.get(this.fundIdParam)
                         .subscribe(
                             (data: PeFund) => {
                                 if(data && data.id > 0) {
@@ -90,9 +95,14 @@ export class PeFundProfileComponent extends CommonComponent implements OnInit{
                                     if(this.fund.status == 'Open'){
                                         this.visible = true;
                                     }
+
                                     console.log(this.fund.fundCompanyPerformance);
-                                    if(this.fund.cashflow == null){
-                                        this.fund.cashflow = [];
+                                    if(this.fund.grossCashflow == null){
+                                        this.fund.grossCashflow = [];
+                                    }
+
+                                    if(this.fund.netCashflow == null){
+                                        this.fund.grossCashflow = [];
                                     }
 
                                 }else{
@@ -104,7 +114,7 @@ export class PeFundProfileComponent extends CommonComponent implements OnInit{
                         );
                 }
                 if(this.firmIdParam > 0){
-                    this.firmService.get(this.firmIdParam)
+                    this.busy = this.firmService.get(this.firmIdParam)
                         .subscribe(
                             (data: PeFirm) => {
                                 if(data && data.id > 0) {
@@ -126,6 +136,7 @@ export class PeFundProfileComponent extends CommonComponent implements OnInit{
     }
 
     ngOnInit(): any {
+
         // TODO: exclude jQuery
         // datetimepicker
         $('#firstClose').datetimepicker({
@@ -293,21 +304,40 @@ export class PeFundProfileComponent extends CommonComponent implements OnInit{
     }
 
     addRow(){
-        console.log(this.fund.cashflow);
-        this.fund.cashflow.push({companyName:"", date:"",invested:"", realized:"", unrealized:"", grossCF:"", irr:""});
+        console.log(this.fund.grossCashflow);
+        this.fund.grossCashflow.push({companyName:"", date:"",invested:"", realized:"", unrealized:"", grossCF:"", irr:""});
     }
 
-    parse(){
+    addRowNetCf(){
+        console.log(this.fund.netCashflow);
+        this.fund.netCashflow.push({fundName:"", currency:"", transactionDate:"", drawn:"", distributed:"", nav:"", netCF:"", typeOfFundTransaction:""})
+    }
+
+    grossCfParse(){
         var cf = [];
-        var rows = this.uploadedCf.split("\n");
+        var rows = this.uploadedGrossCf.split("\n");
 
         for(var i = 0; i < rows.length; i++){
-            var row = rows[i].split(",");
+            var row = rows[i].split("\t");
             if(row[0] != "") {
-                this.fund.cashflow.push({companyName: row[0], date: row[1], invested: row[2], realized: row[3], unrealized: row[4], grossCF: row[5]});
+                this.fund.grossCashflow.push({companyName: row[0], date: row[1], invested: row[2], realized: row[3], unrealized: row[4], grossCF: row[5]});
             }
         }
-        this.numOfRows = rows.length;
+        this.numOfRows1 = rows.length;
+        $('#tabs li:eq(2) a').tab('show');
+    }
+
+    netCfParse(){
+        var cf = [];
+        var rows = this.uploadedNetCf.split("\n");
+
+        for(var i = 0; i < rows.length; i++){
+            var row = rows[i].split("\t");
+            if(row[0] != "") {
+                this.fund.netCashflow.push({fundName: row[0], currency: row[1], transactionDate: row[2], drawn: row[3], distributed: row[4], nav: row[5], netCF: row[6], typeOfFundTransaction: row[7]});
+            }
+        }
+        this.numOfRows2 = rows.length;
         $('#tabs a:last').tab('show');
     }
 }

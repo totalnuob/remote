@@ -4,6 +4,7 @@ import kz.nicnbk.repo.model.base.CreateUpdateBaseEntity;
 import kz.nicnbk.repo.model.common.Geography;
 import kz.nicnbk.repo.model.common.Strategy;
 import kz.nicnbk.repo.model.pe.common.Industry;
+import org.hibernate.type.StringClobType;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -20,15 +21,23 @@ public class Firm extends CreateUpdateBaseEntity{
     private float aum;
     private int invTeamSize;
     private int opsTeamSize;
-    private String locations;
-    private Set<Firm> peers;
+//    private Set<Firm> peers;
     private Set<Strategy> strategy;
     private Set<Industry> industryFocus;
     private Set<Geography> geographyFocus;
 //    private Set<Fund> funds;
 
-    private Set<FirmAddress> address;
-    private Set<Contacts> contacts;
+//    private Set<FirmAddress> address;
+//    private Set<Contacts> contacts;
+
+    private String peers;
+    private String locations;
+    private String headquarters;
+    private String telephone;
+    private String fax;
+    private String website;
+    private String contactPerson;
+    private String email;
 
     @Column(name = "firm_name")
     public String getFirmName() {
@@ -75,28 +84,19 @@ public class Firm extends CreateUpdateBaseEntity{
         this.opsTeamSize = opsTeamSize;
     }
 
-    @Column(name = "locations")
-    public String getLocations() {
-        return locations;
-    }
-
-    public void setLocations(String locations) {
-        this.locations = locations;
-    }
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "firm_peers",
-            joinColumns = @JoinColumn(name = "firm_id", referencedColumnName = "ID"),
-            inverseJoinColumns = @JoinColumn(name = "peers_id", referencedColumnName = "ID")
-    )
-    public Set<Firm> getPeers() {
-        return peers;
-    }
-
-    public void setPeers(Set<Firm> peers) {
-        this.peers = peers;
-    }
+//    @ManyToMany(fetch = FetchType.LAZY)
+//    @JoinTable(
+//            name = "firm_peers",
+//            joinColumns = @JoinColumn(name = "firm_id", referencedColumnName = "ID"),
+//            inverseJoinColumns = @JoinColumn(name = "peers_id", referencedColumnName = "ID")
+//    )
+//    public Set<Firm> getPeers() {
+//        return peers;
+//    }
+//
+//    public void setPeers(Set<Firm> peers) {
+//        this.peers = peers;
+//    }
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -149,22 +149,87 @@ public class Firm extends CreateUpdateBaseEntity{
 //        this.funds = funds;
 //    }
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "firm")
-    public Set<FirmAddress> getAddress() {
-        return address;
+//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "firm")
+//    public Set<FirmAddress> getAddress() {
+//        return address;
+//    }
+//
+//    public void setAddress(Set<FirmAddress> address) {
+//        this.address = address;
+//    }
+//
+//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "firm")
+//    public Set<Contacts> getContacts() {
+//        return contacts;
+//    }
+//
+//    public void setContacts(Set<Contacts> contacts) {
+//        this.contacts = contacts;
+//    }
+
+    @Column(name = "locations")
+    public String getLocations() {
+        return locations;
     }
 
-    public void setAddress(Set<FirmAddress> address) {
-        this.address = address;
+    public void setLocations(String locations) {
+        this.locations = locations;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "firm")
-    public Set<Contacts> getContacts() {
-        return contacts;
+    public String getPeers() {
+        return peers;
     }
 
-    public void setContacts(Set<Contacts> contacts) {
-        this.contacts = contacts;
+    public void setPeers(String peers) {
+        this.peers = peers;
+    }
+
+    public String getHeadquarters() {
+        return headquarters;
+    }
+
+    public void setHeadquarters(String headquarters) {
+        this.headquarters = headquarters;
+    }
+
+    public String getTelephone() {
+        return telephone;
+    }
+
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
+    }
+
+    public String getFax() {
+        return fax;
+    }
+
+    public void setFax(String fax) {
+        this.fax = fax;
+    }
+
+    public String getWebsite() {
+        return website;
+    }
+
+    public void setWebsite(String website) {
+        this.website = website;
+    }
+
+    public String getContactPerson() {
+        return contactPerson;
+    }
+
+    public void setContactPerson(String contactPerson) {
+        this.contactPerson = contactPerson;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
 }

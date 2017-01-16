@@ -34,7 +34,8 @@ import {RiskManagementReportService} from "./riskmanagement/riskmanagement.repor
     templateUrl: './app.component.html',
     styleUrls: [
         '../../public/css/header.css', '../../public/css/footer.css',
-        '../../public/css/common.css'
+        '../../public/css/common.css',
+        '../../node_modules/angular2-busy/build/style/busy.css'
     ],
     providers: [
         //FORM_PROVIDERS, // fixes 'No provider for RadioControlRegistry!'

@@ -52,4 +52,5 @@ public class PeFirmServiceREST {
     public Set<PeFirmDto> search(@RequestBody PeSearchParams searchParams){
         return this.service.findByName(searchParams);
     }
+
 }

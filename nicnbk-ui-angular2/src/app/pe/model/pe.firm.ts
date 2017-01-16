@@ -6,15 +6,25 @@ export class PeFirm {
     aum: number;
     invTeamSize: number;
     opsTeamSize: number;
-    locations: string;
-    peers: any[];
+
+    //peers: any[];
     strategy: any[];
     industryFocus: any[];
     geographyFocus: any[];
-    funds: any[];
-    address: any[];
-    contacts: any[];
+    //funds: any[];
+    //address: any[];
+    //contacts: any[];
+
+    peers: string;
+    locations: string;
+    headquarters: string;
+    telephone: string;
+    fax: string;
+    website: string;
+    contactPerson: string;
+    email: string;
 
     id: number;
     creationDate: string;
+
 }

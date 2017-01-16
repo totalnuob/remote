@@ -56,6 +56,7 @@ export class PeFund {
     id: number;
     creationDate: string;
 
-    cashflow = [];
+    grossCashflow = [];
+    netCashflow = [];
     fundCompanyPerformance = [];
 }
