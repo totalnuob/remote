@@ -25,9 +25,12 @@ import '../../public/css/bootstrap/bootstrap-datetimepicker.min.css';
 import '../../public/js/viz_v1.js';
 
 import {TextareaAutosize} from "./common/textarea-autosize.directive";
+import {HFManagerService} from "./hf/hf.manager.service";
+import {HedgeFundService} from "./hf/hf.fund.service";
 import {RiskManagementReportService} from "./riskmanagement/riskmanagement.report.service";
+import {AlbourneService} from "./hf/hf.albourne.service";
 
-//import '../../public/js/jquery.ns-autogrow.min.js';
+import '../../public/js/jquery.ns-autogrow.min.js';
 
 @Component({
     selector: 'app-main',
@@ -46,7 +49,10 @@ import {RiskManagementReportService} from "./riskmanagement/riskmanagement.repor
         LookupService,
         EmployeeService,
         FileUploadService,
-        RiskManagementReportService
+        HFManagerService,
+        HedgeFundService,
+        RiskManagementReportService,
+        AlbourneService
     ]
 })
 @NgModule({

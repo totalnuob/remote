@@ -4,6 +4,8 @@ import {ActivatedRoute} from '@angular/router';
 import {News} from "./model/news";
 import {NewsService} from "./news.service";
 
+import {Subscription} from 'rxjs';
+
 
 @Component({
     selector: 'news-view',
@@ -12,6 +14,7 @@ import {NewsService} from "./news.service";
 export class NewsViewComponent{
     private selectedId: number;
     private newsItem = new News;
+    busy: Subscription;
 
     errorMessage: string;
 
@@ -27,7 +30,7 @@ export class NewsViewComponent{
             .params
             .subscribe(params => {
                 this.selectedId = +params['id'];
-                this.newsService.getNewsById(this.selectedId)
+                this.busy = this.newsService.getNewsById(this.selectedId)
                     .subscribe(
                         newsItem => this.newsItem = newsItem,
                         error => this.errorMessage = <any>error

@@ -41,13 +41,16 @@ import {HFManagerProfileComponent} from "./hf/hf.manager-profile.component.ts";
 import {MonitoringPrivateEquityFundComponent} from "./monitoring/monitoring-private-equity-fund.component";
 import {MonitoringHedgeFunds2Component} from "./monitoring/monitoring-hedge-funds-2.component";
 
+import {BusyModule} from "angular2-busy/index";
+
 @NgModule({
     imports: [
         BrowserModule,
         FormsModule, HttpModule,
         SelectModule,
         //TagInputModule,
-        appRouterProviders
+        appRouterProviders,
+        BusyModule
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA], // for custom elements like ng-select
     providers: [

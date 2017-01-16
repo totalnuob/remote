@@ -13,9 +13,4 @@ import javax.persistence.Table;
 @Table(name="meeting_arrangedby")
 public class MeetingArrangedBy extends BaseTypeEntityImpl {
 
-    // TODO: refactor
-    public static final String BY_NIC = "NIC";
-    public static final String BY_GP = "GP";
-    public static final String BY_OTHER = "OTHER";
-
 }

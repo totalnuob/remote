@@ -2,10 +2,11 @@ import { Component,NgModule, OnInit, ViewChild  } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 
 import {GeneralMemo} from "./model/general-memo";
-import {CommonComponent} from "../common/common.component";
+import {CommonFormViewComponent} from "../common/common.component";
 import {MemoService} from "./memo.service";
 import {EmployeeService} from "../employee/employee.service";
 import {MemoAttachmentDownloaderComponent} from "./memo-attachment-downloader.component";
+import {Subscription} from 'rxjs';
 
 declare var $:any
 declare var Chart: any;
@@ -19,10 +20,11 @@ declare var Chart: any;
 @NgModule({
     imports: []
 })
-export class GeneralMemoEditComponent extends CommonComponent implements OnInit{
+export class GeneralMemoEditComponent extends CommonFormViewComponent implements OnInit{
 
     private sub: any;
     private memoIdParam: number;
+    busy: Subscription;
 
     memo = new GeneralMemo;
 
@@ -60,19 +62,19 @@ export class GeneralMemoEditComponent extends CommonComponent implements OnInit{
         super();
 
         // loadLookups
-        this.loadLookups();
+        this.sub = this.loadLookups();
 
 
         // TODO: wait/sync on lookup loading
         // TODO: sync on subscribe results
-        this.waitSleep(700);
+        //this.waitSleep(700);
 
         this.sub = this.route
             .params
             .subscribe(params => {
                 this.memoIdParam = +params['id'];
                 if(this.memoIdParam > 0) {
-                    this.memoService.get(1, this.memoIdParam)
+                    this.busy = this.memoService.get(1, this.memoIdParam)
                         .subscribe(
                             memo => {
                                 // TODO: check response memo
@@ -111,6 +113,8 @@ export class GeneralMemoEditComponent extends CommonComponent implements OnInit{
 
     ngOnInit():any {
 
+        this.postAction(null, null);
+
         // TODO: exclude jQuery
         // datetimepicker
         $('#meetingDate').datetimepicker({
@@ -122,6 +126,7 @@ export class GeneralMemoEditComponent extends CommonComponent implements OnInit{
             format: 'LT'
         })
 
+        $('input[type=text], textarea').autogrow();
 
     }
 

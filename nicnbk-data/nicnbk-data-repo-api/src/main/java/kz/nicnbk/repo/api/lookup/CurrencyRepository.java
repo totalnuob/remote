@@ -7,4 +7,6 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  * Created by magzumov on 04.08.2016.
  */
 public interface CurrencyRepository extends PagingAndSortingRepository<Currency, Long> {
+
+    Currency findByCode(String code);
 }
