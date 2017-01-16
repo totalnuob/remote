@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -51,7 +52,7 @@ public class PeFundServiceREST {
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
-    public Set<PeFundDto> search(@RequestBody PeSearchParams searchParams){
+    public List<PeFundDto> search(@RequestBody PeSearchParams searchParams){
         return this.service.loadFirmFunds(searchParams.getId());
     }
 

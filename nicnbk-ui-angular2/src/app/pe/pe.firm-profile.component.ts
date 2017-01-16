@@ -10,6 +10,8 @@ import {PeFundService} from "./pe.fund.service";
 import {PeFund} from "./model/pe.fund";
 import {PESearchParams} from "./model/pe.search-params";
 
+import {Subscription} from 'rxjs';
+
 declare var $:any
 
 @Component({
@@ -41,6 +43,8 @@ export class PeFirmProfileComponent extends CommonComponent {
     foundFundsList: PeFund[];
     private searchParams = new PESearchParams();
 
+    busy: Subscription;
+
     constructor(
         private lookupService: LookupService,
         private firmService: PeFirmService,
@@ -63,7 +67,7 @@ export class PeFirmProfileComponent extends CommonComponent {
                 this.firmIdParam = +params['id'];
                 if(this.firmIdParam > 0) {
                     this.searchParams['id'] = this.firmIdParam;
-                    this.firmService.get(this.firmIdParam)
+                    this.busy = this.firmService.get(this.firmIdParam)
                         .subscribe(
                             data => {
                                 //console.log(data);
@@ -83,7 +87,7 @@ export class PeFirmProfileComponent extends CommonComponent {
                             },
                             error => this.errorMessage = "Error loading firm profile"
                         );
-                    this.fundService.search(this.searchParams)
+                    this.busy = this.fundService.search(this.searchParams)
                         .subscribe(
                             searchResult => {
                                 this.foundFundsList = searchResult;

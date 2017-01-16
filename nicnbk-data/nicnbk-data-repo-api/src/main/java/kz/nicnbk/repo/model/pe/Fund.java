@@ -38,15 +38,15 @@ public class Fund extends CreateUpdateBaseEntity {
     private Set<Geography> geography;
 
     //KEY FUND STATISTICS
-    private int numberOfInvestments;
-    private double investedAmount;
-    private double realized;
-    private double unrealized;
-    private double dpi;
-    private double netIrr;
-    private double netTvpi; // MOIC
-    private double grossIrr;
-    private double grossTvpi;
+//    private int numberOfInvestments;
+//    private double investedAmount;
+//    private double realized;
+//    private double unrealized;
+//    private double dpi;
+//    private double netIrr;
+//    private double netTvpi; // MOIC
+//    private double grossIrr;
+//    private double grossTvpi;
     private Date asOfDate;
     private Benchmark benchmark;
     private Firm firm;
@@ -243,86 +243,86 @@ public class Fund extends CreateUpdateBaseEntity {
         this.geography = geography;
     }
 
-    @Column(name = "number_of_investments")
-    public int getNumberOfInvestments() {
-        return numberOfInvestments;
-    }
-
-    public void setNumberOfInvestments(int numberOfInvestments) {
-        this.numberOfInvestments = numberOfInvestments;
-    }
-
-    @Column(name = "invested_amount")
-    public double getInvestedAmount() {
-        return investedAmount;
-    }
-
-    public void setInvestedAmount(double investedAmount) {
-        this.investedAmount = investedAmount;
-    }
-
-    @Column(name = "realized_amount")
-    public double getRealized() {
-        return realized;
-    }
-
-    public void setRealized(double realized) {
-        this.realized = realized;
-    }
-
-    @Column(name = "unrealized_amount")
-    public double getUnrealized() {
-        return unrealized;
-    }
-
-    public void setUnrealized(double unrealized) {
-        this.unrealized = unrealized;
-    }
-
-    @Column(name = "dpi")
-    public double getDpi() {
-        return dpi;
-    }
-
-    public void setDpi(double dpi) {
-        this.dpi = dpi;
-    }
-
-    @Column(name = "net_irr")
-    public double getNetIrr() {
-        return netIrr;
-    }
-
-    public void setNetIrr(double netIrr) {
-        this.netIrr = netIrr;
-    }
-
-    @Column(name = "net_tvpi")
-    public double getNetTvpi() {
-        return netTvpi;
-    }
-
-    public void setNetTvpi(double netTvpi) {
-        this.netTvpi = netTvpi;
-    }
-
-    @Column(name = "gross_irr")
-    public double getGrossIrr() {
-        return grossIrr;
-    }
-
-    public void setGrossIrr(double gross_irr) {
-        this.grossIrr = gross_irr;
-    }
-
-    @Column(name = "gross_tvpi")
-    public double getGrossTvpi() {
-        return grossTvpi;
-    }
-
-    public void setGrossTvpi(double grossTvpi) {
-        this.grossTvpi = grossTvpi;
-    }
+//    @Column(name = "number_of_investments")
+//    public int getNumberOfInvestments() {
+//        return numberOfInvestments;
+//    }
+//
+//    public void setNumberOfInvestments(int numberOfInvestments) {
+//        this.numberOfInvestments = numberOfInvestments;
+//    }
+//
+//    @Column(name = "invested_amount")
+//    public double getInvestedAmount() {
+//        return investedAmount;
+//    }
+//
+//    public void setInvestedAmount(double investedAmount) {
+//        this.investedAmount = investedAmount;
+//    }
+//
+//    @Column(name = "realized_amount")
+//    public double getRealized() {
+//        return realized;
+//    }
+//
+//    public void setRealized(double realized) {
+//        this.realized = realized;
+//    }
+//
+//    @Column(name = "unrealized_amount")
+//    public double getUnrealized() {
+//        return unrealized;
+//    }
+//
+//    public void setUnrealized(double unrealized) {
+//        this.unrealized = unrealized;
+//    }
+//
+//    @Column(name = "dpi")
+//    public double getDpi() {
+//        return dpi;
+//    }
+//
+//    public void setDpi(double dpi) {
+//        this.dpi = dpi;
+//    }
+//
+//    @Column(name = "net_irr")
+//    public double getNetIrr() {
+//        return netIrr;
+//    }
+//
+//    public void setNetIrr(double netIrr) {
+//        this.netIrr = netIrr;
+//    }
+//
+//    @Column(name = "net_tvpi")
+//    public double getNetTvpi() {
+//        return netTvpi;
+//    }
+//
+//    public void setNetTvpi(double netTvpi) {
+//        this.netTvpi = netTvpi;
+//    }
+//
+//    @Column(name = "gross_irr")
+//    public double getGrossIrr() {
+//        return grossIrr;
+//    }
+//
+//    public void setGrossIrr(double gross_irr) {
+//        this.grossIrr = gross_irr;
+//    }
+//
+//    @Column(name = "gross_tvpi")
+//    public double getGrossTvpi() {
+//        return grossTvpi;
+//    }
+//
+//    public void setGrossTvpi(double grossTvpi) {
+//        this.grossTvpi = grossTvpi;
+//    }
 
     @Column(name = "as_of_date")
     public Date getAsOfDate() {

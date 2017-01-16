@@ -10,6 +10,8 @@ import {PESearchParams} from "./model/pe.search-params";
 import '../../../public/js/viz_v1.js';
 import {GoogleChartComponent} from "../google-chart/google-chart.component";
 
+import {Subscription} from 'rxjs';
+
 declare var google:any;
 declare var $: any;
 
@@ -37,6 +39,8 @@ export class PeFundReportComponent extends GoogleChartComponent {
     public fundIndustryList: Array<any> = [];
     public fundGeographyList: Array<any> = [];
 
+    busy: Subscription;
+
     constructor(
         private firmService: PeFirmService,
         private fundService: PeFundService,
@@ -50,7 +54,7 @@ export class PeFundReportComponent extends GoogleChartComponent {
                 this.firmIdParam = +params['id'];
                 if(this.firmIdParam > 0){
                     this.searchParams['id'] = this.firmIdParam;
-                    this.firmService.get(this.firmIdParam)
+                    this.busy = this.firmService.get(this.firmIdParam)
                         .subscribe(
                             (data: PeFirm) => {
                                 if(data && data.id > 0){
@@ -144,7 +148,11 @@ export class PeFundReportComponent extends GoogleChartComponent {
 
         for(var i = 0; i < this.fundsList.length; i++) {
             if(this.fundsList[i].status == 'Closed'){
-                irrData.addRow([this.fundsList[i].fundName, this.fundsList[i].netIrr, 30]);
+                if(this.fundsList[i].netIrr != NaN) {
+                    irrData.addRow([this.fundsList[i].fundName, this.fundsList[i].netIrr, 30]);
+                } else {
+                    irrData.addRow([this.fundsList[i].fundName, 30, 30]);
+                }
             }
         }
 

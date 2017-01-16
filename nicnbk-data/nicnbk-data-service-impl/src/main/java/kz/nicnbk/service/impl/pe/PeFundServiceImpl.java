@@ -64,6 +64,7 @@ public class PeFundServiceImpl implements PeFundService {
 
     @Override
     public Long save(PeFundDto fundDto) {
+
         Fund entity = converter.assemble(fundDto);
         Long id =repository.save(entity).getId();
         fundDto.setId(id);
@@ -105,39 +106,73 @@ public class PeFundServiceImpl implements PeFundService {
         dto.setGrossCashflow(grossCFDto);
         dto.setNetCashflow(netCFDto);
 
+        calculatePerformanceParameters(grossCFDto, netCFDto, dto);
 
+        return dto;
+    }
 
+    @Override
+    public List<PeFundDto> loadFirmFunds(Long firmId) {
+        Page<Fund> page = this.repository.findByFirmId(firmId, new PageRequest(0,10, new Sort(Sort.Direction.ASC, "vintage")));
+        List<PeFundDto> fundDtoList = this.converter.disassembleList(page.getContent());
+        for(PeFundDto fundDto: fundDtoList){
+            List<PeGrossCashflow> grossCfEntity = this.grossCFRepository.getEntitiesByFundId(fundDto.getId(), new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName")));
+            List<PeNetCashflow> netCfEntity = this.netCFRepository.getEntitiesByFundId(fundDto.getId());
+            List<PeGrossCashflowDto> grossCFDto = this.grossCFConverter.disassembleList(grossCfEntity);
+            List<PeNetCashflowDto> netCFDto = this.netCFConverter.disassembleList(netCfEntity);
 
+            fundDto.setGrossCashflow(grossCFDto);
+            fundDto.setNetCashflow(netCFDto);
+
+            calculatePerformanceParameters(grossCFDto, netCFDto, fundDto);
+        }
+        return fundDtoList;
+    }
+
+    private void calculatePerformanceParameters(List<PeGrossCashflowDto> grossCfDtoList, List<PeNetCashflowDto> netCfDtoList, PeFundDto dto) {
         double totalInvestedAmount = 0;
         double totalRealized = 0;
         double totalUnrealized = 0;
         double totalTotalValue = 0;
         double totalGrossTvpi = 0;
 
-        if(!grossCFDto.isEmpty()) {
+        XIRR irrCalculator = new XIRR();
+
+        if(!grossCfDtoList.isEmpty()) {
 
             // Calculating fund's companies performance
             List<PeFundCompaniesPerformanceDto> performanceDtoList = new ArrayList<>();
 
             int j = 0;
-            double cashInvested = grossCFDto.get(0).getInvested();
-            double realized = grossCFDto.get(0).getRealized();
-            double unrealized = grossCFDto.get(0).getUnrealized();
+
+            double cashInvested = grossCfDtoList.get(0).getInvested();
+            double realized = grossCfDtoList.get(0).getRealized();
+            double unrealized = grossCfDtoList.get(0).getUnrealized();
             double totalValue;
             double multiple;
             double grossIrr;
-
-            XIRR irrCalculator = new XIRR();
+            double fundGrossIrr;
 
             List<Double> grossCf = new ArrayList<>();
-            grossCf.add(grossCFDto.get(0).getGrossCF());
+            grossCf.add(grossCfDtoList.get(0).getGrossCF());
+
+            List<Double> fundGrossCf = new ArrayList<>();
+            fundGrossCf.add(grossCfDtoList.get(0).getGrossCF());
 
             List<Double> dates = new ArrayList<>();
-            dates.add(DateUtil.getExcelDate(grossCFDto.get(0).getDate()));
+            dates.add(DateUtil.getExcelDate(grossCfDtoList.get(0).getDate()));
+
+            List<Double> fundDates = new ArrayList<>();
+            fundDates.add(DateUtil.getExcelDate(grossCfDtoList.get(0).getDate()));
+
             double[] cf;
             double[] pDates;
-            for (int i = 1; i < grossCFDto.size(); i++) {
-                if (!Objects.equals(grossCFDto.get(j).getCompanyName(), grossCFDto.get(i).getCompanyName())) {
+
+            double[] fundCf;
+            double[] fpDates;
+
+            for (int i = 1; i < grossCfDtoList.size(); i++) {
+                if (!Objects.equals(grossCfDtoList.get(j).getCompanyName(), grossCfDtoList.get(i).getCompanyName())) {
                     totalValue = realized + unrealized;
                     if (cashInvested != 0) {
                         multiple = totalValue / cashInvested;
@@ -148,6 +183,7 @@ public class PeFundServiceImpl implements PeFundService {
                     cf = toPrimitive(grossCf.toArray(new Double[0]));
                     pDates = toPrimitive(dates.toArray(new Double[0]));
 
+
 //                    System.out.println(CFDto.get(i-1).getCompanyName());
 //                    System.out.println(dates);
 //                    System.out.println(grossCf);
@@ -155,34 +191,41 @@ public class PeFundServiceImpl implements PeFundService {
                     grossIrr = irrCalculator.xirr(new XIRRData(cf.length, 0.1, cf, pDates));
 
 
-                    performanceDtoList.add(new PeFundCompaniesPerformanceDto(grossCFDto.get(i - 1).getCompanyName(), cashInvested, realized, unrealized, totalValue, multiple, (grossIrr - 1)*100, 123));
+                    performanceDtoList.add(new PeFundCompaniesPerformanceDto(grossCfDtoList.get(i - 1).getCompanyName(), Math.round(-cashInvested*100)/100.00, Math.round(realized*100)/100.00, Math.round(unrealized*100)/100.00, Math.round(totalValue*100)/100.00, Math.round(multiple*100)/100.00, Math.round(((grossIrr - 1) * 100)*100)/100.00, 123));
+
                     totalInvestedAmount = totalInvestedAmount + cashInvested;
                     totalRealized = totalRealized + realized;
                     totalUnrealized = totalUnrealized + unrealized;
                     totalTotalValue = totalTotalValue + totalValue;
 
-                    cashInvested = grossCFDto.get(i).getInvested();
-                    realized = grossCFDto.get(i).getRealized();
-                    unrealized = grossCFDto.get(i).getUnrealized();
+                    cashInvested = grossCfDtoList.get(i).getInvested();
+                    realized = grossCfDtoList.get(i).getRealized();
+                    unrealized = grossCfDtoList.get(i).getUnrealized();
 
 
                     dto.setFundCompanyPerformance(performanceDtoList);
 
                     grossCf = new ArrayList<>();
-                    grossCf.add(grossCFDto.get(i).getGrossCF());
+                    grossCf.add(grossCfDtoList.get(i).getGrossCF());
+                    fundGrossCf.add(grossCfDtoList.get(i).getGrossCF());
 
                     dates = new ArrayList<>();
-                    dates.add(DateUtil.getExcelDate(grossCFDto.get(i).getDate()));
+                    dates.add(DateUtil.getExcelDate(grossCfDtoList.get(i).getDate()));
+                    fundDates.add(DateUtil.getExcelDate(grossCfDtoList.get(i).getDate()));
+
                     j = i;
 
                 } else {
-                    cashInvested = cashInvested + grossCFDto.get(i).getInvested();
-                    realized = realized + grossCFDto.get(i).getRealized();
-                    unrealized = unrealized + grossCFDto.get(i).getUnrealized();
+                    cashInvested = cashInvested + grossCfDtoList.get(i).getInvested();
+                    realized = realized + grossCfDtoList.get(i).getRealized();
+                    unrealized = unrealized + grossCfDtoList.get(i).getUnrealized();
 
-                    grossCf.add(grossCFDto.get(i).getGrossCF());
+                    grossCf.add(grossCfDtoList.get(i).getGrossCF());
+                    fundGrossCf.add(grossCfDtoList.get(i).getGrossCF());
 
-                    dates.add(DateUtil.getExcelDate(grossCFDto.get(i).getDate()));
+
+                    dates.add(DateUtil.getExcelDate(grossCfDtoList.get(i).getDate()));
+                    fundDates.add(DateUtil.getExcelDate(grossCfDtoList.get(i).getDate()));
 
                 }
             }
@@ -198,6 +241,10 @@ public class PeFundServiceImpl implements PeFundService {
             pDates = toPrimitive(dates.toArray(new Double[0]));
             grossIrr = irrCalculator.xirr(new XIRRData(cf.length, 0.1, cf, pDates));
 
+            fundCf = toPrimitive(fundGrossCf.toArray(new Double[0]));
+            fpDates = toPrimitive(fundDates.toArray(new Double[0]));
+            fundGrossIrr = irrCalculator.xirr(new XIRRData(fundCf.length, 0.1, fundCf, fpDates));
+
             totalInvestedAmount = totalInvestedAmount + cashInvested;
             totalRealized = totalRealized + realized;
             totalUnrealized = totalUnrealized + unrealized;
@@ -205,16 +252,18 @@ public class PeFundServiceImpl implements PeFundService {
 
             totalGrossTvpi = totalTotalValue/-totalInvestedAmount;
 
-            performanceDtoList.add(new PeFundCompaniesPerformanceDto(grossCFDto.get(grossCFDto.size() - 1).getCompanyName(), cashInvested, realized, unrealized, totalValue, multiple, (grossIrr - 1)*100, 123));
+            performanceDtoList.add(new PeFundCompaniesPerformanceDto(grossCfDtoList.get(grossCfDtoList.size() - 1).getCompanyName(), Math.round(-cashInvested*1000000), Math.round(realized*1000000), Math.round(unrealized*1000000), Math.round(totalValue*100)/100.00, Math.round(multiple*100)/100.00, Math.round(((grossIrr - 1) * 100)*100)/100.00, 123));
 
 
             dto.setNumberOfInvestments(performanceDtoList.size());
-            dto.setInvestedAmount(-totalInvestedAmount);
-            dto.setRealized(totalRealized);
-            dto.setUnrealized(totalUnrealized);
-            dto.setGrossTvpi(totalGrossTvpi);
+            dto.setInvestedAmount(Math.round(-totalInvestedAmount/1000000.00));
+            dto.setRealized(Math.round(totalRealized/1000000.00));
+            dto.setUnrealized(Math.round(totalUnrealized/1000000.00));
+            dto.setGrossTvpi(Math.round(totalGrossTvpi*100)/100.00);
+            dto.setGrossIrr(Math.round((fundGrossIrr - 1) * 100 * 100)/100.00);
 
-
+//            System.out.println(fundGrossCf.size());
+//            System.out.println(fundDates.size());
 
             System.out.println("JOB IS DONE in service");
         }
@@ -222,29 +271,35 @@ public class PeFundServiceImpl implements PeFundService {
         double totalNetDrawn = 0;
         double totalNetDistributed = 0;
         double totalNav = 0;
+        double fundNetIrr = 0;
+        List<Double> fundNetCf = new ArrayList<>();
+        List<Double> fundNetDates = new ArrayList<>();
 
-        if(!netCFDto.isEmpty()){
-
-            for(int i = 0; i < netCFDto.size(); i++){
-                totalNetDrawn = totalNetDrawn + netCFDto.get(i).getDrawn();
-                totalNetDistributed = totalNetDistributed + netCFDto.get(i).getDistributed();
-                totalNav = totalNav + netCFDto.get(i).getNav();
+        if(!netCfDtoList.isEmpty()){
+            for(int i = 0; i < netCfDtoList.size(); i++){
+                fundNetCf.add(netCfDtoList.get(i).getNetCF());
+                fundNetDates.add(DateUtil.getExcelDate(netCfDtoList.get(i).getTransactionDate()));
+                totalNetDrawn = totalNetDrawn + netCfDtoList.get(i).getDrawn();
+                totalNetDistributed = totalNetDistributed + netCfDtoList.get(i).getDistributed();
+                totalNav = totalNav + netCfDtoList.get(i).getNav();
             }
         }
-        System.out.println("totalNetDistributed = " + totalNetDistributed);
-        System.out.println("totalNetDrawn = " + totalNetDrawn);
+//
+//        System.out.println("totalNetDistributed = " + totalNetDistributed);
+//        System.out.println("totalNetDrawn = " + totalNetDrawn);
 
-        dto.setDpi(totalNetDistributed / -totalNetDrawn);
-        dto.setNetTvpi((totalNetDistributed + totalNav) / -totalNetDrawn);
+        System.out.println(fundNetCf.size());
+        System.out.println(fundNetDates.size());
 
-        return dto;
+        fundNetIrr = irrCalculator.xirr(new XIRRData(fundNetCf.size(), 0.1, toPrimitive(fundNetCf.toArray(new Double[0])), toPrimitive(fundNetDates.toArray(new Double[0])) ));
+
+        dto.setDpi(Math.round((totalNetDistributed / -totalNetDrawn) * 100)/100.00);
+        dto.setNetTvpi(Math.round((totalNetDistributed + totalNav) / -totalNetDrawn * 100) / 100.00);
+        dto.setNetIrr(Math.round((fundNetIrr - 1) * 100 * 100) / 100.00);
+
+        return;
     }
 
-    @Override
-    public Set<PeFundDto> loadFirmFunds(Long firmId) {
-        Page<Fund> page = this.repository.findByFirmId(firmId, new PageRequest(0,10, new Sort(Sort.Direction.ASC, "vintage")));
-        return this.converter.disassembleSet(page.getContent());
-    }
 
     public static double[] toPrimitive(Double[] array) {
         if (array == null) {

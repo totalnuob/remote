@@ -114,7 +114,7 @@ export class PeFundProfileComponent extends CommonComponent implements OnInit{
                         );
                 }
                 if(this.firmIdParam > 0){
-                    this.busy = this.firmService.get(this.firmIdParam)
+                    this.firmService.get(this.firmIdParam)
                         .subscribe(
                             (data: PeFirm) => {
                                 if(data && data.id > 0) {

@@ -1,218 +1,222 @@
 <div class="container">
-    <div class="row top-buffer" >
-        <div class="col-md-12">
-            <ol class="breadcrumb">
-                <li><a [routerLink]="['/pe/firmSearch']">Private Equity</a></li>
-                <li class="active">Fund report</li>
-            </ol>
-        </div>
-    </div>
-    <div class="row top-buffer" >
-        <div class="col-md-12">
-            <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
+    <div style="position: relative;" class="withpadding">
+        <div [ngBusy]="busy">
+            <div class="row top-buffer" >
+                <div class="col-md-12">
+                    <ol class="breadcrumb">
+                        <li><a [routerLink]="['/pe/firmSearch']">Private Equity</a></li>
+                        <li class="active">Fund report</li>
+                    </ol>
+                </div>
             </div>
-        </div>
-    </div>
-    <div class="row top-buffer" >
-        <div class="col-md-12">
-            <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+            <div class="row top-buffer" >
+                <div class="col-md-12">
+                    <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-    <div class="row withpadding">
-        <h2>{{firm.firmName}}</h2>
-        <div style="text-align: center">
-            <h3>{{openFund.fundName}}</h3>
-        </div>
-    </div>
-    <div class="row withpadding">
-        <div  style="background-color:#307240; color:white; font-size: medium; font-weight: bold">Organization overview</div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <table class="table table-hover table-responsive" style="font-size: smaller">
-                <tr>
-                    <td style="font-weight: bold">GP Name</td>
-                    <td>{{firm.firmName}}</td>
-                    <td style="font-weight: bold">AUM</td>
-                    <td>${{firm.aum}} mln</td>
-                    <td style="font-weight: bold">Locations</td>
-                    <td>{{firm.locations}}</td>
-                </tr>
-                <tr>
-                    <td style="font-weight: bold">Firm inception</td>
-                    <td>{{firm.foundedYear}}</td>
-                    <td style="font-weight: bold">Inv Team (ops team)</td>
-                    <td>{{firm.invTeamSize}} ({{firm.opsTeamSize}})</td>
-                    <td style="font-weight: bold">Peers</td>
-                    <td>{{firm.peers}}</td>
-                </tr>
-            </table>
-        </div>
-    </div>
-    <div class="row withpadding">
-        <div  style="background-color:#307240; color:white; font-size: medium; font-weight: bold">Fund summary</div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <table class="table table-hover table-responsive" style="font-size: smaller">
-                <tr>
-                    <td style="font-weight: bold">Fund Size</td>
-                    <td>${{openFund.fundSize}} mln</td>
-                    <td style="font-weight: bold">Management fee</td>
-                    <td>{{openFund.managementFee}}% <span *ngIf="openFund.managementFeeComment != ''">({{openFund.managementFeeComment}})</span></td>
-                    <td style="font-weight: bold">Industry</td>
-                    <td>{{fundIndustryList.toString()}}</td>
-                </tr>
-                <tr>
-                    <td style="font-weight: bold">Target size/Hard cap</td>
-                    <td><span *ngIf="openFund.targetSize != 0">{{openFund.targetSize}} / {{openFund.hardCap}}</span> {{openFund.targetHardCapComment}}</td>
-                    <td style="font-weight: bold">Carried interest</td>
-                    <td>{{openFund.carriedInterest}}%</td>
-                    <td style="font-weight: bold">Strategy</td>
-                    <td>{{fundStrategyList.toString()}}</td>
-                </tr>
-                <tr>
-                    <td style="font-weight: bold">GP Commitment</td>
-                    <td>{{openFund.gpCommitment}}%</td>
-                    <td style="font-weight: bold">Hurdle rate</td>
-                    <td>{{openFund.hurdleRate}}%</td>
-                    <td style="font-weight: bold">Geography</td>
-                    <td>{{fundGeographyList.toString()}}</td>
-                </tr>
-            </table>
-        </div>
-    </div>
-    <div class="row withpadding">
-        <div  style="background-color:#307240; color:white; font-size: medium; font-weight: bold">Key fund statistics</div>
-        <div class="row">
-            <div class="col-md-12">
-                <table class="table table-hover table-responsive" style="font-size: smaller">
-                    <tr>
-                        <th>Fund</th>
-                        <th>Vintage</th>
-                        <th># of Inv.</th>
-                        <th>Fund Size</th>
-                        <th>Invested Amount</th>
-                        <th>Realized</th>
-                        <th>Unrealized</th>
-                        <th>DPI</th>
-                        <th>Gross MOIC</th>
-                        <th>Gross IRR</th>
-                        <th>Net MOIC</th>
-                        <th>Net IRR</th>
-                    </tr>
-                    <tr *ngFor="let fund of fundsList">
-                        <td *ngIf="fund.status != 'Open'">{{fund.fundName}}</td>
-                        <td *ngIf="fund.status != 'Open'">{{fund.vintage}}</td>
-                        <td *ngIf="fund.status != 'Open'">{{fund.numberOfInvestments}}</td>
-                        <td *ngIf="fund.status != 'Open'">{{fund.fundSize}}</td>
-                        <td *ngIf="fund.status != 'Open'">{{fund.investedAmount}}</td>
-                        <td *ngIf="fund.status != 'Open'">{{fund.realized}}</td>
-                        <td *ngIf="fund.status != 'Open'">{{fund.unrealized}}</td>
-                        <td *ngIf="fund.status != 'Open'">{{fund.dpi}}x</td>
-                        <td *ngIf="fund.status != 'Open'">{{fund.grossTvpi}}x</td>
-                        <td *ngIf="fund.status != 'Open'">{{fund.grossIrr}}%</td>
-                        <td *ngIf="fund.status != 'Open'">{{fund.netTvpi}}x</td>
-                        <td *ngIf="fund.status != 'Open'">{{fund.netIrr}}%</td>
-                    </tr>
-                </table>
+            <div class="row top-buffer" >
+                <div class="col-md-12">
+                    <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-    <div class="row withpadding">
-        <div class="col-md-8" style="background-color:#307240; color:white; font-size: medium; font-weight: bold">IRR & TVPI Multiple</div>
-        <div class="col-md-4 withpadding" style="background-color:#307240; color:white; font-size: medium; font-weight: bold">Fund strategy</div>
-    </div>
-    <div class="row">
-        <div class="col-md-8">
-            <div class="col-md-6" id="bar-chart-1">
+            <div class="row withpadding">
+                <h2>{{firm.firmName}}</h2>
+                <div style="text-align: center">
+                    <h3>{{openFund.fundName}}</h3>
+                </div>
             </div>
-            <div class="col-md-6" id="bar-chart-2">
+            <div class="row withpadding">
+                <div  style="background-color:#307240; color:white; font-size: medium; font-weight: bold">Organization overview</div>
             </div>
-        </div>
-        <div class="col-md-4">
-            <table class="table table-hover table-responsive" style="font-size: smaller">
-                <tr>
-                    <td style="white-space: pre-wrap">{{openFund.strategyComment}}</td>
-                </tr>
-            </table>
-        </div>
-    </div>
-    <div class="row withpadding">
-        <div class="col-md-8" style="background-color:#307240; color:white; font-size: medium; font-weight: bold">Observations</div>
-        <div class="col-md-4 withpadding" style="background-color:#307240; color:white; font-size: medium; font-weight: bold">Descriptive Data</div>
-        <div class="row">
-            <div class="col-md-8">
-                <table class="table table-hover table-responsive" style="font-size: smaller">
-                    <tr>
-                        <th style="text-align: center" width="50%">Merits</th>
-                        <th style="text-align: center" width="50%">Risks</th>
-                    </tr>
-                    <tr>
-                        <th colspan="2" style="text-align: center" width="100%">General Partner</th>
-                    </tr>
-                    <tr>
-                        <td style="white-space: pre-wrap">{{openFund.generalPartnerMerits}}</td>
-                        <td style="white-space: pre-wrap">{{openFund.generalPartnerRisks}}</td>
-                    </tr>
-                    <tr>
-                        <th colspan="2" style="text-align: center" width="100%">Strategy/Structure</th>
-                    </tr>
-                    <tr>
-                        <td style="white-space: pre-wrap">{{openFund.strategyStructureMerits}}</td>
-                        <td style="white-space: pre-wrap">{{openFund.strategyStructureRisks}}</td>
-                    </tr>
-                    <tr>
-                        <th colspan="2" style="text-align: center" width="100%">Performance</th>
-                    </tr>
-                    <tr>
-                        <td style="white-space: pre-wrap">{{openFund.performanceMerits}}</td>
-                        <td style="white-space: pre-wrap">{{openFund.performanceRisks}}</td>
-                    </tr>
-                </table>
-            </div>
-            <div class="col-md-4 nopadding">
-                <table class="table table-hover table-responsive" style="font-size: smaller">
-                    <tr>
-                        <td style="font-weight: bold">Investment period</td>
-                        <td>{{openFund.investmentPeriod}}</td>
-                    </tr>
-                    <tr>
-                        <td style="font-weight: bold">Fund Term</td>
-                        <td>{{openFund.fundTerm}}<span *ngIf="openFund.fundTerm != ''">({{openFund.fundTermComment}})</span></td>
-                    </tr>
-                    <tr>
-                        <td style="font-weight: bold">Target Inv. Size Range</td>
-                        <td>${{openFund.targetInvSizeRange}} mln</td>
-                    </tr>
-                    <tr>
-                        <td style="font-weight: bold">Target EV Range</td>
-                        <td>${{openFund.targetEvRange}} mln</td>
-                    </tr>
-                    <tr>
-                        <td style="font-weight: bold">Target # of Inv.</td>
-                        <td>{{openFund.targetNumberOfInv1}}<span *ngIf="openFund.targetNumberOfInv2 != 0">-{{openFund.targetNumberOfInv2}}</span></td>
-                    </tr>
-                    <tr>
-                        <td style="font-weight: bold">Exp. Annual # of Inv.</td>
-                        <td>{{openFund.expAnnualNumberOfInv1}}<span *ngIf="openFund.expAnnualNumberOfInv2 != 0">-{{openFund.expAnnualNumberOfInv2}}</span></td>
-                    </tr>
-                </table>
-                <div class="nopadding" style="background-color:#307240; color:white; font-size: medium; font-weight: bold">Targeted Closing Information</div>
-                <div clas="col-md-12">
+            <div class="row">
+                <div class="col-md-12">
                     <table class="table table-hover table-responsive" style="font-size: smaller">
                         <tr>
-                            <td style="font-weight: bold">First Close</td>
-                            <td>{{openFund.firstClose}}</td>
+                            <td style="font-weight: bold">GP Name</td>
+                            <td>{{firm.firmName}}</td>
+                            <td style="font-weight: bold">AUM</td>
+                            <td>${{firm.aum}} mln</td>
+                            <td style="font-weight: bold">Locations</td>
+                            <td>{{firm.locations}}</td>
                         </tr>
                         <tr>
-                            <td style="font-weight: bold">Final Close</td>
-                            <td>{{openFund.finalClose}}</td>
+                            <td style="font-weight: bold">Firm inception</td>
+                            <td>{{firm.foundedYear}}</td>
+                            <td style="font-weight: bold">Inv Team (ops team)</td>
+                            <td>{{firm.invTeamSize}} ({{firm.opsTeamSize}})</td>
+                            <td style="font-weight: bold">Peers</td>
+                            <td>{{firm.peers}}</td>
                         </tr>
                     </table>
                 </div>
-                <div class="nopadding" style="background-color:#307240; color:white; font-size: medium; font-weight: bold">Senior Management Team</div>
+            </div>
+            <div class="row withpadding">
+                <div  style="background-color:#307240; color:white; font-size: medium; font-weight: bold">Fund summary</div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table table-hover table-responsive" style="font-size: smaller">
+                        <tr>
+                            <td style="font-weight: bold">Fund Size</td>
+                            <td>${{openFund.fundSize}} mln</td>
+                            <td style="font-weight: bold">Management fee</td>
+                            <td>{{openFund.managementFee}}% <span *ngIf="openFund.managementFeeComment != ''">({{openFund.managementFeeComment}})</span></td>
+                            <td style="font-weight: bold">Industry</td>
+                            <td>{{fundIndustryList.toString()}}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold">Target size/Hard cap</td>
+                            <td><span *ngIf="openFund.targetSize != 0">{{openFund.targetSize}} / {{openFund.hardCap}}</span> {{openFund.targetHardCapComment}}</td>
+                            <td style="font-weight: bold">Carried interest</td>
+                            <td>{{openFund.carriedInterest}}%</td>
+                            <td style="font-weight: bold">Strategy</td>
+                            <td>{{fundStrategyList.toString()}}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold">GP Commitment</td>
+                            <td>{{openFund.gpCommitment}}%</td>
+                            <td style="font-weight: bold">Hurdle rate</td>
+                            <td>{{openFund.hurdleRate}}%</td>
+                            <td style="font-weight: bold">Geography</td>
+                            <td>{{fundGeographyList.toString()}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="row withpadding">
+                <div  style="background-color:#307240; color:white; font-size: medium; font-weight: bold">Key fund statistics</div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="table table-hover table-responsive" style="font-size: smaller">
+                            <tr>
+                                <th>Fund</th>
+                                <th>Vintage</th>
+                                <th># of Inv.</th>
+                                <th>Fund Size</th>
+                                <th>Invested Amount</th>
+                                <th>Realized</th>
+                                <th>Unrealized</th>
+                                <th>DPI</th>
+                                <th>Gross MOIC</th>
+                                <th>Gross IRR</th>
+                                <th>Net MOIC</th>
+                                <th>Net IRR</th>
+                            </tr>
+                            <tr *ngFor="let fund of fundsList">
+                                <td *ngIf="fund.status != 'Open'">{{fund.fundName}}</td>
+                                <td *ngIf="fund.status != 'Open'">{{fund.vintage}}</td>
+                                <td *ngIf="fund.status != 'Open'">{{fund.numberOfInvestments}}</td>
+                                <td *ngIf="fund.status != 'Open'">{{fund.fundSize}}</td>
+                                <td *ngIf="fund.status != 'Open'">{{fund.investedAmount}}</td>
+                                <td *ngIf="fund.status != 'Open'">{{fund.realized}}</td>
+                                <td *ngIf="fund.status != 'Open'">{{fund.unrealized}}</td>
+                                <td *ngIf="fund.status != 'Open'">{{fund.dpi}}x</td>
+                                <td *ngIf="fund.status != 'Open'">{{fund.grossTvpi}}x</td>
+                                <td *ngIf="fund.status != 'Open'">{{fund.grossIrr}}%</td>
+                                <td *ngIf="fund.status != 'Open'">{{fund.netTvpi}}x</td>
+                                <td *ngIf="fund.status != 'Open'">{{fund.netIrr}}%</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="row withpadding">
+                <div class="col-md-8" style="background-color:#307240; color:white; font-size: medium; font-weight: bold">IRR & TVPI Multiple</div>
+                <div class="col-md-4 withpadding" style="background-color:#307240; color:white; font-size: medium; font-weight: bold">Fund strategy</div>
+            </div>
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="col-md-6" id="bar-chart-1">
+                    </div>
+                    <div class="col-md-6" id="bar-chart-2">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <table class="table table-hover table-responsive" style="font-size: smaller">
+                        <tr>
+                            <td style="white-space: pre-wrap">{{openFund.strategyComment}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="row withpadding">
+                <div class="col-md-8" style="background-color:#307240; color:white; font-size: medium; font-weight: bold">Observations</div>
+                <div class="col-md-4 withpadding" style="background-color:#307240; color:white; font-size: medium; font-weight: bold">Descriptive Data</div>
+                <div class="row">
+                    <div class="col-md-8">
+                        <table class="table table-hover table-responsive" style="font-size: smaller">
+                            <tr>
+                                <th style="text-align: center" width="50%">Merits</th>
+                                <th style="text-align: center" width="50%">Risks</th>
+                            </tr>
+                            <tr>
+                                <th colspan="2" style="text-align: center" width="100%">General Partner</th>
+                            </tr>
+                            <tr>
+                                <td style="white-space: pre-wrap">{{openFund.generalPartnerMerits}}</td>
+                                <td style="white-space: pre-wrap">{{openFund.generalPartnerRisks}}</td>
+                            </tr>
+                            <tr>
+                                <th colspan="2" style="text-align: center" width="100%">Strategy/Structure</th>
+                            </tr>
+                            <tr>
+                                <td style="white-space: pre-wrap">{{openFund.strategyStructureMerits}}</td>
+                                <td style="white-space: pre-wrap">{{openFund.strategyStructureRisks}}</td>
+                            </tr>
+                            <tr>
+                                <th colspan="2" style="text-align: center" width="100%">Performance</th>
+                            </tr>
+                            <tr>
+                                <td style="white-space: pre-wrap">{{openFund.performanceMerits}}</td>
+                                <td style="white-space: pre-wrap">{{openFund.performanceRisks}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-4 nopadding">
+                        <table class="table table-hover table-responsive" style="font-size: smaller">
+                            <tr>
+                                <td style="font-weight: bold">Investment period</td>
+                                <td>{{openFund.investmentPeriod}}</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold">Fund Term</td>
+                                <td>{{openFund.fundTerm}}<span *ngIf="openFund.fundTerm != ''">({{openFund.fundTermComment}})</span></td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold">Target Inv. Size Range</td>
+                                <td>${{openFund.targetInvSizeRange}} mln</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold">Target EV Range</td>
+                                <td>${{openFund.targetEvRange}} mln</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold">Target # of Inv.</td>
+                                <td>{{openFund.targetNumberOfInv1}}<span *ngIf="openFund.targetNumberOfInv2 != 0">-{{openFund.targetNumberOfInv2}}</span></td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold">Exp. Annual # of Inv.</td>
+                                <td>{{openFund.expAnnualNumberOfInv1}}<span *ngIf="openFund.expAnnualNumberOfInv2 != 0">-{{openFund.expAnnualNumberOfInv2}}</span></td>
+                            </tr>
+                        </table>
+                        <div class="nopadding" style="background-color:#307240; color:white; font-size: medium; font-weight: bold">Targeted Closing Information</div>
+                        <div clas="col-md-12">
+                            <table class="table table-hover table-responsive" style="font-size: smaller">
+                                <tr>
+                                    <td style="font-weight: bold">First Close</td>
+                                    <td>{{openFund.firstClose}}</td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: bold">Final Close</td>
+                                    <td>{{openFund.finalClose}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="nopadding" style="background-color:#307240; color:white; font-size: medium; font-weight: bold">Senior Management Team</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
