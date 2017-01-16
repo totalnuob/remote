@@ -54,7 +54,7 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
         super();
 
         // loadLookups
-        this.busy = this.loadLookups();
+        this.loadLookups();
 
         // TODO: wait/sync on lookup loading
         // TODO: sync on subscribe results
