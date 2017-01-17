@@ -2,8 +2,6 @@ package kz.nicnbk.repo.model.hf;
 
 import kz.nicnbk.repo.model.base.BaseEntity;
 import kz.nicnbk.repo.model.common.Substrategy;
-import kz.nicnbk.repo.model.files.Files;
-import kz.nicnbk.repo.model.m2s2.MeetingMemo;
 
 import javax.persistence.*;
 
