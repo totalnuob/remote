@@ -1,7 +1,6 @@
 package kz.nicnbk.repo.api.hf;
 
 import kz.nicnbk.repo.model.hf.HedgeFundReturn;
-import kz.nicnbk.repo.model.hf.InvestorBase;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;

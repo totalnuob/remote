@@ -1,6 +1,6 @@
 package kz.nicnbk.repo.api.pe;
 
-import kz.nicnbk.repo.model.pe.PeGrossCashflow;
+import kz.nicnbk.repo.model.pe.PEGrossCashflow;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -12,10 +12,10 @@ import java.util.List;
 /**
  * Created by zhambyl on 05-Jan-17.
  */
-public interface PeGrossCashflowRepository extends PagingAndSortingRepository<PeGrossCashflow, Long> {
+public interface PeGrossCashflowRepository extends PagingAndSortingRepository<PEGrossCashflow, Long> {
 
     @Query("SELECT e from pe_gross_cashflow e where e.fund.id=?1")
-    List<PeGrossCashflow> getEntitiesByFundId(Long fundId, Pageable pageable);
+    List<PEGrossCashflow> getEntitiesByFundId(Long fundId, Pageable pageable);
 
     @Modifying
     @Transactional

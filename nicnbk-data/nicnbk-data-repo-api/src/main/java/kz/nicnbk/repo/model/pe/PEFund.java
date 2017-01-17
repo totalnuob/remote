@@ -4,7 +4,6 @@ import kz.nicnbk.repo.model.base.CreateUpdateBaseEntity;
 import kz.nicnbk.repo.model.common.Currency;
 import kz.nicnbk.repo.model.common.Geography;
 import kz.nicnbk.repo.model.common.Strategy;
-import kz.nicnbk.repo.model.pe.common.PEIndustry;
 
 import javax.persistence.*;
 import java.util.Date;

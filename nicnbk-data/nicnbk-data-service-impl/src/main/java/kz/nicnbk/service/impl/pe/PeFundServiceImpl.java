@@ -6,18 +6,18 @@ import kz.nicnbk.repo.api.pe.PEFundRepository;
 import kz.nicnbk.repo.api.pe.PeGrossCashflowRepository;
 import kz.nicnbk.repo.api.pe.PeNetCashflowRepository;
 import kz.nicnbk.repo.model.pe.PEFund;
-import kz.nicnbk.repo.model.pe.PeGrossCashflow;
-import kz.nicnbk.repo.model.pe.PeNetCashflow;
-import kz.nicnbk.service.api.pe.PeGrossCashflowService;
-import kz.nicnbk.service.api.pe.PeFundService;
-import kz.nicnbk.service.api.pe.PeNetCashflowService;
-import kz.nicnbk.service.converter.pe.PeGrossCashflowEntityConverter;
-import kz.nicnbk.service.converter.pe.PeFundEntityConverter;
-import kz.nicnbk.service.converter.pe.PeNetCashflowEntityConverter;
-import kz.nicnbk.service.dto.pe.PeGrossCashflowDto;
-import kz.nicnbk.service.dto.pe.PeFundCompaniesPerformanceDto;
-import kz.nicnbk.service.dto.pe.PeFundDto;
-import kz.nicnbk.service.dto.pe.PeNetCashflowDto;
+import kz.nicnbk.repo.model.pe.PEGrossCashflow;
+import kz.nicnbk.repo.model.pe.PENetCashflow;
+import kz.nicnbk.service.api.pe.PEGrossCashflowService;
+import kz.nicnbk.service.api.pe.PEFundService;
+import kz.nicnbk.service.api.pe.PENetCashflowService;
+import kz.nicnbk.service.converter.pe.PEGrossCashflowEntityConverter;
+import kz.nicnbk.service.converter.pe.PEFundEntityConverter;
+import kz.nicnbk.service.converter.pe.PENetCashflowEntityConverter;
+import kz.nicnbk.service.dto.pe.PEFundDto;
+import kz.nicnbk.service.dto.pe.PEGrossCashflowDto;
+import kz.nicnbk.service.dto.pe.PEFundCompaniesPerformanceDto;
+import kz.nicnbk.service.dto.pe.PENetCashflowDto;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -32,7 +32,7 @@ import java.util.*;
  * Created by zhambyl on 15-Nov-16.
  */
 @Service
-public class PeFundServiceImpl implements PeFundService {
+public class PEFundServiceImpl implements PEFundService {
 
     private static final double[] EMPTY_DOUBLE_ARRAY = null;
 
@@ -40,30 +40,30 @@ public class PeFundServiceImpl implements PeFundService {
     private PEFundRepository repository;
 
     @Autowired
-    private PeFundEntityConverter converter;
+    private PEFundEntityConverter converter;
 
     @Autowired
     private PeGrossCashflowRepository grossCFRepository;
 
     @Autowired
-    private PeGrossCashflowService grossCFService;
+    private PEGrossCashflowService grossCFService;
 
     @Autowired
-    private PeGrossCashflowEntityConverter grossCFConverter;
+    private PEGrossCashflowEntityConverter grossCFConverter;
 
     @Autowired
     private PeNetCashflowRepository netCFRepository;
 
     @Autowired
-    private PeNetCashflowService netCFService;
+    private PENetCashflowService netCFService;
 
     @Autowired
-    private PeNetCashflowEntityConverter netCFConverter;
+    private PENetCashflowEntityConverter netCFConverter;
 
 
 
     @Override
-    public Long save(PeFundDto fundDto) {
+    public Long save(PEFundDto fundDto) {
 
         PEFund entity = converter.assemble(fundDto);
         Long id =repository.save(entity).getId();
@@ -73,7 +73,7 @@ public class PeFundServiceImpl implements PeFundService {
 
         //Save gross cashflows
         if(fundDto.getGrossCashflow() != null){
-            for(PeGrossCashflowDto dto: fundDto.getGrossCashflow()){
+            for(PEGrossCashflowDto dto: fundDto.getGrossCashflow()){
                 dto.setFund(fundDto);
                 this.grossCFService.save(dto);
             }
@@ -83,7 +83,7 @@ public class PeFundServiceImpl implements PeFundService {
 
         //Save net cashflows
         if(fundDto.getNetCashflow() != null){
-            for(PeNetCashflowDto dto: fundDto.getNetCashflow()){
+            for(PENetCashflowDto dto: fundDto.getNetCashflow()){
                 dto.setFund(fundDto);
                 this.netCFService.save(dto);
             }
@@ -92,16 +92,16 @@ public class PeFundServiceImpl implements PeFundService {
     }
 
     @Override
-    public PeFundDto get(Long id) {
+    public PEFundDto get(Long id) {
         PEFund entity = this.repository.findOne(id);
 
-        List<PeGrossCashflow> grossCfEntity = this.grossCFRepository.getEntitiesByFundId(id, new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName")));
-        List<PeNetCashflow> netCfEntity = this.netCFRepository.getEntitiesByFundId(id);
+        List<PEGrossCashflow> grossCfEntity = this.grossCFRepository.getEntitiesByFundId(id, new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName")));
+        List<PENetCashflow> netCfEntity = this.netCFRepository.getEntitiesByFundId(id);
 
-        PeFundDto dto = this.converter.disassemble(entity);
+        PEFundDto dto = this.converter.disassemble(entity);
 
-        List<PeGrossCashflowDto> grossCFDto = this.grossCFConverter.disassembleList(grossCfEntity);
-        List<PeNetCashflowDto> netCFDto = this.netCFConverter.disassembleList(netCfEntity);
+        List<PEGrossCashflowDto> grossCFDto = this.grossCFConverter.disassembleList(grossCfEntity);
+        List<PENetCashflowDto> netCFDto = this.netCFConverter.disassembleList(netCfEntity);
 
         dto.setGrossCashflow(grossCFDto);
         dto.setNetCashflow(netCFDto);
@@ -112,14 +112,14 @@ public class PeFundServiceImpl implements PeFundService {
     }
 
     @Override
-    public List<PeFundDto> loadFirmFunds(Long firmId) {
+    public List<PEFundDto> loadFirmFunds(Long firmId) {
         Page<PEFund> page = this.repository.findByFirmId(firmId, new PageRequest(0,10, new Sort(Sort.Direction.ASC, "vintage")));
-        List<PeFundDto> fundDtoList = this.converter.disassembleList(page.getContent());
-        for(PeFundDto fundDto: fundDtoList){
-            List<PeGrossCashflow> grossCfEntity = this.grossCFRepository.getEntitiesByFundId(fundDto.getId(), new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName")));
-            List<PeNetCashflow> netCfEntity = this.netCFRepository.getEntitiesByFundId(fundDto.getId());
-            List<PeGrossCashflowDto> grossCFDto = this.grossCFConverter.disassembleList(grossCfEntity);
-            List<PeNetCashflowDto> netCFDto = this.netCFConverter.disassembleList(netCfEntity);
+        List<PEFundDto> fundDtoList = this.converter.disassembleList(page.getContent());
+        for(PEFundDto fundDto: fundDtoList){
+            List<PEGrossCashflow> grossCfEntity = this.grossCFRepository.getEntitiesByFundId(fundDto.getId(), new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName")));
+            List<PENetCashflow> netCfEntity = this.netCFRepository.getEntitiesByFundId(fundDto.getId());
+            List<PEGrossCashflowDto> grossCFDto = this.grossCFConverter.disassembleList(grossCfEntity);
+            List<PENetCashflowDto> netCFDto = this.netCFConverter.disassembleList(netCfEntity);
 
             fundDto.setGrossCashflow(grossCFDto);
             fundDto.setNetCashflow(netCFDto);
@@ -129,7 +129,7 @@ public class PeFundServiceImpl implements PeFundService {
         return fundDtoList;
     }
 
-    private void calculatePerformanceParameters(List<PeGrossCashflowDto> grossCfDtoList, List<PeNetCashflowDto> netCfDtoList, PeFundDto dto) {
+    private void calculatePerformanceParameters(List<PEGrossCashflowDto> grossCfDtoList, List<PENetCashflowDto> netCfDtoList, PEFundDto dto) {
         double totalInvestedAmount = 0;
         double totalRealized = 0;
         double totalUnrealized = 0;
@@ -141,7 +141,7 @@ public class PeFundServiceImpl implements PeFundService {
         if(!grossCfDtoList.isEmpty()) {
 
             // Calculating fund's companies performance
-            List<PeFundCompaniesPerformanceDto> performanceDtoList = new ArrayList<>();
+            List<PEFundCompaniesPerformanceDto> performanceDtoList = new ArrayList<>();
 
             int j = 0;
 
@@ -191,7 +191,7 @@ public class PeFundServiceImpl implements PeFundService {
                     grossIrr = irrCalculator.xirr(new XIRRData(cf.length, 0.1, cf, pDates));
 
 
-                    performanceDtoList.add(new PeFundCompaniesPerformanceDto(grossCfDtoList.get(i - 1).getCompanyName(), Math.round(-cashInvested*100)/100.00, Math.round(realized*100)/100.00, Math.round(unrealized*100)/100.00, Math.round(totalValue*100)/100.00, Math.round(multiple*100)/100.00, Math.round(((grossIrr - 1) * 100)*100)/100.00, 123));
+                    performanceDtoList.add(new PEFundCompaniesPerformanceDto(grossCfDtoList.get(i - 1).getCompanyName(), Math.round(-cashInvested*100)/100.00, Math.round(realized*100)/100.00, Math.round(unrealized*100)/100.00, Math.round(totalValue*100)/100.00, Math.round(multiple*100)/100.00, Math.round(((grossIrr - 1) * 100)*100)/100.00, 123));
 
                     totalInvestedAmount = totalInvestedAmount + cashInvested;
                     totalRealized = totalRealized + realized;
@@ -252,7 +252,7 @@ public class PeFundServiceImpl implements PeFundService {
 
             totalGrossTvpi = totalTotalValue/-totalInvestedAmount;
 
-            performanceDtoList.add(new PeFundCompaniesPerformanceDto(grossCfDtoList.get(grossCfDtoList.size() - 1).getCompanyName(), Math.round(-cashInvested*1000000), Math.round(realized*1000000), Math.round(unrealized*1000000), Math.round(totalValue*100)/100.00, Math.round(multiple*100)/100.00, Math.round(((grossIrr - 1) * 100)*100)/100.00, 123));
+            performanceDtoList.add(new PEFundCompaniesPerformanceDto(grossCfDtoList.get(grossCfDtoList.size() - 1).getCompanyName(), Math.round(-cashInvested*1000000), Math.round(realized*1000000), Math.round(unrealized*1000000), Math.round(totalValue*100)/100.00, Math.round(multiple*100)/100.00, Math.round(((grossIrr - 1) * 100)*100)/100.00, 123));
 
 
             dto.setNumberOfInvestments(performanceDtoList.size());

@@ -14,7 +14,7 @@ import java.util.Set;
 public class HedgeFundDto extends HistoryBaseEntityDto<HedgeFund> {
 
     private String name;
-    private HFFirmDto manager;
+    private HFManagerDto manager;
     private String summary;
     private String inception;
     private Date inceptionDate;
@@ -86,11 +86,11 @@ public class HedgeFundDto extends HistoryBaseEntityDto<HedgeFund> {
         this.name = name;
     }
 
-    public HFFirmDto getManager() {
+    public HFManagerDto getManager() {
         return manager;
     }
 
-    public void setManager(HFFirmDto manager) {
+    public void setManager(HFManagerDto manager) {
         this.manager = manager;
     }
 

@@ -128,7 +128,7 @@ public class HedgeFundEntityConverter extends BaseDozerEntityConverter<HedgeFund
             dto.setUpdateDate(entity.getCreationDate());
         }
 
-//        HFFirmDto firmDto = new HFFirmDto();
+//        HFManagerDto firmDto = new HFManagerDto();
 //        if(entity.getManager().getAUM() != null){
 //            firmDto.setAum(entity.getManager().getAUM());
 //        }

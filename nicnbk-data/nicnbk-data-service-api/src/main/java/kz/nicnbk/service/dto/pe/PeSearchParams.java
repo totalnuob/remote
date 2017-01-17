@@ -5,7 +5,7 @@ import kz.nicnbk.common.service.model.BaseParams;
 /**
  * Created by zhambyl on 22-Nov-16.
  */
-public class PeSearchParams implements BaseParams {
+public class PESearchParams implements BaseParams {
 
     private String name;
 

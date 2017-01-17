@@ -1,10 +1,10 @@
 package kz.nicnbk.service.impl.pe;
 
 import kz.nicnbk.repo.api.pe.PeGrossCashflowRepository;
-import kz.nicnbk.repo.model.pe.PeGrossCashflow;
-import kz.nicnbk.service.api.pe.PeGrossCashflowService;
-import kz.nicnbk.service.converter.pe.PeGrossCashflowEntityConverter;
-import kz.nicnbk.service.dto.pe.PeGrossCashflowDto;
+import kz.nicnbk.repo.model.pe.PEGrossCashflow;
+import kz.nicnbk.service.api.pe.PEGrossCashflowService;
+import kz.nicnbk.service.converter.pe.PEGrossCashflowEntityConverter;
+import kz.nicnbk.service.dto.pe.PEGrossCashflowDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -16,18 +16,18 @@ import java.util.List;
  * Created by zhambyl on 05-Jan-17.
  */
 @Service
-public class PeGrossCashflowServiceImpl implements PeGrossCashflowService {
+public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
 
     @Autowired
     private PeGrossCashflowRepository peCFRepository;
 
     @Autowired
-    private PeGrossCashflowEntityConverter peCFEntityConverter;
+    private PEGrossCashflowEntityConverter peCFEntityConverter;
 
     @Override
-    public Long save(PeGrossCashflowDto dto) {
+    public Long save(PEGrossCashflowDto dto) {
         try {
-            PeGrossCashflow entity = this.peCFEntityConverter.assemble(dto);
+            PEGrossCashflow entity = this.peCFEntityConverter.assemble(dto);
             Long id = this.peCFRepository.save(entity).getId();
             return id;
         } catch(Exception ex){
@@ -43,13 +43,13 @@ public class PeGrossCashflowServiceImpl implements PeGrossCashflowService {
     }
 
     @Override
-    public PeGrossCashflowDto get(Long id) {
+    public PEGrossCashflowDto get(Long id) {
         return null;
     }
 
     @Override
-    public List<PeGrossCashflowDto> findByFundId(Long id) {
-        List<PeGrossCashflow> entities = this.peCFRepository.getEntitiesByFundId(id, new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName")));
+    public List<PEGrossCashflowDto> findByFundId(Long id) {
+        List<PEGrossCashflow> entities = this.peCFRepository.getEntitiesByFundId(id, new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName")));
         return this.peCFEntityConverter.disassembleList(entities);
     }
 }

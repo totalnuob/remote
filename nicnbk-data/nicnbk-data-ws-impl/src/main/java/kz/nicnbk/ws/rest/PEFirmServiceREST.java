@@ -1,7 +1,8 @@
 package kz.nicnbk.ws.rest;
 
-import kz.nicnbk.service.api.hf.HFManagerService;
-import kz.nicnbk.service.dto.hf.HFManagerDto;
+import kz.nicnbk.service.api.pe.PEFirmService;
+import kz.nicnbk.service.dto.pe.PEFirmDto;
+import kz.nicnbk.service.dto.pe.PESearchParams;
 import kz.nicnbk.ws.model.EntitySaveResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -10,21 +11,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.Set;
 
 /**
- * Created by magzumov on 20.07.2016.
+ * Created by zhambyl on 16-Nov-16.
  */
 
 @RestController
-@RequestMapping("/hf/manager")
-public class HFManagerServiceREST {
+@RequestMapping("/pe/firm")
+public class PEFirmServiceREST {
 
     @Autowired
-    private HFManagerService service;
+    private PEFirmService service;
 
     @RequestMapping(value = "/get/{id}", method = RequestMethod.GET)
-    public HFManagerDto get(@PathVariable long id){
-        HFManagerDto firmDto = this.service.get(id);
+    public PEFirmDto get(@PathVariable long id){
+        PEFirmDto firmDto = this.service.get(id);
         if(firmDto == null){
 
         }
@@ -32,7 +34,9 @@ public class HFManagerServiceREST {
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public ResponseEntity<?>  save(@RequestBody HFManagerDto firmDto) {
+    public ResponseEntity<?> save(@RequestBody PEFirmDto firmDto){
+//        System.out.println(firmDto.getFirmName());
+//        System.out.println(firmDto.getStrategy().size());
         Long id = this.service.save(firmDto);
 
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -40,11 +44,13 @@ public class HFManagerServiceREST {
         response.setEntityId(id);
         if(firmDto.getId() == null){
             response.setCreationDate(new Date());
-        }else{
-            response.setCreationDate(firmDto.getCreationDate());
         }
-        //managerDto.setId(id);
         return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/search", method = RequestMethod.POST)
+    public Set<PEFirmDto> search(@RequestBody PESearchParams searchParams){
+        return this.service.findByName(searchParams);
     }
 
 }

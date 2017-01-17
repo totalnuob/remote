@@ -5,7 +5,7 @@ import kz.nicnbk.repo.api.lookup.*;
 import kz.nicnbk.repo.api.lookup.CurrencyRepository;
 import kz.nicnbk.repo.api.lookup.GeographyRepository;
 import kz.nicnbk.repo.api.lookup.StrategyRepository;
-import kz.nicnbk.repo.api.pe.lookup.IndustryRepository;
+import kz.nicnbk.repo.api.pe.IndustryRepository;
 import kz.nicnbk.repo.model.base.BaseTypeEntity;
 import kz.nicnbk.repo.model.common.*;
 import kz.nicnbk.repo.model.files.FilesType;
@@ -13,7 +13,7 @@ import kz.nicnbk.repo.model.hf.*;
 import kz.nicnbk.repo.model.m2s2.MeetingArrangedBy;
 import kz.nicnbk.repo.model.m2s2.MeetingType;
 import kz.nicnbk.repo.model.news.NewsType;
-import kz.nicnbk.repo.model.pe.common.PEIndustry;
+import kz.nicnbk.repo.model.pe.PEIndustry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -46,9 +46,6 @@ public class LookupServiceImpl implements LookupService {
     private HedgeFundStatusRepository hedgeFundStatusRepository;
 
     @Autowired
-    private ManagerTypeRepository managerTypeRepository;
-
-    @Autowired
     private ManagerStatusRepository managerStatusRepository;
 
     @Autowired
@@ -59,15 +56,6 @@ public class LookupServiceImpl implements LookupService {
 
     @Autowired
     private SubscriptionFrequencyRepository subscriptionFrequencyRepository;
-
-    @Autowired
-    private ManagementFeeTypeRepository managementFeeTypeRepository;
-
-    @Autowired
-    private PerformanceFeeTypeRepository performanceFeeTypeRepository;
-
-    @Autowired
-    private PerformanceFeePayFrequencyRepository performanceFeePayFrequencyRepository;
 
     @Autowired
     private RedemptionFrequencyRepository redemptionFrequencyRepository;
@@ -113,8 +101,6 @@ public class LookupServiceImpl implements LookupService {
             return (T) this.strategyRepository.findByCode(code);
         }else if(clazz.equals(Geography.class)){
             return (T) this.geographyRepository.findByCode(code);
-        }else if(clazz.equals(ManagerType.class)){
-            return (T) this.managerTypeRepository.findByCode(code);
         }else if(clazz.equals(HedgeFundStatus.class)){
             return (T) this.managerStatusRepository.findByCode(code);
         }else if(clazz.equals(Country.class)){
@@ -123,12 +109,6 @@ public class LookupServiceImpl implements LookupService {
             return (T) this.legalStructureRepository.findByCode(code);
         }else if(clazz.equals(SubscriptionFrequency.class)){
             return (T) this.subscriptionFrequencyRepository.findByCode(code);
-        }else if(clazz.equals(ManagementFeeType.class)){
-            return (T) this.managementFeeTypeRepository.findByCode(code);
-        }else if(clazz.equals(PerformanceFeeType.class)){
-            return (T) this.performanceFeeTypeRepository.findByCode(code);
-        }else if(clazz.equals(PerformanceFeePayFrequencyType.class)){
-            return (T) this.performanceFeePayFrequencyRepository.findByCode(code);
         }else if(clazz.equals(RedemptionFrequency.class)){
             return (T) this.redemptionFrequencyRepository.findByCode(code);
         }else if(clazz.equals(RedemptionNotificationPeriod.class)){

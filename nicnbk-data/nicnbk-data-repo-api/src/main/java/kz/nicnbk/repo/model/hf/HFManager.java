@@ -21,7 +21,6 @@ public class HFManager extends CreateUpdateBaseEntity {
     // TODO: rename table and class
 
     private String name;
-    private ManagerType managerType;
     private String inception;
     private Date inceptionDate;
     private String AUM;
@@ -51,16 +50,6 @@ public class HFManager extends CreateUpdateBaseEntity {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "type_id")
-    public ManagerType getManagerType() {
-        return managerType;
-    }
-
-    public void setManagerType(ManagerType managerType) {
-        this.managerType = managerType;
     }
 
     @Column(name="inception")

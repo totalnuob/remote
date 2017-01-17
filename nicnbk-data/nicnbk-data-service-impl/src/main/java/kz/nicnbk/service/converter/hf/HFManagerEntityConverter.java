@@ -3,10 +3,9 @@ package kz.nicnbk.service.converter.hf;
 import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.model.common.Currency;
 import kz.nicnbk.repo.model.hf.HFManager;
-import kz.nicnbk.repo.model.hf.ManagerType;
 import kz.nicnbk.service.converter.dozer.BaseDozerEntityConverter;
 import kz.nicnbk.service.datamanager.LookupService;
-import kz.nicnbk.service.dto.hf.HFFirmDto;
+import kz.nicnbk.service.dto.hf.HFManagerDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,20 +14,14 @@ import org.springframework.stereotype.Component;
  */
 
 @Component
-public class HFManagerEntityConverter extends BaseDozerEntityConverter<HFManager, HFFirmDto> {
+public class HFManagerEntityConverter extends BaseDozerEntityConverter<HFManager, HFManagerDto> {
 
     @Autowired
     private LookupService lookupService;
 
     @Override
-    public HFManager assemble(HFFirmDto dto){
+    public HFManager assemble(HFManagerDto dto){
         HFManager entity = super.assemble(dto);
-
-        // manager type
-        if(StringUtils.isNotEmpty(dto.getManagerType())) {
-            ManagerType managerType = lookupService.findByTypeAndCode(ManagerType.class, dto.getManagerType());
-            entity.setManagerType(managerType);
-        }
 
         if(StringUtils.isNotEmpty(dto.getAumCurrency())) {
             Currency currency = lookupService.findByTypeAndCode(Currency.class, dto.getAumCurrency());
@@ -39,12 +32,8 @@ public class HFManagerEntityConverter extends BaseDozerEntityConverter<HFManager
     }
 
     @Override
-    public HFFirmDto disassemble(HFManager entity){
-        HFFirmDto dto = super.disassemble(entity);
-        // manager type
-        if(entity.getManagerType() != null){
-            dto.setManagerType(entity.getManagerType().getCode());
-        }
+    public HFManagerDto disassemble(HFManager entity){
+        HFManagerDto dto = super.disassemble(entity);
 
         //AUM Currency
         if(entity.getAUMCurrency() != null){

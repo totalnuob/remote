@@ -1,23 +1,27 @@
 package kz.nicnbk.service.dto.hf;
 
 import kz.nicnbk.common.service.model.HistoryBaseEntityDto;
+import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.model.hf.HFManager;
 
-import java.util.Set;
+import java.util.Date;
+import java.util.List;
 
 /**
- * Created by timur on 19.10.2016.
+ * Created by timur on 27.10.2016.
  */
-@Deprecated
 public class HFManagerDto extends HistoryBaseEntityDto<HFManager> {
     private String name;
     private String managerType;
-    private String strategy;
-    private String status;
+
     private String inception;
-    private String legalStructure;
-    private String domicileCountry;
-    private String AUM;
+    private Date inceptionDate;
+
+    private String aum;
+    private String aumDigit;
+    private String aumCurrency;
+
+    private Boolean meetingsInThePast;
 
     private String fundManagers;
     private String headquarters;
@@ -27,7 +31,7 @@ public class HFManagerDto extends HistoryBaseEntityDto<HFManager> {
     private String website;
     private String email;
 
-    private Set<HedgeFundDto> funds;
+    private List<HedgeFundDto> funds;
 
     public String getName() {
         return name;
@@ -45,22 +49,6 @@ public class HFManagerDto extends HistoryBaseEntityDto<HFManager> {
         this.managerType = managerType;
     }
 
-    public String getStrategy() {
-        return strategy;
-    }
-
-    public void setStrategy(String strategy) {
-        this.strategy = strategy;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     public String getInception() {
         return inception;
     }
@@ -69,28 +57,28 @@ public class HFManagerDto extends HistoryBaseEntityDto<HFManager> {
         this.inception = inception;
     }
 
-    public String getLegalStructure() {
-        return legalStructure;
+    public String getAum() {
+        return aum;
     }
 
-    public void setLegalStructure(String legalStructure) {
-        this.legalStructure = legalStructure;
+    public void setAum(String aum) {
+        this.aum = aum;
     }
 
-    public String getDomicileCountry() {
-        return domicileCountry;
+    public String getAumDigit() {
+        return aumDigit;
     }
 
-    public void setDomicileCountry(String domicileCountry) {
-        this.domicileCountry = domicileCountry;
+    public void setAumDigit(String aumDigit) {
+        this.aumDigit = aumDigit;
     }
 
-    public String getAUM() {
-        return AUM;
+    public String getAumCurrency() {
+        return aumCurrency;
     }
 
-    public void setAUM(String AUM) {
-        this.AUM = AUM;
+    public void setAumCurrency(String aumCurrency) {
+        this.aumCurrency = aumCurrency;
     }
 
     public String getFundManagers() {
@@ -149,11 +137,43 @@ public class HFManagerDto extends HistoryBaseEntityDto<HFManager> {
         this.email = email;
     }
 
-    public Set<HedgeFundDto> getFunds() {
+    public List<HedgeFundDto> getFunds() {
         return funds;
     }
 
-    public void setFunds(Set<HedgeFundDto> funds) {
+    public void setFunds(List<HedgeFundDto> funds) {
         this.funds = funds;
+    }
+
+    public Date getInceptionDate() {
+        return inceptionDate;
+    }
+
+    public void setInceptionDate(Date inceptionDate) {
+        this.inceptionDate = inceptionDate;
+    }
+
+    public Boolean getMeetingsInThePast() {
+        return meetingsInThePast;
+    }
+
+    public void setMeetingsInThePast(Boolean meetingsInThePast) {
+        this.meetingsInThePast = meetingsInThePast;
+    }
+
+    public String getAumText(){
+        String AUMText = "";
+        if(StringUtils.isNotEmpty(this.aum)){
+            AUMText += this.aum;
+            if(StringUtils.isNotEmpty(this.aumDigit)){
+                AUMText += " " + this.aumDigit;
+            }
+            if(StringUtils.isNotEmpty(this.aumCurrency)){
+                AUMText += " " + this.aumCurrency;
+            }
+            return AUMText;
+        }else{
+            return null;
+        }
     }
 }

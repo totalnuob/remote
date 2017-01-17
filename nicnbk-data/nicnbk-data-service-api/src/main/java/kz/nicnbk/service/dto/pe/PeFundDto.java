@@ -13,7 +13,7 @@ import java.util.Set;
 /**
  * Created by zhambyl on 15-Nov-16.
  */
-public class PeFundDto extends HistoryBaseEntityDto<PEFund> {
+public class PEFundDto extends HistoryBaseEntityDto<PEFund> {
     //FUND SUMMARY
     private String fundName;
     private String status;
@@ -71,9 +71,9 @@ public class PeFundDto extends HistoryBaseEntityDto<PEFund> {
     private String performanceRisks;
 
     //cashflows
-    private List<PeGrossCashflowDto> grossCashflow;
-    private List<PeNetCashflowDto> netCashflow;
-    private List<PeFundCompaniesPerformanceDto> fundCompanyPerformance;
+    private List<PEGrossCashflowDto> grossCashflow;
+    private List<PENetCashflowDto> netCashflow;
+    private List<PEFundCompaniesPerformanceDto> fundCompanyPerformance;
 
     public String getFundName() {
         return fundName;
@@ -443,27 +443,27 @@ public class PeFundDto extends HistoryBaseEntityDto<PEFund> {
         this.performanceRisks = performanceRisks;
     }
 
-    public List<PeGrossCashflowDto> getGrossCashflow() {
+    public List<PEGrossCashflowDto> getGrossCashflow() {
         return grossCashflow;
     }
 
-    public void setGrossCashflow(List<PeGrossCashflowDto> grossCashflow) {
+    public void setGrossCashflow(List<PEGrossCashflowDto> grossCashflow) {
         this.grossCashflow = grossCashflow;
     }
 
-    public List<PeFundCompaniesPerformanceDto> getFundCompanyPerformance() {
+    public List<PEFundCompaniesPerformanceDto> getFundCompanyPerformance() {
         return fundCompanyPerformance;
     }
 
-    public void setFundCompanyPerformance(List<PeFundCompaniesPerformanceDto> fundCompanyPerformance) {
+    public void setFundCompanyPerformance(List<PEFundCompaniesPerformanceDto> fundCompanyPerformance) {
         this.fundCompanyPerformance = fundCompanyPerformance;
     }
 
-    public List<PeNetCashflowDto> getNetCashflow() {
+    public List<PENetCashflowDto> getNetCashflow() {
         return netCashflow;
     }
 
-    public void setNetCashflow(List<PeNetCashflowDto> netCashflow) {
+    public void setNetCashflow(List<PENetCashflowDto> netCashflow) {
         this.netCashflow = netCashflow;
     }
 

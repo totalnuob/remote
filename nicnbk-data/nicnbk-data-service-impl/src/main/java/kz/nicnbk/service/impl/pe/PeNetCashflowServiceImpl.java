@@ -1,10 +1,10 @@
 package kz.nicnbk.service.impl.pe;
 
 import kz.nicnbk.repo.api.pe.PeNetCashflowRepository;
-import kz.nicnbk.repo.model.pe.PeNetCashflow;
-import kz.nicnbk.service.api.pe.PeNetCashflowService;
-import kz.nicnbk.service.converter.pe.PeNetCashflowEntityConverter;
-import kz.nicnbk.service.dto.pe.PeNetCashflowDto;
+import kz.nicnbk.repo.model.pe.PENetCashflow;
+import kz.nicnbk.service.api.pe.PENetCashflowService;
+import kz.nicnbk.service.converter.pe.PENetCashflowEntityConverter;
+import kz.nicnbk.service.dto.pe.PENetCashflowDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,19 +14,19 @@ import java.util.List;
  * Created by zhambyl on 12-Jan-17.
  */
 @Service
-public class PeNetCashflowServiceImpl implements PeNetCashflowService {
+public class PENetCashflowServiceImpl implements PENetCashflowService {
 
     @Autowired
     private PeNetCashflowRepository peNetCfRepository;
 
     @Autowired
-    private PeNetCashflowEntityConverter peNetCfEntityConverter;
+    private PENetCashflowEntityConverter peNetCfEntityConverter;
 
 
     @Override
-    public Long save(PeNetCashflowDto dto) {
+    public Long save(PENetCashflowDto dto) {
         try {
-            PeNetCashflow entity = this.peNetCfEntityConverter.assemble(dto);
+            PENetCashflow entity = this.peNetCfEntityConverter.assemble(dto);
             Long id = this.peNetCfRepository.save(entity).getId();
             return id;
         } catch(Exception ex){
@@ -42,13 +42,13 @@ public class PeNetCashflowServiceImpl implements PeNetCashflowService {
     }
 
     @Override
-    public PeNetCashflowDto get(Long id) {
+    public PENetCashflowDto get(Long id) {
         return null;
     }
 
     @Override
-    public List<PeNetCashflowDto> findByFundId(Long id) {
-        List<PeNetCashflow> entities = this.peNetCfRepository.getEntitiesByFundId(id);
+    public List<PENetCashflowDto> findByFundId(Long id) {
+        List<PENetCashflow> entities = this.peNetCfRepository.getEntitiesByFundId(id);
         return this.peNetCfEntityConverter.disassembleList(entities);
     }
 }

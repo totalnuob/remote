@@ -1,6 +1,6 @@
-package kz.nicnbk.repo.api.pe.lookup;
+package kz.nicnbk.repo.api.pe;
 
-import kz.nicnbk.repo.model.pe.common.PEIndustry;
+import kz.nicnbk.repo.model.pe.PEIndustry;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 /**

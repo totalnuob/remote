@@ -1,6 +1,5 @@
 package kz.nicnbk.repo.api.hf;
 
-import kz.nicnbk.repo.model.hf.HedgeFundSubstrategy;
 import kz.nicnbk.repo.model.hf.InvestorBase;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

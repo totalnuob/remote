@@ -1,4 +1,4 @@
-package kz.nicnbk.repo.model.pe.common;
+package kz.nicnbk.repo.model.pe;
 
 import kz.nicnbk.repo.model.base.BaseTypeEntityImpl;
 

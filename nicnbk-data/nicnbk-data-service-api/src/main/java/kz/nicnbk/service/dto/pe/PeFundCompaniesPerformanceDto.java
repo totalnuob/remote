@@ -3,7 +3,7 @@ package kz.nicnbk.service.dto.pe;
 /**
  * Created by zhambyl on 09-Jan-17.
  */
-public class PeFundCompaniesPerformanceDto {
+public class PEFundCompaniesPerformanceDto {
     private String companyName;
     private double invested;
     private double realized;
@@ -13,7 +13,7 @@ public class PeFundCompaniesPerformanceDto {
     private double grossIrr;
     private double netIrr;
 
-    public PeFundCompaniesPerformanceDto(String test, double i, double i1, double i2, double i3, double i4, double i5, double i6) {
+    public PEFundCompaniesPerformanceDto(String test, double i, double i1, double i2, double i3, double i4, double i5, double i6) {
         companyName = test;
         invested = i;
         realized = i1;
@@ -24,7 +24,7 @@ public class PeFundCompaniesPerformanceDto {
         netIrr = i6;
     }
 
-    public PeFundCompaniesPerformanceDto(){
+    public PEFundCompaniesPerformanceDto(){
 
     }
 

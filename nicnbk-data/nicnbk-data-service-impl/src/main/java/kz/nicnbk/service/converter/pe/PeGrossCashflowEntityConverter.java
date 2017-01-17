@@ -1,20 +1,20 @@
 package kz.nicnbk.service.converter.pe;
 
 import kz.nicnbk.repo.model.pe.PEFund;
-import kz.nicnbk.repo.model.pe.PeGrossCashflow;
+import kz.nicnbk.repo.model.pe.PEGrossCashflow;
 import kz.nicnbk.service.converter.dozer.BaseDozerEntityConverter;
-import kz.nicnbk.service.dto.pe.PeGrossCashflowDto;
+import kz.nicnbk.service.dto.pe.PEGrossCashflowDto;
 import org.springframework.stereotype.Component;
 
 /**
  * Created by zhambyl on 05-Jan-17.
  */
 @Component
-public class PeGrossCashflowEntityConverter extends BaseDozerEntityConverter<PeGrossCashflow, PeGrossCashflowDto> {
+public class PEGrossCashflowEntityConverter extends BaseDozerEntityConverter<PEGrossCashflow, PEGrossCashflowDto> {
 
     @Override
-    public PeGrossCashflow assemble(PeGrossCashflowDto dto){
-        PeGrossCashflow entity = super.assemble(dto);
+    public PEGrossCashflow assemble(PEGrossCashflowDto dto){
+        PEGrossCashflow entity = super.assemble(dto);
 
         PEFund PEFund = new PEFund();
         PEFund.setId(dto.getFund().getId());
@@ -23,8 +23,8 @@ public class PeGrossCashflowEntityConverter extends BaseDozerEntityConverter<PeG
     }
 
     @Override
-    public PeGrossCashflowDto disassemble(PeGrossCashflow entity){
-        PeGrossCashflowDto dto = super.disassemble(entity);
+    public PEGrossCashflowDto disassemble(PEGrossCashflow entity){
+        PEGrossCashflowDto dto = super.disassemble(entity);
         return dto;
     }
 }

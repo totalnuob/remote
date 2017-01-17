@@ -1,29 +1,25 @@
-package kz.nicnbk.repo.model.pe;
+package kz.nicnbk.service.dto.pe;
 
-import kz.nicnbk.repo.model.base.CreateUpdateBaseEntity;
-import kz.nicnbk.repo.model.common.Geography;
-import kz.nicnbk.repo.model.common.Strategy;
+import kz.nicnbk.common.service.model.BaseDictionaryDto;
+import kz.nicnbk.common.service.model.HistoryBaseEntityDto;
+import kz.nicnbk.repo.model.pe.PEFirm;
 
-import javax.persistence.*;
 import java.util.Set;
 
 /**
- * Created by zhambyl on 15-Sep-16.
+ * Created by zhambyl on 15-Nov-16.
  */
-@Entity
-@Table(name = "pe_firm")
-public class PEFirm extends CreateUpdateBaseEntity{
-
+public class PEFirmDto extends HistoryBaseEntityDto<PEFirm> {
     private String firmName;
     private int foundedYear;
     private float aum;
     private int invTeamSize;
     private int opsTeamSize;
 //    private Set<PEFirm> peers;
-    private Set<Strategy> strategy;
-    private Set<PEIndustry> industryFocus;
-    private Set<Geography> geographyFocus;
-//    private Set<PEFund> funds;
+    private Set<BaseDictionaryDto> strategy;
+    private Set<BaseDictionaryDto> industryFocus;
+    private Set<BaseDictionaryDto> geographyFocus;
+//    private Set<PEFundDto> funds;
 
 //    private Set<FirmAddress> address;
 //    private Set<Contacts> contacts;
@@ -37,7 +33,7 @@ public class PEFirm extends CreateUpdateBaseEntity{
     private String contactPerson;
     private String email;
 
-    @Column(name = "firm_name")
+
     public String getFirmName() {
         return firmName;
     }
@@ -46,7 +42,6 @@ public class PEFirm extends CreateUpdateBaseEntity{
         this.firmName = firmName;
     }
 
-    @Column(name = "founded_year")
     public int getFoundedYear() {
         return foundedYear;
     }
@@ -55,7 +50,6 @@ public class PEFirm extends CreateUpdateBaseEntity{
         this.foundedYear = foundedYear;
     }
 
-    @Column(name = "aum")
     public float getAum() {
         return aum;
     }
@@ -64,7 +58,6 @@ public class PEFirm extends CreateUpdateBaseEntity{
         this.aum = aum;
     }
 
-    @Column(name = "investment_team_size")
     public int getInvTeamSize() {
         return invTeamSize;
     }
@@ -73,7 +66,6 @@ public class PEFirm extends CreateUpdateBaseEntity{
         this.invTeamSize = invTeamSize;
     }
 
-    @Column(name = "operations_team_size")
     public int getOpsTeamSize() {
         return opsTeamSize;
     }
@@ -82,12 +74,14 @@ public class PEFirm extends CreateUpdateBaseEntity{
         this.opsTeamSize = opsTeamSize;
     }
 
-//    @ManyToMany(fetch = FetchType.LAZY)
-//    @JoinTable(
-//            name = "firm_peers",
-//            joinColumns = @JoinColumn(name = "firm_id", referencedColumnName = "ID"),
-//            inverseJoinColumns = @JoinColumn(name = "peers_id", referencedColumnName = "ID")
-//    )
+    public String getLocations() {
+        return locations;
+    }
+
+    public void setLocations(String locations) {
+        this.locations = locations;
+    }
+
 //    public Set<PEFirm> getPeers() {
 //        return peers;
 //    }
@@ -96,58 +90,38 @@ public class PEFirm extends CreateUpdateBaseEntity{
 //        this.peers = peers;
 //    }
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "pe_firm_strategies",
-            joinColumns = @JoinColumn(name = "firm_id", referencedColumnName = "ID"),
-            inverseJoinColumns = @JoinColumn(name = "strategy_id", referencedColumnName = "ID")
-    )
-    public Set<Strategy> getStrategy() {
+    public Set<BaseDictionaryDto> getStrategy() {
         return strategy;
     }
 
-    public void setStrategy(Set<Strategy> strategy) {
+    public void setStrategy(Set<BaseDictionaryDto> strategy) {
         this.strategy = strategy;
     }
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "pe_firm_industries",
-            joinColumns = @JoinColumn(name = "firm_id", referencedColumnName = "ID"),
-            inverseJoinColumns = @JoinColumn(name = "pe_industry_id", referencedColumnName = "ID")
-    )
-    public Set<PEIndustry> getIndustryFocus() {
+    public Set<BaseDictionaryDto> getIndustryFocus() {
         return industryFocus;
     }
 
-    public void setIndustryFocus(Set<PEIndustry> industryFocus) {
+    public void setIndustryFocus(Set<BaseDictionaryDto> industryFocus) {
         this.industryFocus = industryFocus;
     }
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "pe_firm_geography",
-            joinColumns = @JoinColumn(name = "firm_id", referencedColumnName = "ID"),
-            inverseJoinColumns = @JoinColumn(name = "geography_id", referencedColumnName = "ID")
-    )
-    public Set<Geography> getGeographyFocus() {
+    public Set<BaseDictionaryDto> getGeographyFocus() {
         return geographyFocus;
     }
 
-    public void setGeographyFocus(Set<Geography> geographyFocus) {
+    public void setGeographyFocus(Set<BaseDictionaryDto> geographyFocus) {
         this.geographyFocus = geographyFocus;
     }
 
-//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "firm", cascade = CascadeType.ALL)
-//    public Set<PEFund> getFunds() {
+//    public Set<PEFundDto> getFunds() {
 //        return funds;
 //    }
 //
-//    public void setFunds(Set<PEFund> funds) {
+//    public void setFunds(Set<PEFundDto> funds) {
 //        this.funds = funds;
 //    }
 
-//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "firm")
 //    public Set<FirmAddress> getAddress() {
 //        return address;
 //    }
@@ -156,7 +130,6 @@ public class PEFirm extends CreateUpdateBaseEntity{
 //        this.address = address;
 //    }
 //
-//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "firm")
 //    public Set<Contacts> getContacts() {
 //        return contacts;
 //    }
@@ -165,14 +138,6 @@ public class PEFirm extends CreateUpdateBaseEntity{
 //        this.contacts = contacts;
 //    }
 
-    @Column(name = "locations")
-    public String getLocations() {
-        return locations;
-    }
-
-    public void setLocations(String locations) {
-        this.locations = locations;
-    }
 
     public String getPeers() {
         return peers;
@@ -229,5 +194,4 @@ public class PEFirm extends CreateUpdateBaseEntity{
     public void setEmail(String email) {
         this.email = email;
     }
-
 }

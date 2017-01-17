@@ -26,10 +26,6 @@
             <a>meetingType</a>
             <b>meetingType</b>
         </field-exclude>
-        <!--<field-exclude>-->
-            <!--<a>memoType</a>-->
-            <!--<b>memoType</b>-->
-        <!--</field-exclude>-->
         <field-exclude>
             <a>arrangedBy</a>
             <b>arrangedBy</b>
@@ -72,24 +68,12 @@
 
     <!-- HEDGE FUNDS-->
     <mapping>
-        <class-a>kz.nicnbk.service.dto.hf.HFFirmDto</class-a>
+        <class-a>kz.nicnbk.service.dto.hf.HFManagerDto</class-a>
         <class-b>kz.nicnbk.repo.model.hf.HFManager</class-b>
-        <field-exclude>
-            <a>managerType</a>
-            <b>managerType</b>
-        </field-exclude>
         <field-exclude>
             <a>aumCurrency</a>
             <b>AUMCurrency</b>
         </field-exclude>
-        <!--<field-exclude>-->
-            <!--<a>status</a>-->
-            <!--<b>status</b>-->
-        <!--</field-exclude>-->
-        <!--<field-exclude>-->
-            <!--<a>legalStructure</a>-->
-            <!--<b>legalStructure</b>-->
-        <!--</field-exclude>-->
         <field-exclude>
             <a>domicileCountry</a>
             <b>domicileCountry</b>
