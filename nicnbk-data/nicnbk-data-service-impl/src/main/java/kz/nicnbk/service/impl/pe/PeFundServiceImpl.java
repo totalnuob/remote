@@ -3,20 +3,19 @@ package kz.nicnbk.service.impl.pe;
 import in.satpathy.financial.XIRR;
 import in.satpathy.financial.XIRRData;
 import kz.nicnbk.repo.api.pe.PEFundRepository;
-import kz.nicnbk.repo.api.pe.PEGrossCashflowRepository;
 import kz.nicnbk.repo.api.pe.PENetCashflowRepository;
 import kz.nicnbk.repo.model.pe.PEFund;
 import kz.nicnbk.repo.model.pe.PEGrossCashflow;
 import kz.nicnbk.repo.model.pe.PENetCashflow;
-import kz.nicnbk.service.api.pe.PEGrossCashflowService;
 import kz.nicnbk.service.api.pe.PEFundService;
+import kz.nicnbk.service.api.pe.PEGrossCashflowService;
 import kz.nicnbk.service.api.pe.PENetCashflowService;
-import kz.nicnbk.service.converter.pe.PEGrossCashflowEntityConverter;
 import kz.nicnbk.service.converter.pe.PEFundEntityConverter;
+import kz.nicnbk.service.converter.pe.PEGrossCashflowEntityConverter;
 import kz.nicnbk.service.converter.pe.PENetCashflowEntityConverter;
+import kz.nicnbk.service.dto.pe.PEFundCompaniesPerformanceDto;
 import kz.nicnbk.service.dto.pe.PEFundDto;
 import kz.nicnbk.service.dto.pe.PEGrossCashflowDto;
-import kz.nicnbk.service.dto.pe.PEFundCompaniesPerformanceDto;
 import kz.nicnbk.service.dto.pe.PENetCashflowDto;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +24,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by zhambyl on 15-Nov-16.

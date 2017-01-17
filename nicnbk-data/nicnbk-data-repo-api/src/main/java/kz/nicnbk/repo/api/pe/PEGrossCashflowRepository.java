@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by zhambyl on 05-Jan-17.
  */
-public interface _PEGrossCashflowRepository extends PagingAndSortingRepository<PEGrossCashflow, Long> {
+public interface PEGrossCashflowRepository extends PagingAndSortingRepository<PEGrossCashflow, Long> {
 
     @Query("SELECT e from pe_gross_cashflow e where e.fund.id=?1")
     List<PEGrossCashflow> getEntitiesByFundId(Long fundId, Pageable pageable);
