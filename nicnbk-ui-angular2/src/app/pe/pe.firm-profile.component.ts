@@ -99,7 +99,7 @@ export class PEFirmProfileComponent extends CommonFormViewComponent {
     }
 
     save(){
-        //console.log(this.firm);
+        console.log(this.firm);
 
         this.firm.strategy = this.convertToServiceModel(this.firm.strategy);
         this.firm.industryFocus = this.convertToServiceModel(this.firm.industryFocus);

@@ -1,19 +1,19 @@
 package kz.nicnbk.service.impl.pe;
 
+import kz.nicnbk.common.service.util.PaginationUtils;
 import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.api.pe.PEFirmRepository;
 import kz.nicnbk.repo.model.pe.PEFirm;
 import kz.nicnbk.service.api.pe.PEFirmService;
 import kz.nicnbk.service.converter.pe.PEFirmEntityConverter;
 import kz.nicnbk.service.dto.pe.PEFirmDto;
+import kz.nicnbk.service.dto.pe.PEPagedSearchResult;
 import kz.nicnbk.service.dto.pe.PESearchParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
-import java.util.Set;
 
 /**
  * Created by zhambyl on 16-Nov-16.
@@ -43,15 +43,30 @@ public class PEFirmServiceImpl implements PEFirmService {
     }
 
     @Override
-    public Set<PEFirmDto> findByName(PESearchParams searchParams) {
-        if(StringUtils.isEmpty(searchParams.getName())){
-            Page<PEFirm> page = this.repository.findAll(new PageRequest(0, 10, new Sort(Sort.Direction.DESC, "id")));
-            return this.converter.disassembleSet(page.getContent());
+    public PEPagedSearchResult findByName(PESearchParams searchParams) {
+
+        int page = 0;
+        int pageSize = searchParams != null && searchParams.getPageSize() > 0 ? searchParams.getPageSize() : DEFAULT_PAGE_SIZE;
+
+        Page<PEFirm> entityPage = this.repository.findByName(searchParams.getName(),
+                new PageRequest(searchParams.getPage(), searchParams.getPageSize(), new Sort(Sort.Direction.DESC, "id")));
+
+        PEPagedSearchResult result = new PEPagedSearchResult();
+
+        if (entityPage != null) {
+            result.setTotalElements(entityPage.getTotalElements());
+            if (entityPage.getTotalElements() > 0) {
+                result.setShowPageFrom(PaginationUtils.getShowPageFrom(DEFAULT_PAGES_PER_VIEW, page + 1));
+                result.setShowPageTo(PaginationUtils.getShowPageTo(DEFAULT_PAGES_PER_VIEW,
+                        page + 1, result.getShowPageFrom(), entityPage.getTotalPages()));
+            }
+            result.setTotalPages(entityPage.getTotalPages());
+            result.setCurrentPage(page + 1);
+            if (searchParams != null) {
+                result.setSearchParams(searchParams.getSearchParamsAsString());
+            }
+            result.setFirms(this.converter.disassembleList(entityPage.getContent()));
         }
-        Page<PEFirm> page = this.repository.findByName(searchParams.getName(), new PageRequest(0, 10, new Sort(Sort.Direction.DESC, "id")));
-
-        return this.converter.disassembleSet(page.getContent());
+        return result;
     }
-
-
 }

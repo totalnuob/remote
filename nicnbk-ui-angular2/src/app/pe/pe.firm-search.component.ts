@@ -4,6 +4,9 @@ import {PEFirmService} from "./pe.firm.service";
 import {LookupService} from "../common/lookup.service";
 import {PEFirm} from "./model/pe.firm";
 import {CommonFormViewComponent} from "../common/common.component";
+import {PESearchResults} from "./model/pe.search-results";
+
+import {Subscription} from 'rxjs';
 
 @Component({
     selector: 'pe-firm-search',
@@ -11,28 +14,36 @@ import {CommonFormViewComponent} from "../common/common.component";
     styleUrls: [],
     providers: [PEFirmService]
 })
-export class PEFirmSearchComponent extends CommonFormViewComponent implements OnInit{
+export class PEFirmSearchComponent extends CommonFormViewComponent {
 
     foundEntities: PEFirm[];
     searchParams = new PESearchParams();
+    searchResult = new PESearchResults();
+    busy: Subscription;
 
     constructor(
         private firmService: PEFirmService
     ){
         super();
         this.searchParams.name = '';
-        this.search();
+        this.search(0);
     }
 
-    ngOnInit():any{
+    search(page){
 
-    }
+        this.searchParams.pageSize = 10;
 
-    search(){
-        this.firmService.search(this.searchParams)
+        if(page > 0) {
+            this.searchParams.page = page;
+        }
+
+        console.log(this.searchParams);
+
+        this.busy = this.firmService.search(this.searchParams)
             .subscribe(
                 searchResult => {
-                    this.foundEntities = searchResult;
+                    this.foundEntities = searchResult.firms;
+                    this.searchResult = searchResult;
                 },
                 error => this.errorMessage = "Failed to search"
             );

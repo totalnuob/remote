@@ -137,7 +137,6 @@ public class LookupServiceImpl implements LookupService {
                     return (T) geography;
                 };
             }
-
         }
 
         if(clazz.getSimpleName().equals("PEIndustry")) {

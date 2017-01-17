@@ -25,7 +25,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-
 import java.util.*;
 
 /**
@@ -265,7 +264,7 @@ public class PEFundServiceImpl implements PEFundService {
 //            System.out.println(fundGrossCf.size());
 //            System.out.println(fundDates.size());
 
-            System.out.println("JOB IS DONE in service");
+//            System.out.println("JOB IS DONE in service");
         }
 
         double totalNetDrawn = 0;
@@ -288,8 +287,8 @@ public class PEFundServiceImpl implements PEFundService {
 //        System.out.println("totalNetDistributed = " + totalNetDistributed);
 //        System.out.println("totalNetDrawn = " + totalNetDrawn);
 
-        System.out.println(fundNetCf.size());
-        System.out.println(fundNetDates.size());
+//        System.out.println(fundNetCf.size());
+//        System.out.println(fundNetDates.size());
 
         fundNetIrr = irrCalculator.xirr(new XIRRData(fundNetCf.size(), 0.1, toPrimitive(fundNetCf.toArray(new Double[0])), toPrimitive(fundNetDates.toArray(new Double[0])) ));
 

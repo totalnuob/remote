@@ -100,13 +100,13 @@
     </table>
 
     </div>
-    <!--<div class="row pull-right">-->
-        <!--<ul class="pagination" *ngIf="memoSearchResult?.showPageFrom > 0">-->
-            <!--<li><a *ngIf="memoSearchResult?.showPageFrom > 1" (click)="search(memoSearchResult.showPageFrom - 1)">&laquo;</a></li>-->
-            <!--<li *ngFor="let i of range(memoSearchResult.showPageFrom, memoSearchResult.showPageTo)" [class.active]="i == memoSearchResult.currentPage">-->
-                <!--<a (click)="search(i)">{{i}}</a>-->
-            <!--</li>-->
-            <!--<li><a *ngIf="memoSearchResult.showPageTo < memoSearchResult.totalPages" (click)="search(memoSearchResult.showPageTo + 1)">&raquo;</a></li>-->
-        <!--</ul>-->
-    <!--</div>-->
+    <div class="row pull-right">
+        <ul class="pagination" *ngIf="searchResult?.showPageFrom > 0">
+            <li><a *ngIf="searchResult?.showPageFrom > 1" (click)="search(searchResult.showPageFrom - 1)">&laquo;</a></li>
+            <li *ngFor="let i of range(searchResult.showPageFrom, searchResult.showPageTo)" [class.active]="i == searchResult.currentPage">
+                <a (click)="search(i - 1)">{{i}}</a>
+            </li>
+            <li><a *ngIf="searchResult.showPageTo < searchResult.totalPages" (click)="search(searchResult.showPageTo + 1)">&raquo;</a></li>
+        </ul>
+    </div>
 </div>
