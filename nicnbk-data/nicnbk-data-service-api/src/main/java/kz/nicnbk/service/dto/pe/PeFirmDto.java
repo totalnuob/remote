@@ -9,7 +9,7 @@ import java.util.Set;
 /**
  * Created by zhambyl on 15-Nov-16.
  */
-public class PeFirmDto extends HistoryBaseEntityDto<PEFirm> {
+public class PEFirmDto extends HistoryBaseEntityDto<PEFirm> {
     private String firmName;
     private int foundedYear;
     private float aum;
@@ -19,7 +19,7 @@ public class PeFirmDto extends HistoryBaseEntityDto<PEFirm> {
     private Set<BaseDictionaryDto> strategy;
     private Set<BaseDictionaryDto> industryFocus;
     private Set<BaseDictionaryDto> geographyFocus;
-//    private Set<PeFundDto> funds;
+//    private Set<PEFundDto> funds;
 
 //    private Set<FirmAddress> address;
 //    private Set<Contacts> contacts;
@@ -114,11 +114,11 @@ public class PeFirmDto extends HistoryBaseEntityDto<PEFirm> {
         this.geographyFocus = geographyFocus;
     }
 
-//    public Set<PeFundDto> getFunds() {
+//    public Set<PEFundDto> getFunds() {
 //        return funds;
 //    }
 //
-//    public void setFunds(Set<PeFundDto> funds) {
+//    public void setFunds(Set<PEFundDto> funds) {
 //        this.funds = funds;
 //    }
 

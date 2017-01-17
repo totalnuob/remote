@@ -1,8 +1,8 @@
 package kz.nicnbk.ws.rest;
 
-import kz.nicnbk.service.api.pe.PeFirmService;
-import kz.nicnbk.service.dto.pe.PeFirmDto;
-import kz.nicnbk.service.dto.pe.PeSearchParams;
+import kz.nicnbk.service.api.pe.PEFirmService;
+import kz.nicnbk.service.dto.pe.PEFirmDto;
+import kz.nicnbk.service.dto.pe.PESearchParams;
 import kz.nicnbk.ws.model.EntitySaveResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -19,14 +19,14 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/pe/firm")
-public class PeFirmServiceREST {
+public class PEFirmServiceREST {
 
     @Autowired
-    private PeFirmService service;
+    private PEFirmService service;
 
     @RequestMapping(value = "/get/{id}", method = RequestMethod.GET)
-    public PeFirmDto get(@PathVariable long id){
-        PeFirmDto firmDto = this.service.get(id);
+    public PEFirmDto get(@PathVariable long id){
+        PEFirmDto firmDto = this.service.get(id);
         if(firmDto == null){
 
         }
@@ -34,7 +34,7 @@ public class PeFirmServiceREST {
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public ResponseEntity<?> save(@RequestBody PeFirmDto firmDto){
+    public ResponseEntity<?> save(@RequestBody PEFirmDto firmDto){
 //        System.out.println(firmDto.getFirmName());
 //        System.out.println(firmDto.getStrategy().size());
         Long id = this.service.save(firmDto);
@@ -49,7 +49,7 @@ public class PeFirmServiceREST {
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
-    public Set<PeFirmDto> search(@RequestBody PeSearchParams searchParams){
+    public Set<PEFirmDto> search(@RequestBody PESearchParams searchParams){
         return this.service.findByName(searchParams);
     }
 

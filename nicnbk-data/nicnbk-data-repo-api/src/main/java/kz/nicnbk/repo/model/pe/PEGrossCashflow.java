@@ -1,26 +1,27 @@
-package kz.nicnbk.service.dto.pe;
+package kz.nicnbk.repo.model.pe;
 
-import kz.nicnbk.common.service.model.BaseEntityDto;
-import kz.nicnbk.repo.model.pe.PEGrossCashflow;
-import org.springframework.format.annotation.DateTimeFormat;
+import kz.nicnbk.repo.model.base.BaseEntity;
 
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.util.Date;
 
 /**
  * Created by zhambyl on 05-Jan-17.
  */
-public class PEGrossCashflowDto extends BaseEntityDto<PEGrossCashflow> {
+@Entity(name = "pe_gross_cashflow")
+public class PEGrossCashflow extends BaseEntity {
+
     private String companyName;
-
-    @DateTimeFormat(pattern="dd-MM-yyyy")
     private Date date;
-
     private double invested;
     private double realized;
     private double unrealized;
     private double grossCF;
     private double irr;
-    private PEFundDto fund;
+    private PEFund fund;
 
     public String getCompanyName() {
         return companyName;
@@ -78,12 +79,13 @@ public class PEGrossCashflowDto extends BaseEntityDto<PEGrossCashflow> {
         this.irr = irr;
     }
 
-    public PEFundDto getFund() {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="fund_id", nullable = false)
+    public PEFund getFund() {
         return fund;
     }
 
-    public void setFund(PEFundDto fund) {
+    public void setFund(PEFund fund) {
         this.fund = fund;
     }
 }
-

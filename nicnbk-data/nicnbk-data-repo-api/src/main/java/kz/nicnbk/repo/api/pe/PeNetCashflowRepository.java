@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Created by zhambyl on 12-Jan-17.
  */
-public interface PeNetCashflowRepository extends PagingAndSortingRepository<PENetCashflow, Long>{
+public interface PENetCashflowRepository extends PagingAndSortingRepository<PENetCashflow, Long>{
 
     @Query("SELECT e from pe_net_cashflow e where e.fund.id=?1")
     List<PENetCashflow> getEntitiesByFundId(Long fundId);

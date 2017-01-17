@@ -3,14 +3,15 @@ package kz.nicnbk.service.converter.pe;
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.repo.model.common.Geography;
 import kz.nicnbk.repo.model.common.Strategy;
-import kz.nicnbk.repo.model.pe.PEFirm;
+import kz.nicnbk.repo.model.pe.PEFund;
 import kz.nicnbk.repo.model.pe.PEIndustry;
 import kz.nicnbk.service.converter.dozer.BaseDozerEntityConverter;
 import kz.nicnbk.service.datamanager.LookupService;
-import kz.nicnbk.service.dto.pe.PEFirmDto;
+import kz.nicnbk.service.dto.pe.PEFundDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -19,15 +20,14 @@ import java.util.Set;
  * Created by zhambyl on 15-Nov-16.
  */
 @Component
-public class PEFirmEntityConverter extends BaseDozerEntityConverter<PEFirm,PEFirmDto> {
+public class PEFundEntityConverter extends BaseDozerEntityConverter<PEFund, PEFundDto> {
 
     @Autowired
     private LookupService lookupService;
 
     @Override
-    public PEFirm assemble(PEFirmDto dto){
-
-        PEFirm entity = super.assemble(dto);
+    public PEFund assemble(PEFundDto dto){
+        PEFund entity = super.assemble(dto);
 
         // strategies
         Set<Strategy> strategies = new HashSet<>();
@@ -43,38 +43,47 @@ public class PEFirmEntityConverter extends BaseDozerEntityConverter<PEFirm,PEFir
         //IndustryFocus
         Set<PEIndustry> industries = new HashSet<>();
 
-        if(dto.getIndustryFocus() != null){
-            for(BaseDictionaryDto industryDto: dto.getIndustryFocus()){
+        if(dto.getIndustry() != null){
+            for(BaseDictionaryDto industryDto: dto.getIndustry()){
                 PEIndustry PEIndustry = lookupService.findByTypeAndCode(PEIndustry.class, industryDto.getCode());
                 industries.add(PEIndustry);
             }
         }
-        entity.setIndustryFocus(industries);
+        entity.setPEIndustry(industries);
 
         // geographies
         Set<Geography> geographies = new HashSet<>();
-        if(dto.getGeographyFocus() != null){
-            for(BaseDictionaryDto geographyDto: dto.getGeographyFocus()){
+        if(dto.getGeography() != null){
+            for(BaseDictionaryDto geographyDto: dto.getGeography()){
                 Geography geography = lookupService.findByTypeAndCode(Geography.class, geographyDto.getCode());
                 geographies.add(geography);
             }
         }
-        entity.setGeographyFocus(geographies);
+        entity.setGeography(geographies);
 
         return entity;
     }
 
     @Override
-    public PEFirmDto disassemble(PEFirm entity){
-        PEFirmDto dto = super.disassemble(entity);
-
+    public PEFundDto disassemble(PEFund entity){
+        PEFundDto dto = super.disassemble(entity);
         return dto;
     }
 
-    public Set<PEFirmDto> disassembleSet(List<PEFirm> entities) {
-        Set<PEFirmDto> dtoSet = new HashSet<>();
+    public List<PEFundDto> disassembleList(List<PEFund> entities){
+        List<PEFundDto> dtoList = new ArrayList<>();
         if(entities != null){
-            for(PEFirm entity: entities){
+            for(PEFund entity: entities){
+                dtoList.add(disassemble(entity));
+            }
+        }
+        return dtoList;
+    }
+
+    public Set<PEFundDto> disassembleSet(List<PEFund> entities){
+        Set<PEFundDto> dtoSet = new HashSet<>();
+        if(entities != null){
+            for(PEFund entity: entities){
                 dtoSet.add(disassemble(entity));
             }
         }

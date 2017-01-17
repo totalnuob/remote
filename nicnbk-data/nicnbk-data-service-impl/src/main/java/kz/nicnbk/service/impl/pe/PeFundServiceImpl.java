@@ -3,8 +3,8 @@ package kz.nicnbk.service.impl.pe;
 import in.satpathy.financial.XIRR;
 import in.satpathy.financial.XIRRData;
 import kz.nicnbk.repo.api.pe.PEFundRepository;
-import kz.nicnbk.repo.api.pe.PeGrossCashflowRepository;
-import kz.nicnbk.repo.api.pe.PeNetCashflowRepository;
+import kz.nicnbk.repo.api.pe.PEGrossCashflowRepository;
+import kz.nicnbk.repo.api.pe.PENetCashflowRepository;
 import kz.nicnbk.repo.model.pe.PEFund;
 import kz.nicnbk.repo.model.pe.PEGrossCashflow;
 import kz.nicnbk.repo.model.pe.PENetCashflow;
@@ -43,7 +43,7 @@ public class PEFundServiceImpl implements PEFundService {
     private PEFundEntityConverter converter;
 
     @Autowired
-    private PeGrossCashflowRepository grossCFRepository;
+    private PEGrossCashflowRepository grossCFRepository;
 
     @Autowired
     private PEGrossCashflowService grossCFService;
@@ -52,7 +52,7 @@ public class PEFundServiceImpl implements PEFundService {
     private PEGrossCashflowEntityConverter grossCFConverter;
 
     @Autowired
-    private PeNetCashflowRepository netCFRepository;
+    private PENetCashflowRepository netCFRepository;
 
     @Autowired
     private PENetCashflowService netCFService;

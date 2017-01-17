@@ -1,7 +1,7 @@
 package kz.nicnbk.service.dto.pe;
 
 import kz.nicnbk.common.service.model.BaseEntityDto;
-import kz.nicnbk.repo.model.pe.PeNetCashflow;
+import kz.nicnbk.repo.model.pe.PENetCashflow;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
@@ -9,7 +9,7 @@ import java.util.Date;
 /**
  * Created by zhambyl on 12-Jan-17.
  */
-public class PeNetCashflowDto extends BaseEntityDto<PeNetCashflow> {
+public class PENetCashflowDto extends BaseEntityDto<PENetCashflow> {
 
     private String fundName;
 
@@ -28,7 +28,7 @@ public class PeNetCashflowDto extends BaseEntityDto<PeNetCashflow> {
 
     private String typeOfFundTransaction;
 
-    private PeFundDto fund;
+    private PEFundDto fund;
 
     public String getFundName() {
         return fundName;
@@ -94,11 +94,11 @@ public class PeNetCashflowDto extends BaseEntityDto<PeNetCashflow> {
         this.typeOfFundTransaction = typeOfFundTransaction;
     }
 
-    public PeFundDto getFund() {
+    public PEFundDto getFund() {
         return fund;
     }
 
-    public void setFund(PeFundDto fund) {
+    public void setFund(PEFundDto fund) {
         this.fund = fund;
     }
 }

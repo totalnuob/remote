@@ -12,7 +12,7 @@ import java.util.Date;
  * Created by zhambyl on 12-Jan-17.
  */
 @Entity(name = "pe_net_cashflow")
-public class PeNetCashflow extends BaseEntity{
+public class PENetCashflow extends BaseEntity{
     private String fundName;
     private String currency;
     private Date transactionDate;

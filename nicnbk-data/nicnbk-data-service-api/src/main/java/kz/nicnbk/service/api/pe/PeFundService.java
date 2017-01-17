@@ -1,18 +1,18 @@
 package kz.nicnbk.service.api.pe;
 
 import kz.nicnbk.service.api.base.BaseService;
-import kz.nicnbk.service.dto.pe.PeFundDto;
+import kz.nicnbk.service.dto.pe.PEFundDto;
 
 import java.util.List;
 
 /**
  * Created by zhambyl on 15-Nov-16.
  */
-public interface PeFundService extends BaseService {
+public interface PEFundService extends BaseService {
 
-    Long save(PeFundDto fundDto);
+    Long save(PEFundDto fundDto);
 
-    PeFundDto get(Long id);
+    PEFundDto get(Long id);
 
-    List<PeFundDto> loadFirmFunds(Long firmId);
+    List<PEFundDto> loadFirmFunds(Long firmId);
 }

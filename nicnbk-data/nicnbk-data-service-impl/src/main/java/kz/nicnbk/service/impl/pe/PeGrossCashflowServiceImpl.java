@@ -1,6 +1,6 @@
 package kz.nicnbk.service.impl.pe;
 
-import kz.nicnbk.repo.api.pe.PeGrossCashflowRepository;
+import kz.nicnbk.repo.api.pe.PEGrossCashflowRepository;
 import kz.nicnbk.repo.model.pe.PEGrossCashflow;
 import kz.nicnbk.service.api.pe.PEGrossCashflowService;
 import kz.nicnbk.service.converter.pe.PEGrossCashflowEntityConverter;
@@ -19,7 +19,7 @@ import java.util.List;
 public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
 
     @Autowired
-    private PeGrossCashflowRepository peCFRepository;
+    private PEGrossCashflowRepository peCFRepository;
 
     @Autowired
     private PEGrossCashflowEntityConverter peCFEntityConverter;
