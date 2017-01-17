@@ -3,7 +3,10 @@ package kz.nicnbk.repo.model.tripmemo;
 import kz.nicnbk.repo.model.base.BaseEntity;
 import kz.nicnbk.repo.model.files.Files;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 /**
  * Created by zhambyl on 04-Aug-16.
