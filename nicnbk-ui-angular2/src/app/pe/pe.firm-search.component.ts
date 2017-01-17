@@ -3,7 +3,7 @@ import {PESearchParams} from "./model/pe.search-params";
 import {PeFirmService} from "./pe.firm.service";
 import {LookupService} from "../common/lookup.service";
 import {PeFirm} from "./model/pe.firm";
-import {CommonComponent} from "../common/common.component";
+import {CommonFormViewComponent} from "../common/common.component";
 
 @Component({
     selector: 'pe-firm-search',
@@ -11,7 +11,7 @@ import {CommonComponent} from "../common/common.component";
     styleUrls: [],
     providers: [PeFirmService]
 })
-export class PeFirmSearchComponent extends CommonComponent implements OnInit{
+export class PeFirmSearchComponent extends CommonFormViewComponent implements OnInit{
 
     foundEntities: PeFirm[];
     searchParams = new PESearchParams();

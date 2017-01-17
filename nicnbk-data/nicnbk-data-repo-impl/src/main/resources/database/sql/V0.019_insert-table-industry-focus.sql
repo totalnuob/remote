@@ -8,5 +8,5 @@ INSERT INTO pe_industry(id, code, name_en, name_ru, name_kz) VALUES(7, 'AGRICULT
 INSERT INTO pe_industry(id, code, name_en, name_ru, name_kz) VALUES(8, 'FINSERV', 'Financial services', '', '');
 INSERT INTO pe_industry(id, code, name_en, name_ru, name_kz) VALUES(9, 'TECH', 'Technology', '', '');
 INSERT INTO pe_industry(id, code, name_en, name_ru, name_kz) VALUES(10, 'LEISURE', 'Leisure', '', '');
-INSERT INTO pe_industry(id, code, name_en, name_ru, name_kz) VALUES(10, 'MULTI', 'Multi', '', '');
-INSERT INTO pe_industry(id, code, name_en, name_ru, name_kz) VALUES(11, 'OTHER', 'Other', '', '');
+INSERT INTO pe_industry(id, code, name_en, name_ru, name_kz) VALUES(11, 'MULTI', 'Multi', '', '');
+INSERT INTO pe_industry(id, code, name_en, name_ru, name_kz) VALUES(12, 'OTHER', 'Other', '', '');

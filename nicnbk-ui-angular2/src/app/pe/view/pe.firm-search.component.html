@@ -76,7 +76,7 @@
         <tr>
             <th>&nbsp;</th>
             <th>MANAGER</th>
-            <th>FUND</th>
+            <!--<th>FUND</th>-->
             <th>STRATEGY</th>
             <th>LOCATION</th>
             <th>UPDATED</th>
@@ -89,9 +89,9 @@
         <tr *ngFor = "let firm of foundEntities">
             <td width="5%"></td>
             <td width="30%"><a [routerLink]="['/pe/firmProfile/', firm.id]">{{firm.firmName}}</a></td>
-            <td width="30%">
-                <!--<a [routerLink]="['/hf/managerProfile/', fund.manager.id]">{{fund.manager.name}}</a>-->
-            </td>
+            <!--<td width="30%">-->
+                <!--&lt;!&ndash;<a [routerLink]="['/hf/managerProfile/', fund.manager.id]">{{fund.manager.name}}</a>&ndash;&gt;-->
+            <!--</td>-->
             <!--<td width="10%" th:text="${memoItem.meetingDate}"></td>-->
             <td width="10%"></td>
             <td width="10%"></td>

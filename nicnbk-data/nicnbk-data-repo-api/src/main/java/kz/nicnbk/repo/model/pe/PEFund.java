@@ -4,7 +4,7 @@ import kz.nicnbk.repo.model.base.CreateUpdateBaseEntity;
 import kz.nicnbk.repo.model.common.Currency;
 import kz.nicnbk.repo.model.common.Geography;
 import kz.nicnbk.repo.model.common.Strategy;
-import kz.nicnbk.repo.model.pe.common.Industry;
+import kz.nicnbk.repo.model.pe.common.PEIndustry;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -15,8 +15,8 @@ import java.util.Set;
  */
 
 @Entity
-@Table(name = "fund")
-public class Fund extends CreateUpdateBaseEntity {
+@Table(name = "pe_fund")
+public class PEFund extends CreateUpdateBaseEntity {
 
     //FUND SUMMARY
     private String fundName;
@@ -32,7 +32,7 @@ public class Fund extends CreateUpdateBaseEntity {
     private String managementFeeComment;
     private double carriedInterest;
     private double hurdleRate;
-    private Set<Industry> industry;
+    private Set<PEIndustry> PEIndustry;
     private Set<Strategy> strategy;
     private String strategyComment;
     private Set<Geography> geography;
@@ -48,8 +48,8 @@ public class Fund extends CreateUpdateBaseEntity {
 //    private double grossIrr;
 //    private double grossTvpi;
     private Date asOfDate;
-    private Benchmark benchmark;
-    private Firm firm;
+    private PEBenchmark benchmark;
+    private PEFirm firm;
 
     // Descriptive data
     private double investmentPeriod;
@@ -198,12 +198,12 @@ public class Fund extends CreateUpdateBaseEntity {
             joinColumns = @JoinColumn(name = "fund_id", referencedColumnName = "ID"),
             inverseJoinColumns = @JoinColumn(name = "pe_industry_id", referencedColumnName = "ID")
     )
-    public Set<Industry> getIndustry() {
-        return industry;
+    public Set<PEIndustry> getPEIndustry() {
+        return PEIndustry;
     }
 
-    public void setIndustry(Set<Industry> industry) {
-        this.industry = industry;
+    public void setPEIndustry(Set<PEIndustry> PEIndustry) {
+        this.PEIndustry = PEIndustry;
     }
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -335,21 +335,21 @@ public class Fund extends CreateUpdateBaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fund_benchmark_id")
-    public Benchmark getBenchmark() {
+    public PEBenchmark getPEBenchmark() {
         return benchmark;
     }
 
-    public void setBenchmark(Benchmark benchmark) {
+    public void setPEBenchmark(PEBenchmark PEBenchmark) {
         this.benchmark = benchmark;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "firm_id")
-    public Firm getFirm() {
+    public PEFirm getFirm() {
         return firm;
     }
 
-    public void setFirm(Firm firm) {
+    public void setFirm(PEFirm firm) {
         this.firm = firm;
     }
 

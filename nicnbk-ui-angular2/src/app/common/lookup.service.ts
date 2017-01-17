@@ -16,7 +16,6 @@ import {SUBSCRIPTION_FREQUENCY_URL} from "./lookup.service.url";
 import {REDEMPTION_FREQUENCY_URL} from "./lookup.service.url";
 import {REDEMPTION_NOTICE_PERIOD_URL} from "./lookup.service.url";
 import {SIDE_POCKET_URL} from "./lookup.service.url";
-import {CURRENCIES_URL} from "./lookup.service.url";
 import {PE_INDUSTRY_FOCUS_URL} from "./lookup.service.url";
 
 

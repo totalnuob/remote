@@ -9,8 +9,8 @@ import java.util.Date;
  * Created by zhambyl on 22-Sep-16.
  */
 @Entity
-@Table(name = "benchmark")
-public class Benchmark extends CreateUpdateBaseEntity{
+@Table(name = "pe_benchmark")
+public class PEBenchmark extends CreateUpdateBaseEntity{
 
     private String name;
     private int vintage;

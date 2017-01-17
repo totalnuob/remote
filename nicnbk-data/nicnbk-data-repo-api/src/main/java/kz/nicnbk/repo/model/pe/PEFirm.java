@@ -3,8 +3,7 @@ package kz.nicnbk.repo.model.pe;
 import kz.nicnbk.repo.model.base.CreateUpdateBaseEntity;
 import kz.nicnbk.repo.model.common.Geography;
 import kz.nicnbk.repo.model.common.Strategy;
-import kz.nicnbk.repo.model.pe.common.Industry;
-import org.hibernate.type.StringClobType;
+import kz.nicnbk.repo.model.pe.common.PEIndustry;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -13,19 +12,19 @@ import java.util.Set;
  * Created by zhambyl on 15-Sep-16.
  */
 @Entity
-@Table(name = "firm")
-public class Firm extends CreateUpdateBaseEntity{
+@Table(name = "pe_firm")
+public class PEFirm extends CreateUpdateBaseEntity{
 
     private String firmName;
     private int foundedYear;
     private float aum;
     private int invTeamSize;
     private int opsTeamSize;
-//    private Set<Firm> peers;
+//    private Set<PEFirm> peers;
     private Set<Strategy> strategy;
-    private Set<Industry> industryFocus;
+    private Set<PEIndustry> industryFocus;
     private Set<Geography> geographyFocus;
-//    private Set<Fund> funds;
+//    private Set<PEFund> funds;
 
 //    private Set<FirmAddress> address;
 //    private Set<Contacts> contacts;
@@ -90,11 +89,11 @@ public class Firm extends CreateUpdateBaseEntity{
 //            joinColumns = @JoinColumn(name = "firm_id", referencedColumnName = "ID"),
 //            inverseJoinColumns = @JoinColumn(name = "peers_id", referencedColumnName = "ID")
 //    )
-//    public Set<Firm> getPeers() {
+//    public Set<PEFirm> getPeers() {
 //        return peers;
 //    }
 //
-//    public void setPeers(Set<Firm> peers) {
+//    public void setPeers(Set<PEFirm> peers) {
 //        this.peers = peers;
 //    }
 
@@ -118,11 +117,11 @@ public class Firm extends CreateUpdateBaseEntity{
             joinColumns = @JoinColumn(name = "firm_id", referencedColumnName = "ID"),
             inverseJoinColumns = @JoinColumn(name = "pe_industry_id", referencedColumnName = "ID")
     )
-    public Set<Industry> getIndustryFocus() {
+    public Set<PEIndustry> getIndustryFocus() {
         return industryFocus;
     }
 
-    public void setIndustryFocus(Set<Industry> industryFocus) {
+    public void setIndustryFocus(Set<PEIndustry> industryFocus) {
         this.industryFocus = industryFocus;
     }
 
@@ -141,11 +140,11 @@ public class Firm extends CreateUpdateBaseEntity{
     }
 
 //    @OneToMany(fetch = FetchType.LAZY, mappedBy = "firm", cascade = CascadeType.ALL)
-//    public Set<Fund> getFunds() {
+//    public Set<PEFund> getFunds() {
 //        return funds;
 //    }
 //
-//    public void setFunds(Set<Fund> funds) {
+//    public void setFunds(Set<PEFund> funds) {
 //        this.funds = funds;
 //    }
 

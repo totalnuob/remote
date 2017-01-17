@@ -1,10 +1,9 @@
 package kz.nicnbk.service.impl.pe;
 
 import kz.nicnbk.common.service.util.StringUtils;
-import kz.nicnbk.repo.api.pe.FirmRepository;
-import kz.nicnbk.repo.model.pe.Firm;
+import kz.nicnbk.repo.api.pe.PEFirmRepository;
+import kz.nicnbk.repo.model.pe.PEFirm;
 import kz.nicnbk.service.api.pe.PeFirmService;
-import kz.nicnbk.service.api.pe.PeFundService;
 import kz.nicnbk.service.converter.pe.PeFirmEntityConverter;
 import kz.nicnbk.service.dto.pe.PeFirmDto;
 import kz.nicnbk.service.dto.pe.PeSearchParams;
@@ -23,21 +22,21 @@ import java.util.Set;
 public class PeFirmServiceImpl implements PeFirmService{
 
     @Autowired
-    private FirmRepository repository;
+    private PEFirmRepository repository;
 
     @Autowired
     private PeFirmEntityConverter converter;
 
     @Override
     public Long save(PeFirmDto firmDto) {
-        Firm entity = converter.assemble(firmDto);
+        PEFirm entity = converter.assemble(firmDto);
         Long id = repository.save(entity).getId();
         return id;
     }
 
     @Override
     public PeFirmDto get(Long id) {
-        Firm entity = this.repository.findOne(id);
+        PEFirm entity = this.repository.findOne(id);
         PeFirmDto firmDto = this.converter.disassemble(entity);
 
         return firmDto;
@@ -46,10 +45,10 @@ public class PeFirmServiceImpl implements PeFirmService{
     @Override
     public Set<PeFirmDto> findByName(PeSearchParams searchParams) {
         if(StringUtils.isEmpty(searchParams.getName())){
-            Page<Firm> page = this.repository.findAll(new PageRequest(0, 10, new Sort(Sort.Direction.DESC, "id")));
+            Page<PEFirm> page = this.repository.findAll(new PageRequest(0, 10, new Sort(Sort.Direction.DESC, "id")));
             return this.converter.disassembleSet(page.getContent());
         }
-        Page<Firm> page = this.repository.findByName(searchParams.getName(), new PageRequest(0, 10, new Sort(Sort.Direction.DESC, "id")));
+        Page<PEFirm> page = this.repository.findByName(searchParams.getName(), new PageRequest(0, 10, new Sort(Sort.Direction.DESC, "id")));
 
         return this.converter.disassembleSet(page.getContent());
     }

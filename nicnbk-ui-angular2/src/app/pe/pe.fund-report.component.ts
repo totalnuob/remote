@@ -1,7 +1,6 @@
 import {Component} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {PeFirmService} from "./pe.firm.service";
-import {CommonComponent} from "../common/common.component";
 import {PeFirm} from "./model/pe.firm";
 import {PeFund} from "./model/pe.fund";
 import {PeFundService} from "./pe.fund.service";

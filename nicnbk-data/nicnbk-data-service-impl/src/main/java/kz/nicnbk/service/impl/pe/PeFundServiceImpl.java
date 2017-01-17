@@ -2,10 +2,10 @@ package kz.nicnbk.service.impl.pe;
 
 import in.satpathy.financial.XIRR;
 import in.satpathy.financial.XIRRData;
-import kz.nicnbk.repo.api.pe.FundRepository;
+import kz.nicnbk.repo.api.pe.PEFundRepository;
 import kz.nicnbk.repo.api.pe.PeGrossCashflowRepository;
 import kz.nicnbk.repo.api.pe.PeNetCashflowRepository;
-import kz.nicnbk.repo.model.pe.Fund;
+import kz.nicnbk.repo.model.pe.PEFund;
 import kz.nicnbk.repo.model.pe.PeGrossCashflow;
 import kz.nicnbk.repo.model.pe.PeNetCashflow;
 import kz.nicnbk.service.api.pe.PeGrossCashflowService;
@@ -37,7 +37,7 @@ public class PeFundServiceImpl implements PeFundService {
     private static final double[] EMPTY_DOUBLE_ARRAY = null;
 
     @Autowired
-    private FundRepository repository;
+    private PEFundRepository repository;
 
     @Autowired
     private PeFundEntityConverter converter;
@@ -65,7 +65,7 @@ public class PeFundServiceImpl implements PeFundService {
     @Override
     public Long save(PeFundDto fundDto) {
 
-        Fund entity = converter.assemble(fundDto);
+        PEFund entity = converter.assemble(fundDto);
         Long id =repository.save(entity).getId();
         fundDto.setId(id);
 
@@ -93,7 +93,7 @@ public class PeFundServiceImpl implements PeFundService {
 
     @Override
     public PeFundDto get(Long id) {
-        Fund entity = this.repository.findOne(id);
+        PEFund entity = this.repository.findOne(id);
 
         List<PeGrossCashflow> grossCfEntity = this.grossCFRepository.getEntitiesByFundId(id, new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName")));
         List<PeNetCashflow> netCfEntity = this.netCFRepository.getEntitiesByFundId(id);
@@ -113,7 +113,7 @@ public class PeFundServiceImpl implements PeFundService {
 
     @Override
     public List<PeFundDto> loadFirmFunds(Long firmId) {
-        Page<Fund> page = this.repository.findByFirmId(firmId, new PageRequest(0,10, new Sort(Sort.Direction.ASC, "vintage")));
+        Page<PEFund> page = this.repository.findByFirmId(firmId, new PageRequest(0,10, new Sort(Sort.Direction.ASC, "vintage")));
         List<PeFundDto> fundDtoList = this.converter.disassembleList(page.getContent());
         for(PeFundDto fundDto: fundDtoList){
             List<PeGrossCashflow> grossCfEntity = this.grossCFRepository.getEntitiesByFundId(fundDto.getId(), new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName")));

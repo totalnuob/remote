@@ -3,8 +3,8 @@ package kz.nicnbk.service.converter.pe;
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.repo.model.common.Geography;
 import kz.nicnbk.repo.model.common.Strategy;
-import kz.nicnbk.repo.model.pe.Fund;
-import kz.nicnbk.repo.model.pe.common.Industry;
+import kz.nicnbk.repo.model.pe.PEFund;
+import kz.nicnbk.repo.model.pe.common.PEIndustry;
 import kz.nicnbk.service.converter.dozer.BaseDozerEntityConverter;
 import kz.nicnbk.service.datamanager.LookupService;
 import kz.nicnbk.service.dto.pe.PeFundDto;
@@ -20,14 +20,14 @@ import java.util.Set;
  * Created by zhambyl on 15-Nov-16.
  */
 @Component
-public class PeFundEntityConverter extends BaseDozerEntityConverter<Fund, PeFundDto> {
+public class PeFundEntityConverter extends BaseDozerEntityConverter<PEFund, PeFundDto> {
 
     @Autowired
     private LookupService lookupService;
 
     @Override
-    public Fund assemble(PeFundDto dto){
-        Fund entity = super.assemble(dto);
+    public PEFund assemble(PeFundDto dto){
+        PEFund entity = super.assemble(dto);
 
         // strategies
         Set<Strategy> strategies = new HashSet<>();
@@ -41,15 +41,15 @@ public class PeFundEntityConverter extends BaseDozerEntityConverter<Fund, PeFund
         entity.setStrategy(strategies);
 
         //IndustryFocus
-        Set<Industry> industries = new HashSet<>();
+        Set<PEIndustry> industries = new HashSet<>();
 
         if(dto.getIndustry() != null){
             for(BaseDictionaryDto industryDto: dto.getIndustry()){
-                Industry industry = lookupService.findByTypeAndCode(Industry.class, industryDto.getCode());
-                industries.add(industry);
+                PEIndustry PEIndustry = lookupService.findByTypeAndCode(PEIndustry.class, industryDto.getCode());
+                industries.add(PEIndustry);
             }
         }
-        entity.setIndustry(industries);
+        entity.setPEIndustry(industries);
 
         // geographies
         Set<Geography> geographies = new HashSet<>();
@@ -65,25 +65,25 @@ public class PeFundEntityConverter extends BaseDozerEntityConverter<Fund, PeFund
     }
 
     @Override
-    public PeFundDto disassemble(Fund entity){
+    public PeFundDto disassemble(PEFund entity){
         PeFundDto dto = super.disassemble(entity);
         return dto;
     }
 
-    public List<PeFundDto> disassembleList(List<Fund> entities){
+    public List<PeFundDto> disassembleList(List<PEFund> entities){
         List<PeFundDto> dtoList = new ArrayList<>();
         if(entities != null){
-            for(Fund entity: entities){
+            for(PEFund entity: entities){
                 dtoList.add(disassemble(entity));
             }
         }
         return dtoList;
     }
 
-    public Set<PeFundDto> disassembleSet(List<Fund> entities){
+    public Set<PeFundDto> disassembleSet(List<PEFund> entities){
         Set<PeFundDto> dtoSet = new HashSet<>();
         if(entities != null){
-            for(Fund entity: entities){
+            for(PEFund entity: entities){
                 dtoSet.add(disassemble(entity));
             }
         }

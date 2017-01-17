@@ -2,7 +2,7 @@ import {Component, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {PeFirm} from "./model/pe.firm";
 import {PeFirmService} from "./pe.firm.service";
-import {CommonComponent} from "../common/common.component";
+import {CommonFormViewComponent} from "../common/common.component";
 import {SaveResponse} from "../common/save-response";
 import {LookupService} from "../common/lookup.service";
 import {error} from "util";
@@ -20,7 +20,7 @@ declare var $:any
     styleUrls: [],
     providers: [PeFirmService, PeFundService]
 })
-export class PeFirmProfileComponent extends CommonComponent {
+export class PeFirmProfileComponent extends CommonFormViewComponent {
 
     private firm = new PeFirm();
 

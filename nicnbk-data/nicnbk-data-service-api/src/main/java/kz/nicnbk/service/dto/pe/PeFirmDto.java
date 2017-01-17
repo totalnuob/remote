@@ -2,24 +2,20 @@ package kz.nicnbk.service.dto.pe;
 
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.common.service.model.HistoryBaseEntityDto;
-import kz.nicnbk.repo.model.common.Geography;
-import kz.nicnbk.repo.model.pe.Contacts;
-import kz.nicnbk.repo.model.pe.Firm;
-import kz.nicnbk.repo.model.pe.FirmAddress;
-import kz.nicnbk.repo.model.pe.common.Industry;
+import kz.nicnbk.repo.model.pe.PEFirm;
 
 import java.util.Set;
 
 /**
  * Created by zhambyl on 15-Nov-16.
  */
-public class PeFirmDto extends HistoryBaseEntityDto<Firm> {
+public class PeFirmDto extends HistoryBaseEntityDto<PEFirm> {
     private String firmName;
     private int foundedYear;
     private float aum;
     private int invTeamSize;
     private int opsTeamSize;
-//    private Set<Firm> peers;
+//    private Set<PEFirm> peers;
     private Set<BaseDictionaryDto> strategy;
     private Set<BaseDictionaryDto> industryFocus;
     private Set<BaseDictionaryDto> geographyFocus;
@@ -86,11 +82,11 @@ public class PeFirmDto extends HistoryBaseEntityDto<Firm> {
         this.locations = locations;
     }
 
-//    public Set<Firm> getPeers() {
+//    public Set<PEFirm> getPeers() {
 //        return peers;
 //    }
 //
-//    public void setPeers(Set<Firm> peers) {
+//    public void setPeers(Set<PEFirm> peers) {
 //        this.peers = peers;
 //    }
 

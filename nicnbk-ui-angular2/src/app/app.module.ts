@@ -46,8 +46,6 @@ import {MonitoringPrivateEquityFundComponent} from "./monitoring/monitoring-priv
 import {MonitoringHedgeFunds2Component} from "./monitoring/monitoring-hedge-funds-2.component";
 import {BusyModule} from "angular2-busy/index"
 
-import {BusyModule} from "angular2-busy/index";
-
 @NgModule({
     imports: [
         BrowserModule,

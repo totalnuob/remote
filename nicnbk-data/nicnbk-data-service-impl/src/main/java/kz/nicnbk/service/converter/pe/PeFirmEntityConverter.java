@@ -3,8 +3,8 @@ package kz.nicnbk.service.converter.pe;
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.repo.model.common.Geography;
 import kz.nicnbk.repo.model.common.Strategy;
-import kz.nicnbk.repo.model.pe.Firm;
-import kz.nicnbk.repo.model.pe.common.Industry;
+import kz.nicnbk.repo.model.pe.PEFirm;
+import kz.nicnbk.repo.model.pe.common.PEIndustry;
 import kz.nicnbk.service.converter.dozer.BaseDozerEntityConverter;
 import kz.nicnbk.service.datamanager.LookupService;
 import kz.nicnbk.service.dto.pe.PeFirmDto;
@@ -19,15 +19,15 @@ import java.util.Set;
  * Created by zhambyl on 15-Nov-16.
  */
 @Component
-public class PeFirmEntityConverter extends BaseDozerEntityConverter<Firm,PeFirmDto> {
+public class PeFirmEntityConverter extends BaseDozerEntityConverter<PEFirm,PeFirmDto> {
 
     @Autowired
     private LookupService lookupService;
 
     @Override
-    public Firm assemble(PeFirmDto dto){
+    public PEFirm assemble(PeFirmDto dto){
 
-        Firm entity = super.assemble(dto);
+        PEFirm entity = super.assemble(dto);
 
         // strategies
         Set<Strategy> strategies = new HashSet<>();
@@ -41,12 +41,12 @@ public class PeFirmEntityConverter extends BaseDozerEntityConverter<Firm,PeFirmD
         entity.setStrategy(strategies);
 
         //IndustryFocus
-        Set<Industry> industries = new HashSet<>();
+        Set<PEIndustry> industries = new HashSet<>();
 
         if(dto.getIndustryFocus() != null){
             for(BaseDictionaryDto industryDto: dto.getIndustryFocus()){
-                Industry industry = lookupService.findByTypeAndCode(Industry.class, industryDto.getCode());
-                industries.add(industry);
+                PEIndustry PEIndustry = lookupService.findByTypeAndCode(PEIndustry.class, industryDto.getCode());
+                industries.add(PEIndustry);
             }
         }
         entity.setIndustryFocus(industries);
@@ -65,16 +65,16 @@ public class PeFirmEntityConverter extends BaseDozerEntityConverter<Firm,PeFirmD
     }
 
     @Override
-    public PeFirmDto disassemble(Firm entity){
+    public PeFirmDto disassemble(PEFirm entity){
         PeFirmDto dto = super.disassemble(entity);
 
         return dto;
     }
 
-    public Set<PeFirmDto> disassembleSet(List<Firm> entities) {
+    public Set<PeFirmDto> disassembleSet(List<PEFirm> entities) {
         Set<PeFirmDto> dtoSet = new HashSet<>();
         if(entities != null){
-            for(Firm entity: entities){
+            for(PEFirm entity: entities){
                 dtoSet.add(disassemble(entity));
             }
         }

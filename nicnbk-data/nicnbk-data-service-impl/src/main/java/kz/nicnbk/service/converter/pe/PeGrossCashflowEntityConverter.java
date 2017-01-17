@@ -1,6 +1,6 @@
 package kz.nicnbk.service.converter.pe;
 
-import kz.nicnbk.repo.model.pe.Fund;
+import kz.nicnbk.repo.model.pe.PEFund;
 import kz.nicnbk.repo.model.pe.PeGrossCashflow;
 import kz.nicnbk.service.converter.dozer.BaseDozerEntityConverter;
 import kz.nicnbk.service.dto.pe.PeGrossCashflowDto;
@@ -16,9 +16,9 @@ public class PeGrossCashflowEntityConverter extends BaseDozerEntityConverter<PeG
     public PeGrossCashflow assemble(PeGrossCashflowDto dto){
         PeGrossCashflow entity = super.assemble(dto);
 
-        Fund fund = new Fund();
-        fund.setId(dto.getFund().getId());
-        entity.setFund(fund);
+        PEFund PEFund = new PEFund();
+        PEFund.setId(dto.getFund().getId());
+        entity.setFund(PEFund);
         return entity;
     }
 

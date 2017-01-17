@@ -2,9 +2,9 @@ package kz.nicnbk.service.dto.pe;
 
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.common.service.model.HistoryBaseEntityDto;
-import kz.nicnbk.repo.model.pe.Benchmark;
-import kz.nicnbk.repo.model.pe.Firm;
-import kz.nicnbk.repo.model.pe.Fund;
+import kz.nicnbk.repo.model.pe.PEBenchmark;
+import kz.nicnbk.repo.model.pe.PEFirm;
+import kz.nicnbk.repo.model.pe.PEFund;
 
 import java.util.Date;
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.Set;
 /**
  * Created by zhambyl on 15-Nov-16.
  */
-public class PeFundDto extends HistoryBaseEntityDto<Fund> {
+public class PeFundDto extends HistoryBaseEntityDto<PEFund> {
     //FUND SUMMARY
     private String fundName;
     private String status;
@@ -44,8 +44,8 @@ public class PeFundDto extends HistoryBaseEntityDto<Fund> {
     private double grossIrr;
     private double grossTvpi;
     private Date asOfDate;
-    private Benchmark benchmark;
-    private Firm firm;
+    private PEBenchmark benchmark;
+    private PEFirm firm;
 
     // Descriptive data
     private double investmentPeriod;
@@ -291,19 +291,19 @@ public class PeFundDto extends HistoryBaseEntityDto<Fund> {
         this.asOfDate = asOfDate;
     }
 
-    public Benchmark getBenchmark() {
+    public PEBenchmark getPEBenchmark() {
         return benchmark;
     }
 
-    public void setBenchmark(Benchmark benchmark) {
+    public void setPEBenchmark(PEBenchmark PEBenchmark) {
         this.benchmark = benchmark;
     }
 
-    public Firm getFirm() {
+    public PEFirm getFirm() {
         return firm;
     }
 
-    public void setFirm(Firm firm) {
+    public void setFirm(PEFirm firm) {
         this.firm = firm;
     }
 

@@ -47,7 +47,7 @@ public class HedgeFundSubstrategyEntityConverter  extends BaseDozerEntityConvert
         substrategyDto.setNameEn(entity.getSubstrategy().getNameEn());
         dto.setSubstrategy(substrategyDto);
 
-        //dto.setFund();
+        //dto.setPEFund();
         return dto;
     }
 }

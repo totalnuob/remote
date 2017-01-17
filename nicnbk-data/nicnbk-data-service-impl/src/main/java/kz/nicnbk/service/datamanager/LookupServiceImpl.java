@@ -13,8 +13,7 @@ import kz.nicnbk.repo.model.hf.*;
 import kz.nicnbk.repo.model.m2s2.MeetingArrangedBy;
 import kz.nicnbk.repo.model.m2s2.MeetingType;
 import kz.nicnbk.repo.model.news.NewsType;
-import kz.nicnbk.repo.model.pe.common.Industry;
-import org.jsoup.Connection;
+import kz.nicnbk.repo.model.pe.common.PEIndustry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -161,12 +160,12 @@ public class LookupServiceImpl implements LookupService {
 
         }
 
-        if(clazz.getSimpleName().equals("Industry")) {
-            Iterator<Industry> iterator = industryRepository.findAll().iterator();
+        if(clazz.getSimpleName().equals("PEIndustry")) {
+            Iterator<PEIndustry> iterator = industryRepository.findAll().iterator();
             while(iterator.hasNext()){
-                Industry industry = iterator.next();
-                if(industry.getCode().equals(code)) {
-                    return (T) industry;
+                PEIndustry PEIndustry = iterator.next();
+                if(PEIndustry.getCode().equals(code)) {
+                    return (T) PEIndustry;
                 }
             }
         }
@@ -306,9 +305,9 @@ public class LookupServiceImpl implements LookupService {
     @Override
     public List<BaseDictionaryDto> getPEIndustry(){
         List<BaseDictionaryDto> dtoList = new ArrayList<>();
-        Iterator<Industry> iterator = this.industryRepository.findAll().iterator();
+        Iterator<PEIndustry> iterator = this.industryRepository.findAll().iterator();
         while(iterator.hasNext()){
-            Industry entity = iterator.next();
+            PEIndustry entity = iterator.next();
             BaseDictionaryDto industryDto = disassemble(entity);
             dtoList.add(industryDto);
         }

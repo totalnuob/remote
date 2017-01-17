@@ -1,6 +1,6 @@
 import {Component, ViewChild, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {CommonComponent} from "../common/common.component";
+import {CommonFormViewComponent} from "../common/common.component";
 import {PeFund} from "./model/pe.fund";
 import {PeFirmService} from "./pe.firm.service";
 import {PeFirm} from "./model/pe.firm";
@@ -18,7 +18,7 @@ declare var $:any
     styleUrls: [],
     providers: [PeFirmService, PeFundService]
 })
-export class PeFundProfileComponent extends CommonComponent implements OnInit{
+export class PeFundProfileComponent extends CommonFormViewComponent implements OnInit{
     private fund = new PeFund();
 
     @ViewChild('strategySelect')

@@ -11,5 +11,5 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "pe_industry")
-public class Industry extends BaseTypeEntityImpl {
+public class PEIndustry extends BaseTypeEntityImpl {
 }

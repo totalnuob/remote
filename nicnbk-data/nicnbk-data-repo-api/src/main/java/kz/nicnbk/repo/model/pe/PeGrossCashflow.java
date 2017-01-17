@@ -21,7 +21,7 @@ public class PeGrossCashflow extends BaseEntity {
     private double unrealized;
     private double grossCF;
     private double irr;
-    private Fund fund;
+    private PEFund fund;
 
     public String getCompanyName() {
         return companyName;
@@ -81,11 +81,11 @@ public class PeGrossCashflow extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="fund_id", nullable = false)
-    public Fund getFund() {
+    public PEFund getFund() {
         return fund;
     }
 
-    public void setFund(Fund fund) {
+    public void setFund(PEFund fund) {
         this.fund = fund;
     }
 }

@@ -21,7 +21,7 @@ public class PeNetCashflow extends BaseEntity{
     private double nav;
     private double netCF;
     private String typeOfFundTransaction;
-    private Fund fund;
+    private PEFund fund;
 
     public String getFundName() {
         return fundName;
@@ -89,11 +89,11 @@ public class PeNetCashflow extends BaseEntity{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="fund_id", nullable = false)
-    public Fund getFund() {
+    public PEFund getFund() {
         return fund;
     }
 
-    public void setFund(Fund fund) {
+    public void setFund(PEFund fund) {
         this.fund = fund;
     }
 }
