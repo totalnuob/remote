@@ -2,6 +2,7 @@ package kz.nicnbk.ws.rest;
 
 import kz.nicnbk.service.api.pe.PEFirmService;
 import kz.nicnbk.service.dto.pe.PEFirmDto;
+import kz.nicnbk.service.dto.pe.PEPagedSearchResult;
 import kz.nicnbk.service.dto.pe.PESearchParams;
 import kz.nicnbk.ws.model.EntitySaveResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
-import java.util.Set;
 
 /**
  * Created by zhambyl on 16-Nov-16.
@@ -20,7 +20,6 @@ import java.util.Set;
 @RestController
 @RequestMapping("/pe/firm")
 public class PEFirmServiceREST {
-
     @Autowired
     private PEFirmService service;
 
@@ -35,8 +34,7 @@ public class PEFirmServiceREST {
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public ResponseEntity<?> save(@RequestBody PEFirmDto firmDto){
-//        System.out.println(firmDto.getFirmName());
-//        System.out.println(firmDto.getStrategy().size());
+
         Long id = this.service.save(firmDto);
 
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -44,12 +42,14 @@ public class PEFirmServiceREST {
         response.setEntityId(id);
         if(firmDto.getId() == null){
             response.setCreationDate(new Date());
+        } else {
+            response.setCreationDate(firmDto.getCreationDate());
         }
         return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
-    public Set<PEFirmDto> search(@RequestBody PESearchParams searchParams){
+    public PEPagedSearchResult search(@RequestBody PESearchParams searchParams){
         return this.service.findByName(searchParams);
     }
 
