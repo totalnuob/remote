@@ -1,6 +1,5 @@
 package kz.nicnbk.service.impl.pe;
 
-import kz.nicnbk.repo.api.pe.PEGrossCashflowRepository;
 import kz.nicnbk.repo.model.pe.PEGrossCashflow;
 import kz.nicnbk.service.api.pe.PEGrossCashflowService;
 import kz.nicnbk.service.converter.pe.PEGrossCashflowEntityConverter;
