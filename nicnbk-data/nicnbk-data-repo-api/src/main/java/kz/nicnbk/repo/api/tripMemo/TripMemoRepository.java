@@ -1,6 +1,6 @@
 package kz.nicnbk.repo.api.tripMemo;
 
-import kz.nicnbk.repo.model.tripMemo.TripMemo;
+import kz.nicnbk.repo.model.tripmemo.TripMemo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;

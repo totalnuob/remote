@@ -97,9 +97,11 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li><a href="#">Dashboard</a></li>
-                            <li><a href="#">Manager Search</a></li>
+                            <li><a [routerLink]="['/pe/firmSearch']">Fund Search</a></li>
                             <li role="separator" class="divider"></li>
-                            <li><a href="#">Forward Calendar</a></li>
+                            <!--<li><a [routerLink]="['/pe/fundProfile']">New Fund</a></li>-->
+                            <li><a [routerLink]="['/pe/firmProfile']">New Firm</a></li>
+                            <!--<li><a href="#">Forward Calendar</a></li>-->
                         </ul>
                     </li>
                     <li [routerLinkActive]="['active']" ><a href="#">Real Estate</a></li>

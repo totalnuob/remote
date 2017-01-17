@@ -1,8 +1,8 @@
-package kz.nicnbk.service.converter.tripMemo;
+package kz.nicnbk.service.converter.tripmemo;
 
-import kz.nicnbk.repo.model.tripMemo.TripMemo;
+import kz.nicnbk.repo.model.tripmemo.TripMemo;
 import kz.nicnbk.service.converter.dozer.BaseDozerEntityConverter;
-import kz.nicnbk.service.dto.tripMemo.TripMemoDto;
+import kz.nicnbk.service.dto.tripmemo.TripMemoDto;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

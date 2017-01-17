@@ -2,6 +2,10 @@ package kz.nicnbk.service.datamanager;
 
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.repo.api.lookup.*;
+import kz.nicnbk.repo.api.lookup.CurrencyRepository;
+import kz.nicnbk.repo.api.lookup.GeographyRepository;
+import kz.nicnbk.repo.api.lookup.StrategyRepository;
+import kz.nicnbk.repo.api.pe.lookup.IndustryRepository;
 import kz.nicnbk.repo.model.base.BaseTypeEntity;
 import kz.nicnbk.repo.model.common.*;
 import kz.nicnbk.repo.model.files.FilesType;
@@ -9,6 +13,8 @@ import kz.nicnbk.repo.model.hf.*;
 import kz.nicnbk.repo.model.m2s2.MeetingArrangedBy;
 import kz.nicnbk.repo.model.m2s2.MeetingType;
 import kz.nicnbk.repo.model.news.NewsType;
+import kz.nicnbk.repo.model.pe.common.Industry;
+import org.jsoup.Connection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +39,9 @@ public class LookupServiceImpl implements LookupService {
 
     @Autowired
     private CurrencyRepository currencyRepository;
+
+    @Autowired
+    private IndustryRepository industryRepository;
 
     @Autowired
     private HedgeFundStatusRepository hedgeFundStatusRepository;
@@ -129,6 +138,37 @@ public class LookupServiceImpl implements LookupService {
             return (T) this.hedgeFundSidePocketRepository.findByCode(code);
         }else if(clazz.equals(Substrategy.class)){
             return (T) this.substrategyRepository.findByCode(code);
+        }
+
+        if(clazz.getSimpleName().equals("Strategy")){
+            Iterator<Strategy> iterator = strategyRepository.findAll().iterator();
+            while(iterator.hasNext()){
+                Strategy strategy = iterator.next();
+                if(strategy.getCode().equals(code)){
+                    return (T) strategy;
+                };
+            }
+
+        }
+        if(clazz.getSimpleName().equals("Geography")){
+            Iterator<Geography> iterator = geographyRepository.findAll().iterator();
+            while(iterator.hasNext()){
+                Geography geography = iterator.next();
+                if(geography.getCode().equals(code)){
+                    return (T) geography;
+                };
+            }
+
+        }
+
+        if(clazz.getSimpleName().equals("Industry")) {
+            Iterator<Industry> iterator = industryRepository.findAll().iterator();
+            while(iterator.hasNext()){
+                Industry industry = iterator.next();
+                if(industry.getCode().equals(code)) {
+                    return (T) industry;
+                }
+            }
         }
 
         return null;
@@ -259,6 +299,18 @@ public class LookupServiceImpl implements LookupService {
             Geography entity = iterator.next();
             BaseDictionaryDto geographyDto = disassemble(entity);
             dtoList.add(geographyDto);
+        }
+        return dtoList;
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getPEIndustry(){
+        List<BaseDictionaryDto> dtoList = new ArrayList<>();
+        Iterator<Industry> iterator = this.industryRepository.findAll().iterator();
+        while(iterator.hasNext()){
+            Industry entity = iterator.next();
+            BaseDictionaryDto industryDto = disassemble(entity);
+            dtoList.add(industryDto);
         }
         return dtoList;
     }

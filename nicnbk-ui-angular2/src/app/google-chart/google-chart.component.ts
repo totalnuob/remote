@@ -20,7 +20,8 @@ export class GoogleChartComponent extends CommonFormViewComponent implements OnI
             GoogleChartComponent.googleLoaded = true;
             google.charts.load('current',  {packages: ['corechart', 'bar', 'table', 'line', 'geochart']});
         }
-        google.charts.setOnLoadCallback(() => this.drawGraph());
+        setTimeout(() => this.drawGraph(), 1000);
+        //google.charts.setOnLoadCallback(() => this.drawGraph());
     }
 
     drawGraph(){

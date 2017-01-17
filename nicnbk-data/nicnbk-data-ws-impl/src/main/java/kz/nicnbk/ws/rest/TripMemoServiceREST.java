@@ -2,11 +2,11 @@ package kz.nicnbk.ws.rest;
 
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.service.api.files.FileService;
-import kz.nicnbk.service.api.tripMemo.TripMemoService;
+import kz.nicnbk.service.api.tripmemo.TripMemoService;
 import kz.nicnbk.service.dto.files.FilesDto;
-import kz.nicnbk.service.dto.tripMemo.TripMemoDto;
-import kz.nicnbk.service.dto.tripMemo.TripMemoPagedSearchResult;
-import kz.nicnbk.service.dto.tripMemo.TripMemoSearchParamsDto;
+import kz.nicnbk.service.dto.tripmemo.TripMemoDto;
+import kz.nicnbk.service.dto.tripmemo.TripMemoPagedSearchResult;
+import kz.nicnbk.service.dto.tripmemo.TripMemoSearchParamsDto;
 import kz.nicnbk.ws.model.EntitySaveResponse;
 import kz.nicnbk.ws.model.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.naming.directory.SearchResult;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;

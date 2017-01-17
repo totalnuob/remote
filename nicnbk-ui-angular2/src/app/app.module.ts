@@ -38,8 +38,13 @@ import {HFPortfolioComponent} from "./hf/hf.portfolio.component";
 import {HFReportComponent} from "./hf/hf.report.component";
 import {HFFundProfileComponent} from "./hf/hf.fund-profile.component";
 import {HFManagerProfileComponent} from "./hf/hf.manager-profile.component.ts";
+import {PeFundProfileComponent} from "./pe/pe.fund-profile.component";
+import {PeFirmProfileComponent} from "./pe/pe.firm-profile.component";
+import {PeFirmSearchComponent} from "./pe/pe.firm-search.component";
+import {PeFundReportComponent} from "./pe/pe.fund-report.component";
 import {MonitoringPrivateEquityFundComponent} from "./monitoring/monitoring-private-equity-fund.component";
 import {MonitoringHedgeFunds2Component} from "./monitoring/monitoring-hedge-funds-2.component";
+import {BusyModule} from "angular2-busy/index"
 
 import {BusyModule} from "angular2-busy/index";
 
@@ -70,7 +75,7 @@ import {BusyModule} from "angular2-busy/index";
         MonitoringHedgeFunds2Component,
 
         HFDashboardComponent, HFFundSearchComponent, HFFundSelectionComponent, HFPortfolioComponent, HFReportComponent,
-        HFFundProfileComponent, HFManagerProfileComponent
+        HFFundProfileComponent, HFManagerProfileComponent, PeFundProfileComponent, PeFirmProfileComponent, PeFirmSearchComponent, PeFundReportComponent
     ],
     bootstrap: [ AppComponent ]
 })

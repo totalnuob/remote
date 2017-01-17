@@ -1,4 +1,4 @@
-package kz.nicnbk.repo.model.tripMemo;
+package kz.nicnbk.repo.model.tripmemo;
 
 import kz.nicnbk.repo.model.base.BaseEntity;
 import kz.nicnbk.repo.model.files.Files;
