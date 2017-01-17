@@ -1,4 +1,4 @@
-package kz.nicnbk.repo.api.tripMemo;
+package kz.nicnbk.repo.api.tripmemo;
 
 import kz.nicnbk.repo.model.tripmemo.TripMemo;
 import org.springframework.data.domain.Page;
