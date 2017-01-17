@@ -2,6 +2,8 @@ package kz.nicnbk.ws.rest;
 
 import kz.nicnbk.service.api.hf.HFManagerService;
 import kz.nicnbk.service.dto.hf.HFManagerDto;
+import kz.nicnbk.service.dto.hf.HedgeFundManagerPagedSearchResult;
+import kz.nicnbk.service.dto.hf.HedgeFundSearchParams;
 import kz.nicnbk.ws.model.EntitySaveResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -45,6 +47,11 @@ public class HFManagerServiceREST {
         }
         //managerDto.setId(id);
         return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/search", method = RequestMethod.POST)
+    public HedgeFundManagerPagedSearchResult search(@RequestBody HedgeFundSearchParams searchParams){
+        return this.service.findByName(searchParams);
     }
 
 }

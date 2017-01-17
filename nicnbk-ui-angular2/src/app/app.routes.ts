@@ -36,6 +36,7 @@ import {PEFundProfileComponent} from "./pe/pe.fund-profile.component";
 import {PEFirmProfileComponent} from "./pe/pe.firm-profile.component";
 import {PEFirmSearchComponent} from "./pe/pe.firm-search.component";
 import {PEFundReportComponent} from "./pe/pe.fund-report.component";
+import {HFManagerSearchComponent} from "./hf/hf.manager-search.component";
 
 
 const routes: Routes  = [
@@ -165,6 +166,11 @@ const routes: Routes  = [
     {
         path: 'hf/fundSearch',
         component: HFFundSearchComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'hf/managerSearch',
+        component: HFManagerSearchComponent,
         canActivate: [AuthGuard]
     },
     {
