@@ -1,4 +1,4 @@
-package kz.nicnbk.repo.api.pe;
+package kz.nicnbk.repo.api.news;
 
 import kz.nicnbk.repo.model.pe.PENetCashflow;
 import org.springframework.data.jpa.repository.Modifying;
