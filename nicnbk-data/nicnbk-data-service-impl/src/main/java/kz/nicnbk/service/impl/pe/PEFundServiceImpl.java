@@ -3,7 +3,6 @@ package kz.nicnbk.service.impl.pe;
 import in.satpathy.financial.XIRR;
 import in.satpathy.financial.XIRRData;
 import kz.nicnbk.repo.api.pe.PEFundRepository;
-import kz.nicnbk.repo.api.pe.PENetCashflowRepository;
 import kz.nicnbk.repo.model.pe.PEFund;
 import kz.nicnbk.repo.model.pe.PEGrossCashflow;
 import kz.nicnbk.repo.model.pe.PENetCashflow;
