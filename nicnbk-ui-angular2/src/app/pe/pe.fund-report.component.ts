@@ -1,9 +1,9 @@
 import {Component} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {PeFirmService} from "./pe.firm.service";
-import {PeFirm} from "./model/pe.firm";
-import {PeFund} from "./model/pe.fund";
-import {PeFundService} from "./pe.fund.service";
+import {PEFirmService} from "./pe.firm.service";
+import {PEFirm} from "./model/pe.firm";
+import {PEFund} from "./model/pe.fund";
+import {PEFundService} from "./pe.fund.service";
 import {PESearchParams} from "./model/pe.search-params";
 
 import '../../../public/js/viz_v1.js';
@@ -18,16 +18,16 @@ declare var $: any;
     selector: 'pe-fund-report',
     templateUrl: 'view/pe.fund-report.component.html',
     styleUrls: [],
-    providers: [PeFirmService, PeFundService]
+    providers: [PEFirmService, PEFundService]
 })
-export class PeFundReportComponent extends GoogleChartComponent {
+export class PEFundReportComponent extends GoogleChartComponent {
 
     private sub: any;
-    private firm = new PeFirm();
-    //private fund = new PeFund();
+    private firm = new PEFirm();
+    //private fund = new PEFund();
     public firmIdParam: number;
-    private fundsList: PeFund[];
-    private openFund = new PeFund();
+    private fundsList: PEFund[];
+    private openFund = new PEFund();
     private searchParams = new PESearchParams();
 
     public firmStrategyList: Array<any> = [];
@@ -41,8 +41,8 @@ export class PeFundReportComponent extends GoogleChartComponent {
     busy: Subscription;
 
     constructor(
-        private firmService: PeFirmService,
-        private fundService: PeFundService,
+        private firmService: PEFirmService,
+        private fundService: PEFundService,
         private route: ActivatedRoute
     ){
         super();
@@ -55,7 +55,7 @@ export class PeFundReportComponent extends GoogleChartComponent {
                     this.searchParams['id'] = this.firmIdParam;
                     this.busy = this.firmService.get(this.firmIdParam)
                         .subscribe(
-                            (data: PeFirm) => {
+                            (data: PEFirm) => {
                                 if(data && data.id > 0){
                                     this.firm = data;
                                     this.preselectFirmStrategyGeographyIndustry();

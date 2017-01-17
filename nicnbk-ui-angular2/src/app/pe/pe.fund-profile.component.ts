@@ -1,10 +1,10 @@
 import {Component, ViewChild, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {CommonFormViewComponent} from "../common/common.component";
-import {PeFund} from "./model/pe.fund";
-import {PeFirmService} from "./pe.firm.service";
-import {PeFirm} from "./model/pe.firm";
-import {PeFundService} from "./pe.fund.service";
+import {PEFund} from "./model/pe.fund";
+import {PEFirmService} from "./pe.firm.service";
+import {PEFirm} from "./model/pe.firm";
+import {PEFundService} from "./pe.fund.service";
 import {SaveResponse} from "../common/save-response";
 import {LookupService} from "../common/lookup.service";
 
@@ -16,10 +16,10 @@ declare var $:any
     selector: 'pe-fund-profile',
     templateUrl: 'view/pe.fund-profile.component.html',
     styleUrls: [],
-    providers: [PeFirmService, PeFundService]
+    providers: [PEFirmService, PEFundService]
 })
-export class PeFundProfileComponent extends CommonFormViewComponent implements OnInit{
-    private fund = new PeFund();
+export class PEFundProfileComponent extends CommonFormViewComponent implements OnInit{
+    private fund = new PEFund();
 
     @ViewChild('strategySelect')
     private strategySelect;
@@ -54,8 +54,8 @@ export class PeFundProfileComponent extends CommonFormViewComponent implements O
 
     constructor(
         private lookupService: LookupService,
-        private firmService: PeFirmService,
-        private fundService: PeFundService,
+        private firmService: PEFirmService,
+        private fundService: PEFundService,
         private route: ActivatedRoute
     ){
         super();
@@ -73,12 +73,12 @@ export class PeFundProfileComponent extends CommonFormViewComponent implements O
             .subscribe(params => {
                 this.firmIdParam = +params['firmId'];
                 this.fundIdParam = +params['id'];
-                this.fund.firm = new PeFirm();
+                this.fund.firm = new PEFirm();
 
                 if(this.fundIdParam > 0){
                     this.busy = this.fundService.get(this.fundIdParam)
                         .subscribe(
-                            (data: PeFund) => {
+                            (data: PEFund) => {
                                 if(data && data.id > 0) {
                                     this.fund = data;
 
@@ -116,7 +116,7 @@ export class PeFundProfileComponent extends CommonFormViewComponent implements O
                 if(this.firmIdParam > 0){
                     this.firmService.get(this.firmIdParam)
                         .subscribe(
-                            (data: PeFirm) => {
+                            (data: PEFirm) => {
                                 if(data && data.id > 0) {
                                     this.fund.firm = data;
                                     this.preselectFirmStrategyGeographyIndustry();

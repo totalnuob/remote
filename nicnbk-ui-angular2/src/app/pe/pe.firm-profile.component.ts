@@ -1,13 +1,13 @@
 import {Component, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {PeFirm} from "./model/pe.firm";
-import {PeFirmService} from "./pe.firm.service";
+import {PEFirm} from "./model/pe.firm";
+import {PEFirmService} from "./pe.firm.service";
 import {CommonFormViewComponent} from "../common/common.component";
 import {SaveResponse} from "../common/save-response";
 import {LookupService} from "../common/lookup.service";
 import {error} from "util";
-import {PeFundService} from "./pe.fund.service";
-import {PeFund} from "./model/pe.fund";
+import {PEFundService} from "./pe.fund.service";
+import {PEFund} from "./model/pe.fund";
 import {PESearchParams} from "./model/pe.search-params";
 
 import {Subscription} from 'rxjs';
@@ -18,11 +18,11 @@ declare var $:any
     selector: 'pe-firm-profile',
     templateUrl: 'view/pe.firm-profile.component.html',
     styleUrls: [],
-    providers: [PeFirmService, PeFundService]
+    providers: [PEFirmService, PEFundService]
 })
-export class PeFirmProfileComponent extends CommonFormViewComponent {
+export class PEFirmProfileComponent extends CommonFormViewComponent {
 
-    private firm = new PeFirm();
+    private firm = new PEFirm();
 
     @ViewChild('strategySelect')
     private strategySelect;
@@ -40,15 +40,15 @@ export class PeFirmProfileComponent extends CommonFormViewComponent {
     private sub: any;
     public firmIdParam: number;
 
-    foundFundsList: PeFund[];
+    foundFundsList: PEFund[];
     private searchParams = new PESearchParams();
 
     busy: Subscription;
 
     constructor(
         private lookupService: LookupService,
-        private firmService: PeFirmService,
-        private fundService: PeFundService,
+        private firmService: PEFirmService,
+        private fundService: PEFundService,
         private route: ActivatedRoute,
         private router: Router
     ) {

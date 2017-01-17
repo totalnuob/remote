@@ -1,6 +1,6 @@
-import {PeFirm} from "./pe.firm";
+import {PEFirm} from "./pe.firm";
 
-export class PeFund {
+export class PEFund {
 
     fundName: string;
     status: string;
@@ -52,7 +52,7 @@ export class PeFund {
     performanceMerits: string;
     performanceRisks: string;
 
-    firm: PeFirm;
+    firm: PEFirm;
     id: number;
     creationDate: string;
 

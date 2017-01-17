@@ -1,5 +1,5 @@
 
-export class PeFirm {
+export class PEFirm {
 
     firmName: string;
     foundedYear: number;

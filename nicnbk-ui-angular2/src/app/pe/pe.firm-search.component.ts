@@ -1,23 +1,23 @@
 import {Component, OnInit} from '@angular/core';
 import {PESearchParams} from "./model/pe.search-params";
-import {PeFirmService} from "./pe.firm.service";
+import {PEFirmService} from "./pe.firm.service";
 import {LookupService} from "../common/lookup.service";
-import {PeFirm} from "./model/pe.firm";
+import {PEFirm} from "./model/pe.firm";
 import {CommonFormViewComponent} from "../common/common.component";
 
 @Component({
     selector: 'pe-firm-search',
     templateUrl: 'view/pe.firm-search.component.html',
     styleUrls: [],
-    providers: [PeFirmService]
+    providers: [PEFirmService]
 })
-export class PeFirmSearchComponent extends CommonFormViewComponent implements OnInit{
+export class PEFirmSearchComponent extends CommonFormViewComponent implements OnInit{
 
-    foundEntities: PeFirm[];
+    foundEntities: PEFirm[];
     searchParams = new PESearchParams();
 
     constructor(
-        private firmService: PeFirmService
+        private firmService: PEFirmService
     ){
         super();
         this.searchParams.name = '';

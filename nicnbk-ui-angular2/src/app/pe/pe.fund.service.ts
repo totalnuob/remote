@@ -4,10 +4,10 @@ import {Observable}     from 'rxjs/Observable';
 
 import {CommonService} from "../common/common.service";
 import {DATA_APP_URL} from "../common/common.service.constants";
-import {PeFund} from "./model/pe.fund";
+import {PEFund} from "./model/pe.fund";
 
 @Injectable()
-export class PeFundService extends CommonService {
+export class PEFundService extends CommonService {
     private PE_BASE_URL = DATA_APP_URL + "pe/fund/";
     private PE_FUND_SAVE_URL = this.PE_BASE_URL + "save/";
     private PE_FUND_GET_URL = this.PE_BASE_URL + "get/";
@@ -29,7 +29,7 @@ export class PeFundService extends CommonService {
             .catch(this.handleError);
     }
 
-    get(id): Observable<PeFund> {
+    get(id): Observable<PEFund> {
         return this.http.get(this.PE_FUND_GET_URL + id)
             .map(this.extractData)
             .catch(this.handleError);
