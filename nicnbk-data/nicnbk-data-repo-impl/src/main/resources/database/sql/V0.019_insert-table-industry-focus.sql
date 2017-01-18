@@ -1,0 +1,12 @@
+INSERT INTO pe_industry(id, code, name_en, name_ru, name_kz) VALUES(1, 'RETAIL', 'Retail', '', '');
+INSERT INTO pe_industry(id, code, name_en, name_ru, name_kz) VALUES(2, 'HEALTH', 'Healthcare', '', '');
+INSERT INTO pe_industry(id, code, name_en, name_ru, name_kz) VALUES(3, 'OILGAS', 'Oil and gas', '', '');
+INSERT INTO pe_industry(id, code, name_en, name_ru, name_kz) VALUES(4, 'FINANCE', 'Finance', '', '');
+INSERT INTO pe_industry(id, code, name_en, name_ru, name_kz) VALUES(5, 'FOOD', 'Food and beverage', '', '');
+INSERT INTO pe_industry(id, code, name_en, name_ru, name_kz) VALUES(6, 'TELECOM', 'Telecom', '', '');
+INSERT INTO pe_industry(id, code, name_en, name_ru, name_kz) VALUES(7, 'AGRICULT', 'Agriculture', '', '');
+INSERT INTO pe_industry(id, code, name_en, name_ru, name_kz) VALUES(8, 'FINSERV', 'Financial services', '', '');
+INSERT INTO pe_industry(id, code, name_en, name_ru, name_kz) VALUES(9, 'TECH', 'Technology', '', '');
+INSERT INTO pe_industry(id, code, name_en, name_ru, name_kz) VALUES(10, 'LEISURE', 'Leisure', '', '');
+INSERT INTO pe_industry(id, code, name_en, name_ru, name_kz) VALUES(11, 'MULTI', 'Multi', '', '');
+INSERT INTO pe_industry(id, code, name_en, name_ru, name_kz) VALUES(12, 'OTHER', 'Other', '', '');

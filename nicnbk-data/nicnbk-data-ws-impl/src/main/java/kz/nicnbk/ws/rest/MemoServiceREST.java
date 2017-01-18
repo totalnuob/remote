@@ -168,7 +168,6 @@ public class MemoServiceREST {
         return null;
     }
 
-
     @RequestMapping(value="/attachment/{id}", method=RequestMethod.GET)
     @ResponseBody
     public void downloadFile(@PathVariable(value="id") Long fileId, HttpServletResponse response) {

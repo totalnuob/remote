@@ -1,6 +1,6 @@
 import {Component, AfterViewInit, ViewChild} from "@angular/core";
 import {ActivatedRoute} from "@angular/router";
-import {CommonComponent} from "../common/common.component";
+import {CommonFormViewComponent} from "../common/common.component";
 import {CommonTableau} from "./common-tableau.component";
 import {GoogleChartComponent} from "../google-chart/google-chart.component";
 
@@ -57,7 +57,7 @@ export class MonitoringHedgeFundsComponent extends GoogleChartComponent {
             prefix:'$ ',
             groupingSymbol: ' ',
             fractionDigits: 0
-        })
+        });
         data.addColumn("string", "");
         data.addColumn("number", "");
         data.addRows([

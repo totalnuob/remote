@@ -4,8 +4,9 @@ import {ActivatedRoute} from '@angular/router';
 import {LookupService} from "../common/lookup.service";
 import {REMemo} from "./model/re-memo";
 import {MemoService} from "./memo.service";
-import {CommonComponent} from "../common/common.component";
+import {CommonFormViewComponent} from "../common/common.component";
 import {EmployeeService} from "../employee/employee.service";
+import {Subscription} from 'rxjs';
 
 declare var $:any
 declare var Chart: any;
@@ -19,10 +20,11 @@ declare var Chart: any;
 @NgModule({
     imports: []
 })
-export class RealEstateMemoEditComponent extends CommonComponent implements OnInit{
+export class RealEstateMemoEditComponent extends CommonFormViewComponent implements OnInit{
 
     private sub: any;
     private memoIdParam: number;
+    busy: Subscription;
 
     public uploadFiles: Array<any> = [];
 
@@ -75,11 +77,11 @@ export class RealEstateMemoEditComponent extends CommonComponent implements OnIn
         super();
 
         // loadLookups
-        this.loadLookups();
+        this.sub = this.loadLookups();
 
         // TODO: wait/sync on lookup loading
         // TODO: sync on subscribe results
-        this.waitSleep(700);
+        //this.waitSleep(700);
 
         // parse params and load data
         this.sub = this.route
@@ -87,7 +89,7 @@ export class RealEstateMemoEditComponent extends CommonComponent implements OnIn
             .subscribe(params => {
                 this.memoIdParam = +params['id'];
                 if(this.memoIdParam > 0) {
-                    this.memoService.get(4, this.memoIdParam)
+                    this.busy = this.memoService.get(4, this.memoIdParam)
                         .subscribe(
                             memo => {
                                 // TODO: check response memo
@@ -183,6 +185,9 @@ export class RealEstateMemoEditComponent extends CommonComponent implements OnIn
     }
 
     ngOnInit() {
+
+        this.postAction(null, null);
+
         // TODO: exclude jQuery
         // datetimepicker
         $('#meetingDate').datetimepicker({
@@ -193,6 +198,8 @@ export class RealEstateMemoEditComponent extends CommonComponent implements OnIn
         $('#timePicker').datetimepicker({
             format: 'LT'
         })
+
+        $('input[type=text], textarea').autogrow();
 
         // load lookups
         //this.loadLookups();

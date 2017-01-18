@@ -1,0 +1,120 @@
+<div class="container">
+    <!--<div class="row">-->
+    <!--<div class="col-md-12">-->
+    <!--<div class="dropdown pull-right">-->
+    <!--<button class="btn btn-primary dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">New-->
+    <!--<span class="bootstrapCaret"></span></button>-->
+    <!--<ul class="dropdown-menu" role="menu" aria-labelledby="menu1">-->
+    <!--<li role="presentation">-->
+    <!--&lt;!&ndash;<a [routerLink]="['/hf/fundProfile']" role="menuitem" tabindex="-1" >Fund</a></li>&ndash;&gt;-->
+    <!--<li role="presentation">-->
+    <!--<a [routerLink]="['/pe/firmProfile']" role="menuitem" tabindex="-1" >Firm</a></li>-->
+    <!--</ul>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--</div>-->
+
+    <br/>
+
+    <div class="jumbotron">
+        <br/>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-9">
+                    <div class="form-group">
+                        <label for="firmName">Manager name</label>
+                        <input type="text" class="form-control" id="firmName" [(ngModel)]="searchParams.name"
+                               placeholder="Enter manager..."
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--<div class="row">-->
+        <!--<div class="col-md-12">-->
+        <!--<div class="col-md-3">-->
+        <!--<div class="form-group">-->
+        <!--<label for="strategy">Strategy</label>-->
+        <!--<select class="form-control" id="strategy">-->
+        <!--<option value="0">-&#45;&#45;</option>-->
+        <!--<option *ngFor = "let item of strategyList" [value]="item.code">{{item.nameEn}}</option>-->
+        <!--</select>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--<div class="col-md-3">-->
+        <!--<div class="form-group">-->
+        <!--<label for="status">Status</label>-->
+        <!--<select class="form-control" id="status">-->
+        <!--<option value="0">-&#45;&#45;</option>-->
+        <!--<option *ngFor = "let item of statusList" [value]="item.code">{{item.nameEn}}</option>-->
+        <!--</select>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</div>-->
+        <div class="row">
+            <div class="col-md-12">
+                <button type="button" class="btn btn-success pull-right" (click)="search()">Search</button>
+            </div>
+        </div>
+    </div>
+    <div style="position: relative">
+        <div [ngBusy]="busy" class="table table-hover">
+            <div>
+                <label>Total found: <span>{{searchResult?.totalElements > 0 ?  searchResult?.totalElements : 0}}</span></label>
+            </div>
+            <div class="row pull-right">
+                <ul class="pagination" *ngIf="searchResult?.showPageFrom > 0">
+                    <li><a *ngIf="searchResult?.showPageFrom > 1" (click)="search(searchResult.showPageFrom - 1)">&laquo;</a></li>
+                    <li *ngFor="let i of range(searchResult.showPageFrom, searchResult.showPageTo)" [class.active]="i == searchResult.currentPage">
+                        <a (click)="search(i - 1)">{{i}}</a>
+                    </li>
+                    <li><a *ngIf="searchResult.showPageTo < searchResult.totalPages" (click)="search(searchResult.showPageTo + 1)">&raquo;</a></li>
+                </ul>
+            </div>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>&nbsp;</th>
+                    <th>MANAGER</th>
+                    <!--<th>FUND</th>-->
+                    <th>STRATEGY</th>
+                    <th>LOCATION</th>
+                    <th>UPDATED</th>
+                    <th>ACTIONS</th>
+                </tr>
+                </thead>
+
+                <tbody>
+
+                <tr *ngFor = "let firm of foundEntities">
+                    <td width="5%"></td>
+                    <td width="30%"><a [routerLink]="['/pe/firmProfile/', firm.id]">{{firm.firmName}}</a></td>
+                    <!--<td width="30%">-->
+                    <!--&lt;!&ndash;<a [routerLink]="['/hf/managerProfile/', fund.manager.id]">{{fund.manager.name}}</a>&ndash;&gt;-->
+                    <!--</td>-->
+                    <!--<td width="10%" th:text="${memoItem.meetingDate}"></td>-->
+                    <td width="10%"></td>
+                    <td width="10%"></td>
+                    <td width="10%"></td>
+                    <td width="5%">
+                        <!--<a><i class="glyphicon glyphicon-search"></i></a>-->
+                        <a><i class="glyphicon glyphicon-file" [routerLink]="['/pe/fundReport/', firm.id]"></i></a>
+                    </td>
+                </tr>
+
+
+                </tbody>
+            </table>
+            <div class="row pull-right">
+                <ul class="pagination" *ngIf="searchResult?.showPageFrom > 0">
+                    <li><a *ngIf="searchResult?.showPageFrom > 1" (click)="search(searchResult.showPageFrom - 1)">&laquo;</a></li>
+                    <li *ngFor="let i of range(searchResult.showPageFrom, searchResult.showPageTo)" [class.active]="i == searchResult.currentPage">
+                        <a (click)="search(i - 1)">{{i}}</a>
+                    </li>
+                    <li><a *ngIf="searchResult.showPageTo < searchResult.totalPages" (click)="search(searchResult.showPageTo + 1)">&raquo;</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

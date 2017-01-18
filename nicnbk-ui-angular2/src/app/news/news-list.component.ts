@@ -7,6 +7,7 @@ import {NEWS_PAGE_SIZE} from "./news.constants";
 import {AuthenticationService} from "../authentication/authentication.service";
 
 //import '../../../public/js/star-rating/star-rating.min.js';
+import {Subscription} from 'rxjs';
 
 declare var $: any
 
@@ -23,6 +24,7 @@ declare var $: any
     changeDetection: ChangeDetectionStrategy.Default // TODO: change to OnPush ??
 })
 export class NewsListComponent implements OnInit{
+    busy: Subscription;
     newsList:  News[];
     selectedNews = new News;
     pageMap = {};
@@ -59,7 +61,7 @@ export class NewsListComponent implements OnInit{
         //alert(category);
 
         // TODO: loading icon
-        this.newsService.loadMore(category, this.getPage(category))
+        this.busy = this.newsService.loadMore(category, this.getPage(category))
             .subscribe(
                 loadedNews => {
                     Array.prototype.push.apply(this.newsList,loadedNews);
@@ -86,7 +88,7 @@ export class NewsListComponent implements OnInit{
 
     loadNews(){
 
-        this.newsService.loadNews()
+        this.busy = this.newsService.loadNews()
             .subscribe(
                 newsList => {
                     this.newsList = newsList;

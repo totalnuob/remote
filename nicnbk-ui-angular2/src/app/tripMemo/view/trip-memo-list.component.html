@@ -96,16 +96,17 @@
         <div>
             <label>Total found: <span>{{tripMemoSearchResult?.totalElements > 0 ?  tripMemoSearchResult?.totalElements : 0}}</span></label>
         </div>
-        <div class="row pull-right">
-            <ul class="pagination" *ngIf="tripMemoSearchResult?.showPageFrom > 0">
-                <li><a *ngIf="tripMemoSearchResult?.showPageFrom > 1" (click)="search(tripMemoSearchResult.showPageFrom - 1)">&laquo;</a></li>
-                <li *ngFor="let i of range(tripMemoSearchResult.showPageFrom, tripMemoSearchResult.showPageTo)" [class.active]="i == tripMemoSearchResult.currentPage">
-                    <a (click)="search(i)">{{i}}</a>
-                </li>
-                <li><a *ngIf="tripMemoSearchResult.showPageTo < tripMemoSearchResult.totalPages" (click)="search(tripMemoSearchResult.showPageTo + 1)">&raquo;</a></li>
-            </ul>
-        </div>
-        <table class = "table table-hover">
+        <div class="row withpadding" style="position: relative; min-height: 80px;">
+            <div class="row pull-right">
+                <ul class="pagination" *ngIf="tripMemoSearchResult?.showPageFrom > 0">
+                    <li><a *ngIf="tripMemoSearchResult?.showPageFrom > 1" (click)="search(tripMemoSearchResult.showPageFrom - 1)">&laquo;</a></li>
+                    <li *ngFor="let i of range(tripMemoSearchResult.showPageFrom, tripMemoSearchResult.showPageTo)" [class.active]="i == tripMemoSearchResult.currentPage">
+                        <a (click)="search(i)">{{i}}</a>
+                    </li>
+                    <li><a *ngIf="tripMemoSearchResult.showPageTo < tripMemoSearchResult.totalPages" (click)="search(tripMemoSearchResult.showPageTo + 1)">&raquo;</a></li>
+                </ul>
+            </div>
+            <table [ngBusy]="busy"  class = "table table-hover">
             <thead>
             <tr>
                 <th>REPORT TYPE</th>
@@ -134,14 +135,15 @@
             </tr>
             </tbody>
         </table>
-        <div class="row pull-right">
-            <ul class="pagination" *ngIf="tripMemoSearchResult?.showPageFrom > 0">
-                <li><a *ngIf="tripMemoSearchResult?.showPageFrom > 1" (click)="search(tripMemoSearchResult.showPageFrom - 1)">&laquo;</a></li>
-                <li *ngFor="let i of range(tripMemoSearchResult.showPageFrom, tripMemoSearchResult.showPageTo)" [class.active]="i == tripMemoSearchResult.currentPage">
-                    <a (click)="search(i)">{{i}}</a>
-                </li>
-                <li><a *ngIf="tripMemoSearchResult.showPageTo < tripMemoSearchResult.totalPages" (click)="search(tripMemoSearchResult.showPageTo + 1)">&raquo;</a></li>
-            </ul>
+            <div class="row pull-right">
+                <ul class="pagination" *ngIf="tripMemoSearchResult?.showPageFrom > 0">
+                    <li><a *ngIf="tripMemoSearchResult?.showPageFrom > 1" (click)="search(tripMemoSearchResult.showPageFrom - 1)">&laquo;</a></li>
+                    <li *ngFor="let i of range(tripMemoSearchResult.showPageFrom, tripMemoSearchResult.showPageTo)" [class.active]="i == tripMemoSearchResult.currentPage">
+                        <a (click)="search(i)">{{i}}</a>
+                    </li>
+                    <li><a *ngIf="tripMemoSearchResult.showPageTo < tripMemoSearchResult.totalPages" (click)="search(tripMemoSearchResult.showPageTo + 1)">&raquo;</a></li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>

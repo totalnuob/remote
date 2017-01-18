@@ -9,9 +9,14 @@ import {Observable} from "rxjs/Observable";
 import {CommonService} from "./common.service";
 import {PE_STRATEGIES_URL} from "./lookup.service.url";
 import {RE_STRATEGIES_URL} from "./lookup.service.url";
-import {HF_STRATEGIES_URL} from "./lookup.service.url";
+import {HF_STRATEGIES_URL, HF_SUBSTRATEGIES_URL} from "./lookup.service.url";
 import {GEOGRAPHIES_URL} from "./lookup.service.url";
-import {CURRENCIES_URL} from "./lookup.service.url";
+import {CURRENCIES_URL, HEDGE_FUND_STATUS_URL} from "./lookup.service.url";
+import {SUBSCRIPTION_FREQUENCY_URL} from "./lookup.service.url";
+import {REDEMPTION_FREQUENCY_URL} from "./lookup.service.url";
+import {REDEMPTION_NOTICE_PERIOD_URL} from "./lookup.service.url";
+import {SIDE_POCKET_URL} from "./lookup.service.url";
+import {PE_INDUSTRY_FOCUS_URL} from "./lookup.service.url";
 
 
 @Injectable()
@@ -95,9 +100,157 @@ export class LookupService extends CommonService{
             .catch(this.handleError);
     }
 
+    getHFSubStrategies(strategy){
+        return this.http.get(HF_SUBSTRATEGIES_URL + strategy)
+            .map(this.extractDataList)
+            .catch(this.handleError);
+    }
+
     getGeographies(){
         return this.http.get(GEOGRAPHIES_URL)
             .map(this.extractDataList)
             .catch(this.handleError);
+    }
+
+    getPEIndustryFocus(){
+        return this.http.get(PE_INDUSTRY_FOCUS_URL)
+            .map(this.extractDataList)
+            .catch(this.handleError);
+    }
+
+    getManagerTypes(){
+        var list = [];
+        var lookup = new Lookup;
+        lookup.code = 'FOF';
+        lookup.nameEn = "Fund of Funds";
+        list.push(lookup);
+
+        lookup = new Lookup;
+        lookup.code = 'MANAGER';
+        lookup.nameEn = "Manager Fund";
+        list.push(lookup);
+
+        return Promise.resolve(list);
+    }
+
+    getHedgeFundStatuses(){
+        return this.http.get(HEDGE_FUND_STATUS_URL)
+            .map(this.extractDataList)
+            .catch(this.handleError);
+    }
+
+    getSubscriptionFrequencies(){
+        return this.http.get(SUBSCRIPTION_FREQUENCY_URL)
+            .map(this.extractDataList)
+            .catch(this.handleError);
+    }
+
+    getRedemptionFrequencies(){
+        return this.http.get(REDEMPTION_FREQUENCY_URL)
+            .map(this.extractDataList)
+            .catch(this.handleError);
+    }
+
+    getRedemptionNoticePeriods(){
+        return this.http.get(REDEMPTION_NOTICE_PERIOD_URL)
+            .map(this.extractDataList)
+            .catch(this.handleError);
+    }
+
+    getSidePocketLookup(){
+        return this.http.get(SIDE_POCKET_URL)
+            .map(this.extractDataList)
+            .catch(this.handleError);
+    }
+
+    getManagerStatuses(){
+        var list = [];
+        var lookup = new Lookup;
+        lookup.code = 'OPEN_ALL';
+        lookup.nameEn = "Open to all";
+        list.push(lookup);
+
+        lookup = new Lookup;
+        lookup.code = 'CLOSED';
+        lookup.nameEn = "Closed";
+        list.push(lookup);
+
+        return Promise.resolve(list);
+    }
+
+    getLegalStructures(){
+        var list = [];
+        var lookup = new Lookup;
+        lookup.code = 'LLP';
+        lookup.nameEn = "Limited Liability Partnership";
+        list.push(lookup);
+
+        lookup = new Lookup;
+        lookup.code = 'LLC';
+        lookup.nameEn = "Limited Liability Company";
+        list.push(lookup);
+
+        return Promise.resolve(list);
+    }
+
+    getDomicileCountries(){
+        var list = [];
+        var lookup = new Lookup;
+        lookup.code = 'US';
+        lookup.nameEn = "United States";
+        list.push(lookup);
+
+        lookup = new Lookup;
+        lookup.code = 'UK';
+        lookup.nameEn = "United Kingdom";
+        list.push(lookup);
+
+        return Promise.resolve(list);
+    }
+
+
+    getRedemptionFrequencyTypes(){
+        var list = [];
+        var lookup = new Lookup;
+        lookup.code = 'TYPE1';
+        lookup.nameEn = "Redemption Freq Type 1";
+        list.push(lookup);
+
+        lookup = new Lookup;
+        lookup.code = 'TYPE2';
+        lookup.nameEn = "Redemption Freq Type 2";
+        list.push(lookup);
+
+        return Promise.resolve(list);
+    }
+
+    getRedemptionNotificationPeriodTypes(){
+        var list = [];
+        var lookup = new Lookup;
+        lookup.code = 'TYPE1';
+        lookup.nameEn = "Notif Period Type 1";
+        list.push(lookup);
+
+        lookup = new Lookup;
+        lookup.code = 'TYPE2';
+        lookup.nameEn = "Notif Period Type 2";
+        list.push(lookup);
+
+        return Promise.resolve(list);
+    }
+
+    getSubscriptionFrequencyTypes(){
+        var list = [];
+        var lookup = new Lookup;
+        lookup.code = 'TYPE1';
+        lookup.nameEn = "Subscription Type 1";
+        list.push(lookup);
+
+        lookup = new Lookup;
+        lookup.code = 'TYPE2';
+        lookup.nameEn = "Subscription Type 2";
+        list.push(lookup);
+
+        return Promise.resolve(list);
     }
 }

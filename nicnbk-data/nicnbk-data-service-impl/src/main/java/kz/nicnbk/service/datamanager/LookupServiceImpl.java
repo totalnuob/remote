@@ -1,20 +1,19 @@
 package kz.nicnbk.service.datamanager;
 
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
+import kz.nicnbk.repo.api.lookup.*;
 import kz.nicnbk.repo.api.lookup.CurrencyRepository;
 import kz.nicnbk.repo.api.lookup.GeographyRepository;
 import kz.nicnbk.repo.api.lookup.StrategyRepository;
+import kz.nicnbk.repo.api.pe.IndustryRepository;
 import kz.nicnbk.repo.model.base.BaseTypeEntity;
-import kz.nicnbk.repo.model.common.Currency;
-import kz.nicnbk.repo.model.common.Geography;
-import kz.nicnbk.repo.model.common.Strategy;
+import kz.nicnbk.repo.model.common.*;
 import kz.nicnbk.repo.model.files.FilesType;
-import kz.nicnbk.repo.model.lookup.FileTypeLookup;
-import kz.nicnbk.repo.model.lookup.MeetingTypeLookup;
-import kz.nicnbk.repo.model.lookup.NewsTypeLookup;
+import kz.nicnbk.repo.model.hf.*;
 import kz.nicnbk.repo.model.m2s2.MeetingArrangedBy;
 import kz.nicnbk.repo.model.m2s2.MeetingType;
 import kz.nicnbk.repo.model.news.NewsType;
+import kz.nicnbk.repo.model.pe.PEIndustry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +34,49 @@ public class LookupServiceImpl implements LookupService {
     private StrategyRepository strategyRepository;
 
     @Autowired
+    private SubstrategyRepository substrategyRepository;
+
+    @Autowired
     private CurrencyRepository currencyRepository;
+
+    @Autowired
+    private IndustryRepository industryRepository;
+
+    @Autowired
+    private HedgeFundStatusRepository hedgeFundStatusRepository;
+
+    @Autowired
+    private ManagerStatusRepository managerStatusRepository;
+
+    @Autowired
+    private CountryRepository countryRepository;
+
+    @Autowired
+    private LegalStructureRepository legalStructureRepository;
+
+    @Autowired
+    private SubscriptionFrequencyRepository subscriptionFrequencyRepository;
+
+    @Autowired
+    private RedemptionFrequencyRepository redemptionFrequencyRepository;
+
+    @Autowired
+    private RedemptionNotificationPeriodRepository redemptionNotificationPeriodRepository;
+
+    @Autowired
+    private HedgeFundSidePocketRepository hedgeFundSidePocketRepository;
+
+    @Autowired
+    private NewsTypeRepository newsTypeRepository;
+
+    @Autowired
+    private MeetingTypeRepository meetingTypeRepository;
+
+    @Autowired
+    private MeetingArrangedByRepository meetingArrangedByRepository;
+
+    @Autowired
+    private FilesTypeRepository filesTypeRepository;
 
     @Override
     public <T extends BaseTypeEntity> T findByTypeAndCode(Class<T> clazz, String code) {
@@ -46,100 +87,36 @@ public class LookupServiceImpl implements LookupService {
             return null;
         }
 
-        if(clazz.getSimpleName().equals("NewsType")){
-            if(code.equals(NewsTypeLookup.GENERAL.getCode())){
-                NewsType newsType = new NewsType();
-                newsType.setId(1);
-                newsType.setCode("GENERAL");
-                return (T) newsType;
-            }
-            if(code.equals(NewsTypeLookup.PRIVATE_EQUITY.getCode())){
-                NewsType newsType = new NewsType();
-                newsType.setId(2);
-                newsType.setCode("PE");
-                return (T) newsType;
-            }
-            if(code.equals(NewsTypeLookup.HEDGE_FUNDS.getCode())){
-                NewsType newsType = new NewsType();
-                newsType.setId(3);
-                newsType.setCode("HF");
-                return (T) newsType;
-            }
-            if(code.equals(NewsTypeLookup.SOVEREIGN_WEALTH_FUNDS
-                    .getCode())){
-                NewsType newsType = new NewsType();
-                newsType.setId(4);
-                newsType.setCode("SWF");
-                return (T) newsType;
-            }
-            if(code.equals(NewsTypeLookup.REAL_ESTATE
-                    .getCode())){
-                NewsType newsType = new NewsType();
-                newsType.setId(5);
-                newsType.setCode("RE");
-                return (T) newsType;
-            }
-            if(code.equals(NewsTypeLookup.RISK_MANAGEMENT
-                    .getCode())){
-                NewsType newsType = new NewsType();
-                newsType.setId(6);
-                newsType.setCode("RM");
-                return (T) newsType;
-            }
-        }
-
-        if(clazz.getSimpleName().equals("MeetingType")){
-            if(code.equals(MeetingTypeLookup.MEETING.getCode())){
-                MeetingType meetingType = new MeetingType();
-                meetingType.setId(1);
-                meetingType.setCode(MeetingTypeLookup.MEETING.getCode());
-                return (T) meetingType;
-            }
-            if(code.equals(MeetingTypeLookup.CALL.getCode())){
-                MeetingType meetingType = new MeetingType();
-                meetingType.setId(2);
-                meetingType.setCode(MeetingTypeLookup.CALL.getCode());
-                return (T) meetingType;
-            }
-        }
-
-        if(clazz.getSimpleName().equals("MeetingArrangedBy")){
-            if(code.equals(MeetingArrangedBy.BY_NIC)){
-                MeetingArrangedBy arrangedBy = new MeetingArrangedBy();
-                arrangedBy.setId(1);
-                arrangedBy.setCode(MeetingArrangedBy.BY_NIC);
-                return (T) arrangedBy;
-            }
-            if(code.equals(MeetingArrangedBy.BY_GP)){
-                MeetingArrangedBy arrangedBy = new MeetingArrangedBy();
-                arrangedBy.setId(2);
-                arrangedBy.setCode(MeetingArrangedBy.BY_GP);
-                return (T) arrangedBy;
-            }
-            if(code.equals(MeetingArrangedBy.BY_OTHER)){
-                MeetingArrangedBy arrangedBy = new MeetingArrangedBy();
-                arrangedBy.setId(3);
-                arrangedBy.setCode(MeetingArrangedBy.BY_OTHER);
-                return (T) arrangedBy;
-            }
-        }
-        if(clazz.getSimpleName().equals("Currency")){
-            Iterator<Currency> iterator = currencyRepository.findAll().iterator();
-            while(iterator.hasNext()){
-                Currency currency = iterator.next();
-                if(currency.getCode().equals(code)){
-                    return (T) currency;
-                };
-            }
-        }
-
-        if(clazz.getSimpleName().equals("FilesType")){
-            if(code.equals(FileTypeLookup.MEMO_ATTACHMENT.getCode())){
-                FilesType filesType = new FilesType();
-                filesType.setId(1);
-                filesType.setCode(FileTypeLookup.MEMO_ATTACHMENT.getCode());
-                return (T) filesType;
-            }
+        if(clazz.equals(NewsType.class)){
+            return (T) this.newsTypeRepository.findByCode(code);
+        }else if(clazz.equals(MeetingType.class)){
+            return (T) this.meetingTypeRepository.findByCode(code);
+        }else if(clazz.equals(MeetingArrangedBy.class)){
+            return (T) this.meetingArrangedByRepository.findByCode(code);
+        }else if(clazz.equals(Currency.class)){
+            return (T) this.currencyRepository.findByCode(code);
+        }else if(clazz.equals(FilesType.class)){
+            return (T) this.filesTypeRepository.findByCode(code);
+        }else if(clazz.equals(Strategy.class)){
+            return (T) this.strategyRepository.findByCode(code);
+        }else if(clazz.equals(Geography.class)){
+            return (T) this.geographyRepository.findByCode(code);
+        }else if(clazz.equals(HedgeFundStatus.class)){
+            return (T) this.managerStatusRepository.findByCode(code);
+        }else if(clazz.equals(Country.class)){
+            return (T) this.countryRepository.findByCode(code);
+        }else if(clazz.equals(LegalStructure.class)){
+            return (T) this.legalStructureRepository.findByCode(code);
+        }else if(clazz.equals(SubscriptionFrequency.class)){
+            return (T) this.subscriptionFrequencyRepository.findByCode(code);
+        }else if(clazz.equals(RedemptionFrequency.class)){
+            return (T) this.redemptionFrequencyRepository.findByCode(code);
+        }else if(clazz.equals(RedemptionNotificationPeriod.class)){
+            return (T) this.redemptionNotificationPeriodRepository.findByCode(code);
+        }else if(clazz.equals(HedgeFundSidePocket.class)){
+            return (T) this.hedgeFundSidePocketRepository.findByCode(code);
+        }else if(clazz.equals(Substrategy.class)){
+            return (T) this.substrategyRepository.findByCode(code);
         }
 
         if(clazz.getSimpleName().equals("Strategy")){
@@ -160,10 +137,21 @@ public class LookupServiceImpl implements LookupService {
                     return (T) geography;
                 };
             }
-
         }
+
+        if(clazz.getSimpleName().equals("PEIndustry")) {
+            Iterator<PEIndustry> iterator = industryRepository.findAll().iterator();
+            while(iterator.hasNext()){
+                PEIndustry PEIndustry = iterator.next();
+                if(PEIndustry.getCode().equals(code)) {
+                    return (T) PEIndustry;
+                }
+            }
+        }
+
         return null;
     }
+
 
     @Override
     public List<BaseDictionaryDto> getCurrencies(){
@@ -178,13 +166,78 @@ public class LookupServiceImpl implements LookupService {
     }
 
     @Override
+    public List<BaseDictionaryDto> getHedgeFundStatuses() {
+        List<BaseDictionaryDto> dtoList = new ArrayList<>();
+        Iterator<HedgeFundStatus> iterator = this.hedgeFundStatusRepository.findAll().iterator();
+        while(iterator.hasNext()){
+            HedgeFundStatus entity = iterator.next();
+            BaseDictionaryDto dto = disassemble(entity);
+            dtoList.add(dto);
+        }
+        return dtoList;
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getSubscriptionFrequencies() {
+        List<BaseDictionaryDto> dtoList = new ArrayList<>();
+        Iterator<SubscriptionFrequency> iterator = this.subscriptionFrequencyRepository.findAll().iterator();
+        while(iterator.hasNext()){
+            SubscriptionFrequency entity = iterator.next();
+            BaseDictionaryDto dto = disassemble(entity);
+            dtoList.add(dto);
+        }
+        return dtoList;
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getRedemptionFrequencies() {
+        List<BaseDictionaryDto> dtoList = new ArrayList<>();
+        Iterator<RedemptionFrequency> iterator = this.redemptionFrequencyRepository.findAll().iterator();
+        while(iterator.hasNext()){
+            RedemptionFrequency entity = iterator.next();
+            BaseDictionaryDto dto = disassemble(entity);
+            dtoList.add(dto);
+        }
+        return dtoList;
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getRedemptionNoticePeriods() {
+        List<BaseDictionaryDto> dtoList = new ArrayList<>();
+        Iterator<RedemptionNotificationPeriod> iterator = this.redemptionNotificationPeriodRepository.findAll().iterator();
+        while(iterator.hasNext()){
+            RedemptionNotificationPeriod entity = iterator.next();
+            BaseDictionaryDto dto = disassemble(entity);
+            dtoList.add(dto);
+        }
+        return dtoList;
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getSidePockets() {
+        List<BaseDictionaryDto> dtoList = new ArrayList<>();
+        Iterator<HedgeFundSidePocket> iterator = this.hedgeFundSidePocketRepository.findAll().iterator();
+        while(iterator.hasNext()){
+            HedgeFundSidePocket entity = iterator.next();
+            BaseDictionaryDto dto = disassemble(entity);
+            dtoList.add(dto);
+        }
+        return dtoList;
+    }
+
+    @Override
     public List<BaseDictionaryDto> getPrivateEquityStrategies(){
         return getStrategies(Strategy.TYPE_PRIVATE_EQUITY);
     }
 
     @Override
-    public List<BaseDictionaryDto> getHedgeFundsStrategy(){
-        return getStrategies(Strategy.TYPE_PHEDGE_FUNDS);
+    public List<BaseDictionaryDto> getHedgeFundsStrategies(){
+        return getStrategies(Strategy.TYPE_HEDGE_FUNDS);
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getHedgeFundsSubStrategies(String strategy){
+        return getSubStrategies(strategy);
     }
 
     @Override
@@ -204,6 +257,18 @@ public class LookupServiceImpl implements LookupService {
         return dtoList;
     }
 
+    private List<BaseDictionaryDto> getSubStrategies(String strategyCode){
+        List<BaseDictionaryDto> dtoList = new ArrayList<>();
+        List<Substrategy> entityList = this.substrategyRepository.findByStrategy(strategyCode);
+        if(entityList != null) {
+            for (Substrategy entity : entityList) {
+                BaseDictionaryDto dto = disassemble(entity);
+                dtoList.add(dto);
+            }
+        }
+        return dtoList;
+    }
+
     @Override
     public List<BaseDictionaryDto> getGeographies(){
         List<BaseDictionaryDto> dtoList = new ArrayList<>();
@@ -212,6 +277,18 @@ public class LookupServiceImpl implements LookupService {
             Geography entity = iterator.next();
             BaseDictionaryDto geographyDto = disassemble(entity);
             dtoList.add(geographyDto);
+        }
+        return dtoList;
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getPEIndustry(){
+        List<BaseDictionaryDto> dtoList = new ArrayList<>();
+        Iterator<PEIndustry> iterator = this.industryRepository.findAll().iterator();
+        while(iterator.hasNext()){
+            PEIndustry entity = iterator.next();
+            BaseDictionaryDto industryDto = disassemble(entity);
+            dtoList.add(industryDto);
         }
         return dtoList;
     }

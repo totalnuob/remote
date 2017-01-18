@@ -32,6 +32,11 @@ import {HFFundProfileComponent} from "./hf/hf.fund-profile.component";
 import {HFManagerProfileComponent} from "./hf/hf.manager-profile.component.ts";
 import {MonitoringPrivateEquityFundComponent} from "./monitoring/monitoring-private-equity-fund.component";
 import {MonitoringHedgeFunds2Component} from "./monitoring/monitoring-hedge-funds-2.component";
+import {PEFundProfileComponent} from "./pe/pe.fund-profile.component";
+import {PEFirmProfileComponent} from "./pe/pe.firm-profile.component";
+import {PEFirmSearchComponent} from "./pe/pe.firm-search.component";
+import {PEFundReportComponent} from "./pe/pe.fund-report.component";
+import {HFManagerSearchComponent} from "./hf/hf.manager-search.component";
 
 
 const routes: Routes  = [
@@ -164,6 +169,11 @@ const routes: Routes  = [
         canActivate: [AuthGuard]
     },
     {
+        path: 'hf/managerSearch',
+        component: HFManagerSearchComponent,
+        canActivate: [AuthGuard]
+    },
+    {
         path: 'hf/fundSelection',
         component: HFFundSelectionComponent,
         canActivate: [AuthGuard]
@@ -179,13 +189,51 @@ const routes: Routes  = [
         canActivate: [AuthGuard]
     },
     {
-        path: 'hf/fundProfile',
+        // existing fund
+        path: 'hf/fundProfile/:id',
         component: HFFundProfileComponent,
         canActivate: [AuthGuard]
     },
     {
-        path: 'hf/managerProfile',
+        // new fund
+        path: 'hf/fundProfile/:id/:managerId',
+        component: HFFundProfileComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'hf/managerProfile/:id',
         component: HFManagerProfileComponent,
+        canActivate: [AuthGuard]
+    },
+    /* Private Equity ************************************/
+    {
+        path: 'pe/fundProfile',
+        component: PEFundProfileComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'pe/firmProfile',
+        component: PEFirmProfileComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'pe/firmProfile/:id',
+        component: PEFirmProfileComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'pe/fundProfile/:id/:firmId',
+        component: PEFundProfileComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'pe/firmSearch',
+        component: PEFirmSearchComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'pe/fundReport/:id',
+        component: PEFundReportComponent,
         canActivate: [AuthGuard]
     },
 ];

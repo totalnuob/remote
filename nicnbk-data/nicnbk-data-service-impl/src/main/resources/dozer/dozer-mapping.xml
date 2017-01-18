@@ -26,10 +26,6 @@
             <a>meetingType</a>
             <b>meetingType</b>
         </field-exclude>
-        <!--<field-exclude>-->
-            <!--<a>memoType</a>-->
-            <!--<b>memoType</b>-->
-        <!--</field-exclude>-->
         <field-exclude>
             <a>arrangedBy</a>
             <b>arrangedBy</b>
@@ -67,6 +63,57 @@
         <field-exclude>
             <a>type</a>
             <b>type</b>
+        </field-exclude>
+    </mapping>
+
+    <!-- HEDGE FUNDS-->
+    <mapping>
+        <class-a>kz.nicnbk.service.dto.hf.HFManagerDto</class-a>
+        <class-b>kz.nicnbk.repo.model.hf.HFManager</class-b>
+        <field-exclude>
+            <a>aumCurrency</a>
+            <b>AUMCurrency</b>
+        </field-exclude>
+        <field-exclude>
+            <a>domicileCountry</a>
+            <b>domicileCountry</b>
+        </field-exclude>
+    </mapping>
+
+    <mapping>
+        <class-a>kz.nicnbk.service.dto.hf.HedgeFundDto</class-a>
+        <class-b>kz.nicnbk.repo.model.hf.HedgeFund</class-b>
+        <field-exclude>
+            <a>aumCurrency</a>
+            <b>aumCurrency</b>
+        </field-exclude>
+        <field-exclude>
+            <a>status</a>
+            <b>status</b>
+        </field-exclude>
+        <field-exclude>
+            <a>strategy</a>
+            <b>strategy</b>
+        </field-exclude>
+        <field-exclude>
+            <a>geography</a>
+            <b>geography</b>
+        </field-exclude>
+        <field-exclude>
+            <a>subscriptionFrequency</a>
+            <b>subscriptionFrequency</b>
+        </field-exclude>
+        <field-exclude>
+            <a>redemptionFrequency</a>
+            <b>redemptionFrequency</b>
+        </field-exclude>
+        <field-exclude>
+            <a>redemptionNotificationPeriod</a>
+            <b>redemptionNotificationPeriod</b>
+        </field-exclude>
+        <field-exclude>
+            <a>sidePocket</a>
+            <b>sidePocket</b>
         </field-exclude>
     </mapping>
 

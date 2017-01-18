@@ -1,29 +1,31 @@
 import { Component, OnInit} from '@angular/core';
+import {CommonFormViewComponent} from "../common/common.component";
 declare var google:any;
 @Component({
     selector: 'chart'
 })
-export class GoogleChartComponent implements OnInit {
+export class GoogleChartComponent extends CommonFormViewComponent implements OnInit{
     private static googleLoaded:any;
 
     constructor(){
         //console.log("GoogleChartComponent")
+        super();
     }
 
     getGoogle() {
         return google;
     }
     ngOnInit() {
-        //console.log('ngOnInit');
         if(!GoogleChartComponent.googleLoaded) {
             GoogleChartComponent.googleLoaded = true;
             google.charts.load('current',  {packages: ['corechart', 'bar', 'table', 'line', 'geochart']});
         }
-        google.charts.setOnLoadCallback(() => this.drawGraph());
+        setTimeout(() => this.drawGraph(), 1000);
+        //google.charts.setOnLoadCallback(() => this.drawGraph());
     }
 
     drawGraph(){
-        console.log("DrawGraph base  ");
+        console.log("DrawGraph base");
     }
 
     createBarChart(element:any):any {

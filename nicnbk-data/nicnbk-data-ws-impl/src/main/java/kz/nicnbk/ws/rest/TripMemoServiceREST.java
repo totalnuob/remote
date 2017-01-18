@@ -133,7 +133,6 @@ public class TripMemoServiceREST {
 
     @RequestMapping(value = "/attachment/list/{tripMemoId}", method = RequestMethod.GET)
     private Set<FilesDto> getFiles(@PathVariable("tripMemoId") long tripMemoId){
-
         return this.tripMemoService.getAttachments(tripMemoId);
     }
 }

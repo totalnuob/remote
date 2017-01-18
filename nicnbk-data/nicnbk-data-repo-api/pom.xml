@@ -54,6 +54,11 @@
             <version>9.1-901.jdbc4</version>
             <!--<version>9.4.1208-jdbc42-atlassian-hosted</version>-->
         </dependency>
+        <dependency>
+            <groupId>kz.nicnbk</groupId>
+            <artifactId>nicnbk-common-repo-impl</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
 
 </project>

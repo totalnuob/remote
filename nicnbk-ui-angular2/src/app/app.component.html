@@ -5,130 +5,133 @@
     <title>Home</title>
 </head>
 <body>
-    <div class="header">
-        <div class="container">
-            <ul>
-                <li style="float:right"><a (click)="logout()">
-                    <h5><span class="glyphicon glyphicon-off"></span></h5></a></li>
-                <li style="float:right"><a href="#">
-                    <h5><span class="glyphicon glyphicon-user"></span></h5></a></li>
-                <li style="float:right"><a [routerLink]="['/news/edit/']">
-                    <h5><span class="glyphicon glyphicon-cog"></span></h5></a></li>
+<div class="header">
+    <div class="container">
+        <ul>
+            <li style="float:right"><a (click)="logout()">
+                <h5><span class="glyphicon glyphicon-off"></span></h5></a></li>
+            <li style="float:right"><a href="#">
+                <h5><span class="glyphicon glyphicon-user"></span></h5></a></li>
+            <li style="float:right"><a [routerLink]="['/news/edit/']">
+                <h5><span class="glyphicon glyphicon-cog"></span></h5></a></li>
 
-                <li style="float:left; background-color:#1D7D35;">
-                    <!--<a href="#about">-->
-                    <!--<h4><span class="label label-primary">NIC System</span></h4>-->
-                    <img src="../../public/img/nic.png" height="50" width="35"/>
-                    <!--</a>-->
-                </li>
-                <li style="padding-top: 1%; padding-bottom: 1%; padding-left: 1%;">
-                    <span style="color: #7B7A7A; font-family: Arial; font-weight: bold; font-size: medium;">NATIONAL | INVESTMENT | CORPORATION</span>
-                    <!--<a href="#about">-->
-                    <!--<h4><span class="label label-primary">NIC System</span></h4>-->
-                    <!--<img th:src="@{/img/nic-name-logo.png}" height="40" width="600"/>-->
-                    <!--</a>-->
-                </li>
-            </ul>
-            <div class="row" style="padding-left: 15px; padding-right: 15px;">
-                <div class="col-md-12" style="background-color:#DEBA5B;height: 5px;">
-                </div>
+            <li style="float:left; background-color:#1D7D35;">
+                <!--<a href="#about">-->
+                <!--<h4><span class="label label-primary">NIC System</span></h4>-->
+                <img src="../../public/img/nic.png" height="50" width="35"/>
+                <!--</a>-->
+            </li>
+            <li style="padding-top: 1%; padding-bottom: 1%; padding-left: 1%;">
+                <span style="color: #7B7A7A; font-family: Arial; font-weight: bold; font-size: medium;">NATIONAL | INVESTMENT | CORPORATION</span>
+                <!--<a href="#about">-->
+                <!--<h4><span class="label label-primary">NIC System</span></h4>-->
+                <!--<img th:src="@{/img/nic-name-logo.png}" height="40" width="600"/>-->
+                <!--</a>-->
+            </li>
+        </ul>
+        <div class="row" style="padding-left: 15px; padding-right: 15px;">
+            <div class="col-md-12" style="background-color:#DEBA5B;height: 5px;">
             </div>
         </div>
-        <br/>
-        <div class="container" *ngIf="showMenu()">
-            <div class="row">
-                <div class="col-md-3 pull-right">
-                    <div id="custom-search-input">
-                        <div class="input-group col-md-12">
-                            <input type="text" class="form-control" placeholder="search..." />
+    </div>
+    <br/>
+    <div class="container" *ngIf="showMenu()">
+        <div class="row">
+            <div class="col-md-3 pull-right">
+                <div id="custom-search-input">
+                    <div class="input-group col-md-12">
+                        <input type="text" class="form-control" placeholder="search..." />
                         <span class="input-group-btn">
                             <button class="btn btn-info" type="button">
                                 <i class="glyphicon glyphicon-search"></i>
                             </button>
                         </span>
-                        </div>
                     </div>
                 </div>
             </div>
-            <hr/>
         </div>
+        <hr/>
     </div>
-    <div class="container" *ngIf="showMenu()">
-        <nav class="navbar navbar-default">
-            <div class="container-fluid">
-                <ul class="nav navbar-nav">
-                    <li [routerLinkActive]="['active']">
-                        <a data-toggle="tooltip" [routerLink]="['/news']" >
-                            <span class="glyphicon glyphicon-home"></span>
-                        </a>
-                    </li>
-                    <li [routerLinkActive]="['active']"  class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                            Monitoring <span class="bootstrapCaret"></span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a [routerLink]="['/monitoring/portfolio']" data-toggle="tooltip" title="Monitoring NIC Portfolio">NIC Portfolio</a></li>
-                            <li><a [routerLink]="['/monitoring/liq']" data-toggle="tooltip" title="Monitoring Liquid Portfolio">Liquid Portfolio</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li><a [routerLink]="['/monitoring/pe']" data-toggle="tooltip" title="Monitoring Private Equity Portfolio">Private Equity Portfolio</a></li>
-                            <li><a [routerLink]="['/monitoring/peFund']" data-toggle="tooltip" title="Monitoring Tarragon">Tarragon</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li><a [routerLink]="['/monitoring/hf']" data-toggle="tooltip" title="Monitoring Hedge Funds Portfolio">Hedge Funds Portfolio</a></li>
-                            <li><a [routerLink]="['/monitoring/hf2']" data-toggle="tooltip" title="Monitoring Tarragon">Singularity</a></li>
-                        </ul>
-                    </li>
-                    <li [routerLinkActive]="['active']" >
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                            Risk Management <span class="bootstrapCaret"></span>
-                        </a>
-                        <!--<a th:href="@{/risks}">Risk Management</a></li>-->
-                        <ul class="dropdown-menu">
-                            <!--<li><a [routerLink]="['/monitoring/mm']" data-toggle="tooltip" title="Macro Monitor">Macro Monitor</a></li>-->
-                            <li><a [routerLink]="['/monitoring/axioma']" data-toggle="tooltip" title="Axioma Reporting">Axioma Reporting</a></li>
-                            <!--<li><a href="#">Risk</a></li>-->
-                        </ul>
-                    </li>
-                    <li [routerLinkActive]="['active']"><a [routerLink]="['/monitoring/mm']" data-toggle="tooltip" title="Macro Monitor">Macro Monitor</a></li>
-                    <li [routerLinkActive]="['active']"><a [routerLink]="['/m2s2']" data-toggle="tooltip" title="Meeting Memo Scoring System">M2S2</a></li>
-                    <li [routerLinkActive]="['active']"  class="dropdown">
-                        <!--<a th:href="@{/pe}">Private Equity</a>-->
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                            Private Equity <span class="bootstrapCaret"></span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a href="#">Dashboard</a></li>
-                            <li><a href="#">Manager Search</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li><a href="#">Forward Calendar</a></li>
-                        </ul>
-                    </li>
-                    <li [routerLinkActive]="['active']" ><a href="#">Real Estate</a></li>
-                    <li [routerLinkActive]="['active']" ><a href="#">Hedge Funds</a></li>
-                    <!--<li class="dropdown">-->
-                        <!--&lt;!&ndash;<a th:href="@{/pe}">Private Equity</a>&ndash;&gt;-->
-                        <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">-->
-                            <!--Hedge Funds <span class="bootstrapCaret"></span>-->
-                        <!--</a>-->
-                        <!--<ul class="dropdown-menu">-->
-                            <!--<li><a [routerLink]="['/hf/dashboard']" >Dashboard</a></li>-->
-                            <!--<li><a [routerLink]="['/hf/fundSearch']">Fund Search</a></li>-->
-                            <!--<li><a [routerLink]="['/hf/fundSelection']">Fund Selection </a></li>-->
-                            <!--<li><a [routerLink]="['/hf/portfolio']">Portfolio </a></li>-->
-                            <!--<li><a [routerLink]="['/hf/report']">Report </a></li>-->
-                            <!--<li role="separator" class="divider"></li>-->
-                            <!--<li><a [routerLink]="['/hf/fundProfile']">New Fund </a></li>-->
-                            <!--<li><a [routerLink]="['/hf/managerProfile']">New Manager </a></li>-->
+</div>
+<div class="container" *ngIf="showMenu()">
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <ul class="nav navbar-nav">
+                <li [routerLinkActive]="['active']">
+                    <a data-toggle="tooltip" [routerLink]="['/news']" >
+                        <span class="glyphicon glyphicon-home"></span>
+                    </a>
+                </li>
+                <li [routerLinkActive]="['active']"  class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        Monitoring <span class="bootstrapCaret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a [routerLink]="['/monitoring/portfolio']" data-toggle="tooltip" title="Monitoring NIC Portfolio">NIC Portfolio</a></li>
+                        <li><a [routerLink]="['/monitoring/liq']" data-toggle="tooltip" title="Monitoring Liquid Portfolio">Liquid Portfolio</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a [routerLink]="['/monitoring/pe']" data-toggle="tooltip" title="Monitoring Private Equity Portfolio">Private Equity Portfolio</a></li>
+                        <li><a [routerLink]="['/monitoring/peFund']" data-toggle="tooltip" title="Monitoring Tarragon">Tarragon</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a [routerLink]="['/monitoring/hf']" data-toggle="tooltip" title="Monitoring Hedge Funds Portfolio">Hedge Funds Portfolio</a></li>
+                        <li><a [routerLink]="['/monitoring/hf2']" data-toggle="tooltip" title="Monitoring Tarragon">Singularity</a></li>
+                    </ul>
+                </li>
+                <li [routerLinkActive]="['active']" >
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        Risk Management <span class="bootstrapCaret"></span>
+                    </a>
+                    <!--<a th:href="@{/risks}">Risk Management</a></li>-->
+                    <ul class="dropdown-menu">
+                        <!--<li><a [routerLink]="['/monitoring/mm']" data-toggle="tooltip" title="Macro Monitor">Macro Monitor</a></li>-->
+                        <li><a [routerLink]="['/monitoring/axioma']" data-toggle="tooltip" title="Axioma Reporting">Axioma Reporting</a></li>
+                        <!--<li><a href="#">Risk</a></li>-->
+                    </ul>
+                </li>
+                <li [routerLinkActive]="['active']"><a [routerLink]="['/monitoring/mm']" data-toggle="tooltip" title="Macro Monitor">Macro Monitor</a></li>
+                <li [routerLinkActive]="['active']"><a [routerLink]="['/m2s2']" data-toggle="tooltip" title="Meeting Memo Scoring System">M2S2</a></li>
+                <li [routerLinkActive]="['active']"  class="dropdown">
+                    <!--<a th:href="@{/pe}">Private Equity</a>-->
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        Private Equity <span class="bootstrapCaret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <!--<li><a href="#">Dashboard</a></li>-->
+                        <li><a [routerLink]="['/pe/firmSearch']">Fund Search</a></li>
+                        <li role="separator" class="divider"></li>
+                        <!--<li><a [routerLink]="['/pe/fundProfile']">New Fund</a></li>-->
+                        <li><a [routerLink]="['/pe/firmProfile']">New Firm</a></li>
+                        <!--<li><a href="#">Forward Calendar</a></li>-->
+                    </ul>
+                </li>
+                <li [routerLinkActive]="['active']" ><a href="#">Real Estate</a></li>
+                <!--<li [routerLinkActive]="['active']" ><a href="#">Hedge Funds</a></li>-->
+                <li class="dropdown">
+                    <!--<a th:href="@{/pe}">Private Equity</a>-->
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        Hedge Funds <span class="bootstrapCaret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <!--<li><a [routerLink]="['/hf/dashboard']" >Dashboard</a></li>-->
+                        <li><a [routerLink]="['/hf/fundSearch']">Fund Search</a></li>
+                        <li><a [routerLink]="['/hf/managerSearch']">Manager Search</a></li>
+                        <!--<li><a [routerLink]="['/hf/fundSelection']">Fund Selection </a></li>-->
+                        <!--<li><a [routerLink]="['/hf/portfolio']">Portfolio </a></li>-->
+                        <!--<li><a [routerLink]="['/hf/report']">Report </a></li>-->
+                        <li role="separator" class="divider"></li>
+                        <!--<li><a [routerLink]="['/hf/fundProfile/0']">New Fund </a></li>-->
+                        <li><a [routerLink]="['/hf/managerProfile/0']">New Manager </a></li>
 
-                        <!--</ul>-->
-                    <!--</li>-->
-                    <li [routerLinkActive]="['active']"><a [routerLink]="['/bt']" data-toggle="tooltip" title="Business Trip Memo">Business Trips</a></li>
-                </ul>
-            </div>
-        </nav>
-    </div>
+                    </ul>
+                </li>
+                <li [routerLinkActive]="['active']"><a [routerLink]="['/bt']" data-toggle="tooltip" title="Business Trip Memo">Business Trips</a></li>
+            </ul>
+        </div>
+    </nav>
+</div>
 
-    <router-outlet></router-outlet>
+<router-outlet></router-outlet>
 
-    <!--<div class="copyrightText">&copy; 2016 NIC</div>-->
+<!--<div class="copyrightText">&copy; 2016 NIC</div>-->
 </body>
 </html>

@@ -17,6 +17,11 @@
             <artifactId>nicnbk-data-repo-api</artifactId>
             <version>1.0</version>
         </dependency>
+        <dependency>
+            <groupId>kz.nicnbk</groupId>
+            <artifactId>nicnbk-common-repo-impl</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
 
 </project>

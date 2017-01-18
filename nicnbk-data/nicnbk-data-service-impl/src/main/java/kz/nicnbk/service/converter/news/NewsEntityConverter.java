@@ -1,5 +1,6 @@
 package kz.nicnbk.service.converter.news;
 
+import kz.nicnbk.repo.model.lookup.NewsTypeLookup;
 import kz.nicnbk.repo.model.news.News;
 import kz.nicnbk.repo.model.news.NewsType;
 import kz.nicnbk.service.converter.dozer.BaseDozerEntityConverter;

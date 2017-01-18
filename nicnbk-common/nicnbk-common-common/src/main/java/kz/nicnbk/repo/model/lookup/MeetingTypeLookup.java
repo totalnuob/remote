@@ -5,17 +5,31 @@ package kz.nicnbk.repo.model.lookup;
  */
 public enum MeetingTypeLookup {
 
-    MEETING("MEETING"),
-    CALL("CALL");
+    MEETING("MEETING", 1),
+    CALL("CALL", 2);
 
 
     private String code;
+    private int id;
 
-    MeetingTypeLookup(String code) {
+    MeetingTypeLookup(String code, int id) {
         this.code = code;
+        this.id = id;
     }
 
     public String getCode() {
         return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

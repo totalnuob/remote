@@ -1,177 +1,181 @@
 <div class="container">
-    <div class="row top-buffer" >
-        <div class="col-md-12">
-            <ol class="breadcrumb">
-                <li><a [routerLink]="['/bt']">Business Trips</a></li>
-                <li class="active">General</li>
-            </ol>
-        </div>
-    </div>
-    <div class="row top-buffer" >
-        <div class="col-md-12">
-            <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span></div>
-        </div>
-    </div>
-    <div class="row top-buffer" >
-        <div class="col-md-12">
-            <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span></div>
-        </div>
-    </div>
-
-    <!--<div class="row top-buffer" >-->
-        <!--<div class="col-md-2">-->
-            <!--<a [routerLink]="['/bt/list/']" class="btn btn-default pull-left">Back</a>-->
-        <!--</div>-->
-    <!--</div>-->
-    <div class="row top-buffer">
-        <div class="col-md-2">
-            <label class="checkbox-inline">
-                <input type="radio" [ngModel]="tripMemo.tripType"
-                       (ngModelChange)="tripMemo.tripType='BUSINESS TRIP'" name="tripType" value="BUSINESS TRIP">
-                <span>Business Trip</span>
-            </label>
-        </div>
-        <div class="col-md-2">
-            <label class="checkbox-inline">
-            <input type="radio" [ngModel]="tripMemo.tripType"
-                   (ngModelChange)="tripMemo.tripType='TRAINING'" name="tripType" value="TRAINING">
-            <span>Training</span>
-            </label>
-        </div>
-        <div class="col-md-2">
-            <label class="checkbox-inline">
-            <input type="radio" [ngModel]="tripMemo.tripType"
-                   (ngModelChange)="tripMemo.tripType='CONFERENCE'" name="tripType" value="CONFERENCE">
-            <span>Conference</span>
-            </label>
-        </div>
-
-        <div class="col-md-3">
-            <div class='input-group date col-md-2' id='meetingDate1' style="width: 100%">
-                <input type='text' class="form-control" id="meetingDateValue" [(ngModel)]="tripMemo.meetingDateStart"/>
-                <span class="input-group-addon">
-                    <span class="glyphicon glyphicon-calendar">Start date</span>
-                </span>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class='input-group date col-md-2' id='meetingDate2' style="width: 100%">
-                <input type='text' class="form-control" id="meetingDateValue2" [(ngModel)]="tripMemo.meetingDateEnd"/>
-                <span class="input-group-addon">
-                    <span class="glyphicon glyphicon-calendar">End date</span>
-                </span>
-            </div>
-        </div>
-    </div>
-    <div class="row top-buffer">
-        <div class="col-md-2">
-
-        </div>
-        <div class="col-md-10">
-            <input type="text" class="form-control" placeholder="Enter name..." maxlength="250" [(ngModel)]="tripMemo.name"/>
-        </div>
-    </div>
-    <div class="row top-buffer">
-        <div class="col-md-12">
-
-            <div class="row top-buffer">
-                <label class="control-label col-md-2">Organization:</label>
-                <div class="col-md-10">
-                    <textarea type="text" class="form-control" maxlength="250" [(ngModel)]="tripMemo.organization"></textarea>
+    <div class="row withpadding" style="position: relative; min-height: 80px;">
+        <div [ngBusy]="busy">
+            <div class="row top-buffer" >
+                <div class="col-md-12">
+                    <ol class="breadcrumb">
+                        <li><a [routerLink]="['/bt']">Business Trips</a></li>
+                        <li class="active">General</li>
+                    </ol>
                 </div>
             </div>
-            <div class="row top-buffer">
-                <label class="control-label col-md-2">Location:</label>
-                <div class="col-md-10">
-                    <textarea type="text" class="form-control" maxlength="250" [(ngModel)]="tripMemo.location"></textarea>
+            <div class="row top-buffer" >
+                <div class="col-md-12">
+                    <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span></div>
                 </div>
             </div>
-            <div class="row top-buffer">
-                <label class="control-label col-md-2">Attendees (NIC):</label>
-                <div class="col-md-10" *ngIf="attendeesList.length > 0">
-                    <ng-select #attendeesSelect [initData]="tripMemo.attendees"
-                               [multiple]="true"
-                               [items]="attendeesList"
-                               (data)="refreshAttendees($event)"
-                               (selected)="selected($event)"
-                               (removed)="removed($event)"
-                               placeholder="No attendee selected">
-                    </ng-select>
+            <div class="row top-buffer" >
+                <div class="col-md-12">
+                    <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span></div>
                 </div>
             </div>
+
+            <!--<div class="row top-buffer" >-->
+                <!--<div class="col-md-2">-->
+                    <!--<a [routerLink]="['/bt/list/']" class="btn btn-default pull-left">Back</a>-->
+                <!--</div>-->
+            <!--</div>-->
             <div class="row top-buffer">
-                <label class="control-label col-md-2">Status:</label>
                 <div class="col-md-2">
-                    <select id="statusSelect" class="form-control" [(ngModel)]="tripMemo.status">
-                        <option value="NONE">---</option>
-                        <option value="APPROVED">Approved</option>
-                        <option value="REJECTED">Rejected</option>
-                        <option value="CONSIDERATION">Under Consideration</option>
-                    </select>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <div class="row top-buffer withpadding">
-        <div class="col-md-12" style="background-color:#5bc0de;">
-            <div class="col-md-6">
-                <span>Description</span>
-            </div>
-            <div class="col-md-5">&nbsp;</div>
-        </div>
-    </div>
-
-    <div class="row top-buffer">
-        <div class="col-md-12">
-            <textarea type="text" class="form-control" rows="10" [(ngModel)]="tripMemo.description"></textarea>
-        </div>
-    </div>
-    <br/>
-    <div class="row top-buffer">
-        <div class="col-md-6">
-            <div class="jumbotron" style="padding-top: 5px; padding-bottom: 5px;">
-                <div class="row">
-                    <label>ATTACHMENTS</label>
-                </div>
-
-                <div class="row">
-                    <label class="btn btn-primary col-md-2" for="attachmentFile">
-                        <input type="file" id="attachmentFile" (change)="onFileChange($event)" name="file" multiple style="display:none;"/>
-                        Add
+                    <label class="checkbox-inline">
+                        <input type="radio" [ngModel]="tripMemo.tripType"
+                               (ngModelChange)="tripMemo.tripType='BUSINESS TRIP'" name="tripType" value="BUSINESS TRIP">
+                        <span>Business Trip</span>
                     </label>
+                </div>
+                <div class="col-md-2">
+                    <label class="checkbox-inline">
+                    <input type="radio" [ngModel]="tripMemo.tripType"
+                           (ngModelChange)="tripMemo.tripType='TRAINING'" name="tripType" value="TRAINING">
+                    <span>Training</span>
+                    </label>
+                </div>
+                <div class="col-md-2">
+                    <label class="checkbox-inline">
+                    <input type="radio" [ngModel]="tripMemo.tripType"
+                           (ngModelChange)="tripMemo.tripType='CONFERENCE'" name="tripType" value="CONFERENCE">
+                    <span>Conference</span>
+                    </label>
+                </div>
+
+                <div class="col-md-3">
+                    <div class='input-group date col-md-2' id='meetingDate1' style="width: 100%">
+                        <input type='text' class="form-control" id="meetingDateValue" [(ngModel)]="tripMemo.meetingDateStart"/>
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar">Start date</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class='input-group date col-md-2' id='meetingDate2' style="width: 100%">
+                        <input type='text' class="form-control" id="meetingDateValue2" [(ngModel)]="tripMemo.meetingDateEnd"/>
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar">End date</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="row top-buffer">
+                <div class="col-md-2">
+
+                </div>
+                <div class="col-md-10">
+                    <input type="text" class="form-control" placeholder="Enter name..." maxlength="250" [(ngModel)]="tripMemo.name"/>
+                </div>
+            </div>
+            <div class="row top-buffer">
+                <div class="col-md-12">
+
+                    <div class="row top-buffer">
+                        <label class="control-label col-md-2">Organization:</label>
+                        <div class="col-md-10">
+                            <textarea type="text" class="form-control" maxlength="250" [(ngModel)]="tripMemo.organization"></textarea>
+                        </div>
+                    </div>
+                    <div class="row top-buffer">
+                        <label class="control-label col-md-2">Location:</label>
+                        <div class="col-md-10">
+                            <textarea type="text" class="form-control" maxlength="250" [(ngModel)]="tripMemo.location"></textarea>
+                        </div>
+                    </div>
+                    <div class="row top-buffer">
+                        <label class="control-label col-md-2">Attendees (NIC):</label>
+                        <div class="col-md-10" *ngIf="attendeesList.length > 0">
+                            <ng-select #attendeesSelect [initData]="tripMemo.attendees"
+                                       [multiple]="true"
+                                       [items]="attendeesList"
+                                       (data)="refreshAttendees($event)"
+                                       (selected)="selected($event)"
+                                       (removed)="removed($event)"
+                                       placeholder="No attendee selected">
+                            </ng-select>
+                        </div>
+                    </div>
+                    <div class="row top-buffer">
+                        <label class="control-label col-md-2">Status:</label>
+                        <div class="col-md-2">
+                            <select id="statusSelect" class="form-control" [(ngModel)]="tripMemo.status">
+                                <option value="NONE">---</option>
+                                <option value="APPROVED">Approved</option>
+                                <option value="REJECTED">Rejected</option>
+                                <option value="CONSIDERATION">Under Consideration</option>
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="row top-buffer withpadding">
+                <div class="col-md-12" style="background-color:#5bc0de;">
                     <div class="col-md-6">
-                        <div class="row" *ngFor="let newFile of uploadFiles" class="label label-info" style="display: table;">
-                            <span>{{newFile.name}}</span>
+                        <span>Description</span>
+                    </div>
+                    <div class="col-md-5">&nbsp;</div>
+                </div>
+            </div>
+
+            <div class="row top-buffer">
+                <div class="col-md-12">
+                    <textarea type="text" class="form-control" rows="10" [(ngModel)]="tripMemo.description"></textarea>
+                </div>
+            </div>
+            <br/>
+            <div class="row top-buffer">
+                <div class="col-md-6">
+                    <div class="jumbotron" style="padding-top: 5px; padding-bottom: 5px;">
+                        <div class="row">
+                            <label>ATTACHMENTS</label>
+                        </div>
+
+                        <div class="row">
+                            <label class="btn btn-primary col-md-2" for="attachmentFile">
+                                <input type="file" id="attachmentFile" (change)="onFileChange($event)" name="file" multiple style="display:none;"/>
+                                Add
+                            </label>
+                            <div class="col-md-6">
+                                <div class="row" *ngFor="let newFile of uploadFiles" class="label label-info" style="display: table;">
+                                    <span>{{newFile.name}}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row" *ngIf="tripMemo?.files?.length > 0">
+                            <div *ngFor="let attachment of tripMemo.files">
+                                <memo-attachment-downloader fileId="{{attachment.id}}"
+                                                            fileName="{{attachment?.fileName}}">
+
+                                </memo-attachment-downloader>
+
+                                <a (click)="deleteAttachment(attachment.id)">
+                                    <i class="glyphicon glyphicon-trash"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-
-                <div class="row" *ngIf="tripMemo?.files?.length > 0">
-                    <div *ngFor="let attachment of tripMemo.files">
-                        <memo-attachment-downloader fileId="{{attachment.id}}"
-                                                    fileName="{{attachment?.fileName}}">
-
-                        </memo-attachment-downloader>
-
-                        <a (click)="deleteAttachment(attachment.id)">
-                            <i class="glyphicon glyphicon-trash"></i>
-                        </a>
+                <div class="col-md-6">
+                    <label class="col-md-2">Author:</label>
+                    <div class="col-md-4">
+                        <input type="text" placeholder="Your name... " class="form-control col-md-2" id="auhtor" name="author" [(ngModel)]="tripMemo.author"/>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-6">
-            <label class="col-md-2">Author:</label>
-            <div class="col-md-4">
-                <input type="text" placeholder="Your name... " class="form-control col-md-2" id="auhtor" name="author" [(ngModel)]="tripMemo.author"/>
+            <div class="row top-buffer">
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-success pull-right" name="saveMemo" (click)="save()">Save</button>
+                </div>
             </div>
-        </div>
-    </div>
-    <div class="row top-buffer">
-        <div class="col-md-12">
-            <button type="submit" class="btn btn-success pull-right" name="saveMemo" (click)="save()">Save</button>
         </div>
     </div>
 </div>

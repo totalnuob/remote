@@ -10,4 +10,6 @@ import java.util.List;
  */
 public interface StrategyRepository extends PagingAndSortingRepository<Strategy, Long> {
     List<Strategy> findByGroupType(int groupType);
+
+    Strategy findByCode(String code);
 }

@@ -1,0 +1,2 @@
+INSERT INTO hf_manager_type(id, code, name_en, name_ru, name_kz) VALUES(1, 'FOF', 'Fund of Funds', '', '');
+INSERT INTO hf_manager_type(id, code, name_en, name_ru, name_kz) VALUES(2, 'MANAGER', 'Manager Fund', '', '');
