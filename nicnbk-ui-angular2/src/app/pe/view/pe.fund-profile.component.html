@@ -48,41 +48,43 @@
                         <h4>Manager Details</h4>
                         <table class=" col-md-4 table-striped table-condensed">
                             <tr>
-                                <td class="col-md-1">GP Name</td>
+                                <td class="col-md-1"><b>GP Name</b></td>
                                 <td class="col-md-3">
                                     <a [routerLink]="['/pe/firmProfile/', fund?.firm?.id]">{{fund?.firm?.firmName}}</a></td>
                             </tr>
                             <tr>
-                                <td class="col-md-1">AUM (mln)</td>
+                                <td class="col-md-1"><b>AUM (mln)</b></td>
                                 <td class="col-md-3">{{fund?.firm?.aum}}</td>
                             </tr>
                             <tr>
-                                <td class="col-md-1">Inception</td>
+                                <td class="col-md-1"><b>Inception</b></td>
                                 <td class="col-md-3">{{fund?.firm?.foundedYear}}
                                 </td>
-                            </tr>
-                            <tr>
-                                <td class="col-md-3">Inv team (ops team)</td>
-                                <td class="col-md-3">{{fund?.firm?.invTeamSize}}({{fund?.firm?.opsTeamSize}})</td>
                             </tr>
                         </table>
                         <table class=" col-md-4 table-striped table-condensed">
                             <tr>
-                                <td class="col-md-1">Strategy focus</td>
+                                <td class="col-md-3"><b>Inv team (ops team)</b></td>
+                                <td class="col-md-3">{{fund?.firm?.invTeamSize}}({{fund?.firm?.opsTeamSize}})</td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-1"><b>Strategy focus</b></td>
                                 <td class="col-md-3">{{firmStrategyList.toString()}}</td>
                             </tr>
-
+                        </table>
+                        <table class=" col-md-4 table-striped table-condensed">
                             <tr>
-                                <td class="col-md-1">Industry focus</td>
+                                <td class="col-md-1"><b>Industry focus</b></td>
                                 <td class="col-md-3">{{firmIndustryList.toString()}}</td>
                             </tr>
                             <tr>
-                                <td class="col-md-1">Geography focus</td>
+                                <td class="col-md-1"><b>Geography focus</b></td>
                                 <td class="col-md-3">{{firmGeographyList.toString()}}</td>
                             </tr>
                         </table>
                     </div>
-                    <br/>
+                    <hr>
+
                     <div class="row">
                         <div class="col-md-1">
                             <label><b>Fund name</b></label>
@@ -103,77 +105,77 @@
                     </div>
                     <div [hidden]="!visible">
                         <div class="row">
-                        <h4>Fund Details</h4>
-                        <table class=" col-md-4 table-striped table-condensed">
-                            <tr>
-                                <td class="col-md-1">Fund size</td>
-                                <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.fundSize"/></td>
-                            </tr>
-                            <tr>
-                                <td class="col-md-1">Target size / Hard cap</td>
-                                <td class="col-md-3">
-                                    <input style="width: 30%" type="text" [(ngModel)]="fund.targetSize"/><input style="width: 70%" type="text" [(ngModel)]="fund.targetHardCapComment" placeholder="Comment"/>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="col-md-1">GP commitment</td>
-                                <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.gpCommitment"/></td>
-                            </tr>
-                            <tr>
-                                <td class="col-md-1">Management fee</td>
-                                <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.managementFee"/></td>
-                            </tr>
-                            <tr>
-                                <td class="col-md-1">Management fee comment</td>
-                                <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.managementFeeComment"/></td>
-                            </tr>
-                        </table>
-                        <table class=" col-md-4 table-striped table-condensed">
-                            <tr>
-                                <td class="col-md-1">Carried interest</td>
-                                <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.carriedInterest"/></td>
-                            </tr>
-                            <tr>
-                                <td class="col-md-1">Hurdle rate</td>
-                                <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.hurdleRate"/></td>
-                            </tr>
-                            <tr>
-                                <td class="col-md-1">Industry</td>
-                                <td class="col-md-3" *ngIf="industryList?.length > 0">
-                                    <ng-select #industrySelect [initData]="fund.industry"
-                                               [multiple]="true"
-                                               [items]="industryList"
-                                               (data)="refreshIndustry($event)"
-                                               (selected)="selected($event)"
-                                               (removed)="removed($event)"
-                                               placeholder="No industry selected"></ng-select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="col-md-1">Strategy</td>
-                                <td class="col-md-3" *ngIf="strategyList?.length > 0">
-                                    <ng-select #strategySelect [initData]="fund.strategy"
-                                               [multiple]="true"
-                                               [items]="strategyList"
-                                               (data)="refreshStrategy($event)"
-                                               (selected)="selected($event)"
-                                               (removed)="removed($event)"
-                                               placeholder="No strategy selected"></ng-select>
-                            </tr>
-                            <tr>
-                                <td class="col-md-1">Geography</td>
-                                <td class="col-md-3" *ngIf="geographyList?.length > 0">
-                                    <ng-select #geographySelect [initData]="fund.geography"
-                                               [multiple]="true"
-                                               [items]="geographyList"
-                                               (data)="refreshGeography($event)"
-                                               (selected)="selected($event)"
-                                               (removed)="removed($event)"
-                                               placeholder="No geography selected"></ng-select>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
+                            <h4>Fund Details</h4>
+                            <table class=" col-md-4 table-striped table-condensed">
+                                <tr>
+                                    <td class="col-md-1">Fund size</td>
+                                    <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.fundSize"/></td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-1">Target size / Hard cap</td>
+                                    <td class="col-md-3">
+                                        <input style="width: 30%" type="text" [(ngModel)]="fund.targetSize"/><input style="width: 70%" type="text" [(ngModel)]="fund.targetHardCapComment" placeholder="Comment"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-1">GP commitment</td>
+                                    <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.gpCommitment"/></td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-1">Management fee</td>
+                                    <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.managementFee"/></td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-1">Management fee comment</td>
+                                    <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.managementFeeComment"/></td>
+                                </tr>
+                            </table>
+                            <table class=" col-md-4 table-striped table-condensed">
+                                <tr>
+                                    <td class="col-md-1">Carried interest</td>
+                                    <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.carriedInterest"/></td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-1">Hurdle rate</td>
+                                    <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.hurdleRate"/></td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-1">Industry</td>
+                                    <td class="col-md-3" *ngIf="industryList?.length > 0">
+                                        <ng-select #industrySelect [initData]="fund.industry"
+                                                   [multiple]="true"
+                                                   [items]="industryList"
+                                                   (data)="refreshIndustry($event)"
+                                                   (selected)="selected($event)"
+                                                   (removed)="removed($event)"
+                                                   placeholder="No industry selected"></ng-select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-1">Strategy</td>
+                                    <td class="col-md-3" *ngIf="strategyList?.length > 0">
+                                        <ng-select #strategySelect [initData]="fund.strategy"
+                                                   [multiple]="true"
+                                                   [items]="strategyList"
+                                                   (data)="refreshStrategy($event)"
+                                                   (selected)="selected($event)"
+                                                   (removed)="removed($event)"
+                                                   placeholder="No strategy selected"></ng-select>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-1">Geography</td>
+                                    <td class="col-md-3" *ngIf="geographyList?.length > 0">
+                                        <ng-select #geographySelect [initData]="fund.geography"
+                                                   [multiple]="true"
+                                                   [items]="geographyList"
+                                                   (data)="refreshGeography($event)"
+                                                   (selected)="selected($event)"
+                                                   (removed)="removed($event)"
+                                                   placeholder="No geography selected"></ng-select>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
                     </div>
 
                     <div [hidden]="visible">
@@ -220,11 +222,6 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-2" *ngIf="numOfRows != null">
-                                {{numOfRows}} rows uploaded
-                            </div>
-                        </div>
-                        <div class="row">
                             <div class="modal fade" id="grossCfInputModal" role="dialog">
                                 <div class="modal-dialog" style="overflow-y: scroll; max-height:85%; margin-top: 50px; margin-bottom: 50px;">
                                     <div class="modal-content">
@@ -260,179 +257,182 @@
                                 </div>
                             </div>
                         </div>
+                        <hr>
                         <div class="row">
-                        <h4>Key fund statistics</h4>
-                        <table class=" col-md-4 table-striped table-condensed">
-                            <tr>
-                                <td class="col-md-1">Number of investments</td>
-                                <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.numberOfInvestments"/></td>
-                            </tr>
-                            <tr>
-                                <td class="col-md-1">Invested amount</td>
-                                <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.investedAmount"/></td>
-                            </tr>
+                            <h4>Key fund statistics</h4>
+                            <table class=" col-md-4 table-striped table-condensed">
+                                <tr>
+                                    <td class="col-md-3"><b>Number of investments</b></td>
+                                    <td class="col-md-2">{{fund.numberOfInvestments}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-3"><b>Invested amount</b></td>
+                                    <td class="col-md-2">{{fund.investedAmount}}</td>
+                                </tr>
 
-                            <tr>
-                                <td class="col-md-1">Realized amount</td>
-                                <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.realized"/></td>
-                            </tr>
-                            <tr>
-                                <td class="col-md-1">Unrealized amount</td>
-                                <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.unrealized"/></td>
-                            </tr>
-                        </table>
-                        <table class=" col-md-4 table-striped table-condensed">
-                            <tr>
-                                <td class="col-md-1">DPI</td>
-                                <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.dpi"/></td>
-                            </tr>
-                            <tr>
-                                <td class="col-md-1">Gross TVPI</td>
-                                <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.grossTvpi"/></td>
-                            </tr>
-                            <tr>
-                                <td class="col-md-1">Gross IRR</td>
-                                <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.grossIrr"/></td>
-                            </tr>
-                            <tr>
-                                <td class="col-md-1">Net TVPI</td>
-                                <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.netTvpi"/></td>
-                            </tr>
-                            <tr>
-                                <td class="col-md-1">Net IRR</td>
-                                <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.netIrr"/></td>
-                            </tr>
-                        </table>
-                    </div>
+                                <tr>
+                                    <td class="col-md-3"><b>Realized amount</b></td>
+                                    <td class="col-md-2">{{fund.realized}}</td>
+                                </tr>
+                            </table>
+                            <table class=" col-md-4 table-striped table-condensed">
+                                <tr>
+                                    <td class="col-md-3"><b>Unrealized amount</b></td>
+                                    <td class="col-md-2">{{fund.unrealized}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-3"><b>DPI</b></td>
+                                    <td class="col-md-2">{{fund.dpi}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-3"><b>Gross TVPI</b></td>
+                                    <td class="col-md-2">{{fund.grossTvpi}}</td>
+                                </tr>
+                            </table>
+                            <table class=" col-md-4 table-striped table-condensed">
+                                <tr>
+                                    <td class="col-md-3"><b>Gross IRR</b></td>
+                                    <td class="col-md-2">{{fund.grossIrr}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-3"><b>Net TVPI</b></td>
+                                    <td class="col-md-2">{{fund.netTvpi}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-3"><b>Net IRR</b></td>
+                                    <td class="col-md-2">{{fund.netIrr}}</td>
+                                </tr>
+                            </table>
+                        </div>
                     </div>
 
                     <div [hidden]="!visible">
                         <div class="row">
-                        <h4>Fund strategy</h4>
-                        <table class=" col-md-4 table-striped table-condensed">
-                            <tr>
-                                <td class="col-md-1">Fund strategy comment</td>
-                                <td class="col-md-3"><textarea   spellcheck="false"  class="form-control" [(ngModel)]="fund.strategyComment"></textarea></td>
-                            </tr>
-                        </table>
-                    </div>
+                            <h4>Fund strategy</h4>
+                            <table class=" col-md-4 table-striped table-condensed">
+                                <tr>
+                                    <td class="col-md-1">Fund strategy comment</td>
+                                    <td class="col-md-3"><textarea   spellcheck="false"  class="form-control" [(ngModel)]="fund.strategyComment"></textarea></td>
+                                </tr>
+                            </table>
+                        </div>
                     </div>
                     <div [hidden]="!visible">
                         <div class="row">
-                        <h4>Descriptive data</h4>
-                        <table class=" col-md-4 table-striped table-condensed">
-                            <tr>
-                                <td class="col-md-1">Investment period</td>
-                                <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.investmentPeriod"/></td>
-                            </tr>
-                            <tr>
-                                <td class="col-md-1">Fund term</td>
-                                <td class="col-md-3">
-                                    <input style="width: 30%" type="text" [(ngModel)]="fund.fundTerm"/><input style="width: 70%" type="text" [(ngModel)]="fund.fundTermComment" placeholder="Comment"/>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="col-md-1">Target inv. size range</td>
-                                <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.targetInvSizeRange"/></td>
-                            </tr>
-                        </table>
-                        <table class=" col-md-4 table-striped table-condensed">
-                            <tr>
-                                <td class="col-md-1">Target EV range</td>
-                                <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.targetEvRange"/></td>
-                            </tr>
-                            <tr>
-                                <td class="col-md-1">Target number of inv.</td>
-                                <td class="col-md-3">
-                                    <input style="width: 30%" type="text" [(ngModel)]="fund.targetNumberOfInv1"/><input style="width: 70%" type="text" [(ngModel)]="fund.targetNumberOfInv2"/>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="col-md-1">Expected annual number of inv.</td>
-                                <td class="col-md-3">
-                                    <input style="width: 30%" type="text" [(ngModel)]="fund.expAnnualNumberOfInv1"/><input style="width: 70%" type="text" [(ngModel)]="fund.expAnnualNumberOfInv2"/>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
+                            <h4>Descriptive data</h4>
+                            <table class=" col-md-4 table-striped table-condensed">
+                                <tr>
+                                    <td class="col-md-1">Investment period</td>
+                                    <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.investmentPeriod"/></td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-1">Fund term</td>
+                                    <td class="col-md-3">
+                                        <input style="width: 30%" type="text" [(ngModel)]="fund.fundTerm"/><input style="width: 70%" type="text" [(ngModel)]="fund.fundTermComment" placeholder="Comment"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-1">Target inv. size range</td>
+                                    <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.targetInvSizeRange"/></td>
+                                </tr>
+                            </table>
+                            <table class=" col-md-4 table-striped table-condensed">
+                                <tr>
+                                    <td class="col-md-1">Target EV range</td>
+                                    <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.targetEvRange"/></td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-1">Target number of inv.</td>
+                                    <td class="col-md-3">
+                                        <input style="width: 30%" type="text" [(ngModel)]="fund.targetNumberOfInv1"/><input style="width: 70%" type="text" [(ngModel)]="fund.targetNumberOfInv2"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-1">Expected annual number of inv.</td>
+                                    <td class="col-md-3">
+                                        <input style="width: 30%" type="text" [(ngModel)]="fund.expAnnualNumberOfInv1"/><input style="width: 70%" type="text" [(ngModel)]="fund.expAnnualNumberOfInv2"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
 
                         <div class="row">
-                        <h4>Targeted closing information</h4>
-                        <!--<div class="col-md-3">-->
+                            <h4>Targeted closing information</h4>
+                            <!--<div class="col-md-3">-->
                             <!--<div class='input-group date col-md-2' id='firstClose' style="width: 100%">-->
-                                <!--<input type='text' class="form-control" id="firstCloseVal" [(ngModel)]="fund.firstClose"/>-->
+                            <!--<input type='text' class="form-control" id="firstCloseVal" [(ngModel)]="fund.firstClose"/>-->
                             <!--<span class="input-group-addon">-->
-                                <!--<span class="glyphicon glyphicon-calendar">Start date</span>-->
+                            <!--<span class="glyphicon glyphicon-calendar">Start date</span>-->
                             <!--</span>-->
                             <!--</div>-->
-                        <!--</div>-->
-                        <!--<div class="col-md-3">-->
+                            <!--</div>-->
+                            <!--<div class="col-md-3">-->
                             <!--<div class='input-group date col-md-2' id='finalClose' style="width: 100%">-->
-                                <!--<input type='text' class="form-control" id="finalCloseVal" [(ngModel)]="fund.finalClose"/>-->
+                            <!--<input type='text' class="form-control" id="finalCloseVal" [(ngModel)]="fund.finalClose"/>-->
                             <!--<span class="input-group-addon">-->
-                                <!--<span class="glyphicon glyphicon-calendar">End date</span>-->
+                            <!--<span class="glyphicon glyphicon-calendar">End date</span>-->
                             <!--</span>-->
                             <!--</div>-->
-                        <!--</div>-->
-                        <table class="col-md-4 table-striped table-condensed">
-                            <tr>
-                                <td class="col-md-1">First close</td>
-                                <td class="col-md-3"><input type='text' class="form-control" id="firstClose" [(ngModel)]="fund.firstClose"/></td>
-                            </tr>
-                        </table>
-                        <table class="col-md-4 table-striped table-condensed">
-                            <tr>
-                                <td class="col-md-1">Final close</td>
-                                <td class="col-md-3"><input type='text' class="form-control" id="finalClose" [(ngModel)]="fund.finalClose"/></td>
-                            </tr>
-                        </table>
-                    </div>
+                            <!--</div>-->
+                            <table class="col-md-4 table-striped table-condensed">
+                                <tr>
+                                    <td class="col-md-1">First close</td>
+                                    <td class="col-md-3"><input type='text' class="form-control" id="firstClose" [(ngModel)]="fund.firstClose"/></td>
+                                </tr>
+                            </table>
+                            <table class="col-md-4 table-striped table-condensed">
+                                <tr>
+                                    <td class="col-md-1">Final close</td>
+                                    <td class="col-md-3"><input type='text' class="form-control" id="finalClose" [(ngModel)]="fund.finalClose"/></td>
+                                </tr>
+                            </table>
+                        </div>
                         <div class="row">
-                        <h4>Observations</h4>
-                        <h5>General Partner</h5>
-                        <table class=" col-md-4 table-striped table-condensed">
-                            <th>Merits</th>
-                            <tr>
-                                <td class="col-md-3"><textarea   spellcheck="false"  class="form-control" [(ngModel)]="fund.generalPartnerMerits"></textarea></td>
-                            </tr>
-                        </table>
-                        <table class=" col-md-4 table-striped table-condensed">
-                            <th>Risks</th>
-                            <tr>
-                                <td class="col-md-3"><textarea   spellcheck="false"  class="form-control" [(ngModel)]="fund.generalPartnerRisks"></textarea></td>
-                            </tr>
-                        </table>
-                    </div>
+                            <h4>Observations</h4>
+                            <h5>General Partner</h5>
+                            <table class=" col-md-4 table-striped table-condensed">
+                                <th>Merits</th>
+                                <tr>
+                                    <td class="col-md-3"><textarea   spellcheck="false"  class="form-control" [(ngModel)]="fund.generalPartnerMerits"></textarea></td>
+                                </tr>
+                            </table>
+                            <table class=" col-md-4 table-striped table-condensed">
+                                <th>Risks</th>
+                                <tr>
+                                    <td class="col-md-3"><textarea   spellcheck="false"  class="form-control" [(ngModel)]="fund.generalPartnerRisks"></textarea></td>
+                                </tr>
+                            </table>
+                        </div>
                         <div class="row">
-                        <h5>Strategy/Structure</h5>
-                        <table class=" col-md-4 table-striped table-condensed">
-                            <th>Merits</th>
-                            <tr>
-                                <td class="col-md-3"><textarea   spellcheck="false"  class="form-control" [(ngModel)]="fund.strategyStructureMerits"></textarea></td>
-                            </tr>
-                        </table>
-                        <table class=" col-md-4 table-striped table-condensed">
-                            <th>Risks</th>
-                            <tr>
-                                <td class="col-md-3"><textarea   spellcheck="false"  class="form-control" [(ngModel)]="fund.strategyStructureRisks"></textarea></td>
-                            </tr>
-                        </table>
-                    </div>
+                            <h5>Strategy/Structure</h5>
+                            <table class=" col-md-4 table-striped table-condensed">
+                                <th>Merits</th>
+                                <tr>
+                                    <td class="col-md-3"><textarea   spellcheck="false"  class="form-control" [(ngModel)]="fund.strategyStructureMerits"></textarea></td>
+                                </tr>
+                            </table>
+                            <table class=" col-md-4 table-striped table-condensed">
+                                <th>Risks</th>
+                                <tr>
+                                    <td class="col-md-3"><textarea   spellcheck="false"  class="form-control" [(ngModel)]="fund.strategyStructureRisks"></textarea></td>
+                                </tr>
+                            </table>
+                        </div>
                         <div class="row">
-                        <h5>Performance</h5>
-                        <table class=" col-md-4 table-striped table-condensed">
-                            <th>Merits</th>
-                            <tr>
-                                <td class="col-md-3"><textarea   spellcheck="false"  class="form-control" [(ngModel)]="fund.performanceMerits"></textarea></td>
-                            </tr>
-                        </table>
-                        <table class=" col-md-4 table-striped table-condensed">
-                            <th>Risks</th>
-                            <tr>
-                                <td class="col-md-3"><textarea   spellcheck="false"  class="form-control" [(ngModel)]="fund.performanceRisks"></textarea></td>
-                            </tr>
-                        </table>
-                    </div>
+                            <h5>Performance</h5>
+                            <table class=" col-md-4 table-striped table-condensed">
+                                <th>Merits</th>
+                                <tr>
+                                    <td class="col-md-3"><textarea   spellcheck="false"  class="form-control" [(ngModel)]="fund.performanceMerits"></textarea></td>
+                                </tr>
+                            </table>
+                            <table class=" col-md-4 table-striped table-condensed">
+                                <th>Risks</th>
+                                <tr>
+                                    <td class="col-md-3"><textarea   spellcheck="false"  class="form-control" [(ngModel)]="fund.performanceRisks"></textarea></td>
+                                </tr>
+                            </table>
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col-md-12">
@@ -471,27 +471,25 @@
                             <th>Total Value</th>
                             <th>Multiple</th>
                             <th>Gross IRR</th>
-                            <th>Net IRR</th>
                         </tr>
                         <tr *ngFor="let performance of fund.fundCompanyPerformance">
-                            <td><input style="width: 100%" type="text" [(ngModel)]="performance.companyName" /></td>
-                            <td><input style="width: 100%" type="text" [(ngModel)]="performance.invested"/></td>
-                            <td><input style="width: 100%" type="text" [(ngModel)]="performance.realized"/></td>
-                            <td><input style="width: 100%" type="text" [(ngModel)]="performance.unrealized"/></td>
-                            <td><input style="width: 100%" type="text" [(ngModel)]="performance.totalValue"/></td>
-                            <td><input style="width: 100%" type="text" [(ngModel)]="performance.multiple"/></td>
-                            <td><input style="width: 100%" type="text" [(ngModel)]="performance.grossIrr"/></td>
-                            <td><input style="width: 100%" type="text" [(ngModel)]="performance.netIrr"/></td>
+                            <td>{{performance.companyName}}</td>
+                            <td><span *ngIf="performance.invested != 0">{{performance.invested}}</span><span *ngIf="performance.invested == 0">-</span></td>
+                            <td><span *ngIf="performance.realized != 0">{{performance.realized}}</span><span *ngIf="performance.realized == 0">-</span></td>
+                            <td><span *ngIf="performance.unrealized != 0">{{performance.unrealized}}</span><span *ngIf="performance.unrealized == 0">-</span></td>
+                            <td><span *ngIf="performance.totalValue != 0">{{performance.totalValue}}</span><span *ngIf="performance.totalValue == 0">-</span></td>
+                            <td><span *ngIf="performance.multiple != 0">{{performance.multiple}}x</span><span *ngIf="performance.multiple == 0">-</span></td>
+                            <td>{{performance.grossIrr}}</td>
                         </tr>
                         <!--<tr>-->
-                            <!--<td>ACR Logistics</td>-->
-                            <!--<td>46 500 000</td>-->
-                            <!--<td>540 523 074</td>-->
-                            <!--<td>-</td>-->
-                            <!--<td>540 523 074</td>-->
-                            <!--<td>11.6x</td>-->
-                            <!--<td>284.1%</td>-->
-                            <!--<td>-</td>-->
+                        <!--<td>ACR Logistics</td>-->
+                        <!--<td>46 500 000</td>-->
+                        <!--<td>540 523 074</td>-->
+                        <!--<td>-</td>-->
+                        <!--<td>540 523 074</td>-->
+                        <!--<td>11.6x</td>-->
+                        <!--<td>284.1%</td>-->
+                        <!--<td>-</td>-->
                         <!--</tr>-->
                     </table>
                 </div>
