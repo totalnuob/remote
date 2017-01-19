@@ -11,9 +11,8 @@ public class PEFundCompaniesPerformanceDto {
     private double totalValue;
     private double multiple;
     private double grossIrr;
-    private double netIrr;
 
-    public PEFundCompaniesPerformanceDto(String test, double i, double i1, double i2, double i3, double i4, double i5, double i6) {
+    public PEFundCompaniesPerformanceDto(String test, double i, double i1, double i2, double i3, double i4, double i5) {
         companyName = test;
         invested = i;
         realized = i1;
@@ -21,7 +20,6 @@ public class PEFundCompaniesPerformanceDto {
         totalValue = i3;
         multiple = i4;
         grossIrr = i5;
-        netIrr = i6;
     }
 
     public PEFundCompaniesPerformanceDto(){
@@ -84,12 +82,4 @@ public class PEFundCompaniesPerformanceDto {
         this.grossIrr = grossIrr;
     }
 
-    public double getNetIrr() {
-        return netIrr;
-    }
-
-    public void setNetIrr(double netIrr) {
-        this.netIrr = netIrr;
-    }
 }
-

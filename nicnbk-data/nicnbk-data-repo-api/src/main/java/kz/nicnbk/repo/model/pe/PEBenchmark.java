@@ -2,9 +2,7 @@ package kz.nicnbk.repo.model.pe;
 
 import kz.nicnbk.repo.model.base.CreateUpdateBaseEntity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -125,4 +123,3 @@ public class PEBenchmark extends CreateUpdateBaseEntity{
         this.tvpi = tvpi;
     }
 }
-

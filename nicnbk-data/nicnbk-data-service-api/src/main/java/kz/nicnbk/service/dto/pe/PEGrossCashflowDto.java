@@ -9,7 +9,7 @@ import java.util.Date;
 /**
  * Created by zhambyl on 05-Jan-17.
  */
-public class PEGrossCashflowDto extends BaseEntityDto<PEGrossCashflow> {
+public class PEGrossCashflowDto extends BaseEntityDto<PEGrossCashflow> implements Comparable<PEGrossCashflowDto>{
     private String companyName;
 
     @DateTimeFormat(pattern="dd-MM-yyyy")
@@ -85,5 +85,9 @@ public class PEGrossCashflowDto extends BaseEntityDto<PEGrossCashflow> {
     public void setFund(PEFundDto fund) {
         this.fund = fund;
     }
-}
 
+    @Override
+    public int compareTo(PEGrossCashflowDto dto) {
+        return this.date.compareTo(dto.getDate());
+    }
+}

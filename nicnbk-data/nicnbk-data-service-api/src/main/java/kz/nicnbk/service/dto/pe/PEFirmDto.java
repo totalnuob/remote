@@ -15,7 +15,7 @@ public class PEFirmDto extends HistoryBaseEntityDto<PEFirm> {
     private float aum;
     private int invTeamSize;
     private int opsTeamSize;
-//    private Set<PEFirm> peers;
+    //    private Set<PEFirm> peers;
     private Set<BaseDictionaryDto> strategy;
     private Set<BaseDictionaryDto> industryFocus;
     private Set<BaseDictionaryDto> geographyFocus;

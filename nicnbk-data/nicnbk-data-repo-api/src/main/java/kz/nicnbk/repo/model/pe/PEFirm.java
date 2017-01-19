@@ -19,7 +19,7 @@ public class PEFirm extends CreateUpdateBaseEntity{
     private float aum;
     private int invTeamSize;
     private int opsTeamSize;
-//    private Set<PEFirm> peers;
+    //    private Set<PEFirm> peers;
     private Set<Strategy> strategy;
     private Set<PEIndustry> industryFocus;
     private Set<Geography> geographyFocus;

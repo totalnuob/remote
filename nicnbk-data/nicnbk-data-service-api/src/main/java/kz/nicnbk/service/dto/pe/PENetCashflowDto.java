@@ -9,7 +9,7 @@ import java.util.Date;
 /**
  * Created by zhambyl on 12-Jan-17.
  */
-public class PENetCashflowDto extends BaseEntityDto<PENetCashflow> {
+public class PENetCashflowDto extends BaseEntityDto<PENetCashflow> implements Comparable<PENetCashflowDto>{
 
     private String fundName;
 
@@ -100,5 +100,10 @@ public class PENetCashflowDto extends BaseEntityDto<PENetCashflow> {
 
     public void setFund(PEFundDto fund) {
         this.fund = fund;
+    }
+
+    @Override
+    public int compareTo(PENetCashflowDto dto) {
+        return this.transactionDate.compareTo(dto.getTransactionDate());
     }
 }

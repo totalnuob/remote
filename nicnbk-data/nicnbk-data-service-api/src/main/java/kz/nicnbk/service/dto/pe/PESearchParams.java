@@ -1,7 +1,6 @@
 package kz.nicnbk.service.dto.pe;
 
 import kz.nicnbk.common.service.model.BaseParams;
-
 import java.text.SimpleDateFormat;
 
 /**

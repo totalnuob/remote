@@ -48,9 +48,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     busy: Subscription;
 
     uploadedGrossCf;
-    numOfRows1;
     uploadedNetCf;
-    numOfRows2;
 
     constructor(
         private lookupService: LookupService,
@@ -323,7 +321,6 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                 this.fund.grossCashflow.push({companyName: row[0], date: row[1], invested: row[2], realized: row[3], unrealized: row[4], grossCF: row[5]});
             }
         }
-        this.numOfRows1 = rows.length;
         $('#tabs li:eq(2) a').tab('show');
     }
 
@@ -337,7 +334,6 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                 this.fund.netCashflow.push({fundName: row[0], currency: row[1], transactionDate: row[2], drawn: row[3], distributed: row[4], nav: row[5], netCF: row[6], typeOfFundTransaction: row[7]});
             }
         }
-        this.numOfRows2 = rows.length;
         $('#tabs a:last').tab('show');
     }
 }
