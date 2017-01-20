@@ -45,11 +45,11 @@ public class PEFirmServiceImpl implements PEFirmService {
     @Override
     public PEPagedSearchResult findByName(PESearchParams searchParams) {
 
-        int page = 0;
+        int page = searchParams != null && searchParams.getPage() > 0 ? searchParams.getPage() - 1 : 0;
         int pageSize = searchParams != null && searchParams.getPageSize() > 0 ? searchParams.getPageSize() : DEFAULT_PAGE_SIZE;
-
         Page<PEFirm> entityPage = this.repository.findByName(searchParams.getName(),
-                new PageRequest(searchParams.getPage(), searchParams.getPageSize(), new Sort(Sort.Direction.DESC, "id")));
+                //new PageRequest(searchParams.getPage(), searchParams.getPageSize(), new Sort(Sort.Direction.DESC, "id")));
+                new PageRequest(page, pageSize, new Sort(Sort.Direction.DESC, "id")));
 
         PEPagedSearchResult result = new PEPagedSearchResult();
 

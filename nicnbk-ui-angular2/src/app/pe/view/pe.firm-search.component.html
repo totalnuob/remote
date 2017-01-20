@@ -58,65 +58,64 @@
             </div>
         </div>
     </div>
-    <div style="position: relative">
-        <div [ngBusy]="busy" class="table table-hover">
-            <div>
-                <label>Total found: <span>{{searchResult?.totalElements > 0 ?  searchResult?.totalElements : 0}}</span></label>
-            </div>
-            <div class="row pull-right">
-                <ul class="pagination" *ngIf="searchResult?.showPageFrom > 0">
-                    <li><a *ngIf="searchResult?.showPageFrom > 1" (click)="search(searchResult.showPageFrom - 1)">&laquo;</a></li>
-                    <li *ngFor="let i of range(searchResult.showPageFrom, searchResult.showPageTo)" [class.active]="i == searchResult.currentPage">
-                        <a (click)="search(i - 1)">{{i}}</a>
-                    </li>
-                    <li><a *ngIf="searchResult.showPageTo < searchResult.totalPages" (click)="search(searchResult.showPageTo + 1)">&raquo;</a></li>
-                </ul>
-            </div>
-            <table class="table table-hover">
-                <thead>
-                <tr>
-                    <th>&nbsp;</th>
-                    <th>MANAGER</th>
-                    <!--<th>FUND</th>-->
-                    <th>AUM (mln)</th>
-                    <th>FOUNDED YEAR</th>
-                    <th>LOCATION</th>
-                    <th>UPDATED</th>
-                    <th>ACTIONS</th>
-                </tr>
-                </thead>
+    <div>
+        <label>Total found: <span>{{searchResult?.totalElements > 0 ?  searchResult?.totalElements : 0}}</span></label>
+    </div>
 
-                <tbody>
+    <div class="row withpadding" style="position: relative; min-height: 80px;">
+        <div class="row pull-right">
+            <ul class="pagination" *ngIf="searchResult?.showPageFrom > 0">
+                <li><a *ngIf="searchResult?.showPageFrom > 1" (click)="search(searchResult.showPageFrom - 1)">&laquo;</a></li>
+                <li *ngFor="let i of range(searchResult.showPageFrom, searchResult.showPageTo)" [class.active]="i == searchResult.currentPage">
+                    <a (click)="search(i)">{{i}}</a>
+                </li>
+                <li><a *ngIf="searchResult.showPageTo < searchResult.totalPages" (click)="search(searchResult.showPageTo + 1)">&raquo;</a></li>
+            </ul>
+        </div>
+        <table [ngBusy]="busy" class="table table-hover">
+            <thead>
+            <tr>
+                <th>&nbsp;</th>
+                <th>MANAGER</th>
+                <!--<th>FUND</th>-->
+                <th>AUM (mln)</th>
+                <th>FOUNDED YEAR</th>
+                <th>LOCATION</th>
+                <th>UPDATED</th>
+                <th>ACTIONS</th>
+            </tr>
+            </thead>
 
-                <tr *ngFor = "let firm of foundEntities">
-                    <td width="5%"></td>
-                    <td width="15%"><a [routerLink]="['/pe/firmProfile/', firm.id]">{{firm.firmName}}</a></td>
-                    <!--<td width="30%">-->
-                    <!--&lt;!&ndash;<a [routerLink]="['/hf/managerProfile/', fund.manager.id]">{{fund.manager.name}}</a>&ndash;&gt;-->
-                    <!--</td>-->
-                    <!--<td width="10%" th:text="${memoItem.meetingDate}"></td>-->
-                    <td width="7%">{{firm.aum}}</td>
-                    <td width="7%">{{firm.foundedYear}}</td>
-                    <td width="15%">{{firm.locations}}</td>
-                    <td width="7%">{{firm.creationDate}}</td>
-                    <td width="5%">
-                        <!--<a><i class="glyphicon glyphicon-search"></i></a>-->
-                        <a><i class="glyphicon glyphicon-file" [routerLink]="['/pe/fundReport/', firm.id]"></i></a>
-                    </td>
-                </tr>
+            <tbody>
+
+            <tr *ngFor = "let firm of foundEntities">
+                <td width="5%"></td>
+                <td width="15%"><a [routerLink]="['/pe/firmProfile/', firm.id]">{{firm.firmName}}</a></td>
+                <!--<td width="30%">-->
+                <!--&lt;!&ndash;<a [routerLink]="['/hf/managerProfile/', fund.manager.id]">{{fund.manager.name}}</a>&ndash;&gt;-->
+                <!--</td>-->
+                <!--<td width="10%" th:text="${memoItem.meetingDate}"></td>-->
+                <td width="7%">{{firm.aum}}</td>
+                <td width="7%">{{firm.foundedYear}}</td>
+                <td width="15%">{{firm.locations}}</td>
+                <td width="7%">{{firm.creationDate}}</td>
+                <td width="5%">
+                    <!--<a><i class="glyphicon glyphicon-search"></i></a>-->
+                    <a><i class="glyphicon glyphicon-file" [routerLink]="['/pe/fundReport/', firm.id]"></i></a>
+                </td>
+            </tr>
 
 
-                </tbody>
-            </table>
-            <div class="row pull-right">
-                <ul class="pagination" *ngIf="searchResult?.showPageFrom > 0">
-                    <li><a *ngIf="searchResult?.showPageFrom > 1" (click)="search(searchResult.showPageFrom - 1)">&laquo;</a></li>
-                    <li *ngFor="let i of range(searchResult.showPageFrom, searchResult.showPageTo)" [class.active]="i == searchResult.currentPage">
-                        <a (click)="search(i - 1)">{{i}}</a>
-                    </li>
-                    <li><a *ngIf="searchResult.showPageTo < searchResult.totalPages" (click)="search(searchResult.showPageTo + 1)">&raquo;</a></li>
-                </ul>
-            </div>
+            </tbody>
+        </table>
+        <div class="row pull-right">
+            <ul class="pagination" *ngIf="searchResult?.showPageFrom > 0">
+                <li><a *ngIf="searchResult?.showPageFrom > 1" (click)="search(searchResult.showPageFrom - 1)">&laquo;</a></li>
+                <li *ngFor="let i of range(searchResult.showPageFrom, searchResult.showPageTo)" [class.active]="i == searchResult.currentPage">
+                    <a (click)="search(i)">{{i}}</a>
+                </li>
+                <li><a *ngIf="searchResult.showPageTo < searchResult.totalPages" (click)="search(searchResult.showPageTo + 1)">&raquo;</a></li>
+            </ul>
         </div>
     </div>
 </div>
