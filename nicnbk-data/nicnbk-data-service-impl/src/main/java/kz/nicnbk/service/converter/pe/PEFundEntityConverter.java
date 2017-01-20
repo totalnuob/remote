@@ -49,7 +49,7 @@ public class PEFundEntityConverter extends BaseDozerEntityConverter<PEFund, PEFu
                 industries.add(PEIndustry);
             }
         }
-        entity.setPEIndustry(industries);
+        entity.setIndustry(industries);
 
         // geographies
         Set<Geography> geographies = new HashSet<>();

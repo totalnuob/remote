@@ -58,7 +58,7 @@ export class PEFirmProfileComponent extends CommonFormViewComponent {
 
         // TODO: wait/sync on lookup loading
         // TODO: sync on subscribe results
-        this.waitSleep(700);
+        //this.waitSleep(700);
 
         //parse params and load data
         this.sub = this.route

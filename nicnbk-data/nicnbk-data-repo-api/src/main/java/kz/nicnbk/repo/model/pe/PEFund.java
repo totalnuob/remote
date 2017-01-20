@@ -31,7 +31,7 @@ public class PEFund extends CreateUpdateBaseEntity {
     private String managementFeeComment;
     private double carriedInterest;
     private double hurdleRate;
-    private Set<PEIndustry> PEIndustry;
+    private Set<PEIndustry> industry;
     private Set<Strategy> strategy;
     private String strategyComment;
     private Set<Geography> geography;
@@ -197,12 +197,12 @@ public class PEFund extends CreateUpdateBaseEntity {
             joinColumns = @JoinColumn(name = "fund_id", referencedColumnName = "ID"),
             inverseJoinColumns = @JoinColumn(name = "pe_industry_id", referencedColumnName = "ID")
     )
-    public Set<PEIndustry> getPEIndustry() {
-        return PEIndustry;
+    public Set<PEIndustry> getIndustry() {
+        return industry;
     }
 
-    public void setPEIndustry(Set<PEIndustry> PEIndustry) {
-        this.PEIndustry = PEIndustry;
+    public void setIndustry(Set<PEIndustry> industry) {
+        this.industry = industry;
     }
 
     @ManyToMany(fetch = FetchType.LAZY)
