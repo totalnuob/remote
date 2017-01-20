@@ -88,7 +88,8 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
                                     if(this.fund.strategyBreakdownList == null){
                                         this.fund.strategyBreakdownList = [];
                                     }else{
-                                        //this.drawGraph();
+                                        this.drawGraph();
+                                        //this.drawSubstrategiesChart();
                                     }
                                     if(this.fund.investorBaseList == null){
                                         this.fund.investorBaseList = [];
@@ -129,7 +130,9 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
     }
 
     drawGraph(){
-        this.drawSubstrategiesChart();
+        if(this.fund) {
+            this.drawSubstrategiesChart();
+        }
     }
 
 
@@ -362,14 +365,14 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
     loadSubstrategies(){
 
         //substrategy
-        this.lookupService.getHFSubStrategies(this.fund.strategy)
+        this.busy = this.lookupService.getHFSubStrategies(this.fund.strategy)
             .subscribe(
                 data => {
                     //data.forEach(element => {
                     //    this.strategyLookup.push({ id: element.code, value: element.nameEn});
                     //});
                     this.substrategyLookup = data;
-                    this.drawGraph();
+                    //this.drawGraph();
                 },
                 error =>  {this.errorMessage = <any>error}
             );

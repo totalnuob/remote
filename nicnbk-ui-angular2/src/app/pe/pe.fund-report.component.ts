@@ -66,17 +66,18 @@ export class PEFundReportComponent extends GoogleChartComponent {
                             }
                             //error => this.errorMessage = "Error loading firm profile"
                         );
-                    this.fundService.search(this.searchParams)
+                    this.busy = this.fundService.search(this.searchParams)
                         .subscribe(
                             searchResult => {
                                 this.fundsList = searchResult;
-                                for(var i = 0; i <= this.fundsList.length; i++){
+                                for(var i = 0; i < this.fundsList.length; i++){
                                     if(this.fundsList[i].status == 'Open'){
                                         this.openFund = this.fundsList[i];
                                         break;
                                     }
                                 }
                                 this.preselectFundStrategyGeographyIndustry();
+                                this.drawGraph();
                             }
                             //error => this.errorMessage = "Failed to load GP's funds"
                         );
@@ -139,35 +140,37 @@ export class PEFundReportComponent extends GoogleChartComponent {
         //    ['Fund III', 1.58, 1.11],
         //]);
 
-        //console.log(this.openFund);
-        var irrData = new google.visualization.DataTable();
-        irrData.addColumn('string', 'Fund');
-        irrData.addColumn('number', this.openFund.firm.firmName);
-        irrData.addColumn('number', 'CA');
 
-        for(var i = 0; i < this.fundsList.length; i++) {
-            if(this.fundsList[i].status == 'Closed'){
-                if(this.fundsList[i].netIrr != NaN) {
-                    irrData.addRow([this.fundsList[i].fundName, this.fundsList[i].netIrr, 30]);
-                } else {
-                    irrData.addRow([this.fundsList[i].fundName, 30, 30]);
+        if(this.fundsList && this.fundsList.length > 0){
+            var irrData = new google.visualization.DataTable();
+            irrData.addColumn('string', 'Fund');
+            irrData.addColumn('number', this.openFund.firm.firmName);
+            irrData.addColumn('number', 'CA');
+
+            for(var i = 0; i < this.fundsList.length; i++) {
+                if(this.fundsList[i].status == 'Closed'){
+                    if(this.fundsList[i].netIrr != NaN) {
+                        irrData.addRow([this.fundsList[i].fundName, this.fundsList[i].netIrr, 30]);
+                    } else {
+                        irrData.addRow([this.fundsList[i].fundName, 30, 30]);
+                    }
                 }
             }
-        }
 
-        var tvpiData = new google.visualization.DataTable();
-        tvpiData.addColumn('string', 'Fund');
-        tvpiData.addColumn('number', this.openFund.firm.firmName);
-        tvpiData.addColumn('number', 'CA');
+            var tvpiData = new google.visualization.DataTable();
+            tvpiData.addColumn('string', 'Fund');
+            tvpiData.addColumn('number', this.openFund.firm.firmName);
+            tvpiData.addColumn('number', 'CA');
 
-        for(var i = 0; i < this.fundsList.length; i++) {
-            if(this.fundsList[i].status == 'Closed'){
-                tvpiData.addRow([this.fundsList[i].fundName, this.fundsList[i].netTvpi, 1]);
+            for(var i = 0; i < this.fundsList.length; i++) {
+                if(this.fundsList[i].status == 'Closed'){
+                    tvpiData.addRow([this.fundsList[i].fundName, this.fundsList[i].netTvpi, 1]);
+                }
             }
-        }
 
-        this.drawBarChart('bar-chart-1', irrData, 'NET IRR');
-        this.drawBarChart('bar-chart-2', tvpiData, 'NET TVPI');
+            this.drawBarChart('bar-chart-1', irrData, 'NET IRR');
+            this.drawBarChart('bar-chart-2', tvpiData, 'NET TVPI');
+        }
     }
 
     drawBarChart(id, data, title){
