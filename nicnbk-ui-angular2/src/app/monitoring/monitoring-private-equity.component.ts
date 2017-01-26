@@ -362,7 +362,9 @@ export class MonitoringPrivateEquityComponent extends GoogleChartComponent {
         ["Jul-16",28882486],
         ["Aug-16",36981406],
         ["Sep-16",46115007],
-        ["Oct-16",57581011]
+        ["Oct-16",57581011],
+        ["Nov-16",68373409],
+        ["Dec-16",72629726],
     ];
 
     private commitments = [
@@ -378,15 +380,17 @@ export class MonitoringPrivateEquityComponent extends GoogleChartComponent {
             ["Jul-16",161849170],
             ["Aug-16",188941388],
             ["Sep-16",188941388],
-            ["Oct-16",188186946]
+            ["Oct-16",188186946],
+            ["Nov-16",268093661],
+            ["Dec-16",268093661],
     ];
 
     private irr = [
         ["Dec-15", -0.061680851],
         ["Mar-16", 0.048384799],
-        ["Jun-16", 0.057800000],
-        ["Sep-16", 0.103491026],
-        ["Oct-16", 0.114600000]
+        ["Jun-16", 0.106167063],
+        ["Sep-16", 0.169112596],
+        ["Dec-16", 0.026016088]
     ];
 
     private holdingsA = [
@@ -477,7 +481,39 @@ export class MonitoringPrivateEquityComponent extends GoogleChartComponent {
         ["31.10.2016",["Capitala Private Credit Fund V, L.P.","USD","North America","Mezzanine",4304087,2016,28700000,859697.38,0,865297,859697,-5600,-0.006471766,0.999999558]],
         ["31.10.2016",["Cridiron Capital Fund III, L.P.","USD","North America","Corporate Finance/Buyout",10000000,2015,785000000,0,0,0,0,0,0,0]],
         ["31.10.2016",["Jimmy John's LLC","USD","North America","Co/Direct Investment",7500000,2016,100000000,7500000,0,7500000,7500000,0,0,1]],
-        ["31.10.2016",["Total Tranche A","","","",0,0,0,49504662.58,3505067.35,45858241.42,48157199,2298957.58,0.05013183,0]]
+        ["31.10.2016",["Total Tranche A","","","",0,0,0,49504662.58,3505067.35,45858241.42,48157199,2298957.58,0.05013183,0]],
+
+        ["30.11.2016",["Bridgepoint Europe IV, L.P.","Euro","Western Europe","Buyout (Secondaries)",3758464,2008,5369537453,3508085.01,613552.43,2886095.07,3212033,325937.93,0.112933885,1.090505338]],
+        ["30.11.2016",["Saw Mill Capital Partners II, L.P.","USD","North America","Buyout",10000000,2015,108744444,1018829,274710,744119,801936,57817,0.077698594,1.056748483]],
+        ["30.11.2016",["BCP Energy Services Fund, L.P.","USD","North America","Buyout",10000000,2015,694500000,3996934,42303,3880105,3740769,-139336,-0.035910368,0.946493487]],
+        ["30.11.2016",["ADT Security","USD","North America","Co/Direct Investment",7500000,2016,15000000000,7503225.1,977563.89,6612819,6612819,0,0,1.011616044]],
+        ["30.11.2016",["Bridgepoint Development Capital III, L.P.","GBP**","Western Europe","Corporate Finance/Buyout",6666667,2016,600000000,0,0,0,0,0,0,0]],
+        ["30.11.2016",["OHA Strategic Credit Fund II, LP.","USD","Global","Distressed Debt",10000000,2016,2055820000,0,0,0,0,0,0,0]],
+        ["30.11.2016",["PDC Opportunities V LP","USD","Global","Special Situations",5000000,2016,269773377,4633484.34,705606.27,3863888.15,4710899,847010.85,0.219212052,1.168991815]],
+        ["30.11.2016",["HL Secondary Investment SPV-9 LP","USD","North America","Growth Equity",7113753,2016,106652968,5576209,2702684,2873525,3794008,920483,0.320332344,1.16507326]],
+        ["30.11.2016",["OSI Group, LLC","USD","North America","Co/Direct Investment",7500000,2016,15000000,7500000,86069.63,7500000,7500000,0,0,1.011475951]],
+        ["30.11.2016",["CapitalSouth Partners Florida Sidecar Fund II, L.P.","USD","North America","Mezzanine",8179978,2016,44000000,8179977.99,0,8179977.99,8241054,61076.01,0.007466525,1.007466525]],
+        ["30.11.2016",["Capitala Private Credit Fund V, L.P.","USD","North America","Mezzanine",4304087,2016,28700000,859697.38,0,865297,859697,-5600,-0.006471766,0.999999558]],
+        ["30.11.2016",["Cridiron Capital Fund III, L.P.","USD","North America","Corporate Finance/Buyout",10000000,2015,785000000,3104034,0,2931755,3292778,361023,0.123142282,1.060806035]],
+        ["30.11.2016",["Jimmy John's LLC","USD","North America","Co/Direct Investment",7500000,2016,100000000,7500000,0,7500000,7500000,0,0,1]],
+        ["30.11.2016",["Vertiv (fka Emerson Network Power)","USD","North America","Co/Direct Investment",7500000,2016,160000000,7500000,0,7500000,7500000,0,0,0]],
+        ["30.11.2016",["Total Tranche A","","","",0,0,0,60880475.82,5402489.22,55337581.21,57765993,2428411.79,0.043883591,0]],
+
+        ["31.12.2016",["BCP Energy Services Fund, L.P.","USD","North America","Buyout",10000000,2015,694500000,3996934,42303,3880105,3740769,-139336,-0.035910368,0.946493487]],
+        ["31.12.2016",["Cridiron Capital Fund III, L.P.","USD","North America","Corporate Finance/Buyout",10000000,2015,785000000,3104034,0,2931755,3292778,361023,0.123142282,1.060806035]],
+        ["31.12.2016",["HL Secondary Investment SPV-9 LP","USD","North America","Corporate Finance/Buyout",7113753,2016,106652968,5576209,2702684,2873525,3772413,898888,0.312817184,1.161200558]],
+        ["31.12.2016",["Saw Mill Capital Partners II, L.P.","USD","North America","Buyout",10000000,2015,108744444,1018829,274710,744119,801936,57817,0.077698594,1.056748483]],
+        ["31.12.2016",["Bridgepoint Europe IV, L.P.","Euro","Western Europe","Buyout (Secondaries)",3758464,2008,5369537453,3599610.76,1308816.51,2282356.74,2540133,257776.26,0.112943019,1.069268253]],
+        ["31.12.2016",["Bridgepoint Development Capital III, L.P.","GBP**","Western Europe","Corporate Finance/Buyout",6666667,2016,600000000,0,0,0,0,0,0,0]],
+        ["31.12.2016",["Capitala Private Credit Fund V, L.P.","USD","North America","Mezzanine",4304087,2016,28700000,859697.38,0,865297,859697,-5600,-0.006471766,0.999999558]],
+        ["31.12.2016",["CapitalSouth Partners Florida Sidecar Fund II, L.P.","USD","North America","Mezzanine",8179978,2016,44000000,8179977.99,0,8179977.99,8241054,61076.01,0.007466525,1.007466525]],
+        ["31.12.2016",["OHA Strategic Credit Fund II, LP.","USD","Global","Distressed Debt",10000000,2016,2055820000,0,0,0,0,0,0,0]],
+        ["31.12.2016",["PDC Opportunities V LP","USD","Global","Special Situations",5000000,2016,269773377,5044304.85,705606.27,4274708.66,5121720,847011.34,0.198144811,1.155228806]],
+        ["31.12.2016",["Jimmy John's LLC","USD","North America","Co/Direct Investment",7500000,2016,100000000,7500000,0,7500000,7500000,0,0,1]],
+        ["31.12.2016",["OSI Group, LLC","USD","North America","Co/Direct Investment",7500000,2016,15000000,7500000,86069.63,7500000,7500000,0,0,1.011475951]],
+        ["31.12.2016",["ADT Security","USD","North America","Co/Direct Investment",7500000,2016,15000000000,7503225.1,1023186.95,6612819,6612819,0,0,1.017696504]],
+        ["31.12.2016",["Vertiv (fka Emerson Network Power)","USD","North America","Co/Direct Investment",7500000,2016,160000000,7500000,0,7500000,7500000,0,0,1]],
+        ["31.12.2016",["Total Tranche A","","","",106718661.6,0,0,61382822.08,6143376.36,55144663.39,57483319,2338655.61,0.042409464,0]]
     ];
 
     private holdingsB = [
@@ -531,7 +567,21 @@ export class MonitoringPrivateEquityComponent extends GoogleChartComponent {
         ["30.09.2016",["Total Tranche B","","","",0,0,0,3275979.98,0,3275979.98,2329120,-946859.98,-0.289031064,0]],
         ["31.10.2016",["Warburg Pincus Private Equity XII, L.P.","USD","Global","Special Situations",21000000,2015,13250000000,2341500,0,2341500,2026958,-314542,-0.134333547,0.865666453]],
         ["31.10.2016",["Advent GPE VIII, L.P.","USD","Global","Buyout",30000000,2016,12000000000,630000,0,630000,480070,-149930,-0.237984127,0.762015873]],
-        ["31.10.2016",["Total Tranche B","","","",0,0,0,3593591.25,0,3593591.25,2621767,-971824.25,-0.270432607,0]]
+        ["31.10.2016",["Total Tranche B","","","",0,0,0,3593591.25,0,3593591.25,2621767,-971824.25,-0.270432607,0]],
+
+        ["30.11.2016",["Blackstone Capital Partners VII, L.P.","USD","Global","Buyout",55375000,2015,17500000000,622091.25,0,622091.25,114739,-507352.25,-0.815559213,0.184440787]],
+        ["30.11.2016",["Warburg Pincus Private Equity XII, L.P.","USD","Global","Special Situations",21000000,2015,13250000000,2572500,0,2572500,2241350,-331150,-0.128726919,0.871273081]],
+        ["30.11.2016",["Advent GPE VIII, L.P.","USD","Global","Buyout",30000000,2016,12000000000,630000,0,630000,480070,-149930,-0.237984127,0.762015873]],
+        ["30.11.2016",["ACON Equity Partners IV, L.P.","USD","North America","Corporate Finance/Buyout",15000000,2016,965000000,0,0,0,0,0,0,0]],
+        ["30.11.2016",["Platinum Equity Capital Partners IV, L.P. ","USD","Global","Corporate Finance/Buyout",40000000,2016,4358300000,3553873,0,3553873,3553873,0,0,0]],
+        ["30.11.2016",["Total Tranche B","","","",0,0,0,7378464.25,0,7378464.25,6390032,-988432.25,-0.133961786,0]],
+
+        ["31.12.2016",["Advent GPE VIII, L.P.","USD","Global","Buyout",30000000,2016,12000000000,630000,0,630000,480070,-149930,-0.237984127,0.762015873]],
+        ["31.12.2016",["Blackstone Capital Partners VII, L.P.","USD","Global","Buyout",55375000,2015,17500000000,808462.66,3539.48,808462.66,298810,-509652.66,-0.630397278,0.37398076]],
+        ["31.12.2016",["Platinum Equity Capital Partners IV, L.P. ","USD","Global","Corporate Finance/Buyout",40000000,2016,4358300000,3553873,0,4092232,3913876,-178356,-0.043584039,1.10129878]],
+        ["31.12.2016",["ACON Equity Partners IV, L.P.","USD","North America","Corporate Finance/Buyout",15000000,2016,965000000,1466936,0,1466936,1093617,-373319,-0.254488948,0]],
+        ["31.12.2016",["Warburg Pincus Private Equity XII, L.P.","USD","Global","Special Situations",21000000,2015,13250000000,2572500,0,3769500,3369707,-399793,-0.106059955,1.309895821]],
+        ["31.12.2016",["Total Tranche B","","","",161375000,0,0,9031771.66,0,10767130.66,9156080,-1611050.66,-0.14962674,0]]
     ];
 
     private cashFlow = [
