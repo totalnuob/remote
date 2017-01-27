@@ -79,7 +79,7 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
             fractionDigits: 0
         });
         data.addColumn("string", "");
-        data.addColumn("number", "");
+        data.addColumn("number", "NAV");
 
         var NAVarray = this.getNAVByDate(tableDate);
         data.addRows([
@@ -108,7 +108,7 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
         var options = {
             showRowNumber: false,
             width: '100%',
-            height: '100%',
+            height: 170,
             'allowHtml': true,
             cssClassNames: {}
         };
@@ -158,7 +158,7 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
         var options = {
             showRowNumber: false,
             width: '100%',
-            height: '100%',
+            height: 170,
             'allowHtml': true,
             cssClassNames: {}
         };
@@ -185,7 +185,7 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
             ["Composite Benchmark", performanceArray[0][11], performanceArray[1][11], performanceArray[2][11]],
             ["Cpi + 5%", performanceArray[0][9], performanceArray[1][9], performanceArray[2][9]],
             ["US 6m T-bills1", performanceArray[0][8], performanceArray[1][8], performanceArray[2][8]],
-            ["HFRI FoF indez", performanceArray[0][10], performanceArray[1][10], performanceArray[2][10]]
+            ["HFRI FoF index", performanceArray[0][10], performanceArray[1][10], performanceArray[2][10]]
         ]);
         formatter.format(data,1);
         formatter.format(data,2);
@@ -197,7 +197,7 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
         var options = {
             showRowNumber: false,
             width: '100%',
-            height: '100%',
+            height: 170,
             'allowHtml': true,
             cssClassNames: {}
         };
@@ -229,6 +229,11 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
                 legend: { position: 'top' },
                 width: 600,
                 height: 500,
+            },
+            animation: {
+                duration: 500,
+                easing: 'out',
+                startup: true,
             },
             vAxis: {
                 format: '#.##%',
@@ -332,7 +337,12 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
         ]);
 
         var options = {
-            title: 'Target Allocation'
+            title: 'Target Allocation',
+            animation: {
+                duration: 500,
+                easing: 'out',
+                startup: true,
+            },
         };
 
         var chart = new google.visualization.PieChart(document.getElementById('target_allocation'));
@@ -353,7 +363,13 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
         );
 
         var options = {
+            animation: {
+                duration: 500,
+                easing: 'out',
+                startup: true,
+            },
             title: 'Actual Allocation'
+
         };
 
         var chart = new google.visualization.PieChart(document.getElementById('actual_allocation'));
@@ -384,6 +400,11 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
                 legend: { position: 'top' },
                 width: 600,
                 height: 500
+            },
+            animation: {
+                duration: 500,
+                easing: 'out',
+                startup: true,
             },
             vAxis: {
                 format: '#.##%',

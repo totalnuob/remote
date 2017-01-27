@@ -57,7 +57,7 @@ export class MonitoringPrivateEquityComponent extends GoogleChartComponent {
             fractionDigits: 0
         });
         data.addColumn("string", "");
-        data.addColumn("number", "");
+        data.addColumn("number", "NAV");
         data.addRows([
             ["Private Equity Portfolio", this.getNAVByDate(tableDate)],
             ["Commitment", this.getCommitmentByDate(tableDate)]
@@ -109,6 +109,11 @@ export class MonitoringPrivateEquityComponent extends GoogleChartComponent {
             showRowNumber: false,
             width: '100%',
             height: '100%',
+            animation: {
+                duration: 700,
+                easing: 'out',
+                startup: true,
+            },
             'allowHtml': true,
             vAxis: {
                 format: '#.##%',
@@ -142,6 +147,12 @@ export class MonitoringPrivateEquityComponent extends GoogleChartComponent {
         data.addColumn("number", "Return");
         data.addColumn("number", "TVPI");
         data.addRows(this.getHoldingsARowData(date));
+
+        var formatter = new google.visualization.NumberFormat({
+            pattern:'####'
+        });
+        formatter.format(data,5);
+
 
         var options = {
             showRowNumber: false,
@@ -187,6 +198,11 @@ export class MonitoringPrivateEquityComponent extends GoogleChartComponent {
         data.addColumn("number", "Return");
         data.addColumn("number", "TVPI");
         data.addRows(this.getHoldingsBRowData(date));
+
+        var formatter = new google.visualization.NumberFormat({
+            pattern:'####'
+        });
+        formatter.format(data,5);
 
         var options = {
             showRowNumber: false,
@@ -513,7 +529,7 @@ export class MonitoringPrivateEquityComponent extends GoogleChartComponent {
         ["31.12.2016",["OSI Group, LLC","USD","North America","Co/Direct Investment",7500000,2016,15000000,7500000,86069.63,7500000,7500000,0,0,1.011475951]],
         ["31.12.2016",["ADT Security","USD","North America","Co/Direct Investment",7500000,2016,15000000000,7503225.1,1023186.95,6612819,6612819,0,0,1.017696504]],
         ["31.12.2016",["Vertiv (fka Emerson Network Power)","USD","North America","Co/Direct Investment",7500000,2016,160000000,7500000,0,7500000,7500000,0,0,1]],
-        ["31.12.2016",["Total Tranche A","","","",106718661.6,0,0,61382822.08,6143376.36,55144663.39,57483319,2338655.61,0.042409464,0]]
+        ["31.12.2016",["Total Tranche A","","","",106718661.6,null,null,61382822.08,6143376.36,55144663.39,57483319,2338655.61,0.042409464,0]]
     ];
 
     private holdingsB = [
@@ -581,7 +597,7 @@ export class MonitoringPrivateEquityComponent extends GoogleChartComponent {
         ["31.12.2016",["Platinum Equity Capital Partners IV, L.P. ","USD","Global","Corporate Finance/Buyout",40000000,2016,4358300000,3553873,0,4092232,3913876,-178356,-0.043584039,1.10129878]],
         ["31.12.2016",["ACON Equity Partners IV, L.P.","USD","North America","Corporate Finance/Buyout",15000000,2016,965000000,1466936,0,1466936,1093617,-373319,-0.254488948,0]],
         ["31.12.2016",["Warburg Pincus Private Equity XII, L.P.","USD","Global","Special Situations",21000000,2015,13250000000,2572500,0,3769500,3369707,-399793,-0.106059955,1.309895821]],
-        ["31.12.2016",["Total Tranche B","","","",161375000,0,0,9031771.66,0,10767130.66,9156080,-1611050.66,-0.14962674,0]]
+        ["31.12.2016",["Total Tranche B","","","",161375000,null,null,9031771.66,0,10767130.66,9156080,-1611050.66,-0.14962674,0]]
     ];
 
     private cashFlow = [

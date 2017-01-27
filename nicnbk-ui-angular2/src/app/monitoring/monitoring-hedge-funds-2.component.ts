@@ -34,18 +34,19 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
         this.drawAllocationChart();
 
         // PORTFOLIO B -----------------------------
+        this.drawPortfolioBComparisonReturns();
     }
 
     drawContributionToReturn(){
         var data = google.visualization.arrayToDataTable([
             ['Element', 'Contribution to Return'],
-            ['Macro', 0.62],
-            ['Event Driven', 0.49],            // RGB value
-            ['Credit', 0.41],            // English color name
-            ['Multi-Strategy', 0.1], // CSS-style declaration
+            ['Equities', 0.33],
+            ['Credit', 0.24],            // English color name
+            ['Macro', 0.16],
+            ['Event Driven', 0.12],            // RGB value
+            ['Multi-Strategy', 0.06], // CSS-style declaration
+            ['Relative Value', 0.03],
             ['Commodities', -0.05],
-            ['Relative Value', -0.31],
-            ['Equities', -0.47],
         ]);
 
         var options = {
@@ -59,6 +60,11 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
             },
             //width: 600,
             //height: 400,
+            animation: {
+                duration: 500,
+                easing: 'out',
+                startup: true,
+            },
             chartArea: {left:100},
             bar: {groupWidth: "80%"},
             colors: ['#307240'],
@@ -72,14 +78,14 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
     drawAllocationByStrategy(){
         var data = google.visualization.arrayToDataTable([
             ['Element', 'Allocation by Strategy'],
-            ['Equities', 32.86],            // RGB value
-            ['Credit', 29.12],            // English color name
-            ['Relative Value', 11.05], // CSS-style declaration
-            ['Macro', 10.44],
-            ['Event Driven', 7.6],
-            ['Multi-Strategy', 4.98],
-            ['Commodities', 2.27],
-            ['Cash', 1.67]
+            ['Equities', 31.17],            // RGB value
+            ['Credit', 28.93],            // English color name
+            ['Relative Value', 11.84], // CSS-style declaration
+            ['Macro', 10.51],
+            ['Event Driven', 7.62],
+            ['Multi-Strategy', 6.73],
+            ['Commodities', 0],
+            ['Cash', 3.20]
         ]);
 
         var options = {
@@ -90,6 +96,11 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
                 fontSize: 14, // 12, 18 whatever you want (don't specify px)
                 bold: true,    // true or false
                 italic: false   // true of false
+            },
+            animation: {
+                duration: 500,
+                easing: 'out',
+                startup: true,
             },
             //width: 600,
             //height: 400,
@@ -200,7 +211,7 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
     private getReturnsRowData(){
         return [
             ["2015", null,null,null,null,null,null,null,-1.59,-2.17,0.12,0.19,-0.56,-3.96],
-            ["2016", -2.42,-1.56,0.14,0.76,0.83,-0.31,0.42,0.88,0.17,0.04,1.24,null,0.11]
+            ["2016", -2.42,-1.56,0.14,0.76,0.83,-0.31,0.42,0.88,0.17,0.04,1.24,0.83,0.97]
         ];
     }
 
@@ -222,6 +233,11 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
             showRowNumber: false,
             width: '100%',
             height: '100%',
+            animation: {
+                duration: 500,
+                easing: 'out',
+                startup: true,
+            },
             'allowHtml': true,
             cssClassNames: {},
             colors:['green', '#a4dfb2'],
@@ -252,36 +268,36 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
 
     getPortfolioATop5Funds(){
         return [
-            ["CVI Intl Credit Ltd", "Credit", 0.83],
-            ["Canyon Opp Cred GRF Ltd", "Credit", 0.52],
-            ["Whitebox Asymm Opp Ltd", "Relative Value", 0.50],
-            ["MTP Energy Corp and Ltd", "Event Driven", 0.43],
-            ["Trian Partners Ltd", "Equity", 0.40]
+            ["Ren Inst Div Alpha LP", "Equities", 0.17],
+            ["Basswood Enhanced LS Ltd", "Equities ", 0.14],
+            ["Element Capital Ltd", "Macro", 0.11],
+            ["Trian Partners Ltd", "Equities", 0.10],
+            ["CVI Intl Credit Ltd", "Credit", 0.09]
         ];
     }
 
     getPortfolioATop5NegativeFunds(){
         return [
-            ["Prosiris Gbl Opp Fund Ltd", "Credit", -1.08],
-            ["Hitchwood Ltd", "Equities", -0.40],
-            ["Passport Global LS Ltd", "Equities", -0.38],
-            ["GS Gamma Investments Ltd", "Relative Value", -0.35],
-            ["Argentiere Enhanced Ltd", "Relative Value", -0.23],
+            ["Discovery Gbl Opp Ltd", "Equities", -0.09],
+            ["Nipun Capital Ltd", "Equities", -0.05],
+            ["GCM COM Ltd", "Commodities ", -0.05],
+            ["Blue Mtn LS Equity Ltd", "Equities ", -0.03],
+            ["Argentiere Enhanced Ltd", "Relative Value", -0.02],
         ];
     }
 
     getPortfolioATop10AllocationFunds() {
         return [
             ["CVI Intl Credit Ltd", "Credit", 8.34],
-            ["Chenavari Struct Cred Ltd", "Credit", 7.30],
-            ["Canyon Opp Cred GRF Ltd", "Credit", 5.87],
-            ["Whitebox Asymm Opp Ltd", "Relative Value", 5.23],
+            ["Chenavari Struct Cred Ltd", "Credit", 7.29],
+            ["Canyon Opp Cred GRF Ltd", "Credit", 5.88],
+            ["Whitebox Asymm Opp Ltd", "Relative Value", 5.22],
             ["York Euro Opp Unit Trust", "Event Driven", 5.11],
             ["Myriad Opportunities Ltd", "Multi-Strategy", 4.98],
             ["Graticule Asia Macro Ltd", "Macro", 4.46],
             ["Trian Partners Ltd", "Equities", 4.45],
             ["Anchorage Cap Ltd", "Credit", 4.29],
-            ["Atlas Enhanced Fund Ltd", "Equities", 3.73]
+            ["Atlas Enhanced Fund Ltd", "Equities", 3.72]
         ];
     }
 
@@ -328,10 +344,61 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
         chart.draw(data, options);
     }
 
+    drawPortfolioBComparisonReturns(){
+        var data = new google.visualization.DataTable();
+        data.addColumn("string", "2017");
+        data.addColumn("number", "Jan");
+        data.addColumn("number", "Feb");
+        data.addColumn("number", "Mar");
+        data.addColumn("number", "Apr");
+        data.addColumn("number", "May");
+        data.addColumn("number", "Jun");
+        data.addColumn("number", "Jul");
+        data.addColumn("number", "Aug");
+        data.addColumn("number", "Sep");
+        data.addColumn("number", "Oct");
+        data.addColumn("number", "Nov");
+        data.addColumn("number", "Dec");
+        data.addColumn("number", "YTD");
+
+        var rowData = this.getPortfolioBReturnsRowData();
+        data.addRows(rowData);
+        //this.setPortfolioAReturnsRowData(data);
+
+        var options = {
+            showRowNumber: false,
+            width: '100%',
+            height: '100%',
+            'allowHtml': true,
+            cssClassNames: {
+                tableCell: '',
+            }
+        };
+
+        //var colorFormatter = this.getReturnsFormatter(rowData);
+        //for(var i = 1; i <= 12; i++){
+        //    colorFormatter.format(data, i);
+        //}
+
+        // set cell format
+        this.formatCells(data, rowData, 1, 13);
+
+        var chart = this.createTableChart(document.getElementById('classBComparisonReturns'));
+        chart.draw(data, options);
+    }
+
     private getPortfolioAReturnsRowData(){
         return [
-            ["Singularity", -2.42, -1.56, 0.14, 0.76, 0.83, -0.31, 0.42, 0.88, 0.17, 0.04, 1.24, null, 0.11],
-            ["HFRIFOF", -2.66, -1.20, 0.73, 0.52, 0.50, -0.47, 1.50, 0.44, 0.44, -0.25, 0.30, null, -0.20]
+            ["Singularity", -2.42, -1.56, 0.14, 0.76, 0.83, -0.31, 0.42, 0.88, 0.17, 0.04, 1.24, 0.83, 0.97],
+            ["HFRIFOF", -2.66, -1.20, 0.73, 0.52, 0.50, -0.47, 1.50, 0.44, 0.33, -0.29, 0.27, 1.08, 0.71]
+        ];
+
+    }
+
+    private getPortfolioBReturnsRowData(){
+        return [
+            ["Singul class B", null, null, null, null, null, null, null, null, null, null, null, null, null],
+            ["HFRIFOF", null, null, null, null, null, null, null, null, null, null, null, null, null]
         ];
 
     }
@@ -409,9 +476,10 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
         ["Jun-16","MTD",-0.0031,-0.0047],
         ["Jul-16","MTD",0.0042,0.0150],
         ["Aug-16","MTD",0.0088,0.0044],
-        ["Sep-16","MTD",0.0017,0.0044],
-        ["Oct-16","MTD",0.0004,-0.0025],
-        ["Nov-16","MTD",0.0124,0.0030],
+        ["Sep-16","MTD",0.0017,0.0033],
+        ["Oct-16","MTD",0.0004,-0.0029],
+        ["Nov-16","MTD",0.0124,0.0027],
+        ["Dec-16","MTD",0.0083,0.0108]
     ];
 
 }
