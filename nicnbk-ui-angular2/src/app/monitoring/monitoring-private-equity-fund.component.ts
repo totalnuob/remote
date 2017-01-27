@@ -100,6 +100,11 @@ export class MonitoringPrivateEquityFundComponent extends GoogleChartComponent {
         var options = {
             title: 'Vintage Diversification',
             width: '100%',
+            animation: {
+                duration: 1200,
+                easing: 'out',
+                startup: true,
+            },
             legend: { position: 'bottom' },
             chart: { //subtitle: 'popularity by percentage'
             },
@@ -128,6 +133,11 @@ export class MonitoringPrivateEquityFundComponent extends GoogleChartComponent {
         var options = {
             width: '100%',
             height: '100%',
+            animation: {
+                duration: 500,
+                easing: 'out',
+                startup: true,
+            },
             chartArea: {width: '50%'},
             legend: { position: 'right', maxLines: 3 },
             bar: { groupWidth: '30%' },
@@ -149,6 +159,11 @@ export class MonitoringPrivateEquityFundComponent extends GoogleChartComponent {
         var options = {
             //width: 500,
             //height: 300,
+            animation: {
+                duration: 500,
+                easing: 'out',
+                startup: true,
+            },
             chartArea: {width: '50%'},
             legend: { position: 'right', maxLines: 3 },
             bar: { groupWidth: '30%' },
@@ -170,6 +185,11 @@ export class MonitoringPrivateEquityFundComponent extends GoogleChartComponent {
         var options = {
             //width: 500,
             //height: 300,
+            animation: {
+                duration: 500,
+                easing: 'out',
+                startup: true,
+            },
             chartArea: {width: '50%'},
             legend: { position: 'right', maxLines: 3 },
             bar: { groupWidth: '30%' },
@@ -203,6 +223,11 @@ export class MonitoringPrivateEquityFundComponent extends GoogleChartComponent {
 
         var options = {
             title: 'Geographic Exposure',
+            animation: {
+                duration: 500,
+                easing: 'out',
+                startup: true,
+            },
             //width: 900,
             legend: { position: 'none' },
             chart: { //subtitle: 'popularity by percentage'
@@ -238,6 +263,11 @@ export class MonitoringPrivateEquityFundComponent extends GoogleChartComponent {
 
         var options = {
             title: 'Sector Exposure',
+            animation: {
+                duration: 500,
+                easing: 'out',
+                startup: true,
+            },
             //width: 900,
             legend: { position: 'none' },
             chart: { //subtitle: 'popularity by percentage'
