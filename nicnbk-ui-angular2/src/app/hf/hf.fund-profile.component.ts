@@ -88,7 +88,7 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
                                     if(this.fund.strategyBreakdownList == null){
                                         this.fund.strategyBreakdownList = [];
                                     }else{
-                                        this.drawGraph();
+                                        //this.drawGraph();
                                         //this.drawSubstrategiesChart();
                                     }
                                     if(this.fund.investorBaseList == null){
@@ -372,7 +372,7 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
                     //    this.strategyLookup.push({ id: element.code, value: element.nameEn});
                     //});
                     this.substrategyLookup = data;
-                    //this.drawGraph();
+                    this.drawGraph();
                 },
                 error =>  {this.errorMessage = <any>error}
             );
@@ -449,6 +449,13 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
     }
 
     drawSubstrategiesChart(){
+        if(typeof google.visualization === 'undefined'){
+            return;
+        }
+        if(this.substrategyLookup == null  || this.substrategyLookup.length == 0){
+            return;
+        }
+
         var data = google.visualization.arrayToDataTable(this.getStrategyBreakdownRowData());
 
         var options = {
@@ -466,8 +473,6 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
     }
 
     getStrategyBreakdownRowData(){
-
-        //console.log(this.substrategyLookup);
 
         var list = [['Type', '%']];
         for(var i = 0; i < this.fund.strategyBreakdownList.length; i++){
