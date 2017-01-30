@@ -168,7 +168,7 @@ export class MonitoringHedgeFundsComponent extends GoogleChartComponent {
             'allowHtml': true,
             cssClassNames: {},
             vAxis:{
-                format:'$#',
+                format:'short',
             }
         };
 
