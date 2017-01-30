@@ -15,6 +15,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 /**
  * Created by zhambyl on 16-Nov-16.
  */
@@ -30,6 +32,8 @@ public class PEFirmServiceImpl implements PEFirmService {
     @Override
     public Long save(PEFirmDto firmDto) {
         PEFirm entity = converter.assemble(firmDto);
+        entity.setUpdateDate(new Date());
+
         Long id = repository.save(entity).getId();
         return id;
     }
@@ -38,7 +42,6 @@ public class PEFirmServiceImpl implements PEFirmService {
     public PEFirmDto get(Long id) {
         PEFirm entity = this.repository.findOne(id);
         PEFirmDto firmDto = this.converter.disassemble(entity);
-
         return firmDto;
     }
 

@@ -157,7 +157,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
         this.fund.industry = this.convertToServiceModel(this.fund.industry);
         this.fund.geography = this.convertToServiceModel(this.fund.geography);
 
-        this.fundService.save(this.fund)
+        this.busy = this.fundService.save(this.fund)
             .subscribe(
                 (response: SaveResponse) => {
                     this.fund.id = response.entityId;

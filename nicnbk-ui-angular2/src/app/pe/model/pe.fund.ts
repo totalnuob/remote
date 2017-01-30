@@ -55,6 +55,7 @@ export class PEFund {
     firm: PEFirm;
     id: number;
     creationDate: string;
+    updateDate: string;
 
     grossCashflow = [];
     netCashflow = [];

@@ -67,6 +67,7 @@ export class PEFirmProfileComponent extends CommonFormViewComponent {
                 this.firmIdParam = +params['id'];
                 if(this.firmIdParam > 0) {
                     this.searchParams['id'] = this.firmIdParam;
+                    this.searchParams.name = '';
                     this.busy = this.firmService.get(this.firmIdParam)
                         .subscribe(
                             data => {
@@ -105,7 +106,7 @@ export class PEFirmProfileComponent extends CommonFormViewComponent {
         this.firm.industryFocus = this.convertToServiceModel(this.firm.industryFocus);
         this.firm.geographyFocus = this.convertToServiceModel(this.firm.geographyFocus);
 
-        this.firmService.save(this.firm)
+        this.busy = this.firmService.save(this.firm)
             .subscribe(
                 (response: SaveResponse) => {
                     this.firm.id = response.entityId;
