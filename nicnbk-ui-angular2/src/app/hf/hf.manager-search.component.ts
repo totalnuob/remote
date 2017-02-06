@@ -39,10 +39,7 @@ export class HFManagerSearchComponent extends CommonFormViewComponent{
 
         // TODO: as parameter?
         this.searchParams.pageSize = 10;
-
-        if(page > 0) {
-            this.searchParams.page = page;
-        }
+        this.searchParams.page = page;
 
         this.busy = this.managerService.search(this.searchParams)
             .subscribe(

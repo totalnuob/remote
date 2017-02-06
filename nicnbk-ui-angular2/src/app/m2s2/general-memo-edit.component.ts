@@ -126,7 +126,7 @@ export class GeneralMemoEditComponent extends CommonFormViewComponent implements
             format: 'LT'
         })
 
-        $('input[type=text], textarea').autogrow();
+        $('input[type=text], textarea').autogrow({vertical: true, horizontal: false, flickering: false});
 
     }
 

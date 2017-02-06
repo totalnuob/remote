@@ -206,7 +206,7 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
             format: 'LT'
         });
 
-        $('input[type=text], textarea').autogrow();
+        $('input[type=text], textarea').autogrow({vertical: true, horizontal: false, flickering: false});
 
         // init chart
         this.initRadarChart();

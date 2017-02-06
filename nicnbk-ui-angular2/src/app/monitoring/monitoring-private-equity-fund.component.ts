@@ -125,93 +125,210 @@ export class MonitoringPrivateEquityFundComponent extends GoogleChartComponent {
 
     // PORTFOLIO DIVERSIFICATION  ----------------------------------------------
     drawGeographicDiversification(){
-        var data = google.visualization.arrayToDataTable([
-            ['Diversification', 'Global', 'North America', 'Europe' , { role: 'annotation' } ],
-            ["Geographic Diversification", 65.5, 29.3, 5.2, '']
+
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'diversification');
+        data.addColumn('number', 'value');
+        data.addColumn({type: 'string', role: 'tooltip'});
+        data.addRows([
+            ["North America", 94.6, "94.6"],
+            ["Western Europe", 12.7, "12.7"],
+            ["Global", 161.4, "161.4\nGlobal focused funds:\nTranche A - 9%\nTranche B - 91%"],
         ]);
 
         var options = {
             width: '100%',
             height: '100%',
-            animation: {
-                duration: 500,
-                easing: 'out',
-                startup: true,
+            chartArea: {
+                width: '100%'
             },
-            chartArea: {width: '50%'},
-            legend: { position: 'right', maxLines: 3 },
-            bar: { groupWidth: '30%' },
-            colors: ['#548ec1', 'grey', 'red'],
-            isStacked: true,
+            title: 'Geographic Diversification',
+            slices: {
+                0: {color: '#548ec1'},
+                1: {color: '#c15469'},
+                2: {color: '#75d17f'}
+            },
+            pieHole: 0.3,
         };
-
-        var chart = new google.visualization.ColumnChart(document.getElementById('geographicDiversification'));
-
+        var chart = new google.visualization.PieChart(document.getElementById('geographicDiversification'));
         chart.draw(data, options);
     }
+    //drawGeographicDiversification(){
+    //    var data = google.visualization.arrayToDataTable([
+    //        ['Diversification', 'North America', 'Western Europe', 'Global', { role: 'annotation' } ],
+    //        ["Geographic Diversification", 94.6, 12.7, 161.4, '']
+    //    ]);
+    //
+    //    var options = {
+    //        width: '100%',
+    //        height: '100%',
+    //        animation: {
+    //            duration: 500,
+    //            easing: 'out',
+    //            startup: true,
+    //        },
+    //        chartArea: {width: '50%'},
+    //        legend: { position: 'right', maxLines: 3 },
+    //        bar: { groupWidth: '30%' },
+    //        colors: ['#548ec1', 'grey', 'red'],
+    //        isStacked: true,
+    //    };
+    //
+    //    var chart = new google.visualization.ColumnChart(document.getElementById('geographicDiversification'));
+    //
+    //    chart.draw(data, options);
+    //}
 
     drawStrategyDiversification(){
-        var data = google.visualization.arrayToDataTable([
-            ['Diversification', 'Buyout Equity', 'Growth Equity', 'Co-investment' , 'Mezzanine', 'Distressed Debt', 'Special situations', { role: 'annotation' } ],
-            ["Strategic Diversification", 74, 9, 6, 5, 4, 2, '']
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'diversification');
+        data.addColumn('number', 'value');
+        data.addColumn({type: 'string', role: 'tooltip'});
+        data.addRows([
+            ["Special Situations", 26, "26"],
+            ["Distressed Debt", 10, "10"],
+            ["Co/Direct Investment", 22.5, "22.5"],
+            ["Mezzanine", 12.48, "12.48"],
+            ["Corporate Finance/Buyout", 197.18, "Buyout equity focused funds:\nTranche A - 29%\nTranche B - 71%"],
         ]);
 
         var options = {
-            //width: 500,
-            //height: 300,
+            title: "Strategic diversification",
+            //titleTextStyle: {
+            //    color: 'black',    // any HTML string color ('red', '#cc00cc')
+            //    //fontName: <string>, // i.e. 'Times New Roman'
+            //    fontSize: 14, // 12, 18 whatever you want (don't specify px)
+            //    bold: true,    // true or false
+            //    italic: false   // true of false
+            //},
             animation: {
                 duration: 500,
                 easing: 'out',
                 startup: true,
             },
-            chartArea: {width: '50%'},
-            legend: { position: 'right', maxLines: 3 },
-            bar: { groupWidth: '30%' },
-            colors: ['#548ec1', 'grey', 'red', 'purple', 'turquoise', 'orange'],
-            isStacked: true,
+            //width: 600,
+            //height: 400,
+            bar: {groupWidth: "80%"},
+            colors: ['#548ec1'],
+            chartArea: {left:100},
+            legend: { position: "none" },
         };
-
-        var chart = new google.visualization.ColumnChart(document.getElementById('strategyDiversification'));
-
-        chart.draw(data, options);
+        var view = new google.visualization.DataView(data);
+        view.setColumns([0, 1,
+            {calc: "stringify",
+                sourceColumn: 1,
+                type: "string",
+                role: "annotation" },
+            2]);
+        var chart = new google.visualization.BarChart(document.getElementById('strategyDiversification'));
+        chart.draw(view, options);
     }
+
+    //drawStrategyDiversification(){
+    //    var data = google.visualization.arrayToDataTable([
+    //        ['Diversification', 'Buyout Equity', 'Growth Equity', 'Co-investment' , 'Mezzanine', 'Distressed Debt', 'Special situations', { role: 'annotation' } ],
+    //        ["Strategic Diversification", 74, 9, 6, 5, 4, 2, '']
+    //    ]);
+    //
+    //    var options = {
+    //        //width: 500,
+    //        //height: 300,
+    //        animation: {
+    //            duration: 500,
+    //            easing: 'out',
+    //            startup: true,
+    //        },
+    //        chartArea: {width: '50%'},
+    //        legend: { position: 'right', maxLines: 3 },
+    //        bar: { groupWidth: '30%' },
+    //        colors: ['#548ec1', 'grey', 'red', 'purple', 'turquoise', 'orange'],
+    //        isStacked: true,
+    //    };
+    //
+    //    var chart = new google.visualization.ColumnChart(document.getElementById('strategyDiversification'));
+    //
+    //    chart.draw(data, options);
+    //}
 
     drawDiversificationByInvestments(){
-        var data = google.visualization.arrayToDataTable([
-            ['Diversification', 'Primaries', 'Secondaries', 'Co-investments' , { role: 'annotation' } ],
-            ["Diversification by Investments", 79.2, 11.7, 9.1, '']
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'diversification');
+        data.addColumn('number', 'percent');
+        data.addColumn({type: 'string', role: 'tooltip'});
+        data.addRows([
+            ["Primary", 78, "209.58\nInvestment in primary funds:\nTranche A - 23%\nTranche B - 77%"],
+            ["Secondary", 11, "28.55"],
+            ["Co Investment", 11, "30.03"],
         ]);
 
         var options = {
-            //width: 500,
-            //height: 300,
+            title: "Diversification by Investments",
+            //titleTextStyle: {
+            //    color: 'black',    // any HTML string color ('red', '#cc00cc')
+            //    //fontName: <string>, // i.e. 'Times New Roman'
+            //    fontSize: 14, // 12, 18 whatever you want (don't specify px)
+            //    bold: true,    // true or false
+            //    italic: false   // true of false
+            //},
             animation: {
                 duration: 500,
                 easing: 'out',
                 startup: true,
             },
-            chartArea: {width: '50%'},
-            legend: { position: 'right', maxLines: 3 },
-            bar: { groupWidth: '30%' },
-            colors: ['#548ec1', 'grey', 'red'],
-            isStacked: true,
+            //width: 600,
+            //height: 400,
+            bar: {groupWidth: "80%"},
+            colors: ['#548ec1'],
+            chartArea: {left:100},
+            legend: { position: "none" },
         };
-
+        var view = new google.visualization.DataView(data);
+        view.setColumns([0, 1,
+            {calc: "stringify",
+                sourceColumn: 1,
+                type: "string",
+                role: "annotation" },
+            2]);
         var chart = new google.visualization.ColumnChart(document.getElementById('diversificationByInvestments'));
 
-        chart.draw(data, options);
+        chart.draw(view, options);
     }
+
+    //drawDiversificationByInvestments(){
+    //    var data = google.visualization.arrayToDataTable([
+    //        ['Diversification', 'Primaries', 'Secondaries', 'Co-investments' , { role: 'annotation' } ],
+    //        ["Diversification by Investments", 79.2, 11.7, 9.1, '']
+    //    ]);
+    //
+    //    var options = {
+    //        //width: 500,
+    //        //height: 300,
+    //        animation: {
+    //            duration: 500,
+    //            easing: 'out',
+    //            startup: true,
+    //        },
+    //        chartArea: {width: '50%'},
+    //        legend: { position: 'right', maxLines: 3 },
+    //        bar: { groupWidth: '30%' },
+    //        colors: ['#548ec1', 'grey', 'red'],
+    //        isStacked: true,
+    //    };
+    //
+    //    var chart = new google.visualization.ColumnChart(document.getElementById('diversificationByInvestments'));
+    //
+    //    chart.draw(data, options);
+    //}
 
 
     // PORTFOLIO EXPOSURE
     drawGeographicExposure(){
         var data = google.visualization.arrayToDataTable([
             ['Geography', 'Exposure'],
-            ['North America', 59 ],
-            ['Western Europe', 36],
-            ['Eastern Europe', 3],
-            ['Middle East', 1],
-            ['Asia Pacific', 1]
+            ['North America', 86.49 ],
+            ['Western Europe', 11.26],
+            ['Eastern Europe', 1.59],
+            ['Asia Pacific', 0.66]
         ]);
 
         var view = new google.visualization.DataView(data);
@@ -250,15 +367,17 @@ export class MonitoringPrivateEquityFundComponent extends GoogleChartComponent {
     drawSectorExposure(){
         var data = google.visualization.arrayToDataTable([
             ['Geography', 'Exposure'],
-            ['Consumer Discretionary', 27 ],
-            ['Industrials', 26],
-            ['Materials', 15],
-            ['Health Care', 11],
-            ['Energy', 9],
-            ['Financials (Real Estate)', 5],
-            ['Information Technology', 3],
-            ['Financials', 2],
-            ['Consumer Staples', 1]
+            ['Consumer Discretionary', 14.6 ],
+            ['Health Care', 7.34],
+            ['Materials', 10.23],
+            ['Energy', 4.05],
+            ['Industrials', 35.43],
+            ['Real Estate', 0.10],
+            ['Utilities', 0.13],
+            ['Information Technology', 2.28],
+            ['Financials', 16.56],
+            ['Consumer Staples', 0.39],
+            ['FoF Holding', 8.91]
         ]);
 
         var options = {
@@ -305,31 +424,35 @@ export class MonitoringPrivateEquityFundComponent extends GoogleChartComponent {
         //investments.push([null, "A", "A", "A", "A", "A", "A", "A", "A", "A","A", "A",]);
         //investments.push([null, "A", "A", "A", "A", "A", "A", "A", "A", "A","A", "A",]);
 
-        investments.push(["Small Cap Buyout", "Gridiron Capital Fund III", 2016, 785, 10, null, null, 0, null, null, null, "Gridiron Capital", 4]);
-        investments.push([null, "BCP Energy Services Fund", 2015, 750, 10, 4, 0.1, 3.7, "-6%", "0.0x", "0.9x", "Bernhard Capital Partners"]);
-        investments.push([null, "BDC III",2016,	632, 8.67, "", "", 0, "", "", "", "Bridgepoint Development Capital"]);
-        investments.push([null, "Saw Mill Capital Partners II",	2016,300, 10, 1, 0.3, 0.8, "5%", "0.3x", "1.0x", "Saw Mill Capital"]);
+        investments.push(["Small Cap Buyout", "Gridiron Capital Fund III, L.P", 2015, 760.27, 10, 3.1, 0.37, 2.92, "5%", "0.12x", "1.06x", "Gridiron Capital","Target middle-market energy services companies with the   focus on North America with a concentration in Louisiana and surrounding regions", 4]);
+        investments.push([null, "BCP Energy Services Fund, L.P.",2014,694.50,10.00,5.07,0.07,4.74,"-2%","0.01x","0.95x","Bernhard Capital Partners","Target middle-market energy services companies with the   focus on North America with a concentration in Louisiana and surrounding regions"]);
+        investments.push([null, "BDC III, L.P.",2017,605.00,8.20, , ,0.00," ","0.00x"," ","Bridgepoint Development Capital","Targets small-cap transactions across core European markets (the U.K., the Nordics and France)"]);
+        investments.push([null, "Saw Mill Capital Partners II, L.P.",2016,289.80,10.00,1.02,0.28,0.80,"7%","0.27x","1.06x","Saw Mill Capital","Targets manufacturing, commercial services and specialized distribution companies in the lower middle market across  U.S.-based businesses  "]);
 
-        investments.push(["Distressed Debt", "OHA Strategic Credit Fund II", 2016, 2000, 10, "", "", 0, "", "", "", "Oak Hill Advisors, L.P.", 1]);
+        investments.push(["Distressed Debt", "OHA Strategic Credit Fund II, L.P.",2017,2700.02,10.00, , ,0.00, ,"0.00x", ,"Oak Hill Advisors, L.P.","Invest in stressed and distressed debt of companies, as well as in restructuring situations across North America and Europe",1]);
         //investments.push([null, "OSI Group, LLC", 2016, "", 7.5, 7.5,  0.0, 7.5, "0%", "0.0x", "1.0x", "Prudential Capital Group, L.P."]);
-        investments.push(["Co-investment", "OSI Group, LLC", 2016, "", 7.5, 7.5,  0.0, 7.5, "0%", "0.0x", "1.0x", "Prudential Capital Group, L.P.", 3]);
-        investments.push([null, "ADT Security", 2016, "", 7.5, 7.5, "", 7.6, "2%", "0.0x", "1.0x", "Apollo Management"]);
-        investments.push([null,"Jimmy John's","2016","",7.5,"","",0,"","","","Roark Capital Group, Inc."]);
-        investments.push(["Secondary", "PDC Opportunities V","2015","250",5,3.9,0.5,4.2,"27%","0.1x","1.2x","Pearl Diver Capital", 5]);
-        investments.push([null, "Bridgepoint Europe IV","2008","4 866",4.22,3.5,0.6,3.4,"16%","0.2x","1.1x","Bridgepoint Capital Ltd."]);
-        investments.push([null, "Capitala Private Credit Fund V","2014-2015","350",4.3,0.9,"",0.9,"0%","0.0x","1.0x","Capital South Partners"]);
-        investments.push([null, "CapitalSouth Partners Florida Sidecar Fund II","2016","29",8.18,8.2,"",8.2,"1%","0.0x","1.0x",""]);
-        investments.push([null, "Secondary Investment SPV-9","1997-2007","",7.1,5.6,2.1,4.5,"20%","0.4x","1.2x","Hamilton Lane"]);
+
+        investments.push(["Co-investment", "OSI Group, LLC",2016,15.00,7.50,7.50,0.10,7.50,"1%","0.01x","1.01x","Prudential Capital Group, L.P.","OSI Group is a global processor of poultry, beef, pork, and other food products to the food service industry, primarily QSRs, retail, and branded food companies",4]);
+        investments.push([null, "ADT Security",2016,154.91,7.53,7.50,1.02,6.61,"2%","0.14x","1.02x","Apollo Management","The deal in the home and commercial security business"]);
+        investments.push([null, "Jimmy John's",2016,100.00,7.50,7.50, ,7.50,"0%","0.00x","1.00x","Roark Capital Group, Inc.","Jimmy John's Is a franchised sandwich restaurant chain specializing in delivery"]);
+        investments.push([null, "Vertiv (fka Emerson Network Power)",2016,160.00,7.50,7.50, ,7.50,"0%","0.00x","1.00x","Platinum Equity Capital Partners","Vertiv is a global leader in designing, manufacturing, and servicing mission-critical infrastructure technologies for data centers, communication networks, and commercial / industrial environments"]);
+
+        investments.push(["Secondary", "PDC Opportunities V, L.P.",2015,269.77,5.00,5.04,0.71,5.12,"22%","0.14x","1.16x","Pearl Diver Capital","Secondaries (Control CLO equity)",5]);
+        investments.push([null, "Bridgepoint Europe IV, L.P.",2008,4835.00,3.96,3.60,1.31,2.94,"10%","0.36x","1.18x","Bridgepoint Capital Ltd.","Growth oriented pan-European Middle Market Fund with generalist approach to sector exposure"]);
+        investments.push([null, "Capitala Private Credit Fund V, L.P.",2016,44.00,4.30,0.87, ,0.86,"0%","0.00x","0.99x","Capital South Partners","Structured deal based on secondary purchase of credit assets and commitment in Capitala Fund V"]);
+        investments.push([null, "CapitalSouth Partners Florida Sidecar Fund II, L.P.",2016,47.57,8.18,8.18, ,8.24,"1%","0.00x","1.01x","",""]);
+        investments.push([null, "Secondary Investment SPV-9, L.P.",2016,106.65,7.11,5.58,2.70,3.77,"24%","0.48x","1.16x","Hamilton Lane","Secondaries of following funds \n• Levine Leichtman II, III, IV, Deep Value Fund • Acon Bastion II"]);
         //investments.push(["Total for Tranche A","", "", "", 100, 42, 4, 41, "", "", "", ""]);
         return investments;
     }
 
     public getTrancheBInvestments() {
         var investments = [];
-        investments.push(["Large Buyout","Blackstone Capital Partners VII", 2015, 17500, 55.4, 0.6, "", 0.1, "", 0, "0.1x", "Blackstone Group", 2]);
-        investments.push([null, "Advent International GPE VIII-H", 2016, "12 000", 30, 0.6, "", 0.3, "-52%", 0, "0.5x", "Advent International"]);
-        investments.push(["Mid Cap Buyout", "Platinum Equity Capital Partners IV", 2016, "4 358", 40, "", "", 0, "", "", "", "Platinum Equity Capital Partners", 1]);
-        investments.push(["Growth Equity", "Warburg Pincus Private Equity XII", 2015, "13 250", 21, 2.6, "", 2.2, "-28%", 0, "0.9x", "Warburg Pincus LLC", 1]);
+        investments.push(["Large Buyout", "Blackstone Capital Partners VII, L.P.",2016,18000,55.38,2.54,0.00,1.86,"-80%","0.00x","0.73x","Blackstone Group","Focuses on the large buyout space globally with the focus on US market", 3]);
+        investments.push([null, "Advent International GPE VIII-H, L.P.",2016,930,30.00,0.63, ,0.48,"-23%","0.00x","0.76x","Advent International","Focus on investments in mid-sized to large companies globally"]);
+        investments.push([null, "ACON Equity Partners IV, L.P.",2016,965,15.00,1.62,0.00,1.09,"-29%","0.00x","0.68x","ACON Investments, L.L.C.","The Fund pursues a middle-market private equity investment strategy targeting control-oriented deep-value, complex transactions"]);
+        investments.push(["Mid Cap Buyout", "Platinum Equity Capital Partners IV, L.P.",2016,4358,40.00,4.09, ,3.91,"-5%","0.00x","0.96x","Platinum Equity Capital Partners","Fund invests across sectors, primarily in US, and make selective investments in Europe and ROW with deep operational expertise. Target companies are carve-outs, corporate orphans, unmanaged businesses", 1]);
+        investments.push(["Growth Equity", "Warburg Pincus Private Equity XII, L.P.",2016,12471,21.00,3.77, ,3.37,"-19%","0.00x","0.89x","Warburg Pincus LLC","Growth-oriented investment strategy across five core sectors", 1]);
         //investments.push(["Total for Tranche B","", "", "", 146, 4, "", 3, "", "", "", ""]);
 
         return investments;

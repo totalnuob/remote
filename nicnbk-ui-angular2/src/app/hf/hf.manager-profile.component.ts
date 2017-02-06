@@ -145,7 +145,7 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
             format: 'DD-MM-YYYY'
         });
 
-        $('input[type=text], textarea').autogrow();
+        $('input[type=text], textarea').autogrow({vertical: true, horizontal: false, flickering: false});
     }
 
     search(page){

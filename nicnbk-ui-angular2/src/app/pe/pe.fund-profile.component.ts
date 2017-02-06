@@ -146,6 +146,9 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
             //defaultDate: new Date(),
             format: 'DD-MM-YYYY'
         });
+
+        $('input[type=text], textarea').autogrow({vertical: true, horizontal: false, flickering: false});
+
     }
 
     save(){
