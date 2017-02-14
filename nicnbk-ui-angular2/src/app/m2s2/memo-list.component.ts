@@ -85,13 +85,14 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
         // memo types
         this.lookupService.getMemoTypes().then(memoTypes => this.memoTypes = memoTypes);
 
+        console.log(this.memoTypes);
+
         //meeting types
         this.lookupService.getMeetingTypes().then(meetingTypes => this.meetingTypes = meetingTypes);
     }
 
     search(page){
 
-        console.log(this.searchParams);
         // TODO: as parameter?
         this.searchParams.pageSize = 20;
 
@@ -101,6 +102,8 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
 
         this.searchParams.fromDate = $('#fromDate').val();
         this.searchParams.toDate = $('#toDate').val();
+
+        console.log(this.searchParams);
 
         this.busy = this.memoService.search(this.searchParams)
             .subscribe(

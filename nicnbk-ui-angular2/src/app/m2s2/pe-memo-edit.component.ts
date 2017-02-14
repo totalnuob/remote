@@ -10,15 +10,20 @@ import {FileUploadService} from "../upload/file.upload.service";
 import {CommonFormViewComponent} from "../common/common.component";
 import {SaveResponse} from "../common/save-response.";
 import {Subscription} from 'rxjs';
+import {PEFirm} from "../pe/model/pe.firm";
+import {PEFirmService} from "../pe/pe.firm.service";
+import {PEFundService} from "../pe/pe.fund.service";
+import {PESearchParams} from "../pe/model/pe.search-params";
+import {PEFund} from "../pe/model/pe.fund";
 
-declare var $:any
+declare var $:any;
 declare var Chart: any;
 
 @Component({
     selector: 'pe-memo-edit',
     templateUrl: './view/pe-memo-edit.component.html',
     styleUrls: [],
-    providers: [],
+    providers: [PEFirmService, PEFundService],
 })
 @NgModule({
     imports: []
@@ -48,6 +53,12 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
     public geographyList: Array<any> = [];
     public attendeesList: Array<any> = [];
 
+    public firmList: Array<any> = [];
+    public fundList: Array<any> = [];
+    public foundFundsList: Array<any> = [];
+    private peSearchParams = new PESearchParams();
+
+
     closingScheduleList = [];
     openingScheduleList = [];
     currencyList = [];
@@ -76,24 +87,29 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
         private lookupService: LookupService,
         private employeeService: EmployeeService,
         private memoService: MemoService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private peFirmService: PEFirmService,
+        private peFundService: PEFundService
     ){
         super();
 
         // loadLookups
         this.sub = this.loadLookups();
 
-
+        // load all firms for dropdown
+        this.sub = this.loadFirms();
 
         // TODO: wait/sync on lookup loading
         // TODO: sync on subscribe results
-        //this.waitSleep(700);
+        this.waitSleep(700);
 
         // parse params and load data
         this.sub = this.route
             .params
             .subscribe(params => {
                 this.memoIdParam = +params['id'];
+                this.memo.firm = new PEFirm();
+                this.memo.fund = new PEFund();
                 if(this.memoIdParam > 0) {
                     this.busy = this.memoService.get(2, this.memoIdParam)
                         .subscribe(
@@ -102,6 +118,16 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
                                 this.memo = memo;
                                 this.initRadarChart();
 
+                                //if(this.memo.fund == null){
+                                //    this.memo.fund = new PEFund();
+                                //}
+                                if(this.memo.firm == null){
+                                    this.memo.firm = new PEFirm();
+                                }
+
+                                console.log("Memo = ");
+                                console.log(this.memo);
+
                                 if(this.memo.tags == null) {
                                     this.memo.tags = [];
                                 }
@@ -109,6 +135,11 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
                                 // untoggle funds details if fundname is not empty
                                 if(this.memo.fundName != null && this.memo.fundName != "") {
                                     this.visible = true;
+                                }
+
+                                // Downloading funds data
+                                if(this.memo.firm.id != null) {
+                                    this.getFirmData(this.memo.firm.id);
                                 }
 
                                 // preselect memo strategies
@@ -127,6 +158,7 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
                 }else{
                     // TODO: default value for radio buttons?
                     this.memo.meetingType = "MEETING";
+                    this.memo.fund.suitable = false;
                     this.memo.suitable = false;
                     this.memo.currentlyFundRaising = true;
                     this.memo.openingSoon = false;
@@ -226,18 +258,22 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
         this.memo.meetingDate = $('#meetingDateValue').val();
         this.memo.meetingTime = $('#meetingTimeValue').val();
 
+        console.log("Saving ");
         console.log(this.memo);
 
         //TODO: refactor ?
         this.memo.strategies = this.convertToServiceModel(this.memo.strategies);
         this.memo.geographies = this.convertToServiceModel(this.memo.geographies);
 
+        //if(this.memo.fund.id == null) {
+        //    this.memo.fund = null;
+        //}
+
         this.memoService.savePE(this.memo)
             .subscribe(
                 (response: SaveResponse)  => {
                     this.memo.id = response.entityId;
                     this.memo.creationDate = response.creationDate;
-
                     if(this.uploadFiles.length > 0) {
 
                         // TODO: refactor
@@ -269,6 +305,19 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
                     this.postAction(null, "Error saving memo.");
                 }
             );
+
+        if(this.memo.fund.id != null){
+            console.log("here");
+            this.peFundService.save(this.memo.fund)
+                .subscribe(
+                    (response:SaveResponse) => {
+                        this.postAction("Succesfully saved PE FUND", null);
+                    },
+                    error => {
+                        this.postAction(null, "Error saving PE FUND");
+                    }
+                )
+        }
     }
 
     postAction(successMessage, errorMessage){
@@ -441,15 +490,79 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
                 error =>  this.errorMessage = <any>error);
     }
 
+    loadFirms(){
+        this.peFirmService.getFirms()
+            .subscribe(
+                data => {
+                    data.forEach(element => {
+                        this.firmList.push({id: element.id, name: element.firmName});
+                    });
+                },
+                error => {
+                    this.postAction(null, "Error loading firms list for dropdown.");
+                }
+            )
+        console.log(this.firmList);
+    }
 
+    getFirmDataOnChange(id){
+        this.getFundData(null);
+        this.getFirmData(id);
+    }
+
+    getFirmData(id){
+        this.fundList = [];
+        this.peFirmService.get(id)
+            .subscribe(
+                (data: PEFirm) => {
+                    if(data && data.id > 0) {
+                        this.memo.firm = data;
+                    } else {
+                        this.errorMessage = "Error loading fund manager info.";
+                    }
+                },
+                error => this.errorMessage = "Error loading manager profile"
+            );
+        this.peSearchParams['id'] = id;
+        this.peFundService.search(this.peSearchParams)
+            .subscribe(
+                searchResult => {
+                    this.foundFundsList = searchResult;
+                    searchResult.forEach(element => {
+                        this.fundList.push({id: element.id, name: element.fundName});
+                    });
+                },
+                error => this.errorMessage = "Failed to load GP's funds"
+            );
+    }
+
+    getFundData(id){
+        if(id == null) {
+            return this.memo.fund = new PEFund();
+        }
+        for(var i = 0; i < this.foundFundsList.length; i++){
+            if(this.foundFundsList[i].id == id) {
+                return this.memo.fund = this.foundFundsList[i];
+            }
+        }
+    }
 
     //TODO: bind ngModel - boolean
     setSuitable(){
+        this.memo.fund.suitable = true;
+        this.memo.fund.nonsuitableReason = '';
+    }
+
+    setNonSuitable(){
+        this.memo.fund.suitable = false;
+    }
+
+    setSuitableTemp(){
         this.memo.suitable = true;
         this.memo.nonsuitableReason = '';
     }
 
-    setNonSuitable(){
+    setNonSuitableTemp(){
         this.memo.suitable = false;
     }
 

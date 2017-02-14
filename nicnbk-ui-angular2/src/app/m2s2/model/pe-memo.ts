@@ -1,4 +1,6 @@
 import {FundMemo} from "./fund-memo";
+import {PEFirm} from "../../pe/model/pe.firm";
+import {PEFund} from "../../pe/model/pe.fund";
 
 export class PEMemo extends FundMemo{
 
@@ -14,4 +16,6 @@ export class PEMemo extends FundMemo{
     nicFollowups: string;
     otherPartyFollowups: string;
 
+    firm: PEFirm;
+    fund: PEFund;
 }

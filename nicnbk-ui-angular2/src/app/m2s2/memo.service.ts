@@ -13,9 +13,12 @@ export class MemoService extends CommonService{
     private MEMO_BASE_URL = DATA_APP_URL + "m2s2/";
 
     private PE_MEMO_SAVE_URL = this.MEMO_BASE_URL + "PE/save/";
+    private PE_MEMO_SEARCH_URL = this.MEMO_BASE_URL + "PE/search";
+
     private HF_MEMO_SAVE_URL = this.MEMO_BASE_URL + "HF/save/";
     private RE_MEMO_SAVE_URL = this.MEMO_BASE_URL + "RE/save/";
     private GN_MEMO_SAVE_URL = this.MEMO_BASE_URL + "GN/save/";
+
 
     private MEMO_SEARCH_URL = this.MEMO_BASE_URL + "search/";
     private MEMO_GET_URL = this.MEMO_BASE_URL + "get/";
@@ -38,6 +41,17 @@ export class MemoService extends CommonService{
 
         //console.log(body);
         return this.http.post(this.MEMO_SEARCH_URL, body, options)
+            .map(this.extractData)
+            .catch(this.handleError);
+    }
+
+    searchPE(searchParam){
+        let body = JSON.stringify(searchParam);
+        let headers = new Headers({ 'Content-Type': 'application/json' });
+        let options = new RequestOptions({ headers: headers });
+
+        //console.log(body);
+        return this.http.post(this.PE_MEMO_SEARCH_URL, body, options)
             .map(this.extractData)
             .catch(this.handleError);
     }

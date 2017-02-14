@@ -38,17 +38,21 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     public firmIndustryList: Array<any> = [];
     public firmGeographyList: Array<any> = [];
 
+    public currencyList = [];
+    openingScheduleList = [];
 
     public sub:any;
     public fundIdParam: number;
     public firmIdParam: number;
 
     private visible = false;
+    private openingSoon = false;
 
     busy: Subscription;
 
     uploadedGrossCf;
     uploadedNetCf;
+
 
     constructor(
         private lookupService: LookupService,
@@ -63,7 +67,9 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
 
         // TODO: wait/sync on lookup loading
         // TODO: sync on subscribe results
-        this.waitSleep(700);
+        //this.waitSleep(700);
+
+        console.log(this.currencyList);
 
         //parse params and load data
         this.sub = this.route
@@ -80,6 +86,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                 if(data && data.id > 0) {
                                     this.fund = data;
 
+                                    console.log(this.fund);
+
                                     // preselect firm strategies
                                     this.preselectStrategy();
 
@@ -93,6 +101,11 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                     if(this.fund.status == 'Open'){
                                         this.visible = true;
                                     }
+                                    if(this.fund.status == 'Opening soon'){
+                                        this.visible = true;
+                                        this.openingSoon = true;
+                                    }
+
 
                                     console.log(this.fund.fundCompanyPerformance);
                                     if(this.fund.grossCashflow == null){
@@ -181,6 +194,9 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
 
     // TODO: Move to a common component
     loadLookups(){
+
+        this.lookupService.getOpeningScheduleList().then(data => this.openingScheduleList = data);
+
         //load strategies
         this.lookupService.getPEStrategies()
             .subscribe(
@@ -208,6 +224,16 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                 data => {
                     data.forEach(element => {
                         this.geographyList.push({ id: element.code, text: element.nameEn});
+                    });
+                },
+                error =>  this.errorMessage = <any>error
+            );
+
+        this.lookupService.getCurrencyList()
+            .subscribe(
+                data => {
+                    data.forEach(element => {
+                        this.currencyList.push(element);
                     });
                 },
                 error =>  this.errorMessage = <any>error
@@ -294,10 +320,15 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     }
 
     toggle() {
-        if(this.fund.status == "Open"){
+        if(this.fund.status != "Closed"){
             this.visible = true;
         } else {
             this.visible = false;
+        }
+        if(this.fund.status == "Opening_soon"){
+            this.openingSoon = true;
+        } else {
+            this.openingSoon = false;
         }
     }
 

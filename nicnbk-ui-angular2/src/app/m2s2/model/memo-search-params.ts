@@ -8,4 +8,5 @@ export class MemoSearchParams extends PageableSearchParams{
     fundName: string;
     tags: string[];
 
+    firmId: number;
 }

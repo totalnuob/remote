@@ -91,7 +91,7 @@ public class MeetingMemoServiceImpl implements MeetingMemoService {
                         searchParams.getMemoType(),
                         searchParams.getFirmName(), searchParams.getFundName(), searchParams.getFromDate(), searchParams.getToDate(),
                         new PageRequest(page, pageSize, new Sort(Sort.Direction.DESC, "meetingDate")));
-            } else if (searchParams.getFromDate() != null) {
+            }  else if (searchParams.getFromDate() != null) {
                 memoPage = memoRepository.findDateFrom(StringUtils.isValue(searchParams.getMeetingType()) ? searchParams.getMeetingType() : null,
                         //StringUtils.isValue(searchParams.getMemoType()) ? searchParams.getMemoType() : null,
                         searchParams.getMemoType(),

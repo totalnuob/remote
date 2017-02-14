@@ -13,7 +13,8 @@ export class PEFirmService extends CommonService {
     private PE_BASE_URL = DATA_APP_URL + 'pe/firm/';
     private PE_FIRM_SAVE_URL = this.PE_BASE_URL + 'save/';
     private PE_FIRM_GET_URL = this.PE_BASE_URL + 'get/';
-    private PE_FIRM_SEARCH_URL = this.PE_BASE_URL + "search/"
+    private PE_FIRM_SEARCH_URL = this.PE_BASE_URL + "search/";
+    private PE_FIRM_FIRMS_URL = this.PE_BASE_URL + "all/";
 
     constructor(
         private http: Http)
@@ -46,6 +47,12 @@ export class PEFirmService extends CommonService {
 
         return this.http.post(this.PE_FIRM_SEARCH_URL, body, options)
             .map(this.extractData)
+            .catch(this.handleError);
+    }
+
+    getFirms(){
+        return this.http.get(this.PE_FIRM_FIRMS_URL)
+            .map(this.extractDataList)
             .catch(this.handleError);
     }
 }

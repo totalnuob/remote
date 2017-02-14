@@ -1,6 +1,7 @@
 package kz.nicnbk.repo.model.pe;
 
 import kz.nicnbk.repo.model.base.CreateUpdateBaseEntity;
+import kz.nicnbk.repo.model.base.DataConstraints;
 import kz.nicnbk.repo.model.common.Currency;
 import kz.nicnbk.repo.model.common.Geography;
 import kz.nicnbk.repo.model.common.Strategy;
@@ -23,6 +24,7 @@ public class PEFund extends CreateUpdateBaseEntity {
     private Currency fundCurrency;
     private int vintage;
     private double fundSize;
+    private Double predecessorInvestedPct;
     private double targetSize;
     private double hardCap;
     private String targetHardCapComment;
@@ -35,6 +37,10 @@ public class PEFund extends CreateUpdateBaseEntity {
     private Set<Strategy> strategy;
     private String strategyComment;
     private Set<Geography> geography;
+
+    private String openingSchedule;
+    private Boolean suitable;
+    private String nonsuitableReason;
 
     //KEY FUND STATISTICS
 //    private int numberOfInvestments;
@@ -117,6 +123,15 @@ public class PEFund extends CreateUpdateBaseEntity {
 
     public void setFundSize(double fundSize) {
         this.fundSize = fundSize;
+    }
+
+    @Column(name="predecessor_invested_pct")
+    public Double getPredecessorInvestedPct() {
+        return predecessorInvestedPct;
+    }
+
+    public void setPredecessorInvestedPct(Double predecessorInvestedPct) {
+        this.predecessorInvestedPct = predecessorInvestedPct;
     }
 
     @Column(name = "target_size")
@@ -511,5 +526,31 @@ public class PEFund extends CreateUpdateBaseEntity {
 
     public void setPerformanceRisks(String performanceRisks) {
         this.performanceRisks = performanceRisks;
+    }
+
+    @Column(name="opening_schedule", length = DataConstraints.C_TYPE_ENTITY_NAME)
+    public String getOpeningSchedule() {
+        return openingSchedule;
+    }
+
+    public void setOpeningSchedule(String openingSchedule) {
+        this.openingSchedule = openingSchedule;
+    }
+
+    public Boolean getSuitable() {
+        return suitable;
+    }
+
+    public void setSuitable(Boolean suitable) {
+        this.suitable = suitable;
+    }
+
+    @Column(name="nonsuitable_desc", length = DataConstraints.C_TYPE_ENTITY_DESCRIPTION_LONG)
+    public String getNonsuitableReason() {
+        return nonsuitableReason;
+    }
+
+    public void setNonsuitableReason(String nonsuitableReason) {
+        this.nonsuitableReason = nonsuitableReason;
     }
 }

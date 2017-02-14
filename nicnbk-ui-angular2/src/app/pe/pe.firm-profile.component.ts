@@ -1,4 +1,4 @@
-import {Component, ViewChild} from '@angular/core';
+import {Component, ViewChild, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {PEFirm} from "./model/pe.firm";
 import {PEFirmService} from "./pe.firm.service";
@@ -11,6 +11,10 @@ import {PEFund} from "./model/pe.fund";
 import {PESearchParams} from "./model/pe.search-params";
 
 import {Subscription} from 'rxjs';
+import {MemoSearchParams} from "../m2s2/model/memo-search-params";
+import {Memo} from "../m2s2/model/memo";
+import {MemoSearchResults} from "../m2s2/model/memo-search-results";
+import {MemoService} from "../m2s2/memo.service";
 
 declare var $:any
 
@@ -20,7 +24,7 @@ declare var $:any
     styleUrls: [],
     providers: [PEFirmService, PEFundService]
 })
-export class PEFirmProfileComponent extends CommonFormViewComponent {
+export class PEFirmProfileComponent extends CommonFormViewComponent implements OnInit{
 
     private firm = new PEFirm();
 
@@ -45,12 +49,19 @@ export class PEFirmProfileComponent extends CommonFormViewComponent {
 
     busy: Subscription;
 
+    //For memo loading
+    memoSearchParams = new MemoSearchParams;
+    meetingTypes = [];
+    memoList: Memo[];
+    memoSearchResult: MemoSearchResults;
+
     constructor(
         private lookupService: LookupService,
         private firmService: PEFirmService,
         private fundService: PEFundService,
         private route: ActivatedRoute,
-        private router: Router
+        private router: Router,
+        private memoService: MemoService
     ) {
         super();
 
@@ -83,6 +94,10 @@ export class PEFirmProfileComponent extends CommonFormViewComponent {
 
                                 // preselect geography focus
                                 this.preselectGeographies();
+
+                                // memo search params init
+                                this.memoSearchParams.memoType = "2";
+                                this.memoSearchParams.firmId = this.firm.id;
 
                             },
                             error => this.errorMessage = "Error loading firm profile"
@@ -118,6 +133,52 @@ export class PEFirmProfileComponent extends CommonFormViewComponent {
                 }
             )
     }
+
+    ngOnInit():any {
+        // TODO: exclude jQuery
+        // datetimepicker
+        $('#fromDate').datetimepicker({
+            //defaultDate: new Date(),
+            format: 'DD-MM-YYYY'
+        });
+        $('#toDate').datetimepicker({
+            //defaultDate: new Date(),
+            format: 'DD-MM-YYYY'
+        });
+
+        this.loadLookups();
+
+    }
+
+    //ngAfterContentInit():any {
+    //    console.log("Search = ");
+    //    console.log(this.firm.id);
+    //    //findAll memos
+    //
+    //}
+
+
+
+    search(page){
+
+        // TODO: as parameter?
+        this.memoSearchParams.pageSize = 20;
+
+        this.memoSearchParams.page = page;
+
+        this.memoSearchParams.fromDate = $('#fromDate').val();
+        this.memoSearchParams.toDate = $('#toDate').val();
+
+        this.busy = this.memoService.searchPE(this.memoSearchParams)
+            .subscribe(
+                searchResult  => {
+                    this.memoList = searchResult.memos;
+                    this.memoSearchResult = searchResult;
+                },
+                error =>  this.errorMessage = "Failed to search memos."
+            );
+    }
+
     postAction(successMessage, errorMessage) {
         this.successMessage = successMessage;
         this.errorMessage = errorMessage;
@@ -128,6 +189,10 @@ export class PEFirmProfileComponent extends CommonFormViewComponent {
 
     // TODO: Move to a common component
     loadLookups(){
+
+        //meeting types
+        this.lookupService.getMeetingTypes().then(meetingTypes => this.meetingTypes = meetingTypes);
+
         //load strategies
         this.lookupService.getPEStrategies()
             .subscribe(

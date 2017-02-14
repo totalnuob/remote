@@ -27,6 +27,8 @@ public class MemoSearchParams implements BaseParams {
 
     private Long fundId;
 
+    private Long firmId;
+
     /* Pagination */
     private int page;
     private int pageSize;
@@ -111,6 +113,14 @@ public class MemoSearchParams implements BaseParams {
 
     public void setFundId(Long fundId) {
         this.fundId = fundId;
+    }
+
+    public Long getFirmId() {
+        return firmId;
+    }
+
+    public void setFirmId(Long firmId) {
+        this.firmId = firmId;
     }
 
     public boolean isEmpty(){

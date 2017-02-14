@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by zhambyl on 16-Nov-16.
@@ -51,6 +52,11 @@ public class PEFirmServiceREST {
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public PEPagedSearchResult search(@RequestBody PESearchParams searchParams){
         return this.service.findByName(searchParams);
+    }
+
+    @RequestMapping(value = "/all", method = RequestMethod.GET)
+    public List<PEFirmDto> getFirms(){
+        return this.service.findAll();
     }
 
 }

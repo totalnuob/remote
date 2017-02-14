@@ -54,6 +54,11 @@ public class MemoServiceREST {
         return searchResult;
     }
 
+    @RequestMapping(value = "PE/search", method = RequestMethod.POST)
+    public MemoPagedSearchResult searchPE(@RequestBody MemoSearchParams searchParams){
+        return PEmemoService.search(searchParams);
+    }
+
     @RequestMapping(value = "/get/{type}/{memoId}", method = RequestMethod.GET)
     public MeetingMemoDto get(@PathVariable int type, @PathVariable long memoId){
         switch (type){
@@ -73,6 +78,9 @@ public class MemoServiceREST {
 
     @RequestMapping(value = "/PE/save", method = RequestMethod.POST)
     public ResponseEntity<?>  save(@RequestBody PrivateEquityMeetingMemoDto memoDto){
+        if(memoDto.getFund().getId() == null) {
+            memoDto.setFund(null);
+        }
         Long id = PEmemoService.save(memoDto);
 
         // TODO: response

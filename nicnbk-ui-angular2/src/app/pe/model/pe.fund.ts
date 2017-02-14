@@ -4,7 +4,7 @@ export class PEFund {
 
     fundName: string;
     status: string;
-    fundCurrency: string;
+    currency: string;
     vintage: number;
     fundSize: number;
     targetSize: number;
@@ -59,4 +59,9 @@ export class PEFund {
     grossCashflow = [];
     netCashflow = [];
     fundCompanyPerformance = [];
+
+    predecessorInvestedPct: number;
+    openingSchedule: string;
+    suitable: boolean;
+    nonsuitableReason: string;
 }

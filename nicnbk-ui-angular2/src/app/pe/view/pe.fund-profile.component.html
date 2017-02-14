@@ -100,7 +100,20 @@
                             <select id="fundStatus" class="form-control" [(ngModel)]="fund.status" (ngModelChange)="toggle()">
                                 <option value="Closed" selected>Closed</option>
                                 <option value="Open">Open</option>
+                                <option value="Opening soon">Opening soon</option>
                             </select>
+                        </div>
+                    </div>
+                    <div [hidden]="!openingSoon">
+                        <div class="row">
+                            <div class="col-md-1">
+                                <label><b>Opening Schedule</b></label>
+                            </div>
+                            <div class="col-md-3">
+                                <select id="openingSchedule" class="form-control"  [(ngModel)]="fund.openingSchedule">
+                                    <option *ngFor="let item of openingScheduleList" [value]="item.code">{{item.nameEn}}</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                     <div [hidden]="!visible">
@@ -109,7 +122,15 @@
                             <table class=" col-md-4 table-striped table-condensed">
                                 <tr>
                                     <td class="col-md-1">Fund size</td>
-                                    <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.fundSize"/></td>
+                                    <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.fundSize"/>
+                                        <select id="currency" class="form-control" [(ngModel)] = "fund.currency">
+                                            <option *ngFor="let item of currencyList" [value]="item.code">{{item.nameEn}}</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-1">Predecessor fund invested, %</td>
+                                    <td class="col-md-3"><input style="width: 100%" type="text" [(ngModel)]="fund.predecessorInvestedPct"/></td>
                                 </tr>
                                 <tr>
                                     <td class="col-md-1">Target size / Hard cap</td>

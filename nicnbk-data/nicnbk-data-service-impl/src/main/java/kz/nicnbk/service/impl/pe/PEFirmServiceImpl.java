@@ -15,6 +15,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by zhambyl on 16-Nov-16.
  */
@@ -40,6 +43,11 @@ public class PEFirmServiceImpl implements PEFirmService {
         PEFirmDto firmDto = this.converter.disassemble(entity);
 
         return firmDto;
+    }
+
+    @Override
+    public List<PEFirmDto> findAll() {
+        return converter.disassembleList(repository.findAllByOrderByFirmNameDesc());
     }
 
     @Override

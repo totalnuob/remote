@@ -17,9 +17,10 @@ public class PEFundDto extends HistoryBaseEntityDto<PEFund> {
     //FUND SUMMARY
     private String fundName;
     private String status;
-    private String fundCurrency;
+    private String currency;
     private int vintage;
     private double fundSize;
+    private Double predecessorInvestedPct;
     private double targetSize;
     private double hardCap;
     private String targetHardCapComment;
@@ -32,6 +33,10 @@ public class PEFundDto extends HistoryBaseEntityDto<PEFund> {
     private Set<BaseDictionaryDto> strategy;
     private String strategyComment;
     private Set<BaseDictionaryDto> geography;
+
+    private String openingSchedule;
+    private Boolean suitable;
+    private String nonsuitableReason;
 
     //KEY FUND STATISTICS
     private int numberOfInvestments;
@@ -91,12 +96,12 @@ public class PEFundDto extends HistoryBaseEntityDto<PEFund> {
         this.status = status;
     }
 
-    public String getFundCurrency() {
-        return fundCurrency;
+    public String getCurrency() {
+        return currency;
     }
 
-    public void setFundCurrency(String fundCurrency) {
-        this.fundCurrency = fundCurrency;
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 
     public int getVintage() {
@@ -467,4 +472,35 @@ public class PEFundDto extends HistoryBaseEntityDto<PEFund> {
         this.netCashflow = netCashflow;
     }
 
+    public Double getPredecessorInvestedPct() {
+        return predecessorInvestedPct;
+    }
+
+    public void setPredecessorInvestedPct(Double predecessorInvestedPct) {
+        this.predecessorInvestedPct = predecessorInvestedPct;
+    }
+
+    public String getOpeningSchedule() {
+        return openingSchedule;
+    }
+
+    public void setOpeningSchedule(String openingSchedule) {
+        this.openingSchedule = openingSchedule;
+    }
+
+    public Boolean getSuitable() {
+        return suitable;
+    }
+
+    public void setSuitable(Boolean suitable) {
+        this.suitable = suitable;
+    }
+
+    public String getNonsuitableReason() {
+        return nonsuitableReason;
+    }
+
+    public void setNonsuitableReason(String nonsuitableReason) {
+        this.nonsuitableReason = nonsuitableReason;
+    }
 }
