@@ -59,6 +59,12 @@ public class MemoServiceREST {
         return PEmemoService.search(searchParams);
     }
 
+    @RequestMapping(value = "HF/search", method = RequestMethod.POST)
+    public MemoPagedSearchResult searchHF(@RequestBody MemoSearchParams searchParams){
+        return HFmemoService.search(searchParams);
+    }
+
+
     @RequestMapping(value = "/get/{type}/{memoId}", method = RequestMethod.GET)
     public MeetingMemoDto get(@PathVariable int type, @PathVariable long memoId){
         switch (type){
@@ -97,6 +103,10 @@ public class MemoServiceREST {
 
     @RequestMapping(value = "/HF/save", method = RequestMethod.POST)
     public ResponseEntity<?>  save(@RequestBody HedgeFundsMeetingMemoDto memoDto){
+
+        if(memoDto.getFund() != null && memoDto.getFund().getId() == null) {
+            memoDto.setFund(null);
+        }
         Long id = HFmemoService.save(memoDto);
 
         // TODO: response

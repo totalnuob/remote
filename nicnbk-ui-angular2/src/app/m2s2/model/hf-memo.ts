@@ -1,4 +1,6 @@
 import {FundMemo} from "./fund-memo";
+import {HFManager} from "../../hf/model/hf.manager";
+import {HedgeFund} from "../../hf/model/hf.fund";
 
 export class HFMemo extends FundMemo{
 
@@ -14,4 +16,6 @@ export class HFMemo extends FundMemo{
     NICFollowups: string;
     otherFollowups: string;
 
+    manager: HFManager;
+    fund: HedgeFund;
 }

@@ -147,16 +147,7 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
         });
 
         this.loadLookups();
-
     }
-
-    //ngAfterContentInit():any {
-    //    console.log("Search = ");
-    //    console.log(this.firm.id);
-    //    //findAll memos
-    //
-    //}
-
 
 
     search(page){

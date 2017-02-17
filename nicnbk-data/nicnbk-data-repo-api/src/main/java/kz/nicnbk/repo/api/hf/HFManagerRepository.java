@@ -7,7 +7,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface HFManagerRepository extends PagingAndSortingRepository<HFManager, Long> {
+
+    List<HFManager> findAllByOrderByNameDesc();
 
     @Query("select manager from HFManager manager where UPPER(manager.name) LIKE UPPER(CONCAT('%',:name,'%'))" )
     Page<HFManager> findByName(@Param("name") String name, Pageable pageable);

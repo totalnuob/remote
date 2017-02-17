@@ -1,5 +1,10 @@
 package kz.nicnbk.service.dto.m2s2;
 
+import kz.nicnbk.repo.model.hf.HFManager;
+import kz.nicnbk.repo.model.hf.HedgeFund;
+import kz.nicnbk.service.dto.hf.HFManagerDto;
+import kz.nicnbk.service.dto.hf.HedgeFundDto;
+
 /**
  * Created by magzumov on 11.07.2016.
  */
@@ -15,6 +20,9 @@ public class HedgeFundsMeetingMemoDto extends FundMeetingMemoDto {
     private String nicFollowups;
     private String otherPartyFollowups;
     private Short conviction;
+
+    private HFManagerDto manager;
+    private HedgeFundDto fund;
 
     public String getManagementAndTeamNotes() {
         return managementAndTeamNotes;
@@ -94,5 +102,21 @@ public class HedgeFundsMeetingMemoDto extends FundMeetingMemoDto {
 
     public void setConviction(Short conviction) {
         this.conviction = conviction;
+    }
+
+    public HFManagerDto getManager() {
+        return manager;
+    }
+
+    public void setManager(HFManagerDto manager) {
+        this.manager = manager;
+    }
+
+    public HedgeFundDto getFund() {
+        return fund;
+    }
+
+    public void setFund(HedgeFundDto fund) {
+        this.fund = fund;
     }
 }

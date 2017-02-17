@@ -10,6 +10,10 @@ import {CommonFormViewComponent} from "../common/common.component";
 import {EmployeeService} from "../employee/employee.service";
 import {MemoAttachmentDownloaderComponent} from "./memo-attachment-downloader.component";
 import {Subscription} from 'rxjs';
+import {HFManagerService} from "../hf/hf.manager.service";
+import {HFManager} from "../hf/model/hf.manager";
+import {HedgeFund} from "../hf/model/hf.fund";
+import {HedgeFundService} from "../hf/hf.fund.service";
 
 declare var $:any
 declare var Chart: any;
@@ -48,6 +52,8 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
     public geographyList: Array<any> = [];
     public attendeesList: Array<any> = [];
 
+    public managerList: Array<any> = [];
+
     closingScheduleList = [];
     openingScheduleList = [];
     currencyList = [];
@@ -75,12 +81,17 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
         private lookupService: LookupService,
         private employeeService: EmployeeService,
         private memoService: MemoService,
+        private hfManagerService: HFManagerService,
+        private hfFundService: HedgeFundService,
         private route: ActivatedRoute
     ){
         super();
 
         // loadLookups
         this.sub = this.loadLookups();
+
+        // load all managers for dropdown
+        this.sub = this.loadManagers();
 
 
         // TODO: wait/sync on lookup loading
@@ -93,6 +104,8 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
             .params
             .subscribe(params => {
                 this.memoIdParam = +params['id'];
+                this.memo.manager = new HFManager();
+                this.memo.fund = new HedgeFund();
                 if(this.memoIdParam > 0) {
                     this.busy = this.memoService.get(3, this.memoIdParam)
                         .subscribe(
@@ -103,6 +116,10 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
 
                                 if(this.memo.tags == null) {
                                     this.memo.tags = [];
+                                }
+
+                                if(this.memo.manager == null) {
+                                    this.memo.manager = new HFManager();
                                 }
 
                                 // untoggle funds details if fundname is not empty
@@ -118,6 +135,8 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
 
                                 // preselect memo attendees
                                 this.preselectAttendeesNIC();
+
+                                console.log(this.memo);
                             },
                             error => this.errorMessage = "Error loading memo"
                         );
@@ -224,6 +243,9 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
         //TODO: refactor ?
         this.memo.strategies = this.convertToServiceModel(this.memo.strategies);
         this.memo.geographies = this.convertToServiceModel(this.memo.geographies);
+
+        console.log("Saving ");
+        console.log(this.memo);
 
         this.memoService.saveHF(this.memo)
             .subscribe(
@@ -431,6 +453,51 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
                     });
                 },
                 error =>  this.errorMessage = <any>error);
+    }
+
+    loadManagers(){
+        this.hfManagerService.getManagers()
+            .subscribe(
+                data => {
+                    data.forEach(element => {
+                        this.managerList.push({id: element.id, name: element.name});
+                    })
+                },
+                error => {
+                    this.postAction(null, "Error loading managers list for dropdown");
+                }
+            )
+        console.log(this.managerList);
+    }
+
+    getManagerDataOnChange(id){
+        this.getManagerData(id);
+    }
+
+    getManagerData(id){
+        this.hfManagerService.get(id)
+            .subscribe(
+                (data: HFManager) => {
+                    if(data && data.id > 0) {
+                        this.memo.manager = data;
+                    } else {
+                        this.errorMessage = "Error loading fund manager info";
+                    }
+                },
+                error => this.errorMessage = "Error loading manager profile"
+            );
+    }
+
+    getFundData(id) {
+        for(var i = 0; i < this.memo.manager.funds.length; i++){
+            if(this.memo.manager.funds[i].id == id) {
+                return this.memo.fund = this.memo.manager.funds[i];
+            }
+        }
+    }
+
+    toggleFund(){
+        this.memo.fund = new HedgeFund();
     }
 
     //TODO: bind ngModel - boolean

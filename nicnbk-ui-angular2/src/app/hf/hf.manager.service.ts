@@ -14,6 +14,8 @@ export class HFManagerService extends CommonService{
     private HF_MANAGER_SAVE_URL = this.HF_BASE_URL + "save/";
     private HF_MANAGER_GET_URL = this.HF_BASE_URL + "get/";
     private HF_MANAGER_SEARCH_URL = this.HF_BASE_URL + "search/";
+    private HF_MANAGER_LIST_URL = this.HF_BASE_URL + "all/";
+
     constructor (
         private http: Http)
     {
@@ -49,4 +51,9 @@ export class HFManagerService extends CommonService{
             .catch(this.handleError);
     }
 
+    getManagers(){
+        return this.http.get(this.HF_MANAGER_LIST_URL)
+            .map(this.extractDataList)
+            .catch(this.handleError);
+    }
 }

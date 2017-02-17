@@ -25,7 +25,7 @@ declare var $:any
 })
 export class HFManagerProfileComponent extends CommonFormViewComponent implements OnInit{
 
-    searchParams = new MemoSearchParams();
+    memoSearchParams = new MemoSearchParams();
     memoList: Memo[];
     memoSearchResult: MemoSearchResults;
     meetingTypes = [];
@@ -60,7 +60,6 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
         // TODO: sync on subscribe results
         //this.waitSleep(700);
 
-
         // parse params and load data
         this.sub = this.route
             .params
@@ -73,6 +72,10 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
                                 console.log(data);
                                 // TODO: check response memo
                                 this.manager = data;
+
+                                // memo search params init
+                                this.memoSearchParams.memoType = "3";
+                                this.memoSearchParams.firmId = this.manager.id;
                             },
                             error => this.errorMessage = "Error loading manager profile"
                         );
@@ -149,25 +152,21 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
     }
 
     search(page){
-        //console.log(this.searchParams);
-        //// TODO: as parameter?
-        //this.searchParams.pageSize = 20;
-        //
-        //if(page > 0) {
-        //    this.searchParams.page = page;
-        //}
-        //
-        //this.searchParams.fromDate = $('#fromDate').val();
-        //this.searchParams.toDate = $('#toDate').val();
-        //
-        //this.memoService.search(this.searchParams)
-        //    .subscribe(
-        //        searchResult  => {
-        //            this.memoList = searchResult.memos;
-        //            this.memoSearchResult = searchResult;
-        //        },
-        //        error =>  this.errorMessage = "Failed to search memos."
-        //    );
+        console.log(this.memoSearchParams);
+
+        this.memoSearchParams.pageSize = 20;
+        this.memoSearchParams.page = page;
+        this.memoSearchParams.fromDate = $('#fromDate').val();
+        this.memoSearchParams.toDate = $('#toDate').val();
+
+        this.busy = this.memoService.searchHF(this.memoSearchParams)
+            .subscribe(
+                searchResult => {
+                    this.memoList = searchResult.memos;
+                    this.memoSearchResult = searchResult;
+                },
+                error => this.errorMessage = "Failed to search memos."
+            );
     }
 
     loadLookups(){
@@ -191,7 +190,6 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
                 data => {
                     this.currencyLookup = data;
 
-
                     // TODO: wait/sync on lookup loading
                     // TODO: sync on subscribe results
                     if(this.manager.id == null){
@@ -206,7 +204,6 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
 
         // memo types
         this.lookupService.getMeetingTypes().then(meetingTypes => this.meetingTypes = meetingTypes);
-
     }
 
     getStrategyName(code){

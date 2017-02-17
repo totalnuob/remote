@@ -5,6 +5,8 @@ import kz.nicnbk.service.dto.hf.HFManagerDto;
 import kz.nicnbk.service.dto.hf.HedgeFundManagerPagedSearchResult;
 import kz.nicnbk.service.dto.hf.HedgeFundSearchParams;
 
+import java.util.List;
+
 /**
  * Created by timur on 19.10.2016.
  */
@@ -21,4 +23,6 @@ public interface HFManagerService extends BaseService {
     HFManagerDto get(Long id);
 
     HedgeFundManagerPagedSearchResult findByName(HedgeFundSearchParams searchParams);
+
+    List<HFManagerDto> findAll();
 }

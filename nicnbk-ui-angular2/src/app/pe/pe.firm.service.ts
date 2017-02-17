@@ -14,7 +14,7 @@ export class PEFirmService extends CommonService {
     private PE_FIRM_SAVE_URL = this.PE_BASE_URL + 'save/';
     private PE_FIRM_GET_URL = this.PE_BASE_URL + 'get/';
     private PE_FIRM_SEARCH_URL = this.PE_BASE_URL + "search/";
-    private PE_FIRM_FIRMS_URL = this.PE_BASE_URL + "all/";
+    private PE_FIRM_LIST_URL = this.PE_BASE_URL + "all/";
 
     constructor(
         private http: Http)
@@ -51,7 +51,7 @@ export class PEFirmService extends CommonService {
     }
 
     getFirms(){
-        return this.http.get(this.PE_FIRM_FIRMS_URL)
+        return this.http.get(this.PE_FIRM_LIST_URL)
             .map(this.extractDataList)
             .catch(this.handleError);
     }

@@ -15,6 +15,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Created by timur on 19.10.2016.
  */
@@ -46,6 +48,11 @@ public class HFManagerServiceImpl implements HFManagerService {
         firmDto.setFunds(this.fundService.loadManagerFunds(id));
 
         return firmDto;
+    }
+
+    @Override
+    public List<HFManagerDto> findAll(){
+        return converter.disassembleList(repository.findAllByOrderByNameDesc());
     }
 
     @Override

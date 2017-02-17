@@ -1,4 +1,12 @@
 <div class="container">
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li><a [routerLink]="['/hf/managerSearch']">Hedge Funds</a></li>
+                <li class="active">Manager profile</li>
+            </ol>
+        </div>
+    </div>
     <div style="position: relative;">
         <div [ngBusy]="busy">
         <div class="row top-buffer" >
@@ -18,7 +26,7 @@
             <li class="active">
                 <a data-toggle="tab" href="#overview">OVERVIEW</a>
             </li>
-            <li>
+            <li (click)="search()">
                 <a data-toggle="tab" href="#meetings_calls">MEETINGS/CALLS</a>
             </li>
         </ul>
@@ -226,7 +234,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="meetingType">Meeting Type</label>
-                                    <select class="form-control" id="meetingType" [(ngModel)]="searchParams.meetingType">
+                                    <select class="form-control" id="meetingType" [(ngModel)]="memoSearchParams.meetingType">
                                         <option value="NONE">---</option>
                                         <option *ngFor = "let type of meetingTypes" [value]="type.code">{{type.nameEn}}</option>
                                     </select>
@@ -255,11 +263,68 @@
                     <br/>
                     <div class="row">
                         <div class="col-md-12">
-                            <button type="button" class="btn btn-success pull-right" (click)="search()">Search</button>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="fundName">Fund</label>
+                                    <input type="text" class="form-control" id="fundName" placeholder="Enter fund name..."
+                                           [(ngModel)]="memoSearchParams.fundName"/>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="row">
-                        <span style="color: #002a80">Manager meetings & calls under construction. Please use 'M2S2' instead.</span>
+                        <div class="col-md-12">
+                            <button type="button" class="btn btn-success pull-right" (click)="search()">Search</button>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label>Total found: <span>{{memoSearchResult?.totalElements > 0 ?  memoSearchResult?.totalElements : 0}}</span></label>
+                </div>
+                <div class="row withpadding" style="position: relative; min-height: 80px;">
+                    <div class="row pull-right">
+                        <ul class="pagination" *ngIf="memoSearchResult?.showPageFrom > 0">
+                            <li><a *ngIf="memoSearchResult?.showPageFrom > 1" (click)="search(memoSearchResult.showPageFrom - 1)">&laquo;</a></li>
+                            <li *ngFor="let i of range(memoSearchResult.showPageFrom, memoSearchResult.showPageTo)" [class.active]="i == memoSearchResult.currentPage">
+                                <a (click)="search(i)">{{i}}</a>
+                            </li>
+                            <li><a *ngIf="memoSearchResult.showPageTo < memoSearchResult.totalPages" (click)="search(memoSearchResult.showPageTo + 1)">&raquo;</a></li>
+                        </ul>
+                    </div>
+                    <table [ngBusy]="busy" class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>MEETING/CALL</th>
+                            <th>FIRM</th>
+                            <th>FUND</th>
+                            <th>DATE</th>
+                            <th>AUTHOR</th>
+                            <th>ACTIONS</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <tr *ngFor = "let memo of memoList">
+                            <td width="10%" >{{memo.meetingType}}</td>
+                            <td width="30%"><a [routerLink]="['/m2s2/edit/', memo.memoType, memo.id]">{{memo.firmName}}</a></td>
+                            <td width="30%"><a [routerLink]="['/m2s2/edit/', memo.memoType, memo.id]">{{memo.fundName}}</a></td>
+                            <!--<td width="10%" th:text="${memoItem.meetingDate}"></td>-->
+                            <td width="10%">{{memo.meetingDate}}</td>
+                            <td width="10%">{{memo.author}}</td>
+                            <td width="5%">
+                                <a><i class="glyphicon glyphicon-trash"></i></a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="row pull-right">
+                        <ul class="pagination" *ngIf="memoSearchResult?.showPageFrom > 0">
+                            <li><a *ngIf="memoSearchResult?.showPageFrom > 1" (click)="search(memoSearchResult.showPageFrom - 1)">&laquo;</a></li>
+                            <li *ngFor="let i of range(memoSearchResult.showPageFrom, memoSearchResult.showPageTo)" [class.active]="i == memoSearchResult.currentPage">
+                                <a (click)="search(i)">{{i}}</a>
+                            </li>
+                            <li><a *ngIf="memoSearchResult.showPageTo < memoSearchResult.totalPages" (click)="search(memoSearchResult.showPageTo + 1)">&raquo;</a></li>
+                        </ul>
                     </div>
                 </div>
             </div>

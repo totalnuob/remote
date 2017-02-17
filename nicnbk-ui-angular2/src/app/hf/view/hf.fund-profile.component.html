@@ -1,4 +1,13 @@
 <div class="container">
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li><a [routerLink]="['/hf/managerSearch']">Hedge Fund</a></li>
+                <li><a [routerLink]="['/hf/managerProfile',fund?.manager?.id]">Firm profile</a></li>
+                <li class="active">Fund profile</li>
+            </ol>
+        </div>
+    </div>
     <!--<div [ngSwitch]='status'>-->
         <!--<div *ngSwitchCase="'loading'">-->
             <!--&lt;!&ndash; all of the inline styles and massive SVG markup for my spinner &ndash;&gt;-->

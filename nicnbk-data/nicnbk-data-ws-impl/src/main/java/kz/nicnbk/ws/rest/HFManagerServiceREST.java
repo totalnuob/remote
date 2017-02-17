@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by magzumov on 20.07.2016.
@@ -54,4 +55,8 @@ public class HFManagerServiceREST {
         return this.service.findByName(searchParams);
     }
 
+    @RequestMapping(value = "/all", method = RequestMethod.GET)
+    public List<HFManagerDto> getManagers(){
+        return this.service.findAll();
+    }
 }

@@ -21,6 +21,87 @@
                     </div>
                 </div>
             </div>
+            <div class="jumbotron">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label class="control-label col-md-1" for="firmSelect" ><b>Manager:</b></label>
+                        <div class="col-md-5">
+                            <select class="form-control" id="firmSelect" [(ngModel)]="memo.manager.id" name="managerId" (change)="getManagerDataOnChange($event.target.value)">
+                                <option *ngFor="let item of managerList" [value]="item.id">{{item.name}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="row">
+                    <table class="col-md-6 table-striped table-condensed">
+                        <tr>
+                            <td class="col-md-3"><b>AUM (mln)</b></td>
+                            <td class="col-md-3">{{memo?.manager?.aum}}</td>
+                            <!--<td class="col-md-3"><b>Strategy:</b></td>-->
+                            <!--<td class="col-md-3">{{memo?.firm?.strategy}}</td>-->
+                        </tr>
+                        <tr>
+                            <td class="col-md-3"><b>Inception</b></td>
+                            <td class="col-md-3">{{memo?.manager?.inceptionDate}}</td>
+                            <!--<td class="col-md-3"><b>Industry focus:</b></td>-->
+                            <!--<td class="col-md-3">{{memo?.firm?.industryFocus}}</td>-->
+                        </tr>
+                        <!--<tr>-->
+                            <!--<td class="col-md-3"><b>Investment team size:</b></td>-->
+                            <!--<td class="col-md-3">{{memo?.firm?.invTeamSize}}</td>-->
+                            <!--<td class="col-md-3"><b>Geography focus:</b></td>-->
+                            <!--<td class="col-md-3">{{memo?.firm?.geographyFocus}}</td>-->
+                        <!--</tr>-->
+                        <!--<tr>-->
+                            <!--<td class="col-md-3"><b>Operations team size:</b></td>-->
+                            <!--<td class="col-md-3">{{memo?.firm?.opsTeamSize}}</td>-->
+                        <!--</tr>-->
+                    </table>
+                </div>
+            </div>
+            <br>
+            <div class="panel-group" id="accordion">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseFund" (click)="toggleFund()">Fund</a>
+                        </h4>
+                    </div>
+                </div>
+                <span *ngIf="memo.fund != null">
+                    <div id="collapseFund" class="collapse in">
+                        <div class="jumbotron">
+                            <div class="row">
+                                <form class="form-horizontal">
+                                    <div class="form-group">
+                                        <label class="control-label col-md-1" for="fundSelect" ><b>Fund:</b></label>
+                                        <div class="col-md-5">
+                                            <select class="form-control" id="fundSelect" [(ngModel)]="memo.fund.id" name="fundId" (change)="getFundData($event.target.value)">
+                                                <option *ngFor="let item of memo.manager.funds" [value]="item.id">{{item.name}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="row">
+                                <table class="col-md-6 table-striped table-condensed">
+                                    <tr>
+                                        <td class="col-md-3"><b>Status</b></td>
+                                        <td class="col-md-3">{{memo?.fund?.status}}</td>
+                                        <td class="col-md-3"><b>Aum</b></td>
+                                        <td class="col-md-3">{{memo?.fund?.aum}} {{memo?.fund?.aumDigit}} {{memo?.fund?.aumCurrency}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="col-md-3"><b>Strategy</b></td>
+                                        <td class="col-md-3">{{memo?.fund?.strategy}}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </span>
+            </div>
             <input type="hidden" name="memoId" />
             <input type="hidden" id="memoType" name="memoType" />
             <div class="row top-buffer" >
@@ -182,6 +263,8 @@
                     </div>
                 </div>
             </div>
+            <br>
+
             <a (click)="toggle()">Fund details {{ visible ? '&#9660;' : '&#9658;' }}</a>
             <div [hidden]="!visible">
                 <div class="row top-buffer withpadding">
