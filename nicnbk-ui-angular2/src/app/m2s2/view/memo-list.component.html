@@ -116,8 +116,8 @@
                 <tr *ngFor = "let memo of memoList">
                     <td width="5%">{{getMemoTypeName(memo.memoType)}}</td>
                     <td width="10%" >{{memo.meetingType}}</td>
-                    <td width="30%"><a (click)="navigate(memo.memoType, memo.id)">{{memo.firmName}}</a></td>
-                    <td width="30%"><a (click)="navigate(memo.memoType, memo.id)">{{memo.fundName}}</a></td>
+                    <td width="30%"><a style="cursor: pointer" (click)="navigate(memo.memoType, memo.id)">{{memo.firmName}}</a></td>
+                    <td width="30%"><a style="cursor: pointer" (click)="navigate(memo.memoType, memo.id)">{{memo.fundName}}</a></td>
                     <!--<td width="10%" th:text="${memoItem.meetingDate}"></td>-->
                     <td width="10%">{{memo.meetingDate}}</td>
                     <td width="10%">{{memo.author}}</td>

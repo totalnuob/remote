@@ -90,7 +90,7 @@
 
             <tr *ngFor = "let firm of foundEntities">
                 <td width="5%"></td>
-                <td width="15%"><a (click)="navigate('/pe/firmProfile/', firm.id)">{{firm.firmName}}</a></td>
+                <td width="15%"><a style="cursor: pointer" (click)="navigate('/pe/firmProfile/', firm.id)">{{firm.firmName}}</a></td>
                 <!--<td width="30%">-->
                 <!--&lt;!&ndash;<a [routerLink]="['/hf/managerProfile/', fund.manager.id]">{{fund.manager.name}}</a>&ndash;&gt;-->
                 <!--</td>-->

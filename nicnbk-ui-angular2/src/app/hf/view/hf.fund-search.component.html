@@ -88,8 +88,8 @@
 
             <tr *ngFor = "let fund of foundEntities">
                 <td width="5%"></td>
-                <td width="30%"><a (click)="navigate('/hf/fundProfile/', fund.id)" >{{fund.name}}</a></td>
-                <td width="30%"><a (click)="navigate('/hf/managerProfile/', fund.manager.id)">{{fund.manager.name}}</a></td>
+                <td width="30%"><a style="cursor: pointer" (click)="navigate('/hf/fundProfile/', fund.id)" >{{fund.name}}</a></td>
+                <td width="30%"><a style="cursor: pointer" (click)="navigate('/hf/managerProfile/', fund.manager.id)">{{fund.manager.name}}</a></td>
                 <td width="10%">{{fund.inceptionDate}}</td>
                 <td width="10%">{{fund.updateDate}}</td>
                 <td width="5%">
