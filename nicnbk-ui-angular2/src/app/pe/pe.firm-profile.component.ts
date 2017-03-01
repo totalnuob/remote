@@ -8,7 +8,6 @@ import {LookupService} from "../common/lookup.service";
 import {error} from "util";
 import {PEFundService} from "./pe.fund.service";
 import {PEFund} from "./model/pe.fund";
-import {PESearchParams} from "./model/pe.search-params";
 
 import {Subscription} from 'rxjs';
 import {MemoSearchParams} from "../m2s2/model/memo-search-params";
@@ -46,9 +45,6 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
     private sub: any;
     public firmIdParam: number;
 
-    foundFundsList: PEFund[];
-    private searchParams = new PESearchParams();
-
     busy: Subscription;
 
     //For memo loading
@@ -80,8 +76,6 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
                 this.firmIdParam = +params['id'];
                 this.breadcrumbParams = params['params'];
                 if(this.firmIdParam > 0) {
-                    this.searchParams['id'] = this.firmIdParam;
-                    this.searchParams.name = '';
                     this.busy = this.firmService.get(this.firmIdParam)
                         .subscribe(
                             data => {
@@ -89,6 +83,7 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
 
                                 //TODO: check response memo
                                 this.firm = data;
+                                console.log(this.firm)
 
                                 // preselect firm strategies
                                 this.preselectStrategy();
@@ -105,13 +100,6 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
 
                             },
                             error => this.errorMessage = "Error loading firm profile"
-                        );
-                    this.busy = this.fundService.search(this.searchParams)
-                        .subscribe(
-                            searchResult => {
-                                this.foundFundsList = searchResult;
-                            },
-                            error => this.errorMessage = "Failed to load GP's funds"
                         );
                 }
             })
@@ -284,5 +272,11 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
 
     createFund(){
         this.router.navigate(['/pe/fundProfile/0/' + this.firm.id], {relativeTo: this.route});
+    }
+
+    navigate(memoType, memoId){
+        this.memoSearchParams.path = '/pe/firmProfile/' + this.firm.id;
+        let params = JSON.stringify(this.memoSearchParams);
+        this.router.navigate(['/m2s2/edit/', memoType, memoId, { params }]);
     }
 }

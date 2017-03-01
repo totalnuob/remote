@@ -14,6 +14,7 @@ import {HFManagerService} from "../hf/hf.manager.service";
 import {HFManager} from "../hf/model/hf.manager";
 import {HedgeFund} from "../hf/model/hf.fund";
 import {HedgeFundService} from "../hf/hf.fund.service";
+import {MemoSearchParams} from "./model/memo-search-params";
 
 declare var $:any
 declare var Chart: any;
@@ -60,6 +61,7 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
     currencyList = [];
 
     private breadcrumbParams: string;
+    private searchParams = new MemoSearchParams();
 
     options = {
         placeholder: "+ tag",
@@ -108,6 +110,7 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
             .subscribe(params => {
                 this.memoIdParam = +params['id'];
                 this.breadcrumbParams = params['params'];
+                this.searchParams = JSON.parse(this.breadcrumbParams);
                 this.memo.manager = new HFManager();
                 this.memo.fund = new HedgeFund();
                 if(this.memoIdParam > 0) {
@@ -215,7 +218,6 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
     ngOnInit() {
 
         this.postAction(null, null);
-
 
         // TODO: exclude jQuery
         // datetimepicker

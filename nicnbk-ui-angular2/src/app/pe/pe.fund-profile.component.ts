@@ -160,8 +160,6 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
             format: 'DD-MM-YYYY'
         });
 
-        $('input[type=text], textarea').autogrow({vertical: true, horizontal: false, flickering: false});
-
     }
 
     save(){
@@ -328,7 +326,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
         } else {
             this.visible = false;
         }
-        if(this.fund.status == "Opening_soon"){
+        if(this.fund.status == "Opening soon"){
             this.openingSoon = true;
         } else {
             this.openingSoon = false;

@@ -8,6 +8,7 @@ import kz.nicnbk.repo.model.m2s2.MeetingMemo;
 import kz.nicnbk.repo.model.m2s2.PrivateEquityMeetingMemo;
 import kz.nicnbk.service.api.m2s2.MeetingMemoService;
 import kz.nicnbk.service.api.m2s2.PEMeetingMemoService;
+import kz.nicnbk.service.api.pe.PEFundService;
 import kz.nicnbk.service.converter.m2s2.MeetingMemoEntityConverter;
 import kz.nicnbk.service.converter.m2s2.PEMeetingMemoEntityConverter;
 import kz.nicnbk.service.dto.m2s2.MemoPagedSearchResult;
@@ -42,6 +43,9 @@ public class PEMeetingMemoServiceImpl implements PEMeetingMemoService {
     @Autowired
     private MeetingMemoRepository memoRepository;
 
+    @Autowired
+    private PEFundService fundService;
+
     @Override
     public Long save(PrivateEquityMeetingMemoDto memoDto) {
         // save memo
@@ -74,6 +78,12 @@ public class PEMeetingMemoServiceImpl implements PEMeetingMemoService {
     public PrivateEquityMeetingMemoDto get(Long id) {
         PrivateEquityMeetingMemo entity = repository.getFullEagerById(id);
         PrivateEquityMeetingMemoDto memoDto = converter.disassemble(entity);
+
+
+        // set firms funds
+        if(memoDto.getFirm() != null) {
+            memoDto.getFirm().setFunds(this.fundService.loadFirmFunds(memoDto.getFirm().getId(), false));
+        }
 
         // get attachment files
         memoDto.setFiles(memoService.getAttachments(id));

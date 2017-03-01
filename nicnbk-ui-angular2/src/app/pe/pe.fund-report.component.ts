@@ -49,6 +49,8 @@ export class PEFundReportComponent extends GoogleChartComponent {
     ){
         super();
 
+
+
         this.sub = this.route
             .params
             .subscribe(params => {
@@ -56,7 +58,7 @@ export class PEFundReportComponent extends GoogleChartComponent {
                 this.breadcrumbParams = params['params'];
                 if(this.firmIdParam > 0){
                     this.searchParams['id'] = this.firmIdParam;
-                    this.searchParams.name = "report";
+                    this.searchParams.report = true;
                     this.busy = this.firmService.get(this.firmIdParam)
                         .subscribe(
                             (data: PEFirm) => {
@@ -90,7 +92,7 @@ export class PEFundReportComponent extends GoogleChartComponent {
                     //error => this.errorMessage = "Invalid parameter values";
                     return;
                 }
-            })
+            });
     }
 
     preselectFirmStrategyGeographyIndustry(){

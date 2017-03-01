@@ -5,8 +5,8 @@
                 <div class="col-md-12">
                     <ol class="breadcrumb">
                         <li>
-                            <span *ngIf="this.breadcrumbParams != null"><a [routerLink]="['/m2s2', {params: this.breadcrumbParams }]">Meeting Memo</a></span>
-                            <span *ngIf="this.breadcrumbParams == null"><a [routerLink]="['/m2s2']">Meeting Memo</a></span>
+                            <span *ngIf="this.breadcrumbParams != null"><a [routerLink]="[this.searchParams.path, {params: this.breadcrumbParams }]">Meeting Memo</a></span>
+                            <span *ngIf="this.breadcrumbParams == null"><a [routerLink]="[this.searchParams.path]">Meeting Memo</a></span>
                         </li>
                         <li class="active">Private Equity</li>
                     </ol>
@@ -222,78 +222,89 @@
                             </div>
                         </div>
                     </div>
-                    <span *ngIf="memo.fund != null">
-                        <div class="jumbotron">
-                            <div class="row">
-                                <form class="form-horizontal">
-                                    <div class="form-group">
-                                        <label class="control-label col-md-1" for="fundSelect" ><b>Fund:</b></label>
-                                        <div class="col-md-5">
-                                            <select class="form-control" id="fundSelect" name="fundId" [(ngModel)]="memo.fund.id" name="fundId" (change)="getFundData($event.target.value)">
-                                                <option *ngFor="let item of fundList" [value]="item.id">{{item.name}}</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </form>
+                    <div class="panel-group" id="accordion">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseFund" (click)="toggleFund()">Fund</a>
+                                </h4>
                             </div>
-                            <div class="row">
-                                <table class="col-md-12 table-striped table-condensed">
-                                    <tr>
-                                        <td class="col-md-3"><b>Status</b></td>
-                                        <td class="col-md-3">{{memo?.fund?.status}}</td>
-
-                                        <td class="col-md-3" *ngIf="memo.fund.status == 'Opening soon'"><b>Opening schedule</b></td>
-                                        <td class="col-md-3" *ngIf="memo.fund.status == 'Opening soon'">{{memo?.fund?.openingSchedule}}</td>
-
-                                        <td class="col-md-3" *ngIf="memo.fund.status == 'Open'"><b>First close</b></td>
-                                        <td class="col-md-3" *ngIf="memo.fund.status == 'Open'">{{memo?.fund?.firstClose}}</td>
-
-                                        <td class="col-md-3" *ngIf="memo.fund.status == 'Closed'"><b>&nbsp;</b></td>
-                                        <td class="col-md-3" *ngIf="memo.fund.status == 'Closed'">&nbsp;</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="col-md-3"><b>Size, mn</b></td>
-                                        <td class="col-md-3">{{memo?.fund?.fundSize}}M {{memo?.fund?.currency}}</td>
-                                        <td class="col-md-3"><b>Predecessor fund invested, %</b></td>
-                                        <td class="col-md-3">{{memo?.fund?.predecessorInvestedPct}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="col-md-3"><b>Strategy</b></td>
-                                        <td class="col-md-3">{{memo?.fund?.strategy}}</td>
-                                        <td class="col-md-3"><b>Geography:</b></td>
-                                        <td class="col-md-3">{{memo?.fund?.geography}}</td>
-                                    </tr>
-                                </table>
-                            </div>
-                            <br>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <label class="col-md-2"><b>Suitability(Y/N)</b></label>
-                                    <div class="col-md-1">
-                                        <label class="checkbox-inline">
-                                            <input type="radio" [checked]="!memo.fund.suitable"
-                                                   (click)="setNonSuitable()" name="suitability" value=false/>
-                                            <span>N</span>
-                                        </label>
+                        </div>
+                        <span *ngIf="memo.fund != null">
+                            <div id="collapseFund" class="collapse in">
+                                <div class="jumbotron">
+                                    <div class="row">
+                                        <form class="form-horizontal">
+                                            <div class="form-group">
+                                                <label class="control-label col-md-1" for="fundSelect" ><b>Fund:</b></label>
+                                                <div class="col-md-5">
+                                                    <select class="form-control" id="fundSelect" name="fundId" [(ngModel)]="memo.fund.id" name="fundId" (change)="getFundData($event.target.value)">
+                                                        <option *ngFor="let item of memo.firm.funds" [value]="item.id">{{item.fundName}}</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </form>
                                     </div>
-                                    <div class="col-md-1">
-                                        <label class="checkbox-inline">
-                                            <input type="radio" name="suitability" [checked]="memo.fund.suitable"
-                                                   (click)="setSuitable(); reason.reset();" value=true/>
-                                            <span>Y</span>
-                                        </label>
+                                    <div class="row">
+                                        <table class="col-md-12 table-striped table-condensed">
+                                            <tr>
+                                                <td class="col-md-3"><b>Status</b></td>
+                                                <td class="col-md-3">{{memo?.fund?.status}}</td>
+
+                                                <td class="col-md-3" *ngIf="memo.fund.status == 'Opening soon'"><b>Opening schedule</b></td>
+                                                <td class="col-md-3" *ngIf="memo.fund.status == 'Opening soon'">{{memo?.fund?.openingSchedule}}</td>
+
+                                                <td class="col-md-3" *ngIf="memo.fund.status == 'Open'"><b>First close</b></td>
+                                                <td class="col-md-3" *ngIf="memo.fund.status == 'Open'">{{memo?.fund?.firstClose}}</td>
+
+                                                <td class="col-md-3" *ngIf="memo.fund.status == 'Closed'"><b>&nbsp;</b></td>
+                                                <td class="col-md-3" *ngIf="memo.fund.status == 'Closed'">&nbsp;</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="col-md-3"><b>Size, mn</b></td>
+                                                <td class="col-md-3">{{memo?.fund?.fundSize}}M {{memo?.fund?.currency}}</td>
+                                                <td class="col-md-3"><b>Predecessor fund invested, %</b></td>
+                                                <td class="col-md-3">{{memo?.fund?.predecessorInvestedPct}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="col-md-3"><b>Strategy</b></td>
+                                                <td class="col-md-3">{{memo?.fund?.strategy}}</td>
+                                                <td class="col-md-3"><b>Geography:</b></td>
+                                                <td class="col-md-3">{{memo?.fund?.geography}}</td>
+                                            </tr>
+                                        </table>
                                     </div>
-                                    <div class="col-md-1">&nbsp;</div>
-                                    <label for="nonsuitableReason" class="col-md-1">If No, why</label>
-                                    <div class="col-md-5">
+                                    <br>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <label class="col-md-2"><b>Suitability(Y/N)</b></label>
+                                            <div class="col-md-1">
+                                                <label class="checkbox-inline">
+                                                    <input type="radio" [checked]="!memo.fund.suitable"
+                                                           (click)="setNonSuitable()" name="suitability" value=false/>
+                                                    <span>N</span>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <label class="checkbox-inline">
+                                                    <input type="radio" name="suitability" [checked]="memo.fund.suitable"
+                                                           (click)="setSuitable(); reason.reset();" value=true/>
+                                                    <span>Y</span>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-1">&nbsp;</div>
+                                            <label for="nonsuitableReason" class="col-md-1">If No, why</label>
+                                            <div class="col-md-5">
                                         <textarea fz-elastic  spellcheck="false"  class="form-control col-md-4" id="nonsuitableReason" maxlength="1000"
                                                   [disabled]="memo.fund.suitable" name="nonsuitableReason" [(ngModel)]="memo.fund.nonsuitableReason"  required #reason="ngModel"></textarea>
-                                        <div [hidden]="reason.valid || reason.pristine" class="alert alert-danger">Description is required</div>
+                                                <div [hidden]="reason.valid || reason.pristine" class="alert alert-danger">Description is required</div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
                     </span>
+                    </div>
                     <a (click)="toggle()">Fund details {{ visible ? '&#9660;' : '&#9658;' }}</a>
                     <div [hidden]="!visible">
                         <div class="row top-buffer withpadding">

@@ -62,6 +62,8 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
 
     private breadcrumbParams: string;
 
+    private searchParams = new MemoSearchParams();
+
     closingScheduleList = [];
     openingScheduleList = [];
     currencyList = [];
@@ -108,6 +110,8 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
             .subscribe(params => {
                 this.memoIdParam = +params['id'];
                 this.breadcrumbParams = params['params'];
+                this.searchParams = JSON.parse(this.breadcrumbParams);
+                console.log(this.searchParams);
                 this.memo.firm = new PEFirm();
                 this.memo.fund = new PEFund();
                 if(this.memoIdParam > 0) {
@@ -117,7 +121,7 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
                                 // TODO: check response memo
                                 this.memo = memo;
                                 this.initRadarChart();
-
+                                console.log(this.memo);
                                 //if(this.memo.fund == null){
                                 //    this.memo.fund = new PEFund();
                                 //}
@@ -134,10 +138,10 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
                                     this.visible = true;
                                 }
 
-                                // Downloading funds data
-                                if(this.memo.firm.id != null) {
-                                    this.getFirmData(this.memo.firm.id);
-                                }
+                                //// Downloading funds data
+                                //if(this.memo.firm.id != null) {
+                                //    this.getFirmData(this.memo.firm.id);
+                                //}
 
                                 // preselect memo strategies
                                 this.preselectStrategies();
@@ -148,8 +152,6 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
                                 // preselect memo attendees
                                 this.preselectAttendeesNIC();
 
-                                //$('input[type=text], textarea').autogrow({vertical: true, horizontal: false});
-                                //$('input[type=text], textarea').autoGrow();
                             },
                             error => this.errorMessage = "Error loading memo"
                         );
@@ -237,9 +239,6 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
         $('#timePicker').datetimepicker({
             format: 'LT'
         })
-
-        //$('input[type=text], textarea').autogrow({vertical: true, horizontal: false});
-        //$('input[type=text], textarea').autoGrow();
 
         // init chart also moved to constructor
         // due to that scores array is still empty when ngOnInit called
@@ -510,7 +509,7 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
     }
 
     getFirmDataOnChange(id){
-        this.getFundData(null);
+        //this.getFundData(null);
         this.getFirmData(id);
         this.memo.fund.suitable = true;
     }
@@ -528,28 +527,33 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
                 },
                 error => this.errorMessage = "Error loading manager profile"
             );
-        this.peSearchParams['id'] = id;
-        this.peFundService.search(this.peSearchParams)
-            .subscribe(
-                searchResult => {
-                    this.foundFundsList = searchResult;
-                    searchResult.forEach(element => {
-                        this.fundList.push({id: element.id, name: element.fundName});
-                    });
-                },
-                error => this.errorMessage = "Failed to load GP's funds"
-            );
+        //this.peSearchParams['id'] = id;
+        //this.peFundService.search(this.peSearchParams)
+        //    .subscribe(
+        //        searchResult => {
+        //            this.foundFundsList = searchResult;
+        //            searchResult.forEach(element => {
+        //                this.fundList.push({id: element.id, name: element.fundName});
+        //            });
+        //        },
+        //        error => this.errorMessage = "Failed to load GP's funds"
+        //    );
     }
 
     getFundData(id){
-        if(id == null) {
-            return this.memo.fund = new PEFund();
-        }
-        for(var i = 0; i < this.foundFundsList.length; i++){
-            if(this.foundFundsList[i].id == id) {
-                return this.memo.fund = this.foundFundsList[i];
+        //if(id == null) {
+        //    return this.memo.fund = new PEFund();
+        //}
+        for(var i = 0; i < this.memo.firm.funds.length; i++){
+            if(this.memo.firm.funds[i].id == id) {
+                return this.memo.fund = this.memo.firm.funds[i];
             }
         }
+    }
+
+    toggleFund(){
+        this.memo.fund = new PEFund();
+        this.memo.fund.suitable = true;
     }
 
     //TODO: bind ngModel - boolean
@@ -581,6 +585,5 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
         this.memo.openingSoon = true;
         this.memo.currentlyFundRaising = false;
         this.memo.closingSchedule = null;
-
     }
 }

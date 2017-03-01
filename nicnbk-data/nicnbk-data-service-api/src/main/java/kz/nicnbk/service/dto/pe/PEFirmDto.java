@@ -4,6 +4,7 @@ import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.common.service.model.HistoryBaseEntityDto;
 import kz.nicnbk.repo.model.pe.PEFirm;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -19,7 +20,7 @@ public class PEFirmDto extends HistoryBaseEntityDto<PEFirm> {
     private Set<BaseDictionaryDto> strategy;
     private Set<BaseDictionaryDto> industryFocus;
     private Set<BaseDictionaryDto> geographyFocus;
-//    private Set<PEFundDto> funds;
+    private List<PEFundDto> funds;
 
 //    private Set<FirmAddress> address;
 //    private Set<Contacts> contacts;
@@ -114,13 +115,13 @@ public class PEFirmDto extends HistoryBaseEntityDto<PEFirm> {
         this.geographyFocus = geographyFocus;
     }
 
-//    public Set<PEFundDto> getFunds() {
-//        return funds;
-//    }
-//
-//    public void setFunds(Set<PEFundDto> funds) {
-//        this.funds = funds;
-//    }
+    public List<PEFundDto> getFunds() {
+        return funds;
+    }
+
+    public void setFunds(List<PEFundDto> funds) {
+        this.funds = funds;
+    }
 
 //    public Set<FirmAddress> getAddress() {
 //        return address;

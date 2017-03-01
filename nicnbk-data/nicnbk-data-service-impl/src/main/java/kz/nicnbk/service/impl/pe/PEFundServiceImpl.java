@@ -113,10 +113,10 @@ public class PEFundServiceImpl implements PEFundService {
     }
 
     @Override
-    public List<PEFundDto> loadFirmFunds(Long firmId, String name) {
+    public List<PEFundDto> loadFirmFunds(Long firmId, boolean report) {
         Page<PEFund> page = this.repository.findByFirmId(firmId, new PageRequest(0,10, new Sort(Sort.Direction.ASC, "vintage")));
         List<PEFundDto> fundDtoList = this.converter.disassembleList(page.getContent());
-        if(name.equals("report")) {
+        if(report) {
             for (PEFundDto fundDto : fundDtoList) {
                 List<PEGrossCashflow> grossCfEntity = this.grossCFRepository.getEntitiesByFundId(fundDto.getId(), new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName")));
                 List<PENetCashflow> netCfEntity = this.netCFRepository.getEntitiesByFundId(fundDto.getId());

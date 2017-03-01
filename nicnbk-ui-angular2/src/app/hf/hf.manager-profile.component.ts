@@ -46,7 +46,6 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
 
     private breadcrumbParams: string;
 
-
     constructor(
         private lookupService: LookupService,
         private managerService: HFManagerService,
@@ -298,4 +297,11 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
         this.setUpRadarChart($('#myChart'), scores);
 
     }
+
+    navigate(memoType, memoId){
+        this.memoSearchParams.path = '/hf/managerProfile/' + this.manager.id;
+        let params = JSON.stringify(this.memoSearchParams);
+        this.router.navigate(['/m2s2/edit/', memoType, memoId, { params }]);
+    }
+
 }

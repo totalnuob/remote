@@ -113,7 +113,7 @@
                 </thead>
 
                 <tbody>
-                <tr *ngFor = "let memo of memoList">
+                <tr *ngFor = "let memo of memoList" style="cursor: pointer" (click)="navigate(memo.memoType, memo.id)">
                     <td width="5%">{{getMemoTypeName(memo.memoType)}}</td>
                     <td width="10%" >{{memo.meetingType}}</td>
                     <td width="30%"><a style="cursor: pointer" (click)="navigate(memo.memoType, memo.id)">{{memo.firmName}}</a></td>

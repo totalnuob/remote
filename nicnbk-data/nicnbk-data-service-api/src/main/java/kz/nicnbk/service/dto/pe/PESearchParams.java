@@ -16,6 +16,8 @@ public class PESearchParams implements BaseParams {
 
     private long id;
 
+    private boolean report;
+
     public String getName() {
         return name;
     }
@@ -38,6 +40,14 @@ public class PESearchParams implements BaseParams {
 
     public void setPageSize(int pageSize) {
         this.pageSize = pageSize;
+    }
+
+    public boolean getReport() {
+        return report;
+    }
+
+    public void setReport(boolean report) {
+        this.report = report;
     }
 
     public String getSearchParamsAsString(){

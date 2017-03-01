@@ -5,6 +5,7 @@ import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.api.pe.PEFirmRepository;
 import kz.nicnbk.repo.model.pe.PEFirm;
 import kz.nicnbk.service.api.pe.PEFirmService;
+import kz.nicnbk.service.api.pe.PEFundService;
 import kz.nicnbk.service.converter.pe.PEFirmEntityConverter;
 import kz.nicnbk.service.dto.pe.PEFirmDto;
 import kz.nicnbk.service.dto.pe.PEPagedSearchResult;
@@ -32,6 +33,9 @@ public class PEFirmServiceImpl implements PEFirmService {
     @Autowired
     private PEFirmEntityConverter converter;
 
+    @Autowired
+    private PEFundService fundService;
+
     @Override
     public Long save(PEFirmDto firmDto) {
         PEFirm entity = converter.assemble(firmDto);
@@ -45,6 +49,9 @@ public class PEFirmServiceImpl implements PEFirmService {
     public PEFirmDto get(Long id) {
         PEFirm entity = this.repository.findOne(id);
         PEFirmDto firmDto = this.converter.disassemble(entity);
+
+        // load funds
+        firmDto.setFunds(this.fundService.loadFirmFunds(id, false));
 
         return firmDto;
     }

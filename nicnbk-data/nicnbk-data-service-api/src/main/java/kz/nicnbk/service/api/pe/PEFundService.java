@@ -14,5 +14,5 @@ public interface PEFundService extends BaseService {
 
     PEFundDto get(Long id);
 
-    List<PEFundDto> loadFirmFunds(Long firmId, String name);
+    List<PEFundDto> loadFirmFunds(Long firmId, boolean report);
 }

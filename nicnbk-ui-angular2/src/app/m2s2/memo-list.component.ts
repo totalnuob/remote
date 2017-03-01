@@ -138,6 +138,7 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
     }
 
     navigate(memoType, memoId){
+        this.searchParams.path = '/m2s2';
         let params = JSON.stringify(this.searchParams);
         this.router.navigate(['/m2s2/edit/', memoType, memoId, { params }]);
     }

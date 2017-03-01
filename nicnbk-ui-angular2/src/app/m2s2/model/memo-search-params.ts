@@ -9,4 +9,6 @@ export class MemoSearchParams extends PageableSearchParams{
     tags: string[];
 
     firmId: number;
+
+    path: string;
 }

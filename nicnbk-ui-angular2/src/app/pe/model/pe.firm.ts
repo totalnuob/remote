@@ -11,7 +11,7 @@ export class PEFirm {
     strategy: any[];
     industryFocus: any[];
     geographyFocus: any[];
-    //funds: any[];
+    funds: any[];
     //address: any[];
     //contacts: any[];
 

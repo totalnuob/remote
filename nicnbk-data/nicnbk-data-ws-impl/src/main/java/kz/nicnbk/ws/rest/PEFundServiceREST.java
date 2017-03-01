@@ -50,7 +50,7 @@ public class PEFundServiceREST {
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public List<PEFundDto> search(@RequestBody PESearchParams searchParams){
-        return this.service.loadFirmFunds(searchParams.getId(), searchParams.getName());
+        return this.service.loadFirmFunds(searchParams.getId(), searchParams.getReport());
     }
 
 }
