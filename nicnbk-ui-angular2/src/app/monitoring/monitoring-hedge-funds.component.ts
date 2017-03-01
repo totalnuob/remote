@@ -168,7 +168,7 @@ export class MonitoringHedgeFundsComponent extends GoogleChartComponent {
             'allowHtml': true,
             cssClassNames: {},
             vAxis:{
-                format:'$#',
+                format:'short',
             }
         };
 
@@ -280,7 +280,6 @@ export class MonitoringHedgeFundsComponent extends GoogleChartComponent {
     //}
 
     // HOLDINGS ---------------------------------------------------------------------
-
     drawHoldings(date){
         var data = new google.visualization.DataTable();
         var formatter = new google.visualization.NumberFormat({

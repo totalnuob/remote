@@ -160,7 +160,7 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
             showRowNumber: false,
             width: '100%',
             height: '100%',
-            'allowHtml': true,
+            'allowHtml': false,
             vAxis: {
                 format: '#.##%',
             },

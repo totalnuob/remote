@@ -159,6 +159,9 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
             //defaultDate: new Date(),
             format: 'DD-MM-YYYY'
         });
+
+        $('input[type=text], textarea').autogrow({vertical: true, horizontal: false, flickering: false});
+
     }
 
     save(){
@@ -170,7 +173,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
         this.fund.industry = this.convertToServiceModel(this.fund.industry);
         this.fund.geography = this.convertToServiceModel(this.fund.geography);
 
-        this.fundService.save(this.fund)
+        this.busy = this.fundService.save(this.fund)
             .subscribe(
                 (response: SaveResponse) => {
                     this.fund.id = response.entityId;

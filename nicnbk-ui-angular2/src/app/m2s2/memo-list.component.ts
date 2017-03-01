@@ -120,9 +120,7 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
         // TODO: as parameter?
         this.searchParams.pageSize = 20;
 
-        if(page > 0) {
-            this.searchParams.page = page;
-        }
+        this.searchParams.page = page;
 
         this.searchParams.fromDate = $('#fromDate').val();
         this.searchParams.toDate = $('#toDate').val();

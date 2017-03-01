@@ -65,6 +65,8 @@ public class PEFundServiceImpl implements PEFundService {
     public Long save(PEFundDto fundDto) {
 
         PEFund entity = converter.assemble(fundDto);
+        entity.setUpdateDate(new Date());
+
         Long id =repository.save(entity).getId();
         fundDto.setId(id);
 
@@ -111,19 +113,21 @@ public class PEFundServiceImpl implements PEFundService {
     }
 
     @Override
-    public List<PEFundDto> loadFirmFunds(Long firmId) {
+    public List<PEFundDto> loadFirmFunds(Long firmId, String name) {
         Page<PEFund> page = this.repository.findByFirmId(firmId, new PageRequest(0,10, new Sort(Sort.Direction.ASC, "vintage")));
         List<PEFundDto> fundDtoList = this.converter.disassembleList(page.getContent());
-        for(PEFundDto fundDto: fundDtoList){
-            List<PEGrossCashflow> grossCfEntity = this.grossCFRepository.getEntitiesByFundId(fundDto.getId(), new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName")));
-            List<PENetCashflow> netCfEntity = this.netCFRepository.getEntitiesByFundId(fundDto.getId());
-            List<PEGrossCashflowDto> grossCFDto = this.grossCFConverter.disassembleList(grossCfEntity);
-            List<PENetCashflowDto> netCFDto = this.netCFConverter.disassembleList(netCfEntity);
+        if(name.equals("report")) {
+            for (PEFundDto fundDto : fundDtoList) {
+                List<PEGrossCashflow> grossCfEntity = this.grossCFRepository.getEntitiesByFundId(fundDto.getId(), new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName")));
+                List<PENetCashflow> netCfEntity = this.netCFRepository.getEntitiesByFundId(fundDto.getId());
+                List<PEGrossCashflowDto> grossCFDto = this.grossCFConverter.disassembleList(grossCfEntity);
+                List<PENetCashflowDto> netCFDto = this.netCFConverter.disassembleList(netCfEntity);
 
-            fundDto.setGrossCashflow(grossCFDto);
-            fundDto.setNetCashflow(netCFDto);
+                fundDto.setGrossCashflow(grossCFDto);
+                fundDto.setNetCashflow(netCFDto);
 
-            calculatePerformanceParameters(grossCFDto, netCFDto, fundDto);
+                calculatePerformanceParameters(grossCFDto, netCFDto, fundDto);
+            }
         }
         return fundDtoList;
     }

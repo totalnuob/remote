@@ -52,10 +52,7 @@ export class PEFirmSearchComponent extends CommonFormViewComponent {
     search(page){
 
         this.searchParams.pageSize = 10;
-
-        if(page > 0) {
-            this.searchParams.page = page;
-        }
+        this.searchParams.page = page;
 
         console.log(this.searchParams);
 

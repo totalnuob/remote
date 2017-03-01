@@ -1,4 +1,4 @@
-import { Component, NgModule, OnInit, ViewChild, AfterViewInit, } from '@angular/core';
+import { Component, NgModule, OnInit, ViewChild, AfterViewInit  } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 
 import {LookupService} from "../common/lookup.service";

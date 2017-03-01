@@ -56,6 +56,7 @@ export class PEFundReportComponent extends GoogleChartComponent {
                 this.breadcrumbParams = params['params'];
                 if(this.firmIdParam > 0){
                     this.searchParams['id'] = this.firmIdParam;
+                    this.searchParams.name = "report";
                     this.busy = this.firmService.get(this.firmIdParam)
                         .subscribe(
                             (data: PEFirm) => {

@@ -55,10 +55,7 @@ export class TripMemoListComponent extends CommonFormViewComponent implements On
 
         // TODO: as parameter?
         this.searchParams.pageSize = 10;
-
-        if(page > 0) {
-            this.searchParams.page = page;
-        }
+        this.searchParams.page = page;
 
         this.searchParams.fromDate = $('#fromDate').val();
         this.searchParams.toDate = $('#toDate').val();
