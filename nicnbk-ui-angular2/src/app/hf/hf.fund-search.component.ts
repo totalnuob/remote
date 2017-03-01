@@ -4,7 +4,7 @@ import {HedgeFund} from "./model/hf.fund";
 import {CommonFormViewComponent} from "../common/common.component";
 import {HedgeFundSearchParams} from "./model/hf.search-params";
 import {HedgeFundSearchResults} from "./model/fund-search-results";
-
+import {ActivatedRoute, Router} from '@angular/router';
 import {Subscription} from 'rxjs';
 
 @Component({
@@ -21,17 +21,38 @@ export class HFFundSearchComponent extends CommonFormViewComponent{
     foundEntities: HedgeFund[];
     searchParams = new HedgeFundSearchParams;
     searchResult = new HedgeFundSearchResults();
-
+    public sub: any;
     busy: Subscription;
 
     constructor(
-        private fundService: HedgeFundService
+        private fundService: HedgeFundService,
+        private route: ActivatedRoute,
+        private router: Router
     ){
         super();
-        this.searchParams.name = '';
-        this.search(0);
-    }
 
+        this.sub = this.route
+            .params
+            .subscribe(params => {
+                if (params['params'] != null) {
+                    this.searchParams = JSON.parse(params['params']);
+                    this.busy = this.fundService.search(this.searchParams)
+                        .subscribe(
+                            searchResult  => {
+                                //console.log(searchResult);
+                                this.foundEntities = searchResult.funds;
+                                this.searchResult = searchResult;
+                            },
+                            error =>  {
+                                this.errorMessage = "Failed to search funds"
+                            }
+                        );
+                } else {
+                    this.searchParams.name = '';
+                    this.search(0);
+                }
+            });
+    }
     search(page){
         //alert(this.name);
 
@@ -54,4 +75,10 @@ export class HFFundSearchComponent extends CommonFormViewComponent{
                 }
             );
     }
+
+    navigate(path, id) {
+        let params = JSON.stringify(this.searchParams);
+        this.router.navigate([path, id, { params }]);
+    }
+
 }

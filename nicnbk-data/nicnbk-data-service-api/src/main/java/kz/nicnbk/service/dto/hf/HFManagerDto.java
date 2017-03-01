@@ -31,6 +31,15 @@ public class HFManagerDto extends HistoryBaseEntityDto<HFManager> {
     private String website;
     private String email;
 
+    //m2s2 fields
+    private String managementAndTeamNotes;
+    private Short managementAndTeamScore;
+    private String portfolioNotes;
+    private Short portfolioScore;
+    private String strategyNotes;
+    private Short strategyScore;
+    private Short conviction;
+
     private List<HedgeFundDto> funds;
 
     public String getName() {
@@ -159,6 +168,62 @@ public class HFManagerDto extends HistoryBaseEntityDto<HFManager> {
 
     public void setMeetingsInThePast(Boolean meetingsInThePast) {
         this.meetingsInThePast = meetingsInThePast;
+    }
+
+    public String getManagementAndTeamNotes() {
+        return managementAndTeamNotes;
+    }
+
+    public void setManagementAndTeamNotes(String managementAndTeamNotes) {
+        this.managementAndTeamNotes = managementAndTeamNotes;
+    }
+
+    public Short getManagementAndTeamScore() {
+        return managementAndTeamScore;
+    }
+
+    public void setManagementAndTeamScore(Short managementAndTeamScore) {
+        this.managementAndTeamScore = managementAndTeamScore;
+    }
+
+    public String getPortfolioNotes() {
+        return portfolioNotes;
+    }
+
+    public void setPortfolioNotes(String portfolioNotes) {
+        this.portfolioNotes = portfolioNotes;
+    }
+
+    public Short getPortfolioScore() {
+        return portfolioScore;
+    }
+
+    public void setPortfolioScore(Short portfolioScore) {
+        this.portfolioScore = portfolioScore;
+    }
+
+    public String getStrategyNotes() {
+        return strategyNotes;
+    }
+
+    public void setStrategyNotes(String strategyNotes) {
+        this.strategyNotes = strategyNotes;
+    }
+
+    public Short getStrategyScore() {
+        return strategyScore;
+    }
+
+    public void setStrategyScore(Short strategyScore) {
+        this.strategyScore = strategyScore;
+    }
+
+    public Short getConviction() {
+        return conviction;
+    }
+
+    public void setConviction(Short conviction) {
+        this.conviction = conviction;
     }
 
     public String getAumText(){

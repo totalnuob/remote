@@ -13,7 +13,8 @@ import {Memo} from "../m2s2/model/memo";
 import {MemoSearchResults} from "../m2s2/model/memo-search-results";
 import {Subscription} from 'rxjs';
 
-declare var $:any
+declare var $:any;
+declare var Chart: any;
 
 @Component({
     selector: 'hf-manager-profile',
@@ -43,6 +44,9 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
     legalStructureLookup = [];
     domicileCountryLookup = [];
 
+    private breadcrumbParams: string;
+
+
     constructor(
         private lookupService: LookupService,
         private managerService: HFManagerService,
@@ -65,13 +69,16 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
             .params
             .subscribe(params => {
                 this.managerIdParam = +params['id'];
+                this.breadcrumbParams = params['params'];
                 if(this.managerIdParam > 0) {
                     this.busy = this.managerService.get(this.managerIdParam)
                         .subscribe(
                             data => {
-                                console.log(data);
+                                console.log(this.breadcrumbParams);
                                 // TODO: check response memo
                                 this.manager = data;
+
+                                this.initRadarChart();
 
                                 // memo search params init
                                 this.memoSearchParams.memoType = "3";
@@ -148,7 +155,8 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
             format: 'DD-MM-YYYY'
         });
 
-        $('input[type=text], textarea').autogrow();
+        // init chart
+        this.initRadarChart();
     }
 
     search(page){
@@ -212,5 +220,82 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
                 return this.strategyLookup[i].nameEn;
             }
         }
+    }
+
+    setUpRadarChart(ctx, scores){
+
+        var labels = ["Management and Team", "Portfolio", "Strategy"];
+
+        var data = {
+            labels: labels,
+            datasets: [
+                {
+                    label: "",
+                    backgroundColor: "rgba(255,99,132,0.2)",
+                    borderColor: "rgba(255,99,132,1)",
+                    pointBackgroundColor: "rgba(255,99,132,1)",
+                    pointBorderColor: "#fff",
+                    pointHoverBackgroundColor: "#fff",
+                    pointHoverBorderColor: "rgba(255,99,132,1)",
+                    // playing with lines
+                    borderDash: [15, 2],
+                    data: scores //[4, 3, 2]
+                }
+            ]
+        };
+        var myRadarChart = new Chart(ctx, {
+            type: 'radar',
+            data: data,
+            options: {
+                legend:{
+                    display: false
+                },
+                scale: {
+                    ticks: {
+                        //beginAtZero: true,
+                        min: 0,
+                        max: 5
+                    },
+                    gridLines: {
+                        color: "#8A9396"
+                    }
+                }
+            }
+        });
+    }
+
+    initRadarChart(){
+        var scores = new Array();
+        scores.push(Number(this.manager.managementAndTeamScore));
+        scores.push(Number(this.manager.portfolioScore));
+        scores.push(Number(this.manager.strategyScore));
+
+        //initializing average score for memos. if new memo skip
+        if(this.manager.managementAndTeamScore != null) {
+            var totalScore = Number(this.manager.portfolioScore) + Number(this.manager.strategyScore) + Number(this.manager.managementAndTeamScore);
+            var rounded = Math.round((totalScore / 3) * 10) / 10;
+            $("#averageScore").text(rounded);
+        }
+
+        this.setUpRadarChart($('#myChart'), scores);
+    }
+
+    updateScore(){
+
+        // TODO: fix select bind - ngModel
+        this.manager.managementAndTeamScore = $('#managementAndTeamScore').val();
+        this.manager.portfolioScore = $('#portfolioScore').val();
+        this.manager.strategyScore = $('#strategyScore').val();
+
+        var totalScore = Number(this.manager.managementAndTeamScore) + Number(this.manager.portfolioScore) + Number(this.manager.strategyScore);
+        var rounded = Math.round( (totalScore/3) * 10 ) / 10;
+        $("#averageScore").text(rounded);
+
+        var scores = new Array();
+        scores.push(Number(this.manager.managementAndTeamScore));
+        scores.push(Number(this.manager.portfolioScore));
+        scores.push(Number(this.manager.strategyScore));
+        this.setUpRadarChart($('#myChart'), scores);
+
     }
 }

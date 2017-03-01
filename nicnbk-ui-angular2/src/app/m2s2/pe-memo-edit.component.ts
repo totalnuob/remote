@@ -15,6 +15,7 @@ import {PEFirmService} from "../pe/pe.firm.service";
 import {PEFundService} from "../pe/pe.fund.service";
 import {PESearchParams} from "../pe/model/pe.search-params";
 import {PEFund} from "../pe/model/pe.fund";
+import {MemoSearchParams} from "./model/memo-search-params";
 
 declare var $:any;
 declare var Chart: any;
@@ -37,6 +38,7 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
     public uploadFiles: Array<any> = [];
 
     private visible = false;
+    submitted = false;
 
     public memo = new PEMemo;
 
@@ -58,6 +60,7 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
     public foundFundsList: Array<any> = [];
     private peSearchParams = new PESearchParams();
 
+    private breadcrumbParams: string;
 
     closingScheduleList = [];
     openingScheduleList = [];
@@ -99,15 +102,12 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
         // load all firms for dropdown
         this.sub = this.loadFirms();
 
-        // TODO: wait/sync on lookup loading
-        // TODO: sync on subscribe results
-        this.waitSleep(700);
-
         // parse params and load data
         this.sub = this.route
             .params
             .subscribe(params => {
                 this.memoIdParam = +params['id'];
+                this.breadcrumbParams = params['params'];
                 this.memo.firm = new PEFirm();
                 this.memo.fund = new PEFund();
                 if(this.memoIdParam > 0) {
@@ -124,9 +124,6 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
                                 if(this.memo.firm == null){
                                     this.memo.firm = new PEFirm();
                                 }
-
-                                console.log("Memo = ");
-                                console.log(this.memo);
 
                                 if(this.memo.tags == null) {
                                     this.memo.tags = [];
@@ -151,21 +148,21 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
                                 // preselect memo attendees
                                 this.preselectAttendeesNIC();
 
-                                $('input[type=text], textarea').autogrow({vertical: true, horizontal: false});
+                                //$('input[type=text], textarea').autogrow({vertical: true, horizontal: false});
+                                //$('input[type=text], textarea').autoGrow();
                             },
                             error => this.errorMessage = "Error loading memo"
                         );
                 }else{
                     // TODO: default value for radio buttons?
                     this.memo.meetingType = "MEETING";
-                    this.memo.fund.suitable = false;
-                    this.memo.suitable = false;
+                    this.memo.fund.suitable = true;
+                    this.memo.suitable = true;
                     this.memo.currentlyFundRaising = true;
                     this.memo.openingSoon = false;
                     this.memo.tags = [];
                 }
             });
-
     }
 
     preselectStrategies(){
@@ -241,7 +238,8 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
             format: 'LT'
         })
 
-        $('input[type=text], textarea').autogrow({vertical: true, horizontal: false});
+        //$('input[type=text], textarea').autogrow({vertical: true, horizontal: false});
+        //$('input[type=text], textarea').autoGrow();
 
         // init chart also moved to constructor
         // due to that scores array is still empty when ngOnInit called
@@ -291,18 +289,22 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
                                 }
 
                                 this.postAction("Successfully saved.", null);
+                                this.submitted = true;
                             },
                             error => {
                                 // TODO: don't save memo?
 
                                 this.postAction(null, "Error uploading attachments.");
+                                this.submitted = false;
                             });
                     }else{
                         this.postAction("Successfully saved.", null);
+                        this.submitted = true;
                     }
                 },
                 error =>  {
                     this.postAction(null, "Error saving memo.");
+                    this.submitted = false;
                 }
             );
 
@@ -312,9 +314,11 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
                 .subscribe(
                     (response:SaveResponse) => {
                         this.postAction("Succesfully saved PE FUND", null);
+                        this.submitted = true;
                     },
                     error => {
                         this.postAction(null, "Error saving PE FUND");
+                        this.submitted = false;
                     }
                 )
         }
@@ -508,6 +512,7 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
     getFirmDataOnChange(id){
         this.getFundData(null);
         this.getFirmData(id);
+        this.memo.fund.suitable = true;
     }
 
     getFirmData(id){

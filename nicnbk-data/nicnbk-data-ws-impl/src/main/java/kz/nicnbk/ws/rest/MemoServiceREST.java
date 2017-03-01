@@ -96,6 +96,8 @@ public class MemoServiceREST {
         response.setEntityId(id);
         if(memoDto.getId() == null){
             response.setCreationDate(new Date());
+        } else {
+            response.setCreationDate(memoDto.getCreationDate());
         }
         memoDto.setId(id);
         return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
@@ -116,6 +118,8 @@ public class MemoServiceREST {
         response.setEntityId(id);
         if(memoDto.getId() == null){
             response.setCreationDate(new Date());
+        } else {
+            response.setCreationDate(memoDto.getCreationDate());
         }
         memoDto.setId(id);
         return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
@@ -131,6 +135,8 @@ public class MemoServiceREST {
         response.setEntityId(id);
         if(memoDto.getId() == null){
             response.setCreationDate(new Date());
+        } else {
+            response.setCreationDate(memoDto.getCreationDate());
         }
         memoDto.setId(id);
         return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
@@ -147,6 +153,8 @@ public class MemoServiceREST {
         response.setEntityId(id);
         if(memoDto.getId() == null){
             response.setCreationDate(new Date());
+        } else {
+            response.setCreationDate(memoDto.getCreationDate());
         }
         memoDto.setId(id);
         return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);

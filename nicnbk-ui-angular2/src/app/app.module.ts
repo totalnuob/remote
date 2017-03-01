@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 
 import {SelectModule} from 'ng2-select';
 //import { TagInputModule } from 'ng2-tag-input';
+import {ElasticModule} from 'angular2-elastic';
 
 import { appRouterProviders } from './app.routes';
 import {AuthGuard} from "./auth.guard.service";
@@ -54,7 +55,8 @@ import {HFManagerSearchComponent} from "./hf/hf.manager-search.component";
         SelectModule,
         //TagInputModule,
         appRouterProviders,
-        BusyModule
+        BusyModule,
+        ElasticModule
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA], // for custom elements like ng-select
     providers: [

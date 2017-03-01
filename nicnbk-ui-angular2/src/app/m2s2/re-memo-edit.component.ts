@@ -1,4 +1,4 @@
-import { Component, NgModule, OnInit, ViewChild, AfterViewInit  } from '@angular/core';
+import { Component, NgModule, OnInit, ViewChild, AfterViewInit, } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 
 import {LookupService} from "../common/lookup.service";
@@ -30,6 +30,8 @@ export class RealEstateMemoEditComponent extends CommonFormViewComponent impleme
 
     private visible = false;
 
+    submitted = false;
+
     memo = new REMemo;
 
     @ViewChild('attendeesSelect')
@@ -48,6 +50,8 @@ export class RealEstateMemoEditComponent extends CommonFormViewComponent impleme
     closingScheduleList = [];
     openingScheduleList = [];
     currencyList = [];
+
+    private breadcrumbParams: string;
 
     options = {
         placeholder: "+ tag",
@@ -88,6 +92,7 @@ export class RealEstateMemoEditComponent extends CommonFormViewComponent impleme
             .params
             .subscribe(params => {
                 this.memoIdParam = +params['id'];
+                this.breadcrumbParams = params['params'];
                 if(this.memoIdParam > 0) {
                     this.busy = this.memoService.get(4, this.memoIdParam)
                         .subscribe(
@@ -119,7 +124,7 @@ export class RealEstateMemoEditComponent extends CommonFormViewComponent impleme
                 }else{
                     // TODO: default value for meeting type?
                     this.memo.meetingType = "MEETING";
-                    this.memo.suitable = false;
+                    this.memo.suitable = true;
 
                     this.memo.tags = [];
                 }
@@ -199,7 +204,6 @@ export class RealEstateMemoEditComponent extends CommonFormViewComponent impleme
             format: 'LT'
         })
 
-        $('input[type=text], textarea').autogrow();
 
         // load lookups
         //this.loadLookups();
@@ -247,18 +251,22 @@ export class RealEstateMemoEditComponent extends CommonFormViewComponent impleme
                                 }
 
                                 this.postAction("Successfully saved.", null);
+                                this.submitted = true;
                             },
                             error => {
                                 // TODO: don't save memo?
 
                                 this.postAction(null, "Error uploading attachments.");
+                                this.submitted = false;
                             });
                     }else{
                         this.postAction("Successfully saved.", null);
+                        this.submitted = true;
                     }
                 },
                 error =>  {
                     this.postAction(null, "Error saving memo.");
+                    this.submitted = false;
                 }
             );
     }

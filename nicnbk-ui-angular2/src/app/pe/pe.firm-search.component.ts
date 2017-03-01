@@ -5,7 +5,7 @@ import {LookupService} from "../common/lookup.service";
 import {PEFirm} from "./model/pe.firm";
 import {CommonFormViewComponent} from "../common/common.component";
 import {PESearchResults} from "./model/pe.search-results";
-
+import {Router, ActivatedRoute} from '@angular/router';
 import {Subscription} from 'rxjs';
 
 @Component({
@@ -20,13 +20,33 @@ export class PEFirmSearchComponent extends CommonFormViewComponent {
     searchParams = new PESearchParams();
     searchResult = new PESearchResults();
     busy: Subscription;
+    public sub: any;
 
     constructor(
-        private firmService: PEFirmService
+        private firmService: PEFirmService,
+        private router: Router,
+        private route: ActivatedRoute
     ){
         super();
-        this.searchParams.name = '';
-        this.search(0);
+        this.sub = this.route
+            .params
+            .subscribe(params => {
+                console.log(params['params'] != null);
+                if(params['params'] != null){
+                    this.searchParams = JSON.parse(params['params']);
+                    this.busy = this.firmService.search(this.searchParams)
+                        .subscribe(
+                            searchResult => {
+                                this.foundEntities = searchResult.firms;
+                                this.searchResult = searchResult;
+                            },
+                            error => this.errorMessage = "Failed to search"
+                        );
+                } else {
+                    this.searchParams.name = '';
+                    this.search(0);
+                }
+            });
     }
 
     search(page){
@@ -49,6 +69,10 @@ export class PEFirmSearchComponent extends CommonFormViewComponent {
             );
     }
 
+    navigate(path, firmId){
+        let params = JSON.stringify(this.searchParams);
+        this.router.navigate([path, firmId, { params }]);
+    }
 
 
 }

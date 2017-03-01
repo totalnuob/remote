@@ -37,6 +37,8 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
     @ViewChild('geographySelect')
     private geographySelect;
 
+    private breadcrumbParams: string;
+
     public strategyList: Array<any> = [];
     public industryList: Array<any> = [];
     public geographyList: Array<any> = [];
@@ -76,6 +78,7 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
             .params
             .subscribe(params => {
                 this.firmIdParam = +params['id'];
+                this.breadcrumbParams = params['params'];
                 if(this.firmIdParam > 0) {
                     this.searchParams['id'] = this.firmIdParam;
                     this.busy = this.firmService.get(this.firmIdParam)

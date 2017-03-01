@@ -40,6 +40,8 @@ export class PEFundReportComponent extends GoogleChartComponent {
 
     busy: Subscription;
 
+    private breadcrumbParams: string;
+
     constructor(
         private firmService: PEFirmService,
         private fundService: PEFundService,
@@ -51,6 +53,7 @@ export class PEFundReportComponent extends GoogleChartComponent {
             .params
             .subscribe(params => {
                 this.firmIdParam = +params['id'];
+                this.breadcrumbParams = params['params'];
                 if(this.firmIdParam > 0){
                     this.searchParams['id'] = this.firmIdParam;
                     this.busy = this.firmService.get(this.firmIdParam)

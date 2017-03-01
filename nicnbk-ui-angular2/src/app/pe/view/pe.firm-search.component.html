@@ -90,7 +90,7 @@
 
             <tr *ngFor = "let firm of foundEntities">
                 <td width="5%"></td>
-                <td width="15%"><a [routerLink]="['/pe/firmProfile/', firm.id]">{{firm.firmName}}</a></td>
+                <td width="15%"><a (click)="navigate('/pe/firmProfile/', firm.id)">{{firm.firmName}}</a></td>
                 <!--<td width="30%">-->
                 <!--&lt;!&ndash;<a [routerLink]="['/hf/managerProfile/', fund.manager.id]">{{fund.manager.name}}</a>&ndash;&gt;-->
                 <!--</td>-->
@@ -101,7 +101,7 @@
                 <td width="7%">{{firm.creationDate}}</td>
                 <td width="5%">
                     <!--<a><i class="glyphicon glyphicon-search"></i></a>-->
-                    <a><i class="glyphicon glyphicon-file" [routerLink]="['/pe/fundReport/', firm.id]"></i></a>
+                    <a><i class="glyphicon glyphicon-file" (click)="navigate('/pe/fundReport/', firm.id)"></i></a>
                 </td>
             </tr>
 

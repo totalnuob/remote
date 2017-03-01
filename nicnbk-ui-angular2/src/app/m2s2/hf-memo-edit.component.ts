@@ -34,6 +34,7 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
     busy: Subscription;
 
     private visible = false;
+    submitted = false;
 
     memo = new HFMemo;
 
@@ -57,6 +58,8 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
     closingScheduleList = [];
     openingScheduleList = [];
     currencyList = [];
+
+    private breadcrumbParams: string;
 
     options = {
         placeholder: "+ tag",
@@ -104,6 +107,7 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
             .params
             .subscribe(params => {
                 this.memoIdParam = +params['id'];
+                this.breadcrumbParams = params['params'];
                 this.memo.manager = new HFManager();
                 this.memo.fund = new HedgeFund();
                 if(this.memoIdParam > 0) {
@@ -225,8 +229,6 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
             format: 'LT'
         });
 
-        $('input[type=text], textarea').autogrow();
-
         // init chart
         this.initRadarChart();
 
@@ -270,19 +272,23 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
                                 }
 
                                 this.postAction("Successfully saved.", null);
+                                this.submitted = true;
                             },
                             error => {
                                 // TODO: don't save memo?
 
                                 this.postAction(null, "Error uploading attachments.");
+                                this.submitted = false;
                             });
                     }else{
                         this.postAction("Successfully saved.", null);
+                        this.submitted = true;
                     }
                 },
                 //error =>  this.errorMessage = <any>error
                 error =>  {
                     this.postAction(null, "Error saving memo.");
+                    this.submitted = false;
                 }
             );
     }

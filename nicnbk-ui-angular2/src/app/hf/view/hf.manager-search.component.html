@@ -87,7 +87,7 @@
 
             <tr *ngFor = "let manager of foundEntities">
                 <td width="5%"></td>
-                <td width="30%"><a [routerLink]="['/hf/managerProfile/', manager.id]">{{manager.name}}</a></td>
+                <td width="30%"><a (click)="navigate('/hf/managerProfile/', manager.id)">{{manager.name}}</a></td>
                 <td width="10%">{{manager.inceptionDate}}</td>
                 <td width="10%">{{manager.updateDate}}</td>
                 <td width="5%">

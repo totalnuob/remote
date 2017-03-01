@@ -30,14 +30,12 @@ import {HedgeFundService} from "./hf/hf.fund.service";
 import {RiskManagementReportService} from "./riskmanagement/riskmanagement.report.service";
 import {AlbourneService} from "./hf/hf.albourne.service";
 
-import '../../public/js/jquery.ns-autogrow.min.js';
-
 @Component({
     selector: 'app-main',
     templateUrl: './app.component.html',
     styleUrls: [
         '../../public/css/header.css', '../../public/css/footer.css',
-        '../../public/css/common.css',
+        '../../public/css/common.css','../../public/css/forms.css',
         '../../node_modules/angular2-busy/build/style/busy.css'
     ],
     providers: [

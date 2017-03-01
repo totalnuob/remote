@@ -59,18 +59,6 @@
                                         </span>
                             </div>
                         </div>
-                        <!--<script th:inline="javascript" type="text/javascript">-->
-                            <!--$(function () {-->
-                                <!--$('#fromDateDTPickeer').datetimepicker({-->
-                                    <!--//defaultDate: new Date(),-->
-                                    <!--format: 'DD-MM-YYYY'-->
-                                <!--});-->
-                                <!--$('#untilDateDTPickeer').datetimepicker({-->
-                                    <!--//defaultDate: new Date(),-->
-                                    <!--format: 'DD-MM-YYYY'-->
-                                <!--});-->
-                            <!--});-->
-                        <!--</script>-->
                     </div>
                 </div>
                 <div class="row">
@@ -91,23 +79,6 @@
                         </div>
                     </div>
                 </div>
-                <!--<div>-->
-                    <!--<a (click)="toggle()">Advanced search {{ advancedSearch ? '&#9660;' : '&#9658;' }}</a>-->
-                <!--</div>-->
-                <!--<br/>-->
-                <!--<div class="row" style="background-color: white"  [hidden]="!advancedSearch">-->
-                    <!--<div class="col-md-12">-->
-                        <!--<div class="col-md-6">-->
-                            <!--<tag-input [ngModel]="searchParams.tags" ngDefaultControl-->
-                                       <!--(onRemove)="onItemRemoved($event)"-->
-                                       <!--(onAdd)="onItemAdded($event)"-->
-                                       <!--[placeholder]="options.placeholder"-->
-                                       <!--[secondaryPlaceholder]="options.secondaryPlaceholder">-->
-                            <!--</tag-input>-->
-                        <!--</div>-->
-                    <!--</div>-->
-                    <!--<br/>-->
-                <!--</div>-->
                 <br/>
                 <div class="row">
                     <div class="col-md-12">
@@ -145,8 +116,8 @@
                 <tr *ngFor = "let memo of memoList">
                     <td width="5%">{{getMemoTypeName(memo.memoType)}}</td>
                     <td width="10%" >{{memo.meetingType}}</td>
-                    <td width="30%"><a [routerLink]="['/m2s2/edit/', memo.memoType, memo.id]">{{memo.firmName}}</a></td>
-                    <td width="30%"><a [routerLink]="['/m2s2/edit/', memo.memoType, memo.id]">{{memo.fundName}}</a></td>
+                    <td width="30%"><a (click)="navigate(memo.memoType, memo.id)">{{memo.firmName}}</a></td>
+                    <td width="30%"><a (click)="navigate(memo.memoType, memo.id)">{{memo.fundName}}</a></td>
                     <!--<td width="10%" th:text="${memoItem.meetingDate}"></td>-->
                     <td width="10%">{{memo.meetingDate}}</td>
                     <td width="10%">{{memo.author}}</td>

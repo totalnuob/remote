@@ -2,219 +2,260 @@
     <div class="row top-buffer" >
         <div class="col-md-12">
             <ol class="breadcrumb">
-                <li><a [routerLink]="['/hf/managerSearch']">Hedge Funds</a></li>
+                <li><span *ngIf="this.breadcrumbParams != null"><a [routerLink]="['/hf/managerSearch', {params: this.breadcrumbParams}]">Hedge Funds</a></span>
+                    <span *ngIf="this.breadcrumbParams == null"><a [routerLink]="['/hf/managerSearch']">Hedge Funds</a></span>
+                </li>
                 <li class="active">Manager profile</li>
             </ol>
         </div>
     </div>
     <div style="position: relative;">
         <div [ngBusy]="busy">
-        <div class="row top-buffer" >
-            <div class="col-md-12">
-                <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
-                </div>
-            </div>
-        </div>
-        <div class="row top-buffer" >
-            <div class="col-md-12">
-                <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
-                </div>
-            </div>
-        </div>
-
-        <ul class="nav nav-tabs">
-            <li class="active">
-                <a data-toggle="tab" href="#overview">OVERVIEW</a>
-            </li>
-            <li (click)="search()">
-                <a data-toggle="tab" href="#meetings_calls">MEETINGS/CALLS</a>
-            </li>
-        </ul>
-        <br/>
-        <div class="tab-content">
-            <div id="overview" class="tab-pane fade in active">
-                <div class="row withpadding">
-                    <div class="col-md-9">
-                        <input type="text" class="form-control" placeholder="Enter name..."
-                               [(ngModel)]="manager.name"/>
+            <div class="row top-buffer" >
+                <div class="col-md-12">
+                    <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
                     </div>
                 </div>
-                <br/>
+            </div>
+            <div class="row top-buffer" >
+                <div class="col-md-12">
+                    <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+                    </div>
+                </div>
+            </div>
 
-                <div class="row withpadding">
-                    <table class=" col-md-4 table-striped table-condensed">
-                        <!--<tr>-->
-                            <!--<td class="col-md-1">Manager Type</td>-->
-                            <!--<td class="col-md-3">-->
-                                <!--<select style="width: 100%" class="form-control" [(ngModel)]="manager.managerType">-->
-                                    <!--<option value="0">-&#45;&#45;</option>-->
-                                    <!--<option *ngFor="let item of managerTypeLookup" [value]="item.code">{{item.nameEn}}</option>-->
-                                <!--</select>-->
-                            <!--</td>-->
-                        <!--</tr>-->
-                        <!--<tr>-->
-                            <!--<td class="col-md-1">Strategy</td>-->
-                            <!--<td class="col-md-3">-->
-                                <!--<select style="width: 100%" [(ngModel)]="manager.strategy">-->
-                                    <!--<option value="0">-&#45;&#45;</option>-->
-                                    <!--<option *ngFor="let item of strategyLookup" [value]="item.code">{{item.nameEn}}</option>-->
-                                <!--</select>-->
-                            <!--</td>-->
-                        <!--</tr>-->
-                        <!--<tr>-->
-                            <!--<td class="col-md-1">Status</td>-->
-                            <!--<td class="col-md-3">-->
-                                <!--<select style="width: 100%" [(ngModel)]="manager.status">-->
-                                    <!--<option value="0">-&#45;&#45;</option>-->
-                                    <!--<option *ngFor="let item of statusLookup" [value]="item.code">{{item.nameEn}}</option>-->
-                                <!--</select>-->
-                            <!--</td>-->
-                        <!--</tr>-->
-                        <!--<tr>-->
-                            <!--<td class="col-md-1">Inception</td>-->
-                            <!--<td class="col-md-3">-->
-                                <!--<input type="text" [(ngModel)]="manager.inception"/>-->
-                            <!--</td>-->
-                        <!--</tr>-->
-                        <tr>
-                            <td class="col-md-1">Inception</td>
-                            <td class="col-md-3">
-                                <!--<input type="text" [(ngModel)]="manager.inceptionDate"/>-->
+            <ul class="nav nav-tabs">
+                <li class="active">
+                    <a data-toggle="tab" href="#overview">OVERVIEW</a>
+                </li>
+                <li (click)="search()">
+                    <a data-toggle="tab" href="#meetings_calls">MEETINGS/CALLS</a>
+                </li>
+            </ul>
+            <br/>
+            <div class="tab-content">
+                <div id="overview" class="tab-pane fade in active">
+                    <form (ngSubmit)="save()" #managerForm="ngForm" class="well span">
+                        <div class="row withpadding">
+                            <div class="col-md-9">
+                                <input type="text" class="form-control" name="name" placeholder="Enter name..."
+                                       [(ngModel)]="manager.name" required #name="ngModel"/>
+                                <div [hidden]="name.valid || name.pristine" class="alert alert-danger">Name is required</div>
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="row withpadding">
+                            <table class=" col-md-5 table-striped table-condensed">
+                                <tr>
+                                    <td class="col-md-2">Inception</td>
+                                    <td class="col-md-3">
+                                        <div class='input-group date col-md-2' id='inceptionDate' style="width: 100%">
+                                            <input type="text" class="form-control" id="inceptionDateValue" name="inceptionDate" [(ngModel)]="manager.inceptionDate"/>
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-2">AUM </td>
+                                    <td class="col-md-3">
+                                        <input type="text" class="form-control" style="display:inline; width: 30%" name="aum" [(ngModel)]="manager.aum" pattern="[+]?[0-9]*\.?[0-9]+" #aum="ngModel"/>
+                                        <select class="form-control" style="display:inline; width: 25%" name="aumDigit" [(ngModel)]="manager.aumDigit">
+                                            <option value="M">M</option>
+                                            <option value="B">B</option>
+                                        </select>
+                                        <select class="form-control" style="display:inline; width: 35%" name="aumCurrency" [(ngModel)]="manager.aumCurrency">
+                                            <option value="-">--</option>
+                                            <option *ngFor="let currency of currencyLookup">{{currency.code}}</option>
+                                        </select>
+                                        <div [hidden]="aum.valid || aum.pristine" class="alert alert-danger">
+                                            Only positive number could be entered
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-2">Meetings in the past</td>
+                                    <td class="col-md-3">
+                                        <select style="width: 100%" class="form-control" name="meetingsInThePast" [(ngModel)]="manager.meetingsInThePast">
+                                            <option value="null">---</option>
+                                            <option value="true">Yes</option>
+                                            <option value="false">No</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <!--</table>-->
+                                <!--<table class=" col-md-4 table-striped table-condensed">-->
+                                <br>
+                                <tr>
+                                    <td class="col-md-12" colspan="2">
+                                        <canvas id="myChart"></canvas>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-2">
+                                        <label class="control-label col-md-6" for="conviction">Score:<span id="averageScore"></span></label>
+                                        <label class="control-label col-md-6" for="conviction">Conviction:</label>
+                                    </td>
+                                    <td class="col-md-3">
+                                        <select id="conviction" name="conviction" class="form-control" name="conviction" [(ngModel)]="manager.conviction">
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            </table>
+                            <div class=" col-md-1">&nbsp;</div>
+                            <table class=" col-md-6 table-striped table-condensed">
+                                <tr>
+                                    <td class="col-md-1">Fund Managers</td>
+                                    <td class="col-md-5">
+                                        <textarea fz-elastic style="width:100%" class="form-control" name="fundManagers" [(ngModel)]="manager.fundManagers"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-1">Headquarters</td>
+                                    <td class="col-md-5">
+                                        <textarea style="width:100%"  class="form-control" name="headquarters" [(ngModel)]="manager.headquarters"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-1">Contact person</td>
+                                    <td class="col-md-5">
+                                        <textarea style="width:100%" class="form-control" name="contactPerson" [(ngModel)]="manager.contactPerson"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-1">Telephone</td>
+                                    <td class="col-md-5">
+                                        <input type="text" class="form-control" name="telephone" [(ngModel)]="manager.telephone"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-1">Website</td>
+                                    <td class="col-md-5">
+                                        <input type="text" class="form-control" name="website" [(ngModel)]="manager.website"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-1">Email</td>
+                                    <td class="col-md-5">
+                                        <input type="text" class="form-control" name="email" [(ngModel)]="manager.email"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
 
-                                <div class='input-group date col-md-2' id='inceptionDate' style="width: 100%">
-                                    <input type="text" class="form-control" id="inceptionDateValue" [(ngModel)]="manager.inceptionDate"/>
-                                    <span class="input-group-addon">
-                                        <span class="glyphicon glyphicon-calendar"></span>
-                                    </span>
+                        <div class="row">
+                            &nbsp;
+                        </div>
+                        <div class="row top-buffer withpadding">
+                            <div class="col-md-12" style="background-color:#5bc0de; height: 34px">
+                                <div>
+                                    <div class="col-md-6">
+                                        <h5>MANAGEMENT AND TEAM</h5>
+                                    </div>
+                                    <div class="col-md-5">&nbsp;</div>
+                                    <div class="col-md-1">
+                                        <select id="managementAndTeamScore" name="managementAndTeamScore" class="form-control" (ngModelChange)="updateScore($event)"
+                                                name="managementAndTeamScore" [(ngModel)]="manager.managementAndTeamScore">
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                        </select>
+                                    </div>
                                 </div>
-
-                            </td>
-                        </tr>
-                        <!--<tr>-->
-                            <!--<td class="col-md-1">Legal Structure</td>-->
-                            <!--<td class="col-md-3">-->
-                                <!--<select style="width: 100%" [(ngModel)]="manager.legalStructure">-->
-                                    <!--<option value="0">-&#45;&#45;</option>-->
-                                    <!--<option *ngFor="let item of legalStructureLookup" [value]="item.code">{{item.nameEn}}</option>-->
-                                <!--</select>-->
-                            <!--</td>-->
-                        <!--</tr>-->
-                        <tr>
-                            <td class="col-md-1">AUM </td>
-                            <td class="col-md-3">
-                                <input type="text" class="form-control" style="display:inline; width: 30%" [(ngModel)]="manager.aum"/>
-                                <select class="form-control" style="display:inline; width: 25%" [(ngModel)]="manager.aumDigit">
-                                    <option value="M">M</option>
-                                    <option value="B">B</option>
-                                </select>
-                                <select class="form-control" style="display:inline; width: 35%" [(ngModel)]="manager.aumCurrency">
-                                    <option value="-">--</option>
-                                    <option *ngFor="let currency of currencyLookup">{{currency.code}}</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-1">Meetings in the past</td>
-                            <td class="col-md-3">
-                                <select style="width: 100%" class="form-control" [(ngModel)]="manager.meetingsInThePast">
-                                    <option value="null">---</option>
-                                    <option value="true">Yes</option>
-                                    <option value="false">No</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <!--<tr>-->
-                            <!--<td class="col-md-1">Domicile Country</td>-->
-                            <!--<td class="col-md-3">-->
-                                <!--<select style="width: 100%" [(ngModel)]="manager.domicileCountry">-->
-                                    <!--<option value="0">-&#45;&#45;</option>-->
-                                    <!--<option *ngFor="let item of domicileCountryLookup" [value]="item.code">{{item.nameEn}}</option>-->
-                                <!--</select>-->
-                            <!--</td>-->
-                        <!--</tr>-->
-                    </table>
-                    <div class=" col-md-1">&nbsp;</div>
-                    <table class=" col-md-6 table-striped table-condensed">
-                    <!--<h4>Contacts</h4>-->
-                        <!--<tr>-->
-                        <!--<td class="col-md-1">Manager Name</td>-->
-                        <!--<td class="col-md-3">Gorsvenor Capital Management</td>-->
-                        <!--</tr>-->
-                        <tr>
-                            <td class="col-md-1">Fund Managers</td>
-                            <td class="col-md-5">
-                                <textarea style="width:100%" class="form-control" [(ngModel)]="manager.fundManagers"></textarea>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-1">Headquarters</td>
-                            <td class="col-md-5">
-                                <textarea style="width:100%"  class="form-control" [(ngModel)]="manager.headquarters"></textarea>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-1">Contact person</td>
-                            <td class="col-md-5">
-                                <textarea style="width:100%" class="form-control" [(ngModel)]="manager.contactPerson"></textarea>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-1">Telephone</td>
-                            <td class="col-md-5">
-                                <input type="text" class="form-control" [(ngModel)]="manager.telephone"/>
-                            </td>
-                        </tr>
-                        <!--<tr>-->
-                            <!--<td class="col-md-1">Fax</td>-->
-                            <!--<td class="col-md-5">-->
-                                <!--<input type="text" [(ngModel)]="manager.fax"/>-->
-                            <!--</td>-->
-                        <!--</tr>-->
-                        <tr>
-                            <td class="col-md-1">Website</td>
-                            <td class="col-md-5">
-                                <input type="text" class="form-control" [(ngModel)]="manager.website"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-1">Email</td>
-                            <td class="col-md-5">
-                                <input type="text" class="form-control" [(ngModel)]="manager.email"/>
-                            </td>
-                        </tr>
-                    </table>
-                    <div class=" col-md-3">&nbsp;</div>
-                    <div class="col-md-1 pull-right">
-                        <button class="btn btn-success" (click)="save()">SAVE</button>
-                    </div>
-                </div>
-
-                <div class="row withpadding">
-                    <hr style="border-top: 1px solid #B5AEAE"/>
-                    <div class="col-md-9">
-                        <h3>Funds</h3>
-                    </div>
-                    <div class="col-md-1 pull-right">
-                        <button class="btn btn-primary" [disabled]="manager.id == 0 || manager.id == null"
-                                (click)="createFund()">ADD</button>
-                    </div>
-                    <div class="row col-md-12" *ngIf="manager?.funds == null || manager?.funds?.length == 0">
-                        No funds.
-                    </div>
-                    <table class="table table-striped" *ngIf="manager?.funds?.length > 0">
-                        <thead>
+                            </div>
+                        </div>
+                        <div class="row top-buffer withpadding">
+                            <div class="col-md-12 nopadding">
+                                <textarea fz-elastic spellcheck="false"  class="form-control" name="managementAndTeamNotes" name="managementAndTeamNotes" [(ngModel)]="manager.managementAndTeamNotes"></textarea>
+                            </div>
+                        </div>
+                        <div class="row top-buffer withpadding">
+                            <div class="col-md-12" style="background-color:#5bc0de; height: 34px">
+                                <div class="col-md-6">
+                                    <h5>STRATEGY AND INVESTMENT PROCESS</h5>
+                                </div>
+                                <div class="col-md-5">&nbsp;</div>
+                                <div class="col-md-1">
+                                    <select id="strategyScore" name="strategyScore" class="form-control" (ngModelChange)="updateScore()"
+                                            name="strategyScore" [(ngModel)]="manager.strategyScore">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top-buffer withpadding">
+                            <div class="col-md-12 nopadding">
+                                <textarea fz-elastic spellcheck="false"  name="strategyNotes" class="form-control" name="strategyNotes" [(ngModel)]="manager.strategyNotes"></textarea>
+                            </div>
+                        </div>
+                        <div class="row top-buffer withpadding">
+                            <div class="col-md-12" style="background-color:#5bc0de; height: 34px">
+                                <div class="col-md-6">
+                                    <h5>PORTFOLIO OVERVIEW AND CONSTRUCTION</h5>
+                                </div>
+                                <div class="col-md-5">&nbsp;</div>
+                                <div class="col-md-1">
+                                    <select id="portfolioScore" name="portfolioScore" class="form-control" (ngModelChange)="updateScore()"
+                                            name="portfolioScore" [(ngModel)]="manager.portfolioScore">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top-buffer withpadding">
+                            <div class="col-md-12 nopadding">
+                                <textarea fz-elastic spellcheck="false" name="portfolioNotes" class="form-control" name="portfolioNotes" [(ngModel)]="manager.portfolioNotes"></textarea>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class=" col-md-3">&nbsp;</div>
+                            <div class="col-md-1 pull-right">
+                                <button type="submit" class="btn btn-success" [disabled]="!managerForm.form.valid">SAVE</button>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="row withpadding">
+                        <hr style="border-top: 1px solid #B5AEAE"/>
+                        <div class="col-md-9">
+                            <h3>Funds</h3>
+                        </div>
+                        <div class="col-md-1 pull-right">
+                            <button class="btn btn-primary" [disabled]="manager.id == 0 || manager.id == null"
+                                    (click)="createFund()">ADD</button>
+                        </div>
+                        <div class="row col-md-12" *ngIf="manager?.funds == null || manager?.funds?.length == 0">
+                            No funds.
+                        </div>
+                        <table class="table table-striped" *ngIf="manager?.funds?.length > 0">
+                            <thead>
                             <th>&nbsp;</th>
                             <th>FUND</th>
                             <th>STRATEGY</th>
                             <th>INCEPTION</th>
                             <th>UPDATED</th>
                             <th>ACTIONS</th>
-                        </thead>
-                        <tbody>
+                            </thead>
+                            <tbody>
                             <tr *ngFor="let fund of manager?.funds">
                                 <td width="5%"></td>
                                 <td width="30%"><a [routerLink]="['/hf/fundProfile/', fund.id]">{{fund.name}}</a></td>
-                                <!--<td width="10%" th:text="${memoItem.meetingDate}"></td>-->
                                 <td width="10%">{{getStrategyName(fund.strategy)}}</td>
                                 <td width="10%">{{fund.inceptionDate}}</td>
                                 <td width="10%">{{fund.updateDate}}</td>
@@ -222,113 +263,116 @@
                                     <a><i class="glyphicon glyphicon-file"></i></a>
                                 </td>
                             </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                </div>
+                <div id="meetings_calls" class="tab-pane fade">
+                    <div class="jumbotron">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="meetingType">Meeting Type</label>
+                                        <select class="form-control" id="meetingType" name="meetingType" [(ngModel)]="memoSearchParams.meetingType">
+                                            <option value="NONE">---</option>
+                                            <option *ngFor = "let type of meetingTypes" [value]="type.code">{{type.nameEn}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="fromDate">From</label>
+                                    <div class='input-group date col-md-3' id='fromDate' style="width: 100%">
+                                        <input type='text' class="form-control" id="fromDateValue" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="toDate">To</label>
+                                    <div class='input-group date col-md-3' id='toDate' style="width: 100%">
+                                        <input type='text' class="form-control" id="toDateValue"/>
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="fundName">Fund</label>
+                                        <input type="text" class="form-control" id="fundName" placeholder="Enter fund name..."
+                                               name="fundName" [(ngModel)]="memoSearchParams.fundName"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button type="button" class="btn btn-success pull-right" (click)="search()">Search</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label>Total found: <span>{{memoSearchResult?.totalElements > 0 ?  memoSearchResult?.totalElements : 0}}</span></label>
+                    </div>
+                    <div class="row withpadding" style="position: relative; min-height: 80px;">
+                        <div class="row pull-right">
+                            <ul class="pagination" *ngIf="memoSearchResult?.showPageFrom > 0">
+                                <li><a *ngIf="memoSearchResult?.showPageFrom > 1" (click)="search(memoSearchResult.showPageFrom - 1)">&laquo;</a></li>
+                                <li *ngFor="let i of range(memoSearchResult.showPageFrom, memoSearchResult.showPageTo)" [class.active]="i == memoSearchResult.currentPage">
+                                    <a (click)="search(i)">{{i}}</a>
+                                </li>
+                                <li><a *ngIf="memoSearchResult.showPageTo < memoSearchResult.totalPages" (click)="search(memoSearchResult.showPageTo + 1)">&raquo;</a></li>
+                            </ul>
+                        </div>
+                        <table [ngBusy]="busy" class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>MEETING/CALL</th>
+                                <th>FIRM</th>
+                                <th>FUND</th>
+                                <th>DATE</th>
+                                <th>AUTHOR</th>
+                                <th>ACTIONS</th>
+                            </tr>
+                            </thead>
 
-                        </tbody>
-                    </table>
+                            <tbody>
+                            <tr *ngFor = "let memo of memoList">
+                                <td width="10%" >{{memo.meetingType}}</td>
+                                <td width="30%"><a [routerLink]="['/m2s2/edit/', memo.memoType, memo.id]">{{memo.firmName}}</a></td>
+                                <td width="30%"><a [routerLink]="['/m2s2/edit/', memo.memoType, memo.id]">{{memo.fundName}}</a></td>
+                                <!--<td width="10%" th:text="${memoItem.meetingDate}"></td>-->
+                                <td width="10%">{{memo.meetingDate}}</td>
+                                <td width="10%">{{memo.author}}</td>
+                                <td width="5%">
+                                    <a><i class="glyphicon glyphicon-trash"></i></a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="row pull-right">
+                            <ul class="pagination" *ngIf="memoSearchResult?.showPageFrom > 0">
+                                <li><a *ngIf="memoSearchResult?.showPageFrom > 1" (click)="search(memoSearchResult.showPageFrom - 1)">&laquo;</a></li>
+                                <li *ngFor="let i of range(memoSearchResult.showPageFrom, memoSearchResult.showPageTo)" [class.active]="i == memoSearchResult.currentPage">
+                                    <a (click)="search(i)">{{i}}</a>
+                                </li>
+                                <li><a *ngIf="memoSearchResult.showPageTo < memoSearchResult.totalPages" (click)="search(memoSearchResult.showPageTo + 1)">&raquo;</a></li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div id="meetings_calls" class="tab-pane fade">
-                <div class="jumbotron">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="meetingType">Meeting Type</label>
-                                    <select class="form-control" id="meetingType" [(ngModel)]="memoSearchParams.meetingType">
-                                        <option value="NONE">---</option>
-                                        <option *ngFor = "let type of meetingTypes" [value]="type.code">{{type.nameEn}}</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <label for="fromDate">From</label>
-                                <div class='input-group date col-md-3' id='fromDate' style="width: 100%">
-                                    <input type='text' class="form-control" id="fromDateValue" />
-                                            <span class="input-group-addon">
-                                                <span class="glyphicon glyphicon-calendar"></span>
-                                            </span>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <label for="toDate">To</label>
-                                <div class='input-group date col-md-3' id='toDate' style="width: 100%">
-                                    <input type='text' class="form-control" id="toDateValue"/>
-                                    <span class="input-group-addon">
-                                        <span class="glyphicon glyphicon-calendar"></span>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <br/>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="fundName">Fund</label>
-                                    <input type="text" class="form-control" id="fundName" placeholder="Enter fund name..."
-                                           [(ngModel)]="memoSearchParams.fundName"/>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <button type="button" class="btn btn-success pull-right" (click)="search()">Search</button>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <label>Total found: <span>{{memoSearchResult?.totalElements > 0 ?  memoSearchResult?.totalElements : 0}}</span></label>
-                </div>
-                <div class="row withpadding" style="position: relative; min-height: 80px;">
-                    <div class="row pull-right">
-                        <ul class="pagination" *ngIf="memoSearchResult?.showPageFrom > 0">
-                            <li><a *ngIf="memoSearchResult?.showPageFrom > 1" (click)="search(memoSearchResult.showPageFrom - 1)">&laquo;</a></li>
-                            <li *ngFor="let i of range(memoSearchResult.showPageFrom, memoSearchResult.showPageTo)" [class.active]="i == memoSearchResult.currentPage">
-                                <a (click)="search(i)">{{i}}</a>
-                            </li>
-                            <li><a *ngIf="memoSearchResult.showPageTo < memoSearchResult.totalPages" (click)="search(memoSearchResult.showPageTo + 1)">&raquo;</a></li>
-                        </ul>
-                    </div>
-                    <table [ngBusy]="busy" class="table table-hover">
-                        <thead>
-                        <tr>
-                            <th>MEETING/CALL</th>
-                            <th>FIRM</th>
-                            <th>FUND</th>
-                            <th>DATE</th>
-                            <th>AUTHOR</th>
-                            <th>ACTIONS</th>
-                        </tr>
-                        </thead>
-
-                        <tbody>
-                        <tr *ngFor = "let memo of memoList">
-                            <td width="10%" >{{memo.meetingType}}</td>
-                            <td width="30%"><a [routerLink]="['/m2s2/edit/', memo.memoType, memo.id]">{{memo.firmName}}</a></td>
-                            <td width="30%"><a [routerLink]="['/m2s2/edit/', memo.memoType, memo.id]">{{memo.fundName}}</a></td>
-                            <!--<td width="10%" th:text="${memoItem.meetingDate}"></td>-->
-                            <td width="10%">{{memo.meetingDate}}</td>
-                            <td width="10%">{{memo.author}}</td>
-                            <td width="5%">
-                                <a><i class="glyphicon glyphicon-trash"></i></a>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <div class="row pull-right">
-                        <ul class="pagination" *ngIf="memoSearchResult?.showPageFrom > 0">
-                            <li><a *ngIf="memoSearchResult?.showPageFrom > 1" (click)="search(memoSearchResult.showPageFrom - 1)">&laquo;</a></li>
-                            <li *ngFor="let i of range(memoSearchResult.showPageFrom, memoSearchResult.showPageTo)" [class.active]="i == memoSearchResult.currentPage">
-                                <a (click)="search(i)">{{i}}</a>
-                            </li>
-                            <li><a *ngIf="memoSearchResult.showPageTo < memoSearchResult.totalPages" (click)="search(memoSearchResult.showPageTo + 1)">&raquo;</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
         </div>
     </div>
 </div>

@@ -32,8 +32,12 @@ public class PEMeetingMemoEntityConverter extends FundMeetingMemoConverter<Priva
         PrivateEquityMeetingMemoDto dto = super.disassemble(entity);
         disassembleFundNonmappedFields(dto, entity);
 
-        dto.setFund(fundEntityConverter.disassemble(entity.getFund()));
-        dto.setFirm(firmEntityConverter.disassemble(entity.getFirm()));
+        if(entity.getFund() != null) {
+            dto.setFund(fundEntityConverter.disassemble(entity.getFund()));
+        }
+        if(entity.getFirm() != null) {
+            dto.setFirm(firmEntityConverter.disassemble(entity.getFirm()));
+        }
 
         return dto;
     }

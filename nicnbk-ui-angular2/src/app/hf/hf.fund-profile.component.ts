@@ -33,6 +33,7 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
     public managerIdParam: number;
 
     busy: Subscription;
+    submitted = false;
 
     strategyLookup = [];
     substrategyLookup = [];
@@ -53,6 +54,8 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
     returnUploadErrorMessage;
     returnUploadSuccessMessage;
 
+    private breadcrumbParams: string;
+
     constructor(
         private lookupService: LookupService,
         private route: ActivatedRoute,
@@ -72,8 +75,7 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
             .subscribe(params => {
                 this.fundIdParam = +params['id'];
                 this.managerIdParam = +params['managerId'];
-
-
+                this.breadcrumbParams = params['params'];
                 this.fund.manager = new HFManager();
 
                 if(this.fundIdParam > 0) {
@@ -149,7 +151,6 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
             format: 'DD-MM-YYYY'
         });
 
-        //$('input[type=text], textarea').autogrow({vertical: true, horizontal: false});
     }
 
     save(){
@@ -170,9 +171,11 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
                     this.fund.creationDate = response.creationDate;
 
                     this.postAction("Successfully saved", null);
+                    this.submitted = true;
                 },
                 error =>  {
                     this.postAction(null, "Error saving fund profile");
+                    this.submitted = false;
                 }
             );
     }

@@ -1,11 +1,12 @@
 import { Component, OnInit  } from '@angular/core';
-import { } from '@angular/router';
+import { Router} from '@angular/router';
 import {LookupService} from "../common/lookup.service";
 import {MemoSearchParams} from "./model/memo-search-params";
 import {MemoService} from "./memo.service";
 import {CommonFormViewComponent} from "../common/common.component";
 import {Memo} from "./model/memo";
 import {MemoSearchResults} from "./model/memo-search-results";
+import {ActivatedRoute} from '@angular/router';
 
 import {Subscription} from 'rxjs';
 
@@ -19,6 +20,8 @@ var moment = require("moment");
     providers: [],
 })
 export class MemoListComponent  extends CommonFormViewComponent implements OnInit{
+
+    public sub: any;
 
     searchParams = new MemoSearchParams;
     busy: Subscription;
@@ -53,9 +56,30 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
 
     constructor(
         private lookupService: LookupService,
-        private memoService: MemoService
+        private memoService: MemoService,
+        private route: ActivatedRoute,
+        private router: Router
     ){
         super();
+
+        this.sub = this.route
+            .params
+            .subscribe(params => {
+               if(params['params'] != null){
+                this.searchParams = JSON.parse(params['params']);
+                this.busy = this.memoService.search(this.searchParams)
+                    .subscribe(
+                        searchResult  => {
+                            this.memoList = searchResult.memos;
+                            this.memoSearchResult = searchResult;
+                        },
+                        error =>  this.errorMessage = "Failed to search memos."
+                    );
+                } else {
+                   this.search(0);
+               }
+            });
+
     }
 
     ngOnInit():any {
@@ -78,7 +102,7 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
         }
 
         // find all
-        this.search(0);
+        //this.search(0);
     }
 
     loadLookups(){
@@ -113,6 +137,11 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
                 },
                 error =>  this.errorMessage = "Failed to search memos."
             );
+    }
+
+    navigate(memoType, memoId){
+        let params = JSON.stringify(this.searchParams);
+        this.router.navigate(['/m2s2/edit/', memoType, memoId, { params }]);
     }
 
     toggle(){

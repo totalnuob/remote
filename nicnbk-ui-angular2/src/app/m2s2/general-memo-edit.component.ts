@@ -27,6 +27,7 @@ export class GeneralMemoEditComponent extends CommonFormViewComponent implements
     busy: Subscription;
 
     memo = new GeneralMemo;
+    submitted = false;
 
     public uploadFiles: Array<any> = [];
 
@@ -34,6 +35,8 @@ export class GeneralMemoEditComponent extends CommonFormViewComponent implements
     private attendeesSelect;
 
     public attendeesList: Array<any> = [];
+
+    private breadcrumbParams: string;
 
     options = {
         placeholder: "+ tag",
@@ -73,6 +76,7 @@ export class GeneralMemoEditComponent extends CommonFormViewComponent implements
             .params
             .subscribe(params => {
                 this.memoIdParam = +params['id'];
+                this.breadcrumbParams = params['params'];
                 if(this.memoIdParam > 0) {
                     this.busy = this.memoService.get(1, this.memoIdParam)
                         .subscribe(
@@ -126,8 +130,6 @@ export class GeneralMemoEditComponent extends CommonFormViewComponent implements
             format: 'LT'
         })
 
-        $('input[type=text], textarea').autogrow();
-
     }
 
     public selected(value:any):void {
@@ -171,19 +173,23 @@ export class GeneralMemoEditComponent extends CommonFormViewComponent implements
                                 }
 
                                 this.postAction("Successfully saved.", null);
+                                this.submitted = true;
                             },
                             error => {
                                 // TODO: don't save memo?
 
                                 this.postAction(null, "Error uploading attachments.");
+                                this.submitted = false;
                             });
                     }else{
                         this.postAction("Successfully saved.", null);
+                        this.submitted = true;
                     }
                 },
                 //error =>  this.errorMessage = <any>error
                 error =>  {
                     this.postAction(null, "Error saving memo.");
+                    this.submitted = false;
                 }
             );
 
