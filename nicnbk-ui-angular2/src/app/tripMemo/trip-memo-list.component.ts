@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {} from '@angular/router';
-import { } from '@angular/common';
+import {Router, ActivatedRoute} from '@angular/router';
 
 import {LookupService} from "../common/lookup.service";
 import {TripMemoSearchParams} from "./model/trip-memo-search-params";
@@ -21,15 +20,37 @@ declare var $:any
 export class TripMemoListComponent extends CommonFormViewComponent implements OnInit {
     searchParams = new TripMemoSearchParams;
     busy: Subscription;
+    public sub: any;
 
     tripMemoSearchResult: TripMemoSearchResults;
     tripMemoList: TripMemo[];
 
     constructor(
         private lookupService: LookupService,
-        private tripMemoService: TripMemoService
+        private tripMemoService: TripMemoService,
+        private router: Router,
+        private route: ActivatedRoute
     ){
         super();
+
+        this.sub = this.route
+            .params
+            .subscribe(params => {
+                if(params['params'] != null){
+                    this.searchParams = JSON.parse(params['params']);
+                    this.busy = this.tripMemoService.search(this.searchParams)
+                        .subscribe(
+                            searchResult  => {
+                                this.tripMemoList = searchResult.memos;
+                                this.tripMemoSearchResult = searchResult;
+                            },
+                            error =>  this.errorMessage = "Failed to search trip memos."
+                        );
+                } else {
+                    this.search(0);
+                }
+            });
+
     }
 
     ngOnInit():any {
@@ -69,4 +90,11 @@ export class TripMemoListComponent extends CommonFormViewComponent implements On
                 error =>  this.errorMessage = "Failed to search trip memos."
             );
     }
+
+    navigate(tripMemoId){
+        this.searchParams.path = '/bt';
+        let params = JSON.stringify(this.searchParams);
+        this.router.navigate(['/bt/edit/', tripMemoId, { params }]);
+    }
+
 }

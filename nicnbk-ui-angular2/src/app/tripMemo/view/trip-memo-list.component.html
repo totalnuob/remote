@@ -28,7 +28,7 @@
                             <label for="tripType">Trip Type</label>
                             <select class="form-control" id="tripType" [(ngModel)]="searchParams.tripType">
                                 <option value="NONE">---</option>
-                                <option value="BUSINESS TRIP">BUSINESS TRIP</option>
+                                <!--<option value="BUSINESS TRIP">BUSINESS TRIP</option>-->
                                 <option value="TRAINING">TRAINING</option>
                                 <option value="CONFERENCE">CONFERENCE</option>
                             </select>
@@ -72,21 +72,21 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="status">Status</label>
-                            <select class="form-control" id="status" [(ngModel)]="searchParams.status" >
-                                <option value="NONE">---</option>
-                                <option value="APPROVED">APPROVED</option>
-                                <option value="TRAINING">REJECTED</option>
-                                <option value="CONSIDERATION">UNDER CONSIDERATION</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <!--<div class="row">-->
+                <!--<div class="col-md-12">-->
+                    <!--<div class="col-md-6">-->
+                        <!--<div class="form-group">-->
+                            <!--<label for="status">Status</label>-->
+                            <!--<select class="form-control" id="status" [(ngModel)]="searchParams.status" >-->
+                                <!--<option value="NONE">-&#45;&#45;</option>-->
+                                <!--<option value="APPROVED">APPROVED</option>-->
+                                <!--<option value="TRAINING">REJECTED</option>-->
+                                <!--<option value="CONSIDERATION">UNDER CONSIDERATION</option>-->
+                            <!--</select>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
             <div class="row">
                 <div class="col-md-12">
                     <button type="button" class="btn btn-success pull-right" (click)="search()">Search</button>
@@ -109,26 +109,27 @@
             <table [ngBusy]="busy"  class = "table table-hover">
             <thead>
             <tr>
-                <th>REPORT TYPE</th>
+                <th>TYPE</th>
+                <th>NAME</th>
                 <th>ORGANIZATION</th>
                 <th>LOCATION</th>
                 <th>DATE FROM</th>
                 <th>DATE TO</th>
-                <th>AUTHOR</th>
-                <th>STATUS</th>
+                <!--<th>STATUS</th>-->
                 <th>ACTIONS</th>
             </tr>
             </thead>
 
             <tbody>
-            <tr *ngFor="let tripMemo of tripMemoList">
+            <tr *ngFor="let tripMemo of tripMemoList"  style="cursor: pointer" (click)="navigate(tripMemo.id)">
                 <td width="5%">{{tripMemo.tripType}}</td>
-                <td width="5%"><a [routerLink]="['/bt/edit', tripMemo.id]">{{tripMemo.organization}}</a></td>
-                <td width="5%">{{tripMemo.location}}</td>
-                <td width="15%">{{tripMemo.meetingDateStart}}</td>
-                <td width="15%">{{tripMemo.meetingDateEnd}}</td>
-                <td width="10%">{{tripMemo.author}}</td>
-                <td width="10%">{{tripMemo.status}}</td>
+                <td width="40%"><a>{{tripMemo.name}}</a></td>
+                <td width="15%"><a>{{tripMemo.organization}}</a></td>
+                <td width="15%"><a>{{tripMemo.location}}</a></td>
+                <td width="10%">{{tripMemo.meetingDateStart}}</td>
+                <td width="10%">{{tripMemo.meetingDateEnd}}</td>
+
+                <!--<td width="10%">{{tripMemo.status}}</td>-->
                 <td width="5%">
                     <a><i class="glyphicon glyphicon-trash"></i></a>
                 </td>

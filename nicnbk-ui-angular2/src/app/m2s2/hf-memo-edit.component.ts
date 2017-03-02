@@ -110,7 +110,9 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
             .subscribe(params => {
                 this.memoIdParam = +params['id'];
                 this.breadcrumbParams = params['params'];
-                this.searchParams = JSON.parse(this.breadcrumbParams);
+                if(this.breadcrumbParams != null) {
+                    this.searchParams = JSON.parse(this.breadcrumbParams);
+                }
                 this.memo.manager = new HFManager();
                 this.memo.fund = new HedgeFund();
                 if(this.memoIdParam > 0) {

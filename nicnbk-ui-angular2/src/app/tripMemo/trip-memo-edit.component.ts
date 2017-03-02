@@ -7,6 +7,7 @@ import {TripMemoService} from "./trip-memo.service";
 import {EmployeeService} from "../employee/employee.service";
 import {MemoAttachmentDownloaderComponent} from "../m2s2/memo-attachment-downloader.component";
 import {Subscription} from 'rxjs';
+import {TripMemoSearchParams} from "./model/trip-memo-search-params";
 
 declare var $:any
 declare var Chart: any;
@@ -26,6 +27,7 @@ export class TripMemoEditComponent extends CommonFormViewComponent implements On
     private tripMemoIdParam: number;
     tripMemo = new TripMemo;
     busy: Subscription;
+    submitted = false;
 
     public uploadFiles: Array<any> = [];
 
@@ -33,6 +35,9 @@ export class TripMemoEditComponent extends CommonFormViewComponent implements On
     private attendeesSelect: SelectComponent;
 
     public attendeesList: Array<any> = [];
+
+    private breadcrumbParams: string;
+
 
     constructor(
         private employeeService: EmployeeService,
@@ -48,6 +53,7 @@ export class TripMemoEditComponent extends CommonFormViewComponent implements On
             .params
             .subscribe(params => {
                 this.tripMemoIdParam = +params['id'];
+                this.breadcrumbParams = params['params'];
                 if(this.tripMemoIdParam > 0) {
                     this.busy = this.tripMemoService.get(this.tripMemoIdParam)
                         .subscribe(
@@ -62,7 +68,7 @@ export class TripMemoEditComponent extends CommonFormViewComponent implements On
                             error => this.errorMessage = "Error loading trip memo"
                         );
                 }else{
-                    this.tripMemo.tripType = "BUSINESS TRIP";
+                    this.tripMemo.tripType = 'TRAINING';
                 }
             });
     }
@@ -136,18 +142,22 @@ export class TripMemoEditComponent extends CommonFormViewComponent implements On
                                         this.tripMemo.files.push(res[i]);
                                     }
                                     this.postAction("Successfully saved.", null);
+                                    this.submitted = true;
                                 },
                                 error => {
                                     // TODO: don't save memo?
 
                                     this.postAction(null, "Error uploading attachments.");
+                                    this.submitted = false;
                                 });
                     } else {
                         this.postAction("Successfully saved.", null);
+                        this.submitted = true;
                     }
                 },
                 error => {
                     this.postAction(null, "Error saving trip memo.");
+                    this.submitted = false;
                 }
             );
     }

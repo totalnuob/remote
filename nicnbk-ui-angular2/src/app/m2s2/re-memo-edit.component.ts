@@ -125,7 +125,6 @@ export class RealEstateMemoEditComponent extends CommonFormViewComponent impleme
                     // TODO: default value for meeting type?
                     this.memo.meetingType = "MEETING";
                     this.memo.suitable = true;
-
                     this.memo.tags = [];
                 }
             });

@@ -232,7 +232,7 @@
                                     <label for="preInvested" class="control-label col-md-3">Predecessor fund invested %</label>
                                     <div class="col-md-2">
                                         <input type="text" name="preInvested" class="form-control" id="preinvested" [(ngModel)]="memo.preInvested"
-                                        pattern="[+]?[0-9]*\.?[0-9]+" #preInvested="ngModel" />
+                                               pattern="[+]?[0-9]*\.?[0-9]+" #preInvested="ngModel" />
                                         <div [hidden]="preInvested.valid || preInvested.pristine" class="alert alert-danger">
                                             Only positive number could be entered
                                         </div>
@@ -299,8 +299,8 @@
                                 <label for="nonsuitableReason" class="col-md-1">If No, why</label>
                                 <div class="col-md-5">
                                     <textarea fz-elastic autosize spellcheck="false" name="nonsuitableReason" class="form-control col-md-4" id="nonsuitableReason" maxlength="1000"
-                                        required #reason="ngModel"
-                                        [disabled]="memo.suitable" [(ngModel)]="memo.nonsuitableReason"></textarea>
+                                              required #reason="ngModel"
+                                              [disabled]="memo.suitable" [(ngModel)]="memo.nonsuitableReason"></textarea>
                                     <div [hidden]="reason.valid || reason.pristine" class="alert alert-danger">Description is required</div>
                                 </div>
                             </div>
@@ -316,7 +316,7 @@
                                 <div class="col-md-5">&nbsp;</div>
                                 <div class="col-md-1">
                                     <select id="teamScore" name="teamScore" class="form-control" (ngModelChange)="updateScore($event)"
-                                        [(ngModel)]="memo.teamScore">
+                                            [(ngModel)]="memo.teamScore">
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>

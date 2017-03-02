@@ -61,7 +61,6 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
     private peSearchParams = new PESearchParams();
 
     private breadcrumbParams: string;
-
     private searchParams = new MemoSearchParams();
 
     closingScheduleList = [];
@@ -110,8 +109,10 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
             .subscribe(params => {
                 this.memoIdParam = +params['id'];
                 this.breadcrumbParams = params['params'];
-                this.searchParams = JSON.parse(this.breadcrumbParams);
-                console.log(this.searchParams);
+                console.log(this.breadcrumbParams);
+                if(this.breadcrumbParams != null) {
+                    this.searchParams = JSON.parse(this.breadcrumbParams);
+                }
                 this.memo.firm = new PEFirm();
                 this.memo.fund = new PEFund();
                 if(this.memoIdParam > 0) {

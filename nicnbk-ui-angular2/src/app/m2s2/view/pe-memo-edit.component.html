@@ -12,8 +12,6 @@
                     </ol>
                 </div>
             </div>
-
-
             <div class="row top-buffer" >
                 <div class="col-md-12">
                     <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
@@ -36,6 +34,7 @@
                                 </div>
                             </div>
                         </div>
+                        <br>
                         <div class="row">
                             <table class="col-md-12 table-striped table-condensed">
                                 <tr>
@@ -62,20 +61,20 @@
                                 </tr>
                             </table>
                         </div>
-                        <div class="row">
-                            <hr style="border-top: 1px solid #B5AEAE"/>
-                            <h4>Funds</h4>
-                            <table class="col-md-12 table-striped table-condensed">
-                                <th>FUND</th>
-                                <th>STATUS</th>
-                                <th>VINTAGE</th>
-                                <tr *ngFor="let fund of foundFundsList">
-                                    <td width="15%">{{fund.fundName}}</td>
-                                    <td width="5%">{{fund.status}}</td>
-                                    <td width="5%">{{fund.vintage}}</td>
-                                </tr>
-                            </table>
-                        </div>
+                        <!--<div class="row">-->
+                            <!--<hr style="border-top: 1px solid #B5AEAE"/>-->
+                            <!--<h4>Funds</h4>-->
+                            <!--<table class="col-md-12 table-striped table-condensed">-->
+                                <!--<th>FUND</th>-->
+                                <!--<th>STATUS</th>-->
+                                <!--<th>VINTAGE</th>-->
+                                <!--<tr *ngFor="let fund of foundFundsList">-->
+                                    <!--<td width="15%">{{fund.fundName}}</td>-->
+                                    <!--<td width="5%">{{fund.status}}</td>-->
+                                    <!--<td width="5%">{{fund.vintage}}</td>-->
+                                <!--</tr>-->
+                            <!--</table>-->
+                        <!--</div>-->
                     </div>
                     <div class="row top-buffer">
                         <div class="col-md-12">
@@ -99,11 +98,13 @@
                         <div class="col-md-12">
                             <div class="col-md-6">
                                 <div class="row top-buffer" >
-                                    <label class="control-label col-md-3">Firm name:</label>
+                                    <div class="form-group form-horizontal">
+                                    <label class="control-label col-md-3" for="firmName">Firm name:</label>
                                     <div class="col-md-9">
                                         <input id="firmName" class="form-control" placeholder="Enter firm..." maxlength="250"
                                                name="firmName" [(ngModel)]="memo.firmName"/>
                                     </div>
+                                        </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -137,7 +138,8 @@
                         <div class="col-md-12">
                             <div class="col-md-6">
                                 <div class="row top-buffer">
-                                    <label class="control-label col-md-3">Arranged By:</label>
+                                    <div class="form-group form-horizontal">
+                                    <label class="control-label col-md-3" for="arrangedBySelect">Arranged By:</label>
                                     <div class="col-md-3">
                                         <select id="arrangedBySelect" class="form-control" name="arrangedBy" [(ngModel)]="memo.arrangedBy"
                                                 (ngModelChange)="changeArrangedBy(); arranged.reset();">
@@ -154,18 +156,23 @@
                                             Description is required
                                         </div>
                                     </div>
+                                        </div>
                                 </div>
                                 <div class="row top-buffer">
-                                    <label class="control-label col-md-3">Purpose:</label>
+                                    <div class="form-group form-horizontal">
+                                    <label class="control-label col-md-3" for="purpose">Purpose:</label>
                                     <div class="col-md-9">
                                         <textarea fz-elastic  spellcheck="false"  type="text" class="form-control" id="purpose" maxlength="1000"
                                                   name="purpose" [(ngModel)]="memo.purpose"></textarea>
                                     </div>
+                                        </div>
                                 </div>
                                 <div class="row top-buffer">
+                                    <div class="form-group form-horizontal" for="attendeesSelect">
                                     <label class="control-label col-md-3">Attendees (NIC):</label>
                                     <div class="col-md-6" *ngIf="attendeesList?.length > 0">
-                                        <ng-select #attendeesSelect [initData]="memo.attendeesNIC"
+                                        <ng-select  id="attendeesSelect"
+                                                #attendeesSelect [initData]="memo.attendeesNIC"
                                                    [multiple]="true"
                                                    [items]="attendeesList"
                                                    (data)="refreshAttendeesNIC($event)"
@@ -173,6 +180,7 @@
                                                    (removed)="removed($event)"
                                                    placeholder="No attendee selected"></ng-select>
                                     </div>
+                                        </div>
                                 </div>
 
 
@@ -184,11 +192,13 @@
                                     </div>
                                 </div>
                                 <div class="row top-buffer">
+                                    <div class="form-group form-horizontal">
                                     <label class="control-label col-md-3" for="attendeesDescription">Attendees (Other Party):</label>
                                     <div class="col-md-9">
                                         <textarea fz-elastic  spellcheck="false"  type="text" class="form-control" id="attendeesDescription" maxlength="1000"
                                                   name="attendeesOther" [(ngModel)]="memo.attendeesOther"></textarea>
                                     </div>
+                                        </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -208,8 +218,9 @@
                                 &nbsp;
                             </div>
                             <div class="col-md-6">
-                                <label class="col-md-2">Score:<span id="averageScore"></span></label>
-                                <label class="col-md-2">Conviction:</label>
+                                <div class="form-group form-horizontal">
+                                <label class="control-label col-md-2" for="averageScore">Score:<span id="averageScore"></span></label>
+                                <label class="control-label col-md-2" for="conviction">Conviction:</label>
                                 <div class="col-md-2">
                                     <select id="conviction" class="form-control" name="conviction" [(ngModel)]="memo.conviction">
                                         <option value="1">1</option>
@@ -219,6 +230,7 @@
                                         <option value="5">5</option>
                                     </select>
                                 </div>
+                                    </div>
                             </div>
                         </div>
                     </div>
@@ -415,10 +427,10 @@
                     </div>
                     <hr style="border-top: 1px solid #B5AEAE"/>
                     <div class="row top-buffer withpadding">
-                        <div class="col-md-12" style="background-color:#5bc0de;">
+                        <div class="col-md-12" style="background-color:#5bc0de; height: 34px">
                             <div>
                                 <div class="col-md-6">
-                                    <span>GP AND TEAM</span>
+                                    <h5>GP AND TEAM</h5>
                                 </div>
                                 <div class="col-md-5">&nbsp;</div>
                                 <div class="col-md-1">
@@ -440,9 +452,9 @@
                         </div>
                     </div>
                     <div class="row top-buffer withpadding">
-                        <div class="col-md-12" style="background-color:#5bc0de;">
+                        <div class="col-md-12" style="background-color:#5bc0de; height: 34px">
                             <div class="col-md-6">
-                                <span>TRACK RECORD</span>
+                                <h5>TRACK RECORD</h5>
                             </div>
                             <div class="col-md-5">&nbsp;</div>
                             <div class="col-md-1">
@@ -463,9 +475,9 @@
                         </div>
                     </div>
                     <div class="row top-buffer withpadding">
-                        <div class="col-md-12" style="background-color:#5bc0de;">
+                        <div class="col-md-12" style="background-color:#5bc0de; height: 34px">
                             <div class="col-md-6">
-                                <span>STRATEGY</span>
+                                <h5>STRATEGY</h5>
                             </div>
                             <div class="col-md-5">&nbsp;</div>
                             <div class="col-md-1">
@@ -486,9 +498,9 @@
                         </div>
                     </div>
                     <div class="row top-buffer withpadding">
-                        <div class="col-md-12" style="background-color:#5bc0de;">
+                        <div class="col-md-12" style="background-color:#5bc0de; height: 34px">
                             <div class="col-md-2">
-                                <span>OTHER INFO</span>
+                                <h5>OTHER INFO</h5>
                             </div>
                             <div class="col-md-10">&nbsp;</div>
                         </div>
@@ -499,9 +511,9 @@
                         </div>
                     </div>
                     <div class="row top-buffer withpadding">
-                        <div class="col-md-12" style="background-color:#5bc0de;">
+                        <div class="col-md-12" style="background-color:#5bc0de; height: 34px">
                             <div class="col-md-2">
-                                <span>FOLLOW-UPS</span>
+                                <h5>FOLLOW-UPS</h5>
                             </div>
                             <div class="col-md-10">&nbsp;</div>
                         </div>
@@ -558,11 +570,13 @@
                         </div>
 
                         <div class="col-md-6">
-                            <label class="col-md-2">Author:</label>
+                            <div class="form-group form-horizontal">
+                            <label class="control-label col-md-2" for="author">Author:</label>
                             <div class="col-md-4">
                                 <input type="text" placeholder="Your name... " class="form-control col-md-4" id="author"
                                        name="author" maxlength="250" name="author" [(ngModel)]="memo.author"/>
                             </div>
+                                </div>
                         </div>
 
                         <div class="col-md-12">
