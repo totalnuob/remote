@@ -9,6 +9,8 @@ import {SaveResponse} from "../common/save-response";
 import {LookupService} from "../common/lookup.service";
 
 import {Subscription} from 'rxjs';
+import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
+import {ErrorResponse} from "../common/error-response";
 
 declare var $:any
 
@@ -50,20 +52,29 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     uploadedGrossCf;
     uploadedNetCf;
 
+    private moduleAccessChecker: ModuleAccessCheckerService;
+
     constructor(
         private lookupService: LookupService,
         private firmService: PEFirmService,
         private fundService: PEFundService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private router: Router
     ){
         super();
+
+        this.moduleAccessChecker = new ModuleAccessCheckerService;
+
+        if(!this.moduleAccessChecker.checkAccessPrivateEquity()){
+            this.router.navigate(['accessDenied']);
+        }
 
         //loadLookups
         this.loadLookups();
 
         // TODO: wait/sync on lookup loading
         // TODO: sync on subscribe results
-        this.waitSleep(700);
+        //this.waitSleep(700);
 
         //parse params and load data
         this.sub = this.route
@@ -108,7 +119,14 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                     this.errorMessage = "Error loading fund profile.";
                                 }
                             },
-                            error => this.errorMessage = "Error loading manager profile"
+                            (error: ErrorResponse) => {
+                                this.errorMessage = "Error loading fund profile";
+                                if(error && !error.isEmpty()){
+                                    this.processErrorMessage(error);
+                                    console.log(error);
+                                }
+                                this.postAction(null, null);
+                            }
                         );
                 }
                 if(this.firmIdParam > 0){
@@ -123,7 +141,14 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                     this.errorMessage = "Error loading fund manager info.";
                                 }
                             },
-                            error => this.errorMessage = "Error loading manager profile"
+                            (error: ErrorResponse) => {
+                                this.errorMessage = "Error loading manager profile";
+                                if(error && !error.isEmpty()){
+                                    this.processErrorMessage(error);
+                                    console.log(error);
+                                }
+                                this.postAction(null, null);
+                            }
                         );
                 }else{
                     // TODO: handle error
@@ -165,8 +190,13 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
 
                     this.postAction("Successfully saved.", null);
                 },
-                error => {
-                    this.postAction(null, "Error saving fund profile.");
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error saving fund profile";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                        console.log(error);
+                    }
+                    this.postAction(null, null);
                 }
             )
     }
@@ -189,7 +219,14 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                         this.strategyList.push({id: element.code, text: element.nameEn});
                     });
                 },
-                error => this.errorMessage = <any>error
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                        console.log(error);
+                    }
+                    this.postAction(null, null);
+                }
             );
 
         //load PE_Industry_Focus
@@ -200,7 +237,14 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                         this.industryList.push({id: element.code, text: element.nameEn});
                     });
                 },
-                error => this.errorMessage = <any>error
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                        console.log(error);
+                    }
+                    this.postAction(null, null);
+                }
             );
         // load geographies
         this.lookupService.getGeographies()
@@ -210,7 +254,14 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                         this.geographyList.push({ id: element.code, text: element.nameEn});
                     });
                 },
-                error =>  this.errorMessage = <any>error
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                        console.log(error);
+                    }
+                    this.postAction(null, null);
+                }
             );
     }
 

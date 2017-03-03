@@ -22,7 +22,7 @@ export class RiskManagementReportService extends CommonService{
 
 
     getPortfolioReport(): Observable<TableChartDto> {
-        return this.http.get(this.RM_LIQUID_REPORT_URL)
+        return this.http.get(this.RM_LIQUID_REPORT_URL, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleError);
     }

@@ -17,4 +17,6 @@ export class TripMemo {
     creationDate: string;
 
     files: any[];
+
+    owner: string;
 }

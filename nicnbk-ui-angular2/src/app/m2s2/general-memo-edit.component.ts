@@ -7,6 +7,8 @@ import {MemoService} from "./memo.service";
 import {EmployeeService} from "../employee/employee.service";
 import {MemoAttachmentDownloaderComponent} from "./memo-attachment-downloader.component";
 import {Subscription} from 'rxjs';
+import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
+import {ErrorResponse} from "../common/error-response";
 
 declare var $:any
 declare var Chart: any;
@@ -87,7 +89,13 @@ export class GeneralMemoEditComponent extends CommonFormViewComponent implements
                                 // preselect memo attendees
                                 this.preselectAttendeesNIC();
                             },
-                            error => this.errorMessage = "Error loading memo"
+                            (error: ErrorResponse) => {
+                                this.errorMessage = "Error loading memo";
+                                if(error && !error.isEmpty()){
+                                    this.processErrorMessage(error);
+                                }
+                                this.postAction(null, null);
+                            }
                         );
                 }else{
                     // TODO: default value for meeting type?
@@ -181,20 +189,15 @@ export class GeneralMemoEditComponent extends CommonFormViewComponent implements
                         this.postAction("Successfully saved.", null);
                     }
                 },
-                //error =>  this.errorMessage = <any>error
-                error =>  {
-                    this.postAction(null, "Error saving memo.");
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error saving memo";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
                 }
             );
 
-    }
-
-    postAction(successMessage, errorMessage){
-        this.successMessage = successMessage;
-        this.errorMessage = errorMessage;
-
-        // TODO: non jQuery
-        $('html, body').animate({ scrollTop: 0 }, 'fast');
     }
 
     deleteAttachment(fileId){
@@ -211,8 +214,12 @@ export class GeneralMemoEditComponent extends CommonFormViewComponent implements
 
                         this.postAction("Attachment deleted.", null);
                     },
-                    error => {
-                        this.postAction(null, "Failed to delete attachment");
+                    (error: ErrorResponse) => {
+                        this.errorMessage = "Error deleting attachment";
+                        if(error && !error.isEmpty()){
+                            this.processErrorMessage(error);
+                        }
+                        this.postAction(null, null);
                     }
                 );
         }
@@ -242,8 +249,27 @@ export class GeneralMemoEditComponent extends CommonFormViewComponent implements
                         this.attendeesList.push({ id: element.id, text: element.firstName + " " + element.lastName[0] + "."});
                     });
                 },
-                error =>  this.errorMessage = <any>error);
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading employees";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
+            );
     }
 
+    public showSaveButton() {
+        // only owner can edit
+        var moduleAccessChecker = new ModuleAccessCheckerService;
+        if(moduleAccessChecker.checkAccessAdmin()){
+            return true;
+        }
+        var currentUser = localStorage.getItem("authenticatedUser");
+        if(this.memo.owner == null  || this.memo.owner == "" || this.memo.owner == currentUser){
+            return true;
+        }
+        return false;
+    }
 
 }

@@ -8,9 +8,9 @@
 
 
 <div class="container">
-    <!--<div class="row" [hidden]="">-->
-        <!--<a [routerLink]="['/news/edit']" class="btn btn-primary pull-right">Create</a>-->
-    <!--</div>-->
+    <div class="row withpadding">
+        <a [routerLink]="['/news/edit']" class="btn btn-primary pull-right" *ngIf="showNewsCreateButton()">Add News</a>
+    </div>
     <ul class="nav nav-tabs">
         <li class="active">
             <a data-toggle="tab" href="#general">GENERAL</a>

@@ -33,17 +33,15 @@ export class MemoService extends CommonService{
 
     search(searchParam){
         let body = JSON.stringify(searchParam);
-        let headers = new Headers({ 'Content-Type': 'application/json' });
-        let options = new RequestOptions({ headers: headers });
 
         //console.log(body);
-        return this.http.post(this.MEMO_SEARCH_URL, body, options)
+        return this.http.post(this.MEMO_SEARCH_URL, body, this.getOptionsWithCredentials())
             .map(this.extractData)
-            .catch(this.handleError);
+            .catch(this.handleErrorResponse);
     }
 
     savePE(entity){
-        return this.save(this.PE_MEMO_SAVE_URL, entity);
+        return this.save(this.PE_MEMO_SAVE_URL, entity, );
     }
     saveHF(entity){
         return this.save(this.HF_MEMO_SAVE_URL, entity);
@@ -58,12 +56,10 @@ export class MemoService extends CommonService{
     private save(URL, entity){
 
         let body = JSON.stringify(entity);
-        let headers = new Headers({ 'Content-Type': 'application/json' });
-        let options = new RequestOptions({headers: headers});
 
-        return this.http.post(URL, body, options)
+        return this.http.post(URL, body, this.getOptionsWithCredentials())
             .map(this.extractData)
-            .catch(this.handleError);
+            .catch(this.handleErrorResponse);
     }
 
     postFiles(memoId, params, files){
@@ -73,15 +69,15 @@ export class MemoService extends CommonService{
     get(type, id): Observable<any> {
         // TODO: check type and id
 
-        return this.http.get(this.MEMO_GET_URL + type + "/" + id)
+        return this.http.get(this.MEMO_GET_URL + type + "/" + id, this.getOptionsWithCredentials())
             .map(this.extractData)
-            .catch(this.handleError);
+            .catch(this.handleErrorResponse);
     }
 
     public deleteAttachment(memoId, fileId) {
-        return this.http.get(this.MEMO_ATTACHMENT_DELETE_URL + memoId + "/" + fileId)
+        return this.http.get(this.MEMO_ATTACHMENT_DELETE_URL + memoId + "/" + fileId, this.getOptionsWithCredentials())
             .map(this.extractData)
-            .catch(this.handleError);
+            .catch(this.handleErrorResponse);
     }
 
 }

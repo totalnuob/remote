@@ -40,6 +40,8 @@ public class MeetingMemoDto extends HistoryBaseEntityDto<MeetingMemo> {
     // TODO: TEMP in place of authentication
     private String author;
 
+    private String owner;
+
     // TODO: refactor?
     private Set<BaseDictionaryDto> strategies;
     private Set<BaseDictionaryDto> geographies;
@@ -198,5 +200,13 @@ public class MeetingMemoDto extends HistoryBaseEntityDto<MeetingMemo> {
 
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 }

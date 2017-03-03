@@ -35,10 +35,27 @@ export class CommonFormViewComponent {
     }
 
     postAction(successMessage, errorMessage){
-        this.successMessage = successMessage;
-        this.errorMessage = errorMessage;
+        if(successMessage && successMessage != null) {
+            this.successMessage = successMessage;
+        }
+        if(errorMessage && errorMessage != null) {
+            this.errorMessage = errorMessage;
+        }
 
         // TODO: non jQuery
         $('html, body').animate({ scrollTop: 0 }, 'fast');
+    }
+
+    processErrorMessage(errorResponse){
+        if(errorResponse.message){
+            this.errorMessage = errorResponse.message;
+        }else if(errorResponse.status){
+            if(errorResponse.status == 401){
+                this.errorMessage = "Access Denied";
+            }
+        }else {
+            this.errorMessage = "Error occurred when processing request.";
+        }
+        //console.log(errorResponse);
     }
 }

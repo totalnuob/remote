@@ -9,6 +9,7 @@ import {CommonFormViewComponent} from "../common/common.component";
 import {TripMemo} from "./model/trip-memo";
 import {TripMemoSearchResults} from "./model/trip-memo-search-results";
 import {Subscription} from 'rxjs';
+import {ErrorResponse} from "../common/error-response";
 
 declare var $:any
 
@@ -69,7 +70,13 @@ export class TripMemoListComponent extends CommonFormViewComponent implements On
                     this.tripMemoList = searchResult.tripMemos;
                     this.tripMemoSearchResult = searchResult;
                 },
-                error =>  this.errorMessage = "Failed to search trip memos."
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error searching memos";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
             );
     }
 }

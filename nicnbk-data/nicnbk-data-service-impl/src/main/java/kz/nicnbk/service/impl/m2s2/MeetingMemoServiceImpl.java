@@ -71,6 +71,7 @@ public class MeetingMemoServiceImpl implements MeetingMemoService {
 
     @Override
     public MemoPagedSearchResult search(MemoSearchParams searchParams) {
+
         Page<MeetingMemo> memoPage = null;
         int page = 0;
         int pageSize = searchParams != null && searchParams.getPageSize() > 0 ? searchParams.getPageSize() : DEFAULT_PAGE_SIZE;

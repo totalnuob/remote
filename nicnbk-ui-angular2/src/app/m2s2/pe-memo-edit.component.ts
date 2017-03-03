@@ -8,8 +8,10 @@ import {EmployeeService} from "../employee/employee.service";
 
 import {FileUploadService} from "../upload/file.upload.service";
 import {CommonFormViewComponent} from "../common/common.component";
-import {SaveResponse} from "../common/save-response.";
+import {SaveResponse} from "../common/save-response";
 import {Subscription} from 'rxjs';
+import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
+import {ErrorResponse} from "../common/error-response";
 
 declare var $:any
 declare var Chart: any;
@@ -59,6 +61,8 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
         maxItems: 10
     }
 
+    private moduleAccessChecler: ModuleAccessCheckerService;
+
     public onItemAdded(item) {
         this.memo.tags.push(item);
     }
@@ -80,6 +84,8 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
     ){
         super();
 
+        this.moduleAccessChecler = new ModuleAccessCheckerService;
+
         // loadLookups
         this.sub = this.loadLookups();
 
@@ -94,7 +100,10 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
             .params
             .subscribe(params => {
                 this.memoIdParam = +params['id'];
-                if(this.memoIdParam > 0) {
+                if(this.memoIdParam > 0)
+
+
+                {
                     this.busy = this.memoService.get(2, this.memoIdParam)
                         .subscribe(
                             memo => {
@@ -122,7 +131,13 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
 
                                 $('input[type=text], textarea').autogrow({vertical: true, horizontal: false});
                             },
-                            error => this.errorMessage = "Error loading memo"
+                            (error: ErrorResponse) => {
+                                this.errorMessage = "Error loading memo";
+                                if(error && !error.isEmpty()){
+                                    this.processErrorMessage(error);
+                                }
+                                this.postAction(null, null);
+                            }
                         );
                 }else{
                     // TODO: default value for radio buttons?
@@ -256,27 +271,25 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
 
                                 this.postAction("Successfully saved.", null);
                             },
-                            error => {
-                                // TODO: don't save memo?
-
-                                this.postAction(null, "Error uploading attachments.");
+                            (error: ErrorResponse) => {
+                                this.errorMessage = "Error uploading attachments";
+                                if(error && !error.isEmpty()){
+                                    this.processErrorMessage(error);
+                                }
+                                this.postAction(null, null);
                             });
                     }else{
                         this.postAction("Successfully saved.", null);
                     }
                 },
-                error =>  {
-                    this.postAction(null, "Error saving memo.");
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error saving memo";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
                 }
             );
-    }
-
-    postAction(successMessage, errorMessage){
-        this.successMessage = successMessage;
-        this.errorMessage = errorMessage;
-
-        // TODO: non jQuery
-        $('html, body').animate({ scrollTop: 0 }, 'fast');
     }
 
     deleteAttachment(fileId){
@@ -293,8 +306,12 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
 
                         this.postAction("Attachment deleted.", null);
                     },
-                    error => {
-                        this.postAction(null, "Failed to delete attachment");
+                    (error: ErrorResponse) => {
+                        this.errorMessage = "Error deleting attachments";
+                        if(error && !error.isEmpty()){
+                            this.processErrorMessage(error);
+                        }
+                        this.postAction(null, null);
                     }
                 );
         }
@@ -404,7 +421,14 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
                         this.strategyList.push({ id: element.code, text: element.nameEn});
                     });
                 },
-                error =>  this.errorMessage = <any>error
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
+
             );
 
         // load geographies
@@ -415,7 +439,13 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
                     this.geographyList.push({ id: element.code, text: element.nameEn});
                 });
             },
-            error =>  this.errorMessage = <any>error
+            (error: ErrorResponse) => {
+                this.errorMessage = "Error loading lookups";
+                if(error && !error.isEmpty()){
+                    this.processErrorMessage(error);
+                }
+                this.postAction(null, null);
+            }
         );
 
         // load currencies
@@ -426,7 +456,13 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
                         this.currencyList.push(element);
                     });
                 },
-                error =>  this.errorMessage = <any>error
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
         );
 
         // load employees
@@ -438,7 +474,14 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
 
                     });
                 },
-                error =>  this.errorMessage = <any>error);
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
+        );
     }
 
 
@@ -464,5 +507,9 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
         this.memo.currentlyFundRaising = false;
         this.memo.closingSchedule = null;
 
+    }
+
+    public showSaveButton(){
+        return this.moduleAccessChecler.checkAccessPrivateEquityEditor();
     }
 }

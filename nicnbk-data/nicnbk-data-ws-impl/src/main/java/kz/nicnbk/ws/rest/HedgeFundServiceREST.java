@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -24,6 +25,7 @@ public class HedgeFundServiceREST {
     @Autowired
     private HedgeFundService service;
 
+    @PreAuthorize("hasRole('ROLE_HEDGE_FUND_VIEWER') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/get/{id}", method = RequestMethod.GET)
     public HedgeFundDto get(@PathVariable long id){
         HedgeFundDto hedgeFundDto = this.service.get(id);
@@ -33,6 +35,7 @@ public class HedgeFundServiceREST {
         return hedgeFundDto;
     }
 
+    @PreAuthorize("hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public ResponseEntity<?>  save(@RequestBody HedgeFundDto hedgeFundDto) {
         Long id = this.service.save(hedgeFundDto);
@@ -48,7 +51,8 @@ public class HedgeFundServiceREST {
         return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
     }
 
-    // TODO: search result & search params
+
+    @PreAuthorize("hasRole('ROLE_HEDGE_FUND_VIEWER') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public HedgeFundPagedSearchResult search(@RequestBody HedgeFundSearchParams searchParams){
         return this.service.findByName(searchParams);

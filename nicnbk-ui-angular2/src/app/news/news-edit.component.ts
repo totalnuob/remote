@@ -1,10 +1,12 @@
 import {Component, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
 import {LookupService} from "../common/lookup.service";
 import {News} from "./model/news";
 import {NewsService} from "./news.service";
 
 import '../../../public/js/jquery.hotkeys.js';
 import '../../../public/js/bootstrap/bootstrap-wysiwyg.js';
+import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 
 declare var $:any
 
@@ -20,10 +22,19 @@ export class NewsEditComponent implements OnInit{
     successMessage: string;
     errorMessage: string;
 
+    private moduleAccessChecker: ModuleAccessCheckerService;
+
     constructor(
         private lookupService: LookupService,
-        private newsService: NewsService
-    ){}
+        private newsService: NewsService,
+        private router: Router
+    ){
+        this.moduleAccessChecker = new ModuleAccessCheckerService;
+
+        if(!this.moduleAccessChecker.checkAccessNewsEdit()) {
+            this.router.navigate(['accessDenied']);
+        }
+    }
 
     ngOnInit(){
         // load news types

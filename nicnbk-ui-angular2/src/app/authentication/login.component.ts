@@ -1,10 +1,11 @@
-import {Component, ElementRef} from '@angular/core';
-import { } from '@angular/router';
+import {Component, ElementRef, Compiler } from '@angular/core';
+import { RuntimeCompiler} from '@angular/compiler';
+import {Router} from '@angular/router';
 import {AuthenticationService, User} from './authentication.service'
 
 @Component({
     selector: 'login-form',
-    providers: [AuthenticationService],
+    providers: [AuthenticationService, RuntimeCompiler],
     templateUrl: './view/login.component.html',
     styleUrls: ['../../../public/css/footer.css']
 })
@@ -15,11 +16,27 @@ export class LoginComponent {
     public errorMsg = '';
 
     constructor(
-        private _service: AuthenticationService) {}
+        private router: Router,
+        private authenticationService: AuthenticationService,
+        private runtimeCompiler: RuntimeCompiler) {}
 
     login() {
-        if(!this._service.login(this.user)){
-            this.errorMsg = 'Failed to login';
-        }
+        this.authenticationService.login(this.user)
+            .subscribe(
+                response => {
+
+                    //this.runtimeCompiler.clearCache();
+
+                    localStorage.setItem("authenticatedUser", this.user.username);
+                    localStorage.setItem("authenticatedUserRoles", JSON.stringify(response.roles));
+
+                    location.reload();
+
+                    this.router.navigate(['/']);
+                },
+                error =>  {
+                    this.errorMsg = 'Failed to login';
+                }
+            );
     }
 }

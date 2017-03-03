@@ -8,6 +8,8 @@ import {Memo} from "./model/memo";
 import {MemoSearchResults} from "./model/memo-search-results";
 
 import {Subscription} from 'rxjs';
+import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
+import {ErrorResponse} from "../common/error-response";
 
 declare var $:any
 
@@ -39,6 +41,8 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
         maxItems: 10
     }
 
+    private moduleAccessChecler: ModuleAccessCheckerService
+
     public onItemAdded(item) {
         this.searchParams.tags.push(item);
     }
@@ -56,6 +60,8 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
         private memoService: MemoService
     ){
         super();
+
+        this.moduleAccessChecler = new ModuleAccessCheckerService;
     }
 
     ngOnInit():any {
@@ -83,7 +89,7 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
 
     loadLookups(){
         // memo types
-        this.lookupService.getMemoTypes().then(memoTypes => this.memoTypes = memoTypes);
+        this.lookupService.getMemoTypes().then(memoTypes => {this.memoTypes = memoTypes});
 
         //meeting types
         this.lookupService.getMeetingTypes().then(meetingTypes => this.meetingTypes = meetingTypes);
@@ -91,7 +97,7 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
 
     search(page){
 
-        console.log(this.searchParams);
+        //console.log(this.searchParams);
         // TODO: as parameter?
         this.searchParams.pageSize = 20;
 
@@ -108,7 +114,14 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
                     this.memoList = searchResult.memos;
                     this.memoSearchResult = searchResult;
                 },
-                error =>  this.errorMessage = "Failed to search memos."
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error searching memos";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                    //alert(this.errorMessage);
+                }
             );
     }
 
@@ -129,6 +142,18 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
         }else{
             return "";
         }
+    }
+
+    public showHedgeFunds(){
+        return this.moduleAccessChecler.checkAccessHedgeFundsEditor();
+    }
+
+    public showPrivateEquity(){
+        return this.moduleAccessChecler.checkAccessPrivateEquityEditor();
+    }
+
+    public showRealEstate(){
+        return this.moduleAccessChecler.checkAccessRealEstateEditor();
     }
 
 }

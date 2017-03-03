@@ -73,4 +73,7 @@ public interface TripMemoService extends BaseService {
      */
     public boolean saveTripMemoFileInfo(Long tripMemoId, Long fileId);
 
+
+    public boolean checkAccess(String token, Long entityId);
+
 }

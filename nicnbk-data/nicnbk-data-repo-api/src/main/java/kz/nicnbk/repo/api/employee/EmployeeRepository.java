@@ -7,4 +7,6 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  * Created by magzumov on 02.08.2016.
  */
 public interface EmployeeRepository extends PagingAndSortingRepository<Employee, Long> {
+
+    Employee findByUsername(String username);
 }

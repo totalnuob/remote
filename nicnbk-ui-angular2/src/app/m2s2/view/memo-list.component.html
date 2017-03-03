@@ -1,16 +1,30 @@
 <div class="container">
     <div class="col-md-12">
         <div class="row">
+            <div class="row top-buffer" >
+                <div class="col-md-12">
+                    <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row top-buffer" >
+                <div class="col-md-12">
+                    <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-md-12">
                 <div class="dropdown pull-right">
                     <button class="btn btn-primary dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">New
                         <span class="bootstrapCaret"></span></button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                        <li role="presentation">
+                        <li role="presentation" *ngIf="showPrivateEquity()">
                             <a [routerLink]="['/m2s2/edit/2/', 0]" role="menuitem" tabindex="-1" >Private Equity</a></li>
-                        <li role="presentation">
+                        <li role="presentation" *ngIf="showRealEstate()">
                             <a [routerLink]="['/m2s2/edit/4/', 0]" role="menuitem" tabindex="-1" >Real Estate</a></li>
-                        <li role="presentation">
+                        <li role="presentation" *ngIf="showHedgeFunds()">
                             <a [routerLink]="['/m2s2/edit/3/', 0]" role="menuitem" tabindex="-1" >Hedge Fund</a></li>
                         <li role="presentation" class="divider"></li>
                         <li role="presentation">

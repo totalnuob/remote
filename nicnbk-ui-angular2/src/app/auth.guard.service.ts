@@ -6,13 +6,12 @@ import {AuthenticationService} from "./authentication/authentication.service";
 export class AuthGuard implements CanActivate {
 
     constructor(
-        private authenticationSservice: AuthenticationService
+        private authenticationService: AuthenticationService
     ){}
 
     canActivate() {
         // authentication
-        this.authenticationSservice.checkCredentials();
-
+        this.authenticationService.checkCredentials();
         return true;
     }
 }

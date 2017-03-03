@@ -8,6 +8,7 @@ import {AuthenticationService} from "../authentication/authentication.service";
 
 //import '../../../public/js/star-rating/star-rating.min.js';
 import {Subscription} from 'rxjs';
+import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 
 declare var $: any
 
@@ -33,9 +34,12 @@ export class NewsListComponent implements OnInit{
 
     showMoreButtonMap = {};
 
+    private moduleAccessChecker: ModuleAccessCheckerService;
+
 
     constructor(
       private newsService: NewsService){
+        this.moduleAccessChecker = new ModuleAccessCheckerService;
     }
 
     ngOnInit(){
@@ -104,5 +108,9 @@ export class NewsListComponent implements OnInit{
                 newsItem => this.selectedNews = newsItem,
                 error => this.errorMessage = <any>error
             );
+    }
+
+    public showNewsCreateButton(){
+        return this.moduleAccessChecker.checkAccessNewsEdit();
     }
 }

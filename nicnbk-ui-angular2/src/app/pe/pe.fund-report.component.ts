@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {PEFirmService} from "./pe.firm.service";
 import {PEFirm} from "./model/pe.firm";
 import {PEFund} from "./model/pe.fund";
@@ -10,6 +10,8 @@ import '../../../public/js/viz_v1.js';
 import {GoogleChartComponent} from "../google-chart/google-chart.component";
 
 import {Subscription} from 'rxjs';
+import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
+import {ErrorResponse} from "../common/error-response";
 
 declare var google:any;
 declare var $: any;
@@ -40,53 +42,78 @@ export class PEFundReportComponent extends GoogleChartComponent {
 
     busy: Subscription;
 
+    private moduleAccessChecker: ModuleAccessCheckerService;
+
     constructor(
         private firmService: PEFirmService,
         private fundService: PEFundService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private router: Router
     ){
-        super();
+    super();
 
-        this.sub = this.route
-            .params
-            .subscribe(params => {
-                this.firmIdParam = +params['id'];
-                if(this.firmIdParam > 0){
-                    this.searchParams['id'] = this.firmIdParam;
-                    this.busy = this.firmService.get(this.firmIdParam)
-                        .subscribe(
-                            (data: PEFirm) => {
-                                if(data && data.id > 0){
-                                    this.firm = data;
-                                    this.preselectFirmStrategyGeographyIndustry();
-                                } else {
-                                    // TODO: handle error
-                                    //this.errorMessage = "Error loading firm";
+    this.moduleAccessChecker = new ModuleAccessCheckerService;
+
+    if(!this.moduleAccessChecker.checkAccessPrivateEquity()){
+        this.router.navigate(['accessDenied']);
+    }
+
+    this.sub = this.route
+        .params
+        .subscribe(params => {
+            this.firmIdParam = +params['id'];
+            if(this.firmIdParam > 0){
+                this.searchParams['id'] = this.firmIdParam;
+                this.busy = this.firmService.get(this.firmIdParam)
+                    .subscribe(
+                        (data: PEFirm) => {
+                            if(data && data.id > 0){
+                                this.firm = data;
+                                this.preselectFirmStrategyGeographyIndustry();
+                            } else {
+                                // TODO: handle error
+                                //this.errorMessage = "Error loading firm";
+                            }
+                        },
+                        (error: ErrorResponse) => {
+                            this.errorMessage = "Error loading firm info";
+                            if(error && !error.isEmpty()){
+                                this.processErrorMessage(error);
+                                console.log(error);
+                            }
+                            this.postAction(null, null);
+                        }
+                        //error => this.errorMessage = "Error loading firm profile"
+                    );
+                this.busy = this.fundService.search(this.searchParams)
+                    .subscribe(
+                        searchResult => {
+                            this.fundsList = searchResult;
+                            for(var i = 0; i < this.fundsList.length; i++){
+                                if(this.fundsList[i].status == 'Open'){
+                                    this.openFund = this.fundsList[i];
+                                    break;
                                 }
                             }
-                            //error => this.errorMessage = "Error loading firm profile"
-                        );
-                    this.busy = this.fundService.search(this.searchParams)
-                        .subscribe(
-                            searchResult => {
-                                this.fundsList = searchResult;
-                                for(var i = 0; i < this.fundsList.length; i++){
-                                    if(this.fundsList[i].status == 'Open'){
-                                        this.openFund = this.fundsList[i];
-                                        break;
-                                    }
-                                }
-                                this.preselectFundStrategyGeographyIndustry();
-                                this.drawGraph();
+                            this.preselectFundStrategyGeographyIndustry();
+                            this.drawGraph();
+                        },
+                        (error: ErrorResponse) => {
+                            this.errorMessage = "Error loading fund info";
+                            if(error && !error.isEmpty()){
+                                this.processErrorMessage(error);
+                                console.log(error);
                             }
-                            //error => this.errorMessage = "Failed to load GP's funds"
-                        );
-                } else {
-                    // TODO: handle error
-                    //error => this.errorMessage = "Invalid parameter values";
-                    return;
-                }
-            })
+                            this.postAction(null, null);
+                        }
+                        //error => this.errorMessage = "Failed to load GP's funds"
+                    );
+            } else {
+                // TODO: handle error
+                //error => this.errorMessage = "Invalid parameter values";
+                return;
+            }
+        })
     }
 
     preselectFirmStrategyGeographyIndustry(){

@@ -21,27 +21,23 @@ export class PEFundService extends CommonService {
 
     save(entity){
         let body = JSON.stringify(entity);
-        let headers = new Headers({ 'Content-Type': 'application/json' });
-        let options = new RequestOptions({headers: headers});
 
-        return this.http.post(this.PE_FUND_SAVE_URL, body, options)
+        return this.http.post(this.PE_FUND_SAVE_URL, body, this.getOptionsWithCredentials())
             .map(this.extractData)
-            .catch(this.handleError);
+            .catch(this.handleErrorResponse);
     }
 
     get(id): Observable<PEFund> {
-        return this.http.get(this.PE_FUND_GET_URL + id)
+        return this.http.get(this.PE_FUND_GET_URL + id, this.getOptionsWithCredentials())
             .map(this.extractData)
-            .catch(this.handleError);
+            .catch(this.handleErrorResponse);
     }
 
     search(searchParams) {
         let body = JSON.stringify(searchParams);
-        let headers = new Headers({ 'Content-Type': 'application/json'});
-        let options = new RequestOptions({headers: headers});
 
-        return this.http.post(this.PE_FUND_SEARCH_URL, body, options)
-            .map(this.extractData)
-            .catch(this.handleError);
+        return this.http.post(this.PE_FUND_SEARCH_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
     }
 }

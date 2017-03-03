@@ -11,6 +11,8 @@ import {PEFund} from "./model/pe.fund";
 import {PESearchParams} from "./model/pe.search-params";
 
 import {Subscription} from 'rxjs';
+import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
+import {ErrorResponse} from "../common/error-response";
 
 declare var $:any
 
@@ -45,6 +47,8 @@ export class PEFirmProfileComponent extends CommonFormViewComponent {
 
     busy: Subscription;
 
+    private moduleAccessChecker: ModuleAccessCheckerService;
+
     constructor(
         private lookupService: LookupService,
         private firmService: PEFirmService,
@@ -53,6 +57,12 @@ export class PEFirmProfileComponent extends CommonFormViewComponent {
         private router: Router
     ) {
         super();
+
+        this.moduleAccessChecker = new ModuleAccessCheckerService;
+
+        if(!this.moduleAccessChecker.checkAccessPrivateEquity()){
+            this.router.navigate(['accessDenied']);
+        }
 
         this.loadLookups();
 
@@ -85,14 +95,28 @@ export class PEFirmProfileComponent extends CommonFormViewComponent {
                                 this.preselectGeographies();
 
                             },
-                            error => this.errorMessage = "Error loading firm profile"
+                            (error: ErrorResponse) => {
+                                this.errorMessage = "Error loading firm profile";
+                                if(error && !error.isEmpty()){
+                                    this.processErrorMessage(error);
+                                    console.log(error);
+                                }
+                                this.postAction(null, null);
+                            }
                         );
+
                     this.busy = this.fundService.search(this.searchParams)
                         .subscribe(
                             searchResult => {
                                 this.foundFundsList = searchResult;
                             },
-                            error => this.errorMessage = "Failed to load GP's funds"
+                            (error: ErrorResponse) => {
+                                this.errorMessage = "Error loading GP funds";
+                                if(error && !error.isEmpty()){
+                                    this.processErrorMessage(error);
+                                }
+                                this.postAction(null, null);
+                            }
                         );
                 }
             })
@@ -113,17 +137,14 @@ export class PEFirmProfileComponent extends CommonFormViewComponent {
 
                     this.postAction("Successfully saved.", null);
                 },
-                error => {
-                    this.postAction(null, "Error saving firm profile.");
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error saving firm profile";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
                 }
             )
-    }
-    postAction(successMessage, errorMessage) {
-        this.successMessage = successMessage;
-        this.errorMessage = errorMessage;
-
-        // TODO: non jQuery
-        $('html, body').animate({scrollTop: 0}, 'fast');
     }
 
     // TODO: Move to a common component
@@ -136,7 +157,13 @@ export class PEFirmProfileComponent extends CommonFormViewComponent {
                         this.strategyList.push({id: element.code, text: element.nameEn});
                     });
                 },
-                error => this.errorMessage = <any>error
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
             );
 
         //load PE_Industry_Focus
@@ -147,7 +174,13 @@ export class PEFirmProfileComponent extends CommonFormViewComponent {
                         this.industryList.push({id: element.code, text: element.nameEn});
                     });
                 },
-                error => this.errorMessage = <any>error
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
             );
         // load geographies
         this.lookupService.getGeographies()
@@ -157,7 +190,13 @@ export class PEFirmProfileComponent extends CommonFormViewComponent {
                         this.geographyList.push({ id: element.code, text: element.nameEn});
                     });
                 },
-                error =>  this.errorMessage = <any>error
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
             );
     }
 
