@@ -8,6 +8,8 @@ import {EmployeeService} from "../employee/employee.service";
 import {MemoAttachmentDownloaderComponent} from "../m2s2/memo-attachment-downloader.component";
 import {Subscription} from 'rxjs';
 import {TripMemoSearchParams} from "./model/trip-memo-search-params";
+import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
+import {ErrorResponse} from "../common/error-response";
 
 declare var $:any
 declare var Chart: any;
@@ -65,7 +67,13 @@ export class TripMemoEditComponent extends CommonFormViewComponent implements On
                                 this.preselectAttendees();
 
                             },
-                            error => this.errorMessage = "Error loading trip memo"
+                            (error: ErrorResponse) => {
+                                this.errorMessage = "Error loading memo";
+                                if(error && !error.isEmpty()){
+                                    this.processErrorMessage(error);
+                                }
+                                this.postAction(null, null);
+                            }
                         );
                 }else{
                     this.tripMemo.tripType = 'TRAINING';
@@ -144,10 +152,12 @@ export class TripMemoEditComponent extends CommonFormViewComponent implements On
                                     this.postAction("Successfully saved.", null);
                                     this.submitted = true;
                                 },
-                                error => {
-                                    // TODO: don't save memo?
-
-                                    this.postAction(null, "Error uploading attachments.");
+                                (error: ErrorResponse) => {
+                                    this.errorMessage = "Error uploading attachments";
+                                    if(error && !error.isEmpty()){
+                                        this.processErrorMessage(error);
+                                    }
+                                    this.postAction(null, null);
                                     this.submitted = false;
                                 });
                     } else {
@@ -155,19 +165,15 @@ export class TripMemoEditComponent extends CommonFormViewComponent implements On
                         this.submitted = true;
                     }
                 },
-                error => {
-                    this.postAction(null, "Error saving trip memo.");
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error saving memo";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
                     this.submitted = false;
                 }
             );
-    }
-
-    postAction(successMessage, errorMessage) {
-        this.successMessage = successMessage;
-        this.errorMessage = errorMessage;
-
-        // TODO: non jQuery
-        $('html, body').animate({scrollTop: 0}, 'fast');
     }
 
     deleteAttachment(fileId) {
@@ -183,8 +189,12 @@ export class TripMemoEditComponent extends CommonFormViewComponent implements On
                        }
                        this.postAction("Attachment deleted.", null);
                     },
-                    error => {
-                        this.postAction(null, "Failed to delete attachment.");
+                    (error: ErrorResponse) => {
+                        this.errorMessage = "Error deleting attachments";
+                        if(error && !error.isEmpty()){
+                            this.processErrorMessage(error);
+                        }
+                        this.postAction(null, null);
                     }
                 );
         }
@@ -208,7 +218,28 @@ export class TripMemoEditComponent extends CommonFormViewComponent implements On
                         this.attendeesList.push({id: element.id, text: element.firstName + " " + element.lastName[0] + "."});
                     });
                 },
-                error => this.errorMessage = <any>error);
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading employees";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
+            );
+    }
+
+    public showSaveButton() {
+        // only owner can edit
+        var moduleAccessChecker = new ModuleAccessCheckerService;
+        if(moduleAccessChecker.checkAccessAdmin()){
+            return true;
+        }
+        var currentUser = localStorage.getItem("authenticatedUser");
+        if(this.tripMemo.owner == null || this.tripMemo.owner == "" || this.tripMemo.owner == currentUser){
+            //console.log(this.memo.owner);
+            return true;
+        }
+        return false;
     }
 
 }

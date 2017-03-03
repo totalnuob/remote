@@ -3,6 +3,7 @@ import { BrowserModule }  from '@angular/platform-browser';
 import { LocationStrategy, HashLocationStrategy} from '@angular/common';
 import { HttpModule } from '@angular/http';
 import { FormsModule } from '@angular/forms';
+import { COMPILER_PROVIDERS } from "@angular/compiler";
 
 import {SelectModule} from 'ng2-select';
 //import { TagInputModule } from 'ng2-tag-input';
@@ -47,6 +48,8 @@ import {MonitoringPrivateEquityFundComponent} from "./monitoring/monitoring-priv
 import {MonitoringHedgeFunds2Component} from "./monitoring/monitoring-hedge-funds-2.component";
 import {BusyModule} from "angular2-busy/index"
 import {HFManagerSearchComponent} from "./hf/hf.manager-search.component";
+import {AccessDeniedComponent} from "./access.denied.component";
+import {EmployeeProfileComponent} from "./employee/employee.profile.component";
 
 @NgModule({
     imports: [
@@ -62,11 +65,12 @@ import {HFManagerSearchComponent} from "./hf/hf.manager-search.component";
     providers: [
         {provide: LocationStrategy, useClass: HashLocationStrategy}, // make pages available by URL on apache
         AuthGuard,
-        AuthenticationService
+        AuthenticationService,
+        COMPILER_PROVIDERS
         ],
     declarations: [
         AppComponent,
-        LoginComponent,
+        LoginComponent, EmployeeProfileComponent,
         NewsListComponent, NewsEditComponent, NewsViewComponent,
         MemoListComponent,
         MemoAttachmentDownloaderComponent,
@@ -77,7 +81,8 @@ import {HFManagerSearchComponent} from "./hf/hf.manager-search.component";
 
         HFDashboardComponent, HFFundSearchComponent, HFFundSelectionComponent, HFPortfolioComponent, HFReportComponent,
         HFFundProfileComponent, HFManagerProfileComponent, HFManagerSearchComponent,
-        PEFundProfileComponent, PEFirmProfileComponent, PEFirmSearchComponent, PEFundReportComponent
+        PEFundProfileComponent, PEFirmProfileComponent, PEFirmSearchComponent, PEFundReportComponent,
+        AccessDeniedComponent
     ],
     bootstrap: [ AppComponent ]
 })

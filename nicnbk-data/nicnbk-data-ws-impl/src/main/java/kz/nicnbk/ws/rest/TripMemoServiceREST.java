@@ -9,10 +9,13 @@ import kz.nicnbk.service.dto.tripmemo.TripMemoPagedSearchResult;
 import kz.nicnbk.service.dto.tripmemo.TripMemoSearchParamsDto;
 import kz.nicnbk.ws.model.EntitySaveResponse;
 import kz.nicnbk.ws.model.Response;
+import kz.nicnbk.ws.model.ResponseMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -52,6 +55,22 @@ public class TripMemoServiceREST {
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public ResponseEntity<?> save(@RequestBody TripMemoDto tripMemoDto) {
+
+        // check access by owner
+        if(tripMemoDto.getId() > 0){
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            boolean access = this.tripMemoService.checkAccess((String)auth.getDetails(), tripMemoDto.getId());
+            if(!access){
+                Response response = new Response();
+                response.setSuccess(false);
+                ResponseMessage message = new ResponseMessage();
+                message.setNameEn("Accees denied");
+                response.setMessage(message);
+                return new ResponseEntity<>(response, null, HttpStatus.UNAUTHORIZED);
+            }
+
+        }
+
         Long id = tripMemoService.save(tripMemoDto);
         // TODO: response
         tripMemoDto.setId(id);

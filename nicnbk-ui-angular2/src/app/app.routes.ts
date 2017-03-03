@@ -37,6 +37,8 @@ import {PEFirmProfileComponent} from "./pe/pe.firm-profile.component";
 import {PEFirmSearchComponent} from "./pe/pe.firm-search.component";
 import {PEFundReportComponent} from "./pe/pe.fund-report.component";
 import {HFManagerSearchComponent} from "./hf/hf.manager-search.component";
+import {AccessDeniedComponent} from "./access.denied.component";
+import {EmployeeProfileComponent} from "./employee/employee.profile.component";
 
 
 const routes: Routes  = [
@@ -49,6 +51,18 @@ const routes: Routes  = [
     {
         path: 'login',
         component: LoginComponent
+    },
+    /* USER PROFILE ***************************************/
+    {
+        path: 'profile',
+        component: EmployeeProfileComponent,
+        canActivate: [AuthGuard]
+    },
+
+    /* ACCESS DENIED *******************************/
+    {
+        path: 'accessDenied',
+        component: AccessDeniedComponent
     },
     /* NEWS ***************************************/
     {

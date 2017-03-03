@@ -480,7 +480,7 @@
                     </div>
                     <div class="row top-buffer">
                         <div class="col-md-12">
-                            <button type="submit" class="btn btn-success pull-right" [disabled]="!memoForm.form.valid">Save</button>
+                            <button type="submit" class="btn btn-success pull-right" [disabled]="!memoForm.form.valid" *ngIf="showSaveButton()">Save</button>
                         </div>
                     </div>
                 </form>

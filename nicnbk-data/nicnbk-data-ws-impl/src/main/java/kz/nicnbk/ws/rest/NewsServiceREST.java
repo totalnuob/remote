@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,11 +25,6 @@ public class NewsServiceREST {
     @Autowired
     private NewsService newsService;
 
-
-//    Cache-control: no-cache
-//    Cache-control: no-store
-//    Pragma: no-cache
-//    Expires: 0
 
     @RequestMapping(value = "/load", method = RequestMethod.GET)
     public ResponseEntity<?> getNewsShort(){
@@ -50,6 +46,7 @@ public class NewsServiceREST {
         return new ResponseEntity<>(news, getHeaders(), HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('ROLE_NEWS_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value="/save", method = RequestMethod.POST)
     public ResponseEntity<?> save(@RequestBody NewsDto newsDto){
         Long id = newsService.save(newsDto);

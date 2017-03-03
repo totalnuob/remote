@@ -1,10 +1,17 @@
 package kz.nicnbk.service.impl.m2s2;
 
+import com.auth0.jwt.JWT;
 import kz.nicnbk.repo.api.m2s2.GeneralMeetingMemoRepository;
+import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.m2s2.GeneralMeetingMemo;
+import kz.nicnbk.repo.model.m2s2.MeetingMemo;
+import kz.nicnbk.service.api.authentication.TokenService;
+import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.api.m2s2.GeneralMeetingMemoService;
 import kz.nicnbk.service.api.m2s2.MeetingMemoService;
 import kz.nicnbk.service.converter.m2s2.GeneralMeetingMemoEntityConverter;
+import kz.nicnbk.service.dto.authentication.TokenUserInfo;
+import kz.nicnbk.service.dto.employee.EmployeeDto;
 import kz.nicnbk.service.dto.m2s2.GeneralMeetingMemoDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +30,12 @@ public class GeneralMeetingMemoServiceImpl implements GeneralMeetingMemoService 
 
     @Autowired
     private MeetingMemoService memoService;
+
+    @Autowired
+    private TokenService tokenService;
+
+    @Autowired
+    private EmployeeService employeeService;
 
     @Override
     public Long save(GeneralMeetingMemoDto memoDto) {
@@ -54,6 +67,27 @@ public class GeneralMeetingMemoServiceImpl implements GeneralMeetingMemoService 
         // get attachment files
         memoDto.setFiles(memoService.getAttachments(id));
 
+        if(entity.getCreator() != null){
+            memoDto.setOwner(entity.getCreator().getUsername());
+            //memoDto.setOwner("galym");
+        }
         return memoDto;
     }
+
+    @Override
+    public boolean checkAccess(String token, Long memoId) {
+        TokenUserInfo tokenUserInfo = this.tokenService.decode(token);
+        if(tokenUserInfo != null){
+            EmployeeDto employeeDto = this.employeeService.findByUsername(tokenUserInfo.getUsername());
+            if(employeeDto != null){
+                MeetingMemo meetingMemo = this.repository.findOne(memoId);
+                if(meetingMemo != null){
+                    return meetingMemo.getCreator() == null || (employeeDto.getId() == meetingMemo.getCreator().getId());
+                }
+            }
+        }
+        return false;
+    }
+
+
 }

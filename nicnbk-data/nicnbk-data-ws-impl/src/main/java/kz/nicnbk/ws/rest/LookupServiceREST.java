@@ -76,7 +76,7 @@ public class LookupServiceREST {
     }
 
     @RequestMapping(value = "/RedemptionNoticePeriods", method = RequestMethod.GET)
-    public List<BaseDictionaryDto> getRedemptionNOticePeriods(){
+    public List<BaseDictionaryDto> getRedemptionNoticePeriods(){
         List<BaseDictionaryDto> lookups = this.lookupService.getRedemptionNoticePeriods();
         return lookups;
     }

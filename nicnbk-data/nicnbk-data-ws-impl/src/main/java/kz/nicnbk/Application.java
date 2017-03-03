@@ -29,6 +29,11 @@ public class Application {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**");
+
+//                System.out.println("CORS configuration");
+//
+//                registry.addMapping("/authenticate").allowedOrigins("http://localhost", "http://10.10.163.45", "http://app.nicnbk.kz");
+//
 //                registry.addMapping("/news/**").allowedOrigins("http://localhost", "http://10.10.163.45","http://app.nicnbk.kz");
 //                registry.addMapping("/m2s2/**").allowedOrigins("http://localhost", "http://10.10.163.45", "http://app.nicnbk.kz");
 //                registry.addMapping("/employee/**").allowedOrigins("http://localhost", "http://10.10.163.45", "http://app.nicnbk.kz");

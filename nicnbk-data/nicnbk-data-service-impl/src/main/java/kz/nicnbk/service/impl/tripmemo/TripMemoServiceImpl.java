@@ -7,9 +7,13 @@ import kz.nicnbk.repo.api.tripmemo.TripMemoRepository;
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.repo.model.tripmemo.TripMemo;
 import kz.nicnbk.repo.model.tripmemo.TripMemoFiles;
+import kz.nicnbk.service.api.authentication.TokenService;
+import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.api.files.FileService;
 import kz.nicnbk.service.api.tripmemo.TripMemoService;
 import kz.nicnbk.service.converter.tripmemo.TripMemoEntityConverter;
+import kz.nicnbk.service.dto.authentication.TokenUserInfo;
+import kz.nicnbk.service.dto.employee.EmployeeDto;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.tripmemo.TripMemoDto;
 import kz.nicnbk.service.dto.tripmemo.TripMemoPagedSearchResult;
@@ -36,6 +40,12 @@ public class TripMemoServiceImpl implements TripMemoService {
     private FileService fileService;
     @Autowired
     private TripMemoFilesRepository tripMemoFilesRepository;
+
+    @Autowired
+    private TokenService tokenService;
+
+    @Autowired
+    private EmployeeService employeeService;
 
 
     @Override
@@ -157,5 +167,20 @@ public class TripMemoServiceImpl implements TripMemoService {
         TripMemoFiles tripMemoFiles = new TripMemoFiles(tripMemoId, fileId);
         tripMemoFilesRepository.save(tripMemoFiles);
         return true;
+    }
+
+    @Override
+    public boolean checkAccess(String token, Long entityId) {
+        TokenUserInfo tokenUserInfo = this.tokenService.decode(token);
+        if(tokenUserInfo != null){
+            EmployeeDto employeeDto = this.employeeService.findByUsername(tokenUserInfo.getUsername());
+            if(employeeDto != null){
+                TripMemo memo = this.tripMemoRepository.findOne(entityId);
+                if(memo != null){
+                    return memo.getCreator() == null || (employeeDto.getId() == memo.getCreator().getId());
+                }
+            }
+        }
+        return false;
     }
 }

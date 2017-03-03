@@ -5,13 +5,15 @@ import {HFManager} from "./model/hf.manager";
 import {LookupService} from "../common/lookup.service";
 import {CommonFormViewComponent} from "../common/common.component";
 import {HFManagerService} from "./hf.manager.service";
-import {SaveResponse} from "../common/save-response.";
+import {SaveResponse} from "../common/save-response";
 import {HedgeFund} from "./model/hf.fund";
 import {MemoSearchParams} from "../m2s2/model/memo-search-params";
 import {MemoService} from "../m2s2/memo.service";
 import {Memo} from "../m2s2/model/memo";
 import {MemoSearchResults} from "../m2s2/model/memo-search-results";
 import {Subscription} from 'rxjs';
+import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
+import {ErrorResponse} from "../common/error-response";
 
 declare var $:any;
 declare var Chart: any;
@@ -46,6 +48,8 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
 
     private breadcrumbParams: string;
 
+    private moduleAccessChecker: ModuleAccessCheckerService;
+
     constructor(
         private lookupService: LookupService,
         private managerService: HFManagerService,
@@ -55,6 +59,12 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
     ) {
 
         super();
+
+        this.moduleAccessChecker = new ModuleAccessCheckerService;
+
+        if(!this.moduleAccessChecker.checkAccessHedgeFunds()){
+            this.router.navigate(['accessDenied']);
+        }
 
         // loadLookups
         this.loadLookups();
@@ -83,7 +93,13 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
                                 this.memoSearchParams.memoType = "3";
                                 this.memoSearchParams.firmId = this.manager.id;
                             },
-                            error => this.errorMessage = "Error loading manager profile"
+                            (error: ErrorResponse) => {
+                                this.errorMessage = "Error loading manager profile";
+                                if(error && !error.isEmpty()){
+                                    this.processErrorMessage(error);
+                                }
+                                this.postAction(null, null);
+                            }
                         );
                 }else{
                 }
@@ -113,8 +129,12 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
 
                     this.postAction("Successfully saved.", null);
                 },
-                error =>  {
-                    this.postAction(null, "Error saving manager profile.");
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error saving manager profile";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
                 }
             );
     }
@@ -189,7 +209,13 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
                     //});
                     this.strategyLookup = data;
                 },
-                error =>  this.errorMessage = <any>error
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
             );
 
         this.lookupService.getCurrencyList()
@@ -203,7 +229,13 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
                         this.manager.aumCurrency = 'USD';
                     }
                 },
-                error =>  this.errorMessage = <any>error
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
             );
 
         // status

@@ -25,30 +25,26 @@ export class HedgeFundService extends CommonService{
     save(entity){
 
         let body = JSON.stringify(entity);
-        let headers = new Headers({ 'Content-Type': 'application/json' });
-        let options = new RequestOptions({headers: headers});
 
-        return this.http.post(this.HF_FUND_SAVE_URL, body, options)
+        return this.http.post(this.HF_FUND_SAVE_URL, body, this.getOptionsWithCredentials())
             .map(this.extractData)
-            .catch(this.handleError);
+            .catch(this.handleErrorResponse);
     }
 
     get(id): Observable<HedgeFund> {
         // TODO: check id
-        return this.http.get(this.HF_FUND_GET_URL + "/" + id)
+        return this.http.get(this.HF_FUND_GET_URL + "/" + id, this.getOptionsWithCredentials())
             .map(this.extractData)
-            .catch(this.handleError);
+            .catch(this.handleErrorResponse);
     }
 
     search(searchParams){
         let body = JSON.stringify(searchParams);
-        let headers = new Headers({ 'Content-Type': 'application/json' });
-        let options = new RequestOptions({ headers: headers });
 
         //console.log(body);
-        return this.http.post(this.HF_FUND_SEARCH_URL, body, options)
+        return this.http.post(this.HF_FUND_SEARCH_URL, body, this.getOptionsWithCredentials())
             .map(this.extractData)
-            .catch(this.handleError);
+            .catch(this.handleErrorResponse);
     }
 
 }

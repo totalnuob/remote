@@ -14,6 +14,8 @@ import {MemoSearchParams} from "../m2s2/model/memo-search-params";
 import {Memo} from "../m2s2/model/memo";
 import {MemoSearchResults} from "../m2s2/model/memo-search-results";
 import {MemoService} from "../m2s2/memo.service";
+import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
+import {ErrorResponse} from "../common/error-response";
 
 declare var $:any
 
@@ -47,6 +49,8 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
 
     busy: Subscription;
 
+    private moduleAccessChecker: ModuleAccessCheckerService;
+
     //For memo loading
     memoSearchParams = new MemoSearchParams;
     meetingTypes = [];
@@ -62,6 +66,12 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
         private memoService: MemoService
     ) {
         super();
+
+        this.moduleAccessChecker = new ModuleAccessCheckerService;
+
+        if(!this.moduleAccessChecker.checkAccessPrivateEquity()){
+            this.router.navigate(['accessDenied']);
+        }
 
         this.loadLookups();
 
@@ -99,7 +109,14 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
                                 this.memoSearchParams.firmId = this.firm.id;
 
                             },
-                            error => this.errorMessage = "Error loading firm profile"
+                            (error: ErrorResponse) => {
+                                this.errorMessage = "Error loading firm profile";
+                                if(error && !error.isEmpty()){
+                                    this.processErrorMessage(error);
+                                    console.log(error);
+                                }
+                                this.postAction(null, null);
+                            }
                         );
                 }
             })
@@ -120,8 +137,12 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
 
                     this.postAction("Successfully saved.", null);
                 },
-                error => {
-                    this.postAction(null, "Error saving firm profile.");
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error saving firm profile";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
                 }
             )
     }
@@ -162,14 +183,6 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
             );
     }
 
-    postAction(successMessage, errorMessage) {
-        this.successMessage = successMessage;
-        this.errorMessage = errorMessage;
-
-        // TODO: non jQuery
-        $('html, body').animate({scrollTop: 0}, 'fast');
-    }
-
     // TODO: Move to a common component
     loadLookups(){
 
@@ -184,7 +197,13 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
                         this.strategyList.push({id: element.code, text: element.nameEn});
                     });
                 },
-                error => this.errorMessage = <any>error
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
             );
 
         //load PE_Industry_Focus
@@ -195,7 +214,13 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
                         this.industryList.push({id: element.code, text: element.nameEn});
                     });
                 },
-                error => this.errorMessage = <any>error
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
             );
         // load geographies
         this.lookupService.getGeographies()
@@ -205,7 +230,13 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
                         this.geographyList.push({ id: element.code, text: element.nameEn});
                     });
                 },
-                error =>  this.errorMessage = <any>error
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
             );
     }
 

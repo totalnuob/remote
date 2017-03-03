@@ -25,13 +25,11 @@ export class TripMemoService extends CommonService {
 
     search(searchParam) {
         let body = JSON.stringify(searchParam);
-        let headers = new Headers({'Content-Type': 'application/json'});
-        let options = new RequestOptions({headers: headers});
 
         //console.log(body);
-        return this.http.post(this.TRIP_MEMO_SEARCH_URL, body, options)
+        return this.http.post(this.TRIP_MEMO_SEARCH_URL, body, this.getOptionsWithCredentials())
             .map(this.extractData)
-            .catch(this.handleError);
+            .catch(this.handleErrorResponse);
     }
 
     saveBt(entity) {
@@ -40,13 +38,11 @@ export class TripMemoService extends CommonService {
 
     private save(URL, entity){
         let body = JSON.stringify(entity);
-        let headers = new Headers({ 'Content-Type': 'application/json' });
-        let options = new RequestOptions({ headers: headers });
 
         //console.log(body);
-        return this.http.post(URL, body, options)
+        return this.http.post(URL, body, this.getOptionsWithCredentials())
             .map(this.extractData)
-            .catch(this.handleError);
+            .catch(this.handleErrorResponse);
     }
     postFiles(tripMemoId, params, files) {
         return this.uploadService.postFiles(this.TRIP_MEMO_ATTACHMENT_UPLOAD_URL + tripMemoId, [], files);
@@ -55,13 +51,13 @@ export class TripMemoService extends CommonService {
     get(id): Observable<any> {
         // TODO: check type and id
 
-        return this.http.get(this.TRIP_MEMO_GET_URL + id)
+        return this.http.get(this.TRIP_MEMO_GET_URL + id, this.getOptionsWithCredentials())
             .map(this.extractData)
-            .catch(this.handleError);
+            .catch(this.handleErrorResponse);
     }
     public deleteAttachment(tripMemoId, fileId) {
-        return this.http.get(this.TRIP_MEMO_ATTACHMENT_DELETE_URL + tripMemoId + "/" + fileId)
+        return this.http.get(this.TRIP_MEMO_ATTACHMENT_DELETE_URL + tripMemoId + "/" + fileId, this.getOptionsWithCredentials())
             .map(this.extractData)
-            .catch(this.handleError);
+            .catch(this.handleErrorResponse);
     }
 }

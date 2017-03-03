@@ -18,6 +18,8 @@ export class Memo{
     attendeesOther: string;
     author: string;
 
+    owner: string;
+
     // TODO: move to fund-memo.ts ?
     strategies: any[];
     geographies: any[];

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -18,11 +19,12 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/pe/fund")
-public class PEFundServiceREST {
+public class PrivateEquityFundServiceREST {
 
     @Autowired
     private PEFundService service;
 
+    @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_VIEWER') OR hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/get/{id}", method = RequestMethod.GET)
     public PEFundDto get(@PathVariable long id){
         PEFundDto fundDto = this.service.get(id);
@@ -32,6 +34,7 @@ public class PEFundServiceREST {
         return fundDto;
     }
 
+    @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public ResponseEntity<?> save(@RequestBody PEFundDto fundDto){
         Long id = this.service.save(fundDto);
@@ -48,6 +51,7 @@ public class PEFundServiceREST {
         return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_VIEWER') OR hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public List<PEFundDto> search(@RequestBody PESearchParams searchParams){
         return this.service.loadFirmFunds(searchParams.getId(), searchParams.getReport());

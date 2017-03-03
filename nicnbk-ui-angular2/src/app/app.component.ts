@@ -30,6 +30,9 @@ import {HedgeFundService} from "./hf/hf.fund.service";
 import {RiskManagementReportService} from "./riskmanagement/riskmanagement.report.service";
 import {AlbourneService} from "./hf/hf.albourne.service";
 
+import '../../public/js/jquery.ns-autogrow.min.js';
+import {ModuleAccessCheckerService} from "./authentication/module.access.checker.service";
+
 @Component({
     selector: 'app-main',
     templateUrl: './app.component.html',
@@ -51,7 +54,8 @@ import {AlbourneService} from "./hf/hf.albourne.service";
         HFManagerService,
         HedgeFundService,
         RiskManagementReportService,
-        AlbourneService
+        AlbourneService,
+        ModuleAccessCheckerService
     ]
 })
 @NgModule({
@@ -59,18 +63,41 @@ import {AlbourneService} from "./hf/hf.albourne.service";
 })
 export class AppComponent {
 
+    private moduleAccessChecker: ModuleAccessCheckerService;
+
     constructor(
         private _router: Router
-    ){}
+    ){
+        this.moduleAccessChecker = new ModuleAccessCheckerService;
+    }
 
     logout() {
-        localStorage.removeItem("user");
+        localStorage.removeItem("authenticatedUser");
+        localStorage.removeItem("authenticatedUserRoles");
+        //location.reload();
         this._router.navigate(['login']);
     }
 
     // TODO: refactor
     showMenu(){
-        return localStorage.getItem("user") != null;
+        return localStorage.getItem("authenticatedUser") != null;
+    }
+
+    getUsername(){
+        return localStorage.getItem("authenticatedUser") != null ? "," + localStorage.getItem("authenticatedUser") : "";
+    }
+
+    showPrivateEquity(){
+        return this.moduleAccessChecker.checkAccessPrivateEquity();
+    }
+
+    showHedgeFunds(){
+        return this.moduleAccessChecker.checkAccessHedgeFunds();
+    }
+
+    showRealEstate(){
+        //return false;
+        return this.moduleAccessChecker.checkAccessRealEstate();
     }
 }
 

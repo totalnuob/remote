@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
 import {HedgeFundService} from "./hf.fund.service";
 import {HedgeFund} from "./model/hf.fund";
 import {CommonFormViewComponent} from "../common/common.component";
@@ -8,6 +9,8 @@ import {HFManager} from "./model/hf.manager";
 import {HFManagerSearchParams} from "./model/hf.manager-search-params";
 import {HFManagerSearchResults} from "./model/hf.manager-search-results";
 import {HFManagerService} from "./hf.manager.service";
+import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
+import {ErrorResponse} from "../common/error-response";
 import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
@@ -27,12 +30,25 @@ export class HFManagerSearchComponent extends CommonFormViewComponent{
     public sub: any;
     busy: Subscription;
 
+    private moduleAccessChecker: ModuleAccessCheckerService;
+
     constructor(
+        private managerService: HFManagerService,
+        private router: Router
         private managerService: HFManagerService,
         private route: ActivatedRoute,
         private router: Router
     ){
         super();
+
+        this.moduleAccessChecker = new ModuleAccessCheckerService;
+
+        if(!this.moduleAccessChecker.checkAccessHedgeFunds()){
+            this.router.navigate(['accessDenied']);
+        }
+
+        this.searchParams.name = '';
+        this.search(0);
 
         this.sub = this.route
             .params
@@ -71,8 +87,12 @@ export class HFManagerSearchComponent extends CommonFormViewComponent{
                     this.foundEntities = searchResult.managers;
                     this.searchResult = searchResult;
                 },
-                error =>  {
-                    this.errorMessage = "Failed to search funds"
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error searching managers";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
                 }
             );
     }

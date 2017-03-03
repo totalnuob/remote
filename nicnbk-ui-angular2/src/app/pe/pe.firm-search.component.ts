@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
 import {PESearchParams} from "./model/pe.search-params";
 import {PEFirmService} from "./pe.firm.service";
 import {LookupService} from "../common/lookup.service";
@@ -7,6 +8,8 @@ import {CommonFormViewComponent} from "../common/common.component";
 import {PESearchResults} from "./model/pe.search-results";
 import {Router, ActivatedRoute} from '@angular/router';
 import {Subscription} from 'rxjs';
+import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
+import {ErrorResponse} from "../common/error-response";
 
 @Component({
     selector: 'pe-firm-search',
@@ -22,12 +25,24 @@ export class PEFirmSearchComponent extends CommonFormViewComponent {
     busy: Subscription;
     public sub: any;
 
+    private moduleAccessChecker: ModuleAccessCheckerService;
+
     constructor(
         private firmService: PEFirmService,
         private router: Router,
         private route: ActivatedRoute
     ){
         super();
+
+        this.moduleAccessChecker = new ModuleAccessCheckerService;
+
+        if(!this.moduleAccessChecker.checkAccessPrivateEquity()){
+            this.router.navigate(['accessDenied']);
+        }
+
+        //this.searchParams.name = '';
+        //this.search(0);
+
         this.sub = this.route
             .params
             .subscribe(params => {
@@ -54,7 +69,7 @@ export class PEFirmSearchComponent extends CommonFormViewComponent {
         this.searchParams.pageSize = 10;
         this.searchParams.page = page;
 
-        console.log(this.searchParams);
+        //console.log(this.searchParams);
 
         this.busy = this.firmService.search(this.searchParams)
             .subscribe(
@@ -62,7 +77,14 @@ export class PEFirmSearchComponent extends CommonFormViewComponent {
                     this.foundEntities = searchResult.firms;
                     this.searchResult = searchResult;
                 },
-                error => this.errorMessage = "Failed to search"
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error searching firms";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                        console.log(error);
+                    }
+                    this.postAction(null, null);
+                }
             );
     }
 
