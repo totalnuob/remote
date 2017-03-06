@@ -6,7 +6,7 @@
                     <ol class="breadcrumb">
                         <li>
                             <span *ngIf="this.breadcrumbParams != null"><a [routerLink]="[this.searchParams.path, {params: this.breadcrumbParams }]">Meeting Memo</a></span>
-                            <span *ngIf="this.breadcrumbParams == null"><a [routerLink]="[this.searchParams.path]">Meeting Memo</a></span>
+                            <span *ngIf="this.breadcrumbParams == null"><a [routerLink]="['/m2s2']">Meeting Memo</a></span>
                         </li>
                         <li class="active">Private Equity</li>
                     </ol>

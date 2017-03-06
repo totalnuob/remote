@@ -115,8 +115,6 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
         // memo types
         this.lookupService.getMemoTypes().then(memoTypes => {this.memoTypes = memoTypes});
 
-        console.log(this.memoTypes);
-
         //meeting types
         this.lookupService.getMeetingTypes().then(meetingTypes => this.meetingTypes = meetingTypes);
     }

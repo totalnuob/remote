@@ -159,6 +159,7 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
                                     this.processErrorMessage(error);
                                 }
                                 this.postAction(null, null);
+                                console.log("Error loading memo");
                             }
                         );
                 }else{

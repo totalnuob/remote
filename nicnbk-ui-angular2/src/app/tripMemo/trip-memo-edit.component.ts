@@ -235,8 +235,10 @@ export class TripMemoEditComponent extends CommonFormViewComponent implements On
             return true;
         }
         var currentUser = localStorage.getItem("authenticatedUser");
-        if(this.tripMemo.owner == null || this.tripMemo.owner == "" || this.tripMemo.owner == currentUser){
-            //console.log(this.memo.owner);
+        //if(this.memo.owner == null  || this.memo.owner == ""){
+        //    return true;
+        //}
+        if(this.tripMemo.owner === currentUser){
             return true;
         }
         return false;

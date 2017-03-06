@@ -48,7 +48,7 @@ export class HFManagerService extends CommonService{
     }
 
     getManagers(){
-        return this.http.get(this.HF_MANAGER_LIST_URL)
+        return this.http.get(this.HF_MANAGER_LIST_URL, this.getOptionsWithCredentials())
             .map(this.extractDataList)
             .catch(this.handleError);
     }

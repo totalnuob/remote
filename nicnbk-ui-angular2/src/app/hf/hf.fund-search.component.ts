@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {HedgeFundService} from "./hf.fund.service";
 import {HedgeFund} from "./model/hf.fund";
 import {CommonFormViewComponent} from "../common/common.component";
 import {HedgeFundSearchParams} from "./model/hf.search-params";
 import {HedgeFundSearchResults} from "./model/fund-search-results";
-import {ActivatedRoute, Router} from '@angular/router';
 import {Subscription} from 'rxjs';
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 import {ErrorResponse} from "../common/error-response";
@@ -32,8 +31,8 @@ export class HFFundSearchComponent extends CommonFormViewComponent{
 
     constructor(
         private fundService: HedgeFundService,
-        private router: Router
-        private route: ActivatedRoute,
+        private router: Router,
+        private route: ActivatedRoute
     ){
         super();
 

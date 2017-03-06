@@ -28,7 +28,7 @@ export class TripMemoService extends CommonService {
 
         //console.log(body);
         return this.http.post(this.TRIP_MEMO_SEARCH_URL, body, this.getOptionsWithCredentials())
-            .map(this.extractData)
+            .map(this.extractDataList)
             .catch(this.handleErrorResponse);
     }
 

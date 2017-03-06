@@ -113,8 +113,8 @@
                 </li>
                 <li [routerLinkActive]="['active']" *ngIf="showRealEstate()"><a href="#">Real Estate</a></li>
                 <!--<li [routerLinkActive]="['active']" ><a href="#">Hedge Funds</a></li>-->
-                <li [routerLinkActive]="['active']" class="dropdown" *ngIf="showHedgeFunds()">
-                <li [routerLinkActive]="['active']"  class="dropdown">
+                <!--<li [routerLinkActive]="['active']" class="dropdown" *ngIf="showHedgeFunds()">-->
+                <li [routerLinkActive]="['active']"  class="dropdown" *ngIf="showHedgeFunds()">
                     <!--<a th:href="@{/pe}">Private Equity</a>-->
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                         Hedge Funds <span class="bootstrapCaret"></span>

@@ -54,7 +54,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     antMatchers(HttpMethod.OPTIONS, "/**").permitAll().
                     anyRequest().authenticated().
 
-                and().addFilterBefore(getTokenAuthenticationFilter(), AnonymousAuthenticationFilter.class).
+                and().addFilterAfter(getTokenAuthenticationFilter(), AnonymousAuthenticationFilter.class).
+                //and().addFilter(getTokenAuthenticationFilter()).
 
                 exceptionHandling().
                 authenticationEntryPoint(unauthorizedEntryPoint()).
@@ -65,9 +66,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     }
 
-    //@Override
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+
+
+    //@Autowired
+    //public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+    @Override
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.
                 authenticationProvider(tokenAuthenticationProvider());
     }

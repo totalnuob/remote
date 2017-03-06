@@ -60,7 +60,7 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
     constructor(
         private lookupService: LookupService,
         private firmService: PEFirmService,
-        private fundService: PEFundService,
+        //private fundService: PEFundService,
         private route: ActivatedRoute,
         private router: Router,
         private memoService: MemoService
@@ -159,7 +159,7 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
             format: 'DD-MM-YYYY'
         });
 
-        this.loadLookups();
+        //this.loadLookups();
     }
 
 
@@ -179,7 +179,13 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
                     this.memoList = searchResult.memos;
                     this.memoSearchResult = searchResult;
                 },
-                error =>  this.errorMessage = "Failed to search memos."
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Failed to search memos";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
             );
     }
 
@@ -231,12 +237,12 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
                     });
                 },
                 (error: ErrorResponse) => {
-                    this.errorMessage = "Error loading lookups";
-                    if(error && !error.isEmpty()){
-                        this.processErrorMessage(error);
-                    }
-                    this.postAction(null, null);
-                }
+            this.errorMessage = "Error loading lookups";
+            if(error && !error.isEmpty()){
+                this.processErrorMessage(error);
+            }
+            this.postAction(null, null);
+        }
             );
     }
 

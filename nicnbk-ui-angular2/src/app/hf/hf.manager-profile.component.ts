@@ -192,7 +192,13 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
                     this.memoList = searchResult.memos;
                     this.memoSearchResult = searchResult;
                 },
-                error => this.errorMessage = "Failed to search memos."
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error searching memos";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
             );
     }
 

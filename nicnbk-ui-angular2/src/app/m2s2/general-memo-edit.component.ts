@@ -272,8 +272,11 @@ export class GeneralMemoEditComponent extends CommonFormViewComponent implements
             return true;
         }
         var currentUser = localStorage.getItem("authenticatedUser");
-        if(this.memo.owner == null  || this.memo.owner == "" || this.memo.owner == currentUser){
-            return true;
+        //if(this.memo.owner == null  || this.memo.owner == ""){
+        //    return true;
+        //}
+        if(this.memo.owner === currentUser){
+           return true;
         }
         return false;
     }

@@ -115,24 +115,20 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
             .subscribe(params => {
                 this.memoIdParam = +params['id'];
                 this.breadcrumbParams = params['params'];
-                console.log(this.breadcrumbParams);
+                //console.log(this.breadcrumbParams);
                 if(this.breadcrumbParams != null) {
                     this.searchParams = JSON.parse(this.breadcrumbParams);
                 }
                 this.memo.firm = new PEFirm();
                 this.memo.fund = new PEFund();
                 if(this.memoIdParam > 0) {
-                if(this.memoIdParam > 0)
-
-
-                {
                     this.busy = this.memoService.get(2, this.memoIdParam)
                         .subscribe(
                             memo => {
                                 // TODO: check response memo
                                 this.memo = memo;
                                 this.initRadarChart();
-                                console.log(this.memo);
+                                //console.log(this.memo);
                                 //if(this.memo.fund == null){
                                 //    this.memo.fund = new PEFund();
                                 //}
@@ -170,6 +166,7 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
                                     this.processErrorMessage(error);
                                 }
                                 this.postAction(null, null);
+                                console.log("Error loading memo");
                             }
                         );
                 }else{
@@ -181,7 +178,8 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
                     this.memo.openingSoon = false;
                     this.memo.tags = [];
                 }
-            });
+            }
+            );
     }
 
     preselectStrategies(){
@@ -272,7 +270,7 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
         this.memo.meetingDate = $('#meetingDateValue').val();
         this.memo.meetingTime = $('#meetingTimeValue').val();
 
-        console.log(this.memo);
+        //console.log(this.memo);
 
         //TODO: refactor ?
         this.memo.strategies = this.convertToServiceModel(this.memo.strategies);
@@ -549,17 +547,26 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
                         this.firmList.push({id: element.id, name: element.firmName});
                     });
                 },
-                error => {
-                    this.postAction(null, "Error loading firms list for dropdown.");
+                //error => {
+                //    this.postAction(null, "Error loading firms list for dropdown.");
+                //}
+                (error: ErrorResponse) => {
+                this.errorMessage = "Error loading firms list for dropdown.";
+                if(error && !error.isEmpty()){
+                    this.processErrorMessage(error);
                 }
+                this.postAction(null, null);
+        }
             )
-        console.log(this.firmList);
+        //console.log(this.firmList);
     }
 
     getFirmDataOnChange(id){
         //this.getFundData(null);
         this.getFirmData(id);
-        this.memo.fund.suitable = true;
+        if(this.memo.fund) {
+            this.memo.fund.suitable = true;
+        }
     }
 
     getFirmData(id){
@@ -602,6 +609,7 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
     toggleFund(){
         this.memo.fund = new PEFund();
         this.memo.fund.suitable = true;
+        console.log("TOGGLE FUND");
     }
 
     //TODO: bind ngModel - boolean

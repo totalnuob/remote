@@ -47,30 +47,25 @@ export class MemoService extends CommonService{
 
     searchPE(searchParam){
         let body = JSON.stringify(searchParam);
-        let headers = new Headers({ 'Content-Type': 'application/json' });
-        let options = new RequestOptions({ headers: headers });
 
         //console.log(body);
-        return this.http.post(this.PE_MEMO_SEARCH_URL, body, options)
+        return this.http.post(this.PE_MEMO_SEARCH_URL, body, this.getOptionsWithCredentials())
             .map(this.extractData)
-            .catch(this.handleError);
-    }
-
-    savePE(entity){
-        return this.save(this.PE_MEMO_SAVE_URL, entity, );
+            .catch(this.handleErrorResponse);
     }
 
     searchHF(searchParam){
         let body = JSON.stringify(searchParam);
-        let headers = new Headers({ 'Content-Type': 'application/json' });
-        let options = new RequestOptions({ headers: headers });
 
         //console.log(body);
-        return this.http.post(this.HF_MEMO_SEARCH_URL, body, options)
+        return this.http.post(this.HF_MEMO_SEARCH_URL, body, this.getOptionsWithCredentials())
             .map(this.extractData)
-            .catch(this.handleError);
+            .catch(this.handleErrorResponse);
     }
 
+    savePE(entity){
+        return this.save(this.PE_MEMO_SAVE_URL, entity );
+    }
 
     saveHF(entity){
         return this.save(this.HF_MEMO_SAVE_URL, entity);

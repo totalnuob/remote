@@ -90,6 +90,7 @@ export class TripMemoListComponent extends CommonFormViewComponent implements On
                 },
                 (error: ErrorResponse) => {
                     this.errorMessage = "Error searching memos";
+                    console.log("Error searching memos");
                     if(error && !error.isEmpty()){
                         this.processErrorMessage(error);
                     }

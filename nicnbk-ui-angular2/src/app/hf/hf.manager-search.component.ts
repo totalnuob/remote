@@ -11,7 +11,6 @@ import {HFManagerSearchResults} from "./model/hf.manager-search-results";
 import {HFManagerService} from "./hf.manager.service";
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 import {ErrorResponse} from "../common/error-response";
-import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
     selector: 'hf-fund-search',
@@ -34,8 +33,6 @@ export class HFManagerSearchComponent extends CommonFormViewComponent{
 
     constructor(
         private managerService: HFManagerService,
-        private router: Router
-        private managerService: HFManagerService,
         private route: ActivatedRoute,
         private router: Router
     ){
@@ -53,7 +50,7 @@ export class HFManagerSearchComponent extends CommonFormViewComponent{
         this.sub = this.route
             .params
             .subscribe(params => {
-                if (params['params'] != null) {
+                if (params['params'] != null && JSON.parse(params['params'])['path'] == null) {
                     this.searchParams = JSON.parse(params['params']);
                     this.busy = this.managerService.search(this.searchParams)
                         .subscribe(

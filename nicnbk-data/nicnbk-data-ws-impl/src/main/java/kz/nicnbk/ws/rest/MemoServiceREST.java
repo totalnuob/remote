@@ -90,7 +90,7 @@ public class MemoServiceREST {
     @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/PE/save", method = RequestMethod.POST)
     public ResponseEntity<?>  save(@RequestBody PrivateEquityMeetingMemoDto memoDto){
-        if(memoDto.getFund().getId() == null) {
+        if(memoDto.getFund() != null && memoDto.getFund().getId() == null) {
             memoDto.setFund(null);
         }
         Long id = PEmemoService.save(memoDto);

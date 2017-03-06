@@ -45,8 +45,8 @@ export class PEFirmService extends CommonService {
     }
 
     getFirms(){
-        return this.http.get(this.PE_FIRM_LIST_URL)
+        return this.http.get(this.PE_FIRM_LIST_URL, this.getOptionsWithCredentials())
             .map(this.extractDataList)
-            .catch(this.handleError);
+            .catch(this.handleErrorResponse);
     }
 }

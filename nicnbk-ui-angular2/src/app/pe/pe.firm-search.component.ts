@@ -1,12 +1,11 @@
 import {Component, OnInit} from '@angular/core';
-import {Router} from '@angular/router';
+import {Router, ActivatedRoute} from '@angular/router';
 import {PESearchParams} from "./model/pe.search-params";
 import {PEFirmService} from "./pe.firm.service";
 import {LookupService} from "../common/lookup.service";
 import {PEFirm} from "./model/pe.firm";
 import {CommonFormViewComponent} from "../common/common.component";
 import {PESearchResults} from "./model/pe.search-results";
-import {Router, ActivatedRoute} from '@angular/router';
 import {Subscription} from 'rxjs';
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 import {ErrorResponse} from "../common/error-response";
@@ -47,7 +46,7 @@ export class PEFirmSearchComponent extends CommonFormViewComponent {
             .params
             .subscribe(params => {
                 console.log(params['params'] != null);
-                if(params['params'] != null){
+                if(params['params'] != null && JSON.parse(params['params'])['path'] == null){
                     this.searchParams = JSON.parse(params['params']);
                     this.busy = this.firmService.search(this.searchParams)
                         .subscribe(
