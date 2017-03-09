@@ -32,6 +32,7 @@ public class HFMeetingMemoEntityConverter extends FundMeetingMemoConverter<Hedge
     public HedgeFundsMeetingMemo assemble(HedgeFundsMeetingMemoDto dto){
         HedgeFundsMeetingMemo entity = super.assemble(dto);
         assembleFundNonmappedFields(entity, dto);
+
         return entity;
     }
 
@@ -47,6 +48,10 @@ public class HFMeetingMemoEntityConverter extends FundMeetingMemoConverter<Hedge
         if(entity.getManager() != null) {
             HFManagerDto managerDto = managerConverter.disassemble(entity.getManager());
             dto.setManager(managerDto);
+        }
+
+        if(entity.getCreator() != null){
+            dto.setOwner(entity.getCreator().getUsername());
         }
 
         return dto;

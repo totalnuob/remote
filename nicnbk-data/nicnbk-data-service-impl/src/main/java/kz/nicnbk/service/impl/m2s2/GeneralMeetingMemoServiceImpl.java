@@ -1,6 +1,7 @@
 package kz.nicnbk.service.impl.m2s2;
 
 import com.auth0.jwt.JWT;
+import kz.nicnbk.repo.api.employee.EmployeeRepository;
 import kz.nicnbk.repo.api.m2s2.GeneralMeetingMemoRepository;
 import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.m2s2.GeneralMeetingMemo;
@@ -37,10 +38,21 @@ public class GeneralMeetingMemoServiceImpl implements GeneralMeetingMemoService 
     @Autowired
     private EmployeeService employeeService;
 
+    @Autowired
+    private EmployeeRepository employeeRepository;
+
     @Override
     public Long save(GeneralMeetingMemoDto memoDto) {
         // save memo
         GeneralMeetingMemo entity = converter.assemble(memoDto);
+        // set creator
+        if(memoDto.getId() == null && memoDto.getOwner() != null){
+            Employee employee = this.employeeRepository.findByUsername(memoDto.getOwner());
+            entity.setCreator(employee);
+        }else{
+            Employee employee = this.repository.findOne(memoDto.getId()).getCreator();
+            entity.setCreator(employee);
+        }
         Long memoId = repository.save(entity).getId();
 
         // save files

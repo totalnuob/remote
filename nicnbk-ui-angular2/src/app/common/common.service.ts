@@ -12,7 +12,6 @@ export class CommonService{
 
     public extractData(res: Response) {
         // TODO: check res is empty
-        //console.log(res);
         let body = res.json();
         return body || {};
     }

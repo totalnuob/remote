@@ -2,6 +2,7 @@ package kz.nicnbk.ws.rest;
 
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.repo.model.m2s2.MeetingMemo;
+import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.files.FileService;
 import kz.nicnbk.service.api.m2s2.*;
 import kz.nicnbk.service.dto.files.FilesDto;
@@ -52,6 +53,9 @@ public class MemoServiceREST {
     @Autowired
     private FileService fileService;
 
+    @Autowired
+    private TokenService tokenService;
+
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public MemoPagedSearchResult search(@RequestBody MemoSearchParams searchParams){
@@ -87,12 +91,24 @@ public class MemoServiceREST {
         return null;
     }
 
+//    @RequestMapping(value = "/get/{type}/{memoId}", method = RequestMethod.GET)
+//    public HedgeFundsMeetingMemoDto get(@PathVariable int type, @PathVariable long memoId){
+//        return HFmemoService.get(memoId);
+//    }
+
     @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/PE/save", method = RequestMethod.POST)
     public ResponseEntity<?>  save(@RequestBody PrivateEquityMeetingMemoDto memoDto){
         if(memoDto.getFund() != null && memoDto.getFund().getId() == null) {
             memoDto.setFund(null);
         }
+        // set creator
+        if(memoDto.getId() == null){
+            String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+            String username = this.tokenService.decode(token).getUsername();
+            memoDto.setOwner(username);
+        }
+
         Long id = PEmemoService.save(memoDto);
 
         // TODO: response
@@ -116,6 +132,14 @@ public class MemoServiceREST {
         if(memoDto.getFund() != null && memoDto.getFund().getId() == null) {
             memoDto.setFund(null);
         }
+
+        // set creator
+        if(memoDto.getId() == null){
+            String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+            String username = this.tokenService.decode(token).getUsername();
+            memoDto.setOwner(username);
+        }
+
         Long id = HFmemoService.save(memoDto);
 
         // TODO: response
@@ -135,6 +159,13 @@ public class MemoServiceREST {
     @PreAuthorize("hasRole('ROLE_REAL_ESTATE_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/RE/save", method = RequestMethod.POST)
     public ResponseEntity<?>  save(@RequestBody RealEstateMeetingMemoDto memoDto){
+
+        // set creator
+        if(memoDto.getId() == null){
+            String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+            String username = this.tokenService.decode(token).getUsername();
+            memoDto.setOwner(username);
+        }
         Long id = REmemoService.save(memoDto);
 
         // TODO: response
@@ -154,7 +185,7 @@ public class MemoServiceREST {
     public ResponseEntity<Response>  save(@RequestBody GeneralMeetingMemoDto memoDto){
 
         // check access by owner
-        if(memoDto.getId() > 0){
+        if(memoDto.getId() != null){
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             boolean access = this.generalMemoService.checkAccess((String)auth.getDetails(), memoDto.getId());
             if(!access){
@@ -166,6 +197,11 @@ public class MemoServiceREST {
                 return new ResponseEntity<>(response, null, HttpStatus.UNAUTHORIZED);
             }
 
+        } else{
+            // set creator
+            String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+            String username = this.tokenService.decode(token).getUsername();
+            memoDto.setOwner(username);
         }
 
         Long id = generalMemoService.save(memoDto);

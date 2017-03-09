@@ -275,7 +275,7 @@ export class GeneralMemoEditComponent extends CommonFormViewComponent implements
         //if(this.memo.owner == null  || this.memo.owner == ""){
         //    return true;
         //}
-        if(this.memo.owner === currentUser){
+        if(this.memo.owner === currentUser || !this.memo.id){
            return true;
         }
         return false;

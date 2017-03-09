@@ -2,8 +2,10 @@ package kz.nicnbk.service.impl.m2s2;
 
 import kz.nicnbk.common.service.util.PaginationUtils;
 import kz.nicnbk.common.service.util.StringUtils;
+import kz.nicnbk.repo.api.employee.EmployeeRepository;
 import kz.nicnbk.repo.api.m2s2.MeetingMemoRepository;
 import kz.nicnbk.repo.api.m2s2.PEMeetingMemoRepository;
+import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.m2s2.MeetingMemo;
 import kz.nicnbk.repo.model.m2s2.PrivateEquityMeetingMemo;
 import kz.nicnbk.service.api.m2s2.MeetingMemoService;
@@ -19,8 +21,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * Created by magzumov on 19.07.2016.
@@ -46,10 +46,21 @@ public class PEMeetingMemoServiceImpl implements PEMeetingMemoService {
     @Autowired
     private PEFundService fundService;
 
+    @Autowired
+    private EmployeeRepository employeeRepository;
+
     @Override
     public Long save(PrivateEquityMeetingMemoDto memoDto) {
-        // save memo
+        // assemble
         PrivateEquityMeetingMemo entity = converter.assemble(memoDto);
+        // set creator
+        if(memoDto.getId() == null && memoDto.getOwner() != null){
+            Employee employee = this.employeeRepository.findByUsername(memoDto.getOwner());
+            entity.setCreator(employee);
+        }else{
+            Employee employee = this.repository.findOne(memoDto.getId()).getCreator();
+            entity.setCreator(employee);
+        }
         Long memoId = repository.save(entity).getId();
 
         // save files

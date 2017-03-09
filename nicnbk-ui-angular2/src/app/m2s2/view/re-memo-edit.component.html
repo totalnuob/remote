@@ -452,15 +452,15 @@
 
                         <div class="col-md-6">
                             <div class="form-group form-horizontal">
-                                <label class="control-label col-md-2" for="author">Author:</label>
-                                <div class="col-md-4">
-                                    <input type="text" placeholder="Your name... " name="author" class="form-control col-md-4" id="author"
-                                           name="author" maxlength="250" [(ngModel)]="memo.author"
-                                           pattern="[a-zA-z. ]+" #author="ngModel"/>
-                                    <div [hidden]="author.valid || author.pristine" class="alert alert-danger">
-                                        Only characters are allowed
-                                    </div>
-                                </div>
+                                <label class="control-label col-md-6" >Author: {{memo.owner}}</label>
+                                <!--<div class="col-md-4">-->
+                                    <!--&lt;!&ndash;<input type="text" placeholder="Your name... " name="author" class="form-control col-md-4" id="author"&ndash;&gt;-->
+                                           <!--&lt;!&ndash;name="author" maxlength="250" [(ngModel)]="memo.author"&ndash;&gt;-->
+                                           <!--&lt;!&ndash;pattern="[a-zA-z. ]+" #author="ngModel"/>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<div [hidden]="author.valid || author.pristine" class="alert alert-danger">&ndash;&gt;-->
+                                        <!--&lt;!&ndash;Only characters are allowed&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                                <!--</div>-->
                             </div>
                         </div>
 

@@ -19,7 +19,7 @@ import {HedgeFundService} from "../hf/hf.fund.service";
 import {MemoSearchParams} from "./model/memo-search-params";
 
 declare var $:any
-declare var Chart: any;
+//declare var Chart: any;
 
 @Component({
     selector: 'pe-memo-edit',
@@ -37,6 +37,7 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
     busy: Subscription;
 
     private visible = false;
+    private showFundDetails = false;
     submitted = false;
 
     memo = new HFMemo;
@@ -126,8 +127,9 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
                         .subscribe(
                             memo => {
                                 // TODO: check response memo
+
                                 this.memo = memo;
-                                this.initRadarChart();
+                                //this.initRadarChart();
 
                                 if(this.memo.tags == null) {
                                     this.memo.tags = [];
@@ -151,7 +153,14 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
                                 // preselect memo attendees
                                 this.preselectAttendeesNIC();
 
-                                console.log(this.memo);
+                                //if(this.memo.manager != null && this.memo.fund == null){
+                                //    this.toggleFund();
+                                //}
+
+                                if(this.memo.fund != null){
+                                    this.showFundDetails = true;
+                                }
+
                             },
                             (error: ErrorResponse) => {
                                 this.errorMessage = "Error loading memo";
@@ -247,7 +256,7 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
         });
 
         // init chart
-        this.initRadarChart();
+        //this.initRadarChart();
 
     }
 
@@ -409,25 +418,25 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
                 }
             ]
         };
-        var myRadarChart = new Chart(ctx, {
-            type: 'radar',
-            data: data,
-            options: {
-                legend:{
-                    display: false
-                },
-                scale: {
-                    ticks: {
-                        //beginAtZero: true,
-                        min: 0,
-                        max: 5
-                    },
-                    gridLines: {
-                        color: "#8A9396"
-                    }
-                }
-            }
-        });
+        //var myRadarChart = new Chart(ctx, {
+        //    type: 'radar',
+        //    data: data,
+        //    options: {
+        //        legend:{
+        //            display: false
+        //        },
+        //        scale: {
+        //            ticks: {
+        //                //beginAtZero: true,
+        //                min: 0,
+        //                max: 5
+        //            },
+        //            gridLines: {
+        //                color: "#8A9396"
+        //            }
+        //        }
+        //    }
+        //});
     }
 
     loadLookups(){
@@ -544,7 +553,10 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
     }
 
     toggleFund(){
-        this.memo.fund = new HedgeFund();
+        if(this.memo.fund == null){
+            this.memo.fund = new HedgeFund();
+        }
+        this.showFundDetails = !this.showFundDetails;
     }
 
     //TODO: bind ngModel - boolean

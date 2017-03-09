@@ -2,7 +2,9 @@ package kz.nicnbk.service.impl.m2s2;
 
 import kz.nicnbk.common.service.util.PaginationUtils;
 import kz.nicnbk.common.service.util.StringUtils;
+import kz.nicnbk.repo.api.employee.EmployeeRepository;
 import kz.nicnbk.repo.api.m2s2.HFMeetingMemoRepository;
+import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.m2s2.HedgeFundsMeetingMemo;
 import kz.nicnbk.repo.model.m2s2.MeetingMemo;
 import kz.nicnbk.service.api.hf.HedgeFundService;
@@ -40,10 +42,23 @@ public class HFMeetingMemoServiceImpl implements HFMeetingMemoService {
     @Autowired
     private HedgeFundService fundService;
 
+    @Autowired
+    private EmployeeRepository employeeRepository;
+
     @Override
     public Long save(HedgeFundsMeetingMemoDto memoDto) {
-        // save memo
+        // assemble memo
         HedgeFundsMeetingMemo entity = converter.assemble(memoDto);
+
+        // set creator
+        if(memoDto.getId() == null){
+            Employee employee = this.employeeRepository.findByUsername(memoDto.getOwner());
+            entity.setCreator(employee);
+        }else{
+            Employee employee = this.repository.findOne(memoDto.getId()).getCreator();
+            entity.setCreator(employee);
+        }
+        // save
         Long memoId = repository.save(entity).getId();
 
         // save files
@@ -72,6 +87,11 @@ public class HFMeetingMemoServiceImpl implements HFMeetingMemoService {
         HedgeFundsMeetingMemo entity = repository.findOne(id);
 
         HedgeFundsMeetingMemoDto memoDto = converter.disassemble(entity);
+
+        // set strategy name
+        if(entity.getFund() != null && entity.getFund().getStrategy() != null) {
+            memoDto.getFund().setStrategyName(entity.getFund().getStrategy().getNameEn());
+        }
 
         // set managers funds
         if(memoDto.getManager() != null) {

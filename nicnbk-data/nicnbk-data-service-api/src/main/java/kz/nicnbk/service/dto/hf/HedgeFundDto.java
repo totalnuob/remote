@@ -22,6 +22,7 @@ public class HedgeFundDto extends HistoryBaseEntityDto<HedgeFund> {
     private String aumDigit;
     private String aumCurrency;
     private String strategy;
+    private String strategyName;
 
     private String leverage;
 
@@ -496,4 +497,14 @@ public class HedgeFundDto extends HistoryBaseEntityDto<HedgeFund> {
     public void setWorstDrawdownPeriod(String worstDrawdownPeriod) {
         this.worstDrawdownPeriod = worstDrawdownPeriod;
     }
+
+    public String getStrategyName() {
+        return strategyName;
+    }
+
+    public void setStrategyName(String strategyName) {
+        this.strategyName = strategyName;
+    }
 }
+
+

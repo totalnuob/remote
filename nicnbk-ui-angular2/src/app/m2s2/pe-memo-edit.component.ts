@@ -127,6 +127,7 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
                             memo => {
                                 // TODO: check response memo
                                 this.memo = memo;
+                                console.log(memo);
                                 this.initRadarChart();
                                 //console.log(this.memo);
                                 //if(this.memo.fund == null){
@@ -327,11 +328,11 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
                 }
             );
 
-        if(this.memo.fund.id != null){
+        if(this.memo.fund && this.memo.fund.id != null){
             //console.log("here");
             this.peFundService.save(this.memo.fund)
                 .subscribe(
-                    (response:SaveResponse) => {
+                    (response: SaveResponse) => {
                         this.postAction("Succesfully saved fund", null);
                         this.submitted = true;
                     },

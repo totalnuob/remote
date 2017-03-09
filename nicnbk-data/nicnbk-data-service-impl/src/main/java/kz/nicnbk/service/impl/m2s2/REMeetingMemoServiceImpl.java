@@ -1,6 +1,8 @@
 package kz.nicnbk.service.impl.m2s2;
 
+import kz.nicnbk.repo.api.employee.EmployeeRepository;
 import kz.nicnbk.repo.api.m2s2.REMeetingMemoRepository;
+import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.m2s2.RealEstateMeetingMemo;
 import kz.nicnbk.service.api.m2s2.MeetingMemoService;
 import kz.nicnbk.service.api.m2s2.REMeetingMemoService;
@@ -24,10 +26,21 @@ public class REMeetingMemoServiceImpl implements REMeetingMemoService {
     @Autowired
     private MeetingMemoService memoService;
 
+    @Autowired
+    private EmployeeRepository employeeRepository;
+
     @Override
     public Long save(RealEstateMeetingMemoDto memoDto) {
-        // save memo
+        // assemble
         RealEstateMeetingMemo entity = converter.assemble(memoDto);
+        // set creator
+        if(memoDto.getId() == null && memoDto.getOwner() != null){
+            Employee employee = this.employeeRepository.findByUsername(memoDto.getOwner());
+            entity.setCreator(employee);
+        }else{
+            Employee employee = this.repository.findOne(memoDto.getId()).getCreator();
+            entity.setCreator(employee);
+        }
         Long memoId = repository.save(entity).getId();
 
         // save files
@@ -53,6 +66,11 @@ public class REMeetingMemoServiceImpl implements REMeetingMemoService {
         RealEstateMeetingMemoDto memoDto = converter.disassemble(entity);
         // get attachment files
         memoDto.setFiles(memoService.getAttachments(id));
+
+        if(entity.getCreator() != null){
+            memoDto.setOwner(entity.getCreator().getUsername());
+            //memoDto.setOwner("galym");
+        }
 
         return memoDto;
     }
