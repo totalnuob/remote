@@ -7,7 +7,7 @@ export const NEWS_TYPES: Lookup[] = [
     {id: 4, code: 'RE', nameEn: 'Real Estate', nameKz: '', nameRu: ''},
     {id: 5, code: 'RM', nameEn: 'Risk Management', nameKz: '', nameRu: ''},
     {id: 6, code: 'SWF', nameEn: 'Sovereign Wealth Funds', nameKz: '', nameRu: ''},
-    {id: 7, code: 'NBRK', nameEn: 'National Bank', nameKz: '', nameRu: ''},
+    {id: 7, code: 'KZ', nameEn: 'KZ News', nameKz: '', nameRu: ''},
 ];
 
 export const MEETING_TYPES: Lookup[] = [
