@@ -24,6 +24,7 @@ public class TokenAuthenticationFilter extends AbstractAuthenticationProcessingF
 
     public TokenAuthenticationFilter(RequestMatcher requestMatcher) {
         super(requestMatcher);
+        this.setAuthenticationSuccessHandler((request, response, authentication) -> {});
     }
 
     @Override
@@ -35,16 +36,7 @@ public class TokenAuthenticationFilter extends AbstractAuthenticationProcessingF
             return;
         }
 
-        //On success keep going on the chain
-        this.setAuthenticationSuccessHandler(new AuthenticationSuccessHandler() {
-            @Override
-            public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-                chain.doFilter(request, response);
-            }
-        });
-
         super.doFilter(req, res, chain);
-
     }
 
     @Override
@@ -65,6 +57,19 @@ public class TokenAuthenticationFilter extends AbstractAuthenticationProcessingF
         tokenAuthentication.setDetails(authenticationDetailsSource.buildDetails(request));
 
         return this.getAuthenticationManager().authenticate(tokenAuthentication);
+    }
+
+    /*
+     * Overriding this method to maintain the chaining on authentication success.
+     */
+    @Override
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+
+        super.successfulAuthentication(request, response, chain, authResult);
+
+        //Continue the chain
+        chain.doFilter(request, response);
+
     }
 
 

@@ -24,6 +24,15 @@ public class Application {
     }
 
     @Bean
+    public Jackson2ObjectMapperBuilder jacksonBuilder() {
+        Jackson2ObjectMapperBuilder b = new Jackson2ObjectMapperBuilder();
+        b.indentOutput(true).dateFormat(new SimpleDateFormat("dd-MM-yyyy"));
+        return b;
+    }
+
+
+        /* moved to separate config class (CORSConfig)
+    @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurerAdapter() {
             @Override
@@ -44,11 +53,5 @@ public class Application {
             }
         };
     }
-
-    @Bean
-    public Jackson2ObjectMapperBuilder jacksonBuilder() {
-        Jackson2ObjectMapperBuilder b = new Jackson2ObjectMapperBuilder();
-        b.indentOutput(true).dateFormat(new SimpleDateFormat("dd-MM-yyyy"));
-        return b;
-    }
+    */
 }

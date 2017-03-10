@@ -16,6 +16,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RegexRequestMatcher;
@@ -46,30 +47,28 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 csrf().disable().
 
                 sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS).
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS).
                 and().
+                exceptionHandling().
+                    authenticationEntryPoint(unauthorizedEntryPoint()).
+
+                and().
+                    httpBasic().disable().
 
                 authorizeRequests().
-                    antMatchers("/authenticate").permitAll().
+                    antMatchers(HttpMethod.POST, "/authenticate").permitAll().
                     antMatchers(HttpMethod.OPTIONS, "/**").permitAll().
-                    anyRequest().authenticated().
-
-                and().addFilterAfter(getTokenAuthenticationFilter(), AnonymousAuthenticationFilter.class).
-                //and().addFilter(getTokenAuthenticationFilter()).
-
-                exceptionHandling().
-                authenticationEntryPoint(unauthorizedEntryPoint()).
-
-                and().httpBasic().disable();
-
-       // http.addFilterAfter(new CsrfTokenResponseHeaderBindingFilter(), CsrfFilter.class);
+                    anyRequest().authenticated();
+        http.
+                //addFilterBefore(getTokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+                addFilterBefore(getTokenAuthenticationFilter(), AnonymousAuthenticationFilter.class);
 
     }
 
 
 
-    //@Autowired
-    //public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+//    @Autowired
+//    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.
