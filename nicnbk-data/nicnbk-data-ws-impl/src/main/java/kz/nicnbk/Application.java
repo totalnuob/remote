@@ -30,8 +30,7 @@ public class Application {
         return b;
     }
 
-
-        /* moved to separate config class (CORSConfig)
+    // CORS configuration
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurerAdapter() {
@@ -53,5 +52,4 @@ public class Application {
             }
         };
     }
-    */
 }
