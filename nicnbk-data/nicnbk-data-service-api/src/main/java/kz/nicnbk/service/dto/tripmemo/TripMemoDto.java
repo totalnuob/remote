@@ -29,7 +29,9 @@ public class TripMemoDto extends BaseEntityDto<TripMemo> {
     private Set<EmployeeDto> attendees;
     private String status;
     private String description;
+
     private String author;
+    private String owner;
 
     private Set<FilesDto> files;
 
@@ -131,6 +133,14 @@ public class TripMemoDto extends BaseEntityDto<TripMemo> {
 
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 }
 

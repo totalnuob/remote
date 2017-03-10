@@ -2,8 +2,10 @@ package kz.nicnbk.service.impl.tripmemo;
 
 import kz.nicnbk.common.service.util.PaginationUtils;
 import kz.nicnbk.common.service.util.StringUtils;
+import kz.nicnbk.repo.api.employee.EmployeeRepository;
 import kz.nicnbk.repo.api.tripmemo.TripMemoFilesRepository;
 import kz.nicnbk.repo.api.tripmemo.TripMemoRepository;
+import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.repo.model.tripmemo.TripMemo;
 import kz.nicnbk.repo.model.tripmemo.TripMemoFiles;
@@ -47,11 +49,24 @@ public class TripMemoServiceImpl implements TripMemoService {
     @Autowired
     private EmployeeService employeeService;
 
+    @Autowired
+    private EmployeeRepository employeeRepository;
+
 
     @Override
     public Long save(TripMemoDto tripMemoDto) {
-        TripMemo tripMemo = tripMemoConverter.assemble(tripMemoDto);
-        Long id = tripMemoRepository.save(tripMemo).getId();
+        TripMemo entity = tripMemoConverter.assemble(tripMemoDto);
+
+        // set creator
+        if(tripMemoDto.getId() == null){
+            Employee employee = this.employeeRepository.findByUsername(tripMemoDto.getOwner());
+            entity.setCreator(employee);
+        }else{
+            Employee employee = this.tripMemoRepository.findOne(tripMemoDto.getId()).getCreator();
+            entity.setCreator(employee);
+        }
+
+        Long id = tripMemoRepository.save(entity).getId();
         return id;
     }
 

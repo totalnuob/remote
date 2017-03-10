@@ -51,6 +51,9 @@ export class TripMemoEditComponent extends CommonFormViewComponent implements On
         //loadLookups
         this.sub = this.loadLookups();
 
+        // TODO: loading employees
+        //this.waitSleep(700);
+
         this.sub = this.route
             .params
             .subscribe(params => {
@@ -125,8 +128,8 @@ export class TripMemoEditComponent extends CommonFormViewComponent implements On
 
     save() {
         // TODO: ngModel date
-        this.tripMemo.meetingDateStart = $('#meetingDateValue').val();
-        this.tripMemo.meetingDateEnd = $('#meetingDateValue2').val();
+        this.tripMemo.meetingDateStart = $('#meetingDateStart').val();
+        this.tripMemo.meetingDateEnd = $('#meetingDateEnd').val();
 
         //console.log(this.tripMemo);
         this.tripMemoService.saveBt(this.tripMemo)
@@ -229,6 +232,7 @@ export class TripMemoEditComponent extends CommonFormViewComponent implements On
     }
 
     public showSaveButton() {
+
         // only owner can edit
         var moduleAccessChecker = new ModuleAccessCheckerService;
         if(moduleAccessChecker.checkAccessAdmin()){
@@ -238,7 +242,7 @@ export class TripMemoEditComponent extends CommonFormViewComponent implements On
         //if(this.memo.owner == null  || this.memo.owner == ""){
         //    return true;
         //}
-        if(this.tripMemo.owner === currentUser){
+        if(this.tripMemo.owner === currentUser || !this.tripMemo.id){
             return true;
         }
         return false;

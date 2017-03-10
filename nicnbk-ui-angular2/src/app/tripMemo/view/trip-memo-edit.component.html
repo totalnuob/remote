@@ -42,19 +42,21 @@
                         </div>
                         <div class="col-md-3">
                             <div class='input-group date col-md-2' id='meetingDate1' style="width: 100%">
-                                <input type='text' class="form-control" id="meetingDateValue" name="meetingDateStart" [(ngModel)]="tripMemo.meetingDateStart"/>
-                            <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-calendar">Start date</span>
-                            </span>
+                                <input type='text' class="form-control" id="meetingDateStart" name="meetingDateStart" [(ngModel)]="tripMemo.meetingDateStart"
+                                       required #meetingDateStart="ngModel"/>
+                                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar">From</span></span>
                             </div>
+                            <div [hidden]="meetingDateStart.valid || meetingDateStart.pristine" class="alert alert-danger">Start date is required</div>
                         </div>
                         <div class="col-md-3">
                             <div class='input-group date col-md-2' id='meetingDate2' style="width: 100%">
-                                <input type='text' class="form-control" id="meetingDateValue2" name="meetingDateEnd" [(ngModel)]="tripMemo.meetingDateEnd"/>
+                                <input type='text' class="form-control" id="meetingDateEnd" name="meetingDateEnd" [(ngModel)]="tripMemo.meetingDateEnd"
+                                       required #meetingDateEnd="ngModel"/>
                             <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-calendar">End date</span>
+                                <span class="glyphicon glyphicon-calendar">To</span>
                             </span>
                             </div>
+                            <div [hidden]="meetingDateEnd.valid || meetingDateEnd.pristine" class="alert alert-danger">End date is required</div>
                         </div>
                     </div>
                     <div class="row top-buffer">
@@ -166,10 +168,12 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group form-horizontal">
-                                <label class="control-label col-md-2" for="author">Author:</label>
-                                <div class="col-md-4">
-                                    <input type="text" id="author" placeholder="Your name... " class="form-control col-md-2" id="auhtor" name="author" [(ngModel)]="tripMemo.author"/>
-                                </div>
+                                <label class="control-label col-md-6" >Author: {{tripMemo.owner}}</label>
+                                <!--<div class="col-md-4">-->
+                                <!--&lt;!&ndash;<input type="text" placeholder="Your name... " class="form-control col-md-4" id="author"&ndash;&gt;-->
+                                <!--&lt;!&ndash;name="author" maxlength="250" name="author" [(ngModel)]="memo.author"/>&ndash;&gt;-->
+                                <!--<span>{{memo.owner}}</span>-->
+                                <!--</div>-->
                             </div>
                         </div>
                     </div>

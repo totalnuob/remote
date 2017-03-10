@@ -34,8 +34,11 @@ public class TripMemoEntityConverter extends BaseDozerEntityConverter<TripMemo, 
         if (entity == null) {
             return null;
         }
-
         TripMemoDto tripMemoDto = mapper.map(entity, TripMemoDto.class);
+
+        if(entity.getCreator() != null){
+            tripMemoDto.setOwner(entity.getCreator().getUsername());
+        }
         return tripMemoDto;
     }
 

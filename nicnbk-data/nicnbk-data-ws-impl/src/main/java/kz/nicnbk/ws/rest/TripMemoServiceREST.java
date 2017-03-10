@@ -1,6 +1,7 @@
 package kz.nicnbk.ws.rest;
 
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
+import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.files.FileService;
 import kz.nicnbk.service.api.tripmemo.TripMemoService;
 import kz.nicnbk.service.dto.files.FilesDto;
@@ -41,6 +42,9 @@ public class TripMemoServiceREST {
     @Autowired
     private FileService fileService;
 
+    @Autowired
+    private TokenService tokenService;
+
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public TripMemoPagedSearchResult search(@RequestBody TripMemoSearchParamsDto searchParams) {
@@ -56,8 +60,9 @@ public class TripMemoServiceREST {
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public ResponseEntity<?> save(@RequestBody TripMemoDto tripMemoDto) {
 
+
         // check access by owner
-        if(tripMemoDto.getId() > 0){
+        if(tripMemoDto.getId() != null){
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             boolean access = this.tripMemoService.checkAccess((String)auth.getDetails(), tripMemoDto.getId());
             if(!access){
@@ -69,6 +74,11 @@ public class TripMemoServiceREST {
                 return new ResponseEntity<>(response, null, HttpStatus.UNAUTHORIZED);
             }
 
+        } else{
+            // set creator
+            String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+            String username = this.tokenService.decode(token).getUsername();
+            tripMemoDto.setOwner(username);
         }
 
         Long id = tripMemoService.save(tripMemoDto);
