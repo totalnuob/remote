@@ -40,6 +40,8 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
     public uploadFiles: Array<any> = [];
 
     private visible = false;
+    private showFundDetails = false;
+    private showFirmDetails = false;
     submitted = false;
 
     public memo = new PEMemo;
@@ -152,13 +154,17 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
                                 //}
 
                                 // preselect memo strategies
-                                this.preselectStrategies();
+                                //this.preselectStrategies();
 
                                 // preselect memo geographies
-                                this.preselectGeographies();
+                                //this.preselectGeographies();
 
                                 // preselect memo attendees
                                 this.preselectAttendeesNIC();
+
+                                if(this.memo.fund != null){
+                                    this.showFundDetails = true;
+                                }
 
                             },
                             (error: ErrorResponse) => {
@@ -608,9 +614,15 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
     }
 
     toggleFund(){
-        this.memo.fund = new PEFund();
-        this.memo.fund.suitable = true;
-        console.log("TOGGLE FUND");
+        if(this.memo.fund == null){
+            this.memo.fund = new PEFund();
+            this.memo.fund.suitable = true;
+        }
+        this.showFundDetails = !this.showFundDetails;
+    }
+
+    toggleFirm(){
+        this.showFirmDetails = !this.showFirmDetails;
     }
 
     //TODO: bind ngModel - boolean
@@ -644,7 +656,7 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
         this.memo.closingSchedule = null;
     }
 
-    public showSaveButton(){
+    public canEdit(){
         return this.moduleAccessChecler.checkAccessPrivateEquityEditor();
     }
 }

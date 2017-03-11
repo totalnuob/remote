@@ -23,6 +23,8 @@ public interface MeetingMemoService extends BaseService {
 
     //MeetingMemoDto get(Long id);
 
+    int getMemoType(Long id);
+
     MemoPagedSearchResult search(MemoSearchParams searchParams);
 
     boolean deleteAttachment(Long memoId, Long fileId);

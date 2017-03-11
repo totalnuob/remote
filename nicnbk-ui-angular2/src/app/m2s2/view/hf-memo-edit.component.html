@@ -5,10 +5,11 @@
                 <div class="col-md-12">
                     <ol class="breadcrumb">
                         <li>
-                            <span *ngIf="this.breadcrumbParams != null"><a [routerLink]="[this.searchParams.path, {params: this.breadcrumbParams }]">Meeting Memo</a></span>
-                            <span *ngIf="this.breadcrumbParams == null"><a [routerLink]="['/m2s2']">Meeting Memo</a></span>
+                            <span *ngIf="this.breadcrumbParams != null"><a [routerLink]="[this.searchParams.path, {params: this.breadcrumbParams }]">
+                                {{searchParams.path.indexOf('/hf/managerProfile') != -1 ? 'Manager Profile' : searchParams.path == '/m2s2' ? 'M2S2' : searchParams.path }}</a></span>
+                            <span *ngIf="this.breadcrumbParams == null"><a [routerLink]="['/m2s2']">M2S2</a></span>
                         </li>
-                        <li class="active">Hedge Fund</li>
+                        <li class="active">HF Memo</li>
                     </ol>
                 </div>
             </div>
@@ -24,10 +25,13 @@
                         <div class="row">
                             <div class="form-group form-horizontal">
                                 <label class="control-label col-md-1" for="managerId" ><b>Manager:</b></label>
+                                <!--<label class="control-label">-->
+                                    <!--<a [routerLink]="['/hf/managerProfile/', memo.manager.id]" target="_blank"><span><i class="glyphicon glyphicon-circle-arrow-right"></i></span></a>-->
+                                <!--</label>-->
                                 <div class="col-md-5">
                                     <select class="form-control" id="managerId" required
                                             [(ngModel)]="memo.manager.id" name="managerId" (change)="getManagerDataOnChange($event.target.value)"
-                                            #managerId="ngModel">
+                                            #managerId="ngModel" [disabled]="!canEdit()">
                                         <option *ngFor="let item of managerList" [value]="item.id">{{item.name}}</option>
                                     </select>
                                     <div [hidden]="managerId.valid || managerId.pristine" class="alert alert-danger">Manager is required</div>
@@ -58,7 +62,8 @@
                                         <div class="form-group form-horizontal">
                                             <label class="control-label col-md-1" for="fundSelect2" ><b>Fund:</b></label>
                                             <div class="col-md-5">
-                                                <select class="form-control" id="fundSelect2" [(ngModel)]="memo.fund.id" name="fundId" (change)="getFundData($event.target.value)">
+                                                <select class="form-control" id="fundSelect2" [(ngModel)]="memo.fund.id"
+                                                        name="fundId" (change)="getFundData($event.target.value)" [disabled]="!canEdit()">
                                                     <option *ngFor="let item of memo.manager.funds" [value]="item.id">{{item.name}}</option>
                                                 </select>
                                             </div>
@@ -75,7 +80,7 @@
                                             </tr>
                                             <tr>
                                                 <!--<td class="col-md-3"><b>Strategy</b></td>-->
-                                                <td class="col-md-3"><b>Strategy</b>{{memo?.fund?.strategy}}</td>
+                                                <td class="col-md-3"><b>Strategy </b>{{getStrategyName(memo?.fund?.strategy)}}</td>
                                             </tr>
                                         </table>
                                     </div>
@@ -114,33 +119,49 @@
                     <input type="hidden" id="memoType" name="memoType" />
                     <div class="row top-buffer" >
                         <div class="col-md-12">
-                            <div class="col-md-2">
-                                <label class="checkbox-inline">
-                                    <input type="radio" name="meetingtype" [ngModel]="memo.meetingType"
-                                           (ngModelChange)="memo.meetingType='MEETING'"  name="meetingType" value="MEETING">
-                                    <span>Meeting</span>
-                                </label>
-                            </div>
-                            <div class="col-md-2">
-                                <label class="checkbox-inline">
-                                    <input type="radio" name="meetingType" [ngModel]="memo.meetingType"
-                                           (ngModelChange)="memo.meetingType='CALL'; memo.meetingLocation='';"  name="meetingType" value="CALL">
-                                    <span>Call</span>
-                                </label>
-                            </div>
+                            <!--<div class="col-md-2">-->
+                                <!--<label class="checkbox-inline">-->
+                                    <!--<input type="radio" name="meetingtype" [ngModel]="memo.meetingType"-->
+                                           <!--(ngModelChange)="memo.meetingType='MEETING'"  name="meetingType" value="MEETING">-->
+                                    <!--<span>Meeting</span>-->
+                                <!--</label>-->
+                            <!--</div>-->
+                            <!--<div class="col-md-2">-->
+                                <!--<label class="checkbox-inline">-->
+                                    <!--<input type="radio" name="meetingType" [ngModel]="memo.meetingType"-->
+                                           <!--(ngModelChange)="memo.meetingType='CALL'; memo.meetingLocation='';"  name="meetingType" value="CALL">-->
+                                    <!--<span>Call</span>-->
+                                <!--</label>-->
+                            <!--</div>-->
                         </div>
                     </div>
                     <div class="row top-buffer" >
                         <div class="form-group form-horizontal">
                             <div class="col-md-12">
                                 <div class="col-md-6">
-                                    <div class="row top-buffer" >
-                                        <label class="control-label col-md-3">Firm name:</label>
-                                        <div class="col-md-9">
-                                            <input id="firmName" name="firmName" class="form-control" placeholder="Enter firm..." maxlength="250"
-                                                   [(ngModel)]="memo.firmName"/>
-                                        </div>
+
+                                    <div class="col-md-3">
+                                        <label class="checkbox-inline">
+                                            <input type="radio" name="meetingtype" [ngModel]="memo.meetingType"
+                                                   (ngModelChange)="memo.meetingType='MEETING'"  name="meetingType" value="MEETING">
+                                            <span>Meeting</span>
+                                        </label>
                                     </div>
+                                    <div class="col-md-3">
+                                        <label class="checkbox-inline">
+                                            <input type="radio" name="meetingType" [ngModel]="memo.meetingType"
+                                                   (ngModelChange)="memo.meetingType='CALL'; memo.meetingLocation='';"  name="meetingType" value="CALL">
+                                            <span>Call</span>
+                                        </label>
+                                    </div>
+
+                                    <!--<div class="row top-buffer" >-->
+                                        <!--<label class="control-label col-md-3">Firm name:</label>-->
+                                        <!--<div class="col-md-9">-->
+                                            <!--<input id="firmName" name="firmName" class="form-control" placeholder="Enter firm..." maxlength="250"-->
+                                                   <!--[(ngModel)]="memo.firmName"/>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
                                 </div>
                                 <div class="col-md-6">
                                     <div class="row top-buffer" >
@@ -504,7 +525,7 @@
                                                                     fileName="{{attachment.fileName}}">
                                         </memo-attachment-downloader>
 
-                                        <a (click)="deleteAttachment(attachment.id)">
+                                        <a (click)="deleteAttachment(attachment.id)" *ngIf="canEdit()">
                                             <i class="glyphicon glyphicon-trash"></i>
                                         </a>
                                     </div>
@@ -539,7 +560,7 @@
                     </div>
                     <div class="row top-buffer">
                         <div class="col-md-12">
-                            <button type="submit" class="btn btn-success pull-right" [disabled]="!memoForm.form.valid" *ngIf="showSaveButton()">Save</button>
+                            <button type="submit" class="btn btn-success pull-right" [disabled]="!memoForm.form.valid" *ngIf="canEdit()">Save</button>
                         </div>
                     </div>
                 </form>

@@ -185,7 +185,7 @@ public class TripMemoServiceImpl implements TripMemoService {
     }
 
     @Override
-    public boolean checkAccess(String token, Long entityId) {
+    public boolean checkOwner(String token, Long entityId) {
         TokenUserInfo tokenUserInfo = this.tokenService.decode(token);
         if(tokenUserInfo != null){
             EmployeeDto employeeDto = this.employeeService.findByUsername(tokenUserInfo.getUsername());

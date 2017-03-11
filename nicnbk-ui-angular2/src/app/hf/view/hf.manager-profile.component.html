@@ -2,8 +2,8 @@
     <div class="row top-buffer" >
         <div class="col-md-12">
             <ol class="breadcrumb">
-                <li><span *ngIf="this.breadcrumbParams != null"><a [routerLink]="['/hf/managerSearch', {params: this.breadcrumbParams}]">Hedge Funds</a></span>
-                    <span *ngIf="this.breadcrumbParams == null"><a [routerLink]="['/hf/managerSearch']">Hedge Funds</a></span>
+                <li><span *ngIf="this.breadcrumbParams != null"><a [routerLink]="['/hf/managerSearch', {params: this.breadcrumbParams}]">Manager Search</a></span>
+                    <span *ngIf="this.breadcrumbParams == null"><a [routerLink]="['/hf/managerSearch']">Manager Search</a></span>
                 </li>
                 <li class="active">Manager profile</li>
             </ol>
@@ -305,17 +305,17 @@
                             </div>
                         </div>
                         <br/>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="fundName">Fund</label>
-                                        <input type="text" class="form-control" id="fundName" placeholder="Enter fund name..."
-                                               name="fundName" [(ngModel)]="memoSearchParams.fundName"/>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <!--<div class="row">-->
+                            <!--<div class="col-md-12">-->
+                                <!--<div class="col-md-6">-->
+                                    <!--<div class="form-group">-->
+                                        <!--<label for="fundName">Fund</label>-->
+                                        <!--<input type="text" class="form-control" id="fundName" placeholder="Enter fund name..."-->
+                                               <!--name="fundName" [(ngModel)]="memoSearchParams.fundName"/>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</div>-->
                         <div class="row">
                             <div class="col-md-12">
                                 <button type="button" class="btn btn-success pull-right" (click)="search()">Search</button>
@@ -339,8 +339,9 @@
                             <thead>
                             <tr>
                                 <th>MEETING/CALL</th>
-                                <th>FIRM</th>
+                                <!--<th>FIRM</th>-->
                                 <th>FUND</th>
+                                <th>LOCATION</th>
                                 <th>DATE</th>
                                 <th>AUTHOR</th>
                                 <th>ACTIONS</th>
@@ -350,13 +351,14 @@
                             <tbody>
                             <tr *ngFor = "let memo of memoList" style="cursor: pointer" (click)="navigate(memo.memoType, memo.id)">
                                 <td width="10%" >{{memo.meetingType}}</td>
-                                <td width="30%"><a style="cursor: pointer" (click)="navigate(memo.memoType, memo.id)">{{memo.firmName}}</a></td>
-                                <td width="30%"><a style="cursor: pointer" (click)="navigate(memo.memoType, memo.id)">{{memo.fundName}}</a></td>
+                                <!--<td width="30%"><a style="cursor: pointer" (click)="navigate(memo.memoType, memo.id)">{{memo.firmName}}</a></td>-->
+                                <td width="30%">{{memo.fundName}}</td>
                                 <!--<td width="10%" th:text="${memoItem.meetingDate}"></td>-->
+                                <td width="10%">{{memo.meetingLocation}}</td>
                                 <td width="10%">{{memo.meetingDate}}</td>
-                                <td width="10%">{{memo.author}}</td>
+                                <td width="10%">{{memo.owner}}</td>
                                 <td width="5%">
-                                    <a><i class="glyphicon glyphicon-trash"></i></a>
+                                    <!--<a><i class="glyphicon glyphicon-trash"></i></a>-->
                                 </td>
                             </tr>
                             </tbody>

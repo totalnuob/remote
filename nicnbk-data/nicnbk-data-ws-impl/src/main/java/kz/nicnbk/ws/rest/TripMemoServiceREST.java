@@ -64,7 +64,7 @@ public class TripMemoServiceREST {
         // check access by owner
         if(tripMemoDto.getId() != null){
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            boolean access = this.tripMemoService.checkAccess((String)auth.getDetails(), tripMemoDto.getId());
+            boolean access = this.tripMemoService.checkOwner((String)auth.getDetails(), tripMemoDto.getId());
             if(!access){
                 Response response = new Response();
                 response.setSuccess(false);
@@ -150,6 +150,17 @@ public class TripMemoServiceREST {
     @RequestMapping(value="/attachment/delete/{memoId}/{fileId}", method=RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<?> deleteFile(@PathVariable(value="memoId") Long tripMemoId, @PathVariable(value="fileId") Long fileId){
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        boolean access = this.tripMemoService.checkOwner((String)auth.getDetails(), tripMemoId);
+        if(!access){
+            Response response = new Response();
+            response.setSuccess(false);
+            ResponseMessage message = new ResponseMessage();
+            message.setNameEn("Accees denied");
+            response.setMessage(message);
+            return new ResponseEntity<>(response, null, HttpStatus.UNAUTHORIZED);
+        }
 
         boolean deleted = this.tripMemoService.deleteAttachment(tripMemoId, fileId);
 

@@ -159,7 +159,7 @@
                                                                     fileName="{{attachment?.fileName}}">
                                         </memo-attachment-downloader>
 
-                                        <a (click)="deleteAttachment(attachment.id)">
+                                        <a (click)="deleteAttachment(attachment.id)" *ngIf="canEdit()">
                                             <i class="glyphicon glyphicon-trash"></i>
                                         </a>
                                     </div>
@@ -179,7 +179,7 @@
                     </div>
                     <div class="row top-buffer">
                         <div class="col-md-12">
-                            <button type="submit" class="btn btn-success pull-right" name="saveMemo" [disabled]="!tripmemoForm.form.valid" *ngIf="showSaveButton()">Save</button>
+                            <button type="submit" class="btn btn-success pull-right" name="saveMemo" [disabled]="!tripmemoForm.form.valid" *ngIf="canEdit()">Save</button>
                         </div>
                     </div>
                 </form>

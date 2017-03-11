@@ -51,9 +51,6 @@ export class TripMemoEditComponent extends CommonFormViewComponent implements On
         //loadLookups
         this.sub = this.loadLookups();
 
-        // TODO: loading employees
-        //this.waitSleep(700);
-
         this.sub = this.route
             .params
             .subscribe(params => {
@@ -231,8 +228,7 @@ export class TripMemoEditComponent extends CommonFormViewComponent implements On
             );
     }
 
-    public showSaveButton() {
-
+    public canEdit() {
         // only owner can edit
         var moduleAccessChecker = new ModuleAccessCheckerService;
         if(moduleAccessChecker.checkAccessAdmin()){

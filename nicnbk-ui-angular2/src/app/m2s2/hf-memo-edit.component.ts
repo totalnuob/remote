@@ -108,7 +108,7 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
 
         // TODO: wait/sync on lookup loading
         // TODO: sync on subscribe results
-        //this.waitSleep(700);
+        //this.waitSleep(100);
 
 
         // parse params and load data
@@ -145,16 +145,16 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
                                 }
 
                                 // preselect memo strategies
-                                this.preselectStrategies();
+                                //this.preselectStrategies();
 
                                 // preselect memo geographies
-                                this.preselectGeographies();
+                                //this.preselectGeographies();
 
                                 // preselect memo attendees
                                 this.preselectAttendeesNIC();
 
                                 //if(this.memo.manager != null && this.memo.fund == null){
-                                //    this.toggleFund();
+                                //    this.toggleFund
                                 //}
 
                                 if(this.memo.fund != null){
@@ -272,7 +272,6 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
         this.memo.strategies = this.convertToServiceModel(this.memo.strategies);
         this.memo.geographies = this.convertToServiceModel(this.memo.geographies);
 
-        console.log("Saving ");
         console.log(this.memo);
 
         this.memoService.saveHF(this.memo)
@@ -569,8 +568,16 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
         this.memo.suitable = false;
     }
 
-    public showSaveButton(){
+    public canEdit(){
         return this.moduleAccessChecler.checkAccessHedgeFundsEditor();
+    }
+
+    getStrategyName(code){
+        for(var i = 0; i < this.strategyList.length; i++){
+            if(this.strategyList[i].id === code){
+                return this.strategyList[i].text;
+            }
+        }
     }
 
 }

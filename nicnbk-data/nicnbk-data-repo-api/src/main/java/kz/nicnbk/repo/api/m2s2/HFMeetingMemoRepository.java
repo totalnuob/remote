@@ -75,4 +75,10 @@ public interface HFMeetingMemoRepository extends PagingAndSortingRepository<Hedg
                                  @Param("firmName")String firmName,
                                  @Param("fundName")String fundName,
                                  @Param("dateTo") @Temporal(TemporalType.DATE) Date dateTo, Pageable pageable);
+
+    @Query("select manager.name from HedgeFundsMeetingMemo memo LEFT JOIN memo.manager manager where memo.id=:id")
+    String getManagerNameByMemoId(@Param("id") Long id);
+
+    @Query("select fund.name from HedgeFundsMeetingMemo memo LEFT JOIN memo.fund fund where memo.id=:id")
+    String getFundNameByMemoId(@Param("id") Long id);
 }

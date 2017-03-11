@@ -5,10 +5,10 @@
                 <div class="col-md-12">
                     <ol class="breadcrumb">
                         <li>
-                            <span *ngIf="this.breadcrumbParams != null"><a [routerLink]="['/m2s2', {params: this.breadcrumbParams }]">Meeting Memo</a></span>
-                            <span *ngIf="this.breadcrumbParams == null"><a [routerLink]="['/m2s2']">Meeting Memo</a></span>
+                            <span *ngIf="this.breadcrumbParams != null"><a [routerLink]="['/m2s2', {params: this.breadcrumbParams }]">M2S2</a></span>
+                            <span *ngIf="this.breadcrumbParams == null"><a [routerLink]="['/m2s2']">M2S2</a></span>
                         </li>
-                        <li class="active">Real Estate</li>
+                        <li class="active">RE Memo</li>
                     </ol>
                 </div>
             </div>
@@ -187,125 +187,132 @@
                         </div>
                     </div>
 
-                    <a (click)="toggle()">Fund details {{ visible ? '&#9660;' : '&#9658;' }}</a>
-                    <div [hidden]="!visible">
-                        <div class="row top-buffer withpadding">
-                            <div class="col-md-5">
-                                <input type="text" placeholder="Fund name... " name="fundName" class="form-control" id="fundName"
-                                       [(ngModel)]="memo.fundName" name="fundName" maxlength="250"/>
-                            </div>
-                        </div>
-                        <br>
-                        <div class="row top-buffer">
-                            <div class="col-md-12">
-                                <label class="checkbox-inline control-label col-md-2" for="currentlyFundRaising">
-                                    <input  type="checkbox" id="currentlyFundRaising" name="currentlyFundRaising" [(ngModel)]="memo.currentlyFundRaising"/>
-                                    <span>Currently fund-raising</span>
-                                </label>
-                                <label class="control-label col-md-1">Closing schedule</label>
-                                <div class="col-md-2">
-                                    <select id="closingSchedule" name="closingSchedule" class="form-control" [disabled]="!memo.currentlyFundRaising"
-                                            [(ngModel)]="memo.closingSchedule">
-                                        <option *ngFor="let item of closingScheduleList" [value]="item.code">{{item.nameEn}}</option>
-                                    </select>
+                    <!--<a (click)="toggle()">Fund details {{ visible ? '&#9660;' : '&#9658;' }}</a>-->
+
+                    <div class="panel-group" id="accordion">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseFund" (click)="toggleFund()">
+                            {{ visible ? 'Hide fund details &#9660;' : 'Show fund details &#9658;' }}</a>
+
+                        <div id="collapseFund" [ngClass]="{'collapse in': memo.fundName != null, 'collapse': memo.fundName == null}">
+                            <div class="row top-buffer withpadding">
+                                <div class="col-md-5">
+                                    <input type="text" placeholder="Fund name... " name="fundName" class="form-control" id="fundName"
+                                           [(ngModel)]="memo.fundName" name="fundName" maxlength="250"/>
                                 </div>
-                                <div class="form-group form-horizontal">
-                                    <label for="size" class="control-label col-md-2">Size, mn</label>
+                            </div>
+                            <br>
+                            <div class="row top-buffer">
+                                <div class="col-md-12">
+                                    <label class="checkbox-inline control-label col-md-2" for="currentlyFundRaising">
+                                        <input  type="checkbox" id="currentlyFundRaising" name="currentlyFundRaising" [(ngModel)]="memo.currentlyFundRaising"/>
+                                        <span>Currently fund-raising</span>
+                                    </label>
+                                    <label class="control-label col-md-1">Closing schedule</label>
                                     <div class="col-md-2">
-                                        <input class="form-control" id="size" name="fundSize" [(ngModel)]="memo.fundSize" pattern="[+]?[0-9]*\.?[0-9]+"  #fundSize="ngModel"/>
-                                        <div [hidden]="fundSize.valid || fundSize.pristine" class="alert alert-danger">
-                                            Only positive number could be entered
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <select id="sizeCurrency" name="fundSizeCurrency" class="form-control" [(ngModel)] = "memo.fundSizeCurrency">
-                                            <option *ngFor="let item of currencyList" [value]="item.code">{{item.nameEn}}</option>
+                                        <select id="closingSchedule" name="closingSchedule" class="form-control" [disabled]="!memo.currentlyFundRaising"
+                                                [(ngModel)]="memo.closingSchedule">
+                                            <option *ngFor="let item of closingScheduleList" [value]="item.code">{{item.nameEn}}</option>
                                         </select>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row top-buffer">
-                            <div class="col-md-12">
-                                <div class="col-md-4">&nbsp;</div>
-                                <div class="form-group form-horizontal">
-                                    <label for="preInvested" class="control-label col-md-3">Predecessor fund invested %</label>
-                                    <div class="col-md-2">
-                                        <input type="text" name="preInvested" class="form-control" id="preinvested" [(ngModel)]="memo.preInvested"
-                                               pattern="[+]?[0-9]*\.?[0-9]+" #preInvested="ngModel" />
-                                        <div [hidden]="preInvested.valid || preInvested.pristine" class="alert alert-danger">
-                                            Only positive number could be entered
+                                    <div class="form-group form-horizontal">
+                                        <label for="size" class="control-label col-md-2">Size, mn</label>
+                                        <div class="col-md-2">
+                                            <input class="form-control" id="size" name="fundSize" [(ngModel)]="memo.fundSize" pattern="[+]?[0-9]*\.?[0-9]+"  #fundSize="ngModel"/>
+                                            <div [hidden]="fundSize.valid || fundSize.pristine" class="alert alert-danger">
+                                                Only positive number could be entered
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <select id="sizeCurrency" name="fundSizeCurrency" class="form-control" [(ngModel)] = "memo.fundSizeCurrency">
+                                                <option *ngFor="let item of currencyList" [value]="item.code">{{item.nameEn}}</option>
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-2">&nbsp;</div>
                             </div>
-                        </div>
-                        <br>
-                        <div class="row top-buffer">
-                            <div class="col-md-12">
-                                <label class="checkbox-inline col-md-2">
-                                    <input type="checkbox" id="openingSoon" name="openingSoon" [(ngModel)] = "memo.openingSoon" />
-                                    <span>Opening soon</span>
-                                </label>
-                                <label for="openingSchedule" class="col-md-1">Opening schedule</label>
-                                <div class="col-md-2">
-                                    <select id="openingSchedule" name="openingSchedule" class="form-control" [disabled]="!memo.openingSoon" [(ngModel)]="memo.openingSchedule">
-                                        <option *ngFor="let item of openingScheduleList" [value]="item.code">{{item.nameEn}}</option>
-                                    </select>
-                                </div>
-                                <div class="form-group form-horizontal">
-                                    <label class="control-label col-md-1">Strategy</label>
-                                    <div class="col-md-2" *ngIf="strategyList?.length > 0">
-                                        <ng-select #strategySelect [initData]="memo.strategies"
-                                                   [multiple]="true"
-                                                   [items]="strategyList"
-                                                   (data)="refreshStrategy($event)"
-                                                   (selected)="selected($event)"
-                                                   (removed)="removed($event)"
-                                                   placeholder="No strategy selected"></ng-select>
+                            <div class="row top-buffer">
+                                <div class="col-md-12">
+                                    <div class="col-md-4">&nbsp;</div>
+                                    <div class="form-group form-horizontal">
+                                        <label for="preInvested" class="control-label col-md-3">Predecessor fund invested %</label>
+                                        <div class="col-md-2">
+                                            <input type="text" name="preInvested" class="form-control" id="preinvested" [(ngModel)]="memo.preInvested"
+                                                   pattern="[+]?[0-9]*\.?[0-9]+" #preInvested="ngModel" />
+                                            <div [hidden]="preInvested.valid || preInvested.pristine" class="alert alert-danger">
+                                                Only positive number could be entered
+                                            </div>
+                                        </div>
                                     </div>
-                                    <label class="control-label col-md-1">Geography</label>
-                                    <div class="col-md-2" *ngIf="geographyList?.length > 0">
-                                        <ng-select #geographySelect [data]="memo.geographies"
-                                                   [multiple]="true"
-                                                   [items]="geographyList"
-                                                   (data)="refreshGeography($event)"
-                                                   (selected)="selected($event)"
-                                                   (removed)="removed($event)"
-                                                   placeholder="No geography selected"></ng-select>
-                                    </div>
+                                    <div class="col-md-2">&nbsp;</div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row top-buffer">
-                            <div class="col-md-12">
-                                <label class="col-md-2">Suitability(Y/N)</label>
-                                <div class="col-md-1">
-                                    <label class="checkbox-inline">
-                                        <input type="radio" [checked]="!memo.suitable"
-                                               (click)="setNonSuitable()" name="suitability" value=false/>
-                                        <span>N</span>
+                            <br>
+                            <div class="row top-buffer">
+                                <div class="col-md-12">
+                                    <label class="checkbox-inline col-md-2">
+                                        <input type="checkbox" id="openingSoon" name="openingSoon" [(ngModel)] = "memo.openingSoon" />
+                                        <span>Opening soon</span>
                                     </label>
+                                    <label for="openingSchedule" class="col-md-1">Opening schedule</label>
+                                    <div class="col-md-2">
+                                        <select id="openingSchedule" name="openingSchedule" class="form-control" [disabled]="!memo.openingSoon" [(ngModel)]="memo.openingSchedule">
+                                            <option *ngFor="let item of openingScheduleList" [value]="item.code">{{item.nameEn}}</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group form-horizontal">
+                                        <label class="control-label col-md-1">Strategy</label>
+                                        <div class="col-md-2" *ngIf="strategyList?.length > 0">
+                                            <ng-select #strategySelect [initData]="memo.strategies"
+                                                       [multiple]="true"
+                                                       [items]="strategyList"
+                                                       (data)="refreshStrategy($event)"
+                                                       (selected)="selected($event)"
+                                                       (removed)="removed($event)"
+                                                       placeholder="No strategy selected"></ng-select>
+                                        </div>
+                                        <label class="control-label col-md-1">Geography</label>
+                                        <div class="col-md-2" *ngIf="geographyList?.length > 0">
+                                            <ng-select #geographySelect [data]="memo.geographies"
+                                                       [multiple]="true"
+                                                       [items]="geographyList"
+                                                       (data)="refreshGeography($event)"
+                                                       (selected)="selected($event)"
+                                                       (removed)="removed($event)"
+                                                       placeholder="No geography selected"></ng-select>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col-md-1">
-                                    <label class="checkbox-inline">
-                                        <input type="radio" name="suitability" [checked]="memo.suitable"
-                                               (click)="setSuitable(); reason.reset();" value=true/>
-                                        <span>Y</span>
-                                    </label>
-                                </div>
-                                <div class="col-md-1">&nbsp;</div>
-                                <label for="nonsuitableReason" class="col-md-1">If No, why</label>
-                                <div class="col-md-5">
-                                    <textarea fz-elastic autosize spellcheck="false" name="nonsuitableReason" class="form-control col-md-4" id="nonsuitableReason" maxlength="1000"
-                                              required #reason="ngModel"
-                                              [disabled]="memo.suitable" [(ngModel)]="memo.nonsuitableReason"></textarea>
-                                    <div [hidden]="reason.valid || reason.pristine" class="alert alert-danger">Description is required</div>
+                            </div>
+                            <div class="row top-buffer">
+                                <div class="col-md-12">
+                                    <label class="col-md-2">Suitability(Y/N)</label>
+                                    <div class="col-md-1">
+                                        <label class="checkbox-inline">
+                                            <input type="radio" [checked]="!memo.suitable"
+                                                   (click)="setNonSuitable()" name="suitability" value=false/>
+                                            <span>N</span>
+                                        </label>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <label class="checkbox-inline">
+                                            <input type="radio" name="suitability" [checked]="memo.suitable"
+                                                   (click)="setSuitable(); reason.reset();" value=true/>
+                                            <span>Y</span>
+                                        </label>
+                                    </div>
+                                    <div class="col-md-1">&nbsp;</div>
+                                    <label for="nonsuitableReason" class="col-md-1">If No, why</label>
+                                    <div class="col-md-5">
+                                        <textarea fz-elastic autosize spellcheck="false" name="nonsuitableReason" class="form-control col-md-4" id="nonsuitableReason" maxlength="1000"
+                                                  required #reason="ngModel"
+                                                  [disabled]="memo.suitable" [(ngModel)]="memo.nonsuitableReason"></textarea>
+                                        <div [hidden]="reason.valid || reason.pristine" class="alert alert-danger">Description is required</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                     <hr style="border-top: 1px solid #B5AEAE"/>
                     <div class="row top-buffer withpadding">
                         <div class="col-md-12" style="background-color:#5bc0de; height: 34px">
@@ -442,7 +449,7 @@
                                                                     fileName="{{attachment.fileName}}">
                                         </memo-attachment-downloader>
 
-                                        <a (click)="deleteAttachment(attachment.id)">
+                                        <a (click)="deleteAttachment(attachment.id)" *ngIf="canEdit()">
                                             <i class="glyphicon glyphicon-trash"></i>
                                         </a>
                                     </div>
@@ -480,7 +487,7 @@
                     </div>
                     <div class="row top-buffer">
                         <div class="col-md-12">
-                            <button type="submit" class="btn btn-success pull-right" [disabled]="!memoForm.form.valid" *ngIf="showSaveButton()">Save</button>
+                            <button type="submit" class="btn btn-success pull-right" [disabled]="!memoForm.form.valid" *ngIf="canEdit()">Save</button>
                         </div>
                     </div>
                 </form>

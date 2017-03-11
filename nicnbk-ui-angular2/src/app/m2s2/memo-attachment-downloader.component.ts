@@ -33,6 +33,7 @@ export class MemoAttachmentDownloaderComponent  extends CommonService{
 
         // Create the Xhr request object
         let xhr = new XMLHttpRequest();
+        xhr.withCredentials = true; // send auth token with the request
         // TODO: url const
         let url =  DATA_APP_URL + `m2s2/attachment/${this.fileId}`;
         xhr.open('GET', url, true);
