@@ -9,7 +9,7 @@
 
 <div class="container">
     <div class="row withpadding">
-        <a [routerLink]="['/news/edit/',0 ]" class="btn btn-primary pull-right" *ngIf="showNewsCreateButton()">Add News</a>
+        <a [routerLink]="['/news/edit/',0 ]" class="btn btn-primary pull-right" *ngIf="canEdit()">Add News</a>
     </div>
     <ul class="nav nav-tabs">
         <li class="active">
@@ -55,7 +55,7 @@
                                        (click) = "getNewsById(news.id)" data-target="#newsModal">View</a>
                                 </div>
                                 <div class="col-md-1">
-                                    <a [routerLink]="['/news/edit/', news.id]" class="btn btn-primary btn-sm" *ngIf="showNewsCreateButton()" >Edit</a>
+                                    <a [routerLink]="['/news/edit/', news.id]" class="btn btn-primary btn-sm" *ngIf="canEdit()" >Edit</a>
                                 </div>
                             </div>
                             <div class="row">
@@ -93,7 +93,7 @@
                                        (click) = "getNewsById(news.id)" data-target="#newsModal">view</a>
                                 </div>
                                 <div class="col-md-1">
-                                    <a [routerLink]="['/news/edit/', news.id]" class="btn btn-primary btn-sm" *ngIf="showNewsCreateButton()" >Edit</a>
+                                    <a [routerLink]="['/news/edit/', news.id]" class="btn btn-primary btn-sm" *ngIf="canEdit()" >Edit</a>
                                 </div>
                             </div>
                             <div class="row">
@@ -131,7 +131,7 @@
                                        (click) = "getNewsById(news.id)" data-target="#newsModal">view</a>
                                 </div>
                                 <div class="col-md-1">
-                                    <a [routerLink]="['/news/edit/', news.id]" class="btn btn-primary btn-sm" *ngIf="showNewsCreateButton()" >Edit</a>
+                                    <a [routerLink]="['/news/edit/', news.id]" class="btn btn-primary btn-sm" *ngIf="canEdit()" >Edit</a>
                                 </div>
                             </div>
                             <div class="row">
@@ -169,7 +169,7 @@
                                        (click) = "getNewsById(news.id)" data-target="#newsModal">view</a>
                                 </div>
                                 <div class="col-md-1">
-                                    <a [routerLink]="['/news/edit/', news.id]" class="btn btn-primary btn-sm" *ngIf="showNewsCreateButton()" >Edit</a>
+                                    <a [routerLink]="['/news/edit/', news.id]" class="btn btn-primary btn-sm" *ngIf="canEdit()" >Edit</a>
                                 </div>
                             </div>
                             <div class="row">
@@ -207,7 +207,7 @@
                                        (click) = "getNewsById(news.id)" data-target="#newsModal">view</a>
                                 </div>
                                 <div class="col-md-1">
-                                    <a [routerLink]="['/news/edit/', news.id]" class="btn btn-primary btn-sm" *ngIf="showNewsCreateButton()" >Edit</a>
+                                    <a [routerLink]="['/news/edit/', news.id]" class="btn btn-primary btn-sm" *ngIf="canEdit()" >Edit</a>
                                 </div>
                             </div>
                             <div class="row">
@@ -245,7 +245,7 @@
                                        (click) = "getNewsById(news.id)" data-target="#newsModal">view</a>
                                 </div>
                                 <div class="col-md-1">
-                                    <a [routerLink]="['/news/edit/', news.id]" class="btn btn-primary btn-sm" *ngIf="showNewsCreateButton()" >Edit</a>
+                                    <a [routerLink]="['/news/edit/', news.id]" class="btn btn-primary btn-sm" *ngIf="canEdit()" >Edit</a>
                                 </div>
                             </div>
                             <div class="row">
@@ -283,7 +283,7 @@
                                        (click) = "getNewsById(news.id)" data-target="#newsModal">view</a>
                                 </div>
                                 <div class="col-md-1">
-                                    <a [routerLink]="['/news/edit/', news.id]" class="btn btn-primary btn-sm" *ngIf="showNewsCreateButton()" >Edit</a>
+                                    <a [routerLink]="['/news/edit/', news.id]" class="btn btn-primary btn-sm" *ngIf="canEdit()" >Edit</a>
                                 </div>
                             </div>
                             <div class="row">

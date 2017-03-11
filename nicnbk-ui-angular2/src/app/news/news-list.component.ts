@@ -110,7 +110,7 @@ export class NewsListComponent implements OnInit{
             );
     }
 
-    public showNewsCreateButton(){
+    public canEdit(){
         return this.moduleAccessChecker.checkAccessNewsEdit();
     }
 }

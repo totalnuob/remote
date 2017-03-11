@@ -91,7 +91,7 @@ export class NewsEditComponent extends CommonFormViewComponent implements OnInit
         // TODO: remove jQuery
         this.newsItem.content = $("#editor").html().replace(/<script[^>]*>/gi, "&lt;script&rt;").replace(/<\/script[^>]*>/gi, "&lt;/script&rt;");
 
-        console.log(this.newsItem.content);
+        //console.log(this.newsItem.content);
 
         this.newsService.save(this.newsItem)
             .subscribe(

@@ -40,10 +40,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
     }
 
+    // TODO: change ROLE.CODE field size and remove this conversion, store long code
     private String convertToOutputRoleName(String roleName){
         switch(roleName){
             case "ADMIN":
                 return "ROLE_ADMIN";
+            case "NEWS_EDIT":
+                return "ROLE_NEWS_EDITOR";
             case "HF_EDIT":
                 return "ROLE_HEDGE_FUND_EDITOR";
             case "HF_VIEW":

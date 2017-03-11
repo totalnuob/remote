@@ -10,3 +10,5 @@ INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(42, 'RA_VIEW', 'Rep
 INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(51, 'SRM_EDIT', 'Strategy and Risk Management - Editor', '', '');
 INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(52, 'SRM_VIEW', 'Strategy and Risk Management - Viewer', '', '');
 
+INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(101, 'NEWS_EDIT', 'News - Editor', '', '');
+
