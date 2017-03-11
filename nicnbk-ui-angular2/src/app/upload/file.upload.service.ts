@@ -15,6 +15,7 @@ export class FileUploadService {
                 formData.append("file", files[i], files[i].name);
             }
 
+            xhr.withCredentials = true;
             xhr.onreadystatechange = () => {
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
