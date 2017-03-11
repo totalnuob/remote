@@ -2,11 +2,15 @@ package kz.nicnbk.service.impl.m2s2;
 
 import kz.nicnbk.common.service.util.PaginationUtils;
 import kz.nicnbk.common.service.util.StringUtils;
+import kz.nicnbk.repo.api.m2s2.HFMeetingMemoRepository;
 import kz.nicnbk.repo.api.m2s2.MeetingMemoRepository;
 import kz.nicnbk.repo.api.m2s2.MemoFilesRepository;
+import kz.nicnbk.repo.api.m2s2.PEMeetingMemoRepository;
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
+import kz.nicnbk.repo.model.m2s2.HedgeFundsMeetingMemo;
 import kz.nicnbk.repo.model.m2s2.MeetingMemo;
 import kz.nicnbk.repo.model.m2s2.MemoFiles;
+import kz.nicnbk.repo.model.m2s2.PrivateEquityMeetingMemo;
 import kz.nicnbk.service.api.files.FileService;
 import kz.nicnbk.service.api.m2s2.MeetingMemoService;
 import kz.nicnbk.service.converter.m2s2.MeetingMemoEntityConverter;
@@ -43,6 +47,12 @@ public class MeetingMemoServiceImpl implements MeetingMemoService {
     @Autowired
     private FileService fileService;
 
+    @Autowired
+    private PEMeetingMemoRepository peMeetingMemoRepository;
+
+    @Autowired
+    private HFMeetingMemoRepository hfMeetingMemoRepository;
+
     //@Override
     private Long save(MeetingMemoDto memoDto) {
         // save memo
@@ -67,6 +77,15 @@ public class MeetingMemoServiceImpl implements MeetingMemoService {
         MeetingMemoDto memoDto = memoConverter.disassemble(memo);
         memoDto.setFiles(getAttachments(id));
         return memoDto;
+    }
+
+    @Override
+    public int getMemoType(Long id) {
+        MeetingMemo memo = this.memoRepository.findOne(id);
+        if(memo != null){
+            return memo.getMemoType();
+        }
+        return 0;
     }
 
     @Override
@@ -119,6 +138,25 @@ public class MeetingMemoServiceImpl implements MeetingMemoService {
                 result.setSearchParams(searchParams.getSearchParamsAsString());
             }
             result.setMemos(memoConverter.disassembleList(memoPage.getContent()));
+
+
+            // TODO: temp, need a new DB structure
+            // firm and fund names
+            for(MeetingMemoDto memoDto: result.getMemos()){
+                if(memoDto.getMemoType() == 2){
+                    // PE memo
+                    String firmName = this.peMeetingMemoRepository.getFirmNameByMemoId(memoDto.getId());
+                    String fundName = this.peMeetingMemoRepository.getFundNameByMemoId(memoDto.getId());
+                    memoDto.setFirmName(firmName);
+                    memoDto.setFundName(fundName);
+                }else if(memoDto.getMemoType() == 3){
+                    // HF memo
+                    String firmName = this.hfMeetingMemoRepository.getManagerNameByMemoId(memoDto.getId());
+                    String fundName = this.hfMeetingMemoRepository.getFundNameByMemoId(memoDto.getId());
+                    memoDto.setFirmName(firmName);
+                    memoDto.setFundName(fundName);
+                }
+            }
         }
         return result;
     }

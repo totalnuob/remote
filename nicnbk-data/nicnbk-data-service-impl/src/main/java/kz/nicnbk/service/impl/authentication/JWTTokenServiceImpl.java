@@ -43,8 +43,8 @@ public class JWTTokenServiceImpl implements TokenService {
         return this.authPrivateKey.get("key");
     }
 
-    @Scheduled(cron = "0 1 5 * * ?") // at 5:01 every day
-    public void resetAuthPrivateKey(){
+    //@Scheduled(cron = "0 1 5 * * ?") // at 5:01 every day
+    private void resetAuthPrivateKey(){
         this.authPrivateKey.put("key", HashUtils.generateRandomText());
         // TODO: log
         System.out.println("Generated token authentication key (RESET): " + getKey());

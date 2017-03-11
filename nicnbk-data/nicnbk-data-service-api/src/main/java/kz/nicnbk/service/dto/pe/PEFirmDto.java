@@ -12,10 +12,10 @@ import java.util.Set;
  */
 public class PEFirmDto extends HistoryBaseEntityDto<PEFirm> {
     private String firmName;
-    private int foundedYear;
-    private float aum;
-    private int invTeamSize;
-    private int opsTeamSize;
+    private Integer foundedYear;
+    private Float aum;
+    private Integer invTeamSize;
+    private Integer opsTeamSize;
     //    private Set<PEFirm> peers;
     private Set<BaseDictionaryDto> strategy;
     private Set<BaseDictionaryDto> industryFocus;
@@ -43,35 +43,35 @@ public class PEFirmDto extends HistoryBaseEntityDto<PEFirm> {
         this.firmName = firmName;
     }
 
-    public int getFoundedYear() {
+    public Integer getFoundedYear() {
         return foundedYear;
     }
 
-    public void setFoundedYear(int foundedYear) {
+    public void setFoundedYear(Integer foundedYear) {
         this.foundedYear = foundedYear;
     }
 
-    public float getAum() {
+    public Float getAum() {
         return aum;
     }
 
-    public void setAum(float aum) {
+    public void setAum(Float aum) {
         this.aum = aum;
     }
 
-    public int getInvTeamSize() {
+    public Integer getInvTeamSize() {
         return invTeamSize;
     }
 
-    public void setInvTeamSize(int invTeamSize) {
+    public void setInvTeamSize(Integer invTeamSize) {
         this.invTeamSize = invTeamSize;
     }
 
-    public int getOpsTeamSize() {
+    public Integer getOpsTeamSize() {
         return opsTeamSize;
     }
 
-    public void setOpsTeamSize(int opsTeamSize) {
+    public void setOpsTeamSize(Integer opsTeamSize) {
         this.opsTeamSize = opsTeamSize;
     }
 

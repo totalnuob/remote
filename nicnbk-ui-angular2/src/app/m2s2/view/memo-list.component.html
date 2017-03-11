@@ -75,24 +75,24 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="firmName">Firm</label>
-                                <input type="text" class="form-control" id="firmName" placeholder="Enter firm name..."
-                                    [(ngModel)]="searchParams.firmName"/>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                    <label for="fundName">Fund</label>
-                                <input type="text" class="form-control" id="fundName" placeholder="Enter fund name..."
-                                       [(ngModel)]="searchParams.fundName" [disabled]="searchParams.memoType == 'GENERAL'"/>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <!--<div class="row">-->
+                    <!--<div class="col-md-12">-->
+                        <!--<div class="col-md-6">-->
+                            <!--<div class="form-group">-->
+                                <!--<label for="firmName">Firm</label>-->
+                                <!--<input type="text" class="form-control" id="firmName" placeholder="Enter firm name..."-->
+                                    <!--[(ngModel)]="searchParams.firmName"/>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--<div class="col-md-6">-->
+                            <!--<div class="form-group">-->
+                                    <!--<label for="fundName">Fund</label>-->
+                                <!--<input type="text" class="form-control" id="fundName" placeholder="Enter fund name..."-->
+                                       <!--[(ngModel)]="searchParams.fundName" [disabled]="searchParams.memoType == 'GENERAL'"/>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
                 <br/>
                 <div class="row">
                     <div class="col-md-12">
@@ -130,13 +130,16 @@
                 <tr *ngFor = "let memo of memoList" style="cursor: pointer" (click)="navigate(memo.memoType, memo.id)">
                     <td width="5%">{{getMemoTypeName(memo.memoType)}}</td>
                     <td width="10%" >{{memo.meetingType}}</td>
-                    <td width="30%"><a style="cursor: pointer" (click)="navigate(memo.memoType, memo.id)">{{memo.firmName}}</a></td>
-                    <td width="30%"><a style="cursor: pointer" (click)="navigate(memo.memoType, memo.id)">{{memo.fundName}}</a></td>
+                    <!--<td width="30%"><a style="cursor: pointer" (click)="navigate(memo.memoType, memo.id)">{{memo.firmName}}</a></td>-->
+                    <!--<td width="30%"><a style="cursor: pointer" (click)="navigate(memo.memoType, memo.id)">{{memo.fundName}}</a></td>-->
                     <!--<td width="10%" th:text="${memoItem.meetingDate}"></td>-->
+                    <td width="30%">{{memo.firmName}}</td>
+                    <td width="30%">{{memo.fundName}}</td>
                     <td width="10%">{{memo.meetingDate}}</td>
-                    <td width="10%">{{memo.author}}</td>
+                    <!--<td width="10%">{{memo.author}}</td>-->
+                    <td width="10%">{{memo.owner}}</td>
                     <td width="5%">
-                        <a><i class="glyphicon glyphicon-trash"></i></a>
+                        <!--<a><i class="glyphicon glyphicon-trash"></i></a>-->
                     </td>
                 </tr>
                 </tbody>

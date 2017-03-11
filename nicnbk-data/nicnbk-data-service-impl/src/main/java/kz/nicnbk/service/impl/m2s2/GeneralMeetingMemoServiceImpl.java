@@ -87,7 +87,7 @@ public class GeneralMeetingMemoServiceImpl implements GeneralMeetingMemoService 
     }
 
     @Override
-    public boolean checkAccess(String token, Long memoId) {
+    public boolean checkOwner(String token, Long memoId) {
         TokenUserInfo tokenUserInfo = this.tokenService.decode(token);
         if(tokenUserInfo != null){
             EmployeeDto employeeDto = this.employeeService.findByUsername(tokenUserInfo.getUsername());

@@ -228,7 +228,7 @@ export class TripMemoEditComponent extends CommonFormViewComponent implements On
             );
     }
 
-    public showSaveButton() {
+    public canEdit() {
         // only owner can edit
         var moduleAccessChecker = new ModuleAccessCheckerService;
         if(moduleAccessChecker.checkAccessAdmin()){

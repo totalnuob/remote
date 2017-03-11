@@ -265,7 +265,7 @@ export class GeneralMemoEditComponent extends CommonFormViewComponent implements
             );
     }
 
-    public showSaveButton() {
+    public canEdit() {
         // only owner can edit
         var moduleAccessChecker = new ModuleAccessCheckerService;
         if(moduleAccessChecker.checkAccessAdmin()){

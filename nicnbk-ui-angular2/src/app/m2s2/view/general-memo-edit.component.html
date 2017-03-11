@@ -5,10 +5,10 @@
                 <div class="col-md-12">
                     <ol class="breadcrumb">
                         <li>
-                            <span *ngIf="this.breadcrumbParams != null"><a [routerLink]="['/m2s2', {params: this.breadcrumbParams }]">Meeting Memo</a></span>
-                            <span *ngIf="this.breadcrumbParams == null"><a [routerLink]="['/m2s2']">Meeting Memo</a></span>
+                            <span *ngIf="this.breadcrumbParams != null"><a [routerLink]="['/m2s2', {params: this.breadcrumbParams }]">M2S2</a></span>
+                            <span *ngIf="this.breadcrumbParams == null"><a [routerLink]="['/m2s2']">M2S2</a></span>
                         </li>
-                        <li class="active">General</li>
+                        <li class="active">General memo</li>
                     </ol>
                 </div>
             </div>
@@ -243,7 +243,7 @@
                                                                     fileName="{{attachment.fileName}}">
                                         </memo-attachment-downloader>
 
-                                        <a (click)="deleteAttachment(attachment.id)">
+                                        <a (click)="deleteAttachment(attachment.id)" *ngIf="canEdit()">
                                             <i class="glyphicon glyphicon-trash"></i>
                                         </a>
                                     </div>
@@ -276,7 +276,7 @@
                     </div>
                     <div class="row top-buffer">
                         <div class="col-md-12">
-                            <button type="submit" class="btn btn-success pull-right" name="saveMemo" [disabled]="!memoForm.form.valid" *ngIf="showSaveButton()">Save</button>
+                            <button type="submit" class="btn btn-success pull-right" name="saveMemo" [disabled]="!memoForm.form.valid" *ngIf="canEdit()">Save</button>
                         </div>
                     </div>
                 </form>

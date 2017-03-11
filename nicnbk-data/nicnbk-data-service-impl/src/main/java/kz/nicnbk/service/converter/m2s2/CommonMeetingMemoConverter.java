@@ -70,6 +70,11 @@ public abstract class CommonMeetingMemoConverter<E extends MeetingMemo, DTO exte
             }
             dto.setTags(result);
         }
+
+        // creator
+        if(entity.getCreator() != null){
+            dto.setOwner(entity.getCreator().getUsername());
+        }
     }
 
     protected void disassembleLazyNonmappedFields(DTO dto, E entity){

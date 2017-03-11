@@ -79,4 +79,10 @@ public interface PEMeetingMemoRepository extends PagingAndSortingRepository<Priv
                                  @Param("fundName")String fundName,
                                  @Param("dateTo") @Temporal(TemporalType.DATE) Date dateTo, Pageable pageable);
 
+    @Query("select firm.firmName from PrivateEquityMeetingMemo memo LEFT JOIN memo.firm firm where memo.id=:id")
+    String getFirmNameByMemoId(@Param("id") Long id);
+
+    @Query("select fund.fundName from PrivateEquityMeetingMemo memo LEFT JOIN memo.fund fund where memo.id=:id")
+    String getFundNameByMemoId(@Param("id") Long id);
+
 }

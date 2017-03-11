@@ -12,5 +12,5 @@ public interface GeneralMeetingMemoService extends BaseService {
 
     GeneralMeetingMemoDto get(Long id);
 
-    boolean checkAccess(String token, Long memoId);
+    boolean checkOwner(String token, Long memoId);
 }

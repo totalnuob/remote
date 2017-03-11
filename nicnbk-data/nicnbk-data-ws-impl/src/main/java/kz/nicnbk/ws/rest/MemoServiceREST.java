@@ -5,6 +5,7 @@ import kz.nicnbk.repo.model.m2s2.MeetingMemo;
 import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.files.FileService;
 import kz.nicnbk.service.api.m2s2.*;
+import kz.nicnbk.service.dto.authentication.TokenUserInfo;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.m2s2.*;
 import kz.nicnbk.ws.model.EntitySaveResponse;
@@ -16,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -187,7 +187,7 @@ public class MemoServiceREST {
         // check access by owner
         if(memoDto.getId() != null){
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            boolean access = this.generalMemoService.checkAccess((String)auth.getDetails(), memoDto.getId());
+            boolean access = this.generalMemoService.checkOwner((String)auth.getDetails(), memoDto.getId());
             if(!access){
                 Response response = new Response();
                 response.setSuccess(false);
@@ -290,6 +290,19 @@ public class MemoServiceREST {
     @ResponseBody
     public ResponseEntity<?> deleteFile(@PathVariable(value="memoId") Long memoId, @PathVariable(value="fileId") Long fileId){
 
+        //check rights
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        int memoType = this.memoService.getMemoType(memoId);
+        if(!checkMemoEditRights((String)auth.getDetails(), memoType)){
+            Response response = new Response();
+            response.setSuccess(false);
+            ResponseMessage message = new ResponseMessage();
+            message.setNameEn("Accees denied");
+            response.setMessage(message);
+            return new ResponseEntity<>(response, null, HttpStatus.UNAUTHORIZED);
+        }
+
+
         boolean deleted = this.memoService.deleteAttachment(memoId, fileId);
 
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -304,5 +317,26 @@ public class MemoServiceREST {
     private Set<FilesDto> get(@PathVariable("memoId") long memoId){
 
        return this.memoService.getAttachments(memoId);
+    }
+
+
+    public boolean checkMemoEditRights(String token, int memoType){
+        TokenUserInfo userInfo = this.tokenService.decode(token);
+        String roleName = "";
+        if(memoType == 2){ // PRIVATE EQUITY
+            roleName = "ROLE_PRIVATE_EQUITY_EDITOR";
+        }else if(memoType == 3){ // HEDGE FUNDS
+            roleName = "ROLE_HEDGE_FUND_EDITOR";
+        }else if(memoType == 4){ // REAL ESTATE
+            roleName = "ROLE_REAL_ESTATE_EDITOR";
+        }
+        if(userInfo != null && userInfo.getRoles() != null) {
+            for (int i = 0; i < userInfo.getRoles().length; i++) {
+                if(userInfo.getRoles()[i].equalsIgnoreCase(roleName)){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

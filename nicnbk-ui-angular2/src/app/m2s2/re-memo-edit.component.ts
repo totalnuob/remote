@@ -226,6 +226,7 @@ export class RealEstateMemoEditComponent extends CommonFormViewComponent impleme
 
     toggle() {
         this.visible = !this.visible;
+        this.memo.suitable = true;
     }
 
     save(){
@@ -484,6 +485,10 @@ export class RealEstateMemoEditComponent extends CommonFormViewComponent impleme
             );
     }
 
+    toggleFund(){
+        this.visible = !this.visible;
+    }
+
     //TODO: bind ngModel - boolean
     setSuitable(){
         this.memo.suitable = true;
@@ -494,7 +499,7 @@ export class RealEstateMemoEditComponent extends CommonFormViewComponent impleme
         this.memo.suitable = false;
     }
 
-    public showSaveButton(){
+    public canEdit(){
         return this.moduleAccessChecler.checkAccessRealEstateEditor();
     }
 

@@ -3,8 +3,8 @@
         <div class="col-md-12">
             <ol class="breadcrumb">
                 <li>
-                    <span *ngIf="this.breadcrumbParams != null"><a [routerLink]="['/hf/fundSearch', {params: this.breadcrumbParams}]">Hedge Funds</a></span>
-                    <span *ngIf="this.breadcrumbParams == null"><a [routerLink]="['/hf/fundSearch']">Hedge Funds</a></span>
+                    <span *ngIf="this.breadcrumbParams != null"><a [routerLink]="['/hf/fundSearch', {params: this.breadcrumbParams}]">Funds Search</a></span>
+                    <span *ngIf="this.breadcrumbParams == null"><a [routerLink]="['/hf/fundSearch']">Funds Search</a></span>
                 </li>
                 <li><a [routerLink]="['/hf/managerProfile',fund?.manager?.id]">Manager profile</a></li>
                 <li class="active">Fund profile</li>
