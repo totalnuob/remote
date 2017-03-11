@@ -71,7 +71,7 @@ const routes: Routes  = [
         canActivate: [AuthGuard]
     },
     {
-        path: 'news/edit',
+        path: 'news/edit/:id',
         component: NewsEditComponent,
         canActivate: [AuthGuard]
     },

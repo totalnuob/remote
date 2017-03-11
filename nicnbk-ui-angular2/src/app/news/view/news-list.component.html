@@ -9,7 +9,7 @@
 
 <div class="container">
     <div class="row withpadding">
-        <a [routerLink]="['/news/edit']" class="btn btn-primary pull-right" *ngIf="showNewsCreateButton()">Add News</a>
+        <a [routerLink]="['/news/edit/',0 ]" class="btn btn-primary pull-right" *ngIf="showNewsCreateButton()">Add News</a>
     </div>
     <ul class="nav nav-tabs">
         <li class="active">
@@ -31,7 +31,7 @@
             <a data-toggle="tab" href="#risk_management">RISK MANAGEMENT</a>
         </li>
         <li>
-            <a data-toggle="tab" href="#national_bank">NATIONAL BANK</a>
+            <a data-toggle="tab" href="#kz_news">KZ NEWS</a>
         </li>
     </ul>
     <div class="row withpadding" style="position: relative; min-height: 80px;">
@@ -41,21 +41,21 @@
                     <div class="row withpadding" *ngFor = "let news of newsList">
                         <div class="col-md-12" *ngIf = "news.type == 'GENERAL'">
                             <div class="row">
-                                <a [routerLink]="['/news/view/', news.id]"><h4>{{news.header}}</h4></a>
+                                <a data-toggle="modal" (click) = "getNewsById(news.id)" data-target="#newsModal" style="cursor: pointer"><h4 style="word-wrap: break-word">{{news.header}}</h4></a>
                             </div>
                             <div class="row">
-                                <h4><small>{{news.source}}</small></h4>
+                                <h4 style="word-wrap: break-word"><small>{{news.source}}</small></h4>
                             </div>
                             <div class="row">
-                                <p>{{news.shortContent}}</p>
+                                <p style="word-wrap: break-word">{{news.shortContent}}</p>
                             </div>
                             <div class="row">
                                 <div class="col-md-1">
                                     <a class="btn btn-info btn-sm" data-toggle="modal"
-                                       (click) = "getNewsById(news.id)" data-target="#newsModal">view</a>
+                                       (click) = "getNewsById(news.id)" data-target="#newsModal">View</a>
                                 </div>
-                                <div class="col-md-2 pull-right">
-                                    <!--<input name="rating_stars" type="number" class="rating"/>-->
+                                <div class="col-md-1">
+                                    <a [routerLink]="['/news/edit/', news.id]" class="btn btn-primary btn-sm" *ngIf="showNewsCreateButton()" >Edit</a>
                                 </div>
                             </div>
                             <div class="row">
@@ -79,21 +79,21 @@
                     <div class="row withpadding" *ngFor = "let news of newsList">
                         <div class="col-md-12" *ngIf = "news.type == 'PE'">
                             <div class="row">
-                                <a [routerLink]="['/news/view/', news.id]"><h4>{{news.header}}</h4></a>
+                                <a data-toggle="modal" (click) = "getNewsById(news.id)" data-target="#newsModal" style="cursor: pointer"><h4 style="word-wrap: break-word">{{news.header}}</h4></a>
                             </div>
                             <div class="row">
-                                <h4><small>{{news.source}}</small></h4>
+                                <h4 style="word-wrap: break-word"><small>{{news.source}}</small></h4>
                             </div>
                             <div class="row">
-                                <p>{{news.shortContent}}</p>
+                                <p style="word-wrap: break-word">{{news.shortContent}}</p>
                             </div>
                             <div class="row">
                                 <div class="col-md-1">
                                     <a class="btn btn-info btn-sm" data-toggle="modal"
                                        (click) = "getNewsById(news.id)" data-target="#newsModal">view</a>
                                 </div>
-                                <div class="col-md-2 pull-right">
-                                    <!--<input name="rating_stars" type="number" class="rating"/>-->
+                                <div class="col-md-1">
+                                    <a [routerLink]="['/news/edit/', news.id]" class="btn btn-primary btn-sm" *ngIf="showNewsCreateButton()" >Edit</a>
                                 </div>
                             </div>
                             <div class="row">
@@ -102,7 +102,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row withpadding">
                     <div id="loadmoreajaxloader_private_equity" style="display:none;" class="center-block">
                         <!--<img src="app/static/img/ajax-loader.gif" height="42" width="42"/>-->
                     </div>
@@ -117,21 +117,21 @@
                     <div class="row withpadding" *ngFor = "let news of newsList">
                         <div class="col-md-12" *ngIf = "news.type == 'HF'">
                             <div class="row">
-                                <a [routerLink]="['/news/view/', news.id]"><h4>{{news.header}}</h4></a>
+                                <a data-toggle="modal" (click) = "getNewsById(news.id)" data-target="#newsModal" style="cursor: pointer"><h4 style="word-wrap: break-word">{{news.header}}</h4></a>
                             </div>
                             <div class="row">
-                                <h4><small>{{news.source}}</small></h4>
+                                <h4 style="word-wrap: break-word"><small>{{news.source}}</small></h4>
                             </div>
                             <div class="row">
-                                <p>{{news.shortContent}}</p>
+                                <p style="word-wrap: break-word">{{news.shortContent}}</p>
                             </div>
                             <div class="row">
                                 <div class="col-md-1">
                                     <a class="btn btn-info btn-sm" data-toggle="modal"
                                        (click) = "getNewsById(news.id)" data-target="#newsModal">view</a>
                                 </div>
-                                <div class="col-md-2 pull-right">
-                                    <!--<input name="rating_stars" type="number" class="rating"/>-->
+                                <div class="col-md-1">
+                                    <a [routerLink]="['/news/edit/', news.id]" class="btn btn-primary btn-sm" *ngIf="showNewsCreateButton()" >Edit</a>
                                 </div>
                             </div>
                             <div class="row">
@@ -140,7 +140,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row withpadding">
                     <div id="loadmoreajaxloader_hedge_funds" style="display:none;" class="center-block">
                         <!--<img src="app/static/img/ajax-loader.gif" height="42" width="42"/>-->
                     </div>
@@ -155,21 +155,21 @@
                     <div class="row withpadding" *ngFor = "let news of newsList">
                         <div class="col-md-12" *ngIf = "news.type == 'SWF'">
                             <div class="row">
-                                <a [routerLink]="['/news/view/', news.id]"><h4>{{news.header}}</h4></a>
+                                <a data-toggle="modal" (click) = "getNewsById(news.id)" data-target="#newsModal" style="cursor: pointer"><h4 style="word-wrap: break-word">{{news.header}}</h4></a>
                             </div>
                             <div class="row">
-                                <h4><small>{{news.source}}</small></h4>
+                                <h4 style="word-wrap: break-word"><small>{{news.source}}</small></h4>
                             </div>
                             <div class="row">
-                                <p>{{news.shortContent}}</p>
+                                <p style="word-wrap: break-word">{{news.shortContent}}</p>
                             </div>
                             <div class="row">
                                 <div class="col-md-1">
                                     <a class="btn btn-info btn-sm" data-toggle="modal"
                                        (click) = "getNewsById(news.id)" data-target="#newsModal">view</a>
                                 </div>
-                                <div class="col-md-2 pull-right">
-                                    <!--<input name="rating_stars" type="number" class="rating"/>-->
+                                <div class="col-md-1">
+                                    <a [routerLink]="['/news/edit/', news.id]" class="btn btn-primary btn-sm" *ngIf="showNewsCreateButton()" >Edit</a>
                                 </div>
                             </div>
                             <div class="row">
@@ -178,7 +178,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row withpadding">
                     <div id="loadmoreajaxloader_sovereign_wealth_funds" style="display:none;" class="center-block">
                         <!--<img src="app/static/img/ajax-loader.gif" height="42" width="42"/>-->
                     </div>
@@ -193,21 +193,21 @@
                     <div class="row withpadding" *ngFor = "let news of newsList">
                         <div class="col-md-12" *ngIf = "news.type == 'RE'">
                             <div class="row">
-                                <a [routerLink]="['/news/view/', news.id]"><h4>{{news.header}}</h4></a>
+                                <a data-toggle="modal" (click) = "getNewsById(news.id)" data-target="#newsModal" style="cursor: pointer"><h4 style="word-wrap: break-word">{{news.header}}</h4></a>
                             </div>
                             <div class="row">
-                                <h4><small>{{news.source}}</small></h4>
+                                <h4 style="word-wrap: break-word"><small>{{news.source}}</small></h4>
                             </div>
                             <div class="row">
-                                <p>{{news.shortContent}}</p>
+                                <p style="word-wrap: break-word">{{news.shortContent}}</p>
                             </div>
                             <div class="row">
                                 <div class="col-md-1">
                                     <a class="btn btn-info btn-sm" data-toggle="modal"
                                        (click) = "getNewsById(news.id)" data-target="#newsModal">view</a>
                                 </div>
-                                <div class="col-md-2 pull-right">
-                                    <!--<input name="rating_stars" type="number" class="rating"/>-->
+                                <div class="col-md-1">
+                                    <a [routerLink]="['/news/edit/', news.id]" class="btn btn-primary btn-sm" *ngIf="showNewsCreateButton()" >Edit</a>
                                 </div>
                             </div>
                             <div class="row">
@@ -216,7 +216,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row withpadding">
                     <div id="loadmoreajaxloader_real_estate" style="display:none;" class="center-block">
                         <!--<img src="app/static/img/ajax-loader.gif" height="42" width="42"/>-->
                     </div>
@@ -231,21 +231,21 @@
                     <div class="row withpadding" *ngFor = "let news of newsList" >
                         <div class="col-md-12" *ngIf = "news.type == 'RM'">
                             <div class="row">
-                                <a [routerLink]="['/news/view/', news.id]"><h4>{{news.header}}</h4></a>
+                                <a data-toggle="modal" (click) = "getNewsById(news.id)" data-target="#newsModal" style="cursor: pointer"><h4 style="word-wrap: break-word">{{news.header}}</h4></a>
                             </div>
                             <div class="row">
-                                <h4><small>{{news.source}}</small></h4>
+                                <h4 style = "word-wrap: break-word"><small>{{news.source}}</small></h4>
                             </div>
                             <div class="row">
-                                <p>{{news.shortContent}}</p>
+                                <p style = "word-wrap: break-word">{{news.shortContent}}</p>
                             </div>
                             <div class="row">
                                 <div class="col-md-1">
                                     <a class="btn btn-info btn-sm" data-toggle="modal"
                                        (click) = "getNewsById(news.id)" data-target="#newsModal">view</a>
                                 </div>
-                                <div class="col-md-2 pull-right">
-                                    <!--<input name="rating_stars" type="number" class="rating"/>-->
+                                <div class="col-md-1">
+                                    <a [routerLink]="['/news/edit/', news.id]" class="btn btn-primary btn-sm" *ngIf="showNewsCreateButton()" >Edit</a>
                                 </div>
                             </div>
                             <div class="row">
@@ -254,7 +254,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row withpadding">
                     <div id="loadmoreajaxloader_risk_management" style="display:none;" class="center-block">
                         <!--<img src="app/static/img/ajax-loader.gif" height="42" width="42"/>-->
                     </div>
@@ -264,26 +264,26 @@
                     </div>
                 </div>
             </div>
-            <div id="national_bank" class="tab-pane fade">
-                <div id="national_bank_content">
+            <div id="kz_news" class="tab-pane fade">
+                <div id="kz_news_content">
                     <div class="row withpadding" *ngFor = "let news of newsList" >
-                        <div class="col-md-12" *ngIf = "news.type == 'NBRK'">
+                        <div class="col-md-12" *ngIf = "news.type == 'KZ'">
                             <div class="row">
-                                <a [routerLink]="['/news/view/', news.id]"><h4>{{news.header}}</h4></a>
+                                <a data-toggle="modal" (click) = "getNewsById(news.id)" data-target="#newsModal" style="cursor: pointer"><h4 style="word-wrap: break-word">{{news.header}}</h4></a>
                             </div>
                             <div class="row">
-                                <h4><small>{{news.source}}</small></h4>
+                                <h4 style="word-wrap: break-word"><small>{{news.source}}</small></h4>
                             </div>
                             <div class="row">
-                                <p>{{news.shortContent}}</p>
+                                <p style="word-wrap: break-word">{{news.shortContent}}</p>
                             </div>
                             <div class="row">
                                 <div class="col-md-1">
                                     <a class="btn btn-info btn-sm" data-toggle="modal"
                                        (click) = "getNewsById(news.id)" data-target="#newsModal">view</a>
                                 </div>
-                                <div class="col-md-2 pull-right">
-                                    <!--<input name="rating_stars" type="number" class="rating"/>-->
+                                <div class="col-md-1">
+                                    <a [routerLink]="['/news/edit/', news.id]" class="btn btn-primary btn-sm" *ngIf="showNewsCreateButton()" >Edit</a>
                                 </div>
                             </div>
                             <div class="row">
@@ -292,13 +292,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div id="loadmoreajaxloader_national_bank" style="display:none;" class="center-block">
+                <div class="row withpadding">
+                    <div id="loadmoreajaxloader_kz_news" style="display:none;" class="center-block">
                         <!--<img src="app/static/img/ajax-loader.gif" height="42" width="42"/>-->
                     </div>
-                    <div id="moreBtn_national_bank">
-                        <button class="btn btn-default" (click)="loadMore('NBRK')" *ngIf="isShowMoreButton('NBRK')">More</button>
-                        <div *ngIf="!isShowMoreButton('NBRK')">No more posts to show</div>
+                    <div id="moreBtn_kz_news">
+                        <button class="btn btn-default" (click)="loadMore('KZ')" *ngIf="isShowMoreButton('KZ')">More</button>
+                        <div *ngIf="!isShowMoreButton('KZ')">No more posts to show</div>
                     </div>
                 </div>
             </div>
@@ -308,17 +308,24 @@
                 <!--$(".rating").rating({min:1, max:10, step:1, size:'xs', showClear: false, showCaption: false});-->
             <!--</script>-->
             <div class="modal fade" id="newsModal" role="dialog">
-                    <div class="modal-dialog" style="overflow-y: scroll; max-height:85%;  margin-top: 50px; margin-bottom:50px;">
-                        <div class="modal-content">
+                    <div class="modal-dialog" style="overflow-y: scroll; max-height:85%;  margin-top: 50px; margin-bottom:50px; width:65%;">
+                        <div class="modal-content" style="background-color: #fff1e0">
+                            <div class="row withpadding">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <h4><span class="label label-info" >{{selectedNews.type}}</span></h4>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                <h3 class="modal-title" >{{selectedNews.header}}</h3>
-                                <h4>
+                                <h3 class="modal-title"  style="word-wrap: break-word">{{selectedNews.header}}</h3>
+                                <h4 style="word-wrap: break-word">
                                     <small>{{selectedNews.source}}</small>
                                 </h4>
                             </div>
                             <div class="modal-body">
-                                <p [innerHTML]="selectedNews.content"></p>
+                                <p style="word-wrap: break-word;" [innerHTML]="selectedNews.content"></p>
                             </div>
                             <div class="modal-footer">
                                 <!--<div class="row">-->

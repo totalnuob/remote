@@ -11,7 +11,7 @@ public enum NewsTypeLookup {
     SOVEREIGN_WEALTH_FUNDS("SWF", 4),
     REAL_ESTATE("RE", 5),
     RISK_MANAGEMENT("RM", 6),
-    NBRK("NBRK", 7);
+    KZ("KZ", 7);
 
     private String code;
     private int id;
