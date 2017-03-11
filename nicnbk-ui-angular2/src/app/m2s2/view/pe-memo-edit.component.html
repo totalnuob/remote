@@ -35,7 +35,7 @@
                                     <div [hidden]="firmId.valid || firmId.pristine" class="alert alert-danger">Firm is required</div>
                                 </div>
 
-                                <div class="control-label pull-left" for="firmSelect">
+                                <div class="control-label pull-left" for="firmSelect" *ngIf="memo.firm.id != null">
                                     <a data-toggle="collapse" data-parent="#firmAccordion" href="#collapseFirm" (click)="toggleFirm()">
                                         {{ showFirmDetails ? 'Hide firm details &#9660;' : 'Show firm details &#9658;' }}</a>
                                 </div>
