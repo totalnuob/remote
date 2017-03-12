@@ -419,4 +419,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
         }
         $('#tabs a:last').tab('show');
     }
+
+    canEdit(){
+        return this.moduleAccessChecker.checkAccessPrivateEquityEditor();
+    }
 }

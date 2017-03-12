@@ -90,9 +90,16 @@ export class AppComponent {
     showPrivateEquity(){
         return this.moduleAccessChecker.checkAccessPrivateEquity();
     }
+    showPrivateEquityEditor(){
+        return this.moduleAccessChecker.checkAccessPrivateEquityEditor();
+    }
 
     showHedgeFunds(){
         return this.moduleAccessChecker.checkAccessHedgeFunds();
+    }
+
+    showHedgeFundsEditor(){
+        return this.moduleAccessChecker.checkAccessHedgeFundsEditor();
     }
 
     showRealEstate(){

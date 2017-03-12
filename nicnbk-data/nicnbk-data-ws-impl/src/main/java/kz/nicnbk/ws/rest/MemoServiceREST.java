@@ -1,5 +1,6 @@
 package kz.nicnbk.ws.rest;
 
+import jdk.nashorn.internal.runtime.regexp.joni.Regex;
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.repo.model.m2s2.MeetingMemo;
 import kz.nicnbk.service.api.authentication.TokenService;
@@ -269,7 +270,7 @@ public class MemoServiceREST {
             response.setContentType(fileDto.getMimeType());
             String fileName = URLEncoder.encode(fileDto.getFileName(), "UTF-8");
             fileName = URLDecoder.decode(fileName, "ISO8859_1");
-            response.setHeader("Content-disposition", "attachment; filename="+ fileName);
+            response.setHeader("Content-disposition", "attachment; filename=\""+ fileName + "\"");
             org.apache.commons.io.IOUtils.copy(inputStream, response.getOutputStream());
             response.flushBuffer();
         } catch (IOException e) {
@@ -293,15 +294,17 @@ public class MemoServiceREST {
         //check rights
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         int memoType = this.memoService.getMemoType(memoId);
-        if(!checkMemoEditRights((String)auth.getDetails(), memoType)){
-            Response response = new Response();
-            response.setSuccess(false);
-            ResponseMessage message = new ResponseMessage();
-            message.setNameEn("Accees denied");
-            response.setMessage(message);
-            return new ResponseEntity<>(response, null, HttpStatus.UNAUTHORIZED);
-        }
 
+        if(memoType == 1){ // GENERAL MEMO
+            // check owner
+            boolean access = this.generalMemoService.checkOwner((String)auth.getDetails(), memoId);
+            if(!access){
+                return new ResponseEntity<>(getErrorResponse(), null, HttpStatus.UNAUTHORIZED);
+            }
+        }else if(!checkMemoEditRights((String)auth.getDetails(), memoType)){
+            // check module rights
+            return new ResponseEntity<>(getErrorResponse(), null, HttpStatus.UNAUTHORIZED);
+        }
 
         boolean deleted = this.memoService.deleteAttachment(memoId, fileId);
 
@@ -338,5 +341,14 @@ public class MemoServiceREST {
             }
         }
         return false;
+    }
+
+    private Response getErrorResponse(){
+        Response response = new Response();
+        response.setSuccess(false);
+        ResponseMessage message = new ResponseMessage();
+        message.setNameEn("Accees denied");
+        response.setMessage(message);
+        return response;
     }
 }

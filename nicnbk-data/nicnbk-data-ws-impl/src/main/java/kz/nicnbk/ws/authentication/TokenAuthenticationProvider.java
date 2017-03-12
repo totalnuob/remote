@@ -46,7 +46,9 @@ public class TokenAuthenticationProvider implements AuthenticationProvider {
         Set<SimpleGrantedAuthority> roles = new HashSet<>();
         if(userInfo.getRoles() != null){
             for(String role: userInfo.getRoles()){
-                roles.add(new SimpleGrantedAuthority(role));
+                if(role != null) {
+                    roles.add(new SimpleGrantedAuthority(role));
+                }
             }
         }
 

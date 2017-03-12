@@ -107,7 +107,7 @@
                         <li><a [routerLink]="['/pe/firmSearch']">Firm Search</a></li>
                         <li role="separator" class="divider"></li>
                         <!--<li><a [routerLink]="['/pe/fundProfile']">New Fund</a></li>-->
-                        <li><a [routerLink]="['/pe/firmProfile']">New Firm</a></li>
+                        <li *ngIf="showPrivateEquityEditor()"><a [routerLink]="['/pe/firmProfile']">New Firm</a></li>
                         <!--<li><a href="#">Forward Calendar</a></li>-->
                     </ul>
                 </li>
@@ -128,7 +128,7 @@
                         <!--<li><a [routerLink]="['/hf/report']">Report </a></li>-->
                         <li role="separator" class="divider"></li>
                         <!--<li><a [routerLink]="['/hf/fundProfile/0']">New Fund </a></li>-->
-                        <li><a [routerLink]="['/hf/managerProfile/0']">New Manager </a></li>
+                        <li *ngIf="showHedgeFundsEditor()"><a [routerLink]="['/hf/managerProfile/0']">New Manager </a></li>
 
                     </ul>
                 </li>

@@ -43,20 +43,20 @@
                         <div class="col-md-3">
                             <div class='input-group date col-md-2' id='meetingDate1' style="width: 100%">
                                 <input type='text' class="form-control" id="meetingDateStart" name="meetingDateStart" [(ngModel)]="tripMemo.meetingDateStart"
-                                       required #meetingDateStart="ngModel"/>
+                                        #meetingDateStart="ngModel"/>
                                     <span class="input-group-addon"><span class="glyphicon glyphicon-calendar">From</span></span>
                             </div>
-                            <div [hidden]="meetingDateStart.valid || meetingDateStart.pristine" class="alert alert-danger">Start date is required</div>
+                            <!--<div [hidden]="meetingDateStart.valid || meetingDateStart.pristine" class="alert alert-danger">Start date is required</div>-->
                         </div>
                         <div class="col-md-3">
                             <div class='input-group date col-md-2' id='meetingDate2' style="width: 100%">
                                 <input type='text' class="form-control" id="meetingDateEnd" name="meetingDateEnd" [(ngModel)]="tripMemo.meetingDateEnd"
-                                       required #meetingDateEnd="ngModel"/>
+                                        #meetingDateEnd="ngModel"/>
                             <span class="input-group-addon">
                                 <span class="glyphicon glyphicon-calendar">To</span>
                             </span>
                             </div>
-                            <div [hidden]="meetingDateEnd.valid || meetingDateEnd.pristine" class="alert alert-danger">End date is required</div>
+                            <!--<div [hidden]="meetingDateEnd.valid || meetingDateEnd.pristine" class="alert alert-danger">End date is required</div>-->
                         </div>
                     </div>
                     <div class="row top-buffer">
@@ -141,11 +141,9 @@
                                     <label>ATTACHMENTS</label>
                                 </div>
 
-                                <div class="row">
+                                <div class="row" *ngIf="canEdit()">
                                     <label class="btn btn-primary col-md-2" for="attachmentFile">
-                                        <input type="file" id="attachmentFile" (change)="onFileChange($event)" name="file" multiple style="display:none;"/>
-                                        Add
-                                    </label>
+                                        <input type="file" id="attachmentFile" (change)="onFileChange($event)" name="file" multiple style="display:none;"/>Add</label>
                                     <div class="col-md-6">
                                         <div class="row" *ngFor="let newFile of uploadFiles" class="label label-info" style="display: table;">
                                             <span>{{newFile.name}}</span>

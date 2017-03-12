@@ -32,6 +32,10 @@ public class NewsEntityConverter extends BaseDozerEntityConverter<News, NewsDto>
         NewsDto dto = super.disassemble(entity);
         // set type
         dto.setType(entity.getType().getCode());
+
+        if(entity.getCreator() != null){
+            dto.setOwner(entity.getCreator().getUsername());
+        }
         return dto;
     }
 }

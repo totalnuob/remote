@@ -277,13 +277,13 @@
                                                 <tr  *ngFor="let item of fund.strategyBreakdownList">
                                                     <td width="70%">
                                                         <!--<input type="text" class="form-control" [(ngModel)]="item.name"/>-->
-                                                        <select class="form-control" style="width: 100%" name="code" [(ngModel)]="item.code">
+                                                        <select class="form-control" style="width: 100%" name="code" [(ngModel)]="item.code" [ngModelOptions]="{standalone: true}">
                                                             <option value="0">---</option>
-                                                            <option *ngFor="let item of substrategyLookup" [value]="item.code">{{item.nameEn}}</option>
+                                                            <option *ngFor="let substrategyOption of substrategyLookup" [value]="substrategyOption.code">{{substrategyOption.nameEn}}</option>
                                                         </select>
                                                     </td>
                                                     <td width="30%">
-                                                        <input type="text" class="form-control" name="value" [(ngModel)]="item.value"/>
+                                                        <input type="text" class="form-control" name="value" [(ngModel)]="item.value" [ngModelOptions]="{standalone: true}"/>
                                                     </td>
                                                     <td>
                                                         <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeStrategyBreakdown(item)">
@@ -313,10 +313,10 @@
                                             </tr>
                                             <tr *ngFor="let item of fund.investorBaseList">
                                                 <td width="70%">
-                                                    <input type="text" class="form-control" name="category" [(ngModel)]="item.category"/>
+                                                    <input type="text" class="form-control" name="category" [(ngModel)]="item.category" [ngModelOptions]="{standalone: true}"/>
                                                 </td>
                                                 <td width="30%">
-                                                    <input type="text" class="form-control" name="fund" [(ngModel)]="item.fund"/>
+                                                    <input type="text" class="form-control" name="fund" [(ngModel)]="item.fund" [ngModelOptions]="{standalone: true}"/>
                                                 </td>
                                                 <td>
                                                     <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeInvestorBase(item)">
@@ -394,13 +394,13 @@
                                     </thead>
                                     <tr *ngFor="let manager of fund.managers">
                                         <td width="20%">
-                                            <input type="text" class="form-control" name="managerName" [(ngModel)]="manager.name" placeholder="Name..."/>
+                                            <input type="text" class="form-control" name="managerName" [(ngModel)]="manager.name" placeholder="Name..." [ngModelOptions]="{standalone: true}"/>
                                         </td>
                                         <td width="50%">
-                                            <input type="text" class="form-control" name="description" [(ngModel)]="manager.description" placeholder="Description..."/>
+                                            <input type="text" class="form-control" name="description" [(ngModel)]="manager.description" placeholder="Description..." [ngModelOptions]="{standalone: true}"/>
                                         </td>
                                         <td width="20%">
-                                            <input type="text" class="form-control" name="started" [(ngModel)]="manager.started" placeholder="Since..."/>
+                                            <input type="text" class="form-control" name="started" [(ngModel)]="manager.started" placeholder="Since..." [ngModelOptions]="{standalone: true}"/>
                                         </td>
                                         <td>
                                             <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeFundManager(manager)">
@@ -626,7 +626,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="col-md-1 pull-right">
-                                        <button type="submit" class="btn btn-success" [disabled]="!fundForm.form.valid">SAVE</button>
+                                        <button type="submit" class="btn btn-success" [disabled]="!fundForm.form.valid" *ngIf="canEdit()">SAVE</button>
                                     </div>
                                 </div>
                             </div>

@@ -1,5 +1,6 @@
 package kz.nicnbk.ws.rest;
 
+import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.news.NewsService;
 import kz.nicnbk.service.dto.news.NewsDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +27,8 @@ public class NewsServiceREST {
     @Autowired
     private NewsService newsService;
 
+    @Autowired
+    private TokenService tokenService;
 
     @RequestMapping(value = "/load", method = RequestMethod.GET)
     public ResponseEntity<?> getNewsShort(){
@@ -49,6 +53,14 @@ public class NewsServiceREST {
     @PreAuthorize("hasRole('ROLE_NEWS_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value="/save", method = RequestMethod.POST)
     public ResponseEntity<?> save(@RequestBody NewsDto newsDto){
+
+        // set creator
+        if(newsDto.getId() == null){
+            String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+            String username = this.tokenService.decode(token).getUsername();
+            newsDto.setOwner(username);
+        }
+
         Long id = newsService.save(newsDto);
         HttpHeaders httpHeaders = new HttpHeaders();
         // TODO: response

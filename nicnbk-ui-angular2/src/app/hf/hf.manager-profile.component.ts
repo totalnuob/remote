@@ -183,8 +183,8 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
 
         this.memoSearchParams.pageSize = 20;
         this.memoSearchParams.page = page;
-        this.memoSearchParams.fromDate = $('#fromDate').val();
-        this.memoSearchParams.toDate = $('#toDate').val();
+        this.memoSearchParams.fromDate = $('#fromDateValue').val();
+        this.memoSearchParams.toDate = $('#toDateValue').val();
 
         this.busy = this.memoService.searchHF(this.memoSearchParams)
             .subscribe(
@@ -340,6 +340,10 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
         this.memoSearchParams.path = '/hf/managerProfile/' + this.manager.id;
         let params = JSON.stringify(this.memoSearchParams);
         this.router.navigate(['/m2s2/edit/', memoType, memoId, { params }]);
+    }
+
+    canEdit(){
+        return this.moduleAccessChecker.checkAccessHedgeFundsEditor();
     }
 
 }

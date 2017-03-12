@@ -16,6 +16,8 @@
                 <div class="col-md-12">
                     <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
                     </div>
+                    <div class="alert alert-info" *ngIf="!submitted && successMessage != null"><span>{{successMessage}}</span>
+                    </div>
                 </div>
             </div>
             <div [hidden]="submitted">
@@ -224,11 +226,9 @@
                                     <label>ATTACHMENTS</label>
                                 </div>
 
-                                <div class="row">
+                                <div class="row" *ngIf="canEdit()">
                                     <label class="btn btn-primary col-md-2" for="attachmentFile">
-                                        <input type="file" id="attachmentFile" (change)="onFileChange($event)" name="file" multiple style="display:none;"/>
-                                        Add
-                                    </label>
+                                        <input type="file" id="attachmentFile" (change)="onFileChange($event)" name="file" multiple style="display:none;"/>Add</label>
 
                                     <div class="col-md-4">
                                         <div class="row" *ngFor="let newFile of uploadFiles" class="label label-info" style="display: table;">
@@ -281,7 +281,7 @@
                     </div>
                 </form>
             </div>
-            <div [hidden]="!submitted && successMessage == null">
+            <div [hidden]="!submitted">
                 <div class="row top-buffer" >
                     <div class="col-md-12">
                         <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>

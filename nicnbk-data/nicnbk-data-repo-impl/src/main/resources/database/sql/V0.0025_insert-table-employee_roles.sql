@@ -1,7 +1,15 @@
 
---INSERT INTO public.employee_roles(employee_id, role_id)VALUES (29, );
---INSERT INTO public.employee_roles(employee_id, role_id)VALUES (28, );
-INSERT INTO public.employee_roles(employee_id, role_id)VALUES (1, 1);
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (29, 12);
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (29, 22);
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (29, 32);
+
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (28, 12);
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (28, 22);
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (28, 32);
+
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (1, 12);
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (1, 22);
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (1, 32);
 --INSERT INTO public.employee_roles(employee_id, role_id)VALUES (44, );
 
 

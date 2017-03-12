@@ -58,7 +58,7 @@
                         <div class="col-md-3">
                             <label for="fromDateDTPickeer">From</label>
                             <div class='input-group date col-md-3' id='fromDateDTPickeer' style="width: 100%">
-                                <input type='text' class="form-control" id="fromDate" />
+                                <input type='text' class="form-control" id="fromDate" [(ngModel)]="searchParams.fromDate"/>
                                         <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
                                         </span>
@@ -67,7 +67,7 @@
                         <div class="col-md-3">
                             <label for="untilDateDTPickeer">To</label>
                             <div class='input-group date col-md-3' id='untilDateDTPickeer' style="width: 100%">
-                                <input type='text' class="form-control" id="toDate"/>
+                                <input type='text' class="form-control" id="toDate" [(ngModel)]="searchParams.toDate"/>
                                         <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
                                         </span>

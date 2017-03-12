@@ -310,7 +310,7 @@ export class RealEstateMemoEditComponent extends CommonFormViewComponent impleme
                         }
 
                         this.postAction("Attachment deleted.", null);
-                        this.submitted = true;
+                        this.submitted = false;
                     },
                     (error: ErrorResponse) => {
                         this.errorMessage = "Error deleting attachments";

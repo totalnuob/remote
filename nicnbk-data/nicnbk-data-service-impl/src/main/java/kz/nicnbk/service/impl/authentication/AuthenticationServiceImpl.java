@@ -47,6 +47,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 return "ROLE_ADMIN";
             case "NEWS_EDIT":
                 return "ROLE_NEWS_EDITOR";
+            case "NEWS_VIEW":
+                return "ROLE_NEWS_VIEWER";
             case "HF_EDIT":
                 return "ROLE_HEDGE_FUND_EDITOR";
             case "HF_VIEW":
@@ -59,6 +61,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 return "ROLE_REAL_ESTATE_EDITOR";
             case "RE_VIEW":
                 return "ROLE_REAL_ESTATE_VIEWER";
+            case "RA_EDIT":
+                return "ROLE_REPORTING_ANALYSIS_EDITOR";
+            case "RA_VIEW":
+                return "ROLE_REPORTING_ANALYSIS_VIEWER";
+            case "SRM_EDIT":
+                return "ROLE_STRATEGY_RISK_MANAGEMENT_EDITOR";
+            case "SRM_VIEW":
+                return "ROLE_STRATEGY_RISK_MANAGEMENT_VIEWER";
             default:
                 return null;
         }

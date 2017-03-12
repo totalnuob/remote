@@ -170,6 +170,8 @@ public class MeetingMemoServiceImpl implements MeetingMemoService {
         // delete memo file association
         MemoFiles entity = memoFilesRepository.getFilesByFileId(fileId);
 
+        // delete files entry
+
         if(entity != null && entity.getMemo().getId().longValue() == memoId){
             memoFilesRepository.delete(entity);
             // delete file

@@ -219,7 +219,7 @@ export class GeneralMemoEditComponent extends CommonFormViewComponent implements
                         }
 
                         this.postAction("Attachment deleted.", null);
-                        this.submitted = true;
+                        this.submitted = false;
                     },
                     (error: ErrorResponse) => {
                         this.errorMessage = "Error deleting attachment";

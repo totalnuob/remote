@@ -132,7 +132,10 @@ public class TripMemoServiceREST {
             response.setContentType(fileDto.getMimeType());
             String fileName = URLEncoder.encode(fileDto.getFileName(), "UTF-8");
             fileName = URLDecoder.decode(fileName, "ISO8859_1");
-            response.setHeader("Content-disposition", "attachment; filename="+ fileName);
+
+            // TODO: fix comma
+            response.setHeader("Content-disposition", "attachment; filename=\""+ fileName + "\"");
+
             org.apache.commons.io.IOUtils.copy(inputStream, response.getOutputStream());
             response.flushBuffer();
         } catch (IOException e) {

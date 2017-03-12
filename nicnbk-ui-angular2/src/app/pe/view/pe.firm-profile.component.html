@@ -179,7 +179,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-1 pull-right">
-                                <button type="submit" class="btn btn-success" [disabled]="!firmForm.form.valid">SAVE</button>
+                                <button type="submit" class="btn btn-success" [disabled]="!firmForm.form.valid" *ngIf="canEdit()">SAVE</button>
                             </div>
                         </div>
                     </form>
@@ -189,7 +189,7 @@
                             <h3>Funds</h3>
                         </div>
                         <div class="col-md-1 pull-right">
-                            <button class="btn btn-primary" [disabled]="firm.id == 0 || firm.id == null" (click)="createFund()">ADD</button>
+                            <button class="btn btn-primary" [disabled]="firm.id == 0 || firm.id == null" (click)="createFund()" *ngIf="canEdit()">ADD</button>
                         </div>
                         <table class="table table-hover">
                             <thead>

@@ -316,4 +316,8 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
         let params = JSON.stringify(this.memoSearchParams);
         this.router.navigate(['/m2s2/edit/', memoType, memoId, { params }]);
     }
+
+    canEdit(){
+        return this.moduleAccessChecker.checkAccessPrivateEquityEditor();
+    }
 }

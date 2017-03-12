@@ -73,6 +73,12 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
             .subscribe(params => {
                if(params['params'] != null){
                 this.searchParams = JSON.parse(params['params']);
+
+                //console.log(this.searchParams.fromDate);
+                $('#fromDate').val(this.searchParams.fromDate);
+                $('#toDate').val(this.searchParams.toDate);
+
+
                 this.busy = this.memoService.search(this.searchParams)
                     .subscribe(
                         searchResult  => {
@@ -150,6 +156,7 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
     navigate(memoType, memoId){
         this.searchParams.path = '/m2s2';
         let params = JSON.stringify(this.searchParams);
+        //console.log(this.searchParams);
         this.router.navigate(['/m2s2/edit/', memoType, memoId, { params }]);
     }
 

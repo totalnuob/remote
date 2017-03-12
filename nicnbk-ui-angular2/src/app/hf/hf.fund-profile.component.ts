@@ -95,6 +95,7 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
                             (data: HedgeFund) => {
                                 if(data && data.id > 0) {
                                     this.fund = data;
+                                    console.log(this.fund);
                                     if(this.fund.strategy != null){
                                         this.loadSubstrategies();
                                     }
@@ -103,6 +104,7 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
                                     }else{
                                         //this.drawGraph();
                                         //this.drawSubstrategiesChart();
+                                        console.log(this.fund.strategyBreakdownList);
                                     }
                                     if(this.fund.investorBaseList == null){
                                         this.fund.investorBaseList = [];
@@ -672,5 +674,9 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
         } else if (month == '12') {
             returnObject.december = value;
         }
+    }
+
+    canEdit(){
+        return this.moduleAccessChecker.checkAccessHedgeFundsEditor();
     }
 }

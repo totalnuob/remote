@@ -1,6 +1,8 @@
 package kz.nicnbk.service.impl.news;
 
+import kz.nicnbk.repo.api.employee.EmployeeRepository;
 import kz.nicnbk.repo.api.news.NewsRepository;
+import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.lookup.NewsTypeLookup;
 import kz.nicnbk.repo.model.news.News;
 import kz.nicnbk.service.api.news.NewsService;
@@ -28,6 +30,9 @@ public class NewsServiceImpl implements NewsService {
     @Autowired
     private NewsRepository newsRepository;
 
+    @Autowired
+    private EmployeeRepository employeeRepository;
+
     @Override
     public Long save(NewsDto newsItemDto) {
 
@@ -36,6 +41,16 @@ public class NewsServiceImpl implements NewsService {
         newsItemDto.setShortContent(extractShort(newsItemDto.getContent()));
 
         News entity = newsConverter.assemble(newsItemDto);
+
+        // set creator
+        if(newsItemDto.getId() == null){
+            Employee employee = this.employeeRepository.findByUsername(newsItemDto.getOwner());
+            entity.setCreator(employee);
+        }else{
+            Employee employee = this.newsRepository.findOne(newsItemDto.getId()).getCreator();
+            entity.setCreator(employee);
+        }
+
         if(entity != null){
             Long id = newsRepository.save(entity).getId();
             return id;
@@ -83,7 +98,7 @@ public class NewsServiceImpl implements NewsService {
     public List<NewsDto> loadNewsShort(String type, int page, int pageSize){
         List<NewsDto> newsItems = new ArrayList<>();
         Page<News> entityPage = newsRepository.findByType(type, new PageRequest(page, pageSize,
-                new Sort(Sort.Direction.DESC, "creationDate")));
+                new Sort(Sort.Direction.DESC, "creationDate", "id")));
         if(entityPage != null && entityPage.getContent() != null){
             for(News entity: entityPage.getContent()){
                 newsItems.add(newsConverter.disassemble(entity));

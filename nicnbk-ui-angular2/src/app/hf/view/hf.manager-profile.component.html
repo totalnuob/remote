@@ -227,7 +227,7 @@
                         <div class="row">
                             <div class=" col-md-3">&nbsp;</div>
                             <div class="col-md-1 pull-right">
-                                <button type="submit" class="btn btn-success" [disabled]="!managerForm.form.valid">SAVE</button>
+                                <button type="submit" class="btn btn-success" [disabled]="!managerForm.form.valid" *ngIf="canEdit()">SAVE</button>
                             </div>
                         </div>
                     </form>
@@ -238,7 +238,7 @@
                         </div>
                         <div class="col-md-1 pull-right">
                             <button class="btn btn-primary" [disabled]="manager.id == 0 || manager.id == null"
-                                    (click)="createFund()">ADD</button>
+                                    (click)="createFund()" *ngIf="canEdit()">ADD</button>
                         </div>
                         <div class="row col-md-12" *ngIf="manager?.funds == null || manager?.funds?.length == 0">
                             No funds.

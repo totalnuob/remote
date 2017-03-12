@@ -516,7 +516,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="col-md-1 pull-right">
-                                    <button type="submit" class="btn btn-success" [disabled]="!fundForm.form.valid">SAVE</button>
+                                    <button type="submit" class="btn btn-success" [disabled]="!fundForm.form.valid" *ngIf="canEdit()">SAVE</button>
                                 </div>
                             </div>
                         </div>

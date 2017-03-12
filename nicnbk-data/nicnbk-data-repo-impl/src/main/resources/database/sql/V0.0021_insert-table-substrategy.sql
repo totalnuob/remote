@@ -15,11 +15,11 @@ INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES
 
 
 INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES(101, 'EQ_DISTR', 'Distressed/Restructuring', '', '', 22);
-INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES(102, 'EQ_EMERG', 'Emerging Market Fixed Income', '', '', 22);
+INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES(102, 'EQ_EMERGFI', 'Emerging Market Fixed Income', '', '', 22);
 INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES(103, 'EQ_RISKARB', 'Risk Arbitrage', '', '', 22);
 INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES(104, 'EQ_ACTIV', 'Activist', '', '', 22);
 INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES(105, 'EQ_ESITER', 'Esoteric - Event Driven', '', '', 22);
-INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES(106, 'EQ_MULTI', 'Multi-Strategy - Event Driven', '', '', 22);
+INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES(106, 'EQ_MULTIED', 'Multi-Strategy - Event Driven', '', '', 22);
 
 
 INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES(201, 'EQ_ASIA', 'Asia Pacific L/S',  '', '', 21);
@@ -27,7 +27,7 @@ INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES
 INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES(203, 'EQ_GLOBAL', 'Global L/S', '', '', 21);
 INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES(204, 'EQ_JAPAN', 'Japan L/S', '', '', 21);
 INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES(205, 'EQ_US', 'US L/S', '', '', 21);
-INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES(206, 'EQ_EMERG', 'Emerging Markets L/S', '', '', 21);
+INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES(206, 'EQ_EMERGLS', 'Emerging Markets L/S', '', '', 21);
 INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES(207, 'EQ_HEALTH', 'Sector Healthcare', '', '', 21);
 INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES(208, 'EQ_COMMOD', 'Sector Commodity', '', '', 21);
 INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES(209, 'EQ_FINANC', 'Sector Financial', '', '', 21);
@@ -40,7 +40,7 @@ INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES
 INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES(216, 'EQ_ENERGY', 'Sector Energy', '', '', 21);
 INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES(217, 'EQ_SELLER', 'Short Seller', '', '', 21);
 INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES(218, 'EQ_ESOTER', 'Esoteric - Equity L/S', '', '', 21);
-INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES(219, 'EQ_MULTI', 'Multi-Strategy - Equity L/S', '', '', 21);
+INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES(219, 'EQ_MULTILS', 'Multi-Strategy - Equity L/S', '', '', 21);
 
 
 INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES(301, 'M_GLOBAL', 'Global Macro', '', '', 24);
