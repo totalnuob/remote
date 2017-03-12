@@ -253,9 +253,10 @@
                             <th>ACTIONS</th>
                             </thead>
                             <tbody>
-                            <tr *ngFor="let fund of manager?.funds">
+                            <tr *ngFor="let fund of manager?.funds" style="cursor: pointer" [routerLink]="['/hf/fundProfile/', fund.id]">
                                 <td width="5%"></td>
-                                <td width="30%"><a [routerLink]="['/hf/fundProfile/', fund.id]">{{fund.name}}</a></td>
+                                <!--<td width="30%"><a [routerLink]="['/hf/fundProfile/', fund.id]">{{fund.name}}</a></td>-->
+                                <td width="30%"><a>{{fund.name}}</a></td>
                                 <td width="10%">{{getStrategyName(fund.strategy)}}</td>
                                 <td width="10%">{{fund.inceptionDate}}</td>
                                 <td width="10%">{{fund.updateDate}}</td>
