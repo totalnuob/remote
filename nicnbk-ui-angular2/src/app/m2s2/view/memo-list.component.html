@@ -39,7 +39,7 @@
                     <div class="col-md-12">
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label for="firmName">Meeting Type</label>
+                                <label for="meetingType">Meeting Type</label>
                                 <select class="form-control" id="meetingType" [(ngModel)]="searchParams.meetingType">
                                     <option value="NONE">---</option>
                                     <option *ngFor = "let type of meetingTypes" [value]="type.code">{{type.nameEn}}</option>
@@ -48,7 +48,7 @@
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label for="firmName">Memo Type</label>
+                                <label for="memoType">Memo Type</label>
                                 <select class="form-control" id="memoType" [(ngModel)]="searchParams.memoType">
                                     <option value="0">---</option>
                                     <option *ngFor = "let type of memoTypes" [value]="type.code">{{type.nameEn}}</option>

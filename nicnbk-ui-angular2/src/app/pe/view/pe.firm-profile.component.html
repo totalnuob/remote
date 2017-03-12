@@ -202,9 +202,9 @@
                             <th>ACTIONS</th>
                             </thead>
                             <tbody>
-                            <tr *ngFor="let fund of firm.funds">
+                            <tr *ngFor="let fund of firm.funds" style="cursor: pointer" [routerLink]="['/pe/fundProfile/',fund.id, firm.id]">
                                 <td width="5%"></td>
-                                <td width="20%"><a [routerLink]="['/pe/fundProfile/',fund.id, firm.id]">{{fund.fundName}}</a></td>
+                                <td width="20%"><a>{{fund.fundName}}</a></td>
                                 <td width="5%">{{fund.status}}</td>
                                 <td width="5%"><span *ngIf="fund.vintage != 0">{{fund.vintage}}</span></td>
                                 <!--<td width="10%"></td>-->
