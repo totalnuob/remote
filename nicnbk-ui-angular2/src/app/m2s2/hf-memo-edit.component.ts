@@ -334,6 +334,7 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
                         }
 
                         this.postAction("Attachment deleted.", null);
+                        this.submitted = true;
                     },
                     (error: ErrorResponse) => {
                         this.errorMessage = "Error deleting attachment";
@@ -341,6 +342,7 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
                             this.processErrorMessage(error);
                         }
                         this.postAction(null, null);
+                        this.submitted = false;
                     }
                 );
         }

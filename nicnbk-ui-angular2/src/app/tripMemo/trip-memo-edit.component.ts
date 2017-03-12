@@ -193,8 +193,11 @@ export class TripMemoEditComponent extends CommonFormViewComponent implements On
                         this.errorMessage = "Error deleting attachments";
                         if(error && !error.isEmpty()){
                             this.processErrorMessage(error);
+                            this.submitted = true;
                         }
                         this.postAction(null, null);
+                        this.submitted = false;
+
                     }
                 );
         }

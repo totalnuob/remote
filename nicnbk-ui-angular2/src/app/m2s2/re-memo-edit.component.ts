@@ -310,6 +310,7 @@ export class RealEstateMemoEditComponent extends CommonFormViewComponent impleme
                         }
 
                         this.postAction("Attachment deleted.", null);
+                        this.submitted = true;
                     },
                     (error: ErrorResponse) => {
                         this.errorMessage = "Error deleting attachments";
@@ -317,6 +318,7 @@ export class RealEstateMemoEditComponent extends CommonFormViewComponent impleme
                             this.processErrorMessage(error);
                         }
                         this.postAction(null, null);
+                        this.submitted = false;
                     }
                 );
         }

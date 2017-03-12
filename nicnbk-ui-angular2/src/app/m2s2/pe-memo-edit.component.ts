@@ -367,6 +367,7 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
                         }
 
                         this.postAction("Attachment deleted.", null);
+                        this.submitted = true;
                     },
                     (error: ErrorResponse) => {
                         this.errorMessage = "Error deleting attachments";
@@ -374,6 +375,7 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
                             this.processErrorMessage(error);
                         }
                         this.postAction(null, null);
+                        this.submitted = false;
                     }
                 );
         }
