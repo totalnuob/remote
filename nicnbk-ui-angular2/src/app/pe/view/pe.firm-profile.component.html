@@ -197,7 +197,7 @@
                             <th>FUND</th>
                             <th>STATUS</th>
                             <th>VINTAGE</th>
-                            <th>STRATEGY</th>
+                            <!--<th>STRATEGY</th>-->
                             <th>UPDATED</th>
                             <th>ACTIONS</th>
                             </thead>
@@ -207,7 +207,7 @@
                                 <td width="20%"><a [routerLink]="['/pe/fundProfile/',fund.id, firm.id]">{{fund.fundName}}</a></td>
                                 <td width="5%">{{fund.status}}</td>
                                 <td width="5%"><span *ngIf="fund.vintage != 0">{{fund.vintage}}</span></td>
-                                <td width="10%"></td>
+                                <!--<td width="10%"></td>-->
                                 <td width="10%">{{fund.updateDate}}</td>
                                 <td width="5%">
                                     <a><i class="glyphicon glyphicon-search"></i></a>

@@ -537,6 +537,7 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
                 (data: HFManager) => {
                     if(data && data.id > 0) {
                         this.memo.manager = data;
+                        this.memo.fund = null;
                     } else {
                         this.errorMessage = "Error loading fund manager info";
                     }

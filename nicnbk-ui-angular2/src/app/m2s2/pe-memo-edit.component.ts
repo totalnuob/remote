@@ -59,6 +59,14 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
     public geographyList: Array<any> = [];
     public attendeesList: Array<any> = [];
 
+    public firmStrategyList: Array<any> = [];
+    public firmIndustryList: Array<any> = [];
+    public firmGeographyList: Array<any> = [];
+    public fundStrategyList: Array<any> = [];
+    public fundGeographyList: Array<any> = [];
+
+
+
     public firmList: Array<any> = [];
     public fundList: Array<any> = [];
     public foundFundsList: Array<any> = [];
@@ -128,13 +136,20 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
                         .subscribe(
                             memo => {
                                 // TODO: check response memo
+
                                 this.memo = memo;
-                                console.log(memo);
+                                //console.log(memo);
+
                                 this.initRadarChart();
+
                                 //console.log(this.memo);
                                 //if(this.memo.fund == null){
                                 //    this.memo.fund = new PEFund();
                                 //}
+
+                                this.preselectFirmStrategyGeographyIndustry(this.memo.firm);
+                                this.preselectFundStrategyGeographyIndustry(this.memo.fund);
+
                                 if(this.memo.firm == null){
                                     this.memo.firm = new PEFirm();
                                 }
@@ -585,12 +600,16 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
                 (data: PEFirm) => {
                     if(data && data.id > 0) {
                         this.memo.firm = data;
+                        this.preselectFirmStrategyGeographyIndustry(this.memo.firm);
+                        this.preselectFundStrategyGeographyIndustry(null);
+                        this.memo.fund = null;
                     } else {
                         this.errorMessage = "Error loading fund manager info.";
                     }
                 },
                 error => this.errorMessage = "Error loading manager profile"
             );
+
         //this.peSearchParams['id'] = id;
         //this.peFundService.search(this.peSearchParams)
         //    .subscribe(
@@ -610,6 +629,7 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
         //}
         for(var i = 0; i < this.memo.firm.funds.length; i++){
             if(this.memo.firm.funds[i].id == id) {
+                this.preselectFundStrategyGeographyIndustry(this.memo.firm.funds[i]);
                 return this.memo.fund = this.memo.firm.funds[i];
             }
         }
@@ -660,5 +680,46 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
 
     public canEdit(){
         return this.moduleAccessChecler.checkAccessPrivateEquityEditor();
+    }
+
+    preselectFirmStrategyGeographyIndustry(firm){
+        this.firmGeographyList = [];
+        this.firmStrategyList = [];
+        this.firmIndustryList = [];
+
+        if(firm && firm.id && firm.strategy) {
+            firm.strategy.forEach(element => {
+                this.firmStrategyList.push(element.nameEn.toString());
+            });
+        }
+        if(firm && firm.id && firm.industryFocus) {
+            this.memo.firm.industryFocus.forEach(element => {
+                this.firmIndustryList.push(element.nameEn.toString());
+            });
+        }
+        if(firm && firm.id && firm.geographyFocus) {
+            firm.geographyFocus.forEach(element => {
+                this.firmGeographyList.push(element.nameEn.toString());
+            });
+        }
+
+        console.log(this.firmStrategyList);
+
+    }
+
+    preselectFundStrategyGeographyIndustry(fund){
+        this.fundStrategyList = [];
+        this.fundGeographyList = [];
+
+        if(fund && fund.id && fund.strategy) {
+            fund.strategy.forEach(element => {
+                this.fundStrategyList.push(element.nameEn.toString());
+            });
+        }
+        if(fund && fund.id && fund.geography) {
+            fund.geography.forEach(element => {
+                this.fundGeographyList.push(element.nameEn.toString());
+            });
+        }
     }
 }
