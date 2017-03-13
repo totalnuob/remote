@@ -209,12 +209,13 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
     drawPortfolioStructureChart(){
         var data = google.visualization.arrayToDataTable([
             ['Type', '%'],
-            ["Government Bonds",0.1506],
-            ["Corporate Bonds",0.3942],
-            ["Agencies",0.1980],
-            ["Supranationals",0.1746],
-            ["Margin at Broker",0.0032],
-            ["Cash",0.0377]
+            ["Government Bonds",0.12],
+            ["Corporate Bonds",0.48],
+            ["Agencies",0.14],
+            ["Supernationals",0.12],
+            ["Margin at Broker",0.01],
+            ["Swaps", 0.04],
+            ["Cash", 0.09]
         ]);
 
         var options = {
@@ -228,15 +229,12 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
     drawBondsByCountryChart(){
         var data = google.visualization.arrayToDataTable([
             ['Country', '%'],
-            ["United States", 0.04],
-            ["France", 0.07],
-            ["Canada", 	0.26],
-            ["Australia", 0.26],
-            ["South Korea", 0.09],
-            ["Japan", 0.18],
-            ["Cayman Islands", 0.05],
-            ["Hong Kong", 0.05],
-            ["China", 0],
+            ["United States", 0.53],
+            ["Canada", 	0.04],
+            ["South Korea", 0.02],
+            ["Japan", 0.08],
+            ["China", 0.05],
+            ["Britain", 0.28],
             ["Others", 0]
         ]);
 
@@ -250,9 +248,11 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
 
     drawBondsBySectorChart(){
         var data = google.visualization.arrayToDataTable([
-            ['Secotr', '%'],
+            ['Sector', '%'],
             ['Energy', 0.00],
-            ['Financial', 1.00],
+            ['Consumers', 0.11],
+            ['Financial', 0.85],
+            ['Other', 0.04]
         ]);
 
         var options = {
@@ -310,14 +310,16 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
         ["Sep-16",105939320,145406608,180764953,105447406,1251970,61795069,614968977],
         ["Oct-16",91022227,237796146,119768433,105493262,1246973,26006836,607250213],
         ["Nov-16",56068270,253124756,111749442,100499500,1999277,26075274,594189386],
-        ["Dec-16",69811340,316801341,86769238,64912802,6103132,105030857,591152852]
+        ["Dec-16",69811340,316801341,86769238,64912802,6103132,105030857,591152852],
+        ["Jan-17",69876340,268378406,76711605,65074072,6065035,48660019,560171989]
     ];
 
     private performance = [
         ["Sep-16",0.82,0.94,1.11,0.79,0.75,1.03],
         ["Oct-16",0.42,2.10,1.19,0.89,0.74,1.39],
         ["Nov-16",0.86,0.75,1.2,0.83,0.77,1.16],
-        ["Dec-16",0.68,2.44,-0.03,-1.6,0,-0.46]
+        ["Dec-16",0.68,2.44,-0.03,-1.6,0,-0.46],
+        ["Jan-17",0.68,2.44,-0.03,-1.6,0,1.21]
     ];
 
     private getRowDataReturnsYTD(date){
