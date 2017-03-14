@@ -33,12 +33,12 @@
         <li class="active">
             <a data-toggle="tab" href="#overview">OVERVIEW</a>
         </li>
-        <li>
-            <a data-toggle="tab" href="#idd">IDD</a>
-        </li>
-        <li>
-            <a data-toggle="tab" href="#odd">ODD</a>
-        </li>
+        <!--<li>-->
+            <!--<a data-toggle="tab" href="#idd">IDD</a>-->
+        <!--</li>-->
+        <!--<li>-->
+            <!--<a data-toggle="tab" href="#odd">ODD</a>-->
+        <!--</li>-->
         <!--<li>-->
         <!--<a data-toggle="tab" href="#quant_dd">QUANT DD</a>-->
         <!--</li>-->
@@ -414,6 +414,7 @@
                             <br/>
                             <div class="row">
                                 <div class="col-md-6">
+                                    <h4>Albourne ratings</h4>
                                     <table class="table table-responsive table-hover">
                                         <tr>
                                             <td width="40%">IDD Analyst Assessment</td>
@@ -568,32 +569,32 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr *ngFor="let return of fund.returns">
-                                            <td><input type="text" size="3" class="form-control hfReturns"
+                                        <tr *ngFor="let return of fund.returns" >
+                                            <td><input type="text" size="3" class="form-control hfReturns" [ngModelOptions]="{standalone: true}"
                                                        name="year" [(ngModel)]="return.year" (ngModelChange)="calculateReturnsYTD(return)"/></td>
-                                            <td><input type="text" size="4" class="form-control hfReturns" [style.color]="return.january < 0 ? 'red' : 'black'"
+                                            <td><input type="text" size="4" class="form-control hfReturns" [style.color]="return.january < 0 ? 'red' : 'black'" [ngModelOptions]="{standalone: true}"
                                                        name="january" [(ngModel)]="return.january" (ngModelChange)="calculateReturnsYTD(return)"/></td>
-                                            <td><input type="text" size="4" class="form-control hfReturns" [style.color]="return.february < 0 ? 'red' : 'black'"
+                                            <td><input type="text" size="4" class="form-control hfReturns" [style.color]="return.february < 0 ? 'red' : 'black'" [ngModelOptions]="{standalone: true}"
                                                        name="february" [(ngModel)]="return.february" (ngModelChange)="calculateReturnsYTD(return)"/></td>
-                                            <td><input type="text" size="4" class="form-control hfReturns" [style.color]="return.march < 0 ? 'red' : 'black'"
+                                            <td><input type="text" size="4" class="form-control hfReturns" [style.color]="return.march < 0 ? 'red' : 'black'" [ngModelOptions]="{standalone: true}"
                                                        name="march" [(ngModel)]="return.march"(ngModelChange)="calculateReturnsYTD(return)"/></td>
-                                            <td><input type="text" size="4" class="form-control hfReturns" [style.color]="return.april < 0 ? 'red' : 'black'"
+                                            <td><input type="text" size="4" class="form-control hfReturns" [style.color]="return.april < 0 ? 'red' : 'black'" [ngModelOptions]="{standalone: true}"
                                                        name="april" [(ngModel)]="return.april" (ngModelChange)="calculateReturnsYTD(return)"/></td>
-                                            <td><input type="text" size="4" class="form-control hfReturns" [style.color]="return.may < 0 ? 'red' : 'black'"
+                                            <td><input type="text" size="4" class="form-control hfReturns" [style.color]="return.may < 0 ? 'red' : 'black'" [ngModelOptions]="{standalone: true}"
                                                        name="may" [(ngModel)]="return.may" (ngModelChange)="calculateReturnsYTD(return)"/></td>
-                                            <td><input type="text" size="4" class="form-control hfReturns" [style.color]="return.june < 0 ? 'red' : 'black'"
+                                            <td><input type="text" size="4" class="form-control hfReturns" [style.color]="return.june < 0 ? 'red' : 'black'" [ngModelOptions]="{standalone: true}"
                                                        name="june" [(ngModel)]="return.june" (ngModelChange)="calculateReturnsYTD(return)"/></td>
-                                            <td><input type="text" size="4" class="form-control hfReturns" [style.color]="return.july < 0 ? 'red' : 'black'"
+                                            <td><input type="text" size="4" class="form-control hfReturns" [style.color]="return.july < 0 ? 'red' : 'black'" [ngModelOptions]="{standalone: true}"
                                                        name="july" [(ngModel)]="return.july" (ngModelChange)="calculateReturnsYTD(return)"/></td>
-                                            <td><input type="text" size="4" class="form-control hfReturns" [style.color]="return.august < 0 ? 'red' : 'black'"
+                                            <td><input type="text" size="4" class="form-control hfReturns" [style.color]="return.august < 0 ? 'red' : 'black'" [ngModelOptions]="{standalone: true}"
                                                        name="august" [(ngModel)]="return.august" (ngModelChange)="calculateReturnsYTD(return)"/></td>
-                                            <td><input type="text" size="4" class="form-control hfReturns" [style.color]="return.september < 0 ? 'red' : 'black'"
+                                            <td><input type="text" size="4" class="form-control hfReturns" [style.color]="return.september < 0 ? 'red' : 'black'" [ngModelOptions]="{standalone: true}"
                                                        name="september" [(ngModel)]="return.september" (ngModelChange)="calculateReturnsYTD(return)"/></td>
-                                            <td><input type="text" size="4" class="form-control hfReturns" [style.color]="return.october < 0 ? 'red' : 'black'"
+                                            <td><input type="text" size="4" class="form-control hfReturns" [style.color]="return.october < 0 ? 'red' : 'black'" [ngModelOptions]="{standalone: true}"
                                                        name="october" [(ngModel)]="return.october" (ngModelChange)="calculateReturnsYTD(return)"/></td>
-                                            <td><input type="text" size="4" class="form-control hfReturns" [style.color]="return.november < 0 ? 'red' : 'black'"
+                                            <td><input type="text" size="4" class="form-control hfReturns" [style.color]="return.november < 0 ? 'red' : 'black'" [ngModelOptions]="{standalone: true}"
                                                        name="november" [(ngModel)]="return.november" (ngModelChange)="calculateReturnsYTD(return)"/></td>
-                                            <td><input type="text" size="4" class="form-control hfReturns" [style.color]="return.devember < 0 ? 'red' : 'black'"
+                                            <td><input type="text" size="4" class="form-control hfReturns" [style.color]="return.devember < 0 ? 'red' : 'black'" [ngModelOptions]="{standalone: true}"
                                                        name="december" [(ngModel)]="return.december" (ngModelChange)="calculateReturnsYTD(return)"/></td>
                                             <td><input type="text" readonly size="5" class="form-control hfReturns" [style.color]="calculateReturnsYTD(return) < 0 ? 'red' : 'black'"
                                                        [value]="calculateReturnsYTD(return)"/></td>
@@ -652,7 +653,7 @@
                                             <div>
                                                 Date format: <span style="font-weight: bold">dd.mm.yyyy</span>
                                             </div>
-                                    <textarea fz-elastic class="form-control" placeholder="Paste returns here..."
+                                    <textarea class="form-control" placeholder="Paste returns here..."
                                               name="uploadedReturns" [(ngModel)]="uploadedReturns"></textarea>
                                         </div>
                                         <div class="modal-footer">
@@ -678,18 +679,18 @@
                 </div>
                 <button class="btn btn-primary" [routerLink]="['/hf/managerProfile',fund?.manager?.id]">Back to manager profile</button>
             </div>
-            <div id="idd" class="tab-pane fade">
-                Investment Due Diligence
-                <div style="min-height: 150px;">
+           <!-- <div id="idd" class="tab-pane fade"-->
+               <!-- Investment Due Diligenc-->
+               <!-- <div style="min-height: 150px;"-->
 
-                </div>
-            </div>
-            <div id="odd" class="tab-pane fade">
-                Operational Due Diligence
-                <div style="min-height: 150px;">
+               <!-- </div-->
+           <!-- </div-->
+           <!-- <div id="odd" class="tab-pane fade"-->
+               <!-- Operational Due Diligenc-->
+               <!-- <div style="min-height: 150px;"-->
 
-                </div>
-            </div>
+               <!-- </div-->
+           <!-- </div-->
             <!--<div id="quant_dd" class="tab-pane fade">-->
             <!--Quantitative Due Diligence-->
             <!--<div style="min-height: 150px;">-->

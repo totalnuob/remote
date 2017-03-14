@@ -60,6 +60,11 @@ INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES
 
 INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES(401, 'MULTI_DIV', 'Multi-Strategy Diversified', '', '', 27);
 INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES(402, 'MULTI_OPP', 'Multi-Strategy Opportunistic', '', '', 27);
+INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES(403, 'MULTI_FUND', 'Fundamental Equity MN', '', '', 27);
+INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES(404, 'MULTI_STAT', 'Statistical Arbitrage', '', '', 27);
+INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES(405, 'MULTI_FIA', 'Fixed Income Arbitrage ', '', '', 27);
+INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES(406, 'MULTI_RIA', 'Risk Arbitrage', '', '', 27);
+INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES(407, 'MULTI_SECC', 'Sector Commodity', '', '', 27);
 
 
 INSERT INTO substrategy(id, code, name_en, name_ru, name_kz, strategy_id) VALUES(501, 'LB_ASIA', 'Asia Pacific Long Biased',  '', '', 28);
