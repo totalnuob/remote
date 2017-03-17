@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Component, Injectable } from '@angular/core';
 import {Router} from '@angular/router';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import {CommonService} from "../common/common.service";
@@ -15,7 +15,8 @@ export class AuthenticationService extends CommonService{
 
     constructor(
         private _router: Router,
-        private http: Http){
+        private http: Http
+    ){
         super();
     }
 
@@ -31,9 +32,9 @@ export class AuthenticationService extends CommonService{
 
     }
 
-    checkCredentials(){
+    checkCredentials(state){
         if (localStorage.getItem("authenticatedUser") === null){
-            this._router.navigate(['login']);
+            this._router.navigate(['/login'], {queryParams: {returnUrl: state}});
         }
     }
 }

@@ -55,7 +55,7 @@ import {ModuleAccessCheckerService} from "./authentication/module.access.checker
         HedgeFundService,
         RiskManagementReportService,
         AlbourneService,
-        ModuleAccessCheckerService
+        ModuleAccessCheckerService,
     ]
 })
 @NgModule({

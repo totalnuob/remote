@@ -9,6 +9,8 @@ import {SelectModule} from 'ng2-select';
 //import { TagInputModule } from 'ng2-tag-input';
 import {ElasticModule} from 'angular2-elastic';
 
+import {RouterModule} from '@angular/router';
+
 import { appRouterProviders } from './app.routes';
 import {AuthGuard} from "./auth.guard.service";
 import {AuthenticationService} from "./authentication/authentication.service";
@@ -50,6 +52,7 @@ import {BusyModule} from "angular2-busy/index"
 import {HFManagerSearchComponent} from "./hf/hf.manager-search.component";
 import {AccessDeniedComponent} from "./access.denied.component";
 import {EmployeeProfileComponent} from "./employee/employee.profile.component";
+import {NotFoundComponent} from "./page-not-found.component";
 
 @NgModule({
     imports: [
@@ -82,7 +85,7 @@ import {EmployeeProfileComponent} from "./employee/employee.profile.component";
         HFDashboardComponent, HFFundSearchComponent, HFFundSelectionComponent, HFPortfolioComponent, HFReportComponent,
         HFFundProfileComponent, HFManagerProfileComponent, HFManagerSearchComponent,
         PEFundProfileComponent, PEFirmProfileComponent, PEFirmSearchComponent, PEFundReportComponent,
-        AccessDeniedComponent
+        AccessDeniedComponent,NotFoundComponent
     ],
     bootstrap: [ AppComponent ]
 })

@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
-import { } from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
+import {Location} from '@angular/common';
 import {News} from "./model/news";
 import {NEWS} from "./model/mock-news";
 import {NewsService} from "./news.service";
@@ -34,12 +35,19 @@ export class NewsListComponent implements OnInit{
 
     showMoreButtonMap = {};
 
-    private moduleAccessChecker: ModuleAccessCheckerService;
+    id: number;
 
+    private moduleAccessChecker: ModuleAccessCheckerService;
+    private sub: any;
 
     constructor(
-      private newsService: NewsService){
+      private newsService: NewsService,
+      private route: ActivatedRoute,
+      private router: Router,
+      private location: Location
+    ){
         this.moduleAccessChecker = new ModuleAccessCheckerService;
+
     }
 
     ngOnInit(){
@@ -48,6 +56,21 @@ export class NewsListComponent implements OnInit{
 
         // load news
         this.loadNews();
+
+        this.sub = this.route
+            .params
+            .subscribe( params => {
+                    if(params['params'] != null) {
+                        try {
+                            this.id = JSON.parse(params['params']);
+                            this.getNewsById(this.id);
+                            $('#newsModal').modal('show');
+                        } catch(error) {
+                            return;
+                        }
+                    }
+                }
+            )
     }
 
     getPage(category){
@@ -102,7 +125,15 @@ export class NewsListComponent implements OnInit{
     }
 
     getNewsById(id){
+
+        //let params = JSON.stringify(id);
+        this.location.go('/news;params=' + id);
+        //console.log(this.router.url);
+
+        //this.router.navigate(['/news/',{ params }]);
+
         //alert(id);
+
         this.newsService.getNewsById(id)
             .subscribe(
                 newsItem => this.selectedNews = newsItem,

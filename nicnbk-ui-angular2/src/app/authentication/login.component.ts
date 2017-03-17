@@ -1,7 +1,8 @@
-import {Component, ElementRef, Compiler } from '@angular/core';
+import {Component, ElementRef, Compiler, OnInit  } from '@angular/core';
 import { RuntimeCompiler} from '@angular/compiler';
-import {Router} from '@angular/router';
+import {Router, ActivatedRoute} from '@angular/router';
 import {AuthenticationService, User} from './authentication.service'
+import lastIndexOf = require("core-js/fn/array/last-index-of");
 
 @Component({
     selector: 'login-form',
@@ -10,15 +11,34 @@ import {AuthenticationService, User} from './authentication.service'
     styleUrls: ['../../../public/css/footer.css']
 })
 
-export class LoginComponent {
+export class LoginComponent implements OnInit{
 
     public user = new User('','');
     public errorMsg = '';
 
+    returnUrl: string;
+    url: string;
+    params: string;
+
     constructor(
         private router: Router,
+        private route: ActivatedRoute,
         private authenticationService: AuthenticationService,
-        private runtimeCompiler: RuntimeCompiler) {}
+        private runtimeCompiler: RuntimeCompiler) {
+    }
+
+    ngOnInit() {
+        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+
+        if(this.returnUrl != '/') {
+            this.url = this.returnUrl.substring(0, this.returnUrl.indexOf(';'));
+            if(this.url == '/news') {
+                this.params = this.returnUrl.substring(this.returnUrl.indexOf('=') + 1);
+            }
+        } else {
+            this.url = this.returnUrl;
+        }
+    }
 
     login() {
         this.authenticationService.login(this.user)
@@ -32,7 +52,13 @@ export class LoginComponent {
 
                     location.reload();
 
-                    this.router.navigate(['/']);
+                    if(this.params){
+                        let params = this.params;
+                        this.router.navigate([this.url, {params}]);
+                    } else {
+                        this.router.navigate([this.url]);
+                    }
+
                 },
                 error =>  {
                     this.errorMsg = 'Failed to login';

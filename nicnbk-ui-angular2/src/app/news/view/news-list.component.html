@@ -41,7 +41,10 @@
                     <div class="row withpadding" *ngFor = "let news of newsList">
                         <div class="col-md-12" *ngIf = "news.type == 'GENERAL'">
                             <div class="row">
-                                <a data-toggle="modal" (click) = "getNewsById(news.id)" data-target="#newsModal" style="cursor: pointer"><h4 style="word-wrap: break-word">{{news.header}}</h4></a>
+                                <a data-toggle="modal" (click) = "getNewsById(news.id)" data-target="#newsModal" style="cursor: pointer">
+                                <!--<a target="_blank" [routerLink]="['/news/view/', news.id]">-->
+                                    <h4 style="word-wrap: break-word">{{news.header}}</h4>
+                                </a>
                             </div>
                             <div class="row">
                                 <h4 style="word-wrap: break-word"><small>{{news.source}}</small></h4>
