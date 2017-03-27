@@ -53,7 +53,7 @@ public interface TripMemoRepository extends PagingAndSortingRepository<TripMemo,
      * @param pageable
      * @return
      */
-    @Query("select tripMemo from TripMemo tripMemo where (tripMemo.tripType=:tripType or :tripType is null) " +
+    @Query("select tripMemo from TripMemo tripMemo where (tripMemo.tripType.code=:tripType or :tripType is null) " +
             " and (tripMemo.status=:status or :status is null)" +
             " and (UPPER(tripMemo.organization) LIKE UPPER(CONCAT('%',:organization,'%'))  or :organization is null or :organization = '') " +
             " and (UPPER(tripMemo.location) LIKE UPPER(CONCAT('%',:location,'%'))  or :location is null or :location = '') " +
@@ -75,7 +75,7 @@ public interface TripMemoRepository extends PagingAndSortingRepository<TripMemo,
      * @param pageable
      * @return
      */
-    @Query("select tripMemo from TripMemo tripMemo where (tripMemo.tripType=:tripType or :tripType is null) " +
+    @Query("select tripMemo from TripMemo tripMemo where (tripMemo.tripType.code=:tripType or :tripType is null) " +
             " and (tripMemo.status=:status or :status is null)" +
             " and (UPPER(tripMemo.organization) LIKE UPPER(CONCAT('%',:organization,'%'))  or :organization is null or :organization = '') " +
             " and (UPPER(tripMemo.location) LIKE UPPER(CONCAT('%',:location,'%'))  or :location is null or :location = '') " +
@@ -98,7 +98,7 @@ public interface TripMemoRepository extends PagingAndSortingRepository<TripMemo,
      * @param pageable
      * @return
      */
-    @Query("select tripMemo from TripMemo tripMemo where (tripMemo.tripType=:tripType or :tripType is null) " +
+    @Query("select tripMemo from TripMemo tripMemo where (tripMemo.tripType.code=:tripType or :tripType is null) " +
             " and (tripMemo.status=:status or :status is null)" +
             " and (UPPER(tripMemo.organization) LIKE UPPER(CONCAT('%',:organization,'%'))  or :organization is null or :organization = '') " +
             " and (UPPER(tripMemo.location) LIKE UPPER(CONCAT('%',:location,'%'))  or :location is null or :location = '') " +
@@ -120,7 +120,7 @@ public interface TripMemoRepository extends PagingAndSortingRepository<TripMemo,
      * @param pageable
      * @return
      */
-    @Query("select tripMemo from TripMemo tripMemo where (tripMemo.tripType=:tripType or :tripType is null) " +
+    @Query("select tripMemo from TripMemo tripMemo where (tripMemo.tripType.code=:tripType or :tripType is null) " +
             " and (tripMemo.status=:status or :status is null)" +
             " and (UPPER(tripMemo.organization) LIKE UPPER(CONCAT('%',:organization,'%'))  or :organization is null or :organization = '') " +
             " and (UPPER(tripMemo.location) LIKE UPPER(CONCAT('%',:location,'%'))  or :location is null or :location = '') " +

@@ -8,18 +8,20 @@
             <div *ngIf="false">
                 You have been logged out.
             </div>
-            <div class="form-group input-group">
-                <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                <input class="form-control" type="text" name="username" placeholder="username"
-                    [(ngModel)]="user.username"/>
-            </div>
-            <div class="form-group input-group">
-                <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-                <input class="form-control" type="password" name="password" placeholder="password"
-                       [(ngModel)]="user.password"/>
-            </div>
-            <div><button type="button" class="btn btn-def btn-block" (click)="login()">Sign In</button></div>
 
+            <form (ngSubmit)="login()">
+                <div class="form-group input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                    <input class="form-control" type="text" name="username" placeholder="username"
+                        [(ngModel)]="user.username"/>
+                </div>
+                <div class="form-group input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                    <input class="form-control" type="password" name="password" placeholder="password"
+                           [(ngModel)]="user.password"/>
+                </div>
+                <div><button type="submit" class="btn btn-def btn-block">Sign In</button></div>
+            </form>
             <br/>
             <!--<div class="copyrightText">&copy; 2016 NIC</div>-->
         </div>

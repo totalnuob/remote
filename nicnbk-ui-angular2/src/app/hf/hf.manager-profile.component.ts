@@ -251,6 +251,14 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
         this.lookupService.getMeetingTypes().then(meetingTypes => this.meetingTypes = meetingTypes);
     }
 
+    getMeetingTypeName(type){
+        for(var i = 0; i < this.meetingTypes.length; i++){
+            if(this.meetingTypes[i].code == type){
+                return this.meetingTypes[i].nameEn;
+            }
+        }
+    }
+
     getStrategyName(code){
         for(var i = 0; i < this.strategyLookup.length; i++){
             if(this.strategyLookup[i].code === code){

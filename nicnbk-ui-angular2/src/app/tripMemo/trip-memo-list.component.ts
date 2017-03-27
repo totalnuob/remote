@@ -25,6 +25,7 @@ export class TripMemoListComponent extends CommonFormViewComponent implements On
 
     tripMemoSearchResult: TripMemoSearchResults;
     tripMemoList: TripMemo[];
+    tripTypes = [];
 
     constructor(
         private lookupService: LookupService,
@@ -33,6 +34,9 @@ export class TripMemoListComponent extends CommonFormViewComponent implements On
         private route: ActivatedRoute
     ){
         super();
+
+        //loadLookups
+        this.sub = this.loadLookups();
 
         this.sub = this.route
             .params
@@ -99,10 +103,22 @@ export class TripMemoListComponent extends CommonFormViewComponent implements On
             );
     }
 
+    loadLookups() {
+        //trip types
+        this.lookupService.getTripTypes().then(tripTypes => this.tripTypes = tripTypes);
+    }
+
     navigate(tripMemoId){
         this.searchParams.path = '/bt';
         let params = JSON.stringify(this.searchParams);
         this.router.navigate(['/bt/edit/', tripMemoId, { params }]);
     }
 
+    getTripTypeName(type){
+        for(var i = 0; i < this.tripTypes.length; i++){
+            if(this.tripTypes[i].code == type){
+                return this.tripTypes[i].nameEn;
+            }
+        }
+    }
 }

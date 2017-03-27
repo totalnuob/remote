@@ -32,45 +32,46 @@
 
     <div class="jumbotron">
         <br/>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="col-md-9">
-                    <div class="form-group">
-                        <label for="firmName">Firm name</label>
-                        <input type="text" class="form-control" id="firmName" [(ngModel)]="searchParams.name"
-                               placeholder="Enter firm name..."
-                        />
+        <form (ngSubmit)="search()">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-9">
+                        <div class="form-group">
+                            <label for="firmName">Firm name</label>
+                            <input type="text" class="form-control" id="firmName" [(ngModel)]="searchParams.name" name="firmName"
+                                   placeholder="Enter firm name..." />
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <!--<div class="row">-->
-        <!--<div class="col-md-12">-->
-        <!--<div class="col-md-3">-->
-        <!--<div class="form-group">-->
-        <!--<label for="strategy">Strategy</label>-->
-        <!--<select class="form-control" id="strategy">-->
-        <!--<option value="0">-&#45;&#45;</option>-->
-        <!--<option *ngFor = "let item of strategyList" [value]="item.code">{{item.nameEn}}</option>-->
-        <!--</select>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--<div class="col-md-3">-->
-        <!--<div class="form-group">-->
-        <!--<label for="status">Status</label>-->
-        <!--<select class="form-control" id="status">-->
-        <!--<option value="0">-&#45;&#45;</option>-->
-        <!--<option *ngFor = "let item of statusList" [value]="item.code">{{item.nameEn}}</option>-->
-        <!--</select>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</div>-->
-        <div class="row">
-            <div class="col-md-12">
-                <button type="button" class="btn btn-success pull-right" (click)="search()">Search</button>
+            <!--<div class="row">-->
+            <!--<div class="col-md-12">-->
+            <!--<div class="col-md-3">-->
+            <!--<div class="form-group">-->
+            <!--<label for="strategy">Strategy</label>-->
+            <!--<select class="form-control" id="strategy">-->
+            <!--<option value="0">-&#45;&#45;</option>-->
+            <!--<option *ngFor = "let item of strategyList" [value]="item.code">{{item.nameEn}}</option>-->
+            <!--</select>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--<div class="col-md-3">-->
+            <!--<div class="form-group">-->
+            <!--<label for="status">Status</label>-->
+            <!--<select class="form-control" id="status">-->
+            <!--<option value="0">-&#45;&#45;</option>-->
+            <!--<option *ngFor = "let item of statusList" [value]="item.code">{{item.nameEn}}</option>-->
+            <!--</select>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+            <div class="row">
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-success pull-right">Search</button>
+                </div>
             </div>
-        </div>
+        </form>
     </div>
     <div>
         <label>Total found: <span>{{searchResult?.totalElements > 0 ?  searchResult?.totalElements : 0}}</span></label>

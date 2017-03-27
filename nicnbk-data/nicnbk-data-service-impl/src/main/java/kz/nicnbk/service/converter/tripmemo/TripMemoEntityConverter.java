@@ -1,7 +1,10 @@
 package kz.nicnbk.service.converter.tripmemo;
 
+import kz.nicnbk.common.service.util.StringUtils;
+import kz.nicnbk.repo.model.tripmemo.TripType;
 import kz.nicnbk.repo.model.tripmemo.TripMemo;
 import kz.nicnbk.service.converter.dozer.BaseDozerEntityConverter;
+import kz.nicnbk.service.datamanager.LookupService;
 import kz.nicnbk.service.dto.tripmemo.TripMemoDto;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +22,9 @@ public class TripMemoEntityConverter extends BaseDozerEntityConverter<TripMemo, 
     @Autowired
     private Mapper mapper;
 
+    @Autowired
+    private LookupService lookupService;
+
     @Override
     public TripMemo assemble(TripMemoDto dto) {
         if (dto == null) {
@@ -26,6 +32,12 @@ public class TripMemoEntityConverter extends BaseDozerEntityConverter<TripMemo, 
         }
 
         TripMemo tripMemo = mapper.map(dto, TripMemo.class);
+
+        if(StringUtils.isNotEmpty(dto.getTripType())){
+            TripType tripType = lookupService.findByTypeAndCode(TripType.class, dto.getTripType());
+            tripMemo.setTripType(tripType);
+        }
+
         return tripMemo;
     }
 
@@ -35,6 +47,10 @@ public class TripMemoEntityConverter extends BaseDozerEntityConverter<TripMemo, 
             return null;
         }
         TripMemoDto tripMemoDto = mapper.map(entity, TripMemoDto.class);
+
+        if(entity.getTripType() != null){
+            tripMemoDto.setTripType(entity.getTripType().getCode());
+        }
 
         if(entity.getCreator() != null){
             tripMemoDto.setOwner(entity.getCreator().getUsername());

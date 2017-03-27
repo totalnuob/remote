@@ -117,4 +117,12 @@
         </field-exclude>
     </mapping>
 
+    <mapping>
+        <class-a>kz.nicnbk.service.dto.tripmemo.TripMemoDto</class-a>
+        <class-b>kz.nicnbk.repo.model.tripmemo.TripMemo</class-b>
+        <field-exclude>
+            <a>tripType</a>
+            <b>tripType</b>
+        </field-exclude>
+    </mapping>
 </mappings>

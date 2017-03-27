@@ -33,45 +33,47 @@
 
     <div class="jumbotron">
         <br/>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="col-md-9">
-                    <div class="form-group">
-                        <label for="fundName">Fund name</label>
-                        <input type="text" class="form-control" id="fundName" [(ngModel)]="searchParams.name"
-                        placeholder="Enter fund name..."
-                        />
+        <form (ngSubmit)="search()">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-9">
+                        <div class="form-group">
+                            <label for="fundName">Fund name</label>
+                            <input type="text" class="form-control" id="fundName" [(ngModel)]="searchParams.name" name="fundName"
+                            placeholder="Enter fund name..."
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <!--<div class="row">-->
-            <!--<div class="col-md-12">-->
-                <!--<div class="col-md-3">-->
-                    <!--<div class="form-group">-->
-                        <!--<label for="strategy">Strategy</label>-->
-                        <!--<select class="form-control" id="strategy">-->
-                            <!--<option value="0">-&#45;&#45;</option>-->
-                            <!--<option *ngFor = "let item of strategyList" [value]="item.code">{{item.nameEn}}</option>-->
-                        <!--</select>-->
+            <!--<div class="row">-->
+                <!--<div class="col-md-12">-->
+                    <!--<div class="col-md-3">-->
+                        <!--<div class="form-group">-->
+                            <!--<label for="strategy">Strategy</label>-->
+                            <!--<select class="form-control" id="strategy">-->
+                                <!--<option value="0">-&#45;&#45;</option>-->
+                                <!--<option *ngFor = "let item of strategyList" [value]="item.code">{{item.nameEn}}</option>-->
+                            <!--</select>-->
+                        <!--</div>-->
                     <!--</div>-->
-                <!--</div>-->
-                <!--<div class="col-md-3">-->
-                    <!--<div class="form-group">-->
-                        <!--<label for="status">Status</label>-->
-                        <!--<select class="form-control" id="status">-->
-                            <!--<option value="0">-&#45;&#45;</option>-->
-                            <!--<option *ngFor = "let item of statusList" [value]="item.code">{{item.nameEn}}</option>-->
-                        <!--</select>-->
+                    <!--<div class="col-md-3">-->
+                        <!--<div class="form-group">-->
+                            <!--<label for="status">Status</label>-->
+                            <!--<select class="form-control" id="status">-->
+                                <!--<option value="0">-&#45;&#45;</option>-->
+                                <!--<option *ngFor = "let item of statusList" [value]="item.code">{{item.nameEn}}</option>-->
+                            <!--</select>-->
+                        <!--</div>-->
                     <!--</div>-->
                 <!--</div>-->
             <!--</div>-->
-        <!--</div>-->
-        <div class="row">
-            <div class="col-md-12">
-                <button type="button" class="btn btn-success pull-right" (click)="search()">Search</button>
+            <div class="row">
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-success pull-right">Search</button>
+                </div>
             </div>
-        </div>
+        </form>
     </div>
 
     <div>
