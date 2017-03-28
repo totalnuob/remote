@@ -25,7 +25,7 @@ public interface HFMeetingMemoRepository extends PagingAndSortingRepository<Hedg
             " WHERE m.id = :id")
     HedgeFundsMeetingMemo getFullEagerById(@Param("id") Long id);
 
-    Page<MeetingMemo> findAllByManagerIdOrderByMeetingDateDesc(@Param("id") Long id, Pageable pageable);
+    Page<HedgeFundsMeetingMemo> findAllByManagerIdOrderByMeetingDateDesc(@Param("id") Long id, Pageable pageable);
 
     @Query("SELECT memo FROM HedgeFundsMeetingMemo memo " +
             "where (memo.meetingType.code=:meetingType or :meetingType is null) " +
@@ -34,7 +34,7 @@ public interface HFMeetingMemoRepository extends PagingAndSortingRepository<Hedg
             " and (UPPER(memo.manager.name) LIKE UPPER(CONCAT('%',:firmName,'%')) or :firmName is null or :firmName = '') " +
             " and (UPPER(memo.fund.name) LIKE UPPER(CONCAT('%',:fundName,'%')) or :fundName is null or :fundName = '')" +
             " ORDER BY memo.meetingDate DESC")
-    Page<MeetingMemo> findWithoutDates(@Param("id") Long id,
+    Page<HedgeFundsMeetingMemo> findWithoutDates(@Param("id") Long id,
                                        @Param("meetingType") String meetingType,
                                        @Param("memoType") Integer memoType,
                                        @Param("firmName")String firmName,
@@ -48,7 +48,7 @@ public interface HFMeetingMemoRepository extends PagingAndSortingRepository<Hedg
             " and (UPPER(memo.fund.name) LIKE UPPER(CONCAT('%',:fundName,'%')) or :fundName is null or :fundName = '') " +
             " and (memo.meetingDate >= :dateFrom) and (memo.meetingDate <= :dateTo)" +
             " ORDER BY memo.meetingDate DESC")
-    Page<MeetingMemo> findBothDates(@Param("id") Long id, @Param("meetingType") String meetingType, @Param("memoType") Integer memoType,
+    Page<HedgeFundsMeetingMemo> findBothDates(@Param("id") Long id, @Param("meetingType") String meetingType, @Param("memoType") Integer memoType,
                                     @Param("firmName")String firmName,
                                     @Param("fundName")String fundName, @Param("dateFrom")@Temporal(TemporalType.DATE) Date dateFrom,
                                     @Param("dateTo") @Temporal(TemporalType.DATE) Date dateTo, Pageable pageable);
@@ -60,7 +60,7 @@ public interface HFMeetingMemoRepository extends PagingAndSortingRepository<Hedg
             " and (UPPER(memo.fund.name) LIKE UPPER(CONCAT('%',:fundName,'%')) or :fundName is null or :fundName = '') " +
             " and (memo.meetingDate >= :dateFrom)" +
             " ORDER BY memo.meetingDate DESC")
-    Page<MeetingMemo> findDateFrom(@Param("id") Long id, @Param("meetingType") String meetingType, @Param("memoType") Integer memoType,
+    Page<HedgeFundsMeetingMemo> findDateFrom(@Param("id") Long id, @Param("meetingType") String meetingType, @Param("memoType") Integer memoType,
                                    @Param("firmName")String firmName,
                                    @Param("fundName")String fundName, @Temporal(TemporalType.DATE) @Param("dateFrom") Date dateFrom, Pageable pageable);
 
@@ -71,7 +71,7 @@ public interface HFMeetingMemoRepository extends PagingAndSortingRepository<Hedg
             " and (UPPER(memo.fund.name) LIKE UPPER(CONCAT('%',:fundName,'%')) or :fundName is null or :fundName = '') " +
             " and (memo.meetingDate <= :dateTo)" +
             " ORDER BY memo.meetingDate DESC")
-    Page<MeetingMemo> findDateTo(@Param("id") Long id, @Param("meetingType") String meetingType, @Param("memoType") Integer memoType,
+    Page<HedgeFundsMeetingMemo> findDateTo(@Param("id") Long id, @Param("meetingType") String meetingType, @Param("memoType") Integer memoType,
                                  @Param("firmName")String firmName,
                                  @Param("fundName")String fundName,
                                  @Param("dateTo") @Temporal(TemporalType.DATE) Date dateTo, Pageable pageable);

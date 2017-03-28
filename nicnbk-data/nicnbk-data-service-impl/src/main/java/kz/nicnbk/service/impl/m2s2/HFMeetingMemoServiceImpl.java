@@ -107,7 +107,7 @@ public class HFMeetingMemoServiceImpl implements HFMeetingMemoService {
 
     @Override
     public MemoPagedSearchResult search(MemoSearchParams searchParams) {
-        Page<MeetingMemo> memoPage = null;
+        Page<HedgeFundsMeetingMemo> memoPage = null;
         int page = 0;
         int pageSize = searchParams != null && searchParams.getPageSize() > 0 ? searchParams.getPageSize() : memoService.DEFAULT_PAGE_SIZE;
 
@@ -158,20 +158,7 @@ public class HFMeetingMemoServiceImpl implements HFMeetingMemoService {
             if(searchParams != null) {
                 result.setSearchParams(searchParams.getSearchParamsAsString());
             }
-            result.setMemos(memoConverter.disassembleList(memoPage.getContent()));
-
-            // TODO: temp, need a new DB structure
-            // firm and fund names
-            for(MeetingMemoDto memoDto: result.getMemos()){
-                if(memoDto.getMemoType() == 3){
-                    // HF memo
-                    String firmName = this.repository.getManagerNameByMemoId(memoDto.getId());
-                    String fundName = this.repository.getFundNameByMemoId(memoDto.getId());
-                    memoDto.setFirmName(firmName);
-                    memoDto.setFundName(fundName);
-                }
-            }
-
+            result.setMemos(memoConverter.disHF(memoPage.getContent()));
         }
         return result;
     }

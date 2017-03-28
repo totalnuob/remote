@@ -25,7 +25,7 @@ public interface PEMeetingMemoRepository extends PagingAndSortingRepository<Priv
     PrivateEquityMeetingMemo getFullEagerById(@Param("id") Long id);
 
 
-    Page<MeetingMemo> findAllByFirmIdOrderByMeetingDateDesc(@Param("id") Long id, Pageable pageable);
+    Page<PrivateEquityMeetingMemo> findAllByFirmIdOrderByMeetingDateDesc(@Param("id") Long id, Pageable pageable);
 
 
     @Query("SELECT memo FROM PrivateEquityMeetingMemo memo " +
@@ -35,7 +35,7 @@ public interface PEMeetingMemoRepository extends PagingAndSortingRepository<Priv
             " and (UPPER(memo.firm.firmName) LIKE UPPER(CONCAT('%',:firmName,'%')) or :firmName is null or :firmName = '') " +
             " and (UPPER(memo.fund.fundName) LIKE UPPER(CONCAT('%',:fundName,'%')) or :fundName is null or :fundName = '')" +
             " ORDER BY memo.meetingDate DESC")
-    Page<MeetingMemo> findWithoutDates(@Param("id") Long id,
+    Page<PrivateEquityMeetingMemo> findWithoutDates(@Param("id") Long id,
                            @Param("meetingType") String meetingType,
                            @Param("memoType") Integer memoType,
                            @Param("firmName")String firmName,
@@ -50,7 +50,7 @@ public interface PEMeetingMemoRepository extends PagingAndSortingRepository<Priv
             " and (UPPER(memo.fund.fundName) LIKE UPPER(CONCAT('%',:fundName,'%')) or :fundName is null or :fundName = '') " +
             " and (memo.meetingDate >= :dateFrom) and (memo.meetingDate <= :dateTo)" +
             " ORDER BY memo.meetingDate DESC")
-    Page<MeetingMemo> findBothDates(@Param("id") Long id, @Param("meetingType") String meetingType, @Param("memoType") Integer memoType,
+    Page<PrivateEquityMeetingMemo> findBothDates(@Param("id") Long id, @Param("meetingType") String meetingType, @Param("memoType") Integer memoType,
                                     @Param("firmName")String firmName,
                                     @Param("fundName")String fundName, @Param("dateFrom")@Temporal(TemporalType.DATE) Date dateFrom,
                                     @Param("dateTo") @Temporal(TemporalType.DATE) Date dateTo, Pageable pageable);
@@ -62,7 +62,7 @@ public interface PEMeetingMemoRepository extends PagingAndSortingRepository<Priv
             " and (UPPER(memo.fund.fundName) LIKE UPPER(CONCAT('%',:fundName,'%')) or :fundName is null or :fundName = '') " +
             " and (memo.meetingDate >= :dateFrom)" +
             " ORDER BY memo.meetingDate DESC")
-    Page<MeetingMemo> findDateFrom(@Param("id") Long id, @Param("meetingType") String meetingType, @Param("memoType") Integer memoType,
+    Page<PrivateEquityMeetingMemo> findDateFrom(@Param("id") Long id, @Param("meetingType") String meetingType, @Param("memoType") Integer memoType,
                                    @Param("firmName")String firmName,
                                    @Param("fundName")String fundName, @Temporal(TemporalType.DATE) @Param("dateFrom") Date dateFrom, Pageable pageable);
 
@@ -74,7 +74,7 @@ public interface PEMeetingMemoRepository extends PagingAndSortingRepository<Priv
             " and (UPPER(memo.fund.fundName) LIKE UPPER(CONCAT('%',:fundName,'%')) or :fundName is null or :fundName = '') " +
             " and (memo.meetingDate <= :dateTo)" +
             " ORDER BY memo.meetingDate DESC")
-    Page<MeetingMemo> findDateTo(@Param("id") Long id, @Param("meetingType") String meetingType, @Param("memoType") Integer memoType,
+    Page<PrivateEquityMeetingMemo> findDateTo(@Param("id") Long id, @Param("meetingType") String meetingType, @Param("memoType") Integer memoType,
                                  @Param("firmName")String firmName,
                                  @Param("fundName")String fundName,
                                  @Param("dateTo") @Temporal(TemporalType.DATE) Date dateTo, Pageable pageable);
