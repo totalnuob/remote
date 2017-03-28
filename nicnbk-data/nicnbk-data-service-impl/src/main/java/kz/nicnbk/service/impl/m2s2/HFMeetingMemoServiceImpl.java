@@ -13,6 +13,7 @@ import kz.nicnbk.service.api.m2s2.MeetingMemoService;
 import kz.nicnbk.service.converter.m2s2.HFMeetingMemoEntityConverter;
 import kz.nicnbk.service.converter.m2s2.MeetingMemoEntityConverter;
 import kz.nicnbk.service.dto.m2s2.HedgeFundsMeetingMemoDto;
+import kz.nicnbk.service.dto.m2s2.MeetingMemoDto;
 import kz.nicnbk.service.dto.m2s2.MemoPagedSearchResult;
 import kz.nicnbk.service.dto.m2s2.MemoSearchParams;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -158,6 +159,19 @@ public class HFMeetingMemoServiceImpl implements HFMeetingMemoService {
                 result.setSearchParams(searchParams.getSearchParamsAsString());
             }
             result.setMemos(memoConverter.disassembleList(memoPage.getContent()));
+
+            // TODO: temp, need a new DB structure
+            // firm and fund names
+            for(MeetingMemoDto memoDto: result.getMemos()){
+                if(memoDto.getMemoType() == 3){
+                    // HF memo
+                    String firmName = this.repository.getManagerNameByMemoId(memoDto.getId());
+                    String fundName = this.repository.getFundNameByMemoId(memoDto.getId());
+                    memoDto.setFirmName(firmName);
+                    memoDto.setFundName(fundName);
+                }
+            }
+
         }
         return result;
     }

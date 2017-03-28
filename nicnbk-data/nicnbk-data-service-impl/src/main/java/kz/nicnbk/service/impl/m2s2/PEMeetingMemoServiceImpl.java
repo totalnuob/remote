@@ -13,6 +13,7 @@ import kz.nicnbk.service.api.m2s2.PEMeetingMemoService;
 import kz.nicnbk.service.api.pe.PEFundService;
 import kz.nicnbk.service.converter.m2s2.MeetingMemoEntityConverter;
 import kz.nicnbk.service.converter.m2s2.PEMeetingMemoEntityConverter;
+import kz.nicnbk.service.dto.m2s2.MeetingMemoDto;
 import kz.nicnbk.service.dto.m2s2.MemoPagedSearchResult;
 import kz.nicnbk.service.dto.m2s2.MemoSearchParams;
 import kz.nicnbk.service.dto.m2s2.PrivateEquityMeetingMemoDto;
@@ -156,6 +157,18 @@ public class PEMeetingMemoServiceImpl implements PEMeetingMemoService {
                 result.setSearchParams(searchParams.getSearchParamsAsString());
             }
             result.setMemos(memoConverter.disassembleList(memoPage.getContent()));
+
+            // TODO: temp, need a new DB structure
+            // firm and fund names
+            for(MeetingMemoDto memoDto: result.getMemos()){
+                if(memoDto.getMemoType() == 2){
+                    // PE memo
+                    String firmName = this.repository.getFirmNameByMemoId(memoDto.getId());
+                    String fundName = this.repository.getFundNameByMemoId(memoDto.getId());
+                    memoDto.setFirmName(firmName);
+                    memoDto.setFundName(fundName);
+                }
+            }
         }
         return result;
     }

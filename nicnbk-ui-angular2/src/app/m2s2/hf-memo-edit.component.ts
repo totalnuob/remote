@@ -62,6 +62,7 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
     closingScheduleList = [];
     openingScheduleList = [];
     currencyList = [];
+    fundStatusLookup = [];
 
     private breadcrumbParams: string;
     private searchParams = new MemoSearchParams();
@@ -493,6 +494,21 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
                 }
         );
 
+        // load statuses
+        this.lookupService.getHedgeFundStatuses()
+            .subscribe(
+                data => {
+                    this.fundStatusLookup = data;
+                },
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
+            );
+
         // load employees
         this.employeeService.findAll()
             .subscribe(
@@ -579,6 +595,14 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
         for(var i = 0; i < this.strategyList.length; i++){
             if(this.strategyList[i].id === code){
                 return this.strategyList[i].text;
+            }
+        }
+    }
+
+    getStatusName(code){
+        for(var i = 0; i < this.fundStatusLookup.length; i++){
+            if(this.fundStatusLookup[i].code === code){
+                return this.fundStatusLookup[i].nameEn;
             }
         }
     }

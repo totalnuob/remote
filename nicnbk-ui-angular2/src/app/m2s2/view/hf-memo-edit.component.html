@@ -75,7 +75,7 @@
                                     <div class="row">
                                         <table class="col-md-6 table-condensed">
                                             <tr>
-                                                <td class="col-md-3"><b>Status </b> {{memo?.fund?.status}}</td>
+                                                <td class="col-md-3"><b>Status </b> {{getStatusName(memo?.fund?.status)}}</td>
                                                 <!--<td class="col-md-3">{{memo?.fund?.status}}</td>-->
                                                 <!--<td class="col-md-3"><b>AUM</b></td>-->
                                                 <td class="col-md-3"><b>AUM </b>{{memo?.fund?.aum}} {{memo?.fund?.aum ? memo?.fund?.aumDigit : ''}} {{memo?.fund?.aum ? memo?.fund?.aumCurrency : ''}}</td>
