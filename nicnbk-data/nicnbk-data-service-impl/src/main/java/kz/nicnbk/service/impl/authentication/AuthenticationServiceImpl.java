@@ -5,6 +5,8 @@ import kz.nicnbk.service.api.authentication.AuthenticationService;
 import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.dto.authentication.AuthenticatedUserDto;
 import kz.nicnbk.service.dto.employee.EmployeeDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,26 +20,35 @@ import java.util.Set;
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
 
+    private static final Logger logger = LoggerFactory.getLogger(AuthenticationServiceImpl.class);
+
     @Autowired
     private EmployeeService employeeService;
 
     @Override
     public AuthenticatedUserDto authenticate(String username, String password) {
-        EmployeeDto employeeDto = employeeService.findActiveByUsernamePassword(username, password);
-        if(employeeDto == null){
-            return null;
-        }else{
-            AuthenticatedUserDto authenticatedUserDto = new AuthenticatedUserDto();
-            authenticatedUserDto.setUsername(employeeDto.getUsername());
-            if(employeeDto.getRoles() != null){
-                Set<String> roles = new HashSet<>();
-                for(BaseDictionaryDto role: employeeDto.getRoles()){
-                    roles.add(convertToOutputRoleName(role.getCode()));
+        try {
+            EmployeeDto employeeDto = employeeService.findActiveByUsernamePassword(username, password);
+            if (employeeDto == null) {
+                logger.error("Failed to authenticate: username=" + username);
+                return null;
+            } else {
+                AuthenticatedUserDto authenticatedUserDto = new AuthenticatedUserDto();
+                authenticatedUserDto.setUsername(employeeDto.getUsername());
+                if (employeeDto.getRoles() != null) {
+                    Set<String> roles = new HashSet<>();
+                    for (BaseDictionaryDto role : employeeDto.getRoles()) {
+                        roles.add(convertToOutputRoleName(role.getCode()));
+                    }
+                    authenticatedUserDto.setRoles(roles);
                 }
-                authenticatedUserDto.setRoles(roles);
+                logger.info("Successfully authenticated: username=" + username);
+                return authenticatedUserDto;
             }
-            return authenticatedUserDto;
+        }catch (Exception ex){
+            logger.error("Authentication error: username=" + username, ex);
         }
+        return null;
     }
 
     // TODO: change ROLE.CODE field size and remove this conversion, store long code

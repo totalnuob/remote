@@ -132,22 +132,23 @@
                 <th>DATE TO</th>
                 <th>AUTHOR</th>
                 <!--<th>STATUS</th>-->
-                <th>ACTIONS</th>
+                <th>UPDATED</th>
             </tr>
             </thead>
 
             <tbody>
             <tr *ngFor="let tripMemo of tripMemoList"  style="cursor: pointer" (click)="navigate(tripMemo.id)">
                 <td width="5%">{{tripMemo.tripType}}</td>
-                <td width="40%"><a>{{tripMemo.name}}</a></td>
-                <td width="15%"><a>{{tripMemo.organization}}</a></td>
+                <td width="30%"><a>{{tripMemo.name}}</a></td>
+                <td width="10%"><a>{{tripMemo.organization}}</a></td>
                 <td width="15%"><a>{{tripMemo.location}}</a></td>
                 <td width="10%">{{tripMemo.meetingDateStart}}</td>
                 <td width="10%">{{tripMemo.meetingDateEnd}}</td>
 
                 <td width="10%">{{tripMemo.owner}}</td>
                 <!--<td width="10%">{{tripMemo.status}}</td>-->
-                <td width="5%">
+                <td width="10%">
+                    {{tripMemo.updateDate}}
                     <!--<a><i class="glyphicon glyphicon-trash"></i></a>-->
                 </td>
             </tr>

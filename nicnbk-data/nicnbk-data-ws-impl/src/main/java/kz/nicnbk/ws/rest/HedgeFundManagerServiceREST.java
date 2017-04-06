@@ -1,5 +1,6 @@
 package kz.nicnbk.ws.rest;
 
+import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.hf.HFManagerService;
 import kz.nicnbk.service.dto.hf.HFManagerDto;
 import kz.nicnbk.service.dto.hf.HedgeFundManagerPagedSearchResult;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -21,46 +23,50 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/hf/manager")
-public class HedgeFundManagerServiceREST {
+public class HedgeFundManagerServiceREST extends CommonServiceREST{
 
     @Autowired
     private HFManagerService service;
 
+    @Autowired
+    private TokenService tokenService;
+
     @PreAuthorize("hasRole('ROLE_HEDGE_FUND_VIEWER') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/get/{id}", method = RequestMethod.GET)
-    public HFManagerDto get(@PathVariable long id){
+    public ResponseEntity get(@PathVariable long id){
         HFManagerDto firmDto = this.service.get(id);
-        if(firmDto == null){
-
-        }
-        return firmDto;
+        return buildResponse(firmDto);
     }
 
     @PreAuthorize("hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public ResponseEntity<?>  save(@RequestBody HFManagerDto firmDto) {
-        Long id = this.service.save(firmDto);
-
-        HttpHeaders httpHeaders = new HttpHeaders();
-        EntitySaveResponse response = new EntitySaveResponse();
-        response.setEntityId(id);
+        // set creator
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
         if(firmDto.getId() == null){
-            response.setCreationDate(new Date());
-        }else{
-            response.setCreationDate(firmDto.getCreationDate());
+            firmDto.setOwner(username);
         }
-        //managerDto.setId(id);
-        return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
+        Long id = this.service.save(firmDto, username);
+        if(id == null){
+            // error occurred
+            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }else {
+            // TODO: response from DB, not UI
+            return buildEntitySaveResponse(id, firmDto.getCreationDate());
+        }
     }
 
     @PreAuthorize("hasRole('ROLE_HEDGE_FUND_VIEWER') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/search", method = RequestMethod.POST)
-    public HedgeFundManagerPagedSearchResult search(@RequestBody HedgeFundSearchParams searchParams){
-        return this.service.findByName(searchParams);
+    public ResponseEntity search(@RequestBody HedgeFundSearchParams searchParams){
+        HedgeFundManagerPagedSearchResult searchResult = this.service.findByName(searchParams);
+        return buildResponse(searchResult);
     }
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)
-    public List<HFManagerDto> getManagers(){
-        return this.service.findAll();
+    public ResponseEntity getManagers(){
+        List<HFManagerDto> managers = this.service.findAll();
+        return buildResponse(managers);
     }
 }

@@ -65,7 +65,7 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
         private router: Router,
         private memoService: MemoService
     ) {
-        super();
+        super(router);
 
         this.moduleAccessChecker = new ModuleAccessCheckerService;
 

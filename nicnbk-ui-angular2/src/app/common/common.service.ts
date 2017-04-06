@@ -19,7 +19,7 @@ export class CommonService{
     public handleErrorResponse (error: any) {
         var errorResponse = new ErrorResponse;
         if(error.message){
-            console.log(error);
+            //console.log(error);
             errorResponse.message = error.message;
         }
         if(error.status){

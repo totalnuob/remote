@@ -18,7 +18,7 @@ public interface HFManagerService extends BaseService {
     /* Number of elements per page */
     int DEFAULT_PAGE_SIZE = 20;
 
-    Long save(HFManagerDto firmDto);
+    Long save(HFManagerDto firmDto, String updater);
 
     HFManagerDto get(Long id);
 

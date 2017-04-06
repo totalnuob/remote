@@ -17,8 +17,7 @@ export class LoginComponent {
 
     constructor(
         private router: Router,
-        private authenticationService: AuthenticationService,
-        private runtimeCompiler: RuntimeCompiler) {}
+        private authenticationService: AuthenticationService) {}
 
     login() {
         this.authenticationService.login(this.user)

@@ -14,14 +14,15 @@ export class User {
 export class AuthenticationService extends CommonService{
 
     constructor(
-        private _router: Router,
+        private router: Router,
         private http: Http){
         super();
     }
 
     private LOGIN_URL = DATA_APP_URL + "authenticate";
+    //private CHECK_TOKEN_URL = DATA_APP_URL + "checkToken";
 
-    login(user){
+        login(user){
 
         let body = JSON.stringify(user);
         return this.http.post(this.LOGIN_URL, body, this.getOptionsWithCredentials())
@@ -31,9 +32,16 @@ export class AuthenticationService extends CommonService{
 
     }
 
+    //checkToken(){
+    //    return this.http.post(this.CHECK_TOKEN_URL, null, this.getOptionsWithCredentials())
+    //        .map(this.extractData)
+    //        .catch(this.handleError);
+    //
+    //}
+
     checkCredentials(){
         if (localStorage.getItem("authenticatedUser") === null){
-            this._router.navigate(['login']);
+            this.router.navigate(['login']);
         }
     }
 }

@@ -75,6 +75,11 @@ public abstract class CommonMeetingMemoConverter<E extends MeetingMemo, DTO exte
         if(entity.getCreator() != null){
             dto.setOwner(entity.getCreator().getUsername());
         }
+
+        // updater
+        if(entity.getUpdater() != null){
+            dto.setUpdater(entity.getUpdater().getUsername());
+        }
     }
 
     protected void disassembleLazyNonmappedFields(DTO dto, E entity){

@@ -2,7 +2,7 @@ import { Component,NgModule, OnInit, ViewChild  } from '@angular/core';
 import {LookupService} from "../common/lookup.service";
 import {PEMemo} from "./model/pe-memo";
 import {MemoService} from "./memo.service";
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {Lookup} from "../common/lookup";
 import {EmployeeService} from "../employee/employee.service";
 
@@ -106,10 +106,11 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
         private employeeService: EmployeeService,
         private memoService: MemoService,
         private route: ActivatedRoute,
+        private router: Router,
         private peFirmService: PEFirmService,
         private peFundService: PEFundService
     ){
-        super();
+        super(router);
 
         this.moduleAccessChecler = new ModuleAccessCheckerService;
 

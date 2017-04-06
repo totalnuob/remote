@@ -23,9 +23,10 @@ public interface TripMemoService extends BaseService {
      * Save tripMemo and return tripMemo id
      *
      * @param tripMemoDto
+     * @param updater - user updating memo
      * @return - id
      */
-    Long save(TripMemoDto tripMemoDto);
+    Long save(TripMemoDto tripMemoDto, String updater);
 
     /**
      * get TripMemo dto by id
@@ -61,7 +62,9 @@ public interface TripMemoService extends BaseService {
      * @param fileId - file id
      * @return
      */
-    boolean deleteAttachment(Long tripMemoId, Long fileId);
+    boolean deleteAttachment(Long tripMemoId, Long fileId, String username);
+
+    boolean safeDeleteAttachment(Long tripMemoId, Long fileId, String username);
 
     /**
      * Save memo file info.
@@ -71,7 +74,7 @@ public interface TripMemoService extends BaseService {
      * @param fileId - file id
      * @return - true/false
      */
-    boolean saveTripMemoFileInfo(Long tripMemoId, Long fileId);
+    //boolean saveTripMemoFileInfo(Long tripMemoId, Long fileId);
 
 
     boolean checkOwner(String token, Long entityId);

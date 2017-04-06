@@ -75,6 +75,8 @@ public class PEFundDto extends HistoryBaseEntityDto<PEFund> {
     private String performanceMerits;
     private String performanceRisks;
 
+    private String owner;
+
     //cashflows
     private List<PEGrossCashflowDto> grossCashflow;
     private List<PENetCashflowDto> netCashflow;
@@ -502,5 +504,13 @@ public class PEFundDto extends HistoryBaseEntityDto<PEFund> {
 
     public void setNonsuitableReason(String nonsuitableReason) {
         this.nonsuitableReason = nonsuitableReason;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 }

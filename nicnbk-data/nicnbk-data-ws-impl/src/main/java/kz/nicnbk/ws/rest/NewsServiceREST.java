@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/news")
-public class NewsServiceREST {
+public class NewsServiceREST extends CommonServiceREST{
 
     public static final int DEFAULT_PAGE_SIZE = 5;
     public static final int MAX_PAGE_SIZE = 20;
@@ -33,54 +33,56 @@ public class NewsServiceREST {
     @RequestMapping(value = "/load", method = RequestMethod.GET)
     public ResponseEntity<?> getNewsShort(){
         List<NewsDto> news = newsService.loadNewsShort(DEFAULT_PAGE_SIZE);
-        return new ResponseEntity<>(news, getHeaders(), HttpStatus.CREATED);
+        return buildResponse(news);
     }
 
-    @RequestMapping(value = "/load/{pageSize}", method = RequestMethod.GET)
-    public ResponseEntity<?> getNewsShort(@PathVariable Integer pageSize){
-
-        List<NewsDto> news = newsService.loadNewsShort(pageSize);
-        return new ResponseEntity<>(news, getHeaders(), HttpStatus.CREATED);
-    }
+//    @RequestMapping(value = "/load/{pageSize}", method = RequestMethod.GET)
+//    public ResponseEntity<?> getNewsShort(@PathVariable Integer pageSize){
+//
+//        List<NewsDto> news = newsService.loadNewsShort(pageSize);
+//        return new ResponseEntity<>(news, getHeaders(), HttpStatus.CREATED);
+//    }
 
     @RequestMapping(value = "/load/{pageSize}/{newsType}/{page}", method = RequestMethod.GET)
     public ResponseEntity<?> getNewsShort(@PathVariable Integer pageSize, @PathVariable String newsType, @PathVariable Integer page){
-
         List<NewsDto> news = newsService.loadNewsShort(newsType, page, Math.min(pageSize, MAX_PAGE_SIZE));
-        return new ResponseEntity<>(news, getHeaders(), HttpStatus.CREATED);
+        return buildResponse(news);
     }
 
     @PreAuthorize("hasRole('ROLE_NEWS_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value="/save", method = RequestMethod.POST)
     public ResponseEntity<?> save(@RequestBody NewsDto newsDto){
-
         // set creator
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
         if(newsDto.getId() == null){
-            String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
-            String username = this.tokenService.decode(token).getUsername();
             newsDto.setOwner(username);
         }
 
-        Long id = newsService.save(newsDto);
-        HttpHeaders httpHeaders = new HttpHeaders();
+        Long id = newsService.save(newsDto, username);
         // TODO: response
-        newsDto.setId(id);
-        return new ResponseEntity<>(newsDto, httpHeaders, HttpStatus.CREATED);
+        if(id == null){
+            // error occurred
+            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }else {
+            // TODO: response from DB, not UI
+            return buildEntitySaveResponse(id, newsDto.getCreationDate());
+        }
     }
 
     @RequestMapping(value="/get/{id}", method = RequestMethod.GET)
-    public NewsDto get(@PathVariable Long id){
+    public ResponseEntity<?> get(@PathVariable Long id){
         NewsDto newsDto = this.newsService.get(id);
-        return newsDto;
+        return buildResponse(newsDto);
     }
 
-    private HttpHeaders getHeaders(){
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("Cache-control", "no-cache");
-        httpHeaders.add("Cache-control", "no-store");
-        httpHeaders.add("Pragma", "no-cache");
-        httpHeaders.add("Expires", "0");
-        return httpHeaders;
-    }
+//    private HttpHeaders getHeaders(){
+//        HttpHeaders httpHeaders = new HttpHeaders();
+//        httpHeaders.add("Cache-control", "no-cache");
+//        httpHeaders.add("Cache-control", "no-store");
+//        httpHeaders.add("Pragma", "no-cache");
+//        httpHeaders.add("Expires", "0");
+//        return httpHeaders;
+//    }
 
 }

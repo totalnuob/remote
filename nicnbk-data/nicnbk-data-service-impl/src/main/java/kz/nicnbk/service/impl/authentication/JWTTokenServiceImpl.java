@@ -10,6 +10,8 @@ import kz.nicnbk.common.service.util.HashUtils;
 import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.dto.authentication.AuthenticatedUserDto;
 import kz.nicnbk.service.dto.authentication.TokenUserInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -26,17 +28,19 @@ import java.util.concurrent.ConcurrentMap;
 @Service
 public class JWTTokenServiceImpl implements TokenService {
 
-    private static ConcurrentMap<String,Date> revocationList = new ConcurrentHashMap<String,Date>(100);
+    private static final Logger logger = LoggerFactory.getLogger(JWTTokenServiceImpl.class);
 
     // TODO: concurrent access - read and update
+    private static ConcurrentMap<String,Date> revocationList = new ConcurrentHashMap<String,Date>(100);
     private final ConcurrentMap<String,String> authPrivateKey = new ConcurrentHashMap<String,String>(1);
 
 
     @PostConstruct
     public void init(){
         this.authPrivateKey.put("key", HashUtils.generateRandomText());
-        // TODO: log
-        System.out.println("Generated token authentication key: " + getKey());
+        logger.info("Generated token authentication key: " + getKey());
+        //System.out.println("Generated token authentication key: " + getKey());
+
     }
 
     private String getKey(){
@@ -46,11 +50,10 @@ public class JWTTokenServiceImpl implements TokenService {
     //@Scheduled(cron = "0 1 5 * * ?") // at 5:01 every day
     private void resetAuthPrivateKey(){
         this.authPrivateKey.put("key", HashUtils.generateRandomText());
-        // TODO: log
-        System.out.println("Generated token authentication key (RESET): " + getKey());
-
+        logger.info("Generated token authentication key (RESET): " + getKey());
         // reset revocation list
         this.revocationList = new ConcurrentHashMap<String,Date>(100);
+        logger.info("Token revocation list reset");
     }
 
 
@@ -65,17 +68,24 @@ public class JWTTokenServiceImpl implements TokenService {
 
     @Override
     public boolean revokeUsername(String username){
-        this.revocationList.put(username, new Date());
-
-        return true;
+        try {
+            this.revocationList.put(username, new Date());
+            logger.info("Username revoked: " + username);
+            return true;
+        }catch (Exception ex){
+            logger.error("Token username revocation failed: username=" + username, ex);
+        }
+        return false;
     }
 
     @Override
     public boolean cancelRevocationUsername(String username) {
         if(this.revocationList.containsKey(username)){
             this.revocationList.remove(username);
+            logger.info("Username revocation canceled: " + username);
             return true;
         }
+        logger.info("Username revocation - username not found in revocation list: " + username);
         return false;
     }
 
@@ -90,10 +100,9 @@ public class JWTTokenServiceImpl implements TokenService {
             return true;
         } catch (JWTVerificationException exception){
             //Invalid signature/claims
-            // TODO: log error
+            logger.error("Token verification failed - JWT versification exception: " + token);
         } catch (UnsupportedEncodingException e) {
-            //e.printStackTrace();
-            // TODO: log error
+            logger.error("Token verification failed - unsupported encoding exception: " + token);
         }
         return false;
     }
@@ -110,9 +119,11 @@ public class JWTTokenServiceImpl implements TokenService {
             return token;
         } catch (JWTCreationException exception){
             //Invalid Signing configuration / Couldn't convert Claims.
-            // TODO: log error
+            logger.error("Token creation failed - JWT versification exception: " + authenticatedUserDto.getUsername());
         } catch (UnsupportedEncodingException e) {
-            // TODO: log error
+            logger.error("Token creation failed - unsupported encoding exception: " + authenticatedUserDto.getUsername());
+        } catch (Exception ex){
+            logger.error("Failed to create token with error: username=" + (authenticatedUserDto != null ? authenticatedUserDto.getUsername() : null), ex);
         }
         return null;
     }
@@ -125,6 +136,9 @@ public class JWTTokenServiceImpl implements TokenService {
             return buildUserInfo(jwt);
         } catch (JWTDecodeException exception){
             //Invalid token
+            logger.error("Token decode failed - JWT versification exception: " + token);
+        } catch (Exception ex){
+            logger.error("Failed to decode token with error: token=" + token, ex);
         }
         return null;
     }

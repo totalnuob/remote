@@ -3,6 +3,8 @@ package kz.nicnbk.ws.rest;
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.service.datamanager.LookupService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,80 +18,80 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/lookup")
-public class LookupServiceREST {
+public class LookupServiceREST extends CommonServiceREST{
 
     @Autowired
     private LookupService lookupService;
 
     @RequestMapping(value = "/PEStrategy", method = RequestMethod.GET)
-    public List<BaseDictionaryDto> getPEStrategies(){
+    public ResponseEntity getPEStrategies(){
         List<BaseDictionaryDto> lookups = this.lookupService.getPrivateEquityStrategies();
-        return lookups;
+        return buildResponse(lookups);
     }
 
     @RequestMapping(value = "/HFStrategy", method = RequestMethod.GET)
-    public List<BaseDictionaryDto> getHFStrategies(){
+    public ResponseEntity getHFStrategies(){
         List<BaseDictionaryDto> lookups = this.lookupService.getHedgeFundsStrategies();
-        return lookups;
+        return buildResponse(lookups);
     }
 
     @RequestMapping(value = "/HFSubStrategy/{strategy}", method = RequestMethod.GET)
-    public List<BaseDictionaryDto> getHFSubStrategies(@PathVariable String strategy){
+    public ResponseEntity getHFSubStrategies(@PathVariable String strategy){
         List<BaseDictionaryDto> lookups = this.lookupService.getHedgeFundsSubStrategies(strategy);
-        return lookups;
+        return buildResponse(lookups);
     }
 
     @RequestMapping(value = "/REStrategy", method = RequestMethod.GET)
-    public List<BaseDictionaryDto> getREStrategies(){
+    public ResponseEntity getREStrategies(){
         List<BaseDictionaryDto> lookups = this.lookupService.getRealEstateStrategies();
-        return lookups;
+        return buildResponse(lookups);
     }
 
     @RequestMapping(value = "/Geography", method = RequestMethod.GET)
-    public List<BaseDictionaryDto> getGeographies(){
+    public ResponseEntity getGeographies(){
         List<BaseDictionaryDto> lookups = this.lookupService.getGeographies();
-        return lookups;
+        return buildResponse(lookups);
     }
 
     @RequestMapping(value = "/Currency", method = RequestMethod.GET)
-    public List<BaseDictionaryDto> getCurrencies(){
+    public ResponseEntity getCurrencies(){
         List<BaseDictionaryDto> lookups = this.lookupService.getCurrencies();
-        return lookups;
+        return buildResponse(lookups);
     }
 
     @RequestMapping(value = "/HedgeFundStatus", method = RequestMethod.GET)
-    public List<BaseDictionaryDto> getHedgeFundStatuses(){
+    public ResponseEntity getHedgeFundStatuses(){
         List<BaseDictionaryDto> lookups = this.lookupService.getHedgeFundStatuses();
-        return lookups;
+        return buildResponse(lookups);
     }
 
     @RequestMapping(value = "/SubscriptionFrequency", method = RequestMethod.GET)
-    public List<BaseDictionaryDto> getSubscriptionFrequencies(){
+    public ResponseEntity getSubscriptionFrequencies(){
         List<BaseDictionaryDto> lookups = this.lookupService.getSubscriptionFrequencies();
-        return lookups;
+        return buildResponse(lookups);
     }
 
     @RequestMapping(value = "/RedemptionFrequency", method = RequestMethod.GET)
-    public List<BaseDictionaryDto> getRedemptionFrequencies(){
+    public ResponseEntity getRedemptionFrequencies(){
         List<BaseDictionaryDto> lookups = this.lookupService.getRedemptionFrequencies();
-        return lookups;
+        return buildResponse(lookups);
     }
 
     @RequestMapping(value = "/RedemptionNoticePeriods", method = RequestMethod.GET)
-    public List<BaseDictionaryDto> getRedemptionNoticePeriods(){
+    public ResponseEntity getRedemptionNoticePeriods(){
         List<BaseDictionaryDto> lookups = this.lookupService.getRedemptionNoticePeriods();
-        return lookups;
+        return buildResponse(lookups);
     }
 
     @RequestMapping(value = "/SidePocket", method = RequestMethod.GET)
-    public List<BaseDictionaryDto> getSidePockets(){
+    public ResponseEntity getSidePockets(){
         List<BaseDictionaryDto> lookups = this.lookupService.getSidePockets();
-        return lookups;
+        return buildResponse(lookups);
     }
 
     @RequestMapping(value = "/PEIndustry", method = RequestMethod.GET)
-    public List<BaseDictionaryDto> getPEIndustry(){
+    public ResponseEntity getPEIndustry(){
         List<BaseDictionaryDto> lookups = this.lookupService.getPEIndustry();
-        return lookups;
+        return buildResponse(lookups);
     }
 }

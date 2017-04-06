@@ -29,7 +29,7 @@ export class NewsService extends CommonService{
 
         return this.http.get(this.NEWS_LIST_URL, this.getOptionsWithCredentials())
             .map(this.extractDataList)
-            .catch(this.handleError);
+            .catch(this.handleErrorResponse);
     }
 
     loadMore(category, page){
@@ -47,7 +47,7 @@ export class NewsService extends CommonService{
 
         return this.http.get(this.NEWS_GET_BASE_URL + id, this.getOptionsWithCredentials())
             .map(this.extractDataList)
-            .catch(this.handleError);
+            .catch(this.handleErrorResponse);
     }
 
     save(entity){
@@ -56,7 +56,7 @@ export class NewsService extends CommonService{
         //console.log(body);
         return this.http.post(this.NEWS_SAVE_URL, body, this.getOptionsWithCredentials())
             .map(this.extractData)
-            .catch(this.handleError);
+            .catch(this.handleErrorResponse);
     }
 
 }

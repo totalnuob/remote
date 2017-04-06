@@ -10,7 +10,7 @@ import kz.nicnbk.service.dto.m2s2.PrivateEquityMeetingMemoDto;
  */
 public interface PEMeetingMemoService extends BaseService {
 
-    Long save(PrivateEquityMeetingMemoDto memoDto);
+    Long save(PrivateEquityMeetingMemoDto memoDto, String updater);
 
     PrivateEquityMeetingMemoDto get(Long id);
 

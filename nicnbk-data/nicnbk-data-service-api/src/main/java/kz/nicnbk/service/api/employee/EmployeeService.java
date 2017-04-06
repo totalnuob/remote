@@ -17,7 +17,7 @@ public interface EmployeeService extends BaseService {
 
     EmployeeDto findByUsername(String username);
 
-    boolean setPassword(String username, String password);
+    boolean setPassword(String username, String password, String user);
 
     boolean deactivate(String username);
 

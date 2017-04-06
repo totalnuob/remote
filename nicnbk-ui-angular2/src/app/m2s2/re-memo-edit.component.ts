@@ -1,5 +1,5 @@
 import { Component, NgModule, OnInit, ViewChild, AfterViewInit  } from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 
 import {LookupService} from "../common/lookup.service";
 import {REMemo} from "./model/re-memo";
@@ -80,9 +80,10 @@ export class RealEstateMemoEditComponent extends CommonFormViewComponent impleme
         private lookupService: LookupService,
         private employeeService: EmployeeService,
         private memoService: MemoService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private router: Router
     ){
-        super();
+        super(router);
 
 
         this.moduleAccessChecler = new ModuleAccessCheckerService;

@@ -7,4 +7,5 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  * Created by zhambyl on 14-Nov-16.
  */
 public interface IndustryRepository extends PagingAndSortingRepository<PEIndustry, Long> {
+    PEIndustry findByCode(String code);
 }

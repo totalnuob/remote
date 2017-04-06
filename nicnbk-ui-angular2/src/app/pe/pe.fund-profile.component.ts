@@ -65,7 +65,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
         private route: ActivatedRoute,
         private router: Router
     ){
-        super();
+        super(router);
 
         this.moduleAccessChecker = new ModuleAccessCheckerService;
 

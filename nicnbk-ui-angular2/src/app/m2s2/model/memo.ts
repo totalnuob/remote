@@ -1,4 +1,5 @@
-export class Memo{
+import {UpdatedEntity} from "../../common/model/updated-entity";
+export class Memo extends UpdatedEntity{
     id: number;
     memoType: number;
     meetingType: string;

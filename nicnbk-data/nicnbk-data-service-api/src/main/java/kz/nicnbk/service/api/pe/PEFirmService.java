@@ -18,7 +18,7 @@ public interface PEFirmService extends BaseService {
     /* Number of elements per page */
     int DEFAULT_PAGE_SIZE = 20;
 
-    Long save(PEFirmDto firmDto);
+    Long save(PEFirmDto firmDto, String username);
 
     PEFirmDto get(Long id);
 

@@ -120,16 +120,18 @@
                     <th>MEETING/CALL</th>
                     <th>FIRM</th>
                     <th>FUND</th>
-                    <th>DATE</th>
+                    <th>MEETING DATE</th>
                     <th>AUTHOR</th>
-                    <th>ACTIONS</th>
+                    <!--<th>ACTIONS</th>-->
+                    <th>UPDATED</th>
+                    <th>UPDATEDBY</th>
                 </tr>
                 </thead>
 
                 <tbody>
                 <tr *ngFor = "let memo of memoList" style="cursor: pointer" (click)="navigate(memo.memoType, memo.id)">
                     <td width="5%">{{getMemoTypeName(memo.memoType)}}</td>
-                    <td width="10%" >{{memo.meetingType}}</td>
+                    <td width="5%" >{{memo.meetingType}}</td>
                     <!--<td width="30%"><a style="cursor: pointer" (click)="navigate(memo.memoType, memo.id)">{{memo.firmName}}</a></td>-->
                     <!--<td width="30%"><a style="cursor: pointer" (click)="navigate(memo.memoType, memo.id)">{{memo.fundName}}</a></td>-->
                     <!--<td width="10%" th:text="${memoItem.meetingDate}"></td>-->
@@ -137,10 +139,12 @@
                     <td width="30%">{{memo.fundName}}</td>
                     <td width="10%">{{memo.meetingDate}}</td>
                     <!--<td width="10%">{{memo.author}}</td>-->
-                    <td width="10%">{{memo.owner}}</td>
-                    <td width="5%">
-                        <!--<a><i class="glyphicon glyphicon-trash"></i></a>-->
-                    </td>
+                    <td width="5%">{{memo.owner}}</td>
+                    <td width="10%">{{memo.updateDate}}</td>
+                    <td width="5%">{{memo.updater}}</td>
+                    <!--<td width="5%">-->
+                        <!--&lt;!&ndash;<a><i class="glyphicon glyphicon-trash"></i></a>&ndash;&gt;-->
+                    <!--</td>-->
                 </tr>
                 </tbody>
             </table>

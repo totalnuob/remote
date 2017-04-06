@@ -11,9 +11,9 @@ import java.util.List;
  */
 public interface MemoFilesRepository extends PagingAndSortingRepository<MemoFiles, Long> {
 
-    @Query("SELECT m from memo_files m where m.memo.id=?1")
+    @Query("SELECT m from memo_files m where m.memo.id=?1 and (m.file.deleted is null or m.file.deleted=false)")
     List<MemoFiles> getFilesByMemoId(Long memoId);
 
-    @Query("SELECT m from memo_files m where m.file.id=?1")
+    @Query("SELECT m from memo_files m where m.file.id=?1 and (m.file.deleted is null or m.file.deleted=false)")
     MemoFiles getFilesByFileId(Long fileId);
 }

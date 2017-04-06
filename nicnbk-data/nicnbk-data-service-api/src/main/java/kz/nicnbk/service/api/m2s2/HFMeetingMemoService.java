@@ -10,7 +10,7 @@ import kz.nicnbk.service.dto.m2s2.MemoSearchParams;
  */
 public interface HFMeetingMemoService extends BaseService {
 
-    Long save(HedgeFundsMeetingMemoDto memoDto);
+    Long save(HedgeFundsMeetingMemoDto memoDto, String updater);
 
     HedgeFundsMeetingMemoDto get(Long id);
 
