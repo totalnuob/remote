@@ -39,6 +39,8 @@ import {PEFundReportComponent} from "./pe/pe.fund-report.component";
 import {HFManagerSearchComponent} from "./hf/hf.manager-search.component";
 import {AccessDeniedComponent} from "./access.denied.component";
 import {EmployeeProfileComponent} from "./employee/employee.profile.component";
+import {MMEditComponent} from "./macromonitor/macromonitor.edit.component";
+import {MMViewComponent} from "./macromonitor/macromonitor.view.component";
 
 
 const routes: Routes  = [
@@ -248,6 +250,16 @@ const routes: Routes  = [
     {
         path: 'pe/fundReport/:id',
         component: PEFundReportComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'macromonitor',
+        component: MMViewComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'macromonitor/:id',
+        component: MMEditComponent,
         canActivate: [AuthGuard]
     },
 ];

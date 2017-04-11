@@ -21,3 +21,5 @@ export const SIDE_POCKET_URL = LOOKUP_SERVICE_URL + "SidePocket";
 
 
 export const PE_INDUSTRY_FOCUS_URL = LOOKUP_SERVICE_URL + "PEIndustry";
+
+export const MM_FIELDS_URL = LOOKUP_SERVICE_URL + "MMFields";

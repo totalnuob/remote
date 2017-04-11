@@ -18,6 +18,7 @@ import {REDEMPTION_NOTICE_PERIOD_URL} from "./lookup.service.url";
 import {SIDE_POCKET_URL} from "./lookup.service.url";
 import {PE_INDUSTRY_FOCUS_URL} from "./lookup.service.url";
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
+import {MM_FIELDS_URL} from "./lookup.service.url";
 
 
 @Injectable()
@@ -273,5 +274,11 @@ export class LookupService extends CommonService{
         list.push(lookup);
 
         return Promise.resolve(list);
+    }
+
+    getMacroMonitorFields(){
+        return this.http.get(MM_FIELDS_URL, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
     }
 }

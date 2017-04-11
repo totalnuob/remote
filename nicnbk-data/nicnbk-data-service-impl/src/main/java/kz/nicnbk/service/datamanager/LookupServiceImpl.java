@@ -5,6 +5,8 @@ import kz.nicnbk.repo.api.lookup.*;
 import kz.nicnbk.repo.api.lookup.CurrencyRepository;
 import kz.nicnbk.repo.api.lookup.GeographyRepository;
 import kz.nicnbk.repo.api.lookup.StrategyRepository;
+import kz.nicnbk.repo.api.macromonitor.MacroMonitorFieldRepository;
+import kz.nicnbk.repo.api.macromonitor.MacroMonitorTypeRepository;
 import kz.nicnbk.repo.api.pe.IndustryRepository;
 import kz.nicnbk.repo.model.base.BaseTypeEntity;
 import kz.nicnbk.repo.model.common.*;
@@ -12,8 +14,11 @@ import kz.nicnbk.repo.model.files.FilesType;
 import kz.nicnbk.repo.model.hf.*;
 import kz.nicnbk.repo.model.m2s2.MeetingArrangedBy;
 import kz.nicnbk.repo.model.m2s2.MeetingType;
+import kz.nicnbk.repo.model.macromonitor.MacroMonitorField;
+import kz.nicnbk.repo.model.macromonitor.MacroMonitorType;
 import kz.nicnbk.repo.model.news.NewsType;
 import kz.nicnbk.repo.model.pe.PEIndustry;
+import org.jsoup.Connection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -78,6 +83,12 @@ public class LookupServiceImpl implements LookupService {
     @Autowired
     private FilesTypeRepository filesTypeRepository;
 
+    @Autowired
+    private MacroMonitorFieldRepository macroMonitorFieldRepository;
+
+    @Autowired
+    private MacroMonitorTypeRepository macroMonitorTypeRepository;
+
     @Override
     public <T extends BaseTypeEntity> T findByTypeAndCode(Class<T> clazz, String code) {
 
@@ -117,6 +128,10 @@ public class LookupServiceImpl implements LookupService {
             return (T) this.hedgeFundSidePocketRepository.findByCode(code);
         }else if(clazz.equals(Substrategy.class)){
             return (T) this.substrategyRepository.findByCode(code);
+        } else if(clazz.equals(MacroMonitorField.class)){
+            return (T) this.macroMonitorFieldRepository.findByCode(code);
+        } else if(clazz.equals(MacroMonitorType.class)){
+            return (T) this.macroMonitorTypeRepository.findByCode(code);
         }
 
         if(clazz.getSimpleName().equals("Strategy")){
@@ -291,6 +306,18 @@ public class LookupServiceImpl implements LookupService {
             dtoList.add(industryDto);
         }
         return dtoList;
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getMMFields(){
+        List<BaseDictionaryDto> dtoList = new ArrayList<>();
+        Iterator<MacroMonitorField> iterator = this.macroMonitorFieldRepository.findAll().iterator();
+        while(iterator.hasNext()) {
+            MacroMonitorField entity = iterator.next();
+            BaseDictionaryDto mmFieldDto = disassemble(entity);
+            dtoList.add(mmFieldDto);
+        }
+        return  dtoList;
     }
 
     // TODO: refactor as common lookup converter

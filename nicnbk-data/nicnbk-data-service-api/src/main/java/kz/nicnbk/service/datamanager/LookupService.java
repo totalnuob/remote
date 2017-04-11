@@ -28,4 +28,5 @@ public interface LookupService extends BaseService {
 
 
     List<BaseDictionaryDto> getPEIndustry();
+    List<BaseDictionaryDto> getMMFields();
 }

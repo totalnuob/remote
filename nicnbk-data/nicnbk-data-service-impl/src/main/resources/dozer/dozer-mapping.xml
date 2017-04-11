@@ -66,6 +66,21 @@
         </field-exclude>
     </mapping>
 
+    <mapping>
+        <class-a>kz.nicnbk.service.dto.macromonitor.MacroMonitorScoreDto</class-a>
+        <class-b>kz.nicnbk.repo.model.macromonitor.MacroMonitorScore</class-b>
+        <field-exclude>
+            <a>field</a>
+            <b>field</b>
+        </field-exclude>
+        <field-exclude>
+            <a>type</a>
+            <b>type</b>
+        </field-exclude>
+    </mapping>
+
+
+
     <!-- HEDGE FUNDS-->
     <mapping>
         <class-a>kz.nicnbk.service.dto.hf.HFManagerDto</class-a>

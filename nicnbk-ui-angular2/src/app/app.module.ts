@@ -50,6 +50,8 @@ import {BusyModule} from "angular2-busy/index"
 import {HFManagerSearchComponent} from "./hf/hf.manager-search.component";
 import {AccessDeniedComponent} from "./access.denied.component";
 import {EmployeeProfileComponent} from "./employee/employee.profile.component";
+import {MMEditComponent} from "./macromonitor/macromonitor.edit.component";
+import {MMViewComponent} from "./macromonitor/macromonitor.view.component";
 
 @NgModule({
     imports: [
@@ -82,7 +84,7 @@ import {EmployeeProfileComponent} from "./employee/employee.profile.component";
         HFDashboardComponent, HFFundSearchComponent, HFFundSelectionComponent, HFPortfolioComponent, HFReportComponent,
         HFFundProfileComponent, HFManagerProfileComponent, HFManagerSearchComponent,
         PEFundProfileComponent, PEFirmProfileComponent, PEFirmSearchComponent, PEFundReportComponent,
-        AccessDeniedComponent
+        AccessDeniedComponent, MMEditComponent, MMViewComponent
     ],
     bootstrap: [ AppComponent ]
 })

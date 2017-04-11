@@ -15,7 +15,7 @@ declare var $: any;
     styleUrls: [],
     providers: [],
 })
-export class MonitoringMacroMonitorComponent extends GoogleChartComponent  {
+export class MonitoringMacroMonitorComponent extends GoogleChartComponent {
     //ngAfterViewInit():void {
     //    this.tableau_func()
     //}

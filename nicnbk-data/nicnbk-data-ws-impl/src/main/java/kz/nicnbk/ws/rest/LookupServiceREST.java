@@ -92,4 +92,11 @@ public class LookupServiceREST {
         List<BaseDictionaryDto> lookups = this.lookupService.getPEIndustry();
         return lookups;
     }
+
+    @RequestMapping(value = "/MMFields", method = RequestMethod.GET)
+    public List<BaseDictionaryDto> getMMFields(){
+        List<BaseDictionaryDto> lookups = this.lookupService.getMMFields();
+        return lookups;
+    }
+
 }

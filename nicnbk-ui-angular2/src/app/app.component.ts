@@ -32,6 +32,7 @@ import {AlbourneService} from "./hf/hf.albourne.service";
 
 import '../../public/js/jquery.ns-autogrow.min.js';
 import {ModuleAccessCheckerService} from "./authentication/module.access.checker.service";
+import {MacroMonitorService} from "./macromonitor/macromonitor.service";
 
 @Component({
     selector: 'app-main',
@@ -55,7 +56,8 @@ import {ModuleAccessCheckerService} from "./authentication/module.access.checker
         HedgeFundService,
         RiskManagementReportService,
         AlbourneService,
-        ModuleAccessCheckerService
+        ModuleAccessCheckerService,
+        MacroMonitorService
     ]
 })
 @NgModule({
