@@ -1,0 +1,79 @@
+<div class="container">
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
+            </div>
+        </div>
+    </div>
+
+    <!--<div class="row">-->
+        <!--<div class="col-md-12">-->
+            <!--<table class="table table-hover table-responsive" style="font-size: smaller">-->
+                <!--<tr>-->
+                    <!--<th>Date</th>-->
+                    <!--<th *ngFor="let field of fieldsLookup">{{field.nameEn}}</th>-->
+                <!--</tr>-->
+                <!--<tr *ngFor="let itemList of scoreListInput; let i=index">-->
+                    <!--<td>-->
+                        <!--<input class="input-group date" style="width: 100%" type="date" name="scoreDate" [(ngModel)]="dateListInput[i]">-->
+                    <!--</td>-->
+                    <!--<td *ngFor="let item of itemList">-->
+                        <!--<input style="width: 100%" type="text" [(ngModel)]="item.score">-->
+                    <!--</td>-->
+                    <!--<td>-->
+                        <!--<button type="button" class="btn-xs btn-danger" style="display: inline-block" (click)="removeRow(itemList, i)">-->
+                            <!--<span class="glyphicon glyphicon-minus"></span>-->
+                        <!--</button>-->
+                    <!--</td>-->
+                <!--</tr>-->
+                <!--<button type="button" class="btn-xs btn-info" style="display: inline-block" (click)="addRow()">-->
+                    <!--<span class="glyphicon glyphicon-plus"></span>-->
+                <!--</button>-->
+            <!--</table>-->
+            <!--<button type="button" class="btn-xs btn-info" style="display: inline-block" (click)="save()">Save</button>-->
+        <!--</div>-->
+    <!--</div>-->
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-hover table-responsive" style="font-size: smaller">
+                <tr>
+                    <th></th>
+                    <th *ngFor="let dateItem of dateList; let i=index">
+                        <div class='input-group datetime' id="scoresDate" name='scoresDate' style="width: 100%">
+                            <input type="text" name="scoresDate" id="scoresDateValue" [(ngModel)]="dateList[i]"/>
+                        </div>
+                    </th>
+                </tr>
+                <tr *ngFor="let field of fieldsLookup; let j=index">
+                    <td>
+                        {{field.nameEn}}
+                    </td>
+                    <td *ngFor="let item of scoreListForModel[j]; let i=index">
+                        <input style="width: 100%" type="text" [(ngModel)]="item.score">
+                    </td>
+                </tr>
+                <!--<tr *ngFor="let itemList of scoreListInput; let i=index">-->
+                    <!--<td>-->
+                        <!--<input class="input-group date" style="width: 100%" type="date" name="scoreDate" [(ngModel)]="dateListInput[i]">-->
+                    <!--</td>-->
+                    <!--<td *ngFor="let item of itemList">-->
+                        <!--<input style="width: 100%" type="text" [(ngModel)]="item.score">-->
+                    <!--</td>-->
+                    <!--<td>-->
+                        <!--<button type="button" class="btn-xs btn-danger" style="display: inline-block" (click)="removeRow(itemList, i)">-->
+                            <!--<span class="glyphicon glyphicon-minus"></span>-->
+                        <!--</button>-->
+                    <!--</td>-->
+                <!--</tr>-->
+                <button type="button" class="btn-xs btn-info" style="display: inline-block" (click)="addRow()">
+                    <span class="glyphicon glyphicon-plus"></span>
+                </button>
+            </table>
+            <button type="button" class="btn-xs btn-info" style="display: inline-block" (click)="save()">Save</button>
+        </div>
+    </div>
+</div>

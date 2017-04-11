@@ -1,0 +1,94 @@
+<div class="container">
+    <ul class="nav nav-tabs">
+        <li class="active" (click)="getDataByType(1)">
+            <a data-toggle="tab" href="#global">Global</a>
+        </li>
+        <li (click)="getDataByType(2)">
+            <a data-toggle="tab" href="#us">US</a>
+        </li>
+        <li (click)="getDataByType(3)">
+            <a data-toggle="tab" href="#china">China</a>
+        </li>
+        <li (click)="getDataByType(4)">
+            <a data-toggle="tab" href="#eu">EU</a>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div id="global" class="tab-pane fade in active">
+            <br/>
+            <button class="button" [routerLink]="['/macromonitor/1']">Edit</button>
+            <br/>
+            <br/>
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="table">
+                    </div>
+                </div>
+            </div>
+            <br/>
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="line_chart">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="us" class="tab-pane fade">
+            <br/>
+            <button class="button" [routerLink]="['/macromonitor/2']">Edit</button>
+            <br/>
+            <br/>
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="table_us">
+                    </div>
+                </div>
+            </div>
+            <br/>
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="line_chart_us">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="china" class="tab-pane fade">
+            <br/>
+            <button class="button" [routerLink]="['/macromonitor/3']">Edit</button>
+            <br/>
+            <br/>
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="table_china">
+                    </div>
+                </div>
+            </div>
+            <br/>
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="line_chart_china">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="eu" class="tab-pane fade">
+            <br/>
+            <button class="button" [routerLink]="['/macromonitor/4']">Edit</button>
+            <br/>
+            <br/>
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="table_eu">
+                    </div>
+                </div>
+            </div>
+            <br/>
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="line_chart_eu">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
