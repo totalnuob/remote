@@ -18,6 +18,7 @@ import {REDEMPTION_NOTICE_PERIOD_URL} from "./lookup.service.url";
 import {SIDE_POCKET_URL} from "./lookup.service.url";
 import {PE_INDUSTRY_FOCUS_URL} from "./lookup.service.url";
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
+import {TRIP_TYPES} from "./mock.news.lookups";
 
 
 @Injectable()
@@ -273,5 +274,9 @@ export class LookupService extends CommonService{
         list.push(lookup);
 
         return Promise.resolve(list);
+    }
+
+    getTripTypes(){
+        return Promise.resolve(TRIP_TYPES);
     }
 }

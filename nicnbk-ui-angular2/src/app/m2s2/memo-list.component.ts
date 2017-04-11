@@ -91,7 +91,6 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
                    this.search(0);
                }
             });
-
     }
 
     ngOnInit():any {
@@ -151,6 +150,9 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
                     //alert(this.errorMessage);
                 }
             );
+
+
+        console.log(this.meetingTypes);
     }
 
     navigate(memoType, memoId){
@@ -176,6 +178,14 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
             return "RE";
         }else{
             return "";
+        }
+    }
+
+    getMeetingTypeName(type){
+        for(var i = 0; i < this.meetingTypes.length; i++){
+            if(this.meetingTypes[i].code == type){
+                return this.meetingTypes[i].nameEn;
+            }
         }
     }
 

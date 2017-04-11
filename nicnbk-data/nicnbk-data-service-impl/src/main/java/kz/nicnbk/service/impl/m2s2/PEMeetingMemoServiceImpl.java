@@ -13,6 +13,7 @@ import kz.nicnbk.service.api.m2s2.PEMeetingMemoService;
 import kz.nicnbk.service.api.pe.PEFundService;
 import kz.nicnbk.service.converter.m2s2.MeetingMemoEntityConverter;
 import kz.nicnbk.service.converter.m2s2.PEMeetingMemoEntityConverter;
+import kz.nicnbk.service.dto.m2s2.MeetingMemoDto;
 import kz.nicnbk.service.dto.m2s2.MemoPagedSearchResult;
 import kz.nicnbk.service.dto.m2s2.MemoSearchParams;
 import kz.nicnbk.service.dto.m2s2.PrivateEquityMeetingMemoDto;
@@ -21,6 +22,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * Created by magzumov on 19.07.2016.
@@ -104,7 +107,7 @@ public class PEMeetingMemoServiceImpl implements PEMeetingMemoService {
 
     @Override
     public MemoPagedSearchResult search(MemoSearchParams searchParams) {
-        Page<MeetingMemo> memoPage = null;
+        Page<PrivateEquityMeetingMemo> memoPage = null;
         int page = 0;
         int pageSize = searchParams != null && searchParams.getPageSize() > 0 ? searchParams.getPageSize() : memoService.DEFAULT_PAGE_SIZE;
 
@@ -155,7 +158,7 @@ public class PEMeetingMemoServiceImpl implements PEMeetingMemoService {
             if(searchParams != null) {
                 result.setSearchParams(searchParams.getSearchParamsAsString());
             }
-            result.setMemos(memoConverter.disassembleList(memoPage.getContent()));
+            result.setMemos(memoConverter.disPE(memoPage.getContent()));
         }
         return result;
     }

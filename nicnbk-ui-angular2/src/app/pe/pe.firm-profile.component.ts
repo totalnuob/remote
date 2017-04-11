@@ -288,6 +288,14 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
         }
     }
 
+    getMeetingTypeName(type){
+        for(var i = 0; i < this.meetingTypes.length; i++){
+            if(this.meetingTypes[i].code == type){
+                return this.meetingTypes[i].nameEn;
+            }
+        }
+    }
+
     public selected(value:any):void {
         //console.log('Selected value is: ', value);
     }

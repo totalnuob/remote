@@ -13,6 +13,7 @@ import kz.nicnbk.service.api.m2s2.MeetingMemoService;
 import kz.nicnbk.service.converter.m2s2.HFMeetingMemoEntityConverter;
 import kz.nicnbk.service.converter.m2s2.MeetingMemoEntityConverter;
 import kz.nicnbk.service.dto.m2s2.HedgeFundsMeetingMemoDto;
+import kz.nicnbk.service.dto.m2s2.MeetingMemoDto;
 import kz.nicnbk.service.dto.m2s2.MemoPagedSearchResult;
 import kz.nicnbk.service.dto.m2s2.MemoSearchParams;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,7 +107,7 @@ public class HFMeetingMemoServiceImpl implements HFMeetingMemoService {
 
     @Override
     public MemoPagedSearchResult search(MemoSearchParams searchParams) {
-        Page<MeetingMemo> memoPage = null;
+        Page<HedgeFundsMeetingMemo> memoPage = null;
         int page = 0;
         int pageSize = searchParams != null && searchParams.getPageSize() > 0 ? searchParams.getPageSize() : memoService.DEFAULT_PAGE_SIZE;
 
@@ -157,7 +158,7 @@ public class HFMeetingMemoServiceImpl implements HFMeetingMemoService {
             if(searchParams != null) {
                 result.setSearchParams(searchParams.getSearchParamsAsString());
             }
-            result.setMemos(memoConverter.disassembleList(memoPage.getContent()));
+            result.setMemos(memoConverter.disHF(memoPage.getContent()));
         }
         return result;
     }
