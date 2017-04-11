@@ -64,7 +64,7 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
         private route: ActivatedRoute,
         private router: Router
     ){
-        super();
+        super(router);
 
         this.moduleAccessChecler = new ModuleAccessCheckerService;
 

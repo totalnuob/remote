@@ -249,8 +249,10 @@
                             <th>FUND</th>
                             <th>STRATEGY</th>
                             <th>INCEPTION</th>
+                            <th>CREATED</th>
                             <th>UPDATED</th>
-                            <th>ACTIONS</th>
+                            <th>UPDATED BY</th>
+                            <!--<th>ACTIONS</th>-->
                             </thead>
                             <tbody>
                             <tr *ngFor="let fund of manager?.funds" style="cursor: pointer" [routerLink]="['/hf/fundProfile/', fund.id]">
@@ -259,10 +261,12 @@
                                 <td width="30%"><a>{{fund.name}}</a></td>
                                 <td width="10%">{{getStrategyName(fund.strategy)}}</td>
                                 <td width="10%">{{fund.inceptionDate}}</td>
+                                <td width="10%">{{fund.owner}}</td>
                                 <td width="10%">{{fund.updateDate}}</td>
-                                <td width="5%">
-                                    <a><i class="glyphicon glyphicon-file"></i></a>
-                                </td>
+                                <td width="10%">{{fund.updater}}</td>
+                                <!--<td width="5%">-->
+                                    <!--<a><i class="glyphicon glyphicon-file"></i></a>-->
+                                <!--</td>-->
                             </tr>
                             </tbody>
                         </table>

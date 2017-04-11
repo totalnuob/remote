@@ -69,6 +69,15 @@ public class PEFirmEntityConverter extends BaseDozerEntityConverter<PEFirm,PEFir
     public PEFirmDto disassemble(PEFirm entity){
         PEFirmDto dto = super.disassemble(entity);
 
+        // creator
+        if(entity.getCreator() != null){
+            dto.setOwner(entity.getCreator().getUsername());
+        }
+
+        // updater
+        if(entity.getUpdater() != null){
+            dto.setUpdater(entity.getUpdater().getUsername());
+        }
         return dto;
     }
 

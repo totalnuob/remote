@@ -22,6 +22,8 @@ public class Files extends CreateUpdateBaseEntity  implements TypedEntity<FilesT
 
     private String mimeType;
 
+    private Boolean deleted;
+
 
     @Override
     @ManyToOne(fetch = FetchType.LAZY)
@@ -60,5 +62,14 @@ public class Files extends CreateUpdateBaseEntity  implements TypedEntity<FilesT
 
     public void setMimeType(String mimeType) {
         this.mimeType = mimeType;
+    }
+
+    @Column(name="deleted")
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
     }
 }

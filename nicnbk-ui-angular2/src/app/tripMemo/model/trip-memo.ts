@@ -1,4 +1,5 @@
-export class TripMemo {
+import {UpdatedEntity} from "../../common/model/updated-entity";
+export class TripMemo extends UpdatedEntity{
     id: number;
     tripType: string;
     name: string;

@@ -7,11 +7,11 @@ import java.util.List;
 
 public interface NewsService extends BaseService{
 
-    Long save(NewsDto newsItemDto);
+    Long save(NewsDto newsItemDto, String updater);
 
     NewsDto get(Long id);
 
-    boolean delete(Long id);
+    boolean delete(Long id, String username);
 
     List<NewsDto> loadNewsShort(int pageSize);
 

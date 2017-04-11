@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface PEFundService extends BaseService {
 
-    Long save(PEFundDto fundDto);
+    Long save(PEFundDto fundDto, String username);
 
     PEFundDto get(Long id);
 

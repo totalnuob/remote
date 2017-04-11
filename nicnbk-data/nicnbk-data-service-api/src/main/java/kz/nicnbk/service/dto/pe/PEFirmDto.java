@@ -1,6 +1,7 @@
 package kz.nicnbk.service.dto.pe;
 
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
+import kz.nicnbk.common.service.model.CreateUpdateBaseEntityDto;
 import kz.nicnbk.common.service.model.HistoryBaseEntityDto;
 import kz.nicnbk.repo.model.pe.PEFirm;
 
@@ -10,7 +11,7 @@ import java.util.Set;
 /**
  * Created by zhambyl on 15-Nov-16.
  */
-public class PEFirmDto extends HistoryBaseEntityDto<PEFirm> {
+public class PEFirmDto extends CreateUpdateBaseEntityDto<PEFirm> {
     private String firmName;
     private Integer foundedYear;
     private Float aum;
@@ -34,6 +35,7 @@ public class PEFirmDto extends HistoryBaseEntityDto<PEFirm> {
     private String contactPerson;
     private String email;
 
+    private String owner;
 
     public String getFirmName() {
         return firmName;
@@ -194,5 +196,13 @@ public class PEFirmDto extends HistoryBaseEntityDto<PEFirm> {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 }

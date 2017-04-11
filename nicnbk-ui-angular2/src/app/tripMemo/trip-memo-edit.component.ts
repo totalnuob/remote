@@ -10,6 +10,7 @@ import {Subscription} from 'rxjs';
 import {TripMemoSearchParams} from "./model/trip-memo-search-params";
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 import {ErrorResponse} from "../common/error-response";
+import {Router} from '@angular/router';
 
 declare var $:any
 declare var Chart: any;
@@ -44,9 +45,10 @@ export class TripMemoEditComponent extends CommonFormViewComponent implements On
     constructor(
         private employeeService: EmployeeService,
         private tripMemoService: TripMemoService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private router: Router
     ){
-        super();
+        super(router);
 
         //loadLookups
         this.sub = this.loadLookups();
@@ -188,12 +190,12 @@ export class TripMemoEditComponent extends CommonFormViewComponent implements On
                            }
                        }
                        this.postAction("Attachment deleted.", null);
+                        this.submitted = false;
                     },
                     (error: ErrorResponse) => {
                         this.errorMessage = "Error deleting attachments";
                         if(error && !error.isEmpty()){
                             this.processErrorMessage(error);
-                            this.submitted = true;
                         }
                         this.postAction(null, null);
                         this.submitted = false;

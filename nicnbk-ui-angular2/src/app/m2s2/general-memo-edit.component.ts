@@ -1,5 +1,5 @@
 import { Component,NgModule, OnInit, ViewChild  } from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 
 import {GeneralMemo} from "./model/general-memo";
 import {CommonFormViewComponent} from "../common/common.component";
@@ -62,9 +62,10 @@ export class GeneralMemoEditComponent extends CommonFormViewComponent implements
     constructor(
         private employeeService: EmployeeService,
         private memoService: MemoService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private router: Router
     ){
-        super();
+        super(router);
 
         // loadLookups
         this.sub = this.loadLookups();

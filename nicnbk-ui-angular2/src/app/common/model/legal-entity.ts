@@ -1,7 +1,7 @@
-export class LegalEntity {
+import {UpdatedEntity} from "./updated-entity";
+export class LegalEntity extends UpdatedEntity {
     id: number;
     creationDate: string;
-    updateDate: string;
 
     name: string;
 }

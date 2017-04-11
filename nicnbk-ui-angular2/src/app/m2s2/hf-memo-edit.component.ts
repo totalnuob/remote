@@ -3,7 +3,7 @@ import {LookupService} from "../common/lookup.service";
 import {HFMemo} from "./model/hf-memo";
 
 import {MemoService} from "./memo.service";
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {Lookup} from "../common/lookup";
 //import {SelectItem} from "ng2-select/ng2-select";
 import {CommonFormViewComponent} from "../common/common.component";
@@ -94,9 +94,10 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
         private memoService: MemoService,
         private hfManagerService: HFManagerService,
         private hfFundService: HedgeFundService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private router: Router
     ){
-        super();
+        super(router);
 
         this.moduleAccessChecler = new ModuleAccessCheckerService;
 

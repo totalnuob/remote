@@ -36,9 +36,14 @@ public class EmployeeServiceREST {
     private TokenService tokenService;
 
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
-    public List<EmployeeDto> findAll(){
+    public ResponseEntity findAll(){
         List<EmployeeDto> employees = this.employeeService.findAll();
-        return employees;
+        if(employees == null){
+            // error occurred
+            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }else{
+            return new ResponseEntity<>(employees, null, HttpStatus.OK);
+        }
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -47,7 +52,14 @@ public class EmployeeServiceREST {
         if(credentials == null || StringUtils.isEmpty(credentials.getUsername())) {
             return new ResponseEntity<>(null, null, HttpStatus.BAD_REQUEST);
         }
-        boolean changed = this.employeeService.setPassword(credentials.getUsername(), credentials.getPassword());
+        // get authentication
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        TokenUserInfo tokenUserInfo = this.tokenService.decode((String)authentication.getDetails());
+        if(tokenUserInfo == null || StringUtils.isEmpty(tokenUserInfo.getUsername())){
+            return new ResponseEntity<>(null, null, HttpStatus.BAD_REQUEST);
+        }
+
+        boolean changed = this.employeeService.setPassword(credentials.getUsername(), credentials.getPassword(), tokenUserInfo.getUsername());
         // TODO: revoke??
         this.tokenService.revokeUsername(credentials.getUsername());
 
@@ -57,7 +69,6 @@ public class EmployeeServiceREST {
 
     @RequestMapping(value = "/changeSelfPassword", method = RequestMethod.POST)
     public ResponseEntity changeSelfPassword(@RequestBody ChangePasswordCredentialsDto credentials){
-
         // check request
         if(credentials == null || StringUtils.isEmpty(credentials.getCurrentPassword()) ||
                 StringUtils.isEmpty(credentials.getNewPassword())) {
@@ -78,13 +89,14 @@ public class EmployeeServiceREST {
         }
 
         // change password
-        boolean changed = this.employeeService.setPassword(tokenUserInfo.getUsername(), credentials.getNewPassword());
-
-        // TODO: revoke??
-        this.tokenService.revokeUsername(tokenUserInfo.getUsername());
-
-        return new ResponseEntity<>(changed, null, HttpStatus.OK);
-
+        boolean changed = this.employeeService.setPassword(tokenUserInfo.getUsername(), credentials.getNewPassword(), tokenUserInfo.getUsername());
+        if(changed){
+            // revoke username
+            this.tokenService.revokeUsername(tokenUserInfo.getUsername());
+            return new ResponseEntity<>(changed, null, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -92,10 +104,13 @@ public class EmployeeServiceREST {
     public ResponseEntity<?> deactivate(@RequestBody UserCredentialsDto credentials){
         if(credentials != null && credentials.getUsername() != null) {
             boolean deactivated = this.employeeService.deactivate(credentials.getUsername());
-
-            // revoke username token
-            this.tokenService.revokeUsername(credentials.getUsername());
-            return new ResponseEntity<>(null, null, HttpStatus.OK);
+            if(deactivated){
+                // revoke username token
+                this.tokenService.revokeUsername(credentials.getUsername());
+                return new ResponseEntity<>(null, null, HttpStatus.OK);
+            }else{
+                return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
         }
         return new ResponseEntity<>(null, null, HttpStatus.BAD_REQUEST);
     }
@@ -105,7 +120,11 @@ public class EmployeeServiceREST {
     public ResponseEntity<?> activate(@RequestBody UserCredentialsDto credentials){
         if(credentials != null && credentials.getUsername() != null) {
             boolean activated = this.employeeService.activate(credentials.getUsername());
-            return new ResponseEntity<>(null, null, HttpStatus.OK);
+            if(activated) {
+                return new ResponseEntity<>(null, null, HttpStatus.OK);
+            }else{
+                return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
         }
         return new ResponseEntity<>(null, null, HttpStatus.BAD_REQUEST);
     }

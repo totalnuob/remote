@@ -8,6 +8,8 @@ import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.service.api.files.FileService;
 import kz.nicnbk.service.converter.files.FilesEntityConverter;
 import kz.nicnbk.service.dto.files.FilesDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,8 @@ import java.io.*;
  */
 @Service
 public class FileServiceImpl implements FileService {
+
+    private static final Logger logger = LoggerFactory.getLogger(FileServiceImpl.class);
 
     @Autowired
     private FilesRepository filesRepository;
@@ -70,16 +74,16 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public InputStream getFileInputStream(Long fileId, String fileType) throws IllegalArgumentException{
-        String absolutePath = filePathResolver.resolveAbsoluteFilePath(fileId, getCatalogByFileType(fileType));
-        File file = new File(absolutePath);
-        InputStream inputStream = null;
         try {
+            String absolutePath = filePathResolver.resolveAbsoluteFilePath(fileId, getCatalogByFileType(fileType));
+            File file = new File(absolutePath);
+            InputStream inputStream = null;
             inputStream = new FileInputStream(file.getAbsolutePath());
+            return inputStream;
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            // TODO: handle error
+            logger.error("Failed to get file input stream: file=" + fileId + ", file type=" + fileType, e);
         }
-        return inputStream;
+        return null;
     }
 
     private String getCatalogByFileType(String fileType)  throws IllegalArgumentException{
@@ -114,6 +118,13 @@ public class FileServiceImpl implements FileService {
         boolean deleted = file.delete();
 
         return deleted;
+    }
+
+    @Override
+    public boolean safeDelete(Long id) {
+        int rows = filesRepository.setDeleted(id);
+            // logging done in upper service layer
+        return rows == 1;
     }
 
 

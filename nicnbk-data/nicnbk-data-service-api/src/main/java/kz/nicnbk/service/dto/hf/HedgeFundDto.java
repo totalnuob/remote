@@ -1,6 +1,7 @@
 package kz.nicnbk.service.dto.hf;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import kz.nicnbk.common.service.model.CreateUpdateBaseEntityDto;
 import kz.nicnbk.common.service.model.HistoryBaseEntityDto;
 import kz.nicnbk.repo.model.hf.HedgeFund;
 
@@ -11,7 +12,7 @@ import java.util.Set;
 /**
  * Created by timur on 19.10.2016.
  */
-public class HedgeFundDto extends HistoryBaseEntityDto<HedgeFund> {
+public class HedgeFundDto extends CreateUpdateBaseEntityDto<HedgeFund> {
 
     private String name;
     private HFManagerDto manager;
@@ -78,6 +79,7 @@ public class HedgeFundDto extends HistoryBaseEntityDto<HedgeFund> {
     private List<SubstrategyBreakdownDto> strategyBreakdownList;
     private List<InvestorBaseDto> investorBaseList;
     private List<ReturnDto> returns;
+    private String owner;
 
     public String getName() {
         return name;
@@ -504,6 +506,14 @@ public class HedgeFundDto extends HistoryBaseEntityDto<HedgeFund> {
 
     public void setStrategyName(String strategyName) {
         this.strategyName = strategyName;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 }
 

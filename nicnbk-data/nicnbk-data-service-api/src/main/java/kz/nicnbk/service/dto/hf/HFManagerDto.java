@@ -1,5 +1,6 @@
 package kz.nicnbk.service.dto.hf;
 
+import kz.nicnbk.common.service.model.CreateUpdateBaseEntityDto;
 import kz.nicnbk.common.service.model.HistoryBaseEntityDto;
 import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.model.hf.HFManager;
@@ -10,7 +11,7 @@ import java.util.List;
 /**
  * Created by timur on 27.10.2016.
  */
-public class HFManagerDto extends HistoryBaseEntityDto<HFManager> {
+public class HFManagerDto extends CreateUpdateBaseEntityDto<HFManager> {
     private String name;
     private String managerType;
 
@@ -39,6 +40,8 @@ public class HFManagerDto extends HistoryBaseEntityDto<HFManager> {
     private String strategyNotes;
     private Short strategyScore;
     private Short conviction;
+
+    private String owner;
 
     private List<HedgeFundDto> funds;
 
@@ -240,5 +243,13 @@ public class HFManagerDto extends HistoryBaseEntityDto<HFManager> {
         }else{
             return null;
         }
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 }

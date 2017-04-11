@@ -8,6 +8,11 @@
 
 
 <div class="container">
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <div class="alert alert-danger" *ngIf="errorMessage != null">{{errorMessage}}</div>
+        </div>
+    </div>
     <div class="row withpadding">
         <a [routerLink]="['/news/edit/',0 ]" class="btn btn-primary pull-right" *ngIf="canEdit()">Add News</a>
     </div>
@@ -316,22 +321,28 @@
             <div class="modal fade" id="newsModal" role="dialog">
                     <div class="modal-dialog" style="overflow-y: scroll; max-height:85%;  margin-top: 50px; margin-bottom:50px; width:65%;">
                         <div class="modal-content" style="background-color: #fff1e0">
+                            <div class="row top-buffer" *ngIf="selectedNews == null">
+                                <div class="col-md-12">
+                                    <div class="alert alert-danger">Error loading news details</div>
+                                </div>
+                                {{selectedNews}}
+                            </div>
                             <div class="row withpadding">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <h4><span class="label label-info" >{{selectedNews.type}}</span></h4>
+                                        <h4><span class="label label-info" >{{selectedNews?.type}}</span></h4>
                                     </div>
                                 </div>
                             </div>
                             <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                <h3 class="modal-title"  style="word-wrap: break-word">{{selectedNews.header}}</h3>
+                                <!--<button type="button" class="close" data-dismiss="modal">&times;</button>-->
+                                <h3 class="modal-title"  style="word-wrap: break-word">{{selectedNews?.header}}</h3>
                                 <h4 style="word-wrap: break-word">
-                                    <small>{{selectedNews.source}}</small>
+                                    <small>{{selectedNews?.source}}</small>
                                 </h4>
                             </div>
                             <div class="modal-body">
-                                <p style="word-wrap: break-word;" [innerHTML]="selectedNews.content"></p>
+                                <p style="word-wrap: break-word;" [innerHTML]="selectedNews?.content"></p>
                             </div>
                             <div class="modal-footer">
                                 <!--<div class="row">-->
@@ -343,7 +354,7 @@
                                 <!--$("#modal_rating_stars").rating({min:1, max:10, step:1, size:'xs', showClear: false, showCaption: false});-->
                                 <!--</script>-->
                                 <!--</div>-->
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal" (click)="closeNewsModal()">Close</button>
                                 <!--<div class="pull-left">-->
                                     <!--<span class="glyphicon glyphicon-user"></span> {{selectedNews.owner}}-->
                                 <!--</div>-->

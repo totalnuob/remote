@@ -33,7 +33,7 @@ export class TripMemoListComponent extends CommonFormViewComponent implements On
         private router: Router,
         private route: ActivatedRoute
     ){
-        super();
+        super(router);
 
         //loadLookups
         this.sub = this.loadLookups();
@@ -74,7 +74,7 @@ export class TripMemoListComponent extends CommonFormViewComponent implements On
         //this.loadLookups();
 
         // find all
-        this.search(0);
+        //fthis.search(0);
     }
 
     search(page){

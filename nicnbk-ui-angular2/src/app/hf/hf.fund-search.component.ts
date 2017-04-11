@@ -34,7 +34,7 @@ export class HFFundSearchComponent extends CommonFormViewComponent{
         private router: Router,
         private route: ActivatedRoute
     ){
-        super();
+        super(router);
 
         this.moduleAccessChecker = new ModuleAccessCheckerService;
 

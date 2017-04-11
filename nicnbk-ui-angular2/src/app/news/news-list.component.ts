@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {Location} from '@angular/common';
+import {Router} from '@angular/router';
 import {News} from "./model/news";
 import {NEWS} from "./model/mock-news";
 import {NewsService} from "./news.service";
@@ -10,6 +9,9 @@ import {AuthenticationService} from "../authentication/authentication.service";
 //import '../../../public/js/star-rating/star-rating.min.js';
 import {Subscription} from 'rxjs';
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
+import {ErrorResponse} from "../common/error-response";
+import {CommonFormViewComponent} from "../common/common.component";
+
 
 declare var $: any
 
@@ -25,7 +27,7 @@ declare var $: any
     providers: [AuthenticationService],
     changeDetection: ChangeDetectionStrategy.Default // TODO: change to OnPush ??
 })
-export class NewsListComponent implements OnInit{
+export class NewsListComponent extends CommonFormViewComponent implements OnInit{
     busy: Subscription;
     newsList:  News[];
     selectedNews = new News;
@@ -35,19 +37,15 @@ export class NewsListComponent implements OnInit{
 
     showMoreButtonMap = {};
 
-    id: number;
-
     private moduleAccessChecker: ModuleAccessCheckerService;
-    private sub: any;
+
 
     constructor(
       private newsService: NewsService,
-      private route: ActivatedRoute,
-      private router: Router,
-      private location: Location
-    ){
+      private router: Router)
+    {
+        super(router);
         this.moduleAccessChecker = new ModuleAccessCheckerService;
-
     }
 
     ngOnInit(){
@@ -56,21 +54,6 @@ export class NewsListComponent implements OnInit{
 
         // load news
         this.loadNews();
-
-        this.sub = this.route
-            .params
-            .subscribe( params => {
-                    if(params['params'] != null) {
-                        try {
-                            this.id = JSON.parse(params['params']);
-                            this.getNewsById(this.id);
-                            $('#newsModal').modal('show');
-                        } catch(error) {
-                            return;
-                        }
-                    }
-                }
-            )
     }
 
     getPage(category){
@@ -120,25 +103,36 @@ export class NewsListComponent implements OnInit{
                 newsList => {
                     this.newsList = newsList;
                 },
-                error =>  this.errorMessage = <any>error);
-
+                (error: ErrorResponse) => {
+                    this.successMessage = null;
+                    this.errorMessage = "Error loading news";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
+            );
     }
 
     getNewsById(id){
-
-        //let params = JSON.stringify(id);
-        this.location.go('/news;params=' + id);
-        //console.log(this.router.url);
-
-        //this.router.navigate(['/news/',{ params }]);
-
         //alert(id);
-
         this.newsService.getNewsById(id)
             .subscribe(
                 newsItem => this.selectedNews = newsItem,
-                error => this.errorMessage = <any>error
+                (error: ErrorResponse) => {
+                    //this.successMessage = null;
+                    //this.errorMessage = "Error loading news details";
+                    this.selectedNews = null;
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
             );
+    }
+
+    closeNewsModal(){
+        this.selectedNews = null;
     }
 
     public canEdit(){

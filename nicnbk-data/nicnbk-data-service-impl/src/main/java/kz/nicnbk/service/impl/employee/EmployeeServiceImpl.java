@@ -7,6 +7,8 @@ import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.converter.employee.EmployeeEntityConverter;
 import kz.nicnbk.service.dto.employee.EmployeeDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,21 +22,29 @@ import java.util.List;
 @Service
 public class EmployeeServiceImpl implements EmployeeService{
 
+    private static final Logger logger = LoggerFactory.getLogger(EmployeeServiceImpl.class);
+
+
     @Autowired
-    private EmployeeRepository empoloyeeRepository;
+    private EmployeeRepository employeeRepository;
 
     @Autowired
     private EmployeeEntityConverter employeeEntityConverter;
 
     @Override
     public List<EmployeeDto> findAll(){
-        List<EmployeeDto> dtoList = new ArrayList<>();
-        Iterator<Employee> entities = this.empoloyeeRepository.findAll().iterator();
-        while(entities.hasNext()){
-            EmployeeDto employeeDto = this.employeeEntityConverter.disassemble(entities.next());
-            dtoList.add(employeeDto);
+        try {
+            List<EmployeeDto> dtoList = new ArrayList<>();
+            Iterator<Employee> entities = this.employeeRepository.findAll().iterator();
+            while (entities.hasNext()) {
+                EmployeeDto employeeDto = this.employeeEntityConverter.disassemble(entities.next());
+                dtoList.add(employeeDto);
+            }
+            return dtoList;
+        }catch (Exception ex){
+            logger.error("Failed to load full employee list", ex);
         }
-        return dtoList;
+        return null;
     }
 
     /**
@@ -51,22 +61,26 @@ public class EmployeeServiceImpl implements EmployeeService{
             return null;
         }
 
-        Employee employee = this.empoloyeeRepository.findByUsername(username);
-        if(employee != null){
-            // check active
-            if(employee.getActive() != null && !employee.getActive()){
-                return null;
+        try {
+            Employee employee = this.employeeRepository.findByUsername(username);
+            if (employee != null) {
+                // check active
+                if (employee.getActive() != null && !employee.getActive()) {
+                    return null;
+                }
+                String salt = employee.getSalt();
+                String generatedPassword = generatePassword(password, salt);
+                if (employee.getPassword().equals(generatedPassword)) {
+                    // authentication OK, return employee info
+                    EmployeeDto employeeDto = this.employeeEntityConverter.disassemble(employee);
+                    return employeeDto;
+                } else {
+                    // authentication failed
+                    return null;
+                }
             }
-            String salt = employee.getSalt();
-            String generatedPassword = generatePassword(password, salt);
-            if(employee.getPassword().equals(generatedPassword)){
-                // authentication OK, return employee info
-                EmployeeDto employeeDto = this.employeeEntityConverter.disassemble(employee);
-                return employeeDto;
-            }else{
-                // authentication failed
-                return null;
-            }
+        }catch (Exception ex){
+            logger.error("Employee search by username-password failed with error: username=" + username, ex);
         }
         return null;
     }
@@ -76,47 +90,64 @@ public class EmployeeServiceImpl implements EmployeeService{
         if(StringUtils.isEmpty(username)){
             return null;
         }
-        Employee employee = this.empoloyeeRepository.findByUsername(username);
-        if(employee != null){
-            EmployeeDto employeeDto = this.employeeEntityConverter.disassemble(employee);
-            return employeeDto;
+        try {
+            Employee employee = this.employeeRepository.findByUsername(username);
+            if (employee != null) {
+                EmployeeDto employeeDto = this.employeeEntityConverter.disassemble(employee);
+                return employeeDto;
+            }
+        }catch (Exception ex){
+            logger.error("Failed to search by employee username: username=" + username, ex);
         }
         return null;
     }
 
     @Override
-    public boolean setPassword(String username, String password){
+    public boolean setPassword(String username, String password, String user){
         try {
-            Employee employee = this.empoloyeeRepository.findByUsername(username);
+            Employee employee = this.employeeRepository.findByUsername(username);
             if(employee != null){
                 String salt = generateSalt();
                 String newPassword = generatePassword(password, salt);
                 employee.setSalt(salt);
                 employee.setPassword(newPassword);
 
-                this.empoloyeeRepository.save(employee);
+                this.employeeRepository.save(employee);
+                logger.info("Successfully changed password: username=" + username + ", by " + user);
                 return true;
             }
         }catch(Exception ex){
-            // TODO: log error
+            logger.error("Failed to change password: username=" + username + ", by " + user, ex);
         }
         return false;
     }
 
     @Override
     public boolean deactivate(String username) {
-        Employee employee = this.empoloyeeRepository.findByUsername(username);
-        employee.setActive(false);
-        this.empoloyeeRepository.save(employee);
-        return true;
+        try {
+            Employee employee = this.employeeRepository.findByUsername(username);
+            employee.setActive(false);
+            this.employeeRepository.save(employee);
+            logger.info("Deactivated user: " + username);
+            return true;
+        }catch (Exception ex){
+            logger.error("Failed to deactivate user: username=" + username, ex);
+        }
+        return false;
     }
 
     @Override
     public boolean activate(String username) {
-        Employee employee = this.empoloyeeRepository.findByUsername(username);
-        employee.setActive(true);
-        this.empoloyeeRepository.save(employee);
-        return true;
+        try {
+            Employee employee = this.employeeRepository.findByUsername(username);
+            employee.setActive(true);
+            this.employeeRepository.save(employee);
+            logger.info("Activated user: " + username);
+            return true;
+        }catch(Exception ex){
+            logger.error("Failed to activate user: username=" + username, ex);
+        }
+        return false;
     }
 
     private String generateSalt(){

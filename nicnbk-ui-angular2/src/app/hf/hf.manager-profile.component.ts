@@ -58,7 +58,7 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
         private router: Router
     ) {
 
-        super();
+        super(router);
 
         this.moduleAccessChecker = new ModuleAccessCheckerService;
 

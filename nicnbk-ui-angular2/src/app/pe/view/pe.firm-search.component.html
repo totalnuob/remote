@@ -90,13 +90,15 @@
         <table [ngBusy]="busy" class="table table-hover">
             <thead>
             <tr>
-                <th>&nbsp;</th>
+                <!--<th>&nbsp;</th>-->
                 <th>MANAGER</th>
                 <!--<th>FUND</th>-->
                 <th>AUM (mln)</th>
                 <th>FOUNDED YEAR</th>
                 <th>LOCATION</th>
+                <th>CREATED</th>
                 <th>UPDATED</th>
+                <th>UPDATEDBY</th>
                 <th>ACTIONS</th>
             </tr>
             </thead>
@@ -104,7 +106,7 @@
             <tbody>
 
             <tr *ngFor = "let firm of foundEntities" style="cursor: pointer" (click)="navigate('/pe/firmProfile/', firm.id)">
-                <td width="5%"></td>
+                <!--<td width="5%"></td>-->
                 <td width="15%"><a>{{firm.firmName}}</a></td>
                 <!--<td width="30%">-->
                 <!--&lt;!&ndash;<a [routerLink]="['/hf/managerProfile/', fund.manager.id]">{{fund.manager.name}}</a>&ndash;&gt;-->
@@ -113,7 +115,9 @@
                 <td width="7%">{{firm.aum}}</td>
                 <td width="7%">{{firm.foundedYear}}</td>
                 <td width="15%">{{firm.locations}}</td>
+                <td width="7%">{{firm.owner}}</td>
                 <td width="7%">{{firm.updateDate}}</td>
+                <td width="7%">{{firm.updater}}</td>
                 <td width="5%">
                     <!--<a><i class="glyphicon glyphicon-search"></i></a>-->
                     <a><i class="glyphicon glyphicon-file" (click)="navigate('/pe/fundReport/', firm.id)"></i></a>

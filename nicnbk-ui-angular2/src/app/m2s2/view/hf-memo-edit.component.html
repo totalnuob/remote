@@ -535,7 +535,12 @@
 
                         <div class="col-md-6">
                             <div class="form form-horizontal">
-                                <label class="control-label col-md-6" >Author: {{memo.owner}}</label>
+                                <div class="row">
+                                    <label class="control-label">Author: {{memo.owner}}</label>
+                                </div>
+                                <div class="row" *ngIf="memo.updater != null || memo.updateDate != null">
+                                    <label class="control-label" >Last Update: {{memo.updater}} {{memo.updateDate != null ? 'on ' + memo.updateDate : ''}}</label>
+                                </div>
                                 <!--<div class="col-md-4">-->
                                     <!--&lt;!&ndash;<input type="text" placeholder="Your name... " class="form-control col-md-4" id="author"&ndash;&gt;-->
                                     <!--&lt;!&ndash;name="author" maxlength="250" name="author" [(ngModel)]="memo.author"/>&ndash;&gt;-->

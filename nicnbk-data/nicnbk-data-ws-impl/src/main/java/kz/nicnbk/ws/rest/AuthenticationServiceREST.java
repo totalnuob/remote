@@ -3,10 +3,12 @@ package kz.nicnbk.ws.rest;
 import kz.nicnbk.service.api.authentication.AuthenticationService;
 import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.dto.authentication.AuthenticatedUserDto;
+import kz.nicnbk.service.dto.authentication.TokenUserInfo;
 import kz.nicnbk.service.dto.authentication.UserCredentialsDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -50,6 +52,18 @@ public class AuthenticationServiceREST {
     public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response){
         response.addCookie(getClearTokenCookie());
         return new ResponseEntity<>(null, null, HttpStatus.OK);
+    }
+
+
+    @RequestMapping(value="/checkToken", method = RequestMethod.POST)
+    public ResponseEntity<?> checkToken(){
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        TokenUserInfo tokenUserInfo = this.tokenService.decode(token);
+        if(tokenUserInfo != null){
+            return new ResponseEntity<>(true, null, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(false, null, HttpStatus.OK);
+        }
     }
 
     private Cookie getClearTokenCookie(){

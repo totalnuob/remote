@@ -19,7 +19,7 @@ public interface HedgeFundService extends BaseService {
     /* Number of elements per page */
     int DEFAULT_PAGE_SIZE = 20;
 
-    Long save(HedgeFundDto hedgeFundDto);
+    Long save(HedgeFundDto hedgeFundDto, String username);
 
     HedgeFundDto get(Long id);
 

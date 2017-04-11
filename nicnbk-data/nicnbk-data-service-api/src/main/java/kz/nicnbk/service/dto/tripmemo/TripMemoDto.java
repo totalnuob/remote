@@ -1,6 +1,7 @@
 package kz.nicnbk.service.dto.tripmemo;
 
 import kz.nicnbk.common.service.model.BaseEntityDto;
+import kz.nicnbk.common.service.model.CreateUpdateBaseEntityDto;
 import kz.nicnbk.repo.model.tripmemo.TripMemo;
 import kz.nicnbk.service.dto.employee.EmployeeDto;
 import kz.nicnbk.service.dto.files.FilesDto;
@@ -12,7 +13,7 @@ import java.util.Set;
 /**
  * Created by zhambyl on 04-Aug-16.
  */
-public class TripMemoDto extends BaseEntityDto<TripMemo> {
+public class TripMemoDto extends CreateUpdateBaseEntityDto<TripMemo> {
 
     private Long id;
     private String tripType;

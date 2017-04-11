@@ -91,24 +91,28 @@
         <table [ngBusy]="busy" class="table table-hover">
             <thead>
             <tr>
-                <th>&nbsp;</th>
+                <!--<th>&nbsp;</th>-->
                 <th>MANAGER</th>
                 <th>INCEPTION</th>
+                <th>CREATED</th>
                 <th>UPDATED</th>
-                <th>ACTIONS</th>
+                <th>UPDATED BY</th>
+                <!--<th>ACTIONS</th>-->
             </tr>
             </thead>
 
             <tbody>
 
             <tr *ngFor = "let manager of foundEntities" style="cursor: pointer" (click)="navigate('/hf/managerProfile/', manager.id)">
-                <td width="5%"></td>
+                <!--<td width="5%"></td>-->
                 <td width="30%"><a>{{manager.name}}</a></td>
                 <td width="10%">{{manager.inceptionDate}}</td>
+                <td width="10%">{{manager.owner}}</td>
                 <td width="10%">{{manager.updateDate}}</td>
-                <td width="5%">
-                    <a><i class="glyphicon glyphicon-file"></i></a>
-                </td>
+                <td width="10%">{{manager.updater}}</td>
+                <!--<td width="5%">-->
+                    <!--<a><i class="glyphicon glyphicon-file"></i></a>-->
+                <!--</td>-->
             </tr>
             </tbody>
         </table>

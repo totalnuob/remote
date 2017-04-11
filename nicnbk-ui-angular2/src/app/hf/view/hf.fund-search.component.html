@@ -92,26 +92,31 @@
         <table [ngBusy]="busy" class="table table-hover">
             <thead>
             <tr>
-                <th>&nbsp;</th>
+                <!--<th>&nbsp;</th>-->
                 <th>FUND</th>
                 <th>MANAGER</th>
+                <!--<th>STRATEGY</th>-->
                 <th>INCEPTION</th>
+                <th>CREATED</th>
                 <th>UPDATED</th>
-                <th>ACTIONS</th>
+                <th>UPDATED BY</th>
             </tr>
             </thead>
 
             <tbody>
 
             <tr *ngFor = "let fund of foundEntities">
-                <td width="5%"></td>
+                <!--<td width="5%"></td>-->
                 <td width="30%"><a style="cursor: pointer" (click)="navigate('/hf/fundProfile/', fund.id)" >{{fund.name}}</a></td>
                 <td width="30%"><a style="cursor: pointer" (click)="navigate('/hf/managerProfile/', fund.manager.id)">{{fund.manager.name}}</a></td>
+                <!--<td width="10%">{{fund.strategy}}</td>-->
                 <td width="10%">{{fund.inceptionDate}}</td>
+                <td width="10%">{{fund.owner}}</td>
                 <td width="10%">{{fund.updateDate}}</td>
-                <td width="5%">
-                    <a><i class="glyphicon glyphicon-file"></i></a>
-                </td>
+                <td width="10%">{{fund.updater}}</td>
+                <!--<td width="5%">-->
+                    <!--<a><i class="glyphicon glyphicon-file"></i></a>-->
+                <!--</td>-->
             </tr>
             </tbody>
         </table>

@@ -2,9 +2,11 @@ package kz.nicnbk.service.impl.pe;
 
 import in.satpathy.financial.XIRR;
 import in.satpathy.financial.XIRRData;
+import kz.nicnbk.repo.api.employee.EmployeeRepository;
 import kz.nicnbk.repo.api.pe.PEFundRepository;
 import kz.nicnbk.repo.api.pe.PEGrossCashflowRepository;
 import kz.nicnbk.repo.api.pe.PENetCashflowRepository;
+import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.pe.PEFund;
 import kz.nicnbk.repo.model.pe.PEGrossCashflow;
 import kz.nicnbk.repo.model.pe.PENetCashflow;
@@ -19,6 +21,8 @@ import kz.nicnbk.service.dto.pe.PEGrossCashflowDto;
 import kz.nicnbk.service.dto.pe.PEFundCompaniesPerformanceDto;
 import kz.nicnbk.service.dto.pe.PENetCashflowDto;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,10 +37,13 @@ import java.util.*;
 @Service
 public class PEFundServiceImpl implements PEFundService {
 
+    private static final Logger logger = LoggerFactory.getLogger(PEFundServiceImpl.class);
+
+
     private static final double[] EMPTY_DOUBLE_ARRAY = null;
 
     @Autowired
-    private PEFundRepository repository;
+    private PEFundRepository peFundRepository;
 
     @Autowired
     private PEFundEntityConverter converter;
@@ -59,77 +66,117 @@ public class PEFundServiceImpl implements PEFundService {
     @Autowired
     private PENetCashflowEntityConverter netCFConverter;
 
+    @Autowired
+    private EmployeeRepository employeeRepository;
+
 
 
     @Override
-    public Long save(PEFundDto fundDto) {
+    public Long save(PEFundDto fundDto, String updater) {
 
-        PEFund entity = converter.assemble(fundDto);
-        entity.setUpdateDate(new Date());
+        // TODO: transactions
 
-        Long id =repository.save(entity).getId();
-        fundDto.setId(id);
-
-        boolean deleted = this.grossCFService.deleteByFundId(id);
-
-        //Save gross cashflows
-        if(fundDto.getGrossCashflow() != null){
-            for(PEGrossCashflowDto dto: fundDto.getGrossCashflow()){
-                dto.setFund(fundDto);
-                this.grossCFService.save(dto);
+        try {
+            PEFund entity = converter.assemble(fundDto);
+            if(fundDto.getId() == null){ // CREATE
+                Employee employee = this.employeeRepository.findByUsername(fundDto.getOwner());
+                // set creator
+                entity.setCreator(employee);
+            }else{ // UPDATE
+                // set creator
+                Employee employee = this.peFundRepository.findOne(fundDto.getId()).getCreator();
+                entity.setCreator(employee);
+                // set creation date
+                Date creationDate = peFundRepository.findOne(fundDto.getId()).getCreationDate();
+                entity.setCreationDate(creationDate);
+                // set update date
+                entity.setUpdateDate(new Date());
+                // set updater
+                Employee updatedby = this.employeeRepository.findByUsername(updater);
+                entity.setUpdater(updatedby);
             }
-        }
+            Long id = peFundRepository.save(entity).getId();
+            fundDto.setId(id);
 
-        boolean deleted2 = this.netCFService.deleteByFundId(id);
+            boolean deleted = this.grossCFService.deleteByFundId(id);
 
-        //Save net cashflows
-        if(fundDto.getNetCashflow() != null){
-            for(PENetCashflowDto dto: fundDto.getNetCashflow()){
-                dto.setFund(fundDto);
-                this.netCFService.save(dto);
+            //Save gross cashflows
+            if (fundDto.getGrossCashflow() != null) {
+                for (PEGrossCashflowDto dto : fundDto.getGrossCashflow()) {
+                    dto.setFund(fundDto);
+                    this.grossCFService.save(dto);
+                }
             }
+
+            boolean deleted2 = this.netCFService.deleteByFundId(id);
+
+            //Save net cashflows
+            if (fundDto.getNetCashflow() != null) {
+                for (PENetCashflowDto dto : fundDto.getNetCashflow()) {
+                    dto.setFund(fundDto);
+                    this.netCFService.save(dto);
+                }
+            }
+
+            // TODO: log cash flow saving
+
+            logger.info(fundDto.getId() == null ? "PE fund created: " + id + ", by " + entity.getCreator().getUsername() :
+                    "PE fund updated: " + id + ", by " + updater);
+            return id;
+        }catch (Exception ex){
+            logger.error("Error saving PE fund: " + (fundDto != null && fundDto.getId() != null ? fundDto.getId() : "new") ,ex);
         }
-        return id;
+        return null;
     }
 
     @Override
     public PEFundDto get(Long id) {
-        PEFund entity = this.repository.findOne(id);
+        try {
+            PEFund entity = this.peFundRepository.findOne(id);
 
-        List<PEGrossCashflow> grossCfEntity = this.grossCFRepository.getEntitiesByFundId(id, new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName", "date")));
-        List<PENetCashflow> netCfEntity = this.netCFRepository.getEntitiesByFundId(id);
+            List<PEGrossCashflow> grossCfEntity = this.grossCFRepository.getEntitiesByFundId(id, new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName", "date")));
+            List<PENetCashflow> netCfEntity = this.netCFRepository.getEntitiesByFundId(id);
 
-        PEFundDto dto = this.converter.disassemble(entity);
+            PEFundDto dto = this.converter.disassemble(entity);
 
-        List<PEGrossCashflowDto> grossCFDto = this.grossCFConverter.disassembleList(grossCfEntity);
-        List<PENetCashflowDto> netCFDto = this.netCFConverter.disassembleList(netCfEntity);
+            List<PEGrossCashflowDto> grossCFDto = this.grossCFConverter.disassembleList(grossCfEntity);
+            List<PENetCashflowDto> netCFDto = this.netCFConverter.disassembleList(netCfEntity);
 
-        dto.setGrossCashflow(grossCFDto);
-        dto.setNetCashflow(netCFDto);
+            dto.setGrossCashflow(grossCFDto);
+            dto.setNetCashflow(netCFDto);
 
-        calculatePerformanceParameters(grossCFDto, netCFDto, dto);
+            calculatePerformanceParameters(grossCFDto, netCFDto, dto);
 
-        return dto;
+            return dto;
+        }catch(Exception ex){
+            logger.error("Error loading PE fund: " + id, ex);
+        }
+        return null;
     }
 
     @Override
     public List<PEFundDto> loadFirmFunds(Long firmId, boolean report) {
-        Page<PEFund> page = this.repository.findByFirmId(firmId, new PageRequest(0,10, new Sort(Sort.Direction.ASC, "vintage")));
-        List<PEFundDto> fundDtoList = this.converter.disassembleList(page.getContent());
-        if(report) {
-            for (PEFundDto fundDto : fundDtoList) {
-                List<PEGrossCashflow> grossCfEntity = this.grossCFRepository.getEntitiesByFundId(fundDto.getId(), new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName")));
-                List<PENetCashflow> netCfEntity = this.netCFRepository.getEntitiesByFundId(fundDto.getId());
-                List<PEGrossCashflowDto> grossCFDto = this.grossCFConverter.disassembleList(grossCfEntity);
-                List<PENetCashflowDto> netCFDto = this.netCFConverter.disassembleList(netCfEntity);
+        try {
+            Page<PEFund> page = this.peFundRepository.findByFirmId(firmId, new PageRequest(0, 10, new Sort(Sort.Direction.ASC, "vintage")));
+            List<PEFundDto> fundDtoList = this.converter.disassembleList(page.getContent());
+            if (report) {
+                for (PEFundDto fundDto : fundDtoList) {
+                    List<PEGrossCashflow> grossCfEntity = this.grossCFRepository.getEntitiesByFundId(fundDto.getId(), new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName")));
+                    List<PENetCashflow> netCfEntity = this.netCFRepository.getEntitiesByFundId(fundDto.getId());
+                    List<PEGrossCashflowDto> grossCFDto = this.grossCFConverter.disassembleList(grossCfEntity);
+                    List<PENetCashflowDto> netCFDto = this.netCFConverter.disassembleList(netCfEntity);
 
-                fundDto.setGrossCashflow(grossCFDto);
-                fundDto.setNetCashflow(netCFDto);
+                    fundDto.setGrossCashflow(grossCFDto);
+                    fundDto.setNetCashflow(netCFDto);
 
-                calculatePerformanceParameters(grossCFDto, netCFDto, fundDto);
+                    calculatePerformanceParameters(grossCFDto, netCFDto, fundDto);
+                }
             }
+            return fundDtoList;
+        }catch (Exception ex){
+            logger.error("Failed to load PE firm funds: firm=" + firmId, ex);
         }
-        return fundDtoList;
+        return null;
     }
 
     private void calculatePerformanceParameters(List<PEGrossCashflowDto> grossCfDtoList, List<PENetCashflowDto> netCfDtoList, PEFundDto dto) {

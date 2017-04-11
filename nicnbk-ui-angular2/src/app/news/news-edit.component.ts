@@ -37,7 +37,7 @@ export class NewsEditComponent extends CommonFormViewComponent implements OnInit
         private router: Router,
         private route: ActivatedRoute
     ){
-        super();
+        super(router);
         this.moduleAccessChecker = new ModuleAccessCheckerService;
 
         if(!this.moduleAccessChecker.checkAccessNewsEdit()) {
@@ -57,7 +57,7 @@ export class NewsEditComponent extends CommonFormViewComponent implements OnInit
                                 $('#editor').html(newsItem.content);
                             },
                             (error:ErrorResponse) => {
-                                this.errorMessage = "Error loading news item";
+                                this.errorMessage = "Error loading news";
                                 if (error && !error.isEmpty()) {
                                     this.processErrorMessage(error);
                                 }
@@ -104,13 +104,22 @@ export class NewsEditComponent extends CommonFormViewComponent implements OnInit
                     // TODO: rafactor?
                     $('html, body').animate({ scrollTop: 0 }, 'fast');
                 },
-                error =>  {
-                    this.successMessage = null;
-                    this.errorMessage = <any>error;
-                    this.submitted = false;
+                //error =>  {
+                //    this.successMessage = null;
+                //    this.errorMessage = <any>error;
+                //    this.submitted = false;
+                //
+                //    // TODO: rafactor?
+                //    $('html, body').animate({ scrollTop: 0 }, 'fast');
+                //}
 
-                    // TODO: rafactor?
-                    $('html, body').animate({ scrollTop: 0 }, 'fast');
+                (error: ErrorResponse) => {
+                    this.successMessage = null;
+                    this.errorMessage = "Error saving news";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
                 }
             );
     }

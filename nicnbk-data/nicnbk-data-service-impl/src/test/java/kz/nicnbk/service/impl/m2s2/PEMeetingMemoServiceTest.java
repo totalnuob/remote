@@ -45,7 +45,7 @@ public class PEMeetingMemoServiceTest extends CommonTest {
     @DatabaseSetup({"classpath:datasets/m2s2/pe_memo_save.xml"})
     @DatabaseTearDown({"classpath:datasets/m2s2/memo_files_clear.xml"})
     public void testSave() throws IOException {
-        Long memoId = PEMemoService.save(getTestDto());
+        Long memoId = PEMemoService.save(getTestDto(), null);
         assert (memoId > 0);
 
         //check files

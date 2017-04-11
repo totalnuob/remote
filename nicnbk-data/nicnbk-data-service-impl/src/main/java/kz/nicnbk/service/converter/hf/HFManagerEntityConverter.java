@@ -40,6 +40,16 @@ public class HFManagerEntityConverter extends BaseDozerEntityConverter<HFManager
             dto.setAumCurrency(entity.getAUMCurrency().getCode());
         }
 
+        // creator
+        if(entity.getCreator() != null){
+            dto.setOwner(entity.getCreator().getUsername());
+        }
+
+        // updater
+        if(entity.getUpdater() != null){
+            dto.setUpdater(entity.getUpdater().getUsername());
+        }
+
         return dto;
     }
 

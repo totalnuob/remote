@@ -14,7 +14,8 @@ import kz.nicnbk.repo.model.m2s2.MeetingArrangedBy;
 import kz.nicnbk.repo.model.m2s2.MeetingType;
 import kz.nicnbk.repo.model.news.NewsType;
 import kz.nicnbk.repo.model.pe.PEIndustry;
-import kz.nicnbk.repo.model.tripmemo.TripType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,9 @@ import java.util.List;
  */
 @Service
 public class LookupServiceImpl implements LookupService {
+
+    private static final Logger logger = LoggerFactory.getLogger(LookupServiceImpl.class);
+
 
     @Autowired
     private GeographyRepository geographyRepository;
@@ -87,53 +91,53 @@ public class LookupServiceImpl implements LookupService {
 
         // TODO: implement lookup cash
 
-        if(code == null){
-            return null;
-        }
-
-        if(clazz.equals(NewsType.class)){
-            return (T) this.newsTypeRepository.findByCode(code);
-        }else if(clazz.equals(MeetingType.class)){
-            return (T) this.meetingTypeRepository.findByCode(code);
-        }else if(clazz.equals(MeetingArrangedBy.class)){
-            return (T) this.meetingArrangedByRepository.findByCode(code);
-        }else if(clazz.equals(Currency.class)){
-            return (T) this.currencyRepository.findByCode(code);
-        }else if(clazz.equals(FilesType.class)){
-            return (T) this.filesTypeRepository.findByCode(code);
-        }else if(clazz.equals(Strategy.class)){
-            return (T) this.strategyRepository.findByCode(code);
-        }else if(clazz.equals(Geography.class)){
-            return (T) this.geographyRepository.findByCode(code);
-        }else if(clazz.equals(HedgeFundStatus.class)){
-            return (T) this.managerStatusRepository.findByCode(code);
-        }else if(clazz.equals(Country.class)){
-            return (T) this.countryRepository.findByCode(code);
-        }else if(clazz.equals(LegalStructure.class)){
-            return (T) this.legalStructureRepository.findByCode(code);
-        }else if(clazz.equals(SubscriptionFrequency.class)){
-            return (T) this.subscriptionFrequencyRepository.findByCode(code);
-        }else if(clazz.equals(RedemptionFrequency.class)){
-            return (T) this.redemptionFrequencyRepository.findByCode(code);
-        }else if(clazz.equals(RedemptionNotificationPeriod.class)){
-            return (T) this.redemptionNotificationPeriodRepository.findByCode(code);
-        }else if(clazz.equals(HedgeFundSidePocket.class)){
-            return (T) this.hedgeFundSidePocketRepository.findByCode(code);
-        }else if(clazz.equals(Substrategy.class)){
-            return (T) this.substrategyRepository.findByCode(code);
-        } else if(clazz.equals(TripType.class)){
-            return (T) this.tripTypeRepository.findByCode(code);
-        }
-
-        if(clazz.getSimpleName().equals("Strategy")){
-            Iterator<Strategy> iterator = strategyRepository.findAll().iterator();
-            while(iterator.hasNext()){
-                Strategy strategy = iterator.next();
-                if(strategy.getCode().equals(code)){
-                    return (T) strategy;
-                };
+        try {
+            if (code == null) {
+                return null;
             }
-
+            if (clazz.equals(NewsType.class)) {
+                return (T) this.newsTypeRepository.findByCode(code);
+            } else if (clazz.equals(MeetingType.class)) {
+                return (T) this.meetingTypeRepository.findByCode(code);
+            } else if (clazz.equals(MeetingArrangedBy.class)) {
+                return (T) this.meetingArrangedByRepository.findByCode(code);
+            } else if (clazz.equals(Currency.class)) {
+                return (T) this.currencyRepository.findByCode(code);
+            } else if (clazz.equals(FilesType.class)) {
+                return (T) this.filesTypeRepository.findByCode(code);
+            } else if (clazz.equals(Strategy.class)) {
+                return (T) this.strategyRepository.findByCode(code);
+            } else if (clazz.equals(Geography.class)) {
+                return (T) this.geographyRepository.findByCode(code);
+            } else if (clazz.equals(HedgeFundStatus.class)) {
+                return (T) this.managerStatusRepository.findByCode(code);
+            } else if (clazz.equals(Country.class)) {
+                return (T) this.countryRepository.findByCode(code);
+            } else if (clazz.equals(LegalStructure.class)) {
+                return (T) this.legalStructureRepository.findByCode(code);
+            } else if (clazz.equals(SubscriptionFrequency.class)) {
+                return (T) this.subscriptionFrequencyRepository.findByCode(code);
+            } else if (clazz.equals(RedemptionFrequency.class)) {
+                return (T) this.redemptionFrequencyRepository.findByCode(code);
+            } else if (clazz.equals(RedemptionNotificationPeriod.class)) {
+                return (T) this.redemptionNotificationPeriodRepository.findByCode(code);
+            } else if (clazz.equals(HedgeFundSidePocket.class)) {
+                return (T) this.hedgeFundSidePocketRepository.findByCode(code);
+            } else if (clazz.equals(Substrategy.class)) {
+                return (T) this.substrategyRepository.findByCode(code);
+            }else if (clazz.equals(Strategy.class)) {
+                return (T) this.strategyRepository.findByCode(code);
+            } else if(clazz.equals(TripType.class)){
+                return (T) this.tripTypeRepository.findByCode(code);
+            } else if (clazz.equals(Geography.class)) {
+                return (T) this.geographyRepository.findByCode(code);
+            }else if (clazz.equals(PEIndustry.class)) {
+                return (T) this.industryRepository.findByCode(code);
+            }else{
+                logger.error("Failed to load lookups for clazz=" + clazz + ", code=" + code);
+            }
+        }catch (Exception ex){
+            logger.error("Failed to load lookups with error: clazz=" + clazz + ", code=" + code, ex);
         }
         if(clazz.getSimpleName().equals("Geography")){
             Iterator<Geography> iterator = geographyRepository.findAll().iterator();
@@ -161,74 +165,104 @@ public class LookupServiceImpl implements LookupService {
 
     @Override
     public List<BaseDictionaryDto> getCurrencies(){
-        List<BaseDictionaryDto> dtoList = new ArrayList<>();
-        Iterator<Currency> iterator = this.currencyRepository.findAll().iterator();
-        while(iterator.hasNext()){
-            Currency currency = iterator.next();
-            BaseDictionaryDto geographyDto = disassemble(currency);
-            dtoList.add(geographyDto);
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            Iterator<Currency> iterator = this.currencyRepository.findAll().iterator();
+            while (iterator.hasNext()) {
+                Currency currency = iterator.next();
+                BaseDictionaryDto geographyDto = disassemble(currency);
+                dtoList.add(geographyDto);
+            }
+            return dtoList;
+        }catch (Exception ex){
+            logger.error("Failed to load lookup: Currency", ex);
         }
-        return dtoList;
+        return null;
     }
 
     @Override
     public List<BaseDictionaryDto> getHedgeFundStatuses() {
-        List<BaseDictionaryDto> dtoList = new ArrayList<>();
-        Iterator<HedgeFundStatus> iterator = this.hedgeFundStatusRepository.findAll().iterator();
-        while(iterator.hasNext()){
-            HedgeFundStatus entity = iterator.next();
-            BaseDictionaryDto dto = disassemble(entity);
-            dtoList.add(dto);
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            Iterator<HedgeFundStatus> iterator = this.hedgeFundStatusRepository.findAll().iterator();
+            while (iterator.hasNext()) {
+                HedgeFundStatus entity = iterator.next();
+                BaseDictionaryDto dto = disassemble(entity);
+                dtoList.add(dto);
+            }
+            return dtoList;
+        }catch (Exception ex){
+            logger.error("Failed to load lookup: HedgeFundStatus", ex);
         }
-        return dtoList;
+        return null;
     }
 
     @Override
     public List<BaseDictionaryDto> getSubscriptionFrequencies() {
-        List<BaseDictionaryDto> dtoList = new ArrayList<>();
-        Iterator<SubscriptionFrequency> iterator = this.subscriptionFrequencyRepository.findAll().iterator();
-        while(iterator.hasNext()){
-            SubscriptionFrequency entity = iterator.next();
-            BaseDictionaryDto dto = disassemble(entity);
-            dtoList.add(dto);
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            Iterator<SubscriptionFrequency> iterator = this.subscriptionFrequencyRepository.findAll().iterator();
+            while (iterator.hasNext()) {
+                SubscriptionFrequency entity = iterator.next();
+                BaseDictionaryDto dto = disassemble(entity);
+                dtoList.add(dto);
+            }
+            return dtoList;
+        }catch (Exception ex){
+            logger.error("Failed to load lookup: SubscriptionFrequency", ex);
         }
-        return dtoList;
+        return null;
     }
 
     @Override
     public List<BaseDictionaryDto> getRedemptionFrequencies() {
-        List<BaseDictionaryDto> dtoList = new ArrayList<>();
-        Iterator<RedemptionFrequency> iterator = this.redemptionFrequencyRepository.findAll().iterator();
-        while(iterator.hasNext()){
-            RedemptionFrequency entity = iterator.next();
-            BaseDictionaryDto dto = disassemble(entity);
-            dtoList.add(dto);
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            Iterator<RedemptionFrequency> iterator = this.redemptionFrequencyRepository.findAll().iterator();
+            while (iterator.hasNext()) {
+                RedemptionFrequency entity = iterator.next();
+                BaseDictionaryDto dto = disassemble(entity);
+                dtoList.add(dto);
+            }
+            return dtoList;
+        }catch (Exception ex){
+            logger.error("Failed to load lookup: RedemptionFrequency", ex);
         }
-        return dtoList;
+        return null;
     }
 
     @Override
     public List<BaseDictionaryDto> getRedemptionNoticePeriods() {
-        List<BaseDictionaryDto> dtoList = new ArrayList<>();
-        Iterator<RedemptionNotificationPeriod> iterator = this.redemptionNotificationPeriodRepository.findAll().iterator();
-        while(iterator.hasNext()){
-            RedemptionNotificationPeriod entity = iterator.next();
-            BaseDictionaryDto dto = disassemble(entity);
-            dtoList.add(dto);
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            Iterator<RedemptionNotificationPeriod> iterator = this.redemptionNotificationPeriodRepository.findAll().iterator();
+            while (iterator.hasNext()) {
+                RedemptionNotificationPeriod entity = iterator.next();
+                BaseDictionaryDto dto = disassemble(entity);
+                dtoList.add(dto);
+            }
+            return dtoList;
+        }catch (Exception ex){
+            logger.error("Failed to load lookup: RedemptionNotificationPeriod", ex);
         }
-        return dtoList;
+        return null;
     }
 
     @Override
     public List<BaseDictionaryDto> getSidePockets() {
-        List<BaseDictionaryDto> dtoList = new ArrayList<>();
-        Iterator<HedgeFundSidePocket> iterator = this.hedgeFundSidePocketRepository.findAll().iterator();
-        while(iterator.hasNext()){
-            HedgeFundSidePocket entity = iterator.next();
-            BaseDictionaryDto dto = disassemble(entity);
-            dtoList.add(dto);
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            Iterator<HedgeFundSidePocket> iterator = this.hedgeFundSidePocketRepository.findAll().iterator();
+            while (iterator.hasNext()) {
+                HedgeFundSidePocket entity = iterator.next();
+                BaseDictionaryDto dto = disassemble(entity);
+                dtoList.add(dto);
+            }
+            return dtoList;
+        }catch (Exception ex){
+            logger.error("Failed to load lookup: HedgeFundSidePocket", ex);
         }
-        return dtoList;
+        return null;
     }
 
     @Override
@@ -252,51 +286,71 @@ public class LookupServiceImpl implements LookupService {
     }
 
     private List<BaseDictionaryDto> getStrategies(int group){
-        List<BaseDictionaryDto> dtoList = new ArrayList<>();
-        List<Strategy> entityList = this.strategyRepository.findByGroupType(group);
-        if(entityList != null) {
-            for (Strategy entity : entityList) {
-                BaseDictionaryDto dto = disassemble(entity);
-                dtoList.add(dto);
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            List<Strategy> entityList = this.strategyRepository.findByGroupType(group);
+            if (entityList != null) {
+                for (Strategy entity : entityList) {
+                    BaseDictionaryDto dto = disassemble(entity);
+                    dtoList.add(dto);
+                }
             }
+            return dtoList;
+        }catch (Exception ex){
+            logger.error("Failed to load lookup: Strategy, type=" + group, ex);
         }
-        return dtoList;
+        return null;
     }
 
     private List<BaseDictionaryDto> getSubStrategies(String strategyCode){
-        List<BaseDictionaryDto> dtoList = new ArrayList<>();
-        List<Substrategy> entityList = this.substrategyRepository.findByStrategy(strategyCode);
-        if(entityList != null) {
-            for (Substrategy entity : entityList) {
-                BaseDictionaryDto dto = disassemble(entity);
-                dtoList.add(dto);
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            List<Substrategy> entityList = this.substrategyRepository.findByStrategy(strategyCode);
+            if (entityList != null) {
+                for (Substrategy entity : entityList) {
+                    BaseDictionaryDto dto = disassemble(entity);
+                    dtoList.add(dto);
+                }
             }
+            return dtoList;
+        }catch (Exception ex){
+            logger.error("Failed to load lookup: Substrategy", ex);
         }
-        return dtoList;
+        return null;
     }
 
     @Override
     public List<BaseDictionaryDto> getGeographies(){
-        List<BaseDictionaryDto> dtoList = new ArrayList<>();
-        Iterator<Geography> iterator = this.geographyRepository.findAll().iterator();
-        while(iterator.hasNext()){
-            Geography entity = iterator.next();
-            BaseDictionaryDto geographyDto = disassemble(entity);
-            dtoList.add(geographyDto);
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            Iterator<Geography> iterator = this.geographyRepository.findAll().iterator();
+            while (iterator.hasNext()) {
+                Geography entity = iterator.next();
+                BaseDictionaryDto geographyDto = disassemble(entity);
+                dtoList.add(geographyDto);
+            }
+            return dtoList;
+        }catch (Exception ex){
+            logger.error("Failed to load lookup: Geography", ex);
         }
-        return dtoList;
+        return null;
     }
 
     @Override
     public List<BaseDictionaryDto> getPEIndustry(){
-        List<BaseDictionaryDto> dtoList = new ArrayList<>();
-        Iterator<PEIndustry> iterator = this.industryRepository.findAll().iterator();
-        while(iterator.hasNext()){
-            PEIndustry entity = iterator.next();
-            BaseDictionaryDto industryDto = disassemble(entity);
-            dtoList.add(industryDto);
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            Iterator<PEIndustry> iterator = this.industryRepository.findAll().iterator();
+            while (iterator.hasNext()) {
+                PEIndustry entity = iterator.next();
+                BaseDictionaryDto industryDto = disassemble(entity);
+                dtoList.add(industryDto);
+            }
+            return dtoList;
+        }catch (Exception ex){
+            logger.error("Failed to load lookup: PEIndustry", ex);
         }
-        return dtoList;
+        return null;
     }
 
     // TODO: refactor as common lookup converter

@@ -18,8 +18,9 @@
                 <!--</div>-->
             <!--</div>-->
             <div class="row top-buffer" >
-                <div class="col-md-12">
-                    <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span></div>
+                <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+                </div>
+                <div class="alert alert-info" *ngIf="!submitted && successMessage != null"><span>{{successMessage}}</span>
                 </div>
             </div>
 
@@ -166,7 +167,12 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group form-horizontal">
-                                <label class="control-label col-md-6" >Author: {{tripMemo.owner}}</label>
+                                <div class="row">
+                                    <label class="control-label">Author: {{tripMemo.owner}}</label>
+                                </div>
+                                <div class="row" *ngIf="tripMemo.updater != null || tripMemo.updateDate != null">
+                                    <label class="control-label" >Last Update: {{tripMemo.updater}} {{tripMemo.updateDate != null ? 'on ' + tripMemo.updateDate : ''}}</label>
+                                </div>
                                 <!--<div class="col-md-4">-->
                                 <!--&lt;!&ndash;<input type="text" placeholder="Your name... " class="form-control col-md-4" id="author"&ndash;&gt;-->
                                 <!--&lt;!&ndash;name="author" maxlength="250" name="author" [(ngModel)]="memo.author"/>&ndash;&gt;-->
@@ -182,7 +188,7 @@
                     </div>
                 </form>
             </div>
-            <div [hidden]="!submitted && successMessage == null">
+            <div [hidden]="!submitted">
                 <div class="row top-buffer" >
                     <div class="col-md-12">
                         <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
