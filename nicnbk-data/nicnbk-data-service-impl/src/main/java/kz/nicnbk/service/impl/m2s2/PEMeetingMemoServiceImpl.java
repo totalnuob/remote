@@ -130,7 +130,7 @@ public class PEMeetingMemoServiceImpl implements PEMeetingMemoService {
     @Override
     public MemoPagedSearchResult search(MemoSearchParams searchParams) {
         try {
-            Page<MeetingMemo> memoPage = null;
+            Page<PrivateEquityMeetingMemo> memoPage = null;
             int page = 0;
             int pageSize = searchParams != null && searchParams.getPageSize() > 0 ? searchParams.getPageSize() : memoService.DEFAULT_PAGE_SIZE;
 
@@ -181,7 +181,7 @@ public class PEMeetingMemoServiceImpl implements PEMeetingMemoService {
                 if (searchParams != null) {
                     result.setSearchParams(searchParams.getSearchParamsAsString());
                 }
-                result.setMemos(memoConverter.disassembleList(memoPage.getContent()));
+                result.setMemos(memoConverter.disPE(memoPage.getContent()));
             }
             return result;
         }catch(Exception ex){

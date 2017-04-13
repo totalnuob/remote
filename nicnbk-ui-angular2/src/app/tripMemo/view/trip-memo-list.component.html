@@ -36,77 +36,79 @@
         </div>
         <br/>
         <div class="jumbotron">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="tripType">Type</label>
-                            <select class="form-control" id="tripType" [(ngModel)]="searchParams.tripType">
-                                <option value="NONE">---</option>
-                                <!--<option value="BUSINESS TRIP">BUSINESS TRIP</option>-->
-                                <option value="TRAINING">TRAINING</option>
-                                <option value="CONFERENCE">CONFERENCE</option>
-                            </select>
+            <form (ngSubmit)="search()">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="tripType">Type</label>
+                                <select class="form-control" id="tripType" [(ngModel)]="searchParams.tripType" name="tripType">
+                                    <option value="NONE">---</option>
+                                    <!--<option value="BUSINESS TRIP">BUSINESS TRIP</option>-->
+                                    <option value="TRAINING">TRAINING</option>
+                                    <option value="CONFERENCE">CONFERENCE</option>
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="fromDateDTPickeer">From</label>
-                        <div class='input-group date col-md-3' id='fromDateDTPickeer' style="width: 100%">
-                            <input type='text' class="form-control" id="fromDate"/>
+                        <div class="col-md-3">
+                            <label for="fromDateDTPickeer">From</label>
+                            <div class='input-group date col-md-3' id='fromDateDTPickeer' style="width: 100%">
+                                <input type='text' class="form-control" id="fromDate"/>
                                     <span class="input-group-addon">
                                         <span class="glyphicon glyphicon-calendar"></span>
                                     </span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="untilDateDTPickeer">To</label>
-                        <div class='input-group date col-md-3' id='untilDateDTPickeer' style="width: 100%">
-                            <input type='text' class="form-control" id="toDate"/>
+                        <div class="col-md-3">
+                            <label for="untilDateDTPickeer">To</label>
+                            <div class='input-group date col-md-3' id='untilDateDTPickeer' style="width: 100%">
+                                <input type='text' class="form-control" id="toDate"/>
                                     <span class="input-group-addon">
                                         <span class="glyphicon glyphicon-calendar"></span>
                                     </span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="organization">Organization</label>
-                            <input type="text" class="form-control" id="organization" placeholder="Enter organization name..."
-                                   [(ngModel)]="searchParams.organization"/>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="organization">Organization</label>
+                                <input type="text" class="form-control" id="organization" placeholder="Enter organization name..."
+                                       [(ngModel)]="searchParams.organization" name="organization"/>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="location">Location</label>
-                            <input type="text" class="form-control" id="location" placeholder="Enter location..."
-                                   [(ngModel)]="searchParams.location"/>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="location">Location</label>
+                                <input type="text" class="form-control" id="location" placeholder="Enter location..."
+                                       [(ngModel)]="searchParams.location" name="location"/>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <!--<div class="row">-->
+                <!--<div class="row">-->
                 <!--<div class="col-md-12">-->
-                    <!--<div class="col-md-6">-->
-                        <!--<div class="form-group">-->
-                            <!--<label for="status">Status</label>-->
-                            <!--<select class="form-control" id="status" [(ngModel)]="searchParams.status" >-->
-                                <!--<option value="NONE">-&#45;&#45;</option>-->
-                                <!--<option value="APPROVED">APPROVED</option>-->
-                                <!--<option value="TRAINING">REJECTED</option>-->
-                                <!--<option value="CONSIDERATION">UNDER CONSIDERATION</option>-->
-                            <!--</select>-->
-                        <!--</div>-->
-                    <!--</div>-->
+                <!--<div class="col-md-6">-->
+                <!--<div class="form-group">-->
+                <!--<label for="status">Status</label>-->
+                <!--<select class="form-control" id="status" [(ngModel)]="searchParams.status" >-->
+                <!--<option value="NONE">-&#45;&#45;</option>-->
+                <!--<option value="APPROVED">APPROVED</option>-->
+                <!--<option value="TRAINING">REJECTED</option>-->
+                <!--<option value="CONSIDERATION">UNDER CONSIDERATION</option>-->
+                <!--</select>-->
                 <!--</div>-->
-            <!--</div>-->
-            <div class="row">
-                <div class="col-md-12">
-                    <button type="button" class="btn btn-success pull-right" (click)="search()">Search</button>
+                <!--</div>-->
+                <!--</div>-->
+                <!--</div>-->
+                <div class="row">
+                    <div class="col-md-12">
+                        <button type="submit"class="btn btn-success pull-right">Search</button>
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
         <div>
             <label>Total found: <span>{{tripMemoSearchResult?.totalElements > 0 ?  tripMemoSearchResult?.totalElements : 0}}</span></label>
@@ -133,6 +135,7 @@
                 <th>AUTHOR</th>
                 <!--<th>STATUS</th>-->
                 <th>UPDATED</th>
+                <!--<th>UPDATEDBY</th>-->
             </tr>
             </thead>
 
@@ -151,6 +154,10 @@
                     {{tripMemo.updateDate}}
                     <!--<a><i class="glyphicon glyphicon-trash"></i></a>-->
                 </td>
+                <!--<td width="10%">-->
+                    <!--{{tripMemo.updater}}-->
+                    <!--&lt;!&ndash;<a><i class="glyphicon glyphicon-trash"></i></a>&ndash;&gt;-->
+                <!--</td>-->
             </tr>
             </tbody>
         </table>

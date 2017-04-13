@@ -46,7 +46,7 @@ export class TripMemoListComponent extends CommonFormViewComponent implements On
                     this.busy = this.tripMemoService.search(this.searchParams)
                         .subscribe(
                             searchResult  => {
-                                this.tripMemoList = searchResult.memos;
+                                this.tripMemoList = searchResult.tripMemos;
                                 this.tripMemoSearchResult = searchResult;
                             },
                             error =>  this.errorMessage = "Failed to search trip memos."

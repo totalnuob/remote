@@ -110,28 +110,28 @@ public class TripMemoServiceImpl implements TripMemoService {
             if (searchParams == null || searchParams.isEmpty()) {
                 int pageSize = searchParams != null && searchParams.getPageSize() > 0 ? searchParams.getPageSize() : DEFAULT_PAGE_SIZE;
                 page = searchParams != null && searchParams.getPage() > 0 ? searchParams.getPage() - 1 : 0;
-                tripMemoPage = tripMemoRepository.findAllByOrderByCreationDateDesc(new PageRequest(page, pageSize, new Sort(Sort.Direction.DESC, "creationDate", "id")));
+                tripMemoPage = tripMemoRepository.findAllByOrderByCreationDateDesc(new PageRequest(page, pageSize, new Sort(Sort.Direction.DESC, "meetingDateStart", "id")));
             } else {
                 page = searchParams.getPage() > 0 ? searchParams.getPage() - 1 : 0;
                 if (searchParams.getFromDate() == null && searchParams.getToDate() == null) {
                     tripMemoPage = tripMemoRepository.findWithoutDates(StringUtils.isValue(searchParams.getTripType()) ? searchParams.getTripType() : null,
                             searchParams.getOrganization(), searchParams.getLocation(),
                             StringUtils.isValue(searchParams.getStatus()) ? searchParams.getStatus() : null,
-                            new PageRequest(page, searchParams.getPageSize(), new Sort(Sort.Direction.DESC, "meetingDateStart")));
+                            new PageRequest(page, searchParams.getPageSize(), new Sort(Sort.Direction.DESC, "meetingDateStart", "id")));
                 } else if (searchParams.getFromDate() != null && searchParams.getToDate() != null) {
                     tripMemoPage = tripMemoRepository.findBothDates(StringUtils.isValue(searchParams.getTripType()) ? searchParams.getTripType() : null,
                             searchParams.getOrganization(), searchParams.getFromDate(), searchParams.getToDate(), searchParams.getLocation(),
                             StringUtils.isValue(searchParams.getStatus()) ? searchParams.getStatus() : null,
-                            new PageRequest(page, searchParams.getPageSize(), new Sort(Sort.Direction.DESC, "meetingDateStart")));
+                            new PageRequest(page, searchParams.getPageSize(), new Sort(Sort.Direction.DESC, "meetingDateStart", "id")));
                 } else if (searchParams.getFromDate() != null) {
                     tripMemoPage = tripMemoRepository.findDateFrom(StringUtils.isValue(searchParams.getTripType()) ? searchParams.getTripType() : null,
                             searchParams.getOrganization(), searchParams.getFromDate(), searchParams.getLocation(), StringUtils.isValue(searchParams.getStatus()) ? searchParams.getStatus() : null,
-                            new PageRequest(page, searchParams.getPageSize(), new Sort(Sort.Direction.DESC, "meetingDateStart")));
+                            new PageRequest(page, searchParams.getPageSize(), new Sort(Sort.Direction.DESC, "meetingDateStart", "id")));
 
                 } else {
                     tripMemoPage = tripMemoRepository.findDateTo(StringUtils.isValue(searchParams.getTripType()) ? searchParams.getTripType() : null,
                             searchParams.getOrganization(), searchParams.getToDate(), searchParams.getLocation(), StringUtils.isValue(searchParams.getStatus()) ? searchParams.getStatus() : null,
-                            new PageRequest(page, searchParams.getPageSize(), new Sort(Sort.Direction.DESC, "meetingDateStart")));
+                            new PageRequest(page, searchParams.getPageSize(), new Sort(Sort.Direction.DESC, "meetingDateStart", "id")));
                 }
             }
 

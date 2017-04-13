@@ -20,9 +20,6 @@ import java.util.List;
 public class TripMemoEntityConverter extends BaseDozerEntityConverter<TripMemo, TripMemoDto> {
 
     @Autowired
-    private Mapper mapper;
-
-    @Autowired
     private LookupService lookupService;
 
     @Override
@@ -31,8 +28,9 @@ public class TripMemoEntityConverter extends BaseDozerEntityConverter<TripMemo, 
             return null;
         }
 
-        TripMemo tripMemo = mapper.map(dto, TripMemo.class);
+        TripMemo tripMemo = super.assemble(dto); //mapper.map(dto, TripMemo.class);
 
+        // trip type
         if(StringUtils.isNotEmpty(dto.getTripType())){
             TripType tripType = lookupService.findByTypeAndCode(TripType.class, dto.getTripType());
             tripMemo.setTripType(tripType);
@@ -46,16 +44,19 @@ public class TripMemoEntityConverter extends BaseDozerEntityConverter<TripMemo, 
         if (entity == null) {
             return null;
         }
-        TripMemoDto tripMemoDto = mapper.map(entity, TripMemoDto.class);
+        TripMemoDto tripMemoDto = super.disassemble(entity); //mapper.map(entity, TripMemoDto.class);
 
+        // trip type
         if(entity.getTripType() != null){
             tripMemoDto.setTripType(entity.getTripType().getCode());
         }
 
+        // creator
         if(entity.getCreator() != null){
             tripMemoDto.setOwner(entity.getCreator().getUsername());
         }
 
+        // updater
         if(entity.getUpdater() != null){
             tripMemoDto.setUpdater(entity.getUpdater().getUsername());
         }

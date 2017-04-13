@@ -23,6 +23,7 @@ public class HFManagerEntityConverter extends BaseDozerEntityConverter<HFManager
     public HFManager assemble(HFManagerDto dto){
         HFManager entity = super.assemble(dto);
 
+        // aum currency
         if(StringUtils.isNotEmpty(dto.getAumCurrency())) {
             Currency currency = lookupService.findByTypeAndCode(Currency.class, dto.getAumCurrency());
             entity.setAUMCurrency(currency);

@@ -39,7 +39,6 @@ export class AuthenticationService extends CommonService{
     //
     //}
 
-    checkCredentials(){
     checkCredentials(state){
         if (localStorage.getItem("authenticatedUser") === null){
             this.router.navigate(['/login'], {queryParams: {returnUrl: state}});

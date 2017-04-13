@@ -31,7 +31,7 @@
                         <label for="newsType" class="control-label col-md-1">Category:</label>
                         <div class="col-md-4">
                             <select class="form-control" id="newsType" name="type" [(ngModel)]="newsItem.type" required #type="ngModel">
-                                <option value="NONE">---</option>
+                                <!--<option value="NONE">-&#45;&#45;</option>-->
                                 <option *ngFor = "let type of newsTypes" [value]="type.code">{{type.nameEn}}</option>
                             </select>
                             <div [hidden]="type.valid || type.pristine" class="alert alert-danger">
