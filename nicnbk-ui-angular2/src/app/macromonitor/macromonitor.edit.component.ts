@@ -20,13 +20,10 @@ declare var $:any
 })
 export class MMEditComponent extends CommonFormViewComponent implements OnInit, AfterViewInit{
 
-    private mmScore = new MacroMonitorScore();
     private typeStr: string;
-
 
     scoreListForModel = [];
     fieldsValueList = [];
-
 
     scoreList = [];
     dateList = [];
@@ -35,6 +32,16 @@ export class MMEditComponent extends CommonFormViewComponent implements OnInit, 
     dateListInput = [];
 
 
+    // <parsing from modal>
+    uploadedMacroMonitorScores;
+
+    uploadedDates;
+
+    scoreUploadErrorMessage;
+    scoreUploadSuccessMessage;
+    fromDate;
+    toDate;
+    // </>
 
     public sub: any;
     public typeId: number;
@@ -53,15 +60,6 @@ export class MMEditComponent extends CommonFormViewComponent implements OnInit, 
 
         //load lookups
         this.sub = this.loadLookups();
-
-
-        //this.mmScore.date = null;
-        //this.mmScore.score = 777;
-        //this.mmScore.field = 'INFLATION';
-        //this.mmScore.type = 'US';
-        //this.scoreList.push(this.mmScore);
-
-        //this.save();
 
         this.sub = this.route
             .params
@@ -97,10 +95,15 @@ export class MMEditComponent extends CommonFormViewComponent implements OnInit, 
 
     ngOnInit():any {
 
-        //$('#scoresDate').datetimepicker({
-        //    //defaultDate: new Date(),
-        //    format: 'DD-MM-YYYY'
-        //});
+        $('#fromDate').datetimepicker({
+            //defaultDate: new Date(),
+            format: 'MM-YYYY'
+        });
+
+        $('#toDate').datetimepicker({
+            //defaultDate: new Date(),
+            format: 'MM-YYYY'
+        });
 
     }
 
@@ -144,6 +147,11 @@ export class MMEditComponent extends CommonFormViewComponent implements OnInit, 
                 }
             }
         }
+
+        $('#fromDate').val(this.dateList[this.dateList.length - 1]);
+        $('#toDate').val(this.dateList[0]);
+
+
 
         console.log("DateList");
         console.log(this.dateList);
@@ -255,14 +263,52 @@ export class MMEditComponent extends CommonFormViewComponent implements OnInit, 
         console.log(this.scoreListForModel);
     }
 
-    //removeRow(item, dateIndex){
-    //    //console.log(item);
-    //    for(var i = this.scoreListInput.length; i--;) {
-    //        if(this.scoreListInput[i] === item) {
-    //            this.scoreListInput.splice(i, 1);
-    //        }
-    //    }
-    //
-    //    this.dateListInput.splice(dateIndex,1);
-    //}
+    removeColumn(dateIndex){
+
+        this.dateList.splice(dateIndex, 1);
+
+        for(var i = 0; i < this.scoreListForModel.length; i++) {
+            this.scoreListForModel[i].splice(dateIndex,1);
+        }
+
+        ////console.log(item);
+        //for(var i = this.scoreListInput.length; i--;) {
+        //    if(this.scoreListInput[i] === item) {
+        //        this.scoreListInput.splice(i, 1);
+        //    }
+        //}
+        //
+        //this.dateListInput.splice(dateIndex,1);
+    }
+
+    closeMacroMonitorScoresModal() {
+        this.uploadedMacroMonitorScores = "";
+        this.scoreUploadErrorMessage = null;
+        this.scoreUploadSuccessMessage = null;
+    }
+
+    parseMacroMonitorScoresModal() {
+        console.log(this.uploadedMacroMonitorScores);
+
+        var rows = this.uploadedMacroMonitorScores.split('\n');
+
+        for(var i = 0; i < rows.length; i++) {
+            console.log(rows[i]);
+            console.log(rows[i].length);
+        }
+    }
+
+    createNewDateList() {
+        //this.toDate = $('#toDate').val();
+        //this.fromDate = $('#fromDate').val();
+
+        this.dateList = [];
+
+        var rows = this.uploadedDates.split("\t");
+        console.log(rows);
+        for(var i = 0; i < rows.length; i++) {
+            this.dateList.push(rows[i]);
+        }
+
+    }
 }
