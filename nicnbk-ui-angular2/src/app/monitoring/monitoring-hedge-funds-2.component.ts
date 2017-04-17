@@ -31,6 +31,7 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
 
         // PORTFOLIO A -----------------------------
         this.drawPortfolioAComparisonReturns();
+        this.drawPortfolioAComparisonReturns2017();
         this.drawAllocationChart();
 
         // PORTFOLIO B -----------------------------
@@ -78,14 +79,14 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
     drawAllocationByStrategy(){
         var data = google.visualization.arrayToDataTable([
             ['Element', 'Allocation by Strategy'],
-            ['Equities', 31.17],            // RGB value
-            ['Credit', 28.93],            // English color name
-            ['Relative Value', 11.84], // CSS-style declaration
-            ['Macro', 10.51],
-            ['Event Driven', 7.62],
-            ['Multi-Strategy', 6.73],
+            ['Equities', 30.71],            // RGB value
+            ['Credit', 29.24],            // English color name
+            ['Relative Value', 11.92], // CSS-style declaration
+            ['Macro', 9.5],
+            ['Event Driven', 7.84],
+            ['Multi-Strategy', 10.37],
             ['Commodities', 0],
-            ['Cash', 3.20]
+            ['Cash', 0.42]
         ]);
 
         var options = {
@@ -172,7 +173,24 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
         minMax = this.getMinMax(rowData[1]);
         this.setColor(minMax[0], minMax[1], 1, data, colFrom, colTo);
 
+        // row 2
+        minMax = this.getMinMax(rowData[2]);
+        this.setColor(minMax[0], minMax[1], 2, data, colFrom, colTo);
+
     }
+
+    private formatCells2(data, rowData, colFrom, colTo) {
+
+        // row 0
+        var minMax = this.getMinMax(rowData[0]);
+        this.setColor(minMax[0], minMax[1], 0, data, colFrom, colTo);
+
+        // row 1
+        minMax = this.getMinMax(rowData[1]);
+        this.setColor(minMax[0], minMax[1], 1, data, colFrom, colTo);
+
+    }
+
 
     private setColor(min, max, rowIndex, data, colFrom, colTo){
         var diff = Number((max - min) / 6);
@@ -211,7 +229,8 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
     private getReturnsRowData(){
         return [
             ["2015", null,null,null,null,null,null,null,-1.59,-2.17,0.12,0.19,-0.56,-3.96],
-            ["2016", -2.42,-1.56,0.14,0.76,0.83,-0.31,0.42,0.88,0.17,0.04,1.24,0.83,0.97]
+            ["2016", -2.42,-1.56,0.14,0.76,0.83,-0.31,0.42,0.88,0.17,0.04,1.27,0.88,1.02],
+            ["2017", 0.89,0.63,null,null,null,null,null,null,null,null,null,null,1.53]
         ];
     }
 
@@ -268,36 +287,36 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
 
     getPortfolioATop5Funds(){
         return [
-            ["Ren Inst Div Alpha LP", "Equities", 0.17],
-            ["Basswood Enhanced LS Ltd", "Equities ", 0.14],
-            ["Element Capital Ltd", "Macro", 0.11],
-            ["Trian Partners Ltd", "Equities", 0.10],
-            ["CVI Intl Credit Ltd", "Credit", 0.09]
+            ["Element Capital Ltd", "Macro", 4.57],
+            ["Ren Inst Div Alpha LP", "Equities ", 4.57],
+            ["Lagunita Ltd", "Equities", 2.98],
+            ["Hitchwood Ltd", "Equities", 2.34],
+            ["Basswood Enhanced LS Ltd", "Equities", 2.18]
         ];
     }
 
     getPortfolioATop5NegativeFunds(){
         return [
-            ["Discovery Gbl Opp Ltd", "Equities", -0.09],
-            ["Nipun Capital Ltd", "Equities", -0.05],
-            ["GCM COM Ltd", "Commodities ", -0.05],
-            ["Blue Mtn LS Equity Ltd", "Equities ", -0.03],
-            ["Argentiere Enhanced Ltd", "Relative Value", -0.02],
+            ["Discovery Gbl Opp Ltd", "Equities", -3.55],
+            ["Ionic Vol Arb Fund II Ltd", "Relative Value", -2.61],
+            ["Passport Global LS Ltd", "Equities ", -1.5],
+            ["Atreaus Overseas Fund Ltd", "Macro ", -0.98],
+            ["MTP Energy Corp and Ltd", "Event Driven", -0.72],
         ];
     }
 
     getPortfolioATop10AllocationFunds() {
         return [
-            ["CVI Intl Credit Ltd", "Credit", 8.34],
-            ["Chenavari Struct Cred Ltd", "Credit", 7.29],
-            ["Canyon Opp Cred GRF Ltd", "Credit", 5.88],
-            ["Whitebox Asymm Opp Ltd", "Relative Value", 5.22],
-            ["York Euro Opp Unit Trust", "Event Driven", 5.11],
-            ["Myriad Opportunities Ltd", "Multi-Strategy", 4.98],
-            ["Graticule Asia Macro Ltd", "Macro", 4.46],
+            ["CVI Intl Credit Ltd", "Credit", 9.07],
+            ["Chenavari Struct Cred Ltd", "Credit", 7.31],
+            ["Whitebox Asymm Opp Ltd", "Relative Value", 7.04],
+            ["Myriad Opportunities Ltd", "Multi-Strategy", 6.85],
+            ["Canyon Opp Cred GRF Ltd", "Credit", 6.24],
+            ["York Euro Opp Unit Trust", "Event Driven", 5.33],
+            ["Element Capital Ltd", "Macro", 5.15],
             ["Trian Partners Ltd", "Equities", 4.45],
-            ["Anchorage Cap Ltd", "Credit", 4.29],
-            ["Atlas Enhanced Fund Ltd", "Equities", 3.72]
+            ["Anchorage Cap Ltd", "Credit", 4.35],
+            ["Graticule Asia Macro Ltd", "Macro", 4.34]
         ];
     }
 
@@ -318,7 +337,7 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
         data.addColumn("number", "Dec");
         data.addColumn("number", "YTD");
 
-        var rowData = this.getPortfolioAReturnsRowData();
+        var rowData = this.getPortfolioAReturnsRowData2016();
         data.addRows(rowData);
         //this.setPortfolioAReturnsRowData(data);
 
@@ -338,9 +357,52 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
         //}
 
         // set cell format
-        this.formatCells(data, rowData, 1, 13);
+        this.formatCells2(data, rowData, 1, 12);
 
         var chart = this.createTableChart(document.getElementById('comparisonReturns'));
+        chart.draw(data, options);
+    }
+
+    drawPortfolioAComparisonReturns2017(){
+        var data = new google.visualization.DataTable();
+        data.addColumn("string", "2017");
+        data.addColumn("number", "Jan");
+        data.addColumn("number", "Feb");
+        data.addColumn("number", "Mar");
+        data.addColumn("number", "Apr");
+        data.addColumn("number", "May");
+        data.addColumn("number", "Jun");
+        data.addColumn("number", "Jul");
+        data.addColumn("number", "Aug");
+        data.addColumn("number", "Sep");
+        data.addColumn("number", "Oct");
+        data.addColumn("number", "Nov");
+        data.addColumn("number", "Dec");
+        data.addColumn("number", "YTD");
+
+        var rowData = this.getPortfolioAReturnsRowData2017();
+        data.addRows(rowData);
+        //this.setPortfolioAReturnsRowData(data);
+
+        var options = {
+            showRowNumber: false,
+            width: '100%',
+            height: '100%',
+            'allowHtml': true,
+            cssClassNames: {
+                tableCell: '',
+            }
+        };
+
+        //var colorFormatter = this.getReturnsFormatter(rowData);
+        //for(var i = 1; i <= 12; i++){
+        //    colorFormatter.format(data, i);
+        //}
+
+        // set cell format
+        this.formatCells2(data, rowData, 1, 12);
+
+        var chart = this.createTableChart(document.getElementById('comparisonReturns2'));
         chart.draw(data, options);
     }
 
@@ -381,24 +443,30 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
         //}
 
         // set cell format
-        this.formatCells(data, rowData, 1, 13);
+        this.formatCells2(data, rowData, 1, 12);
 
         var chart = this.createTableChart(document.getElementById('classBComparisonReturns'));
         chart.draw(data, options);
     }
 
-    private getPortfolioAReturnsRowData(){
+    private getPortfolioAReturnsRowData2016(){
         return [
-            ["Singularity", -2.42, -1.56, 0.14, 0.76, 0.83, -0.31, 0.42, 0.88, 0.17, 0.04, 1.24, 0.83, 0.97],
-            ["HFRIFOF", -2.66, -1.20, 0.73, 0.52, 0.50, -0.47, 1.50, 0.44, 0.33, -0.29, 0.27, 1.08, 0.71]
+            ["Singularity", -2.42, -1.56, 0.14, 0.76, 0.83, -0.31, 0.42, 0.88, 0.17, 0.04, 1.27, 0.88, 1.02],
+            ["HFRIFOF", -2.66, -1.20, 0.73, 0.52, 0.50, -0.47, 1.50, 0.44, 0.33, -0.28, 0.25, 0.92, 0.54]
         ];
+    }
 
+    private getPortfolioAReturnsRowData2017(){
+        return [
+            ["Singularity", 0.95, null, null, null, null, null, null, null, null, null, null, null, 1.53],
+            ["HFRIFOF", 1, 0.9, null, null, null, null, null, null, null, null, null, null, 1.9]
+        ];
     }
 
     private getPortfolioBReturnsRowData(){
         return [
-            ["Singul class B", null, null, null, null, null, null, null, null, null, null, null, null, null],
-            ["HFRIFOF", null, null, null, null, null, null, null, null, null, null, null, null, null]
+            ["Singul class B", 1.81, 0.28, null, null, null, null, null, null, null, null, null, null, 2.09],
+            ["HFRIFOF", 1, 0.9, null, null, null, null, null, null, null, null, null, null, 1.9]
         ];
 
     }

@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 
 import {HedgeFund} from "./model/hf.fund";
 import {LookupService} from "../common/lookup.service";
 import {CommonFormViewComponent} from "../common/common.component";
-import {SaveResponse} from "../common/save-response.";
+import {SaveResponse} from "../common/save-response";
 import {HedgeFundService} from "./hf.fund.service";
 import {HFManager} from "./model/hf.manager";
 import {HFManagerService} from "./hf.manager.service";
@@ -12,6 +12,8 @@ import {AlbourneService} from "./hf.albourne.service";
 import {GoogleChartComponent} from "../google-chart/google-chart.component";
 
 import {Subscription} from 'rxjs';
+import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
+import {ErrorResponse} from "../common/error-response";
 
 declare var google:any;
 declare var $:any
@@ -33,6 +35,7 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
     public managerIdParam: number;
 
     busy: Subscription;
+    submitted = false;
 
     strategyLookup = [];
     substrategyLookup = [];
@@ -53,15 +56,26 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
     returnUploadErrorMessage;
     returnUploadSuccessMessage;
 
+    private breadcrumbParams: string;
+
+    private moduleAccessChecker: ModuleAccessCheckerService;
+
     constructor(
         private lookupService: LookupService,
         private route: ActivatedRoute,
+        private router: Router,
         private fundService: HedgeFundService,
         private managerService: HFManagerService,
         private albourneService: AlbourneService
     ) {
 
         super();
+
+        this.moduleAccessChecker = new ModuleAccessCheckerService;
+
+        if(!this.moduleAccessChecker.checkAccessHedgeFunds()){
+            this.router.navigate(['accessDenied']);
+        }
 
         // loadLookups
         this.sub = this.loadLookups();
@@ -72,8 +86,7 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
             .subscribe(params => {
                 this.fundIdParam = +params['id'];
                 this.managerIdParam = +params['managerId'];
-
-
+                this.breadcrumbParams = params['params'];
                 this.fund.manager = new HFManager();
 
                 if(this.fundIdParam > 0) {
@@ -82,6 +95,7 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
                             (data: HedgeFund) => {
                                 if(data && data.id > 0) {
                                     this.fund = data;
+                                    console.log(this.fund);
                                     if(this.fund.strategy != null){
                                         this.loadSubstrategies();
                                     }
@@ -90,6 +104,7 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
                                     }else{
                                         //this.drawGraph();
                                         //this.drawSubstrategiesChart();
+                                        console.log(this.fund.strategyBreakdownList);
                                     }
                                     if(this.fund.investorBaseList == null){
                                         this.fund.investorBaseList = [];
@@ -105,7 +120,13 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
                                     this.errorMessage = "Error loading fund profile";
                                 }
                             },
-                            error => this.errorMessage = "Error loading manager profile"
+                            (error: ErrorResponse) => {
+                                this.errorMessage = "Error loading fund profile";
+                                if(error && !error.isEmpty()){
+                                    this.processErrorMessage(error);
+                                }
+                                this.postAction(null, null);
+                            }
                         );
                 }else if(this.managerIdParam > 0){
                     this.managerService.get(this.managerIdParam)
@@ -118,7 +139,13 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
                                     this.errorMessage = "Error loading fund manager info";
                                 }
                             },
-                            error => this.errorMessage = "Error loading manager profile"
+                            (error: ErrorResponse) => {
+                                this.errorMessage = "Error loading manager profile";
+                                if(error && !error.isEmpty()){
+                                    this.processErrorMessage(error);
+                                }
+                                this.postAction(null, null);
+                            }
                         );
                 }else{
                     // TODO: handle error
@@ -149,7 +176,6 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
             format: 'DD-MM-YYYY'
         });
 
-        //$('input[type=text], textarea').autogrow({vertical: true, horizontal: false});
     }
 
     save(){
@@ -170,9 +196,15 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
                     this.fund.creationDate = response.creationDate;
 
                     this.postAction("Successfully saved", null);
+                    this.submitted = true;
                 },
-                error =>  {
-                    this.postAction(null, "Error saving fund profile");
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error saving fund profile";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                    this.submitted = false;
                 }
             );
     }
@@ -221,7 +253,13 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
                     //});
                     this.strategyLookup = data;
                 },
-                error =>  this.errorMessage = <any>error
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
             );
 
         // geography
@@ -248,7 +286,13 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
                         this.fund.aumCurrency = 'USD';
                     }
                 },
-                error =>  this.errorMessage = <any>error
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
             );
 
         // TODO: load from DB
@@ -259,7 +303,13 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
                 data => {
                     this.fundStatusLookup = data;
                 },
-                error =>  this.errorMessage = <any>error
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
             );
         //this.lookupService.getManagerStatuses().then(data => this.fundStatusLookup = data);
 
@@ -275,7 +325,13 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
                 data => {
                     this.subscriptionFrequencyLookup = data;
                 },
-                error =>  this.errorMessage = <any>error
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
             );
         //this.lookupService.getSubscriptionFrequencyTypes().then(data => this.subscriptionFrequencyLookup = data);
 
@@ -285,7 +341,13 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
                 data => {
                     this.redemptionFrequencyLookup = data;
                 },
-                error =>  this.errorMessage = <any>error
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
             );
         //this.lookupService.getRedemptionFrequencyTypes().then(data => this.redemptionFrequencyLookup = data);
 
@@ -296,7 +358,13 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
                 data => {
                     this.redemptionNotificationPeriodLookup = data;
                 },
-                error =>  this.errorMessage = <any>error
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
             );
         //this.lookupService.getRedemptionNotificationPeriodTypes().then(data => this.redemptionNotificationPeriodLookup = data);
 
@@ -305,7 +373,13 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
                 data => {
                     this.sidePocketLookup = data;
                 },
-                error =>  this.errorMessage = <any>error
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
             );
 
         this.albourneRatingLookup = this.albourneService.getIDDAnalysisAssessmentLookup();
@@ -374,7 +448,13 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
                     this.substrategyLookup = data;
                     this.drawGraph();
                 },
-                error =>  {this.errorMessage = <any>error}
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
             );
     }
 
@@ -594,5 +674,9 @@ export class HFFundProfileComponent extends GoogleChartComponent implements OnIn
         } else if (month == '12') {
             returnObject.december = value;
         }
+    }
+
+    canEdit(){
+        return this.moduleAccessChecker.checkAccessHedgeFundsEditor();
     }
 }

@@ -1,5 +1,5 @@
 import { Component, NgModule, OnInit, ViewChild, AfterViewInit  } from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 
 import {LookupService} from "../common/lookup.service";
 import {REMemo} from "./model/re-memo";
@@ -7,6 +7,8 @@ import {MemoService} from "./memo.service";
 import {CommonFormViewComponent} from "../common/common.component";
 import {EmployeeService} from "../employee/employee.service";
 import {Subscription} from 'rxjs';
+import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
+import {ErrorResponse} from "../common/error-response";
 
 declare var $:any
 declare var Chart: any;
@@ -30,6 +32,8 @@ export class RealEstateMemoEditComponent extends CommonFormViewComponent impleme
 
     private visible = false;
 
+    submitted = false;
+
     memo = new REMemo;
 
     @ViewChild('attendeesSelect')
@@ -49,12 +53,16 @@ export class RealEstateMemoEditComponent extends CommonFormViewComponent impleme
     openingScheduleList = [];
     currencyList = [];
 
+    private breadcrumbParams: string;
+
     options = {
         placeholder: "+ tag",
         secondaryPlaceholder: "Enter a new tag",
         separatorKeys: [188, 191], // exclude coma from tag content
         maxItems: 10
     }
+
+    private moduleAccessChecler: ModuleAccessCheckerService;
 
     public onItemAdded(item) {
         this.memo.tags.push(item);
@@ -72,10 +80,13 @@ export class RealEstateMemoEditComponent extends CommonFormViewComponent impleme
         private lookupService: LookupService,
         private employeeService: EmployeeService,
         private memoService: MemoService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private router: Router
     ){
-        super();
+        super(router);
 
+
+        this.moduleAccessChecler = new ModuleAccessCheckerService;
         // loadLookups
         this.sub = this.loadLookups();
 
@@ -88,6 +99,7 @@ export class RealEstateMemoEditComponent extends CommonFormViewComponent impleme
             .params
             .subscribe(params => {
                 this.memoIdParam = +params['id'];
+                this.breadcrumbParams = params['params'];
                 if(this.memoIdParam > 0) {
                     this.busy = this.memoService.get(4, this.memoIdParam)
                         .subscribe(
@@ -114,13 +126,18 @@ export class RealEstateMemoEditComponent extends CommonFormViewComponent impleme
                                 // preselect memo attendees
                                 this.preselectAttendeesNIC();
                             },
-                            error => this.errorMessage = "Error loading memo"
+                            (error: ErrorResponse) => {
+                                this.errorMessage = "Error loading memo";
+                                if(error && !error.isEmpty()){
+                                    this.processErrorMessage(error);
+                                }
+                                this.postAction(null, null);
+                            }
                         );
                 }else{
                     // TODO: default value for meeting type?
                     this.memo.meetingType = "MEETING";
-                    this.memo.suitable = false;
-
+                    this.memo.suitable = true;
                     this.memo.tags = [];
                 }
             });
@@ -199,7 +216,6 @@ export class RealEstateMemoEditComponent extends CommonFormViewComponent impleme
             format: 'LT'
         })
 
-        $('input[type=text], textarea').autogrow();
 
         // load lookups
         //this.loadLookups();
@@ -211,6 +227,7 @@ export class RealEstateMemoEditComponent extends CommonFormViewComponent impleme
 
     toggle() {
         this.visible = !this.visible;
+        this.memo.suitable = true;
     }
 
     save(){
@@ -247,18 +264,28 @@ export class RealEstateMemoEditComponent extends CommonFormViewComponent impleme
                                 }
 
                                 this.postAction("Successfully saved.", null);
+                                this.submitted = true;
                             },
-                            error => {
-                                // TODO: don't save memo?
-
-                                this.postAction(null, "Error uploading attachments.");
+                            (error: ErrorResponse) => {
+                                this.errorMessage = "Error uploading attachments";
+                                if(error && !error.isEmpty()){
+                                    this.processErrorMessage(error);
+                                }
+                                this.postAction(null, null);
+                                this.submitted = false;
                             });
                     }else{
                         this.postAction("Successfully saved.", null);
+                        this.submitted = true;
                     }
                 },
-                error =>  {
-                    this.postAction(null, "Error saving memo.");
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error saving memo";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                    this.submitted = false;
                 }
             );
     }
@@ -284,9 +311,15 @@ export class RealEstateMemoEditComponent extends CommonFormViewComponent impleme
                         }
 
                         this.postAction("Attachment deleted.", null);
+                        this.submitted = false;
                     },
-                    error => {
-                        this.postAction(null, "Failed to delete attachment");
+                    (error: ErrorResponse) => {
+                        this.errorMessage = "Error deleting attachments";
+                        if(error && !error.isEmpty()){
+                            this.processErrorMessage(error);
+                        }
+                        this.postAction(null, null);
+                        this.submitted = false;
                     }
                 );
         }
@@ -395,7 +428,13 @@ export class RealEstateMemoEditComponent extends CommonFormViewComponent impleme
                         this.strategyList.push({ id: element.code, text: element.nameEn});
                     });
                 },
-                error =>  this.errorMessage = <any>error
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
             );
         // load geographies
         this.lookupService.getGeographies()
@@ -405,7 +444,13 @@ export class RealEstateMemoEditComponent extends CommonFormViewComponent impleme
                         this.geographyList.push({ id: element.code, text: element.nameEn});
                     });
                 },
-                error =>  this.errorMessage = <any>error
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
         );
         // load currencies
         this.lookupService.getCurrencyList()
@@ -415,7 +460,13 @@ export class RealEstateMemoEditComponent extends CommonFormViewComponent impleme
                         this.currencyList.push(element);
                     });
                 },
-                error =>  this.errorMessage = <any>error
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
         );
 
         // load employees
@@ -427,7 +478,18 @@ export class RealEstateMemoEditComponent extends CommonFormViewComponent impleme
 
                     });
                 },
-                error =>  this.errorMessage = <any>error);
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
+            );
+    }
+
+    toggleFund(){
+        this.visible = !this.visible;
     }
 
     //TODO: bind ngModel - boolean
@@ -438,6 +500,10 @@ export class RealEstateMemoEditComponent extends CommonFormViewComponent impleme
 
     setNonSuitable(){
         this.memo.suitable = false;
+    }
+
+    public canEdit(){
+        return this.moduleAccessChecler.checkAccessRealEstateEditor();
     }
 
 }

@@ -18,6 +18,8 @@ public class NewsDto extends BaseEntityDto<News> {
     private String shortContent;
     private Date creationDate;
 
+    private String owner;
+
 
     public String getType() {
         return type;
@@ -65,5 +67,13 @@ public class NewsDto extends BaseEntityDto<News> {
 
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 }

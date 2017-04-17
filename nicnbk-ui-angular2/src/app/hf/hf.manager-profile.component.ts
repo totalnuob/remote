@@ -5,15 +5,18 @@ import {HFManager} from "./model/hf.manager";
 import {LookupService} from "../common/lookup.service";
 import {CommonFormViewComponent} from "../common/common.component";
 import {HFManagerService} from "./hf.manager.service";
-import {SaveResponse} from "../common/save-response.";
+import {SaveResponse} from "../common/save-response";
 import {HedgeFund} from "./model/hf.fund";
 import {MemoSearchParams} from "../m2s2/model/memo-search-params";
 import {MemoService} from "../m2s2/memo.service";
 import {Memo} from "../m2s2/model/memo";
 import {MemoSearchResults} from "../m2s2/model/memo-search-results";
 import {Subscription} from 'rxjs';
+import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
+import {ErrorResponse} from "../common/error-response";
 
-declare var $:any
+declare var $:any;
+declare var Chart: any;
 
 @Component({
     selector: 'hf-manager-profile',
@@ -25,7 +28,7 @@ declare var $:any
 })
 export class HFManagerProfileComponent extends CommonFormViewComponent implements OnInit{
 
-    searchParams = new MemoSearchParams();
+    memoSearchParams = new MemoSearchParams();
     memoList: Memo[];
     memoSearchResult: MemoSearchResults;
     meetingTypes = [];
@@ -43,6 +46,10 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
     legalStructureLookup = [];
     domicileCountryLookup = [];
 
+    private breadcrumbParams: string;
+
+    private moduleAccessChecker: ModuleAccessCheckerService;
+
     constructor(
         private lookupService: LookupService,
         private managerService: HFManagerService,
@@ -51,7 +58,13 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
         private router: Router
     ) {
 
-        super();
+        super(router);
+
+        this.moduleAccessChecker = new ModuleAccessCheckerService;
+
+        if(!this.moduleAccessChecker.checkAccessHedgeFunds()){
+            this.router.navigate(['accessDenied']);
+        }
 
         // loadLookups
         this.loadLookups();
@@ -60,21 +73,33 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
         // TODO: sync on subscribe results
         //this.waitSleep(700);
 
-
         // parse params and load data
         this.sub = this.route
             .params
             .subscribe(params => {
                 this.managerIdParam = +params['id'];
+                this.breadcrumbParams = params['params'];
                 if(this.managerIdParam > 0) {
                     this.busy = this.managerService.get(this.managerIdParam)
                         .subscribe(
                             data => {
-                                console.log(data);
+                                console.log(this.breadcrumbParams);
                                 // TODO: check response memo
                                 this.manager = data;
+
+                                this.initRadarChart();
+
+                                // memo search params init
+                                this.memoSearchParams.memoType = "3";
+                                this.memoSearchParams.firmId = this.manager.id;
                             },
-                            error => this.errorMessage = "Error loading manager profile"
+                            (error: ErrorResponse) => {
+                                this.errorMessage = "Error loading manager profile";
+                                if(error && !error.isEmpty()){
+                                    this.processErrorMessage(error);
+                                }
+                                this.postAction(null, null);
+                            }
                         );
                 }else{
                 }
@@ -104,8 +129,12 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
 
                     this.postAction("Successfully saved.", null);
                 },
-                error =>  {
-                    this.postAction(null, "Error saving manager profile.");
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error saving manager profile";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
                 }
             );
     }
@@ -145,29 +174,32 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
             format: 'DD-MM-YYYY'
         });
 
-        $('input[type=text], textarea').autogrow();
+        // init chart
+        this.initRadarChart();
     }
 
     search(page){
-        //console.log(this.searchParams);
-        //// TODO: as parameter?
-        //this.searchParams.pageSize = 20;
-        //
-        //if(page > 0) {
-        //    this.searchParams.page = page;
-        //}
-        //
-        //this.searchParams.fromDate = $('#fromDate').val();
-        //this.searchParams.toDate = $('#toDate').val();
-        //
-        //this.memoService.search(this.searchParams)
-        //    .subscribe(
-        //        searchResult  => {
-        //            this.memoList = searchResult.memos;
-        //            this.memoSearchResult = searchResult;
-        //        },
-        //        error =>  this.errorMessage = "Failed to search memos."
-        //    );
+        console.log(this.memoSearchParams);
+
+        this.memoSearchParams.pageSize = 20;
+        this.memoSearchParams.page = page;
+        this.memoSearchParams.fromDate = $('#fromDateValue').val();
+        this.memoSearchParams.toDate = $('#toDateValue').val();
+
+        this.busy = this.memoService.searchHF(this.memoSearchParams)
+            .subscribe(
+                searchResult => {
+                    this.memoList = searchResult.memos;
+                    this.memoSearchResult = searchResult;
+                },
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error searching memos";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
+            );
     }
 
     loadLookups(){
@@ -183,7 +215,13 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
                     //});
                     this.strategyLookup = data;
                 },
-                error =>  this.errorMessage = <any>error
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
             );
 
         this.lookupService.getCurrencyList()
@@ -191,14 +229,19 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
                 data => {
                     this.currencyLookup = data;
 
-
                     // TODO: wait/sync on lookup loading
                     // TODO: sync on subscribe results
                     if(this.manager.id == null){
                         this.manager.aumCurrency = 'USD';
                     }
                 },
-                error =>  this.errorMessage = <any>error
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
             );
 
         // status
@@ -206,7 +249,14 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
 
         // memo types
         this.lookupService.getMeetingTypes().then(meetingTypes => this.meetingTypes = meetingTypes);
+    }
 
+    getMeetingTypeName(type){
+        for(var i = 0; i < this.meetingTypes.length; i++){
+            if(this.meetingTypes[i].code == type){
+                return this.meetingTypes[i].nameEn;
+            }
+        }
     }
 
     getStrategyName(code){
@@ -216,4 +266,92 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
             }
         }
     }
+
+    setUpRadarChart(ctx, scores){
+
+        var labels = ["Management and Team", "Portfolio", "Strategy"];
+
+        var data = {
+            labels: labels,
+            datasets: [
+                {
+                    label: "",
+                    backgroundColor: "rgba(255,99,132,0.2)",
+                    borderColor: "rgba(255,99,132,1)",
+                    pointBackgroundColor: "rgba(255,99,132,1)",
+                    pointBorderColor: "#fff",
+                    pointHoverBackgroundColor: "#fff",
+                    pointHoverBorderColor: "rgba(255,99,132,1)",
+                    // playing with lines
+                    borderDash: [15, 2],
+                    data: scores //[4, 3, 2]
+                }
+            ]
+        };
+        var myRadarChart = new Chart(ctx, {
+            type: 'radar',
+            data: data,
+            options: {
+                legend:{
+                    display: false
+                },
+                scale: {
+                    ticks: {
+                        //beginAtZero: true,
+                        min: 0,
+                        max: 5
+                    },
+                    gridLines: {
+                        color: "#8A9396"
+                    }
+                }
+            }
+        });
+    }
+
+    initRadarChart(){
+        var scores = new Array();
+        scores.push(Number(this.manager.managementAndTeamScore));
+        scores.push(Number(this.manager.portfolioScore));
+        scores.push(Number(this.manager.strategyScore));
+
+        //initializing average score for memos. if new memo skip
+        if(this.manager.managementAndTeamScore != null) {
+            var totalScore = Number(this.manager.portfolioScore) + Number(this.manager.strategyScore) + Number(this.manager.managementAndTeamScore);
+            var rounded = Math.round((totalScore / 3) * 10) / 10;
+            $("#averageScore").text(rounded);
+        }
+
+        this.setUpRadarChart($('#myChart'), scores);
+    }
+
+    updateScore(){
+
+        // TODO: fix select bind - ngModel
+        this.manager.managementAndTeamScore = $('#managementAndTeamScore').val();
+        this.manager.portfolioScore = $('#portfolioScore').val();
+        this.manager.strategyScore = $('#strategyScore').val();
+
+        var totalScore = Number(this.manager.managementAndTeamScore) + Number(this.manager.portfolioScore) + Number(this.manager.strategyScore);
+        var rounded = Math.round( (totalScore/3) * 10 ) / 10;
+        $("#averageScore").text(rounded);
+
+        var scores = new Array();
+        scores.push(Number(this.manager.managementAndTeamScore));
+        scores.push(Number(this.manager.portfolioScore));
+        scores.push(Number(this.manager.strategyScore));
+        this.setUpRadarChart($('#myChart'), scores);
+
+    }
+
+    navigate(memoType, memoId){
+        this.memoSearchParams.path = '/hf/managerProfile/' + this.manager.id;
+        let params = JSON.stringify(this.memoSearchParams);
+        this.router.navigate(['/m2s2/edit/', memoType, memoId, { params }]);
+    }
+
+    canEdit(){
+        return this.moduleAccessChecker.checkAccessHedgeFundsEditor();
+    }
+
 }

@@ -45,12 +45,12 @@ export class GoogleChartComponent extends CommonFormViewComponent implements OnI
     }
 
     // TODO: merge with CommonComponent
-    waitSleep(milliseconds) {
-        var start = new Date().getTime();
-        for (var i = 0; i < 1e7; i++) {
-            if ((new Date().getTime() - start) > milliseconds) {
-                break;
-            }
-        }
-    }
+    //waitSleep(milliseconds) {
+    //    var start = new Date().getTime();
+    //    for (var i = 0; i < 1e7; i++) {
+    //        if ((new Date().getTime() - start) > milliseconds) {
+    //            break;
+    //        }
+    //    }
+    //}
 }

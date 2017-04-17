@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {PEFirmService} from "./pe.firm.service";
 import {PEFirm} from "./model/pe.firm";
 import {PEFund} from "./model/pe.fund";
@@ -10,6 +10,8 @@ import '../../../public/js/viz_v1.js';
 import {GoogleChartComponent} from "../google-chart/google-chart.component";
 
 import {Subscription} from 'rxjs';
+import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
+import {ErrorResponse} from "../common/error-response";
 
 declare var google:any;
 declare var $: any;
@@ -40,19 +42,32 @@ export class PEFundReportComponent extends GoogleChartComponent {
 
     busy: Subscription;
 
+    private breadcrumbParams: string;
+
+    private moduleAccessChecker: ModuleAccessCheckerService;
+
     constructor(
         private firmService: PEFirmService,
         private fundService: PEFundService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private router: Router
     ){
-        super();
+    super();
+
+        this.moduleAccessChecker = new ModuleAccessCheckerService;
+
+        if(!this.moduleAccessChecker.checkAccessPrivateEquity()){
+            this.router.navigate(['accessDenied']);
+        }
 
         this.sub = this.route
             .params
             .subscribe(params => {
                 this.firmIdParam = +params['id'];
+                this.breadcrumbParams = params['params'];
                 if(this.firmIdParam > 0){
                     this.searchParams['id'] = this.firmIdParam;
+                    this.searchParams.report = true;
                     this.busy = this.firmService.get(this.firmIdParam)
                         .subscribe(
                             (data: PEFirm) => {
@@ -63,7 +78,15 @@ export class PEFundReportComponent extends GoogleChartComponent {
                                     // TODO: handle error
                                     //this.errorMessage = "Error loading firm";
                                 }
+                            },
+                            (error: ErrorResponse) => {
+                            this.errorMessage = "Error loading firm info";
+                            if(error && !error.isEmpty()){
+                                this.processErrorMessage(error);
+                                console.log(error);
                             }
+                            this.postAction(null, null);
+                        }
                             //error => this.errorMessage = "Error loading firm profile"
                         );
                     this.busy = this.fundService.search(this.searchParams)
@@ -78,6 +101,14 @@ export class PEFundReportComponent extends GoogleChartComponent {
                                 }
                                 this.preselectFundStrategyGeographyIndustry();
                                 this.drawGraph();
+                            },
+                            (error: ErrorResponse) => {
+                                this.errorMessage = "Error loading fund info";
+                                if(error && !error.isEmpty()){
+                                    this.processErrorMessage(error);
+                                    console.log(error);
+                                }
+                                this.postAction(null, null);
                             }
                             //error => this.errorMessage = "Failed to load GP's funds"
                         );
@@ -86,7 +117,7 @@ export class PEFundReportComponent extends GoogleChartComponent {
                     //error => this.errorMessage = "Invalid parameter values";
                     return;
                 }
-            })
+            });
     }
 
     preselectFirmStrategyGeographyIndustry(){

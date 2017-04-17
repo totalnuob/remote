@@ -1,25 +1,68 @@
-import {Component, ElementRef} from '@angular/core';
-import { } from '@angular/router';
+import {Component, ElementRef, Compiler, OnInit  } from '@angular/core';
+import { RuntimeCompiler} from '@angular/compiler';
+import {Router, ActivatedRoute} from '@angular/router';
 import {AuthenticationService, User} from './authentication.service'
+import lastIndexOf = require("core-js/fn/array/last-index-of");
 
 @Component({
     selector: 'login-form',
-    providers: [AuthenticationService],
+    providers: [AuthenticationService, RuntimeCompiler],
     templateUrl: './view/login.component.html',
     styleUrls: ['../../../public/css/footer.css']
 })
 
-export class LoginComponent {
+export class LoginComponent implements OnInit{
 
     public user = new User('','');
     public errorMsg = '';
 
+    returnUrl: string;
+    url: string;
+    params: string;
+
     constructor(
-        private _service: AuthenticationService) {}
+        private router: Router,
+        private route: ActivatedRoute,
+        private authenticationService: AuthenticationService,
+        private runtimeCompiler: RuntimeCompiler) {
+    }
+
+    ngOnInit() {
+        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+
+        if(this.returnUrl != '/') {
+            this.url = this.returnUrl.substring(0, this.returnUrl.indexOf(';'));
+            if(this.url == '/news') {
+                this.params = this.returnUrl.substring(this.returnUrl.indexOf('=') + 1);
+            }
+        } else {
+            this.url = this.returnUrl;
+        }
+    }
 
     login() {
-        if(!this._service.login(this.user)){
-            this.errorMsg = 'Failed to login';
-        }
+        this.authenticationService.login(this.user)
+            .subscribe(
+                response => {
+
+                    //this.runtimeCompiler.clearCache();
+
+                    localStorage.setItem("authenticatedUser", this.user.username);
+                    localStorage.setItem("authenticatedUserRoles", JSON.stringify(response.roles));
+
+                    location.reload();
+
+                    if(this.params){
+                        let params = this.params;
+                        this.router.navigate([this.url, {params}]);
+                    } else {
+                        this.router.navigate([this.url]);
+                    }
+
+                },
+                error =>  {
+                    this.errorMsg = 'Failed to login';
+                }
+            );
     }
 }

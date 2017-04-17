@@ -8,7 +8,7 @@ import kz.nicnbk.service.dto.m2s2.RealEstateMeetingMemoDto;
  */
 public interface REMeetingMemoService extends BaseService {
 
-    Long save(RealEstateMeetingMemoDto memoDto);
+    Long save(RealEstateMeetingMemoDto memoDto, String updater);
 
     RealEstateMeetingMemoDto get(Long id);
 }

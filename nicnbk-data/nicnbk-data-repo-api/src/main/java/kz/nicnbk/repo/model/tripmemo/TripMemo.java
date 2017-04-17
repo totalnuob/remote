@@ -14,10 +14,13 @@ import java.util.Set;
 
 @Entity
 @Table(name = "trip_memo")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class TripMemo extends CreateUpdateBaseEntity{
 
-    @Column(name="trip_type")
-    private String tripType;
+//    @Column(name="trip_type")
+//    private String tripType;
+
+    private TripType tripType;
 
     @Column(name="name", length=255)
     private String name;
@@ -49,11 +52,21 @@ public class TripMemo extends CreateUpdateBaseEntity{
     // TODO: TEMP in place of authentication
     private String author;
 
-    public String getTripType() {
+//    public String getTripType() {
+//        return tripType;
+//    }
+//
+//    public void setTripType(String tripType) {
+//        this.tripType = tripType;
+//    }
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "trip_type_id")
+    public TripType getTripType() {
         return tripType;
     }
 
-    public void setTripType(String tripType) {
+    public void setTripType(TripType tripType) {
         this.tripType = tripType;
     }
 

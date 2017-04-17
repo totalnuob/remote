@@ -1,6 +1,7 @@
 package kz.nicnbk.service.dto.m2s2;
 
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
+import kz.nicnbk.common.service.model.CreateUpdateBaseEntityDto;
 import kz.nicnbk.common.service.model.HistoryBaseEntityDto;
 import kz.nicnbk.repo.model.m2s2.MeetingMemo;
 import kz.nicnbk.service.dto.employee.EmployeeDto;
@@ -13,7 +14,7 @@ import java.util.Set;
 /**
  * Created by magzumov on 08.07.2016.
  */
-public class MeetingMemoDto extends HistoryBaseEntityDto<MeetingMemo> {
+public class MeetingMemoDto extends CreateUpdateBaseEntityDto<MeetingMemo> {
 
     //private String memoType;
     private int memoType;
@@ -39,6 +40,8 @@ public class MeetingMemoDto extends HistoryBaseEntityDto<MeetingMemo> {
 
     // TODO: TEMP in place of authentication
     private String author;
+
+    private String owner;
 
     // TODO: refactor?
     private Set<BaseDictionaryDto> strategies;
@@ -198,5 +201,13 @@ public class MeetingMemoDto extends HistoryBaseEntityDto<MeetingMemo> {
 
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 }

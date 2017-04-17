@@ -1,5 +1,10 @@
 package kz.nicnbk.service.dto.m2s2;
 
+import kz.nicnbk.repo.model.pe.PEFirm;
+import kz.nicnbk.repo.model.pe.PEFund;
+import kz.nicnbk.service.dto.pe.PEFirmDto;
+import kz.nicnbk.service.dto.pe.PEFundDto;
+
 /**
  * Created by magzumov on 11.07.2016.
  */
@@ -15,6 +20,9 @@ public class PrivateEquityMeetingMemoDto extends FundMeetingMemoDto {
     private String nicFollowups;
     private String otherPartyFollowups;
     private Short conviction;
+
+    private PEFirmDto firm;
+    private PEFundDto fund;
 
     public String getTeamNotes() {
         return teamNotes;
@@ -95,4 +103,21 @@ public class PrivateEquityMeetingMemoDto extends FundMeetingMemoDto {
     public void setConviction(Short conviction) {
         this.conviction = conviction;
     }
+
+    public PEFirmDto getFirm() {
+        return firm;
+    }
+
+    public void setFirm(PEFirmDto firm) {
+        this.firm = firm;
+    }
+
+    public PEFundDto getFund() {
+        return fund;
+    }
+
+    public void setFund(PEFundDto fund) {
+        this.fund = fund;
+    }
+
 }

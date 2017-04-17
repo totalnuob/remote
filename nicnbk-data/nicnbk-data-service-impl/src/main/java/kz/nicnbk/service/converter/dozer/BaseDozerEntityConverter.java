@@ -55,4 +55,8 @@ public abstract class BaseDozerEntityConverter<E extends BaseEntity, DTO extends
         mapper.map(entity, dto);
         return dto;
     }
+
+    public Mapper getMapper(){
+        return this.mapper;
+    }
 }

@@ -5,9 +5,11 @@ import kz.nicnbk.common.service.util.DateUtils;
 import kz.nicnbk.common.service.util.MathUtils;
 import kz.nicnbk.common.service.util.PaginationUtils;
 import kz.nicnbk.repo.api.benchmark.BenchmarkValueRepository;
+import kz.nicnbk.repo.api.employee.EmployeeRepository;
 import kz.nicnbk.repo.api.hf.HedgeFundRepository;
 import kz.nicnbk.repo.model.benchmark.Benchmark;
 import kz.nicnbk.repo.model.benchmark.BenchmarkValue;
+import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.hf.HedgeFund;
 import kz.nicnbk.repo.model.lookup.BenchmarkLookup;
 import kz.nicnbk.service.api.benchmark.BenchmarkService;
@@ -20,6 +22,8 @@ import kz.nicnbk.service.dto.benchmark.BenchmarkValueDto;
 import kz.nicnbk.service.dto.hf.*;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 import org.apache.commons.math3.util.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -42,6 +46,8 @@ import java.util.*;
 @Service
 public class HedgeFundServiceImpl implements HedgeFundService {
 
+    private static final Logger logger = LoggerFactory.getLogger(HedgeFundServiceImpl.class);
+
     @Autowired
     private HedgeFundRepository repository;
 
@@ -63,104 +69,127 @@ public class HedgeFundServiceImpl implements HedgeFundService {
     @Autowired
     private BenchmarkValueRepository benchmarkValueRepository;
 
+    @Autowired
+    private EmployeeRepository employeeRepository;
+
     @Override
-    public Long save(HedgeFundDto hedgeFundDto) {
+    public Long save(HedgeFundDto hedgeFundDto, String updater) {
 
         // TODO: handle error and rollback || transactional?
 
-        HedgeFund entity = converter.assemble(hedgeFundDto);
-        if(hedgeFundDto.getId() != null){
-            entity.setUpdateDate(new Date());
-        }
-        Long id = repository.save(entity).getId();
-        hedgeFundDto.setId(id);
+        try {
+            HedgeFund entity = converter.assemble(hedgeFundDto);
 
-        // delete substrategies
-        boolean deleted = this.hedgeFundSubstrategyService.deleteByFundId(id);
-        // save substrategy
-        if(hedgeFundDto.getStrategyBreakdownList() != null) {
-            for (SubstrategyBreakdownDto substrategyBreakdownDto : hedgeFundDto.getStrategyBreakdownList()) {
-                HedgeFundSubstrategyDto dto = new HedgeFundSubstrategyDto();
-                HedgeFundDto fundDto = new HedgeFundDto();
-                fundDto.setId(id);
-                dto.setFund(fundDto);
-
-                BaseDictionaryDto substrategyDto = new BaseDictionaryDto();
-                substrategyDto.setCode(substrategyBreakdownDto.getCode());
-                dto.setSubstrategy(substrategyDto);
-                dto.setValue(substrategyBreakdownDto.getValue());
-                this.hedgeFundSubstrategyService.save(dto);
+            if(hedgeFundDto.getId() == null){ // CREATE
+                Employee employee = this.employeeRepository.findByUsername(hedgeFundDto.getOwner());
+                // set creator
+                entity.setCreator(employee);
+            }else{ // UPDATE
+                // set creator
+                Employee employee = this.repository.findOne(hedgeFundDto.getId()).getCreator();
+                entity.setCreator(employee);
+                // set creation date
+                Date creationDate = repository.findOne(hedgeFundDto.getId()).getCreationDate();
+                entity.setCreationDate(creationDate);
+                // set update date
+                entity.setUpdateDate(new Date());
+                // set updater
+                Employee updatedby = this.employeeRepository.findByUsername(updater);
+                entity.setUpdater(updatedby);
             }
-        }
+            Long id = repository.save(entity).getId();
+            hedgeFundDto.setId(id);
 
-        // delete investor base
-        deleted = this.investorBaseService.deleteByFundId(id);
+            // delete substrategies
+            boolean deleted = this.hedgeFundSubstrategyService.deleteByFundId(id);
+            // save substrategy
+            if (hedgeFundDto.getStrategyBreakdownList() != null) {
+                for (SubstrategyBreakdownDto substrategyBreakdownDto : hedgeFundDto.getStrategyBreakdownList()) {
+                    HedgeFundSubstrategyDto dto = new HedgeFundSubstrategyDto();
+                    HedgeFundDto fundDto = new HedgeFundDto();
+                    fundDto.setId(id);
+                    dto.setFund(fundDto);
 
-        // save investor base
-        if(hedgeFundDto.getInvestorBaseList() != null){
-            for(InvestorBaseDto dto: hedgeFundDto.getInvestorBaseList()){
-                dto.setHedgeFund(hedgeFundDto);
-                this.investorBaseService.save(dto);
-            }
-        }
-
-        // delete returns
-        deleted = this.hedgeFundReturnService.deleteByFundId(id);
-
-        // save returns
-        // scale to numeric
-        scaleToNumeric(hedgeFundDto);
-        // save
-        if(hedgeFundDto.getReturns() != null){
-            for(ReturnDto dto: hedgeFundDto.getReturns()){
-                dto.setFund(hedgeFundDto);
-                Long returnId = this.hedgeFundReturnService.save(dto);
-                if(returnId == null){
-                    // failed to save return
-                    // TODO: rollback
+                    BaseDictionaryDto substrategyDto = new BaseDictionaryDto();
+                    substrategyDto.setCode(substrategyBreakdownDto.getCode());
+                    dto.setSubstrategy(substrategyDto);
+                    dto.setValue(substrategyBreakdownDto.getValue());
+                    this.hedgeFundSubstrategyService.save(dto);
                 }
             }
-        }
 
-        return id;
+            // delete investor base
+            deleted = this.investorBaseService.deleteByFundId(id);
+
+            // save investor base
+            if (hedgeFundDto.getInvestorBaseList() != null) {
+                for (InvestorBaseDto dto : hedgeFundDto.getInvestorBaseList()) {
+                    dto.setHedgeFund(hedgeFundDto);
+                    this.investorBaseService.save(dto);
+                }
+            }
+
+            // delete returns
+            deleted = this.hedgeFundReturnService.deleteByFundId(id);
+
+            // save returns
+            // scale to numeric
+            scaleToNumeric(hedgeFundDto);
+            // save
+            if (hedgeFundDto.getReturns() != null) {
+                for (ReturnDto dto : hedgeFundDto.getReturns()) {
+                    dto.setFund(hedgeFundDto);
+                    Long returnId = this.hedgeFundReturnService.save(dto);
+                    if (returnId == null) {
+                        // failed to save return
+                        // TODO: rollback
+                    }
+                }
+            }
+
+            logger.info(hedgeFundDto.getId() == null ? "HF fund created: " + id + ", by " + entity.getCreator().getUsername() :
+                    "HF fund updated: " + id + ", by " + updater);
+            return id;
+        }catch (Exception ex){
+            logger.error("Error saving HF fund: " + (hedgeFundDto != null && hedgeFundDto.getId() != null ? hedgeFundDto.getId() : "new") ,ex);
+        }
+        return null;
     }
 
     @Override
     public HedgeFundDto get(Long fundId) {
-        HedgeFund entity = this.repository.findOne(fundId);
-        HedgeFundDto fundDto = this.converter.disassemble(entity);
+        try {
+            HedgeFund entity = this.repository.findOne(fundId);
+            HedgeFundDto fundDto = this.converter.disassemble(entity);
 
-        // substrategy breakdown
-        List<HedgeFundSubstrategyDto> substrategyDtoList = this.hedgeFundSubstrategyService.findByFundId(fundId);
-        if(substrategyDtoList != null) {
-            List<SubstrategyBreakdownDto> substrategyBreakdownDtoList = new ArrayList<>();
-            for (HedgeFundSubstrategyDto entityDto : substrategyDtoList) {
-                SubstrategyBreakdownDto dto = new SubstrategyBreakdownDto();
-                dto.setCode(entityDto.getSubstrategy().getCode());
-                dto.setValue(entityDto.getValue());
-                substrategyBreakdownDtoList.add(dto);
+            // substrategy breakdown
+            List<HedgeFundSubstrategyDto> substrategyDtoList = this.hedgeFundSubstrategyService.findByFundId(fundId);
+            if (substrategyDtoList != null) {
+                List<SubstrategyBreakdownDto> substrategyBreakdownDtoList = new ArrayList<>();
+                for (HedgeFundSubstrategyDto entityDto : substrategyDtoList) {
+                    SubstrategyBreakdownDto dto = new SubstrategyBreakdownDto();
+                    dto.setCode(entityDto.getSubstrategy().getCode());
+                    dto.setValue(entityDto.getValue());
+                    substrategyBreakdownDtoList.add(dto);
+                }
+                fundDto.setStrategyBreakdownList(substrategyBreakdownDtoList);
             }
-            fundDto.setStrategyBreakdownList(substrategyBreakdownDtoList);
+            // investor base
+            List<InvestorBaseDto> investorBaseList = this.investorBaseService.findByFundId(fundId);
+            fundDto.setInvestorBaseList(investorBaseList);
+            // returns
+            List<ReturnDto> returnsList = this.hedgeFundReturnService.findByFundId(fundId);
+            Collections.sort(returnsList);
+            fundDto.setReturns(returnsList);
+            // calculated values
+            setCalculatedValues(fundDto);
+            // scale to percent
+            scaleToPercent(fundDto);
+            return fundDto;
+        }catch(Exception ex){
+            logger.error("Error loading HF fund: " + fundId, ex);
         }
-
-        // investor base
-        List<InvestorBaseDto> investorBaseList = this.investorBaseService.findByFundId(fundId);
-        fundDto.setInvestorBaseList(investorBaseList);
-
-        // returns
-        List<ReturnDto> returnsList = this.hedgeFundReturnService.findByFundId(fundId);
-        Collections.sort(returnsList);
-        fundDto.setReturns(returnsList);
-
-        // calculated values
-        setCalculatedValues(fundDto);
-
-        // scale to percent
-        scaleToPercent(fundDto);
-
-        //upload(null);
-
-        return fundDto;
+        return null;
     }
 
     private void setCalculatedValues(HedgeFundDto fundDto){
@@ -169,70 +198,75 @@ public class HedgeFundServiceImpl implements HedgeFundService {
 //            fundDto.setNumMonths(DateUtils.getMonthsDifference(fundDto.getInceptionDate(), new Date()));
 //        }
 
-        if(fundDto.getReturns() != null && !fundDto.getReturns().isEmpty()){
+        try {
+            if (fundDto.getReturns() != null && !fundDto.getReturns().isEmpty()) {
 
-            // TODO: to array with date?
-            double[] fundReturnsArray = getReturnsAsArray(fundDto.getReturns());
-            Date[] fundReturnDatesArray = getReturnDatesAsArray(fundDto.getReturns());
+                // TODO: to array with date?
+                double[] fundReturnsArray = getReturnsAsArray(fundDto.getReturns());
+                Date[] fundReturnDatesArray = getReturnDatesAsArray(fundDto.getReturns());
 
-            // number of months
-            fundDto.setNumMonths(fundReturnsArray.length);
+                // number of months
+                fundDto.setNumMonths(fundReturnsArray.length);
 
-            // number of positive/negative months
-            fundDto.setNumPositiveMonths(getNumberOfPositiveMonths(fundReturnsArray));
-            fundDto.setNumNegativeMonths(getNumberOfNegativeMonths(fundReturnsArray));
+                // number of positive/negative months
+                fundDto.setNumPositiveMonths(getNumberOfPositiveMonths(fundReturnsArray));
+                fundDto.setNumNegativeMonths(getNumberOfNegativeMonths(fundReturnsArray));
 
-            // return since inception
-            fundDto.setReturnSinceInception(getReturnSinceInception(fundReturnsArray));
+                // return since inception
+                fundDto.setReturnSinceInception(getReturnSinceInception(fundReturnsArray));
 
-            // YTD
-            fundDto.setYTD(getYTD(fundDto.getReturns()));
+                // YTD
+                fundDto.setYTD(getYTD(fundDto.getReturns()));
 
-            // annualized return
-            fundDto.setAnnualizedReturn(getAnnualizedReturn(fundReturnsArray));
+                // annualized return
+                fundDto.setAnnualizedReturn(getAnnualizedReturn(fundReturnsArray));
 
-            // beta
-            Date dateFrom = fundDto.getReturns().get(0).getFirstNotNullMonth();
-            Date dateTo = fundDto.getReturns().get(fundDto.getReturns().size() - 1).getLastNotNullMonth();
-            double[] SNPBenchmarkReturns = this.benchmarkService.getReturnValuesBetweenDatesAsArray(dateFrom, dateTo, BenchmarkLookup.S_AND_P.getCode());
-            if(fundReturnsArray == null || SNPBenchmarkReturns == null || fundReturnsArray.length != SNPBenchmarkReturns.length){
-                // TODO: error log
-                System.out.println("FUND ID=" + fundDto.getId() + ". RETURNS MISSING OR S&P RETURNS ARRAY SIZE DIFFERENT FROM RETURNS ARRAY SIZE");
-                System.out.println("Beta - will not be calculated");
-            }else {
-                fundDto.setBeta(getBeta(fundReturnsArray, SNPBenchmarkReturns));
+                // beta
+                Date dateFrom = fundDto.getReturns().get(0).getFirstNotNullMonth();
+                Date dateTo = fundDto.getReturns().get(fundDto.getReturns().size() - 1).getLastNotNullMonth();
+                double[] SNPBenchmarkReturns = this.benchmarkService.getReturnValuesBetweenDatesAsArray(dateFrom, dateTo, BenchmarkLookup.S_AND_P.getCode());
+                if (fundReturnsArray == null) {
+                    logger.error("HF fund calculations: returns missing for fund=" + fundDto.getId() + ". Beta - will not be calculated");
+                }else if(SNPBenchmarkReturns == null ){
+                    logger.error("HF fund calculations: S&P returns missing. Beta - will not be calculated");
+                }else if(fundReturnsArray.length != SNPBenchmarkReturns.length){
+                    logger.error("HF fund calculations: fund returns and S&P returns array size different for fund=" + fundDto.getId() +
+                            ". Beta - will not be calculated");
+                } else {
+                    fundDto.setBeta(getBeta(fundReturnsArray, SNPBenchmarkReturns));
+                }
+
+                // annual volatility
+                fundDto.setAnnualVolatility(getAnnualVolatility(fundReturnsArray));
+
+                // worst drawdown
+                Pair<Double, String> worsdDrawdownResult = getWorstDrawdown(fundReturnsArray, fundReturnDatesArray);
+                fundDto.setWorstDrawdown(worsdDrawdownResult.getFirst());
+                // worst drawdown period
+                fundDto.setWorstDrawdownPeriod(worsdDrawdownResult.getSecond());
+
+                // fund annualized return
+                double fundAnnualizedReturn = getAnnualizedReturn(fundReturnsArray);
+                double[] TBillsBenchmarkReturns = this.benchmarkService.getReturnValuesBetweenDatesAsArray(dateFrom, dateTo, BenchmarkLookup.T_BILLS.getCode());
+                // check returns array sizes
+                if (fundReturnsArray.length != TBillsBenchmarkReturns.length) {
+                    logger.error("HF fund calculations: fund returns and TBills returns array size different for fund=" + fundDto.getId() +
+                            " .Sharpe Ratio, Sortino Ratio - will not be calculated");
+                    return;
+                }
+                Double benchmarkAnnualizedReturn = getAnnualizedReturn(TBillsBenchmarkReturns);
+
+                // std deviation
+                Double stdDeviation = getStandardDeviation(fundReturnsArray);
+
+                // sharpe ratio
+                fundDto.setSharpeRatio(getSharpeRatio(fundAnnualizedReturn, benchmarkAnnualizedReturn, stdDeviation));
+
+                // sortino ratio
+                fundDto.setSortinoRatio(getSortinoRatio(fundAnnualizedReturn, benchmarkAnnualizedReturn, fundReturnsArray));
             }
-
-            // annual volatility
-            fundDto.setAnnualVolatility(getAnnualVolatility(fundReturnsArray));
-
-            // worst drawdown
-            Pair<Double, String> worsdDrawdownResult = getWorstDrawdown(fundReturnsArray, fundReturnDatesArray);
-            fundDto.setWorstDrawdown(worsdDrawdownResult.getFirst());
-            // worst drawdown period
-            fundDto.setWorstDrawdownPeriod(worsdDrawdownResult.getSecond());
-
-            // fund annualized return
-            double fundAnnualizedReturn = getAnnualizedReturn(fundReturnsArray);
-            double[] TBillsBenchmarkReturns = this.benchmarkService.getReturnValuesBetweenDatesAsArray(dateFrom, dateTo, BenchmarkLookup.T_BILLS.getCode());
-            // check returns array sizes
-            if(fundReturnsArray.length != TBillsBenchmarkReturns.length){
-                // TODO: error log
-                System.out.println("FUND ID=" + fundDto.getId() + ". TBILLS RETURNS ARRAY SIZE (" +
-                        TBillsBenchmarkReturns.length + ") DIFFERENT FROM RETURNS ARRAY SIZE (" + fundReturnsArray.length + ")");
-                System.out.println("Sharpe Ratio, Sortino Ratio - will not be calculated");
-                return;
-            }
-            Double benchmarkAnnualizedReturn = getAnnualizedReturn(TBillsBenchmarkReturns);
-
-            // std deviation
-            Double stdDeviation = getStandardDeviation(fundReturnsArray);
-
-            // sharpe ratio
-            fundDto.setSharpeRatio(getSharpeRatio(fundAnnualizedReturn, benchmarkAnnualizedReturn, stdDeviation));
-
-            // sortino ratio
-            fundDto.setSortinoRatio(getSortinoRatio(fundAnnualizedReturn, benchmarkAnnualizedReturn, fundReturnsArray));
+        }catch (Exception ex){
+            logger.error("Failed to set calculated values for HF fund: fund=" + fundDto.getId(), ex);
         }
     }
 
@@ -249,7 +283,6 @@ public class HedgeFundServiceImpl implements HedgeFundService {
             }
 
         }
-
         double divider = Math.max(0.01, Math.sqrt(sumNegativeReturns.doubleValue()) * Math.sqrt(12.0 / returns.length));
         double value = (fundAnnualizedReturn - benchmarkAnnualizedReturn) / divider;
         //return getRoundedValue(value);
@@ -487,13 +520,13 @@ public class HedgeFundServiceImpl implements HedgeFundService {
     private Double getBeta(double[] fundReturns, double[] benchmarkReturns){
 
         if(fundReturns == null  || fundReturns.length == 0 || benchmarkReturns == null || benchmarkReturns.length == 0){
-            System.out.println("BETA CALCULATIONS: RETURNS MISSING\n");
+            logger.error("HF fund calculations[Beta]: returns missing");
             return null;
         }
 
         // TODO: handle - check benchmarks array size no less than returns size
         if(fundReturns.length != benchmarkReturns.length){
-            System.out.println("BETA CALCULATIONS: RETURNS ARRAYS OF DIFFERENT SIZE\n");
+            logger.error("HF fund calculations[Beta]: fund returns and benchmarks arrays of different size");
             return null;
         }
 
@@ -797,36 +830,45 @@ public class HedgeFundServiceImpl implements HedgeFundService {
 
     @Override
     public List<HedgeFundDto> loadManagerFunds(Long managerId) {
-        Page<HedgeFund> page = repository.findByManager(managerId,
-                new PageRequest(0, 10, new Sort(Sort.Direction.DESC, "id")));
-        return this.converter.disassembleList(page.getContent());
+        try {
+            Page<HedgeFund> page = repository.findByManager(managerId,
+                    new PageRequest(0, 10, new Sort(Sort.Direction.DESC, "id")));
+            return this.converter.disassembleList(page.getContent());
+        }catch (Exception ex){
+            logger.error("Failed to load HF manager funds: manager=" + managerId, ex);
+        }
+        return null;
     }
 
     @Override
     public HedgeFundPagedSearchResult findByName(HedgeFundSearchParams searchParams) {
+        try {
+            int page = searchParams != null && searchParams.getPage() > 0 ? searchParams.getPage() - 1 : 0;
+            int pageSize = searchParams != null && searchParams.getPageSize() > 0 ? searchParams.getPageSize() : DEFAULT_PAGE_SIZE;
+            Page<HedgeFund> entityPage = this.repository.findByName(searchParams.getName(),
+                    //new PageRequest(searchParams.getPage(), searchParams.getPageSize(), new Sort(Sort.Direction.DESC, "id")));
+                    new PageRequest(page, pageSize, new Sort(Sort.Direction.DESC, "id")));
 
-        int page = searchParams != null && searchParams.getPage() > 0 ? searchParams.getPage() - 1 : 0;
-        int pageSize = searchParams != null && searchParams.getPageSize() > 0 ? searchParams.getPageSize() : DEFAULT_PAGE_SIZE;
-        Page<HedgeFund> entityPage = this.repository.findByName(searchParams.getName(),
-                //new PageRequest(searchParams.getPage(), searchParams.getPageSize(), new Sort(Sort.Direction.DESC, "id")));
-                new PageRequest(page, pageSize, new Sort(Sort.Direction.DESC, "id")));
-
-        HedgeFundPagedSearchResult result = new HedgeFundPagedSearchResult();
-        if(entityPage != null) {
-            result.setTotalElements(entityPage.getTotalElements());
-            if(entityPage.getTotalElements() > 0) {
-                result.setShowPageFrom(PaginationUtils.getShowPageFrom(DEFAULT_PAGES_PER_VIEW, page + 1));
-                result.setShowPageTo(PaginationUtils.getShowPageTo(DEFAULT_PAGES_PER_VIEW,
-                        page + 1, result.getShowPageFrom(), entityPage.getTotalPages()));
+            HedgeFundPagedSearchResult result = new HedgeFundPagedSearchResult();
+            if (entityPage != null) {
+                result.setTotalElements(entityPage.getTotalElements());
+                if (entityPage.getTotalElements() > 0) {
+                    result.setShowPageFrom(PaginationUtils.getShowPageFrom(DEFAULT_PAGES_PER_VIEW, page + 1));
+                    result.setShowPageTo(PaginationUtils.getShowPageTo(DEFAULT_PAGES_PER_VIEW,
+                            page + 1, result.getShowPageFrom(), entityPage.getTotalPages()));
+                }
+                result.setTotalPages(entityPage.getTotalPages());
+                result.setCurrentPage(page + 1);
+                if (searchParams != null) {
+                    result.setSearchParams(searchParams.getSearchParamsAsString());
+                }
+                result.setFunds(this.converter.disassembleList(entityPage.getContent()));
             }
-            result.setTotalPages(entityPage.getTotalPages());
-            result.setCurrentPage(page + 1);
-            if(searchParams != null) {
-                result.setSearchParams(searchParams.getSearchParamsAsString());
-            }
-            result.setFunds(this.converter.disassembleList(entityPage.getContent()));
+            return result;
+        }catch (Exception ex){
+            logger.error("Failed to search HF funds", ex);
         }
-        return result;
+        return null;
     }
 
 

@@ -1,4 +1,4 @@
-import {Component, ViewChild} from '@angular/core';
+import {Component, ViewChild, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {PEFirm} from "./model/pe.firm";
 import {PEFirmService} from "./pe.firm.service";
@@ -8,9 +8,14 @@ import {LookupService} from "../common/lookup.service";
 import {error} from "util";
 import {PEFundService} from "./pe.fund.service";
 import {PEFund} from "./model/pe.fund";
-import {PESearchParams} from "./model/pe.search-params";
 
 import {Subscription} from 'rxjs';
+import {MemoSearchParams} from "../m2s2/model/memo-search-params";
+import {Memo} from "../m2s2/model/memo";
+import {MemoSearchResults} from "../m2s2/model/memo-search-results";
+import {MemoService} from "../m2s2/memo.service";
+import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
+import {ErrorResponse} from "../common/error-response";
 
 declare var $:any
 
@@ -20,7 +25,7 @@ declare var $:any
     styleUrls: [],
     providers: [PEFirmService, PEFundService]
 })
-export class PEFirmProfileComponent extends CommonFormViewComponent {
+export class PEFirmProfileComponent extends CommonFormViewComponent implements OnInit{
 
     private firm = new PEFirm();
 
@@ -33,6 +38,8 @@ export class PEFirmProfileComponent extends CommonFormViewComponent {
     @ViewChild('geographySelect')
     private geographySelect;
 
+    private breadcrumbParams: string;
+
     public strategyList: Array<any> = [];
     public industryList: Array<any> = [];
     public geographyList: Array<any> = [];
@@ -40,19 +47,31 @@ export class PEFirmProfileComponent extends CommonFormViewComponent {
     private sub: any;
     public firmIdParam: number;
 
-    foundFundsList: PEFund[];
-    private searchParams = new PESearchParams();
-
     busy: Subscription;
+
+    private moduleAccessChecker: ModuleAccessCheckerService;
+
+    //For memo loading
+    memoSearchParams = new MemoSearchParams;
+    meetingTypes = [];
+    memoList: Memo[];
+    memoSearchResult: MemoSearchResults;
 
     constructor(
         private lookupService: LookupService,
         private firmService: PEFirmService,
-        private fundService: PEFundService,
+        //private fundService: PEFundService,
         private route: ActivatedRoute,
-        private router: Router
+        private router: Router,
+        private memoService: MemoService
     ) {
-        super();
+        super(router);
+
+        this.moduleAccessChecker = new ModuleAccessCheckerService;
+
+        if(!this.moduleAccessChecker.checkAccessPrivateEquity()){
+            this.router.navigate(['accessDenied']);
+        }
 
         this.loadLookups();
 
@@ -65,8 +84,8 @@ export class PEFirmProfileComponent extends CommonFormViewComponent {
             .params
             .subscribe(params => {
                 this.firmIdParam = +params['id'];
+                this.breadcrumbParams = params['params'];
                 if(this.firmIdParam > 0) {
-                    this.searchParams['id'] = this.firmIdParam;
                     this.busy = this.firmService.get(this.firmIdParam)
                         .subscribe(
                             data => {
@@ -74,6 +93,7 @@ export class PEFirmProfileComponent extends CommonFormViewComponent {
 
                                 //TODO: check response memo
                                 this.firm = data;
+                                console.log(this.firm)
 
                                 // preselect firm strategies
                                 this.preselectStrategy();
@@ -84,15 +104,19 @@ export class PEFirmProfileComponent extends CommonFormViewComponent {
                                 // preselect geography focus
                                 this.preselectGeographies();
 
+                                // memo search params init
+                                this.memoSearchParams.memoType = "2";
+                                this.memoSearchParams.firmId = this.firm.id;
+
                             },
-                            error => this.errorMessage = "Error loading firm profile"
-                        );
-                    this.busy = this.fundService.search(this.searchParams)
-                        .subscribe(
-                            searchResult => {
-                                this.foundFundsList = searchResult;
-                            },
-                            error => this.errorMessage = "Failed to load GP's funds"
+                            (error: ErrorResponse) => {
+                                this.errorMessage = "Error loading firm profile";
+                                if(error && !error.isEmpty()){
+                                    this.processErrorMessage(error);
+                                    console.log(error);
+                                }
+                                this.postAction(null, null);
+                            }
                         );
                 }
             })
@@ -105,7 +129,7 @@ export class PEFirmProfileComponent extends CommonFormViewComponent {
         this.firm.industryFocus = this.convertToServiceModel(this.firm.industryFocus);
         this.firm.geographyFocus = this.convertToServiceModel(this.firm.geographyFocus);
 
-        this.firmService.save(this.firm)
+        this.busy = this.firmService.save(this.firm)
             .subscribe(
                 (response: SaveResponse) => {
                     this.firm.id = response.entityId;
@@ -113,21 +137,64 @@ export class PEFirmProfileComponent extends CommonFormViewComponent {
 
                     this.postAction("Successfully saved.", null);
                 },
-                error => {
-                    this.postAction(null, "Error saving firm profile.");
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error saving firm profile";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
                 }
             )
     }
-    postAction(successMessage, errorMessage) {
-        this.successMessage = successMessage;
-        this.errorMessage = errorMessage;
 
-        // TODO: non jQuery
-        $('html, body').animate({scrollTop: 0}, 'fast');
+    ngOnInit():any {
+        // TODO: exclude jQuery
+        // datetimepicker
+        $('#fromDate').datetimepicker({
+            //defaultDate: new Date(),
+            format: 'DD-MM-YYYY'
+        });
+        $('#toDate').datetimepicker({
+            //defaultDate: new Date(),
+            format: 'DD-MM-YYYY'
+        });
+
+        //this.loadLookups();
+    }
+
+
+    search(page){
+
+        // TODO: as parameter?
+        this.memoSearchParams.pageSize = 20;
+
+        this.memoSearchParams.page = page;
+
+        this.memoSearchParams.fromDate = $('#fromDate').val();
+        this.memoSearchParams.toDate = $('#toDate').val();
+
+        this.busy = this.memoService.searchPE(this.memoSearchParams)
+            .subscribe(
+                searchResult  => {
+                    this.memoList = searchResult.memos;
+                    this.memoSearchResult = searchResult;
+                },
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Failed to search memos";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
+            );
     }
 
     // TODO: Move to a common component
     loadLookups(){
+
+        //meeting types
+        this.lookupService.getMeetingTypes().then(meetingTypes => this.meetingTypes = meetingTypes);
+
         //load strategies
         this.lookupService.getPEStrategies()
             .subscribe(
@@ -136,7 +203,13 @@ export class PEFirmProfileComponent extends CommonFormViewComponent {
                         this.strategyList.push({id: element.code, text: element.nameEn});
                     });
                 },
-                error => this.errorMessage = <any>error
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
             );
 
         //load PE_Industry_Focus
@@ -147,7 +220,13 @@ export class PEFirmProfileComponent extends CommonFormViewComponent {
                         this.industryList.push({id: element.code, text: element.nameEn});
                     });
                 },
-                error => this.errorMessage = <any>error
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
             );
         // load geographies
         this.lookupService.getGeographies()
@@ -157,7 +236,13 @@ export class PEFirmProfileComponent extends CommonFormViewComponent {
                         this.geographyList.push({ id: element.code, text: element.nameEn});
                     });
                 },
-                error =>  this.errorMessage = <any>error
+                (error: ErrorResponse) => {
+            this.errorMessage = "Error loading lookups";
+            if(error && !error.isEmpty()){
+                this.processErrorMessage(error);
+            }
+            this.postAction(null, null);
+        }
             );
     }
 
@@ -203,6 +288,14 @@ export class PEFirmProfileComponent extends CommonFormViewComponent {
         }
     }
 
+    getMeetingTypeName(type){
+        for(var i = 0; i < this.meetingTypes.length; i++){
+            if(this.meetingTypes[i].code == type){
+                return this.meetingTypes[i].nameEn;
+            }
+        }
+    }
+
     public selected(value:any):void {
         //console.log('Selected value is: ', value);
     }
@@ -224,5 +317,15 @@ export class PEFirmProfileComponent extends CommonFormViewComponent {
 
     createFund(){
         this.router.navigate(['/pe/fundProfile/0/' + this.firm.id], {relativeTo: this.route});
+    }
+
+    navigate(memoType, memoId){
+        this.memoSearchParams.path = '/pe/firmProfile/' + this.firm.id;
+        let params = JSON.stringify(this.memoSearchParams);
+        this.router.navigate(['/m2s2/edit/', memoType, memoId, { params }]);
+    }
+
+    canEdit(){
+        return this.moduleAccessChecker.checkAccessPrivateEquityEditor();
     }
 }

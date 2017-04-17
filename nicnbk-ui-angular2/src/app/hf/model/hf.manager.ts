@@ -17,6 +17,16 @@ export class HFManager extends LegalEntity{
     fax: string;
     website: string;
     email: string;
-
     funds: any[];
+
+
+    //fields from m2s2
+    conviction: number;
+    managementAndTeamNotes: string;
+    managementAndTeamScore: number;
+    portfolioNotes: string;
+    portfolioScore: number;
+    strategyNotes: string;
+    strategyScore: number;
+
 }

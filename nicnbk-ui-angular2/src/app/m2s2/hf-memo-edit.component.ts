@@ -3,16 +3,23 @@ import {LookupService} from "../common/lookup.service";
 import {HFMemo} from "./model/hf-memo";
 
 import {MemoService} from "./memo.service";
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {Lookup} from "../common/lookup";
 //import {SelectItem} from "ng2-select/ng2-select";
 import {CommonFormViewComponent} from "../common/common.component";
 import {EmployeeService} from "../employee/employee.service";
 import {MemoAttachmentDownloaderComponent} from "./memo-attachment-downloader.component";
 import {Subscription} from 'rxjs';
+import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
+import {ErrorResponse} from "../common/error-response";
+import {HFManagerService} from "../hf/hf.manager.service";
+import {HFManager} from "../hf/model/hf.manager";
+import {HedgeFund} from "../hf/model/hf.fund";
+import {HedgeFundService} from "../hf/hf.fund.service";
+import {MemoSearchParams} from "./model/memo-search-params";
 
 declare var $:any
-declare var Chart: any;
+//declare var Chart: any;
 
 @Component({
     selector: 'pe-memo-edit',
@@ -30,6 +37,8 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
     busy: Subscription;
 
     private visible = false;
+    private showFundDetails = false;
+    submitted = false;
 
     memo = new HFMemo;
 
@@ -48,9 +57,15 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
     public geographyList: Array<any> = [];
     public attendeesList: Array<any> = [];
 
+    public managerList: Array<any> = [];
+
     closingScheduleList = [];
     openingScheduleList = [];
     currencyList = [];
+    fundStatusLookup = [];
+
+    private breadcrumbParams: string;
+    private searchParams = new MemoSearchParams();
 
     options = {
         placeholder: "+ tag",
@@ -58,6 +73,8 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
         separatorKeys: [188, 191], // exclude coma from tag content
         maxItems: 10
     }
+
+    private moduleAccessChecler: ModuleAccessCheckerService;
 
     public onItemAdded(item) {
         this.memo.tags.push(item);
@@ -75,17 +92,25 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
         private lookupService: LookupService,
         private employeeService: EmployeeService,
         private memoService: MemoService,
-        private route: ActivatedRoute
+        private hfManagerService: HFManagerService,
+        private hfFundService: HedgeFundService,
+        private route: ActivatedRoute,
+        private router: Router
     ){
-        super();
+        super(router);
+
+        this.moduleAccessChecler = new ModuleAccessCheckerService;
 
         // loadLookups
         this.sub = this.loadLookups();
 
+        // load all managers for dropdown
+        this.sub = this.loadManagers();
+
 
         // TODO: wait/sync on lookup loading
         // TODO: sync on subscribe results
-        //this.waitSleep(700);
+        //this.waitSleep(100);
 
 
         // parse params and load data
@@ -93,16 +118,27 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
             .params
             .subscribe(params => {
                 this.memoIdParam = +params['id'];
+                this.breadcrumbParams = params['params'];
+                if(this.breadcrumbParams != null) {
+                    this.searchParams = JSON.parse(this.breadcrumbParams);
+                }
+                this.memo.manager = new HFManager();
+                this.memo.fund = new HedgeFund();
                 if(this.memoIdParam > 0) {
                     this.busy = this.memoService.get(3, this.memoIdParam)
                         .subscribe(
                             memo => {
                                 // TODO: check response memo
+
                                 this.memo = memo;
-                                this.initRadarChart();
+                                //this.initRadarChart();
 
                                 if(this.memo.tags == null) {
                                     this.memo.tags = [];
+                                }
+
+                                if(this.memo.manager == null) {
+                                    this.memo.manager = new HFManager();
                                 }
 
                                 // untoggle funds details if fundname is not empty
@@ -111,15 +147,31 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
                                 }
 
                                 // preselect memo strategies
-                                this.preselectStrategies();
+                                //this.preselectStrategies();
 
                                 // preselect memo geographies
-                                this.preselectGeographies();
+                                //this.preselectGeographies();
 
                                 // preselect memo attendees
                                 this.preselectAttendeesNIC();
+
+                                //if(this.memo.manager != null && this.memo.fund == null){
+                                //    this.toggleFund
+                                //}
+
+                                if(this.memo.fund != null){
+                                    this.showFundDetails = true;
+                                }
+
                             },
-                            error => this.errorMessage = "Error loading memo"
+                            (error: ErrorResponse) => {
+                                this.errorMessage = "Error loading memo";
+                                if(error && !error.isEmpty()){
+                                    this.processErrorMessage(error);
+                                }
+                                this.postAction(null, null);
+                                console.log("Error loading memo");
+                            }
                         );
                 }else{
                     // TODO: default value for meeting type?
@@ -193,7 +245,6 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
 
         this.postAction(null, null);
 
-
         // TODO: exclude jQuery
         // datetimepicker
         $('#meetingDate').datetimepicker({
@@ -206,10 +257,8 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
             format: 'LT'
         });
 
-        $('input[type=text], textarea').autogrow();
-
         // init chart
-        this.initRadarChart();
+        //this.initRadarChart();
 
     }
 
@@ -224,6 +273,8 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
         //TODO: refactor ?
         this.memo.strategies = this.convertToServiceModel(this.memo.strategies);
         this.memo.geographies = this.convertToServiceModel(this.memo.geographies);
+
+        console.log(this.memo);
 
         this.memoService.saveHF(this.memo)
             .subscribe(
@@ -248,29 +299,28 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
                                 }
 
                                 this.postAction("Successfully saved.", null);
+                                this.submitted = true;
                             },
                             error => {
                                 // TODO: don't save memo?
 
                                 this.postAction(null, "Error uploading attachments.");
+                                this.submitted = false;
                             });
                     }else{
                         this.postAction("Successfully saved.", null);
+                        this.submitted = true;
                     }
                 },
-                //error =>  this.errorMessage = <any>error
-                error =>  {
-                    this.postAction(null, "Error saving memo.");
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error saving memo";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                    this.submitted = false;
                 }
             );
-    }
-
-    postAction(successMessage, errorMessage){
-        this.successMessage = successMessage;
-        this.errorMessage = errorMessage;
-
-        // TODO: non jQuery
-        $('html, body').animate({ scrollTop: 0 }, 'fast');
     }
 
     deleteAttachment(fileId){
@@ -286,9 +336,15 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
                         }
 
                         this.postAction("Attachment deleted.", null);
+                        this.submitted = false;
                     },
-                    error => {
-                        this.postAction(null, "Failed to delete attachment");
+                    (error: ErrorResponse) => {
+                        this.errorMessage = "Error deleting attachment";
+                        if(error && !error.isEmpty()){
+                            this.processErrorMessage(error);
+                        }
+                        this.postAction(null, null);
+                        this.submitted = false;
                     }
                 );
         }
@@ -365,25 +421,25 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
                 }
             ]
         };
-        var myRadarChart = new Chart(ctx, {
-            type: 'radar',
-            data: data,
-            options: {
-                legend:{
-                    display: false
-                },
-                scale: {
-                    ticks: {
-                        //beginAtZero: true,
-                        min: 0,
-                        max: 5
-                    },
-                    gridLines: {
-                        color: "#8A9396"
-                    }
-                }
-            }
-        });
+        //var myRadarChart = new Chart(ctx, {
+        //    type: 'radar',
+        //    data: data,
+        //    options: {
+        //        legend:{
+        //            display: false
+        //        },
+        //        scale: {
+        //            ticks: {
+        //                //beginAtZero: true,
+        //                min: 0,
+        //                max: 5
+        //            },
+        //            gridLines: {
+        //                color: "#8A9396"
+        //            }
+        //        }
+        //    }
+        //});
     }
 
     loadLookups(){
@@ -398,7 +454,13 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
                         this.strategyList.push({ id: element.code, text: element.nameEn});
                     });
                 },
-                error =>  this.errorMessage = <any>error
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
             );
         // load geographies
         this.lookupService.getGeographies()
@@ -408,7 +470,13 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
                     this.geographyList.push({ id: element.code, text: element.nameEn});
                 });
             },
-            error =>  this.errorMessage = <any>error
+            (error: ErrorResponse) => {
+                this.errorMessage = "Error loading lookups";
+                if(error && !error.isEmpty()){
+                    this.processErrorMessage(error);
+                }
+                this.postAction(null, null);
+            }
         );
         // load currencies
         this.lookupService.getCurrencyList()
@@ -418,8 +486,29 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
                         this.currencyList.push(element);
                     });
                 },
-                error =>  this.errorMessage = <any>error
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
         );
+
+        // load statuses
+        this.lookupService.getHedgeFundStatuses()
+            .subscribe(
+                data => {
+                    this.fundStatusLookup = data;
+                },
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
+            );
 
         // load employees
         this.employeeService.findAll()
@@ -430,7 +519,63 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
 
                     });
                 },
-                error =>  this.errorMessage = <any>error);
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading employees";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
+            );
+    }
+
+    loadManagers(){
+        this.hfManagerService.getManagers()
+            .subscribe(
+                data => {
+                    data.forEach(element => {
+                        this.managerList.push({id: element.id, name: element.name});
+                    })
+                },
+                error => {
+                    this.postAction(null, "Error loading managers list for dropdown");
+                }
+            )
+        console.log(this.managerList);
+    }
+
+    getManagerDataOnChange(id){
+        this.getManagerData(id);
+    }
+
+    getManagerData(id){
+        this.hfManagerService.get(id)
+            .subscribe(
+                (data: HFManager) => {
+                    if(data && data.id > 0) {
+                        this.memo.manager = data;
+                        this.memo.fund = null;
+                    } else {
+                        this.errorMessage = "Error loading fund manager info";
+                    }
+                },
+                error => this.errorMessage = "Error loading manager profile"
+            );
+    }
+
+    getFundData(id) {
+        for(var i = 0; i < this.memo.manager.funds.length; i++){
+            if(this.memo.manager.funds[i].id == id) {
+                return this.memo.fund = this.memo.manager.funds[i];
+            }
+        }
+    }
+
+    toggleFund(){
+        if(this.memo.fund == null){
+            this.memo.fund = new HedgeFund();
+        }
+        this.showFundDetails = !this.showFundDetails;
     }
 
     //TODO: bind ngModel - boolean
@@ -441,6 +586,26 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
 
     setNonSuitable(){
         this.memo.suitable = false;
+    }
+
+    public canEdit(){
+        return this.moduleAccessChecler.checkAccessHedgeFundsEditor();
+    }
+
+    getStrategyName(code){
+        for(var i = 0; i < this.strategyList.length; i++){
+            if(this.strategyList[i].id === code){
+                return this.strategyList[i].text;
+            }
+        }
+    }
+
+    getStatusName(code){
+        for(var i = 0; i < this.fundStatusLookup.length; i++){
+            if(this.fundStatusLookup[i].code === code){
+                return this.fundStatusLookup[i].nameEn;
+            }
+        }
     }
 
 }

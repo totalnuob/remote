@@ -4,299 +4,301 @@
             <div class="row top-buffer" >
                 <div class="col-md-12">
                     <ol class="breadcrumb">
-                        <li><a [routerLink]="['/m2s2']">Meeting Memo</a></li>
-                        <li class="active">General</li>
+                        <li>
+                            <span *ngIf="this.breadcrumbParams != null"><a [routerLink]="['/m2s2', {params: this.breadcrumbParams }]">M2S2</a></span>
+                            <span *ngIf="this.breadcrumbParams == null"><a [routerLink]="['/m2s2']">M2S2</a></span>
+                        </li>
+                        <li class="active">General memo</li>
                     </ol>
-                </div>
-            </div>
-            <div class="row top-buffer" >
-                <div class="col-md-12">
-                    <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
-                    </div>
                 </div>
             </div>
             <div class="row top-buffer" >
                 <div class="col-md-12">
                     <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
                     </div>
-                </div>
-            </div>
-            <div class="row top-buffer">
-                <div class="col-md-12">
-                    <!--<div class="col-md-2">-->
-                        <!--<a [routerLink]="['/m2s2/list/']" class="btn btn-default pull-left">Back</a>-->
-                    <!--</div>-->
-                    <div class="col-md-3">
-                        <label class="checkbox-inline">
-                            <input type="radio" [ngModel]="memo.meetingType" (ngModelChange)="memo.meetingType='MEETING'"  name="meetingType" value="MEETING">
-                            <span>Meeting</span>
-                        </label>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="checkbox-inline">
-                            <input type="radio" [ngModel]="memo.meetingType" (ngModelChange)="memo.meetingType='CALL'; memo.meetingLocation='';"  name="meetingType" value="CALL">
-                            <span>Call</span>
-                        </label>
+                    <div class="alert alert-info" *ngIf="!submitted && successMessage != null"><span>{{successMessage}}</span>
                     </div>
                 </div>
             </div>
-            <!--<div class="btn-group"  data-toggle="buttons">-->
-                <!--<label class="btn btn-primary active">-->
-                    <!--<input type="radio" [(ngModel)]="memo.meetingType" name="meetingType" value="MEETING">Meeting</label>-->
-                <!--<label class="btn btn-primary">-->
-                    <!--<input type="radio" [(ngModel)]="memo.meetingType" name="meetingType" value="CALL">Call</label>-->
-            <!--</div>-->
-            <!--<div class="row top-buffer">-->
-                <!--<label class="control-label col-md-2">&nbsp;</label>-->
-            <!--</div>-->
-            <div class="row top-buffer">
-                <div class="col-md-12">
+            <div [hidden]="submitted">
+                <form (ngSubmit)="save()" #memoForm="ngForm" class="well span">
                     <div class="row top-buffer">
-                        <label class="control-label col-md-2">Firm name:</label>
-                        <div class="col-md-4">
-                            <input id="firmName" class="form-control" placeholder="Enter firm..." maxlength="250"
-                                   [(ngModel)]="memo.firmName"/>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row top-buffer" >
-                <div class="col-md-12">
-                    <div class="row top-buffer" >
-                        <label class="control-label col-md-2">Fund name:</label>
-                        <div class="col-md-4">
-                            <input type="text" placeholder="Enter fund... " class="form-control" id="fundName"
-                                   [(ngModel)]="memo.fundName" name="fundName" maxlength="250"/>
-                        </div>
-                        <div class="col-md-2">
-                            <div class='input-group date col-md-2' id='meetingDate' style="width: 100%">
-                                <input type="text" class="form-control" id="meetingDateValue" [(ngModel)]="memo.meetingDate"/>
-                                    <span class="input-group-addon">
-                                        <span class="glyphicon glyphicon-calendar"></span>
-                                    </span>
+                        <div class="col-md-12">
+                            <div class="col-md-3">
+                                <label class="checkbox-inline">
+                                    <input type="radio" name="meetingType" [ngModel]="memo.meetingType" (ngModelChange)="memo.meetingType='MEETING'"  name="meetingType" value="MEETING">
+                                    <span>Meeting</span>
+                                </label>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="checkbox-inline">
+                                    <input type="radio" name="meetingType" [ngModel]="memo.meetingType" (ngModelChange)="memo.meetingType='CALL'; memo.meetingLocation='';"  name="meetingType" value="CALL">
+                                    <span>Call</span>
+                                </label>
                             </div>
                         </div>
-                        <div class="col-md-2">
-                            <div class='input-group datetime col-md-3' id='timePicker' style="width: 100%">
-                                <input type='text' class="form-control" id="meetingTimeValue" [(ngModel)]="memo.meetingTime"/>
-                                    <span class="input-group-addon">
-                                        <span class="glyphicon glyphicon-time"></span>
-                                    </span>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <input type="text" id="meetingLocation" placeholder="Enter location..." [(ngModel)] = "memo.meetingLocation"
-                                   [disabled]="memo.meetingType != 'MEETING'" class="form-control col-md-2" maxlength="250"/>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row top-buffer">
-                <div class="col-md-12">
-                    <div class="row top-buffer">
-                        <label class="control-label col-md-3">Arranged By:</label>
-                        <div class="col-md-3">
-                            <select id="arrangedBySelect" class="form-control" [(ngModel)]="memo.arrangedBy"
-                                    (ngModelChange)="changeArrangedBy()">
-                                <option value="NIC">NIC</option>
-                                <option value="GP">GP</option>
-                                <option value="OTHER">Other</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                                    <textarea spellcheck="false" class="form-control"
-                                              [disabled]="memo.arrangedBy != 'OTHER'" id="arrengedByDescription" maxlength="250"
-                                              [(ngModel)]="memo.arrangedByDescription"></textarea>
-                        </div>
                     </div>
                     <div class="row top-buffer">
-                        <label class="control-label col-md-3">Purpose:</label>
-                        <div class="col-md-9">
-                                <textarea  spellcheck="false"  type="text" class="form-control" id="purpose" maxlength="1000"
-                                          [(ngModel)]="memo.purpose"></textarea>
-                        </div>
-                    </div>
-                    <div class="row top-buffer">
-                        <label class="control-label col-md-3">Attendees (NIC):</label>
-                        <div class="col-md-6" *ngIf="attendeesList?.length > 0">
-                            <!--<select id="attendeesNICSelect" class="form-control" multiple="multiple">-->
-                            <!--<option value="NA">NA</option>-->
-                            <!--<option value="GB">GB</option>-->
-                            <!--<option value="KZ">KZ</option>-->
-                            <!--<option value="AK">AK</option>-->
-                            <!--<option value="TT">TT</option>-->
-                            <!--</select>-->
-
-                            <ng-select #attendeesSelect [initData]="memo.attendeesNIC"
-                                       [multiple]="true"
-                                       [items]="attendeesList"
-                                       (data)="refreshAttendeesNIC($event)"
-                                       (selected)="selected($event)"
-                                       (removed)="removed($event)"
-                                       placeholder="No attendee selected"></ng-select>
-
-
-                        </div>
-                    </div>
-
-                    <div class="row top-buffer">
-                        <label class="control-label col-md-3">Attendees (NIC) Other:</label>
-                        <div class="col-md-9">
-                                <textarea  spellcheck="false"  type="text" placeholder="NIC attendees..." class="form-control"
-                                          maxlength="1000" id="attendeesNIC" [(ngModel)]="memo.attendeesNICOther"></textarea>
-                        </div>
-                    </div>
-                    <div class="row top-buffer">
-                        <label class="control-label col-md-3" for="attendeesDescription">Attendees (Other Party):</label>
-                        <div class="col-md-9">
-                                <textarea  spellcheck="false"  type="text" class="form-control" id="attendeesDescription"
-                                          placeholder="Other attendees..."maxlength="1000"
-                                          [(ngModel)]="memo.attendeesOther"></textarea>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!--<hr style="border-top: 1px solid #B5AEAE"/>-->
-
-            <div class="row top-buffer withpadding">
-                <div class="col-md-12" style="background-color:#5bc0de;">
-                    <div>
-                        <div class="col-md-6">
-                            <span>TOPIC 1</span>
-                        </div>
-                        <div class="col-md-5">&nbsp;</div>
-                    </div>
-                </div>
-            </div>
-            <div class="row top-buffer withpadding">
-                <div class="col-md-12 nopadding">
-                    <textarea  pInputTextarea autoResize="autoResize" spellcheck="false"  class="form-control" [(ngModel)]="memo.topic1"></textarea>
-                </div>
-            </div>
-            <div class="row top-buffer withpadding">
-                <div class="col-md-12" style="background-color:#5bc0de;">
-                    <div class="col-md-6">
-                        <span>TOPIC 2</span>
-                    </div>
-                    <div class="col-md-6">&nbsp;</div>
-                </div>
-            </div>
-            <div class="row top-buffer withpadding">
-                <div class="col-md-12 nopadding">
-                    <textarea  spellcheck="false"  class="form-control" [(ngModel)]="memo.topic2"></textarea>
-                </div>
-            </div>
-            <div class="row top-buffer withpadding">
-                <div class="col-md-12" style="background-color:#5bc0de;">
-                    <div class="col-md-6">
-                        <span>TOPIC 3</span>
-                    </div>
-                    <div class="col-md-6">&nbsp;</div>
-                </div>
-            </div>
-            <div class="row top-buffer withpadding">
-                <div class="col-md-12 nopadding">
-                    <textarea spellcheck="false"  class="form-control" [(ngModel)]="memo.topic3"></textarea>
-                </div>
-            </div>
-            <div class="row top-buffer withpadding">
-                <div class="col-md-12" style="background-color:#5bc0de;">
-                    <div class="col-md-2">
-                        <span>OTHER INFO</span>
-                    </div>
-                    <div class="col-md-10">&nbsp;</div>
-                </div>
-            </div>
-            <div class="row top-buffer withpadding">
-                <div class="col-md-12 nopadding">
-                    <textarea spellcheck="false"  class="form-control" [(ngModel)]="memo.otherNotes"></textarea>
-                </div>
-            </div>
-            <div class="row top-buffer withpadding">
-                <div class="col-md-12" style="background-color:#5bc0de;">
-                    <div class="col-md-2">
-                        <span>FOLLOW-UPS</span>
-                    </div>
-                    <div class="col-md-10">&nbsp;</div>
-                </div>
-            </div>
-            <div class="row top-buffer withpadding">
-                <div class="col-md-6">
-                    <label>NIC</label>
-                </div>
-                <div class="col-md-6">
-                    <label>OTHER</label>
-                </div>
-            </div>
-            <div class="row top-buffer withpadding">
-                <div class="col-md-6 nopadding">
-                    <textarea spellcheck="false"  class="form-control" [(ngModel)]="memo.nicFollowups"></textarea>
-                </div>
-                <div class="col-md-6 nopadding">
-                    <textarea spellcheck="false"  class="form-control" [(ngModel)]="memo.otherPartyFollowups"></textarea>
-                </div>
-            </div>
-            <br/>
-            <div class="row top-buffer">
-                <div class="col-md-6">
-                    <div class="jumbotron" style="padding-top: 5px; padding-bottom: 5px;">
-                        <div class="row">
-                            <label>ATTACHMENTS</label>
-                        </div>
-
-                        <div class="row">
-                            <label class="btn btn-primary col-md-2" for="attachmentFile">
-                                <input type="file" id="attachmentFile" (change)="onFileChange($event)" name="file" multiple style="display:none;"/>
-                                Add
-                            </label>
-
-                            <div class="col-md-4">
-                                <div class="row" *ngFor="let newFile of uploadFiles" class="label label-info" style="display: table;">
-                                    <span>{{newFile.name}}</span>
+                        <div class="col-md-12">
+                            <div class="row top-buffer">
+                                <label class="control-label col-md-2">Firm name:</label>
+                                <div class="col-md-4">
+                                    <input id="firmName" class="form-control" placeholder="Enter firm..." maxlength="250"
+                                           name="firmName" [(ngModel)]="memo.firmName"/>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="row top-buffer" >
+                        <div class="col-md-12">
+                            <div class="row top-buffer" >
+                                <label class="control-label col-md-2">Fund name:</label>
+                                <div class="col-md-4">
+                                    <input type="text" placeholder="Enter fund... " class="form-control" id="fundName"
+                                           name="fundName" [(ngModel)]="memo.fundName" name="fundName" maxlength="250"/>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class='input-group date col-md-2' id='meetingDate' style="width: 100%">
+                                        <input type="text" class="form-control" id="meetingDateValue" name="meetingDate" [(ngModel)]="memo.meetingDate"/>
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class='input-group datetime col-md-3' id='timePicker' style="width: 100%">
+                                        <input type='text' class="form-control" id="meetingTimeValue" name="meetingTime" [(ngModel)]="memo.meetingTime"/>
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-time"></span>
+                                    </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="text" id="meetingLocation" placeholder="Enter location..." name="meetingLocation" [(ngModel)] = "memo.meetingLocation"
+                                           [disabled]="memo.meetingType != 'MEETING'" class="form-control col-md-2" maxlength="250"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                        <div class="row" *ngIf="memo?.files?.length > 0">
-                            <div *ngFor="let attachment of memo.files">
-                                <memo-attachment-downloader fileId="{{attachment.id}}"
-                                                            fileName="{{attachment.fileName}}">
-                                </memo-attachment-downloader>
+                    <div class="row top-buffer">
+                        <div class="col-md-12">
+                            <div class="row top-buffer">
+                                <label class="control-label col-md-3">Arranged By:</label>
+                                <div class="col-md-3">
+                                    <select id="arrangedBySelect" class="form-control" name="arrangedBy" [(ngModel)]="memo.arrangedBy"
+                                            (ngModelChange)="changeArrangedBy(); arranged.reset();">
+                                        <option value="NIC">NIC</option>
+                                        <option value="GP">GP</option>
+                                        <option value="OTHER">Other</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <textarea fz-elastic spellcheck="false" class="form-control"
+                                              [disabled]="memo.arrangedBy != 'OTHER'" id="arrengedByDescription" maxlength="250"
+                                              name="arrangedByDescription" [(ngModel)]="memo.arrangedByDescription" required #arranged="ngModel"></textarea>
+                                    <div [hidden]="arranged.valid || arranged.pristine" class="alert alert-danger">
+                                        Description is required
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row top-buffer">
+                                <label class="control-label col-md-3">Purpose:</label>
+                                <div class="col-md-9">
+                                <textarea fz-elastic spellcheck="false"  type="text" class="form-control" id="purpose" maxlength="1000"
+                                          name="purpose" [(ngModel)]="memo.purpose"></textarea>
+                                </div>
+                            </div>
+                            <div class="row top-buffer">
+                                <label class="control-label col-md-3">Attendees (NIC):</label>
+                                <div class="col-md-6" *ngIf="attendeesList?.length > 0">
+                                    <ng-select #attendeesSelect [initData]="memo.attendeesNIC"
+                                               [multiple]="true"
+                                               [items]="attendeesList"
+                                               (data)="refreshAttendeesNIC($event)"
+                                               (selected)="selected($event)"
+                                               (removed)="removed($event)"
+                                               placeholder="No attendee selected"></ng-select>
+                                </div>
+                            </div>
 
-                                <a (click)="deleteAttachment(attachment.id)">
-                                    <i class="glyphicon glyphicon-trash"></i>
-                                </a>
+                            <div class="row top-buffer">
+                                <label class="control-label col-md-3">Attendees (NIC) Other:</label>
+                                <div class="col-md-9">
+                                <textarea fz-elastic spellcheck="false"  type="text" placeholder="NIC attendees..." class="form-control"
+                                          maxlength="1000" id="attendeesNIC" name="attendeesNICOther" [(ngModel)]="memo.attendeesNICOther"></textarea>
+                                </div>
+                            </div>
+                            <div class="row top-buffer">
+                                <label class="control-label col-md-3" for="attendeesDescription">Attendees (Other Party):</label>
+                                <div class="col-md-9">
+                                <textarea fz-elastic spellcheck="false"  type="text" class="form-control" id="attendeesDescription"
+                                          placeholder="Other attendees..."maxlength="1000"
+                                          name="attendeesOther" [(ngModel)]="memo.attendeesOther"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row top-buffer withpadding">
+                        <div class="col-md-12" style="background-color:#5bc0de; height: 34px">
+                            <div>
+                                <div class="col-md-6">
+                                    <h5>TOPIC 1</h5>
+                                </div>
+                                <div class="col-md-5">&nbsp;</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row top-buffer withpadding">
+                        <div class="col-md-12 nopadding">
+                            <textarea fz-elastic pInputTextarea autoResize="autoResize" spellcheck="false"  class="form-control" name="topic1" [(ngModel)]="memo.topic1"></textarea>
+                        </div>
+                    </div>
+                    <div class="row top-buffer withpadding">
+                        <div class="col-md-12" style="background-color:#5bc0de; height: 34px">
+                            <div class="col-md-6">
+                                <h5>TOPIC 2</h5>
+                            </div>
+                            <div class="col-md-6">&nbsp;</div>
+                        </div>
+                    </div>
+                    <div class="row top-buffer withpadding">
+                        <div class="col-md-12 nopadding">
+                            <textarea fz-elastic spellcheck="false"  class="form-control" name="topic2" [(ngModel)]="memo.topic2"></textarea>
+                        </div>
+                    </div>
+                    <div class="row top-buffer withpadding">
+                        <div class="col-md-12" style="background-color:#5bc0de; height: 34px">
+                            <div class="col-md-6">
+                                <h5>TOPIC 3</h5>
+                            </div>
+                            <div class="col-md-6">&nbsp;</div>
+                        </div>
+                    </div>
+                    <div class="row top-buffer withpadding">
+                        <div class="col-md-12 nopadding">
+                            <textarea fz-elastic spellcheck="false"  class="form-control" name="topic3" [(ngModel)]="memo.topic3"></textarea>
+                        </div>
+                    </div>
+                    <div class="row top-buffer withpadding">
+                        <div class="col-md-12" style="background-color:#5bc0de; height: 34px">
+                            <div class="col-md-2">
+                                <h5>OTHER INFO</h5>
+                            </div>
+                            <div class="col-md-10">&nbsp;</div>
+                        </div>
+                    </div>
+                    <div class="row top-buffer withpadding">
+                        <div class="col-md-12 nopadding">
+                            <textarea fz-elastic spellcheck="false"  class="form-control" name="otherNotes" [(ngModel)]="memo.otherNotes"></textarea>
+                        </div>
+                    </div>
+                    <div class="row top-buffer withpadding">
+                        <div class="col-md-12" style="background-color:#5bc0de; height: 34px">
+                            <div class="col-md-2">
+                                <h5>FOLLOW-UPS</h5>
+                            </div>
+                            <div class="col-md-10">&nbsp;</div>
+                        </div>
+                    </div>
+                    <div class="row top-buffer withpadding">
+                        <div class="col-md-6">
+                            <label>NIC</label>
+                        </div>
+                        <div class="col-md-6">
+                            <label>OTHER</label>
+                        </div>
+                    </div>
+                    <div class="row top-buffer withpadding">
+                        <div class="col-md-6 nopadding">
+                            <textarea fz-elastic spellcheck="false"  class="form-control" name="nicFollowups" [(ngModel)]="memo.nicFollowups"></textarea>
+                        </div>
+                        <div class="col-md-6 nopadding">
+                            <textarea fz-elastic spellcheck="false"  class="form-control" name="otherPartyFollowups" [(ngModel)]="memo.otherPartyFollowups"></textarea>
+                        </div>
+                    </div>
+                    <br/>
+                    <div class="row top-buffer">
+                        <div class="col-md-12">
+                            <div class="col-md-6">
+                                <div class="jumbotron" style="padding-top: 5px; padding-bottom: 5px;">
+                                    <div class="row">
+                                        <label>ATTACHMENTS</label>
+                                    </div>
+
+                                    <div class="row" *ngIf="canEdit()">
+                                        <label class="btn btn-primary col-md-2" for="attachmentFile">
+                                            <input type="file" id="attachmentFile" (change)="onFileChange($event)" name="file" multiple style="display:none;"/>Add</label>
+
+                                        <div class="col-md-4">
+                                            <div class="row" *ngFor="let newFile of uploadFiles" class="label label-info" style="display: table;">
+                                                <span>{{newFile.name}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row" *ngIf="memo?.files?.length > 0">
+                                        <div *ngFor="let attachment of memo.files">
+                                            <memo-attachment-downloader fileId="{{attachment.id}}"
+                                                                        fileName="{{attachment.fileName}}">
+                                            </memo-attachment-downloader>
+
+                                            <a (click)="deleteAttachment(attachment.id)" *ngIf="canEdit()">
+                                                <i class="glyphicon glyphicon-trash"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <label class="control-label">Author: {{memo.owner}}</label>
+                                </div>
+                                <div class="row" *ngIf="memo.updater != null || memo.updateDate != null">
+                                    <label class="control-label" >Last Update: {{memo.updater}} {{memo.updateDate != null ? 'on ' + memo.updateDate : ''}}</label>
+                                </div>
+                                <!--<div class="col-md-4">-->
+                                    <!--&lt;!&ndash;<input type="text" placeholder="Your name... " class="form-control col-md-4" id="author"&ndash;&gt;-->
+                                           <!--&lt;!&ndash;name="author" maxlength="250" name="author" [(ngModel)]="memo.author"/>&ndash;&gt;-->
+                                    <!--<span>{{memo.owner}}</span>-->
+                                <!--</div>-->
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="col-md-4">
+                                <tag-input name="tags"
+                                           [ngModel]="memo.tags" ngDefaultControl
+                                           (onRemove)="onItemRemoved($event)"
+                                           (onAdd)="onItemAdded($event)"
+                                           [placeholder]="options.placeholder"
+                                           [secondaryPlaceholder]="options.secondaryPlaceholder"
+                                           [maxItems]="options.maxItems"
+                                           [separatorKeys]="options.separatorKeys">
+                                </tag-input>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row top-buffer">
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-success pull-right" name="saveMemo" [disabled]="!memoForm.form.valid" *ngIf="canEdit()">Save</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div [hidden]="!submitted">
+                <div class="row top-buffer" >
+                    <div class="col-md-12">
+                        <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
+                            <div class="row withpadding">
+                                <h3>This memo was saved</h3>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <div class="col-md-6">
-                    <label class="col-md-2">Author:</label>
-                    <div class="col-md-4">
-                        <input type="text" placeholder="Your name... " class="form-control col-md-4" id="author"
-                               name="author" maxlength="250" [(ngModel)]="memo.author"/>
-                    </div>
-                </div>
-
-                <div class="col-md-12">
-                    <div class="col-md-4">
-                        <tag-input [ngModel]="memo.tags" ngDefaultControl
-                                   (onRemove)="onItemRemoved($event)"
-                                   (onAdd)="onItemAdded($event)"
-                                   [placeholder]="options.placeholder"
-                                   [secondaryPlaceholder]="options.secondaryPlaceholder"
-                                   [maxItems]="options.maxItems"
-                                   [separatorKeys]="options.separatorKeys">
-                        </tag-input>
-                    </div>
-                </div>
-            </div>
-            <div class="row top-buffer">
-                <div class="col-md-12">
-                    <button type="button" class="btn btn-success pull-right" name="saveMemo" (click)="save()">Save</button>
-                </div>
+                <button class="btn btn-primary" [routerLink]="['/m2s2']">Back to menu</button>
             </div>
         </div>
     </div>

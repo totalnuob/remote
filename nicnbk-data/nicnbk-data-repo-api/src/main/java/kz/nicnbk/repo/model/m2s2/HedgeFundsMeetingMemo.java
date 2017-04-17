@@ -1,8 +1,9 @@
 package kz.nicnbk.repo.model.m2s2;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import kz.nicnbk.repo.model.hf.HFManager;
+import kz.nicnbk.repo.model.hf.HedgeFund;
+
+import javax.persistence.*;
 
 /**
  * Created by magzumov on 04.07.2016.
@@ -23,6 +24,9 @@ public class HedgeFundsMeetingMemo extends FundMeetingMemo {
     private String NICFollowups;
     private String otherPartyFollowups;
     private Short conviction;
+
+    private HFManager manager;
+    private HedgeFund fund;
 
     public HedgeFundsMeetingMemo(){
         setMemoType(HF_DISCRIMINATOR);
@@ -116,5 +120,26 @@ public class HedgeFundsMeetingMemo extends FundMeetingMemo {
 
     public void setConviction(Short conviction) {
         this.conviction = conviction;
+    }
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "manager_id")
+    public HFManager getManager() {
+        return manager;
+    }
+
+    public void setManager(HFManager manager) {
+        this.manager = manager;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fund_id")
+    public HedgeFund getFund() {
+        return fund;
+    }
+
+    public void setFund(HedgeFund fund) {
+        this.fund = fund;
     }
 }

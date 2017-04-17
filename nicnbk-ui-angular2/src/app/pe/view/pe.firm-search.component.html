@@ -14,49 +14,64 @@
     <!--</div>-->
     <!--</div>-->
 
+    <div class="row">
+        <div class="row top-buffer" >
+            <div class="col-md-12">
+                <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
+                </div>
+            </div>
+        </div>
+        <div class="row top-buffer" >
+            <div class="col-md-12">
+                <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
     <br/>
 
     <div class="jumbotron">
         <br/>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="col-md-9">
-                    <div class="form-group">
-                        <label for="firmName">Manager name</label>
-                        <input type="text" class="form-control" id="firmName" [(ngModel)]="searchParams.name"
-                               placeholder="Enter manager..."
-                        />
+        <form (ngSubmit)="search()">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-9">
+                        <div class="form-group">
+                            <label for="firmName">Firm name</label>
+                            <input type="text" class="form-control" id="firmName" [(ngModel)]="searchParams.name" name="firmName"
+                                   placeholder="Enter firm name..." />
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <!--<div class="row">-->
-        <!--<div class="col-md-12">-->
-        <!--<div class="col-md-3">-->
-        <!--<div class="form-group">-->
-        <!--<label for="strategy">Strategy</label>-->
-        <!--<select class="form-control" id="strategy">-->
-        <!--<option value="0">-&#45;&#45;</option>-->
-        <!--<option *ngFor = "let item of strategyList" [value]="item.code">{{item.nameEn}}</option>-->
-        <!--</select>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--<div class="col-md-3">-->
-        <!--<div class="form-group">-->
-        <!--<label for="status">Status</label>-->
-        <!--<select class="form-control" id="status">-->
-        <!--<option value="0">-&#45;&#45;</option>-->
-        <!--<option *ngFor = "let item of statusList" [value]="item.code">{{item.nameEn}}</option>-->
-        <!--</select>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</div>-->
-        <div class="row">
-            <div class="col-md-12">
-                <button type="button" class="btn btn-success pull-right" (click)="search()">Search</button>
+            <!--<div class="row">-->
+            <!--<div class="col-md-12">-->
+            <!--<div class="col-md-3">-->
+            <!--<div class="form-group">-->
+            <!--<label for="strategy">Strategy</label>-->
+            <!--<select class="form-control" id="strategy">-->
+            <!--<option value="0">-&#45;&#45;</option>-->
+            <!--<option *ngFor = "let item of strategyList" [value]="item.code">{{item.nameEn}}</option>-->
+            <!--</select>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--<div class="col-md-3">-->
+            <!--<div class="form-group">-->
+            <!--<label for="status">Status</label>-->
+            <!--<select class="form-control" id="status">-->
+            <!--<option value="0">-&#45;&#45;</option>-->
+            <!--<option *ngFor = "let item of statusList" [value]="item.code">{{item.nameEn}}</option>-->
+            <!--</select>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+            <div class="row">
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-success pull-right">Search</button>
+                </div>
             </div>
-        </div>
+        </form>
     </div>
     <div>
         <label>Total found: <span>{{searchResult?.totalElements > 0 ?  searchResult?.totalElements : 0}}</span></label>
@@ -75,22 +90,24 @@
         <table [ngBusy]="busy" class="table table-hover">
             <thead>
             <tr>
-                <th>&nbsp;</th>
+                <!--<th>&nbsp;</th>-->
                 <th>MANAGER</th>
                 <!--<th>FUND</th>-->
                 <th>AUM (mln)</th>
                 <th>FOUNDED YEAR</th>
                 <th>LOCATION</th>
+                <th>CREATED</th>
                 <th>UPDATED</th>
+                <th>UPDATEDBY</th>
                 <th>ACTIONS</th>
             </tr>
             </thead>
 
             <tbody>
 
-            <tr *ngFor = "let firm of foundEntities">
-                <td width="5%"></td>
-                <td width="15%"><a [routerLink]="['/pe/firmProfile/', firm.id]">{{firm.firmName}}</a></td>
+            <tr *ngFor = "let firm of foundEntities" style="cursor: pointer" (click)="navigate('/pe/firmProfile/', firm.id)">
+                <!--<td width="5%"></td>-->
+                <td width="15%"><a>{{firm.firmName}}</a></td>
                 <!--<td width="30%">-->
                 <!--&lt;!&ndash;<a [routerLink]="['/hf/managerProfile/', fund.manager.id]">{{fund.manager.name}}</a>&ndash;&gt;-->
                 <!--</td>-->
@@ -98,10 +115,12 @@
                 <td width="7%">{{firm.aum}}</td>
                 <td width="7%">{{firm.foundedYear}}</td>
                 <td width="15%">{{firm.locations}}</td>
-                <td width="7%">{{firm.creationDate}}</td>
+                <td width="7%">{{firm.owner}}</td>
+                <td width="7%">{{firm.updateDate}}</td>
+                <td width="7%">{{firm.updater}}</td>
                 <td width="5%">
                     <!--<a><i class="glyphicon glyphicon-search"></i></a>-->
-                    <a><i class="glyphicon glyphicon-file" [routerLink]="['/pe/fundReport/', firm.id]"></i></a>
+                    <a><i class="glyphicon glyphicon-file" (click)="navigate('/pe/fundReport/', firm.id)"></i></a>
                 </td>
             </tr>
 

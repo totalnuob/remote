@@ -11,6 +11,7 @@ import kz.nicnbk.service.dto.pe.PEFirmDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -68,6 +69,15 @@ public class PEFirmEntityConverter extends BaseDozerEntityConverter<PEFirm,PEFir
     public PEFirmDto disassemble(PEFirm entity){
         PEFirmDto dto = super.disassemble(entity);
 
+        // creator
+        if(entity.getCreator() != null){
+            dto.setOwner(entity.getCreator().getUsername());
+        }
+
+        // updater
+        if(entity.getUpdater() != null){
+            dto.setUpdater(entity.getUpdater().getUsername());
+        }
         return dto;
     }
 
@@ -79,5 +89,15 @@ public class PEFirmEntityConverter extends BaseDozerEntityConverter<PEFirm,PEFir
             }
         }
         return dtoSet;
+    }
+
+    public List<PEFirmDto> disassembleList(List<PEFirm> entities){
+        List<PEFirmDto> dtoList = new ArrayList<>();
+        if(entities != null){
+            for(PEFirm entity: entities){
+                dtoList.add(disassemble(entity));
+            }
+        }
+        return dtoList;
     }
 }

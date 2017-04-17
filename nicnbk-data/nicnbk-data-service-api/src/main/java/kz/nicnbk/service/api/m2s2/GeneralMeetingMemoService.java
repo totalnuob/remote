@@ -8,7 +8,9 @@ import kz.nicnbk.service.dto.m2s2.GeneralMeetingMemoDto;
  */
 public interface GeneralMeetingMemoService extends BaseService {
 
-    Long save(GeneralMeetingMemoDto memoDto);
+    Long save(GeneralMeetingMemoDto memoDto, String updater);
 
     GeneralMeetingMemoDto get(Long id);
+
+    boolean checkOwner(String token, Long memoId);
 }

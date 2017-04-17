@@ -10,10 +10,12 @@
         <ul>
             <li style="float:right"><a (click)="logout()">
                 <h5><span class="glyphicon glyphicon-off"></span></h5></a></li>
-            <li style="float:right"><a href="#">
+            <li style="float:right"><a [routerLink]="['/profile']">
                 <h5><span class="glyphicon glyphicon-user"></span></h5></a></li>
-            <li style="float:right"><a [routerLink]="['/news/edit/']">
+            <li style="float:right"><a href="#">
                 <h5><span class="glyphicon glyphicon-cog"></span></h5></a></li>
+            <li style="float:right"><h5><span class="glyphicon">Hello{{getUsername()}}</span></h5></li>
+
 
             <li style="float:left; background-color:#1D7D35;">
                 <!--<a href="#about">-->
@@ -36,6 +38,11 @@
     </div>
     <br/>
     <div class="container" *ngIf="showMenu()">
+        <!--<div class="row">-->
+            <!--<div class="col-md-3 pull-right">-->
+                <!--<div>Hello, {{getUsername()}}</div>-->
+            <!--</div>-->
+        <!--</div>-->
         <div class="row">
             <div class="col-md-3 pull-right">
                 <div id="custom-search-input">
@@ -70,43 +77,44 @@
                         <li><a [routerLink]="['/monitoring/portfolio']" data-toggle="tooltip" title="Monitoring NIC Portfolio">NIC Portfolio</a></li>
                         <li><a [routerLink]="['/monitoring/liq']" data-toggle="tooltip" title="Monitoring Liquid Portfolio">Liquid Portfolio</a></li>
                         <li role="separator" class="divider"></li>
-                        <li><a [routerLink]="['/monitoring/pe']" data-toggle="tooltip" title="Monitoring Private Equity Portfolio">Private Equity Portfolio</a></li>
+                        <!--<li><a [routerLink]="['/monitoring/pe']" data-toggle="tooltip" title="Monitoring Private Equity Portfolio">Private Equity Portfolio</a></li>-->
                         <li><a [routerLink]="['/monitoring/peFund']" data-toggle="tooltip" title="Monitoring Tarragon">Tarragon</a></li>
                         <li role="separator" class="divider"></li>
-                        <li><a [routerLink]="['/monitoring/hf']" data-toggle="tooltip" title="Monitoring Hedge Funds Portfolio">Hedge Funds Portfolio</a></li>
+                        <!--<li><a [routerLink]="['/monitoring/hf']" data-toggle="tooltip" title="Monitoring Hedge Funds Portfolio">Hedge Funds Portfolio</a></li>-->
                         <li><a [routerLink]="['/monitoring/hf2']" data-toggle="tooltip" title="Monitoring Tarragon">Singularity</a></li>
                     </ul>
                 </li>
-                <li [routerLinkActive]="['active']" >
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                        Risk Management <span class="bootstrapCaret"></span>
-                    </a>
-                    <!--<a th:href="@{/risks}">Risk Management</a></li>-->
-                    <ul class="dropdown-menu">
-                        <!--<li><a [routerLink]="['/monitoring/mm']" data-toggle="tooltip" title="Macro Monitor">Macro Monitor</a></li>-->
-                        <li><a [routerLink]="['/monitoring/axioma']" data-toggle="tooltip" title="Axioma Reporting">Axioma Reporting</a></li>
-                        <!--<li><a href="#">Risk</a></li>-->
-                    </ul>
-                </li>
+                <!--<li [routerLinkActive]="['active']" >-->
+                    <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">-->
+                        <!--Risk Management <span class="bootstrapCaret"></span>-->
+                    <!--</a>-->
+                    <!--&lt;!&ndash;<a th:href="@{/risks}">Risk Management</a></li>&ndash;&gt;-->
+                    <!--<ul class="dropdown-menu">-->
+                        <!--&lt;!&ndash;<li><a [routerLink]="['/monitoring/mm']" data-toggle="tooltip" title="Macro Monitor">Macro Monitor</a></li>&ndash;&gt;-->
+                        <!--<li><a [routerLink]="['/monitoring/axioma']" data-toggle="tooltip" title="Axioma Reporting">Axioma Reporting</a></li>-->
+                        <!--&lt;!&ndash;<li><a href="#">Risk</a></li>&ndash;&gt;-->
+                    <!--</ul>-->
+                <!--</li>-->
                 <li [routerLinkActive]="['active']"><a [routerLink]="['/monitoring/mm']" data-toggle="tooltip" title="Macro Monitor">Macro Monitor</a></li>
                 <li [routerLinkActive]="['active']"><a [routerLink]="['/m2s2']" data-toggle="tooltip" title="Meeting Memo Scoring System">M2S2</a></li>
-                <li [routerLinkActive]="['active']"  class="dropdown">
+                <li [routerLinkActive]="['active']"  class="dropdown" *ngIf="showPrivateEquity()">
                     <!--<a th:href="@{/pe}">Private Equity</a>-->
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                         Private Equity <span class="bootstrapCaret"></span>
                     </a>
                     <ul class="dropdown-menu">
                         <!--<li><a href="#">Dashboard</a></li>-->
-                        <li><a [routerLink]="['/pe/firmSearch']">Fund Search</a></li>
+                        <li><a [routerLink]="['/pe/firmSearch']">Firm Search</a></li>
                         <li role="separator" class="divider"></li>
                         <!--<li><a [routerLink]="['/pe/fundProfile']">New Fund</a></li>-->
-                        <li><a [routerLink]="['/pe/firmProfile']">New Firm</a></li>
+                        <li *ngIf="showPrivateEquityEditor()"><a [routerLink]="['/pe/firmProfile']">New Firm</a></li>
                         <!--<li><a href="#">Forward Calendar</a></li>-->
                     </ul>
                 </li>
-                <li [routerLinkActive]="['active']" ><a href="#">Real Estate</a></li>
+                <!--<li [routerLinkActive]="['active']" *ngIf="showRealEstate()"><a href="#">Real Estate</a></li>-->
                 <!--<li [routerLinkActive]="['active']" ><a href="#">Hedge Funds</a></li>-->
-                <li class="dropdown">
+                <!--<li [routerLinkActive]="['active']" class="dropdown" *ngIf="showHedgeFunds()">-->
+                <li [routerLinkActive]="['active']"  class="dropdown" *ngIf="showHedgeFunds()">
                     <!--<a th:href="@{/pe}">Private Equity</a>-->
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                         Hedge Funds <span class="bootstrapCaret"></span>
@@ -120,15 +128,24 @@
                         <!--<li><a [routerLink]="['/hf/report']">Report </a></li>-->
                         <li role="separator" class="divider"></li>
                         <!--<li><a [routerLink]="['/hf/fundProfile/0']">New Fund </a></li>-->
-                        <li><a [routerLink]="['/hf/managerProfile/0']">New Manager </a></li>
+                        <li *ngIf="showHedgeFundsEditor()"><a [routerLink]="['/hf/managerProfile/0']">New Manager </a></li>
 
                     </ul>
                 </li>
-                <li [routerLinkActive]="['active']"><a [routerLink]="['/bt']" data-toggle="tooltip" title="Business Trip Memo">Business Trips</a></li>
+                <li [routerLinkActive]="['active']"><a [routerLink]="['/bt']" data-toggle="tooltip" title="Trip Memo">Trainings</a></li>
             </ul>
         </div>
     </nav>
 </div>
+
+<!--<div class="container">-->
+    <!--<div class="row top-buffer" >-->
+        <!--<div class="col-md-12">-->
+            <!--<breadcrumb></breadcrumb>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->
+
 
 <router-outlet></router-outlet>
 

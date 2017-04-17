@@ -1,8 +1,9 @@
 package kz.nicnbk.repo.model.m2s2;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import kz.nicnbk.repo.model.pe.PEFirm;
+import kz.nicnbk.repo.model.pe.PEFund;
+
+import javax.persistence.*;
 
 /**
  * Created by magzumov on 04.07.2016.
@@ -23,6 +24,9 @@ public class PrivateEquityMeetingMemo extends FundMeetingMemo {
     private String nicFollowups;
     private String otherPartyFollowups;
     private Short conviction;
+
+    private PEFirm firm;
+    private PEFund fund;
 
     public PrivateEquityMeetingMemo(){
         setMemoType(PE_DISCRIMINATOR);
@@ -118,4 +122,23 @@ public class PrivateEquityMeetingMemo extends FundMeetingMemo {
         this.conviction = conviction;
     }
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "firm_id")
+    public PEFirm getFirm() {
+        return firm;
+    }
+
+    public void setFirm(PEFirm firm) {
+        this.firm = firm;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fund_id")
+    public PEFund getFund() {
+        return fund;
+    }
+
+    public void setFund(PEFund fund) {
+        this.fund = fund;
+    }
 }

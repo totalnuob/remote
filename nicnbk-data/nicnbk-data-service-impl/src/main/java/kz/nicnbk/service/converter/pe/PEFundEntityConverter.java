@@ -1,6 +1,8 @@
 package kz.nicnbk.service.converter.pe;
 
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
+import kz.nicnbk.common.service.util.StringUtils;
+import kz.nicnbk.repo.model.common.Currency;
 import kz.nicnbk.repo.model.common.Geography;
 import kz.nicnbk.repo.model.common.Strategy;
 import kz.nicnbk.repo.model.pe.PEFund;
@@ -61,12 +63,23 @@ public class PEFundEntityConverter extends BaseDozerEntityConverter<PEFund, PEFu
         }
         entity.setGeography(geographies);
 
+        // set currency
+        if(StringUtils.isNotEmpty(dto.getCurrency())) {
+            Currency currency = lookupService.findByTypeAndCode(Currency.class, dto.getCurrency());
+            entity.setFundCurrency(currency);
+        }
+
         return entity;
     }
 
     @Override
     public PEFundDto disassemble(PEFund entity){
         PEFundDto dto = super.disassemble(entity);
+
+        if(entity.getFundCurrency() != null){
+            dto.setCurrency(entity.getFundCurrency().getCode());
+        }
+
         return dto;
     }
 

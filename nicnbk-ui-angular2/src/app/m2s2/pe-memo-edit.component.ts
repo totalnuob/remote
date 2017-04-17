@@ -2,23 +2,31 @@ import { Component,NgModule, OnInit, ViewChild  } from '@angular/core';
 import {LookupService} from "../common/lookup.service";
 import {PEMemo} from "./model/pe-memo";
 import {MemoService} from "./memo.service";
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {Lookup} from "../common/lookup";
 import {EmployeeService} from "../employee/employee.service";
 
 import {FileUploadService} from "../upload/file.upload.service";
 import {CommonFormViewComponent} from "../common/common.component";
-import {SaveResponse} from "../common/save-response.";
+import {SaveResponse} from "../common/save-response";
 import {Subscription} from 'rxjs';
+import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
+import {ErrorResponse} from "../common/error-response";
+import {PEFirm} from "../pe/model/pe.firm";
+import {PEFirmService} from "../pe/pe.firm.service";
+import {PEFundService} from "../pe/pe.fund.service";
+import {PESearchParams} from "../pe/model/pe.search-params";
+import {PEFund} from "../pe/model/pe.fund";
+import {MemoSearchParams} from "./model/memo-search-params";
 
-declare var $:any
+declare var $:any;
 declare var Chart: any;
 
 @Component({
     selector: 'pe-memo-edit',
     templateUrl: './view/pe-memo-edit.component.html',
     styleUrls: [],
-    providers: [],
+    providers: [PEFirmService, PEFundService],
 })
 @NgModule({
     imports: []
@@ -32,6 +40,9 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
     public uploadFiles: Array<any> = [];
 
     private visible = false;
+    private showFundDetails = false;
+    private showFirmDetails = false;
+    submitted = false;
 
     public memo = new PEMemo;
 
@@ -48,6 +59,22 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
     public geographyList: Array<any> = [];
     public attendeesList: Array<any> = [];
 
+    public firmStrategyList: Array<any> = [];
+    public firmIndustryList: Array<any> = [];
+    public firmGeographyList: Array<any> = [];
+    public fundStrategyList: Array<any> = [];
+    public fundGeographyList: Array<any> = [];
+
+
+
+    public firmList: Array<any> = [];
+    public fundList: Array<any> = [];
+    public foundFundsList: Array<any> = [];
+    private peSearchParams = new PESearchParams();
+
+    private breadcrumbParams: string;
+    private searchParams = new MemoSearchParams();
+
     closingScheduleList = [];
     openingScheduleList = [];
     currencyList = [];
@@ -58,6 +85,8 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
         separatorKeys: [188, 191], // exclude coma from tag content
         maxItems: 10
     }
+
+    private moduleAccessChecler: ModuleAccessCheckerService;
 
     public onItemAdded(item) {
         this.memo.tags.push(item);
@@ -76,31 +105,55 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
         private lookupService: LookupService,
         private employeeService: EmployeeService,
         private memoService: MemoService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private router: Router,
+        private peFirmService: PEFirmService,
+        private peFundService: PEFundService
     ){
-        super();
+        super(router);
+
+        this.moduleAccessChecler = new ModuleAccessCheckerService;
 
         // loadLookups
         this.sub = this.loadLookups();
 
-
-
-        // TODO: wait/sync on lookup loading
-        // TODO: sync on subscribe results
-        //this.waitSleep(700);
+        // load all firms for dropdown
+        this.sub = this.loadFirms();
 
         // parse params and load data
         this.sub = this.route
             .params
             .subscribe(params => {
                 this.memoIdParam = +params['id'];
+                this.breadcrumbParams = params['params'];
+                //console.log(this.breadcrumbParams);
+                if(this.breadcrumbParams != null) {
+                    this.searchParams = JSON.parse(this.breadcrumbParams);
+                }
+                this.memo.firm = new PEFirm();
+                this.memo.fund = new PEFund();
                 if(this.memoIdParam > 0) {
                     this.busy = this.memoService.get(2, this.memoIdParam)
                         .subscribe(
                             memo => {
                                 // TODO: check response memo
+
                                 this.memo = memo;
+                                //console.log(memo);
+
                                 this.initRadarChart();
+
+                                //console.log(this.memo);
+                                //if(this.memo.fund == null){
+                                //    this.memo.fund = new PEFund();
+                                //}
+
+                                this.preselectFirmStrategyGeographyIndustry(this.memo.firm);
+                                this.preselectFundStrategyGeographyIndustry(this.memo.fund);
+
+                                if(this.memo.firm == null){
+                                    this.memo.firm = new PEFirm();
+                                }
 
                                 if(this.memo.tags == null) {
                                     this.memo.tags = [];
@@ -111,29 +164,45 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
                                     this.visible = true;
                                 }
 
+                                //// Downloading funds data
+                                //if(this.memo.firm.id != null) {
+                                //    this.getFirmData(this.memo.firm.id);
+                                //}
+
                                 // preselect memo strategies
-                                this.preselectStrategies();
+                                //this.preselectStrategies();
 
                                 // preselect memo geographies
-                                this.preselectGeographies();
+                                //this.preselectGeographies();
 
                                 // preselect memo attendees
                                 this.preselectAttendeesNIC();
 
-                                $('input[type=text], textarea').autogrow({vertical: true, horizontal: false});
+                                if(this.memo.fund != null){
+                                    this.showFundDetails = true;
+                                }
+
                             },
-                            error => this.errorMessage = "Error loading memo"
+                            (error: ErrorResponse) => {
+                                this.errorMessage = "Error loading memo";
+                                if(error && !error.isEmpty()){
+                                    this.processErrorMessage(error);
+                                }
+                                this.postAction(null, null);
+                                console.log("Error loading memo");
+                            }
                         );
                 }else{
                     // TODO: default value for radio buttons?
                     this.memo.meetingType = "MEETING";
-                    this.memo.suitable = false;
+                    this.memo.fund.suitable = true;
+                    this.memo.suitable = true;
                     this.memo.currentlyFundRaising = true;
                     this.memo.openingSoon = false;
                     this.memo.tags = [];
                 }
-            });
-
+            }
+            );
     }
 
     preselectStrategies(){
@@ -209,8 +278,6 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
             format: 'LT'
         })
 
-        $('input[type=text], textarea').autogrow({vertical: true, horizontal: false});
-
         // init chart also moved to constructor
         // due to that scores array is still empty when ngOnInit called
         this.initRadarChart();
@@ -226,18 +293,21 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
         this.memo.meetingDate = $('#meetingDateValue').val();
         this.memo.meetingTime = $('#meetingTimeValue').val();
 
-        console.log(this.memo);
+        //console.log(this.memo);
 
         //TODO: refactor ?
         this.memo.strategies = this.convertToServiceModel(this.memo.strategies);
         this.memo.geographies = this.convertToServiceModel(this.memo.geographies);
+
+        //if(this.memo.fund.id == null) {
+        //    this.memo.fund = null;
+        //}
 
         this.memoService.savePE(this.memo)
             .subscribe(
                 (response: SaveResponse)  => {
                     this.memo.id = response.entityId;
                     this.memo.creationDate = response.creationDate;
-
                     if(this.uploadFiles.length > 0) {
 
                         // TODO: refactor
@@ -255,28 +325,49 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
                                 }
 
                                 this.postAction("Successfully saved.", null);
+                                this.submitted = true;
                             },
-                            error => {
-                                // TODO: don't save memo?
-
-                                this.postAction(null, "Error uploading attachments.");
+                            (error: ErrorResponse) => {
+                                this.errorMessage = "Error uploading attachments";
+                                if(error && !error.isEmpty()){
+                                    this.processErrorMessage(error);
+                                }
+                                this.postAction(null, null);
+                                this.submitted = false;
                             });
                     }else{
                         this.postAction("Successfully saved.", null);
+                        this.submitted = true;
                     }
                 },
-                error =>  {
-                    this.postAction(null, "Error saving memo.");
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error saving memo";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                    this.submitted = false;
                 }
             );
-    }
 
-    postAction(successMessage, errorMessage){
-        this.successMessage = successMessage;
-        this.errorMessage = errorMessage;
-
-        // TODO: non jQuery
-        $('html, body').animate({ scrollTop: 0 }, 'fast');
+        if(this.memo.fund && this.memo.fund.id != null){
+            //console.log("here");
+            this.peFundService.save(this.memo.fund)
+                .subscribe(
+                    (response: SaveResponse) => {
+                        this.postAction("Succesfully saved fund", null);
+                        this.submitted = true;
+                    },
+                    (error: ErrorResponse) => {
+                        this.errorMessage = "Error saving fund";
+                        if(error && !error.isEmpty()){
+                            this.processErrorMessage(error);
+                        }
+                        this.postAction(null, null);
+                        this.submitted = false;
+                    }
+                )
+        }
     }
 
     deleteAttachment(fileId){
@@ -292,9 +383,15 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
                         }
 
                         this.postAction("Attachment deleted.", null);
+                        this.submitted = false;
                     },
-                    error => {
-                        this.postAction(null, "Failed to delete attachment");
+                    (error: ErrorResponse) => {
+                        this.errorMessage = "Error deleting attachments";
+                        if(error && !error.isEmpty()){
+                            this.processErrorMessage(error);
+                        }
+                        this.postAction(null, null);
+                        this.submitted = false;
                     }
                 );
         }
@@ -404,7 +501,14 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
                         this.strategyList.push({ id: element.code, text: element.nameEn});
                     });
                 },
-                error =>  this.errorMessage = <any>error
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
+
             );
 
         // load geographies
@@ -415,7 +519,13 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
                     this.geographyList.push({ id: element.code, text: element.nameEn});
                 });
             },
-            error =>  this.errorMessage = <any>error
+            (error: ErrorResponse) => {
+                this.errorMessage = "Error loading lookups";
+                if(error && !error.isEmpty()){
+                    this.processErrorMessage(error);
+                }
+                this.postAction(null, null);
+            }
         );
 
         // load currencies
@@ -426,7 +536,13 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
                         this.currencyList.push(element);
                     });
                 },
-                error =>  this.errorMessage = <any>error
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
         );
 
         // load employees
@@ -438,18 +554,116 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
 
                     });
                 },
-                error =>  this.errorMessage = <any>error);
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
+        );
     }
 
+    loadFirms(){
+        this.peFirmService.getFirms()
+            .subscribe(
+                data => {
+                    data.forEach(element => {
+                        this.firmList.push({id: element.id, name: element.firmName});
+                    });
+                },
+                //error => {
+                //    this.postAction(null, "Error loading firms list for dropdown.");
+                //}
+                (error: ErrorResponse) => {
+                this.errorMessage = "Error loading firms list for dropdown.";
+                if(error && !error.isEmpty()){
+                    this.processErrorMessage(error);
+                }
+                this.postAction(null, null);
+        }
+            )
+        //console.log(this.firmList);
+    }
 
+    getFirmDataOnChange(id){
+        //this.getFundData(null);
+        this.getFirmData(id);
+        if(this.memo.fund) {
+            this.memo.fund.suitable = true;
+        }
+    }
+
+    getFirmData(id){
+        this.fundList = [];
+        this.peFirmService.get(id)
+            .subscribe(
+                (data: PEFirm) => {
+                    if(data && data.id > 0) {
+                        this.memo.firm = data;
+                        this.preselectFirmStrategyGeographyIndustry(this.memo.firm);
+                        this.preselectFundStrategyGeographyIndustry(null);
+                        this.memo.fund = null;
+                    } else {
+                        this.errorMessage = "Error loading fund manager info.";
+                    }
+                },
+                error => this.errorMessage = "Error loading manager profile"
+            );
+
+        //this.peSearchParams['id'] = id;
+        //this.peFundService.search(this.peSearchParams)
+        //    .subscribe(
+        //        searchResult => {
+        //            this.foundFundsList = searchResult;
+        //            searchResult.forEach(element => {
+        //                this.fundList.push({id: element.id, name: element.fundName});
+        //            });
+        //        },
+        //        error => this.errorMessage = "Failed to load GP's funds"
+        //    );
+    }
+
+    getFundData(id){
+        //if(id == null) {
+        //    return this.memo.fund = new PEFund();
+        //}
+        for(var i = 0; i < this.memo.firm.funds.length; i++){
+            if(this.memo.firm.funds[i].id == id) {
+                this.preselectFundStrategyGeographyIndustry(this.memo.firm.funds[i]);
+                return this.memo.fund = this.memo.firm.funds[i];
+            }
+        }
+    }
+
+    toggleFund(){
+        if(this.memo.fund == null){
+            this.memo.fund = new PEFund();
+            this.memo.fund.suitable = true;
+        }
+        this.showFundDetails = !this.showFundDetails;
+    }
+
+    toggleFirm(){
+        this.showFirmDetails = !this.showFirmDetails;
+    }
 
     //TODO: bind ngModel - boolean
     setSuitable(){
+        this.memo.fund.suitable = true;
+        this.memo.fund.nonsuitableReason = '';
+    }
+
+    setNonSuitable(){
+        this.memo.fund.suitable = false;
+    }
+
+    setSuitableTemp(){
         this.memo.suitable = true;
         this.memo.nonsuitableReason = '';
     }
 
-    setNonSuitable(){
+    setNonSuitableTemp(){
         this.memo.suitable = false;
     }
 
@@ -463,6 +677,50 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
         this.memo.openingSoon = true;
         this.memo.currentlyFundRaising = false;
         this.memo.closingSchedule = null;
+    }
 
+    public canEdit(){
+        return this.moduleAccessChecler.checkAccessPrivateEquityEditor();
+    }
+
+    preselectFirmStrategyGeographyIndustry(firm){
+        this.firmGeographyList = [];
+        this.firmStrategyList = [];
+        this.firmIndustryList = [];
+
+        if(firm && firm.id && firm.strategy) {
+            firm.strategy.forEach(element => {
+                this.firmStrategyList.push(element.nameEn.toString());
+            });
+        }
+        if(firm && firm.id && firm.industryFocus) {
+            this.memo.firm.industryFocus.forEach(element => {
+                this.firmIndustryList.push(element.nameEn.toString());
+            });
+        }
+        if(firm && firm.id && firm.geographyFocus) {
+            firm.geographyFocus.forEach(element => {
+                this.firmGeographyList.push(element.nameEn.toString());
+            });
+        }
+
+        console.log(this.firmStrategyList);
+
+    }
+
+    preselectFundStrategyGeographyIndustry(fund){
+        this.fundStrategyList = [];
+        this.fundGeographyList = [];
+
+        if(fund && fund.id && fund.strategy) {
+            fund.strategy.forEach(element => {
+                this.fundStrategyList.push(element.nameEn.toString());
+            });
+        }
+        if(fund && fund.id && fund.geography) {
+            fund.geography.forEach(element => {
+                this.fundGeographyList.push(element.nameEn.toString());
+            });
+        }
     }
 }

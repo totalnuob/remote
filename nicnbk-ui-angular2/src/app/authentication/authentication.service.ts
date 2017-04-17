@@ -1,5 +1,8 @@
-import { Injectable } from '@angular/core';
+import {Component, Injectable } from '@angular/core';
 import {Router} from '@angular/router';
+import { Http, Response, Headers, RequestOptions } from '@angular/http';
+import {CommonService} from "../common/common.service";
+import {DATA_APP_URL} from "../common/common.service.constants";
 
 export class User {
     constructor(
@@ -8,36 +11,42 @@ export class User {
 }
 
 @Injectable()
-export class AuthenticationService {
+export class AuthenticationService extends CommonService{
 
     constructor(
-        private _router: Router){}
+        private router: Router,
+        private http: Http){
+        super();
+    }
 
+    private LOGIN_URL = DATA_APP_URL + "authenticate";
+    //private CHECK_TOKEN_URL = DATA_APP_URL + "checkToken";
 
-    login(user){
-        var authenticatedUser = users.find(u => u.username === user.username);
-        if (authenticatedUser && authenticatedUser.password === user.password){
+        login(user){
 
-            // TODO: set user object?
-            localStorage.setItem("user", authenticatedUser.username);
-
-            // TODO: navigate to requested url
-            this._router.navigate(['/']);
-
-            return true;
-        }
-        return false;
+        let body = JSON.stringify(user);
+        return this.http.post(this.LOGIN_URL, body, this.getOptionsWithCredentials())
+        // TODO: parse json with extractData()
+            .map(this.extractData)
+            .catch(this.handleError);
 
     }
 
-    checkCredentials(){
-        if (localStorage.getItem("user") === null){
-            this._router.navigate(['login']);
+    //checkToken(){
+    //    return this.http.post(this.CHECK_TOKEN_URL, null, this.getOptionsWithCredentials())
+    //        .map(this.extractData)
+    //        .catch(this.handleError);
+    //
+    //}
+
+    checkCredentials(state){
+        if (localStorage.getItem("authenticatedUser") === null){
+            this.router.navigate(['/login'], {queryParams: {returnUrl: state}});
         }
     }
 }
 
-var users = [
-    new User('nician','VeKMazVa#@!'),
-    new User('birtanov', '123456'),
-];
+//var users = [
+//    new User('nician','VeKMazVa#@!'),
+//    new User('birtanov', '123456'),
+//];

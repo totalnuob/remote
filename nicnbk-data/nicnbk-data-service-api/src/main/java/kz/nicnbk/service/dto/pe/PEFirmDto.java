@@ -1,25 +1,27 @@
 package kz.nicnbk.service.dto.pe;
 
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
+import kz.nicnbk.common.service.model.CreateUpdateBaseEntityDto;
 import kz.nicnbk.common.service.model.HistoryBaseEntityDto;
 import kz.nicnbk.repo.model.pe.PEFirm;
 
+import java.util.List;
 import java.util.Set;
 
 /**
  * Created by zhambyl on 15-Nov-16.
  */
-public class PEFirmDto extends HistoryBaseEntityDto<PEFirm> {
+public class PEFirmDto extends CreateUpdateBaseEntityDto<PEFirm> {
     private String firmName;
-    private int foundedYear;
-    private float aum;
-    private int invTeamSize;
-    private int opsTeamSize;
+    private Integer foundedYear;
+    private Float aum;
+    private Integer invTeamSize;
+    private Integer opsTeamSize;
     //    private Set<PEFirm> peers;
     private Set<BaseDictionaryDto> strategy;
     private Set<BaseDictionaryDto> industryFocus;
     private Set<BaseDictionaryDto> geographyFocus;
-//    private Set<PEFundDto> funds;
+    private List<PEFundDto> funds;
 
 //    private Set<FirmAddress> address;
 //    private Set<Contacts> contacts;
@@ -33,6 +35,7 @@ public class PEFirmDto extends HistoryBaseEntityDto<PEFirm> {
     private String contactPerson;
     private String email;
 
+    private String owner;
 
     public String getFirmName() {
         return firmName;
@@ -42,35 +45,35 @@ public class PEFirmDto extends HistoryBaseEntityDto<PEFirm> {
         this.firmName = firmName;
     }
 
-    public int getFoundedYear() {
+    public Integer getFoundedYear() {
         return foundedYear;
     }
 
-    public void setFoundedYear(int foundedYear) {
+    public void setFoundedYear(Integer foundedYear) {
         this.foundedYear = foundedYear;
     }
 
-    public float getAum() {
+    public Float getAum() {
         return aum;
     }
 
-    public void setAum(float aum) {
+    public void setAum(Float aum) {
         this.aum = aum;
     }
 
-    public int getInvTeamSize() {
+    public Integer getInvTeamSize() {
         return invTeamSize;
     }
 
-    public void setInvTeamSize(int invTeamSize) {
+    public void setInvTeamSize(Integer invTeamSize) {
         this.invTeamSize = invTeamSize;
     }
 
-    public int getOpsTeamSize() {
+    public Integer getOpsTeamSize() {
         return opsTeamSize;
     }
 
-    public void setOpsTeamSize(int opsTeamSize) {
+    public void setOpsTeamSize(Integer opsTeamSize) {
         this.opsTeamSize = opsTeamSize;
     }
 
@@ -114,13 +117,13 @@ public class PEFirmDto extends HistoryBaseEntityDto<PEFirm> {
         this.geographyFocus = geographyFocus;
     }
 
-//    public Set<PEFundDto> getFunds() {
-//        return funds;
-//    }
-//
-//    public void setFunds(Set<PEFundDto> funds) {
-//        this.funds = funds;
-//    }
+    public List<PEFundDto> getFunds() {
+        return funds;
+    }
+
+    public void setFunds(List<PEFundDto> funds) {
+        this.funds = funds;
+    }
 
 //    public Set<FirmAddress> getAddress() {
 //        return address;
@@ -193,5 +196,13 @@ public class PEFirmDto extends HistoryBaseEntityDto<PEFirm> {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 }

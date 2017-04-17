@@ -37,6 +37,9 @@ import {PEFirmProfileComponent} from "./pe/pe.firm-profile.component";
 import {PEFirmSearchComponent} from "./pe/pe.firm-search.component";
 import {PEFundReportComponent} from "./pe/pe.fund-report.component";
 import {HFManagerSearchComponent} from "./hf/hf.manager-search.component";
+import {AccessDeniedComponent} from "./access.denied.component";
+import {EmployeeProfileComponent} from "./employee/employee.profile.component";
+import {NotFoundComponent} from "./page-not-found.component";
 
 
 const routes: Routes  = [
@@ -50,6 +53,18 @@ const routes: Routes  = [
         path: 'login',
         component: LoginComponent
     },
+    /* USER PROFILE ***************************************/
+    {
+        path: 'profile',
+        component: EmployeeProfileComponent,
+        canActivate: [AuthGuard]
+    },
+
+    /* ACCESS DENIED *******************************/
+    {
+        path: 'accessDenied',
+        component: AccessDeniedComponent
+    },
     /* NEWS ***************************************/
     {
         path: 'news',
@@ -57,7 +72,7 @@ const routes: Routes  = [
         canActivate: [AuthGuard]
     },
     {
-        path: 'news/edit',
+        path: 'news/edit/:id',
         component: NewsEditComponent,
         canActivate: [AuthGuard]
     },
@@ -236,6 +251,17 @@ const routes: Routes  = [
         component: PEFundReportComponent,
         canActivate: [AuthGuard]
     },
+    /* Page not found. ERROR 404 *********************/
+    {
+        path: '404',
+        component: NotFoundComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: '**',
+        redirectTo: '/404'
+    },
+
 ];
 
 export const appRouterProviders = RouterModule.forRoot(routes);

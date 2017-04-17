@@ -5,6 +5,8 @@ import kz.nicnbk.service.dto.pe.PEFirmDto;
 import kz.nicnbk.service.dto.pe.PEPagedSearchResult;
 import kz.nicnbk.service.dto.pe.PESearchParams;
 
+import java.util.List;
+
 
 /**
  * Created by zhambyl on 15-Nov-16.
@@ -16,9 +18,11 @@ public interface PEFirmService extends BaseService {
     /* Number of elements per page */
     int DEFAULT_PAGE_SIZE = 20;
 
-    Long save(PEFirmDto firmDto);
+    Long save(PEFirmDto firmDto, String username);
 
     PEFirmDto get(Long id);
 
     PEPagedSearchResult findByName(PESearchParams searchParams);
+
+    List<PEFirmDto> findAll();
 }

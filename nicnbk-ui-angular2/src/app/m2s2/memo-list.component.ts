@@ -1,13 +1,16 @@
 import { Component, OnInit  } from '@angular/core';
-import { } from '@angular/router';
+import { Router} from '@angular/router';
 import {LookupService} from "../common/lookup.service";
 import {MemoSearchParams} from "./model/memo-search-params";
 import {MemoService} from "./memo.service";
 import {CommonFormViewComponent} from "../common/common.component";
 import {Memo} from "./model/memo";
 import {MemoSearchResults} from "./model/memo-search-results";
+import {ActivatedRoute} from '@angular/router';
 
 import {Subscription} from 'rxjs';
+import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
+import {ErrorResponse} from "../common/error-response";
 
 declare var $:any
 
@@ -19,6 +22,8 @@ var moment = require("moment");
     providers: [],
 })
 export class MemoListComponent  extends CommonFormViewComponent implements OnInit{
+
+    public sub: any;
 
     searchParams = new MemoSearchParams;
     busy: Subscription;
@@ -39,6 +44,8 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
         maxItems: 10
     }
 
+    private moduleAccessChecler: ModuleAccessCheckerService
+
     public onItemAdded(item) {
         this.searchParams.tags.push(item);
     }
@@ -53,9 +60,37 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
 
     constructor(
         private lookupService: LookupService,
-        private memoService: MemoService
+        private memoService: MemoService,
+        private route: ActivatedRoute,
+        private router: Router
     ){
-        super();
+        super(router);
+
+        this.moduleAccessChecler = new ModuleAccessCheckerService;
+
+        this.sub = this.route
+            .params
+            .subscribe(params => {
+               if(params['params'] != null){
+                this.searchParams = JSON.parse(params['params']);
+
+                //console.log(this.searchParams.fromDate);
+                $('#fromDate').val(this.searchParams.fromDate);
+                $('#toDate').val(this.searchParams.toDate);
+
+
+                this.busy = this.memoService.search(this.searchParams)
+                    .subscribe(
+                        searchResult  => {
+                            this.memoList = searchResult.memos;
+                            this.memoSearchResult = searchResult;
+                        },
+                        error =>  this.errorMessage = "Failed to search memos."
+                    );
+                } else {
+                   this.search(0);
+               }
+            });
     }
 
     ngOnInit():any {
@@ -78,12 +113,12 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
         }
 
         // find all
-        this.search(0);
+        //this.search(0);
     }
 
     loadLookups(){
         // memo types
-        this.lookupService.getMemoTypes().then(memoTypes => this.memoTypes = memoTypes);
+        this.lookupService.getMemoTypes().then(memoTypes => {this.memoTypes = memoTypes});
 
         //meeting types
         this.lookupService.getMeetingTypes().then(meetingTypes => this.meetingTypes = meetingTypes);
@@ -91,13 +126,11 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
 
     search(page){
 
-        console.log(this.searchParams);
+        //console.log(this.searchParams);
         // TODO: as parameter?
         this.searchParams.pageSize = 20;
 
-        if(page > 0) {
-            this.searchParams.page = page;
-        }
+        this.searchParams.page = page;
 
         this.searchParams.fromDate = $('#fromDate').val();
         this.searchParams.toDate = $('#toDate').val();
@@ -108,8 +141,25 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
                     this.memoList = searchResult.memos;
                     this.memoSearchResult = searchResult;
                 },
-                error =>  this.errorMessage = "Failed to search memos."
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error searching memos";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                    //alert(this.errorMessage);
+                }
             );
+
+
+        console.log(this.meetingTypes);
+    }
+
+    navigate(memoType, memoId){
+        this.searchParams.path = '/m2s2';
+        let params = JSON.stringify(this.searchParams);
+        //console.log(this.searchParams);
+        this.router.navigate(['/m2s2/edit/', memoType, memoId, { params }]);
     }
 
     toggle(){
@@ -129,6 +179,26 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
         }else{
             return "";
         }
+    }
+
+    getMeetingTypeName(type){
+        for(var i = 0; i < this.meetingTypes.length; i++){
+            if(this.meetingTypes[i].code == type){
+                return this.meetingTypes[i].nameEn;
+            }
+        }
+    }
+
+    public showHedgeFunds(){
+        return this.moduleAccessChecler.checkAccessHedgeFundsEditor();
+    }
+
+    public showPrivateEquity(){
+        return this.moduleAccessChecler.checkAccessPrivateEquityEditor();
+    }
+
+    public showRealEstate(){
+        return this.moduleAccessChecler.checkAccessRealEstateEditor();
     }
 
 }

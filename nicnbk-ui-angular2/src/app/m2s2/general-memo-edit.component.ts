@@ -1,5 +1,5 @@
 import { Component,NgModule, OnInit, ViewChild  } from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 
 import {GeneralMemo} from "./model/general-memo";
 import {CommonFormViewComponent} from "../common/common.component";
@@ -7,6 +7,8 @@ import {MemoService} from "./memo.service";
 import {EmployeeService} from "../employee/employee.service";
 import {MemoAttachmentDownloaderComponent} from "./memo-attachment-downloader.component";
 import {Subscription} from 'rxjs';
+import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
+import {ErrorResponse} from "../common/error-response";
 
 declare var $:any
 declare var Chart: any;
@@ -27,6 +29,7 @@ export class GeneralMemoEditComponent extends CommonFormViewComponent implements
     busy: Subscription;
 
     memo = new GeneralMemo;
+    submitted = false;
 
     public uploadFiles: Array<any> = [];
 
@@ -34,6 +37,8 @@ export class GeneralMemoEditComponent extends CommonFormViewComponent implements
     private attendeesSelect;
 
     public attendeesList: Array<any> = [];
+
+    private breadcrumbParams: string;
 
     options = {
         placeholder: "+ tag",
@@ -57,9 +62,10 @@ export class GeneralMemoEditComponent extends CommonFormViewComponent implements
     constructor(
         private employeeService: EmployeeService,
         private memoService: MemoService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private router: Router
     ){
-        super();
+        super(router);
 
         // loadLookups
         this.sub = this.loadLookups();
@@ -73,6 +79,7 @@ export class GeneralMemoEditComponent extends CommonFormViewComponent implements
             .params
             .subscribe(params => {
                 this.memoIdParam = +params['id'];
+                this.breadcrumbParams = params['params'];
                 if(this.memoIdParam > 0) {
                     this.busy = this.memoService.get(1, this.memoIdParam)
                         .subscribe(
@@ -87,7 +94,13 @@ export class GeneralMemoEditComponent extends CommonFormViewComponent implements
                                 // preselect memo attendees
                                 this.preselectAttendeesNIC();
                             },
-                            error => this.errorMessage = "Error loading memo"
+                            (error: ErrorResponse) => {
+                                this.errorMessage = "Error loading memo";
+                                if(error && !error.isEmpty()){
+                                    this.processErrorMessage(error);
+                                }
+                                this.postAction(null, null);
+                            }
                         );
                 }else{
                     // TODO: default value for meeting type?
@@ -125,8 +138,6 @@ export class GeneralMemoEditComponent extends CommonFormViewComponent implements
         $('#timePicker').datetimepicker({
             format: 'LT'
         })
-
-        $('input[type=text], textarea').autogrow();
 
     }
 
@@ -171,30 +182,29 @@ export class GeneralMemoEditComponent extends CommonFormViewComponent implements
                                 }
 
                                 this.postAction("Successfully saved.", null);
+                                this.submitted = true;
                             },
                             error => {
                                 // TODO: don't save memo?
 
                                 this.postAction(null, "Error uploading attachments.");
+                                this.submitted = false;
                             });
                     }else{
                         this.postAction("Successfully saved.", null);
+                        this.submitted = true;
                     }
                 },
-                //error =>  this.errorMessage = <any>error
-                error =>  {
-                    this.postAction(null, "Error saving memo.");
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error saving memo";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                    this.submitted = false;
                 }
             );
 
-    }
-
-    postAction(successMessage, errorMessage){
-        this.successMessage = successMessage;
-        this.errorMessage = errorMessage;
-
-        // TODO: non jQuery
-        $('html, body').animate({ scrollTop: 0 }, 'fast');
     }
 
     deleteAttachment(fileId){
@@ -210,9 +220,15 @@ export class GeneralMemoEditComponent extends CommonFormViewComponent implements
                         }
 
                         this.postAction("Attachment deleted.", null);
+                        this.submitted = false;
                     },
-                    error => {
-                        this.postAction(null, "Failed to delete attachment");
+                    (error: ErrorResponse) => {
+                        this.errorMessage = "Error deleting attachment";
+                        if(error && !error.isEmpty()){
+                            this.processErrorMessage(error);
+                        }
+                        this.postAction(null, null);
+                        this.submitted = false;
                     }
                 );
         }
@@ -242,8 +258,30 @@ export class GeneralMemoEditComponent extends CommonFormViewComponent implements
                         this.attendeesList.push({ id: element.id, text: element.firstName + " " + element.lastName[0] + "."});
                     });
                 },
-                error =>  this.errorMessage = <any>error);
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading employees";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
+            );
     }
 
+    public canEdit() {
+        // only owner can edit
+        var moduleAccessChecker = new ModuleAccessCheckerService;
+        if(moduleAccessChecker.checkAccessAdmin()){
+            return true;
+        }
+        var currentUser = localStorage.getItem("authenticatedUser");
+        //if(this.memo.owner == null  || this.memo.owner == ""){
+        //    return true;
+        //}
+        if(this.memo.owner === currentUser || !this.memo.id){
+           return true;
+        }
+        return false;
+    }
 
 }

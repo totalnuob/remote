@@ -1,7 +1,6 @@
 package kz.nicnbk.repo.model.base;
 
 import kz.nicnbk.repo.model.markers.CreationDate;
-
 import javax.persistence.*;
 import java.util.Date;
 
@@ -10,7 +9,7 @@ public abstract class HistoryBaseEntity extends BaseEntity implements CreationDa
 
     private Date creationDate;
 
-    @Column(name = "Inserted", nullable = false)
+    @Column(name = "Inserted"/*, nullable = false*/)
     @Temporal(value = TemporalType.TIMESTAMP)
     public Date getCreationDate() {
         return creationDate;

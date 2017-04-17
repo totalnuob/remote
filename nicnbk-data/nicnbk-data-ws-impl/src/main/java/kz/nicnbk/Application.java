@@ -1,5 +1,7 @@
 package kz.nicnbk;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -19,16 +21,31 @@ import java.text.SimpleDateFormat;
 @SpringBootApplication
 public class Application {
 
+    private static final Logger logger = LoggerFactory.getLogger(Application.class);
+
     public static void main(String[] args) throws Exception {
         SpringApplication.run(Application.class, args);
     }
 
+    @Bean
+    public Jackson2ObjectMapperBuilder jacksonBuilder() {
+        Jackson2ObjectMapperBuilder b = new Jackson2ObjectMapperBuilder();
+        b.indentOutput(true).dateFormat(new SimpleDateFormat("dd-MM-yyyy"));
+        return b;
+    }
+
+    // CORS configuration
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurerAdapter() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**");
+
+//                System.out.println("CORS configuration");
+//
+//                registry.addMapping("/authenticate").allowedOrigins("http://localhost", "http://10.10.163.45", "http://app.nicnbk.kz");
+//
 //                registry.addMapping("/news/**").allowedOrigins("http://localhost", "http://10.10.163.45","http://app.nicnbk.kz");
 //                registry.addMapping("/m2s2/**").allowedOrigins("http://localhost", "http://10.10.163.45", "http://app.nicnbk.kz");
 //                registry.addMapping("/employee/**").allowedOrigins("http://localhost", "http://10.10.163.45", "http://app.nicnbk.kz");
@@ -38,12 +55,5 @@ public class Application {
 //                registry.addMapping("/riskManagement/**").allowedOrigins("http://localhost", "http://10.10.163.45", "http://app.nicnbk.kz");
             }
         };
-    }
-
-    @Bean
-    public Jackson2ObjectMapperBuilder jacksonBuilder() {
-        Jackson2ObjectMapperBuilder b = new Jackson2ObjectMapperBuilder();
-        b.indentOutput(true).dateFormat(new SimpleDateFormat("dd-MM-yyyy"));
-        return b;
     }
 }

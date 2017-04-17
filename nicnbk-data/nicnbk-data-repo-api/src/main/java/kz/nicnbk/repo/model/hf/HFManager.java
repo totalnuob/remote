@@ -36,6 +36,14 @@ public class HFManager extends CreateUpdateBaseEntity {
     private String website;
     private String email;
 
+    // m2s2 fields
+    private String managementAndTeamNotes;
+    private Short managementAndTeamScore;
+    private String portfolioNotes;
+    private Short portfolioScore;
+    private String strategyNotes;
+    private Short strategyScore;
+    private Short conviction;
 
     //    private Strategy strategy;
 //    private HedgeFundStatus status;
@@ -172,6 +180,70 @@ public class HFManager extends CreateUpdateBaseEntity {
     public void setMeetingsInThePast(Boolean meetingsInThePast) {
         this.meetingsInThePast = meetingsInThePast;
     }
+
+    @Column(name="team_notes", columnDefinition = "TEXT")
+    public String getManagementAndTeamNotes() {
+        return managementAndTeamNotes;
+    }
+
+    public void setManagementAndTeamNotes(String managementAndTeamNotes) {
+        this.managementAndTeamNotes = managementAndTeamNotes;
+    }
+
+    @Column(name="team_score")
+    public Short getManagementAndTeamScore() {
+        return managementAndTeamScore;
+    }
+
+    public void setManagementAndTeamScore(Short managementAndTeamScore) {
+        this.managementAndTeamScore = managementAndTeamScore;
+    }
+
+    @Column(name="portfolio_notes", columnDefinition = "TEXT")
+    public String getPortfolioNotes() {
+        return portfolioNotes;
+    }
+
+    public void setPortfolioNotes(String portfolioNotes) {
+        this.portfolioNotes = portfolioNotes;
+    }
+
+    @Column(name="portfolio_score")
+    public Short getPortfolioScore() {
+        return portfolioScore;
+    }
+
+    public void setPortfolioScore(Short portfolioScore) {
+        this.portfolioScore = portfolioScore;
+    }
+
+    @Column(name="strategy_notes", columnDefinition = "TEXT")
+    public String getStrategyNotes() {
+        return strategyNotes;
+    }
+
+    public void setStrategyNotes(String strategyNotes) {
+        this.strategyNotes = strategyNotes;
+    }
+
+    @Column(name="strategy_score")
+    public Short getStrategyScore() {
+        return strategyScore;
+    }
+
+    public void setStrategyScore(Short strategyScore) {
+        this.strategyScore = strategyScore;
+    }
+
+    @Column(name="conviction")
+    public Short getConviction() {
+        return conviction;
+    }
+
+    public void setConviction(Short conviction) {
+        this.conviction = conviction;
+    }
+
 
     //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "strategy_id")

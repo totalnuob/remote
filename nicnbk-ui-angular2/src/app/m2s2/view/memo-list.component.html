@@ -1,16 +1,30 @@
 <div class="container">
     <div class="col-md-12">
         <div class="row">
+            <div class="row top-buffer" >
+                <div class="col-md-12">
+                    <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row top-buffer" >
+                <div class="col-md-12">
+                    <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-md-12">
                 <div class="dropdown pull-right">
                     <button class="btn btn-primary dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">New
                         <span class="bootstrapCaret"></span></button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                        <li role="presentation">
+                        <li role="presentation" *ngIf="showPrivateEquity()">
                             <a [routerLink]="['/m2s2/edit/2/', 0]" role="menuitem" tabindex="-1" >Private Equity</a></li>
-                        <li role="presentation">
+                        <li role="presentation" *ngIf="showRealEstate()">
                             <a [routerLink]="['/m2s2/edit/4/', 0]" role="menuitem" tabindex="-1" >Real Estate</a></li>
-                        <li role="presentation">
+                        <li role="presentation" *ngIf="showHedgeFunds()">
                             <a [routerLink]="['/m2s2/edit/3/', 0]" role="menuitem" tabindex="-1" >Hedge Fund</a></li>
                         <li role="presentation" class="divider"></li>
                         <li role="presentation">
@@ -25,7 +39,7 @@
                     <div class="col-md-12">
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label for="firmName">Meeting Type</label>
+                                <label for="meetingType">Meeting Type</label>
                                 <select class="form-control" id="meetingType" [(ngModel)]="searchParams.meetingType">
                                     <option value="NONE">---</option>
                                     <option *ngFor = "let type of meetingTypes" [value]="type.code">{{type.nameEn}}</option>
@@ -34,7 +48,7 @@
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label for="firmName">Memo Type</label>
+                                <label for="memoType">Memo Type</label>
                                 <select class="form-control" id="memoType" [(ngModel)]="searchParams.memoType">
                                     <option value="0">---</option>
                                     <option *ngFor = "let type of memoTypes" [value]="type.code">{{type.nameEn}}</option>
@@ -44,7 +58,7 @@
                         <div class="col-md-3">
                             <label for="fromDateDTPickeer">From</label>
                             <div class='input-group date col-md-3' id='fromDateDTPickeer' style="width: 100%">
-                                <input type='text' class="form-control" id="fromDate" />
+                                <input type='text' class="form-control" id="fromDate" [(ngModel)]="searchParams.fromDate"/>
                                         <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
                                         </span>
@@ -53,60 +67,31 @@
                         <div class="col-md-3">
                             <label for="untilDateDTPickeer">To</label>
                             <div class='input-group date col-md-3' id='untilDateDTPickeer' style="width: 100%">
-                                <input type='text' class="form-control" id="toDate"/>
+                                <input type='text' class="form-control" id="toDate" [(ngModel)]="searchParams.toDate"/>
                                         <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
                                         </span>
                             </div>
                         </div>
-                        <!--<script th:inline="javascript" type="text/javascript">-->
-                            <!--$(function () {-->
-                                <!--$('#fromDateDTPickeer').datetimepicker({-->
-                                    <!--//defaultDate: new Date(),-->
-                                    <!--format: 'DD-MM-YYYY'-->
-                                <!--});-->
-                                <!--$('#untilDateDTPickeer').datetimepicker({-->
-                                    <!--//defaultDate: new Date(),-->
-                                    <!--format: 'DD-MM-YYYY'-->
-                                <!--});-->
-                            <!--});-->
-                        <!--</script>-->
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="firmName">Firm</label>
-                                <input type="text" class="form-control" id="firmName" placeholder="Enter firm name..."
-                                    [(ngModel)]="searchParams.firmName"/>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                    <label for="fundName">Fund</label>
-                                <input type="text" class="form-control" id="fundName" placeholder="Enter fund name..."
-                                       [(ngModel)]="searchParams.fundName" [disabled]="searchParams.memoType == 'GENERAL'"/>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!--<div>-->
-                    <!--<a (click)="toggle()">Advanced search {{ advancedSearch ? '&#9660;' : '&#9658;' }}</a>-->
-                <!--</div>-->
-                <!--<br/>-->
-                <!--<div class="row" style="background-color: white"  [hidden]="!advancedSearch">-->
+                <!--<div class="row">-->
                     <!--<div class="col-md-12">-->
                         <!--<div class="col-md-6">-->
-                            <!--<tag-input [ngModel]="searchParams.tags" ngDefaultControl-->
-                                       <!--(onRemove)="onItemRemoved($event)"-->
-                                       <!--(onAdd)="onItemAdded($event)"-->
-                                       <!--[placeholder]="options.placeholder"-->
-                                       <!--[secondaryPlaceholder]="options.secondaryPlaceholder">-->
-                            <!--</tag-input>-->
+                            <!--<div class="form-group">-->
+                                <!--<label for="firmName">Firm</label>-->
+                                <!--<input type="text" class="form-control" id="firmName" placeholder="Enter firm name..."-->
+                                    <!--[(ngModel)]="searchParams.firmName"/>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--<div class="col-md-6">-->
+                            <!--<div class="form-group">-->
+                                    <!--<label for="fundName">Fund</label>-->
+                                <!--<input type="text" class="form-control" id="fundName" placeholder="Enter fund name..."-->
+                                       <!--[(ngModel)]="searchParams.fundName" [disabled]="searchParams.memoType == 'GENERAL'"/>-->
+                            <!--</div>-->
                         <!--</div>-->
                     <!--</div>-->
-                    <!--<br/>-->
                 <!--</div>-->
                 <br/>
                 <div class="row">
@@ -135,24 +120,31 @@
                     <th>MEETING/CALL</th>
                     <th>FIRM</th>
                     <th>FUND</th>
-                    <th>DATE</th>
+                    <th>MEETING DATE</th>
                     <th>AUTHOR</th>
-                    <th>ACTIONS</th>
+                    <!--<th>ACTIONS</th>-->
+                    <th>UPDATED</th>
+                    <th>UPDATEDBY</th>
                 </tr>
                 </thead>
 
                 <tbody>
-                <tr *ngFor = "let memo of memoList">
+                <tr *ngFor = "let memo of memoList" style="cursor: pointer" (click)="navigate(memo.memoType, memo.id)">
                     <td width="5%">{{getMemoTypeName(memo.memoType)}}</td>
-                    <td width="10%" >{{memo.meetingType}}</td>
-                    <td width="30%"><a [routerLink]="['/m2s2/edit/', memo.memoType, memo.id]">{{memo.firmName}}</a></td>
-                    <td width="30%"><a [routerLink]="['/m2s2/edit/', memo.memoType, memo.id]">{{memo.fundName}}</a></td>
+                    <td width="10%" >{{getMeetingTypeName(memo.meetingType)}}</td>
+                    <!--<td width="30%"><a style="cursor: pointer" (click)="navigate(memo.memoType, memo.id)">{{memo.firmName}}</a></td>-->
+                    <!--<td width="30%"><a style="cursor: pointer" (click)="navigate(memo.memoType, memo.id)">{{memo.fundName}}</a></td>-->
                     <!--<td width="10%" th:text="${memoItem.meetingDate}"></td>-->
+                    <td width="30%">{{memo.firmName}}</td>
+                    <td width="30%"><span *ngIf="memo.fundName == null || memo.fundName == ''">---</span>{{memo.fundName}}</td>
                     <td width="10%">{{memo.meetingDate}}</td>
-                    <td width="10%">{{memo.author}}</td>
-                    <td width="5%">
-                        <a><i class="glyphicon glyphicon-trash"></i></a>
-                    </td>
+                    <!--<td width="10%">{{memo.author}}</td>-->
+                    <td width="5%">{{memo.owner}}</td>
+                    <td width="10%">{{memo.updateDate}}</td>
+                    <td width="5%">{{memo.updater}}</td>
+                    <!--<td width="5%">-->
+                        <!--&lt;!&ndash;<a><i class="glyphicon glyphicon-trash"></i></a>&ndash;&gt;-->
+                    <!--</td>-->
                 </tr>
                 </tbody>
             </table>

@@ -8,10 +8,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 /**
  * Created by zhambyl on 14-Nov-16.
  */
 public interface PEFirmRepository extends PagingAndSortingRepository<PEFirm, Long> {
+
+    List<PEFirm> findAllByOrderByFirmNameDesc();
 
     @Query("select firm from PEFirm firm where UPPER(firm.firmName) LIKE UPPER(CONCAT('%',:firmName, '%'))")
     Page<PEFirm> findByName(@Param("firmName") String firmName, Pageable pageable);

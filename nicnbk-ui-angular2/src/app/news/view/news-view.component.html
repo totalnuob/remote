@@ -20,26 +20,32 @@
             <div class="row withpadding">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <h3>{{newsItem.header}}</h3>
+                        <h3 style="word-wrap: break-word">{{newsItem.header}}</h3>
                     </div>
                 </div>
             </div>
             <div class="row withpadding">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <h3><small>{{newsItem.source}}</small></h3>
+                        <h3 style="word-wrap: break-word"><small>{{newsItem.source}}</small></h3>
                     </div>
                 </div>
             </div>
-            <p [innerHTML]="newsItem.content"></p>
+            <div class="row withpadding">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <p [innerHTML]="newsItem.content" style="word-wrap: break-word"></p>
+                    </div>
+                </div>
+            </div>
             <br/>
             <div class="row withpadding">
                 <!--<div class="col-md-2 pull-right">-->
-                    <!--<input name="rating_stars" type="number" class="rating"/>-->
+                <!--<input name="rating_stars" type="number" class="rating"/>-->
                 <!--</div>-->
                 <!--<script>-->
-                    <!--// with plugin options-->
-                    <!--$(".rating").rating({min:1, max:10, step:1, size:'xs', showClear: false, showCaption: false});-->
+                <!--// with plugin options-->
+                <!--$(".rating").rating({min:1, max:10, step:1, size:'xs', showClear: false, showCaption: false});-->
                 <!--</script>-->
             </div>
         </div>

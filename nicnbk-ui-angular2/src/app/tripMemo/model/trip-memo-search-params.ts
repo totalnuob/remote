@@ -7,4 +7,6 @@ export class TripMemoSearchParams {
     toDate: Date;
     page: number;
     pageSize: number;
+
+    path: string;
 }

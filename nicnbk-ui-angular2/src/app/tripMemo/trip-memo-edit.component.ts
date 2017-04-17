@@ -7,6 +7,10 @@ import {TripMemoService} from "./trip-memo.service";
 import {EmployeeService} from "../employee/employee.service";
 import {MemoAttachmentDownloaderComponent} from "../m2s2/memo-attachment-downloader.component";
 import {Subscription} from 'rxjs';
+import {TripMemoSearchParams} from "./model/trip-memo-search-params";
+import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
+import {ErrorResponse} from "../common/error-response";
+import {Router} from '@angular/router';
 
 declare var $:any
 declare var Chart: any;
@@ -26,6 +30,7 @@ export class TripMemoEditComponent extends CommonFormViewComponent implements On
     private tripMemoIdParam: number;
     tripMemo = new TripMemo;
     busy: Subscription;
+    submitted = false;
 
     public uploadFiles: Array<any> = [];
 
@@ -34,12 +39,16 @@ export class TripMemoEditComponent extends CommonFormViewComponent implements On
 
     public attendeesList: Array<any> = [];
 
+    private breadcrumbParams: string;
+
+
     constructor(
         private employeeService: EmployeeService,
         private tripMemoService: TripMemoService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private router: Router
     ){
-        super();
+        super(router);
 
         //loadLookups
         this.sub = this.loadLookups();
@@ -48,6 +57,7 @@ export class TripMemoEditComponent extends CommonFormViewComponent implements On
             .params
             .subscribe(params => {
                 this.tripMemoIdParam = +params['id'];
+                this.breadcrumbParams = params['params'];
                 if(this.tripMemoIdParam > 0) {
                     this.busy = this.tripMemoService.get(this.tripMemoIdParam)
                         .subscribe(
@@ -59,10 +69,16 @@ export class TripMemoEditComponent extends CommonFormViewComponent implements On
                                 this.preselectAttendees();
 
                             },
-                            error => this.errorMessage = "Error loading trip memo"
+                            (error: ErrorResponse) => {
+                                this.errorMessage = "Error loading memo";
+                                if(error && !error.isEmpty()){
+                                    this.processErrorMessage(error);
+                                }
+                                this.postAction(null, null);
+                            }
                         );
                 }else{
-                    this.tripMemo.tripType = "BUSINESS TRIP";
+                    this.tripMemo.tripType = 'TRAINING';
                 }
             });
     }
@@ -111,8 +127,8 @@ export class TripMemoEditComponent extends CommonFormViewComponent implements On
 
     save() {
         // TODO: ngModel date
-        this.tripMemo.meetingDateStart = $('#meetingDateValue').val();
-        this.tripMemo.meetingDateEnd = $('#meetingDateValue2').val();
+        this.tripMemo.meetingDateStart = $('#meetingDateStart').val();
+        this.tripMemo.meetingDateEnd = $('#meetingDateEnd').val();
 
         //console.log(this.tripMemo);
         this.tripMemoService.saveBt(this.tripMemo)
@@ -136,28 +152,30 @@ export class TripMemoEditComponent extends CommonFormViewComponent implements On
                                         this.tripMemo.files.push(res[i]);
                                     }
                                     this.postAction("Successfully saved.", null);
+                                    this.submitted = true;
                                 },
-                                error => {
-                                    // TODO: don't save memo?
-
-                                    this.postAction(null, "Error uploading attachments.");
+                                (error: ErrorResponse) => {
+                                    this.errorMessage = "Error uploading attachments";
+                                    if(error && !error.isEmpty()){
+                                        this.processErrorMessage(error);
+                                    }
+                                    this.postAction(null, null);
+                                    this.submitted = false;
                                 });
                     } else {
                         this.postAction("Successfully saved.", null);
+                        this.submitted = true;
                     }
                 },
-                error => {
-                    this.postAction(null, "Error saving trip memo.");
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error saving memo";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                    this.submitted = false;
                 }
             );
-    }
-
-    postAction(successMessage, errorMessage) {
-        this.successMessage = successMessage;
-        this.errorMessage = errorMessage;
-
-        // TODO: non jQuery
-        $('html, body').animate({scrollTop: 0}, 'fast');
     }
 
     deleteAttachment(fileId) {
@@ -172,9 +190,16 @@ export class TripMemoEditComponent extends CommonFormViewComponent implements On
                            }
                        }
                        this.postAction("Attachment deleted.", null);
+                        this.submitted = false;
                     },
-                    error => {
-                        this.postAction(null, "Failed to delete attachment.");
+                    (error: ErrorResponse) => {
+                        this.errorMessage = "Error deleting attachments";
+                        if(error && !error.isEmpty()){
+                            this.processErrorMessage(error);
+                        }
+                        this.postAction(null, null);
+                        this.submitted = false;
+
                     }
                 );
         }
@@ -198,7 +223,30 @@ export class TripMemoEditComponent extends CommonFormViewComponent implements On
                         this.attendeesList.push({id: element.id, text: element.firstName + " " + element.lastName[0] + "."});
                     });
                 },
-                error => this.errorMessage = <any>error);
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading employees";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
+            );
+    }
+
+    public canEdit() {
+        // only owner can edit
+        var moduleAccessChecker = new ModuleAccessCheckerService;
+        if(moduleAccessChecker.checkAccessAdmin()){
+            return true;
+        }
+        var currentUser = localStorage.getItem("authenticatedUser");
+        //if(this.memo.owner == null  || this.memo.owner == ""){
+        //    return true;
+        //}
+        if(this.tripMemo.owner === currentUser || !this.tripMemo.id){
+            return true;
+        }
+        return false;
     }
 
 }

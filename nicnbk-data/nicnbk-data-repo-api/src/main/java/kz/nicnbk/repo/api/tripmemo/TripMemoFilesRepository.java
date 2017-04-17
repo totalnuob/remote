@@ -3,6 +3,7 @@ package kz.nicnbk.repo.api.tripmemo;
 import kz.nicnbk.repo.model.tripmemo.TripMemoFiles;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -17,7 +18,7 @@ public interface TripMemoFilesRepository extends PagingAndSortingRepository<Trip
      * @param tripMemoId
      * @return
      */
-    @Query("select m from trip_memo_files m where m.tripMemo.id=?1")
+    @Query("select m from trip_memo_files m where m.tripMemo.id=?1 and (m.file.deleted is null or m.file.deleted=false)")
     List<TripMemoFiles> getFilesByTripMemoId(Long tripMemoId);
 
     /**
@@ -26,6 +27,6 @@ public interface TripMemoFilesRepository extends PagingAndSortingRepository<Trip
      * @param fileId
      * @return
      */
-    @Query("select m from trip_memo_files m where m.file.id=?1")
+    @Query("select m from trip_memo_files m where m.file.id=?1  and (m.file.deleted is null or m.file.deleted=false)")
     TripMemoFiles getFilesByFileId(Long fileId);
 }

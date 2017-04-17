@@ -2,26 +2,23 @@ package kz.nicnbk.ws.rest;
 
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.repo.model.m2s2.MeetingMemo;
+import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.files.FileService;
 import kz.nicnbk.service.api.m2s2.*;
+import kz.nicnbk.service.dto.authentication.TokenUserInfo;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.m2s2.*;
-import kz.nicnbk.ws.model.EntitySaveResponse;
-import kz.nicnbk.ws.model.Response;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -30,7 +27,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/m2s2")
-public class MemoServiceREST {
+public class MemoServiceREST extends CommonServiceREST {
 
     @Autowired
     private MeetingMemoService memoService;
@@ -47,170 +44,267 @@ public class MemoServiceREST {
     @Autowired
     private FileService fileService;
 
+    @Autowired
+    private TokenService tokenService;
+
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
-    public MemoPagedSearchResult search(@RequestBody MemoSearchParams searchParams){
+    public ResponseEntity<?> search(@RequestBody MemoSearchParams searchParams){
         MemoPagedSearchResult searchResult = memoService.search(searchParams);
-        return searchResult;
+        if(searchResult != null){
+            return new ResponseEntity<>(searchResult, null, HttpStatus.OK);
+        }else{
+            // error occurred
+            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
+
+    @RequestMapping(value = "PE/search", method = RequestMethod.POST)
+    public ResponseEntity<?> searchPE(@RequestBody MemoSearchParams searchParams){
+        MemoPagedSearchResult searchResult = PEmemoService.search(searchParams);
+        if(searchResult != null){
+            return new ResponseEntity<>(searchResult, null, HttpStatus.OK);
+        }else{
+            // error occurred
+            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "HF/search", method = RequestMethod.POST)
+    public ResponseEntity<?> searchHF(@RequestBody MemoSearchParams searchParams){
+        MemoPagedSearchResult searchResult = HFmemoService.search(searchParams);
+        if(searchResult != null){
+            return new ResponseEntity<>(searchResult, null, HttpStatus.OK);
+        }else{
+            // error occurred
+            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
     @RequestMapping(value = "/get/{type}/{memoId}", method = RequestMethod.GET)
-    public MeetingMemoDto get(@PathVariable int type, @PathVariable long memoId){
+    public ResponseEntity<?> get(@PathVariable int type, @PathVariable long memoId){
         switch (type){
             case MeetingMemo.GENERAL_DISCRIMINATOR:
-                return generalMemoService.get(memoId);
+                MeetingMemoDto generalMeetingMemoDto = generalMemoService.get(memoId);
+                if(generalMeetingMemoDto != null){
+                    return new ResponseEntity<>(generalMeetingMemoDto, null, HttpStatus.OK);
+                }else{
+                    // error occurred
+                    return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+                }
             case MeetingMemo.PE_DISCRIMINATOR:
-                return PEmemoService.get(memoId);
+                MeetingMemoDto privateEquityMeetingMemoDto =  PEmemoService.get(memoId);
+                if(privateEquityMeetingMemoDto != null){
+                    return new ResponseEntity<>(privateEquityMeetingMemoDto, null, HttpStatus.OK);
+                }else{
+                    // error occurred
+                    return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+                }
             case MeetingMemo.HF_DISCRIMINATOR:
-                return HFmemoService.get(memoId);
+                MeetingMemoDto hedgeFundMeetingMemoDto = HFmemoService.get(memoId);
+                if(hedgeFundMeetingMemoDto != null){
+                    return new ResponseEntity<>(hedgeFundMeetingMemoDto, null, HttpStatus.OK);
+                }else{
+                    // error occurred
+                    return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+                }
             case MeetingMemo.RE_DISCRIMINATOR:
-                return REmemoService.get(memoId);
+                MeetingMemoDto realEstateMeetingMemoDto =  REmemoService.get(memoId);
+                if(realEstateMeetingMemoDto != null){
+                    return new ResponseEntity<>(realEstateMeetingMemoDto, null, HttpStatus.OK);
+                }else{
+                    // error occurred
+                    return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            default:
+                // error occurred
+                return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        // TODO: custom response if not matched
-        return null;
     }
 
+//    @RequestMapping(value = "/get/{type}/{memoId}", method = RequestMethod.GET)
+//    public HedgeFundsMeetingMemoDto get(@PathVariable int type, @PathVariable long memoId){
+//        return HFmemoService.get(memoId);
+//    }
+
+    @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/PE/save", method = RequestMethod.POST)
     public ResponseEntity<?>  save(@RequestBody PrivateEquityMeetingMemoDto memoDto){
-        Long id = PEmemoService.save(memoDto);
-
-        // TODO: response
-
-        HttpHeaders httpHeaders = new HttpHeaders();
-        EntitySaveResponse response = new EntitySaveResponse();
-        response.setEntityId(id);
-        if(memoDto.getId() == null){
-            response.setCreationDate(new Date());
+        if(memoDto.getFund() != null && memoDto.getFund().getId() == null) {
+            memoDto.setFund(null);
         }
-        memoDto.setId(id);
-        return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
+        // set creator
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+        if(memoDto.getId() == null){
+            memoDto.setOwner(username);
+        }
+        Long id = PEmemoService.save(memoDto, username);
+
+        if(id == null){
+            // error occurred
+            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }else {
+            // TODO: response from DB, not UI
+            return buildEntitySaveResponse(id, memoDto.getCreationDate());
+        }
     }
 
+    @PreAuthorize("hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/HF/save", method = RequestMethod.POST)
     public ResponseEntity<?>  save(@RequestBody HedgeFundsMeetingMemoDto memoDto){
-        Long id = HFmemoService.save(memoDto);
-
-        // TODO: response
-
-        HttpHeaders httpHeaders = new HttpHeaders();
-        EntitySaveResponse response = new EntitySaveResponse();
-        response.setEntityId(id);
-        if(memoDto.getId() == null){
-            response.setCreationDate(new Date());
+        if(memoDto.getFund() != null && memoDto.getFund().getId() == null) {
+            memoDto.setFund(null);
         }
-        memoDto.setId(id);
-        return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
+        // set creator
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+        if(memoDto.getId() == null){
+            memoDto.setOwner(username);
+        }
+        Long id = HFmemoService.save(memoDto, username);
+        if(id == null){
+            // error occurred
+            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }else {
+            // TODO: response from DB, not UI
+            return buildEntitySaveResponse(id, memoDto.getCreationDate());
+        }
     }
 
+    @PreAuthorize("hasRole('ROLE_REAL_ESTATE_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/RE/save", method = RequestMethod.POST)
     public ResponseEntity<?>  save(@RequestBody RealEstateMeetingMemoDto memoDto){
-        Long id = REmemoService.save(memoDto);
-
-        // TODO: response
-        HttpHeaders httpHeaders = new HttpHeaders();
-        EntitySaveResponse response = new EntitySaveResponse();
-        response.setEntityId(id);
+        // set creator
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
         if(memoDto.getId() == null){
-            response.setCreationDate(new Date());
+            memoDto.setOwner(username);
         }
-        memoDto.setId(id);
-        return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
+        Long id = REmemoService.save(memoDto, username);
+        if(id == null){
+            // error occurred
+            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }else {
+            // TODO: response from DB, not UI
+            return buildEntitySaveResponse(id, memoDto.getCreationDate());
+        }
     }
 
     @RequestMapping(value = "/GN/save", method = RequestMethod.POST)
     public ResponseEntity<?>  save(@RequestBody GeneralMeetingMemoDto memoDto){
-        Long id = generalMemoService.save(memoDto);
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
 
-        // TODO: response
-
-        HttpHeaders httpHeaders = new HttpHeaders();
-        EntitySaveResponse response = new EntitySaveResponse();
-        response.setEntityId(id);
-        if(memoDto.getId() == null){
-            response.setCreationDate(new Date());
+        // check access by owner
+        if(memoDto.getId() != null){
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            boolean access = this.generalMemoService.checkOwner((String)auth.getDetails(), memoDto.getId());
+            if(!access){
+                return buildUnauthorizedResponse();
+            }
+        } else{
+            // set creator
+            memoDto.setOwner(username);
         }
-        memoDto.setId(id);
-        return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
+
+        Long id = generalMemoService.save(memoDto, username);
+        if(id == null){
+            // error occurred
+            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }else{
+            // TODO: response from DB, not UI
+            return buildEntitySaveResponse(id, memoDto.getCreationDate());
+        }
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/attachment/upload/{memoId}")
-    public Set<FilesDto> handleFileUpload(@PathVariable("memoId") long memoId,
+    public ResponseEntity<?> handleFileUpload(@PathVariable("memoId") long memoId,
                                               @RequestParam(value = "file", required = false) MultipartFile[] files) {
 
-        Set<FilesDto> filesDtoSet = new HashSet<>();
-        if(files != null && files.length > 0){
-            for(MultipartFile file: files){
-                FilesDto filesDto = new FilesDto();
-                filesDto.setType(FileTypeLookup.MEMO_ATTACHMENT.getCode());
-                filesDto.setFileName(file.getOriginalFilename());
-                filesDto.setMimeType(file.getContentType());
-                filesDto.setSize(file.getSize());
-                try {
-                    filesDto.setBytes(file.getBytes());
-                } catch (IOException e) {
+        // TODO: control file upload by user role
 
-                    // TODO: handle error
-                    e.printStackTrace();
-                }
-                filesDtoSet.add(filesDto);
-            }
-            try {
-                return this.memoService.saveAttachments(memoId, filesDtoSet);
-            }catch (Exception ex){
-
-                // TODO: handle error
-                ex.printStackTrace();
+        Set<FilesDto> filesDtoSet = buildFilesDtoFromMultipart(files, FileTypeLookup.MEMO_ATTACHMENT.getCode());
+        if(filesDtoSet != null){
+            Set<FilesDto> savedAttachments = this.memoService.saveAttachments(memoId, filesDtoSet);
+            if(savedAttachments == null){
+                // error occurred
+                return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+            }else{
+                return new ResponseEntity<>(savedAttachments, null, HttpStatus.OK);
             }
         }
-
-        // TODO: handle error, send response
-        return null;
+        return new ResponseEntity<>(null, null, HttpStatus.OK);
     }
+
 
     @RequestMapping(value="/attachment/{id}", method=RequestMethod.GET)
     @ResponseBody
     public void downloadFile(@PathVariable(value="id") Long fileId, HttpServletResponse response) {
+
+        // TODO: control file download by user role
         // TODO: Check rights
+
         InputStream inputStream = fileService.getFileInputStream(fileId, FileTypeLookup.MEMO_ATTACHMENT.getCode());
         if(inputStream == null){
             // TODO: handle error
         }
-        try {
-            FilesDto fileDto = fileService.getFileInfo(fileId);
-            response.setContentType(fileDto.getMimeType());
-            String fileName = URLEncoder.encode(fileDto.getFileName(), "UTF-8");
-            fileName = URLDecoder.decode(fileName, "ISO8859_1");
-            response.setHeader("Content-disposition", "attachment; filename="+ fileName);
-            org.apache.commons.io.IOUtils.copy(inputStream, response.getOutputStream());
-            response.flushBuffer();
-        } catch (IOException e) {
-            e.printStackTrace();
-            // TODO: handle error
-        }
-
-        try {
-            inputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        sendFileDownloadResponse(response, fileService.getFileInfo(fileId), inputStream);
     }
+
 
     @RequestMapping(value="/attachment/delete/{memoId}/{fileId}", method=RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<?> deleteFile(@PathVariable(value="memoId") Long memoId, @PathVariable(value="fileId") Long fileId){
+        //check rights
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+        int memoType = this.memoService.getMemoType(memoId);
 
-        boolean deleted = this.memoService.deleteAttachment(memoId, fileId);
+        if(memoType == 1){ // GENERAL MEMO
+            // check owner
+            boolean access = this.generalMemoService.checkOwner(token, memoId);
+            if(!access){
+                return buildUnauthorizedResponse();
+            }
+        }else if(!checkMemoEditRights(token, memoType)){
+            // check module rights
+            return buildUnauthorizedResponse();
+        }
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        Response response = new Response();
-        response.setSuccess(deleted);
-        return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
+        //boolean deleted = this.memoService.deleteAttachment(memoId, fileId, username);
+        boolean deleted = this.memoService.safeDeleteAttachment(memoId, fileId, username);
+        return buildDeleteResponseEntity(deleted);
     }
 
-    @RequestMapping(value = "/attachment/list/{memoId}", method = RequestMethod.GET)
-    private Set<FilesDto> get(@PathVariable("memoId") long memoId){
 
-       return this.memoService.getAttachments(memoId);
+    @RequestMapping(value = "/attachment/list/{memoId}", method = RequestMethod.GET)
+    private Set<FilesDto> getFiles(@PathVariable("memoId") long memoId){
+        return this.memoService.getAttachments(memoId);
+    }
+
+
+    public boolean checkMemoEditRights(String token, int memoType){
+        TokenUserInfo userInfo = this.tokenService.decode(token);
+        String roleName = "";
+        if(memoType == 2){ // PRIVATE EQUITY
+            roleName = "ROLE_PRIVATE_EQUITY_EDITOR";
+        }else if(memoType == 3){ // HEDGE FUNDS
+            roleName = "ROLE_HEDGE_FUND_EDITOR";
+        }else if(memoType == 4){ // REAL ESTATE
+            roleName = "ROLE_REAL_ESTATE_EDITOR";
+        }
+        if(userInfo != null && userInfo.getRoles() != null) {
+            for (int i = 0; i < userInfo.getRoles().length; i++) {
+                String role = userInfo.getRoles()[i];
+                if(role.equalsIgnoreCase("ROLE_ADMIN")){
+                    return true;
+                }else if(userInfo.getRoles()[i].equalsIgnoreCase(roleName)){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
