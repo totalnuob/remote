@@ -39,6 +39,11 @@
     <!--</div>-->
     <div class="row">
         <div class="col-md-12">
+            <h4>Macro Monitor: {{typeStr}}</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
             <table class="table table-hover table-responsive" style="font-size: smaller; overflow: scroll; overflow: auto; display: block" >
                 <tr>
                     <th>
@@ -47,15 +52,15 @@
                         </button>
                     </th>
                     <th></th>
-                    <th *ngFor="let dateItem of dateList; let i=index">
-                        <div class='input-group datetime' id="scoresDate" name='scoresDate' style="width: 100%">
-                            <input type="text" name="scoresDate" id="scoresDateValue" [(ngModel)]="dateList[i]"/>
-                        </div>
+                    <th *ngFor="let dateItem of dateList; let i=index; trackBy:trackByIndex;">
+                        <!--<div class='input-group' id="scoresDate" name='scoresDate' style="width: 100%">-->
+                        <input type="text" style="width: 100%" [(ngModel)]="dateList[i]"/>
+                        <!--</div>-->
                     </th>
                 </tr>
                 <tr *ngFor="let field of fieldsLookup; let j=index">
                     <td>
-                        <button type="btn-xs btn-info" class="pull-left" data-toggle="modal" data-target="#macroScoreInputModal">
+                        <button type="btn-xs btn-info" class="pull-left" data-toggle="modal" data-target="#macroScoreInputModal" (click)="macroScoreInputModalHelper(j)">
                             <span class="glyphicon glyphicon-circle-arrow-up"></span>
                         </button>
                     </td>
@@ -94,10 +99,7 @@
                 <br/>
                 <br/>
             </table>
-            <button type="btn-xs btn-info" class="pull-left" data-toggle="modal" data-target="#macroScoreInputModal">
-                <span>Upload scores </span><span class="glyphicon glyphicon-circle-arrow-up"></span>
-            </button>
-            <button type="button" class="btn-xs btn-info pull-right" style="display: inline-block" (click)="save()">Save</button>
+            <button type="button" id="saveButton" class="btn-xs btn-info pull-right" style="display: inline-block" (click)="save()">Save</button>
         </div>
     </div>
     <div class="modal fade" id="macroScoreInputModal" role="dialog">
@@ -107,13 +109,9 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <div class="alert alert-danger" *ngIf="returnUploadErrorMessage != null"><span>{{scoreUploadErrorMessage}}</span></div>
-                    <div class="alert alert-info" *ngIf="returnUploadSuccessMessage != null"><span>{{scoreUploadSuccessMessage}}</span></div>
+                    <div class="alert alert-danger" *ngIf="scoreUploadErrorMessage != null"><span>{{scoreUploadErrorMessage}}</span></div>
+                    <div class="alert alert-info" *ngIf="scoreUploadSuccessMessage != null"><span>{{scoreUploadSuccessMessage}}</span></div>
                     <br/>
-                    <div>Format: <span style="font-weight: bold"> </span></div>
-                    <div>
-                        Date format: <span style="font-weight: bold"> </span>
-                    </div>
                     <textarea class="form-control" placeholder="Paste macromonitor score here..." name="uploadedMacroMonitorScores" [(ngModel)]="uploadedMacroMonitorScores"></textarea>
                 </div>
                 <div class="modal-footer">
@@ -128,28 +126,13 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <span>Date format: DD-MM-YYYY, e.g. 31-12-2017</span>
                 </div>
                 <div class="modal-body">
-                    <div class="alert alert-danger" *ngIf="returnUploadErrorMessage != null"><span>{{scoreUploadErrorMessage}}</span></div>
-                    <div class="alert alert-info" *ngIf="returnUploadSuccessMessage != null"><span>{{scoreUploadSuccessMessage}}</span></div>
+                    <div class="alert alert-danger" *ngIf="scoreUploadErrorMessage != null"><span>{{scoreUploadErrorMessage}}</span></div>
+                    <div class="alert alert-info" *ngIf="scoreUploadSuccessMessage != null"><span>{{scoreUploadSuccessMessage}}</span></div>
                     <br/>
-                    <label for="fromDatePicker">From</label>
-                    <div class='input-group date col-md-3' id='fromDatePicker' style="width: 100%">
-                        <input type='text' class="form-control" id="fromDate" [(ngModel)]="fromDate"/>
-                            <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-calendar"></span>
-                            </span>
-                    </div>
-                    <br>
-                    <label for="untilDatePicker">To</label>
-                    <div class='input-group date col-md-3' id='untilDatePicker' style="width: 100%">
-                        <input type='text' class="form-control" id="toDate" [(ngModel)]="toDate"/>
-                            <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-calendar"></span>
-                            </span>
-                    </div>
-
-                    <textarea class="form-control" placeholder="Paste macromonitor score here..." name="uploadedDates" [(ngModel)]="uploadedDates"></textarea>
+                    <textarea class="form-control" placeholder="Paste list of dates here..." name="uploadedDates" [(ngModel)]="uploadedDates"></textarea>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default pull-left" data-dismiss="modal" (click)='closeMacroMonitorScoresModal()'>Close</button>

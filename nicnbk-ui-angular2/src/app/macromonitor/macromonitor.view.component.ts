@@ -7,6 +7,7 @@ import {Subscription} from 'rxjs';
 import {MacroMonitorScore} from "./model/macromonitor.score";
 import {SaveResponse} from "../common/save-response";
 import {ErrorResponse} from "../common/error-response";
+import * as moment from "moment";
 
 declare var google:any;
 
@@ -32,7 +33,10 @@ export class  MMViewComponent extends GoogleChartComponent {
         //load lookups for fields
         this.sub = this.loadLookups();
 
-        //this.getDataByType(1);
+    }
+
+    drawGraph(){
+        this.getDataByType(1);
     }
 
 
@@ -84,9 +88,6 @@ export class  MMViewComponent extends GoogleChartComponent {
 
         }
 
-        console.log(valueList);
-        console.log(dateList);
-
     }
 
     loadLookups(){
@@ -94,7 +95,6 @@ export class  MMViewComponent extends GoogleChartComponent {
             .subscribe(
                 data => {
                     this.fieldsLookup = data;
-                    //console.log(this.fieldsLookup);
                 },
                 (error: ErrorResponse) => {
                     this.errorMessage = "Error loading lookups";
@@ -119,8 +119,11 @@ export class  MMViewComponent extends GoogleChartComponent {
             'allowHtml': true,
             cssClassNames: {
                 tableCell: '',
-            }
+            },
         };
+
+        var monthYearFormatter = new google.visualization.DateFormat({pattern: "MMM yyyy"});
+        monthYearFormatter.format(data, 0);
 
         var colorFormatter = new google.visualization.ColorFormat();
         colorFormatter.addRange(-100, 1, 'white', '#9C0824');
@@ -134,6 +137,7 @@ export class  MMViewComponent extends GoogleChartComponent {
         colorFormatter.addRange(8, 9, 'white', '#297839');
         colorFormatter.addRange(9, 10, 'white', '#09622A');
         colorFormatter.addRange(10, 100, 'white', '#09622A');
+
         for(var i = 1; i <= dates.length; i++){
             colorFormatter.format(data, i);
         }
@@ -171,13 +175,12 @@ export class  MMViewComponent extends GoogleChartComponent {
             var row = [dates[i], input[input.length - 2][1+i], input[input.length - 1][1+i]];
             rows.push(row);
         }
-        //console.log(rows);
         return rows;
     }
 
     private setColumnData(data, dates){
         for(var i = 0; i < dates.length; i++){
-            data.addColumn("number", dates[i]);
+            data.addColumn("number", moment(dates[i], 'DD-MM-YYYY').format('MMM-YY'));
         }
     };
 

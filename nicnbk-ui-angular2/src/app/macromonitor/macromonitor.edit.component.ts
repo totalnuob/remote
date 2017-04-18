@@ -34,7 +34,7 @@ export class MMEditComponent extends CommonFormViewComponent implements OnInit, 
 
     // <parsing from modal>
     uploadedMacroMonitorScores;
-
+    modalFieldTypeIndex;
     uploadedDates;
 
     scoreUploadErrorMessage;
@@ -95,23 +95,10 @@ export class MMEditComponent extends CommonFormViewComponent implements OnInit, 
 
     ngOnInit():any {
 
-        $('#fromDate').datetimepicker({
-            //defaultDate: new Date(),
-            format: 'MM-YYYY'
-        });
-
-        $('#toDate').datetimepicker({
-            //defaultDate: new Date(),
-            format: 'MM-YYYY'
-        });
-
     }
 
     ngAfterViewInit(){
-        //$('#scoresDate').datetimepicker({
-        //    //defaultDate: new Date(),
-        //    format: 'DD-MM-YYYY'
-        //});
+
     }
 
     setDateTimePicker() {
@@ -287,28 +274,70 @@ export class MMEditComponent extends CommonFormViewComponent implements OnInit, 
         this.scoreUploadSuccessMessage = null;
     }
 
+    // Function for parsing list of scores entered from modal
     parseMacroMonitorScoresModal() {
-        console.log(this.uploadedMacroMonitorScores);
 
-        var rows = this.uploadedMacroMonitorScores.split('\n');
+        var rows = this.uploadedMacroMonitorScores.split('\t');
+        //this.scoreListForModel[this.modalFieldTypeIndex] = [];
+
+        console.log(this.dateList);
+
+        if( this.dateList.length != rows.length) {
+            this.scoreUploadErrorMessage = "Error! The length of list of SCORES entered doesn't match dates list length!";
+            this.scoreUploadSuccessMessage = null;
+            return;
+        }
 
         for(var i = 0; i < rows.length; i++) {
-            console.log(rows[i]);
-            console.log(rows[i].length);
+            //let temp = new MacroMonitorScore();
+            //temp.field = this.fieldsValueList[this.modalFieldTypeIndex];
+            //temp.type = this.typeStr;
+            //temp.score = rows[i];
+            this.scoreListForModel[this.modalFieldTypeIndex][i].score = rows[i];
+            //console.log(rows[i]);
+            //console.log(rows[i].length);
         }
+
+        this.scoreUploadSuccessMessage = "Scores added";
+        this.scoreUploadErrorMessage = null;
+
+        console.log(this.scoreListForModel[this.modalFieldTypeIndex]);
     }
 
+
+    // Function for parsing list of dates entered from modal
     createNewDateList() {
-        //this.toDate = $('#toDate').val();
-        //this.fromDate = $('#fromDate').val();
 
         this.dateList = [];
+        for(var i = 0; i < this.scoreListForModel.length; i++) {
+            this.scoreListForModel[i] = [];
+        }
 
         var rows = this.uploadedDates.split("\t");
         console.log(rows);
         for(var i = 0; i < rows.length; i++) {
             this.dateList.push(rows[i]);
+            for(var j = 0; j < this.scoreListForModel.length; j++) {
+                let temp = new MacroMonitorScore();
+                temp.field = this.fieldsValueList[j];
+                temp.type = this.typeStr;
+                this.scoreListForModel[j].splice(0,0, temp);
+            }
         }
 
+        this.scoreUploadSuccessMessage = "Dates added";
+        this.scoreUploadErrorMessage = null;
+
+        console.log(this.scoreListForModel);
+    }
+
+    // Function for getting type of the field for the list of scores from modal input
+    macroScoreInputModalHelper(index) {
+        this.modalFieldTypeIndex = index;
+        console.log(this.modalFieldTypeIndex);
+    }
+
+    trackByIndex(index: number, obj: any): any {
+        return index;
     }
 }

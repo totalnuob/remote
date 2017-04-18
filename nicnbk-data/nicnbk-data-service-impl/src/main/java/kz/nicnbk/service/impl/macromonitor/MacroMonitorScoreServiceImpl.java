@@ -25,8 +25,7 @@ public class MacroMonitorScoreServiceImpl implements MacroMonitorScoreService {
 
     @Override
     public Long save(List<MacroMonitorScoreDto> macroMonitorScoreDtoList) {
-        if(macroMonitorScoreDtoList != null) {
-
+        if(macroMonitorScoreDtoList != null && macroMonitorScoreDtoList.size() != 0) {
             repository.deleteByTypeId(this.converter.assemble(macroMonitorScoreDtoList.get(0)).getType().getId());
 
             for (MacroMonitorScoreDto dto : macroMonitorScoreDtoList) {
