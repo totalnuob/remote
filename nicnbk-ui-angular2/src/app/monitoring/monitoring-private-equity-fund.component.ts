@@ -356,7 +356,7 @@ export class MonitoringPrivateEquityFundComponent extends GoogleChartComponent {
                 role: "annotation" }]);
 
         var options = {
-            title: 'Geographic Exposure',
+            title: 'Geographic Exposure**',
             animation: {
                 duration: 500,
                 easing: 'out',
@@ -401,7 +401,7 @@ export class MonitoringPrivateEquityFundComponent extends GoogleChartComponent {
         ]);
 
         var options = {
-            title: 'Sector Exposure',
+            title: 'Sector Exposure**',
             animation: {
                 duration: 500,
                 easing: 'out',
