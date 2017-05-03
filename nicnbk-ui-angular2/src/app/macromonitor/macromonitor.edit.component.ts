@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import {Component, OnInit, AfterViewInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MacroMonitorService} from "./macromonitor.service";
 import {Subscription} from 'rxjs';
@@ -8,9 +8,9 @@ import {SaveResponse} from "../common/save-response";
 import {ErrorResponse} from "../common/error-response";
 import {LookupService} from "../common/lookup.service";
 import {error} from "util";
+import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 
-
-declare var $:any
+declare var $:any;
 
 @Component({
     selector: 'mm-edit',
@@ -25,12 +25,7 @@ export class MMEditComponent extends CommonFormViewComponent implements OnInit, 
     scoreListForModel = [];
     fieldsValueList = [];
 
-    scoreList = [];
     dateList = [];
-
-    scoreListInput = [];
-    dateListInput = [];
-
 
     // <parsing from modal>
     uploadedMacroMonitorScores;
@@ -39,9 +34,9 @@ export class MMEditComponent extends CommonFormViewComponent implements OnInit, 
 
     scoreUploadErrorMessage;
     scoreUploadSuccessMessage;
-    fromDate;
-    toDate;
-    // </>
+    //fromDate;
+    //toDate;
+    // </parsing from modal>
 
     public sub: any;
     public typeId: number;
@@ -50,6 +45,9 @@ export class MMEditComponent extends CommonFormViewComponent implements OnInit, 
 
     fieldsLookup = [];
 
+    private moduleAccessChecker: ModuleAccessCheckerService;
+
+
     constructor (
         private route: ActivatedRoute,
         private router: Router,
@@ -57,6 +55,12 @@ export class MMEditComponent extends CommonFormViewComponent implements OnInit, 
         private mmService: MacroMonitorService
     ) {
         super();
+
+        this.moduleAccessChecker = new ModuleAccessCheckerService;
+
+        if(!this.moduleAccessChecker.checkAccessMacroMonitor()){
+            this.router.navigate(['accessDenied']);
+        }
 
         //load lookups
         this.sub = this.loadLookups();
@@ -83,8 +87,6 @@ export class MMEditComponent extends CommonFormViewComponent implements OnInit, 
                     .subscribe(
                     (data: [MacroMonitorScore]) => {
                         if(data) {
-                            //this.scoreList.push(data);
-                            //console.log(data);
                             this.parseDataForModel(data);
                         } else {
                             this.errorMessage = "Error loading macromonitor data";
@@ -92,6 +94,8 @@ export class MMEditComponent extends CommonFormViewComponent implements OnInit, 
                     });
             });
     }
+
+
 
     ngOnInit():any {
 
@@ -102,17 +106,9 @@ export class MMEditComponent extends CommonFormViewComponent implements OnInit, 
     }
 
     setDateTimePicker() {
-        console.log("Hey1");
         $('#scoresDateValue').datetimepicker({
             format: 'MM-YYYY'
         });
-        //$("[name = 'scoresDate']").each(
-        //    console.log("Hey")
-            //$('#scoresDate').datetimepicker({
-            ////defaultDate: new Date(),
-            //format: 'DD-MM-YYYY'
-            //})
-        //);
     }
 
     parseDataForModel(dataList) {
@@ -135,9 +131,8 @@ export class MMEditComponent extends CommonFormViewComponent implements OnInit, 
             }
         }
 
-        $('#fromDate').val(this.dateList[this.dateList.length - 1]);
-        $('#toDate').val(this.dateList[0]);
-
+        //$('#fromDate').val(this.dateList[this.dateList.length - 1]);
+        //$('#toDate').val(this.dateList[0]);
 
 
         console.log("DateList");
@@ -147,34 +142,16 @@ export class MMEditComponent extends CommonFormViewComponent implements OnInit, 
 
     }
 
-    //parseData(dataList) {
-    //    let valueList = [];
-    //
-    //
-    //    for(var i = 0; i < this.fieldsLookup.length; i ++) {
-    //        valueList.push([this.fieldsLookup[i].code]);
-    //    }
-    //
-    //
-    //
-    //    console.log(valueList);
-    //
-    //    for(var i = 0; i < dataList[0].length; i++) {
-    //        if(this.dateList.indexOf(dataList[0][i].date) == -1) {
-    //            this.dateList.push(dataList[0][i].date);
-    //        }
-    //        for(var j = 0; j < valueList.length; j++) {
-    //            if(dataList[0][i].field == valueList[j][0]) {
-    //                valueList[j].push(dataList[0][i].score);
-    //            }
-    //        }
-    //    }
-    //
-    //    console.log(this.dateList);
-    //    console.log(valueList);
-    //}
-
     save(){
+        this.errorMessage = null;
+        this.successMessage = null;
+
+        for(var i = 0; i < this.dateList.length - 1; i++) {
+            if(this.dateList.includes(this.dateList[i], i + 1)) {
+                this.postAction(null, "Duplicate date is not allowed. Please check this date: " + this.dateList[i] + ". At column: " + (i+1));
+                return;
+            }
+        }
 
         let data = [];
 
@@ -190,20 +167,20 @@ export class MMEditComponent extends CommonFormViewComponent implements OnInit, 
             }
         }
 
+        console.log(this.dateList);
+
         this.mmService.save(data)
             .subscribe(
                 (response: SaveResponse) => {
-                    //this.mmScore.id = response.entityId;
-                    //this.mmScore.creationDate = response.creationDate;
-
                     this.postAction("Successfully saved", null);
+                    this.errorMessage = null;
                 },
                 (error: ErrorResponse) => {
-                    this.errorMessage = "Error saving macromonitor data";
+                    this.successMessage = null;
                     if(error && !error.isEmpty()){
                         this.processErrorMessage(error);
                     }
-                    this.postAction(null, null);
+                    this.postAction(null, "Error saving macromonitor data");
                 }
             )
     }
@@ -213,7 +190,6 @@ export class MMEditComponent extends CommonFormViewComponent implements OnInit, 
             .subscribe(
                 data => {
                     this.fieldsLookup = data;
-                    //console.log(this.fieldsLookup);
                 },
                 (error: ErrorResponse) => {
                     this.errorMessage = "Error loading lookups";
@@ -236,16 +212,6 @@ export class MMEditComponent extends CommonFormViewComponent implements OnInit, 
             this.scoreListForModel[i].splice(0,0, temp);
         }
 
-        //let list = [];
-        //for(var i = 0; i < this.fieldsLookup.length; i++) {
-        //    list.push(new MacroMonitorScore());
-        //    list[i].field = this.fieldsLookup[i].code;
-        //    list[i].type = "GLOBAL";
-        //}
-        //
-        //this.scoreListInput.push(list);
-        //this.dateListInput.push(new Date);
-
         console.log(this.dateList);
         console.log(this.scoreListForModel);
     }
@@ -258,14 +224,7 @@ export class MMEditComponent extends CommonFormViewComponent implements OnInit, 
             this.scoreListForModel[i].splice(dateIndex,1);
         }
 
-        ////console.log(item);
-        //for(var i = this.scoreListInput.length; i--;) {
-        //    if(this.scoreListInput[i] === item) {
-        //        this.scoreListInput.splice(i, 1);
-        //    }
-        //}
-        //
-        //this.dateListInput.splice(dateIndex,1);
+        console.log(this.dateList);
     }
 
     closeMacroMonitorScoresModal() {
@@ -316,7 +275,7 @@ export class MMEditComponent extends CommonFormViewComponent implements OnInit, 
         var rows = this.uploadedDates.split("\t");
         console.log(rows);
         for(var i = 0; i < rows.length; i++) {
-            this.dateList.push(rows[i]);
+            this.dateList.splice(0,0,rows[i]);
             for(var j = 0; j < this.scoreListForModel.length; j++) {
                 let temp = new MacroMonitorScore();
                 temp.field = this.fieldsValueList[j];
@@ -334,10 +293,31 @@ export class MMEditComponent extends CommonFormViewComponent implements OnInit, 
     // Function for getting type of the field for the list of scores from modal input
     macroScoreInputModalHelper(index) {
         this.modalFieldTypeIndex = index;
-        console.log(this.modalFieldTypeIndex);
     }
 
+
+    // Function for correct loop index in dynamic <input> elements
     trackByIndex(index: number, obj: any): any {
         return index;
     }
+
+    deleteAll() {
+        this.mmService.delete(this.typeId)
+            .subscribe(
+                (response: SaveResponse) => {
+                    this.postAction("Successfully deleted", null);
+                    this.errorMessage = null;
+                    this.dateList = [];
+                    this.scoreListForModel = [];
+                },
+                (error: ErrorResponse) => {
+                    this.successMessage = null;
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, "Error deleting macromonitor data");
+                }
+            )
+    }
+
 }

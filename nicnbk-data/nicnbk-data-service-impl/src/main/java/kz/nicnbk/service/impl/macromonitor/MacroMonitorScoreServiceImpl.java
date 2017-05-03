@@ -46,4 +46,10 @@ public class MacroMonitorScoreServiceImpl implements MacroMonitorScoreService {
 
         return dtoList;
     }
+
+    @Override
+    public Long deleteAll(Integer typeId) {
+        repository.deleteByTypeId(typeId);
+        return 1L;
+    }
 }

@@ -8,6 +8,7 @@ import {MacroMonitorScore} from "./model/macromonitor.score";
 import {SaveResponse} from "../common/save-response";
 import {ErrorResponse} from "../common/error-response";
 import * as moment from "moment";
+import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 
 declare var google:any;
 
@@ -23,15 +24,24 @@ export class  MMViewComponent extends GoogleChartComponent {
     busy: Subscription;
     fieldsLookup = [];
 
+    indexName: string;
+    tableName: string;
+    lineChartName: string;
+
+    private moduleAccessChecker: ModuleAccessCheckerService
+
     constructor (
         private route: ActivatedRoute,
         private lookupService: LookupService,
-        private mmService: MacroMonitorService
+        private mmService: MacroMonitorService,
+        private router: Router
     ) {
         super();
 
         //load lookups for fields
         this.sub = this.loadLookups();
+
+        this.moduleAccessChecker = new ModuleAccessCheckerService;
 
     }
 
@@ -41,6 +51,26 @@ export class  MMViewComponent extends GoogleChartComponent {
 
 
     getDataByType(typeId) {
+        if(typeId == 1) {
+            this.indexName = 'MSCI World';
+            this.tableName = 'table';
+            this.lineChartName = 'line_chart';
+        } else if(typeId == 2) {
+            this.indexName = 'S&P 500';
+            this.tableName = 'table_us';
+            this.lineChartName = 'line_chart_us';
+        } else if(typeId == 3) {
+            this.indexName = 'Shanghai SE composite';
+            this.tableName = 'table_china';
+            this.lineChartName = 'line_chart_china';
+        } else if(typeId == 4) {
+            this.indexName = 'STXE 600 Index';
+            this.tableName = 'table_eu';
+            this.lineChartName = 'line_chart_eu';
+        } else {
+
+        }
+
         this.busy = this.mmService.get(typeId)
             .subscribe(
                 (data: [MacroMonitorScore]) => {
@@ -58,7 +88,11 @@ export class  MMViewComponent extends GoogleChartComponent {
         let dateList = [];
 
         for(var i = 0; i < this.fieldsLookup.length; i++) {
-            valueList.push([this.fieldsLookup[i].nameEn]);
+            if(this.fieldsLookup[i].code == "INDEX") {
+                valueList.push([this.indexName]);
+            } else {
+                valueList.push([this.fieldsLookup[i].nameEn]);
+            }
         }
 
         for(var i = 0; i < dataList.length; i++) {
@@ -72,21 +106,24 @@ export class  MMViewComponent extends GoogleChartComponent {
             }
         }
 
-        if(typeId == 1) {
-            this.drawValuesTable('table', valueList, dateList);
-            this.drawLineChart('line_chart', valueList, dateList, 'MSCI World');
-        } else if(typeId == 2) {
-            this.drawValuesTable('table_us', valueList, dateList);
-            this.drawLineChart('line_chart_us', valueList, dateList, 'S&P 500');
-        } else if(typeId == 3) {
-            this.drawValuesTable('table_china', valueList, dateList);
-            this.drawLineChart('line_chart_china', valueList, dateList, 'Shanghai SE composite');
-        } else if(typeId == 4) {
-            this.drawValuesTable('table_eu', valueList, dateList)
-            this.drawLineChart('line_chart_eu', valueList, dateList, 'STXE 600 Index');
-        } else {
+        this.drawValuesTable(this.tableName, valueList, dateList);
+        this.drawLineChart(this.lineChartName, valueList, dateList, this.indexName);
 
-        }
+        //if(typeId == 1) {
+        //    this.drawValuesTable('table', valueList, dateList);
+        //    this.drawLineChart('line_chart', valueList, dateList, 'MSCI World');
+        //} else if(typeId == 2) {
+        //    this.drawValuesTable('table_us', valueList, dateList);
+        //    this.drawLineChart('line_chart_us', valueList, dateList, 'S&P 500');
+        //} else if(typeId == 3) {
+        //    this.drawValuesTable('table_china', valueList, dateList);
+        //    this.drawLineChart('line_chart_china', valueList, dateList, 'Shanghai SE composite');
+        //} else if(typeId == 4) {
+        //    this.drawValuesTable('table_eu', valueList, dateList)
+        //    this.drawLineChart('line_chart_eu', valueList, dateList, 'STXE 600 Index');
+        //} else {
+        //
+        //}
 
     }
 
@@ -186,5 +223,9 @@ export class  MMViewComponent extends GoogleChartComponent {
 
     private setRowData(data, input){
         data.addRows(input);
+    }
+
+    public showEditMacroMonitor(){
+        return this.moduleAccessChecker.checkAccessMacroMonitor();
     }
 }

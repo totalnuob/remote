@@ -16,4 +16,6 @@ public interface MacroMonitorScoreService extends BaseService {
 
     List<MacroMonitorScoreDto> getList(Integer typeId);
 
+    Long deleteAll(Integer typeId);
+
 }

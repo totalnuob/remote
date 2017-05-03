@@ -8,5 +8,5 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  */
 public interface MacroMonitorFieldRepository extends PagingAndSortingRepository<MacroMonitorField, Long> {
 
-    MacroMonitorField findByCode(String code);
+    MacroMonitorField findByCodeOrderByIdAsc(String code);
 }

@@ -129,7 +129,7 @@ public class LookupServiceImpl implements LookupService {
         }else if(clazz.equals(Substrategy.class)){
             return (T) this.substrategyRepository.findByCode(code);
         } else if(clazz.equals(MacroMonitorField.class)){
-            return (T) this.macroMonitorFieldRepository.findByCode(code);
+            return (T) this.macroMonitorFieldRepository.findByCodeOrderByIdAsc(code);
         } else if(clazz.equals(MacroMonitorType.class)){
             return (T) this.macroMonitorTypeRepository.findByCode(code);
         }
