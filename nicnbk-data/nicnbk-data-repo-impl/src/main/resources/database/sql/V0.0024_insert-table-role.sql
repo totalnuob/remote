@@ -12,3 +12,4 @@ INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(52, 'SRM_VIEW', 'St
 
 INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(101, 'NEWS_EDIT', 'News - Editor', '', '');
 
+INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(53, 'MM_EDIT', 'MacroMonitor - Editor', '', '');

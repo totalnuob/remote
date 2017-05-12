@@ -5,6 +5,8 @@ import kz.nicnbk.repo.api.lookup.*;
 import kz.nicnbk.repo.api.lookup.CurrencyRepository;
 import kz.nicnbk.repo.api.lookup.GeographyRepository;
 import kz.nicnbk.repo.api.lookup.StrategyRepository;
+import kz.nicnbk.repo.api.macromonitor.MacroMonitorFieldRepository;
+import kz.nicnbk.repo.api.macromonitor.MacroMonitorTypeRepository;
 import kz.nicnbk.repo.api.pe.IndustryRepository;
 import kz.nicnbk.repo.model.base.BaseTypeEntity;
 import kz.nicnbk.repo.model.common.*;
@@ -12,6 +14,8 @@ import kz.nicnbk.repo.model.files.FilesType;
 import kz.nicnbk.repo.model.hf.*;
 import kz.nicnbk.repo.model.m2s2.MeetingArrangedBy;
 import kz.nicnbk.repo.model.m2s2.MeetingType;
+import kz.nicnbk.repo.model.macromonitor.MacroMonitorField;
+import kz.nicnbk.repo.model.macromonitor.MacroMonitorType;
 import kz.nicnbk.repo.model.news.NewsType;
 import kz.nicnbk.repo.model.pe.PEIndustry;
 import kz.nicnbk.repo.model.tripmemo.TripType;
@@ -85,6 +89,12 @@ public class LookupServiceImpl implements LookupService {
     private FilesTypeRepository filesTypeRepository;
 
     @Autowired
+    private MacroMonitorFieldRepository macroMonitorFieldRepository;
+
+    @Autowired
+    private MacroMonitorTypeRepository macroMonitorTypeRepository;
+
+    @Autowired
     private TripTypeRepository tripTypeRepository;
 
     @Override
@@ -134,7 +144,11 @@ public class LookupServiceImpl implements LookupService {
                 return (T) this.geographyRepository.findByCode(code);
             }else if (clazz.equals(PEIndustry.class)) {
                 return (T) this.industryRepository.findByCode(code);
-            }else{
+            } else if(clazz.equals(MacroMonitorField.class)){
+                return (T) this.macroMonitorFieldRepository.findByCodeOrderByIdAsc(code);
+            } else if(clazz.equals(MacroMonitorType.class)){
+                return (T) this.macroMonitorTypeRepository.findByCode(code);
+            } else{
                 logger.error("Failed to load lookups for clazz=" + clazz + ", code=" + code);
             }
         }catch (Exception ex){
@@ -352,6 +366,18 @@ public class LookupServiceImpl implements LookupService {
             logger.error("Failed to load lookup: PEIndustry", ex);
         }
         return null;
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getMMFields(){
+        List<BaseDictionaryDto> dtoList = new ArrayList<>();
+        Iterator<MacroMonitorField> iterator = this.macroMonitorFieldRepository.findAll().iterator();
+        while(iterator.hasNext()) {
+            MacroMonitorField entity = iterator.next();
+            BaseDictionaryDto mmFieldDto = disassemble(entity);
+            dtoList.add(mmFieldDto);
+        }
+        return  dtoList;
     }
 
     // TODO: refactor as common lookup converter

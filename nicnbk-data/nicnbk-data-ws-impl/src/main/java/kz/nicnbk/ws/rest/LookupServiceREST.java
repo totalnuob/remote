@@ -94,4 +94,11 @@ public class LookupServiceREST extends CommonServiceREST{
         List<BaseDictionaryDto> lookups = this.lookupService.getPEIndustry();
         return buildResponse(lookups);
     }
+
+    @RequestMapping(value = "/MMFields", method = RequestMethod.GET)
+    public List<BaseDictionaryDto> getMMFields(){
+        List<BaseDictionaryDto> lookups = this.lookupService.getMMFields();
+        return lookups;
+    }
+
 }

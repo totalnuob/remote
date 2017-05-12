@@ -1,0 +1,14 @@
+INSERT INTO macro_monitor_field(id, code, name_en, name_ru, name_kz) VALUES(1, 'LEADING', 'Leading Indicators', '', '');
+INSERT INTO macro_monitor_field(id, code, name_en, name_ru, name_kz) VALUES(2, 'INFLATION', 'Inflation', '', '');
+INSERT INTO macro_monitor_field(id, code, name_en, name_ru, name_kz) VALUES(3, 'MANUFACT', 'Manufacturing', '', '');
+INSERT INTO macro_monitor_field(id, code, name_en, name_ru, name_kz) VALUES(4, 'SERVICE', 'Service', '', '');
+INSERT INTO macro_monitor_field(id, code, name_en, name_ru, name_kz) VALUES(5, 'TRADE', 'Trade', '', '');
+INSERT INTO macro_monitor_field(id, code, name_en, name_ru, name_kz) VALUES(6, 'LIQUID', 'Liquidity', '', '');
+INSERT INTO macro_monitor_field(id, code, name_en, name_ru, name_kz) VALUES(7, 'CONSUMESP', 'Consumer Spending', '', '');
+INSERT INTO macro_monitor_field(id, code, name_en, name_ru, name_kz) VALUES(8, 'HOUSING', 'Housing Market', '', '');
+INSERT INTO macro_monitor_field(id, code, name_en, name_ru, name_kz) VALUES(9, 'INVESTSTM', 'Investor Sentiment', '', '');
+INSERT INTO macro_monitor_field(id, code, name_en, name_ru, name_kz) VALUES(10, 'MSCIWRLD', 'MSCI World', '', '');
+INSERT INTO macro_monitor_field(id, code, name_en, name_ru, name_kz) VALUES(11, 'SHANGHAISE', 'Shanghai SE Composite', '', '');
+INSERT INTO macro_monitor_field(id, code, name_en, name_ru, name_kz) VALUES(12, 'SP500', 'S&P 500', '', '');
+INSERT INTO macro_monitor_field(id, code, name_en, name_ru, name_kz) VALUES(13, 'STXE600', 'STXE 600 index', '', '');
+INSERT INTO macro_monitor_field(id, code, name_en, name_ru, name_kz) VALUES(14, 'MACROSCORE', 'Macro Score', '', '');

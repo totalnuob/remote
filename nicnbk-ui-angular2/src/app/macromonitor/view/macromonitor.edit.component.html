@@ -1,0 +1,141 @@
+<div class="container">
+    <div class="row withpadding" style="position: relative; min-height: 80px;">
+        <div [ngBusy]="busy">
+            <div class="row top-buffer" >
+                <div class="col-md-12">
+                    <ol class="breadcrumb">
+                        <li>
+                            <span><a [routerLink]="['/macromonitor']">Macromonitor</a></span>
+                        </li>
+                        <li class="active">{{typeStr}}</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="row top-buffer" >
+                <div class="col-md-12">
+                    <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
+                    </div>
+                </div>
+            </div>
+            <form (ngSubmit)="save()" #scoreForm="ngForm" class="well span">
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="table table-hover table-responsive" style="font-size: smaller; overflow-x: auto; display: block; table-layout: fixed">
+                            <tr>
+                                <th>
+                                    <button type="button" class="btn btn-xs pull-left" data-toggle="modal" data-target="#dateInputModal">
+                                        <span class="glyphicon glyphicon-circle-arrow-up"></span>
+                                    </button>
+                                </th>
+                                <th style="min-width: 200px; font-size: xx-small; text-align: right">DD-MM-YYYY:</th>
+                                <th *ngFor="let dateItem of dateList; let i=index; trackBy:trackByIndex;">
+                                    <ng-form>
+                                        <input type="text" style="width: 70px" name="date{{i}}"  [(ngModel)]="dateList[i]" pattern="\s*(0[1-9]|[12][0-9]|3[01])[-](0[1-9]|1[012])[-](19|20)\d\d\s*" #date="ngModel" required/>
+                                        <div style="width: 70px" [hidden]="date.valid || date.pristine" class="alert alert-danger">Invalid date</div>
+                                    </ng-form>
+                                </th>
+                            </tr>
+                            <tr *ngFor="let field of fieldsLookup; let j=index">
+                                <td>
+                                    <button type="button" class="btn btn-xs btn pull-left" data-toggle="modal" data-target="#macroScoreInputModal" (click)="macroScoreInputModalHelper(j)">
+                                        <span class="glyphicon glyphicon-circle-arrow-up"></span>
+                                    </button>
+                                </td>
+                                <td>
+                                    {{field.nameEn}}
+                                </td>
+                                <td *ngFor="let item of scoreListForModel[j]; let i=index; trackBy:trackByIndex;">
+                                    <input style="width: 70px" type="text" name="score{{j}}{{i}}" [(ngModel)]="item.score">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <button type="button" class="btn-xs btn-info" style="display: inline-block" (click)="addRow()">
+                                        <span class="glyphicon glyphicon-plus"></span>
+                                    </button>
+                                </td>
+                                <td></td>
+                                <td *ngFor="let item of scoreListForModel[0]; let i=index">
+                                    <button type="button" class="btn-xs btn-danger" style="display: inline-block" (click)="removeColumn(i)">
+                                        <span class="glyphicon glyphicon-minus"></span>
+                                    </button>
+                                </td>
+                            </tr>
+                            <br/>
+                        </table>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-3 pull-left">
+                                    <button type="button" class="btn-sm btn-danger" data-toggle="modal" data-target="#deleteAllModal">Delete all <span class="glyphicon glyphicon-remove"></span></button>
+                                </div>
+                                <div class="col-md-1 pull-right">
+                                    <button type="submit" class="btn btn-sm btn-success" [disabled]="!scoreForm.form.valid || this.dateList.length==0">SAVE</button>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <br>
+                    </div>
+                </div>
+            </form>
+            <div class="modal fade" id="macroScoreInputModal" role="dialog">
+                <div class="modal-dialog" style="overflow-y: scroll; max-height:85%;  margin-top: 50px; margin-bottom:50px;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <span>{{this.fieldsValueList[modalFieldTypeIndex]}}</span>
+                        </div>
+                        <div class="modal-body">
+                            <div class="alert alert-danger" *ngIf="scoreUploadErrorMessage != null"><span>{{scoreUploadErrorMessage}}</span></div>
+                            <div class="alert alert-info" *ngIf="scoreUploadSuccessMessage != null"><span>{{scoreUploadSuccessMessage}}</span></div>
+                            <br/>
+                            <textarea class="form-control" placeholder="Paste macromonitor score here..." name="uploadedMacroMonitorScores" [(ngModel)]="uploadedMacroMonitorScores"></textarea>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default pull-left" data-dismiss="modal" (click)='closeMacroMonitorScoresModal()'>Close</button>
+                            <button type="button" class="btn btn-success pull-right" (click)="parseMacroMonitorScoresModal()">Add</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="dateInputModal" role="dialog">
+                <div class="modal-dialog" style="max-height:100%;  margin-top: 50px; margin-bottom:50px;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <span>Date format: DD-MM-YYYY, e.g. 31-12-2017</span>
+                        </div>
+                        <div class="modal-body">
+                            <div class="alert alert-danger" *ngIf="scoreUploadErrorMessage != null"><span>{{scoreUploadErrorMessage}}</span></div>
+                            <div class="alert alert-info" *ngIf="scoreUploadSuccessMessage != null"><span>{{scoreUploadSuccessMessage}}</span></div>
+                            <br/>
+                            <textarea class="form-control" placeholder="Paste list of dates here..." name="uploadedDates" [(ngModel)]="uploadedDates"></textarea>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default pull-left" data-dismiss="modal" (click)='closeMacroMonitorScoresModal()'>Close</button>
+                            <button [disabled]="modalLoading" type="button" class="btn btn-success pull-right" (click)="createNewDateList()">Add</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="deleteAllModal" role="dialog">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Are you sure you want to delete all data?</h4>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-success" (click)="deleteAll()" data-dismiss="modal">Yes</button>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
