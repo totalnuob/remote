@@ -56,6 +56,12 @@ public abstract class CommonServiceREST {
         return new ResponseEntity<>(response, null, HttpStatus.OK);
     }
 
+    public FilesDto buildFilesDtoFromMultipart(MultipartFile file, String fileType){
+        MultipartFile[] files = new MultipartFile[1];
+        files[0] = file;
+        return (FilesDto) buildFilesDtoFromMultipart(files, fileType).toArray()[0];
+    }
+
     public Set<FilesDto> buildFilesDtoFromMultipart(MultipartFile[] files, String fileType){
         Set<FilesDto> filesDtoSet = new HashSet<>();
         if(files != null && files.length > 0) {

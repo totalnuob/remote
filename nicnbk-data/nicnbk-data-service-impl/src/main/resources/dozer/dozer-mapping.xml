@@ -155,4 +155,24 @@
             <b>updater</b>
         </field-exclude>
     </mapping>
+    <mapping>
+        <class-a>kz.nicnbk.service.dto.reporting.PeriodicReportDto</class-a>
+        <class-b>kz.nicnbk.repo.model.reporting.PeriodicReport</class-b>
+        <field-exclude>
+            <a>type</a>
+            <b>type</b>
+        </field-exclude>
+        <field-exclude>
+            <a>status</a>
+            <b>status</b>
+        </field-exclude>
+        <field-exclude>
+            <a>creator</a>
+            <b>creator</b>
+        </field-exclude>
+        <field-exclude>
+            <a>updater</a>
+            <b>updater</b>
+        </field-exclude>
+    </mapping>
 </mappings>

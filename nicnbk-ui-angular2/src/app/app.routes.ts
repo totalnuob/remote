@@ -40,6 +40,8 @@ import {HFManagerSearchComponent} from "./hf/hf.manager-search.component";
 import {AccessDeniedComponent} from "./access.denied.component";
 import {EmployeeProfileComponent} from "./employee/employee.profile.component";
 import {NotFoundComponent} from "./page-not-found.component";
+import {MainNBReportingComponent} from "./reporting/main.nb.reporting.component";
+import {InputFileUploadNBReportingComponent} from "./reporting/input.file.upload.nb.reporting.component";
 
 
 const routes: Routes  = [
@@ -249,6 +251,17 @@ const routes: Routes  = [
     {
         path: 'pe/fundReport/:id',
         component: PEFundReportComponent,
+        canActivate: [AuthGuard]
+    },
+    /* Reporting ************************************/
+    {
+        path: 'reporting/NBReporting',
+        component: MainNBReportingComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'reporting/NBReporting/inputFileUpload/:id',
+        component: InputFileUploadNBReportingComponent,
         canActivate: [AuthGuard]
     },
     /* Page not found. ERROR 404 *********************/

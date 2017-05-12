@@ -6,13 +6,16 @@ export class FileUploadService {
     constructor () {
     }
 
-    public postFiles (url: string, params: string[], files: File[]): Observable<any> {
+    public postFiles (url: string, params: string[], files: File[], type: string): Observable<any> {
         return Observable.create(observer => {
             let formData: FormData = new FormData(),
                 xhr: XMLHttpRequest = new XMLHttpRequest();
 
             for (let i = 0; i < files.length; i++) {
                 formData.append("file", files[i], files[i].name);
+                if(type != null){
+                    formData.append("fileType", type);
+                }
             }
 
             xhr.withCredentials = true;

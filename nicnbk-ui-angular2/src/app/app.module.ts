@@ -53,6 +53,8 @@ import {HFManagerSearchComponent} from "./hf/hf.manager-search.component";
 import {AccessDeniedComponent} from "./access.denied.component";
 import {EmployeeProfileComponent} from "./employee/employee.profile.component";
 import {NotFoundComponent} from "./page-not-found.component";
+import {MainNBReportingComponent} from "./reporting/main.nb.reporting.component";
+import {InputFileUploadNBReportingComponent} from "./reporting/input.file.upload.nb.reporting.component";
 
 @NgModule({
     imports: [
@@ -81,6 +83,7 @@ import {NotFoundComponent} from "./page-not-found.component";
         TripMemoListComponent, TripMemoEditComponent, RiskManagementAxiomaReportingComponent, MonitoringHedgeFundsComponent, MonitoringLiquidPortfolioComponent,
         MonitoringMacroMonitorComponent, MonitoringPortfolioComponent, MonitoringPrivateEquityComponent, MonitoringPrivateEquityFundComponent,
         MonitoringHedgeFunds2Component,
+        MainNBReportingComponent, InputFileUploadNBReportingComponent,
 
         HFDashboardComponent, HFFundSearchComponent, HFFundSelectionComponent, HFPortfolioComponent, HFReportComponent,
         HFFundProfileComponent, HFManagerProfileComponent, HFManagerSearchComponent,

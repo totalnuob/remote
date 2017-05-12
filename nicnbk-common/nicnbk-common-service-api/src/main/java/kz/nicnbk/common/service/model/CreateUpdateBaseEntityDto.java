@@ -9,16 +9,15 @@ import java.util.Date;
  */
 public abstract class CreateUpdateBaseEntityDto<T extends CreateUpdateBaseEntity> extends HistoryBaseEntityDto{
 
-    private Date updateDate;
-
+    private String creator;
     private String updater;
 
-    public Date getUpdateDate() {
-        return updateDate;
+    public String getCreator() {
+        return creator;
     }
 
-    public void setUpdateDate(Date updateDate) {
-        this.updateDate = updateDate;
+    public void setCreator(String creator) {
+        this.creator = creator;
     }
 
     public String getUpdater() {

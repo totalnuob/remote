@@ -133,6 +133,15 @@
                     </ul>
                 </li>
                 <li [routerLinkActive]="['active']"><a [routerLink]="['/bt']" data-toggle="tooltip" title="Trip Memo">Trainings</a></li>
+                <li [routerLinkActive]="['active']"  class="dropdown" *ngIf="showReporting()">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        Reporting <span class="bootstrapCaret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a [routerLink]="['/reporting/NBReporting']">NB Reporting</a></li>
+                        <!--<li role="separator" class="divider"></li>-->
+                    </ul>
+                </li>
             </ul>
         </div>
     </nav>

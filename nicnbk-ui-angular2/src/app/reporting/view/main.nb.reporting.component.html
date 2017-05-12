@@ -1,0 +1,83 @@
+<div class="container">
+    <div class="row">
+        <!--<div class="row withpadding">-->
+            <!--<a [routerLink]="['/reporting/inputFileUpload', 0]" class="btn btn-primary pull-right" *ngIf="canEdit()">New report</a>-->
+        <!--</div>-->
+        <div class="row withpadding">
+            <a class="btn btn-primary pull-right" data-toggle="modal" data-target="#newReportModal">NEW REPORT</a>
+        </div>
+        <div class="row">
+            <table [ngBusy]="busy" class="table table-hover">
+                <thead>
+                <tr>
+                    <th>REPORT DATE</th>
+                    <th>STATUS</th>
+                    <th>CREATED</th>
+                    <th>CREATED BY</th>
+                    <!--<th>UPDATED</th>-->
+                    <!--<th>UPDATED BY</th>-->
+                </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor = "let report of reportList" style="cursor: pointer" (click)="navigate(report.id)">
+                        <td>{{getReportDateShortFormatted(report.reportDate)}}</td>
+                        <td>{{report.status}}</td>
+                        <td>{{report.creationDate}}</td>
+                        <td>{{report.creator}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="modal fade" id="newReportModal" role="dialog">
+            <div class="modal-dialog" style="overflow-y: scroll; min-height: 100px; max-height:85%;  margin-top: 100px; margin-bottom:50px; width:65%;">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <select class="form-control" [(ngModel)]="reportMonth">
+                                    <option value="01">JAN</option>
+                                    <option value="02">FEB</option>
+                                    <option value="03">MAR</option>
+                                    <option value="04">APR</option>
+                                    <option value="05">MAY</option>
+                                    <option value="06">JUN</option>
+                                    <option value="07">JUL</option>
+                                    <option value="08">AUG</option>
+                                    <option value="09">SEP</option>
+                                    <option value="10">OCT</option>
+                                    <option value="11">NOV</option>
+                                    <option value="12">DEC</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <select class="form-control" [(ngModel)]="reportYear">
+                                    <option value="2016">2016</option>
+                                    <option value="2017">2017</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default pull-left" (click)="closeModal()" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary pull-right" (click)="createNewReport()" [disabled]="report != null" *ngIf="report == null">Create</button>
+
+                        <button type="button" class="btn btn-primary pull-right" (click)="closeModal()" *ngIf="report != null">OK</button>
+
+                        <!--<a [routerLink]="['/reporting/inputFileUpload', report.id]" class="btn btn-primary pull-right"-->
+                           <!--*ngIf="report != null && report.id > 0" (click)="closeModal()">Go to report</a>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

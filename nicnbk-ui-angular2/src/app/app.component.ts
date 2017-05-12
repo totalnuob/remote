@@ -32,6 +32,7 @@ import {AlbourneService} from "./hf/hf.albourne.service";
 
 import '../../public/js/jquery.ns-autogrow.min.js';
 import {ModuleAccessCheckerService} from "./authentication/module.access.checker.service";
+import {PeriodicReportService} from "./reporting/periodic.report.service";
 
 @Component({
     selector: 'app-main',
@@ -56,6 +57,7 @@ import {ModuleAccessCheckerService} from "./authentication/module.access.checker
         RiskManagementReportService,
         AlbourneService,
         ModuleAccessCheckerService,
+        PeriodicReportService
     ]
 })
 @NgModule({
@@ -104,7 +106,12 @@ export class AppComponent {
 
     showRealEstate(){
         //return false;
-        return this.moduleAccessChecker.checkAccessRealEstate();
+        return this.moduleAccessChecker.checkAccessReporting();
+    }
+
+    showReporting(){
+        //return false;
+        return this.moduleAccessChecker.checkAccessReporting();
     }
 }
 

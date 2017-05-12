@@ -45,7 +45,7 @@ export class TripMemoService extends CommonService {
             .catch(this.handleErrorResponse);
     }
     postFiles(tripMemoId, params, files) {
-        return this.uploadService.postFiles(this.TRIP_MEMO_ATTACHMENT_UPLOAD_URL + tripMemoId, [], files);
+        return this.uploadService.postFiles(this.TRIP_MEMO_ATTACHMENT_UPLOAD_URL + tripMemoId, [], files, null);
     }
 
     get(id): Observable<any> {
