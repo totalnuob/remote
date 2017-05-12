@@ -159,9 +159,6 @@ export class  MMViewComponent extends GoogleChartComponent {
             },
         };
 
-        var monthYearFormatter = new google.visualization.DateFormat({pattern: "MMM yyyy"});
-        monthYearFormatter.format(data, 0);
-
         var colorFormatter = new google.visualization.ColorFormat();
         colorFormatter.addRange(-100, 1, 'white', '#9C0824');
         colorFormatter.addRange(1, 2, 'white', '#B41F27');
@@ -209,7 +206,7 @@ export class  MMViewComponent extends GoogleChartComponent {
     private getLineChartData(input, dates){
         var rows = [];
         for(var i = dates.length - 1; i >= 0; i--){
-            var row = [dates[i], input[input.length - 2][1+i], input[input.length - 1][1+i]];
+            var row = [moment(dates[i], 'DD-MM-YYYY').format('MMM-YY'), input[input.length - 2][1+i], input[input.length - 1][1+i]];
             rows.push(row);
         }
         return rows;

@@ -18,7 +18,7 @@ declare var $:any;
     styleUrls: [],
     providers: [MacroMonitorService]
 })
-export class MMEditComponent extends CommonFormViewComponent implements OnInit, AfterViewInit{
+export class MMEditComponent extends CommonFormViewComponent{
 
     private typeStr: string;
 
@@ -31,11 +31,8 @@ export class MMEditComponent extends CommonFormViewComponent implements OnInit, 
     uploadedMacroMonitorScores;
     modalFieldTypeIndex;
     uploadedDates;
-
     scoreUploadErrorMessage;
     scoreUploadSuccessMessage;
-    //fromDate;
-    //toDate;
     // </parsing from modal>
 
     public sub: any;
@@ -83,6 +80,7 @@ export class MMEditComponent extends CommonFormViewComponent implements OnInit, 
                 }
                 // </TODO>
 
+
                 this.busy = this.mmService.get(this.typeId)
                     .subscribe(
                     (data: [MacroMonitorScore]) => {
@@ -93,22 +91,6 @@ export class MMEditComponent extends CommonFormViewComponent implements OnInit, 
                         }
                     });
             });
-    }
-
-
-
-    ngOnInit():any {
-
-    }
-
-    ngAfterViewInit(){
-
-    }
-
-    setDateTimePicker() {
-        $('#scoresDateValue').datetimepicker({
-            format: 'MM-YYYY'
-        });
     }
 
     parseDataForModel(dataList) {
@@ -130,16 +112,6 @@ export class MMEditComponent extends CommonFormViewComponent implements OnInit, 
                 }
             }
         }
-
-        //$('#fromDate').val(this.dateList[this.dateList.length - 1]);
-        //$('#toDate').val(this.dateList[0]);
-
-
-        console.log("DateList");
-        console.log(this.dateList);
-        console.log("ScoreListForModel");
-        console.log(this.scoreListForModel);
-
     }
 
     save(){
@@ -167,9 +139,7 @@ export class MMEditComponent extends CommonFormViewComponent implements OnInit, 
             }
         }
 
-        console.log(this.dateList);
-
-        this.mmService.save(data)
+        this.busy = this.mmService.save(data)
             .subscribe(
                 (response: SaveResponse) => {
                     this.postAction("Successfully saved", null);
@@ -186,7 +156,7 @@ export class MMEditComponent extends CommonFormViewComponent implements OnInit, 
     }
 
     loadLookups(){
-        this.lookupService.getMacroMonitorFields()
+        this.busy = this.lookupService.getMacroMonitorFields()
             .subscribe(
                 data => {
                     this.fieldsLookup = data;
@@ -202,6 +172,8 @@ export class MMEditComponent extends CommonFormViewComponent implements OnInit, 
     }
 
     addRow() {
+        this.errorMessage = null;
+        this.successMessage = null;
 
         this.dateList.splice(0,0, new String);
 
@@ -211,12 +183,11 @@ export class MMEditComponent extends CommonFormViewComponent implements OnInit, 
             temp.type = this.typeStr;
             this.scoreListForModel[i].splice(0,0, temp);
         }
-
-        console.log(this.dateList);
-        console.log(this.scoreListForModel);
     }
 
     removeColumn(dateIndex){
+        this.errorMessage = null;
+        this.successMessage = null;
 
         this.dateList.splice(dateIndex, 1);
 
@@ -224,10 +195,11 @@ export class MMEditComponent extends CommonFormViewComponent implements OnInit, 
             this.scoreListForModel[i].splice(dateIndex,1);
         }
 
-        console.log(this.dateList);
     }
 
     closeMacroMonitorScoresModal() {
+        this.errorMessage = null;
+        this.successMessage = null;
         this.uploadedMacroMonitorScores = "";
         this.scoreUploadErrorMessage = null;
         this.scoreUploadSuccessMessage = null;
@@ -235,11 +207,11 @@ export class MMEditComponent extends CommonFormViewComponent implements OnInit, 
 
     // Function for parsing list of scores entered from modal
     parseMacroMonitorScoresModal() {
+        this.errorMessage = null;
+        this.successMessage = null;
 
         var rows = this.uploadedMacroMonitorScores.split('\t');
         //this.scoreListForModel[this.modalFieldTypeIndex] = [];
-
-        console.log(this.dateList);
 
         if( this.dateList.length != rows.length) {
             this.scoreUploadErrorMessage = "Error! The length of list of SCORES entered doesn't match dates list length!";
@@ -248,24 +220,22 @@ export class MMEditComponent extends CommonFormViewComponent implements OnInit, 
         }
 
         for(var i = 0; i < rows.length; i++) {
-            //let temp = new MacroMonitorScore();
-            //temp.field = this.fieldsValueList[this.modalFieldTypeIndex];
-            //temp.type = this.typeStr;
-            //temp.score = rows[i];
+            let temp = new MacroMonitorScore();
+            temp.field = this.fieldsValueList[this.modalFieldTypeIndex];
+            temp.type = this.typeStr;
+            temp.score = rows[i];
             this.scoreListForModel[this.modalFieldTypeIndex][i].score = rows[i];
-            //console.log(rows[i]);
-            //console.log(rows[i].length);
         }
 
         this.scoreUploadSuccessMessage = "Scores added";
         this.scoreUploadErrorMessage = null;
-
-        console.log(this.scoreListForModel[this.modalFieldTypeIndex]);
     }
 
 
     // Function for parsing list of dates entered from modal
     createNewDateList() {
+        this.errorMessage = null;
+        this.successMessage = null;
 
         this.dateList = [];
         for(var i = 0; i < this.scoreListForModel.length; i++) {
@@ -273,9 +243,11 @@ export class MMEditComponent extends CommonFormViewComponent implements OnInit, 
         }
 
         var rows = this.uploadedDates.split("\t");
-        console.log(rows);
+
         for(var i = 0; i < rows.length; i++) {
-            this.dateList.splice(0,0,rows[i]);
+            this.dateList.push(rows[i]);
+            //this.dateList.splice(0,0,rows[i]);
+
             for(var j = 0; j < this.scoreListForModel.length; j++) {
                 let temp = new MacroMonitorScore();
                 temp.field = this.fieldsValueList[j];
@@ -286,8 +258,6 @@ export class MMEditComponent extends CommonFormViewComponent implements OnInit, 
 
         this.scoreUploadSuccessMessage = "Dates added";
         this.scoreUploadErrorMessage = null;
-
-        console.log(this.scoreListForModel);
     }
 
     // Function for getting type of the field for the list of scores from modal input
@@ -302,13 +272,15 @@ export class MMEditComponent extends CommonFormViewComponent implements OnInit, 
     }
 
     deleteAll() {
-        this.mmService.delete(this.typeId)
+        this.busy = this.mmService.delete(this.typeId)
             .subscribe(
                 (response: SaveResponse) => {
                     this.postAction("Successfully deleted", null);
                     this.errorMessage = null;
                     this.dateList = [];
-                    this.scoreListForModel = [];
+                    for(var i = 0; i < this.scoreListForModel.length; i++) {
+                        this.scoreListForModel[i] = [];
+                    }
                 },
                 (error: ErrorResponse) => {
                     this.successMessage = null;
