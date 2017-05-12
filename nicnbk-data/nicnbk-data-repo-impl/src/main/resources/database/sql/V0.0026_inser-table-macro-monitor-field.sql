@@ -7,8 +7,5 @@ INSERT INTO macro_monitor_field(id, code, name_en, name_ru, name_kz) VALUES(6, '
 INSERT INTO macro_monitor_field(id, code, name_en, name_ru, name_kz) VALUES(7, 'CONSUMESP', 'Consumer Spending', '', '');
 INSERT INTO macro_monitor_field(id, code, name_en, name_ru, name_kz) VALUES(8, 'HOUSING', 'Housing Market', '', '');
 INSERT INTO macro_monitor_field(id, code, name_en, name_ru, name_kz) VALUES(9, 'INVESTSTM', 'Investor Sentiment', '', '');
-INSERT INTO macro_monitor_field(id, code, name_en, name_ru, name_kz) VALUES(10, 'MSCIWRLD', 'MSCI World', '', '');
-INSERT INTO macro_monitor_field(id, code, name_en, name_ru, name_kz) VALUES(11, 'SHANGHAISE', 'Shanghai SE Composite', '', '');
-INSERT INTO macro_monitor_field(id, code, name_en, name_ru, name_kz) VALUES(12, 'SP500', 'S&P 500', '', '');
-INSERT INTO macro_monitor_field(id, code, name_en, name_ru, name_kz) VALUES(13, 'STXE600', 'STXE 600 index', '', '');
-INSERT INTO macro_monitor_field(id, code, name_en, name_ru, name_kz) VALUES(14, 'MACROSCORE', 'Macro Score', '', '');
+INSERT INTO macro_monitor_field(id, code, name_en, name_ru, name_kz) VALUES(10, 'INDEX', 'Index', '', '', '');
+INSERT INTO macro_monitor_field(id, code, name_en, name_ru, name_kz) VALUES(11, 'MACROSCORE', 'Macro Score', '', '');

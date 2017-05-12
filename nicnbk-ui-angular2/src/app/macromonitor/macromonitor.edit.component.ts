@@ -51,7 +51,7 @@ export class MMEditComponent extends CommonFormViewComponent{
         private lookupService: LookupService,
         private mmService: MacroMonitorService
     ) {
-        super();
+        super(router);
 
         this.moduleAccessChecker = new ModuleAccessCheckerService;
 
