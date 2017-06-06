@@ -209,13 +209,13 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
     drawPortfolioStructureChart(){
         var data = google.visualization.arrayToDataTable([
             ['Type', '%'],
-            ["Government Bonds",0.12],
-            ["Corporate Bonds",0.48],
-            ["Agencies",0.14],
-            ["Supernationals",0.12],
-            ["Margin at Broker",0.01],
-            ["Swaps", 0.04],
-            ["Cash", 0.09]
+            ["Government Bonds",0.1752],
+            ["Corporate Bonds",0.5443],
+            ["Agencies",0.1033],
+            ["Supernationals",0.1207],
+            ["Margin at Broker",0.0084],
+            ["Swaps", 0.0471],
+            ["Cash", 0.001]
         ]);
 
         var options = {
@@ -229,12 +229,12 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
     drawBondsByCountryChart(){
         var data = google.visualization.arrayToDataTable([
             ['Country', '%'],
-            ["United States", 0.53],
-            ["Canada", 	0.04],
-            ["South Korea", 0.02],
-            ["Japan", 0.08],
-            ["China", 0.05],
-            ["Britain", 0.28],
+            ["United States", 0.5255],
+            ["Canada", 	0.0371],
+            ["South Korea", 0.0186],
+            ["Japan", 0.0779],
+            ["China", 0.0489],
+            ["Britain", 0.2920],
             ["Others", 0]
         ]);
 
@@ -249,10 +249,11 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
     drawBondsBySectorChart(){
         var data = google.visualization.arrayToDataTable([
             ['Sector', '%'],
-            ['Energy', 0.00],
+            //['Energy', 0],
             ['Consumers', 0.11],
             ['Financial', 0.85],
-            ['Other', 0.04]
+            ['Communications', 0.04],
+            //['Other', 0]
         ]);
 
         var options = {
@@ -314,6 +315,7 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
         ["Jan-17",69876340,268378406,76711605,65074072,6065035,48660019,560171989],
         ["Feb-17",103448315,268515293,71713700,65123983,5694154,99157299,556305393],
         ["Mar-17",104495055,292570184,55550922,64943737,5654862,1908436,550424168],
+        ["Apr-17",94397032,293174382,55622068,65019968,5790134,540846,538617288],
     ];
 
     private performance = [
@@ -324,6 +326,7 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
         ["Jan-17",0.68,2.44,-0.03,-1.6,0,1.21],
         ["Feb-17",0.76,9.98,0.09,0.33,0,-1.51],
         ["Mar-17",0.73,4.08,-0.06,0.03,0,1.79],
+        ["Apr-17",0.45,0.87,2.95,1.21,0,1.65],
     ];
 
     private getRowDataReturnsYTD(date){
