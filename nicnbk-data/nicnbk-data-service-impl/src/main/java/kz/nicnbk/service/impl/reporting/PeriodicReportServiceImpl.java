@@ -1,5 +1,6 @@
 package kz.nicnbk.service.impl.reporting;
 
+import kz.nicnbk.common.service.util.ExcelUtils;
 import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.api.employee.EmployeeRepository;
 import kz.nicnbk.repo.api.reporting.PeriodReportRepository;
@@ -14,9 +15,8 @@ import kz.nicnbk.service.converter.reporting.PeriodReportConverter;
 import kz.nicnbk.service.dto.common.FileUploadResultDto;
 import kz.nicnbk.service.dto.common.StatusResultType;
 import kz.nicnbk.service.dto.files.FilesDto;
-import kz.nicnbk.service.dto.reporting.InvestmentType;
-import kz.nicnbk.service.dto.reporting.PeriodicReportDto;
-import kz.nicnbk.service.dto.reporting.ScheduleInvestmentsDto;
+import kz.nicnbk.service.dto.reporting.*;
+import kz.nicnbk.service.dto.reporting.exception.ExcelFileParseException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -168,7 +168,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         if(fileType.equals(FileTypeLookup.NB_REP_T1.getCode())){
             return parseScheduleInvestments(filesDto);
         }else if(fileType.equals(FileTypeLookup.NB_REP_T2.getCode())){
-            return parseStatementLiabilities(filesDto);
+            return parseStatementAssetsLiabilities(filesDto);
         }else if(fileType.equals(FileTypeLookup.NB_REP_T3.getCode())){
             return parseStatementCashFlows(filesDto);
         }else if(fileType.equals(FileTypeLookup.NB_REP_T4.getCode())){
@@ -195,335 +195,543 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         }
     }
 
+
+    /* Schedule of Investments ******************************************************/
+
     private FileUploadResultDto parseScheduleInvestments(FilesDto filesDto){
 
-        List<ScheduleInvestmentsDto> scheduleInvestmentsDtoList = new ArrayList<>();
-        try
-        {
+        ScheduleInvestmentsDto scheduleInvestmentsDtoTrancheA = new ScheduleInvestmentsDto();
+        ScheduleInvestmentsDto scheduleInvestmentsDtoTrancheB = new ScheduleInvestmentsDto();
+        try {
             InputStream inputFile = new ByteArrayInputStream(filesDto.getBytes());
             XSSFWorkbook workbook = new XSSFWorkbook(inputFile);
 
             // Sheet 1 - Tranche A
             XSSFSheet sheet = workbook.getSheetAt(0);
-            Iterator<Row> rowIterator = sheet.iterator();
+            FileUploadResultDto fileUploadResultDto = parseScheduleInvestmentsSheet(sheet, scheduleInvestmentsDtoTrancheA);
+            if(fileUploadResultDto.getStatus() == StatusResultType.FAIL){
+                return fileUploadResultDto;
+            }
 
-            InvestmentType investmentType = null;
-            String investmentName = null;
-            String strategy = null;
-            String substrategy = null;
+            // Sheet 2 - Tranche B
+            XSSFSheet sheet2 = workbook.getSheetAt(1);
+            fileUploadResultDto = parseScheduleInvestmentsSheet(sheet2, scheduleInvestmentsDtoTrancheB);
 
-            int rowNum = 0;
-            while (rowIterator.hasNext()) { // each row
-                Row row = rowIterator.next();
+            // TODO: remove temp
+            scheduleInvestmentsDtoTrancheA.print();
+            scheduleInvestmentsDtoTrancheB.print();
 
-                if(rowNum == 0){/* ROW = 0 */
-                    // check file header
-                    Cell cell = row.getCell(0);
-                    if (!cell.getStringCellValue().equals("Tarragon Master Fund LP")) {
-                        throw new IllegalArgumentException("File header mismatch: row=1, cell=1");
-                    }
-                }else if(rowNum == 1){/* ROW = 1 */
-                    // check file header
-                    Cell cell = row.getCell(0);
-                    if (!cell.getStringCellValue().equals("Schedule of Investments - Tranche A")){
-                        throw new IllegalArgumentException("File header mismatch: row=2, cell=1");
-                    }
-                }else if(rowNum == 2){/* ROW = 2 */
-                    // TODO: report date check
-                }else if(rowNum == 3){/* ROW = 3 */
-                    // skip
-                    rowNum++;
-                    continue;
-                }else if(rowNum == 4){ /* ROW == 4*/
-                    // check table header
-                    Cell cell = row.getCell(1);
-                    if(cell.getCellType() == Cell.CELL_TYPE_STRING && StringUtils.isNotEmpty(cell.getStringCellValue())){
-                        if(!cell.getStringCellValue().equals("Investment")){
-                            throw new IllegalArgumentException("File header mismatch: row=5, cell=2");
-                        }
-                    }
-                    cell = row.getCell(2);
-                    if(cell.getCellType() == Cell.CELL_TYPE_STRING && StringUtils.isNotEmpty(cell.getStringCellValue())){
-                        if(!cell.getStringCellValue().equals("Capital Commitments")){
-                            throw new IllegalArgumentException("File header mismatch: row=5, cell=3");
-                        }
-                    }
-                    cell = row.getCell(3);
-                    if(cell.getCellType() == Cell.CELL_TYPE_STRING && StringUtils.isNotEmpty(cell.getStringCellValue())){
-                        if(!cell.getStringCellValue().equals("Net Cost")){
-                            throw new IllegalArgumentException("File header mismatch: row=5, cell=4");
-                        }
-                    }
-                    cell = row.getCell(4);
-                    if(cell.getCellType() == Cell.CELL_TYPE_STRING && StringUtils.isNotEmpty(cell.getStringCellValue())){
-                        if(!cell.getStringCellValue().equals("Fair Value")){
-                            throw new IllegalArgumentException("File header mismatch: row=5, cell=5");
-                        }
-                    }
-                }else {
+            inputFile.close();
 
-                    // Investment type
-                    Cell cell = row.getCell(0);
-                    if(cell != null && cell.getCellType() == Cell.CELL_TYPE_STRING && StringUtils.isNotEmpty(cell.getStringCellValue())){
-                        investmentType = cell.getStringCellValue().equals("Co-Investments") ? InvestmentType.CO_INVESTMENT :
-                                InvestmentType.FUND_INVESTMENT;
-                    }
+            return fileUploadResultDto;
 
-                    if(investmentType == InvestmentType.FUND_INVESTMENT){
-                        /* Investment type = FUND INVESTMENTS */
-                        cell = row.getCell(1);
-                        if(cell != null && cell.getCellType() == Cell.CELL_TYPE_STRING && StringUtils.isNotEmpty(cell.getStringCellValue())){
-                            Cell cell2 = row.getCell(2);
-                            Cell cell3 = row.getCell(3);
-                            Cell cell4 = row.getCell(4);
-                            if(isEmptyCell(row.getCell(2)) && isEmptyCell(cell3) && isEmptyCell(cell4)){
-                                // empty cell
-                                // Strategy
-                                strategy = cell.getStringCellValue();
-                            }else {
-                                // if(cell2.getCellType() == Cell.CELL_TYPE_NUMERIC)
-                                investmentName = cell.getStringCellValue();
-                                // TODO: currency
-                                String currency = null;
+        }catch (ExcelFileParseException e) {
+            //logger.error("");
+            return new FileUploadResultDto(StatusResultType.FAIL, "", e.getMessage(), "");
+        }catch (Exception e){
+            //logger.error("");
+            return new FileUploadResultDto(StatusResultType.FAIL, "", "Error when processing 'Schedule of Investments' file", "");
+        }
 
-                                Double capitalCommitments = getDoubleFromCell(cell2); //cell2.getCellType() == Cell.CELL_TYPE_NUMERIC ? cell2.getNumericCellValue() : null;
-                                Double netCost = getDoubleFromCell(cell3); //cell3.getCellType() == Cell.CELL_TYPE_NUMERIC ? cell3.getNumericCellValue() : null;
-                                Double fairValue = getDoubleFromCell(cell4); //cell4.getCellType() == Cell.CELL_TYPE_NUMERIC ? cell4.getNumericCellValue() : null;
-                                if(StringUtils.isNotEmpty(strategy) && strategy.contains("/")){
-                                    substrategy = strategy.split("/")[1];
-                                    strategy = strategy.split("/")[0];
-                                }
+    }
 
-                                // check if total
-                                boolean totalSubstrategy = false;
-                                boolean totalStrategy = false;
-                                if(StringUtils.isNotEmpty(investmentName) && investmentName.contains("Total")){
-                                    if(StringUtils.isNotEmpty(strategy) && investmentName.contains(strategy)){
-                                        if(StringUtils.isNotEmpty(substrategy) && investmentName.contains(substrategy)){
-                                            totalSubstrategy = true;
-                                        }else{
-                                            totalStrategy = true;
-                                        }
-                                        investmentName = null;
-                                    }
-                                }
+    private void checkScheduleInvestmentsFileHeader(int rowNum, Row row){
+        if (rowNum == 0) {/* ROW = 0 */
+            // check file header
+            Cell cell = row.getCell(0);
+            if (!cell.getStringCellValue().equals("Tarragon Master Fund LP")) {
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=1, cell=1");
+            }
+        } else if (rowNum == 1) {/* ROW = 1 */
+            // check file header
+            Cell cell = row.getCell(0);
+            if (!cell.getStringCellValue().contains("Schedule of Investments - Tranche ")) {
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=2, cell=1");
+            }
+        } else if (rowNum == 2) {/* ROW = 2 */
+            // report date check
+            try {
+                Cell cell = row.getCell(0);
+                Date reportDate = cell.getDateCellValue();
+                if(reportDate != null ){
 
+                    // TODO: check report date
 
-                                ScheduleInvestmentsDto scheduleInvestmentsDto = new ScheduleInvestmentsDto(investmentName,
-                                        currency, capitalCommitments, netCost, fairValue, null, strategy, substrategy,
-                                        investmentType, totalSubstrategy, totalStrategy, null);
+                    return;
+                }
+            }catch (Exception ex){
+                //do nothing, will be logged and thrown
+            }
+            //logger.error("");
+            throw new ExcelFileParseException("File header check failed: row=3, cell=1 - report date");
 
-                                scheduleInvestmentsDtoList.add(scheduleInvestmentsDto);
+        } else if (rowNum == 3) {/* ROW = 3 */
+            // skip, empty row
+        }
+    }
 
-                                if(totalSubstrategy){
-                                    substrategy = null;
-                                }
-                                if(totalStrategy){
-                                    strategy = null;
-                                }
+    private void checkScheduleInvestmentsTableHeader(Row row){
+        Cell cell = row.getCell(1);
+        if (cell.getCellType() == Cell.CELL_TYPE_STRING && StringUtils.isNotEmpty(cell.getStringCellValue())) {
+            if (!cell.getStringCellValue().equals("Investment")) {
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=5, cell=2 - 'Investment' expected");
+            }
+        }else{
+            throw new ExcelFileParseException("File header check failed: row=5, cell=2 - 'Investment' expected");
+        }
+        cell = row.getCell(2);
+        if (cell.getCellType() == Cell.CELL_TYPE_STRING && StringUtils.isNotEmpty(cell.getStringCellValue())) {
+            if (!cell.getStringCellValue().equals("Capital Commitments")) {
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=5, cell=3 - 'Capital Commitments' expected");
+            }
+        }else{
+            throw new ExcelFileParseException("File header check failed: row=5, cell=3 - 'Capital Commitments' expected");
+        }
+        cell = row.getCell(3);
+        if (cell.getCellType() == Cell.CELL_TYPE_STRING && StringUtils.isNotEmpty(cell.getStringCellValue())) {
+            if (!cell.getStringCellValue().equals("Net Cost")) {
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=5, cell=4 - 'Net Cost' expected");
+            }
+        }else{
+            throw new ExcelFileParseException("File header check failed: row=5, cell=4 - 'Net Cost' expected");
+        }
+        cell = row.getCell(4);
+        if (cell.getCellType() == Cell.CELL_TYPE_STRING && StringUtils.isNotEmpty(cell.getStringCellValue())) {
+            if (!cell.getStringCellValue().equals("Fair Value")) {
+                //logger.error("");
+                throw new ExcelFileParseException("File header mismatch: row=5, cell=5 - 'Fair Value' expected");
+            }
+        }else{
+            throw new ExcelFileParseException("File header mismatch: row=5, cell=5 - 'Fair Value' expected");
+        }
+    }
 
-                            }
-                        }
-                    }else if(investmentType == InvestmentType.CO_INVESTMENT){
-                         /* Investment type = CO-INVESTMENTS */
-                        cell = row.getCell(1);
-                        if(cell != null && cell.getCellType() == Cell.CELL_TYPE_STRING && StringUtils.isNotEmpty(cell.getStringCellValue())){
-                            Cell cell2 = row.getCell(2);
-                            Cell cell3 = row.getCell(3);
-                            Cell cell4 = row.getCell(4);
-                            if(isEmptyCell(row.getCell(2)) && isEmptyCell(cell3) && isEmptyCell(cell4)){
-                                // empty cell
-                                // investment name
-                                investmentName = cell.getStringCellValue();
-                            }else if(cell2.getCellType() == Cell.CELL_TYPE_NUMERIC){
-                                // description
-                                String description = cell.getStringCellValue();
+    private String getCellCurrency(Cell cell, String currency) throws ExcelFileParseException{
+        if(cell.getCellStyle().getDataFormatString().contains("€")){
+            if(currency != null && !currency.equals("Euro")){
+                throw new ExcelFileParseException("Currency mismatch: row=" + (cell.getRowIndex() + 1)+ ", cell=3");
+            }
+            return "Euro";
+        }else if(cell.getCellStyle().getDataFormatString().contains("£")){
+            if(currency != null && !currency.equals("GBP")){
+                throw new ExcelFileParseException("Currency mismatch: row=" + (cell.getRowIndex() + 1)+ ", cell=3");
+            }
+            return "GBP";
+        }else if(cell.getCellStyle().getDataFormatString().contains("$")){
+            return "USD";
+        }
+        return currency;
+    }
 
-                                // TODO: currency
-                                String currency = null;
+    private FileUploadResultDto parseScheduleInvestmentsSheet(XSSFSheet sheet, ScheduleInvestmentsDto scheduleInvestmentsDto)
+            throws ExcelFileParseException{
 
-                                Double capitalCommitments = getDoubleFromCell(cell2); //cell2.getCellType() == Cell.CELL_TYPE_NUMERIC ? cell2.getNumericCellValue() : null;
-                                Double netCost = getDoubleFromCell(cell3); //cell3.getCellType() == Cell.CELL_TYPE_NUMERIC ? cell3.getNumericCellValue() : null;
-                                Double fairValue = getDoubleFromCell(cell4); //cell4.getCellType() == Cell.CELL_TYPE_NUMERIC ? cell4.getNumericCellValue() : null;
+        if(sheet == null){
+            return new FileUploadResultDto(StatusResultType.FAIL, "", "Excel sheet is null", "");
+        }
 
-                                // check if total
-                                boolean totalInvestment = false;
-                                if(StringUtils.isNotEmpty(description) && description.equals("Total " + investmentName)){
-                                    description = null;
-                                    totalInvestment = true;
-                                }else{
+        Iterator<Row> rowIterator = sheet.iterator();
+        List<FundInvestmentDto> fundInvestments = new ArrayList<>();
+        List<CoInvestmentDto> coInvestments = new ArrayList<>();
 
-                                }
+        InvestmentType investmentType = null;
+        String investmentName = null;
+        String strategy = null;
+        String currency = null;
 
-                                ScheduleInvestmentsDto scheduleInvestmentsDto = new ScheduleInvestmentsDto(investmentName,
-                                        currency, capitalCommitments, netCost, fairValue, description, null, null,
-                                        investmentType, null, null, totalInvestment);
+        int rowNum = 0;
+        while (rowIterator.hasNext()) { // each row
+            Row row = rowIterator.next();
 
-                                scheduleInvestmentsDtoList.add(scheduleInvestmentsDto);
-                            }
-                        }
+            if (rowNum < 4) {/* ROW 0-3 */
+                checkScheduleInvestmentsFileHeader(rowNum, row);
+            } else if (rowNum == 4) { /* ROW == 4*/
+                // check table header
+                checkScheduleInvestmentsTableHeader(row);
+            } else {
+                // Final total if two investment types
+                Cell lastCell = row.getCell(1);
+                if(!ExcelUtils.isEmptyCell(lastCell) && lastCell.getCellType() == Cell.CELL_TYPE_STRING){
+                    String value = lastCell.getStringCellValue();
+                    if(StringUtils.isNotEmpty(value) && value.trim().equals("Total Private Equity Partnerships and Co-Investments")){
+                        Cell cell2 = row.getCell(2);
+                        Cell cell3 = row.getCell(3);
+                        Cell cell4 = row.getCell(4);
+
+                        Double capitalCommitments = ExcelUtils.getDoubleValueFromCell(cell2);
+                        Double netCost = ExcelUtils.getDoubleValueFromCell(cell3);
+                        Double fairValue = ExcelUtils.getDoubleValueFromCell(cell4);
+
+                        // set currency
+                        currency = getCellCurrency(cell2, null) != null ? getCellCurrency(cell2, null) : null;
+
+                        CommonInvestmentDto commonInvestmentDto = new CommonInvestmentDto(investmentName, capitalCommitments,
+                                netCost, fairValue, currency);
+
+                        scheduleInvestmentsDto.setTotal(commonInvestmentDto);
+
+                        rowNum++;
+                        continue;
                     }
                 }
 
+                // Investment type
+                Cell cell = row.getCell(0);
+                if (cell != null && cell.getCellType() == Cell.CELL_TYPE_STRING && StringUtils.isNotEmpty(cell.getStringCellValue())) {
+                    investmentType = cell.getStringCellValue().equals("Co-Investments") ? InvestmentType.CO_INVESTMENT :
+                            InvestmentType.FUND_INVESTMENT;
+                }
+                if(investmentType == null){
+                    investmentType = InvestmentType.FUND_INVESTMENT;
+                }
 
-//                Iterator<Cell> cellIterator = row.cellIterator();
-//                int cellNum = 0;
-//                while (cellIterator.hasNext()) { // each column
-//                    Cell cell = cellIterator.next();
-//
-//                    /* CHECK HEADER */
-//                    boolean headerChecked = checkScheduleInvestmentsHeader(rowNum, cellNum, cell);
-//                    if(!headerChecked){
-//                        FileUploadResultDto fileUploadResultDto = new FileUploadResultDto();
-//                        fileUploadResultDto.setStatus(StatusResultType.FAIL);
-//                        fileUploadResultDto.setMessageEn("File contents check - header check failed");
-//
-//                        return fileUploadResultDto;
-//                    }
-//
-//                    /* CHECK TABLE HEADER */
-//                    boolean tableHeaderChecked = checkScheduleInvestmentsTableHeader(rowNum, cellNum, cell);
-//                    if(!tableHeaderChecked){
-//                        FileUploadResultDto fileUploadResultDto = new FileUploadResultDto();
-//                        fileUploadResultDto.setStatus(StatusResultType.FAIL);
-//                        fileUploadResultDto.setMessageEn("File contents check - table header check failed");
-//
-//                        return fileUploadResultDto;
-//                    }
-//                    if(rowNum <= 4){
-//                        continue;
-//                    }
-//
-//                    // investment type
-//                    if(cellNum == 0){
-//                        if(cell.getCellType() == Cell.CELL_TYPE_STRING && StringUtils.isNotEmpty(cell.getStringCellValue())){
-//                            investmentType = cell.getStringCellValue().equals("Fund Investments") ? InvestmentType.FUND_INVESTMENT :
-//                                    cell.getStringCellValue().equals("Co-Investments") ? InvestmentType.CO_INVESTMENT : null;
-//                        }
-//                    }
-//
-//                    if(cellNum == 1){
-//                        // strategy
-//                        if(cell.getCellType() == Cell.CELL_TYPE_STRING && StringUtils.isNotEmpty(cell.getStringCellValue())){
-//
-//                        }
-//                    }
-//
-//
-//                    //Check the cell type and format accordingly
-//                    switch (cell.getCellType()) {
-//                        case Cell.CELL_TYPE_NUMERIC:
-//                            System.out.print(cell.getNumericCellValue() + "t");
-//                            break;
-//                        case Cell.CELL_TYPE_STRING:
-//                            System.out.print(cell.getStringCellValue() + "t");
-//                            break;
-//                        default:
-//                            // TODO: not-numeric and non-string
-//                            break;
-//                    }
-//                }
-//                System.out.println("");
+                if(investmentType == InvestmentType.FUND_INVESTMENT){
+                    /* Investment type FUND INVESTMENTS */
+                    cell = row.getCell(1);
+                    if(cell != null && cell.getCellType() == Cell.CELL_TYPE_STRING && StringUtils.isNotEmpty(cell.getStringCellValue())){
+                        Cell cell2 = row.getCell(2);
+                        Cell cell3 = row.getCell(3);
+                        Cell cell4 = row.getCell(4);
 
-                rowNum++;
+                        if(ExcelUtils.isEmptyCell(cell2) && ExcelUtils.isEmptyCell(cell3) && ExcelUtils.isEmptyCell(cell4)){
+                            // empty cells
+                            // Strategy
+                            strategy = cell.getStringCellValue();
+                            if(StringUtils.isNotEmpty(strategy)){
+                                if(strategy.trim().endsWith("- USD") || strategy.contains("-USD")){
+                                    currency = "USD";
+                                }else if(strategy.trim().endsWith("- Euro") || strategy.contains("-Euro")){
+                                    currency = "Euro";
+                                }else if(strategy.trim().endsWith("- GBP") || strategy.contains("-GBP")){
+                                    currency = "GBP";
+                                }
+                            }
+                        }else if(!ExcelUtils.isEmptyCell(cell) && cell.getCellType() == Cell.CELL_TYPE_STRING){
+                            investmentName = cell.getStringCellValue();
+
+                            // check total
+                            if(investmentName != null && investmentName.contains("Total")){
+                                if(strategy != null && !investmentName.contains(strategy)){
+                                    //strategy = null;
+                                    strategy = investmentName.split("Total").length > 0 ? investmentName.split("Total")[1].trim() : null;
+                                }
+                            }
+
+                            // currency
+                            currency = getCellCurrency(cell2, currency) != null ? getCellCurrency(cell2, currency) : currency;
+
+                            Double capitalCommitments = ExcelUtils.getDoubleValueFromCell(cell2); //cell2.getCellType() == Cell.CELL_TYPE_NUMERIC ? cell2.getNumericCellValue() : null;
+                            Double netCost = ExcelUtils.getDoubleValueFromCell(cell3); //cell3.getCellType() == Cell.CELL_TYPE_NUMERIC ? cell3.getNumericCellValue() : null;
+                            Double fairValue = ExcelUtils.getDoubleValueFromCell(cell4); //cell4.getCellType() == Cell.CELL_TYPE_NUMERIC ? cell4.getNumericCellValue() : null;
+
+                            FundInvestmentDto fundInvestmentDto = new FundInvestmentDto(investmentName, capitalCommitments, netCost, fairValue,
+                                    currency, strategy);
+                            fundInvestments.add(fundInvestmentDto);
+
+                            if(StringUtils.isNotEmpty(investmentName) && investmentName.contains("Total")){
+                                if(strategy != null && investmentName.contains(strategy)){
+                                    strategy = null;
+                                    currency = null;
+                                }
+                            }
+                            // clear investment name
+                            investmentName = null;
+                        }
+                    }
+                }else if(investmentType == InvestmentType.CO_INVESTMENT){
+                     /* Investment type CO-INVESTMENTS */
+                    cell = row.getCell(1);
+                    if(cell != null && cell.getCellType() == Cell.CELL_TYPE_STRING && StringUtils.isNotEmpty(cell.getStringCellValue())){
+                        Cell cell2 = row.getCell(2);
+                        Cell cell3 = row.getCell(3);
+                        Cell cell4 = row.getCell(4);
+                        if(ExcelUtils.isEmptyCell(cell2) && ExcelUtils.isEmptyCell(cell3) && ExcelUtils.isEmptyCell(cell4)){
+                            // empty cell
+                            // investment name
+                            investmentName = cell.getStringCellValue();
+                        }else {
+
+                            //if(cell2.getCellType() == Cell.CELL_TYPE_NUMERIC)
+
+                            // description
+                            String description = cell.getStringCellValue();
+
+                            // currency
+                            currency = getCellCurrency(cell2, currency) != null ? getCellCurrency(cell2, currency) : currency;
+
+                            Double capitalCommitments = ExcelUtils.getDoubleValueFromCell(cell2); //cell2.getCellType() == Cell.CELL_TYPE_NUMERIC ? cell2.getNumericCellValue() : null;
+                            Double netCost = ExcelUtils.getDoubleValueFromCell(cell3); //cell3.getCellType() == Cell.CELL_TYPE_NUMERIC ? cell3.getNumericCellValue() : null;
+                            Double fairValue = ExcelUtils.getDoubleValueFromCell(cell4); //cell4.getCellType() == Cell.CELL_TYPE_NUMERIC ? cell4.getNumericCellValue() : null;
+
+                            CoInvestmentDto coInvestmentDto = new CoInvestmentDto(investmentName, description,
+                                    capitalCommitments, netCost, fairValue, currency);
+                            coInvestments.add(coInvestmentDto);
+
+                            // clear description
+                            //description = null;
+
+                            if(StringUtils.isNotEmpty(description) && description.contains("Total")){
+                                if(investmentName != null && description.contains(investmentName)){
+                                    investmentName = null;
+                                    currency = null;
+                                }
+                            }
+
+                        }
+                    }
+                }else{
+                    // should not be here
+                    //logger.error("");
+                    throw new IllegalStateException("Investment type should not be null");
+                }
             }
-            inputFile.close();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
+
+            rowNum++;
         }
 
+        scheduleInvestmentsDto.setFundInvestments(fundInvestments);
+        scheduleInvestmentsDto.setCoInvestments(coInvestments);
 
-        for(ScheduleInvestmentsDto dto: scheduleInvestmentsDtoList){
-            dto.print();
-        }
+        // TODO: return result
         return new FileUploadResultDto();
     }
 
-    // TODO: refactor to EXCEL util class
 
-    private boolean isEmptyCell(Cell cell){
-        if(cell == null){
-            return true;
-        }else if(cell.getCellType() == Cell.CELL_TYPE_BLANK ||
-                (cell.getCellType() == Cell.CELL_TYPE_STRING && StringUtils.isEmpty(cell.getStringCellValue()))){
-            return true;
+
+    /* Statement of Assets, Liabilities, Partners Capital ****************************/
+
+    private FileUploadResultDto parseStatementAssetsLiabilities(FilesDto filesDto)
+    {
+
+        StatementAssetsLiabilitiesDto statementAssetsLiabilitiesDtoTrancheA = new StatementAssetsLiabilitiesDto();
+        StatementAssetsLiabilitiesDto statementAssetsLiabilitiesDtoTrancheB = new StatementAssetsLiabilitiesDto();
+        try {
+            InputStream inputFile = new ByteArrayInputStream(filesDto.getBytes());
+            XSSFWorkbook workbook = new XSSFWorkbook(inputFile);
+
+            // Sheet 1 - Tranche A
+            XSSFSheet sheet = workbook.getSheetAt(0);
+            FileUploadResultDto fileUploadResultDto = parseStatementAssetsLiabilitiesSheet(sheet, statementAssetsLiabilitiesDtoTrancheA);
+            if(fileUploadResultDto.getStatus() == StatusResultType.FAIL){
+                return fileUploadResultDto;
+            }
+
+            // Sheet 2 - Tranche B
+            XSSFSheet sheet2 = workbook.getSheetAt(1);
+            fileUploadResultDto = parseStatementAssetsLiabilitiesSheet(sheet2, statementAssetsLiabilitiesDtoTrancheB);
+
+            // TODO: remove temp
+            statementAssetsLiabilitiesDtoTrancheA.print();
+            statementAssetsLiabilitiesDtoTrancheB.print();
+
+            inputFile.close();
+
+            return fileUploadResultDto;
+
+        }catch (ExcelFileParseException e) {
+            //logger.error("");
+            return new FileUploadResultDto(StatusResultType.FAIL, "", e.getMessage(), "");
+        }catch (Exception e){
+            //logger.error("");
+            return new FileUploadResultDto(StatusResultType.FAIL, "", "Error when processing 'Statement of Assets, Liabilities and Partners Capital' file' file", "");
         }
-        return false;
     }
 
-    private Double getDoubleFromCell(Cell cell){
-        if(cell != null && cell.getCellType() == Cell.CELL_TYPE_NUMERIC){
-            return cell.getNumericCellValue();
-        }else if(cell != null && cell.getCellType() == Cell.CELL_TYPE_STRING){
-            try{
-                Double value = Double.parseDouble(cell.getStringCellValue());
-                return value;
-            }catch (Exception ex){
-                System.out.println("Double parse failed: " + cell.getStringCellValue());
-            }
+    private ConsolidatedStatementType getStatementType(Cell cell){
+        if(cell.getStringCellValue().equalsIgnoreCase("Assets")){
+            return ConsolidatedStatementType.ASSETS;
+        }else if(cell.getStringCellValue().equalsIgnoreCase("Liabilities")){
+            return ConsolidatedStatementType.LIABILITIES;
+//        }else if(cell.getStringCellValue().equalsIgnoreCase("Partners' capital")){
+//            return ConsolidatedStatementType.PARTNERS_CAPITAL;
+        }else if(cell.getStringCellValue().equalsIgnoreCase("Income:")){
+            return ConsolidatedStatementType.INCOME;
+        }else if(cell.getStringCellValue().equalsIgnoreCase("Expenses:")){
+            return ConsolidatedStatementType.EXPENSES;
+//        }else if(cell.getStringCellValue().contains("Net investment")){
+//            return ConsolidatedStatementType.NET_INVESTMENT;
+//        }else if(cell.getStringCellValue().equalsIgnoreCase("Net increase in partners' capital") ||
+//                cell.getStringCellValue().equalsIgnoreCase("Net decrease in partner's capital")){
+//            return ConsolidatedStatementType.NET_PARTNERS_CAPITAL;
         }
         return null;
     }
 
-    private boolean checkScheduleInvestmentsHeader(int rowNum, int cellNum, Cell cell){
-        try {
-            if (rowNum == 0 && cellNum == 0) {
-                if (!cell.getStringCellValue().equals("Tarragon Master Fund LP")) {
-                    throw new IllegalArgumentException();
-                }
-            }
-            if (rowNum == 1 && cellNum == 0) {
-                if (!cell.getStringCellValue().equals("Schedule of Investments - Tranche A")) {
-                    throw new IllegalArgumentException();
-                }
-            }
-            if (rowNum == 2 && cellNum == 0) {
-                Date headerDate = cell.getDateCellValue();
-                // TODO: check date
-                System.out.println(headerDate);
-            }
-        }catch(Exception ex){
-            return false;
+    private FileUploadResultDto parseStatementAssetsLiabilitiesSheet(XSSFSheet sheet, StatementAssetsLiabilitiesDto statementDto){
+        if(sheet == null){
+            return new FileUploadResultDto(StatusResultType.FAIL, "", "Excel sheet is null", "");
         }
-        return true;
-    }
+        boolean isTrancheA = sheet.getSheetName().equals("Tranche A");
+        boolean isTrancheB = sheet.getSheetName().equals("Tranche B");
+        if(!isTrancheA && !isTrancheB){
+            throw new ExcelFileParseException("Missing sheets or sheet name illegal");
+        }
 
-    private boolean checkScheduleInvestmentsTableHeader(int rowNum, int cellNum, Cell cell){
-        try {
-            if (rowNum == 4) {
-                if (cellNum == 1) {
-                    if(!cell.getStringCellValue().equals("Investment")){
-                        throw new IllegalArgumentException();
+        Iterator<Row> rowIterator = sheet.iterator();
+        List<ConsolidatedStatementRecordDto> balance = new ArrayList<>();
+        List<ConsolidatedStatementRecordDto> operations = new ArrayList<>();
+        int rowNum = 0;
+
+        ConsolidatedStatementType statementType = null;
+        boolean isBalance = false;
+        boolean isOperations = false;
+        while (rowIterator.hasNext()) { // each row
+            Row row = rowIterator.next();
+            if(rowNum == 0){
+                // skip
+                rowNum++;
+                continue;
+            }else if(rowNum == 1){
+                if(isTrancheA){
+                    Cell cell = row.getCell(2);
+                    if (!ExcelUtils.isCellStringValueEqual(cell, "Tarragon Master Fund LP")) {
+                        //logger.error("");
+                        throw new ExcelFileParseException("Table header check failed (Tranche A): row=2, cell=3");
                     }
-                }else if (cellNum == 2) {
-                    if(!cell.getStringCellValue().equals("Capital Commitments")){
-                        throw new IllegalArgumentException();
-                    }
-                }else if (cellNum == 3) {
-                    if(!cell.getStringCellValue().equals("Net Cost")){
-                        throw new IllegalArgumentException();
-                    }
-                }else if (cellNum == 4) {
-                    if(!cell.getStringCellValue().equals("Fair Value")){
-                        throw new IllegalArgumentException();
+                }else if(isTrancheB){
+                    if(!ExcelUtils.isCellStringValueEqual(row.getCell(2), "Tarragon")){
+                        //logger.error("");
+                        throw new ExcelFileParseException("Table header check failed (Tranche B): row=2, cell=3");
+                    }else if(!ExcelUtils.isCellStringValueEqual(row.getCell(8), "Consolidation")){
+                        throw new ExcelFileParseException("Table header check failed (Tranche B): row=2, cell=9");
+                    }else if(!ExcelUtils.isCellStringValueEqual(row.getCell(10), "Tranche B")){
+                        throw new ExcelFileParseException("Table header check failed (Tranche B): row=2, cell=11");
                     }
                 }
+            }else if(rowNum == 2){
+                if(isTrancheA){
+                    boolean tableHeaders = ExcelUtils.isCellStringValueEqual(row.getCell(4), "Tarragon GP") &&
+                            ExcelUtils.isCellStringValueEqual(row.getCell(6), "NICK Master") &&
+                            ExcelUtils.isCellStringValueEqual(row.getCell(12), "Consolidation") &&
+                            ExcelUtils.isCellStringValueEqual(row.getCell(14), "Tranche A");
+                    if(!tableHeaders){
+                        throw new ExcelFileParseException("Table header check failed (Tranche A) : row=3");
+                    }
+                }else if(isTrancheB){
+                    if(!ExcelUtils.isCellStringValueEqual(row.getCell(2), "Master Fund LP")){
+                        //logger.error("");
+                        throw new ExcelFileParseException("Table header check failed (Tranche B): row=3, cell=3");
+                    }else if(!ExcelUtils.isCellStringValueEqual(row.getCell(4), "Tarragon LP")){
+                        throw new ExcelFileParseException("Table header check failed (Tranche B): row=3, cell=5");
+                    }else if(!ExcelUtils.isCellStringValueEqual(row.getCell(6), "Total")){
+                        throw new ExcelFileParseException("Table header check failed (Tranche B): row=3, cell=7");
+                    }else if(!ExcelUtils.isCellStringValueEqual(row.getCell(8), "Adjustments")){
+                        throw new ExcelFileParseException("Table header check failed (Tranche B): row=3, cell=9");
+                    }else if(!ExcelUtils.isCellStringValueEqual(row.getCell(10), "Consolidated")){
+                        throw new ExcelFileParseException("Table header check failed (Tranche B): row=3, cell=11");
+                    }
+                }
+            }else if(rowNum == 3){
+                if(isTrancheA){
+                    boolean tableHeaders = row.getCell(2).getStringCellValue().equals("Total*") &&
+                            row.getCell(4).getStringCellValue().equals("LLC's Share") &&
+                            row.getCell(6).getStringCellValue().equals("Fund Ltd.'s Share") &&
+                            row.getCell(8).getStringCellValue().equals("Tarragon LP") &&
+                            row.getCell(10).getStringCellValue().equals("Total") &&
+                            row.getCell(12).getStringCellValue().equals("Adjustments") &&
+                            row.getCell(14).getStringCellValue().equals("Consolidated");
+                    if(!tableHeaders){
+                        throw new ExcelFileParseException("Table header check failed (Tranche A) - row=4");
+                    }
+                }else if(isTrancheB){
+                    // Not part of a header, no specific actions
+                }
+            }else{ /* Rows 4,... */
+                Cell cell = row.getCell(0);
+                if(ExcelUtils.isNotEmptyCell(cell) && cell.getCellType() == Cell.CELL_TYPE_STRING && StringUtils.isNotEmpty(cell.getStringCellValue())){
+                    if(cell.getStringCellValue().trim().equalsIgnoreCase("Consolidated Statement of Assets, Liabilities and Partners' Capital") ||
+                            cell.getStringCellValue().trim().equalsIgnoreCase("Consolidated Statement of Assets, Liabilities and Partner's Capital")){
+                        isBalance = true;
+                        isOperations = false;
+                    }else if(cell.getStringCellValue().trim().equalsIgnoreCase("Consolidated Statement of Operations")){
+                        isOperations = true;
+                        isBalance = false;
+                    }
+
+                    if(ExcelUtils.isEmptyCell(row.getCell(2)) && ExcelUtils.isEmptyCell(row.getCell(4)) &&
+                            ExcelUtils.isEmptyCell(row.getCell(6)) && ExcelUtils.isEmptyCell(row.getCell(8)) &&
+                            ExcelUtils.isEmptyCell(row.getCell(10)) && ExcelUtils.isEmptyCell(row.getCell(12)) &&
+                            ExcelUtils.isEmptyCell(row.getCell(14))){
+
+                        // statement type
+                        ConsolidatedStatementType newType = getStatementType(cell);
+                        statementType = newType != null ? newType : statementType;
+
+                    } else{
+                        String name = cell.getStringCellValue();
+                        Double[] values = new Double[7];
+                        values[0] = ExcelUtils.getDoubleValueFromCell(row.getCell(2));
+                        if(isTrancheA){
+                            values[1] = ExcelUtils.getDoubleValueFromCell(row.getCell(4));
+                            values[2] = ExcelUtils.getDoubleValueFromCell(row.getCell(6));
+                            values[3] = ExcelUtils.getDoubleValueFromCell(row.getCell(8));
+                            values[4] = ExcelUtils.getDoubleValueFromCell(row.getCell(10));
+                            values[5] = ExcelUtils.getDoubleValueFromCell(row.getCell(12));
+                            values[6] = ExcelUtils.getDoubleValueFromCell(row.getCell(14));
+                        }else if(isTrancheB){
+                            values[1] = null;
+                            values[2] = null;
+                            values[3] = ExcelUtils.getDoubleValueFromCell(row.getCell(4));
+                            values[4] = ExcelUtils.getDoubleValueFromCell(row.getCell(6));
+                            values[5] = ExcelUtils.getDoubleValueFromCell(row.getCell(8));
+                            values[6] = ExcelUtils.getDoubleValueFromCell(row.getCell(10));
+                        }
+
+                        ConsolidatedStatementRecordDto recordDto = new ConsolidatedStatementRecordDto();
+                        recordDto.setName(name);
+                        recordDto.setType(statementType);
+                        recordDto.setValues(values);
+                        if(statementType == null){
+                            if(isBalance){
+                                recordDto.setType(ConsolidatedStatementType.BALANCE_OTHER);
+                            }else if(isOperations){
+                                recordDto.setType(ConsolidatedStatementType.OPERATIONS_OTHER);
+                            }
+                        }
+
+                        if(recordDto.isBalance()){
+                            balance.add(recordDto);
+                        }else if(recordDto.isOperations()){
+                            operations.add(recordDto);
+                        }else{
+                            // logger.error("");
+                            throw new ExcelFileParseException("Unresolved statement type: row=" + (rowNum + 1));
+                        }
+
+                        if(name.equalsIgnoreCase("Total assets") || name.equalsIgnoreCase("Total liabilities") ||
+                                name.equalsIgnoreCase("Total income") || name.equalsIgnoreCase("Total expenses")){
+                            statementType = null;
+                        }
+                    }
+
+                }
+
             }
-        }catch (Exception ex){
-            return false;
+
+
+            rowNum++;
         }
-        return true;
+
+        statementDto.setBalance(balance);
+        statementDto.setOperations(operations);
+
+        // TODO: return result
+        return new FileUploadResultDto();
+
     }
 
-    private FileUploadResultDto parseStatementLiabilities(FilesDto filesDto){
-        return null;
-    }
 
+    /* Statement of Cash Flows ********************************************************/
     private FileUploadResultDto parseStatementCashFlows(FilesDto filesDto){
         return null;
     }
+
+
 
     private FileUploadResultDto parseStatementChanges(FilesDto filesDto){
         return null;

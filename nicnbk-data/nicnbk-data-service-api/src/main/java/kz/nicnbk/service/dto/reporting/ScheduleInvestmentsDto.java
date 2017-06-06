@@ -1,143 +1,63 @@
 package kz.nicnbk.service.dto.reporting;
 
+import java.util.List;
+
 /**
  * Created by magzumov on 05.05.2017.
  */
 public class ScheduleInvestmentsDto extends InputFileReportDataDto{
 
-    private String investmentName;
-    private Double capitalCommitments;
-    private Double netCost;
-    private Double fairValue;
-    private String description;
-    private String strategy;
-    private InvestmentType investmentType; // fund investment, co-investment, etc
-    private Boolean totalStrategy;
-    private Boolean totalStrategyByCurrency;
-    private Boolean totalInvestment;
-    private String currency;
+    private List<FundInvestmentDto> fundInvestments;
+    private List<CoInvestmentDto> coInvestments;
 
-    public ScheduleInvestmentsDto(){}
+    private CommonInvestmentDto total;
 
-    public ScheduleInvestmentsDto(String investmentName, String currency, Double capitalCommitments, Double netCost, Double fairValue,
-                                  String description, String strategy, InvestmentType investmentType,
-                                  Boolean totalStrategyByCurrency, Boolean totalStrategy, Boolean totalInvestment){
-        this.investmentName = investmentName;
-        this.currency = currency;
-        this.capitalCommitments = capitalCommitments;
-        this.netCost = netCost;
-        this.fairValue = fairValue;
-        this.description = description;
-        this.strategy = strategy;
-        this.investmentType = investmentType;
-        this.totalStrategy = totalStrategy;
-        this.totalStrategyByCurrency = totalStrategyByCurrency;
-        this.totalInvestment = totalInvestment;
 
+    public List<FundInvestmentDto> getFundInvestments() {
+        return fundInvestments;
     }
 
-    public String getInvestmentName() {
-        return investmentName;
+    public void setFundInvestments(List<FundInvestmentDto> fundInvestments) {
+        this.fundInvestments = fundInvestments;
     }
 
-    public void setInvestmentName(String investmentName) {
-        this.investmentName = investmentName;
+    public List<CoInvestmentDto> getCoInvestments() {
+        return coInvestments;
     }
 
-    public Double getCapitalCommitments() {
-        return capitalCommitments;
+    public void setCoInvestments(List<CoInvestmentDto> coInvestments) {
+        this.coInvestments = coInvestments;
     }
 
-    public void setCapitalCommitments(Double capitalCommitments) {
-        this.capitalCommitments = capitalCommitments;
+    public CommonInvestmentDto getTotal() {
+        return total;
     }
 
-    public Double getNetCost() {
-        return netCost;
+    public void setTotal(CommonInvestmentDto total) {
+        this.total = total;
     }
 
-    public void setNetCost(Double netCost) {
-        this.netCost = netCost;
-    }
+        public void print(){
+            System.out.println("Fund Investments: ");
+            if(this.fundInvestments != null){
+                for(FundInvestmentDto dto: this.fundInvestments){
+                    System.out.println(dto.getInvestmentName() + " | " + dto.getCapitalCommitments() + " | " +
+                    dto.getNetCost() + " | " + dto.getFairValue() + " | " + dto.getCurrency() + " | " + dto.getStrategy());
+                }
+            }
 
-    public Double getFairValue() {
-        return fairValue;
-    }
+            System.out.println("\nCo-Investments: ");
+            if(this.coInvestments != null){
+                for(CoInvestmentDto dto: this.coInvestments){
+                    System.out.println(dto.getInvestmentName() + " | " + dto.getCapitalCommitments() + " | " +
+                            dto.getNetCost() + " | " + dto.getFairValue() + " | " + dto.getCurrency() + " | " + dto.getDescription());
+                }
+            }
 
-    public void setFairValue(Double fairValue) {
-        this.fairValue = fairValue;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getStrategy() {
-        return strategy;
-    }
-
-    public void setStrategy(String strategy) {
-        this.strategy = strategy;
-    }
-
-    public InvestmentType getInvestmentType() {
-        return investmentType;
-    }
-
-    public void setInvestmentType(InvestmentType investmentType) {
-        this.investmentType = investmentType;
-    }
-
-    public Boolean getTotalStrategyByCurrency() {
-        return totalStrategyByCurrency;
-    }
-
-    public void setTotalStrategyByCurrency(Boolean totalStrategyByCurrency) {
-        this.totalStrategyByCurrency = totalStrategyByCurrency;
-    }
-
-    public Boolean getTotalStrategy() {
-        return totalStrategy;
-    }
-
-    public void setTotalStrategy(Boolean totalStrategy) {
-        this.totalStrategy = totalStrategy;
-    }
-
-    public Boolean getTotalInvestment() {
-        return totalInvestment;
-    }
-
-    public void setTotalInvestment(Boolean totalInvestment) {
-        this.totalInvestment = totalInvestment;
-    }
-
-    public String getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(String currency) {
-        this.currency = currency;
-    }
-
-    public void print(){
-
-        System.out.println(this.investmentName + " - " + this.currency + " - " + this.capitalCommitments + " - " +
-                this.netCost + " - " + this.fairValue + " - " + this.description + " - " + this.strategy + " - "
-                + this.investmentType.getCode() + " - " + this.totalStrategyByCurrency + " - " + this.totalStrategy + " - " + this.totalInvestment);
-
-        System.out.println("**************************************************");
-//        System.out.println("description=" + description);
-//        System.out.println("strategy=" + strategy);
-//        System.out.println("substrategy=" + substrategy);
-//        System.out.println("investmentName=" + investmentType);
-//        System.out.println("investmentName=" + totalSubstrategy);
-//        System.out.println("investmentName=" + totalStrategy);
-//        System.out.println("investmentName=" + totalInvestment);
-//        System.out.println("investmentName=" + currency);
+            if(this.total != null) {
+                System.out.println("\nTotal Private Equity Partnerships and Co-Investments | " + this.total.getCapitalCommitments()
+                        + " | " + this.total.getNetCost() + " | " + this.total.getFairValue() + " | " + this.total.getCurrency());
+            }
+            System.out.println("**************************************************");
     }
 }

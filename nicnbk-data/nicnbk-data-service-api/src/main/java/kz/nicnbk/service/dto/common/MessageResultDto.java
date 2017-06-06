@@ -11,6 +11,14 @@ public class MessageResultDto implements BaseDto {
     private String messageKz;
     private String messageRu;
 
+    public MessageResultDto(){}
+
+    public MessageResultDto(String messageRu, String messageEn, String messageKz){
+        this.messageRu = messageRu;
+        this.messageEn = messageEn;
+        this.messageKz = messageKz;
+    }
+
     public String getMessageEn() {
         return messageEn;
     }

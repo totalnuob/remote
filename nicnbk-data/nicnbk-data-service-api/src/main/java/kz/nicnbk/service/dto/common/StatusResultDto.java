@@ -7,6 +7,13 @@ public class StatusResultDto extends MessageResultDto {
 
     private StatusResultType status;
 
+    public StatusResultDto(){}
+
+    public StatusResultDto(StatusResultType status, String messageRu, String messageEn, String messageKz){
+        super(messageRu, messageEn, messageKz);
+        this.status = status;
+    }
+
     public StatusResultType getStatus() {
         return status;
     }
