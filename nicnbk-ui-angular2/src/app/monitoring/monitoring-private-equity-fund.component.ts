@@ -339,13 +339,13 @@ export class MonitoringPrivateEquityFundComponent extends GoogleChartComponent {
     drawGeographicExposure(){
         var data = google.visualization.arrayToDataTable([
             ['Geography', 'Exposure'],
-            ['North America', 64.2 ],
-            ['Western Europe', 28.7],
-            ['Middle East', 1.00],
-            ['Asia', 3.1],
-            ['Eastern Europe', 1.6],
+            ['North America', 60.2 ],
+            ['Western Europe', 32.7],
+            ['Middle East', 1.1],
+            ['Asia', 3.4],
+            ['Eastern Europe', 1.8],
             ['South America', 0.3],
-            ['Other', 0.2]
+            ['Other', 0.3]
         ]);
 
         var view = new google.visualization.DataView(data);
@@ -388,16 +388,17 @@ export class MonitoringPrivateEquityFundComponent extends GoogleChartComponent {
     drawSectorExposure(){
         var data = google.visualization.arrayToDataTable([
             ['Sector', 'Exposure'],
-            ['Industrials', 8.5],
-            ['Materials', 2.6],
-            ['Energy', 3.4],
-            ['Information Technology', 44],
-            ['Financials', 5.5],
-            ['Consumer Discretionary', 15.6 ],
-            ['Health Care', 10.8],
-            ['Real Estate', 0.01],
-            ['Consumer Staples', 2.6],
-            ['Utilities', 0.5]
+            ['Industrials', 10.9],
+            ['Materials', 1.8],
+            ['Energy', 3.5],
+            ['Information Technology', 40.4],
+            ['FoF Holding', 3.1],
+            ['Financials', 5.3],
+            ['Consumer Discretionary', 17.7],
+            ['Health Care', 12.7],
+            ['Real Estate', 0.1],
+            ['Consumer Staples', 3.5],
+            ['Utilities', 0.9]
         ]);
 
         var options = {
@@ -449,38 +450,38 @@ export class MonitoringPrivateEquityFundComponent extends GoogleChartComponent {
         //investments.push([null, "A", "A", "A", "A", "A", "A", "A", "A", "A","A", "A",]);
         //investments.push([null, "A", "A", "A", "A", "A", "A", "A", "A", "A","A", "A",]);
 
-        investments.push(["Small Cap Buyout", "Gridiron Capital Fund III, L.P", 2015, 850, 10, 3.1, 0.37, 2.96, "11%", "0.12x", "1.08x", "Gridiron Capital","Target middle-market energy services companies with the   focus on North America with a concentration in Louisiana and surrounding regions", 5]);
-        investments.push([null, "BCP Energy Services Fund, L.P.",2014,703.3,10.00,6.94,0.07,7.06,"4%","0.01x","1.03x","Bernhard Capital Partners","Target middle-market energy services companies with the   focus on North America with a concentration in Louisiana and surrounding regions"]);
-        investments.push([null, "BDC III, L.P.",2017,600.00,8.30, , ,0.00," ","0.00x"," ","Bridgepoint Development Capital","Targets small-cap transactions across core European markets (the U.K., the Nordics and France)"]);
-        investments.push([null, "Saw Mill Capital Partners II, L.P.",2016,318.13,10.00,1.02,0.28,0.79,"5%","0.27x","1.05x","Saw Mill Capital","Targets manufacturing, commercial services and specialized distribution companies in the lower middle market across  U.S.-based businesses  "]);
+        investments.push(["Small Cap Buyout", "Gridiron Capital Fund III, L.P", 2015, 875.6, 10, 4.96, 0.37, 4.74, "10%", "0.08x", "1.03x", "Gridiron Capital","Target middle-market energy services companies with the   focus on North America with a concentration in Louisiana and surrounding regions", 5]);
+        investments.push([null, "BCP Energy Services Fund, L.P.",2014,703.3,10.00,6.94,0.07,7.06,"6%","0.01x","1.03x","Bernhard Capital Partners","Target middle-market energy services companies with the   focus on North America with a concentration in Louisiana and surrounding regions"]);
+        investments.push([null, "BDC III, L.P.",2017,600.00,8.30, , ,0.07," ","0.00x"," ","Bridgepoint Development Capital","Targets small-cap transactions across core European markets (the U.K., the Nordics and France)"]);
+        investments.push([null, "Saw Mill Capital Partners II, L.P.",2016,318.13,10.00,1.02,0.28,0.79,"4%","0.27x","1.05x","Saw Mill Capital","Targets manufacturing, commercial services and specialized distribution companies in the lower middle market across  U.S.-based businesses  "]);
         investments.push([null, "TZP Capital Partners III, L.P.",2017,565.00,10.00, , ,0.00," ","0.00x"," ","TZP Group LLC","The Fund will target companies in industries such as franchising, outsourced business and IT services, marketing and media services, primarily in North America"]);
 
         investments.push(["Distressed Debt", "OHA Strategic Credit Fund II, L.P.",2017,2700.02,10.00, , ,0.00, ,"0.00x", ,"Oak Hill Advisors, L.P.","Invest in stressed and distressed debt of companies, as well as in restructuring situations across North America and Europe",1]);
         //investments.push([null, "OSI Group, LLC", 2016, "", 7.5, 7.5,  0.0, 7.5, "0%", "0.0x", "1.0x", "Prudential Capital Group, L.P."]);
 
-        investments.push(["Co-investment", "OSI Group, LLC",2016,15.00,7.50,7.50,0.10,7.50,"1%","0.01x","1.01x","Prudential Capital Group, L.P.","OSI Group is a global processor of poultry, beef, pork, and other food products to the food service industry, primarily QSRs, retail, and branded food companies",4]);
-        investments.push([null, "ADT Security",2016,164.14,7.53,7.50,1.81,5.96,"9%","0.24x","1.04x","Apollo Management","The deal in the home and commercial security business"]);
-        investments.push([null, "Jimmy John's",2016,100.00,7.50,7.50, ,7.50,"0%","0.00x","1.00x","Roark Capital Group, Inc.","Jimmy John's Is a franchised sandwich restaurant chain specializing in delivery"]);
-        investments.push([null, "Vertiv (fka Emerson Network Power)",2016,1203.95,7.50,7.50,1.93,5.57,"-10%","0.26x","1.00x","Platinum Equity Capital Partners","Vertiv is a global leader in designing, manufacturing, and servicing mission-critical infrastructure technologies for data centers, communication networks, and commercial / industrial environments"]);
+        investments.push(["Co-investment", "OSI Group, LLC",2016,15.00,7.50,7.50,0.42,7.20,"1%","0.06x","1.02x","Prudential Capital Group, L.P.","OSI Group is a global processor of poultry, beef, pork, and other food products to the food service industry, primarily QSRs, retail, and branded food companies",4]);
+        investments.push([null, "ADT Security",2016,164.14,7.53,7.50,2.10,6.49,"15%","0.28x","1.15x","Apollo Management","The deal in the home and commercial security business"]);
+        investments.push([null, "Jimmy John's",2016,377.51,7.50,7.50, ,7.50,"0%","0.00x","1.00x","Roark Capital Group, Inc.","Jimmy John's Is a franchised sandwich restaurant chain specializing in delivery"]);
+        investments.push([null, "Vertiv (fka Emerson Network Power)",2016,1203.95,7.50,7.50,1.93,4.14,"-5%","0.26x","0.81x","Platinum Equity Capital Partners","Vertiv is a global leader in designing, manufacturing, and servicing mission-critical infrastructure technologies for data centers, communication networks, and commercial / industrial environments"]);
 
-        investments.push(["Secondary", "PDC Opportunities V, L.P.",2015,269.77,5.00,5.03,0.94,5.24,"25%","0.19x","1.23x","Pearl Diver Capital","Secondaries (Control CLO equity)",6]);
-        investments.push([null, "Bridgepoint Europe IV, L.P.",2008,4835.00,4.04,3.57,1.38,2.85,"10%","0.39x","1.19x","Bridgepoint Capital Ltd.","Growth oriented pan-European Middle Market Fund with generalist approach to sector exposure"]);
-        investments.push([null, "Capitala Private Credit Fund V, L.P.",2016,44.00,4.30,0.87, ,0.86,"2%","0.00x","0.99x","Capital South Partners","Structured deal based on secondary purchase of credit assets and commitment in Capitala Fund V"]);
-        investments.push([null, "CapitalSouth Partners Florida Sidecar Fund II, L.P.",2016,47.57,8.18,8.18, ,8.24,"3%","0.00x","1.01x","Capital South Partners",""]);
-        investments.push([null, "Secondary Investment SPV-9, L.P.",2016,106.65,7.11,5.58,2.79,3.68,"25%","0.50x","1.16x","Hamilton Lane","Secondaries of following funds \n• Levine Leichtman II, III, IV, Deep Value Fund • Acon Bastion II"]);
-        investments.push([null,"Centre Lane Credit Partners II, L.P.",2017,147.50,15.00, , ,0.00,"0%","0.00x", ,"Centre Partners Management LLC","Looks to invest in first and second lien loans in the middle market"]);
+        investments.push(["Secondary", "PDC Opportunities V, L.P.",2015,269.77,5.00,5.03,1.11,5.07,"28%","0.22x","1.23x","Pearl Diver Capital","Secondaries (Control CLO equity)",6]);
+        investments.push([null, "Bridgepoint Europe IV, L.P.",2008,4835.00,4.04,3.57,1.50,2.72,"10%","0.42x","1.18x","Bridgepoint Capital Ltd.","Growth oriented pan-European Middle Market Fund with generalist approach to sector exposure"]);
+        investments.push([null, "Capitala Private Credit Fund V, L.P.",2016,44.00,4.30,0.87, ,0.92,"5%","0.00x","1.06x","Capital South Partners","Structured deal based on secondary purchase of credit assets and commitment in Capitala Fund V"]);
+        investments.push([null, "CapitalSouth Partners Florida Sidecar Fund II, L.P.",2016,47.57,8.18,8.18, ,8.88,"7%","0.00x","1.09x","Capital South Partners",""]);
+        investments.push([null, "Secondary Investment SPV-9, L.P.",2016,106.65,7.11,5.58,2.79,3.58,"24%","0.50x","1.14x","Hamilton Lane","Secondaries of following funds \n• Levine Leichtman II, III, IV, Deep Value Fund • Acon Bastion II"]);
+        investments.push([null,"Centre Lane Credit Partners II, L.P.",2017,147.50,15.00,6.00, ,6.00,"0%","1.00x", ,"Centre Partners Management LLC","Looks to invest in first and second lien loans in the middle market"]);
         //investments.push(["Total for Tranche A","", "", "", 100, 42, 4, 41, "", "", "", ""]);
         return investments;
     }
 
     public getTrancheBInvestments() {
         var investments = [];
-        investments.push(["Large Buyout", "Blackstone Capital Partners VII, L.P.",2016,18000,55.38,6.46,0.01,5.76,"-31%","0.00x","0.89x","Blackstone Group","Focuses on the large buyout space globally with the focus on US market", 3]);
-        investments.push([null, "Advent International GPE VIII-H, L.P.",2016,930,30.00,7.02, ,6.42,"-30%","0.00x","0.91x","Advent International","Focus on investments in mid-sized to large companies globally"]);
-        investments.push([null,"Vista Equity Partners Fund VI, L.P.",2016,10870,25.00, , ,0.00,"-3%","0.00x", ,"Vista Equity Partners","Focus on investments in upper middle-market and large cap companies in North America"]);
-        investments.push(["Mid Cap Buyout", "Platinum Equity Capital Partners IV, L.P.",2016,4413,40.00,3.46,0.30,2.30,"-6%","0.09x","0.75x","Platinum Equity Capital Partners","Fund invests across sectors, primarily in US, and make selective investments in Europe and ROW with deep operational expertise. Target companies are carve-outs, corporate orphans, unmanaged businesses", 2]);
-        investments.push([null, "ACON Equity Partners IV, L.P.",2016,965,15.00,1.62,0.00,1.09,"-29%","0.00x","0.68x","ACON Investments, L.L.C.","The Fund pursues a middle-market private equity investment strategy targeting control-oriented deep-value, complex transactions"]);
-        investments.push(["Growth Equity", "Warburg Pincus Private Equity XII, L.P.",2016,12471,21.00,5.02,0.06,4.51,"-13%","0.01x","0.91x","Warburg Pincus LLC","Growth-oriented investment strategy across five core sectors", 1]);
+        investments.push(["Large Buyout", "Blackstone Capital Partners VII, L.P.",2016,18000,55.38,7.85,0.01,7.17,"-13%","0.00x","0.91x","Blackstone Group","Focuses on the large buyout space globally with the focus on US market", 3]);
+        investments.push([null, "Advent International GPE VIII-H, L.P.",2016,930,30.00,7.02, ,6.42,"-7%","0.00x","0.91x","Advent International","Focus on investments in mid-sized to large companies globally"]);
+        investments.push([null,"Vista Equity Partners Fund VI, L.P.",2016,10870,25.00,10.34,0.01,9.35,"-3%","0.00x","0.91","Vista Equity Partners","Focus on investments in upper middle-market and large cap companies in North America"]);
+        investments.push(["Mid Cap Buyout", "Platinum Equity Capital Partners IV, L.P.",2016,6500,40.00,4.42,0.30,3.26,"16%","0.07x","0.81x","Platinum Equity Capital Partners","Fund invests across sectors, primarily in US, and make selective investments in Europe and ROW with deep operational expertise. Target companies are carve-outs, corporate orphans, unmanaged businesses", 2]);
+        investments.push([null, "ACON Equity Partners IV, L.P.",2016,965,15.00,1.62,0.00,1.22,"-14%","0.00x","0.76x","ACON Investments, L.L.C.","The Fund pursues a middle-market private equity investment strategy targeting control-oriented deep-value, complex transactions"]);
+        investments.push(["Growth Equity", "Warburg Pincus Private Equity XII, L.P.",2016,12471,21.00,5.54,0.06,5.03,"-8%","0.01x","0.92x","Warburg Pincus LLC","Growth-oriented investment strategy across five core sectors", 1]);
         //investments.push(["Total for Tranche B","", "", "", 146, 4, "", 3, "", "", "", ""]);
 
         return investments;
