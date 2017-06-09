@@ -12,10 +12,10 @@ import java.util.List;
 public interface MacroMonitorScoreService extends BaseService {
 
 
-    Long save(List<MacroMonitorScoreDto> macroMonitorScoreDtoList);
+    Long save(List<MacroMonitorScoreDto> macroMonitorScoreDtoList, String username);
 
     List<MacroMonitorScoreDto> getList(Integer typeId);
 
-    Long deleteAll(Integer typeId);
+    Long deleteAll(Integer typeId, String username);
 
 }
