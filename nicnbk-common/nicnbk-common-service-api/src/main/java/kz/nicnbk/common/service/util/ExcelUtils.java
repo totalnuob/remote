@@ -1,6 +1,7 @@
 package kz.nicnbk.common.service.util;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 
 /**
  * Created by magzumov on 15.05.2017.
@@ -21,6 +22,20 @@ public class ExcelUtils {
         return !isEmptyCell(cell);
     }
 
+    public static boolean isEmptyCellRange(Row row, int from, int to){
+        for(int i = from; i <= to; i++){
+            Cell cell = row.getCell(i);
+            if(isNotEmptyCell(cell)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean isNotEmptyCellRange(Row row, int from, int to){
+        return !isEmptyCellRange(row, from, to);
+    }
+
     public static Double getDoubleValueFromCell(Cell cell){
         if(cell == null){
             return null;
@@ -38,7 +53,7 @@ public class ExcelUtils {
             }catch (Exception ex){
 
                 // TODO: log error
-                System.out.println("Double parse failed: " + cell.getStringCellValue());
+                //System.out.println("Double parse failed: " + cell.getStringCellValue());
 
             }
         }
@@ -50,6 +65,13 @@ public class ExcelUtils {
          return false;
         }
         return cell.getStringCellValue().equals(value);
+    }
+
+    public static boolean isCellStringValueEqualIgnoreCase(Cell cell, String value){
+        if(cell == null || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())){
+            return false;
+        }
+        return cell.getStringCellValue().equalsIgnoreCase(value);
     }
 
 }

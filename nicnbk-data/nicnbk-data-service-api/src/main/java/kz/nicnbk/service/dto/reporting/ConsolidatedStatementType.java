@@ -10,7 +10,8 @@ public enum ConsolidatedStatementType {
     INCOME("INCOME"),
     EXPENSES("EXPENSES"),
     BALANCE_OTHER("BALANCE_OTHER"),
-    OPERATIONS_OTHER("OPERATIONS_OTHER");
+    OPERATIONS_OTHER("OPERATIONS_OTHER"),
+    EQUITY("EQUITY");
 
     ConsolidatedStatementType(String code){
         this.code = code;

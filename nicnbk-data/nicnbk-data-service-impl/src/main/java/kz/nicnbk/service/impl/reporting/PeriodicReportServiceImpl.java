@@ -17,6 +17,9 @@ import kz.nicnbk.service.dto.common.StatusResultType;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.reporting.*;
 import kz.nicnbk.service.dto.reporting.exception.ExcelFileParseException;
+import kz.nicnbk.service.dto.reporting.StatementCashFlowsDto;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -194,7 +197,6 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             return fileUploadResultDto;
         }
     }
-
 
     /* Schedule of Investments ******************************************************/
 
@@ -501,8 +503,6 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         return new FileUploadResultDto();
     }
 
-
-
     /* Statement of Assets, Liabilities, Partners Capital ****************************/
 
     private FileUploadResultDto parseStatementAssetsLiabilities(FilesDto filesDto)
@@ -728,26 +728,848 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
     /* Statement of Cash Flows ********************************************************/
     private FileUploadResultDto parseStatementCashFlows(FilesDto filesDto){
-        return null;
+
+        StatementCashFlowsDto statementCashFlowsDto = new StatementCashFlowsDto();
+        FileUploadResultDto fileUploadResultDto = new FileUploadResultDto();
+        try {
+            InputStream inputFile = new ByteArrayInputStream(filesDto.getBytes());
+            XSSFWorkbook workbook = new XSSFWorkbook(inputFile);
+
+            // Sheet 1
+            XSSFSheet sheet = workbook.getSheetAt(0);
+
+            Iterator<Row> rowIterator = sheet.iterator();
+            int rowNum = 0;
+            while (rowIterator.hasNext()) { // each row
+                Row row = rowIterator.next();
+
+                if(rowNum == 0){
+                    Cell cell = row.getCell(0);
+                    if (!ExcelUtils.isCellStringValueEqual(cell, "Tarragon LP")) {
+                        //logger.error("");
+                        throw new ExcelFileParseException("File header check failed : row=1, cell=1");
+                    }
+                }else if(rowNum == 1){
+                    Cell cell = row.getCell(0);
+                    if (!ExcelUtils.isCellStringValueEqual(cell, "Consolidated Statement of Cash Flows for NICK Master Fund Ltd.")) {
+                        //logger.error("");
+                        throw new ExcelFileParseException("File header check failed : row=2, cell=1");
+                    }
+                }else if(rowNum == 2){
+
+                }else{
+                    if(!ExcelUtils.isEmptyCell(row.getCell(0))){
+                        ConsolidatedStatementRecordDto recordDto = new ConsolidatedStatementRecordDto();
+                        String name = row.getCell(0).getStringCellValue();
+                        Double tranceAValue = ExcelUtils.getDoubleValueFromCell(row.getCell(2));
+                        Double tranceBValue = ExcelUtils.getDoubleValueFromCell(row.getCell(4));
+                        Double totalValue = ExcelUtils.getDoubleValueFromCell(row.getCell(6));
+                        recordDto.setName(name);
+                        Double[] values = {tranceAValue, tranceBValue, totalValue};
+                        recordDto.setValues(values);
+
+                        statementCashFlowsDto.addRecord(recordDto);
+                    }else{
+                        // empty cell, skip
+                    }
+                }
+
+                rowNum++;
+            }
+            statementCashFlowsDto.print();
+            return fileUploadResultDto;
+        }catch (ExcelFileParseException e) {
+                //logger.error("");
+                return new FileUploadResultDto(StatusResultType.FAIL, "", e.getMessage(), "");
+        }catch (Exception e){
+                //logger.error("");
+                return new FileUploadResultDto(StatusResultType.FAIL, "",
+                        "Error when processing 'Statement of Cash Flows' file", "");
+        }
     }
 
 
-
+    /* Statement of Changes in Partner's Capital ********************************************************/
     private FileUploadResultDto parseStatementChanges(FilesDto filesDto){
-        return null;
+
+        int[] indices = {2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,18,20,22,24};
+        StatementChangesPartnersCapitalDto statement = new StatementChangesPartnersCapitalDto();
+        FileUploadResultDto fileUploadResultDto = new FileUploadResultDto();
+        try {
+            InputStream inputFile = new ByteArrayInputStream(filesDto.getBytes());
+            XSSFWorkbook workbook = new XSSFWorkbook(inputFile);
+
+            // Sheet 1
+            XSSFSheet sheet = workbook.getSheetAt(0);
+
+            Iterator<Row> rowIterator = sheet.iterator();
+            int rowNum = 0;
+            while (rowIterator.hasNext()) { // each row
+                Row row = rowIterator.next();
+
+                if(rowNum == 0){
+                    Cell cell = row.getCell(0);
+                    if (!ExcelUtils.isCellStringValueEqual(cell, "Tarragon LP")) {
+                        //logger.error("");
+                        throw new ExcelFileParseException("File header check failed : row=1, cell=1");
+                    }
+                }else if(rowNum == 1){
+                    Cell cell = row.getCell(0);
+                    if (!ExcelUtils.isCellStringValueEqual(cell, "Consolidated Statement of Changes in Partner’s Capital for NICK Master Fund Ltd.")) {
+                        //logger.error("");
+                        throw new ExcelFileParseException("File header check failed : row=2, cell=1");
+                    }
+                }else if(rowNum == 2){
+                    // TODO: check date?
+                }else if(rowNum == 4){
+                    checkStatementChangesTableHeader(row, indices);
+
+                }else if(rowNum > 4){
+                    if(ExcelUtils.isNotEmptyCell(row.getCell(0))){
+                        ConsolidatedStatementRecordDto recordDto = new ConsolidatedStatementRecordDto();
+                        String name = row.getCell(0).getStringCellValue();
+                        Double[] values = {ExcelUtils.getDoubleValueFromCell(row.getCell(indices[0])),
+                                ExcelUtils.getDoubleValueFromCell(row.getCell(indices[1])), ExcelUtils.getDoubleValueFromCell(row.getCell(indices[2])),
+                                ExcelUtils.getDoubleValueFromCell(row.getCell(indices[3])), ExcelUtils.getDoubleValueFromCell(row.getCell(indices[4])),
+                                ExcelUtils.getDoubleValueFromCell(row.getCell(indices[5])), ExcelUtils.getDoubleValueFromCell(row.getCell(indices[6])),
+                                ExcelUtils.getDoubleValueFromCell(row.getCell(indices[7])), ExcelUtils.getDoubleValueFromCell(row.getCell(indices[8])),
+                                ExcelUtils.getDoubleValueFromCell(row.getCell(indices[9])), ExcelUtils.getDoubleValueFromCell(row.getCell(indices[10])),
+                                ExcelUtils.getDoubleValueFromCell(row.getCell(indices[11])), ExcelUtils.getDoubleValueFromCell(row.getCell(indices[12])),
+                                ExcelUtils.getDoubleValueFromCell(row.getCell(indices[13])), ExcelUtils.getDoubleValueFromCell(row.getCell(indices[14])),
+                                ExcelUtils.getDoubleValueFromCell(row.getCell(indices[15])), ExcelUtils.getDoubleValueFromCell(row.getCell(indices[16])),
+                                ExcelUtils.getDoubleValueFromCell(row.getCell(indices[17])), ExcelUtils.getDoubleValueFromCell(row.getCell(indices[18]))};
+                        recordDto.setName(name);
+                        recordDto.setValues(values);
+                        statement.addRecord(recordDto);
+                    }else{
+                        // empty cell, skip
+                    }
+                }
+                rowNum++;
+            }
+            statement.print();
+            return fileUploadResultDto;
+        }catch (ExcelFileParseException e) {
+            //logger.error("");
+            return new FileUploadResultDto(StatusResultType.FAIL, "", e.getMessage(), "");
+        }catch (Exception e){
+            //logger.error("");
+            return new FileUploadResultDto(StatusResultType.FAIL, "",
+                    "Error when processing 'Statement of Changes in Partners Capital' file", "");
+        }
     }
 
+    private void checkStatementChangesTableHeader(Row row, int[] indices){
+        Cell cell = row.getCell(indices[0]);
+        if (!cell.getStringCellValue().trim().equalsIgnoreCase("Beginning Capital Balance Before Potential Carried Interest")) {
+            //logger.error("");
+            throw new ExcelFileParseException("File header check failed: cell=3");
+        }
+        cell = row.getCell(indices[1]);
+        if (!cell.getStringCellValue().trim().equalsIgnoreCase("Capital Contributions")) {
+            //logger.error("");
+            throw new ExcelFileParseException("File header check failed: cell=4");
+        }
+        cell = row.getCell(indices[2]);
+        if (!cell.getStringCellValue().trim().equalsIgnoreCase("Distributions")) {
+            //logger.error("");
+            throw new ExcelFileParseException("File header check failed: cell=5");
+        }
+        cell = row.getCell(indices[3]);
+        if (!cell.getStringCellValue().trim().equalsIgnoreCase("Dividend and Interest Income, Net of Related Taxes")) {
+            //logger.error("");
+            throw new ExcelFileParseException("File header check failed: cell=6");
+        }
+        cell = row.getCell(indices[4]);
+        if (!cell.getStringCellValue().trim().equalsIgnoreCase("Other Income")) {
+            //logger.error("");
+            throw new ExcelFileParseException("File header check failed: cell=7");
+        }
+        cell = row.getCell(indices[5]);
+        if (!cell.getStringCellValue().trim().equalsIgnoreCase("Management Fee")) {
+            //logger.error("");
+            throw new ExcelFileParseException("File header check failed: cell=8");
+        }
+        cell = row.getCell(indices[6]);
+        if (!cell.getStringCellValue().trim().equalsIgnoreCase("Administration Fees")) {
+            //logger.error("");
+            throw new ExcelFileParseException("File header check failed: cell=9");
+        }
+        cell = row.getCell(indices[7]);
+        if (!cell.getStringCellValue().trim().equalsIgnoreCase("Audit and tax fees")) {
+            //logger.error("");
+            throw new ExcelFileParseException("File header check failed: cell=10");
+        }
+        cell = row.getCell(indices[8]);
+        if (!cell.getStringCellValue().trim().equalsIgnoreCase("Organizational Costs")) {
+            //logger.error("");
+            throw new ExcelFileParseException("File header check failed: cell=11");
+        }
+        cell = row.getCell(indices[9]);
+        if (!cell.getStringCellValue().trim().equalsIgnoreCase("Interest Expense - PEP's")) {
+            //logger.error("");
+            throw new ExcelFileParseException("File header check failed: cell=12");
+        }
+        cell = row.getCell(indices[10]);
+        if (!cell.getStringCellValue().trim().equalsIgnoreCase("License and Filing Fees")) {
+            //logger.error("");
+            throw new ExcelFileParseException("File header check failed: cell=13");
+        }
+        cell = row.getCell(indices[11]);
+        if (!cell.getStringCellValue().trim().equalsIgnoreCase("Other Expenses")) {
+            //logger.error("");
+            throw new ExcelFileParseException("File header check failed: cell=14");
+        }
+        cell = row.getCell(indices[12]);
+        if (!cell.getStringCellValue().trim().equalsIgnoreCase("Total")) {
+            //logger.error("");
+            throw new ExcelFileParseException("File header check failed: cell=15");
+        }
+        cell = row.getCell(indices[13]);
+        if (!cell.getStringCellValue().trim().equalsIgnoreCase("Realized Gain (Loss)")) {
+            //logger.error("");
+            throw new ExcelFileParseException("File header check failed: cell=16");
+        }
+        cell = row.getCell(indices[14]);
+        if (!cell.getStringCellValue().trim().equalsIgnoreCase("Unrealized Gain (Loss)")) {
+            //logger.error("");
+            throw new ExcelFileParseException("File header check failed: cell=17");
+        }
+        cell = row.getCell(indices[15]);
+        if (!cell.getStringCellValue().trim().equalsIgnoreCase("Ending Capital Balance before potential carried interest")) {
+            //logger.error("");
+            throw new ExcelFileParseException("File header check failed: cell=19");
+        }
+        cell = row.getCell(indices[16]);
+        if (!cell.getStringCellValue().trim().equalsIgnoreCase("Prior year - Potential carried interest allocated to general partner")) {
+            //logger.error("");
+            throw new ExcelFileParseException("File header check failed: cell=21");
+        }
+        cell = row.getCell(indices[17]);
+        if (!cell.getStringCellValue().trim().equalsIgnoreCase("Current year - Potential carried interest allocated to general partner")) {
+            //logger.error("");
+            throw new ExcelFileParseException("File header check failed: cell=23");
+        }
+        cell = row.getCell(indices[18]);
+        if (!cell.getStringCellValue().trim().equalsIgnoreCase("Ending Capital Balance after potential carried interest")) {
+            //logger.error("");
+            throw new ExcelFileParseException("File header check failed: cell=25");
+        }
+    }
+
+
+    /* BS Singularity Tranche A *************************************************************************/
     private FileUploadResultDto parseBSTrancheA(FilesDto filesDto){
-        return null;
+        FileUploadResultDto fileUploadResultDto = new FileUploadResultDto();
+        BalanceSheetSingularityDto balanceSheetSingularityDto = new BalanceSheetSingularityDto();
+        try {
+            InputStream inputFile = new ByteArrayInputStream(filesDto.getBytes());
+            //XSSFWorkbook workbook = new XSSFWorkbook(inputFile);
+
+            HSSFWorkbook workbook = new HSSFWorkbook(inputFile);
+            HSSFSheet sheet = workbook.getSheetAt(0);
+
+            // Sheet 1
+            //XSSFSheet sheet = workbook.getSheetAt(0);
+
+            Iterator<Row> rowIterator = sheet.iterator();
+            int rowNum = 0;
+            String category = null;
+            ConsolidatedStatementType type = null;
+            while (rowIterator.hasNext()) { // each row
+                Row row = rowIterator.next();
+
+                Iterator<Cell> cellIterator = row.cellIterator();
+                ConsolidatedStatementRecordDto recordDto = new ConsolidatedStatementRecordDto();
+                String name = null;
+                while(cellIterator.hasNext()){
+                    Cell cell = cellIterator.next();
+                    if(ExcelUtils.isNotEmptyCell(cell) && cell.getCellType() == Cell.CELL_TYPE_STRING){
+                        if(cell.getStringCellValue().equalsIgnoreCase("Assets")){
+                            type = ConsolidatedStatementType.ASSETS;
+                        }else if(cell.getStringCellValue().equalsIgnoreCase("Liabilities")){
+                            type = ConsolidatedStatementType.LIABILITIES;
+                        }else if(cell.getStringCellValue().equalsIgnoreCase("Equity")){
+                            type = ConsolidatedStatementType.EQUITY;
+                        }else {
+                            name = cell.getStringCellValue();
+                        }
+                        //System.out.println(cell.getStringCellValue());
+                    }else if(ExcelUtils.isNotEmptyCell(cell) && cell.getCellType() == Cell.CELL_TYPE_NUMERIC){
+                        Double[] values = {cell.getNumericCellValue()};
+                        recordDto.setValues(values);
+                        recordDto.setName(name);
+                        //System.out.println(cell.getNumericCellValue());
+                    }
+                }
+                if(name != null && recordDto.getValues() == null){
+                    category = name;
+                }else if(name != null && recordDto.getValues() != null){
+                    recordDto.setCategory(category);
+                    recordDto.setType(type);
+                    balanceSheetSingularityDto.addRecord(recordDto);
+                }
+
+                if(name != null && name.equalsIgnoreCase("Total " + category)){
+                    category = null;
+                }
+                if(name != null && type != null && name.equalsIgnoreCase("Total " + type.getCode())){
+                    type = null;
+                }
+
+                rowNum++;
+            }
+            balanceSheetSingularityDto.print();
+            return fileUploadResultDto;
+        }catch (ExcelFileParseException e) {
+            //logger.error("");
+            return new FileUploadResultDto(StatusResultType.FAIL, "", e.getMessage(), "");
+        }catch (Exception e){
+            //logger.error("");
+            return new FileUploadResultDto(StatusResultType.FAIL, "",
+                    "Error when processing 'BS Singularity' file", "");
+        }
     }
+
+
+    /* IMDR Singularity Tranche A ***********************************************************************/
     private FileUploadResultDto parseIMDRTrancheA(FilesDto filesDto){
-        return null;
+        FileUploadResultDto fileUploadResultDto = new FileUploadResultDto();
+        List<ConsolidatedReportRecordDto> records = new ArrayList<>();
+        try {
+            InputStream inputFile = new ByteArrayInputStream(filesDto.getBytes());
+            //XSSFWorkbook workbook = new XSSFWorkbook(inputFile);
+
+            HSSFWorkbook workbook = new HSSFWorkbook(inputFile);
+            HSSFSheet sheet = workbook.getSheetAt(0);
+
+            // Sheet 1
+            //XSSFSheet sheet = workbook.getSheetAt(0);
+
+            Iterator<Row> rowIterator = sheet.iterator();
+            int rowNum = 0;
+            String[] classifications = new String[2];
+            while (rowIterator.hasNext()) { // each row
+                Row row = rowIterator.next();
+                if(rowNum < 10){
+                    // file and table headers
+                    checkIMDRTableHeader(row, rowNum);
+                }else{
+                    Cell cell = row.getCell(0);
+                    if(ExcelUtils.isNotEmptyCell(cell)){
+                        String name = cell.getStringCellValue();
+
+                        if(ExcelUtils.isEmptyCellRange(row, 4, 16) && ExcelUtils.isEmptyCell(row.getCell(18))){
+                            if(classifications[0] == null){
+                                classifications[0] = name;
+                            }else{
+                                classifications[1] = name;
+                            }
+                        }else{
+                            ConsolidatedReportRecordDto recordDto = new ConsolidatedReportRecordDto();
+                            recordDto.setName(name);
+                            recordDto.setClassifications(Arrays.copyOf((String[])classifications, 5));
+                            for(int i = 4; i <= 18; i++){
+                                if(i == 17){
+                                    continue;
+                                }
+                                recordDto.addValue(ExcelUtils.getDoubleValueFromCell(row.getCell(i)));
+                            }
+                            records.add(recordDto);
+
+                            if(name.equalsIgnoreCase("Total " + recordDto.getLastClassification())){
+                                classifications = new String[2];
+                            }
+                        }
+
+                        // Check end of file (footnote)
+                        if(name.equalsIgnoreCase("NET ASSET VALUE")){
+                            break;
+                        }
+
+                    }else{
+                        if(ExcelUtils.isNotEmptyCellRange(row, 4, 16) || ExcelUtils.isNotEmptyCell(row.getCell(18))){
+                            ConsolidatedReportRecordDto recordDto = new ConsolidatedReportRecordDto();
+                            //recordDto.setName(name);
+                            recordDto.setClassifications(Arrays.copyOf((String[])classifications, 5));
+                            for(int i = 4; i <= 18; i++){
+                                if(i == 17){
+                                    continue;
+                                }
+                                recordDto.addValue(ExcelUtils.getDoubleValueFromCell(row.getCell(i)));
+                            }
+                            records.add(recordDto);
+
+                            // clear last classification
+                            classifications[1] = null;
+                        }
+                    }
+                }
+
+                rowNum++;
+            }
+            for(ConsolidatedReportRecordDto record: records){
+                System.out.println(record.getName() + " - " + Arrays.toString(record.getClassifications()) + " - " + Arrays.toString(record.getValues()));
+            }
+            return fileUploadResultDto;
+        }catch (ExcelFileParseException e) {
+            //logger.error("");
+            return new FileUploadResultDto(StatusResultType.FAIL, "", e.getMessage(), "");
+        }catch (Exception e){
+            //logger.error("");
+            return new FileUploadResultDto(StatusResultType.FAIL, "",
+                    "Error when processing 'IMDR Singularity' file", "");
+        }
     }
+
+    private void checkIMDRTableHeader(Row row, int rowNum){
+        if(rowNum == 7){
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(5), "Month to Date")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=8, cell=6");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(13), "Year to Date")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=8, cell=14");
+            }
+        }else if(rowNum == 8){
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(4), "Balance")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=5");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(5), "Subscriptions")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=6");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(6), "Opening")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=7");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(7), "USD")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=8");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(9), "Contrib.")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=10");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(10), "Balance")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=11");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(11), "Subscriptions")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=12");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(12), "USD")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=13");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(13), "Ending")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=14");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(14), "% of")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=15");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(15), "% of")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=16");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(18), "Contrib.")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=19");
+            }
+        }else if(rowNum == 9){
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), "Portfolio Fund Name")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=3");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(4), "Forward")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=5");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(5), "(Redemptions)")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=6");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(6), "Balance")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=7");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(7), "Gain (Loss)")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=8");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(8), "ROR")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=9");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(9), "to Ret.")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=10");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(10), "Forward")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=11");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(11), "(Redemptions)")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=12");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(12), "Gain (Loss)")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=13");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(13), "Balance")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=14");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(14), "Inv.")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=15");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(15), "NAV")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=16");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(16), "ROR")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=17");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(18), "to Ret.")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=19");
+            }
+        }
+
+    }
+
+    /* PAR Singularity Tranche A ************************************************************************/
+
     private FileUploadResultDto parsePARTrancheA(FilesDto filesDto){
-        return null;
+        FileUploadResultDto fileUploadResultDto = new FileUploadResultDto();
+        List<ConsolidatedReportRecordDto> records = new ArrayList<>();
+        try {
+            InputStream inputFile = new ByteArrayInputStream(filesDto.getBytes());
+            //XSSFWorkbook workbook = new XSSFWorkbook(inputFile);
+
+            HSSFWorkbook workbook = new HSSFWorkbook(inputFile);
+            HSSFSheet sheet = workbook.getSheetAt(0);
+
+            // Sheet 1
+            //XSSFSheet sheet = workbook.getSheetAt(0);
+
+            Iterator<Row> rowIterator = sheet.iterator();
+            int rowNum = 0;
+            String[] classifications = new String[2];
+            while (rowIterator.hasNext()) { // each row
+                Row row = rowIterator.next();
+                if(rowNum < 11){
+                    // file and table headers
+                    checkPARTableHeader(row, rowNum);
+                }else{
+                    Cell cell = row.getCell(0);
+                    if(ExcelUtils.isNotEmptyCell(cell)){
+                        String name = cell.getStringCellValue();
+                        if(ExcelUtils.isEmptyCellRange(row, 6, 10) && ExcelUtils.isEmptyCellRange(row, 13, 18)){
+                            if(classifications[0] == null){
+                                classifications[0] = name;
+                            }else{
+                                classifications[1] = name;
+                            }
+                        }else{
+                            ConsolidatedReportRecordDto recordDto = new ConsolidatedReportRecordDto();
+                            recordDto.setName(name);
+                            recordDto.setClassifications(Arrays.copyOf((String[])classifications, 5));
+                            for(int i = 6; i <= 18; i++){
+                                if(i == 11 || i == 12){
+                                    continue;
+                                }
+                                recordDto.addValue(ExcelUtils.getDoubleValueFromCell(row.getCell(i)));
+                            }
+                            records.add(recordDto);
+
+                            if(name.equalsIgnoreCase("Total " + recordDto.getLastClassification()) ||
+                                    name.equalsIgnoreCase("Total - " + recordDto.getLastClassification()) ){
+                                if(classifications[1] != null && classifications[1].equalsIgnoreCase(recordDto.getLastClassification())){
+                                    String classification = classifications[0];
+                                    classifications = new String[2];
+                                    classifications[0] = classification;
+                                }else if(classifications[0] != null && classifications[0].equalsIgnoreCase(recordDto.getLastClassification())){
+                                    classifications = new String[2];
+                                }
+                            }
+                        }
+
+                        // Check end of file (footnote)
+                        if(name.equalsIgnoreCase("NET ASSET VALUE")){
+                            break;
+                        }
+
+                    }else{
+//                        if(ExcelUtils.isNotEmptyCellRange(row, 6, 10) || ExcelUtils.isNotEmptyCellRange(row, 13, 18)){
+//                            ConsolidatedReportRecordDto recordDto = new ConsolidatedReportRecordDto();
+//                            //recordDto.setName(name);
+//                            recordDto.setClassifications(Arrays.copyOf((String[])classifications, 5));
+//                            for(int i = 6; i <= 18; i++){
+//                                if(i == 11 || i == 12){
+//                                    continue;
+//                                }
+//                                recordDto.addValue(ExcelUtils.getDoubleValueFromCell(row.getCell(i)));
+//                            }
+//                            records.add(recordDto);
+//
+//                            // clear last classification
+//                            classifications[1] = null;
+//                        }
+                    }
+                }
+
+                rowNum++;
+            }
+            for(ConsolidatedReportRecordDto record: records){
+                System.out.println(record.getName() + " - " + Arrays.toString(record.getClassifications()) + " - " + Arrays.toString(record.getValues()));
+            }
+            return fileUploadResultDto;
+        }catch (ExcelFileParseException e) {
+            //logger.error("");
+            return new FileUploadResultDto(StatusResultType.FAIL, "", e.getMessage(), "");
+        }catch (Exception e){
+            //logger.error("");
+            return new FileUploadResultDto(StatusResultType.FAIL, "",
+                    "Error when processing 'PAR Singularity' file", "");
+        }
     }
+
+    private void checkPARTableHeader(Row row, int rowNum){
+        if(rowNum == 7){
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(7), "as Percentage")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=8, cell=8");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(8), "as a")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=8, cell=9");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(9), "as a")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=8, cell=10");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(10), "as a")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=8, cell=11");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(15), "as Percentage")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=8, cell=16");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(16), "as a")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=8, cell=17");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(17), "as a")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=8, cell=18");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(18), "as a")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=8, cell=19");
+            }
+
+        }else if(rowNum == 8){
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(6), "Ending")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=7");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(7), "of Substrategy/")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=8");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(8), "Percentage")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=9");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(9), "Percentage")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=10");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(10), "Percentage")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=11");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(12), "Subscriptions")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=13");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(14), "Allocated")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=15");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(15), "of Substrategy/")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=16");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(16), "Percentage")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=17");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(17), "Percentage")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=18");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(18), "Percentage")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=19");
+            }
+
+        }else if(rowNum == 9){
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(6), "Balance")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=7");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(7), "Region")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=8");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(8), "of")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=9");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(9), "of")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=10");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(10), "of")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=11");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(12), "(Redemptions)")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=13");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(14), "Balance")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=15");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(15), "Region")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=16");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(16), "of")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=17");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(17), "of")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=18");
+            }
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(18), "of")){
+                //logger.error("");
+                throw new ExcelFileParseException("File header check failed: row=9, cell=19");
+            }
+
+        }
+
+    }
+
+    /* IS Singularity Tranche A *************************************************************************/
     private FileUploadResultDto parseISTrancheA(FilesDto filesDto){
-        return null;
+        FileUploadResultDto fileUploadResultDto = new FileUploadResultDto();
+        List<ConsolidatedReportRecordDto> records = new ArrayList<>();
+        try {
+            InputStream inputFile = new ByteArrayInputStream(filesDto.getBytes());
+            //XSSFWorkbook workbook = new XSSFWorkbook(inputFile);
+
+            HSSFWorkbook workbook = new HSSFWorkbook(inputFile);
+            HSSFSheet sheet = workbook.getSheetAt(0);
+
+            // Sheet 1
+            //XSSFSheet sheet = workbook.getSheetAt(0);
+
+            Iterator<Row> rowIterator = sheet.iterator();
+            int rowNum = 0;
+            String[] classifications = new String[2];
+            while (rowIterator.hasNext()) { // each row
+                Row row = rowIterator.next();
+
+                if(rowNum == 7){
+                    if(ExcelUtils.isEmptyCell(row.getCell(9)) || !ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(9), "PTD Postings")){
+                        //logger.error("");
+                        throw new ExcelFileParseException("File header check failed: row=9, cell=10");
+                    }
+                    if(ExcelUtils.isEmptyCell(row.getCell(15)) || !ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(15), "YTD Postings")){
+                        //logger.error("");
+                        throw new ExcelFileParseException("File header check failed: row=9, cell=13");
+                    }
+                }else if(rowNum > 7){
+                    if(ExcelUtils.isNotEmptyCell(row.getCell(1))){
+                        if(row.getCell(1).getCellType() == Cell.CELL_TYPE_STRING){
+                            classifications[0] = row.getCell(1).getStringCellValue();
+                        }
+                    }else if(ExcelUtils.isNotEmptyCell(row.getCell(2))){
+                        if(row.getCell(2).getCellType() == Cell.CELL_TYPE_STRING){
+                            classifications[1] = row.getCell(2).getStringCellValue();
+                        }
+                    }else if(ExcelUtils.isNotEmptyCell(row.getCell(3)) || ExcelUtils.isNotEmptyCell(row.getCell(4))){
+                        Cell cell = ExcelUtils.isNotEmptyCell(row.getCell(3)) ? row.getCell(3) : row.getCell(4);
+                        if(cell.getCellType() == Cell.CELL_TYPE_STRING){
+                            ConsolidatedReportRecordDto recordDto = new ConsolidatedReportRecordDto();
+                            recordDto.setName(cell.getStringCellValue());
+
+                            int ptdIndex = ExcelUtils.isNotEmptyCell(row.getCell(3)) ? 8 : 8;
+                            int ytdIndex = ExcelUtils.isNotEmptyCell(row.getCell(3)) ? 14 : 13;
+                            if(ExcelUtils.isNotEmptyCell(row.getCell(ptdIndex)) && row.getCell(ptdIndex).getCellType() == Cell.CELL_TYPE_NUMERIC){
+                                recordDto.addValue(row.getCell(ptdIndex).getNumericCellValue());
+                            }
+                            if(ExcelUtils.isNotEmptyCell(row.getCell(ytdIndex)) && row.getCell(ytdIndex).getCellType() == Cell.CELL_TYPE_NUMERIC){
+                                recordDto.addValue(row.getCell(ytdIndex).getNumericCellValue());
+                            }
+
+                            if(recordDto.getValues() != null && (recordDto.getValues()[0] != null || recordDto.getValues()[1] != null)){
+                                recordDto.setClassifications(Arrays.copyOf((String[])classifications, 5));
+                                records.add(recordDto);
+                            }else{
+                                if(classifications[0] == null){
+                                    classifications[0] = recordDto.getName();
+                                }else{
+                                    classifications[1] = recordDto.getName();
+                                }
+                            }
+
+                            if(recordDto.getName() != null && recordDto.getName().equalsIgnoreCase("Total " + recordDto.getLastClassification())){
+                                if(classifications[1] != null && classifications[1].equalsIgnoreCase(recordDto.getLastClassification())){
+                                    String classification = classifications[0];
+                                    classifications = new String[2];
+                                    classifications[0] = classification;
+                                }else if(classifications[0] != null && classifications[0].equalsIgnoreCase(recordDto.getLastClassification())){
+                                    classifications = new String[2];
+                                }
+                            }
+
+                            if(recordDto.getName() != null && recordDto.getName().equalsIgnoreCase("Net Income ( Loss ) from Operation")){
+                                break;
+                            }
+                        }
+                    }
+
+                }
+
+                rowNum++;
+            }
+            for(ConsolidatedReportRecordDto record: records){
+                System.out.println(record.getName() + " - " + Arrays.toString(record.getClassifications()) + " - " + Arrays.toString(record.getValues()));
+            }
+            return fileUploadResultDto;
+        }catch (ExcelFileParseException e) {
+            //logger.error("");
+            return new FileUploadResultDto(StatusResultType.FAIL, "", e.getMessage(), "");
+        }catch (Exception e){
+            //logger.error("");
+            return new FileUploadResultDto(StatusResultType.FAIL, "",
+                    "Error when processing 'IS Singularity' file", "");
+        }
     }
 
     private FileUploadResultDto parseBSTrancheB(FilesDto filesDto){

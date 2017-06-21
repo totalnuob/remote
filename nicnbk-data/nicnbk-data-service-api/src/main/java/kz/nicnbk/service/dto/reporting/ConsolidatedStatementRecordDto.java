@@ -8,6 +8,7 @@ import kz.nicnbk.common.service.model.BaseDto;
 public class ConsolidatedStatementRecordDto implements BaseDto {
 
     private String name;
+    private String category;
     private ConsolidatedStatementType type;
     private Double[] values;
 
@@ -17,6 +18,14 @@ public class ConsolidatedStatementRecordDto implements BaseDto {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public ConsolidatedStatementType getType() {
