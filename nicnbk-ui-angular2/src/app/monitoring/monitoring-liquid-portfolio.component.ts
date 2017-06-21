@@ -25,7 +25,7 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
     }
 
     drawGraph(){
-        var tableDate = this.getAllDates()[this.getAllDates().length - 1];
+        var tableDate = this.getAllDates()[0];
 
         //$("#tableDate").val($("#tableDate option:last").val());
         this.tableDate = tableDate;
@@ -209,13 +209,13 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
     drawPortfolioStructureChart(){
         var data = google.visualization.arrayToDataTable([
             ['Type', '%'],
-            ["Government Bonds",0.1752],
-            ["Corporate Bonds",0.5443],
-            ["Agencies",0.1033],
-            ["Supernationals",0.1207],
-            ["Margin at Broker",0.0084],
-            ["Swaps", 0.0471],
-            ["Cash", 0.001]
+            ["Government Bonds",0.1485],
+            ["Corporate Bonds",0.5487],
+            ["Agencies",0.1037],
+            ["Supernationals",0.1211],
+            ["Margin at Broker",0.0068],
+            ["Swaps", 0.0473],
+            ["Cash", 0.0239]
         ]);
 
         var options = {
@@ -229,12 +229,12 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
     drawBondsByCountryChart(){
         var data = google.visualization.arrayToDataTable([
             ['Country', '%'],
-            ["United States", 0.5255],
-            ["Canada", 	0.0371],
-            ["South Korea", 0.0186],
-            ["Japan", 0.0779],
-            ["China", 0.0489],
-            ["Britain", 0.2920],
+            ["United States", 0.5231],
+            ["Canada", 	0.0369],
+            ["South Korea", 0.0185],
+            ["Japan", 0.0776],
+            ["China", 0.0486],
+            ["Britain", 0.2952],
             ["Others", 0]
         ]);
 
@@ -301,7 +301,7 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
     // DATA SOURCES --------------------------------------
     public getAllDates(){
         var dates = [];
-        for(var i = 0; i < this.nav.length; i++){
+        for(var i = this.nav.length - 1; i >= 0; i--){
             dates.push(this.nav[i][0]);
         }
         return dates;
@@ -316,6 +316,7 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
         ["Feb-17",103448315,268515293,71713700,65123983,5694154,99157299,556305393],
         ["Mar-17",104495055,292570184,55550922,64943737,5654862,1908436,550424168],
         ["Apr-17",94397032,293174382,55622068,65019968,5790134,540846,538617288],
+        ["May-17",79710320,294581051,55696260,64997438,4352978,12823324,536854358],
     ];
 
     private performance = [
@@ -327,6 +328,7 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
         ["Feb-17",0.76,9.98,0.09,0.33,0,-1.51],
         ["Mar-17",0.73,4.08,-0.06,0.03,0,1.79],
         ["Apr-17",0.45,0.87,2.95,1.21,0,1.65],
+        ["May-17",0.08,2.76,-0.04,0.9,0,-0.5],
     ];
 
     private getRowDataReturnsYTD(date){
@@ -763,7 +765,7 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
             ["Nov-16", ["XS1383319461","DEXIA CREDIT LOCAL","AGENCIES","23.03.2018",20000000,100,20000000,0.00197,39400,84925.82222,0.004246291]],
             ["Nov-16", ["US500769FZ20","KFW","AGENCIES","15.12.2016",25000000,99.97,25047621.53,0.000270081,6750,96159.72,0.003839076]],
             ["Nov-16", ["US45950KBQ22","INTL FINANCE CORP","SUPRANATIONAL","23.11.2016",50000000,101.28,50688437.5,-0.012954186,-656000,975250,0.019240088]],
-            ["Nov-16", ["US298785GE09","EUROPEAN INVESTMENT BANK","SUPRANATIONAL","15.12.2016",50000000,101.065,50546562.5,-0.010478405,-529500,820500,0.016232558]]
+            ["Nov-16", ["US298785GE09","EUROPEAN INVESTMENT BANK","SUPRANATIONAL","15.12.2016",50000000,101.065,50546562.5,-0.010478405,-529500,820500,0.016232558]],
         ];
         //if(date == null){
         //    return positions;
