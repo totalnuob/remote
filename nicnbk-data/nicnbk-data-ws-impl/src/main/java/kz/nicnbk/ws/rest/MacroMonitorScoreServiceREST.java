@@ -1,5 +1,6 @@
 package kz.nicnbk.ws.rest;
 
+import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.macromonitor.MacroMonitorScoreService;
 import kz.nicnbk.service.dto.macromonitor.MacroMonitorScoreDto;
 import kz.nicnbk.ws.model.EntitySaveResponse;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +26,9 @@ public class MacroMonitorScoreServiceREST {
     @Autowired
     private MacroMonitorScoreService service;
 
+    @Autowired
+    private TokenService tokenService;
+
 //    @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_MACROMONITOR_EDITOR')")
     @RequestMapping(value = "/get/{id}", method = RequestMethod.GET)
     public List<MacroMonitorScoreDto> get(@PathVariable Integer id) {
@@ -37,7 +42,11 @@ public class MacroMonitorScoreServiceREST {
     @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_MACROMONITOR_EDITOR')")
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public ResponseEntity<?> save(@RequestBody List<MacroMonitorScoreDto> dtoList) {
-        Long id = this.service.save(dtoList);
+
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        Long id = this.service.save(dtoList, username);
         HttpHeaders httpHeaders = new HttpHeaders();
         EntitySaveResponse response = new EntitySaveResponse();
         response.setEntityId(id);
@@ -48,7 +57,11 @@ public class MacroMonitorScoreServiceREST {
     @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_MACROMONITOR_EDITOR')")
     @RequestMapping(value = "/deleteAll/{id}", method = RequestMethod.GET)
     public ResponseEntity<?> deleteAll(@PathVariable Integer id) {
-        Long ret = this.service.deleteAll(id);
+
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        Long ret = this.service.deleteAll(id, username);
         HttpHeaders httpHeaders = new HttpHeaders();
         Response response = new Response();
         response.setSuccess(true);

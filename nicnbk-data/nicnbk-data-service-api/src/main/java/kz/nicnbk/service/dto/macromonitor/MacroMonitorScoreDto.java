@@ -1,5 +1,6 @@
 package kz.nicnbk.service.dto.macromonitor;
 
+import kz.nicnbk.common.service.model.CreateUpdateBaseEntityDto;
 import kz.nicnbk.common.service.model.HistoryBaseEntityDto;
 import kz.nicnbk.repo.model.macromonitor.MacroMonitorField;
 import kz.nicnbk.repo.model.macromonitor.MacroMonitorScore;
@@ -10,7 +11,7 @@ import java.util.Date;
 /**
  * Created by zhambyl on 29-Mar-17.
  */
-public class MacroMonitorScoreDto extends HistoryBaseEntityDto<MacroMonitorScore> {
+public class MacroMonitorScoreDto extends CreateUpdateBaseEntityDto<MacroMonitorScore> {
 
     private Date date;
     private Double score;
