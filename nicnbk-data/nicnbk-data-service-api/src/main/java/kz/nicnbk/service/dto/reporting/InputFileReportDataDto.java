@@ -6,6 +6,7 @@ import kz.nicnbk.service.dto.files.FilesDto;
 /**
  * Created by magzumov on 10.05.2017.
  */
+@Deprecated
 public class InputFileReportDataDto implements BaseDto {
 
     private FilesDto filesDto;

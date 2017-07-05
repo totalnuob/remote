@@ -74,4 +74,16 @@ public class ExcelUtils {
         return cell.getStringCellValue().equalsIgnoreCase(value);
     }
 
+    public static String getCellCurrency(Cell cell){
+        if(cell.getCellStyle().getDataFormatString().contains("€")){
+            return "EUR";
+        }else if(cell.getCellStyle().getDataFormatString().contains("£")){
+            return "GBP";
+        }else if(cell.getCellStyle().getDataFormatString().contains("$")){
+            return "USD";
+        }else{
+            return null;
+        }
+    }
+
 }

@@ -26,6 +26,5 @@ public interface LookupService extends BaseService {
     List<BaseDictionaryDto> getRedemptionNoticePeriods();
     List<BaseDictionaryDto> getSidePockets();
 
-
     List<BaseDictionaryDto> getPEIndustry();
 }

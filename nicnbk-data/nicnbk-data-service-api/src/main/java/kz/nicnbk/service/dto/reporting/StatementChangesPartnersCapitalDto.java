@@ -3,6 +3,7 @@ package kz.nicnbk.service.dto.reporting;
 /**
  * Created by magzumov on 12.06.2017.
  */
+@Deprecated
 public class StatementChangesPartnersCapitalDto extends ConsolidatedStatementRecordHolderDto {
 
     public void print(){

@@ -5,6 +5,7 @@ import kz.nicnbk.common.service.model.BaseDto;
 /**
  * Created by magzumov on 12.05.2017.
  */
+@Deprecated
 public class CommonInvestmentDto implements BaseDto {
 
     private String investmentName;

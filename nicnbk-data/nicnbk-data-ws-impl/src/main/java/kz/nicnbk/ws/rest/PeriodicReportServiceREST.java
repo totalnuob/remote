@@ -6,6 +6,8 @@ import kz.nicnbk.service.api.reporting.PeriodicReportService;
 import kz.nicnbk.service.dto.common.FileUploadResultDto;
 import kz.nicnbk.service.dto.common.StatusResultType;
 import kz.nicnbk.service.dto.files.FilesDto;
+import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordDto;
+import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordHolderDto;
 import kz.nicnbk.service.dto.reporting.PeriodicReportDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -98,18 +100,19 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
             }
 
             // parse file
-            FileUploadResultDto result = this.periodicReportService.parseFile(fileType, filesDto);
+            FileUploadResultDto result = this.periodicReportService.parseFile(fileType, filesDto, reportId);
+            result.setFileId(savedFile.getId());
 
-            if(result != null && result.getStatus() != StatusResultType.SUCCESS){
+            if(result != null && result.getStatus() == StatusResultType.SUCCESS){
 
                 // TODO: add message to response
 
-                return new ResponseEntity<>(savedFile, null, HttpStatus.OK);
+                return new ResponseEntity<>(result, null, HttpStatus.OK);
             }else{
 
                 // TODO: add message to response
 
-                return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity<>(result, null, HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
 //            if(savedFile == null){
@@ -136,6 +139,22 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
             // TODO: handle error
         }
         sendFileDownloadResponse(response, fileService.getFileInfo(fileId), inputStream);
+    }
+
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/get/scheduleInvestments/{id}", method = RequestMethod.GET)
+    public ResponseEntity getScheduleInvestments(@PathVariable Long id) {
+        ConsolidatedReportRecordHolderDto recordsHolder = this.periodicReportService.getScheduleInvestments(id);
+        return buildResponse(recordsHolder);
+    }
+
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/get/balanceOperations/{id}", method = RequestMethod.GET)
+    public ResponseEntity getBalanaceOperations(@PathVariable Long id) {
+        ConsolidatedReportRecordHolderDto recordsHolder = this.periodicReportService.getStatementBalanceOperations(id);
+        return buildResponse(recordsHolder);
     }
 
 }

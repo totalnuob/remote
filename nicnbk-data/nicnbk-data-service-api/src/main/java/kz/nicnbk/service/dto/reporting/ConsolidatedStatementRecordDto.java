@@ -5,6 +5,7 @@ import kz.nicnbk.common.service.model.BaseDto;
 /**
  * Created by magzumov on 15.05.2017.
  */
+@Deprecated
 public class ConsolidatedStatementRecordDto implements BaseDto {
 
     private String name;

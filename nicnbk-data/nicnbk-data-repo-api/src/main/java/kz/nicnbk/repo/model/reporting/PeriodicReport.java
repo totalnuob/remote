@@ -18,6 +18,12 @@ public class PeriodicReport extends CreateUpdateBaseEntity{
     private Date reportDate;
     private ReportStatus status;
 
+    public PeriodicReport(){}
+
+    public PeriodicReport(Long id){
+        setId(id);
+    }
+
     @Column(name="report_date", nullable = false)
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern="dd-MM-yyyy")

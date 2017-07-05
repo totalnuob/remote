@@ -3,6 +3,7 @@ package kz.nicnbk.service.dto.reporting;
 /**
  * Created by magzumov on 05.05.2017.
  */
+@Deprecated
 public class ScheduleInvestmentsDtoOld extends InputFileReportDataDto{
 
     private String investmentName;

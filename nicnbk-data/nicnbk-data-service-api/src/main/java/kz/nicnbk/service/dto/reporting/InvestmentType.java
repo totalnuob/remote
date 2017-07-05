@@ -5,6 +5,7 @@ import kz.nicnbk.repo.model.hf.InvestorBase;
 /**
  * Created by magzumov on 10.05.2017.
  */
+@Deprecated
 public enum InvestmentType {
 
     FUND_INVESTMENT("FUND_INV"),

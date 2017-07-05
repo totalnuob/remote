@@ -6,6 +6,8 @@ import java.util.List;
 /**
  * Created by magzumov on 12.06.2017.
  */
+
+@Deprecated
 public class ConsolidatedStatementRecordHolderDto extends InputFileReportDataDto {
 
     private List<ConsolidatedStatementRecordDto> records;

@@ -5,6 +5,7 @@ import java.util.List;
 /**
  * Created by magzumov on 15.05.2017.
  */
+@Deprecated
 public class StatementAssetsLiabilitiesDto extends InputFileReportDataDto{
 
     private List<ConsolidatedStatementRecordDto> balance;

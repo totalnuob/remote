@@ -55,6 +55,8 @@ import {EmployeeProfileComponent} from "./employee/employee.profile.component";
 import {NotFoundComponent} from "./page-not-found.component";
 import {MainNBReportingComponent} from "./reporting/main.nb.reporting.component";
 import {InputFileUploadNBReportingComponent} from "./reporting/input.file.upload.nb.reporting.component";
+import {ScheduleInvestmentsNBReportingComponent} from "./reporting/schedule.investments.nb.reporting.component";
+import {StatementBalanceOperationsNBReportingComponent} from "./reporting/statement.balance.operations.nb.reporting.component";
 
 @NgModule({
     imports: [
@@ -88,7 +90,8 @@ import {InputFileUploadNBReportingComponent} from "./reporting/input.file.upload
         HFDashboardComponent, HFFundSearchComponent, HFFundSelectionComponent, HFPortfolioComponent, HFReportComponent,
         HFFundProfileComponent, HFManagerProfileComponent, HFManagerSearchComponent,
         PEFundProfileComponent, PEFirmProfileComponent, PEFirmSearchComponent, PEFundReportComponent,
-        AccessDeniedComponent,NotFoundComponent
+        AccessDeniedComponent,NotFoundComponent,
+        ScheduleInvestmentsNBReportingComponent, StatementBalanceOperationsNBReportingComponent
     ],
     bootstrap: [ AppComponent ]
 })

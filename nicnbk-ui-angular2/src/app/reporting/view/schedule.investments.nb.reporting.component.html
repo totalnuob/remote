@@ -1,0 +1,76 @@
+<div class="container">
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+            </div>
+            <div class="alert alert-info" *ngIf="!submitted && successMessage != null"><span>{{successMessage}}</span>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <div class="row withpadding">
+        <h3 *ngIf="report != null">-- report date -- Schedule of Investments</h3>
+    </div>
+
+    <ul class="nav nav-tabs">
+        <li class="active">
+            <a data-toggle="tab" href="#trancheA">Tranche A</a>
+        </li>
+        <li>
+            <a data-toggle="tab" href="#trancheB">Tranche B</a>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <div id="trancheA" class="tab-pane fade in active">
+            <div class="row withpadding">
+                <table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small">
+                    <tr bgcolor="#e7e7e7">
+                        <td>Investment</td>
+                        <td>Capital Commitments</td>
+                        <td>&nbsp;</td>
+                        <td>Net Cost</td>
+                        <td>&nbsp;</td>
+                        <td>Fair Value</td>
+                    </tr>
+                    <tr *ngFor="let record of records.trancheA">
+                        <td [style.font-weight]="record.header ? 'bold': ''" [align]="record.totalSum ? 'right' : 'left'">{{record.name}}</td>
+                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[0] != null ? (record.values[0] | number:'1.0-0'): ''}}</td>
+                        <td>&nbsp;</td>
+                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[1] != null ? (record.values[1] | number:'1.0-0'): ''}}</td>
+                        <td>&nbsp;</td>
+                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[2] != null ? (record.values[2] | number:'1.0-0'): ''}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div id="trancheB" class="tab-pane fade">
+            <div class="row withpadding">
+                <table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small">
+                    <tr bgcolor="#e7e7e7">
+                        <td>Investment</td>
+                        <td>Capital Commitments</td>
+                        <td>&nbsp;</td>
+                        <td>Net Cost</td>
+                        <td>&nbsp;</td>
+                        <td>Fair Value</td>
+                    </tr>
+                    <tr *ngFor="let record of records.trancheB">
+                        <td [style.font-weight]="record.header ? 'bold': ''" [align]="record.totalSum ? 'right' : 'left'">{{record.name}}</td>
+                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[0] > 0 ? (record.values[0] | number:'1.0-0'): ''}}</td>
+                        <td>&nbsp;</td>
+                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[1] > 0 ? (record.values[1] | number:'1.0-0'): ''}}</td>
+                        <td>&nbsp;</td>
+                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[2] > 0 ? (record.values[2] | number:'1.0-0'): ''}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+        </div>
+    </div>
+</div>

@@ -6,6 +6,7 @@ import {Subscription} from "rxjs/Subscription";
 import {PeriodicReportService} from "./periodic.report.service";
 import {ErrorResponse} from "../common/error-response";
 import {DATA_APP_URL} from "../common/common.service.constants";
+import {FileUploadResult} from "./model/file.uopload.result";
 
 var fileSaver = require("file-saver");
 
@@ -99,25 +100,28 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     // clear upload file on view
                     this.fileTarragonScheduleInvestment = null;
                     // set file id
-                    this.report.tarragonScheduleInvestmentFileId = res.id;
-                    this.postAction("Successfully uploaded file.", null);
+                    this.report.tarragonScheduleInvestmentFileId = res.fileId;
+                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file", null);
                 },
                 error => {
-                    this.postAction(null, "Error uploading file.");
+                    var result = JSON.parse(error);
+                    var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
         } else if(fileType === 'tarragon_statement_assets'){
             console.log("tarragon_statement_assets");
             this.busy = this.periodicReportService.postFiles(this.report.reportId, this.fileTarragonStatementAssets, 'NB_REP_T2').subscribe(
                 res => {
                     // clear upload file on view
-                    console.log("tarragon_statement_assets - done");
                     this.fileTarragonStatementAssets = null;
                     // set file id
-                    this.report.tarragonStatementAssetsFileId = res.id;
-                    this.postAction("Successfully uploaded file.", null);
+                    this.report.tarragonStatementAssetsFileId = res.fileId;
+                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file", null);
                 },
-                error => {
-                    this.postAction(null, "Error uploading file.");
+                (error) => {
+                    var result = JSON.parse(error);
+                    var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
         } else if(fileType === 'tarragon_statement_cashflows'){
             this.busy = this.periodicReportService.postFiles(this.report.reportId, this.fileTarragonStatementCashflows, 'NB_REP_T3').subscribe(
@@ -125,11 +129,13 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     // clear upload file on view
                     this.fileTarragonStatementCashflows = null;
                     // set file id
-                    this.report.tarragonStatementCashflowsFileId = res.id;
-                    this.postAction("Successfully uploaded file.", null);
+                    this.report.tarragonStatementCashflowsFileId = res.fileId;
+                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file", null);
                 },
                 error => {
-                    this.postAction(null, "Error uploading file.");
+                    var result = JSON.parse(error);
+                    var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
         } else if(fileType === 'tarragon_statement_changes'){
             this.busy = this.periodicReportService.postFiles(this.report.reportId, this.fileTarragonStatementChanges, 'NB_REP_T4').subscribe(
@@ -137,11 +143,13 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     // clear upload file on view
                     this.fileTarragonStatementChanges = null;
                     // set file id
-                    this.report.tarragonStatementChangesFileId = res.id;
-                    this.postAction("Successfully uploaded file.", null);
+                    this.report.tarragonStatementChangesFileId = res.fileId;
+                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file", null);
                 },
                 error => {
-                    this.postAction(null, "Error uploading file.");
+                    var result = JSON.parse(error);
+                    var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
         } else if(fileType === 'singularity_bs_a'){
             this.busy = this.periodicReportService.postFiles(this.report.reportId, this.fileSingularityBSTrancheA, 'NB_REP_S1A').subscribe(
@@ -149,11 +157,13 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     // clear upload file on view
                     this.fileSingularityBSTrancheA = null;
                     // set file id
-                    this.report.singularityBSTrancheAFileId = res.id;
-                    this.postAction("Successfully uploaded file.", null);
+                    this.report.singularityBSTrancheAFileId = res.fileId;
+                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file", null);
                 },
                 error => {
-                    this.postAction(null, "Error uploading file.");
+                    var result = JSON.parse(error);
+                    var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
         } else if(fileType === 'singularity_imdr_a'){
             this.busy = this.periodicReportService.postFiles(this.report.reportId, this.fileSingularityIMDRTrancheA, 'NB_REP_S2A').subscribe(
@@ -161,11 +171,13 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     // clear upload file on view
                     this.fileSingularityIMDRTrancheA = null;
                     // set file id
-                    this.report.singularityIMDRTrancheAFileId = res.id;
-                    this.postAction("Successfully uploaded file.", null);
+                    this.report.singularityIMDRTrancheAFileId = res.fileId;
+                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file", null);
                 },
                 error => {
-                    this.postAction(null, "Error uploading file.");
+                    var result = JSON.parse(error);
+                    var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
         } else if(fileType === 'singularity_par_a'){
             this.busy = this.periodicReportService.postFiles(this.report.reportId, this.fileSingularityPARTrancheA, 'NB_REP_S3A').subscribe(
@@ -173,11 +185,13 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     // clear upload file on view
                     this.fileSingularityPARTrancheA = null;
                     // set file id
-                    this.report.singularityPARTrancheAFileId = res.id;
-                    this.postAction("Successfully uploaded file.", null);
+                    this.report.singularityPARTrancheAFileId = res.fileId;
+                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file", null);
                 },
                 error => {
-                    this.postAction(null, "Error uploading file.");
+                    var result = JSON.parse(error);
+                    var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
         } else if(fileType === 'singularity_is_a'){
             this.busy = this.periodicReportService.postFiles(this.report.reportId, this.fileSingularityISTrancheA, 'NB_REP_S4A').subscribe(
@@ -185,11 +199,13 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     // clear upload file on view
                     this.fileSingularityISTrancheA = null;
                     // set file id
-                    this.report.singularityISTrancheAFileId = res.id;
-                    this.postAction("Successfully uploaded file.", null);
+                    this.report.singularityISTrancheAFileId = res.fileId;
+                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file", null);
                 },
                 error => {
-                    this.postAction(null, "Error uploading file.");
+                    var result = JSON.parse(error);
+                    var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
         } else if(fileType === 'singularity_bs_b'){
             this.busy = this.periodicReportService.postFiles(this.report.reportId, this.fileSingularityBSTrancheB, 'NB_REP_S1B').subscribe(
@@ -197,11 +213,13 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     // clear upload file on view
                     this.fileSingularityBSTrancheB = null;
                     // set file id
-                    this.report.singularityBSTrancheBFileId = res.id;
-                    this.postAction("Successfully uploaded file.", null);
+                    this.report.singularityBSTrancheBFileId = res.fileId;
+                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file", null);
                 },
                 error => {
-                    this.postAction(null, "Error uploading file.");
+                    var result = JSON.parse(error);
+                    var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
         } else if(fileType === 'singularity_imdr_b'){
             this.busy = this.periodicReportService.postFiles(this.report.reportId, this.fileSingularityIMDRTrancheB, 'NB_REP_S2B').subscribe(
@@ -209,11 +227,13 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     // clear upload file on view
                     this.fileSingularityIMDRTrancheB = null;
                     // set file id
-                    this.report.singularityIMDRTrancheBFileId = res.id;
-                    this.postAction("Successfully uploaded file.", null);
+                    this.report.singularityIMDRTrancheBFileId = res.fileId;
+                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file", null);
                 },
                 error => {
-                    this.postAction(null, "Error uploading file.");
+                    var result = JSON.parse(error);
+                    var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
         } else if(fileType === 'singularity_par_b'){
             this.busy = this.periodicReportService.postFiles(this.report.reportId, this.fileSingularityPARTrancheB, 'NB_REP_S3B').subscribe(
@@ -221,11 +241,13 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     // clear upload file on view
                     this.fileSingularityPARTrancheB = null;
                     // set file id
-                    this.report.singularityPARTrancheBFileId = res.id;
-                    this.postAction("Successfully uploaded file.", null);
+                    this.report.singularityPARTrancheBFileId = res.fileId;
+                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file", null);
                 },
                 error => {
-                    this.postAction(null, "Error uploading file.");
+                    var result = JSON.parse(error);
+                    var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
         } else if(fileType === 'singularity_is_b'){
             this.busy = this.periodicReportService.postFiles(this.report.reportId, this.fileSingularityISTrancheB, 'NB_REP_S4B').subscribe(
@@ -233,11 +255,13 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     // clear upload file on view
                     this.fileSingularityISTrancheB = null;
                     // set file id
-                    this.report.singularityISTrancheBFileId = res.id;
-                    this.postAction("Successfully uploaded file.", null);
+                    this.report.singularityISTrancheBFileId = res.fileId;
+                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file", null);
                 },
                 error => {
-                    this.postAction(null, "Error uploading file.");
+                    var result = JSON.parse(error);
+                    var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
         }
     }
@@ -286,7 +310,7 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
         }
     }
 
-    public getReportDateShortFormatted(reportDate){
+    getReportDateShortFormatted(reportDate){
         if(reportDate){
             var monthNum = reportDate.split("-")[1];
             var yearNum = reportDate.split("-")[2];
@@ -475,7 +499,7 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
 
 
     // TODO: separate REST Service for file downloads etc and separate service
-    public download(fileType, fileId, fileName) {
+    download(fileType, fileId, fileName) {
 
         // Xhr creates new context so we need to create reference to this
         let self = this;
@@ -504,10 +528,12 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
             if(xhr.readyState === 4 && xhr.status === 200) {
                 var blob = new Blob([this.response], {type: this.response.type});
                 fileSaver.saveAs(blob, fileName);
+
             }
         };
 
         // Start the Ajax request
         xhr.send();
     }
+
 }

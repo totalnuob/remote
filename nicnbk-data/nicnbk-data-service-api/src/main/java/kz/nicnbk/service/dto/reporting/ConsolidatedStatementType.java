@@ -3,6 +3,8 @@ package kz.nicnbk.service.dto.reporting;
 /**
  * Created by magzumov on 10.05.2017.
  */
+
+@Deprecated
 public enum ConsolidatedStatementType {
 
     ASSETS("ASSETS"),

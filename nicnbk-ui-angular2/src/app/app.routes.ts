@@ -42,6 +42,8 @@ import {EmployeeProfileComponent} from "./employee/employee.profile.component";
 import {NotFoundComponent} from "./page-not-found.component";
 import {MainNBReportingComponent} from "./reporting/main.nb.reporting.component";
 import {InputFileUploadNBReportingComponent} from "./reporting/input.file.upload.nb.reporting.component";
+import {ScheduleInvestmentsNBReportingComponent} from "./reporting/schedule.investments.nb.reporting.component";
+import {StatementBalanceOperationsNBReportingComponent} from "./reporting/statement.balance.operations.nb.reporting.component";
 
 
 const routes: Routes  = [
@@ -264,6 +266,17 @@ const routes: Routes  = [
         component: InputFileUploadNBReportingComponent,
         canActivate: [AuthGuard]
     },
+    {
+        path: 'reporting/pe/scheduleInvestments/:id',
+        component: ScheduleInvestmentsNBReportingComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'reporting/pe/statementBalanceOperations/:id',
+        component: StatementBalanceOperationsNBReportingComponent,
+        canActivate: [AuthGuard]
+    },
+
     /* Page not found. ERROR 404 *********************/
     {
         path: '404',

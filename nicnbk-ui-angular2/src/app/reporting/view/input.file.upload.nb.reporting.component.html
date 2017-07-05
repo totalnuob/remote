@@ -35,8 +35,9 @@
                             (click)="uploadFile('tarragon_schedule_investment')">
                         <span class="glyphicon glyphicon-play-circle"></span>
                     </button>
-                    <button *ngIf="showViewButton('tarragon_schedule_investment')" class="btn btn-xs btn-primary">
-                        <span class="glyphicon glyphicon-search"></span>
+                    <button *ngIf="showViewButton('tarragon_schedule_investment')" class="btn btn-xs btn-primary"
+                            [routerLink]="['/reporting/pe/scheduleInvestments/', report.id]">
+                            <span class="glyphicon glyphicon-search"></span>
                     </button>
                 </td>
             </tr>
@@ -59,7 +60,8 @@
                             (click)="uploadFile('tarragon_statement_assets')">
                         <span class="glyphicon glyphicon-play-circle"></span>
                     </button>
-                    <button *ngIf="showViewButton('tarragon_statement_assets')" class="btn btn-xs btn-primary">
+                    <button *ngIf="showViewButton('tarragon_statement_assets')" class="btn btn-xs btn-primary"
+                        [routerLink]="['/reporting/pe/statementBalanceOperations/', report.id]">
                         <span class="glyphicon glyphicon-search"></span>
                     </button>
                 </td>

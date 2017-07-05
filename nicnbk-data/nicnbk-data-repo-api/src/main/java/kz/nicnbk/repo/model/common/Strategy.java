@@ -2,9 +2,7 @@ package kz.nicnbk.repo.model.common;
 
 import kz.nicnbk.repo.model.base.BaseTypeEntityImpl;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * Created by magzumov on 04.07.2016.
@@ -22,6 +20,8 @@ public class Strategy extends BaseTypeEntityImpl {
     // TODO: typed entity (lookup)
     private Integer groupType;
 
+    private Strategy parent;
+
     @Column(name="group_type")
     public Integer getGroupType() {
         return groupType;
@@ -29,5 +29,15 @@ public class Strategy extends BaseTypeEntityImpl {
 
     public void setGroupType(Integer groupType) {
         this.groupType = groupType;
+    }
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "parent_id")
+    public Strategy getParent() {
+        return parent;
+    }
+
+    public void setParent(Strategy parent) {
+        this.parent = parent;
     }
 }

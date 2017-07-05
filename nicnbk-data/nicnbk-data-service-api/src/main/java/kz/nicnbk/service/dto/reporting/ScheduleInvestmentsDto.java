@@ -5,6 +5,7 @@ import java.util.List;
 /**
  * Created by magzumov on 05.05.2017.
  */
+@Deprecated
 public class ScheduleInvestmentsDto extends InputFileReportDataDto{
 
     private List<FundInvestmentDto> fundInvestments;

@@ -3,6 +3,8 @@ package kz.nicnbk.service.api.reporting;
 import kz.nicnbk.service.api.base.BaseService;
 import kz.nicnbk.service.dto.common.FileUploadResultDto;
 import kz.nicnbk.service.dto.files.FilesDto;
+import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordDto;
+import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordHolderDto;
 import kz.nicnbk.service.dto.reporting.PeriodicReportDto;
 
 import java.util.List;
@@ -22,5 +24,9 @@ public interface PeriodicReportService extends BaseService {
 
     FilesDto saveInputFile(Long reportId, FilesDto file);
 
-    FileUploadResultDto parseFile(String fileType, FilesDto filesDto);
+    FileUploadResultDto parseFile(String fileType, FilesDto filesDto, Long reportId);
+
+    ConsolidatedReportRecordHolderDto getScheduleInvestments(Long reportId);
+
+    ConsolidatedReportRecordHolderDto getStatementBalanceOperations(Long reportId);
 }

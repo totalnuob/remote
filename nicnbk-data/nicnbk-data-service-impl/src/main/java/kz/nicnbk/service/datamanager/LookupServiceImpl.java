@@ -16,6 +16,7 @@ import kz.nicnbk.repo.model.news.NewsType;
 import kz.nicnbk.repo.model.pe.PEIndustry;
 import kz.nicnbk.repo.model.reporting.PeriodicReportType;
 import kz.nicnbk.repo.model.reporting.ReportStatus;
+import kz.nicnbk.repo.model.reporting.privateequity.PEInvestmentType;
 import kz.nicnbk.repo.model.tripmemo.TripType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,6 +96,9 @@ public class LookupServiceImpl implements LookupService {
     @Autowired
     private ReportStatusRepository reportStatusRepository;
 
+    @Autowired
+    private PEInvestmentTypeRepository peInvestmentTypeRepository;
+
     @Override
     public <T extends BaseTypeEntity> T findByTypeAndCode(Class<T> clazz, String code) {
 
@@ -146,6 +150,8 @@ public class LookupServiceImpl implements LookupService {
                 return (T) this.periodicReportTypeRepository.findByCode(code);
             } else if (clazz.equals(ReportStatus.class)) {
                 return (T) this.reportStatusRepository.findByCode(code);
+            } else if (clazz.equals(PEInvestmentType.class)) {
+                return (T) this.peInvestmentTypeRepository.findByCode(code);
             }else{
                 logger.error("Failed to load lookups for clazz=" + clazz + ", code=" + code);
             }
