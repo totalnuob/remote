@@ -77,6 +77,10 @@
             <a>type</a>
             <b>type</b>
         </field-exclude>
+        <field-exclude>
+            <a>updater</a>
+            <b>updater</b>
+        </field-exclude>
     </mapping>
 
 
