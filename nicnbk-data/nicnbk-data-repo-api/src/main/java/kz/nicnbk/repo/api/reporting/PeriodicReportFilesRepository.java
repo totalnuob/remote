@@ -1,8 +1,10 @@
 package kz.nicnbk.repo.api.reporting;
 
 import kz.nicnbk.repo.model.reporting.PeriodicReportFiles;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -16,4 +18,9 @@ public interface PeriodicReportFilesRepository extends PagingAndSortingRepositor
 
     @Query("SELECT e from periodic_report_files e where e.file.id=?1 and (e.file.deleted is null or e.file.deleted=false)")
     PeriodicReportFiles getEntitiesByFileId(Long fileId);
+
+    @Modifying
+    @Transactional
+    @Query("DELETE from periodic_report_files e where e.file.id=?1")
+    void deleteByFileId(long fileId);
 }

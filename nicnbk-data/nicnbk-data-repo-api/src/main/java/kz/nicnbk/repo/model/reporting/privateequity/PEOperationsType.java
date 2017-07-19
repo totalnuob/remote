@@ -9,18 +9,18 @@ import javax.persistence.*;
  */
 
 @Entity
-@Table(name = "rep_pe_balance_type")
-public class PEBalanceType extends BaseTypeEntityImpl {
+@Table(name = "rep_pe_operations_type")
+public class PEOperationsType extends BaseTypeEntityImpl {
 
-    private PEBalanceType parent;
+    private PEOperationsType parent;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "parent_id")
-    public PEBalanceType getParent() {
+    public PEOperationsType getParent() {
         return parent;
     }
 
-    public void setParent(PEBalanceType parent) {
+    public void setParent(PEOperationsType parent) {
         this.parent = parent;
     }
 }

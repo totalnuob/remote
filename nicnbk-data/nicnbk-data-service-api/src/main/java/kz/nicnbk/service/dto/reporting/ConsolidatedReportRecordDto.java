@@ -1,6 +1,7 @@
 package kz.nicnbk.service.dto.reporting;
 
 import kz.nicnbk.common.service.model.BaseDto;
+import kz.nicnbk.common.service.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,6 +105,17 @@ public class ConsolidatedReportRecordDto implements BaseDto {
         if(this.classifications != null){
             for(int i = 0; i < this.classifications.length; i++){
                 if(classifications[i] != null && classifications[i].trim().equalsIgnoreCase(classification)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean isTotalClassification(){
+        if(this.classifications != null && this.classifications.length > 0 && StringUtils.isNotEmpty(this.name)){
+            for(String classification: this.classifications){
+                if(this.name.trim().equalsIgnoreCase("Total " + classification) || this.name.trim().equalsIgnoreCase("Net " + classification)){
                     return true;
                 }
             }

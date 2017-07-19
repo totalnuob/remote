@@ -16,6 +16,8 @@ public interface PeriodicReportService extends BaseService {
 
     Long save(PeriodicReportDto dto, String updater);
 
+    boolean deleteFile(Long fileId);
+
     PeriodicReportDto get(Long id);
 
     List<PeriodicReportDto> getAll();
@@ -29,4 +31,6 @@ public interface PeriodicReportService extends BaseService {
     ConsolidatedReportRecordHolderDto getScheduleInvestments(Long reportId);
 
     ConsolidatedReportRecordHolderDto getStatementBalanceOperations(Long reportId);
+
+    ConsolidatedReportRecordHolderDto getStatementCashflows(Long reportId);
 }

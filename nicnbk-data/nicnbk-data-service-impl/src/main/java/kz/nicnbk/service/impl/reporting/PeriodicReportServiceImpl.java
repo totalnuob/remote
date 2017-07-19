@@ -14,10 +14,15 @@ import kz.nicnbk.repo.model.reporting.PeriodicReport;
 import kz.nicnbk.repo.model.reporting.PeriodicReportFiles;
 import kz.nicnbk.repo.model.reporting.privateequity.ReportingPEScheduleInvestment;
 import kz.nicnbk.repo.model.reporting.privateequity.ReportingPEStatementBalance;
+import kz.nicnbk.repo.model.reporting.privateequity.ReportingPEStatementCashflows;
+import kz.nicnbk.repo.model.reporting.privateequity.ReportingPEStatementOperations;
 import kz.nicnbk.service.api.files.FileService;
+import kz.nicnbk.service.api.reporting.PeriodicDataService;
 import kz.nicnbk.service.api.reporting.PeriodicReportService;
 import kz.nicnbk.service.api.reporting.privateequity.PEScheduleInvestmentService;
 import kz.nicnbk.service.api.reporting.privateequity.PEStatementBalanceService;
+import kz.nicnbk.service.api.reporting.privateequity.PEStatementCashflowsService;
+import kz.nicnbk.service.api.reporting.privateequity.PEStatementOperatinsService;
 import kz.nicnbk.service.converter.reporting.PeriodReportConverter;
 import kz.nicnbk.service.dto.common.FileUploadResultDto;
 import kz.nicnbk.service.dto.common.StatusResultType;
@@ -71,7 +76,19 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
     private PEStatementBalanceService statementBalanceService;
 
     @Autowired
+    private PEStatementOperatinsService statementOperatinsService;
+
+    @Autowired
     private StrategyRepository strategyRepository;
+
+    @Autowired
+    private PEStatementCashflowsService statementCashflowsService;
+
+    @Autowired
+    private PeriodicDataService periodicDataService;
+
+
+
 
     @Override
     public Long save(PeriodicReportDto dto, String updater) {
@@ -104,6 +121,17 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             logger.error("Error saving periodic report: " + (dto != null && dto.getId() != null ? dto.getId() : "new") ,ex);
             return null;
         }
+    }
+
+    @Override
+    public boolean deleteFile(Long fileId) {
+        try {
+            this.periodicReportFilesRepository.deleteByFileId(fileId);
+            return true;
+        }catch (Exception ex){
+            logger.error("Error deleting period report file record for file id = " + fileId );
+        }
+        return false;
     }
 
     @Override
@@ -189,7 +217,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         }else if(fileType.equals(FileTypeLookup.NB_REP_T2.getCode())){
             return parseStatementAssetsLiabilities(filesDto, reportId);
         }else if(fileType.equals(FileTypeLookup.NB_REP_T3.getCode())){
-            return parseStatementCashFlows(filesDto);
+            return parseStatementCashFlows(filesDto, reportId);
         }else if(fileType.equals(FileTypeLookup.NB_REP_T4.getCode())){
             return parseStatementChanges(filesDto);
         }else if(fileType.equals(FileTypeLookup.NB_REP_S1A.getCode())){
@@ -226,10 +254,19 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
     @Override
     public ConsolidatedReportRecordHolderDto getStatementBalanceOperations(Long reportId) {
-        ConsolidatedReportRecordHolderDto results = this.statementBalanceService.get(reportId);
+        ConsolidatedReportRecordHolderDto balanceResults = this.statementBalanceService.get(reportId);
 
-        // TODO: statement of operations
-        return results;
+        ConsolidatedReportRecordHolderDto operationsResults = this.statementOperatinsService.get(reportId);
+
+        balanceResults.merge(operationsResults);
+
+        return balanceResults;
+    }
+
+    @Override
+    public ConsolidatedReportRecordHolderDto getStatementCashflows(Long reportId){
+        ConsolidatedReportRecordHolderDto statementCashflows = this.statementCashflowsService.get(reportId);
+        return statementCashflows;
     }
 
 
@@ -256,6 +293,10 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             //System.out.println("---------------------------------------------------------------------------\n");
             //printRecords(sheet2Records);
 
+            /* NORMALIZE TEXT FIELDS ********************************************************************************/
+            normalizeTextFields(sheet1Records);
+            normalizeTextFields(sheet2Records);
+
             /* CHECK SUMS/TOTALS ********************************************************************************/
             List<ConsolidatedReportRecordDto> updatedRecordsTrancheA = checkTotalSumsGeneric(sheet1Records, 3, "Total Private Equity Partnerships and Co-Investments");
             List<ConsolidatedReportRecordDto> updatedRecordsTrancheB = checkTotalSumsGeneric(sheet2Records, 3, "Total Private Equity Partnerships and Co-Investments");
@@ -274,7 +315,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
             if(saved){
                 logger.info("Successfully parsed 'Schedule of Investments' file");
-                return new FileUploadResultDto(StatusResultType.SUCCESS, "", "Successfully processed the file", "");
+                return new FileUploadResultDto(StatusResultType.SUCCESS, "", "Successfully processed the file - Schedule of Investments", "");
             }else{
                 logger.error("Error saving 'Schedule of Investments' file parsed data into database");
                 return new FileUploadResultDto(StatusResultType.FAIL, "", "Error saving to database", "");
@@ -600,12 +641,28 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             //System.out.println("---------------------------------------------------------------------------\n");
             //printRecords(sheet2Records);
 
+            /* NORMALIZE TEXT FIELDS ********************************************************************************/
+            normalizeTextFields(balanceRecordsSheet1);
+            normalizeTextFields(balanceRecordsSheet2);
+            normalizeTextFields(operationsRecordsSheet1);
+            normalizeTextFields(operationsRecordsSheet2);
+
+
             /* CHECK SUMS/TOTALS ********************************************************************************/
+
+            // Balance (Assets, Liabilities, Partners Capital)
             List<ConsolidatedReportRecordDto> updatedBalanceRecordsTrancheA = checkTotalSumsGeneric(balanceRecordsSheet1, 7, null);
             List<ConsolidatedReportRecordDto> updatedBalanceRecordsTrancheB = checkTotalSumsGeneric(balanceRecordsSheet2, 7, null);
 
             checkTotalSumsStatementAssetsLiabilities(updatedBalanceRecordsTrancheA);
             checkTotalSumsStatementAssetsLiabilities(updatedBalanceRecordsTrancheB);
+
+            // Operations
+            List<ConsolidatedReportRecordDto> updatedOperationsRecordsTrancheA = checkTotalSumsGeneric(operationsRecordsSheet1, 7, "Net increase (decrease) in partners' capital");
+            List<ConsolidatedReportRecordDto> updatedOperationsRecordsTrancheB = checkTotalSumsGeneric(operationsRecordsSheet2, 7, "Net increase (decrease) in partners' capital");
+
+            //checkTotalSumsStatementAssetsLiabilities(updatedBalanceRecordsTrancheA);
+            //checkTotalSumsStatementAssetsLiabilities(updatedBalanceRecordsTrancheB);
 
             /* CHECK ENTITIES AND ASSEMBLE **********************************************************************/
 
@@ -616,22 +673,39 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             List<ReportingPEStatementBalance> entities2 = this.statementBalanceService.assembleList(updatedBalanceRecordsTrancheB, 2, reportId); // TODO: tranche type constant !!!
 
             // TODO: OPERATIONS
+            // sheet 1 - Tranche A
+            List<ReportingPEStatementOperations> operationsEntities1 = this.statementOperatinsService.assembleList(updatedOperationsRecordsTrancheA, 1, reportId); // TODO: tranche type constant !!!
+            // sheet 2 - Tranche B
+            List<ReportingPEStatementOperations> operationsEntities2 = this.statementOperatinsService.assembleList(updatedOperationsRecordsTrancheB, 2, reportId); // TODO: tranche type constant !!!
+
 
             /* SAVE TO DB **************************************************************************************/
             // BALANCE
-            boolean saved = this.statementBalanceService.save(entities1);
-            if(saved) {
-                saved = this.statementBalanceService.save(entities2);
+            boolean savedBalance = this.statementBalanceService.save(entities1);
+            if(savedBalance) {
+                savedBalance = this.statementBalanceService.save(entities2);
+            }
+            if(!savedBalance){
+                // TODO: rollback? or transactional?
+
+                logger.error("Error saving 'Schedule of Investments' file parsed data into database (statement of balance)");
+                return new FileUploadResultDto(StatusResultType.FAIL, "", "Error saving to database (statement of balance)", "");
             }
 
-            // TODO: OPERATIONS
+            // OPERATIONS
+            boolean savedOperations = this.statementOperatinsService.save(operationsEntities1);
+            if(savedOperations) {
+                savedOperations = this.statementOperatinsService.save(operationsEntities2);
+            }
 
-            if(saved){
+            if(savedOperations){
                 logger.info("Successfully parsed 'Statement of Assets, Liabilities and Partners Capital' file");
-                return new FileUploadResultDto(StatusResultType.SUCCESS, "", "Successfully processed the file.", "");
+                return new FileUploadResultDto(StatusResultType.SUCCESS, "", "Successfully processed the file - Statement of Assets, Liabilities and Partners Capital", "");
             }else{
-                logger.error("Error saving 'Schedule of Investments' file parsed data into database");
-                return new FileUploadResultDto(StatusResultType.FAIL, "", "Error saving to database", "");
+                // TODO: rollback? or transactional?
+
+                logger.error("Error saving 'Schedule of Investments' file parsed data into database (statement of operations)");
+                return new FileUploadResultDto(StatusResultType.FAIL, "", "Error saving to database (statement of operations)", "");
             }
         }catch (ExcelFileParseException e) {
             logger.error("Error parsing 'Statement of Assets, Liabilities and Partners Capital' file with error: " + e.getMessage());
@@ -846,84 +920,38 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
     }
 
 
-
     /* Statement of Cash Flows ********************************************************/
-    private FileUploadResultDto parseStatementCashFlows(FilesDto filesDto){
+    private FileUploadResultDto parseStatementCashFlows(FilesDto filesDto, Long reportId){
 
-        List<ConsolidatedReportRecordDto> records = new ArrayList<>();
         try {
+
+            /* PARSE EXCEL (RAW) *******************************************************************************/
             Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
-            int rowNum = 0;
-            String[] classifications = new String[5]; // TODO: size?
-            Integer[] indentations = new Integer[5]; // TODO: size?
-            while (rowIterator.hasNext()) { // each row
-                Row row = rowIterator.next();
-                if(rowNum == 0){
-                    Cell cell = row.getCell(0);
-                    if (!ExcelUtils.isCellStringValueEqual(cell, "Tarragon LP")) {
-                        logger.error("File header check failed for 'Statement of Cashflows' file: row=1, cell=1. Expected 'Tarragon LP'");
-                        throw new ExcelFileParseException("File header check failed : row=1, cell=1. Expected 'Tarragon LP'");
-                    }
-                }else if(rowNum == 1){
-                    Cell cell = row.getCell(0);
-                    if (!ExcelUtils.isCellStringValueEqual(cell, "Consolidated Statement of Cash Flows for NICK Master Fund Ltd.")) {
-                        logger.error("File header check failed for 'Statement of Cashflows' file: row=2, cell=1. Expected: 'Consolidated Statement of Cash Flows for NICK Master Fund Ltd.'");
-                        throw new ExcelFileParseException("File header check failed : row=2, cell=1. " +
-                                "Expected: 'Consolidated Statement of Cash Flows for NICK Master Fund Ltd.'");
-                    }
-                }else if(rowNum == 2){
+            List<ConsolidatedReportRecordDto> records = parseStatementCashFlowsRaw(rowIterator);
+            //printRecords(records);
 
-                }else{
-                    if(ExcelUtils.isNotEmptyCell(row.getCell(0))){
-                        String name = row.getCell(0).getStringCellValue();
-                        Double trancheAValue = ExcelUtils.getDoubleValueFromCell(row.getCell(2));
-                        Double trancheBValue = ExcelUtils.getDoubleValueFromCell(row.getCell(4));
-                        Double totalValue = ExcelUtils.getDoubleValueFromCell(row.getCell(6));
+            /* NORMALIZE TEXT FIELDS ********************************************************************************/
+            normalizeTextFields(records);
 
-                        int indentation = row.getCell(0).getCellStyle().getIndention();
-                        if(trancheAValue != null || trancheBValue != null || totalValue != null){
-                            // values
-                            ConsolidatedReportRecordDto recordDto = new ConsolidatedReportRecordDto(10, 3);
-                            recordDto.setName(name);
-                            Double[] values = {trancheAValue, trancheBValue, totalValue};
-                            recordDto.setValues(values);
-
-                            // classifications
-                            recordDto.setClassifications(Arrays.copyOf((String[]) classifications, 10));
-                            for(int i = 0; i < indentations.length; i++){
-                                if(indentations[i] == null || indentations[i] >= indentation){
-                                    recordDto.clearClassification(i);
-                                }
-                            }
-
-                            records.add(recordDto);
-
-                        }else{
-                            // classifications
-                            boolean reset = false;
-                            for(int i = 0; i < classifications.length; i++){
-                                if(reset){
-                                    classifications[i] = null;
-                                    indentations[i] = null;
-                                }else if(classifications[i] == null || indentations[i] == indentation){
-                                    classifications[i] = name;
-                                    indentations[i] = indentation;
-                                    reset = true;
-                                }
-                            }
-                        }
+            /* CHECK SUMS/TOTALS ********************************************************************************/
+            List<ConsolidatedReportRecordDto> updatedRecords = checkTotalSumsGeneric(records, 3, "Net increase (decrease) in cash and cash equivalents");
+            List<ConsolidatedReportRecordDto> checkedRecords = checkSumsStatementCashflows(updatedRecords);
 
 
-                    }else{
-                        // empty cell, skip
-                    }
-                }
+            /* CHECK ENTITIES AND ASSEMBLE **********************************************************************/
+            List<ReportingPEStatementCashflows> entities = this.statementCashflowsService.assembleList(checkedRecords, reportId); // TODO: tranche type constant !!!
 
-                rowNum++;
+            /* SAVE TO DB **************************************************************************************/
+            boolean saved = this.statementCashflowsService.save(entities);
+
+            if(saved){
+                logger.info("Successfully parsed 'Statement of Cashflows' file");
+                return new FileUploadResultDto(StatusResultType.SUCCESS, "", "Successfully processed the file - Statement of Cashflows", "");
+            }else{
+                logger.error("Error saving 'Statement of Cashflows' file parsed data into database");
+                return new FileUploadResultDto(StatusResultType.FAIL, "", "Error saving to database", "");
             }
-            printRecords(records);
-            logger.info("Successfully parsed 'Statement of Cashflows' file");
-            return new FileUploadResultDto(StatusResultType.SUCCESS, "", "Successfully processed the file.", "");
+
         }catch (ExcelFileParseException e) {
             logger.error("Error parsing 'Statement of Cashflows' file with error: " + e.getMessage());
             return new FileUploadResultDto(StatusResultType.FAIL, "", e.getMessage(), "");
@@ -931,6 +959,161 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             logger.error("Error parsing 'Statement of Cashflows' file with error: " + e.getMessage());
             return new FileUploadResultDto(StatusResultType.FAIL, "", "Error processing 'Statement of Cashflows' file'", "");
         }
+    }
+
+    private List<ConsolidatedReportRecordDto> checkSumsStatementCashflows(List<ConsolidatedReportRecordDto> records){
+        List<ConsolidatedReportRecordDto> resultList = new ArrayList<>();
+        Double[] totals = new Double[]{0.0, 0.0, 0.0};
+        if(records != null){
+            Double[] previousPeriod = null;
+            for(ConsolidatedReportRecordDto record: records){
+                if(record.getName().equalsIgnoreCase("Cash and cash equivalents - beginning of period")){
+                    previousPeriod = record.getValues();
+
+                    PeriodicDataDto periodicDataDtoTrancheA = this.periodicDataService.getCashflowBeginningPeriod(1);
+                    PeriodicDataDto periodicDataDtoTrancheB = this.periodicDataService.getCashflowBeginningPeriod(2);
+
+                    if(periodicDataDtoTrancheA == null || periodicDataDtoTrancheB == null){
+                        throw new ExcelFileParseException("Missing beginning of period data for '" + record.getName() + "'");
+                    }
+
+                    // check tranche A
+                    if(periodicDataDtoTrancheA.getValue() != null && record.getValues() != null && record.getValues()[0] != null &&
+                            periodicDataDtoTrancheA.getValue().doubleValue() != record.getValues()[0].doubleValue()){
+                        logger.error("Error checking beginning of period tranche A for '" + record.getName() +
+                                "': expected " + periodicDataDtoTrancheA.getValue().doubleValue() + ", found " + record.getValues()[0].doubleValue());
+                        throw new ExcelFileParseException("Error checking beginning of period tranche A for '" + record.getName() +
+                                "': expected " + periodicDataDtoTrancheA.getValue().doubleValue() + ", found " + record.getValues()[0].doubleValue());
+
+                    }
+                    // check tranche B
+                    if(periodicDataDtoTrancheB.getValue() != null && record.getValues() != null && record.getValues()[1] != null &&
+                            periodicDataDtoTrancheB.getValue().doubleValue() != record.getValues()[1].doubleValue()){
+                        logger.error("Error checking beginning of period tranche B for '" + record.getName() +
+                                "': expected " + periodicDataDtoTrancheB.getValue().doubleValue() + ", found " + record.getValues()[1].doubleValue());
+                        throw new ExcelFileParseException("Error checking beginning of period tranche B for '" + record.getName() +
+                                "': expected " + periodicDataDtoTrancheB.getValue().doubleValue() + ", found " + record.getValues()[1].doubleValue());
+
+                    }
+
+
+                }else if(record.getName().equalsIgnoreCase("Cash and cash equivalents - end of period")){
+                    if(previousPeriod == null){
+                        logger.error("Error checking totals for record '" + record.getName() +
+                                "': missing beginning of period data");
+                        throw new ExcelFileParseException("Error checking totals for record '" + record.getName() +
+                                "': missing beginning of period data");
+                    }else if((totals[0] + previousPeriod[0]) != record.getValues()[0]){
+                        logger.error("Error checking totals for record '" + record.getName() +
+                                "' for values #1: expected " + (totals[0] + previousPeriod[0]) + ", found " + record.getValues()[0]);
+                        throw new ExcelFileParseException("Error checking totals for record '" + record.getName() +
+                                "' for values #1: expected " + (totals[0] + previousPeriod[0]) + ", found " + record.getValues()[0]);
+                    }else if((totals[1] + previousPeriod[1]) != record.getValues()[1]){
+                        logger.error("Error checking totals for record '" + record.getName() +
+                                "' for values #1: expected " + (totals[1] + previousPeriod[1]) + ", found " + record.getValues()[1]);
+                        throw new ExcelFileParseException("Error checking totals for record '" + record.getName() +
+                                "' for values #1: expected " + (totals[1] + previousPeriod[1]) + ", found " + record.getValues()[1]);
+                    }
+                }else{
+
+                    // check total = trancheA + trancheB
+                    if(record.getValues() != null && record.getValues()[0] != null && record.getValues()[1] != null && record.getValues()[2] != null){
+                        if((record.getValues()[0].doubleValue() + record.getValues()[1].doubleValue()) != record.getValues()[2].doubleValue()){
+                            logger.error("Error checking totals for record '" + record.getName() + "': total column value is " +
+                                    record.getValues()[2].doubleValue() + ", expected total is " + (record.getValues()[0].doubleValue() + record.getValues()[1].doubleValue()));
+                            throw new ExcelFileParseException("Error checking totals for record '" + record.getName() + "': total column value is " +
+                                    record.getValues()[2].doubleValue() + ", expected total is " + (record.getValues()[0].doubleValue() + record.getValues()[1].doubleValue()));
+                        }
+                    }
+
+                    ArrayUtils.addArrayValues(totals, record.getValues());
+                    resultList.add(record);
+                }
+            }
+
+        }
+        return resultList;
+    }
+
+    private List<ConsolidatedReportRecordDto> parseStatementCashFlowsRaw(Iterator<Row> rowIterator){
+        List<ConsolidatedReportRecordDto> records = new ArrayList<>();
+        int rowNum = 0;
+        String[] classifications = new String[5]; // TODO: size?
+        Integer[] indentations = new Integer[5]; // TODO: size?
+        while (rowIterator.hasNext()) { // each row
+            Row row = rowIterator.next();
+            if(rowNum == 0){
+                Cell cell = row.getCell(0);
+                if (!ExcelUtils.isCellStringValueEqual(cell, "Tarragon LP")) {
+                    logger.error("File header check failed for 'Statement of Cashflows' file: row=1, cell=1. Expected 'Tarragon LP'");
+                    throw new ExcelFileParseException("File header check failed : row=1, cell=1. Expected 'Tarragon LP'");
+                }
+            }else if(rowNum == 1){
+                Cell cell = row.getCell(0);
+                if (!ExcelUtils.isCellStringValueEqual(cell, "Consolidated Statement of Cash Flows for NICK Master Fund Ltd.")) {
+                    logger.error("File header check failed for 'Statement of Cashflows' file: row=2, cell=1. Expected: 'Consolidated Statement of Cash Flows for NICK Master Fund Ltd.'");
+                    throw new ExcelFileParseException("File header check failed : row=2, cell=1. " +
+                            "Expected: 'Consolidated Statement of Cash Flows for NICK Master Fund Ltd.'");
+                }
+            }else if(rowNum == 2){
+
+            }else{
+                if(ExcelUtils.isNotEmptyCell(row.getCell(0))){
+                    String name = row.getCell(0).getStringCellValue();
+                    Double trancheAValue = ExcelUtils.getDoubleValueFromCell(row.getCell(2));
+                    Double trancheBValue = ExcelUtils.getDoubleValueFromCell(row.getCell(4));
+                    Double totalValue = ExcelUtils.getDoubleValueFromCell(row.getCell(6));
+
+                    int indentation = row.getCell(0).getCellStyle().getIndention();
+                    if(trancheAValue != null || trancheBValue != null || totalValue != null){
+                        // values
+                        ConsolidatedReportRecordDto recordDto = new ConsolidatedReportRecordDto(10, 3);
+                        recordDto.setName(name);
+                        Double[] values = {trancheAValue, trancheBValue, totalValue};
+                        recordDto.setValues(values);
+
+                        // classifications
+                        recordDto.setClassifications(Arrays.copyOf((String[]) classifications, 10));
+                        for (int i = 0; i < indentations.length; i++) {
+                            if (indentations[i] == null || indentations[i] >= indentation) {
+                                if(!recordDto.getName().equalsIgnoreCase("Net " + classifications[i])){
+                                    recordDto.clearClassification(i);
+                                }
+                            }
+                        }
+
+                        records.add(recordDto);
+
+                    }else{
+                        // classifications
+                        boolean reset = false;
+                        for(int i = 0; i < classifications.length; i++){
+                            if(reset){
+                                classifications[i] = null;
+                                indentations[i] = null;
+                            }else if(classifications[i] == null || indentations[i] == indentation){
+
+                                if(StringUtils.isNotEmpty(name) && name.charAt(name.length() - 1) == ':'){
+                                    classifications[i] = name.substring(0, name.length() - 1);
+                                }else {
+                                    classifications[i] = name;
+                                }
+
+                                indentations[i] = indentation;
+                                reset = true;
+                            }
+                        }
+                    }
+
+
+                }else{
+                    // empty cell, skip
+                }
+            }
+
+            rowNum++;
+        }
+        return records;
     }
 
     /* Statement of Changes in Partner's Capital ********************************************************/
@@ -986,7 +1169,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             }
             printRecords(records);
             logger.info("Successfully parsed 'Statement of Changes in Partners Capital' file");
-            return new FileUploadResultDto(StatusResultType.SUCCESS, "", "Successfully processed the file.", "");
+            return new FileUploadResultDto(StatusResultType.SUCCESS, "", "Successfully processed the file - Statement of Changes in Partners Capital", "");
 
         }catch (ExcelFileParseException e) {
             logger.error("Error parsing 'Statement of Changes in Partners Capital' file with error: " + e.getMessage());
@@ -1152,7 +1335,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
             printRecords(records);
             logger.info("Successfully parsed 'Balance Sheet Singularity' file");
-            return new FileUploadResultDto(StatusResultType.SUCCESS, "", "Successfully processed the file.", "");
+            return new FileUploadResultDto(StatusResultType.SUCCESS, "", "Successfully processed the file - BS Singularity", "");
 
         }catch (ExcelFileParseException e) {
             logger.error("Error parsing 'Balance Sheet Singularity' file with error: " + e.getMessage());
@@ -1240,7 +1423,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             }
             printRecords(records);
             logger.info("Successfully parsed 'IMDR Singularity' file");
-            return new FileUploadResultDto(StatusResultType.SUCCESS, "", "Successfully processed the file.", "");
+            return new FileUploadResultDto(StatusResultType.SUCCESS, "", "Successfully processed the file - IMDR Singularity", "");
 
         }catch (ExcelFileParseException e) {
             logger.error("Error parsing 'IMDR Singularity' file with error: " + e.getMessage());
@@ -1445,7 +1628,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             }
             printRecords(records);
             logger.info("Successfully parsed 'PAR Singularity' file");
-            return new FileUploadResultDto(StatusResultType.SUCCESS, "", "Successfully processed the file.", "");
+            return new FileUploadResultDto(StatusResultType.SUCCESS, "", "Successfully processed the file - PAR Singularity", "");
 
         }catch (ExcelFileParseException e) {
             logger.error("Error parsing 'PAR Singularity' file with error: " + e.getMessage());
@@ -1671,7 +1854,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             }
             printRecords(records);
             logger.info("Successfully parsed 'Income Statement Singularity' file");
-            return new FileUploadResultDto(StatusResultType.SUCCESS, "", "Successfully processed the file.", "");
+            return new FileUploadResultDto(StatusResultType.SUCCESS, "", "Successfully processed the file - IS Singularity", "");
 
         }catch (ExcelFileParseException e) {
             logger.error("Error parsing 'Income Statement Singularity' file with error: " + e.getMessage());
@@ -1743,6 +1926,11 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             }
             for(ConsolidatedReportRecordDto recordDto: fullList){
 
+                // Cut off ':'
+                if(StringUtils.isNotEmpty(recordDto.getName()) && recordDto.getName().endsWith(":")){
+                    recordDto.setName(recordDto.getName().substring(0, recordDto.getName().length() - 1));
+                }
+
                 if(StringUtils.isNotEmpty(totalRecordName) && totalRecordName.equalsIgnoreCase(recordDto.getName())) {
                     double[] totalValues = sums.get(totalRecordName);
                     if (totalValues != null) {
@@ -1750,6 +1938,8 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                             if (recordDto.getValues() != null && recordDto.getValues()[i] != null) {
                                 if (totalValues[i] != recordDto.getValues()[i]) {
                                     // total sum mismatch
+                                    logger.error("Error checking totals for record '" + recordDto.getName() +
+                                            "' for values #" + (i + 1) + ": expected " + totalValues[i] + ", found " + recordDto.getValues()[i]);
                                     throw new ExcelFileParseException("Error checking totals for record '" + recordDto.getName() +
                                             "' for values #" + (i + 1) + ": expected " + totalValues[i] + ", found " + recordDto.getValues()[i]);
                                 }
@@ -1771,11 +1961,16 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                                     "' values list size mismatch: expected "  + size + " , found "  + recordDto.getValues().length);
                         }
 
-                        // TODO: notify if record starting with 'TOTAL'
-                        if((recordDto.getName().startsWith("Total") && recordDto.getName().length() > 5) ||
-                                recordDto.getName().startsWith("Net") && recordDto.getName().length() > 5){
+                        boolean isTotal = recordDto.getName().startsWith("Total") && recordDto.getName().length() > 5 &&
+                                recordDto.hasClassification(recordDto.getName().substring(5).trim().toLowerCase());
+
+                        boolean isNet = recordDto.getName().startsWith("Net") && recordDto.getName().length() > 3 &&
+                                recordDto.hasClassification(recordDto.getName().substring(3).trim().toLowerCase());
+
+                        if(isTotal || isNet){
                             // Check total value
-                            String key = recordDto.getName().substring(5).trim().toLowerCase();
+                            int nameIndex = isTotal ? 5 : 3;
+                            String key = recordDto.getName().substring(nameIndex).trim().toLowerCase();
                             if(key.endsWith(":")){
                                 key = key.substring(0, key.length() - 1);
                             }
@@ -1842,5 +2037,26 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             }
         }
         return recordsWithoutTotals;
+    }
+
+    /**
+     * Remove trimming spaces, replace new line characters with spaces.
+     * @param records
+     */
+    private void normalizeTextFields(List<ConsolidatedReportRecordDto> records){
+        if(records != null){
+            for(ConsolidatedReportRecordDto record: records){
+                if(StringUtils.isNotEmpty(record.getName())){
+                    record.setName(record.getName().trim().replace("\\n", " "));
+                }
+                for(int i = 0; i < record.getClassifications().length; i++){
+                    if(StringUtils.isNotEmpty(record.getClassifications()[i])){
+                        String classification = record.getClassifications()[i].trim().replace("\n", " ");
+                        record.getClassifications()[i] = classification;
+                    }
+                }
+            }
+        }
+
     }
 }

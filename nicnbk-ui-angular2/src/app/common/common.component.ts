@@ -45,12 +45,12 @@ export class CommonFormViewComponent {
     }
 
     postAction(successMessage, errorMessage){
-        if(successMessage && successMessage != null) {
+        //if(successMessage && successMessage != null) {
             this.successMessage = successMessage;
-        }
-        if(errorMessage && errorMessage != null) {
+        //}
+        //if(errorMessage && errorMessage != null) {
             this.errorMessage = errorMessage;
-        }
+        //}
 
         // TODO: non jQuery
         $('html, body').animate({ scrollTop: 0 }, 'fast');

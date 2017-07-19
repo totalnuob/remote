@@ -57,6 +57,7 @@ import {MainNBReportingComponent} from "./reporting/main.nb.reporting.component"
 import {InputFileUploadNBReportingComponent} from "./reporting/input.file.upload.nb.reporting.component";
 import {ScheduleInvestmentsNBReportingComponent} from "./reporting/schedule.investments.nb.reporting.component";
 import {StatementBalanceOperationsNBReportingComponent} from "./reporting/statement.balance.operations.nb.reporting.component";
+import {StatementCashflowsNBReportingComponent} from "./reporting/statement.cashflows.nb.reporting.component";
 
 @NgModule({
     imports: [
@@ -91,7 +92,7 @@ import {StatementBalanceOperationsNBReportingComponent} from "./reporting/statem
         HFFundProfileComponent, HFManagerProfileComponent, HFManagerSearchComponent,
         PEFundProfileComponent, PEFirmProfileComponent, PEFirmSearchComponent, PEFundReportComponent,
         AccessDeniedComponent,NotFoundComponent,
-        ScheduleInvestmentsNBReportingComponent, StatementBalanceOperationsNBReportingComponent
+        ScheduleInvestmentsNBReportingComponent, StatementBalanceOperationsNBReportingComponent, StatementCashflowsNBReportingComponent
     ],
     bootstrap: [ AppComponent ]
 })

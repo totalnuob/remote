@@ -46,6 +46,14 @@
             <a>tags</a>
             <b>tags</b>
         </field-exclude>
+        <field-exclude>
+            <a>creator</a>
+            <b>creator</b>
+        </field-exclude>
+        <field-exclude>
+            <a>updater</a>
+            <b>updater</b>
+        </field-exclude>
     </mapping>
 
     <mapping>

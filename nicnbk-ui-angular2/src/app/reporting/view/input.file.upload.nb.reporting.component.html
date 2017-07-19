@@ -1,6 +1,17 @@
 <div class="container">
     <div class="row top-buffer" >
         <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting']">NB Reporting</a></span>
+                </li>
+                <li *ngIf="report != null" class="active">{{getReportDateShortFormatted(report.reportDate)}}</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row top-buffer" >
+        <div class="col-md-12">
             <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
             </div>
             <div class="alert alert-info" *ngIf="!submitted && successMessage != null"><span>{{successMessage}}</span>
@@ -85,7 +96,8 @@
                             (click)="uploadFile('tarragon_statement_cashflows')">
                         <span class="glyphicon glyphicon-play-circle"></span>
                     </button>
-                    <button *ngIf="showViewButton('tarragon_statement_cashflows')" class="btn btn-xs btn-primary">
+                    <button *ngIf="showViewButton('tarragon_statement_cashflows')" class="btn btn-xs btn-primary"
+                            [routerLink]="['/reporting/pe/statementCashflows/', report.id]">
                         <span class="glyphicon glyphicon-search"></span>
                     </button>
                 </td>

@@ -12,12 +12,12 @@ import {CommonNBReportingComponent} from "./common.nb.reporting.component";
 import {PeriodicReport} from "./model/periodic.report";
 
 @Component({
-    selector: 'schedule.investments.nb.reporting',
-    templateUrl: 'view/schedule.investments.nb.reporting.component.html',
+    selector: 'statement.cashflows.nb.reporting',
+    templateUrl: 'view/statement.cashflows.nb.reporting.component.html',
     styleUrls: [],
     providers: [],
 })
-export class ScheduleInvestmentsNBReportingComponent extends CommonNBReportingComponent {
+export class StatementCashflowsNBReportingComponent extends CommonNBReportingComponent {
 
     private sub: any;
     private reportId;
@@ -46,15 +46,16 @@ export class ScheduleInvestmentsNBReportingComponent extends CommonNBReportingCo
                 if(this.reportId > 0){
                     // load report data
 
-                    this.busy = this.periodicReportService.getScheduleInvestments(this.reportId)
+                    this.busy = this.periodicReportService.getStatementCashflows(this.reportId)
                         .subscribe(
                             response  => {
+                                console.log(response);
                                 this.records = response;
                                 this.report = response.report;
                             },
                             (error: ErrorResponse) => {
                                 this.successMessage = null;
-                                this.errorMessage = "Error loading schedule of investments";
+                                this.errorMessage = "Error loading statment of cashflows";
                                 if(error && !error.isEmpty()){
                                     this.processErrorMessage(error);
                                 }

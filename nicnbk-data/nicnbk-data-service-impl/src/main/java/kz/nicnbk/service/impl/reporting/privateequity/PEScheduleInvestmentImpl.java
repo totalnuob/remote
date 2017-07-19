@@ -10,6 +10,7 @@ import kz.nicnbk.repo.model.reporting.PeriodicReport;
 import kz.nicnbk.repo.model.reporting.privateequity.PEInvestmentType;
 import kz.nicnbk.repo.model.reporting.privateequity.ReportingPEScheduleInvestment;
 import kz.nicnbk.service.api.reporting.privateequity.PEScheduleInvestmentService;
+import kz.nicnbk.service.converter.reporting.PeriodReportConverter;
 import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordDto;
 import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordHolderDto;
 import kz.nicnbk.service.dto.reporting.exception.ExcelFileParseException;
@@ -42,6 +43,9 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
 
     @Autowired
     private ReportingPEScheduleInvestmentRepository peScheduleInvestmentRepository;
+
+    @Autowired
+    private PeriodReportConverter periodReportConverter;
 
 
     @Override
@@ -153,6 +157,11 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
 
         result.setTrancheA(trancheA);
         result.setTrancheB(trancheB);
+        if(entitiesTrancheA != null && !entitiesTrancheA.isEmpty()) {
+            result.setReport(periodReportConverter.disassemble(entitiesTrancheA.get(0).getReport()));
+        }else if(entitiesTrancheB != null && !entitiesTrancheB.isEmpty()){
+            result.setReport(periodReportConverter.disassemble(entitiesTrancheB.get(0).getReport()));
+        }
 
         return result;
     }

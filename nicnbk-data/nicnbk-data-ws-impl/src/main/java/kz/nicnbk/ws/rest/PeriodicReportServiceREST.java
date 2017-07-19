@@ -94,9 +94,10 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
             if(savedFile == null){
                 // error occurred
 
-                // TODO: add message to response
+                // TODO: check error
+                FileUploadResultDto result = new FileUploadResultDto(StatusResultType.FAIL, null, "File upload failed: error saving file", null);
 
-                return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity<>(result, null, HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
             // parse file
@@ -104,23 +105,23 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
             result.setFileId(savedFile.getId());
 
             if(result != null && result.getStatus() == StatusResultType.SUCCESS){
-
-                // TODO: add message to response
-
                 return new ResponseEntity<>(result, null, HttpStatus.OK);
             }else{
 
-                // TODO: add message to response
+                // TODO: check error
+                // remove file
+                boolean deleted = periodicReportService.deleteFile(savedFile.getId());
+                if(deleted){
+                    deleted = fileService.delete(savedFile.getId());
+                }
 
-                return new ResponseEntity<>(result, null, HttpStatus.INTERNAL_SERVER_ERROR);
+                if(deleted){
+                    return new ResponseEntity<>(result, null, HttpStatus.INTERNAL_SERVER_ERROR);
+                }else{
+                    return new ResponseEntity<>(new FileUploadResultDto(StatusResultType.FAIL, null,
+                            "File upload failed: error when deleting file to undo actions", null), null, HttpStatus.INTERNAL_SERVER_ERROR);
+                }
             }
-
-//            if(savedFile == null){
-//                // error occurred
-//                return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
-//            }else{
-//                return new ResponseEntity<>(savedFile, null, HttpStatus.OK);
-//            }
         }
         return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -154,6 +155,13 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
     @RequestMapping(value = "/get/balanceOperations/{id}", method = RequestMethod.GET)
     public ResponseEntity getBalanaceOperations(@PathVariable Long id) {
         ConsolidatedReportRecordHolderDto recordsHolder = this.periodicReportService.getStatementBalanceOperations(id);
+        return buildResponse(recordsHolder);
+    }
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/get/cashflows/{id}", method = RequestMethod.GET)
+    public ResponseEntity getStatementCashflows(@PathVariable Long id) {
+        ConsolidatedReportRecordHolderDto recordsHolder = this.periodicReportService.getStatementCashflows(id);
         return buildResponse(recordsHolder);
     }
 

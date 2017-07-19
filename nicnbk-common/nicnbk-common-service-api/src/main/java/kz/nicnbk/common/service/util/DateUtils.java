@@ -57,6 +57,16 @@ public class DateUtils {
         return getYear(new Date());
     }
 
+    public static Date getFirstDayCurrentYear(){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        try {
+            return simpleDateFormat.parse("01.01." + getCurrentYear());
+        } catch (ParseException e) {
+            //e.printStackTrace();
+        }
+        return null;
+    }
+
     public static boolean isLeapYear(int year) {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.YEAR, year);

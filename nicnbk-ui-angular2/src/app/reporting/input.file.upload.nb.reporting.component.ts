@@ -101,11 +101,12 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     this.fileTarragonScheduleInvestment = null;
                     // set file id
                     this.report.tarragonScheduleInvestmentFileId = res.fileId;
-                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file", null);
+                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - Schedule of Investments", null);
                 },
                 error => {
                     var result = JSON.parse(error);
                     var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    this.fileTarragonScheduleInvestment = null;
                     this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
         } else if(fileType === 'tarragon_statement_assets'){
@@ -116,11 +117,12 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     this.fileTarragonStatementAssets = null;
                     // set file id
                     this.report.tarragonStatementAssetsFileId = res.fileId;
-                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file", null);
+                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - Statement of Assets, Liabilities and Partners Capital", null);
                 },
                 (error) => {
                     var result = JSON.parse(error);
                     var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    this.fileTarragonStatementAssets = null;
                     this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
         } else if(fileType === 'tarragon_statement_cashflows'){
@@ -130,11 +132,12 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     this.fileTarragonStatementCashflows = null;
                     // set file id
                     this.report.tarragonStatementCashflowsFileId = res.fileId;
-                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file", null);
+                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - Statment of Cashflows", null);
                 },
                 error => {
                     var result = JSON.parse(error);
                     var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    this.fileTarragonStatementCashflows = null;
                     this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
         } else if(fileType === 'tarragon_statement_changes'){
@@ -144,11 +147,12 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     this.fileTarragonStatementChanges = null;
                     // set file id
                     this.report.tarragonStatementChangesFileId = res.fileId;
-                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file", null);
+                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - Statement of Changes", null);
                 },
                 error => {
                     var result = JSON.parse(error);
                     var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    this.fileTarragonStatementChanges = null;
                     this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
         } else if(fileType === 'singularity_bs_a'){
@@ -158,11 +162,12 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     this.fileSingularityBSTrancheA = null;
                     // set file id
                     this.report.singularityBSTrancheAFileId = res.fileId;
-                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file", null);
+                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - BS Singular Tranche A", null);
                 },
                 error => {
                     var result = JSON.parse(error);
                     var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    this.fileSingularityBSTrancheA = null;
                     this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
         } else if(fileType === 'singularity_imdr_a'){
@@ -172,11 +177,12 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     this.fileSingularityIMDRTrancheA = null;
                     // set file id
                     this.report.singularityIMDRTrancheAFileId = res.fileId;
-                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file", null);
+                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - IMDR Singular Tranche A", null);
                 },
                 error => {
                     var result = JSON.parse(error);
                     var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    this.fileSingularityIMDRTrancheA = null;
                     this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
         } else if(fileType === 'singularity_par_a'){
@@ -186,11 +192,12 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     this.fileSingularityPARTrancheA = null;
                     // set file id
                     this.report.singularityPARTrancheAFileId = res.fileId;
-                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file", null);
+                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - PAR Singular Tranche A", null);
                 },
                 error => {
                     var result = JSON.parse(error);
                     var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    this.fileSingularityPARTrancheA = null;
                     this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
         } else if(fileType === 'singularity_is_a'){
@@ -200,11 +207,12 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     this.fileSingularityISTrancheA = null;
                     // set file id
                     this.report.singularityISTrancheAFileId = res.fileId;
-                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file", null);
+                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - IS Singular Tranche A", null);
                 },
                 error => {
                     var result = JSON.parse(error);
                     var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    this.fileSingularityISTrancheA = null;
                     this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
         } else if(fileType === 'singularity_bs_b'){
@@ -214,11 +222,12 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     this.fileSingularityBSTrancheB = null;
                     // set file id
                     this.report.singularityBSTrancheBFileId = res.fileId;
-                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file", null);
+                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - BS Singular Tranche B", null);
                 },
                 error => {
                     var result = JSON.parse(error);
                     var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    this.fileSingularityBSTrancheB = null;
                     this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
         } else if(fileType === 'singularity_imdr_b'){
@@ -228,11 +237,12 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     this.fileSingularityIMDRTrancheB = null;
                     // set file id
                     this.report.singularityIMDRTrancheBFileId = res.fileId;
-                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file", null);
+                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - IMDR Singular Tranche B", null);
                 },
                 error => {
                     var result = JSON.parse(error);
                     var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    this.fileSingularityIMDRTrancheB = null;
                     this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
         } else if(fileType === 'singularity_par_b'){
@@ -242,11 +252,12 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     this.fileSingularityPARTrancheB = null;
                     // set file id
                     this.report.singularityPARTrancheBFileId = res.fileId;
-                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file", null);
+                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - PAR Singular Tranche B", null);
                 },
                 error => {
                     var result = JSON.parse(error);
                     var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    this.fileSingularityPARTrancheB = null;
                     this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
         } else if(fileType === 'singularity_is_b'){
@@ -256,11 +267,12 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     this.fileSingularityISTrancheB = null;
                     // set file id
                     this.report.singularityISTrancheBFileId = res.fileId;
-                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file", null);
+                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - IS Singular Tranche B", null);
                 },
                 error => {
                     var result = JSON.parse(error);
                     var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    this.fileSingularityISTrancheB = null;
                     this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
         }

@@ -25,6 +25,7 @@ export class PeriodicReportService extends CommonService{
 
     private PERIODIC_REPORT_SCHEDULE_INVESTMENTS_URL  = this.PERIODIC_REPORT_BASE_URL + "get/scheduleInvestments/";
     private PERIODIC_REPORT_STATEMENT_BALANCE_OPERATIONS_URL  = this.PERIODIC_REPORT_BASE_URL + "get/balanceOperations/";
+    private PERIODIC_REPORT_STATEMENT_CASHFLOWS_URL = this.PERIODIC_REPORT_BASE_URL + "get/cashflows/";
 
     private PERIODIC_REPORT_UPLOAD_URL = this.PERIODIC_REPORT_BASE_URL + "upload/";
 
@@ -70,6 +71,12 @@ export class PeriodicReportService extends CommonService{
 
     getStatementBalanceOperations(reportId): Observable<PeriodicReportRecordHolder>{
         return this.http.get(this.PERIODIC_REPORT_STATEMENT_BALANCE_OPERATIONS_URL + reportId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    getStatementCashflows(reportId): Observable<PeriodicReportRecordHolder>{
+        return this.http.get(this.PERIODIC_REPORT_STATEMENT_CASHFLOWS_URL + reportId, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }

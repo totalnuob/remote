@@ -1,6 +1,20 @@
 <div class="container">
     <div class="row top-buffer" >
         <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting']">NB Reporting</a></span>
+                </li>
+                <li>
+                    <span *ngIf="report != null"><a [routerLink]="['/reporting/NBReporting/inputFileUpload/17']">{{getReportDateShortFormatted(report.reportDate)}}</a></span>
+                </li>
+                <li class="active">Schedule of Investments</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row top-buffer" *ngIf="errorMessage != null || successMessage != null">
+        <div class="col-md-12">
             <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
             </div>
             <div class="alert alert-info" *ngIf="!submitted && successMessage != null"><span>{{successMessage}}</span>
@@ -9,7 +23,7 @@
     </div>
     <br/>
     <div class="row withpadding">
-        <h3 *ngIf="report != null">-- report date -- Schedule of Investments</h3>
+        <h3 *ngIf="report != null">{{getReportDateShortFormatted(report.reportDate)}} - Schedule of Investments</h3>
     </div>
 
     <ul class="nav nav-tabs">

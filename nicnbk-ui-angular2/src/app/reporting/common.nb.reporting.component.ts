@@ -30,5 +30,38 @@ export class CommonNBReportingComponent extends CommonFormViewComponent {
         return value > 0 + '' ? value : value == 0 ? '-' : '(' + (-value) +')';
     }
 
+    public getReportDateShortFormatted(reportDate){
+        if(reportDate){
+            var monthNum = reportDate.split("-")[1];
+            var yearNum = reportDate.split("-")[2];
+            if(monthNum === '01'){
+                return 'JAN ' + yearNum;
+            }else if(monthNum === '02'){
+                return 'FEB ' + yearNum;
+            }else if(monthNum === '03'){
+                return 'MAR ' + yearNum;
+            }else if(monthNum === '04'){
+                return 'APR ' + yearNum;
+            }else if(monthNum === '05'){
+                return 'MAY ' + yearNum;
+            }else if(monthNum === '06'){
+                return 'JUN ' + yearNum;
+            }else if(monthNum === '07'){
+                return 'JUL ' + yearNum;
+            }else if(monthNum === '08'){
+                return 'AUG ' + yearNum;
+            }else if(monthNum === '09'){
+                return 'SEP ' + yearNum;
+            }else if(monthNum === '10'){
+                return 'OCT ' + yearNum;
+            }else if(monthNum === '11'){
+                return 'NOV ' + yearNum;
+            }else if(monthNum === '12'){
+                return 'DEC ' + yearNum;
+            }
+        }
+        return "";
+    }
+
 
 }

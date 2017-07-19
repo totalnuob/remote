@@ -22,6 +22,7 @@ export class StatementBalanceOperationsNBReportingComponent extends CommonNBRepo
     private reportId;
 
     records: PeriodicReportRecordHolder;
+    report;
 
     busy: Subscription;
 
@@ -48,6 +49,7 @@ export class StatementBalanceOperationsNBReportingComponent extends CommonNBRepo
                             response  => {
                                 //console.log(response);
                                 this.records = response;
+                                this.report = response.report;
                             },
                             (error: ErrorResponse) => {
                                 this.successMessage = null;

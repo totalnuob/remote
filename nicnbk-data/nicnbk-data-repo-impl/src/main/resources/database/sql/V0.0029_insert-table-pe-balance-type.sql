@@ -1,5 +1,0 @@
-INSERT INTO pe_balance_type(id, code, name_en, name_ru, name_kz, parent_id) VALUES(1, 'ASSETS', 'Assets', '', '', null);
-INSERT INTO pe_balance_type(id, code, name_en, name_ru, name_kz, parent_id) VALUES(2, 'LIABLTY', 'Liabilities', '', '', null);
-INSERT INTO pe_balance_type(id, code, name_en, name_ru, name_kz, parent_id) VALUES(3, 'PRTN_CAP', 'Partners'' capital', '', '', null);
-
-INSERT INTO pe_balance_type(id, code, name_en, name_ru, name_kz, parent_id) VALUES(21, 'FAIR_VAL', 'Investments, at fair value', '', '', 1);

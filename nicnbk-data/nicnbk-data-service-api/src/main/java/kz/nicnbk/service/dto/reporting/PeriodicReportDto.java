@@ -15,6 +15,15 @@ public class PeriodicReportDto extends CreateUpdateBaseEntityDto<PeriodicReport>
     private String type;
     private String status;
 
+    public PeriodicReportDto(){}
+
+    public PeriodicReportDto(Long id, Date reportDate, String type, String status){
+        this.id = id;
+        this.reportDate = reportDate;
+        this.type = type;
+        this.status = status;
+    }
+
     @Override
     public Long getId() {
         return id;

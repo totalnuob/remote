@@ -11,8 +11,8 @@ import javax.persistence.*;
  */
 
 @Entity
-@Table(name = "rep_pe_s_balance")
-public class ReportingPEStatementBalance extends CreateUpdateBaseEntity{
+@Table(name = "rep_pe_s_operations")
+public class ReportingPEStatementOperations extends CreateUpdateBaseEntity{
 
     private String name;
     private Double tarragonMFTotal;
@@ -23,7 +23,7 @@ public class ReportingPEStatementBalance extends CreateUpdateBaseEntity{
 
     private PeriodicReport report;
 
-    private PEBalanceType type;
+    private PEOperationsType type;
     private Integer tranche;
 
     @Column(name = "name", length = DataConstraints.C_TYPE_ENTITY_NAME, nullable = false)
@@ -91,12 +91,12 @@ public class ReportingPEStatementBalance extends CreateUpdateBaseEntity{
     }
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "balance_type_id"/*, nullable = false*/)
-    public PEBalanceType getType() {
+    @JoinColumn(name = "operations_type_id"/*, nullable = false*/)
+    public PEOperationsType getType() {
         return type;
     }
 
-    public void setType(PEBalanceType type) {
+    public void setType(PEOperationsType type) {
         this.type = type;
     }
 

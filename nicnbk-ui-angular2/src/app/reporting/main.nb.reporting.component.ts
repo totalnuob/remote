@@ -7,6 +7,7 @@ import {PeriodicReportService} from "./periodic.report.service";
 import {PeriodicReport} from "./model/periodic.report";
 import {ErrorResponse} from "../common/error-response";
 import {Subscription} from "rxjs/Subscription";
+import {CommonNBReportingComponent} from "./common.nb.reporting.component";
 
 declare var $:any
 
@@ -16,13 +17,14 @@ declare var $:any
     styleUrls: [],
     providers: [],
 })
-export class MainNBReportingComponent extends CommonFormViewComponent implements OnInit{
+export class MainNBReportingComponent extends CommonNBReportingComponent implements OnInit{
 
     constructor(
         private router: Router,
+        private route: ActivatedRoute,
         private periodicReportService: PeriodicReportService
     ){
-        super(router);
+        super(router, route, periodicReportService);
     }
     private reportMonth;
     private reportYear;
@@ -129,39 +131,6 @@ export class MainNBReportingComponent extends CommonFormViewComponent implements
                 )
         }
         this.report = null;
-    }
-
-    public getReportDateShortFormatted(reportDate){
-        if(reportDate){
-            var monthNum = reportDate.split("-")[1];
-            var yearNum = reportDate.split("-")[2];
-            if(monthNum === '01'){
-                return 'JAN ' + yearNum;
-            }else if(monthNum === '02'){
-                return 'FEB ' + yearNum;
-            }else if(monthNum === '03'){
-                return 'MAR ' + yearNum;
-            }else if(monthNum === '04'){
-                return 'APR ' + yearNum;
-            }else if(monthNum === '05'){
-                return 'MAY ' + yearNum;
-            }else if(monthNum === '06'){
-                return 'JUN ' + yearNum;
-            }else if(monthNum === '07'){
-                return 'JUL ' + yearNum;
-            }else if(monthNum === '08'){
-                return 'AUG ' + yearNum;
-            }else if(monthNum === '09'){
-                return 'SEP ' + yearNum;
-            }else if(monthNum === '10'){
-                return 'OCT ' + yearNum;
-            }else if(monthNum === '11'){
-                return 'NOV ' + yearNum;
-            }else if(monthNum === '12'){
-                return 'DEC ' + yearNum;
-            }
-        }
-        return "";
     }
 
     navigate(reportId){

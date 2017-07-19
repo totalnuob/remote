@@ -1,12 +1,12 @@
 package kz.nicnbk.service.impl.reporting.privateequity;
 
 import kz.nicnbk.common.service.util.ArrayUtils;
-import kz.nicnbk.repo.api.lookup.PEBalanceTypeRepository;
-import kz.nicnbk.repo.api.reporting.privateequity.ReportingPEStatementBalanceRepository;
+import kz.nicnbk.repo.api.lookup.PEOperationsTypeRepository;
+import kz.nicnbk.repo.api.reporting.privateequity.ReportingPEStatementOperationsRepository;
 import kz.nicnbk.repo.model.reporting.PeriodicReport;
-import kz.nicnbk.repo.model.reporting.privateequity.PEBalanceType;
-import kz.nicnbk.repo.model.reporting.privateequity.ReportingPEStatementBalance;
-import kz.nicnbk.service.api.reporting.privateequity.PEStatementBalanceService;
+import kz.nicnbk.repo.model.reporting.privateequity.PEOperationsType;
+import kz.nicnbk.repo.model.reporting.privateequity.ReportingPEStatementOperations;
+import kz.nicnbk.service.api.reporting.privateequity.PEStatementOperatinsService;
 import kz.nicnbk.service.converter.reporting.PeriodReportConverter;
 import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordDto;
 import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordHolderDto;
@@ -21,25 +21,25 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 /**
- * Created by magzumov on 01.07.2017.
+ * Created by magzumov on 14.07.2017.
  */
 @Service
-public class PEStatementBalanceServiceImpl implements PEStatementBalanceService {
+public class PEStatementOperationsServiceImpl implements PEStatementOperatinsService {
 
-    private static final Logger logger = LoggerFactory.getLogger(PEStatementBalanceServiceImpl.class);
-
-    @Autowired
-    private PEBalanceTypeRepository peBalanceTypeRepository;
+    private static final Logger logger = LoggerFactory.getLogger(PEStatementOperationsServiceImpl.class);
 
     @Autowired
-    private ReportingPEStatementBalanceRepository peStatementBalanceRepository;
+    private PEOperationsTypeRepository peOperationsTypeRepository;
+
+    @Autowired
+    private ReportingPEStatementOperationsRepository peStatementOperationsRepository;
 
     @Autowired
     private PeriodReportConverter periodReportConverter;
 
     @Override
-    public ReportingPEStatementBalance assemble(ConsolidatedReportRecordDto dto, int tranche, Long reportId) {
-        ReportingPEStatementBalance entity = new ReportingPEStatementBalance();
+    public ReportingPEStatementOperations assemble(ConsolidatedReportRecordDto dto, int tranche, Long reportId) {
+        ReportingPEStatementOperations entity = new ReportingPEStatementOperations();
         entity.setName(dto.getName());
         entity.setTarragonMFTotal(dto.getValues()[0]);
         entity.setTarragonMFShareGP(dto.getValues()[1]);
@@ -56,7 +56,7 @@ public class PEStatementBalanceServiceImpl implements PEStatementBalanceService 
         // balance type
         for(String classification: dto.getClassifications()){
             if(classification != null) {
-                PEBalanceType balanceType = this.peBalanceTypeRepository.findByNameEn(classification.trim());
+                PEOperationsType balanceType = this.peOperationsTypeRepository.findByNameEn(classification.trim());
                 if(balanceType != null){
                     entity.setType(balanceType);
                     //break;
@@ -64,7 +64,7 @@ public class PEStatementBalanceServiceImpl implements PEStatementBalanceService 
             }
         }
         if(entity.getType() == null){
-            PEBalanceType balanceType = this.peBalanceTypeRepository.findByNameEn(dto.getName().trim());
+            PEOperationsType balanceType = this.peOperationsTypeRepository.findByNameEn(dto.getName().trim());
             if(balanceType != null){
                 entity.setType(balanceType);
                 //break;
@@ -72,19 +72,20 @@ public class PEStatementBalanceServiceImpl implements PEStatementBalanceService 
         }
 
         if(entity.getType() == null){
-            logger.error("Balance record type could not be determined for record '" + entity.getName() + "'. Expected values are 'Assets', 'Liabilities', etc.");
-            throw new ExcelFileParseException("Balance record type could not be determined for record '" + entity.getName() + "'. Expected values are 'Assets', 'Liabilities', etc.");
+            logger.error("Operations record type could not be determined for record '" + entity.getName() + "'. Expected values are 'Income', 'Expenses', etc.");
+            throw new ExcelFileParseException("Operations record type could not be determined for record '" + entity.getName() +
+                    "'. Expected values are 'Income', 'Expenses', etc.");
         }
 
         return entity;
     }
 
     @Override
-    public List<ReportingPEStatementBalance> assembleList(List<ConsolidatedReportRecordDto> dtoList, int tranche, Long reportId) {
-        List<ReportingPEStatementBalance> entities = new ArrayList<>();
+    public List<ReportingPEStatementOperations> assembleList(List<ConsolidatedReportRecordDto> dtoList, int tranche, Long reportId) {
+        List<ReportingPEStatementOperations> entities = new ArrayList<>();
         if(dtoList != null){
             for(ConsolidatedReportRecordDto dto: dtoList){
-                ReportingPEStatementBalance entity = assemble(dto, tranche, reportId);
+                ReportingPEStatementOperations entity = assemble(dto, tranche, reportId);
                 entities.add(entity);
             }
         }
@@ -92,28 +93,29 @@ public class PEStatementBalanceServiceImpl implements PEStatementBalanceService 
     }
 
     @Override
-    public boolean save(List<ReportingPEStatementBalance> entities) {
+    public boolean save(List<ReportingPEStatementOperations> entities) {
         // TODO: boolean result, check for error?
         if(entities != null){
-            peStatementBalanceRepository.save(entities);
+            peStatementOperationsRepository.save(entities);
         }
         return true;
     }
 
     @Override
     public ConsolidatedReportRecordHolderDto get(Long reportId) {
-        List<ReportingPEStatementBalance> entitiesTrancheA = this.peStatementBalanceRepository.getEntitiesByReportIdAndTranche(reportId, 1,
+        List<ReportingPEStatementOperations> entitiesTrancheA = this.peStatementOperationsRepository.getEntitiesByReportIdAndTranche(reportId, 1,
                 new PageRequest(0, 1000, new Sort(Sort.Direction.ASC, "id")));
 
-        List<ReportingPEStatementBalance> entitiesTrancheB = this.peStatementBalanceRepository.getEntitiesByReportIdAndTranche(reportId, 2,
+        List<ReportingPEStatementOperations> entitiesTrancheB = this.peStatementOperationsRepository.getEntitiesByReportIdAndTranche(reportId, 2,
                 new PageRequest(0, 1000, new Sort(Sort.Direction.ASC, "id")));
 
         ConsolidatedReportRecordHolderDto result = new ConsolidatedReportRecordHolderDto();
         List<ConsolidatedReportRecordDto> trancheA = disassembleList(entitiesTrancheA);
         List<ConsolidatedReportRecordDto> trancheB = disassembleList(entitiesTrancheB);
 
-        result.setBalanceTrancheA(trancheA);
-        result.setBalanceTrancheB(trancheB);
+        result.setOperationsTrancheA(trancheA);
+        result.setOperationsTrancheB(trancheB);
+
         if(entitiesTrancheA != null && !entitiesTrancheA.isEmpty()) {
             result.setReport(periodReportConverter.disassemble(entitiesTrancheA.get(0).getReport()));
         }else if(entitiesTrancheB != null && !entitiesTrancheB.isEmpty()){
@@ -124,34 +126,57 @@ public class PEStatementBalanceServiceImpl implements PEStatementBalanceService 
     }
 
     // TODO: refactor
-    private List<ConsolidatedReportRecordDto> disassembleList(List<ReportingPEStatementBalance> entities){
+    private List<ConsolidatedReportRecordDto> disassembleList(List<ReportingPEStatementOperations> entities){
         List<ConsolidatedReportRecordDto> records = new ArrayList<>();
         if(entities != null && !entities.isEmpty()){
-            PEBalanceType currentType = null;
+            PEOperationsType currentType = null;
 
             Map<String, Double[]> totalSums = new HashMap<>();
+            Double[] totals = new Double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
-            for(ReportingPEStatementBalance entity: entities) {
+            ReportingPEStatementOperations lastEntity = null;
+            for(ReportingPEStatementOperations entity: entities) {
 
-                boolean balanceTypeSwitch = currentType != null && entity.getType() != null
-                        && !entity.getType().getCode().equalsIgnoreCase(currentType.getCode());
+                boolean typeChange = currentType != null && entity.getType() != null &&
+                        !entity.getType().getCode().equalsIgnoreCase(currentType.getCode());
 
                 // add total by type
-                if(balanceTypeSwitch) {
-                    records.add(buildTotalRecord(currentType.getNameEn(), totalSums.get(currentType.getNameEn())));
+                if(typeChange) {
+                    records.add(buildNetRecord(currentType.getNameEn(), totalSums.get(currentType.getNameEn())));
+
+                    PEOperationsType parent = currentType.getParent();
+                    while(parent != null){
+
+                        PEOperationsType entityParent = entity.getType().getParent();
+                        boolean commonParent = false;
+                        while(entityParent != null){
+                            if(parent.getCode().equalsIgnoreCase(entityParent.getCode())){
+                                commonParent = true;
+                                break;
+                            }
+                            entityParent = entityParent.getParent();
+                        }
+                        if(!commonParent){
+                            records.add(buildNetRecord(parent.getNameEn(), totalSums.get(parent.getNameEn())));
+                        }
+                        parent = parent.getParent();
+                    }
+
                     //totalSums.put(currentType.getNameEn(), null);
                 }
 
                 // add headers by type
-                if(balanceTypeSwitch || currentType == null){
+                if(typeChange || currentType == null){
                     // check if need header
                     Set<String> keySet = totalSums.keySet();
                     List<String> headers = new ArrayList<>();
                     if(keySet == null || !keySet.contains(entity.getType().getNameEn())){
                         // add headers
-                        PEBalanceType parent = entity.getType();
+                        PEOperationsType parent = entity.getType();
                         while(parent != null){
-                            headers.add(parent.getNameEn());
+                            if(!keySet.contains(parent.getNameEn())) {
+                                headers.add(parent.getNameEn());
+                            }
                             parent = parent.getParent();
                         }
 
@@ -180,7 +205,7 @@ public class PEStatementBalanceServiceImpl implements PEStatementBalanceService 
                 records.add(new ConsolidatedReportRecordDto(entity.getName(), null, values, null, false, false));
 
                 // add entity values to sums by type
-                PEBalanceType type = entity.getType();
+                PEOperationsType type = entity.getType();
                 while(type != null){
                     Double[] sums = totalSums.get(type.getNameEn());
                     if (sums != null){
@@ -188,25 +213,38 @@ public class PEStatementBalanceServiceImpl implements PEStatementBalanceService 
                     }
                     type = type.getParent();
                 }
+
+                // add totals
+                ArrayUtils.addArrayValues(totals, values);
+                lastEntity = entity;
             }
 
-            // ADD TOTAL LIABILITIES AND PARTNERS CAPITAL
+            // last record sum by type
+            if(lastEntity != null){
+                PEOperationsType type = lastEntity.getType();
+                while(type != null){
+                    Double[] sums = totalSums.get(type.getNameEn());
+                    if(sums != null){
+                        records.add(buildNetRecord(type.getNameEn(), sums));
+                    }
+                    type = type.getParent();
+                }
+            }
+
+            // NET INCREASE (DECREASE) IN PARTNERS' CAPITAL
             // TODO: refactor string literals
-            if(totalSums.get("Liabilities") != null && totalSums.get("Partners' capital") != null){
-                Double[] totalValues = totalSums.get("Liabilities");
-                ArrayUtils.addArrayValues(totalValues, totalSums.get("Partners' capital"));
-                records.add(new ConsolidatedReportRecordDto("Total liabilities and partners' capital", null, totalValues, null, true, true));
+            if(entities != null && !entities.isEmpty()){
+                records.add(new ConsolidatedReportRecordDto("Net increase (decrease) in partners' capital", null, totals, null, true, true));
             }
 
         }
         return records;
     }
 
-
     // TODO: refactor common
-    private ConsolidatedReportRecordDto buildTotalRecord(String name, Double[] totalSums){
+    private ConsolidatedReportRecordDto buildNetRecord(String name, Double[] totalSums){
         ConsolidatedReportRecordDto recordDtoTotal = new ConsolidatedReportRecordDto();
-        recordDtoTotal.setName("Total " + name);
+        recordDtoTotal.setName("Net " + name);
         recordDtoTotal.setValues(totalSums);
         recordDtoTotal.setHeader(true);
         recordDtoTotal.setTotalSum(true);

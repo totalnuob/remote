@@ -44,6 +44,7 @@ import {MainNBReportingComponent} from "./reporting/main.nb.reporting.component"
 import {InputFileUploadNBReportingComponent} from "./reporting/input.file.upload.nb.reporting.component";
 import {ScheduleInvestmentsNBReportingComponent} from "./reporting/schedule.investments.nb.reporting.component";
 import {StatementBalanceOperationsNBReportingComponent} from "./reporting/statement.balance.operations.nb.reporting.component";
+import {StatementCashflowsNBReportingComponent} from "./reporting/statement.cashflows.nb.reporting.component";
 
 
 const routes: Routes  = [
@@ -274,6 +275,11 @@ const routes: Routes  = [
     {
         path: 'reporting/pe/statementBalanceOperations/:id',
         component: StatementBalanceOperationsNBReportingComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'reporting/pe/statementCashflows/:id',
+        component: StatementCashflowsNBReportingComponent,
         canActivate: [AuthGuard]
     },
 
