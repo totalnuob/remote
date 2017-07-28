@@ -4,6 +4,7 @@ export class PEFund {
 
     fundName: string;
     status: string;
+    nicStatus: string;
     currency: string;
     vintage: number;
     fundSize: number;
@@ -30,7 +31,9 @@ export class PEFund {
     grossIrr: number;
     grossTvpi: number;
     asOfDate: Date;
-    benchmark: string;
+    benchmarkNetIrr: number;
+    benchmarkNetTvpi: number;
+    benchmarkName: string;
 
     investmentPeriod: number;
     fundTerm: number;

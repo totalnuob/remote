@@ -147,7 +147,7 @@
                                             <label for="nonsuitableReason" class="col-md-1">If No, why</label>
                                             <div class="col-md-5">
                                             <textarea fz-elastic  spellcheck="false"  class="form-control col-md-4" id="nonsuitableReason" maxlength="1000"
-                                                      [disabled]="memo.fund.suitable" name="nonsuitableReason" [(ngModel)]="memo.fund.nonsuitableReason"  required #reason="ngModel"></textarea>
+                                                      [disabled]="memo.fund.suitable" name="nonsuitableReason" [(ngModel)]="memo.fund.nonsuitableReason" #reason="ngModel"></textarea>
                                                 <div [hidden]="reason.valid || reason.pristine" class="alert alert-danger">Description is required</div>
                                             </div>
                                         </div>
