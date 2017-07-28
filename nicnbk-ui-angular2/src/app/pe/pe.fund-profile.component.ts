@@ -185,6 +185,16 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
             format: 'DD-MM-YYYY'
         });
 
+        $('#asOfDate').datetimepicker({
+            //defaultDate: new Date(),
+            format: 'DD-MM-YYYY'
+        });
+
+        $('#asOfDateOpenFund').datetimepicker({
+            //defaultDate: new Date(),
+            format: 'DD-MM-YYYY'
+        });
+
     }
 
     save(){
@@ -192,6 +202,13 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
 
         this.fund.firstClose = $('#firstClose').val();
         this.fund.finalClose = $('#finalClose').val();
+
+        if(this.fund.status != 'Closed') {
+            this.fund.asOfDate = $('#asOfDateOpenFund').val();
+        } else {
+            this.fund.asOfDate = $('#asOfDate').val();
+        }
+
         this.fund.strategy = this.convertToServiceModel(this.fund.strategy);
         this.fund.industry = this.convertToServiceModel(this.fund.industry);
         this.fund.geography = this.convertToServiceModel(this.fund.geography);

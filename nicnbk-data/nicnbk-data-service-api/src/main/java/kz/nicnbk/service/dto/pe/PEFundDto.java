@@ -17,6 +17,7 @@ public class PEFundDto extends HistoryBaseEntityDto<PEFund> {
     //FUND SUMMARY
     private String fundName;
     private String status;
+    private String nicStatus;
     private String currency;
     private int vintage;
     private Double fundSize;
@@ -49,7 +50,9 @@ public class PEFundDto extends HistoryBaseEntityDto<PEFund> {
     private double grossIrr;
     private double grossTvpi;
     private Date asOfDate;
-    private PEBenchmark benchmark;
+    private Double benchmarkNetIrr;
+    private Double benchmarkNetTvpi;
+    private String benchmarkName;
     private PEFirm firm;
 
     // Descriptive data
@@ -96,6 +99,14 @@ public class PEFundDto extends HistoryBaseEntityDto<PEFund> {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getNicStatus() {
+        return nicStatus;
+    }
+
+    public void setNicStatus(String nicStatus) {
+        this.nicStatus = nicStatus;
     }
 
     public String getCurrency() {
@@ -298,12 +309,28 @@ public class PEFundDto extends HistoryBaseEntityDto<PEFund> {
         this.asOfDate = asOfDate;
     }
 
-    public PEBenchmark getPEBenchmark() {
-        return benchmark;
+    public Double getBenchmarkNetIrr() {
+        return benchmarkNetIrr;
     }
 
-    public void setPEBenchmark(PEBenchmark PEBenchmark) {
-        this.benchmark = benchmark;
+    public void setBenchmarkNetIrr(Double benchmarkNetIrr) {
+        this.benchmarkNetIrr = benchmarkNetIrr;
+    }
+
+    public Double getBenchmarkNetTvpi() {
+        return benchmarkNetTvpi;
+    }
+
+    public void setBenchmarkNetTvpi(Double benchmarkNetTvpi) {
+        this.benchmarkNetTvpi = benchmarkNetTvpi;
+    }
+
+    public String getBenchmarkName() {
+        return benchmarkName;
+    }
+
+    public void setBenchmarkName(String benchmarkName) {
+        this.benchmarkName = benchmarkName;
     }
 
     public PEFirm getFirm() {

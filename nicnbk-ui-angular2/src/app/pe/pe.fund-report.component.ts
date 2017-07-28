@@ -46,6 +46,8 @@ export class PEFundReportComponent extends GoogleChartComponent {
 
     private moduleAccessChecker: ModuleAccessCheckerService;
 
+    public asOfDate;
+
     constructor(
         private firmService: PEFirmService,
         private fundService: PEFundService,
@@ -176,14 +178,19 @@ export class PEFundReportComponent extends GoogleChartComponent {
             var irrData = new google.visualization.DataTable();
             irrData.addColumn('string', 'Fund');
             irrData.addColumn('number', this.openFund.firm.firmName);
-            irrData.addColumn('number', 'CA');
+            if(this.fundsList.length != 0) {
+                irrData.addColumn('number', this.fundsList[this.fundsList.length-1].benchmarkName);
+            } else {
+                irrData.addColumn('number', 'CA');
+            }
 
             for(var i = 0; i < this.fundsList.length; i++) {
                 if(this.fundsList[i].status == 'Closed'){
                     if(this.fundsList[i].netIrr != NaN) {
-                        irrData.addRow([this.fundsList[i].fundName, this.fundsList[i].netIrr, 30]);
+                        irrData.addRow([this.fundsList[i].fundName, this.fundsList[i].netIrr, this.fundsList[i].benchmarkNetIrr]);
+                        this.asOfDate = this.fundsList[this.fundsList.length-1].asOfDate;
                     } else {
-                        irrData.addRow([this.fundsList[i].fundName, 30, 30]);
+                        irrData.addRow([this.fundsList[i].fundName, 0, 0]);
                     }
                 }
             }
@@ -191,14 +198,19 @@ export class PEFundReportComponent extends GoogleChartComponent {
             var tvpiData = new google.visualization.DataTable();
             tvpiData.addColumn('string', 'Fund');
             tvpiData.addColumn('number', this.openFund.firm.firmName);
-            tvpiData.addColumn('number', 'CA');
+            if(this.fundsList.length != 0) {
+                tvpiData.addColumn('number', this.fundsList[this.fundsList.length-1].benchmarkName);
+            } else {
+                tvpiData.addColumn('number', 'CA');
+            }
 
             for(var i = 0; i < this.fundsList.length; i++) {
                 if(this.fundsList[i].status == 'Closed'){
-                    tvpiData.addRow([this.fundsList[i].fundName, this.fundsList[i].netTvpi, 1]);
+                    tvpiData.addRow([this.fundsList[i].fundName, this.fundsList[i].netTvpi, this.fundsList[i].benchmarkNetTvpi]);
                 }
             }
 
+            console.log(this.fundsList);
             this.drawBarChart('bar-chart-1', irrData, 'NET IRR');
             this.drawBarChart('bar-chart-2', tvpiData, 'NET TVPI');
         }
@@ -209,7 +221,7 @@ export class PEFundReportComponent extends GoogleChartComponent {
             showRowNumber: false,
             width: 400,
             height: 200,
-            legend: {position: 'bottom', maxLines: 3},
+            legend: {position: 'bottom', maxLines: 2},
             'allowHtml': true,
             cssClassNames: {},
             title: title,

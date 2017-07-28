@@ -142,11 +142,13 @@ public class PEFundServiceImpl implements PEFundService {
             List<PEGrossCashflowDto> grossCFDto = this.grossCFConverter.disassembleList(grossCfEntity);
             List<PENetCashflowDto> netCFDto = this.netCFConverter.disassembleList(netCfEntity);
 
-            dto.setGrossCashflow(grossCFDto);
-            dto.setNetCashflow(netCFDto);
+            if(!grossCFDto.isEmpty()) {
 
-            calculatePerformanceParameters(grossCFDto, netCFDto, dto);
+                dto.setGrossCashflow(grossCFDto);
+                dto.setNetCashflow(netCFDto);
 
+                calculatePerformanceParameters(grossCFDto, netCFDto, dto);
+            }
             return dto;
         }catch(Exception ex){
             logger.error("Error loading PE fund: " + id, ex);
@@ -169,7 +171,9 @@ public class PEFundServiceImpl implements PEFundService {
                     fundDto.setGrossCashflow(grossCFDto);
                     fundDto.setNetCashflow(netCFDto);
 
-                    calculatePerformanceParameters(grossCFDto, netCFDto, fundDto);
+                    if(!grossCFDto.isEmpty()) {
+                        calculatePerformanceParameters(grossCFDto, netCFDto, fundDto);
+                    }
                 }
             }
             return fundDtoList;
