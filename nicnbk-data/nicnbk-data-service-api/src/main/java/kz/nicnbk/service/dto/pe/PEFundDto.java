@@ -53,7 +53,7 @@ public class PEFundDto extends HistoryBaseEntityDto<PEFund> {
     private Double benchmarkNetIrr;
     private Double benchmarkNetTvpi;
     private String benchmarkName;
-    private PEFirm firm;
+    private PEFirmDto firm;
 
     // Descriptive data
     private double investmentPeriod;
@@ -333,11 +333,11 @@ public class PEFundDto extends HistoryBaseEntityDto<PEFund> {
         this.benchmarkName = benchmarkName;
     }
 
-    public PEFirm getFirm() {
+    public PEFirmDto getFirm() {
         return firm;
     }
 
-    public void setFirm(PEFirm firm) {
+    public void setFirm(PEFirmDto firm) {
         this.firm = firm;
     }
 
