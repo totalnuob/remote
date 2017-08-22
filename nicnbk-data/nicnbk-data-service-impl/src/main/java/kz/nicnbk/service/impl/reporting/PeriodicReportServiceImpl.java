@@ -850,12 +850,15 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                     double partnersCapitalValue = partnersCapitalTotal[i]  != null ? partnersCapitalTotal[i].doubleValue(): 0.0;
                     double recordValue = recordDto.getValues() != null  && recordDto.getValues()[i] != null ? recordDto.getValues()[i].doubleValue() : 0.0;
                     if((liabilitiesValue + partnersCapitalValue) != recordValue){
-                        throw new ExcelFileParseException("Error checking total sums for values #" + (i + 1) +
+                        throw new ExcelFileParseException("Error checking Total liabilities and partner's capital - for values #" + (i + 1) +
                                 ": expected=" + (liabilitiesValue + partnersCapitalValue) + ", found=" + recordValue);
                     }
                 }
             }else {
-                if(recordDto.hasClassification("ASSETS")){ // TODO: final strings
+                if(recordDto.getName().startsWith("Total ") && recordDto.hasClassification(recordDto.getName().substring(5).trim())){
+                    // is total value
+
+                }else if(recordDto.hasClassification("ASSETS")){ // TODO: final strings
                     ArrayUtils.addArrayValues(assetsTotal, recordDto.getValues());
                 }else if(recordDto.hasClassification("LIABILITIES")){// TODO: final strings
                     ArrayUtils.addArrayValues(liabilitiesTotal, recordDto.getValues());
@@ -880,7 +883,8 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             }
         }
 
-        return resultList;
+        return records;
+        //return resultList;
     }
 
 
@@ -1976,18 +1980,12 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
     private List<ConsolidatedReportRecordDto> checkTotalSumsGeneric(List<ConsolidatedReportRecordDto> fullList, int size,
                                                                     String totalRecordName, int tranche){
 
-
-
-
         // TODO: REFACTOR, HARD TO MAINTAIN
-
-
-
 
 
         String trancheName = tranche == 1 ? "[Tranche A]" : tranche == 2 ? "[Tranche B]" : "";
 
-        List<ConsolidatedReportRecordDto> recordsWithoutTotals = new ArrayList<>();
+        //List<ConsolidatedReportRecordDto> recordsWithoutTotals = new ArrayList<>();
         if(fullList != null){
             Map<String, double[]> sums = new HashMap<>();
             Map<String, Integer> classificationsLevel = new HashMap<>();
@@ -2021,6 +2019,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                                 }
                             }
                         }
+
                     }
                 }else if(recordDto.getClassifications() != null){
 
@@ -2132,7 +2131,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         }
                     }
                     if(!isTotalValue) {
-                        recordsWithoutTotals.add(recordDto);
+                        //recordsWithoutTotals.add(recordDto);
 
                         double[] totalSum = sums.get(totalRecordName);
                         if(totalSum != null) {
@@ -2164,7 +2163,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 throw new ExcelFileParseException(trancheName + "Total record '" + totalRecordName + "' is missing.");
             }
         }
-        return recordsWithoutTotals;
+        return fullList;
     }
 
     /**

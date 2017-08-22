@@ -1,5 +1,6 @@
 package kz.nicnbk.service.impl.reporting.privateequity;
 
+import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.api.lookup.CurrencyRepository;
 import kz.nicnbk.repo.api.lookup.PEInvestmentTypeRepository;
 import kz.nicnbk.repo.api.lookup.StrategyRepository;
@@ -75,7 +76,7 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
                 }
             }
         }
-        if(entity.getType() == null){
+        if(entity.getType() == null && isTotalTypeSum(entity.getName())){
             logger.error("Schedule of investment record type could not be determined for record '" + entity.getName() +
                     "'. Expected values are 'Private Equity Partnerships', 'CoInvestments', etc.  Check for possible spaces in names.");
             throw new ExcelFileParseException("Schedule of investment record type could not be determined for record '" + entity.getName() +
@@ -83,8 +84,9 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
         }
 
         // strategy
-        String currencyName = null;
-        if(entity.getType() != null && entity.getType().getNameEn().equalsIgnoreCase(ReportingPEScheduleInvestment.TYPE_PE_PARTNERSHIPS)) {
+//        String currencyName = null;
+        if(entity.getType() != null && entity.getType().getNameEn().equalsIgnoreCase(ReportingPEScheduleInvestment.TYPE_PE_PARTNERSHIPS) &&
+                !isTotalTypeSum(entity.getName())) {
             for(String classification: dto.getClassifications()){
                 if(classification != null && !classification.equalsIgnoreCase("Private Equity Partnerships and Co-Investments")
                         && !classification.equalsIgnoreCase(entity.getType().getNameEn())){
@@ -107,7 +109,7 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
                 }
             }
         }
-        if(entity.getType() != null && entity.getType().getCode().equalsIgnoreCase("PE_PARTN") && entity.getStrategy() == null){
+        if(entity.getType() != null && entity.getType().getCode().equalsIgnoreCase("PE_PARTN") && entity.getStrategy() == null && !isTotalTypeSum(entity.getName())){
             logger.error("Schedule of investment record strategy could not be determined for record '" + entity.getName() + "'");
             throw new ExcelFileParseException("Schedule of investment record strategy could not be determined for record '" + entity.getName() + "'");
         }
@@ -183,32 +185,23 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
         return result;
     }
 
-
-    // TODO: refactor
     private List<ConsolidatedReportRecordDto> disassembleList(List<ReportingPEScheduleInvestment> entities){
         List<ConsolidatedReportRecordDto> records = new ArrayList<>();
         if(entities != null){
             String investmentType = null;
-            String strategy = null;
+            Strategy strategy = null;
             String description = null;
-
-            Double[] totalSums = new Double[]{0.0, 0.0, 0.0};
-            Double[] totalSumsByInvestmentType = new Double[]{0.0, 0.0, 0.0};
-            Double[] totalSumsByStrategy = new Double[]{0.0, 0.0, 0.0};
-            Double[] totalSumsByDescription = new Double[]{0.0, 0.0, 0.0};
-
-            int totalInvestmentsNumber = 0;
-
             for(ReportingPEScheduleInvestment entity: entities){
-
                 boolean isPrivateEquityPartnerships = entity.getType() != null &&
                         entity.getType().getNameEn().equalsIgnoreCase(ReportingPEScheduleInvestment.TYPE_PE_PARTNERSHIPS);
 
                 boolean isCoinvestments = entity.getType() != null &&
                         entity.getType().getNameEn().equalsIgnoreCase(ReportingPEScheduleInvestment.TYPE_COINVESTMENTS);
 
-                boolean strategySwitch = strategy != null && entity.getStrategy() != null && isPrivateEquityPartnerships
-                        && !entity.getStrategy().getNameEn().equalsIgnoreCase(strategy);
+                boolean strategySwitch = strategy != null && entity.getStrategy() != null && isPrivateEquityPartnerships &&
+                        !entity.getStrategy().getNameEn().equalsIgnoreCase(strategy.getNameEn()) &&
+                        // skip parent strategy header, e.g. Corporate Finance Buyout for Total Corporate Finance Buyout
+                        (strategy.getParent() == null || !entity.getStrategy().getNameEn().equalsIgnoreCase(strategy.getParent().getNameEn()));
 
                 boolean descriptionSwitch = description != null && entity.getDescription() != null && isCoinvestments
                         && !entity.getDescription().equalsIgnoreCase(description);
@@ -216,43 +209,15 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
                 boolean investmentTypeSwitch = investmentType != null && entity.getType() != null
                         &&!entity.getType().getNameEn().equalsIgnoreCase(investmentType);
 
-                if((isPrivateEquityPartnerships && strategySwitch) || (investmentTypeSwitch && strategy != null)){
-                    // add total by strategy
-                    records.add(buildTotalRecord(strategy, totalSumsByStrategy));
-
-                    strategy = entity.getStrategy() != null ? entity.getStrategy().getNameEn(): null;
-                    totalSumsByStrategy = new Double[]{0.0, 0.0, 0.0};
-                }
-
-                if((isCoinvestments && descriptionSwitch) || (investmentTypeSwitch && description != null)){
-                    // add total by description
-                    records.add(buildTotalRecord(description, totalSumsByDescription));
-
-                    description = entity.getDescription();
-                    totalSumsByDescription= new Double[]{0.0, 0.0, 0.0};
-                }
-
-                if(investmentTypeSwitch){
-                    // investment type switch, add total by investment type
-                    totalSumsByInvestmentType[0] = null;
-                    records.add(buildTotalRecord(investmentType, totalSumsByInvestmentType));
-
-
-                    totalSumsByInvestmentType = new Double[]{0.0, 0.0, 0.0};
-                    investmentType = entity.getType().getNameEn();
-                }
 
                 if(investmentType == null || investmentTypeSwitch){
                     investmentType = entity.getType() != null ? entity.getType().getNameEn() : null;
-
                     records.add(new ConsolidatedReportRecordDto(investmentType, null, null, null, true, false));
-
-                    totalInvestmentsNumber ++;
                 }
 
                 if(isPrivateEquityPartnerships && (strategy == null || strategySwitch)){
-                    strategy = entity.getStrategy() != null ? entity.getStrategy().getNameEn() : null;
-                    records.add(new ConsolidatedReportRecordDto(strategy, null, null, null, true, false));
+                    strategy = entity.getStrategy();
+                    records.add(new ConsolidatedReportRecordDto(strategy != null ? strategy.getNameEn() : null, null, null, null, true, false));
                 }
 
                 if(isCoinvestments && (description == null || descriptionSwitch)){
@@ -260,59 +225,163 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
                     records.add(new ConsolidatedReportRecordDto(description, null, null, null, true, false));
                 }
 
-
-                // values
-                Double[] values = new Double[]{entity.getCapitalCommitments() != null ? entity.getCapitalCommitments().doubleValue() : null,
-                        entity.getNetCost() != null ? entity.getNetCost().doubleValue() : null,
-                        entity.getFairValue() != null ? entity.getFairValue().doubleValue() : null};
-                ConsolidatedReportRecordDto recordDto = new ConsolidatedReportRecordDto(entity.getName(), null, values, null, false, false);
-                records.add(recordDto);
-
-                // update total sums
-                updateTotalSums(totalSums, recordDto.getValues());
-
-                updateTotalSums(totalSumsByInvestmentType, recordDto.getValues());
-
-                if(entity.getType() != null && isPrivateEquityPartnerships) {
-                    updateTotalSums(totalSumsByStrategy, recordDto.getValues());
-                }
-
-                if(entity.getType() != null && isCoinvestments) {
-                    updateTotalSums(totalSumsByDescription, recordDto.getValues());
-                }
-
-            }
-            if(strategy != null){
-                records.add(buildTotalRecord(strategy, totalSumsByStrategy));
-            }
-            if(description != null){
-                records.add(buildTotalRecord(description, totalSumsByDescription));
-            }
-            if(investmentType != null){
-                totalSumsByInvestmentType[0] = null;
-                records.add(buildTotalRecord(investmentType, totalSumsByInvestmentType));
-
-            }
-            if(totalInvestmentsNumber > 1){
-                totalSums[0] = null;
-                records.add(buildTotalRecord("Private Equity Partnerships and Co-Investments", totalSums));
+                records.add(disassemble(entity));
             }
         }
         return records;
     }
 
-    private ConsolidatedReportRecordDto buildTotalRecord(String name, Double[] totalSums){
-        ConsolidatedReportRecordDto recordDtoTotal = new ConsolidatedReportRecordDto();
-        recordDtoTotal.setName("Total " + name);
-        recordDtoTotal.setValues(totalSums);
-        recordDtoTotal.setHeader(true);
-        recordDtoTotal.setTotalSum(true);
-        return recordDtoTotal;
+    private ConsolidatedReportRecordDto disassemble(ReportingPEScheduleInvestment entity){
+        // values
+        Double[] values = new Double[]{entity.getCapitalCommitments() != null ? entity.getCapitalCommitments().doubleValue() : null,
+                entity.getNetCost() != null ? entity.getNetCost().doubleValue() : null,
+                entity.getFairValue() != null ? entity.getFairValue().doubleValue() : null};
+
+        boolean isTotalStrategySum = isTotalTypeSum(entity.getName()) ||
+                entity.getStrategy() != null && entity.getName().equalsIgnoreCase("Total " + entity.getStrategy().getNameEn());
+
+        boolean isTotalDescriptionSum = isTotalTypeSum(entity.getName()) || entity.getName().equalsIgnoreCase("Total " + entity.getDescription());
+
+        ConsolidatedReportRecordDto recordDto = new ConsolidatedReportRecordDto(entity.getName(), null, values, null, isTotalStrategySum || isTotalDescriptionSum, isTotalStrategySum || isTotalDescriptionSum);
+
+        return recordDto;
     }
 
-    private void updateTotalSums(Double[] totalSums, Double[] values){
-        totalSums[0] += values[0] != null ? values[0] : 0.0;
-        totalSums[1] += values[1] != null ? values[1] : 0.0;
-        totalSums[2] += values[2] != null ? values[2] : 0.0;
+    private boolean isTotalTypeSum(String name){
+        return StringUtils.isNotEmpty(name) && (name.equalsIgnoreCase("Total Private Equity Partnerships") ||
+                name.equalsIgnoreCase("Total Co-Investments") ||
+                name.equalsIgnoreCase("Total Private Equity Partnerships and Co-Investments"));
     }
+
+    // TODO: refactor
+//    private List<ConsolidatedReportRecordDto> _disassembleList(List<ReportingPEScheduleInvestment> entities){
+//        List<ConsolidatedReportRecordDto> records = new ArrayList<>();
+//        if(entities != null){
+//            String investmentType = null;
+//            String strategy = null;
+//            String description = null;
+//
+//            Double[] totalSums = new Double[]{0.0, 0.0, 0.0};
+//            Double[] totalSumsByInvestmentType = new Double[]{0.0, 0.0, 0.0};
+//            Double[] totalSumsByStrategy = new Double[]{0.0, 0.0, 0.0};
+//            Double[] totalSumsByDescription = new Double[]{0.0, 0.0, 0.0};
+//
+//            int totalInvestmentsNumber = 0;
+//
+//            for(ReportingPEScheduleInvestment entity: entities){
+//
+//                boolean isPrivateEquityPartnerships = entity.getType() != null &&
+//                        entity.getType().getNameEn().equalsIgnoreCase(ReportingPEScheduleInvestment.TYPE_PE_PARTNERSHIPS);
+//
+//                boolean isCoinvestments = entity.getType() != null &&
+//                        entity.getType().getNameEn().equalsIgnoreCase(ReportingPEScheduleInvestment.TYPE_COINVESTMENTS);
+//
+//                boolean strategySwitch = strategy != null && entity.getStrategy() != null && isPrivateEquityPartnerships
+//                        && !entity.getStrategy().getNameEn().equalsIgnoreCase(strategy);
+//
+//                boolean descriptionSwitch = description != null && entity.getDescription() != null && isCoinvestments
+//                        && !entity.getDescription().equalsIgnoreCase(description);
+//
+//                boolean investmentTypeSwitch = investmentType != null && entity.getType() != null
+//                        &&!entity.getType().getNameEn().equalsIgnoreCase(investmentType);
+//
+//                if((isPrivateEquityPartnerships && strategySwitch) || (investmentTypeSwitch && strategy != null)){
+//                    // add total by strategy
+//                    records.add(buildTotalRecord(strategy, totalSumsByStrategy));
+//
+//                    strategy = entity.getStrategy() != null ? entity.getStrategy().getNameEn(): null;
+//                    totalSumsByStrategy = new Double[]{0.0, 0.0, 0.0};
+//                }
+//
+//                if((isCoinvestments && descriptionSwitch) || (investmentTypeSwitch && description != null)){
+//                    // add total by description
+//                    records.add(buildTotalRecord(description, totalSumsByDescription));
+//
+//                    description = entity.getDescription();
+//                    totalSumsByDescription= new Double[]{0.0, 0.0, 0.0};
+//                }
+//
+//                if(investmentTypeSwitch){
+//                    // investment type switch, add total by investment type
+//                    totalSumsByInvestmentType[0] = null;
+//                    records.add(buildTotalRecord(investmentType, totalSumsByInvestmentType));
+//
+//
+//                    totalSumsByInvestmentType = new Double[]{0.0, 0.0, 0.0};
+//                    investmentType = entity.getType().getNameEn();
+//                }
+//
+//                if(investmentType == null || investmentTypeSwitch){
+//                    investmentType = entity.getType() != null ? entity.getType().getNameEn() : null;
+//
+//                    records.add(new ConsolidatedReportRecordDto(investmentType, null, null, null, true, false));
+//
+//                    totalInvestmentsNumber ++;
+//                }
+//
+//                if(isPrivateEquityPartnerships && (strategy == null || strategySwitch)){
+//                    strategy = entity.getStrategy() != null ? entity.getStrategy().getNameEn() : null;
+//                    records.add(new ConsolidatedReportRecordDto(strategy, null, null, null, true, false));
+//                }
+//
+//                if(isCoinvestments && (description == null || descriptionSwitch)){
+//                    description = entity.getDescription();
+//                    records.add(new ConsolidatedReportRecordDto(description, null, null, null, true, false));
+//                }
+//
+//
+//                // values
+//                Double[] values = new Double[]{entity.getCapitalCommitments() != null ? entity.getCapitalCommitments().doubleValue() : null,
+//                        entity.getNetCost() != null ? entity.getNetCost().doubleValue() : null,
+//                        entity.getFairValue() != null ? entity.getFairValue().doubleValue() : null};
+//                ConsolidatedReportRecordDto recordDto = new ConsolidatedReportRecordDto(entity.getName(), null, values, null, false, false);
+//                records.add(recordDto);
+//
+//                // update total sums
+//                updateTotalSums(totalSums, recordDto.getValues());
+//
+//                updateTotalSums(totalSumsByInvestmentType, recordDto.getValues());
+//
+//                if(entity.getType() != null && isPrivateEquityPartnerships) {
+//                    updateTotalSums(totalSumsByStrategy, recordDto.getValues());
+//                }
+//
+//                if(entity.getType() != null && isCoinvestments) {
+//                    updateTotalSums(totalSumsByDescription, recordDto.getValues());
+//                }
+//
+//            }
+//            if(strategy != null){
+//                records.add(buildTotalRecord(strategy, totalSumsByStrategy));
+//            }
+//            if(description != null){
+//                records.add(buildTotalRecord(description, totalSumsByDescription));
+//            }
+//            if(investmentType != null){
+//                totalSumsByInvestmentType[0] = null;
+//                records.add(buildTotalRecord(investmentType, totalSumsByInvestmentType));
+//
+//            }
+//            if(totalInvestmentsNumber > 1){
+//                totalSums[0] = null;
+//                records.add(buildTotalRecord("Private Equity Partnerships and Co-Investments", totalSums));
+//            }
+//        }
+//        return records;
+//    }
+//
+//    private ConsolidatedReportRecordDto buildTotalRecord(String name, Double[] totalSums){
+//        ConsolidatedReportRecordDto recordDtoTotal = new ConsolidatedReportRecordDto();
+//        recordDtoTotal.setName("Total " + name);
+//        recordDtoTotal.setValues(totalSums);
+//        recordDtoTotal.setHeader(true);
+//        recordDtoTotal.setTotalSum(true);
+//        return recordDtoTotal;
+//    }
+//
+//    private void updateTotalSums(Double[] totalSums, Double[] values){
+//        totalSums[0] += values[0] != null ? values[0] : 0.0;
+//        totalSums[1] += values[1] != null ? values[1] : 0.0;
+//        totalSums[2] += values[2] != null ? values[2] : 0.0;
+//    }
 }

@@ -1,6 +1,7 @@
 package kz.nicnbk.service.impl.reporting.privateequity;
 
 import kz.nicnbk.common.service.util.ArrayUtils;
+import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.api.lookup.PEBalanceTypeRepository;
 import kz.nicnbk.repo.api.reporting.privateequity.ReportingPEStatementBalanceRepository;
 import kz.nicnbk.repo.model.reporting.PeriodicReport;
@@ -71,7 +72,7 @@ public class PEStatementBalanceServiceImpl implements PEStatementBalanceService 
             }
         }
 
-        if(entity.getType() == null){
+        if(entity.getType() == null && !isTotalTypeSum(entity.getName())){
             logger.error("Balance record type could not be determined for record '" + entity.getName() + "'. Expected values are 'Assets', 'Liabilities', etc.  Check for possible spaces in names.");
             throw new ExcelFileParseException("Balance record type could not be determined for record '" + entity.getName() + "'. Expected values are 'Assets', 'Liabilities', etc.  Check for possible spaces in names.");
         }
@@ -123,31 +124,22 @@ public class PEStatementBalanceServiceImpl implements PEStatementBalanceService 
         return result;
     }
 
-    // TODO: refactor
+
     private List<ConsolidatedReportRecordDto> disassembleList(List<ReportingPEStatementBalance> entities){
         List<ConsolidatedReportRecordDto> records = new ArrayList<>();
-        if(entities != null && !entities.isEmpty()){
+        if(entities != null){
             PEBalanceType currentType = null;
-
-            Map<String, Double[]> totalSums = new HashMap<>();
-
-            for(ReportingPEStatementBalance entity: entities) {
+            Set<String> types = new HashSet<>();
+            for(ReportingPEStatementBalance entity: entities){
 
                 boolean balanceTypeSwitch = currentType != null && entity.getType() != null
                         && !entity.getType().getCode().equalsIgnoreCase(currentType.getCode());
 
-                // add total by type
-                if(balanceTypeSwitch) {
-                    records.add(buildTotalRecord(currentType.getNameEn(), totalSums.get(currentType.getNameEn())));
-                    //totalSums.put(currentType.getNameEn(), null);
-                }
-
                 // add headers by type
                 if(balanceTypeSwitch || currentType == null){
                     // check if need header
-                    Set<String> keySet = totalSums.keySet();
                     List<String> headers = new ArrayList<>();
-                    if(keySet == null || !keySet.contains(entity.getType().getNameEn())){
+                    if(types == null || !types.contains(entity.getType().getNameEn())){
                         // add headers
                         PEBalanceType parent = entity.getType();
                         while(parent != null){
@@ -157,60 +149,132 @@ public class PEStatementBalanceServiceImpl implements PEStatementBalanceService 
 
                         for(int i = headers.size() - 1; i >= 0; i--){
                             records.add(new ConsolidatedReportRecordDto(headers.get(i), null, null, null, true, false));
-                            totalSums.put(headers.get(i), new Double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0});
+                            types.add(headers.get(i));
                         }
                     }
                 }
 
                 currentType = entity.getType();
-                // add entity values to output
-                Double total = null;
-                if(entity.getTranche() == 1) {
-                    total = entity.getTarragonMFShareNICK() != null && entity.getTarragonLP() != null ?
-                            (entity.getTarragonMFShareNICK().doubleValue() + entity.getTarragonLP().doubleValue()) : null;
-                }else if(entity.getTranche() == 2){
-                    total = entity.getTarragonMFTotal() != null && entity.getTarragonLP() != null ?
-                            (entity.getTarragonMFTotal().doubleValue() + entity.getTarragonLP().doubleValue()) : null;
-                }
-
-                Double trancheConsolidated = total != null && entity.getConsolidationAdjustments() != null ?
-                        total + entity.getConsolidationAdjustments().doubleValue() : null;
-                Double[] values = {entity.getTarragonMFTotal(), entity.getTarragonMFShareGP(), entity.getTarragonMFShareNICK(), entity.getTarragonLP(),
-                        total, entity.getConsolidationAdjustments(), trancheConsolidated};
-                records.add(new ConsolidatedReportRecordDto(entity.getName(), null, values, null, false, false));
-
-                // add entity values to sums by type
-                PEBalanceType type = entity.getType();
-                while(type != null){
-                    Double[] sums = totalSums.get(type.getNameEn());
-                    if (sums != null){
-                        ArrayUtils.addArrayValues(sums, values);
-                    }
-                    type = type.getParent();
-                }
+                records.add(disassemble(entity));
             }
-
-            // ADD TOTAL LIABILITIES AND PARTNERS CAPITAL
-            // TODO: refactor string literals
-            if(totalSums.get("Liabilities") != null && totalSums.get("Partner's capital") != null){
-                Double[] sumArray = new Double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-                ArrayUtils.addArrayValues(sumArray, totalSums.get("Liabilities"));
-                ArrayUtils.addArrayValues(sumArray, totalSums.get("Partner's capital"));
-                records.add(new ConsolidatedReportRecordDto("Total liabilities and partner's capital", null, sumArray, null, true, true));
-            }
-
         }
         return records;
     }
 
+    private ConsolidatedReportRecordDto disassemble(ReportingPEStatementBalance entity){
+        // values
+        Double total = null;
+        if(entity.getTranche() == 1) {
+            total = entity.getTarragonMFShareNICK() != null && entity.getTarragonLP() != null ?
+                    (entity.getTarragonMFShareNICK().doubleValue() + entity.getTarragonLP().doubleValue()) : null;
+        }else if(entity.getTranche() == 2){
+            total = entity.getTarragonMFTotal() != null && entity.getTarragonLP() != null ?
+                    (entity.getTarragonMFTotal().doubleValue() + entity.getTarragonLP().doubleValue()) : null;
+        }
 
-    // TODO: refactor common
-    private ConsolidatedReportRecordDto buildTotalRecord(String name, Double[] totalSums){
-        ConsolidatedReportRecordDto recordDtoTotal = new ConsolidatedReportRecordDto();
-        recordDtoTotal.setName("Total " + name);
-        recordDtoTotal.setValues(totalSums);
-        recordDtoTotal.setHeader(true);
-        recordDtoTotal.setTotalSum(true);
-        return recordDtoTotal;
+        Double trancheConsolidated = total != null && entity.getConsolidationAdjustments() != null ?
+                total + entity.getConsolidationAdjustments().doubleValue() : null;
+        Double[] values = {entity.getTarragonMFTotal(), entity.getTarragonMFShareGP(), entity.getTarragonMFShareNICK(), entity.getTarragonLP(),
+                total, entity.getConsolidationAdjustments(), trancheConsolidated};
+
+        boolean isTotalValue = entity.getType() != null && entity.getName().equalsIgnoreCase("Total " + entity.getType().getNameEn());
+
+        ConsolidatedReportRecordDto recordDto = new ConsolidatedReportRecordDto(entity.getName(), null, values, null, isTotalValue, isTotalValue);
+        return recordDto;
     }
+
+    private boolean isTotalTypeSum(String name){
+        return StringUtils.isNotEmpty(name) && (name.equalsIgnoreCase("Total liabilities and partner's capital"));
+    }
+
+    // TODO: refactor
+//    private List<ConsolidatedReportRecordDto> disassembleList(List<ReportingPEStatementBalance> entities){
+//        List<ConsolidatedReportRecordDto> records = new ArrayList<>();
+//        if(entities != null && !entities.isEmpty()){
+//            PEBalanceType currentType = null;
+//
+//            Map<String, Double[]> totalSums = new HashMap<>();
+//
+//            for(ReportingPEStatementBalance entity: entities) {
+//
+//                boolean balanceTypeSwitch = currentType != null && entity.getType() != null
+//                        && !entity.getType().getCode().equalsIgnoreCase(currentType.getCode());
+//
+//                // add total by type
+//                if(balanceTypeSwitch) {
+//                    records.add(buildTotalRecord(currentType.getNameEn(), totalSums.get(currentType.getNameEn())));
+//                    //totalSums.put(currentType.getNameEn(), null);
+//                }
+//
+//                // add headers by type
+//                if(balanceTypeSwitch || currentType == null){
+//                    // check if need header
+//                    Set<String> keySet = totalSums.keySet();
+//                    List<String> headers = new ArrayList<>();
+//                    if(keySet == null || !keySet.contains(entity.getType().getNameEn())){
+//                        // add headers
+//                        PEBalanceType parent = entity.getType();
+//                        while(parent != null){
+//                            headers.add(parent.getNameEn());
+//                            parent = parent.getParent();
+//                        }
+//
+//                        for(int i = headers.size() - 1; i >= 0; i--){
+//                            records.add(new ConsolidatedReportRecordDto(headers.get(i), null, null, null, true, false));
+//                            totalSums.put(headers.get(i), new Double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0});
+//                        }
+//                    }
+//                }
+//
+//                currentType = entity.getType();
+//                // add entity values to output
+//                Double total = null;
+//                if(entity.getTranche() == 1) {
+//                    total = entity.getTarragonMFShareNICK() != null && entity.getTarragonLP() != null ?
+//                            (entity.getTarragonMFShareNICK().doubleValue() + entity.getTarragonLP().doubleValue()) : null;
+//                }else if(entity.getTranche() == 2){
+//                    total = entity.getTarragonMFTotal() != null && entity.getTarragonLP() != null ?
+//                            (entity.getTarragonMFTotal().doubleValue() + entity.getTarragonLP().doubleValue()) : null;
+//                }
+//
+//                Double trancheConsolidated = total != null && entity.getConsolidationAdjustments() != null ?
+//                        total + entity.getConsolidationAdjustments().doubleValue() : null;
+//                Double[] values = {entity.getTarragonMFTotal(), entity.getTarragonMFShareGP(), entity.getTarragonMFShareNICK(), entity.getTarragonLP(),
+//                        total, entity.getConsolidationAdjustments(), trancheConsolidated};
+//                records.add(new ConsolidatedReportRecordDto(entity.getName(), null, values, null, false, false));
+//
+//                // add entity values to sums by type
+//                PEBalanceType type = entity.getType();
+//                while(type != null){
+//                    Double[] sums = totalSums.get(type.getNameEn());
+//                    if (sums != null){
+//                        ArrayUtils.addArrayValues(sums, values);
+//                    }
+//                    type = type.getParent();
+//                }
+//            }
+//
+//            // ADD TOTAL LIABILITIES AND PARTNERS CAPITAL
+//            // TODO: refactor string literals
+//            if(totalSums.get("Liabilities") != null && totalSums.get("Partner's capital") != null){
+//                Double[] sumArray = new Double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+//                ArrayUtils.addArrayValues(sumArray, totalSums.get("Liabilities"));
+//                ArrayUtils.addArrayValues(sumArray, totalSums.get("Partner's capital"));
+//                records.add(new ConsolidatedReportRecordDto("Total liabilities and partner's capital", null, sumArray, null, true, true));
+//            }
+//
+//        }
+//        return records;
+//    }
+//
+//
+//    // TODO: refactor common
+//    private ConsolidatedReportRecordDto buildTotalRecord(String name, Double[] totalSums){
+//        ConsolidatedReportRecordDto recordDtoTotal = new ConsolidatedReportRecordDto();
+//        recordDtoTotal.setName("Total " + name);
+//        recordDtoTotal.setValues(totalSums);
+//        recordDtoTotal.setHeader(true);
+//        recordDtoTotal.setTotalSum(true);
+//        return recordDtoTotal;
+//    }
 }
