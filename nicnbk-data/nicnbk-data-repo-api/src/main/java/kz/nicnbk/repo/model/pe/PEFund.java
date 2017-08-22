@@ -21,6 +21,7 @@ public class PEFund extends CreateUpdateBaseEntity {
     //FUND SUMMARY
     private String fundName;
     private String status;
+    private String nicStatus;
     private Currency fundCurrency;
     private int vintage;
     private double fundSize;
@@ -43,17 +44,19 @@ public class PEFund extends CreateUpdateBaseEntity {
     private String nonsuitableReason;
 
     //KEY FUND STATISTICS
-//    private int numberOfInvestments;
-//    private double investedAmount;
-//    private double realized;
-//    private double unrealized;
-//    private double dpi;
-//    private double netIrr;
-//    private double netTvpi; // MOIC
-//    private double grossIrr;
-//    private double grossTvpi;
+    private Integer numberOfInvestments;
+    private Double investedAmount;
+    private Double realized;
+    private Double unrealized;
+    private Double dpi;
+    private Double netIrr;
+    private Double netTvpi; // MOIC
+    private Double grossIrr;
+    private Double grossTvpi;
     private Date asOfDate;
-    private PEBenchmark benchmark;
+    private Double benchmarkNetIrr;
+    private Double benchmarkNetTvpi;
+    private String benchmarkName;
     private PEFirm firm;
 
     // Descriptive data
@@ -95,6 +98,15 @@ public class PEFund extends CreateUpdateBaseEntity {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    @Column(name = "nic_status")
+    public String getNicStatus() {
+        return nicStatus;
+    }
+
+    public void setNicStatus(String nicStatus) {
+        this.nicStatus = nicStatus;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -257,86 +269,86 @@ public class PEFund extends CreateUpdateBaseEntity {
         this.geography = geography;
     }
 
-//    @Column(name = "number_of_investments")
-//    public int getNumberOfInvestments() {
-//        return numberOfInvestments;
-//    }
-//
-//    public void setNumberOfInvestments(int numberOfInvestments) {
-//        this.numberOfInvestments = numberOfInvestments;
-//    }
-//
-//    @Column(name = "invested_amount")
-//    public double getInvestedAmount() {
-//        return investedAmount;
-//    }
-//
-//    public void setInvestedAmount(double investedAmount) {
-//        this.investedAmount = investedAmount;
-//    }
-//
-//    @Column(name = "realized_amount")
-//    public double getRealized() {
-//        return realized;
-//    }
-//
-//    public void setRealized(double realized) {
-//        this.realized = realized;
-//    }
-//
-//    @Column(name = "unrealized_amount")
-//    public double getUnrealized() {
-//        return unrealized;
-//    }
-//
-//    public void setUnrealized(double unrealized) {
-//        this.unrealized = unrealized;
-//    }
-//
-//    @Column(name = "dpi")
-//    public double getDpi() {
-//        return dpi;
-//    }
-//
-//    public void setDpi(double dpi) {
-//        this.dpi = dpi;
-//    }
-//
-//    @Column(name = "net_irr")
-//    public double getNetIrr() {
-//        return netIrr;
-//    }
-//
-//    public void setNetIrr(double netIrr) {
-//        this.netIrr = netIrr;
-//    }
-//
-//    @Column(name = "net_tvpi")
-//    public double getNetTvpi() {
-//        return netTvpi;
-//    }
-//
-//    public void setNetTvpi(double netTvpi) {
-//        this.netTvpi = netTvpi;
-//    }
-//
-//    @Column(name = "gross_irr")
-//    public double getGrossIrr() {
-//        return grossIrr;
-//    }
-//
-//    public void setGrossIrr(double gross_irr) {
-//        this.grossIrr = gross_irr;
-//    }
-//
-//    @Column(name = "gross_tvpi")
-//    public double getGrossTvpi() {
-//        return grossTvpi;
-//    }
-//
-//    public void setGrossTvpi(double grossTvpi) {
-//        this.grossTvpi = grossTvpi;
-//    }
+    @Column(name = "number_of_investments")
+    public Integer getNumberOfInvestments() {
+        return numberOfInvestments;
+    }
+
+    public void setNumberOfInvestments(Integer numberOfInvestments) {
+        this.numberOfInvestments = numberOfInvestments;
+    }
+
+    @Column(name = "invested_amount")
+    public Double getInvestedAmount() {
+        return investedAmount;
+    }
+
+    public void setInvestedAmount(Double investedAmount) {
+        this.investedAmount = investedAmount;
+    }
+
+    @Column(name = "realized_amount")
+    public Double getRealized() {
+        return realized;
+    }
+
+    public void setRealized(Double realized) {
+        this.realized = realized;
+    }
+
+    @Column(name = "unrealized_amount")
+    public Double getUnrealized() {
+        return unrealized;
+    }
+
+    public void setUnrealized(Double unrealized) {
+        this.unrealized = unrealized;
+    }
+
+    @Column(name = "dpi")
+    public Double getDpi() {
+        return dpi;
+    }
+
+    public void setDpi(Double dpi) {
+        this.dpi = dpi;
+    }
+
+    @Column(name = "net_irr")
+    public Double getNetIrr() {
+        return netIrr;
+    }
+
+    public void setNetIrr(Double netIrr) {
+        this.netIrr = netIrr;
+    }
+
+    @Column(name = "net_tvpi")
+    public Double getNetTvpi() {
+        return netTvpi;
+    }
+
+    public void setNetTvpi(Double netTvpi) {
+        this.netTvpi = netTvpi;
+    }
+
+    @Column(name = "gross_irr")
+    public Double getGrossIrr() {
+        return grossIrr;
+    }
+
+    public void setGrossIrr(Double gross_irr) {
+        this.grossIrr = gross_irr;
+    }
+
+    @Column(name = "gross_tvpi")
+    public Double getGrossTvpi() {
+        return grossTvpi;
+    }
+
+    public void setGrossTvpi(Double grossTvpi) {
+        this.grossTvpi = grossTvpi;
+    }
 
     @Column(name = "as_of_date")
     public Date getAsOfDate() {
@@ -347,14 +359,31 @@ public class PEFund extends CreateUpdateBaseEntity {
         this.asOfDate = asOfDate;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fund_benchmark_id")
-    public PEBenchmark getPEBenchmark() {
-        return benchmark;
+    @Column(name = "benchmark_net_irr")
+    public Double getBenchmarkNetIrr() {
+        return benchmarkNetIrr;
     }
 
-    public void setPEBenchmark(PEBenchmark PEBenchmark) {
-        this.benchmark = benchmark;
+    public void setBenchmarkNetIrr(Double benchmarkNetIrr) {
+        this.benchmarkNetIrr = benchmarkNetIrr;
+    }
+
+    @Column(name = "benchmark_net_tvpi")
+    public Double getBenchmarkNetTvpi() {
+        return benchmarkNetTvpi;
+    }
+
+    public void setBenchmarkNetTvpi(Double benchmarkNetTvpi) {
+        this.benchmarkNetTvpi = benchmarkNetTvpi;
+    }
+
+    @Column(name = "benchmark_name")
+    public String getBenchmarkName() {
+        return benchmarkName;
+    }
+
+    public void setBenchmarkName(String benchmarkName) {
+        this.benchmarkName = benchmarkName;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
