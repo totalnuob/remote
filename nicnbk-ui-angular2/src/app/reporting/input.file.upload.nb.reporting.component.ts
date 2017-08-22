@@ -101,6 +101,7 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     this.fileTarragonScheduleInvestment = null;
                     // set file id
                     this.report.tarragonScheduleInvestmentFileId = res.fileId;
+                    this.report.tarragonScheduleInvestmentFileName = res.fileName;
                     this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - Schedule of Investments", null);
                 },
                 error => {
@@ -117,6 +118,7 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     this.fileTarragonStatementAssets = null;
                     // set file id
                     this.report.tarragonStatementAssetsFileId = res.fileId;
+                    this.report.tarragonStatementAssetsFileName = res.fileName;
                     this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - Statement of Assets, Liabilities and Partners Capital", null);
                 },
                 (error) => {
@@ -132,6 +134,7 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     this.fileTarragonStatementCashflows = null;
                     // set file id
                     this.report.tarragonStatementCashflowsFileId = res.fileId;
+                    this.report.tarragonStatementCashflowsFileName = res.fileName;
                     this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - Statment of Cashflows", null);
                 },
                 error => {
@@ -147,6 +150,7 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     this.fileTarragonStatementChanges = null;
                     // set file id
                     this.report.tarragonStatementChangesFileId = res.fileId;
+                    this.report.tarragonStatementChangesFileName = res.fileName;
                     this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - Statement of Changes", null);
                 },
                 error => {
@@ -162,6 +166,7 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     this.fileSingularityBSTrancheA = null;
                     // set file id
                     this.report.singularityBSTrancheAFileId = res.fileId;
+                    this.report.singularityBSTrancheAFileName = res.fileName;
                     this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - BS Singular Tranche A", null);
                 },
                 error => {
@@ -177,6 +182,7 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     this.fileSingularityIMDRTrancheA = null;
                     // set file id
                     this.report.singularityIMDRTrancheAFileId = res.fileId;
+                    this.report.singularityIMDRTrancheAFileName = res.fileName;
                     this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - IMDR Singular Tranche A", null);
                 },
                 error => {
@@ -192,6 +198,7 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     this.fileSingularityPARTrancheA = null;
                     // set file id
                     this.report.singularityPARTrancheAFileId = res.fileId;
+                    this.report.singularityPARTrancheAFileName = res.fileName;
                     this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - PAR Singular Tranche A", null);
                 },
                 error => {
@@ -207,6 +214,7 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     this.fileSingularityISTrancheA = null;
                     // set file id
                     this.report.singularityISTrancheAFileId = res.fileId;
+                    this.report.singularityISTrancheAFileName = res.fileName;
                     this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - IS Singular Tranche A", null);
                 },
                 error => {
@@ -222,6 +230,7 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     this.fileSingularityBSTrancheB = null;
                     // set file id
                     this.report.singularityBSTrancheBFileId = res.fileId;
+                    this.report.singularityBSTrancheBFileName = res.fileName;
                     this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - BS Singular Tranche B", null);
                 },
                 error => {
@@ -237,6 +246,7 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     this.fileSingularityIMDRTrancheB = null;
                     // set file id
                     this.report.singularityIMDRTrancheBFileId = res.fileId;
+                    this.report.singularityIMDRTrancheBFileName = res.fileName;
                     this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - IMDR Singular Tranche B", null);
                 },
                 error => {
@@ -252,6 +262,7 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     this.fileSingularityPARTrancheB = null;
                     // set file id
                     this.report.singularityPARTrancheBFileId = res.fileId;
+                    this.report.singularityPARTrancheBFileName = res.fileName;
                     this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - PAR Singular Tranche B", null);
                 },
                 error => {
@@ -267,6 +278,7 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     this.fileSingularityISTrancheB = null;
                     // set file id
                     this.report.singularityISTrancheBFileId = res.fileId;
+                    this.report.singularityISTrancheBFileName = res.fileName;
                     this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - IS Singular Tranche B", null);
                 },
                 error => {
@@ -275,6 +287,34 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     this.fileSingularityISTrancheB = null;
                     this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
+        }
+    }
+
+    clearFile(fileType){
+        if(fileType === 'tarragon_schedule_investment'){
+            this.fileTarragonScheduleInvestment = null;
+        } else if(fileType === 'tarragon_statement_assets'){
+            this.fileTarragonStatementAssets = null;
+        } else if(fileType === 'tarragon_statement_cashflows'){
+            this.fileTarragonStatementCashflows = null;
+        } else if(fileType === 'tarragon_statement_changes'){
+            this.fileTarragonStatementChanges = null;
+        } else if(fileType === 'singularity_bs_a'){
+            this.fileSingularityBSTrancheA = null;
+        } else if(fileType === 'singularity_imdr_a'){
+            this.fileSingularityIMDRTrancheA = null;
+        } else if(fileType === 'singularity_par_a'){
+            this.fileSingularityPARTrancheA = null;
+        } else if(fileType === 'singularity_is_a'){
+            this.fileSingularityISTrancheA = null;
+        } else if(fileType === 'singularity_bs_b'){
+            this.fileSingularityBSTrancheB = null;
+        } else if(fileType === 'singularity_imdr_b'){
+            this.fileSingularityIMDRTrancheB = null;
+        } else if(fileType === 'singularity_par_b'){
+            this.fileSingularityPARTrancheB = null;
+        } else if(fileType === 'singularity_is_b'){
+            this.fileSingularityISTrancheB = null;
         }
     }
 

@@ -72,8 +72,8 @@ public class PEStatementBalanceServiceImpl implements PEStatementBalanceService 
         }
 
         if(entity.getType() == null){
-            logger.error("Balance record type could not be determined for record '" + entity.getName() + "'. Expected values are 'Assets', 'Liabilities', etc.");
-            throw new ExcelFileParseException("Balance record type could not be determined for record '" + entity.getName() + "'. Expected values are 'Assets', 'Liabilities', etc.");
+            logger.error("Balance record type could not be determined for record '" + entity.getName() + "'. Expected values are 'Assets', 'Liabilities', etc.  Check for possible spaces in names.");
+            throw new ExcelFileParseException("Balance record type could not be determined for record '" + entity.getName() + "'. Expected values are 'Assets', 'Liabilities', etc.  Check for possible spaces in names.");
         }
 
         return entity;
@@ -192,10 +192,11 @@ public class PEStatementBalanceServiceImpl implements PEStatementBalanceService 
 
             // ADD TOTAL LIABILITIES AND PARTNERS CAPITAL
             // TODO: refactor string literals
-            if(totalSums.get("Liabilities") != null && totalSums.get("Partners' capital") != null){
-                Double[] totalValues = totalSums.get("Liabilities");
-                ArrayUtils.addArrayValues(totalValues, totalSums.get("Partners' capital"));
-                records.add(new ConsolidatedReportRecordDto("Total liabilities and partners' capital", null, totalValues, null, true, true));
+            if(totalSums.get("Liabilities") != null && totalSums.get("Partner's capital") != null){
+                Double[] sumArray = new Double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+                ArrayUtils.addArrayValues(sumArray, totalSums.get("Liabilities"));
+                ArrayUtils.addArrayValues(sumArray, totalSums.get("Partner's capital"));
+                records.add(new ConsolidatedReportRecordDto("Total liabilities and partner's capital", null, sumArray, null, true, true));
             }
 
         }

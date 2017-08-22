@@ -23,6 +23,9 @@ public class ConsolidatedReportRecordHolderDto implements BaseDto {
     // Statement of Cashflows
     private List<ConsolidatedReportRecordDto> cashflows;
 
+    // Statement of Changes
+    private List<ConsolidatedReportRecordDto> changes;
+
     private PeriodicReportDto report;
 
     public List<ConsolidatedReportRecordDto> getTrancheA() {
@@ -81,6 +84,14 @@ public class ConsolidatedReportRecordHolderDto implements BaseDto {
         this.cashflows = cashflows;
     }
 
+    public List<ConsolidatedReportRecordDto> getChanges() {
+        return changes;
+    }
+
+    public void setChanges(List<ConsolidatedReportRecordDto> changes) {
+        this.changes = changes;
+    }
+
     public PeriodicReportDto getReport() {
         return report;
     }
@@ -110,6 +121,9 @@ public class ConsolidatedReportRecordHolderDto implements BaseDto {
         }
         if(other.cashflows != null && !other.cashflows.isEmpty()){
             this.cashflows = other.cashflows;
+        }
+        if(other.changes != null && !other.changes.isEmpty()){
+            this.changes = other.changes;
         }
     }
 }

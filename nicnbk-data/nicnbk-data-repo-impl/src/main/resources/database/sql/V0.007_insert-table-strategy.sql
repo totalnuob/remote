@@ -10,6 +10,7 @@
   INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type, parent_id) VALUES(10, 'CFB_GBP', 'Corporate Finance/ Buyout - GBP', '', '' , 1, 7);
   INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type, parent_id) VALUES(11, 'SPEC_S', 'Special Situations', '', '' , 1, null);
   INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type, parent_id) VALUES(12, 'GROW_EQ', 'Growth Equity', '', '' , 1, 11);
+  INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type, parent_id) VALUES(13, 'VC', 'Venture Capital', '', '' , 1, null);
 
   INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type, parent_id) VALUES(21, 'EQUITY', 'Equity', '', '', 2, null);
   INSERT INTO strategy(id, code, name_en, name_ru, name_kz, group_type, parent_id) VALUES(22, 'EVENT', 'Event Driven', '', '', 2, null);

@@ -6,7 +6,7 @@
                     <span><a [routerLink]="['/reporting/NBReporting']">NB Reporting</a></span>
                 </li>
                 <li>
-                    <span *ngIf="report != null"><a [routerLink]="['/reporting/NBReporting/inputFileUpload/17']">{{getReportDateShortFormatted(report.reportDate)}}</a></span>
+                    <span *ngIf="report != null"><a [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">{{getReportDateShortFormatted(report.reportDate)}}</a></span>
                 </li>
                 <li class="active">Statement of Cashflows</li>
             </ol>
@@ -36,7 +36,7 @@
                 <td>Total</td>
             </tr>
             <tr *ngFor="let record of records.cashflows">
-                <td [style.font-weight]="record.header ? 'bold': ''" [align]="record.totalSum ? 'right' : 'left'">{{record.name}}</td>
+                <td [style.padding-left]="15*record.level + 'px'" [style.font-weight]="record.header ? 'bold': ''">{{record.name}}</td>
                 <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[0] != null ? (record.values[0] | number:'1.0-0'): ''}}</td>
                 <td>&nbsp;</td>
                 <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[1] != null ? (record.values[1] | number:'1.0-0'): ''}}</td>

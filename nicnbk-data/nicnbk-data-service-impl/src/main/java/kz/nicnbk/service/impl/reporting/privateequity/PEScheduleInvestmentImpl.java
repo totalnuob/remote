@@ -65,7 +65,7 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
 
         // investment type
         for(String classification: dto.getClassifications()){
-            if(!classification.equalsIgnoreCase("Private Equity Partnerships and Co-Investments")){
+            if(classification != null && !classification.equalsIgnoreCase("Private Equity Partnerships and Co-Investments")){
                 if(classification != null) {
                     PEInvestmentType investmentType = this.peInvestmentTypeRepository.findByNameEn(classification.trim());
                     if(investmentType != null){
@@ -77,16 +77,29 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
         }
         if(entity.getType() == null){
             logger.error("Schedule of investment record type could not be determined for record '" + entity.getName() +
-                    "'. Expected values are 'Private Equity Partnerships', 'CoInvestments', etc.");
+                    "'. Expected values are 'Private Equity Partnerships', 'CoInvestments', etc.  Check for possible spaces in names.");
             throw new ExcelFileParseException("Schedule of investment record type could not be determined for record '" + entity.getName() +
-                    "'. Expected values are 'Private Equity Partnerships', 'CoInvestments', etc.");
+                    "'. Expected values are 'Private Equity Partnerships', 'CoInvestments', etc.  Check for possible spaces in names.");
         }
 
         // strategy
+        String currencyName = null;
         if(entity.getType() != null && entity.getType().getNameEn().equalsIgnoreCase(ReportingPEScheduleInvestment.TYPE_PE_PARTNERSHIPS)) {
             for(String classification: dto.getClassifications()){
                 if(classification != null && !classification.equalsIgnoreCase("Private Equity Partnerships and Co-Investments")
                         && !classification.equalsIgnoreCase(entity.getType().getNameEn())){
+                    // strategy name cut off CURRENCY
+//                    if(classification.trim().endsWith(" - USD") || classification.trim().endsWith(" - GBP")){
+//                        classification = classification.substring(0, classification.length() - 6);
+//                        currencyName = "USD";
+//                    }else if(classification.trim().endsWith(" - GBP")){
+//                        classification = classification.substring(0, classification.length() - 6);
+//                        currencyName = "GBP";
+//                    }else if(classification.trim().endsWith(" - Euro")){
+//                        classification = classification.substring(0, classification.length() - 7);
+//                        currencyName = "EUR";
+//                    }
+
                     Strategy strategy = this.strategyRepository.findByNameEnAndGroupType(classification.trim(), Strategy.TYPE_PRIVATE_EQUITY);
                     if(strategy != null){
                         entity.setStrategy(strategy);
@@ -94,7 +107,7 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
                 }
             }
         }
-        if(entity.getType().getCode().equalsIgnoreCase("PE_PARTN") && entity.getStrategy() == null){
+        if(entity.getType() != null && entity.getType().getCode().equalsIgnoreCase("PE_PARTN") && entity.getStrategy() == null){
             logger.error("Schedule of investment record strategy could not be determined for record '" + entity.getName() + "'");
             throw new ExcelFileParseException("Schedule of investment record strategy could not be determined for record '" + entity.getName() + "'");
         }
@@ -117,6 +130,10 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
             Currency currency = this.currencyRepository.findByCode(dto.getCurrency());
             entity.setCurrency(currency);
         }
+//        else if(currencyName != null){
+//            Currency currency = this.currencyRepository.findByCode(currencyName);
+//            entity.setCurrency(currency);
+//        }
 
         return entity;
     }

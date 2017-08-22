@@ -102,6 +102,7 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
 
             // parse file
             FileUploadResultDto result = this.periodicReportService.parseFile(fileType, filesDto, reportId);
+            result.setFileName(filesDto.getFileName());
             result.setFileId(savedFile.getId());
 
             if(result != null && result.getStatus() == StatusResultType.SUCCESS){
@@ -162,6 +163,13 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
     @RequestMapping(value = "/get/cashflows/{id}", method = RequestMethod.GET)
     public ResponseEntity getStatementCashflows(@PathVariable Long id) {
         ConsolidatedReportRecordHolderDto recordsHolder = this.periodicReportService.getStatementCashflows(id);
+        return buildResponse(recordsHolder);
+    }
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/get/changes/{id}", method = RequestMethod.GET)
+    public ResponseEntity getStatementChanges(@PathVariable Long id) {
+        ConsolidatedReportRecordHolderDto recordsHolder = this.periodicReportService.getStatementChanges(id);
         return buildResponse(recordsHolder);
     }
 

@@ -72,9 +72,9 @@ public class PEStatementOperationsServiceImpl implements PEStatementOperatinsSer
         }
 
         if(entity.getType() == null){
-            logger.error("Operations record type could not be determined for record '" + entity.getName() + "'. Expected values are 'Income', 'Expenses', etc.");
+            logger.error("Operations record type could not be determined for record '" + entity.getName() + "'. Expected values are 'Income', 'Expenses', etc. Check for possible spaces in names.");
             throw new ExcelFileParseException("Operations record type could not be determined for record '" + entity.getName() +
-                    "'. Expected values are 'Income', 'Expenses', etc.");
+                    "'. Expected values are 'Income', 'Expenses', etc. Check for possible spaces in names.");
         }
 
         return entity;
@@ -231,10 +231,10 @@ public class PEStatementOperationsServiceImpl implements PEStatementOperatinsSer
                 }
             }
 
-            // NET INCREASE (DECREASE) IN PARTNERS' CAPITAL
+            // NET INCREASE (DECREASE) IN PARTNER'S CAPITAL
             // TODO: refactor string literals
             if(entities != null && !entities.isEmpty()){
-                records.add(new ConsolidatedReportRecordDto("Net increase (decrease) in partners' capital", null, totals, null, true, true));
+                records.add(new ConsolidatedReportRecordDto("Net increase (decrease) in partner's capital", null, totals, null, true, true));
             }
 
         }

@@ -33,4 +33,6 @@ public interface PeriodicReportService extends BaseService {
     ConsolidatedReportRecordHolderDto getStatementBalanceOperations(Long reportId);
 
     ConsolidatedReportRecordHolderDto getStatementCashflows(Long reportId);
+
+    ConsolidatedReportRecordHolderDto getStatementChanges(Long reportId);
 }

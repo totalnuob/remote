@@ -64,14 +64,14 @@ public class ExcelUtils {
         if(cell == null || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())){
          return false;
         }
-        return cell.getStringCellValue().equals(value);
+        return cell.getStringCellValue().trim().equals(value);
     }
 
     public static boolean isCellStringValueEqualIgnoreCase(Cell cell, String value){
         if(cell == null || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())){
             return false;
         }
-        return cell.getStringCellValue().equalsIgnoreCase(value);
+        return cell.getStringCellValue().trim().equalsIgnoreCase(value);
     }
 
     public static String getCellCurrency(Cell cell){

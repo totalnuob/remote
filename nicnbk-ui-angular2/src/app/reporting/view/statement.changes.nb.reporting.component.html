@@ -1,0 +1,82 @@
+<div class="container">
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting']">NB Reporting</a></span>
+                </li>
+                <li>
+                    <span *ngIf="report != null"><a [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">{{getReportDateShortFormatted(report.reportDate)}}</a></span>
+                </li>
+                <li class="active">Statement of Changes</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row top-buffer" *ngIf="errorMessage != null || successMessage != null">
+        <div class="col-md-12">
+            <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+            </div>
+            <div class="alert alert-info" *ngIf="!submitted && successMessage != null"><span>{{successMessage}}</span>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <div class="row withpadding">
+        <h3 *ngIf="report != null">{{getReportDateShortFormatted(report.reportDate)}} - Statement of Changes</h3>
+    </div>
+    <div class="row withpadding" style="overflow-y: scroll;">
+        <table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small">
+            <tr bgcolor="#e7e7e7">
+                <td>&nbsp;</td>
+                <td>Beginning Capital Balance Before Potential Carried Interest</td>
+                <td>Capital Contributions</td>
+                <td>Distributions</td>
+                <td>Dividend and Interest Income, Net of Related Taxes</td>
+                <td>Other Income</td>
+                <td>Management Fee</td>
+                <td>Administration Fees</td>
+                <td>Audit and tax fees</td>
+                <td>Organizational Costs</td>
+                <td>Interest Expense - PEP's</td>
+                <td>License and Filing Fees</td>
+                <td>Other Expenses</td>
+                <td>Total</td>
+                <td>Realized Gain (Loss)</td>
+                <td>Unrealized Gain (Loss)</td>
+                <td>Ending Capital Balance before potential carried interest;</td>
+                <td>Prior year - Potential carried interest allocated to general partner</td>
+                <td>Current year - Potential carried interest allocated to general partner</td>
+                <td>Ending Capital Balance after potential carried interest</td>
+
+            </tr>
+            <tr *ngFor="let record of records.changes">
+                <td>{{record.name}}</td>
+                <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[0] != null ? (record.values[0] | number:'1.0-0'): ''}}</td>
+                <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[1] != null ? (record.values[1] | number:'1.0-0'): ''}}</td>
+                <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[2] != null ? (record.values[2] | number:'1.0-0'): ''}}</td>
+                <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[3] != null ? (record.values[3] | number:'1.0-0'): ''}}</td>
+                <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[4] != null ? (record.values[4] | number:'1.0-0'): ''}}</td>
+                <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[5] != null ? (record.values[5] | number:'1.0-0'): ''}}</td>
+                <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[6] != null ? (record.values[6] | number:'1.0-0'): ''}}</td>
+                <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[7] != null ? (record.values[7] | number:'1.0-0'): ''}}</td>
+                <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[8] != null ? (record.values[8] | number:'1.0-0'): ''}}</td>
+                <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[9] != null ? (record.values[9] | number:'1.0-0'): ''}}</td>
+                <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[10] != null ? (record.values[10] | number:'1.0-0'): ''}}</td>
+                <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[11] != null ? (record.values[11] | number:'1.0-0'): ''}}</td>
+                <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[12] != null ? (record.values[12] | number:'1.0-0'): ''}}</td>
+                <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[13] != null ? (record.values[13] | number:'1.0-0'): ''}}</td>
+                <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[14] != null ? (record.values[14] | number:'1.0-0'): ''}}</td>
+                <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[15] != null ? (record.values[15] | number:'1.0-0'): ''}}</td>
+                <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[16] != null ? (record.values[16] | number:'1.0-0'): ''}}</td>
+                <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[17] != null ? (record.values[17] | number:'1.0-0'): ''}}</td>
+                <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[18] != null ? (record.values[18] | number:'1.0-0'): ''}}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+        </div>
+    </div>
+</div>

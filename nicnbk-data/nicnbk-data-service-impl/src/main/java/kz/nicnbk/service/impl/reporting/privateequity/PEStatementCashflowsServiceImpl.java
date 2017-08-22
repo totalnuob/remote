@@ -1,6 +1,7 @@
 package kz.nicnbk.service.impl.reporting.privateequity;
 
 import kz.nicnbk.common.service.util.ArrayUtils;
+import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.api.lookup.PECashflowsTypeRepository;
 import kz.nicnbk.repo.api.reporting.privateequity.ReportingPEStatementCashflowsRepository;
 import kz.nicnbk.repo.model.reporting.PeriodicReport;
@@ -54,11 +55,16 @@ public class PEStatementCashflowsServiceImpl implements PEStatementCashflowsServ
 
         // cashflows type
         for(String classification: dto.getClassifications()){
-            if(classification != null) {
+            if(StringUtils.isNotEmpty(classification)) {
                 PECashflowsType cashflowsType = this.peCashflowsTypeRepository.findByNameEn(classification.trim());
                 if(cashflowsType != null){
                     entity.setType(cashflowsType);
                     //break;
+                }else{
+                    logger.error("Specified Cashflows type '" + classification +"'  could not be determined for record '" + entity.getName() + "'. Expected values are 'Cash flows from operating activities'," +
+                            " 'Cash flows from financing activities' etc. Check for possible spaces in names.");
+                    throw new ExcelFileParseException("Specified Cashflows type '" + classification + "'  could not be determined for record '" + entity.getName() +
+                            "'. Expected values are 'Cash flows from operating activities', 'Cash flows from financing activities', etc. Check for possible spaces in names.");
                 }
             }
         }
@@ -71,9 +77,9 @@ public class PEStatementCashflowsServiceImpl implements PEStatementCashflowsServ
         }
 
         if(entity.getType() == null){
-            logger.error("Operations record type could not be determined for record '" + entity.getName() + "'. Expected values are 'Cash flows from operating activities'," +
+            logger.error("Cashflows record type could not be determined for record '" + entity.getName() + "'. Expected values are 'Cash flows from operating activities'," +
                     " 'Cash flows from financing activities' etc.");
-            throw new ExcelFileParseException("Operations record type could not be determined for record '" + entity.getName() +
+            throw new ExcelFileParseException("Cashflows record type could not be determined for record '" + entity.getName() +
                     "'. Expected values are 'Cash flows from operating activities', 'Cash flows from financing activities', etc.");
         }
 
@@ -129,9 +135,11 @@ public class PEStatementCashflowsServiceImpl implements PEStatementCashflowsServ
             PECashflowsType currentType = null;
 
             Map<String, Double[]> totalSums = new HashMap<>();
+            Map<String, Integer> levels = new HashMap<>();
             Double[] totals = new Double[]{0.0, 0.0, 0.0};
 
             ReportingPEStatementCashflows lastEntity = null;
+            int level = 0;
             for(ReportingPEStatementCashflows entity: entities) {
 
                 boolean typeChange = currentType != null && entity.getType() != null &&
@@ -156,6 +164,9 @@ public class PEStatementCashflowsServiceImpl implements PEStatementCashflowsServ
                     if(biggestPreviousParent != null && biggestNewParent != null &&
                             !biggestPreviousParent.getCode().equalsIgnoreCase(biggestNewParent.getCode())){
                         records.add(buildNetRecord(biggestPreviousParent.getNameEn(), totalSums.get(biggestPreviousParent.getNameEn())));
+                        level = 0;
+
+                        records.add(new ConsolidatedReportRecordDto("", null, null, null, false, false));
                     }
 
                 }
@@ -175,9 +186,29 @@ public class PEStatementCashflowsServiceImpl implements PEStatementCashflowsServ
                             parent = parent.getParent();
                         }
 
+
                         for(int i = headers.size() - 1; i >= 0; i--){
-                            records.add(new ConsolidatedReportRecordDto(headers.get(i), null, null, null, true, false));
                             totalSums.put(headers.get(i), new Double[]{0.0, 0.0, 0.0});
+
+                            PECashflowsType type = getCashflowTypeByName(headers.get(i));
+                            if(type != null){
+                                type = type.getParent();
+                                while(type != null){
+                                    Integer tempLevel = levels.get(type.getNameEn());
+                                    if( tempLevel != null){
+                                        level = tempLevel + 1;
+                                        break;
+                                    }
+                                    type = type.getParent();
+                                }
+                            }
+
+                            ConsolidatedReportRecordDto recordDto = new ConsolidatedReportRecordDto(headers.get(i), null, null, null, true, false);
+                            recordDto.setLevel(level);
+                            records.add(recordDto);
+
+                            levels.put(headers.get(i), level);
+
                         }
                     }
                 }
@@ -187,7 +218,9 @@ public class PEStatementCashflowsServiceImpl implements PEStatementCashflowsServ
                 Double sum = entity.getTrancheA() != null && entity.getTrancheB() != null ? entity.getTrancheA().doubleValue() + entity.getTrancheB().doubleValue() :
                         entity.getTrancheA() != null ? entity.getTrancheA().doubleValue() : entity.getTrancheB() != null ? entity.getTrancheB().doubleValue() : 0.0;
                 Double[] values = {entity.getTrancheA(), entity.getTrancheB(), sum};
-                records.add(new ConsolidatedReportRecordDto(entity.getName(), null, values, null, false, false));
+                ConsolidatedReportRecordDto recordDto = new ConsolidatedReportRecordDto(entity.getName(), null, values, null, false, false);
+                recordDto.setLevel(entity.getType() != null && levels.get(entity.getType().getNameEn()) != null ? levels.get(entity.getType().getNameEn()) : 1);
+                records.add(recordDto);
 
                 // add entity values to sums by type
                 PECashflowsType type = entity.getType();
@@ -216,6 +249,8 @@ public class PEStatementCashflowsServiceImpl implements PEStatementCashflowsServ
                 }
             }
 
+            records.add(new ConsolidatedReportRecordDto("", null, null, null, false, false));
+
             // NET AND CALCULATED VALUES
             // TODO: refactor string literals
             if(entities != null && !entities.isEmpty()){
@@ -236,6 +271,10 @@ public class PEStatementCashflowsServiceImpl implements PEStatementCashflowsServ
 
         }
         return records;
+    }
+
+    private PECashflowsType getCashflowTypeByName(String nameEn){
+        return this.peCashflowsTypeRepository.findByNameEn(nameEn);
     }
 
     // TODO: refactor common

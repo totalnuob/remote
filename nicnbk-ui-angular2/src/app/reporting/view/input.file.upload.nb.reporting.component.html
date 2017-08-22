@@ -12,7 +12,7 @@
 
     <div class="row top-buffer" >
         <div class="col-md-12">
-            <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+            <div class="alert alert-danger" *ngIf="errorMessage != null"><span style="white-space: pre-wrap">{{errorMessage}}</span>
             </div>
             <div class="alert alert-info" *ngIf="!submitted && successMessage != null"><span>{{successMessage}}</span>
             </div>
@@ -34,9 +34,9 @@
                         <input type="file" id="attachmentFileT1" (change)="onFileChange($event, 'tarragon_schedule_investment')" name="attachmentFileT1" style="display:none;"/>
                         <span class="glyphicon glyphicon-circle-arrow-up"></span>
                     </label>
-                    <label *ngIf="fileTarragonScheduleInvestment != null" class="label label-info">ready for upload</label>
+                    <label *ngIf="fileTarragonScheduleInvestment != null" class="label label-info">{{fileTarragonScheduleInvestment[0].name}}</label>
 
-                    <button *ngIf="showDownloadButton('tarragon_schedule_investment')" class="btn btn-xs btn-primary"
+                    <button *ngIf="showDownloadButton('tarragon_schedule_investment')" class="btn btn-xs btn-default"
                             (click)="download('NB_REP_T1', report.tarragonScheduleInvestmentFileId, report.tarragonScheduleInvestmentFileName)">
                         <span class="glyphicon glyphicon-download-alt"></span>
                         <i class="glyphicon glyphicon-refresh" *ngIf="pending"></i>
@@ -46,6 +46,12 @@
                             (click)="uploadFile('tarragon_schedule_investment')">
                         <span class="glyphicon glyphicon-play-circle"></span>
                     </button>
+
+                    <button *ngIf="showProcessButton('tarragon_schedule_investment')" class="btn btn-xs btn-danger"
+                            (click)="clearFile('tarragon_schedule_investment')">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </button>
+
                     <button *ngIf="showViewButton('tarragon_schedule_investment')" class="btn btn-xs btn-primary"
                             [routerLink]="['/reporting/pe/scheduleInvestments/', report.id]">
                             <span class="glyphicon glyphicon-search"></span>
@@ -59,9 +65,9 @@
                         <input type="file" id="attachmentFileT2" (change)="onFileChange($event, 'tarragon_statement_assets')" name="attachmentFileT2" style="display:none;"/>
                         <span class="glyphicon glyphicon-circle-arrow-up"></span>
                     </label>
-                    <label *ngIf="fileTarragonStatementAssets != null" class="label label-info">ready for upload</label>
+                    <label *ngIf="fileTarragonStatementAssets != null" class="label label-info">{{fileTarragonStatementAssets[0].name}}</label>
 
-                    <button *ngIf="showDownloadButton('tarragon_statement_assets')" class="btn btn-xs btn-primary"
+                    <button *ngIf="showDownloadButton('tarragon_statement_assets')" class="btn btn-xs btn-default"
                             (click)="download('NB_REP_T2', report.tarragonStatementAssetsFileId, report.tarragonStatementAssetsFileName)">
                         <span class="glyphicon glyphicon-download-alt"></span>
                         <i class="glyphicon glyphicon-refresh" *ngIf="pending"></i>
@@ -70,6 +76,10 @@
                     <button *ngIf="showProcessButton('tarragon_statement_assets')" class="btn btn-xs btn-success"
                             (click)="uploadFile('tarragon_statement_assets')">
                         <span class="glyphicon glyphicon-play-circle"></span>
+                    </button>
+                    <button *ngIf="showProcessButton('tarragon_statement_assets')" class="btn btn-xs btn-danger"
+                            (click)="clearFile('tarragon_statement_assets')">
+                        <span class="glyphicon glyphicon-trash"></span>
                     </button>
                     <button *ngIf="showViewButton('tarragon_statement_assets')" class="btn btn-xs btn-primary"
                         [routerLink]="['/reporting/pe/statementBalanceOperations/', report.id]">
@@ -84,9 +94,9 @@
                         <input type="file" id="attachmentFileT3" (change)="onFileChange($event, 'tarragon_statement_cashflows')" name="attachmentFileT3" style="display:none;"/>
                         <span class="glyphicon glyphicon-circle-arrow-up"></span>
                     </label>
-                    <label *ngIf="fileTarragonStatementCashflows != null" class="label label-info">ready for upload</label>
+                    <label *ngIf="fileTarragonStatementCashflows != null" class="label label-info">{{fileTarragonStatementCashflows[0].name}}</label>
 
-                    <button *ngIf="showDownloadButton('tarragon_statement_cashflows')" class="btn btn-xs btn-primary"
+                    <button *ngIf="showDownloadButton('tarragon_statement_cashflows')" class="btn btn-xs btn-default"
                             (click)="download('NB_REP_T3', report.tarragonStatementCashflowsFileId, report.tarragonStatementCashflowsFileName)">
                         <span class="glyphicon glyphicon-download-alt"></span>
                         <i class="glyphicon glyphicon-refresh" *ngIf="pending"></i>
@@ -95,6 +105,10 @@
                     <button *ngIf="showProcessButton('tarragon_statement_cashflows')" class="btn btn-xs btn-success"
                             (click)="uploadFile('tarragon_statement_cashflows')">
                         <span class="glyphicon glyphicon-play-circle"></span>
+                    </button>
+                    <button *ngIf="showProcessButton('tarragon_statement_cashflows')" class="btn btn-xs btn-danger"
+                            (click)="clearFile('tarragon_statement_cashflows')">
+                        <span class="glyphicon glyphicon-trash"></span>
                     </button>
                     <button *ngIf="showViewButton('tarragon_statement_cashflows')" class="btn btn-xs btn-primary"
                             [routerLink]="['/reporting/pe/statementCashflows/', report.id]">
@@ -109,9 +123,9 @@
                         <input type="file" id="attachmentFileT4" (change)="onFileChange($event, 'tarragon_statement_changes')" name="attachmentFileT4" style="display:none;"/>
                         <span class="glyphicon glyphicon-circle-arrow-up"></span>
                     </label>
-                    <label *ngIf="fileTarragonStatementChanges != null" class="label label-info">ready for upload</label>
+                    <label *ngIf="fileTarragonStatementChanges != null" class="label label-info">{{fileTarragonStatementChanges[0].name}}</label>
 
-                    <button *ngIf="showDownloadButton('tarragon_statement_changes')" class="btn btn-xs btn-primary"
+                    <button *ngIf="showDownloadButton('tarragon_statement_changes')" class="btn btn-xs btn-default"
                             (click)="download('NB_REP_T4', report.tarragonStatementChangesFileId, report.tarragonStatementChangesFileName)">
                         <span class="glyphicon glyphicon-download-alt"></span>
                         <i class="glyphicon glyphicon-refresh" *ngIf="pending"></i>
@@ -121,7 +135,12 @@
                             (click)="uploadFile('tarragon_statement_changes')">
                         <span class="glyphicon glyphicon-play-circle"></span>
                     </button>
-                    <button *ngIf="showViewButton('tarragon_statement_changes')" class="btn btn-xs btn-primary">
+                    <button *ngIf="showProcessButton('tarragon_statement_changes')" class="btn btn-xs btn-danger"
+                            (click)="clearFile('tarragon_statement_changes')">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </button>
+                    <button *ngIf="showViewButton('tarragon_statement_changes')" class="btn btn-xs btn-primary"
+                            [routerLink]="['/reporting/pe/statementChanges/', report.id]">
                         <span class="glyphicon glyphicon-search"></span>
                     </button>
                 </td>
@@ -137,9 +156,9 @@
                         <input type="file" id="attachmentFileS1A" (change)="onFileChange($event, 'singularity_bs_a')" name="attachmentFileS1A" style="display:none;"/>
                         <span class="glyphicon glyphicon-circle-arrow-up"></span>
                     </label>
-                    <label *ngIf="fileSingularityBSTrancheA != null" class="label label-info">ready for upload</label>
+                    <label *ngIf="fileSingularityBSTrancheA != null" class="label label-info">{{fileSingularityBSTrancheA[0].name}}</label>
 
-                    <button *ngIf="showDownloadButton('singularity_bs_a')" class="btn btn-xs btn-primary"
+                    <button *ngIf="showDownloadButton('singularity_bs_a')" class="btn btn-xs btn-default"
                             (click)="download('NB_REP_S1A', report.singularityBSTrancheAFileId, report.singularityBSTrancheAFileName)">
                         <span class="glyphicon glyphicon-download-alt"></span>
                         <i class="glyphicon glyphicon-refresh" *ngIf="pending"></i>
@@ -148,6 +167,10 @@
                     <button *ngIf="showProcessButton('singularity_bs_a')" class="btn btn-xs btn-success"
                             (click)="uploadFile('singularity_bs_a')">
                         <span class="glyphicon glyphicon-play-circle"></span>
+                    </button>
+                    <button *ngIf="showProcessButton('singularity_bs_a')" class="btn btn-xs btn-danger"
+                            (click)="clearFile('singularity_bs_a')">
+                        <span class="glyphicon glyphicon-trash"></span>
                     </button>
                     <button *ngIf="showViewButton('singularity_bs_a')" class="btn btn-xs btn-primary">
                         <span class="glyphicon glyphicon-search"></span>
@@ -161,9 +184,9 @@
                         <input type="file" id="attachmentFileS2A" (change)="onFileChange($event, 'singularity_imdr_a')" name="attachmentFileS2A" style="display:none;"/>
                         <span class="glyphicon glyphicon-circle-arrow-up"></span>
                     </label>
-                    <label *ngIf="fileSingularityIMDRTrancheA != null" class="label label-info">ready for upload</label>
+                    <label *ngIf="fileSingularityIMDRTrancheA != null" class="label label-info">{{fileSingularityIMDRTrancheA[0].name}}</label>
 
-                    <button *ngIf="showDownloadButton('singularity_imdr_a')" class="btn btn-xs btn-primary"
+                    <button *ngIf="showDownloadButton('singularity_imdr_a')" class="btn btn-xs btn-default"
                             (click)="download('NB_REP_S2A', report.singularityIMDRTrancheAFileId, report.singularityIMDRTrancheAFileName)">
                         <span class="glyphicon glyphicon-download-alt"></span>
                         <i class="glyphicon glyphicon-refresh" *ngIf="pending"></i>
@@ -172,6 +195,10 @@
                     <button *ngIf="showProcessButton('singularity_imdr_a')" class="btn btn-xs btn-success"
                             (click)="uploadFile('singularity_imdr_a')">
                         <span class="glyphicon glyphicon-play-circle"></span>
+                    </button>
+                    <button *ngIf="showProcessButton('singularity_imdr_a')" class="btn btn-xs btn-danger"
+                            (click)="clearFile('singularity_imdr_a')">
+                        <span class="glyphicon glyphicon-trash"></span>
                     </button>
                     <button *ngIf="showViewButton('singularity_imdr_a')" class="btn btn-xs btn-primary">
                         <span class="glyphicon glyphicon-search"></span>
@@ -185,9 +212,9 @@
                         <input type="file" id="attachmentFileS3A" (change)="onFileChange($event, 'singularity_par_a')" name="attachmentFileS3A" style="display:none;"/>
                         <span class="glyphicon glyphicon-circle-arrow-up"></span>
                     </label>
-                    <label *ngIf="fileSingularityPARTrancheA != null" class="label label-info">ready for upload</label>
+                    <label *ngIf="fileSingularityPARTrancheA != null" class="label label-info">{{fileSingularityPARTrancheA[0].name}}</label>
 
-                    <button *ngIf="showDownloadButton('singularity_par_a')" class="btn btn-xs btn-primary"
+                    <button *ngIf="showDownloadButton('singularity_par_a')" class="btn btn-xs btn-default"
                             (click)="download('NB_REP_S3A', report.singularityPARTrancheAFileId, report.singularityPARTrancheAFileName)">
                         <span class="glyphicon glyphicon-download-alt"></span>
                         <i class="glyphicon glyphicon-refresh" *ngIf="pending"></i>
@@ -196,6 +223,10 @@
                     <button *ngIf="showProcessButton('singularity_par_a')" class="btn btn-xs btn-success"
                             (click)="uploadFile('singularity_par_a')">
                         <span class="glyphicon glyphicon-play-circle"></span>
+                    </button>
+                    <button *ngIf="showProcessButton('singularity_par_a')" class="btn btn-xs btn-danger"
+                            (click)="clearFile('singularity_par_a')">
+                        <span class="glyphicon glyphicon-trash"></span>
                     </button>
                     <button *ngIf="showViewButton('singularity_par_a')" class="btn btn-xs btn-primary">
                         <span class="glyphicon glyphicon-search"></span>
@@ -209,9 +240,9 @@
                         <input type="file" id="attachmentFileS4A" (change)="onFileChange($event, 'singularity_is_a')" name="attachmentFileS4A" style="display:none;"/>
                         <span class="glyphicon glyphicon-circle-arrow-up"></span>
                     </label>
-                    <label *ngIf="fileSingularityISTrancheA != null" class="label label-info">ready for upload</label>
+                    <label *ngIf="fileSingularityISTrancheA != null" class="label label-info">{{fileSingularityISTrancheA[0].name}}</label>
 
-                    <button *ngIf="showDownloadButton('singularity_is_a')" class="btn btn-xs btn-primary"
+                    <button *ngIf="showDownloadButton('singularity_is_a')" class="btn btn-xs btn-default"
                             (click)="download('NB_REP_S4A', report.singularityISTrancheAFileId, report.singularityISTrancheAFileName)">
                         <span class="glyphicon glyphicon-download-alt"></span>
                         <i class="glyphicon glyphicon-refresh" *ngIf="pending"></i>
@@ -220,6 +251,10 @@
                     <button *ngIf="showProcessButton('singularity_is_a')" class="btn btn-xs btn-success"
                             (click)="uploadFile('singularity_is_a')">
                         <span class="glyphicon glyphicon-play-circle"></span>
+                    </button>
+                    <button *ngIf="showProcessButton('singularity_is_a')" class="btn btn-xs btn-danger"
+                            (click)="clearFile('singularity_is_a')">
+                        <span class="glyphicon glyphicon-trash"></span>
                     </button>
                     <button *ngIf="showViewButton('singularity_is_a')" class="btn btn-xs btn-primary">
                         <span class="glyphicon glyphicon-search"></span>
@@ -233,9 +268,9 @@
                         <input type="file" id="attachmentFileS5A" (change)="onFileChange($event, 'singularity_bs_b')" name="attachmentFileS5A" style="display:none;"/>
                         <span class="glyphicon glyphicon-circle-arrow-up"></span>
                     </label>
-                    <label *ngIf="fileSingularityBSTrancheB != null" class="label label-info">ready for upload</label>
+                    <label *ngIf="fileSingularityBSTrancheB != null" class="label label-info">{{fileSingularityBSTrancheB[0].name}}</label>
 
-                    <button *ngIf="showDownloadButton('singularity_bs_b')" class="btn btn-xs btn-primary"
+                    <button *ngIf="showDownloadButton('singularity_bs_b')" class="btn btn-xs btn-default"
                             (click)="download('NB_REP_S1B', report.singularityBSTrancheBFileId, report.singularityBSTrancheBFileName)">
                         <span class="glyphicon glyphicon-download-alt"></span>
                         <i class="glyphicon glyphicon-refresh" *ngIf="pending"></i>
@@ -244,6 +279,10 @@
                     <button *ngIf="showProcessButton('singularity_bs_b')" class="btn btn-xs btn-success"
                             (click)="uploadFile('singularity_bs_b')">
                         <span class="glyphicon glyphicon-play-circle"></span>
+                    </button>
+                    <button *ngIf="showProcessButton('singularity_bs_b')" class="btn btn-xs btn-danger"
+                            (click)="clearFile('singularity_bs_b')">
+                        <span class="glyphicon glyphicon-trash"></span>
                     </button>
                     <button *ngIf="showViewButton('singularity_bs_b')" class="btn btn-xs btn-primary">
                         <span class="glyphicon glyphicon-search"></span>
@@ -257,9 +296,9 @@
                         <input type="file" id="attachmentFileS6A" (change)="onFileChange($event, 'singularity_imdr_b')" name="attachmentFileS6A" style="display:none;"/>
                         <span class="glyphicon glyphicon-circle-arrow-up"></span>
                     </label>
-                    <label *ngIf="fileSingularityIMDRTrancheB != null" class="label label-info">ready for upload</label>
+                    <label *ngIf="fileSingularityIMDRTrancheB != null" class="label label-info">{{fileSingularityIMDRTrancheB[0].name}}</label>
 
-                    <button *ngIf="showDownloadButton('singularity_imdr_b')" class="btn btn-xs btn-primary"
+                    <button *ngIf="showDownloadButton('singularity_imdr_b')" class="btn btn-xs btn-default"
                             (click)="download('NB_REP_S2B', report.singularityIMDRTrancheBFileId, report.singularityIMDRTrancheBFileName)">
                         <span class="glyphicon glyphicon-download-alt"></span>
                         <i class="glyphicon glyphicon-refresh" *ngIf="pending"></i>
@@ -268,6 +307,10 @@
                     <button *ngIf="showProcessButton('singularity_imdr_b')" class="btn btn-xs btn-success"
                             (click)="uploadFile('singularity_imdr_b')">
                         <span class="glyphicon glyphicon-play-circle"></span>
+                    </button>
+                    <button *ngIf="showProcessButton('singularity_imdr_b')" class="btn btn-xs btn-danger"
+                            (click)="clearFile('singularity_imdr_b')">
+                        <span class="glyphicon glyphicon-trash"></span>
                     </button>
                     <button *ngIf="showViewButton('singularity_imdr_b')" class="btn btn-xs btn-primary">
                         <span class="glyphicon glyphicon-search"></span>
@@ -281,9 +324,9 @@
                         <input type="file" id="attachmentFileS7A" (change)="onFileChange($event, 'singularity_par_b')" name="attachmentFileS7A" style="display:none;"/>
                         <span class="glyphicon glyphicon-circle-arrow-up"></span>
                     </label>
-                    <label *ngIf="fileSingularityPARTrancheB != null" class="label label-info">ready for upload</label>
+                    <label *ngIf="fileSingularityPARTrancheB != null" class="label label-info">{{fileSingularityPARTrancheB[0].name}}</label>
 
-                    <button *ngIf="showDownloadButton('singularity_par_b')" class="btn btn-xs btn-primary"
+                    <button *ngIf="showDownloadButton('singularity_par_b')" class="btn btn-xs btn-default"
                             (click)="download('NB_REP_S3B', report.singularityPARTrancheBFileId, report.singularityPARTrancheBFileName)">
                         <span class="glyphicon glyphicon-download-alt"></span>
                         <i class="glyphicon glyphicon-refresh" *ngIf="pending"></i>
@@ -292,6 +335,10 @@
                     <button *ngIf="showProcessButton('singularity_par_b')" class="btn btn-xs btn-success"
                             (click)="uploadFile('singularity_par_b')">
                         <span class="glyphicon glyphicon-play-circle"></span>
+                    </button>
+                    <button *ngIf="showProcessButton('singularity_par_b')" class="btn btn-xs btn-danger"
+                            (click)="clearFile('singularity_par_b')">
+                        <span class="glyphicon glyphicon-trash"></span>
                     </button>
                     <button *ngIf="showViewButton('singularity_par_b')" class="btn btn-xs btn-primary">
                         <span class="glyphicon glyphicon-search"></span>
@@ -305,9 +352,9 @@
                         <input type="file" id="attachmentFileS8A" (change)="onFileChange($event, 'singularity_is_b')" name="attachmentFileS8A" style="display:none;"/>
                         <span class="glyphicon glyphicon-circle-arrow-up"></span>
                     </label>
-                    <label *ngIf="fileSingularityISTrancheB != null" class="label label-info">ready for upload</label>
+                    <label *ngIf="fileSingularityISTrancheB != null" class="label label-info">{{fileSingularityISTrancheB[0].name}}</label>
 
-                    <button *ngIf="showDownloadButton('singularity_is_b')" class="btn btn-xs btn-primary"
+                    <button *ngIf="showDownloadButton('singularity_is_b')" class="btn btn-xs btn-default"
                             (click)="download('NB_REP_S4B', report.singularityISTrancheBFileId, report.singularityISTrancheBFileName)">
                         <span class="glyphicon glyphicon-download-alt"></span>
                         <i class="glyphicon glyphicon-refresh" *ngIf="pending"></i>
@@ -316,6 +363,10 @@
                     <button *ngIf="showProcessButton('singularity_is_b')" class="btn btn-xs btn-success"
                             (click)="uploadFile('singularity_is_b')">
                         <span class="glyphicon glyphicon-play-circle"></span>
+                    </button>
+                    <button *ngIf="showProcessButton('singularity_is_b')" class="btn btn-xs btn-danger"
+                            (click)="clearFile('singularity_is_b')">
+                        <span class="glyphicon glyphicon-trash"></span>
                     </button>
                     <button *ngIf="showViewButton('singularity_is_b')" class="btn btn-xs btn-primary">
                         <span class="glyphicon glyphicon-search"></span>

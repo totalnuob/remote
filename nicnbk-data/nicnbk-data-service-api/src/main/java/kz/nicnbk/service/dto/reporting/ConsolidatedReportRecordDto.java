@@ -22,6 +22,9 @@ public class ConsolidatedReportRecordDto implements BaseDto {
     // TODO: formatting?
     private boolean header;
     private boolean totalSum;
+    private boolean formula;
+
+    private int level;
 
     public ConsolidatedReportRecordDto(){}
 
@@ -70,6 +73,14 @@ public class ConsolidatedReportRecordDto implements BaseDto {
 
     public void setCurrency(String currency) {
         this.currency = currency;
+    }
+
+    public boolean isFormula() {
+        return formula;
+    }
+
+    public void setFormula(boolean formula) {
+        this.formula = formula;
     }
 
     public void addClassification(String classification){
@@ -149,5 +160,13 @@ public class ConsolidatedReportRecordDto implements BaseDto {
 
     public void setTotalSum(boolean totalSum) {
         this.totalSum = totalSum;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
     }
 }
