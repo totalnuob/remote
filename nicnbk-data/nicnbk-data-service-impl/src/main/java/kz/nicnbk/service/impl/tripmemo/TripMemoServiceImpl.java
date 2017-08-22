@@ -110,7 +110,7 @@ public class TripMemoServiceImpl implements TripMemoService {
             if (searchParams == null || searchParams.isEmpty()) {
                 int pageSize = searchParams != null && searchParams.getPageSize() > 0 ? searchParams.getPageSize() : DEFAULT_PAGE_SIZE;
                 page = searchParams != null && searchParams.getPage() > 0 ? searchParams.getPage() - 1 : 0;
-                tripMemoPage = tripMemoRepository.findAllByOrderByCreationDateDesc(new PageRequest(page, pageSize, new Sort(Sort.Direction.DESC, "meetingDateStart", "id")));
+                tripMemoPage = tripMemoRepository.findAllByOrderByMeetingDateStartDesc(new PageRequest(page, pageSize, new Sort(Sort.Direction.DESC, "meetingDateStart", "id")));
             } else {
                 page = searchParams.getPage() > 0 ? searchParams.getPage() - 1 : 0;
                 if (searchParams.getFromDate() == null && searchParams.getToDate() == null) {
