@@ -248,7 +248,20 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
         this.lookupService.getManagerStatuses().then(data => this.statusLookup = data);
 
         // memo types
-        this.lookupService.getMeetingTypes().then(meetingTypes => this.meetingTypes = meetingTypes);
+        //this.lookupService.getMeetingTypes().then(meetingTypes => this.meetingTypes = meetingTypes);
+        this.lookupService.getMeetingTypes()
+            .subscribe(
+                meetingTypes => {
+                    this.meetingTypes = meetingTypes;
+                },
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
+            );
     }
 
     getMeetingTypeName(type){
