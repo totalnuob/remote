@@ -16,6 +16,9 @@ export class InputFilesNBReport{
     singularityIMDRTrancheBFileId: number;
     singularityPARTrancheBFileId: number;
     singularityISTrancheBFileId: number;
+    singularityGeneralLedgerFileId: number;
+    singularityNOALTrancheAFileId: number;
+    singularityNOALTrancheBFileId: number;
 
     tarragonScheduleInvestmentFileName: string;
     tarragonStatementAssetsFileName: string;
@@ -29,5 +32,9 @@ export class InputFilesNBReport{
     singularityIMDRTrancheBFileName: string;
     singularityPARTrancheBFileName: string;
     singularityISTrancheBFileName: string;
+    singularityGeneralLedgerFileName: string;
+    singularityNOALTrancheAFileName: string;
+    singularityNOALTrancheBFileName: string;
+
 
 }

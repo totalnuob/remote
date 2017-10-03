@@ -1,5 +1,6 @@
 package kz.nicnbk.service.converter.reporting;
 
+import kz.nicnbk.common.service.util.DateUtils;
 import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.model.reporting.PeriodicReport;
 import kz.nicnbk.repo.model.reporting.PeriodicReportType;
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Component;
  * Created by magzumov on 20.04.2017.
  */
 @Component
-public class PeriodReportConverter extends BaseDozerEntityConverter<PeriodicReport, PeriodicReportDto> {
+public class PeriodicReportConverter extends BaseDozerEntityConverter<PeriodicReport, PeriodicReportDto> {
 
     @Autowired
     private LookupService lookupService;
@@ -25,6 +26,8 @@ public class PeriodReportConverter extends BaseDozerEntityConverter<PeriodicRepo
             return null;
         }
         PeriodicReport entity = super.assemble(dto);
+
+        entity.setReportDate(DateUtils.getLastDayOfCurrentMonth(dto.getReportDate()));
         // type
         if(StringUtils.isNotEmpty(dto.getType())){
             PeriodicReportType reportType = lookupService.findByTypeAndCode(PeriodicReportType.class, dto.getType());

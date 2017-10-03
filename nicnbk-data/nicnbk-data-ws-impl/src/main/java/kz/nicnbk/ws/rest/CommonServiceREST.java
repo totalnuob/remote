@@ -84,30 +84,6 @@ public abstract class CommonServiceREST {
         }
     }
 
-    public void sendFileDownloadResponse(HttpServletResponse response, FilesDto fileDto, InputStream inputStream){
-        response.setContentType(fileDto.getMimeType());
-        String fileName = null;
-        try {
-            fileName = URLEncoder.encode(fileDto.getFileName(), "UTF-8");
-            fileName = URLDecoder.decode(fileName, "ISO8859_1");
-            response.setHeader("Content-disposition", "attachment; filename=\""+ fileName + "\"");
-            org.apache.commons.io.IOUtils.copy(inputStream, response.getOutputStream());
-            response.flushBuffer();
-        } catch (UnsupportedEncodingException e) {
-            logger.error("File download request failed: unsupported encoding", e);
-        } catch (IOException e) {
-            logger.error("File download request failed: io exception", e);
-        } catch (Exception e){
-            logger.error("File download request failed", e);
-        }
-
-        try {
-            inputStream.close();
-        } catch (IOException e) {
-            logger.error("File download: failed to close input stream");
-        }
-    }
-
     public ResponseEntity<?> buildDeleteResponseEntity(boolean deleted){
         if(deleted) {
             Response response = new Response();

@@ -18,4 +18,12 @@ public class NumberUtils {
     public static double sumDouble(Double a, Double b){
         return getDouble(a) + getDouble(b);
     }
+
+    public static boolean isEqualValues(Double a, Double b){
+        return a == b || (a != null && b != null && a.doubleValue() == b.doubleValue());
+    }
+
+    public static boolean isNotEqualValues(Double a, Double b){
+        return !isEqualValues(a, b);
+    }
 }

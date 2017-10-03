@@ -19,6 +19,11 @@ import {SIDE_POCKET_URL} from "./lookup.service.url";
 import {PE_INDUSTRY_FOCUS_URL} from "./lookup.service.url";
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 import {TRIP_TYPES} from "./mock.news.lookups";
+import {NB_CHART_OF_ACCOUNTS_URL} from "./lookup.service.url";
+import {NIC_REPORTING_CHART_OF_ACCOUNTS_URL} from "./lookup.service.url";
+import {NICReportingChartOfAccounts} from "../reporting/model/nic.reporting.chart.of.accounts.";
+import {OptionsBehavior} from "ng2-select/index";
+import {BaseDictionary} from "./model/base-dictionary";
 
 
 @Injectable()
@@ -183,6 +188,25 @@ export class LookupService extends CommonService{
         return this.http.get(SIDE_POCKET_URL, this.getOptionsWithCredentials())
             .map(this.extractDataList)
             .catch(this.handleErrorResponse);
+    }
+
+    getNBChartOfAccounts(): Observable<BaseDictionary[]>{
+        return this.http.get(NB_CHART_OF_ACCOUNTS_URL, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+
+    getNICReportingChartOfAccounts(code): Observable<NICReportingChartOfAccounts[]>{
+        if(code){
+            return this.http.get(NIC_REPORTING_CHART_OF_ACCOUNTS_URL + code, this.getOptionsWithCredentials())
+                .map(this.extractDataList)
+                .catch(this.handleErrorResponse);
+        }else{
+            return this.http.get(NIC_REPORTING_CHART_OF_ACCOUNTS_URL, this.getOptionsWithCredentials())
+                .map(this.extractDataList)
+                .catch(this.handleErrorResponse);
+        }
+
     }
 
     getManagerStatuses(){

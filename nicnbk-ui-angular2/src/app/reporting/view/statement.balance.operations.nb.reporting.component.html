@@ -6,7 +6,7 @@
                     <span><a [routerLink]="['/reporting/NBReporting']">NB Reporting</a></span>
                 </li>
                 <li>
-                    <span *ngIf="report != null"><a [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">{{getReportDateShortFormatted(report.reportDate)}}</a></span>
+                    <span *ngIf="report != null"><a [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">Parsed input files</a></span>
                 </li>
                 <li class="active">Statement of Assets, Liabilities and ...</li>
             </ol>
@@ -44,19 +44,19 @@
                     </tr>
                     <tr bgcolor="#e7e7e7">
                         <td>Name</td>
-                        <td>Tarragon Master Fund LP</td>
+                        <td>Total*</td>
                         <td>&nbsp;</td>
-                        <td>Tarragon GP Share</td>
+                        <td>Tarragon GP LLC'sShare</td>
                         <td>&nbsp;</td>
-                        <td>Tarragon NICK Share</td>
+                        <td>NICK Master Fund Ltd.'s Share</td>
                         <td>&nbsp;</td>
                         <td>Tarragon LP</td>
                         <td>&nbsp;</td>
-                        <td>Total</td>
+                        <td>NICK Master Fund Ltd.'s Share of Total</td>
                         <td>&nbsp;</td>
                         <td>Consolidated Adjustments</td>
                         <td>&nbsp;</td>
-                        <td>Tranche A Consolidated</td>
+                        <td>NICK Master Fund Ltd.'s Share of Tranche A Consolidated</td>
                     </tr>
                     <tr *ngFor="let record of records.balanceTrancheA">
                         <td [style.font-weight]="record.header ? 'bold': ''" [align]="record.totalSum ? 'right' : 'left'">{{record.name}}</td>

@@ -1,6 +1,5 @@
 package kz.nicnbk.service.impl.reporting.privateequity;
 
-import kz.nicnbk.common.service.util.ArrayUtils;
 import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.api.lookup.PEOperationsTypeRepository;
 import kz.nicnbk.repo.api.reporting.privateequity.ReportingPEStatementOperationsRepository;
@@ -8,7 +7,7 @@ import kz.nicnbk.repo.model.reporting.PeriodicReport;
 import kz.nicnbk.repo.model.reporting.privateequity.PEOperationsType;
 import kz.nicnbk.repo.model.reporting.privateequity.ReportingPEStatementOperations;
 import kz.nicnbk.service.api.reporting.privateequity.PEStatementOperatinsService;
-import kz.nicnbk.service.converter.reporting.PeriodReportConverter;
+import kz.nicnbk.service.converter.reporting.PeriodicReportConverter;
 import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordDto;
 import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordHolderDto;
 import kz.nicnbk.service.dto.reporting.exception.ExcelFileParseException;
@@ -36,17 +35,20 @@ public class PEStatementOperationsServiceImpl implements PEStatementOperatinsSer
     private ReportingPEStatementOperationsRepository peStatementOperationsRepository;
 
     @Autowired
-    private PeriodReportConverter periodReportConverter;
+    private PeriodicReportConverter periodicReportConverter;
 
     @Override
     public ReportingPEStatementOperations assemble(ConsolidatedReportRecordDto dto, int tranche, Long reportId) {
+        String trancheName = tranche == 1 ? "[Tranche A]" : tranche == 2 ? "[Tranche B]" : "";
         ReportingPEStatementOperations entity = new ReportingPEStatementOperations();
         entity.setName(dto.getName());
         entity.setTarragonMFTotal(dto.getValues()[0]);
         entity.setTarragonMFShareGP(dto.getValues()[1]);
         entity.setTarragonMFShareNICK(dto.getValues()[2]);
         entity.setTarragonLP(dto.getValues()[3]);
+        entity.setNICKMFShareTotal(dto.getValues()[4]);
         entity.setConsolidationAdjustments(dto.getValues()[5]);
+        entity.setNICKMFShareConsolidated(dto.getValues()[6]);
 
         // report
         entity.setReport(new PeriodicReport(reportId));
@@ -54,27 +56,27 @@ public class PEStatementOperationsServiceImpl implements PEStatementOperatinsSer
         // tranche
         entity.setTranche(tranche);
 
-        // balance type
+        // operations type
         for(String classification: dto.getClassifications()){
             if(classification != null) {
-                PEOperationsType balanceType = this.peOperationsTypeRepository.findByNameEn(classification.trim());
-                if(balanceType != null){
-                    entity.setType(balanceType);
+                PEOperationsType operationsType = this.peOperationsTypeRepository.findByNameEnIgnoreCase(classification.trim());
+                if(operationsType != null){
+                    entity.setType(operationsType);
                     //break;
                 }
             }
         }
         if(entity.getType() == null){
-            PEOperationsType balanceType = this.peOperationsTypeRepository.findByNameEn(dto.getName().trim());
+            PEOperationsType balanceType = this.peOperationsTypeRepository.findByNameEnIgnoreCase(dto.getName().trim());
             if(balanceType != null){
                 entity.setType(balanceType);
                 //break;
             }
         }
 
-        if(entity.getType() == null && !isNetSum(entity.getName())){
-            logger.error("Operations record type could not be determined for record '" + entity.getName() + "'. Expected values are 'Income', 'Expenses', etc. Check for possible spaces in names.");
-            throw new ExcelFileParseException("Operations record type could not be determined for record '" + entity.getName() +
+        if(entity.getType() == null && !isNetSum(entity.getName()) && dto.isClassificationRequired()){
+            logger.error(trancheName + " Operations record type could not be determined for record '" + entity.getName() + "'. Expected values are 'Income', 'Expenses', etc. Check for possible spaces in names.");
+            throw new ExcelFileParseException(trancheName + " Operations record type could not be determined for record '" + entity.getName() +
                     "'. Expected values are 'Income', 'Expenses', etc. Check for possible spaces in names.");
         }
 
@@ -118,9 +120,9 @@ public class PEStatementOperationsServiceImpl implements PEStatementOperatinsSer
         result.setOperationsTrancheB(trancheB);
 
         if(entitiesTrancheA != null && !entitiesTrancheA.isEmpty()) {
-            result.setReport(periodReportConverter.disassemble(entitiesTrancheA.get(0).getReport()));
+            result.setReport(periodicReportConverter.disassemble(entitiesTrancheA.get(0).getReport()));
         }else if(entitiesTrancheB != null && !entitiesTrancheB.isEmpty()){
-            result.setReport(periodReportConverter.disassemble(entitiesTrancheB.get(0).getReport()));
+            result.setReport(periodicReportConverter.disassemble(entitiesTrancheB.get(0).getReport()));
         }
 
         return result;
@@ -132,18 +134,16 @@ public class PEStatementOperationsServiceImpl implements PEStatementOperatinsSer
             PEOperationsType currentType = null;
             Set<String> types = new HashSet<>();
             for(ReportingPEStatementOperations entity: entities){
-
-                boolean balanceTypeSwitch = currentType != null && entity.getType() != null
+                boolean operationsTypeSwitch = currentType != null && entity.getType() != null
                         && !entity.getType().getCode().equalsIgnoreCase(currentType.getCode());
-
                 // add headers by type
-                if(balanceTypeSwitch || currentType == null){
+                if(operationsTypeSwitch || currentType == null){
                     // check if need header
                     List<String> headers = new ArrayList<>();
-                    if(types == null || !types.contains(entity.getType().getNameEn())){
+                    if(types == null || (entity.getType() != null && !types.contains(entity.getType().getNameEn()))){
                         // add headers
                         PEOperationsType parent = entity.getType();
-                        while(parent != null){
+                        while(parent != null && !types.contains(parent.getNameEn())){
                             headers.add(parent.getNameEn());
                             parent = parent.getParent();
                         }
@@ -164,28 +164,31 @@ public class PEStatementOperationsServiceImpl implements PEStatementOperatinsSer
 
     public ConsolidatedReportRecordDto disassemble(ReportingPEStatementOperations entity){
         // values
-        Double total = null;
-        if(entity.getTranche() == 1) {
-            total = entity.getTarragonMFShareNICK() != null && entity.getTarragonLP() != null ?
-                    (entity.getTarragonMFShareNICK().doubleValue() + entity.getTarragonLP().doubleValue()) : null;
-        }else if(entity.getTranche() == 2){
-            total = entity.getTarragonMFTotal() != null && entity.getTarragonLP() != null ?
-                    (entity.getTarragonMFTotal().doubleValue() + entity.getTarragonLP().doubleValue()) : null;
-        }
-
-        Double trancheConsolidated = total != null && entity.getConsolidationAdjustments() != null ?
-                total + entity.getConsolidationAdjustments().doubleValue() : null;
+//        Double total = null;
+//        if(entity.getTranche() == 1) {
+//            total = entity.getTarragonMFShareNICK() != null && entity.getTarragonLP() != null ?
+//                    (entity.getTarragonMFShareNICK().doubleValue() + entity.getTarragonLP().doubleValue()) : null;
+//        }else if(entity.getTranche() == 2){
+//            total = entity.getTarragonMFTotal() != null && entity.getTarragonLP() != null ?
+//                    (entity.getTarragonMFTotal().doubleValue() + entity.getTarragonLP().doubleValue()) : null;
+//        }
+//
+//        Double trancheConsolidated = total != null && entity.getConsolidationAdjustments() != null ?
+//                total + entity.getConsolidationAdjustments().doubleValue() : null;
         Double[] values = {entity.getTarragonMFTotal(), entity.getTarragonMFShareGP(), entity.getTarragonMFShareNICK(), entity.getTarragonLP(),
-                total, entity.getConsolidationAdjustments(), trancheConsolidated};
+                /*total*/entity.getNICKMFShareTotal(), entity.getConsolidationAdjustments(), /*trancheConsolidated*/ entity.getNICKMFShareConsolidated()};
 
-        boolean isTotalValue = entity.getType() != null && entity.getName().equalsIgnoreCase("Total " + entity.getType().getNameEn());
+        boolean isTotalValue = (entity.getType() != null &&
+                (entity.getName().equalsIgnoreCase("Total " + entity.getType().getNameEn()) ||
+                        entity.getName().equalsIgnoreCase("Net " + entity.getType().getNameEn()))) ||
+                entity.getName().equalsIgnoreCase("Net increase (decrease) in partners' capital resulting from operations");
 
         ConsolidatedReportRecordDto recordDto = new ConsolidatedReportRecordDto(entity.getName(), null, values, null, isTotalValue, isTotalValue);
         return recordDto;
     }
 
     private boolean isNetSum(String name){
-        return StringUtils.isNotEmpty(name) && (name.equalsIgnoreCase("Net increase (decrease) in partner's capital resulting from operations"));
+        return StringUtils.isNotEmpty(name) && (name.equalsIgnoreCase("Net increase (decrease) in partners' capital resulting from operations"));
     }
 
     // TODO: refactor
@@ -294,10 +297,10 @@ public class PEStatementOperationsServiceImpl implements PEStatementOperatinsSer
 //                }
 //            }
 //
-//            // NET INCREASE (DECREASE) IN PARTNER'S CAPITAL
+//            // NET INCREASE (DECREASE) IN PARTNERS' CAPITAL
 //            // TODO: refactor string literals
 //            if(entities != null && !entities.isEmpty()){
-//                records.add(new ConsolidatedReportRecordDto("Net increase (decrease) in partner's capital", null, totals, null, true, true));
+//                records.add(new ConsolidatedReportRecordDto("Net increase (decrease) in partners' capital", null, totals, null, true, true));
 //            }
 //
 //        }

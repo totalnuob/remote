@@ -17,6 +17,7 @@ public class ReportingPEStatementCashflows extends CreateUpdateBaseEntity{
     private String name;
     private Double trancheA;
     private Double trancheB;
+    private Double total;
 
     private PeriodicReport report;
 
@@ -47,6 +48,15 @@ public class ReportingPEStatementCashflows extends CreateUpdateBaseEntity{
 
     public void setTrancheB(Double trancheB) {
         this.trancheB = trancheB;
+    }
+
+    @Column(name = "total")
+    public Double getTotal() {
+        return total;
+    }
+
+    public void setTotal(Double total) {
+        this.total = total;
     }
 
     @ManyToOne(fetch = FetchType.EAGER)

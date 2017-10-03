@@ -33,6 +33,7 @@ import {AlbourneService} from "./hf/hf.albourne.service";
 import '../../public/js/jquery.ns-autogrow.min.js';
 import {ModuleAccessCheckerService} from "./authentication/module.access.checker.service";
 import {PeriodicReportService} from "./reporting/periodic.report.service";
+import {AuthenticationService} from "./authentication/authentication.service";
 
 @Component({
     selector: 'app-main',
@@ -68,16 +69,30 @@ export class AppComponent {
     private moduleAccessChecker: ModuleAccessCheckerService;
 
     constructor(
+        private authenticationService: AuthenticationService,
         private _router: Router
     ){
         this.moduleAccessChecker = new ModuleAccessCheckerService;
     }
 
     logout() {
-        localStorage.removeItem("authenticatedUser");
-        localStorage.removeItem("authenticatedUserRoles");
-        //location.reload();
-        this._router.navigate(['login']);
+        this.authenticationService.logout()
+            .subscribe(
+                response => {
+
+                    localStorage.removeItem("authenticatedUser");
+                    localStorage.removeItem("authenticatedUserRoles");
+                    //location.reload();
+                    this._router.navigate(['login']);
+
+                },
+                error =>  {
+
+                    // TODO: error message
+
+                    //this.errorMsg = 'Failed to login';
+                }
+            );
     }
 
     // TODO: refactor

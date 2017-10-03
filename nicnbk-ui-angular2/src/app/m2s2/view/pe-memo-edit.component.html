@@ -584,9 +584,10 @@
 
                                 <div class="row" *ngIf="memo?.files?.length > 0">
                                     <div *ngFor="let attachment of memo.files">
-                                        <memo-attachment-downloader fileId="{{attachment.id}}"
-                                                                    fileName="{{attachment.fileName}}">
-                                        </memo-attachment-downloader>
+                                        <file-attachment-downloader fileId="{{attachment.id}}"
+                                                                    fileName="{{attachment.fileName}}"
+                                                                    fileType="MEMO_ATT">
+                                        </file-attachment-downloader>
 
                                         <a (click)="deleteAttachment(attachment.id)" *ngIf="canEdit()">
                                             <i class="glyphicon glyphicon-trash"></i>

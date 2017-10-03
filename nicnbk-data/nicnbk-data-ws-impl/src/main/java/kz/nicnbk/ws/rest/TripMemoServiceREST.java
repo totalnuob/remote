@@ -97,17 +97,6 @@ public class TripMemoServiceREST extends CommonServiceREST{
         return new ResponseEntity<>(null, null, HttpStatus.OK);
     }
 
-    @RequestMapping(value="/attachment/{id}", method=RequestMethod.GET)
-    @ResponseBody
-    public void downloadFile(@PathVariable(value="id") Long fileId, HttpServletResponse response) {
-        // TODO: Check rights
-        InputStream inputStream = fileService.getFileInputStream(fileId, FileTypeLookup.MEMO_ATTACHMENT.getCode());
-        if(inputStream == null){
-            // TODO: handle error
-        }
-        sendFileDownloadResponse(response, fileService.getFileInfo(fileId), inputStream);
-    }
-
     @ResponseBody
     @RequestMapping(value="/attachment/delete/{memoId}/{fileId}", method=RequestMethod.GET)
     public ResponseEntity<?> deleteFile(@PathVariable(value="memoId") Long tripMemoId, @PathVariable(value="fileId") Long fileId){

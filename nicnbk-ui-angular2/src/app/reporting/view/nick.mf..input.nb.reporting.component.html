@@ -1,0 +1,85 @@
+<div class="container">
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting']">NB Reporting</a></span>
+                </li>
+                <li>
+                    <span *ngIf="reportId != null">
+                        <a [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">
+                        Parsed input files</a></span>
+                </li>
+                <li class="active">NICK MF</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row top-buffer" *ngIf="errorMessage != null || successMessage != null">
+        <div class="col-md-12">
+            <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+            </div>
+            <div class="alert alert-info" *ngIf="!submitted && successMessage != null"><span>{{successMessage}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="row withpadding">
+        <!--<h3 *ngIf="reportId != null">{{getReportDateShortFormatted(report.reportDate) != null ?-->
+            <!--getReportDateShortFormatted(report.reportDate) + ' - ' : ''}}NICK MF</h3>-->
+    </div>
+    <div [ngBusy]="busy" class="row withpadding" style="min-height: 500px">
+        <form (ngSubmit)="save()" #NICKMFForm="ngForm" class="well span">
+            <div class="row">
+                <button class="btn btn-xs btn-primary" type="button" (click)="addRecord()"
+                        [disabled]="false">
+                    <span role="button" class="glyphicon glyphicon-plus">Add New</span>
+                </button>
+                <button class="btn btn-xs btn-primary pull-right" type="button" (click)="copyFromPrevious()"
+                        [disabled]="false">Copy from previous month</button>
+            </div>
+            <div *ngIf="data != null && data.records != null && nbChartOfAccounts != null && nicReportingChartOfAccounts != null">
+                <table class="table table-hover table-responsive table-condensed">
+                    <thead>
+                    <tr *ngIf="data != null && data.records != null && data.records.length > 0">
+                        <td>NB Chart of Accounts</td>
+                        <td>Description</td>
+                        <td>Account Balance</td>
+                        <td>&nbsp;</td>
+                    </tr>
+                    </thead>
+                        <tr  *ngFor="let record of data.records">
+                            <td width="40%">
+                                <select class="form-control" style="width: 100%" name="code"  [(ngModel)]="record.nbChartOfAccountsCode"
+                                        (ngModelChange)="nbChartOfAccountsChanged(record)" [ngModelOptions]="{standalone: true}">
+                                    <option *ngFor="let nbItem of nbChartOfAccounts" [value]="nbItem.code">{{nbItem.code + '-' + nbItem.nameRu}}</option>
+                                </select>
+                            </td>
+                            <td width="40%">
+                                <select class="form-control" style="width: 100%" name="code" [(ngModel)]="record.nicChartOfAccountsCode" [ngModelOptions]="{standalone: true}">
+                                    <option *ngFor="let nicItem of record.matchingNICChartOfAccounts" [value]="nicItem.code">{{nicItem.nameRu}}</option>
+                                </select>
+                            </td>
+                            <td width="20%">
+                                <input type="number" step="0.01" class="form-control" name="value" [(ngModel)]="record.accountBalance" [ngModelOptions]="{standalone: true}"/>
+                            </td>
+                            <td>
+                                <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRecord(record)">
+                                    <span class="glyphicon glyphicon-minus"></span>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr *ngIf="data.records != null && data.records.length > 0">
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td style="font-style: italic" align="right">Total: {{calculateTotal() | number:'1.0-2': ''}}</td>
+                        </tr>
+                </table>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                        <button type="submit" class="btn btn-success pull-right" [disabled]="!checkTotal()" >Save</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

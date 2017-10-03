@@ -19,7 +19,9 @@ public class ReportingPEStatementBalance extends CreateUpdateBaseEntity{
     private Double tarragonMFShareGP;
     private Double tarragonMFShareNICK;
     private Double tarragonLP;
+    private Double NICKMFShareTotal;
     private Double consolidationAdjustments;
+    private Double NICKMFShareConsolidated;
 
     private PeriodicReport report;
 
@@ -71,6 +73,15 @@ public class ReportingPEStatementBalance extends CreateUpdateBaseEntity{
         this.tarragonLP = tarragonLP;
     }
 
+    @Column(name = "nick_mf_share_total")
+    public Double getNICKMFShareTotal() {
+        return NICKMFShareTotal;
+    }
+
+    public void setNICKMFShareTotal(Double NICKMFShareTotal) {
+        this.NICKMFShareTotal = NICKMFShareTotal;
+    }
+
     @Column(name = "consolidated_adjustment")
     public Double getConsolidationAdjustments() {
         return consolidationAdjustments;
@@ -78,6 +89,15 @@ public class ReportingPEStatementBalance extends CreateUpdateBaseEntity{
 
     public void setConsolidationAdjustments(Double consolidationAdjustments) {
         this.consolidationAdjustments = consolidationAdjustments;
+    }
+
+    @Column(name = "nick_mf_share_consolidated")
+    public Double getNICKMFShareConsolidated() {
+        return NICKMFShareConsolidated;
+    }
+
+    public void setNICKMFShareConsolidated(Double NICKMFShareConsolidated) {
+        this.NICKMFShareConsolidated = NICKMFShareConsolidated;
     }
 
     @ManyToOne(fetch = FetchType.EAGER)

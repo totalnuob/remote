@@ -1,0 +1,60 @@
+<div class="container">
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting']">NB Reporting</a></span>
+                </li>
+                <li>
+                    <span *ngIf="report != null"><a [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">Parsed input files</a></span>
+                </li>
+                <li class="active">Singularity General Ledger Balance</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row top-buffer" *ngIf="errorMessage != null || successMessage != null">
+        <div class="col-md-12">
+            <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+            </div>
+            <div class="alert alert-info" *ngIf="!submitted && successMessage != null"><span>{{successMessage}}</span>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <div class="row withpadding">
+        <h3 *ngIf="report != null">{{getReportDateShortFormatted(report.reportDate)}} - Singularity General Ledger Balance</h3>
+    </div>
+    <div class="row withpadding">
+        <table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small">
+            <tr bgcolor="#e7e7e7">
+                <td>Acronym</td>
+                <td>Balance Date</td>
+                <td>Financial Statement Category</td>
+                <td>GL Account</td>
+                <td>Financial Statement Category Description</td>
+                <td>Chart of Accounts Long Description</td>
+                <td>GL Account Balance</td>
+                <td>Seg Val CCY</td>
+                <td>Fund CCY</td>
+            </tr>
+            <tr *ngFor="let record of records.generalLedgerBalanceList">
+                <td>{{record.acronym}}</td>
+                <td>{{record.balanceDate}}</td>
+                <td>{{record.financialStatementCategory}}</td>
+                <td>{{record.glaccount}}</td>
+                <td>{{record.financialStatementCategoryDescription}}</td>
+                <td>{{record.chartAccountsLongDescription}}</td>
+                <td>{{record.glaccountBalance != null ? (record.glaccountBalance | number:'1.2-2'): ''}}</td>
+                <td>{{record.segValCCY}}</td>
+                <td>{{record.fundCCY}}</td>
+
+            </tr>
+        </table>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+        </div>
+    </div>
+</div>

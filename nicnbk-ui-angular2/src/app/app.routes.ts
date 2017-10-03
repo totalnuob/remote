@@ -46,6 +46,12 @@ import {ScheduleInvestmentsNBReportingComponent} from "./reporting/schedule.inve
 import {StatementBalanceOperationsNBReportingComponent} from "./reporting/statement.balance.operations.nb.reporting.component";
 import {StatementCashflowsNBReportingComponent} from "./reporting/statement.cashflows.nb.reporting.component";
 import {StatementChangesNBReportingComponent} from "./reporting/statement.changes.nb.reporting.component";
+import {SingularityGeneralLedgerBalanceNBReportingComponent} from "./reporting/singularity.general.ledger.balance.nb.reporting.component";
+import {SingularityNOALTrancheANBReportingComponent} from "./reporting/singularity.noal.tranchea.nb.reporting.component";
+import {SingularityNOALTrancheBNBReportingComponent} from "./reporting/singularity.noal.trancheb.nb.reporting.component";
+import {OtherInfoInputNBReportingComponent} from "./reporting/other.info.input.nb.reporting.component";
+import {GenerateReportsNBReportingComponent} from "./reporting/generate.reports.nb.reporting.component";
+import {NICKMFInputNBReportingComponent} from "./reporting/nick.mf.input.nb.reporting.component";
 
 
 const routes: Routes  = [
@@ -269,25 +275,57 @@ const routes: Routes  = [
         canActivate: [AuthGuard]
     },
     {
-        path: 'reporting/pe/scheduleInvestments/:id',
+        path: 'reporting/NBReporting/pe/scheduleInvestments/:id',
         component: ScheduleInvestmentsNBReportingComponent,
         canActivate: [AuthGuard]
     },
     {
-        path: 'reporting/pe/statementBalanceOperations/:id',
+        path: 'reporting/NBReporting/pe/statementBalanceOperations/:id',
         component: StatementBalanceOperationsNBReportingComponent,
         canActivate: [AuthGuard]
     },
     {
-        path: 'reporting/pe/statementCashflows/:id',
+        path: 'reporting/NBReporting/pe/statementCashflows/:id',
         component: StatementCashflowsNBReportingComponent,
         canActivate: [AuthGuard]
     },
     {
-        path: 'reporting/pe/statementChanges/:id',
+        path: 'reporting/NBReporting/pe/statementChanges/:id',
         component: StatementChangesNBReportingComponent,
         canActivate: [AuthGuard]
     },
+    {
+        path: 'reporting/NBReporting/hf/generalLedgerBalance/:id',
+        component: SingularityGeneralLedgerBalanceNBReportingComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'reporting/NBReporting/hf/noalA/:id',
+        component: SingularityNOALTrancheANBReportingComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'reporting/NBReporting/hf/noalB/:id',
+        component: SingularityNOALTrancheBNBReportingComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'reporting/NBReporting/otherInfo/:id',
+        component: OtherInfoInputNBReportingComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'reporting/NBReporting/generateReports/:id',
+        component: GenerateReportsNBReportingComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'reporting/NBReporting/NICKMFInput/:id',
+        component: NICKMFInputNBReportingComponent,
+        canActivate: [AuthGuard]
+    },
+
+
 
     /* Page not found. ERROR 404 *********************/
     {

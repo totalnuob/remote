@@ -43,7 +43,7 @@ public class DateUtils {
         try {
             return simpleDateFormat.parse(date);
         } catch (ParseException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
         return null;
     }
@@ -71,5 +71,35 @@ public class DateUtils {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.YEAR, year);
         return cal.getActualMaximum(Calendar.DAY_OF_YEAR) > 365;
+    }
+
+    public static Date getLastDayOfCurrentMonth(Date date){
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.MONTH, getMonth(date));
+        cal.set(Calendar.YEAR, getYear(date));
+        cal.set(Calendar.DAY_OF_MONTH, 1);// This is necessary to get proper results
+        cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
+        System.out.println(cal.getTime());
+        return cal.getTime();
+    }
+
+    public static Date getLastDayOfNextMonth(Date date){
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.MONTH, getMonth(date) + 1);
+        cal.set(Calendar.YEAR, getYear(date));
+        cal.set(Calendar.DAY_OF_MONTH, 1);// This is necessary to get proper results
+        cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
+        System.out.println(cal.getTime());
+        return cal.getTime();
+    }
+
+    public static Date getLastDayOfPreviousMonth(Date date){
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.MONTH, getMonth(date) -1);
+        cal.set(Calendar.YEAR, getYear(date));
+        cal.set(Calendar.DAY_OF_MONTH, 1);// This is necessary to get proper results
+        cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
+        System.out.println(cal.getTime());
+        return cal.getTime();
     }
 }

@@ -11,7 +11,7 @@ public interface PEOperationsTypeRepository extends PagingAndSortingRepository<P
 
     PEOperationsType findByCode(String code);
 
-    PEOperationsType findByNameEn(String name);
+    PEOperationsType findByNameEnIgnoreCase(String name);
 
 
 

@@ -21,7 +21,7 @@ import java.util.Date;
 public class ReportingPEScheduleInvestment extends CreateUpdateBaseEntity{
 
     // TODO: refactor as enum lookup
-    public static final String TYPE_PE_PARTNERSHIPS = "Private Equity Partnerships";
+    public static final String TYPE_FUND_INVESTMENTS = "Fund Investments";
     public static final String TYPE_COINVESTMENTS = "Co-Investments";
 
     private String name;

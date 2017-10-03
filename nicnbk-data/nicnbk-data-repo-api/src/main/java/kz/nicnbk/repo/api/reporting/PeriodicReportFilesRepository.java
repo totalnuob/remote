@@ -16,6 +16,9 @@ public interface PeriodicReportFilesRepository extends PagingAndSortingRepositor
     @Query("SELECT e from periodic_report_files e where e.periodicReport.id=?1 and (e.file.deleted is null or e.file.deleted=false)")
     List<PeriodicReportFiles> getEntitiesByReportId(Long reportId);
 
+    @Query("SELECT e from periodic_report_files e where e.periodicReport.id=?1 and (e.file.deleted is null or e.file.deleted=false) and e.file.type.code=?2")
+    PeriodicReportFiles getEntityByReportIdAndFileType(Long reportId, String type);
+
     @Query("SELECT e from periodic_report_files e where e.file.id=?1 and (e.file.deleted is null or e.file.deleted=false)")
     PeriodicReportFiles getEntitiesByFileId(Long fileId);
 
@@ -23,4 +26,5 @@ public interface PeriodicReportFilesRepository extends PagingAndSortingRepositor
     @Transactional
     @Query("DELETE from periodic_report_files e where e.file.id=?1")
     void deleteByFileId(long fileId);
+
 }

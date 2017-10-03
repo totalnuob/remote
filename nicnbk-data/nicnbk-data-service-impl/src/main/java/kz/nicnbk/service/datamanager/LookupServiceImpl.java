@@ -6,6 +6,8 @@ import kz.nicnbk.repo.api.lookup.CurrencyRepository;
 import kz.nicnbk.repo.api.lookup.GeographyRepository;
 import kz.nicnbk.repo.api.lookup.StrategyRepository;
 import kz.nicnbk.repo.api.pe.IndustryRepository;
+import kz.nicnbk.repo.api.reporting.NBChartOfAccountsRepository;
+import kz.nicnbk.repo.api.reporting.NICReportingChartOfAccountsRepository;
 import kz.nicnbk.repo.model.base.BaseTypeEntity;
 import kz.nicnbk.repo.model.common.*;
 import kz.nicnbk.repo.model.files.FilesType;
@@ -14,10 +16,14 @@ import kz.nicnbk.repo.model.m2s2.MeetingArrangedBy;
 import kz.nicnbk.repo.model.m2s2.MeetingType;
 import kz.nicnbk.repo.model.news.NewsType;
 import kz.nicnbk.repo.model.pe.PEIndustry;
+import kz.nicnbk.repo.model.reporting.NBChartOfAccounts;
+import kz.nicnbk.repo.model.reporting.NICReportingChartOfAccounts;
 import kz.nicnbk.repo.model.reporting.PeriodicReportType;
 import kz.nicnbk.repo.model.reporting.ReportStatus;
+import kz.nicnbk.repo.model.reporting.hedgefunds.HFFinancialStatementType;
 import kz.nicnbk.repo.model.reporting.privateequity.PEInvestmentType;
 import kz.nicnbk.repo.model.tripmemo.TripType;
+import kz.nicnbk.service.dto.reporting.NICReportingChartOfAccountsDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,6 +105,15 @@ public class LookupServiceImpl implements LookupService {
     @Autowired
     private PEInvestmentTypeRepository peInvestmentTypeRepository;
 
+    @Autowired
+    private HFFinancialStatementTypeRepository hfFinancialStatementTypeRepository;
+
+    @Autowired
+    private NBChartOfAccountsRepository nbChartOfAccountsRepository;
+
+    @Autowired
+    private NICReportingChartOfAccountsRepository nicReportingChartOfAccountsRepository;
+
     @Override
     public <T extends BaseTypeEntity> T findByTypeAndCode(Class<T> clazz, String code) {
 
@@ -107,7 +122,10 @@ public class LookupServiceImpl implements LookupService {
         try {
             if (code == null) {
                 return null;
+            }else{
+                code = code.trim();
             }
+
             if (clazz.equals(NewsType.class)) {
                 return (T) this.newsTypeRepository.findByCode(code);
             } else if (clazz.equals(MeetingType.class)) {
@@ -152,6 +170,10 @@ public class LookupServiceImpl implements LookupService {
                 return (T) this.reportStatusRepository.findByCode(code);
             } else if (clazz.equals(PEInvestmentType.class)) {
                 return (T) this.peInvestmentTypeRepository.findByCode(code);
+            } else if (clazz.equals(HFFinancialStatementType.class)) {
+                return (T) this.hfFinancialStatementTypeRepository.findByCode(code);
+            } else if (clazz.equals(NICReportingChartOfAccounts.class)) {
+                return (T) this.nicReportingChartOfAccountsRepository.findByCode(code);
             }else{
                 logger.error("Failed to load lookups for clazz=" + clazz + ", code=" + code);
             }
@@ -372,11 +394,57 @@ public class LookupServiceImpl implements LookupService {
         return null;
     }
 
+    @Override
+    public List<BaseDictionaryDto> getNBChartOfAccounts() {
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            Iterator<NBChartOfAccounts> iterator = this.nbChartOfAccountsRepository.findAll().iterator();
+            while (iterator.hasNext()) {
+                NBChartOfAccounts entity = iterator.next();
+                BaseDictionaryDto dto = disassemble(entity);
+                dtoList.add(dto);
+            }
+            return dtoList;
+        }catch (Exception ex){
+            logger.error("Failed to load lookup: NBChartOfAccounts", ex);
+        }
+        return null;
+    }
+
+    @Override
+    public List<NICReportingChartOfAccountsDto> getNICReportingChartOfAccounts(String code) {
+        try {
+            List<NICReportingChartOfAccountsDto> dtoList = new ArrayList<>();
+            Iterator<NICReportingChartOfAccounts> iterator = null;
+            if(code != null){
+                iterator = this.nicReportingChartOfAccountsRepository.findByNBChartOfAccountsCode(code).iterator();
+            }else{
+                iterator = this.nicReportingChartOfAccountsRepository.findAll().iterator();
+            }
+            while (iterator.hasNext()) {
+                NICReportingChartOfAccounts entity = iterator.next();
+                BaseDictionaryDto baseDictionaryDto = disassemble(entity);
+                NICReportingChartOfAccountsDto dto = new NICReportingChartOfAccountsDto(baseDictionaryDto);
+                if(entity.getNbChartOfAccounts() != null) {
+                    dto.setNBChartOfAccounts(disassemble(entity.getNbChartOfAccounts()));
+                }
+                dtoList.add(dto);
+            }
+            return dtoList;
+        }catch (Exception ex){
+            logger.error("Failed to load lookup: NICReportingChartOfAccounts", ex);
+        }
+        return null;
+
+    }
+
     // TODO: refactor as common lookup converter
     private BaseDictionaryDto disassemble(BaseTypeEntity entity){
         BaseDictionaryDto dto = new BaseDictionaryDto();
         dto.setCode(entity.getCode());
         dto.setNameEn(entity.getNameEn());
+        dto.setNameRu(entity.getNameRu());
+        dto.setNameKz(entity.getNameKz());
         return dto;
     }
 

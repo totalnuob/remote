@@ -56,7 +56,7 @@ public class ScheduleInvestmentsDto extends InputFileReportDataDto{
             }
 
             if(this.total != null) {
-                System.out.println("\nTotal Private Equity Partnerships and Co-Investments | " + this.total.getCapitalCommitments()
+                System.out.println("\nTotal Fund Investments and Co-Investments | " + this.total.getCapitalCommitments()
                         + " | " + this.total.getNetCost() + " | " + this.total.getFairValue() + " | " + this.total.getCurrency());
             }
             System.out.println("**************************************************");

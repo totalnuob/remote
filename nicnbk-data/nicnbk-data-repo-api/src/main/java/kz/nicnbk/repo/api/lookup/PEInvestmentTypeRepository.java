@@ -11,7 +11,7 @@ public interface PEInvestmentTypeRepository extends PagingAndSortingRepository<P
 
     PEInvestmentType findByCode(String code);
 
-    PEInvestmentType findByNameEn(String name);
+    PEInvestmentType findByNameEnIgnoreCase(String name);
 
 
 

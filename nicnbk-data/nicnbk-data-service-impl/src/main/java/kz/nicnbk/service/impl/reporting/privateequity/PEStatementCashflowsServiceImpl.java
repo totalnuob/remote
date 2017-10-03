@@ -1,6 +1,5 @@
 package kz.nicnbk.service.impl.reporting.privateequity;
 
-import kz.nicnbk.common.service.util.ArrayUtils;
 import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.api.lookup.PECashflowsTypeRepository;
 import kz.nicnbk.repo.api.reporting.privateequity.ReportingPEStatementCashflowsRepository;
@@ -9,10 +8,9 @@ import kz.nicnbk.repo.model.reporting.privateequity.PECashflowsType;
 import kz.nicnbk.repo.model.reporting.privateequity.ReportingPEStatementCashflows;
 import kz.nicnbk.service.api.reporting.PeriodicDataService;
 import kz.nicnbk.service.api.reporting.privateequity.PEStatementCashflowsService;
-import kz.nicnbk.service.converter.reporting.PeriodReportConverter;
+import kz.nicnbk.service.converter.reporting.PeriodicReportConverter;
 import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordDto;
 import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordHolderDto;
-import kz.nicnbk.service.dto.reporting.PeriodicDataDto;
 import kz.nicnbk.service.dto.reporting.exception.ExcelFileParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +36,7 @@ public class PEStatementCashflowsServiceImpl implements PEStatementCashflowsServ
     private ReportingPEStatementCashflowsRepository peStatementCashflowsRepository;
 
     @Autowired
-    private PeriodReportConverter periodReportConverter;
+    private PeriodicReportConverter periodicReportConverter;
 
     @Autowired
     private PeriodicDataService periodicDataService;
@@ -49,34 +47,53 @@ public class PEStatementCashflowsServiceImpl implements PEStatementCashflowsServ
         entity.setName(dto.getName());
         entity.setTrancheA(dto.getValues()[0]);
         entity.setTrancheB(dto.getValues()[1]);
+        entity.setTotal(dto.getValues()[2]);
 
         // report
         entity.setReport(new PeriodicReport(reportId));
 
         // cashflows type
-        for(String classification: dto.getClassifications()){
+        String parentClassification = null;
+        for(int i = 0; i < dto.getClassifications().length; i++){
+
+            String classification = dto.getClassifications()[i];
+
             if(StringUtils.isNotEmpty(classification)) {
-                PECashflowsType cashflowsType = this.peCashflowsTypeRepository.findByNameEn(classification.trim());
+                PECashflowsType cashflowsType = this.peCashflowsTypeRepository.findByNameEnIgnoreCase(classification.trim());
                 if(cashflowsType != null){
+                    if(StringUtils.isNotEmpty(parentClassification)){
+                        if(cashflowsType.getParent() == null){
+                            logger.error("Parent type mismatch for cash flow type '" + classification + "': found '" + parentClassification + "', expected null.");
+                            throw new ExcelFileParseException("Parent type mismatch for cash flow type '" + classification + "': found '" + parentClassification + "', expected null.");
+                        }else if(!cashflowsType.getParent().getNameEn().equalsIgnoreCase(parentClassification)){
+                            logger.error("Parent type mismatch for cash flow type '" + classification + "': found '" +
+                                    parentClassification + "', expected '" + cashflowsType.getParent().getNameEn() + "'");
+                            throw new ExcelFileParseException("Parent type mismatch for cash flow type '" + classification + "': found '" +
+                                    parentClassification + "', expected '" + cashflowsType.getParent().getNameEn() + "'");
+                        }else{
+                            //
+                        }
+                    }
                     entity.setType(cashflowsType);
+                    parentClassification = classification;
                     //break;
                 }else{
-                    logger.error("Specified Cashflows type '" + classification +"'  could not be determined for record '" + entity.getName() + "'. Expected values are 'Cash flows from operating activities'," +
+                    logger.error("Cash flows type '" + classification +"'  could not be determined for record '" + entity.getName() + "'. Expected values are 'Cash flows from operating activities'," +
                             " 'Cash flows from financing activities' etc. Check for possible spaces in names.");
-                    throw new ExcelFileParseException("Specified Cashflows type '" + classification + "'  could not be determined for record '" + entity.getName() +
+                    throw new ExcelFileParseException("Cash flows type '" + classification + "'  could not be determined for record '" + entity.getName() +
                             "'. Expected values are 'Cash flows from operating activities', 'Cash flows from financing activities', etc. Check for possible spaces in names.");
                 }
             }
         }
         if(entity.getType() == null){
-            PECashflowsType cashflowsType = this.peCashflowsTypeRepository.findByNameEn(dto.getName().trim());
+            PECashflowsType cashflowsType = this.peCashflowsTypeRepository.findByNameEnIgnoreCase(dto.getName().trim());
             if(cashflowsType != null){
                 entity.setType(cashflowsType);
                 //break;
             }
         }
 
-        if(entity.getType() == null){
+        if(entity.getType() == null && !isNetSum(entity.getName())){
             logger.error("Cashflows record type could not be determined for record '" + entity.getName() + "'. Expected values are 'Cash flows from operating activities'," +
                     " 'Cash flows from financing activities' etc.");
             throw new ExcelFileParseException("Cashflows record type could not be determined for record '" + entity.getName() +
@@ -118,34 +135,30 @@ public class PEStatementCashflowsServiceImpl implements PEStatementCashflowsServ
         result.setCashflows(records);
 
         if(entities != null) {
-            result.setReport(periodReportConverter.disassemble(entities.get(0).getReport()));
+            result.setReport(periodicReportConverter.disassemble(entities.get(0).getReport()));
         }
 
         return result;
     }
 
-//    private List<ConsolidatedReportRecordDto> disassembleList(List<ReportingPEStatementCashflows> entities){
-//        return null;
-//    }
+    private boolean isNetSum(String name){
+        return StringUtils.isNotEmpty(name) && (name.equalsIgnoreCase("Net increase (decrease) in cash and cash equivalents") ||
+                name.equalsIgnoreCase("Cash and cash equivalents - beginning of period") ||
+                name.equalsIgnoreCase("Cash and cash equivalents - end of period"));
+    }
 
     // TODO: refactor
     private List<ConsolidatedReportRecordDto> disassembleList(List<ReportingPEStatementCashflows> entities){
         List<ConsolidatedReportRecordDto> records = new ArrayList<>();
         if(entities != null && !entities.isEmpty()){
             PECashflowsType currentType = null;
-
-            Map<String, Double[]> totalSums = new HashMap<>();
             Map<String, Integer> levels = new HashMap<>();
-            Double[] totals = new Double[]{0.0, 0.0, 0.0};
-
-            ReportingPEStatementCashflows lastEntity = null;
             int level = 0;
             for(ReportingPEStatementCashflows entity: entities) {
 
                 boolean typeChange = currentType != null && entity.getType() != null &&
                         !entity.getType().getCode().equalsIgnoreCase(currentType.getCode());
 
-                // add total by type
                 if(typeChange){
                     PECashflowsType previousParent = currentType.getParent();
                     PECashflowsType biggestPreviousParent = currentType;
@@ -163,20 +176,22 @@ public class PEStatementCashflowsServiceImpl implements PEStatementCashflowsServ
 
                     if(biggestPreviousParent != null && biggestNewParent != null &&
                             !biggestPreviousParent.getCode().equalsIgnoreCase(biggestNewParent.getCode())){
-                        records.add(buildNetRecord(biggestPreviousParent.getNameEn(), totalSums.get(biggestPreviousParent.getNameEn())));
+                        //records.add(buildNetRecord(biggestPreviousParent.getNameEn(), totalSums.get(biggestPreviousParent.getNameEn())));
                         level = 0;
-
                         records.add(new ConsolidatedReportRecordDto("", null, null, null, false, false));
                     }
 
+                }else if((currentType != null && entity.getType() == null) || (currentType == null && entity.getType() != null)){
+                    level = 0;
+                    records.add(new ConsolidatedReportRecordDto("", null, null, null, false, false));
                 }
 
                 // add headers by type
                 if(typeChange || currentType == null){
                     // check if need header
-                    Set<String> keySet = totalSums.keySet();
+                    Set<String> keySet = levels.keySet();
                     List<String> headers = new ArrayList<>();
-                    if(keySet == null || !keySet.contains(entity.getType().getNameEn())){
+                    if(keySet == null || (entity.getType() != null && !keySet.contains(entity.getType().getNameEn()))){
                         // add headers
                         PECashflowsType parent = entity.getType();
                         while(parent != null){
@@ -186,10 +201,7 @@ public class PEStatementCashflowsServiceImpl implements PEStatementCashflowsServ
                             parent = parent.getParent();
                         }
 
-
                         for(int i = headers.size() - 1; i >= 0; i--){
-                            totalSums.put(headers.get(i), new Double[]{0.0, 0.0, 0.0});
-
                             PECashflowsType type = getCashflowTypeByName(headers.get(i));
                             if(type != null){
                                 type = type.getParent();
@@ -197,6 +209,7 @@ public class PEStatementCashflowsServiceImpl implements PEStatementCashflowsServ
                                     Integer tempLevel = levels.get(type.getNameEn());
                                     if( tempLevel != null){
                                         level = tempLevel + 1;
+                                        //level = tempLevel;
                                         break;
                                     }
                                     type = type.getParent();
@@ -215,75 +228,37 @@ public class PEStatementCashflowsServiceImpl implements PEStatementCashflowsServ
 
                 currentType = entity.getType();
                 // add entity values to output
-                Double sum = entity.getTrancheA() != null && entity.getTrancheB() != null ? entity.getTrancheA().doubleValue() + entity.getTrancheB().doubleValue() :
-                        entity.getTrancheA() != null ? entity.getTrancheA().doubleValue() : entity.getTrancheB() != null ? entity.getTrancheB().doubleValue() : 0.0;
-                Double[] values = {entity.getTrancheA(), entity.getTrancheB(), sum};
-                ConsolidatedReportRecordDto recordDto = new ConsolidatedReportRecordDto(entity.getName(), null, values, null, false, false);
-                recordDto.setLevel(entity.getType() != null && levels.get(entity.getType().getNameEn()) != null ? levels.get(entity.getType().getNameEn()) : 1);
+//                Double sum = entity.getTrancheA() != null && entity.getTrancheB() != null ? entity.getTrancheA().doubleValue() + entity.getTrancheB().doubleValue() :
+//                        entity.getTrancheA() != null ? entity.getTrancheA().doubleValue() : entity.getTrancheB() != null ? entity.getTrancheB().doubleValue() : 0.0;
+                Double[] values = {entity.getTrancheA(), entity.getTrancheB(), entity.getTotal()};
+
+                boolean isTotal = isNetSum(entity.getName());
+                int totalLevel = -1;
+                if(!isTotal){
+                    PECashflowsType type = entity.getType();
+                    while(type != null){
+                        if(entity.getName().equalsIgnoreCase("Net " + type.getNameEn())){
+                            isTotal = true;
+                            totalLevel = levels.get(type.getNameEn());
+                            break;
+                        }
+                        type = type.getParent();
+                    }
+                }
+
+                ConsolidatedReportRecordDto recordDto = new ConsolidatedReportRecordDto(entity.getName(), null, values, null, isTotal, isTotal);
+                recordDto.setLevel(entity.getType() != null && levels.get(entity.getType().getNameEn()) != null ? levels.get(entity.getType().getNameEn()) + 1 : 0);
+                if(totalLevel != -1){
+                    recordDto.setLevel(totalLevel);
+                }
                 records.add(recordDto);
-
-                // add entity values to sums by type
-                PECashflowsType type = entity.getType();
-                while(type != null){
-                    Double[] sums = totalSums.get(type.getNameEn());
-                    if (sums != null){
-                        ArrayUtils.addArrayValues(sums, values);
-                    }
-                    type = type.getParent();
-                }
-
-                // add totals
-                ArrayUtils.addArrayValues(totals, values);
-                lastEntity = entity;
             }
-
-            // last record sum by type
-            if(lastEntity != null){
-                PECashflowsType type = lastEntity.getType();
-                while(type != null){
-                    Double[] sums = totalSums.get(type.getNameEn());
-                    if(sums != null){
-                        records.add(buildNetRecord(type.getNameEn(), sums));
-                    }
-                    type = type.getParent();
-                }
-            }
-
             records.add(new ConsolidatedReportRecordDto("", null, null, null, false, false));
-
-            // NET AND CALCULATED VALUES
-            // TODO: refactor string literals
-            if(entities != null && !entities.isEmpty()){
-                records.add(new ConsolidatedReportRecordDto("Net increase (decrease) in cash and cash equivalents", null, totals, null, true, true));
-
-                PeriodicDataDto trancheA = this.periodicDataService.getCashflowBeginningPeriod(1);
-                PeriodicDataDto trancheB = this.periodicDataService.getCashflowBeginningPeriod(2);
-                Double trancheAValue = trancheA != null && trancheA.getValue() != null ? trancheA.getValue().doubleValue() : 0.0;
-                Double trancheBValue = trancheB != null && trancheB.getValue() != null ? trancheB.getValue().doubleValue() : 0.0;
-                Double[] beginningPeriod = {trancheAValue, trancheBValue, (trancheAValue + trancheBValue)};
-                records.add(new ConsolidatedReportRecordDto("Cash and cash equivalents - beginning of period", null, beginningPeriod, null, true, true));
-
-                Double[] endPeriod = {0.0, 0.0, 0.0};
-                ArrayUtils.addArrayValues(endPeriod, totals);
-                ArrayUtils.addArrayValues(endPeriod, beginningPeriod);
-                records.add(new ConsolidatedReportRecordDto("Cash and cash equivalents - end of period", null, endPeriod, null, true, true));
-            }
-
         }
         return records;
     }
 
     private PECashflowsType getCashflowTypeByName(String nameEn){
-        return this.peCashflowsTypeRepository.findByNameEn(nameEn);
-    }
-
-    // TODO: refactor common
-    private ConsolidatedReportRecordDto buildNetRecord(String name, Double[] totalSums){
-        ConsolidatedReportRecordDto recordDtoTotal = new ConsolidatedReportRecordDto();
-        recordDtoTotal.setName("Net " + name);
-        recordDtoTotal.setValues(totalSums);
-        recordDtoTotal.setHeader(true);
-        recordDtoTotal.setTotalSum(true);
-        return recordDtoTotal;
+        return this.peCashflowsTypeRepository.findByNameEnIgnoreCase(nameEn);
     }
 }

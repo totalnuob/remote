@@ -2,6 +2,7 @@ package kz.nicnbk.ws.rest;
 
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.service.datamanager.LookupService;
+import kz.nicnbk.service.dto.reporting.NICReportingChartOfAccountsDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -92,6 +93,24 @@ public class LookupServiceREST extends CommonServiceREST{
     @RequestMapping(value = "/PEIndustry", method = RequestMethod.GET)
     public ResponseEntity getPEIndustry(){
         List<BaseDictionaryDto> lookups = this.lookupService.getPEIndustry();
+        return buildResponse(lookups);
+    }
+
+    @RequestMapping(value = "/NBChartOfAccounts", method = RequestMethod.GET)
+    public ResponseEntity getNBChartOfAccounts(){
+        List<BaseDictionaryDto> lookups = this.lookupService.getNBChartOfAccounts();
+        return buildResponse(lookups);
+    }
+
+    @RequestMapping(value = "/NICReportingChartOfAccounts/{code}", method = RequestMethod.GET)
+    public ResponseEntity getNICReportingChartOfAccountsByCode(@PathVariable String code){
+        List<NICReportingChartOfAccountsDto> lookups = this.lookupService.getNICReportingChartOfAccounts(code);
+        return buildResponse(lookups);
+    }
+
+    @RequestMapping(value = "/NICReportingChartOfAccounts/", method = RequestMethod.GET)
+    public ResponseEntity getNICReportingChartOfAccounts(){
+        List<NICReportingChartOfAccountsDto> lookups = this.lookupService.getNICReportingChartOfAccounts(null);
         return buildResponse(lookups);
     }
 }

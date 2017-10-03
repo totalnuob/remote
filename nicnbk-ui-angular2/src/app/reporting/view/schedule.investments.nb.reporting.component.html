@@ -6,7 +6,7 @@
                     <span><a [routerLink]="['/reporting/NBReporting']">NB Reporting</a></span>
                 </li>
                 <li>
-                    <span *ngIf="report != null"><a [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">{{getReportDateShortFormatted(report.reportDate)}}</a></span>
+                    <span *ngIf="report != null"><a [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">Parsed input files</a></span>
                 </li>
                 <li class="active">Schedule of Investments</li>
             </ol>

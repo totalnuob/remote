@@ -55,7 +55,7 @@ export class StatementChangesNBReportingComponent extends CommonNBReportingCompo
                             },
                             (error: ErrorResponse) => {
                                 this.successMessage = null;
-                                this.errorMessage = "Error loading statment of changes";
+                                this.errorMessage = "Error loading statement of changes";
                                 if(error && !error.isEmpty()){
                                     this.processErrorMessage(error);
                                 }

@@ -39,7 +39,7 @@ public class ExcelUtils {
     public static Double getDoubleValueFromCell(Cell cell){
         if(cell == null){
             return null;
-        }else if(cell.getCellType() == Cell.CELL_TYPE_NUMERIC || cell.getCellType() == Cell.CELL_TYPE_FORMULA){
+        }else if(cell != null && cell.getCellType() == Cell.CELL_TYPE_NUMERIC || cell.getCellType() == Cell.CELL_TYPE_FORMULA){
             return cell.getNumericCellValue();
         }else if(cell.getCellType() == Cell.CELL_TYPE_STRING){
             try{
@@ -60,6 +60,35 @@ public class ExcelUtils {
         return null;
     }
 
+    public static String getStringValueFromCell(Cell cell){
+        if(cell == null || cell.getCellType() != Cell.CELL_TYPE_STRING){
+            return null;
+        }else{
+            return cell.getStringCellValue();
+        }
+    }
+
+    public static String getTextValueFromAnyCell(Cell cell){
+        if(cell == null){
+            return null;
+        }else if(cell.getCellType() == Cell.CELL_TYPE_STRING){
+            return cell.getStringCellValue();
+
+        }else if(cell.getCellType() == Cell.CELL_TYPE_NUMERIC){
+            return cell.getNumericCellValue() + "";
+        }else if(cell.getCellType() == Cell.CELL_TYPE_BLANK){
+            return "";
+        }else if(cell.getCellType() == Cell.CELL_TYPE_BOOLEAN){
+            return cell.getBooleanCellValue() + "";
+        }else if(cell.getCellType() == Cell.CELL_TYPE_ERROR){
+            return null;
+        }else if(cell.getCellType() == Cell.CELL_TYPE_FORMULA){
+            return cell.getCellFormula();
+        }else {
+            return null;
+        }
+    }
+
     public static boolean isCellStringValueEqual(Cell cell, String value){
         if(cell == null || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())){
          return false;
@@ -71,6 +100,14 @@ public class ExcelUtils {
         if(cell == null || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())){
             return false;
         }
+//        for(int i = 0; i < value.length(); i++){
+//
+//            if(value.charAt(i) != cell.getStringCellValue().trim().charAt(i)){
+//                System.out.println("MISMATCH");
+//                System.out.println(value.charAt(i));
+//                System.out.println(cell.getStringCellValue().trim().charAt(i));
+//            }
+//        }
         return cell.getStringCellValue().trim().equalsIgnoreCase(value);
     }
 

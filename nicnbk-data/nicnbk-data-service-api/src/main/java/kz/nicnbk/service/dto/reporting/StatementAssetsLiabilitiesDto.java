@@ -29,7 +29,7 @@ public class StatementAssetsLiabilitiesDto extends InputFileReportDataDto{
     }
 
     public void print(){
-        System.out.println("Consolidated Statement of Assets, Liabilities and Partner's Capital:");
+        System.out.println("Consolidated Statement of Assets, Liabilities and Partners' Capital:");
         if(this.balance != null){
             for(ConsolidatedStatementRecordDto dto: this.balance){
                 System.out.println(dto.getName() + " | " + dto.getType() + " | " + dto.getValues()[0]

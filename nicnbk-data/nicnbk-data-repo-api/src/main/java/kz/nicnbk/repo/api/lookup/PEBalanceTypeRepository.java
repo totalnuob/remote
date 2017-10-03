@@ -10,7 +10,7 @@ public interface PEBalanceTypeRepository extends PagingAndSortingRepository<PEBa
 
     PEBalanceType findByCode(String code);
 
-    PEBalanceType findByNameEn(String name);
+    PEBalanceType findByNameEnIgnoreCase(String name);
 
 
 

@@ -11,7 +11,7 @@ import kz.nicnbk.repo.model.reporting.PeriodicReport;
 import kz.nicnbk.repo.model.reporting.privateequity.PEInvestmentType;
 import kz.nicnbk.repo.model.reporting.privateequity.ReportingPEScheduleInvestment;
 import kz.nicnbk.service.api.reporting.privateequity.PEScheduleInvestmentService;
-import kz.nicnbk.service.converter.reporting.PeriodReportConverter;
+import kz.nicnbk.service.converter.reporting.PeriodicReportConverter;
 import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordDto;
 import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordHolderDto;
 import kz.nicnbk.service.dto.reporting.exception.ExcelFileParseException;
@@ -46,7 +46,7 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
     private ReportingPEScheduleInvestmentRepository peScheduleInvestmentRepository;
 
     @Autowired
-    private PeriodReportConverter periodReportConverter;
+    private PeriodicReportConverter periodicReportConverter;
 
 
     @Override
@@ -66,29 +66,28 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
 
         // investment type
         for(String classification: dto.getClassifications()){
-            if(classification != null && !classification.equalsIgnoreCase("Private Equity Partnerships and Co-Investments")){
-                if(classification != null) {
-                    PEInvestmentType investmentType = this.peInvestmentTypeRepository.findByNameEn(classification.trim());
-                    if(investmentType != null){
-                        entity.setType(investmentType);
-                        break;
-                    }
+            if(classification != null) {
+                PEInvestmentType investmentType = this.peInvestmentTypeRepository.findByNameEnIgnoreCase(classification.trim());
+                if(investmentType != null){
+                    entity.setType(investmentType);
+                    break;
                 }
             }
         }
-        if(entity.getType() == null && isTotalTypeSum(entity.getName())){
-            logger.error("Schedule of investment record type could not be determined for record '" + entity.getName() +
-                    "'. Expected values are 'Private Equity Partnerships', 'CoInvestments', etc.  Check for possible spaces in names.");
-            throw new ExcelFileParseException("Schedule of investment record type could not be determined for record '" + entity.getName() +
-                    "'. Expected values are 'Private Equity Partnerships', 'CoInvestments', etc.  Check for possible spaces in names.");
+        if(entity.getType() == null && !isTotalTypeSum(entity.getName())){
+            String trancheName = tranche == 1 ? "[Tranche A]" : tranche == 2 ? "[Tranche B]" : "";
+            logger.error(trancheName + " Schedule of investment record type could not be determined for '" + entity.getName() +
+                    "'. Expected values are 'Fund Investments', 'Co-Investments', etc.  Check for possible spaces in names.");
+            throw new ExcelFileParseException(trancheName + " Schedule of investment record type could not be determined for '" + entity.getName() +
+                    "'. Expected values are 'Fund Investments', 'Co-Investments', etc.  Check for possible spaces in names.");
         }
 
         // strategy
 //        String currencyName = null;
-        if(entity.getType() != null && entity.getType().getNameEn().equalsIgnoreCase(ReportingPEScheduleInvestment.TYPE_PE_PARTNERSHIPS) &&
+        if(entity.getType() != null && entity.getType().getNameEn().equalsIgnoreCase(ReportingPEScheduleInvestment.TYPE_FUND_INVESTMENTS) &&
                 !isTotalTypeSum(entity.getName())) {
             for(String classification: dto.getClassifications()){
-                if(classification != null && !classification.equalsIgnoreCase("Private Equity Partnerships and Co-Investments")
+                if(classification != null && !classification.equalsIgnoreCase("Fund Investments and Co-Investments")
                         && !classification.equalsIgnoreCase(entity.getType().getNameEn())){
                     // strategy name cut off CURRENCY
 //                    if(classification.trim().endsWith(" - USD") || classification.trim().endsWith(" - GBP")){
@@ -109,7 +108,8 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
                 }
             }
         }
-        if(entity.getType() != null && entity.getType().getCode().equalsIgnoreCase("PE_PARTN") && entity.getStrategy() == null && !isTotalTypeSum(entity.getName())){
+        if(entity.getType() != null && entity.getType().getNameEn().equalsIgnoreCase(ReportingPEScheduleInvestment.TYPE_FUND_INVESTMENTS)
+                && entity.getStrategy() == null && !isTotalTypeSum(entity.getName())){
             logger.error("Schedule of investment record strategy could not be determined for record '" + entity.getName() + "'");
             throw new ExcelFileParseException("Schedule of investment record strategy could not be determined for record '" + entity.getName() + "'");
         }
@@ -118,7 +118,7 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
         // description
         if(entity.getType() != null && entity.getType().getNameEn().equalsIgnoreCase(ReportingPEScheduleInvestment.TYPE_COINVESTMENTS)) {
             for(String classification: dto.getClassifications()){
-                if(classification != null && !classification.equalsIgnoreCase("Private Equity Partnerships and Co-Investments") &&
+                if(classification != null && !classification.equalsIgnoreCase("Fund Investments and Co-Investments") &&
                         !classification.equalsIgnoreCase(entity.getType().getNameEn())){
                     entity.setDescription(classification.trim());
                 }
@@ -177,9 +177,9 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
         result.setTrancheA(trancheA);
         result.setTrancheB(trancheB);
         if(entitiesTrancheA != null && !entitiesTrancheA.isEmpty()) {
-            result.setReport(periodReportConverter.disassemble(entitiesTrancheA.get(0).getReport()));
+            result.setReport(periodicReportConverter.disassemble(entitiesTrancheA.get(0).getReport()));
         }else if(entitiesTrancheB != null && !entitiesTrancheB.isEmpty()){
-            result.setReport(periodReportConverter.disassemble(entitiesTrancheB.get(0).getReport()));
+            result.setReport(periodicReportConverter.disassemble(entitiesTrancheB.get(0).getReport()));
         }
 
         return result;
@@ -193,7 +193,7 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
             String description = null;
             for(ReportingPEScheduleInvestment entity: entities){
                 boolean isPrivateEquityPartnerships = entity.getType() != null &&
-                        entity.getType().getNameEn().equalsIgnoreCase(ReportingPEScheduleInvestment.TYPE_PE_PARTNERSHIPS);
+                        entity.getType().getNameEn().equalsIgnoreCase(ReportingPEScheduleInvestment.TYPE_FUND_INVESTMENTS);
 
                 boolean isCoinvestments = entity.getType() != null &&
                         entity.getType().getNameEn().equalsIgnoreCase(ReportingPEScheduleInvestment.TYPE_COINVESTMENTS);
@@ -248,9 +248,9 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
     }
 
     private boolean isTotalTypeSum(String name){
-        return StringUtils.isNotEmpty(name) && (name.equalsIgnoreCase("Total Private Equity Partnerships") ||
+        return StringUtils.isNotEmpty(name) && (name.equalsIgnoreCase("Total Fund Investments") ||
                 name.equalsIgnoreCase("Total Co-Investments") ||
-                name.equalsIgnoreCase("Total Private Equity Partnerships and Co-Investments"));
+                name.equalsIgnoreCase("Total Fund Investments and Co-Investments"));
     }
 
     // TODO: refactor
@@ -271,7 +271,7 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
 //            for(ReportingPEScheduleInvestment entity: entities){
 //
 //                boolean isPrivateEquityPartnerships = entity.getType() != null &&
-//                        entity.getType().getNameEn().equalsIgnoreCase(ReportingPEScheduleInvestment.TYPE_PE_PARTNERSHIPS);
+//                        entity.getType().getNameEn().equalsIgnoreCase(ReportingPEScheduleInvestment.TYPE_FUND_INVESTMENTS);
 //
 //                boolean isCoinvestments = entity.getType() != null &&
 //                        entity.getType().getNameEn().equalsIgnoreCase(ReportingPEScheduleInvestment.TYPE_COINVESTMENTS);
@@ -364,7 +364,7 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
 //            }
 //            if(totalInvestmentsNumber > 1){
 //                totalSums[0] = null;
-//                records.add(buildTotalRecord("Private Equity Partnerships and Co-Investments", totalSums));
+//                records.add(buildTotalRecord("Fund Investments and Co-Investments", totalSums));
 //            }
 //        }
 //        return records;

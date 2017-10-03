@@ -59,6 +59,13 @@ import {ScheduleInvestmentsNBReportingComponent} from "./reporting/schedule.inve
 import {StatementBalanceOperationsNBReportingComponent} from "./reporting/statement.balance.operations.nb.reporting.component";
 import {StatementCashflowsNBReportingComponent} from "./reporting/statement.cashflows.nb.reporting.component";
 import {StatementChangesNBReportingComponent} from "./reporting/statement.changes.nb.reporting.component";
+import {SingularityGeneralLedgerBalanceNBReportingComponent} from "./reporting/singularity.general.ledger.balance.nb.reporting.component";
+import {SingularityNOALTrancheANBReportingComponent} from "./reporting/singularity.noal.tranchea.nb.reporting.component";
+import {SingularityNOALTrancheBNBReportingComponent} from "./reporting/singularity.noal.trancheb.nb.reporting.component";
+import {OtherInfoInputNBReportingComponent} from "./reporting/other.info.input.nb.reporting.component";
+import {FileAttachmentDownloaderComponent} from "./common/file-attachment-downloader.component";
+import {GenerateReportsNBReportingComponent} from "./reporting/generate.reports.nb.reporting.component";
+import {NICKMFInputNBReportingComponent} from "./reporting/nick.mf.input.nb.reporting.component";
 
 @NgModule({
     imports: [
@@ -82,7 +89,7 @@ import {StatementChangesNBReportingComponent} from "./reporting/statement.change
         LoginComponent, EmployeeProfileComponent,
         NewsListComponent, NewsEditComponent, NewsViewComponent,
         MemoListComponent,
-        MemoAttachmentDownloaderComponent,
+        MemoAttachmentDownloaderComponent, FileAttachmentDownloaderComponent,
         GeneralMemoEditComponent, PrivateEquityMemoEditComponent, HedgeFundsMemoEditComponent, RealEstateMemoEditComponent,
         TripMemoListComponent, TripMemoEditComponent, RiskManagementAxiomaReportingComponent, MonitoringHedgeFundsComponent, MonitoringLiquidPortfolioComponent,
         MonitoringMacroMonitorComponent, MonitoringPortfolioComponent, MonitoringPrivateEquityComponent, MonitoringPrivateEquityFundComponent,
@@ -93,7 +100,9 @@ import {StatementChangesNBReportingComponent} from "./reporting/statement.change
         HFFundProfileComponent, HFManagerProfileComponent, HFManagerSearchComponent,
         PEFundProfileComponent, PEFirmProfileComponent, PEFirmSearchComponent, PEFundReportComponent,
         AccessDeniedComponent,NotFoundComponent,
-        ScheduleInvestmentsNBReportingComponent, StatementBalanceOperationsNBReportingComponent, StatementCashflowsNBReportingComponent, StatementChangesNBReportingComponent
+        ScheduleInvestmentsNBReportingComponent, StatementBalanceOperationsNBReportingComponent, StatementCashflowsNBReportingComponent, StatementChangesNBReportingComponent,
+        SingularityGeneralLedgerBalanceNBReportingComponent, SingularityNOALTrancheANBReportingComponent, SingularityNOALTrancheBNBReportingComponent,
+        OtherInfoInputNBReportingComponent, GenerateReportsNBReportingComponent, NICKMFInputNBReportingComponent
     ],
     bootstrap: [ AppComponent ]
 })

@@ -3,9 +3,6 @@ package kz.nicnbk.service.dto.reporting;
 import kz.nicnbk.common.service.model.BaseDto;
 import kz.nicnbk.common.service.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by magzumov on 15.05.2017.
  */
@@ -22,7 +19,8 @@ public class ConsolidatedReportRecordDto implements BaseDto {
     // TODO: formatting?
     private boolean header;
     private boolean totalSum;
-    private boolean formula;
+    private boolean withSumFormula;
+    private boolean classificationRequired;
 
     private int level;
 
@@ -75,12 +73,44 @@ public class ConsolidatedReportRecordDto implements BaseDto {
         this.currency = currency;
     }
 
-    public boolean isFormula() {
-        return formula;
+    public boolean isWithSumFormula() {
+        return withSumFormula;
     }
 
-    public void setFormula(boolean formula) {
-        this.formula = formula;
+    public void setWithSumFormula(boolean withSumFormula) {
+        this.withSumFormula = withSumFormula;
+    }
+
+    public boolean isHeader() {
+        return header;
+    }
+
+    public void setHeader(boolean header) {
+        this.header = header;
+    }
+
+    public boolean isTotalSum() {
+        return totalSum;
+    }
+
+    public void setTotalSum(boolean totalSum) {
+        this.totalSum = totalSum;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public boolean isClassificationRequired() {
+        return classificationRequired;
+    }
+
+    public void setClassificationRequired(boolean classificationRequired) {
+        this.classificationRequired = classificationRequired;
     }
 
     public void addClassification(String classification){
@@ -146,27 +176,14 @@ public class ConsolidatedReportRecordDto implements BaseDto {
         }
     }
 
-    public boolean isHeader() {
-        return header;
-    }
-
-    public void setHeader(boolean header) {
-        this.header = header;
-    }
-
-    public boolean isTotalSum() {
-        return totalSum;
-    }
-
-    public void setTotalSum(boolean totalSum) {
-        this.totalSum = totalSum;
-    }
-
-    public int getLevel() {
-        return level;
-    }
-
-    public void setLevel(int level) {
-        this.level = level;
+    public boolean hasNonEmptyClassification(){
+        if(this.classifications != null){
+            for(String classification: this.classifications){
+                if(StringUtils.isNotEmpty(classification)){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

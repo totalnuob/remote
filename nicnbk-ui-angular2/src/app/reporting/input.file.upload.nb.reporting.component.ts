@@ -7,6 +7,7 @@ import {PeriodicReportService} from "./periodic.report.service";
 import {ErrorResponse} from "../common/error-response";
 import {DATA_APP_URL} from "../common/common.service.constants";
 import {FileUploadResult} from "./model/file.uopload.result";
+import {InputFilesInfoLookupNBReport} from "./model/input.files.info.lookup.nb.report";
 
 var fileSaver = require("file-saver");
 
@@ -23,6 +24,9 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
 
     busy: Subscription;
 
+    private selectedInfoHeader;
+    private selectedInfoContent;
+
     private report: InputFilesNBReport;
 
     private fileTarragonScheduleInvestment;
@@ -37,6 +41,9 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
     private fileSingularityIMDRTrancheB;
     private fileSingularityPARTrancheB;
     private fileSingularityISTrancheB;
+    private fileSingularityGeneralLedger;
+    private fileSingularityNOALTrancheA;
+    private fileSingularityNOALTrancheB;
 
     constructor(
         private router: Router,
@@ -287,6 +294,54 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     this.fileSingularityISTrancheB = null;
                     this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
+        }else if(fileType === 'singularity_general_ledger'){
+            this.busy = this.periodicReportService.postFiles(this.report.reportId, this.fileSingularityGeneralLedger, 'NB_REP_SGL').subscribe(
+                res => {
+                    // clear upload file on view
+                    this.fileSingularityGeneralLedger = null;
+                    // set file id
+                    this.report.singularityGeneralLedgerFileId = res.fileId;
+                    this.report.singularityGeneralLedgerFileName = res.fileName;
+                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - Singularity General Ledger", null);
+                },
+                error => {
+                    var result = JSON.parse(error);
+                    var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    this.fileSingularityGeneralLedger = null;
+                    this.postAction(null, message != null && message != null ? message : "Error uploading file");
+                });
+        }else if(fileType === 'singularity_noal_a'){
+            this.busy = this.periodicReportService.postFiles(this.report.reportId, this.fileSingularityNOALTrancheA, 'NB_REP_SNA').subscribe(
+                res => {
+                    // clear upload file on view
+                    this.fileSingularityNOALTrancheA = null;
+                    // set file id
+                    this.report.singularityNOALTrancheAFileId = res.fileId;
+                    this.report.singularityNOALTrancheAFileName = res.fileName;
+                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - Singularity NOAL Tranche A", null);
+                },
+                error => {
+                    var result = JSON.parse(error);
+                    var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    this.fileSingularityNOALTrancheA = null;
+                    this.postAction(null, message != null && message != null ? message : "Error uploading file");
+                });
+        }else if(fileType === 'singularity_noal_b'){
+            this.busy = this.periodicReportService.postFiles(this.report.reportId, this.fileSingularityNOALTrancheB, 'NB_REP_SNB').subscribe(
+                res => {
+                    // clear upload file on view
+                    this.fileSingularityNOALTrancheB = null;
+                    // set file id
+                    this.report.singularityNOALTrancheBFileId = res.fileId;
+                    this.report.singularityNOALTrancheBFileName = res.fileName;
+                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - Singularity NOAL Tranche B", null);
+                },
+                error => {
+                    var result = JSON.parse(error);
+                    var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    this.fileSingularityNOALTrancheB = null;
+                    this.postAction(null, message != null && message != null ? message : "Error uploading file");
+                });
         }
     }
 
@@ -315,6 +370,12 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
             this.fileSingularityPARTrancheB = null;
         } else if(fileType === 'singularity_is_b'){
             this.fileSingularityISTrancheB = null;
+        } else if(fileType === 'singularity_general_ledger'){
+            this.fileSingularityGeneralLedger = null;
+        } else if(fileType === 'singularity_noal_a'){
+            this.fileSingularityNOALTrancheA = null;
+        } else if(fileType === 'singularity_noal_b'){
+            this.fileSingularityNOALTrancheB = null;
         }
     }
 
@@ -357,6 +418,15 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                 } else if(filesList[i].type == 'NB_REP_S4B'){
                     this.report.singularityISTrancheBFileId = filesList[i].id;
                     this.report.singularityISTrancheBFileName = filesList[i].fileName;
+                } else if(filesList[i].type == 'NB_REP_SGL'){
+                    this.report.singularityGeneralLedgerFileId = filesList[i].id;
+                    this.report.singularityGeneralLedgerFileName = filesList[i].fileName;
+                } else if(filesList[i].type == 'NB_REP_SNA'){
+                    this.report.singularityNOALTrancheAFileId = filesList[i].id;
+                    this.report.singularityNOALTrancheAFileName = filesList[i].fileName;
+                } else if(filesList[i].type == 'NB_REP_SNB'){
+                    this.report.singularityNOALTrancheBFileId = filesList[i].id;
+                    this.report.singularityNOALTrancheBFileName = filesList[i].fileName;
                 }
             }
         }
@@ -422,6 +492,12 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
             this.fileSingularityPARTrancheB = files;
         } else if(fileType === 'singularity_is_b'){
             this.fileSingularityISTrancheB = files;
+        } else if(fileType === 'singularity_general_ledger'){
+            this.fileSingularityGeneralLedger = files;
+        } else if(fileType === 'singularity_noal_a'){
+            this.fileSingularityNOALTrancheA = files;
+        } else if(fileType === 'singularity_noal_b'){
+            this.fileSingularityNOALTrancheB = files;
         }
 
 
@@ -451,6 +527,12 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
         } else if(fileType === 'singularity_par_b' && !this.fileSingularityPARTrancheB && this.report != null && !this.report.singularityPARTrancheBFileId){
             return true;
         } else if(fileType === 'singularity_is_b' && !this.fileSingularityISTrancheB && this.report != null && !this.report.singularityISTrancheBFileId){
+            return true;
+        } else if(fileType === 'singularity_general_ledger' && !this.fileSingularityGeneralLedger && this.report != null && !this.report.singularityGeneralLedgerFileId){
+            return true;
+        } else if(fileType === 'singularity_noal_a' && !this.fileSingularityNOALTrancheA && this.report != null && !this.report.singularityNOALTrancheAFileId){
+            return true;
+        } else if(fileType === 'singularity_noal_b' && !this.fileSingularityNOALTrancheB && this.report != null && !this.report.singularityNOALTrancheBFileId){
             return true;
         }
 
@@ -482,7 +564,14 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
             return true;
         } else if(fileType === 'singularity_is_b' && this.report != null && this.report.singularityISTrancheBFileId > 0){
             return true;
+        } else if(fileType === 'singularity_general_ledger' && this.report != null && this.report.singularityGeneralLedgerFileId > 0){
+            return true;
+        } else if(fileType === 'singularity_noal_a' && this.report != null && this.report.singularityNOALTrancheAFileId > 0){
+            return true;
+        } else if(fileType === 'singularity_noal_b' && this.report != null && this.report.singularityNOALTrancheBFileId > 0){
+            return true;
         }
+
         return false;
     }
 
@@ -511,6 +600,12 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
             return true;
         } else if(fileType === 'singularity_is_b' && this.fileSingularityISTrancheB && this.report != null && !this.report.singularityISTrancheBFileId){
             return true;
+        } else if(fileType === 'singularity_general_ledger' && this.fileSingularityGeneralLedger && this.report != null && !this.report.singularityGeneralLedgerFileId){
+            return true;
+        } else if(fileType === 'singularity_noal_a' && this.fileSingularityNOALTrancheA && this.report != null && !this.report.singularityNOALTrancheAFileId){
+            return true;
+        } else if(fileType === 'singularity_noal_b' && this.fileSingularityNOALTrancheB && this.report != null && !this.report.singularityNOALTrancheBFileId){
+            return true;
         }
 
         return false;
@@ -521,32 +616,85 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
     }
 
     showNextButton() {
-        if (this.report != null && !this.report.tarragonScheduleInvestmentFileId) {
-            return false;
-        } else if (this.report != null && !this.report.tarragonStatementAssetsFileId) {
-            return false;
-        } else if (this.report != null && !this.report.tarragonStatementCashflowsFileId) {
-            return false;
-        } else if (this.report != null && !this.report.tarragonStatementChangesFileId) {
-            return false;
-        } else if (this.report != null && !this.report.singularityBSTrancheAFileId) {
-            return false;
-        } else if (this.report != null && !this.report.singularityIMDRTrancheAFileId) {
-            return false;
-        } else if (this.report != null && !this.report.singularityPARTrancheAFileId) {
-            return false;
-        } else if (this.report != null && !this.report.singularityISTrancheAFileId) {
-            return false;
-        } else if (this.report != null && !this.report.singularityBSTrancheBFileId) {
-            return false;
-        } else if (this.report != null && !this.report.singularityIMDRTrancheBFileId) {
-            return false;
-        } else if (this.report != null && !this.report.singularityPARTrancheBFileId) {
-            return false;
-        } else if (this.report != null && !this.report.singularityISTrancheBFileId) {
-            return false;
-        }
+        //if (this.report != null && !this.report.tarragonScheduleInvestmentFileId) {
+        //    return false;
+        //} else if (this.report != null && !this.report.tarragonStatementAssetsFileId) {
+        //    return false;
+        //} else if (this.report != null && !this.report.tarragonStatementCashflowsFileId) {
+        //    return false;
+        //} else if(this.report != null && !this.report.singularityGeneralLedgerFileId){
+        //    return false
+        //} else if(this.report != null && !this.report.singularityNOALTrancheAFileId){
+        //    return false
+        //}
+
+
+        //else if (this.report != null && !this.report.tarragonStatementChangesFileId) {
+        //    return false;
+        //} else if (this.report != null && !this.report.singularityBSTrancheAFileId) {
+        //    return false;
+        //} else if (this.report != null && !this.report.singularityIMDRTrancheAFileId) {
+        //    return false;
+        //} else if (this.report != null && !this.report.singularityPARTrancheAFileId) {
+        //    return false;
+        //} else if (this.report != null && !this.report.singularityISTrancheAFileId) {
+        //    return false;
+        //} else if (this.report != null && !this.report.singularityBSTrancheBFileId) {
+        //    return false;
+        //} else if (this.report != null && !this.report.singularityIMDRTrancheBFileId) {
+        //    return false;
+        //} else if (this.report != null && !this.report.singularityPARTrancheBFileId) {
+        //    return false;
+        //} else if (this.report != null && !this.report.singularityISTrancheBFileId) {
+        //    return false;
+        //} else if (this.report != null && !this.report.singularityGeneralLedgerFileId) {
+        //    return false;
+        //} else if (this.report != null && !this.report.singularityNOALTrancheAFileId) {
+        //    return false;
+        //} else if (this.report != null && !this.report.singularityNOALTrancheBFileId) {
+        //    return false;
+        //}
         return true;
+    }
+
+    public getInfo(fileType){
+        if(fileType === 'tarragon_schedule_investment'){
+            this.selectedInfoHeader = "Schedule of Investments";
+            this.selectedInfoContent = InputFilesInfoLookupNBReport.SCHEDULE_INVESTMENTS_DESCRIPTION;
+        } else if(fileType === 'tarragon_statement_assets'){
+            this.selectedInfoHeader = "Statement of Asssets, Liabilities, and Partners' Capital";
+            this.selectedInfoContent = InputFilesInfoLookupNBReport.STATEMENT_ASSETS_LIABILITIES_PX_DESCRIPTION;
+        } else if(fileType === 'tarragon_statement_cashflows'){
+            this.selectedInfoHeader = "Statement of Cash flows";
+            this.selectedInfoContent = InputFilesInfoLookupNBReport.STATEMENT_CASH_FLOWS_DESCRIPTION;
+        } else if(fileType === 'tarragon_statement_changes'){
+            this.selectedInfoHeader = "Statement of Changes";
+            this.selectedInfoContent = InputFilesInfoLookupNBReport.STATEMENT_CHANGES_DESCRIPTION;
+        }
+        //else if(fileType === 'singularity_bs_a' && this.fileSingularityBSTrancheA && this.report != null && !this.report.singularityBSTrancheAFileId){
+        //} else if(fileType === 'singularity_imdr_a' && this.fileSingularityIMDRTrancheA && this.report != null && !this.report.singularityIMDRTrancheAFileId){
+        //} else if(fileType === 'singularity_par_a' && this.fileSingularityPARTrancheA && this.report != null && !this.report.singularityPARTrancheAFileId){
+        //} else if(fileType === 'singularity_is_a' && this.fileSingularityISTrancheA && this.report != null && !this.report.singularityISTrancheAFileId){
+        //} else if(fileType === 'singularity_bs_b' && this.fileSingularityBSTrancheB && this.report != null && !this.report.singularityBSTrancheBFileId){
+        //} else if(fileType === 'singularity_imdr_b' && this.fileSingularityIMDRTrancheB && this.report != null && !this.report.singularityIMDRTrancheBFileId){
+        //} else if(fileType === 'singularity_par_b' && this.fileSingularityPARTrancheB && this.report != null && !this.report.singularityPARTrancheBFileId){
+        //} else if(fileType === 'singularity_is_b' && this.fileSingularityISTrancheB && this.report != null && !this.report.singularityISTrancheBFileId){
+        else if(fileType === 'singularity_general_ledger'){
+            this.selectedInfoHeader = "Singularity - General Ledger Balance";
+            this.selectedInfoContent = InputFilesInfoLookupNBReport.GENERAL_LEDGER_BALANCE_DESCRIPTION;
+        }
+        else if(fileType === 'singularity_noal_a'){
+            this.selectedInfoHeader = "Singularity - NOAL";
+            this.selectedInfoContent = InputFilesInfoLookupNBReport.NOAL_DESCRIPTION;
+        } else if(fileType === 'singularity_noal_b'){
+            this.selectedInfoHeader = "Singularity - NOAL";
+            this.selectedInfoContent = InputFilesInfoLookupNBReport.NOAL_DESCRIPTION;
+        }
+    }
+
+    public closeInfoModal(){
+        this.selectedInfoContent = null;
+        this.selectedInfoHeader = null;
     }
 
 
@@ -563,7 +711,7 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
         let xhr = new XMLHttpRequest();
         xhr.withCredentials = true; // send auth token with the request
         // TODO: url const
-        let url =  DATA_APP_URL + `periodicReport/inputFiles/download/${fileType}/${fileId}`;
+        let url =  DATA_APP_URL + `files/download/${fileType}/${fileId}`;
         xhr.open('GET', url, true);
         xhr.responseType = 'blob';
 

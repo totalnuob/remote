@@ -183,4 +183,12 @@
             <b>updater</b>
         </field-exclude>
     </mapping>
+    <mapping>
+        <class-a>kz.nicnbk.service.dto.reporting.ReportOtherInfoDto</class-a>
+        <class-b>kz.nicnbk.repo.model.reporting.ReportOtherInfo</class-b>
+        <field-exclude>
+            <a>report</a>
+            <b>report</b>
+        </field-exclude>
+    </mapping>
 </mappings>

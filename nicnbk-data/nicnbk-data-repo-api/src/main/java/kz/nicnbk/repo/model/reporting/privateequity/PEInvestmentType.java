@@ -10,6 +10,6 @@ import javax.persistence.Table;
  */
 
 @Entity
-@Table(name = "pe_investment_type")
+@Table(name = "rep_pe_investment_type")
 public class PEInvestmentType extends BaseTypeEntityImpl {
 }

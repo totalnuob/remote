@@ -10,7 +10,7 @@ public interface PECashflowsTypeRepository extends PagingAndSortingRepository<PE
 
     PECashflowsType findByCode(String code);
 
-    PECashflowsType findByNameEn(String name);
+    PECashflowsType findByNameEnIgnoreCase(String name);
 
 
 

@@ -18,7 +18,11 @@ public enum FileTypeLookup {
     NB_REP_S1B("NB_REP_S1B", "reporting/nbrk"),
     NB_REP_S2B("NB_REP_S2B", "reporting/nbrk"),
     NB_REP_S3B("NB_REP_S3B", "reporting/nbrk"),
-    NB_REP_S4B("NB_REP_S4B", "reporting/nbrk");
+    NB_REP_S4B("NB_REP_S4B", "reporting/nbrk"),
+    NB_REP_SINGULAR_GENERAL_LEDGER("NB_REP_SGL", "reporting/nbrk"),
+    NB_REP_SN_TRANCHE_A("NB_REP_SNA", "reporting/nbrk"),
+    NB_REP_SN_TRANCHE_B("NB_REP_SNB", "reporting/nbrk"),
+    NB_REP_MONTHLY_CASH_STATEMENT("NB_REP_MCS", "reporting/nbrk");
 
     private String code;
     private String catalog;

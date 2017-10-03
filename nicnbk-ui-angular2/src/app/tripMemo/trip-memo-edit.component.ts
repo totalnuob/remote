@@ -5,7 +5,6 @@ import {TripMemo} from "./model/trip-memo";
 import {CommonFormViewComponent} from "../common/common.component";
 import {TripMemoService} from "./trip-memo.service";
 import {EmployeeService} from "../employee/employee.service";
-import {MemoAttachmentDownloaderComponent} from "../m2s2/memo-attachment-downloader.component";
 import {Subscription} from 'rxjs';
 import {TripMemoSearchParams} from "./model/trip-memo-search-params";
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
@@ -22,7 +21,7 @@ declare var Chart: any;
     providers: [],
 })
 @NgModule({
-    imports: [MemoAttachmentDownloaderComponent]
+    imports: []
 })
 export class TripMemoEditComponent extends CommonFormViewComponent implements OnInit{
 

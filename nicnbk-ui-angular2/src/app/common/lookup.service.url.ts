@@ -19,5 +19,8 @@ export const REDEMPTION_FREQUENCY_URL = LOOKUP_SERVICE_URL + "RedemptionFrequenc
 export const REDEMPTION_NOTICE_PERIOD_URL = LOOKUP_SERVICE_URL + "RedemptionNoticePeriods";
 export const SIDE_POCKET_URL = LOOKUP_SERVICE_URL + "SidePocket";
 
+export const NB_CHART_OF_ACCOUNTS_URL =  LOOKUP_SERVICE_URL +"NBChartOfAccounts";
+export const NIC_REPORTING_CHART_OF_ACCOUNTS_URL =  LOOKUP_SERVICE_URL +"NICReportingChartOfAccounts/";
+
 
 export const PE_INDUSTRY_FOCUS_URL = LOOKUP_SERVICE_URL + "PEIndustry";

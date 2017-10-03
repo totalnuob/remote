@@ -1,11 +1,10 @@
 package kz.nicnbk.service.api.reporting;
 
+import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.service.api.base.BaseService;
 import kz.nicnbk.service.dto.common.FileUploadResultDto;
 import kz.nicnbk.service.dto.files.FilesDto;
-import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordDto;
-import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordHolderDto;
-import kz.nicnbk.service.dto.reporting.PeriodicReportDto;
+import kz.nicnbk.service.dto.reporting.*;
 
 import java.util.List;
 
@@ -24,6 +23,8 @@ public interface PeriodicReportService extends BaseService {
 
     List<FilesDto> getPeriodicReportFiles(Long reportId);
 
+    FilesDto getPeriodicReportFile(Long reportId, String type);
+
     FilesDto saveInputFile(Long reportId, FilesDto file);
 
     FileUploadResultDto parseFile(String fileType, FilesDto filesDto, Long reportId);
@@ -35,4 +36,20 @@ public interface PeriodicReportService extends BaseService {
     ConsolidatedReportRecordHolderDto getStatementCashflows(Long reportId);
 
     ConsolidatedReportRecordHolderDto getStatementChanges(Long reportId);
+
+    ConsolidatedReportRecordHolderDto getGeneralLedgerBalance(Long reportId);
+
+    ConsolidatedReportRecordHolderDto getNOAL(Long reportId, int tranche);
+
+    boolean saveOtherInfo(ReportOtherInfoDto dto);
+
+    ReportOtherInfoDto getOtherInfo(Long reportId);
+
+    boolean saveNICKMFReportingData(NICKMFReportingDataHolderDto dataHolderDto);
+
+    NICKMFReportingDataHolderDto getNICKMFReportingData(Long reportId);
+
+    NICKMFReportingDataHolderDto getNICKMFReportingDataFromPreviousMonth(Long reportId);
+
+    boolean safeDelete(Long reportId, FileTypeLookup fileTypeLookup, String username);
 }

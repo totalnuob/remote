@@ -26,6 +26,10 @@ public class ConsolidatedReportRecordHolderDto implements BaseDto {
     // Statement of Changes
     private List<ConsolidatedReportRecordDto> changes;
 
+    private List<SingularityGeneralLedgerBalanceRecordDto> generalLedgerBalanceList;
+    private List<SingularityNOALRecordDto> noalTrancheAList;
+    private List<SingularityNOALRecordDto> noalTrancheBList;
+
     private PeriodicReportDto report;
 
     public List<ConsolidatedReportRecordDto> getTrancheA() {
@@ -92,6 +96,30 @@ public class ConsolidatedReportRecordHolderDto implements BaseDto {
         this.changes = changes;
     }
 
+    public List<SingularityGeneralLedgerBalanceRecordDto> getGeneralLedgerBalanceList() {
+        return generalLedgerBalanceList;
+    }
+
+    public void setGeneralLedgerBalanceList(List<SingularityGeneralLedgerBalanceRecordDto> generalLedgerBalanceList) {
+        this.generalLedgerBalanceList = generalLedgerBalanceList;
+    }
+
+    public List<SingularityNOALRecordDto> getNoalTrancheAList() {
+        return noalTrancheAList;
+    }
+
+    public void setNoalTrancheAList(List<SingularityNOALRecordDto> noalTrancheAList) {
+        this.noalTrancheAList = noalTrancheAList;
+    }
+
+    public List<SingularityNOALRecordDto> getNoalTrancheBList() {
+        return noalTrancheBList;
+    }
+
+    public void setNoalTrancheBList(List<SingularityNOALRecordDto> noalTrancheBList) {
+        this.noalTrancheBList = noalTrancheBList;
+    }
+
     public PeriodicReportDto getReport() {
         return report;
     }
@@ -124,6 +152,15 @@ public class ConsolidatedReportRecordHolderDto implements BaseDto {
         }
         if(other.changes != null && !other.changes.isEmpty()){
             this.changes = other.changes;
+        }
+        if(other.generalLedgerBalanceList != null && !other.generalLedgerBalanceList.isEmpty()){
+            this.generalLedgerBalanceList = other.generalLedgerBalanceList;
+        }
+        if(other.noalTrancheAList != null && !other.noalTrancheAList.isEmpty()){
+            this.noalTrancheAList = other.noalTrancheAList;
+        }
+        if(other.noalTrancheBList != null && !other.noalTrancheBList.isEmpty()){
+            this.noalTrancheBList = other.noalTrancheBList;
         }
     }
 }
