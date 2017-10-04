@@ -327,7 +327,9 @@
                                     </div>
                                 </div>
                             </div>
+                        </form>
 
+                        <form [hidden]="openingSoon">
                             <hr>
                             <div class="row withpadding">
                                 <h4>Key fund statistics</h4>
@@ -644,14 +646,67 @@
                             <th>Gross IRR</th>
                         </tr>
                         <tr *ngFor="let performance of fund.fundCompanyPerformance">
-                            <td>{{performance.companyName}}</td>
-                            <td><span *ngIf="performance.invested != 0">{{performance.invested}}</span><span *ngIf="performance.invested == 0">-</span></td>
-                            <td><span *ngIf="performance.realized != 0">{{performance.realized}}</span><span *ngIf="performance.realized == 0">-</span></td>
-                            <td><span *ngIf="performance.unrealized != 0">{{performance.unrealized}}</span><span *ngIf="performance.unrealized == 0">-</span></td>
-                            <td><span *ngIf="performance.totalValue != 0">{{performance.totalValue}}</span><span *ngIf="performance.totalValue == 0">-</span></td>
-                            <td><span *ngIf="performance.multiple != 0">{{performance.multiple}}x</span><span *ngIf="performance.multiple == 0">-</span></td>
-                            <td>{{performance.grossIrr}}</td>
+                            <td>
+                                <input type="text" class="form-control" name="companyName" [(ngModel)]="performance.companyName" placeholder="-" [ngModelOptions]="{standalone: true}"/>
+                            </td>
+
+                            <td class="col-md-2">
+                                <input type="text" class="form-control" name="invested" [(ngModel)]="performance.invested" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #invested="ngModel"/>
+                                <div [hidden]="invested.valid || invested.pristine" class="alert alert-danger">
+                                    Only positive number could be entered
+                                </div>
+                            </td>
+
+                            <td>
+                                <input type="text" class="form-control" name="realized" [(ngModel)]="performance.realized" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #realized="ngModel"/>
+                                <div [hidden]="realized.valid || realized.pristine" class="alert alert-danger">
+                                    Only positive number could be entered
+                                </div>
+                            </td>
+
+                            <td>
+                                <input type="text" class="form-control" name="unrealized" [(ngModel)]="performance.unrealized" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #unrealized="ngModel"/>
+                                <div [hidden]="unrealized.valid || unrealized.pristine" class="alert alert-danger">
+                                    Only positive number could be entered
+                                </div>
+                            </td>
+
+                            <td>
+                                <input type="text" class="form-control" name="totalValue" [(ngModel)]="performance.totalValue" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #totalValue="ngModel"/>
+                                <div [hidden]="totalValue.valid || totalValue.pristine" class="alert alert-danger">
+                                    Only positive number could be entered
+                                </div>
+                            </td>
+
+                            <td>
+                                <input type="text" class="form-control" name="multiple" [(ngModel)]="performance.multiple" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #multiple="ngModel"/>
+                                <div [hidden]="multiple.valid || multiple.pristine" class="alert alert-danger">
+                                    Only positive number could be entered
+                                </div>
+                            </td>
+
+                            <td>
+                                <input type="text" class="form-control" name="grossIrr" [(ngModel)]="performance.grossIrr" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #grossIrr="ngModel"/>
+                                <div [hidden]="grossIrr.valid || grossIrr.pristine" class="alert alert-danger">
+                                    Only positive number could be entered
+                                </div>
+                            </td>
+
+                            <td>
+                                <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRowPerformance(performance)">
+                                    <span class="glyphicon glyphicon-minus"></span>
+                                </button>
+                            </td>
                         </tr>
+
+                        <button type="button" class="btn btn-primary" *ngIf="canEdit()" (click)="addRowPerformance()">
+                            Add company
+                        </button>
+
+                        <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="save()">
+                            SAVE
+                        </button>
+
                         <!--<tr>-->
                         <!--<td>ACR Logistics</td>-->
                         <!--<td>46 500 000</td>-->

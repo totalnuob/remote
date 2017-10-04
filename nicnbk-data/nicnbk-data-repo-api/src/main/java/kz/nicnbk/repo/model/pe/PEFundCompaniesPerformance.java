@@ -1,17 +1,19 @@
-package kz.nicnbk.service.dto.pe;
+package kz.nicnbk.repo.model.pe;
 
-import kz.nicnbk.common.service.model.BaseEntityDto;
-import kz.nicnbk.repo.model.pe.PEFundCompaniesPerformance;
-import org.springframework.format.annotation.DateTimeFormat;
+import kz.nicnbk.repo.model.base.BaseEntity;
 
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.util.Date;
 
 /**
- * Created by zhambyl on 09-Jan-17.
+ * Created by Pak on 03.10.2017.
  */
-public class PEFundCompaniesPerformanceDto extends BaseEntityDto<PEFundCompaniesPerformance> implements Comparable<PEFundCompaniesPerformanceDto> {
+@Entity(name = "pe_fund_companies_performance")
+public class PEFundCompaniesPerformance extends BaseEntity {
 
-    @DateTimeFormat(pattern="dd-MM-yyyy")
     private Date date;
 
     private String companyName;
@@ -21,20 +23,14 @@ public class PEFundCompaniesPerformanceDto extends BaseEntityDto<PEFundCompanies
     private Double totalValue;
     private Double multiple;
     private Double grossIrr;
-    private PEFundDto fund;
+    private PEFund fund;
 
-    public PEFundCompaniesPerformanceDto(String test, Double i, Double i1, Double i2, Double i3, Double i4, Double i5) {
-        companyName = test;
-        invested = i;
-        realized = i1;
-        unrealized = i2;
-        totalValue = i3;
-        multiple = i4;
-        grossIrr = i5;
+    public Date getDate() {
+        return date;
     }
 
-    public PEFundCompaniesPerformanceDto(){
-
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public String getCompanyName() {
@@ -93,24 +89,13 @@ public class PEFundCompaniesPerformanceDto extends BaseEntityDto<PEFundCompanies
         this.grossIrr = grossIrr;
     }
 
-    public PEFundDto getFund() {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="fund_id", nullable = false)
+    public PEFund getFund() {
         return fund;
     }
 
-    public void setFund(PEFundDto fund) {
+    public void setFund(PEFund fund) {
         this.fund = fund;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    @Override
-    public int compareTo(PEFundCompaniesPerformanceDto dto) {
-        return this.date.compareTo(dto.getDate());
     }
 }

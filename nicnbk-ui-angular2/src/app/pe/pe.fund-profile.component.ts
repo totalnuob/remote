@@ -117,8 +117,10 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                         this.openingSoon = true;
                                     }
 
+                                    if(this.fund.fundCompanyPerformance == null){
+                                        this.fund.fundCompanyPerformance = [];
+                                    }
 
-                                    console.log(this.fund.fundCompanyPerformance);
                                     if(this.fund.grossCashflow == null){
                                         this.fund.grossCashflow = [];
                                     }
@@ -409,6 +411,19 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     addRowNetCf(){
         console.log(this.fund.netCashflow);
         this.fund.netCashflow.push({fundName:"", currency:"", transactionDate:"", drawn:"", distributed:"", nav:"", netCF:"", typeOfFundTransaction:""})
+    }
+
+    addRowPerformance(){
+        console.log(this.fund.fundCompanyPerformance);
+        this.fund.fundCompanyPerformance.push({companyName:"", invested:"", realized:"", unrealized:"", totalValue:"", multiple:"", grossIrr:""});
+    }
+
+    removeRowPerformance(item){
+        for(var i = this.fund.fundCompanyPerformance.length; i--;) {
+            if(this.fund.fundCompanyPerformance[i] === item) {
+                this.fund.fundCompanyPerformance.splice(i, 1);
+            }
+        }
     }
 
     grossCfParse(){
