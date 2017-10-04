@@ -79,6 +79,34 @@ public class PEFundServiceImpl implements PEFundService {
     private PEFundCompaniesPerformanceEntityConverter fundCompaniesPerformanceConverter;
 
     @Override
+    public Long savePerformance(List<PEFundCompaniesPerformanceDto> performanceDtoList, Long fundId, String updater) {
+        try {
+            PEFund fund = peFundRepository.findOne(fundId);
+            if (fund == null || performanceDtoList == null) {
+                return null;
+            }
+
+            this.fundCompaniesPerformanceRepository.findAll().forEach(performance -> {
+                if (performance.getFund().getId() == fundId) {
+                    this.fundCompaniesPerformanceRepository.delete(performance.getId());
+                }
+            });
+
+            for (PEFundCompaniesPerformanceDto performanceDto : performanceDtoList) {
+                PEFundCompaniesPerformance performance = fundCompaniesPerformanceConverter.assemble(performanceDto);
+                performance.setFund(fund);
+                this.fundCompaniesPerformanceRepository.save(performance);
+            }
+
+            logger.info("PE fund's company performance updated: " + fundId + ", by " + updater);
+            return fundId;
+        } catch (Exception ex){
+            logger.error("Error saving PE fund's company performance: " + fundId ,ex);
+        }
+        return null;
+    }
+
+    @Override
     public Long save(PEFundDto fundDto, String updater) {
 
         // TODO: transactions
@@ -104,19 +132,6 @@ public class PEFundServiceImpl implements PEFundService {
             }
             Long id = peFundRepository.save(entity).getId();
             fundDto.setId(id);
-
-            if(fundDto.getFundCompanyPerformance() != null) {
-                this.fundCompaniesPerformanceRepository.findAll().forEach(performance -> {
-                    if (performance.getFund().getId() == entity.getId()) {
-                        this.fundCompaniesPerformanceRepository.delete(performance.getId());
-                    }
-                });
-                for (PEFundCompaniesPerformanceDto performanceDto : fundDto.getFundCompanyPerformance()) {
-                    PEFundCompaniesPerformance performance = fundCompaniesPerformanceConverter.assemble(performanceDto);
-                    performance.setFund(entity);
-                    this.fundCompaniesPerformanceRepository.save(performance);
-                }
-            }
 
             boolean deleted = this.grossCFService.deleteByFundId(id);
 

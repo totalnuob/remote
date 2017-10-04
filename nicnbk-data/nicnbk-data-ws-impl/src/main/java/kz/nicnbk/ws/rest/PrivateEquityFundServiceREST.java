@@ -2,6 +2,7 @@ package kz.nicnbk.ws.rest;
 
 import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.pe.PEFundService;
+import kz.nicnbk.service.dto.pe.PEFundCompaniesPerformanceDto;
 import kz.nicnbk.service.dto.pe.PEFundDto;
 import kz.nicnbk.service.dto.pe.PESearchParams;
 import kz.nicnbk.ws.model.EntitySaveResponse;
@@ -57,6 +58,21 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
         }else {
             // TODO: response from DB, not UI
             return buildEntitySaveResponse(id, fundDto.getCreationDate());
+        }
+    }
+
+    @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/save/{fundId}", method = RequestMethod.POST)
+    public ResponseEntity<?> savePerformance(@RequestBody List<PEFundCompaniesPerformanceDto> performanceDtoList, @PathVariable Long fundId) {
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+        Long id = this.service.savePerformance(performanceDtoList, fundId, username);
+        if(id == null){
+            // error occurred
+            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }else {
+            // TODO: response from DB, not UI
+            return buildEntitySaveResponse(id, new Date());
         }
     }
 

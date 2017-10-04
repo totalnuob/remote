@@ -27,6 +27,14 @@ export class PEFundService extends CommonService {
             .catch(this.handleErrorResponse);
     }
 
+    savePerformance(entity, id) {
+        let body = JSON.stringify(entity);
+
+        return this.http.post(this.PE_FUND_SAVE_URL + id, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
     get(id): Observable<PEFund> {
         return this.http.get(this.PE_FUND_GET_URL + id, this.getOptionsWithCredentials())
             .map(this.extractData)

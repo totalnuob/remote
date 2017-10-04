@@ -1,6 +1,7 @@
 package kz.nicnbk.service.api.pe;
 
 import kz.nicnbk.service.api.base.BaseService;
+import kz.nicnbk.service.dto.pe.PEFundCompaniesPerformanceDto;
 import kz.nicnbk.service.dto.pe.PEFundDto;
 
 import java.util.List;
@@ -11,6 +12,8 @@ import java.util.List;
 public interface PEFundService extends BaseService {
 
     Long save(PEFundDto fundDto, String username);
+
+    Long savePerformance(List<PEFundCompaniesPerformanceDto> performanceDtoList, Long fundId, String username);
 
     PEFundDto get(Long id);
 

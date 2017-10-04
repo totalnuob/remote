@@ -234,6 +234,23 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
             )
     }
 
+    savePerformance() {
+        this.busy = this.fundService.savePerformance(this.fund.fundCompanyPerformance, this.fund.id)
+            .subscribe(
+                (response: SaveResponse) => {
+                    this.postAction("Successfully saved fund's company performance", null);
+                },
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error saving fund's company performance";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                        console.log(error);
+                    }
+                    this.postAction(null, null);
+                }
+            )
+    }
+
     postAction(successMessage, errorMessage) {
         this.successMessage = successMessage;
         this.errorMessage = errorMessage;

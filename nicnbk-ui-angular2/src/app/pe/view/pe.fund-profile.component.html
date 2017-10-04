@@ -703,7 +703,7 @@
                             Add company
                         </button>
 
-                        <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="save()">
+                        <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="savePerformance()" [disabled]="fund.id == 0 || fund.id == null">
                             SAVE
                         </button>
 
