@@ -71,6 +71,7 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
         if (!check.equals("OK")) {
             return new ResponseEntity<>(check, null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+
         boolean response = this.service.savePerformance(performanceDtoList, fundId, username);
         if (response){
             return new ResponseEntity<>(null, null, HttpStatus.OK);
