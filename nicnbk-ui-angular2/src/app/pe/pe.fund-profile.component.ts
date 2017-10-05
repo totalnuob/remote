@@ -241,12 +241,11 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     this.postAction("Successfully saved fund's company performance", null);
                 },
                 (error: ErrorResponse) => {
-                    this.errorMessage = "Error saving fund's company performance";
                     if(error && !error.isEmpty()){
                         this.processErrorMessage(error);
                         console.log(error);
                     }
-                    this.postAction(null, null);
+                    this.postAction(null, "Error saving fund's company performance");
                 }
             )
     }
