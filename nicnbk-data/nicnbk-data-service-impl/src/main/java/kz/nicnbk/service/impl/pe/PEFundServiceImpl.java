@@ -83,7 +83,7 @@ public class PEFundServiceImpl implements PEFundService {
     @Override
     public StatusResultDto savePerformance(List<PEFundCompaniesPerformanceDto> performanceDtoList, Long fundId, String updater) {
 
-        StatusResultDto statusResultDto = new StatusResultDto(new StatusResultType("FAIL"), "", "", "");
+        StatusResultDto statusResultDto = new StatusResultDto(StatusResultType.FAIL, "", "", "");
 
         try {
             // performanceDtoList check
@@ -134,7 +134,7 @@ public class PEFundServiceImpl implements PEFundService {
             }
 
             logger.info("PE fund's company performance updated: " + fundId + ", by " + updater);
-            statusResultDto.setStatus(new StatusResultType("SUCCESS"));
+            statusResultDto.setStatus(StatusResultType.SUCCESS);
             statusResultDto.setMessageEn("Successfully saved fund's company performance");
             return statusResultDto;
         } catch (Exception ex){
