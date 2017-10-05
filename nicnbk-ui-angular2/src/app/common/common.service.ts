@@ -18,6 +18,9 @@ export class CommonService{
 
     public handleErrorResponse (error: any) {
         var errorResponse = new ErrorResponse;
+        if(error.json().messageEn) {
+            errorResponse.message = error.json().messageEn;
+        }
         if(error.message){
             //console.log(error);
             errorResponse.message = error.message;
