@@ -247,7 +247,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                         console.log(error);
                     }
                     this.postAction(null, null);
-                }s
+                }sf
             )
     }
 
