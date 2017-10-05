@@ -13,9 +13,9 @@ public interface PEFundService extends BaseService {
 
     Long save(PEFundDto fundDto, String username);
 
-    boolean areNamesUniqueInTheList(List<PEFundCompaniesPerformanceDto> performanceDtoList);
+    String preSaveCheck(List<PEFundCompaniesPerformanceDto> performanceDtoList);
 
-    Long savePerformance(List<PEFundCompaniesPerformanceDto> performanceDtoList, Long fundId, String username);
+    boolean savePerformance(List<PEFundCompaniesPerformanceDto> performanceDtoList, Long fundId, String username);
 
     PEFundDto get(Long id);
 

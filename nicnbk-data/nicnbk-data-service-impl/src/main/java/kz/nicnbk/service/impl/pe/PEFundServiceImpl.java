@@ -79,29 +79,38 @@ public class PEFundServiceImpl implements PEFundService {
     private PEFundCompaniesPerformanceEntityConverter fundCompaniesPerformanceConverter;
 
     @Override
-    public boolean areNamesUniqueInTheList(List<PEFundCompaniesPerformanceDto> performanceDtoList) {
+    public String preSaveCheck(List<PEFundCompaniesPerformanceDto> performanceDtoList) {
         if (performanceDtoList == null) {
-            return false;
+            return "Don't send NULL!";
         }
 
         for (PEFundCompaniesPerformanceDto performanceDto : performanceDtoList) {
-            if (performanceDto.getCompanyName() == null || performanceDto.getCompanyName() == "") {
-                return false;
+            if (performanceDto.getCompanyName() == null || performanceDto.getCompanyName().equals("")) {
+                return "Don't send null or empty company name!";
             }
         }
-        return true;
+
+        for (PEFundCompaniesPerformanceDto performanceDto1 : performanceDtoList) {
+            int i = 0;
+            for (PEFundCompaniesPerformanceDto performanceDto2 : performanceDtoList) {
+                if (performanceDto1.getCompanyName().equals(performanceDto2.getCompanyName())) {
+                    i++;
+                }
+            }
+            if (i > 1) {
+                return "Names must be unique!";
+            }
+        }
+
+        return "OK";
     }
 
     @Override
-    public Long savePerformance(List<PEFundCompaniesPerformanceDto> performanceDtoList, Long fundId, String updater) {
+    public boolean savePerformance(List<PEFundCompaniesPerformanceDto> performanceDtoList, Long fundId, String updater) {
         try {
             PEFund fund = peFundRepository.findOne(fundId);
             if (fund == null) {
-                return null;
-            }
-
-            if (!this.areNamesUniqueInTheList(performanceDtoList)) {
-                return null;
+                return false;
             }
 
             this.fundCompaniesPerformanceRepository.findAll().forEach(performance -> {
@@ -117,11 +126,11 @@ public class PEFundServiceImpl implements PEFundService {
             }
 
             logger.info("PE fund's company performance updated: " + fundId + ", by " + updater);
-            return fundId;
+            return true;
         } catch (Exception ex){
             logger.error("Error saving PE fund's company performance: " + fundId ,ex);
         }
-        return null;
+        return false;
     }
 
     @Override

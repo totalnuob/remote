@@ -27,10 +27,13 @@ export class PEFundService extends CommonService {
             .catch(this.handleErrorResponse);
     }
 
-    savePerformance(entity, id) {
+    savePerformance(entity, id): Promise<any> {
         let body = JSON.stringify(entity);
 
         return this.http.post(this.PE_FUND_SAVE_URL + id, body, this.getOptionsWithCredentials())
+            //.toPromise()
+            //.then(response => response)
+            //.catch(error => error)
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }

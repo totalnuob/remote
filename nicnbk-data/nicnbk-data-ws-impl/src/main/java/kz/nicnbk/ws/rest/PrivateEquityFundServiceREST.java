@@ -66,13 +66,16 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
     public ResponseEntity<?> savePerformance(@RequestBody List<PEFundCompaniesPerformanceDto> performanceDtoList, @PathVariable Long fundId) {
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
-        Long id = this.service.savePerformance(performanceDtoList, fundId, username);
-        if(id == null){
-            // error occurred
-            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }else {
-            // TODO: response from DB, not UI
-            return buildEntitySaveResponse(id, new Date());
+
+        String check = this.service.preSaveCheck(performanceDtoList);
+        if (!check.equals("OK")) {
+            return new ResponseEntity<>(check, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        boolean response = this.service.savePerformance(performanceDtoList, fundId, username);
+        if (response){
+            return new ResponseEntity<>(null, null, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Error saving fund's company performance", null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
