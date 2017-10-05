@@ -86,6 +86,7 @@ public class PEFundServiceImpl implements PEFundService {
         StatusResultDto statusResultDto = new StatusResultDto(new StatusResultType("FAIL"), "", "", "");
 
         try {
+            // performanceDtoList check
             if (performanceDtoList == null) {
                 statusResultDto.setMessageEn("Don't send NULL!");
                 return statusResultDto;
@@ -111,18 +112,21 @@ public class PEFundServiceImpl implements PEFundService {
                 }
             }
 
+            // Find the corresponding fund in DB
             PEFund fund = peFundRepository.findOne(fundId);
             if (fund == null) {
                 statusResultDto.setMessageEn("Fund doesn't exist!");
                 return statusResultDto;
             }
 
+            // Delete all company performance entities for that fund
             this.fundCompaniesPerformanceRepository.findAll().forEach(performance -> {
                 if (performance.getFund().getId() == fundId) {
                     this.fundCompaniesPerformanceRepository.delete(performance.getId());
                 }
             });
 
+            // Save them again
             for (PEFundCompaniesPerformanceDto performanceDto : performanceDtoList) {
                 PEFundCompaniesPerformance performance = fundCompaniesPerformanceConverter.assemble(performanceDto);
                 performance.setFund(fund);
@@ -130,8 +134,8 @@ public class PEFundServiceImpl implements PEFundService {
             }
 
             logger.info("PE fund's company performance updated: " + fundId + ", by " + updater);
+            statusResultDto.setStatus(new StatusResultType("SUCCESS"));
             statusResultDto.setMessageEn("Successfully saved fund's company performance");
-            statusResultDto.setStatus("SUCCESS");
             return statusResultDto;
         } catch (Exception ex){
             logger.error("Error saving PE fund's company performance: " + fundId ,ex);
