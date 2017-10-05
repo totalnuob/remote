@@ -135,9 +135,9 @@ public class PEFundServiceImpl implements PEFundService {
             return statusResultDto;
         } catch (Exception ex){
             logger.error("Error saving PE fund's company performance: " + fundId ,ex);
+            statusResultDto.setMessageEn("Error saving fund's company performance");
+            return statusResultDto;
         }
-        statusResultDto.setMessageEn("Error saving fund's company performance");
-        return statusResultDto;
     }
 
     @Override
