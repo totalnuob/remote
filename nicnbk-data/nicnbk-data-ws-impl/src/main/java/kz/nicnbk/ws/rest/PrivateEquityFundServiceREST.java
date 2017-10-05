@@ -2,6 +2,7 @@ package kz.nicnbk.ws.rest;
 
 import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.pe.PEFundService;
+import kz.nicnbk.service.dto.common.StatusResultDto;
 import kz.nicnbk.service.dto.pe.PEFundCompaniesPerformanceDto;
 import kz.nicnbk.service.dto.pe.PEFundDto;
 import kz.nicnbk.service.dto.pe.PESearchParams;
@@ -67,16 +68,12 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
-        String check = this.service.preSaveCheck(performanceDtoList);
-        if (!check.equals("OK")) {
-            return new ResponseEntity<>(check, null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        StatusResultDto statusResultDto = this.service.savePerformance(performanceDtoList, fundId, username);
 
-        boolean response = this.service.savePerformance(performanceDtoList, fundId, username);
-        if (response){
-            return new ResponseEntity<>(null, null, HttpStatus.OK);
+        if (statusResultDto.getStatus().getCode().equals("SUCCESS")) {
+            return new ResponseEntity<>(statusResultDto, null, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("Error saving fund's company performance", null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(statusResultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

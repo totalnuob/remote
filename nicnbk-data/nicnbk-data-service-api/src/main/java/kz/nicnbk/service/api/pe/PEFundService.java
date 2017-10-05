@@ -1,6 +1,7 @@
 package kz.nicnbk.service.api.pe;
 
 import kz.nicnbk.service.api.base.BaseService;
+import kz.nicnbk.service.dto.common.StatusResultDto;
 import kz.nicnbk.service.dto.pe.PEFundCompaniesPerformanceDto;
 import kz.nicnbk.service.dto.pe.PEFundDto;
 
@@ -13,9 +14,7 @@ public interface PEFundService extends BaseService {
 
     Long save(PEFundDto fundDto, String username);
 
-    String preSaveCheck(List<PEFundCompaniesPerformanceDto> performanceDtoList);
-
-    boolean savePerformance(List<PEFundCompaniesPerformanceDto> performanceDtoList, Long fundId, String username);
+    StatusResultDto savePerformance(List<PEFundCompaniesPerformanceDto> performanceDtoList, Long fundId, String username);
 
     PEFundDto get(Long id);
 

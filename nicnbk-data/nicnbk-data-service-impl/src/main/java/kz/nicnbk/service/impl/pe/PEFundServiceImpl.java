@@ -19,6 +19,8 @@ import kz.nicnbk.service.converter.pe.PEFundCompaniesPerformanceEntityConverter;
 import kz.nicnbk.service.converter.pe.PEGrossCashflowEntityConverter;
 import kz.nicnbk.service.converter.pe.PEFundEntityConverter;
 import kz.nicnbk.service.converter.pe.PENetCashflowEntityConverter;
+import kz.nicnbk.service.dto.common.StatusResultDto;
+import kz.nicnbk.service.dto.common.StatusResultType;
 import kz.nicnbk.service.dto.pe.PEFundDto;
 import kz.nicnbk.service.dto.pe.PEGrossCashflowDto;
 import kz.nicnbk.service.dto.pe.PEFundCompaniesPerformanceDto;
@@ -79,38 +81,40 @@ public class PEFundServiceImpl implements PEFundService {
     private PEFundCompaniesPerformanceEntityConverter fundCompaniesPerformanceConverter;
 
     @Override
-    public String preSaveCheck(List<PEFundCompaniesPerformanceDto> performanceDtoList) {
-        if (performanceDtoList == null) {
-            return "Don't send NULL!";
-        }
+    public StatusResultDto savePerformance(List<PEFundCompaniesPerformanceDto> performanceDtoList, Long fundId, String updater) {
 
-        for (PEFundCompaniesPerformanceDto performanceDto : performanceDtoList) {
-            if (performanceDto.getCompanyName() == null || performanceDto.getCompanyName().equals("")) {
-                return "Don't send null or empty company name!";
+        StatusResultDto statusResultDto = new StatusResultDto(new StatusResultType("FAIL"), "", "", "");
+
+        try {
+            if (performanceDtoList == null) {
+                statusResultDto.setMessageEn("Don't send NULL!");
+                return statusResultDto;
             }
-        }
 
-        for (PEFundCompaniesPerformanceDto performanceDto1 : performanceDtoList) {
-            int i = 0;
-            for (PEFundCompaniesPerformanceDto performanceDto2 : performanceDtoList) {
-                if (performanceDto1.getCompanyName().equals(performanceDto2.getCompanyName())) {
-                    i++;
+            for (PEFundCompaniesPerformanceDto performanceDto : performanceDtoList) {
+                if (performanceDto.getCompanyName() == null || performanceDto.getCompanyName().equals("")) {
+                    statusResultDto.setMessageEn("Don't send null or empty company name!");
+                    return statusResultDto;
                 }
             }
-            if (i > 1) {
-                return "Names must be unique!";
+
+            for (PEFundCompaniesPerformanceDto performanceDto1 : performanceDtoList) {
+                int i = 0;
+                for (PEFundCompaniesPerformanceDto performanceDto2 : performanceDtoList) {
+                    if (performanceDto1.getCompanyName().equals(performanceDto2.getCompanyName())) {
+                        i++;
+                    }
+                }
+                if (i > 1) {
+                    statusResultDto.setMessageEn("Names must be unique!");
+                    return statusResultDto;
+                }
             }
-        }
 
-        return "OK";
-    }
-
-    @Override
-    public boolean savePerformance(List<PEFundCompaniesPerformanceDto> performanceDtoList, Long fundId, String updater) {
-        try {
             PEFund fund = peFundRepository.findOne(fundId);
             if (fund == null) {
-                return false;
+                statusResultDto.setMessageEn("Fund doesn't exist!");
+                return statusResultDto;
             }
 
             this.fundCompaniesPerformanceRepository.findAll().forEach(performance -> {
@@ -126,11 +130,14 @@ public class PEFundServiceImpl implements PEFundService {
             }
 
             logger.info("PE fund's company performance updated: " + fundId + ", by " + updater);
-            return true;
+            statusResultDto.setMessageEn("Successfully saved fund's company performance");
+            statusResultDto.setStatus("SUCCESS");
+            return statusResultDto;
         } catch (Exception ex){
             logger.error("Error saving PE fund's company performance: " + fundId ,ex);
         }
-        return false;
+        statusResultDto.setMessageEn("Error saving fund's company performance");
+        return statusResultDto;
     }
 
     @Override
