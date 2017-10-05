@@ -2,10 +2,7 @@ package kz.nicnbk.repo.model.pe;
 
 import kz.nicnbk.repo.model.base.BaseEntity;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -16,6 +13,7 @@ public class PEFundCompaniesPerformance extends BaseEntity {
 
     private Date date;
 
+    @Column(nullable = false)
     private String companyName;
     private Double invested;
     private Double realized;

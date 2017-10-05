@@ -79,10 +79,28 @@ public class PEFundServiceImpl implements PEFundService {
     private PEFundCompaniesPerformanceEntityConverter fundCompaniesPerformanceConverter;
 
     @Override
+    public boolean areNamesUniqueInTheList(List<PEFundCompaniesPerformanceDto> performanceDtoList) {
+        if (performanceDtoList == null) {
+            return false;
+        }
+
+        for (PEFundCompaniesPerformanceDto performanceDto : performanceDtoList) {
+            if (performanceDto.getCompanyName() == null || performanceDto.getCompanyName() == "") {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
     public Long savePerformance(List<PEFundCompaniesPerformanceDto> performanceDtoList, Long fundId, String updater) {
         try {
             PEFund fund = peFundRepository.findOne(fundId);
-            if (fund == null || performanceDtoList == null) {
+            if (fund == null) {
+                return null;
+            }
+
+            if (!this.areNamesUniqueInTheList(performanceDtoList)) {
                 return null;
             }
 
