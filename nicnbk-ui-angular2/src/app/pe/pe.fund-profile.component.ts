@@ -517,10 +517,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
 
     myFunction() {
         if (this.fund.autoCalculation) {
-            console.log('Hi!');
             this.savePerformanceAndRecalculateStatistics();
-        } else {
-            console.log('Bye!');
         }
     }
 }
