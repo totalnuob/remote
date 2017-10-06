@@ -515,9 +515,10 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
         return this.moduleAccessChecker.checkAccessPrivateEquityEditor();
     }
 
-    myFunction(checkboxElem) {
-        if (checkboxElem.checked) {
+    myFunction() {
+        if (this.fund.autoCalculation) {
             console.log('Hi!');
+            this.savePerformanceAndRecalculateStatistics();
         } else {
             console.log('Bye!');
         }
