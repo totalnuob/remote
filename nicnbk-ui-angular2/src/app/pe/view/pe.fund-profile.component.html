@@ -710,18 +710,6 @@
                             </td>
                         </tr>
 
-                        <button type="button" class="btn btn-primary" *ngIf="canEdit()" (click)="addRowPerformance()">
-                            Add company
-                        </button>
-
-                        <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="savePerformance()" [disabled]="fund.id == 0 || fund.id == null">
-                            SAVE
-                        </button>
-
-                        <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="savePerformanceAndRecalculateStatistics()" [disabled]="fund.id == 0 || fund.id == null">
-                            SAVE and RECALCULATE the Key Fund Statistics
-                        </button>
-
                         <!--<tr>-->
                         <!--<td>ACR Logistics</td>-->
                         <!--<td>46 500 000</td>-->
@@ -733,6 +721,24 @@
                         <!--<td>-</td>-->
                         <!--</tr>-->
                     </table>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-1 pull-left">
+                                <button type="button" class="btn btn-primary" *ngIf="canEdit()" (click)="addRowPerformance()">
+                                    Add company
+                                </button>
+                            </div>
+                            <div class="pull-right">
+                                <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="savePerformance()" [disabled]="fund.id == 0 || fund.id == null">
+                                    SAVE
+                                </button>
+                                <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="savePerformanceAndRecalculateStatistics()" [disabled]="fund.id == 0 || fund.id == null">
+                                    SAVE and RECALCULATE the Key Fund Statistics
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
