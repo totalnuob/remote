@@ -251,8 +251,35 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     savePerformanceAndRecalculateStatistics() {
         this.busy = this.fundService.savePerformanceAndRecalculateStatistics(this.fund.fundCompanyPerformance, this.fund.id)
             .subscribe(
-                (response: SaveResponse) => {
+                (response) => {
                     this.postAction(response.messageEn, null);
+
+                    this.fund.numberOfInvestments = response.trackRecordDTO.numberOfInvestments;
+                    this.fund.investedAmount = response.trackRecordDTO.investedAmount;
+                    this.fund.realized = response.trackRecordDTO.realized;
+                    this.fund.unrealized = response.trackRecordDTO.unrealized;
+                    this.fund.dpi = response.trackRecordDTO.dpi;
+                    this.fund.grossTvpi = response.trackRecordDTO.grossTvpi;
+
+                    //this.fundService.get(this.fundIdParam)
+                    //    .subscribe(
+                    //        (data: PEFund) => {
+                    //            if(data && data.id > 0) {
+                    //                this.fund.numberOfInvestments = data.numberOfInvestments;
+                    //            } else{
+                    //                // TODO: handle error
+                    //                this.errorMessage = "Error loading fund profile.";
+                    //            }
+                    //        },
+                    //        (error: ErrorResponse) => {
+                    //            this.errorMessage = "Error loading fund profile";
+                    //            if(error && !error.isEmpty()){
+                    //                this.processErrorMessage(error);
+                    //                console.log(error);
+                    //            }
+                    //            this.postAction(null, null);
+                    //        }
+                    //    );
                 },
                 (error: ErrorResponse) => {
                     this.processErrorMessage(error);

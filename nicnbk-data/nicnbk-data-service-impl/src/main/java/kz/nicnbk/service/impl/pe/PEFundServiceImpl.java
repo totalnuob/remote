@@ -21,10 +21,7 @@ import kz.nicnbk.service.converter.pe.PEFundEntityConverter;
 import kz.nicnbk.service.converter.pe.PENetCashflowEntityConverter;
 import kz.nicnbk.service.dto.common.StatusResultDto;
 import kz.nicnbk.service.dto.common.StatusResultType;
-import kz.nicnbk.service.dto.pe.PEFundDto;
-import kz.nicnbk.service.dto.pe.PEGrossCashflowDto;
-import kz.nicnbk.service.dto.pe.PEFundCompaniesPerformanceDto;
-import kz.nicnbk.service.dto.pe.PENetCashflowDto;
+import kz.nicnbk.service.dto.pe.*;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,8 +78,101 @@ public class PEFundServiceImpl implements PEFundService {
     private PEFundCompaniesPerformanceEntityConverter fundCompaniesPerformanceConverter;
 
     @Override
-    public StatusResultDto savePerformanceAndRecalculateStatistics(List<PEFundCompaniesPerformanceDto> performanceDtoList, Long fundId, String updater) {
-        return this.savePerformance(performanceDtoList, fundId, updater);
+    public PEFundTrackRecordResultDto savePerformanceAndRecalculateStatistics(List<PEFundCompaniesPerformanceDto> performanceDtoList, Long fundId, String updater) {
+
+        StatusResultDto statusResultDto = this.savePerformance(performanceDtoList, fundId, updater);
+
+        if (statusResultDto.getStatus().getCode().equals("FAIL")) {
+            return new PEFundTrackRecordResultDto(
+                    new PEFundTrackRecordDTO(),
+                    statusResultDto.getStatus(),
+                    statusResultDto.getMessageRu(),
+                    statusResultDto.getMessageEn(),
+                    statusResultDto.getMessageKz()
+            );
+        }
+
+        PEFundTrackRecordDTO fundTrackRecordDTO;
+
+        try {
+            PEFund fund = peFundRepository.findOne(fundId);
+            if (fund == null) {
+                statusResultDto.setStatus(StatusResultType.FAIL);
+                statusResultDto.setMessageEn("Fund doesn't exist!");
+                return new PEFundTrackRecordResultDto(
+                        new PEFundTrackRecordDTO(),
+                        statusResultDto.getStatus(),
+                        statusResultDto.getMessageRu(),
+                        statusResultDto.getMessageEn(),
+                        statusResultDto.getMessageKz()
+                );
+            }
+
+            fund.setNumberOfInvestments(0);
+            fund.setInvestedAmount(0.0);
+            fund.setRealized(0.0);
+            fund.setUnrealized(0.0);
+
+            for (PEFundCompaniesPerformanceDto performanceDto : performanceDtoList) {
+                fund.setNumberOfInvestments(fund.getNumberOfInvestments() + 1);
+                if (performanceDto.getInvested() != null) {
+                    fund.setInvestedAmount(fund.getInvestedAmount() + performanceDto.getInvested());
+                }
+                if (performanceDto.getRealized() != null) {
+                    fund.setRealized(fund.getRealized() + performanceDto.getRealized());
+                }
+                if (performanceDto.getUnrealized() != null) {
+                    fund.setUnrealized(fund.getUnrealized() + performanceDto.getUnrealized());
+                }
+            }
+            if (fund.getInvestedAmount() != 0) {
+                fund.setDpi(fund.getRealized()/fund.getInvestedAmount());
+                fund.setGrossTvpi((fund.getRealized() + fund.getUnrealized())/fund.getInvestedAmount());
+            } else {
+                fund.setDpi(null);
+                fund.setGrossTvpi(null);
+            }
+
+            peFundRepository.save(fund);
+
+            fundTrackRecordDTO = new PEFundTrackRecordDTO(
+                    fund.getNumberOfInvestments(),
+                    fund.getInvestedAmount(),
+                    fund.getRealized(),
+                    fund.getUnrealized(),
+                    fund.getDpi(),
+                    null,
+                    null,
+                    null,
+                    fund.getGrossTvpi(),
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                    );
+        } catch (Exception ex) {
+            logger.error("Error updating PE fund's key statistics: " + fundId ,ex);
+            statusResultDto.setStatus(StatusResultType.FAIL);
+            statusResultDto.setMessageEn("Error updating fund's key statistics");
+            return new PEFundTrackRecordResultDto(
+                    new PEFundTrackRecordDTO(),
+                    statusResultDto.getStatus(),
+                    statusResultDto.getMessageRu(),
+                    statusResultDto.getMessageEn(),
+                    statusResultDto.getMessageKz()
+            );
+        }
+
+        statusResultDto.setStatus(StatusResultType.SUCCESS);
+        statusResultDto.setMessageEn("Successfully saved fund's company performance and updated the key fund statistics");
+        return new PEFundTrackRecordResultDto(
+                fundTrackRecordDTO,
+                statusResultDto.getStatus(),
+                statusResultDto.getMessageRu(),
+                statusResultDto.getMessageEn(),
+                statusResultDto.getMessageKz()
+        );
     }
 
     @Override
