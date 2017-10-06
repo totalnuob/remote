@@ -365,6 +365,9 @@
                                     </label>
                                 </div>
 
+
+
+
                                 <button onclick="myonoffswitch.checked = true">Check Checkbox</button>
                                 <button onclick="myonoffswitch.checked = false">Uncheck Checkbox</button>
 
@@ -756,11 +759,11 @@
                             Add company
                         </button>
 
-                        <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="savePerformance()" [disabled]="fund.id == 0 || fund.id == null">
+                        <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="savePerformance()" onclick="myonoffswitch.checked = false" [disabled]="fund.id == 0 || fund.id == null">
                             SAVE
                         </button>
 
-                        <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="savePerformanceAndRecalculateStatistics()" [disabled]="fund.id == 0 || fund.id == null">
+                        <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="savePerformanceAndRecalculateStatistics()" onclick="myonoffswitch.checked = true" [disabled]="fund.id == 0 || fund.id == null">
                             SAVE and RECALCULATE the Key Fund Statistics
                         </button>
 
