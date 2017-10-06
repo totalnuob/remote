@@ -17,7 +17,7 @@ declare var $:any
 @Component({
     selector: 'pe-fund-profile',
     templateUrl: 'view/pe.fund-profile.component.html',
-    styleUrls: ['pe.fund-profile.component.css'],
+    styleUrls: ['../../../public/css/pe/pe.fund-profile.component.css'],
     providers: [PEFirmService, PEFundService]
 })
 export class PEFundProfileComponent extends CommonFormViewComponent implements OnInit{
@@ -239,6 +239,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
             .subscribe(
                 (response: SaveResponse) => {
                     this.postAction(response.messageEn, null);
+
+                    this.fund.autoCalculation = false;
                 },
                 (error: ErrorResponse) => {
                     this.processErrorMessage(error);
@@ -260,6 +262,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     this.fund.unrealized = response.trackRecordDTO.unrealized;
                     this.fund.dpi = response.trackRecordDTO.dpi;
                     this.fund.grossTvpi = response.trackRecordDTO.grossTvpi;
+
+                    this.fund.autoCalculation = true;
 
                     //this.fundService.get(this.fundIdParam)
                     //    .subscribe(
@@ -509,5 +513,13 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
 
     canEdit(){
         return this.moduleAccessChecker.checkAccessPrivateEquityEditor();
+    }
+
+    myFunction(checkboxElem) {
+        if (checkboxElem.checked) {
+            console.log('Hi!');
+        } else {
+            console.log('Bye!');
+        }
     }
 }

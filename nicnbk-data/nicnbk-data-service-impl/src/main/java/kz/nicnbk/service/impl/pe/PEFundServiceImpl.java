@@ -108,6 +108,8 @@ public class PEFundServiceImpl implements PEFundService {
                 );
             }
 
+            fund.setAutoCalculation(true);
+
             fund.setNumberOfInvestments(0);
             fund.setInvestedAmount(0.0);
             fund.setRealized(0.0);
@@ -227,6 +229,9 @@ public class PEFundServiceImpl implements PEFundService {
                 performance.setFund(fund);
                 this.fundCompaniesPerformanceRepository.save(performance);
             }
+
+            fund.setAutoCalculation(false);
+            peFundRepository.save(fund);
 
             logger.info("PE fund's company performance updated: " + fundId + ", by " + updater);
             statusResultDto.setStatus(StatusResultType.SUCCESS);

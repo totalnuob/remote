@@ -21,6 +21,7 @@ export class PEFund {
     strategyComment: string;
     geography: any[];
 
+    autoCalculation: boolean;
     numberOfInvestments: number;
     investedAmount: number;
     realized: number;

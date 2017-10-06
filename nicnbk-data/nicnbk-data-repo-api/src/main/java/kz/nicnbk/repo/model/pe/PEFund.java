@@ -44,6 +44,7 @@ public class PEFund extends CreateUpdateBaseEntity {
     private String nonsuitableReason;
 
     //KEY FUND STATISTICS
+    private Boolean autoCalculation;
     private Integer numberOfInvestments;
     private Double investedAmount;
     private Double realized;
@@ -267,6 +268,14 @@ public class PEFund extends CreateUpdateBaseEntity {
 
     public void setGeography(Set<Geography> geography) {
         this.geography = geography;
+    }
+
+    public Boolean getAutoCalculation() {
+        return autoCalculation;
+    }
+
+    public void setAutoCalculation(Boolean autoCalculation) {
+        this.autoCalculation = autoCalculation;
     }
 
     @Column(name = "number_of_investments")
