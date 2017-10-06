@@ -77,6 +77,21 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
         }
     }
 
+    @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/save/{fundId}/recalculate", method = RequestMethod.POST)
+    public ResponseEntity<?> savePerformanceAndRecalculateStatistics(@RequestBody List<PEFundCompaniesPerformanceDto> performanceDtoList, @PathVariable Long fundId) {
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        StatusResultDto statusResultDto = this.service.savePerformanceAndRecalculateStatistics(performanceDtoList, fundId, username);
+
+        if (statusResultDto.getStatus().getCode().equals("SUCCESS")) {
+            return new ResponseEntity<>(statusResultDto, null, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(statusResultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_VIEWER') OR hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public ResponseEntity search(@RequestBody PESearchParams searchParams){

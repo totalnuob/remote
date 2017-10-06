@@ -81,6 +81,11 @@ public class PEFundServiceImpl implements PEFundService {
     private PEFundCompaniesPerformanceEntityConverter fundCompaniesPerformanceConverter;
 
     @Override
+    public StatusResultDto savePerformanceAndRecalculateStatistics(List<PEFundCompaniesPerformanceDto> performanceDtoList, Long fundId, String updater) {
+        return this.savePerformance(performanceDtoList, fundId, updater);
+    }
+
+    @Override
     public StatusResultDto savePerformance(List<PEFundCompaniesPerformanceDto> performanceDtoList, Long fundId, String updater) {
 
         StatusResultDto statusResultDto = new StatusResultDto(StatusResultType.FAIL, "", "", "");

@@ -710,6 +710,10 @@
                             SAVE
                         </button>
 
+                        <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="savePerformanceAndRecalculateStatistics()" [disabled]="fund.id == 0 || fund.id == null">
+                            SAVE and RECALCULATE the Key Fund Statistics
+                        </button>
+
                         <!--<tr>-->
                         <!--<td>ACR Logistics</td>-->
                         <!--<td>46 500 000</td>-->
