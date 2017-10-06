@@ -336,7 +336,7 @@
                                 <table class=" col-md-4 table-striped table-condensed">
                                     <tr>
                                         <td class="col-md-3"><b>Number of investments</b></td>
-                                        <td class="col-md-3"><input style="width: 100%" type="text" name="numberOfInv" [(ngModel)]="fund.numberOfInvestments" pattern="[+]?[0-9]*\.?[0-9]+" #numOfInv="ngModel"/>
+                                        <td class="col-md-3"><input style="width: 100%" type="text" name="numberOfInv" [(ngModel)]="fund.numberOfInvestments" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #numOfInv="ngModel"/>
                                             <div [hidden]="numOfInv.valid || numOfInv.pristine" class="alert alert-danger">
                                                 Only positive number could be entered
                                             </div>
@@ -345,7 +345,7 @@
                                     </tr>
                                     <tr>
                                         <td class="col-md-3"><b>Invested amount</b></td>
-                                        <td class="col-md-3"><input style="width: 100%" type="text" name="invested" [(ngModel)]="fund.investedAmount" pattern="[+]?[0-9]*\.?[0-9]+" #invested="ngModel"/>
+                                        <td class="col-md-3"><input style="width: 100%" type="text" name="invested" [(ngModel)]="fund.investedAmount" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #invested="ngModel"/>
                                             <div [hidden]="invested.valid || invested.pristine" class="alert alert-danger">
                                                 Only positive number could be entered
                                             </div>
@@ -355,7 +355,7 @@
 
                                     <tr>
                                         <td class="col-md-3"><b>Realized amount</b></td>
-                                        <td class="col-md-3"><input style="width: 100%" type="text" name="realized" [(ngModel)]="fund.realized" pattern="[+]?[0-9]*\.?[0-9]+" #realized="ngModel"/>
+                                        <td class="col-md-3"><input style="width: 100%" type="text" name="realized" [(ngModel)]="fund.realized" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #realized="ngModel"/>
                                             <div [hidden]="realized.valid || realized.pristine" class="alert alert-danger">
                                                 Only positive number could be entered
                                             </div>
@@ -364,13 +364,13 @@
                                     </tr>
                                     <tr>
                                         <td class="col-md-3"><b>Benchmark</b></td>
-                                        <td class="col-md-3"><input style="width: 100%" type="text" name="benchmark" [(ngModel)]="fund.benchmarkName"></td>
+                                        <td class="col-md-3"><input style="width: 100%" type="text" name="benchmark" [(ngModel)]="fund.benchmarkName" placeholder="-"></td>
                                     </tr>
                                     <tr>
                                         <td class="col-md-3"><b>As of date</b></td>
                                         <td class="col-md-3">
                                             <div class="input-group">
-                                                <input type='text' class="input-group-addon form-control" id="asOfDate" name="asOfDate" [(ngModel)]="fund.asOfDate"/>
+                                                <input type='text' class="input-group-addon form-control" id="asOfDate" name="asOfDate" [(ngModel)]="fund.asOfDate" placeholder="-"/>
                                             </div>
                                         </td>
                                     </tr>
@@ -378,7 +378,7 @@
                                 <table class=" col-md-4 table-striped table-condensed">
                                     <tr>
                                         <td class="col-md-3"><b>Unrealized amount</b></td>
-                                        <td class="col-md-3"><input style="width: 100%" type="text" name="unrealized" [(ngModel)]="fund.unrealized" pattern="[+]?[0-9]*\.?[0-9]+" #unrealized="ngModel"/>
+                                        <td class="col-md-3"><input style="width: 100%" type="text" name="unrealized" [(ngModel)]="fund.unrealized" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #unrealized="ngModel"/>
                                             <div [hidden]="unrealized.valid || unrealized.pristine" class="alert alert-danger">
                                                 Only positive number could be entered
                                             </div>
@@ -387,7 +387,7 @@
                                     </tr>
                                     <tr>
                                         <td class="col-md-3"><b>DPI</b></td>
-                                        <td class="col-md-3"><input style="width: 100%" type="text" name="dpi" [(ngModel)]="fund.dpi" pattern="[+]?[0-9]*\.?[0-9]+" #dpi="ngModel"/>
+                                        <td class="col-md-3"><input style="width: 100%" type="text" name="dpi" [(ngModel)]="fund.dpi" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #dpi="ngModel"/>
                                             <div [hidden]="dpi.valid || dpi.pristine" class="alert alert-danger">
                                                 Only positive number could be entered
                                             </div>
@@ -396,7 +396,7 @@
                                     </tr>
                                     <tr>
                                         <td class="col-md-3"><b>Gross TVPI</b></td>
-                                        <td class="col-md-3"><input style="width: 100%" type="text" name="grossTvpi" [(ngModel)]="fund.grossTvpi" pattern="[+]?[0-9]*\.?[0-9]+" #grossTvpi="ngModel"/>
+                                        <td class="col-md-3"><input style="width: 100%" type="text" name="grossTvpi" [(ngModel)]="fund.grossTvpi" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #grossTvpi="ngModel"/>
                                             <div [hidden]="grossTvpi.valid || grossTvpi.pristine" class="alert alert-danger">
                                                 Only positive number could be entered
                                             </div>
@@ -405,7 +405,7 @@
                                     </tr>
                                     <tr>
                                         <td class="col-md-3"><b>Benchmark NET IRR</b></td>
-                                        <td class="col-md-3"><input style="width: 100%" type="text" name="benchmarkNetIrr" [(ngModel)]="fund.benchmarkNetIrr" pattern="[+/-]?[0-9]*\.?[0-9]+" #benchmarkNetIrr="ngModel"/>
+                                        <td class="col-md-3"><input style="width: 100%" type="text" name="benchmarkNetIrr" [(ngModel)]="fund.benchmarkNetIrr" placeholder="-" pattern="[+/-]?[0-9]*\.?[0-9]+" #benchmarkNetIrr="ngModel"/>
                                             <div [hidden]="benchmarkNetIrr.valid || benchmarkNetIrr.pristine" class="alert alert-danger">
                                                 Only number could be entered
                                             </div>
@@ -415,7 +415,7 @@
                                 <table class=" col-md-4 table-striped table-condensed">
                                     <tr>
                                         <td class="col-md-3"><b>Gross IRR</b></td>
-                                        <td class="col-md-3"><input style="width: 100%" type="text" name="grossIrr" [(ngModel)]="fund.grossIrr" pattern="[+/-]?[0-9]*\.?[0-9]+" #grossIrr="ngModel"/>
+                                        <td class="col-md-3"><input style="width: 100%" type="text" name="grossIrr" [(ngModel)]="fund.grossIrr" placeholder="-" pattern="[+/-]?[0-9]*\.?[0-9]+" #grossIrr="ngModel"/>
                                             <div [hidden]="grossIrr.valid || grossIrr.pristine" class="alert alert-danger">
                                                 Only number could be entered
                                             </div>
@@ -424,7 +424,7 @@
                                     </tr>
                                     <tr>
                                         <td class="col-md-3"><b>Net TVPI</b></td>
-                                        <td class="col-md-3"><input style="width: 100%" type="text" name="netTvpi" [(ngModel)]="fund.netTvpi" pattern="[+]?[0-9]*\.?[0-9]+" #netTvpi="ngModel"/>
+                                        <td class="col-md-3"><input style="width: 100%" type="text" name="netTvpi" [(ngModel)]="fund.netTvpi" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #netTvpi="ngModel"/>
                                             <div [hidden]="netTvpi.valid || netTvpi.pristine" class="alert alert-danger">
                                                 Only positive number could be entered
                                             </div>
@@ -433,7 +433,7 @@
                                     </tr>
                                     <tr>
                                         <td class="col-md-3"><b>Net IRR</b></td>
-                                        <td class="col-md-3"><input style="width: 100%" type="text" name="netIrr" [(ngModel)]="fund.netIrr" pattern="[+/-]?[0-9]*\.?[0-9]+" #netIrr="ngModel"/>
+                                        <td class="col-md-3"><input style="width: 100%" type="text" name="netIrr" [(ngModel)]="fund.netIrr" placeholder="-" pattern="[+/-]?[0-9]*\.?[0-9]+" #netIrr="ngModel"/>
                                             <div [hidden]="netIrr.valid || netIrr.pristine" class="alert alert-danger">
                                                 Only number could be entered
                                             </div>
@@ -442,7 +442,7 @@
                                     </tr>
                                     <tr>
                                         <td class="col-md-3"><b>Benchmark NET TVPI</b></td>
-                                        <td class="col-md-3"><input style="width: 100%" type="text" name="benchmarkNetTvpi" [(ngModel)]="fund.benchmarkNetTvpi" pattern="[+]?[0-9]*\.?[0-9]+" #benchmarkNetTvpi="ngModel"/>
+                                        <td class="col-md-3"><input style="width: 100%" type="text" name="benchmarkNetTvpi" [(ngModel)]="fund.benchmarkNetTvpi" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #benchmarkNetTvpi="ngModel"/>
                                             <div [hidden]="benchmarkNetTvpi.valid || benchmarkNetTvpi.pristine" class="alert alert-danger">
                                                 Only positive number could be entered
                                             </div>
