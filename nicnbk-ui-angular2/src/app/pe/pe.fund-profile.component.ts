@@ -17,7 +17,7 @@ declare var $:any
 @Component({
     selector: 'pe-fund-profile',
     templateUrl: 'view/pe.fund-profile.component.html',
-    styleUrls: [],
+    styleUrls: ['pe.fund-profile.component.css'],
     providers: [PEFirmService, PEFundService]
 })
 export class PEFundProfileComponent extends CommonFormViewComponent implements OnInit{
