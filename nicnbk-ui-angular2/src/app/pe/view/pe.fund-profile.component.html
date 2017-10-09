@@ -752,6 +752,11 @@
         </div>
         <div id="grossCashflow" class="tab-pane fade">
             <br>
+            <form #yourForm="ngForm" (ngSubmit)="onSubmitGrossCF()">
+                <h4>Upload a new portion of the Gross Cash Flow</h4>
+                <input type="file" #fileupload name="myFile" (change)="fileChange(fileupload.files)"/>
+                <button type="submit">Submit</button>
+            </form>
             <br>
             <div class="row">
                 <div style="text-align: center">

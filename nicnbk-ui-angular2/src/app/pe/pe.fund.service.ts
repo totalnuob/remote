@@ -56,4 +56,12 @@ export class PEFundService extends CommonService {
             .map(this.extractDataList)
             .catch(this.handleErrorResponse);
     }
+
+    uploadGrossCF(entity, id) {
+        let body = new FormData().append("MyFile", entity);
+
+        return this.http.post("http://example/api/YourAction", body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
 }
