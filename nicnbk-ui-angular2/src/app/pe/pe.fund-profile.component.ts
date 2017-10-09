@@ -55,7 +55,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     uploadedGrossCf;
     uploadedNetCf;
 
-    myFile: File;
+    myFiles: File[];
 
     private moduleAccessChecker: ModuleAccessCheckerService;
 
@@ -524,12 +524,12 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     }
 
     fileChange(files: any){
-        this.myFile = files[0];
-        console.log(this.myFile);
+        this.myFiles = files;
+        console.log(this.myFiles);
     }
 
     onSubmitGrossCF() {
-        this.busy = this.fundService.uploadGrossCF(this.myFile, this.fund.id)
+        this.busy = this.fundService.postFiles(this.myFiles, this.fund.id)
             .subscribe(
                 (response) => {
                     this.postAction(response.messageEn, null);

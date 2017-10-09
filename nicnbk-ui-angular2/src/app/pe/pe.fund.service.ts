@@ -5,6 +5,7 @@ import {Observable}     from 'rxjs/Observable';
 import {CommonService} from "../common/common.service";
 import {DATA_APP_URL} from "../common/common.service.constants";
 import {PEFund} from "./model/pe.fund";
+import {FileUploadService} from "../upload/file.upload.service";
 
 @Injectable()
 export class PEFundService extends CommonService {
@@ -15,7 +16,8 @@ export class PEFundService extends CommonService {
     private PE_FUND_UPLOAD_GROSS_CF_URL = this.PE_BASE_URL + "uploadGrossCF/";
 
     constructor(
-        private http: Http
+        private http: Http,
+        private uploadService: FileUploadService
     ){
         super();
     }
@@ -58,11 +60,7 @@ export class PEFundService extends CommonService {
             .catch(this.handleErrorResponse);
     }
 
-    uploadGrossCF(entity, id) {
-        let body = new FormData().append("MyFile", entity);
-
-        return this.http.post(this.PE_FUND_UPLOAD_GROSS_CF_URL + id, body, this.getOptionsWithCredentials())
-            .map(this.extractData)
-            .catch(this.handleErrorResponse);
+    postFiles(files, id) {
+        return this.uploadService.postFiles(this.PE_FUND_UPLOAD_GROSS_CF_URL + id, [], files);
     }
 }
