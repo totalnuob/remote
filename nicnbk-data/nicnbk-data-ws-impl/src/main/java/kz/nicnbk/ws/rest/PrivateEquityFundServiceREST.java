@@ -109,11 +109,7 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
-        System.out.println("123456");
-        System.out.println(files);
-        System.out.println("123456");
-
-        return new ResponseEntity<>(new StatusResultDto(StatusResultType.SUCCESS, "", "Good job!", ""), null, HttpStatus.OK);
+        return new ResponseEntity<>(new StatusResultDto(StatusResultType.SUCCESS, "", "Done!", ""), null, HttpStatus.OK);
 
 //        StatusResultDto statusResultDto = this.service.uploadGrossCF(dsasadas, fundId, username);
 //

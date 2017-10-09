@@ -78,6 +78,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
         //loadLookups
         this.loadLookups();
 
+        this.myFiles = [];
+
         // TODO: wait/sync on lookup loading
         // TODO: sync on subscribe results
 
