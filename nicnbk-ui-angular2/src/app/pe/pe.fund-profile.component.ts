@@ -268,26 +268,6 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     this.fund.grossTvpi = response.trackRecordDTO.grossTvpi;
 
                     this.fund.autoCalculation = true;
-
-                    //this.fundService.get(this.fundIdParam)
-                    //    .subscribe(
-                    //        (data: PEFund) => {
-                    //            if(data && data.id > 0) {
-                    //                this.fund.numberOfInvestments = data.numberOfInvestments;
-                    //            } else{
-                    //                // TODO: handle error
-                    //                this.errorMessage = "Error loading fund profile.";
-                    //            }
-                    //        },
-                    //        (error: ErrorResponse) => {
-                    //            this.errorMessage = "Error loading fund profile";
-                    //            if(error && !error.isEmpty()){
-                    //                this.processErrorMessage(error);
-                    //                console.log(error);
-                    //            }
-                    //            this.postAction(null, null);
-                    //        }
-                    //    );
                 },
                 (error: ErrorResponse) => {
                     this.processErrorMessage(error);
