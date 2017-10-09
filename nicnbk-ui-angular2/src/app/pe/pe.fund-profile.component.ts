@@ -130,7 +130,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                     }
 
                                     if(this.fund.netCashflow == null){
-                                        this.fund.grossCashflow = [];
+                                        this.fund.netCashflow = [];
                                     }
 
                                 }else{
@@ -446,18 +446,18 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
         }
     }
 
-    addRow(){
-        console.log(this.fund.grossCashflow);
-        this.fund.grossCashflow.push({companyName:"", date:"",invested:"", realized:"", unrealized:"", grossCF:"", irr:""});
+    addRowGrossCF(){
+        //console.log(this.fund.grossCashflow);
+        this.fund.grossCashflow.push({companyName:"", date:"", invested:"", realized:"", unrealized:"", grossCF:""});
     }
 
     addRowNetCf(){
-        console.log(this.fund.netCashflow);
+        //console.log(this.fund.netCashflow);
         this.fund.netCashflow.push({fundName:"", currency:"", transactionDate:"", drawn:"", distributed:"", nav:"", netCF:"", typeOfFundTransaction:""})
     }
 
     addRowPerformance(){
-        console.log(this.fund.fundCompanyPerformance);
+        //console.log(this.fund.fundCompanyPerformance);
         this.fund.fundCompanyPerformance.push({companyName:"", invested:"", realized:"", unrealized:"", totalValue:"", multiple:"", grossIrr:"", netIrr:""});
     }
 

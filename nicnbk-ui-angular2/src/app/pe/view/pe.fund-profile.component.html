@@ -783,8 +783,18 @@
                             <td><input style="width: 100%" type="text" [(ngModel)]="cf.unrealized"/></td>
                             <td><input style="width: 100%" type="text" [(ngModel)]="cf.grossCF"/></td>
                         </tr>
-                        <button type="button" class="btn-xs btn-primary" style="display: inline-block" (click)="addRow()"><span class="glyphicon glyphicon-plus"></span></button>
+                        <!--<button type="button" class="btn-xs btn-primary" style="display: inline-block" (click)="addRowGrossCF()"><span class="glyphicon glyphicon-plus"></span></button>-->
                     </table>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-1 pull-left">
+                                <button type="button" class="btn btn-primary" *ngIf="canEdit()" (click)="addRowGrossCF()">
+                                    Add transaction
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
