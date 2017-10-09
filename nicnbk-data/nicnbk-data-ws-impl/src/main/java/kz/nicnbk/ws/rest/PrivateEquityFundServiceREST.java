@@ -3,6 +3,7 @@ package kz.nicnbk.ws.rest;
 import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.pe.PEFundService;
 import kz.nicnbk.service.dto.common.StatusResultDto;
+import kz.nicnbk.service.dto.common.StatusResultType;
 import kz.nicnbk.service.dto.pe.PEFundCompaniesPerformanceDto;
 import kz.nicnbk.service.dto.pe.PEFundDto;
 import kz.nicnbk.service.dto.pe.PEFundTrackRecordResultDto;
@@ -14,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -97,4 +99,22 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
         return buildResponse(funds);
     }
 
+    @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/uploadGrossCF/{fundId}", method = RequestMethod.POST)
+    public ResponseEntity<?> uploadGrossCF(@RequestBody File file, @PathVariable Long fundId) {
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        System.out.println("123456");
+
+        return new ResponseEntity<>(new StatusResultDto(StatusResultType.SUCCESS, "", "Good job!", ""), null, HttpStatus.OK);
+
+//        StatusResultDto statusResultDto = this.service.uploadGrossCF(dsasadas, fundId, username);
+//
+//        if (statusResultDto.getStatus().getCode().equals("SUCCESS")) {
+//            return new ResponseEntity<>(statusResultDto, null, HttpStatus.OK);
+//        } else {
+//            return new ResponseEntity<>(statusResultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+    }
 }

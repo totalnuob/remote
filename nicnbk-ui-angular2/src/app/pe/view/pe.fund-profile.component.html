@@ -752,10 +752,10 @@
         </div>
         <div id="grossCashflow" class="tab-pane fade">
             <br>
-            <form #yourForm="ngForm" (ngSubmit)="onSubmitGrossCF()">
+            <form #yourForm="ngForm" (ngSubmit)="onSubmitGrossCF()" *ngIf="canEdit()">
                 <h4>Upload a new portion of the Gross Cash Flow</h4>
                 <input type="file" #fileupload name="myFile" (change)="fileChange(fileupload.files)"/>
-                <button type="submit">Submit</button>
+                <button type="submit" class="btn btn-success" *ngIf="canEdit()" [disabled]="fund.id == 0 || fund.id == null">Submit</button>
             </form>
             <br>
             <div class="row">
