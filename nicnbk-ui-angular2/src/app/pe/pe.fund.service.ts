@@ -12,6 +12,7 @@ export class PEFundService extends CommonService {
     private PE_FUND_SAVE_URL = this.PE_BASE_URL + "save/";
     private PE_FUND_GET_URL = this.PE_BASE_URL + "get/";
     private PE_FUND_SEARCH_URL = this.PE_BASE_URL + "search/";
+    private PE_FUND_UPLOAD_GROSS_CF_URL = this.PE_BASE_URL + "uploadGrossCF/";
 
     constructor(
         private http: Http
@@ -60,7 +61,7 @@ export class PEFundService extends CommonService {
     uploadGrossCF(entity, id) {
         let body = new FormData().append("MyFile", entity);
 
-        return this.http.post("http://example/api/YourAction", body, this.getOptionsWithCredentials())
+        return this.http.post(this.PE_FUND_UPLOAD_GROSS_CF_URL + id, body, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }
