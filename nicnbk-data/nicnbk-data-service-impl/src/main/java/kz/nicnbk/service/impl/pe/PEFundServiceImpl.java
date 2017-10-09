@@ -319,12 +319,14 @@ public class PEFundServiceImpl implements PEFundService {
 
             if(!grossCFDto.isEmpty()) {
 
-                dto.setGrossCashflow(grossCFDto);
+                //Commented by Pak
+//                dto.setGrossCashflow(grossCFDto);
                 dto.setNetCashflow(netCFDto);
 
                 //Commented by Pak
 //                calculatePerformanceParameters(grossCFDto, netCFDto, dto);
             }
+            dto.setGrossCashflow(grossCFDto);
             dto.setFundCompanyPerformance(fundCompaniesPerformanceDto);
             return dto;
         }catch(Exception ex){
