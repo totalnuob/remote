@@ -21,6 +21,7 @@ public class PEFundCompaniesPerformance extends BaseEntity {
     private Double totalValue;
     private Double multiple;
     private Double grossIrr;
+    private Double netIrr;
     private PEFund fund;
 
     public Date getDate() {
@@ -85,6 +86,14 @@ public class PEFundCompaniesPerformance extends BaseEntity {
 
     public void setGrossIrr(Double grossIrr) {
         this.grossIrr = grossIrr;
+    }
+
+    public Double getNetIrr() {
+        return netIrr;
+    }
+
+    public void setNetIrr(Double netIrr) {
+        this.netIrr = netIrr;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)

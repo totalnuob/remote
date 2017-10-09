@@ -21,16 +21,18 @@ public class PEFundCompaniesPerformanceDto extends BaseEntityDto<PEFundCompanies
     private Double totalValue;
     private Double multiple;
     private Double grossIrr;
+    private Double netIrr;
     private PEFundDto fund;
 
-    public PEFundCompaniesPerformanceDto(String test, Double i, Double i1, Double i2, Double i3, Double i4, Double i5) {
-        companyName = test;
-        invested = i;
-        realized = i1;
-        unrealized = i2;
-        totalValue = i3;
-        multiple = i4;
-        grossIrr = i5;
+    public PEFundCompaniesPerformanceDto(String companyName, Double invested, Double realized, Double unrealized, Double totalValue, Double multiple, Double grossIrr, Double netIrr) {
+        this.companyName = companyName;
+        this.invested = invested;
+        this.realized = realized;
+        this.unrealized = unrealized;
+        this.totalValue = totalValue;
+        this.multiple = multiple;
+        this.grossIrr = grossIrr;
+        this.netIrr = netIrr;
     }
 
     public PEFundCompaniesPerformanceDto(){
@@ -91,6 +93,14 @@ public class PEFundCompaniesPerformanceDto extends BaseEntityDto<PEFundCompanies
 
     public void setGrossIrr(Double grossIrr) {
         this.grossIrr = grossIrr;
+    }
+
+    public Double getNetIrr() {
+        return netIrr;
+    }
+
+    public void setNetIrr(Double netIrr) {
+        this.netIrr = netIrr;
     }
 
     public PEFundDto getFund() {
