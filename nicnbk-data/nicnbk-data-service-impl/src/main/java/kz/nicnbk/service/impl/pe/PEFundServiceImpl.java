@@ -166,8 +166,7 @@ public class PEFundServiceImpl implements PEFundService {
         if (statusResultDto.getStatus().getCode().equals("FAIL")) {
             return new PEFundTrackRecordResultDto(
                     new PEFundTrackRecordDto(),
-                    statusResultDto.getStatus(),
-                    statusResultDto.getMessageRu(), statusResultDto.getMessageEn(), statusResultDto.getMessageKz()
+                    statusResultDto.getStatus(), statusResultDto.getMessageRu(), statusResultDto.getMessageEn(), statusResultDto.getMessageKz()
             );
         }
 
@@ -178,8 +177,7 @@ public class PEFundServiceImpl implements PEFundService {
                 statusResultDto.setMessageEn("Fund doesn't exist!");
                 return new PEFundTrackRecordResultDto(
                         new PEFundTrackRecordDto(),
-                        statusResultDto.getStatus(),
-                        statusResultDto.getMessageRu(), statusResultDto.getMessageEn(), statusResultDto.getMessageKz()
+                        statusResultDto.getStatus(), statusResultDto.getMessageRu(), statusResultDto.getMessageEn(), statusResultDto.getMessageKz()
                 );
             }
 
@@ -224,8 +222,7 @@ public class PEFundServiceImpl implements PEFundService {
                             null, null, null,
                             fund.getGrossTvpi(),
                             null, null, null, null, null),
-                    statusResultDto.getStatus(),
-                    statusResultDto.getMessageRu(), statusResultDto.getMessageEn(), statusResultDto.getMessageKz());
+                    statusResultDto.getStatus(), statusResultDto.getMessageRu(), statusResultDto.getMessageEn(), statusResultDto.getMessageKz());
         } catch (Exception ex) {
             logger.error("Error updating PE fund's key statistics: " + fundId ,ex);
 
@@ -233,8 +230,7 @@ public class PEFundServiceImpl implements PEFundService {
             statusResultDto.setMessageEn("Error updating fund's key statistics");
             return new PEFundTrackRecordResultDto(
                     new PEFundTrackRecordDto(),
-                    statusResultDto.getStatus(),
-                    statusResultDto.getMessageRu(), statusResultDto.getMessageEn(), statusResultDto.getMessageKz()
+                    statusResultDto.getStatus(), statusResultDto.getMessageRu(), statusResultDto.getMessageEn(), statusResultDto.getMessageKz()
             );
         }
     }

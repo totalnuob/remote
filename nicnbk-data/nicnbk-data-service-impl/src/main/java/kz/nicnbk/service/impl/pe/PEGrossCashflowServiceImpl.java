@@ -4,6 +4,7 @@ import kz.nicnbk.repo.api.pe.PEGrossCashflowRepository;
 import kz.nicnbk.repo.model.pe.PEGrossCashflow;
 import kz.nicnbk.service.api.pe.PEGrossCashflowService;
 import kz.nicnbk.service.converter.pe.PEGrossCashflowEntityConverter;
+import kz.nicnbk.service.dto.pe.PEFundCompaniesPerformanceDto;
 import kz.nicnbk.service.dto.pe.PEGrossCashflowDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,11 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
             ex.printStackTrace();
             return 0L;
         }
+    }
+
+    @Override
+    public String saveList(List<PEFundCompaniesPerformanceDto> performanceDtoList, Long fundId) {
+        fdsfdsfs
     }
 
     @Override

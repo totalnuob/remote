@@ -10,7 +10,9 @@ import java.util.List;
  */
 public interface PEGrossCashflowService extends BaseService {
 
-    Long save(PEGrossCashflowDto dto, Long fundId);
+    Long save(PEGrossCashflowDto cashflowDto, Long fundId);
+
+    String saveList(List<PEGrossCashflowDto> cashflowDtoList, Long fundId);
 
     List<PEGrossCashflowDto> findByFundId(Long fundId);
 
