@@ -16,11 +16,11 @@ public class PEGrossCashflow extends BaseEntity {
 
     private String companyName;
     private Date date;
-    private double invested;
-    private double realized;
-    private double unrealized;
-    private double grossCF;
-    private double irr;
+    private Double invested;
+    private Double realized;
+    private Double unrealized;
+    private Double grossCF;
+    private Double irr;
     private PEFund fund;
 
     public String getCompanyName() {
@@ -39,43 +39,43 @@ public class PEGrossCashflow extends BaseEntity {
         this.date = date;
     }
 
-    public double getInvested() {
+    public Double getInvested() {
         return invested;
     }
 
-    public void setInvested(double invested) {
+    public void setInvested(Double invested) {
         this.invested = invested;
     }
 
-    public double getRealized() {
+    public Double getRealized() {
         return realized;
     }
 
-    public void setRealized(double realized) {
+    public void setRealized(Double realized) {
         this.realized = realized;
     }
 
-    public double getUnrealized() {
+    public Double getUnrealized() {
         return unrealized;
     }
 
-    public void setUnrealized(double unrealized) {
+    public void setUnrealized(Double unrealized) {
         this.unrealized = unrealized;
     }
 
-    public double getGrossCF() {
+    public Double getGrossCF() {
         return grossCF;
     }
 
-    public void setGrossCF(double grossCF) {
+    public void setGrossCF(Double grossCF) {
         this.grossCF = grossCF;
     }
 
-    public double getIrr() {
+    public Double getIrr() {
         return irr;
     }
 
-    public void setIrr(double irr) {
+    public void setIrr(Double irr) {
         this.irr = irr;
     }
 
