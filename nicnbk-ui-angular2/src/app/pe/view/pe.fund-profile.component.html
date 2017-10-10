@@ -782,11 +782,47 @@
                                     Name must contain 1-20 characters A-Z, a-z, 0-9
                                 </div>
                             </td>
+
+
+
+
+
+                            ???????????????????????????????????????
                             <td><input style="width: 100%" type="text" [(ngModel)]="cf.date"/></td>
-                            <td><input style="width: 100%" type="text" [(ngModel)]="cf.invested"/></td>
-                            <td><input style="width: 100%" type="text" [(ngModel)]="cf.realized"/></td>
-                            <td><input style="width: 100%" type="text" [(ngModel)]="cf.unrealized"/></td>
-                            <td><input style="width: 100%" type="text" [(ngModel)]="cf.grossCF"/></td>
+
+
+
+
+
+
+                            <td>
+                                <input type="text" class="form-control" name="invested" [(ngModel)]="cf.invested" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #invested="ngModel"/>
+                                <div [hidden]="invested.valid || invested.pristine" class="alert alert-danger">
+                                    Only positive number could be entered
+                                </div>
+                            </td>
+
+                            <td>
+                                <input type="text" class="form-control" name="realized" [(ngModel)]="cf.realized" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #realized="ngModel"/>
+                                <div [hidden]="realized.valid || realized.pristine" class="alert alert-danger">
+                                    Only positive number could be entered
+                                </div>
+                            </td>
+
+                            <td>
+                                <input type="text" class="form-control" name="unrealized" [(ngModel)]="cf.unrealized" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #unrealized="ngModel"/>
+                                <div [hidden]="unrealized.valid || unrealized.pristine" class="alert alert-danger">
+                                    Only positive number could be entered
+                                </div>
+                            </td>
+
+                            <td>
+                                <input type="text" class="form-control" name="grossCF" [(ngModel)]="cf.grossCF" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #grossCF="ngModel"/>
+                                <div [hidden]="grossCF.valid || grossCF.pristine" class="alert alert-danger">
+                                    Only positive number could be entered
+                                </div>
+                            </td>
+
                             <td>
                                 <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRowGrossCF(performance)">
                                     <span class="glyphicon glyphicon-minus"></span>
