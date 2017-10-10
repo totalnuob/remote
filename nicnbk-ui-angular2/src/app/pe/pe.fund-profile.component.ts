@@ -201,6 +201,10 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
             format: 'DD-MM-YYYY'
         });
 
+        $('#dateGrossCF').datetimepicker({
+            //defaultDate: new Date(),
+            format: 'DD-MM-YYYY'
+        });
     }
 
     save(){

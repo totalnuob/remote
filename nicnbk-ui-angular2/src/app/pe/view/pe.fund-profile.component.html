@@ -792,11 +792,13 @@
 
 
                             <td>
-                                <input type="text" class="form-control" name="date" [(ngModel)]="cf.date"/>
-                                <input type="text" class="form-control" name="date" [(ngModel)]="cf.date"/>
-                                <div class="input-group">
-                                    <input type='text' class="input-group-addon form-control" id="date" name="date" [(ngModel)]="cf.date" placeholder="-"/>
+                                <input type="text" class="form-control" name="date" [(ngModel)]="cf.date" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #date="ngModel"/>
+                                <div [hidden]="date.valid || date.pristine" class="alert alert-danger">
+                                    Enter date
                                 </div>
+                                <!--<div class="input-group">-->
+                                    <!--<input type='text' class="input-group-addon form-control" id="dateGrossCF" name="dateGrossCF" [(ngModel)]="cf.date" placeholder="-"/>-->
+                                <!--</div>-->
                             </td>
 
 
