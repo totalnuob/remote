@@ -471,6 +471,14 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
         this.fund.grossCashflow.push({companyName:"", date:"", invested:"", realized:"", unrealized:"", grossCF:""});
     }
 
+    removeRowGrossCF(item){
+        for(var i = this.fund.grossCashflow.length; i--;) {
+            if(this.fund.grossCashflow[i] === item) {
+                this.fund.grossCashflow.splice(i, 1);
+            }
+        }
+    }
+
     addRowNetCf(){
         //console.log(this.fund.netCashflow);
         this.fund.netCashflow.push({fundName:"", currency:"", transactionDate:"", drawn:"", distributed:"", nav:"", netCF:"", typeOfFundTransaction:""})
