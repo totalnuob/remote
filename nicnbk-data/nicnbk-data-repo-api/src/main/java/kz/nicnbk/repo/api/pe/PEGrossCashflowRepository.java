@@ -21,5 +21,4 @@ public interface PEGrossCashflowRepository extends PagingAndSortingRepository<PE
     @Transactional
     @Query("DELETE from pe_gross_cashflow e where e.fund.id=?1")
     void deleteByFundId(long fundId);
-
 }

@@ -25,7 +25,7 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
     private PEGrossCashflowEntityConverter peCFEntityConverter;
 
     @Override
-    public Long save(PEGrossCashflowDto dto) {
+    public Long save(PEGrossCashflowDto dto, Long fundId) {
         try {
             PEGrossCashflow entity = this.peCFEntityConverter.assemble(dto);
             Long id = this.peCFRepository.save(entity).getId();
@@ -37,12 +37,6 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
     }
 
     @Override
-    public boolean deleteByFundId(Long fundId) {
-        this.peCFRepository.deleteByFundId(fundId);
-        return true;
-    }
-
-    @Override
     public PEGrossCashflowDto get(Long id) {
         return null;
     }
@@ -51,5 +45,11 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
     public List<PEGrossCashflowDto> findByFundId(Long id) {
         List<PEGrossCashflow> entities = this.peCFRepository.getEntitiesByFundId(id, new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName")));
         return this.peCFEntityConverter.disassembleList(entities);
+    }
+
+    @Override
+    public boolean deleteByFundId(Long fundId) {
+        this.peCFRepository.deleteByFundId(fundId);
+        return true;
     }
 }
