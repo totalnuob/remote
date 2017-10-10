@@ -13,7 +13,7 @@ public interface PENetCashflowService extends BaseService {
 
     PENetCashflowDto get(Long id);
 
-    List<PENetCashflowDto> findByFundId(Long id);
+    List<PENetCashflowDto> findByFundId(Long fundId);
 
     boolean deleteByFundId(Long fundId);
 }
