@@ -787,8 +787,21 @@
 
 
 
-                            ???????????????????????????????????????
-                            <td><input style="width: 100%" type="text" [(ngModel)]="cf.date"/></td>
+
+
+
+
+                            <td>
+                                <input type="text" class="form-control" name="date" [(ngModel)]="cf.date"/>
+                                <input type="text" class="form-control" name="date" [(ngModel)]="cf.date"/>
+                                <div class="input-group">
+                                    <input type='text' class="input-group-addon form-control" id="date" name="date" [(ngModel)]="cf.date" placeholder="-"/>
+                                </div>
+                            </td>
+
+
+
+
 
 
 
