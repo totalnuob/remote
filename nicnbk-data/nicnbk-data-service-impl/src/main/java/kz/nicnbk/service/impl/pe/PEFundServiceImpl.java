@@ -69,6 +69,97 @@ public class PEFundServiceImpl implements PEFundService {
     private PEFundCompaniesPerformanceService performanceService;
 
     @Override
+    public PEFundDto get(Long id) {
+        try {
+            PEFund entity = this.peFundRepository.findOne(id);
+
+            List<PEGrossCashflow> grossCfEntity = this.grossCFRepository.getEntitiesByFundId(id, new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName", "date")));
+            List<PENetCashflow> netCfEntity = this.netCFRepository.getEntitiesByFundId(id);
+
+            PEFundDto dto = this.converter.disassemble(entity);
+
+            List<PEGrossCashflowDto> grossCFDto = this.grossCFConverter.disassembleList(grossCfEntity);
+            List<PENetCashflowDto> netCFDto = this.netCFConverter.disassembleList(netCfEntity);
+            List<PEFundCompaniesPerformanceDto> performanceDto = this.performanceService.getEntityDtosByFundId(id);
+
+            if(!grossCFDto.isEmpty()) {
+
+                //Commented by Pak
+//                dto.setGrossCashflow(grossCFDto);
+                dto.setNetCashflow(netCFDto);
+
+                //Commented by Pak
+//                calculatePerformanceParameters(grossCFDto, netCFDto, dto);
+            }
+            dto.setGrossCashflow(grossCFDto);
+            dto.setFundCompanyPerformance(performanceDto);
+            return dto;
+        }catch(Exception ex){
+            logger.error("Error loading PE fund: " + id, ex);
+        }
+        return null;
+    }
+
+    @Override
+    public Long save(PEFundDto fundDto, String updater) {
+
+        // TODO: transactions
+
+        try {
+            PEFund entity = converter.assemble(fundDto);
+            if(fundDto.getId() == null){ // CREATE
+                Employee employee = this.employeeRepository.findByUsername(fundDto.getOwner());
+                // set creator
+                entity.setCreator(employee);
+            }else{ // UPDATE
+                // set creator
+                Employee employee = this.peFundRepository.findOne(fundDto.getId()).getCreator();
+                entity.setCreator(employee);
+                // set creation date
+                Date creationDate = peFundRepository.findOne(fundDto.getId()).getCreationDate();
+                entity.setCreationDate(creationDate);
+                // set update date
+                entity.setUpdateDate(new Date());
+                // set updater
+                Employee updatedby = this.employeeRepository.findByUsername(updater);
+                entity.setUpdater(updatedby);
+            }
+            Long id = peFundRepository.save(entity).getId();
+            fundDto.setId(id);
+
+            //Commented by Pak
+//            boolean deleted = this.grossCFService.deleteByFundId(id);
+//
+//            //Save gross cashflows
+//            if (fundDto.getGrossCashflow() != null) {
+//                for (PEGrossCashflowDto dto : fundDto.getGrossCashflow()) {
+//                    dto.setFund(fundDto);
+//                    this.grossCFService.save(dto);
+//                }
+//            }
+//
+//            boolean deleted2 = this.netCFService.deleteByFundId(id);
+//
+//            //Save net cashflows
+//            if (fundDto.getNetCashflow() != null) {
+//                for (PENetCashflowDto dto : fundDto.getNetCashflow()) {
+//                    dto.setFund(fundDto);
+//                    this.netCFService.save(dto);
+//                }
+//            }
+
+            // TODO: log cash flow saving
+
+            logger.info(fundDto.getId() == null ? "PE fund created: " + id + ", by " + entity.getCreator().getUsername() :
+                    "PE fund updated: " + id + ", by " + updater);
+            return id;
+        }catch (Exception ex){
+            logger.error("Error saving PE fund: " + (fundDto != null && fundDto.getId() != null ? fundDto.getId() : "new") ,ex);
+        }
+        return null;
+    }
+
+    @Override
     public StatusResultDto savePerformance(List<PEFundCompaniesPerformanceDto> performanceDtoList, Long fundId, String updater) {
 
         StatusResultDto statusResultDto = new StatusResultDto(StatusResultType.FAIL, "", "", "");
@@ -241,97 +332,6 @@ public class PEFundServiceImpl implements PEFundService {
             statusResultDto.setMessageEn("Error saving fund's gross cash flow");
             return statusResultDto;
         }
-    }
-
-    @Override
-    public Long save(PEFundDto fundDto, String updater) {
-
-        // TODO: transactions
-
-        try {
-            PEFund entity = converter.assemble(fundDto);
-            if(fundDto.getId() == null){ // CREATE
-                Employee employee = this.employeeRepository.findByUsername(fundDto.getOwner());
-                // set creator
-                entity.setCreator(employee);
-            }else{ // UPDATE
-                // set creator
-                Employee employee = this.peFundRepository.findOne(fundDto.getId()).getCreator();
-                entity.setCreator(employee);
-                // set creation date
-                Date creationDate = peFundRepository.findOne(fundDto.getId()).getCreationDate();
-                entity.setCreationDate(creationDate);
-                // set update date
-                entity.setUpdateDate(new Date());
-                // set updater
-                Employee updatedby = this.employeeRepository.findByUsername(updater);
-                entity.setUpdater(updatedby);
-            }
-            Long id = peFundRepository.save(entity).getId();
-            fundDto.setId(id);
-
-            //Commented by Pak
-//            boolean deleted = this.grossCFService.deleteByFundId(id);
-//
-//            //Save gross cashflows
-//            if (fundDto.getGrossCashflow() != null) {
-//                for (PEGrossCashflowDto dto : fundDto.getGrossCashflow()) {
-//                    dto.setFund(fundDto);
-//                    this.grossCFService.save(dto);
-//                }
-//            }
-//
-//            boolean deleted2 = this.netCFService.deleteByFundId(id);
-//
-//            //Save net cashflows
-//            if (fundDto.getNetCashflow() != null) {
-//                for (PENetCashflowDto dto : fundDto.getNetCashflow()) {
-//                    dto.setFund(fundDto);
-//                    this.netCFService.save(dto);
-//                }
-//            }
-
-            // TODO: log cash flow saving
-
-            logger.info(fundDto.getId() == null ? "PE fund created: " + id + ", by " + entity.getCreator().getUsername() :
-                    "PE fund updated: " + id + ", by " + updater);
-            return id;
-        }catch (Exception ex){
-            logger.error("Error saving PE fund: " + (fundDto != null && fundDto.getId() != null ? fundDto.getId() : "new") ,ex);
-        }
-        return null;
-    }
-
-    @Override
-    public PEFundDto get(Long id) {
-        try {
-            PEFund entity = this.peFundRepository.findOne(id);
-
-            List<PEGrossCashflow> grossCfEntity = this.grossCFRepository.getEntitiesByFundId(id, new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName", "date")));
-            List<PENetCashflow> netCfEntity = this.netCFRepository.getEntitiesByFundId(id);
-
-            PEFundDto dto = this.converter.disassemble(entity);
-
-            List<PEGrossCashflowDto> grossCFDto = this.grossCFConverter.disassembleList(grossCfEntity);
-            List<PENetCashflowDto> netCFDto = this.netCFConverter.disassembleList(netCfEntity);
-            List<PEFundCompaniesPerformanceDto> performanceDto = this.performanceService.getEntityDtosByFundId(id);
-
-            if(!grossCFDto.isEmpty()) {
-
-                //Commented by Pak
-//                dto.setGrossCashflow(grossCFDto);
-                dto.setNetCashflow(netCFDto);
-
-                //Commented by Pak
-//                calculatePerformanceParameters(grossCFDto, netCFDto, dto);
-            }
-            dto.setGrossCashflow(grossCFDto);
-            dto.setFundCompanyPerformance(performanceDto);
-            return dto;
-        }catch(Exception ex){
-            logger.error("Error loading PE fund: " + id, ex);
-        }
-        return null;
     }
 
     @Override
