@@ -314,25 +314,26 @@ public class PEFundServiceImpl implements PEFundService {
             Long id = peFundRepository.save(entity).getId();
             fundDto.setId(id);
 
-            boolean deleted = this.grossCFService.deleteByFundId(id);
-
-            //Save gross cashflows
-            if (fundDto.getGrossCashflow() != null) {
-                for (PEGrossCashflowDto dto : fundDto.getGrossCashflow()) {
-                    dto.setFund(fundDto);
-                    this.grossCFService.save(dto);
-                }
-            }
-
-            boolean deleted2 = this.netCFService.deleteByFundId(id);
-
-            //Save net cashflows
-            if (fundDto.getNetCashflow() != null) {
-                for (PENetCashflowDto dto : fundDto.getNetCashflow()) {
-                    dto.setFund(fundDto);
-                    this.netCFService.save(dto);
-                }
-            }
+            //Commented by Pak
+//            boolean deleted = this.grossCFService.deleteByFundId(id);
+//
+//            //Save gross cashflows
+//            if (fundDto.getGrossCashflow() != null) {
+//                for (PEGrossCashflowDto dto : fundDto.getGrossCashflow()) {
+//                    dto.setFund(fundDto);
+//                    this.grossCFService.save(dto);
+//                }
+//            }
+//
+//            boolean deleted2 = this.netCFService.deleteByFundId(id);
+//
+//            //Save net cashflows
+//            if (fundDto.getNetCashflow() != null) {
+//                for (PENetCashflowDto dto : fundDto.getNetCashflow()) {
+//                    dto.setFund(fundDto);
+//                    this.netCFService.save(dto);
+//                }
+//            }
 
             // TODO: log cash flow saving
 
