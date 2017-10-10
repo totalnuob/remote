@@ -84,7 +84,7 @@ public class PEFundServiceImpl implements PEFundService {
         PEFundTrackRecordDto fundTrackRecordDTO;
 
         try {
-            PEFund fund = peFundRepository.findOne(fundId);
+            PEFund fund = this.peFundRepository.findOne(fundId);
             if (fund == null) {
                 statusResultDto.setStatus(StatusResultType.FAIL);
                 statusResultDto.setMessageEn("Fund doesn't exist!");
