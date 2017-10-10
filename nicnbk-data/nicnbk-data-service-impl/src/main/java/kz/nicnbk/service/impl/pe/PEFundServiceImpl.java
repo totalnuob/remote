@@ -78,17 +78,10 @@ public class PEFundServiceImpl implements PEFundService {
             List<PENetCashflowDto> netCFDto = this.netCFService.findByFundId(id);
             List<PEFundCompaniesPerformanceDto> performanceDto = this.performanceService.getEntityDtosByFundId(id);
 
-            //Commented by Pak
-//            if(!grossCFDto.isEmpty()) {
-//
-//                dto.setGrossCashflow(grossCFDto);
-//                dto.setNetCashflow(netCFDto);
-//
-//                calculatePerformanceParameters(grossCFDto, netCFDto, dto);
-//            }
             dto.setGrossCashflow(grossCFDto);
             dto.setNetCashflow(netCFDto);
             dto.setFundCompanyPerformance(performanceDto);
+//            calculatePerformanceParameters(grossCFDto, netCFDto, dto);
             return dto;
         }catch(Exception ex){
             logger.error("Error loading PE fund: " + id, ex);
@@ -107,7 +100,7 @@ public class PEFundServiceImpl implements PEFundService {
                 Employee employee = this.employeeRepository.findByUsername(fundDto.getOwner());
                 // set creator
                 entity.setCreator(employee);
-            }else{ // UPDATE
+            } else { // UPDATE
                 // set creator
                 Employee employee = this.peFundRepository.findOne(fundDto.getId()).getCreator();
                 entity.setCreator(employee);
@@ -122,27 +115,6 @@ public class PEFundServiceImpl implements PEFundService {
             }
             Long id = peFundRepository.save(entity).getId();
             fundDto.setId(id);
-
-            //Commented by Pak
-//            boolean deleted = this.grossCFService.deleteByFundId(id);
-//
-//            //Save gross cashflows
-//            if (fundDto.getGrossCashflow() != null) {
-//                for (PEGrossCashflowDto dto : fundDto.getGrossCashflow()) {
-//                    dto.setFund(fundDto);
-//                    this.grossCFService.save(dto);
-//                }
-//            }
-//
-//            boolean deleted2 = this.netCFService.deleteByFundId(id);
-//
-//            //Save net cashflows
-//            if (fundDto.getNetCashflow() != null) {
-//                for (PENetCashflowDto dto : fundDto.getNetCashflow()) {
-//                    dto.setFund(fundDto);
-//                    this.netCFService.save(dto);
-//                }
-//            }
 
             // TODO: log cash flow saving
 
