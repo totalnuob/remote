@@ -202,12 +202,14 @@ public class PEFundServiceImpl implements PEFundService {
                 return statusResultDto;
             }
 
-            // Delete all company performance entities for that fund
-            this.fundCompaniesPerformanceRepository.findAll().forEach(performance -> {
-                if (performance.getFund().getId() == fundId) {
-                    this.fundCompaniesPerformanceRepository.delete(performance.getId());
-                }
-            });
+//            // Delete all company performance entities for that fund
+//            this.fundCompaniesPerformanceRepository.findAll().forEach(performance -> {
+//                if (performance.getFund().getId() == fundId) {
+//                    this.fundCompaniesPerformanceRepository.delete(performance.getId());
+//                }
+//            });
+
+            this.fundCompaniesPerformanceRepository.deleteByFundId(fundId);
 
             // Save them again
             for (PEFundCompaniesPerformanceDto performanceDto : performanceDtoList) {
@@ -236,28 +238,31 @@ public class PEFundServiceImpl implements PEFundService {
         StatusResultDto statusResultDto = new StatusResultDto(StatusResultType.FAIL, "", "", "");
 
         try {
-            // performanceDtoList check
+            // grossCashflowDtoList check
             if (grossCashflowDtoList == null) {
                 statusResultDto.setMessageEn("Don't send NULL!");
                 return statusResultDto;
             }
 
             for (PEGrossCashflowDto grossCashflowDto : grossCashflowDtoList) {
-                if (grossCashflowDto.getCompanyName() == null || grossCashflowDto.getCompanyName().equals("")) {
-                    statusResultDto.setMessageEn("Don't send null or empty company name!");
+                if (grossCashflowDto.getCompanyName() == null ||
+                        grossCashflowDto.getCompanyName().equals("") ||
+                        grossCashflowDto.getDate() == null) {
+                    statusResultDto.setMessageEn("Don't send null or empty company name or null date!");
                     return statusResultDto;
                 }
             }
 
-            for (PEFundCompaniesPerformanceDto performanceDto1 : performanceDtoList) {
+            for (PEGrossCashflowDto grossCashflowDto1 : grossCashflowDtoList) {
                 int i = 0;
-                for (PEFundCompaniesPerformanceDto performanceDto2 : performanceDtoList) {
-                    if (performanceDto1.getCompanyName().equals(performanceDto2.getCompanyName())) {
+                for (PEGrossCashflowDto grossCashflowDto2 : grossCashflowDtoList) {
+                    if (grossCashflowDto1.getCompanyName().equals(grossCashflowDto2.getCompanyName()) &&
+                            grossCashflowDto1.getDate().equals(grossCashflowDto2.getDate())) {
                         i++;
                     }
                 }
                 if (i > 1) {
-                    statusResultDto.setMessageEn("Names must be unique!");
+                    statusResultDto.setMessageEn("The pairs (name, date) must be unique!");
                     return statusResultDto;
                 }
             }
@@ -269,30 +274,24 @@ public class PEFundServiceImpl implements PEFundService {
                 return statusResultDto;
             }
 
-            // Delete all company performance entities for that fund
-            this.fundCompaniesPerformanceRepository.findAll().forEach(performance -> {
-                if (performance.getFund().getId() == fundId) {
-                    this.fundCompaniesPerformanceRepository.delete(performance.getId());
-                }
-            });
+            this.grossCFRepository.deleteByFundId(fundId);
 
             // Save them again
-            for (PEFundCompaniesPerformanceDto performanceDto : performanceDtoList) {
-                PEFundCompaniesPerformance performance = fundCompaniesPerformanceConverter.assemble(performanceDto);
-                performance.setFund(fund);
-                this.fundCompaniesPerformanceRepository.save(performance);
+            for (PEGrossCashflowDto grossCashflowDto : grossCashflowDtoList) {
+                PEGrossCashflow grossCashflow = grossCFConverter.assemble(grossCashflowDto);
+                grossCashflow.setFund(fund);
+                this.grossCFRepository.save(grossCashflow);
             }
 
-            fund.setAutoCalculation(false);
             peFundRepository.save(fund);
 
-            logger.info("PE fund's company performance updated: " + fundId + ", by " + updater);
+            logger.info("PE fund's gross cash flow updated: " + fundId + ", by " + updater);
             statusResultDto.setStatus(StatusResultType.SUCCESS);
-            statusResultDto.setMessageEn("Successfully saved fund's company performance");
+            statusResultDto.setMessageEn("Successfully saved fund's gross cash flow");
             return statusResultDto;
         } catch (Exception ex){
-            logger.error("Error saving PE fund's company performance: " + fundId ,ex);
-            statusResultDto.setMessageEn("Error saving fund's company performance");
+            logger.error("Error saving PE fund's gross cash flow: " + fundId ,ex);
+            statusResultDto.setMessageEn("Error saving fund's gross cash flow");
             return statusResultDto;
         }
     }
