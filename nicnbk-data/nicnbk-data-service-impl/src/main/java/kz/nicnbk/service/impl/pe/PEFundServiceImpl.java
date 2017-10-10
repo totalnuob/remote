@@ -138,6 +138,7 @@ public class PEFundServiceImpl implements PEFundService {
                     statusResultDto.getMessageRu(), statusResultDto.getMessageEn(), statusResultDto.getMessageKz());
         } catch (Exception ex) {
             logger.error("Error updating PE fund's key statistics: " + fundId ,ex);
+
             statusResultDto.setStatus(StatusResultType.FAIL);
             statusResultDto.setMessageEn("Error updating fund's key statistics");
             return new PEFundTrackRecordResultDto(
