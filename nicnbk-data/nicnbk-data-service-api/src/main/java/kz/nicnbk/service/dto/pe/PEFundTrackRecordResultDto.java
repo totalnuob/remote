@@ -8,18 +8,18 @@ import kz.nicnbk.service.dto.common.StatusResultType;
  */
 public class PEFundTrackRecordResultDto extends StatusResultDto {
 
-    private PEFundTrackRecordDTO trackRecordDTO;
+    private PEFundTrackRecordDto trackRecordDTO;
 
-    public PEFundTrackRecordResultDto(PEFundTrackRecordDTO trackRecordDTO, StatusResultType status, String messageRu, String messageEn, String messageKz) {
+    public PEFundTrackRecordResultDto(PEFundTrackRecordDto trackRecordDTO, StatusResultType status, String messageRu, String messageEn, String messageKz) {
         super(status, messageRu, messageEn, messageKz);
         this.trackRecordDTO = trackRecordDTO;
     }
 
-    public PEFundTrackRecordDTO getTrackRecordDTO() {
+    public PEFundTrackRecordDto getTrackRecordDTO() {
         return trackRecordDTO;
     }
 
-    public void setTrackRecordDTO(PEFundTrackRecordDTO trackRecordDTO) {
+    public void setTrackRecordDTO(PEFundTrackRecordDto trackRecordDTO) {
         this.trackRecordDTO = trackRecordDTO;
     }
 }

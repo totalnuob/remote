@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface PEFundCompaniesPerformanceRepository extends PagingAndSortingRepository<PEFundCompaniesPerformance, Long> {
 
-    List<PEFundCompaniesPerformance> getEntitiesByFundId(Long id);
+    List<PEFundCompaniesPerformance> getEntitiesByFundId(Long fundId);
 
     @Modifying
     @Transactional

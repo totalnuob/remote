@@ -1,28 +1,23 @@
 package kz.nicnbk.service.impl.pe;
 
-import in.satpathy.financial.XIRR;
-import in.satpathy.financial.XIRRData;
 import kz.nicnbk.repo.api.employee.EmployeeRepository;
 import kz.nicnbk.repo.api.pe.PEFundRepository;
 import kz.nicnbk.repo.api.pe.PEGrossCashflowRepository;
 import kz.nicnbk.repo.api.pe.PENetCashflowRepository;
 import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.pe.PEFund;
-import kz.nicnbk.repo.model.pe.PEFundCompaniesPerformance;
 import kz.nicnbk.repo.model.pe.PEGrossCashflow;
 import kz.nicnbk.repo.model.pe.PENetCashflow;
 import kz.nicnbk.service.api.pe.PEFundCompaniesPerformanceService;
 import kz.nicnbk.service.api.pe.PEGrossCashflowService;
 import kz.nicnbk.service.api.pe.PEFundService;
 import kz.nicnbk.service.api.pe.PENetCashflowService;
-import kz.nicnbk.service.converter.pe.PEFundCompaniesPerformanceEntityConverter;
 import kz.nicnbk.service.converter.pe.PEGrossCashflowEntityConverter;
 import kz.nicnbk.service.converter.pe.PEFundEntityConverter;
 import kz.nicnbk.service.converter.pe.PENetCashflowEntityConverter;
 import kz.nicnbk.service.dto.common.StatusResultDto;
 import kz.nicnbk.service.dto.common.StatusResultType;
 import kz.nicnbk.service.dto.pe.*;
-import org.apache.poi.ss.usermodel.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,9 +69,6 @@ public class PEFundServiceImpl implements PEFundService {
     @Autowired
     private PEFundCompaniesPerformanceService performanceService;
 
-    @Autowired
-    private PEFundCompaniesPerformanceEntityConverter fundCompaniesPerformanceConverter;
-
     @Override
     public PEFundTrackRecordResultDto savePerformanceAndRecalculateStatistics(List<PEFundCompaniesPerformanceDto> performanceDtoList, Long fundId, String updater) {
 
@@ -84,13 +76,13 @@ public class PEFundServiceImpl implements PEFundService {
 
         if (statusResultDto.getStatus().getCode().equals("FAIL")) {
             return new PEFundTrackRecordResultDto(
-                    new PEFundTrackRecordDTO(),
+                    new PEFundTrackRecordDto(),
                     statusResultDto.getStatus(),
                     statusResultDto.getMessageRu(), statusResultDto.getMessageEn(), statusResultDto.getMessageKz()
             );
         }
 
-        PEFundTrackRecordDTO fundTrackRecordDTO;
+        PEFundTrackRecordDto fundTrackRecordDTO;
 
         try {
             PEFund fund = peFundRepository.findOne(fundId);
@@ -98,7 +90,7 @@ public class PEFundServiceImpl implements PEFundService {
                 statusResultDto.setStatus(StatusResultType.FAIL);
                 statusResultDto.setMessageEn("Fund doesn't exist!");
                 return new PEFundTrackRecordResultDto(
-                        new PEFundTrackRecordDTO(),
+                        new PEFundTrackRecordDto(),
                         statusResultDto.getStatus(),
                         statusResultDto.getMessageRu(), statusResultDto.getMessageEn(), statusResultDto.getMessageKz()
                 );
@@ -133,7 +125,7 @@ public class PEFundServiceImpl implements PEFundService {
 
             peFundRepository.save(fund);
 
-            fundTrackRecordDTO = new PEFundTrackRecordDTO(
+            fundTrackRecordDTO = new PEFundTrackRecordDto(
                     fund.getNumberOfInvestments(),
                     fund.getInvestedAmount(),
                     fund.getRealized(),
@@ -148,7 +140,7 @@ public class PEFundServiceImpl implements PEFundService {
             statusResultDto.setStatus(StatusResultType.FAIL);
             statusResultDto.setMessageEn("Error updating fund's key statistics");
             return new PEFundTrackRecordResultDto(
-                    new PEFundTrackRecordDTO(),
+                    new PEFundTrackRecordDto(),
                     statusResultDto.getStatus(),
                     statusResultDto.getMessageRu(), statusResultDto.getMessageEn(), statusResultDto.getMessageKz()
             );
@@ -169,56 +161,27 @@ public class PEFundServiceImpl implements PEFundService {
         StatusResultDto statusResultDto = new StatusResultDto(StatusResultType.FAIL, "", "", "");
 
         try {
-            // performanceDtoList check
-            if (performanceDtoList == null) {
-                statusResultDto.setMessageEn("Don't send NULL!");
+
+            String saveResponse = performanceService.saveList(performanceDtoList, fundId);
+            if (!saveResponse.equals("Ok")) {
+                statusResultDto.setStatus(StatusResultType.FAIL);
+                statusResultDto.setMessageEn(saveResponse);
                 return statusResultDto;
             }
 
-            for (PEFundCompaniesPerformanceDto performanceDto : performanceDtoList) {
-                if (performanceDto.getCompanyName() == null || performanceDto.getCompanyName().equals("")) {
-                    statusResultDto.setMessageEn("Don't send null or empty company name!");
-                    return statusResultDto;
-                }
-            }
-
-            for (PEFundCompaniesPerformanceDto performanceDto1 : performanceDtoList) {
-                int i = 0;
-                for (PEFundCompaniesPerformanceDto performanceDto2 : performanceDtoList) {
-                    if (performanceDto1.getCompanyName().equals(performanceDto2.getCompanyName())) {
-                        i++;
-                    }
-                }
-                if (i > 1) {
-                    statusResultDto.setMessageEn("Names must be unique!");
-                    return statusResultDto;
-                }
-            }
-
-            // Find the corresponding fund in DB
             PEFund fund = peFundRepository.findOne(fundId);
-            if (fund == null) {
-                statusResultDto.setMessageEn("Fund doesn't exist!");
-                return statusResultDto;
-            }
-
-            this.performanceService.deleteByFundId(fundId);
-
-            for (PEFundCompaniesPerformanceDto performanceDto : performanceDtoList) {
-                PEFundCompaniesPerformance performance = fundCompaniesPerformanceConverter.assemble(performanceDto);
-                performance.setFund(fund);
-                this.performanceService.save(performance);
-            }
-
             fund.setAutoCalculation(false);
             peFundRepository.save(fund);
 
             logger.info("PE fund's company performance updated: " + fundId + ", by " + updater);
+
             statusResultDto.setStatus(StatusResultType.SUCCESS);
             statusResultDto.setMessageEn("Successfully saved fund's company performance");
             return statusResultDto;
         } catch (Exception ex){
             logger.error("Error saving PE fund's company performance: " + fundId ,ex);
+
+            statusResultDto.setStatus(StatusResultType.FAIL);
             statusResultDto.setMessageEn("Error saving fund's company performance");
             return statusResultDto;
         }
@@ -353,13 +316,12 @@ public class PEFundServiceImpl implements PEFundService {
 
             List<PEGrossCashflow> grossCfEntity = this.grossCFRepository.getEntitiesByFundId(id, new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName", "date")));
             List<PENetCashflow> netCfEntity = this.netCFRepository.getEntitiesByFundId(id);
-            List<PEFundCompaniesPerformance> fundCompaniesPerformanceList = this.performanceService.getEntitiesByFundId(id);
 
             PEFundDto dto = this.converter.disassemble(entity);
 
             List<PEGrossCashflowDto> grossCFDto = this.grossCFConverter.disassembleList(grossCfEntity);
             List<PENetCashflowDto> netCFDto = this.netCFConverter.disassembleList(netCfEntity);
-            List<PEFundCompaniesPerformanceDto> fundCompaniesPerformanceDto = this.fundCompaniesPerformanceConverter.disassembleList(fundCompaniesPerformanceList);
+            List<PEFundCompaniesPerformanceDto> performanceDto = this.performanceService.getEntityDtosByFundId(id);
 
             if(!grossCFDto.isEmpty()) {
 
@@ -371,7 +333,7 @@ public class PEFundServiceImpl implements PEFundService {
 //                calculatePerformanceParameters(grossCFDto, netCFDto, dto);
             }
             dto.setGrossCashflow(grossCFDto);
-            dto.setFundCompanyPerformance(fundCompaniesPerformanceDto);
+            dto.setFundCompanyPerformance(performanceDto);
             return dto;
         }catch(Exception ex){
             logger.error("Error loading PE fund: " + id, ex);

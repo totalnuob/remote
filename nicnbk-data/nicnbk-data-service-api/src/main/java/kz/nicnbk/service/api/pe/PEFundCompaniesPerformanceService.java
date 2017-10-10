@@ -1,6 +1,6 @@
 package kz.nicnbk.service.api.pe;
 
-import kz.nicnbk.repo.model.pe.PEFundCompaniesPerformance;
+import kz.nicnbk.service.dto.pe.PEFundCompaniesPerformanceDto;
 
 import java.util.List;
 
@@ -9,9 +9,11 @@ import java.util.List;
  */
 public interface PEFundCompaniesPerformanceService {
 
-    Long save(PEFundCompaniesPerformance performance);
+    Long save(PEFundCompaniesPerformanceDto performanceDto, Long fundId);
+
+    String saveList(List<PEFundCompaniesPerformanceDto> performanceDtoList, Long fundId);
+
+    List<PEFundCompaniesPerformanceDto> getEntityDtosByFundId(Long fundId);
 
     boolean deleteByFundId(Long fundId);
-
-    List<PEFundCompaniesPerformance> getEntitiesByFundId(Long id);
 }

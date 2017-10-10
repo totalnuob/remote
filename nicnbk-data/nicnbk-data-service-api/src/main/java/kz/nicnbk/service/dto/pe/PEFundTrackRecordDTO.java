@@ -5,7 +5,7 @@ import java.util.Date;
 /**
  * Created by Pak on 06.10.2017.
  */
-public class PEFundTrackRecordDTO {
+public class PEFundTrackRecordDto {
 
     //KEY FUND STATISTICS
     private Integer numberOfInvestments;
@@ -23,10 +23,10 @@ public class PEFundTrackRecordDTO {
     private String benchmarkName;
     private PEFirmDto firm;
 
-    public PEFundTrackRecordDTO() {
+    public PEFundTrackRecordDto() {
     }
 
-    public PEFundTrackRecordDTO(Integer numberOfInvestments, Double investedAmount, Double realized, Double unrealized, Double dpi, Double netIrr, Double netTvpi, Double grossIrr, Double grossTvpi, Date asOfDate, Double benchmarkNetIrr, Double benchmarkNetTvpi, String benchmarkName, PEFirmDto firm) {
+    public PEFundTrackRecordDto(Integer numberOfInvestments, Double investedAmount, Double realized, Double unrealized, Double dpi, Double netIrr, Double netTvpi, Double grossIrr, Double grossTvpi, Date asOfDate, Double benchmarkNetIrr, Double benchmarkNetTvpi, String benchmarkName, PEFirmDto firm) {
         this.numberOfInvestments = numberOfInvestments;
         this.investedAmount = investedAmount;
         this.realized = realized;

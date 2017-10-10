@@ -83,6 +83,12 @@ public class PEFund extends CreateUpdateBaseEntity {
     private String performanceMerits;
     private String performanceRisks;
 
+    public PEFund() {}
+
+    public PEFund(Long id) {
+        this.setId(id);
+    }
+
     @Column(name = "fund_name")
     public String getFundName() {
         return fundName;
