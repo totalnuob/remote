@@ -73,25 +73,26 @@ public class PEFundServiceImpl implements PEFundService {
         try {
             PEFund entity = this.peFundRepository.findOne(id);
 
-            List<PEGrossCashflow> grossCfEntity = this.grossCFRepository.getEntitiesByFundId(id, new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName", "date")));
+//            List<PEGrossCashflow> grossCfEntity = this.grossCFRepository.getEntitiesByFundId(id, new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName", "date")));
             List<PENetCashflow> netCfEntity = this.netCFRepository.getEntitiesByFundId(id);
 
             PEFundDto dto = this.converter.disassemble(entity);
 
-            List<PEGrossCashflowDto> grossCFDto = this.grossCFConverter.disassembleList(grossCfEntity);
+//            List<PEGrossCashflowDto> grossCFDto = this.grossCFConverter.disassembleList(grossCfEntity);
+            List<PEGrossCashflowDto> grossCFDto = this.grossCFService.findByFundId(id);
             List<PENetCashflowDto> netCFDto = this.netCFConverter.disassembleList(netCfEntity);
             List<PEFundCompaniesPerformanceDto> performanceDto = this.performanceService.getEntityDtosByFundId(id);
 
-            if(!grossCFDto.isEmpty()) {
-
-                //Commented by Pak
+            //Commented by Pak
+//            if(!grossCFDto.isEmpty()) {
+//
 //                dto.setGrossCashflow(grossCFDto);
-                dto.setNetCashflow(netCFDto);
-
-                //Commented by Pak
+//                dto.setNetCashflow(netCFDto);
+//
 //                calculatePerformanceParameters(grossCFDto, netCFDto, dto);
-            }
+//            }
             dto.setGrossCashflow(grossCFDto);
+            dto.setNetCashflow(netCFDto);
             dto.setFundCompanyPerformance(performanceDto);
             return dto;
         }catch(Exception ex){

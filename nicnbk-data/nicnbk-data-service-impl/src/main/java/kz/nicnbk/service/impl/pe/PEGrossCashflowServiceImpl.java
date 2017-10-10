@@ -41,14 +41,9 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
     }
 
     @Override
-    public PEGrossCashflowDto get(Long id) {
-        return null;
-    }
-
-    @Override
     public List<PEGrossCashflowDto> findByFundId(Long fundId) {
         try {
-            return this.peCFEntityConverter.disassembleList(this.peCFRepository.getEntitiesByFundId(fundId, new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName"))));
+            return this.peCFEntityConverter.disassembleList(this.peCFRepository.getEntitiesByFundId(fundId, new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName", "date"))));
         } catch (Exception ex) {
             logger.error("Error loading PE fund's gross cash flow: " + fundId, ex);
         }

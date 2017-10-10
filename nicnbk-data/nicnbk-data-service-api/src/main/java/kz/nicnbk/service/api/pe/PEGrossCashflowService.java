@@ -12,8 +12,6 @@ public interface PEGrossCashflowService extends BaseService {
 
     Long save(PEGrossCashflowDto dto, Long fundId);
 
-    PEGrossCashflowDto get(Long id);
-
     List<PEGrossCashflowDto> findByFundId(Long fundId);
 
     boolean deleteByFundId(Long fundId);
