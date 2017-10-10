@@ -204,7 +204,6 @@ public class PEFundServiceImpl implements PEFundService {
 
             this.fundCompaniesPerformanceRepository.deleteByFundId(fundId);
 
-            // Save them again
             for (PEFundCompaniesPerformanceDto performanceDto : performanceDtoList) {
                 PEFundCompaniesPerformance performance = fundCompaniesPerformanceConverter.assemble(performanceDto);
                 performance.setFund(fund);
@@ -269,7 +268,6 @@ public class PEFundServiceImpl implements PEFundService {
 
             this.grossCFRepository.deleteByFundId(fundId);
 
-            // Save them again
             for (PEGrossCashflowDto grossCashflowDto : grossCashflowDtoList) {
                 PEGrossCashflow grossCashflow = grossCFConverter.assemble(grossCashflowDto);
                 grossCashflow.setFund(fund);
