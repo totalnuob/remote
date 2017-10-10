@@ -202,13 +202,6 @@ public class PEFundServiceImpl implements PEFundService {
                 return statusResultDto;
             }
 
-//            // Delete all company performance entities for that fund
-//            this.fundCompaniesPerformanceRepository.findAll().forEach(performance -> {
-//                if (performance.getFund().getId() == fundId) {
-//                    this.fundCompaniesPerformanceRepository.delete(performance.getId());
-//                }
-//            });
-
             this.fundCompaniesPerformanceRepository.deleteByFundId(fundId);
 
             // Save them again
