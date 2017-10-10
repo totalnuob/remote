@@ -16,9 +16,9 @@ public class PEGrossCashflowEntityConverter extends BaseDozerEntityConverter<PEG
     public PEGrossCashflow assemble(PEGrossCashflowDto dto){
         PEGrossCashflow entity = super.assemble(dto);
 
-        PEFund fund = new PEFund();
-        fund.setId(dto.getFund().getId());
-        entity.setFund(fund);
+//        PEFund fund = new PEFund();
+//        fund.setId(dto.getFund().getId());
+//        entity.setFund(fund);
         return entity;
     }
 

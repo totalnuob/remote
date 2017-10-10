@@ -1,10 +1,11 @@
 package kz.nicnbk.service.impl.pe;
 
 import kz.nicnbk.repo.api.pe.PEGrossCashflowRepository;
+import kz.nicnbk.repo.model.pe.PEFund;
 import kz.nicnbk.repo.model.pe.PEGrossCashflow;
+import kz.nicnbk.service.api.pe.PEFundService;
 import kz.nicnbk.service.api.pe.PEGrossCashflowService;
 import kz.nicnbk.service.converter.pe.PEGrossCashflowEntityConverter;
-import kz.nicnbk.service.dto.pe.PEFundCompaniesPerformanceDto;
 import kz.nicnbk.service.dto.pe.PEGrossCashflowDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,32 +25,75 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
     private static final Logger logger = LoggerFactory.getLogger(PEFundServiceImpl.class);
 
     @Autowired
-    private PEGrossCashflowRepository peCFRepository;
+    private PEGrossCashflowRepository repository;
 
     @Autowired
-    private PEGrossCashflowEntityConverter peCFEntityConverter;
+    private PEGrossCashflowEntityConverter converter;
+
+    @Autowired
+    private PEFundService peFundService;
 
     @Override
-    public Long save(PEGrossCashflowDto dto, Long fundId) {
+    public Long save(PEGrossCashflowDto cashflowDto, Long fundId) {
         try {
-            PEGrossCashflow entity = this.peCFEntityConverter.assemble(dto);
-            Long id = this.peCFRepository.save(entity).getId();
-            return id;
-        } catch(Exception ex){
-            ex.printStackTrace();
-            return 0L;
+            PEGrossCashflow entity = this.converter.assemble(cashflowDto);
+            entity.setFund(new PEFund(fundId));
+            return this.repository.save(entity).getId();
+        } catch (Exception ex) {
+            logger.error("Error saving PE fund's gross cash flow: " + fundId, ex);
         }
+        return null;
     }
 
     @Override
-    public String saveList(List<PEFundCompaniesPerformanceDto> performanceDtoList, Long fundId) {
-        fdsfdsfs
+    public String saveList(List<PEGrossCashflowDto> cashflowDtoList, Long fundId) {
+        try {
+            if (cashflowDtoList == null || fundId == null) {
+                return "Don't send NULL!";
+            }
+
+            for (PEGrossCashflowDto cashflowDto : cashflowDtoList) {
+                if (cashflowDto.getCompanyName() == null ||
+                        cashflowDto.getCompanyName().equals("") ||
+                        cashflowDto.getDate() == null) {
+                    return "Don't send null or empty company name or date!";
+                }
+            }
+
+            for (PEGrossCashflowDto cashflowDto1 : cashflowDtoList) {
+                int i = 0;
+                for (PEGrossCashflowDto cashflowDto2 : cashflowDtoList) {
+                    if (cashflowDto1.getCompanyName().equals(cashflowDto2.getCompanyName()) &&
+                            cashflowDto1.getDate().equals(cashflowDto2.getDate())) {
+                        i++;
+                    }
+                }
+                if (i > 1) {
+                    return "The pairs (\"Company name\", \"Date of transaction\") must be unique!";
+                }
+            }
+
+            if (this.peFundService.get(fundId) == null) {
+                return "Fund doesn't exist!";
+            }
+
+            this.deleteByFundId(fundId);
+
+            for (PEGrossCashflowDto cashflowDto : cashflowDtoList) {
+                this.save(cashflowDto, fundId);
+            }
+
+            return "Ok";
+        } catch (Exception ex) {
+            logger.error("Error saving PE fund's gross cash flow: " + fundId, ex);
+        }
+        return "Error";
     }
 
     @Override
     public List<PEGrossCashflowDto> findByFundId(Long fundId) {
         try {
-            return this.peCFEntityConverter.disassembleList(this.peCFRepository.getEntitiesByFundId(fundId, new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName", "date"))));
+            return this.converter.disassembleList(this.repository.getEntitiesByFundId(fundId, new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName", "date"))));
         } catch (Exception ex) {
             logger.error("Error loading PE fund's gross cash flow: " + fundId, ex);
         }
@@ -58,7 +102,7 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
 
     @Override
     public boolean deleteByFundId(Long fundId) {
-        this.peCFRepository.deleteByFundId(fundId);
+        this.repository.deleteByFundId(fundId);
         return true;
     }
 }

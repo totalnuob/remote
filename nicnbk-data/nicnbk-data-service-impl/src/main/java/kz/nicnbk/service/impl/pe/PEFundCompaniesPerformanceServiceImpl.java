@@ -36,7 +36,7 @@ public class PEFundCompaniesPerformanceServiceImpl implements PEFundCompaniesPer
         try {
             PEFundCompaniesPerformance entity = this.converter.assemble(performanceDto);
             entity.setFund(new PEFund(fundId));
-            return repository.save(entity).getId();
+            return this.repository.save(entity).getId();
         } catch (Exception ex) {
             logger.error("Error saving PE fund's company performance: " + fundId, ex);
         }
@@ -68,7 +68,7 @@ public class PEFundCompaniesPerformanceServiceImpl implements PEFundCompaniesPer
                 }
             }
 
-            if (peFundService.get(fundId) == null) {
+            if (this.peFundService.get(fundId) == null) {
                 return "Fund doesn't exist!";
             }
 

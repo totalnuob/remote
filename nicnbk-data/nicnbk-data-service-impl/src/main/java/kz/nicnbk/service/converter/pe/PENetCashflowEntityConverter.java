@@ -16,9 +16,9 @@ public class PENetCashflowEntityConverter extends BaseDozerEntityConverter<PENet
     public PENetCashflow assemble(PENetCashflowDto dto){
         PENetCashflow entity = super.assemble(dto);
 
-        PEFund PEFund = new PEFund();
-        PEFund.setId(dto.getFund().getId());
-        entity.setFund(PEFund);
+//        PEFund PEFund = new PEFund();
+//        PEFund.setId(dto.getFund().getId());
+//        entity.setFund(PEFund);
         return entity;
     }
 
@@ -27,5 +27,4 @@ public class PENetCashflowEntityConverter extends BaseDozerEntityConverter<PENet
         PENetCashflowDto dto = super.disassemble(entity);
         return dto;
     }
-
 }

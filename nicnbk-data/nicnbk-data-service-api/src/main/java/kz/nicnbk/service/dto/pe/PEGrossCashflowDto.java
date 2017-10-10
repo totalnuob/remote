@@ -20,7 +20,7 @@ public class PEGrossCashflowDto extends BaseEntityDto<PEGrossCashflow> implement
     private Double unrealized;
     private Double grossCF;
     private Double irr;
-    private PEFundDto fund;
+//    private PEFundDto fund;
 
     public String getCompanyName() {
         return companyName;
@@ -78,13 +78,13 @@ public class PEGrossCashflowDto extends BaseEntityDto<PEGrossCashflow> implement
         this.irr = irr;
     }
 
-    public PEFundDto getFund() {
-        return fund;
-    }
-
-    public void setFund(PEFundDto fund) {
-        this.fund = fund;
-    }
+//    public PEFundDto getFund() {
+//        return fund;
+//    }
+//
+//    public void setFund(PEFundDto fund) {
+//        this.fund = fund;
+//    }
 
     @Override
     public int compareTo(PEGrossCashflowDto dto) {

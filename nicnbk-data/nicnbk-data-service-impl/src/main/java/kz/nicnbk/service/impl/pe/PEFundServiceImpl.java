@@ -83,7 +83,7 @@ public class PEFundServiceImpl implements PEFundService {
             dto.setFundCompanyPerformance(performanceDto);
 //            calculatePerformanceParameters(grossCFDto, netCFDto, dto);
             return dto;
-        }catch(Exception ex){
+        } catch (Exception ex) {
             logger.error("Error loading PE fund: " + id, ex);
         }
         return null;
@@ -121,7 +121,7 @@ public class PEFundServiceImpl implements PEFundService {
             logger.info(fundDto.getId() == null ? "PE fund created: " + id + ", by " + entity.getCreator().getUsername() :
                     "PE fund updated: " + id + ", by " + updater);
             return id;
-        }catch (Exception ex){
+        } catch (Exception ex) {
             logger.error("Error saving PE fund: " + (fundDto != null && fundDto.getId() != null ? fundDto.getId() : "new") ,ex);
         }
         return null;
@@ -133,7 +133,7 @@ public class PEFundServiceImpl implements PEFundService {
         StatusResultDto statusResultDto = new StatusResultDto(StatusResultType.FAIL, "", "", "");
 
         try {
-            String saveResponse = performanceService.saveList(performanceDtoList, fundId);
+            String saveResponse = this.performanceService.saveList(performanceDtoList, fundId);
             if (!saveResponse.equals("Ok")) {
                 statusResultDto.setStatus(StatusResultType.FAIL);
                 statusResultDto.setMessageEn(saveResponse);
@@ -149,7 +149,7 @@ public class PEFundServiceImpl implements PEFundService {
             statusResultDto.setStatus(StatusResultType.SUCCESS);
             statusResultDto.setMessageEn("Successfully saved fund's company performance");
             return statusResultDto;
-        } catch (Exception ex){
+        } catch (Exception ex) {
             logger.error("Error saving PE fund's company performance: " + fundId ,ex);
 
             statusResultDto.setStatus(StatusResultType.FAIL);
@@ -236,63 +236,25 @@ public class PEFundServiceImpl implements PEFundService {
     }
 
     @Override
-    public StatusResultDto saveGrossCF(List<PEGrossCashflowDto> grossCashflowDtoList, Long fundId, String updater) {
+    public StatusResultDto saveGrossCF(List<PEGrossCashflowDto> cashflowDtoList, Long fundId, String updater) {
 
         StatusResultDto statusResultDto = new StatusResultDto(StatusResultType.FAIL, "", "", "");
 
         try {
-            // grossCashflowDtoList check
-            if (grossCashflowDtoList == null) {
-                statusResultDto.setMessageEn("Don't send NULL!");
+            String saveResponse = this.grossCFService.saveList(cashflowDtoList, fundId);
+            if (!saveResponse.equals("Ok")) {
+                statusResultDto.setStatus(StatusResultType.FAIL);
+                statusResultDto.setMessageEn(saveResponse);
                 return statusResultDto;
             }
-
-            for (PEGrossCashflowDto grossCashflowDto : grossCashflowDtoList) {
-                if (grossCashflowDto.getCompanyName() == null ||
-                        grossCashflowDto.getCompanyName().equals("") ||
-                        grossCashflowDto.getDate() == null) {
-                    statusResultDto.setMessageEn("Don't send null or empty company name or null date!");
-                    return statusResultDto;
-                }
-            }
-
-            for (PEGrossCashflowDto grossCashflowDto1 : grossCashflowDtoList) {
-                int i = 0;
-                for (PEGrossCashflowDto grossCashflowDto2 : grossCashflowDtoList) {
-                    if (grossCashflowDto1.getCompanyName().equals(grossCashflowDto2.getCompanyName()) &&
-                            grossCashflowDto1.getDate().equals(grossCashflowDto2.getDate())) {
-                        i++;
-                    }
-                }
-                if (i > 1) {
-                    statusResultDto.setMessageEn("The pairs (name, date) must be unique!");
-                    return statusResultDto;
-                }
-            }
-
-            // Find the corresponding fund in DB
-            PEFund fund = peFundRepository.findOne(fundId);
-            if (fund == null) {
-                statusResultDto.setMessageEn("Fund doesn't exist!");
-                return statusResultDto;
-            }
-
-            this.grossCFService.deleteByFundId(fundId);
-
-            for (PEGrossCashflowDto grossCashflowDto : grossCashflowDtoList) {
-                PEGrossCashflow grossCashflow = grossCFConverter.assemble(grossCashflowDto);
-                grossCashflow.setFund(fund);
-                this.grossCFRepository.save(grossCashflow);
-            }
-
-            peFundRepository.save(fund);
 
             logger.info("PE fund's gross cash flow updated: " + fundId + ", by " + updater);
             statusResultDto.setStatus(StatusResultType.SUCCESS);
             statusResultDto.setMessageEn("Successfully saved fund's gross cash flow");
             return statusResultDto;
-        } catch (Exception ex){
+        } catch (Exception ex) {
             logger.error("Error saving PE fund's gross cash flow: " + fundId ,ex);
+            statusResultDto.setStatus(StatusResultType.FAIL);
             statusResultDto.setMessageEn("Error saving fund's gross cash flow");
             return statusResultDto;
         }
@@ -320,7 +282,7 @@ public class PEFundServiceImpl implements PEFundService {
                 }
             }
             return fundDtoList;
-        }catch (Exception ex){
+        } catch (Exception ex) {
             logger.error("Failed to load PE firm funds: firm=" + firmId, ex);
         }
         return null;
