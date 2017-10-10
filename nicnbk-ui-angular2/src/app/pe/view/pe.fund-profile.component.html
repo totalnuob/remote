@@ -776,25 +776,40 @@
                             <th>Gross Cash Flow</th>
                         </tr>
                         <tr *ngFor="let cf of fund.grossCashflow">
-                            <td><input style="width: 100%" type="text" [(ngModel)]="cf.companyName" /></td>
+                            <td>
+                                <input type="text" class="form-control" name="companyName" [(ngModel)]="cf.companyName" placeholder="-" pattern="[A-Za-z0-9]{1,20}" #companyName="ngModel"/>
+                                <div [hidden]="companyName.valid || companyName.pristine" class="alert alert-danger">
+                                    Name must contain 1-20 characters A-Z, a-z, 0-9
+                                </div>
+                            </td>
                             <td><input style="width: 100%" type="text" [(ngModel)]="cf.date"/></td>
                             <td><input style="width: 100%" type="text" [(ngModel)]="cf.invested"/></td>
                             <td><input style="width: 100%" type="text" [(ngModel)]="cf.realized"/></td>
                             <td><input style="width: 100%" type="text" [(ngModel)]="cf.unrealized"/></td>
                             <td><input style="width: 100%" type="text" [(ngModel)]="cf.grossCF"/></td>
+                            <td>
+                                <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRowGrossCF(performance)">
+                                    <span class="glyphicon glyphicon-minus"></span>
+                                </button>
+                            </td>
                         </tr>
                         <!--<button type="button" class="btn-xs btn-primary" style="display: inline-block" (click)="addRowGrossCF()"><span class="glyphicon glyphicon-plus"></span></button>-->
                     </table>
 
-                    <!--<div class="row">-->
-                        <!--<div class="col-md-12">-->
-                            <!--<div class="col-md-1 pull-left">-->
-                                <!--<button type="button" class="btn btn-primary" *ngIf="canEdit()" (click)="addRowGrossCF()">-->
-                                    <!--Add transaction-->
-                                <!--</button>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                    <!--</div>-->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-1 pull-left">
+                                <button type="button" class="btn btn-primary" *ngIf="canEdit()" (click)="addRowGrossCF()">
+                                    Add transaction
+                                </button>
+                            </div>
+                            <div class="pull-right">
+                                <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="saveGrossCF()" [disabled]="fund.id == 0 || fund.id == null">
+                                    SAVE
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

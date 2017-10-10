@@ -277,6 +277,22 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
             )
     }
 
+    saveGrossCF() {
+        //this.busy = this.fundService.saveGrossCF(this.fund.grossCashflow, this.fund.id)
+        //    .subscribe(
+        //        (response: SaveResponse) => {
+        //            this.postAction(response.messageEn, null);
+        //
+        //            this.fund.autoCalculation = false;
+        //        },
+        //        (error: ErrorResponse) => {
+        //            this.processErrorMessage(error);
+        //            this.postAction(null, error.message);
+        //            console.log(error);
+        //        }
+        //    )
+    }
+
     postAction(successMessage, errorMessage) {
         this.successMessage = successMessage;
         this.errorMessage = errorMessage;
