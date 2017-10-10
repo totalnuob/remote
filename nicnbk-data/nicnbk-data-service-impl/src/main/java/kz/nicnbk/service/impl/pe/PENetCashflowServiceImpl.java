@@ -48,7 +48,7 @@ public class PENetCashflowServiceImpl implements PENetCashflowService {
         try {
             return this.peCFEntityConverter.disassembleList(this.peCFRepository.getEntitiesByFundId(fundId));
         } catch (Exception ex) {
-            logger.error("Error loading PE fund's gross cash flow: " + fundId, ex);
+            logger.error("Error loading PE fund's net cash flow: " + fundId, ex);
         }
         return null;
     }
