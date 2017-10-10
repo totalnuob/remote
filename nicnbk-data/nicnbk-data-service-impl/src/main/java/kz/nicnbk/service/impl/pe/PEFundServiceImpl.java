@@ -36,7 +36,6 @@ public class PEFundServiceImpl implements PEFundService {
 
     private static final Logger logger = LoggerFactory.getLogger(PEFundServiceImpl.class);
 
-
     private static final double[] EMPTY_DOUBLE_ARRAY = null;
 
     @Autowired
@@ -161,7 +160,6 @@ public class PEFundServiceImpl implements PEFundService {
         StatusResultDto statusResultDto = new StatusResultDto(StatusResultType.FAIL, "", "", "");
 
         try {
-
             String saveResponse = performanceService.saveList(performanceDtoList, fundId);
             if (!saveResponse.equals("Ok")) {
                 statusResultDto.setStatus(StatusResultType.FAIL);
