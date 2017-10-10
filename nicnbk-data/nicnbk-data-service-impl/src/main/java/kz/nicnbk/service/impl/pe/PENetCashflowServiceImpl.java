@@ -36,12 +36,6 @@ public class PENetCashflowServiceImpl implements PENetCashflowService {
     }
 
     @Override
-    public boolean deleteByFundId(Long fundId) {
-        this.peNetCfRepository.deleteByFundId(fundId);
-        return true;
-    }
-
-    @Override
     public PENetCashflowDto get(Long id) {
         return null;
     }
@@ -50,5 +44,11 @@ public class PENetCashflowServiceImpl implements PENetCashflowService {
     public List<PENetCashflowDto> findByFundId(Long id) {
         List<PENetCashflow> entities = this.peNetCfRepository.getEntitiesByFundId(id);
         return this.peNetCfEntityConverter.disassembleList(entities);
+    }
+
+    @Override
+    public boolean deleteByFundId(Long fundId) {
+        this.peNetCfRepository.deleteByFundId(fundId);
+        return true;
     }
 }

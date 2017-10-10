@@ -11,9 +11,9 @@ import java.util.List;
 public interface PENetCashflowService extends BaseService {
     Long save(PENetCashflowDto dto);
 
-    boolean deleteByFundId(Long fundId);
-
     PENetCashflowDto get(Long id);
 
     List<PENetCashflowDto> findByFundId(Long id);
+
+    boolean deleteByFundId(Long fundId);
 }
