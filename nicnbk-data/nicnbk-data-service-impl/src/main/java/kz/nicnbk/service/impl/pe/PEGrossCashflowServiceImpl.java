@@ -5,6 +5,8 @@ import kz.nicnbk.repo.model.pe.PEGrossCashflow;
 import kz.nicnbk.service.api.pe.PEGrossCashflowService;
 import kz.nicnbk.service.converter.pe.PEGrossCashflowEntityConverter;
 import kz.nicnbk.service.dto.pe.PEGrossCashflowDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -17,6 +19,8 @@ import java.util.List;
  */
 @Service
 public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
+
+    private static final Logger logger = LoggerFactory.getLogger(PEFundServiceImpl.class);
 
     @Autowired
     private PEGrossCashflowRepository peCFRepository;
@@ -42,9 +46,13 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
     }
 
     @Override
-    public List<PEGrossCashflowDto> findByFundId(Long id) {
-        List<PEGrossCashflow> entities = this.peCFRepository.getEntitiesByFundId(id, new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName")));
-        return this.peCFEntityConverter.disassembleList(entities);
+    public List<PEGrossCashflowDto> findByFundId(Long fundId) {
+        try {
+            return this.peCFEntityConverter.disassembleList(this.peCFRepository.getEntitiesByFundId(fundId, new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName"))));
+        } catch (Exception ex) {
+            logger.error("Error loading PE fund's gross cash flow: " + fundId, ex);
+        }
+        return null;
     }
 
     @Override
