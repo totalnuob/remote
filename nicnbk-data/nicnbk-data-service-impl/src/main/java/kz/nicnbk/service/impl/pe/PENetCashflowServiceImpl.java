@@ -39,11 +39,6 @@ public class PENetCashflowServiceImpl implements PENetCashflowService {
     }
 
     @Override
-    public PENetCashflowDto get(Long id) {
-        return null;
-    }
-
-    @Override
     public List<PENetCashflowDto> findByFundId(Long fundId) {
         try {
             return this.peCFEntityConverter.disassembleList(this.peCFRepository.getEntitiesByFundId(fundId));

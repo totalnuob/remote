@@ -74,10 +74,6 @@ public class PEFundServiceImpl implements PEFundService {
             PEFund entity = this.peFundRepository.findOne(id);
             PEFundDto dto = this.converter.disassemble(entity);
 
-//            List<PEGrossCashflow> grossCfEntity = this.grossCFRepository.getEntitiesByFundId(id, new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName", "date")));
-//            List<PENetCashflow> netCfEntity = this.netCFRepository.getEntitiesByFundId(id);
-//            List<PEGrossCashflowDto> grossCFDto = this.grossCFConverter.disassembleList(grossCfEntity);
-//            List<PENetCashflowDto> netCFDto = this.netCFConverter.disassembleList(netCfEntity);
             List<PEGrossCashflowDto> grossCFDto = this.grossCFService.findByFundId(id);
             List<PENetCashflowDto> netCFDto = this.netCFService.findByFundId(id);
             List<PEFundCompaniesPerformanceDto> performanceDto = this.performanceService.getEntityDtosByFundId(id);
