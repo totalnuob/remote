@@ -81,8 +81,6 @@ public class PEFundServiceImpl implements PEFundService {
             );
         }
 
-        PEFundTrackRecordDto fundTrackRecordDTO;
-
         try {
             PEFund fund = this.peFundRepository.findOne(fundId);
             if (fund == null) {
@@ -94,8 +92,6 @@ public class PEFundServiceImpl implements PEFundService {
                         statusResultDto.getMessageRu(), statusResultDto.getMessageEn(), statusResultDto.getMessageKz()
                 );
             }
-
-            fund.setAutoCalculation(true);
 
             fund.setNumberOfInvestments(0);
             fund.setInvestedAmount(0.0);
@@ -114,6 +110,7 @@ public class PEFundServiceImpl implements PEFundService {
                     fund.setUnrealized(fund.getUnrealized() + performanceDto.getUnrealized());
                 }
             }
+
             if (fund.getInvestedAmount() != 0) {
                 fund.setDpi(fund.getRealized()/fund.getInvestedAmount());
                 fund.setGrossTvpi((fund.getRealized() + fund.getUnrealized())/fund.getInvestedAmount());
@@ -122,18 +119,23 @@ public class PEFundServiceImpl implements PEFundService {
                 fund.setGrossTvpi(null);
             }
 
+            fund.setAutoCalculation(true);
             peFundRepository.save(fund);
 
-            fundTrackRecordDTO = new PEFundTrackRecordDto(
-                    fund.getNumberOfInvestments(),
-                    fund.getInvestedAmount(),
-                    fund.getRealized(),
-                    fund.getUnrealized(),
-                    fund.getDpi(),
-                    null, null, null,
-                    fund.getGrossTvpi(),
-                    null, null, null, null, null
-                    );
+            statusResultDto.setStatus(StatusResultType.SUCCESS);
+            statusResultDto.setMessageEn("Successfully saved fund's company performance and updated the key fund statistics");
+            return new PEFundTrackRecordResultDto(
+                    new PEFundTrackRecordDto(
+                            fund.getNumberOfInvestments(),
+                            fund.getInvestedAmount(),
+                            fund.getRealized(),
+                            fund.getUnrealized(),
+                            fund.getDpi(),
+                            null, null, null,
+                            fund.getGrossTvpi(),
+                            null, null, null, null, null),
+                    statusResultDto.getStatus(),
+                    statusResultDto.getMessageRu(), statusResultDto.getMessageEn(), statusResultDto.getMessageKz());
         } catch (Exception ex) {
             logger.error("Error updating PE fund's key statistics: " + fundId ,ex);
             statusResultDto.setStatus(StatusResultType.FAIL);
@@ -144,14 +146,6 @@ public class PEFundServiceImpl implements PEFundService {
                     statusResultDto.getMessageRu(), statusResultDto.getMessageEn(), statusResultDto.getMessageKz()
             );
         }
-
-        statusResultDto.setStatus(StatusResultType.SUCCESS);
-        statusResultDto.setMessageEn("Successfully saved fund's company performance and updated the key fund statistics");
-        return new PEFundTrackRecordResultDto(
-                fundTrackRecordDTO,
-                statusResultDto.getStatus(),
-                statusResultDto.getMessageRu(), statusResultDto.getMessageEn(), statusResultDto.getMessageKz()
-        );
     }
 
     @Override
