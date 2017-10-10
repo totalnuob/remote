@@ -231,6 +231,73 @@ public class PEFundServiceImpl implements PEFundService {
     }
 
     @Override
+    public StatusResultDto saveGrossCF(List<PEGrossCashflowDto> grossCashflowDtoList, Long fundId, String updater) {
+
+        StatusResultDto statusResultDto = new StatusResultDto(StatusResultType.FAIL, "", "", "");
+
+        try {
+            // performanceDtoList check
+            if (grossCashflowDtoList == null) {
+                statusResultDto.setMessageEn("Don't send NULL!");
+                return statusResultDto;
+            }
+
+            for (PEGrossCashflowDto grossCashflowDto : grossCashflowDtoList) {
+                if (grossCashflowDto.getCompanyName() == null || grossCashflowDto.getCompanyName().equals("")) {
+                    statusResultDto.setMessageEn("Don't send null or empty company name!");
+                    return statusResultDto;
+                }
+            }
+
+            for (PEFundCompaniesPerformanceDto performanceDto1 : performanceDtoList) {
+                int i = 0;
+                for (PEFundCompaniesPerformanceDto performanceDto2 : performanceDtoList) {
+                    if (performanceDto1.getCompanyName().equals(performanceDto2.getCompanyName())) {
+                        i++;
+                    }
+                }
+                if (i > 1) {
+                    statusResultDto.setMessageEn("Names must be unique!");
+                    return statusResultDto;
+                }
+            }
+
+            // Find the corresponding fund in DB
+            PEFund fund = peFundRepository.findOne(fundId);
+            if (fund == null) {
+                statusResultDto.setMessageEn("Fund doesn't exist!");
+                return statusResultDto;
+            }
+
+            // Delete all company performance entities for that fund
+            this.fundCompaniesPerformanceRepository.findAll().forEach(performance -> {
+                if (performance.getFund().getId() == fundId) {
+                    this.fundCompaniesPerformanceRepository.delete(performance.getId());
+                }
+            });
+
+            // Save them again
+            for (PEFundCompaniesPerformanceDto performanceDto : performanceDtoList) {
+                PEFundCompaniesPerformance performance = fundCompaniesPerformanceConverter.assemble(performanceDto);
+                performance.setFund(fund);
+                this.fundCompaniesPerformanceRepository.save(performance);
+            }
+
+            fund.setAutoCalculation(false);
+            peFundRepository.save(fund);
+
+            logger.info("PE fund's company performance updated: " + fundId + ", by " + updater);
+            statusResultDto.setStatus(StatusResultType.SUCCESS);
+            statusResultDto.setMessageEn("Successfully saved fund's company performance");
+            return statusResultDto;
+        } catch (Exception ex){
+            logger.error("Error saving PE fund's company performance: " + fundId ,ex);
+            statusResultDto.setMessageEn("Error saving fund's company performance");
+            return statusResultDto;
+        }
+    }
+
+    @Override
     public Long save(PEFundDto fundDto, String updater) {
 
         // TODO: transactions

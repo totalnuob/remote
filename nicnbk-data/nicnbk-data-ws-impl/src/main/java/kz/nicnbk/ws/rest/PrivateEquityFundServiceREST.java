@@ -6,10 +6,7 @@ import kz.nicnbk.service.api.pe.PEFundService;
 import kz.nicnbk.service.dto.common.StatusResultDto;
 import kz.nicnbk.service.dto.common.StatusResultType;
 import kz.nicnbk.service.dto.files.FilesDto;
-import kz.nicnbk.service.dto.pe.PEFundCompaniesPerformanceDto;
-import kz.nicnbk.service.dto.pe.PEFundDto;
-import kz.nicnbk.service.dto.pe.PEFundTrackRecordResultDto;
-import kz.nicnbk.service.dto.pe.PESearchParams;
+import kz.nicnbk.service.dto.pe.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -93,6 +90,21 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
             return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/saveGrossCF/{fundId}", method = RequestMethod.POST)
+    public ResponseEntity<?> saveGrossCF(@RequestBody List<PEGrossCashflowDto> grossCashflowDtoList, @PathVariable Long fundId) {
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        StatusResultDto statusResultDto = this.service.saveGrossCF(grossCashflowDtoList, fundId, username);
+
+        if (statusResultDto.getStatus().getCode().equals("SUCCESS")) {
+            return new ResponseEntity<>(statusResultDto, null, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(statusResultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
