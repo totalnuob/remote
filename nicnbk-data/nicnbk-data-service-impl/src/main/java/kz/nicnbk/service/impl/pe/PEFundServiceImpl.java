@@ -69,6 +69,37 @@ public class PEFundServiceImpl implements PEFundService {
     private PEFundCompaniesPerformanceService performanceService;
 
     @Override
+    public StatusResultDto savePerformance(List<PEFundCompaniesPerformanceDto> performanceDtoList, Long fundId, String updater) {
+
+        StatusResultDto statusResultDto = new StatusResultDto(StatusResultType.FAIL, "", "", "");
+
+        try {
+            String saveResponse = performanceService.saveList(performanceDtoList, fundId);
+            if (!saveResponse.equals("Ok")) {
+                statusResultDto.setStatus(StatusResultType.FAIL);
+                statusResultDto.setMessageEn(saveResponse);
+                return statusResultDto;
+            }
+
+            PEFund fund = peFundRepository.findOne(fundId);
+            fund.setAutoCalculation(false);
+            peFundRepository.save(fund);
+
+            logger.info("PE fund's company performance updated: " + fundId + ", by " + updater);
+
+            statusResultDto.setStatus(StatusResultType.SUCCESS);
+            statusResultDto.setMessageEn("Successfully saved fund's company performance");
+            return statusResultDto;
+        } catch (Exception ex){
+            logger.error("Error saving PE fund's company performance: " + fundId ,ex);
+
+            statusResultDto.setStatus(StatusResultType.FAIL);
+            statusResultDto.setMessageEn("Error saving fund's company performance");
+            return statusResultDto;
+        }
+    }
+
+    @Override
     public PEFundTrackRecordResultDto savePerformanceAndRecalculateStatistics(List<PEFundCompaniesPerformanceDto> performanceDtoList, Long fundId, String updater) {
 
         StatusResultDto statusResultDto = this.savePerformance(performanceDtoList, fundId, updater);
@@ -146,37 +177,6 @@ public class PEFundServiceImpl implements PEFundService {
                     statusResultDto.getStatus(),
                     statusResultDto.getMessageRu(), statusResultDto.getMessageEn(), statusResultDto.getMessageKz()
             );
-        }
-    }
-
-    @Override
-    public StatusResultDto savePerformance(List<PEFundCompaniesPerformanceDto> performanceDtoList, Long fundId, String updater) {
-
-        StatusResultDto statusResultDto = new StatusResultDto(StatusResultType.FAIL, "", "", "");
-
-        try {
-            String saveResponse = performanceService.saveList(performanceDtoList, fundId);
-            if (!saveResponse.equals("Ok")) {
-                statusResultDto.setStatus(StatusResultType.FAIL);
-                statusResultDto.setMessageEn(saveResponse);
-                return statusResultDto;
-            }
-
-            PEFund fund = peFundRepository.findOne(fundId);
-            fund.setAutoCalculation(false);
-            peFundRepository.save(fund);
-
-            logger.info("PE fund's company performance updated: " + fundId + ", by " + updater);
-
-            statusResultDto.setStatus(StatusResultType.SUCCESS);
-            statusResultDto.setMessageEn("Successfully saved fund's company performance");
-            return statusResultDto;
-        } catch (Exception ex){
-            logger.error("Error saving PE fund's company performance: " + fundId ,ex);
-
-            statusResultDto.setStatus(StatusResultType.FAIL);
-            statusResultDto.setMessageEn("Error saving fund's company performance");
-            return statusResultDto;
         }
     }
 
