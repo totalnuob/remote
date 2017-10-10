@@ -3,7 +3,6 @@ package kz.nicnbk.service.impl.pe;
 import in.satpathy.financial.XIRR;
 import in.satpathy.financial.XIRRData;
 import kz.nicnbk.repo.api.employee.EmployeeRepository;
-import kz.nicnbk.repo.api.pe.PEFundCompaniesPerformanceRepository;
 import kz.nicnbk.repo.api.pe.PEFundRepository;
 import kz.nicnbk.repo.api.pe.PEGrossCashflowRepository;
 import kz.nicnbk.repo.api.pe.PENetCashflowRepository;
@@ -12,6 +11,7 @@ import kz.nicnbk.repo.model.pe.PEFund;
 import kz.nicnbk.repo.model.pe.PEFundCompaniesPerformance;
 import kz.nicnbk.repo.model.pe.PEGrossCashflow;
 import kz.nicnbk.repo.model.pe.PENetCashflow;
+import kz.nicnbk.service.api.pe.PEFundCompaniesPerformanceService;
 import kz.nicnbk.service.api.pe.PEGrossCashflowService;
 import kz.nicnbk.service.api.pe.PEFundService;
 import kz.nicnbk.service.api.pe.PENetCashflowService;
@@ -72,7 +72,7 @@ public class PEFundServiceImpl implements PEFundService {
     private EmployeeRepository employeeRepository;
 
     @Autowired
-    private PEFundCompaniesPerformanceRepository fundCompaniesPerformanceRepository;
+    private PEFundCompaniesPerformanceService performanceService;
 
     @Autowired
     private PEFundCompaniesPerformanceEntityConverter fundCompaniesPerformanceConverter;
@@ -202,12 +202,12 @@ public class PEFundServiceImpl implements PEFundService {
                 return statusResultDto;
             }
 
-            this.fundCompaniesPerformanceRepository.deleteByFundId(fundId);
+            this.performanceService.deleteByFundId(fundId);
 
             for (PEFundCompaniesPerformanceDto performanceDto : performanceDtoList) {
                 PEFundCompaniesPerformance performance = fundCompaniesPerformanceConverter.assemble(performanceDto);
                 performance.setFund(fund);
-                this.fundCompaniesPerformanceRepository.save(performance);
+                this.performanceService.save(performance);
             }
 
             fund.setAutoCalculation(false);
@@ -266,7 +266,7 @@ public class PEFundServiceImpl implements PEFundService {
                 return statusResultDto;
             }
 
-            this.grossCFRepository.deleteByFundId(fundId);
+            this.grossCFService.deleteByFundId(fundId);
 
             for (PEGrossCashflowDto grossCashflowDto : grossCashflowDtoList) {
                 PEGrossCashflow grossCashflow = grossCFConverter.assemble(grossCashflowDto);
@@ -352,7 +352,7 @@ public class PEFundServiceImpl implements PEFundService {
 
             List<PEGrossCashflow> grossCfEntity = this.grossCFRepository.getEntitiesByFundId(id, new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName", "date")));
             List<PENetCashflow> netCfEntity = this.netCFRepository.getEntitiesByFundId(id);
-            List<PEFundCompaniesPerformance> fundCompaniesPerformanceList = this.fundCompaniesPerformanceRepository.getEntitiesByFundId(id);
+            List<PEFundCompaniesPerformance> fundCompaniesPerformanceList = this.performanceService.getEntitiesByFundId(id);
 
             PEFundDto dto = this.converter.disassemble(entity);
 
