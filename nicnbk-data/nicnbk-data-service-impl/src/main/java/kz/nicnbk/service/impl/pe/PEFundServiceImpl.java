@@ -86,9 +86,7 @@ public class PEFundServiceImpl implements PEFundService {
             return new PEFundTrackRecordResultDto(
                     new PEFundTrackRecordDTO(),
                     statusResultDto.getStatus(),
-                    statusResultDto.getMessageRu(),
-                    statusResultDto.getMessageEn(),
-                    statusResultDto.getMessageKz()
+                    statusResultDto.getMessageRu(), statusResultDto.getMessageEn(), statusResultDto.getMessageKz()
             );
         }
 
@@ -102,9 +100,7 @@ public class PEFundServiceImpl implements PEFundService {
                 return new PEFundTrackRecordResultDto(
                         new PEFundTrackRecordDTO(),
                         statusResultDto.getStatus(),
-                        statusResultDto.getMessageRu(),
-                        statusResultDto.getMessageEn(),
-                        statusResultDto.getMessageKz()
+                        statusResultDto.getMessageRu(), statusResultDto.getMessageEn(), statusResultDto.getMessageKz()
                 );
             }
 
@@ -143,15 +139,9 @@ public class PEFundServiceImpl implements PEFundService {
                     fund.getRealized(),
                     fund.getUnrealized(),
                     fund.getDpi(),
-                    null,
-                    null,
-                    null,
+                    null, null, null,
                     fund.getGrossTvpi(),
-                    null,
-                    null,
-                    null,
-                    null,
-                    null
+                    null, null, null, null, null
                     );
         } catch (Exception ex) {
             logger.error("Error updating PE fund's key statistics: " + fundId ,ex);
@@ -160,9 +150,7 @@ public class PEFundServiceImpl implements PEFundService {
             return new PEFundTrackRecordResultDto(
                     new PEFundTrackRecordDTO(),
                     statusResultDto.getStatus(),
-                    statusResultDto.getMessageRu(),
-                    statusResultDto.getMessageEn(),
-                    statusResultDto.getMessageKz()
+                    statusResultDto.getMessageRu(), statusResultDto.getMessageEn(), statusResultDto.getMessageKz()
             );
         }
 
@@ -171,9 +159,7 @@ public class PEFundServiceImpl implements PEFundService {
         return new PEFundTrackRecordResultDto(
                 fundTrackRecordDTO,
                 statusResultDto.getStatus(),
-                statusResultDto.getMessageRu(),
-                statusResultDto.getMessageEn(),
-                statusResultDto.getMessageKz()
+                statusResultDto.getMessageRu(), statusResultDto.getMessageEn(), statusResultDto.getMessageKz()
         );
     }
 
