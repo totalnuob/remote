@@ -335,7 +335,7 @@
                                 <h4>Key fund statistics</h4>
                                 <h5>Auto calculation</h5>
                                 <div class="onoffswitch">
-                                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" [(ngModel)]="fund.autoCalculation" (ngModelChange)="myFunction()" unchecked>
+                                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" [(ngModel)]="fund.autoCalculation" (ngModelChange)="autoCalculationToggle()" unchecked>
                                     <label class="onoffswitch-label" for="myonoffswitch">
                                         <span class="onoffswitch-inner"></span>
                                         <span class="onoffswitch-switch"></span>

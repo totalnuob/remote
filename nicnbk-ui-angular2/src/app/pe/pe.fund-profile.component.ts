@@ -282,19 +282,17 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     }
 
     saveGrossCF() {
-        //this.busy = this.fundService.saveGrossCF(this.fund.grossCashflow, this.fund.id)
-        //    .subscribe(
-        //        (response: SaveResponse) => {
-        //            this.postAction(response.messageEn, null);
-        //
-        //            this.fund.autoCalculation = false;
-        //        },
-        //        (error: ErrorResponse) => {
-        //            this.processErrorMessage(error);
-        //            this.postAction(null, error.message);
-        //            console.log(error);
-        //        }
-        //    )
+        this.busy = this.fundService.saveGrossCF(this.fund.grossCashflow, this.fund.id)
+            .subscribe(
+                (response) => {
+                    this.postAction(response.messageEn, null);
+                },
+                (error: ErrorResponse) => {
+                    this.processErrorMessage(error);
+                    this.postAction(null, error.message);
+                    console.log(error);
+                }
+            )
     }
 
     postAction(successMessage, errorMessage) {
@@ -527,7 +525,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
         return this.moduleAccessChecker.checkAccessPrivateEquityEditor();
     }
 
-    myFunction() {
+    autoCalculationToggle() {
         if (this.fund.autoCalculation) {
             this.savePerformanceAndRecalculateStatistics();
         }
