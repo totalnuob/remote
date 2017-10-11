@@ -13,6 +13,7 @@ import java.util.List;
  */
 public interface PECompanyPerformanceRepository extends PagingAndSortingRepository<PECompanyPerformance, Long> {
 
+    @Query("SELECT e from pe_company_performance e where e.fund.id=?1")
     List<PECompanyPerformance> getEntitiesByFundId(Long fundId);
 
     @Modifying
