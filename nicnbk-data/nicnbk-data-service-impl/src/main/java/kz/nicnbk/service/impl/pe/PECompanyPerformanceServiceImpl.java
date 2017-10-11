@@ -54,11 +54,11 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
                 if (performanceDto.getCompanyName() == null || performanceDto.getCompanyName().equals("")) {
                     return "Don't send null or empty company name!";
                 }
-                if (performanceDto.getInvested() < 0 ||
-                        performanceDto.getRealized() < 0 ||
-                        performanceDto.getUnrealized() < 0 ||
-                        performanceDto.getTotalValue() < 0 ||
-                        performanceDto.getMultiple() < 0) {
+                if ((performanceDto.getInvested() != null && performanceDto.getInvested() < 0) ||
+                        (performanceDto.getRealized() != null && performanceDto.getRealized() < 0) ||
+                        (performanceDto.getUnrealized() != null && performanceDto.getUnrealized() < 0) ||
+                        (performanceDto.getTotalValue() != null && performanceDto.getTotalValue() < 0) ||
+                        (performanceDto.getMultiple() != null && performanceDto.getMultiple() < 0)) {
                     return "Don't send negative numbers!";
                 }
             }
