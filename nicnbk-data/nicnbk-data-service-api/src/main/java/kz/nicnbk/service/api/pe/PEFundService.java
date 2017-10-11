@@ -14,6 +14,8 @@ import java.util.List;
  */
 public interface PEFundService extends BaseService {
 
+    PEFundDto get(Long id);
+
     Long save(PEFundDto fundDto, String username);
 
     StatusResultDto savePerformance(List<PECompanyPerformanceDto> performanceDtoList, Long fundId, String username);
@@ -21,8 +23,6 @@ public interface PEFundService extends BaseService {
     PEFundTrackRecordResultDto savePerformanceAndRecalculateStatistics(List<PECompanyPerformanceDto> performanceDtoList, Long fundId, String username);
 
     StatusResultDto saveGrossCF(List<PEGrossCashflowDto> grossCashflowDtoList, Long fundId, String username);
-
-    PEFundDto get(Long id);
 
     List<PEFundDto> loadFirmFunds(Long firmId, boolean report);
 }

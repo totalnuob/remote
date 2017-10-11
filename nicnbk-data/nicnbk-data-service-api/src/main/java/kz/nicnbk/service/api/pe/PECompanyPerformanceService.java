@@ -13,7 +13,7 @@ public interface PECompanyPerformanceService {
 
     String saveList(List<PECompanyPerformanceDto> performanceDtoList, Long fundId);
 
-    List<PECompanyPerformanceDto> getEntityDtosByFundId(Long fundId);
+    List<PECompanyPerformanceDto> findByFundId(Long fundId);
 
     boolean deleteByFundId(Long fundId);
 }

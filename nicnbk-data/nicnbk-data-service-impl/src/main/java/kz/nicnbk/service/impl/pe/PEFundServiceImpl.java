@@ -76,7 +76,7 @@ public class PEFundServiceImpl implements PEFundService {
 
             List<PEGrossCashflowDto> grossCFDto = this.grossCFService.findByFundId(id);
             List<PENetCashflowDto> netCFDto = this.netCFService.findByFundId(id);
-            List<PECompanyPerformanceDto> performanceDto = this.performanceService.getEntityDtosByFundId(id);
+            List<PECompanyPerformanceDto> performanceDto = this.performanceService.findByFundId(id);
 
             dto.setGrossCashflow(grossCFDto);
             dto.setNetCashflow(netCFDto);
