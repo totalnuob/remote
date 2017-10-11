@@ -2,10 +2,7 @@ package kz.nicnbk.repo.model.pe;
 
 import kz.nicnbk.repo.model.base.BaseEntity;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -14,7 +11,9 @@ import java.util.Date;
 @Entity(name = "pe_gross_cashflow")
 public class PEGrossCashflow extends BaseEntity {
 
+    @Column(nullable = false)
     private String companyName;
+    @Column(nullable = false)
     private Date date;
     private Double invested;
     private Double realized;
