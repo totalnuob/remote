@@ -10,6 +10,7 @@ import java.util.Date;
  * Created by zhambyl on 05-Jan-17.
  */
 public class PEGrossCashflowDto extends BaseEntityDto<PEGrossCashflow> implements Comparable<PEGrossCashflowDto>{
+
     private String companyName;
 
     @DateTimeFormat(pattern="dd-MM-yyyy")
@@ -19,7 +20,7 @@ public class PEGrossCashflowDto extends BaseEntityDto<PEGrossCashflow> implement
     private Double realized;
     private Double unrealized;
     private Double grossCF;
-    private Double irr;
+//    private Double irr;
 //    private PEFundDto fund;
 
     public String getCompanyName() {
@@ -70,18 +71,18 @@ public class PEGrossCashflowDto extends BaseEntityDto<PEGrossCashflow> implement
         this.grossCF = grossCF;
     }
 
-    public Double getIrr() {
-        return irr;
-    }
+//    public Double getIrr() {
+//        return irr;
+//    }
 
-    public void setIrr(Double irr) {
-        this.irr = irr;
-    }
+//    public void setIrr(Double irr) {
+//        this.irr = irr;
+//    }
 
 //    public PEFundDto getFund() {
 //        return fund;
 //    }
-//
+
 //    public void setFund(PEFundDto fund) {
 //        this.fund = fund;
 //    }
