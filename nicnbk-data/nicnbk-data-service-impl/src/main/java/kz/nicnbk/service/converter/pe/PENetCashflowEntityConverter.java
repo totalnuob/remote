@@ -15,7 +15,7 @@ public class PENetCashflowEntityConverter extends BaseDozerEntityConverter<PENet
     @Override
     public PENetCashflow assemble(PENetCashflowDto dto){
         PENetCashflow entity = super.assemble(dto);
-
+        entity.setId(null);
 //        PEFund PEFund = new PEFund();
 //        PEFund.setId(dto.getFund().getId());
 //        entity.setFund(PEFund);

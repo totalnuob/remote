@@ -15,6 +15,7 @@ public class PEFundCompaniesPerformanceEntityConverter extends BaseDozerEntityCo
     @Override
     public PEFundCompaniesPerformance assemble(PEFundCompaniesPerformanceDto dto){
         PEFundCompaniesPerformance entity = super.assemble(dto);
+        entity.setId(null);
         return entity;
     }
 
