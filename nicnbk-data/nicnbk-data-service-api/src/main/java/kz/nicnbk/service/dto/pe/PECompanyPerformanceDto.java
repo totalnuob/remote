@@ -2,17 +2,11 @@ package kz.nicnbk.service.dto.pe;
 
 import kz.nicnbk.common.service.model.BaseEntityDto;
 import kz.nicnbk.repo.model.pe.PECompanyPerformance;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.util.Date;
 
 /**
  * Created by zhambyl on 09-Jan-17.
  */
-public class PECompanyPerformanceDto extends BaseEntityDto<PECompanyPerformance> implements Comparable<PECompanyPerformanceDto> {
-
-    @DateTimeFormat(pattern="dd-MM-yyyy")
-    private Date date;
+public class PECompanyPerformanceDto extends BaseEntityDto<PECompanyPerformance> {
 
     private String companyName;
     private Double invested;
@@ -24,6 +18,9 @@ public class PECompanyPerformanceDto extends BaseEntityDto<PECompanyPerformance>
     private Double netIrr;
 //    private PEFundDto fund;
 
+    public PECompanyPerformanceDto() {
+    }
+
     public PECompanyPerformanceDto(String companyName, Double invested, Double realized, Double unrealized, Double totalValue, Double multiple, Double grossIrr, Double netIrr) {
         this.companyName = companyName;
         this.invested = invested;
@@ -33,10 +30,6 @@ public class PECompanyPerformanceDto extends BaseEntityDto<PECompanyPerformance>
         this.multiple = multiple;
         this.grossIrr = grossIrr;
         this.netIrr = netIrr;
-    }
-
-    public PECompanyPerformanceDto(){
-
     }
 
     public String getCompanyName() {
@@ -110,17 +103,4 @@ public class PECompanyPerformanceDto extends BaseEntityDto<PECompanyPerformance>
 //    public void setFund(PEFundDto fund) {
 //        this.fund = fund;
 //    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    @Override
-    public int compareTo(PECompanyPerformanceDto dto) {
-        return this.date.compareTo(dto.getDate());
-    }
 }
