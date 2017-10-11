@@ -65,12 +65,12 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
-        StatusResultDto statusResultDto = this.service.savePerformance(performanceDtoList, fundId, username);
+        StatusResultDto resultDto = this.service.savePerformance(performanceDtoList, fundId, username);
 
-        if (statusResultDto.getStatus().getCode().equals("SUCCESS")) {
-            return new ResponseEntity<>(statusResultDto, null, HttpStatus.OK);
+        if (resultDto.getStatus().getCode().equals("SUCCESS")) {
+            return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(statusResultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -95,12 +95,12 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
-        StatusResultDto statusResultDto = this.service.saveGrossCF(grossCashflowDtoList, fundId, username);
+        StatusResultDto resultDto = this.service.saveGrossCF(grossCashflowDtoList, fundId, username);
 
-        if (statusResultDto.getStatus().getCode().equals("SUCCESS")) {
-            return new ResponseEntity<>(statusResultDto, null, HttpStatus.OK);
+        if (resultDto.getStatus().getCode().equals("SUCCESS")) {
+            return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(statusResultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -119,12 +119,12 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
 
         return new ResponseEntity<>(new StatusResultDto(StatusResultType.SUCCESS, "", "Pseudo done!", ""), null, HttpStatus.OK);
 
-//        StatusResultDto statusResultDto = this.service.uploadGrossCF(dsasadas, fundId, username);
+//        StatusResultDto resultDto = this.service.uploadGrossCF(dsasadas, fundId, username);
 //
-//        if (statusResultDto.getStatus().getCode().equals("SUCCESS")) {
-//            return new ResponseEntity<>(statusResultDto, null, HttpStatus.OK);
+//        if (resultDto.getStatus().getCode().equals("SUCCESS")) {
+//            return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
 //        } else {
-//            return new ResponseEntity<>(statusResultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
+//            return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
 //        }
 
 

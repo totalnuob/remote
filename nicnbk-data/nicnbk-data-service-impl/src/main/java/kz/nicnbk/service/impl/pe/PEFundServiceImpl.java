@@ -130,14 +130,14 @@ public class PEFundServiceImpl implements PEFundService {
     @Override
     public StatusResultDto savePerformance(List<PECompanyPerformanceDto> performanceDtoList, Long fundId, String updater) {
 
-        StatusResultDto statusResultDto = new StatusResultDto(StatusResultType.FAIL, "", "", "");
+        StatusResultDto resultDto = new StatusResultDto(StatusResultType.FAIL, "", "", "");
 
         try {
             String saveResponse = this.performanceService.saveList(performanceDtoList, fundId);
             if (!saveResponse.equals("Ok")) {
-                statusResultDto.setStatus(StatusResultType.FAIL);
-                statusResultDto.setMessageEn(saveResponse);
-                return statusResultDto;
+                resultDto.setStatus(StatusResultType.FAIL);
+                resultDto.setMessageEn(saveResponse);
+                return resultDto;
             }
 
             PEFund fund = peFundRepository.findOne(fundId);
@@ -146,38 +146,54 @@ public class PEFundServiceImpl implements PEFundService {
 
             logger.info("PE fund's company performance updated: " + fundId + ", by " + updater);
 
-            statusResultDto.setStatus(StatusResultType.SUCCESS);
-            statusResultDto.setMessageEn("Successfully saved fund's company performance");
-            return statusResultDto;
+            resultDto.setStatus(StatusResultType.SUCCESS);
+            resultDto.setMessageEn("Successfully saved fund's company performance");
+            return resultDto;
         } catch (Exception ex) {
             logger.error("Error saving PE fund's company performance: " + fundId ,ex);
 
-            statusResultDto.setStatus(StatusResultType.FAIL);
-            statusResultDto.setMessageEn("Error saving fund's company performance");
-            return statusResultDto;
+            resultDto.setStatus(StatusResultType.FAIL);
+            resultDto.setMessageEn("Error saving fund's company performance");
+            return resultDto;
+        }
+    }
+
+    @Override
+    public PEFundTrackRecordResultDto recalculateStatistics(Long fundId) {
+
+        StatusResultDto resultDto = new StatusResultDto(StatusResultType.FAIL, "", "", "");
+
+        PEFund fund = this.peFundRepository.findOne(fundId);
+        if (fund == null) {
+            resultDto.setStatus(StatusResultType.FAIL);
+            resultDto.setMessageEn("Fund doesn't exist!");
+            return new PEFundTrackRecordResultDto(
+                    new PEFundTrackRecordDto(),
+                    resultDto.getStatus(), resultDto.getMessageRu(), resultDto.getMessageEn(), resultDto.getMessageKz()
+            );
         }
     }
 
     @Override
     public PEFundTrackRecordResultDto savePerformanceAndRecalculateStatistics(List<PECompanyPerformanceDto> performanceDtoList, Long fundId, String updater) {
 
-        StatusResultDto statusResultDto = this.savePerformance(performanceDtoList, fundId, updater);
+        StatusResultDto resultDto = this.savePerformance(performanceDtoList, fundId, updater);
 
-        if (statusResultDto.getStatus().getCode().equals("FAIL")) {
+        if (resultDto.getStatus().getCode().equals("FAIL")) {
             return new PEFundTrackRecordResultDto(
                     new PEFundTrackRecordDto(),
-                    statusResultDto.getStatus(), statusResultDto.getMessageRu(), statusResultDto.getMessageEn(), statusResultDto.getMessageKz()
+                    resultDto.getStatus(), resultDto.getMessageRu(), resultDto.getMessageEn(), resultDto.getMessageKz()
             );
         }
 
         try {
             PEFund fund = this.peFundRepository.findOne(fundId);
             if (fund == null) {
-                statusResultDto.setStatus(StatusResultType.FAIL);
-                statusResultDto.setMessageEn("Fund doesn't exist!");
+                resultDto.setStatus(StatusResultType.FAIL);
+                resultDto.setMessageEn("Fund doesn't exist!");
                 return new PEFundTrackRecordResultDto(
                         new PEFundTrackRecordDto(),
-                        statusResultDto.getStatus(), statusResultDto.getMessageRu(), statusResultDto.getMessageEn(), statusResultDto.getMessageKz()
+                        resultDto.getStatus(), resultDto.getMessageRu(), resultDto.getMessageEn(), resultDto.getMessageKz()
                 );
             }
 
@@ -210,8 +226,8 @@ public class PEFundServiceImpl implements PEFundService {
             fund.setAutoCalculation(true);
             peFundRepository.save(fund);
 
-            statusResultDto.setStatus(StatusResultType.SUCCESS);
-            statusResultDto.setMessageEn("Successfully saved fund's company performance and updated the key fund statistics");
+            resultDto.setStatus(StatusResultType.SUCCESS);
+            resultDto.setMessageEn("Successfully saved fund's company performance and updated the key fund statistics");
             return new PEFundTrackRecordResultDto(
                     new PEFundTrackRecordDto(
                             fund.getNumberOfInvestments(),
@@ -222,15 +238,15 @@ public class PEFundServiceImpl implements PEFundService {
                             null, null, null,
                             fund.getGrossTvpi(),
                             null, null, null, null, null),
-                    statusResultDto.getStatus(), statusResultDto.getMessageRu(), statusResultDto.getMessageEn(), statusResultDto.getMessageKz());
+                    resultDto.getStatus(), resultDto.getMessageRu(), resultDto.getMessageEn(), resultDto.getMessageKz());
         } catch (Exception ex) {
             logger.error("Error updating PE fund's key statistics: " + fundId ,ex);
 
-            statusResultDto.setStatus(StatusResultType.FAIL);
-            statusResultDto.setMessageEn("Error updating fund's key statistics");
+            resultDto.setStatus(StatusResultType.FAIL);
+            resultDto.setMessageEn("Error updating fund's key statistics");
             return new PEFundTrackRecordResultDto(
                     new PEFundTrackRecordDto(),
-                    statusResultDto.getStatus(), statusResultDto.getMessageRu(), statusResultDto.getMessageEn(), statusResultDto.getMessageKz()
+                    resultDto.getStatus(), resultDto.getMessageRu(), resultDto.getMessageEn(), resultDto.getMessageKz()
             );
         }
     }
@@ -238,25 +254,25 @@ public class PEFundServiceImpl implements PEFundService {
     @Override
     public StatusResultDto saveGrossCF(List<PEGrossCashflowDto> cashflowDtoList, Long fundId, String updater) {
 
-        StatusResultDto statusResultDto = new StatusResultDto(StatusResultType.FAIL, "", "", "");
+        StatusResultDto resultDto = new StatusResultDto(StatusResultType.FAIL, "", "", "");
 
         try {
             String saveResponse = this.grossCFService.saveList(cashflowDtoList, fundId);
             if (!saveResponse.equals("Ok")) {
-                statusResultDto.setStatus(StatusResultType.FAIL);
-                statusResultDto.setMessageEn(saveResponse);
-                return statusResultDto;
+                resultDto.setStatus(StatusResultType.FAIL);
+                resultDto.setMessageEn(saveResponse);
+                return resultDto;
             }
 
             logger.info("PE fund's gross cash flow updated: " + fundId + ", by " + updater);
-            statusResultDto.setStatus(StatusResultType.SUCCESS);
-            statusResultDto.setMessageEn("Successfully saved fund's gross cash flow");
-            return statusResultDto;
+            resultDto.setStatus(StatusResultType.SUCCESS);
+            resultDto.setMessageEn("Successfully saved fund's gross cash flow");
+            return resultDto;
         } catch (Exception ex) {
             logger.error("Error saving PE fund's gross cash flow: " + fundId ,ex);
-            statusResultDto.setStatus(StatusResultType.FAIL);
-            statusResultDto.setMessageEn("Error saving fund's gross cash flow");
-            return statusResultDto;
+            resultDto.setStatus(StatusResultType.FAIL);
+            resultDto.setMessageEn("Error saving fund's gross cash flow");
+            return resultDto;
         }
     }
 

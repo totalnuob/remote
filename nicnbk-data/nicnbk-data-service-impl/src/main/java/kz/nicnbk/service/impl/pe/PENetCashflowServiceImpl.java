@@ -21,16 +21,16 @@ public class PENetCashflowServiceImpl implements PENetCashflowService {
     private static final Logger logger = LoggerFactory.getLogger(PEFundServiceImpl.class);
 
     @Autowired
-    private PENetCashflowRepository peCFRepository;
+    private PENetCashflowRepository repository;
 
     @Autowired
-    private PENetCashflowEntityConverter peCFEntityConverter;
+    private PENetCashflowEntityConverter converter;
 
     @Override
     public Long save(PENetCashflowDto dto) {
         try {
-            PENetCashflow entity = this.peCFEntityConverter.assemble(dto);
-            Long id = this.peCFRepository.save(entity).getId();
+            PENetCashflow entity = this.converter.assemble(dto);
+            Long id = this.repository.save(entity).getId();
             return id;
         } catch(Exception ex){
             ex.printStackTrace();
@@ -41,7 +41,7 @@ public class PENetCashflowServiceImpl implements PENetCashflowService {
     @Override
     public List<PENetCashflowDto> findByFundId(Long fundId) {
         try {
-            return this.peCFEntityConverter.disassembleList(this.peCFRepository.getEntitiesByFundId(fundId));
+            return this.converter.disassembleList(this.repository.getEntitiesByFundId(fundId));
         } catch (Exception ex) {
             logger.error("Error loading PE fund's net cash flow: " + fundId, ex);
         }
@@ -50,7 +50,7 @@ public class PENetCashflowServiceImpl implements PENetCashflowService {
 
     @Override
     public boolean deleteByFundId(Long fundId) {
-        this.peCFRepository.deleteByFundId(fundId);
+        this.repository.deleteByFundId(fundId);
         return true;
     }
 }
