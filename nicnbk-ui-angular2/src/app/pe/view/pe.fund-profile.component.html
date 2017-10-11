@@ -698,16 +698,16 @@
                             </td>
 
                             <td>
-                                <input type="text" class="form-control" name="grossIrr" [(ngModel)]="performance.grossIrr" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #grossIrr="ngModel"/>
+                                <input type="text" class="form-control" name="grossIrr" [(ngModel)]="performance.grossIrr" placeholder="-" pattern="[-]?[0-9]*\.?[0-9]+" #grossIrr="ngModel"/>
                                 <div [hidden]="grossIrr.valid || grossIrr.pristine" class="alert alert-danger">
-                                    Only positive number could be entered
+                                    Only number could be entered
                                 </div>
                             </td>
 
                             <td>
-                                <input type="text" class="form-control" name="netIrr" [(ngModel)]="performance.netIrr" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #netIrr="ngModel"/>
+                                <input type="text" class="form-control" name="netIrr" [(ngModel)]="performance.netIrr" placeholder="-" pattern="[-]?[0-9]*\.?[0-9]+" #netIrr="ngModel"/>
                                 <div [hidden]="netIrr.valid || netIrr.pristine" class="alert alert-danger">
-                                    Only positive number could be entered
+                                    Only number could be entered
                                 </div>
                             </td>
 
