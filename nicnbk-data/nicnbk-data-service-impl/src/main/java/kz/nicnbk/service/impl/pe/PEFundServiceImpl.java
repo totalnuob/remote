@@ -234,8 +234,7 @@ public class PEFundServiceImpl implements PEFundService {
         if (resultDto.getStatus().getCode().equals("FAIL")) {
             return new PEFundTrackRecordResultDto(
                     new PEFundTrackRecordDto(),
-                    resultDto.getStatus(), resultDto.getMessageRu(), resultDto.getMessageEn(), resultDto.getMessageKz()
-            );
+                    resultDto.getStatus(), resultDto.getMessageRu(), resultDto.getMessageEn(), resultDto.getMessageKz());
         }
 
         return this.recalculateStatistics(fundId);
