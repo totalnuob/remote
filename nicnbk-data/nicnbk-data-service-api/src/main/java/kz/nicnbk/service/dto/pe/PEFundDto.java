@@ -2,8 +2,6 @@ package kz.nicnbk.service.dto.pe;
 
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.common.service.model.HistoryBaseEntityDto;
-import kz.nicnbk.repo.model.pe.PEBenchmark;
-import kz.nicnbk.repo.model.pe.PEFirm;
 import kz.nicnbk.repo.model.pe.PEFund;
 
 import java.util.Date;
@@ -84,7 +82,7 @@ public class PEFundDto extends HistoryBaseEntityDto<PEFund> {
     //cashflows
     private List<PEGrossCashflowDto> grossCashflow;
     private List<PENetCashflowDto> netCashflow;
-    private List<PEFundCompaniesPerformanceDto> fundCompanyPerformance;
+    private List<PECompanyPerformanceDto> companyPerformance;
 
     public String getFundName() {
         return fundName;
@@ -494,12 +492,12 @@ public class PEFundDto extends HistoryBaseEntityDto<PEFund> {
         this.grossCashflow = grossCashflow;
     }
 
-    public List<PEFundCompaniesPerformanceDto> getFundCompanyPerformance() {
-        return fundCompanyPerformance;
+    public List<PECompanyPerformanceDto> getCompanyPerformance() {
+        return companyPerformance;
     }
 
-    public void setFundCompanyPerformance(List<PEFundCompaniesPerformanceDto> fundCompanyPerformance) {
-        this.fundCompanyPerformance = fundCompanyPerformance;
+    public void setCompanyPerformance(List<PECompanyPerformanceDto> companyPerformance) {
+        this.companyPerformance = companyPerformance;
     }
 
     public List<PENetCashflowDto> getNetCashflow() {

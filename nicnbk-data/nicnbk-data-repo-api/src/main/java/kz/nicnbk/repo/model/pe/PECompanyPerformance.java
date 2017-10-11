@@ -8,8 +8,8 @@ import java.util.Date;
 /**
  * Created by Pak on 03.10.2017.
  */
-@Entity(name = "pe_fund_companies_performance")
-public class PEFundCompaniesPerformance extends BaseEntity {
+@Entity(name = "pe_company_performance")
+public class PECompanyPerformance extends BaseEntity {
 
     private Date date;
 

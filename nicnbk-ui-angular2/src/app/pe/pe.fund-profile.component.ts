@@ -121,8 +121,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                         this.openingSoon = true;
                                     }
 
-                                    if(this.fund.fundCompanyPerformance == null){
-                                        this.fund.fundCompanyPerformance = [];
+                                    if(this.fund.companyPerformance == null){
+                                        this.fund.companyPerformance = [];
                                     }
 
                                     if(this.fund.grossCashflow == null){
@@ -243,7 +243,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     }
 
     savePerformance() {
-        this.busy = this.fundService.savePerformance(this.fund.fundCompanyPerformance, this.fund.id)
+        this.busy = this.fundService.savePerformance(this.fund.companyPerformance, this.fund.id)
             .subscribe(
                 (response: SaveResponse) => {
                     this.postAction(response.messageEn, null);
@@ -259,7 +259,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     }
 
     savePerformanceAndRecalculateStatistics() {
-        this.busy = this.fundService.savePerformanceAndRecalculateStatistics(this.fund.fundCompanyPerformance, this.fund.id)
+        this.busy = this.fundService.savePerformanceAndRecalculateStatistics(this.fund.companyPerformance, this.fund.id)
             .subscribe(
                 (response) => {
                     this.postAction(response.messageEn, null);
@@ -483,14 +483,14 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     }
 
     addRowPerformance(){
-        //console.log(this.fund.fundCompanyPerformance);
-        this.fund.fundCompanyPerformance.push({companyName:"", invested:"", realized:"", unrealized:"", totalValue:"", multiple:"", grossIrr:"", netIrr:""});
+        //console.log(this.fund.companyPerformance);
+        this.fund.companyPerformance.push({companyName:"", invested:"", realized:"", unrealized:"", totalValue:"", multiple:"", grossIrr:"", netIrr:""});
     }
 
     removeRowPerformance(item){
-        for(var i = this.fund.fundCompanyPerformance.length; i--;) {
-            if(this.fund.fundCompanyPerformance[i] === item) {
-                this.fund.fundCompanyPerformance.splice(i, 1);
+        for(var i = this.fund.companyPerformance.length; i--;) {
+            if(this.fund.companyPerformance[i] === item) {
+                this.fund.companyPerformance.splice(i, 1);
             }
         }
     }

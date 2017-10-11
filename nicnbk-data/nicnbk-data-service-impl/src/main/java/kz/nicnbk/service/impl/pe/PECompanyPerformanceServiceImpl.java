@@ -1,12 +1,12 @@
 package kz.nicnbk.service.impl.pe;
 
-import kz.nicnbk.repo.api.pe.PEFundCompaniesPerformanceRepository;
+import kz.nicnbk.repo.api.pe.PECompanyPerformanceRepository;
 import kz.nicnbk.repo.model.pe.PEFund;
-import kz.nicnbk.repo.model.pe.PEFundCompaniesPerformance;
-import kz.nicnbk.service.api.pe.PEFundCompaniesPerformanceService;
+import kz.nicnbk.repo.model.pe.PECompanyPerformance;
+import kz.nicnbk.service.api.pe.PECompanyPerformanceService;
 import kz.nicnbk.service.api.pe.PEFundService;
-import kz.nicnbk.service.converter.pe.PEFundCompaniesPerformanceEntityConverter;
-import kz.nicnbk.service.dto.pe.PEFundCompaniesPerformanceDto;
+import kz.nicnbk.service.converter.pe.PECompanyPerformanceEntityConverter;
+import kz.nicnbk.service.dto.pe.PECompanyPerformanceDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,23 +18,23 @@ import java.util.List;
  * Created by Pak on 10.10.2017.
  */
 @Service
-public class PEFundCompaniesPerformanceServiceImpl implements PEFundCompaniesPerformanceService {
+public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceService {
 
     private static final Logger logger = LoggerFactory.getLogger(PEFundServiceImpl.class);
 
     @Autowired
-    private PEFundCompaniesPerformanceRepository repository;
+    private PECompanyPerformanceRepository repository;
 
     @Autowired
-    private PEFundCompaniesPerformanceEntityConverter converter;
+    private PECompanyPerformanceEntityConverter converter;
 
     @Autowired
     private PEFundService peFundService;
 
     @Override
-    public Long save(PEFundCompaniesPerformanceDto performanceDto, Long fundId) {
+    public Long save(PECompanyPerformanceDto performanceDto, Long fundId) {
         try {
-            PEFundCompaniesPerformance entity = this.converter.assemble(performanceDto);
+            PECompanyPerformance entity = this.converter.assemble(performanceDto);
             entity.setFund(new PEFund(fundId));
             return this.repository.save(entity).getId();
         } catch (Exception ex) {
@@ -44,21 +44,21 @@ public class PEFundCompaniesPerformanceServiceImpl implements PEFundCompaniesPer
     }
 
     @Override
-    public String saveList(List<PEFundCompaniesPerformanceDto> performanceDtoList, Long fundId) {
+    public String saveList(List<PECompanyPerformanceDto> performanceDtoList, Long fundId) {
         try {
             if (performanceDtoList == null || fundId == null) {
                 return "Don't send NULL!";
             }
 
-            for (PEFundCompaniesPerformanceDto performanceDto : performanceDtoList) {
+            for (PECompanyPerformanceDto performanceDto : performanceDtoList) {
                 if (performanceDto.getCompanyName() == null || performanceDto.getCompanyName().equals("")) {
                     return "Don't send null or empty company name!";
                 }
             }
 
-            for (PEFundCompaniesPerformanceDto performanceDto1 : performanceDtoList) {
+            for (PECompanyPerformanceDto performanceDto1 : performanceDtoList) {
                 int i = 0;
-                for (PEFundCompaniesPerformanceDto performanceDto2 : performanceDtoList) {
+                for (PECompanyPerformanceDto performanceDto2 : performanceDtoList) {
                     if (performanceDto1.getCompanyName().equals(performanceDto2.getCompanyName())) {
                         i++;
                     }
@@ -74,7 +74,7 @@ public class PEFundCompaniesPerformanceServiceImpl implements PEFundCompaniesPer
 
             this.deleteByFundId(fundId);
 
-            for (PEFundCompaniesPerformanceDto performanceDto : performanceDtoList) {
+            for (PECompanyPerformanceDto performanceDto : performanceDtoList) {
                 this.save(performanceDto, fundId);
             }
 
@@ -86,7 +86,7 @@ public class PEFundCompaniesPerformanceServiceImpl implements PEFundCompaniesPer
     }
 
     @Override
-    public List<PEFundCompaniesPerformanceDto> getEntityDtosByFundId(Long fundId) {
+    public List<PECompanyPerformanceDto> getEntityDtosByFundId(Long fundId) {
         try {
             return this.converter.disassembleList(this.repository.getEntitiesByFundId(fundId));
         } catch (Exception ex) {

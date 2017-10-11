@@ -1,11 +1,9 @@
 package kz.nicnbk.ws.rest;
 
-import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.pe.PEFundService;
 import kz.nicnbk.service.dto.common.StatusResultDto;
 import kz.nicnbk.service.dto.common.StatusResultType;
-import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.pe.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,9 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by zhambyl on 16-Nov-16.
@@ -65,7 +61,7 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
 
     @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/save/{fundId}", method = RequestMethod.POST)
-    public ResponseEntity<?> savePerformance(@RequestBody List<PEFundCompaniesPerformanceDto> performanceDtoList, @PathVariable Long fundId) {
+    public ResponseEntity<?> savePerformance(@RequestBody List<PECompanyPerformanceDto> performanceDtoList, @PathVariable Long fundId) {
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
@@ -80,7 +76,7 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
 
     @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/save/{fundId}/recalculate", method = RequestMethod.POST)
-    public ResponseEntity<?> savePerformanceAndRecalculateStatistics(@RequestBody List<PEFundCompaniesPerformanceDto> performanceDtoList, @PathVariable Long fundId) {
+    public ResponseEntity<?> savePerformanceAndRecalculateStatistics(@RequestBody List<PECompanyPerformanceDto> performanceDtoList, @PathVariable Long fundId) {
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 

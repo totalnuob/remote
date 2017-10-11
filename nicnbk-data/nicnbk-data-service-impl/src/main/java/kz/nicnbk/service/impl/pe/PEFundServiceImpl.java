@@ -8,7 +8,7 @@ import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.pe.PEFund;
 import kz.nicnbk.repo.model.pe.PEGrossCashflow;
 import kz.nicnbk.repo.model.pe.PENetCashflow;
-import kz.nicnbk.service.api.pe.PEFundCompaniesPerformanceService;
+import kz.nicnbk.service.api.pe.PECompanyPerformanceService;
 import kz.nicnbk.service.api.pe.PEGrossCashflowService;
 import kz.nicnbk.service.api.pe.PEFundService;
 import kz.nicnbk.service.api.pe.PENetCashflowService;
@@ -66,7 +66,7 @@ public class PEFundServiceImpl implements PEFundService {
     private EmployeeRepository employeeRepository;
 
     @Autowired
-    private PEFundCompaniesPerformanceService performanceService;
+    private PECompanyPerformanceService performanceService;
 
     @Override
     public PEFundDto get(Long id) {
@@ -76,11 +76,11 @@ public class PEFundServiceImpl implements PEFundService {
 
             List<PEGrossCashflowDto> grossCFDto = this.grossCFService.findByFundId(id);
             List<PENetCashflowDto> netCFDto = this.netCFService.findByFundId(id);
-            List<PEFundCompaniesPerformanceDto> performanceDto = this.performanceService.getEntityDtosByFundId(id);
+            List<PECompanyPerformanceDto> performanceDto = this.performanceService.getEntityDtosByFundId(id);
 
             dto.setGrossCashflow(grossCFDto);
             dto.setNetCashflow(netCFDto);
-            dto.setFundCompanyPerformance(performanceDto);
+            dto.setCompanyPerformance(performanceDto);
 //            calculatePerformanceParameters(grossCFDto, netCFDto, dto);
             return dto;
         } catch (Exception ex) {
@@ -128,7 +128,7 @@ public class PEFundServiceImpl implements PEFundService {
     }
 
     @Override
-    public StatusResultDto savePerformance(List<PEFundCompaniesPerformanceDto> performanceDtoList, Long fundId, String updater) {
+    public StatusResultDto savePerformance(List<PECompanyPerformanceDto> performanceDtoList, Long fundId, String updater) {
 
         StatusResultDto statusResultDto = new StatusResultDto(StatusResultType.FAIL, "", "", "");
 
@@ -159,7 +159,7 @@ public class PEFundServiceImpl implements PEFundService {
     }
 
     @Override
-    public PEFundTrackRecordResultDto savePerformanceAndRecalculateStatistics(List<PEFundCompaniesPerformanceDto> performanceDtoList, Long fundId, String updater) {
+    public PEFundTrackRecordResultDto savePerformanceAndRecalculateStatistics(List<PECompanyPerformanceDto> performanceDtoList, Long fundId, String updater) {
 
         StatusResultDto statusResultDto = this.savePerformance(performanceDtoList, fundId, updater);
 
@@ -186,7 +186,7 @@ public class PEFundServiceImpl implements PEFundService {
             fund.setRealized(0.0);
             fund.setUnrealized(0.0);
 
-            for (PEFundCompaniesPerformanceDto performanceDto : performanceDtoList) {
+            for (PECompanyPerformanceDto performanceDto : performanceDtoList) {
                 fund.setNumberOfInvestments(fund.getNumberOfInvestments() + 1);
                 if (performanceDto.getInvested() != null) {
                     fund.setInvestedAmount(fund.getInvestedAmount() + performanceDto.getInvested());
@@ -301,7 +301,7 @@ public class PEFundServiceImpl implements PEFundService {
 //        if(!grossCfDtoList.isEmpty()) {
 //
 //            // Calculating fund's companies performance
-//            List<PEFundCompaniesPerformanceDto> performanceDtoList = new ArrayList<>();
+//            List<PECompanyPerformanceDto> performanceDtoList = new ArrayList<>();
 //
 //            int j = 0;
 //
@@ -341,7 +341,7 @@ public class PEFundServiceImpl implements PEFundService {
 //                        grossIrr = Math.round(((grossIrr - 1) * 100)*100)/100.00;
 //                    }
 //
-//                    performanceDtoList.add(new PEFundCompaniesPerformanceDto(grossCfDtoList.get(i - 1).getCompanyName(), Math.round(-cashInvested),
+//                    performanceDtoList.add(new PECompanyPerformanceDto(grossCfDtoList.get(i - 1).getCompanyName(), Math.round(-cashInvested),
 //                            Math.round(realized), Math.round(unrealized), Math.round(totalValue),
 //                            Math.round(-multiple*100)/100.00, grossIrr));
 //
@@ -355,7 +355,7 @@ public class PEFundServiceImpl implements PEFundService {
 //                    unrealized = grossCfDtoList.get(i).getUnrealized();
 //
 //
-//                    dto.setFundCompanyPerformance(performanceDtoList);
+//                    dto.setCompanyPerformance(performanceDtoList);
 //
 //                    grossCf = new ArrayList<>();
 //                    grossCf.add(grossCfDtoList.get(i).getGrossCF());
@@ -412,7 +412,7 @@ public class PEFundServiceImpl implements PEFundService {
 //
 //            totalGrossTvpi = totalTotalValue/-totalInvestedAmount;
 //
-//            performanceDtoList.add(new PEFundCompaniesPerformanceDto(grossCfDtoList.get(grossCfDtoList.size() - 1).getCompanyName(), Math.round(-cashInvested),
+//            performanceDtoList.add(new PECompanyPerformanceDto(grossCfDtoList.get(grossCfDtoList.size() - 1).getCompanyName(), Math.round(-cashInvested),
 //                    Math.round(realized), Math.round(unrealized), Math.round(totalValue*100)/100.00, Math.round(-multiple*100)/100.00,
 //                    Math.round(((grossIrr - 1) * 100)*100)/100.00));
 //

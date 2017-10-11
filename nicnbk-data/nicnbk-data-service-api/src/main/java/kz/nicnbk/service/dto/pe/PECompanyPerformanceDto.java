@@ -1,7 +1,7 @@
 package kz.nicnbk.service.dto.pe;
 
 import kz.nicnbk.common.service.model.BaseEntityDto;
-import kz.nicnbk.repo.model.pe.PEFundCompaniesPerformance;
+import kz.nicnbk.repo.model.pe.PECompanyPerformance;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
@@ -9,7 +9,7 @@ import java.util.Date;
 /**
  * Created by zhambyl on 09-Jan-17.
  */
-public class PEFundCompaniesPerformanceDto extends BaseEntityDto<PEFundCompaniesPerformance> implements Comparable<PEFundCompaniesPerformanceDto> {
+public class PECompanyPerformanceDto extends BaseEntityDto<PECompanyPerformance> implements Comparable<PECompanyPerformanceDto> {
 
     @DateTimeFormat(pattern="dd-MM-yyyy")
     private Date date;
@@ -24,7 +24,7 @@ public class PEFundCompaniesPerformanceDto extends BaseEntityDto<PEFundCompanies
     private Double netIrr;
 //    private PEFundDto fund;
 
-    public PEFundCompaniesPerformanceDto(String companyName, Double invested, Double realized, Double unrealized, Double totalValue, Double multiple, Double grossIrr, Double netIrr) {
+    public PECompanyPerformanceDto(String companyName, Double invested, Double realized, Double unrealized, Double totalValue, Double multiple, Double grossIrr, Double netIrr) {
         this.companyName = companyName;
         this.invested = invested;
         this.realized = realized;
@@ -35,7 +35,7 @@ public class PEFundCompaniesPerformanceDto extends BaseEntityDto<PEFundCompanies
         this.netIrr = netIrr;
     }
 
-    public PEFundCompaniesPerformanceDto(){
+    public PECompanyPerformanceDto(){
 
     }
 
@@ -120,7 +120,7 @@ public class PEFundCompaniesPerformanceDto extends BaseEntityDto<PEFundCompanies
     }
 
     @Override
-    public int compareTo(PEFundCompaniesPerformanceDto dto) {
+    public int compareTo(PECompanyPerformanceDto dto) {
         return this.date.compareTo(dto.getDate());
     }
 }

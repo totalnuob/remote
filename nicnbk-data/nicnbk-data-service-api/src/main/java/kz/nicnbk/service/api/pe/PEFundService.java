@@ -2,7 +2,7 @@ package kz.nicnbk.service.api.pe;
 
 import kz.nicnbk.service.api.base.BaseService;
 import kz.nicnbk.service.dto.common.StatusResultDto;
-import kz.nicnbk.service.dto.pe.PEFundCompaniesPerformanceDto;
+import kz.nicnbk.service.dto.pe.PECompanyPerformanceDto;
 import kz.nicnbk.service.dto.pe.PEFundDto;
 import kz.nicnbk.service.dto.pe.PEFundTrackRecordResultDto;
 import kz.nicnbk.service.dto.pe.PEGrossCashflowDto;
@@ -16,9 +16,9 @@ public interface PEFundService extends BaseService {
 
     Long save(PEFundDto fundDto, String username);
 
-    StatusResultDto savePerformance(List<PEFundCompaniesPerformanceDto> performanceDtoList, Long fundId, String username);
+    StatusResultDto savePerformance(List<PECompanyPerformanceDto> performanceDtoList, Long fundId, String username);
 
-    PEFundTrackRecordResultDto savePerformanceAndRecalculateStatistics(List<PEFundCompaniesPerformanceDto> performanceDtoList, Long fundId, String username);
+    PEFundTrackRecordResultDto savePerformanceAndRecalculateStatistics(List<PECompanyPerformanceDto> performanceDtoList, Long fundId, String username);
 
     StatusResultDto saveGrossCF(List<PEGrossCashflowDto> grossCashflowDtoList, Long fundId, String username);
 

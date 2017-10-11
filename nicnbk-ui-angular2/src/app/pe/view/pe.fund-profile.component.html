@@ -654,7 +654,7 @@
                             <th>Gross IRR</th>
                             <th>Net IRR</th>
                         </tr>
-                        <tr *ngFor="let performance of fund.fundCompanyPerformance">
+                        <tr *ngFor="let performance of fund.companyPerformance">
                             <td>
                                 <input type="text" class="form-control" name="companyName" [(ngModel)]="performance.companyName" placeholder="-" pattern="[A-Za-z0-9]{1,20}" #companyName="ngModel"/>
                                 <div [hidden]="companyName.valid || companyName.pristine" class="alert alert-danger">

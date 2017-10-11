@@ -63,7 +63,7 @@ export class PEFund {
 
     grossCashflow = [];
     netCashflow = [];
-    fundCompanyPerformance = [];
+    companyPerformance = [];
 
     predecessorInvestedPct: number;
     openingSchedule: string;
