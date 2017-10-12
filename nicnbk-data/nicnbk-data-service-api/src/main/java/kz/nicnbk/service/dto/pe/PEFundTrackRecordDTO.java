@@ -21,12 +21,11 @@ public class PEFundTrackRecordDto {
     private Double benchmarkNetIrr;
     private Double benchmarkNetTvpi;
     private String benchmarkName;
-    private PEFirmDto firm;
 
     public PEFundTrackRecordDto() {
     }
 
-    public PEFundTrackRecordDto(Integer numberOfInvestments, Double investedAmount, Double realized, Double unrealized, Double dpi, Double netIrr, Double netTvpi, Double grossIrr, Double grossTvpi, Date asOfDate, Double benchmarkNetIrr, Double benchmarkNetTvpi, String benchmarkName, PEFirmDto firm) {
+    public PEFundTrackRecordDto(Integer numberOfInvestments, Double investedAmount, Double realized, Double unrealized, Double dpi, Double netIrr, Double netTvpi, Double grossIrr, Double grossTvpi, Date asOfDate, Double benchmarkNetIrr, Double benchmarkNetTvpi, String benchmarkName) {
         this.numberOfInvestments = numberOfInvestments;
         this.investedAmount = investedAmount;
         this.realized = realized;
@@ -40,7 +39,6 @@ public class PEFundTrackRecordDto {
         this.benchmarkNetIrr = benchmarkNetIrr;
         this.benchmarkNetTvpi = benchmarkNetTvpi;
         this.benchmarkName = benchmarkName;
-        this.firm = firm;
     }
 
     public Integer getNumberOfInvestments() {
@@ -145,13 +143,5 @@ public class PEFundTrackRecordDto {
 
     public void setBenchmarkName(String benchmarkName) {
         this.benchmarkName = benchmarkName;
-    }
-
-    public PEFirmDto getFirm() {
-        return firm;
-    }
-
-    public void setFirm(PEFirmDto firm) {
-        this.firm = firm;
     }
 }
