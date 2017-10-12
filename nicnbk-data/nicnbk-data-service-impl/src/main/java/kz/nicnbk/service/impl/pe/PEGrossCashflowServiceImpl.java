@@ -56,6 +56,9 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
             }
 
             for (PEGrossCashflowDto cashflowDto : cashflowDtoList) {
+                if (cashflowDto.getCompanyName() != null) {
+                    cashflowDto.setCompanyName(cashflowDto.getCompanyName().trim());
+                }
                 if (cashflowDto.getCompanyName() == null ||
                         cashflowDto.getCompanyName().equals("") ||
                         cashflowDto.getDate() == null) {
