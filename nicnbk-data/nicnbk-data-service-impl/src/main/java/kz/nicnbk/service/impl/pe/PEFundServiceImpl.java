@@ -214,17 +214,30 @@ public class PEFundServiceImpl implements PEFundService {
     }
 
     @Override
-    public PEFundTrackRecordResultDto savePerformanceAndRecalculateStatistics(List<PECompanyPerformanceDto> performanceDtoList, Long fundId, String updater) {
+    public PECompanyPerformanceAndFundTrackRecordResultDto savePerformanceAndRecalculateStatistics(List<PECompanyPerformanceDto> performanceDtoList, Long fundId, String updater) {
 
-        StatusResultDto resultDto = this.savePerformance(performanceDtoList, fundId, updater);
+        PECompanyPerformanceResultDto performanceResultDto = this.savePerformance(performanceDtoList, fundId, updater);
 
-        if (resultDto.getStatus().getCode().equals("FAIL")) {
-            return new PEFundTrackRecordResultDto(
+        if (performanceResultDto.getStatus().equals(StatusResultType.FAIL)) {
+            return new PECompanyPerformanceAndFundTrackRecordResultDto(
+                    new ArrayList<>(),
                     new PEFundTrackRecordDto(),
-                    resultDto.getStatus(), resultDto.getMessageRu(), resultDto.getMessageEn(), resultDto.getMessageKz());
+                    performanceResultDto.getStatus(), performanceResultDto.getMessageRu(), performanceResultDto.getMessageEn(), performanceResultDto.getMessageKz());
         }
 
-        return this.recalculateStatistics(fundId);
+        PEFundTrackRecordResultDto trackRecordResultDto = this.recalculateStatistics(fundId);
+
+        if (trackRecordResultDto.getStatus().equals(StatusResultType.FAIL)) {
+            return new PECompanyPerformanceAndFundTrackRecordResultDto(
+                    new ArrayList<>(),
+                    new PEFundTrackRecordDto(),
+                    trackRecordResultDto.getStatus(), trackRecordResultDto.getMessageRu(), trackRecordResultDto.getMessageEn(), trackRecordResultDto.getMessageKz());
+        }
+
+        return new PECompanyPerformanceAndFundTrackRecordResultDto(
+                performanceResultDto.getPerformanceDtoList(),
+                trackRecordResultDto.getTrackRecordDTO(),
+                StatusResultType.SUCCESS, "", "Successfully saved PE fund's company performance and updated key statistics", "");
     }
 
     @Override

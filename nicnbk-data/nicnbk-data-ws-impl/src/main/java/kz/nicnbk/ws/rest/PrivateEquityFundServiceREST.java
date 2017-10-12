@@ -80,7 +80,7 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
-        PEFundTrackRecordResultDto resultDto = this.service.savePerformanceAndRecalculateStatistics(performanceDtoList, fundId, username);
+        PECompanyPerformanceAndFundTrackRecordResultDto resultDto = this.service.savePerformanceAndRecalculateStatistics(performanceDtoList, fundId, username);
 
         if (resultDto.getStatus().equals(StatusResultType.SUCCESS)) {
             return new ResponseEntity<>(resultDto, null, HttpStatus.OK);

@@ -115,7 +115,7 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
             }
 
             resultDto.setStatus(StatusResultType.SUCCESS);
-            resultDto.setMessageEn("Successfully saved fund's company performance");
+            resultDto.setMessageEn("Successfully saved PE fund's company performance");
             return new PECompanyPerformanceResultDto(performanceDtoList, resultDto.getStatus(), resultDto.getMessageRu(), resultDto.getMessageEn(), resultDto.getMessageKz());
         } catch (Exception ex) {
             logger.error("Error saving PE fund's company performance: " + fundId, ex);

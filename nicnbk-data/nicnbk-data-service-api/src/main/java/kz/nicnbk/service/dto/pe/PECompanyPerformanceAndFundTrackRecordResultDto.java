@@ -8,24 +8,13 @@ import java.util.List;
 /**
  * Created by Pak on 12.10.2017.
  */
-public class PECompanyPerformanceAndFundTrackRecordResultDto extends StatusResultDto {
-
-    private List<PECompanyPerformanceDto> performanceDtoList;
+public class PECompanyPerformanceAndFundTrackRecordResultDto extends PECompanyPerformanceResultDto {
 
     private PEFundTrackRecordDto trackRecordDTO;
 
     public PECompanyPerformanceAndFundTrackRecordResultDto(List<PECompanyPerformanceDto> performanceDtoList, PEFundTrackRecordDto trackRecordDTO, StatusResultType status, String messageRu, String messageEn, String messageKz) {
-        super(status, messageRu, messageEn, messageKz);
-        this.performanceDtoList = performanceDtoList;
+        super(performanceDtoList, status, messageRu, messageEn, messageKz);
         this.trackRecordDTO = trackRecordDTO;
-    }
-
-    public List<PECompanyPerformanceDto> getPerformanceDtoList() {
-        return performanceDtoList;
-    }
-
-    public void setPerformanceDtoList(List<PECompanyPerformanceDto> performanceDtoList) {
-        this.performanceDtoList = performanceDtoList;
     }
 
     public PEFundTrackRecordDto getTrackRecordDTO() {
