@@ -212,8 +212,8 @@ public class PEFundServiceImpl implements PEFundService {
 
         if (performanceResultDto.getStatus().equals(StatusResultType.FAIL)) {
             return new PECompanyPerformanceAndFundTrackRecordResultDto(
-                    new ArrayList<>(),
                     new PEFundTrackRecordDto(),
+                    new ArrayList<>(),
                     performanceResultDto.getStatus(), performanceResultDto.getMessageRu(), performanceResultDto.getMessageEn(), performanceResultDto.getMessageKz());
         }
 
@@ -221,14 +221,14 @@ public class PEFundServiceImpl implements PEFundService {
 
         if (trackRecordResultDto.getStatus().equals(StatusResultType.FAIL)) {
             return new PECompanyPerformanceAndFundTrackRecordResultDto(
-                    new ArrayList<>(),
                     new PEFundTrackRecordDto(),
+                    new ArrayList<>(),
                     trackRecordResultDto.getStatus(), trackRecordResultDto.getMessageRu(), trackRecordResultDto.getMessageEn(), trackRecordResultDto.getMessageKz());
         }
 
         return new PECompanyPerformanceAndFundTrackRecordResultDto(
-                performanceResultDto.getPerformanceDtoList(),
                 trackRecordResultDto.getTrackRecordDTO(),
+                performanceResultDto.getPerformanceDtoList(),
                 StatusResultType.SUCCESS, "", "Successfully saved PE fund's company performance and updated key statistics", "");
     }
 

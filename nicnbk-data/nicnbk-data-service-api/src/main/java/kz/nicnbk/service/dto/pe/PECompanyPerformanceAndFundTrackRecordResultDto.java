@@ -1,6 +1,5 @@
 package kz.nicnbk.service.dto.pe;
 
-import kz.nicnbk.service.dto.common.StatusResultDto;
 import kz.nicnbk.service.dto.common.StatusResultType;
 
 import java.util.List;
@@ -12,7 +11,7 @@ public class PECompanyPerformanceAndFundTrackRecordResultDto extends PECompanyPe
 
     private PEFundTrackRecordDto trackRecordDTO;
 
-    public PECompanyPerformanceAndFundTrackRecordResultDto(List<PECompanyPerformanceDto> performanceDtoList, PEFundTrackRecordDto trackRecordDTO, StatusResultType status, String messageRu, String messageEn, String messageKz) {
+    public PECompanyPerformanceAndFundTrackRecordResultDto(PEFundTrackRecordDto trackRecordDTO, List<PECompanyPerformanceDto> performanceDtoList, StatusResultType status, String messageRu, String messageEn, String messageKz) {
         super(performanceDtoList, status, messageRu, messageEn, messageKz);
         this.trackRecordDTO = trackRecordDTO;
     }
