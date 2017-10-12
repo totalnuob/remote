@@ -6,12 +6,16 @@ import kz.nicnbk.repo.model.pe.PECompanyPerformance;
 import kz.nicnbk.service.api.pe.PECompanyPerformanceService;
 import kz.nicnbk.service.api.pe.PEFundService;
 import kz.nicnbk.service.converter.pe.PECompanyPerformanceEntityConverter;
+import kz.nicnbk.service.dto.common.StatusResultDto;
+import kz.nicnbk.service.dto.common.StatusResultType;
 import kz.nicnbk.service.dto.pe.PECompanyPerformanceDto;
+import kz.nicnbk.service.dto.pe.PECompanyPerformanceResultDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -44,22 +48,31 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
     }
 
     @Override
-    public String saveList(List<PECompanyPerformanceDto> performanceDtoList, Long fundId) {
+    public PECompanyPerformanceResultDto saveList(List<PECompanyPerformanceDto> performanceDtoList, Long fundId) {
+
+        StatusResultDto resultDto = new StatusResultDto(StatusResultType.FAIL, "", "", "");
+
         try {
             if (performanceDtoList == null || fundId == null) {
-                return "Don't send NULL!";
+                resultDto.setStatus(StatusResultType.FAIL);
+                resultDto.setMessageEn("Don't send NULL!");
+                return new PECompanyPerformanceResultDto(new ArrayList<>(), resultDto.getStatus(), resultDto.getMessageRu(), resultDto.getMessageEn(), resultDto.getMessageKz());
             }
 
             for (PECompanyPerformanceDto performanceDto : performanceDtoList) {
                 if (performanceDto.getCompanyName() == null || performanceDto.getCompanyName().equals("")) {
-                    return "Don't send null or empty company name!";
+                    resultDto.setStatus(StatusResultType.FAIL);
+                    resultDto.setMessageEn("Don't send null or empty company name!");
+                    return new PECompanyPerformanceResultDto(new ArrayList<>(), resultDto.getStatus(), resultDto.getMessageRu(), resultDto.getMessageEn(), resultDto.getMessageKz());
                 }
                 if ((performanceDto.getInvested() != null && performanceDto.getInvested() < 0) ||
                         (performanceDto.getRealized() != null && performanceDto.getRealized() < 0) ||
                         (performanceDto.getUnrealized() != null && performanceDto.getUnrealized() < 0) ||
                         (performanceDto.getTotalValue() != null && performanceDto.getTotalValue() < 0) ||
                         (performanceDto.getMultiple() != null && performanceDto.getMultiple() < 0)) {
-                    return "Don't send negative numbers!";
+                    resultDto.setStatus(StatusResultType.FAIL);
+                    resultDto.setMessageEn("Don't send negative numbers!");
+                    return new PECompanyPerformanceResultDto(new ArrayList<>(), resultDto.getStatus(), resultDto.getMessageRu(), resultDto.getMessageEn(), resultDto.getMessageKz());
                 }
             }
 
@@ -71,25 +84,53 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
                     }
                 }
                 if (i > 1) {
-                    return "Names must be unique!";
+                    resultDto.setStatus(StatusResultType.FAIL);
+                    resultDto.setMessageEn("Names must be unique!");
+                    return new PECompanyPerformanceResultDto(new ArrayList<>(), resultDto.getStatus(), resultDto.getMessageRu(), resultDto.getMessageEn(), resultDto.getMessageKz());
                 }
             }
 
             if (this.peFundService.get(fundId) == null) {
-                return "Fund doesn't exist!";
+                resultDto.setStatus(StatusResultType.FAIL);
+                resultDto.setMessageEn("Fund doesn't exist!");
+                return new PECompanyPerformanceResultDto(new ArrayList<>(), resultDto.getStatus(), resultDto.getMessageRu(), resultDto.getMessageEn(), resultDto.getMessageKz());
             }
 
-            this.deleteByFundId(fundId);
+//            this.deleteByFundId(fundId);
+            for (PECompanyPerformance performance: this.repository.getEntitiesByFundId(fundId)) {
+                int i = 0;
+                for (PECompanyPerformanceDto performanceDto : performanceDtoList) {
+                    if (performance.getId().equals(performanceDto.getId())) {
+                        i++;
+                        break;
+                    }
+                }
+                if ( i != 1) {
+                    this.repository.delete(performance);
+                }
+            }
 
             for (PECompanyPerformanceDto performanceDto : performanceDtoList) {
-                this.save(performanceDto, fundId);
+                Long id = this.save(performanceDto, fundId);
+                if (id == null) {
+                    resultDto.setStatus(StatusResultType.FAIL);
+                    resultDto.setMessageEn("Error saving PE fund's company performance");
+                    return new PECompanyPerformanceResultDto(new ArrayList<>(), resultDto.getStatus(), resultDto.getMessageRu(), resultDto.getMessageEn(), resultDto.getMessageKz());
+                } else {
+                    performanceDto.setId(id);
+                }
             }
 
-            return "Ok";
+            resultDto.setStatus(StatusResultType.SUCCESS);
+            resultDto.setMessageEn("Successfully saved fund's company performance");
+            return new PECompanyPerformanceResultDto(performanceDtoList, resultDto.getStatus(), resultDto.getMessageRu(), resultDto.getMessageEn(), resultDto.getMessageKz());
         } catch (Exception ex) {
             logger.error("Error saving PE fund's company performance: " + fundId, ex);
+
+            resultDto.setStatus(StatusResultType.FAIL);
+            resultDto.setMessageEn("Error saving PE fund's company performance");
+            return new PECompanyPerformanceResultDto(new ArrayList<>(), resultDto.getStatus(), resultDto.getMessageRu(), resultDto.getMessageEn(), resultDto.getMessageKz());
         }
-        return "Error";
     }
 
     @Override

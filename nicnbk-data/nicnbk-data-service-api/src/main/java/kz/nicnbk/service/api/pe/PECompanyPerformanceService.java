@@ -1,6 +1,7 @@
 package kz.nicnbk.service.api.pe;
 
 import kz.nicnbk.service.dto.pe.PECompanyPerformanceDto;
+import kz.nicnbk.service.dto.pe.PECompanyPerformanceResultDto;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ public interface PECompanyPerformanceService {
 
     Long save(PECompanyPerformanceDto performanceDto, Long fundId);
 
-    String saveList(List<PECompanyPerformanceDto> performanceDtoList, Long fundId);
+    PECompanyPerformanceResultDto saveList(List<PECompanyPerformanceDto> performanceDtoList, Long fundId);
 
     List<PECompanyPerformanceDto> findByFundId(Long fundId);
 

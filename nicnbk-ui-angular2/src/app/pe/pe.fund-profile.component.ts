@@ -248,6 +248,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                 (response: SaveResponse) => {
                     this.postAction(response.messageEn, null);
 
+                    this.fund.companyPerformance = response.performanceDtoList;
+
                     this.fund.autoCalculation = false;
                 },
                 (error: ErrorResponse) => {
@@ -484,7 +486,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
 
     addRowPerformance(){
         //console.log(this.fund.companyPerformance);
-        this.fund.companyPerformance.push({companyName:"", invested:"", realized:"", unrealized:"", totalValue:"", multiple:"", grossIrr:"", netIrr:""});
+        this.fund.companyPerformance.push({id:"", companyName:"", invested:"", realized:"", unrealized:"", totalValue:"", multiple:"", grossIrr:"", netIrr:""});
     }
 
     removeRowPerformance(item){

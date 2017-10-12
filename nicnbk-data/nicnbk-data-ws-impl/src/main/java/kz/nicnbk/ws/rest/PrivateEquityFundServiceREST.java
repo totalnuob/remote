@@ -60,14 +60,14 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
     }
 
     @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
-    @RequestMapping(value = "/save/{fundId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/savePerformance/{fundId}", method = RequestMethod.POST)
     public ResponseEntity<?> savePerformance(@RequestBody List<PECompanyPerformanceDto> performanceDtoList, @PathVariable Long fundId) {
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
-        StatusResultDto resultDto = this.service.savePerformance(performanceDtoList, fundId, username);
+        PECompanyPerformanceResultDto resultDto = this.service.savePerformance(performanceDtoList, fundId, username);
 
-        if (resultDto.getStatus().getCode().equals("SUCCESS")) {
+        if (resultDto.getStatus().equals(StatusResultType.SUCCESS)) {
             return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -75,14 +75,14 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
     }
 
     @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
-    @RequestMapping(value = "/save/{fundId}/recalculate", method = RequestMethod.POST)
+    @RequestMapping(value = "/savePerformance/{fundId}/recalculate", method = RequestMethod.POST)
     public ResponseEntity<?> savePerformanceAndRecalculateStatistics(@RequestBody List<PECompanyPerformanceDto> performanceDtoList, @PathVariable Long fundId) {
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
         PEFundTrackRecordResultDto resultDto = this.service.savePerformanceAndRecalculateStatistics(performanceDtoList, fundId, username);
 
-        if (resultDto.getStatus().getCode().equals("SUCCESS")) {
+        if (resultDto.getStatus().equals(StatusResultType.SUCCESS)) {
             return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -97,7 +97,7 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
 
         StatusResultDto resultDto = this.service.saveGrossCF(grossCashflowDtoList, fundId, username);
 
-        if (resultDto.getStatus().getCode().equals("SUCCESS")) {
+        if (resultDto.getStatus().equals(StatusResultType.SUCCESS)) {
             return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);

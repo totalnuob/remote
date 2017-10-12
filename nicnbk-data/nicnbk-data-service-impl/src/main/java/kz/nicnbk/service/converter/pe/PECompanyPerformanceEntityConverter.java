@@ -13,14 +13,11 @@ public class PECompanyPerformanceEntityConverter extends BaseDozerEntityConverte
 
     @Override
     public PECompanyPerformance assemble(PECompanyPerformanceDto dto){
-        PECompanyPerformance entity = super.assemble(dto);
-        entity.setId(null);
-        return entity;
+        return super.assemble(dto);
     }
 
     @Override
     public PECompanyPerformanceDto disassemble(PECompanyPerformance entity){
-        PECompanyPerformanceDto dto = super.disassemble(entity);
-        return dto;
+        return super.disassemble(entity);
     }
 }

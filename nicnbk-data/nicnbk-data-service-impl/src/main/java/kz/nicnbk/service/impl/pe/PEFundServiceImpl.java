@@ -5,6 +5,7 @@ import kz.nicnbk.repo.api.pe.PEFundRepository;
 import kz.nicnbk.repo.api.pe.PEGrossCashflowRepository;
 import kz.nicnbk.repo.api.pe.PENetCashflowRepository;
 import kz.nicnbk.repo.model.employee.Employee;
+import kz.nicnbk.repo.model.pe.PECompanyPerformance;
 import kz.nicnbk.repo.model.pe.PEFund;
 import kz.nicnbk.repo.model.pe.PEGrossCashflow;
 import kz.nicnbk.repo.model.pe.PENetCashflow;
@@ -128,32 +129,26 @@ public class PEFundServiceImpl implements PEFundService {
     }
 
     @Override
-    public StatusResultDto savePerformance(List<PECompanyPerformanceDto> performanceDtoList, Long fundId, String updater) {
+    public PECompanyPerformanceResultDto savePerformance(List<PECompanyPerformanceDto> performanceDtoList, Long fundId, String updater) {
 
-        StatusResultDto resultDto = new StatusResultDto(StatusResultType.FAIL, "", "", "");
+        PECompanyPerformanceResultDto resultDto = this.performanceService.saveList(performanceDtoList, fundId);
+        if (resultDto.getStatus().equals(StatusResultType.FAIL)) {
+            return resultDto;
+        }
 
         try {
-            String saveResponse = this.performanceService.saveList(performanceDtoList, fundId);
-            if (!saveResponse.equals("Ok")) {
-                resultDto.setStatus(StatusResultType.FAIL);
-                resultDto.setMessageEn(saveResponse);
-                return resultDto;
-            }
-
             PEFund fund = peFundRepository.findOne(fundId);
             fund.setAutoCalculation(false);
             peFundRepository.save(fund);
 
             logger.info("PE fund's company performance updated: " + fundId + ", by " + updater);
 
-            resultDto.setStatus(StatusResultType.SUCCESS);
-            resultDto.setMessageEn("Successfully saved fund's company performance");
             return resultDto;
         } catch (Exception ex) {
             logger.error("Error saving PE fund's company performance: " + fundId ,ex);
 
             resultDto.setStatus(StatusResultType.FAIL);
-            resultDto.setMessageEn("Error saving fund's company performance");
+            resultDto.setMessageEn("Error saving PE fund's company performance");
             return resultDto;
         }
     }
