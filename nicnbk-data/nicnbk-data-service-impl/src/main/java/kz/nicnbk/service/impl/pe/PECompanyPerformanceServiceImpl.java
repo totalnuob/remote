@@ -96,7 +96,6 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
                 return new PECompanyPerformanceResultDto(new ArrayList<>(), resultDto.getStatus(), resultDto.getMessageRu(), resultDto.getMessageEn(), resultDto.getMessageKz());
             }
 
-//            this.deleteByFundId(fundId);
             for (PECompanyPerformance performance: this.repository.getEntitiesByFundId(fundId)) {
                 int i = 0;
                 for (PECompanyPerformanceDto performanceDto : performanceDtoList) {
@@ -105,7 +104,7 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
                         break;
                     }
                 }
-                if ( i != 1) {
+                if ( i == 0) {
                     this.repository.delete(performance);
                 }
             }
