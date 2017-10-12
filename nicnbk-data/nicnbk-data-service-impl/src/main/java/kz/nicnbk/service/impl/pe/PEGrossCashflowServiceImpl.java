@@ -107,7 +107,7 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
                 }
             }
 
-            return new PEGrossCashflowResultDto(new ArrayList<>(), StatusResultType.SUCCESS, "", "Successfully saved PE fund's gross cash flow", "");
+            return new PEGrossCashflowResultDto(cashflowDtoList, StatusResultType.SUCCESS, "", "Successfully saved PE fund's gross cash flow", "");
         } catch (Exception ex) {
             logger.error("Error saving PE fund's gross cash flow: " + fundId, ex);
             return new PEGrossCashflowResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error saving PE fund's gross cash flow", "");

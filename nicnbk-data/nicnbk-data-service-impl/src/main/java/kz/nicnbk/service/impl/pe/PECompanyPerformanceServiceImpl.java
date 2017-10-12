@@ -6,7 +6,6 @@ import kz.nicnbk.repo.model.pe.PECompanyPerformance;
 import kz.nicnbk.service.api.pe.PECompanyPerformanceService;
 import kz.nicnbk.service.api.pe.PEFundService;
 import kz.nicnbk.service.converter.pe.PECompanyPerformanceEntityConverter;
-import kz.nicnbk.service.dto.common.StatusResultDto;
 import kz.nicnbk.service.dto.common.StatusResultType;
 import kz.nicnbk.service.dto.pe.PECompanyPerformanceDto;
 import kz.nicnbk.service.dto.pe.PECompanyPerformanceResultDto;
