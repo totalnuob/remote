@@ -266,6 +266,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                 (response) => {
                     this.postAction(response.messageEn, null);
 
+                    this.fund.companyPerformance = response.performanceDtoList;
+
                     this.fund.numberOfInvestments = response.trackRecordDTO.numberOfInvestments;
                     this.fund.investedAmount = response.trackRecordDTO.investedAmount;
                     this.fund.realized = response.trackRecordDTO.realized;
