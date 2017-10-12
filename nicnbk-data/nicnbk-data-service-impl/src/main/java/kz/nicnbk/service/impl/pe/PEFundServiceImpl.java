@@ -246,6 +246,11 @@ public class PEFundServiceImpl implements PEFundService {
     }
 
     @Override
+    public PEGrossCashflowAndCompanyPerformanceResultDto saveGrossCFAndRecalculatePerformance(List<PEGrossCashflowDto> grossCashflowDtoList, Long fundId, String updater) {
+        return null;
+    }
+
+    @Override
     public List<PEFundDto> loadFirmFunds(Long firmId, boolean report) {
         try {
             Page<PEFund> page = this.peFundRepository.findByFirmId(firmId, new PageRequest(0, 10, new Sort(Sort.Direction.ASC, "vintage")));
