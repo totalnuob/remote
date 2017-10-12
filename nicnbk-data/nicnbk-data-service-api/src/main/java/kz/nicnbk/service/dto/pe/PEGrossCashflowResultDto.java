@@ -1,7 +1,7 @@
 package kz.nicnbk.service.dto.pe;
 
-import kz.nicnbk.repo.model.pe.PEGrossCashflow;
 import kz.nicnbk.service.dto.common.StatusResultDto;
+import kz.nicnbk.service.dto.common.StatusResultType;
 
 import java.util.List;
 
@@ -11,6 +11,11 @@ import java.util.List;
 public class PEGrossCashflowResultDto extends StatusResultDto {
 
     private List<PEGrossCashflowDto> cashflowDtoList;
+
+    public PEGrossCashflowResultDto (List<PEGrossCashflowDto> cashflowDtoList, StatusResultType status, String messageRu, String messageEn, String messageKz) {
+        super(status, messageRu, messageEn, messageKz);
+        this.cashflowDtoList = cashflowDtoList;
+    }
 
     public List<PEGrossCashflowDto> getCashflowDtoList() {
         return cashflowDtoList;
