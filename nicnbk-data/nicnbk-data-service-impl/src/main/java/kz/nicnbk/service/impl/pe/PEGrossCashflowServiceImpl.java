@@ -94,6 +94,11 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
             logger.error("Error saving PE fund's gross cash flow: " + fundId, ex);
         }
         return "Error";
+
+
+
+        resultDto.setMessageEn("Successfully saved PE fund's gross cash flow");
+        resultDto.setMessageEn("Error saving fund's gross cash flow");
     }
 
     @Override

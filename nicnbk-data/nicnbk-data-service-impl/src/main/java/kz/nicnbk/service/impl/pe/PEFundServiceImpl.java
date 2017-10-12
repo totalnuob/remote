@@ -243,9 +243,6 @@ public class PEFundServiceImpl implements PEFundService {
         }
 
         return resultDto;
-
-        resultDto.setMessageEn("Successfully saved PE fund's gross cash flow");
-        resultDto.setMessageEn("Error saving fund's gross cash flow");
     }
 
     @Override
