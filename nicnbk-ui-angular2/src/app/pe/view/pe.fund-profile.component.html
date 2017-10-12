@@ -816,19 +816,15 @@
                             </td>
 
                             <td>
-                                <input type="text" class="form-control" name="grossCF" [(ngModel)]="cf.grossCF" placeholder="-" pattern="[-]?[0-9]*\.?[0-9]+" #grossCF="ngModel"/>
+                                <input type="text" class="form-control" name="grossCF" [(ngModel)]="cf.grossCF" placeholder="-" pattern="[-]?[0-9]*\.?[0-9]+" [disabled]="cf.autoCalculation" #grossCF="ngModel"/>
                                 <div [hidden]="grossCF.valid || grossCF.pristine" class="alert alert-danger">
                                     Only number could be entered
                                 </div>
                             </td>
 
-                            <div class="onoffswitch">
-                                <input type="checkbox" class="onoffswitch-checkbox" id="myonoffswitch1" [(ngModel)]="cf.autoCalculation" (ngModelChange)="autoCalculationGrossCF()" checked>
-                                <label class="onoffswitch-label" for="myonoffswitch1">
-                                    <span class="onoffswitch-inner"></span>
-                                    <span class="onoffswitch-switch"></span>
-                                </label>
-                            </div>
+                            <td>
+                                <input type="checkbox" [(ngModel)]="cf.autoCalculation" (ngModelChange)="autoCalculationGrossCF()">
+                            </td>
 
                             <td>
                                 <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRowGrossCF(cf)">
