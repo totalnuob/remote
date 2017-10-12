@@ -246,7 +246,16 @@ public class PEFundServiceImpl implements PEFundService {
     }
 
     @Override
-    public PEGrossCashflowAndCompanyPerformanceResultDto saveGrossCFAndRecalculatePerformance(List<PEGrossCashflowDto> grossCashflowDtoList, Long fundId, String updater) {
+    public PEGrossCashflowAndCompanyPerformanceResultDto saveGrossCFAndRecalculatePerformance(List<PEGrossCashflowDto> cashflowDtoList, Long fundId, String updater) {
+
+        PEGrossCashflowResultDto grossCFResultDto = this.saveGrossCF(cashflowDtoList, fundId, updater);
+        if (grossCFResultDto.getStatus().equals(StatusResultType.FAIL)) {
+            return new PEGrossCashflowAndCompanyPerformanceResultDto(
+                    new ArrayList<>(),
+                    new ArrayList<>(),
+                    grossCFResultDto.getStatus(), grossCFResultDto.getMessageRu(), grossCFResultDto.getMessageEn(), grossCFResultDto.getMessageKz());
+        }
+
         return null;
     }
 
