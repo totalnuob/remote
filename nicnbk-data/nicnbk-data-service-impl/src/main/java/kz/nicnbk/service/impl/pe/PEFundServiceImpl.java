@@ -153,14 +153,10 @@ public class PEFundServiceImpl implements PEFundService {
 
     @Override
     public PEFundTrackRecordResultDto recalculateStatistics(Long fundId) {
-
-        StatusResultDto resultDto = new StatusResultDto(StatusResultType.FAIL, "", "", "");
-
         try {
             PEFund fund = this.peFundRepository.findOne(fundId);
             if (fund == null) {
-                resultDto.setMessageEn("Fund doesn't exist!");
-                return new PEFundTrackRecordResultDto(new PEFundTrackRecordDto(), resultDto.getStatus(), resultDto.getMessageRu(), resultDto.getMessageEn(), resultDto.getMessageKz());
+                return new PEFundTrackRecordResultDto(new PEFundTrackRecordDto(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");
             }
 
             fund.setNumberOfInvestments(0);
@@ -192,8 +188,6 @@ public class PEFundServiceImpl implements PEFundService {
             fund.setAutoCalculation(true);
             peFundRepository.save(fund);
 
-            resultDto.setStatus(StatusResultType.SUCCESS);
-            resultDto.setMessageEn("Successfully updated PE fund's key statistics");
             return new PEFundTrackRecordResultDto(
                     new PEFundTrackRecordDto(
                             fund.getNumberOfInvestments(),
@@ -204,12 +198,10 @@ public class PEFundServiceImpl implements PEFundService {
                             null, null, null,
                             fund.getGrossTvpi(),
                             null, null, null, null, null),
-                    resultDto.getStatus(), resultDto.getMessageRu(), resultDto.getMessageEn(), resultDto.getMessageKz());
+                    StatusResultType.SUCCESS, "", "Successfully updated PE fund's key statistics", "");
         } catch (Exception ex) {
             logger.error("Error updating PE fund's key statistics: " + fundId ,ex);
-            resultDto.setStatus(StatusResultType.FAIL);
-            resultDto.setMessageEn("Error updating PE fund's key statistics");
-            return new PEFundTrackRecordResultDto(new PEFundTrackRecordDto(), resultDto.getStatus(), resultDto.getMessageRu(), resultDto.getMessageEn(), resultDto.getMessageKz());
+            return new PEFundTrackRecordResultDto(new PEFundTrackRecordDto(), StatusResultType.FAIL, "", "Error updating PE fund's key statistics", "");
         }
     }
 
