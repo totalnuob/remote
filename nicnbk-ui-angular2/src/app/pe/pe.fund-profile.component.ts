@@ -531,10 +531,14 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
         return this.moduleAccessChecker.checkAccessPrivateEquityEditor();
     }
 
-    autoCalculationToggle() {
+    autoCalculationStatistics() {
         if (this.fund.autoCalculation) {
             this.savePerformanceAndRecalculateStatistics();
         }
+    }
+
+    autoCalculationGrossCF() {
+        console.log('1111111111111111111111111');
     }
 
     fileChange(files: any){

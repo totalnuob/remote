@@ -335,7 +335,7 @@
                                 <h4>Key fund statistics</h4>
                                 <h5>Auto calculation</h5>
                                 <div class="onoffswitch">
-                                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" [(ngModel)]="fund.autoCalculation" (ngModelChange)="autoCalculationToggle()" unchecked>
+                                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" [(ngModel)]="fund.autoCalculation" (ngModelChange)="autoCalculationStatistics()" unchecked>
                                     <label class="onoffswitch-label" for="myonoffswitch">
                                         <span class="onoffswitch-inner"></span>
                                         <span class="onoffswitch-switch"></span>
@@ -774,6 +774,7 @@
                             <th>Realized value</th>
                             <th>Unrealized value</th>
                             <th>Gross Cash Flow</th>
+                            <th>Auto calculation of the Gross Cash Flow</th>
                         </tr>
                         <tr *ngFor="let cf of fund.grossCashflow">
                             <td>
@@ -820,6 +821,14 @@
                                     Only number could be entered
                                 </div>
                             </td>
+
+                            <div class="onoffswitch">
+                                <input type="checkbox" class="onoffswitch-checkbox" id="myonoffswitch1" [(ngModel)]="cf.autoCalculation" (ngModelChange)="autoCalculationGrossCF()" checked>
+                                <label class="onoffswitch-label" for="myonoffswitch1">
+                                    <span class="onoffswitch-inner"></span>
+                                    <span class="onoffswitch-switch"></span>
+                                </label>
+                            </div>
 
                             <td>
                                 <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRowGrossCF(cf)">
