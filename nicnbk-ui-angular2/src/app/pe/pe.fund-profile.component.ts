@@ -539,7 +539,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
 
     autoCalculationGrossCF(item) {
         if (item.autoCalculation) {
-            item.grossCF = item.invested + item.realized + item.unrealized;
+            item.grossCF = Number(item.invested) + Number(item.realized) + Number(item.unrealized);
         }
     }
 
