@@ -846,6 +846,9 @@
                                 <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="saveGrossCF()" [disabled]="fund.id == 0 || fund.id == null">
                                     SAVE
                                 </button>
+                                <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="saveGrossCFAndRecalculatePerformance()" [disabled]="fund.id == 0 || fund.id == null">
+                                    SAVE and RECALCULATE the Key Fund Statistics
+                                </button>
                             </div>
                         </div>
                     </div>
