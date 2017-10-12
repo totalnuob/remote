@@ -54,6 +54,9 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
             }
 
             for (PECompanyPerformanceDto performanceDto : performanceDtoList) {
+                if (performanceDto.getCompanyName() != null) {
+                    performanceDto.setCompanyName(performanceDto.getCompanyName().trim());
+                }
                 if (performanceDto.getCompanyName() == null || performanceDto.getCompanyName().equals("")) {
                     return new PECompanyPerformanceResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Don't send null or empty company name!", "");
                 }
