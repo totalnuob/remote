@@ -197,7 +197,7 @@ public class PEFundServiceImpl implements PEFundService {
                             fund.getDpi(),
                             null, null, null,
                             fund.getGrossTvpi(),
-                            null, null, null, null, null),
+                            null, null, null, null),
                     StatusResultType.SUCCESS, "", "Successfully updated PE fund's key statistics", "");
         } catch (Exception ex) {
             logger.error("Error updating PE fund's key statistics: " + fundId ,ex);
@@ -233,28 +233,19 @@ public class PEFundServiceImpl implements PEFundService {
     }
 
     @Override
-    public StatusResultDto saveGrossCF(List<PEGrossCashflowDto> cashflowDtoList, Long fundId, String updater) {
+    public PEGrossCashflowResultDto saveGrossCF(List<PEGrossCashflowDto> cashflowDtoList, Long fundId, String updater) {
 
-        StatusResultDto resultDto = new StatusResultDto(StatusResultType.FAIL, "", "", "");
-
-        try {
-            String saveResponse = this.grossCFService.saveList(cashflowDtoList, fundId);
-            if (!saveResponse.equals("Ok")) {
-                resultDto.setStatus(StatusResultType.FAIL);
-                resultDto.setMessageEn(saveResponse);
-                return resultDto;
-            }
-
+        PEGrossCashflowResultDto resultDto = this.grossCFService.saveList(cashflowDtoList, fundId);
+        if (resultDto.getStatus().equals(StatusResultType.FAIL)) {
+            logger.error("Error saving PE fund's gross cash flow: " + fundId);
+        } else {
             logger.info("PE fund's gross cash flow updated: " + fundId + ", by " + updater);
-            resultDto.setStatus(StatusResultType.SUCCESS);
-            resultDto.setMessageEn("Successfully saved fund's gross cash flow");
-            return resultDto;
-        } catch (Exception ex) {
-            logger.error("Error saving PE fund's gross cash flow: " + fundId ,ex);
-            resultDto.setStatus(StatusResultType.FAIL);
-            resultDto.setMessageEn("Error saving fund's gross cash flow");
-            return resultDto;
         }
+
+        return resultDto;
+
+        resultDto.setMessageEn("Successfully saved PE fund's gross cash flow");
+        resultDto.setMessageEn("Error saving fund's gross cash flow");
     }
 
     @Override

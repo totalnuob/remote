@@ -7,6 +7,7 @@ import kz.nicnbk.service.api.pe.PEFundService;
 import kz.nicnbk.service.api.pe.PEGrossCashflowService;
 import kz.nicnbk.service.converter.pe.PEGrossCashflowEntityConverter;
 import kz.nicnbk.service.dto.pe.PEGrossCashflowDto;
+import kz.nicnbk.service.dto.pe.PEGrossCashflowResultDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,7 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
     }
 
     @Override
-    public String saveList(List<PEGrossCashflowDto> cashflowDtoList, Long fundId) {
+    public PEGrossCashflowResultDto saveList(List<PEGrossCashflowDto> cashflowDtoList, Long fundId) {
         try {
             if (cashflowDtoList == null || fundId == null) {
                 return "Don't send NULL!";

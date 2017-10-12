@@ -95,7 +95,7 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
-        StatusResultDto resultDto = this.service.saveGrossCF(grossCashflowDtoList, fundId, username);
+        PEGrossCashflowResultDto resultDto = this.service.saveGrossCF(grossCashflowDtoList, fundId, username);
 
         if (resultDto.getStatus().equals(StatusResultType.SUCCESS)) {
             return new ResponseEntity<>(resultDto, null, HttpStatus.OK);

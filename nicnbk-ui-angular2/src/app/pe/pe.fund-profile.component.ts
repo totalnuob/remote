@@ -290,6 +290,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
             .subscribe(
                 (response) => {
                     this.postAction(response.messageEn, null);
+
+                    this.fund.grossCashflow = response.cashflowDtoList;
                 },
                 (error: ErrorResponse) => {
                     this.processErrorMessage(error);
@@ -470,7 +472,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
 
     addRowGrossCF(){
         //console.log(this.fund.grossCashflow);
-        this.fund.grossCashflow.push({companyName:"", date:"", invested:"", realized:"", unrealized:"", grossCF:""});
+        this.fund.grossCashflow.push({id:"", companyName:"", date:"", invested:"", realized:"", unrealized:"", grossCF:""});
     }
 
     removeRowGrossCF(item){
