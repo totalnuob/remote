@@ -19,7 +19,8 @@ public class PEGrossCashflow extends BaseEntity {
     private Double realized;
     private Double unrealized;
     private Double grossCF;
-    private Double irr;
+    private Boolean autoCalculation;
+//    private Double irr;
     private PEFund fund;
 
     public String getCompanyName() {
@@ -70,13 +71,21 @@ public class PEGrossCashflow extends BaseEntity {
         this.grossCF = grossCF;
     }
 
-    public Double getIrr() {
-        return irr;
+    public Boolean getAutoCalculation() {
+        return autoCalculation;
     }
 
-    public void setIrr(Double irr) {
-        this.irr = irr;
+    public void setAutoCalculation(Boolean autoCalculation) {
+        this.autoCalculation = autoCalculation;
     }
+
+//    public Double getIrr() {
+//        return irr;
+//    }
+//
+//    public void setIrr(Double irr) {
+//        this.irr = irr;
+//    }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="fund_id", nullable = false)

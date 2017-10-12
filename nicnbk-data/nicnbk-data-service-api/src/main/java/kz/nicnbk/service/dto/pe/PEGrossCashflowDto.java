@@ -20,6 +20,7 @@ public class PEGrossCashflowDto extends BaseEntityDto<PEGrossCashflow> implement
     private Double realized;
     private Double unrealized;
     private Double grossCF;
+    private Boolean autoCalculation;
 //    private Double irr;
 //    private PEFundDto fund;
 
@@ -71,7 +72,15 @@ public class PEGrossCashflowDto extends BaseEntityDto<PEGrossCashflow> implement
         this.grossCF = grossCF;
     }
 
-//    public Double getIrr() {
+    public Boolean getAutoCalculation() {
+        return autoCalculation;
+    }
+
+    public void setAutoCalculation(Boolean autoCalculation) {
+        this.autoCalculation = autoCalculation;
+    }
+
+    //    public Double getIrr() {
 //        return irr;
 //    }
 
