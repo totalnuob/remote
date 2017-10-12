@@ -142,7 +142,6 @@ public class PEFundServiceImpl implements PEFundService {
             peFundRepository.save(fund);
 
             logger.info("PE fund's company performance updated: " + fundId + ", by " + updater);
-
             return resultDto;
         } catch (Exception ex) {
             logger.error("Error saving PE fund's company performance: " + fundId ,ex);
@@ -212,7 +211,6 @@ public class PEFundServiceImpl implements PEFundService {
                     resultDto.getStatus(), resultDto.getMessageRu(), resultDto.getMessageEn(), resultDto.getMessageKz());
         } catch (Exception ex) {
             logger.error("Error updating PE fund's key statistics: " + fundId ,ex);
-
             resultDto.setStatus(StatusResultType.FAIL);
             resultDto.setMessageEn("Error updating PE fund's key statistics");
             return new PEFundTrackRecordResultDto(
