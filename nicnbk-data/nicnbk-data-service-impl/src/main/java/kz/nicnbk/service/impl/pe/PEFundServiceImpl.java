@@ -145,7 +145,6 @@ public class PEFundServiceImpl implements PEFundService {
             return resultDto;
         } catch (Exception ex) {
             logger.error("Error saving PE fund's company performance: " + fundId ,ex);
-
             resultDto.setStatus(StatusResultType.FAIL);
             resultDto.setMessageEn("Error saving PE fund's company performance");
             return resultDto;
@@ -160,11 +159,8 @@ public class PEFundServiceImpl implements PEFundService {
         try {
             PEFund fund = this.peFundRepository.findOne(fundId);
             if (fund == null) {
-                resultDto.setStatus(StatusResultType.FAIL);
                 resultDto.setMessageEn("Fund doesn't exist!");
-                return new PEFundTrackRecordResultDto(
-                        new PEFundTrackRecordDto(),
-                        resultDto.getStatus(), resultDto.getMessageRu(), resultDto.getMessageEn(), resultDto.getMessageKz());
+                return new PEFundTrackRecordResultDto(new PEFundTrackRecordDto(), resultDto.getStatus(), resultDto.getMessageRu(), resultDto.getMessageEn(), resultDto.getMessageKz());
             }
 
             fund.setNumberOfInvestments(0);
@@ -213,9 +209,7 @@ public class PEFundServiceImpl implements PEFundService {
             logger.error("Error updating PE fund's key statistics: " + fundId ,ex);
             resultDto.setStatus(StatusResultType.FAIL);
             resultDto.setMessageEn("Error updating PE fund's key statistics");
-            return new PEFundTrackRecordResultDto(
-                    new PEFundTrackRecordDto(),
-                    resultDto.getStatus(), resultDto.getMessageRu(), resultDto.getMessageEn(), resultDto.getMessageKz());
+            return new PEFundTrackRecordResultDto(new PEFundTrackRecordDto(), resultDto.getStatus(), resultDto.getMessageRu(), resultDto.getMessageEn(), resultDto.getMessageKz());
         }
     }
 
