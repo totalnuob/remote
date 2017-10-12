@@ -54,14 +54,12 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
 
         try {
             if (performanceDtoList == null || fundId == null) {
-                resultDto.setStatus(StatusResultType.FAIL);
                 resultDto.setMessageEn("Don't send NULL!");
                 return new PECompanyPerformanceResultDto(new ArrayList<>(), resultDto.getStatus(), resultDto.getMessageRu(), resultDto.getMessageEn(), resultDto.getMessageKz());
             }
 
             for (PECompanyPerformanceDto performanceDto : performanceDtoList) {
                 if (performanceDto.getCompanyName() == null || performanceDto.getCompanyName().equals("")) {
-                    resultDto.setStatus(StatusResultType.FAIL);
                     resultDto.setMessageEn("Don't send null or empty company name!");
                     return new PECompanyPerformanceResultDto(new ArrayList<>(), resultDto.getStatus(), resultDto.getMessageRu(), resultDto.getMessageEn(), resultDto.getMessageKz());
                 }
@@ -70,7 +68,6 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
                         (performanceDto.getUnrealized() != null && performanceDto.getUnrealized() < 0) ||
                         (performanceDto.getTotalValue() != null && performanceDto.getTotalValue() < 0) ||
                         (performanceDto.getMultiple() != null && performanceDto.getMultiple() < 0)) {
-                    resultDto.setStatus(StatusResultType.FAIL);
                     resultDto.setMessageEn("Don't send negative numbers!");
                     return new PECompanyPerformanceResultDto(new ArrayList<>(), resultDto.getStatus(), resultDto.getMessageRu(), resultDto.getMessageEn(), resultDto.getMessageKz());
                 }
@@ -84,14 +81,12 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
                     }
                 }
                 if (i > 1) {
-                    resultDto.setStatus(StatusResultType.FAIL);
                     resultDto.setMessageEn("Names must be unique!");
                     return new PECompanyPerformanceResultDto(new ArrayList<>(), resultDto.getStatus(), resultDto.getMessageRu(), resultDto.getMessageEn(), resultDto.getMessageKz());
                 }
             }
 
             if (this.peFundService.get(fundId) == null) {
-                resultDto.setStatus(StatusResultType.FAIL);
                 resultDto.setMessageEn("Fund doesn't exist!");
                 return new PECompanyPerformanceResultDto(new ArrayList<>(), resultDto.getStatus(), resultDto.getMessageRu(), resultDto.getMessageEn(), resultDto.getMessageKz());
             }
@@ -112,7 +107,6 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
             for (PECompanyPerformanceDto performanceDto : performanceDtoList) {
                 Long id = this.save(performanceDto, fundId);
                 if (id == null) {
-                    resultDto.setStatus(StatusResultType.FAIL);
                     resultDto.setMessageEn("Error saving PE fund's company performance");
                     return new PECompanyPerformanceResultDto(new ArrayList<>(), resultDto.getStatus(), resultDto.getMessageRu(), resultDto.getMessageEn(), resultDto.getMessageKz());
                 } else {
@@ -125,8 +119,6 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
             return new PECompanyPerformanceResultDto(performanceDtoList, resultDto.getStatus(), resultDto.getMessageRu(), resultDto.getMessageEn(), resultDto.getMessageKz());
         } catch (Exception ex) {
             logger.error("Error saving PE fund's company performance: " + fundId, ex);
-
-            resultDto.setStatus(StatusResultType.FAIL);
             resultDto.setMessageEn("Error saving PE fund's company performance");
             return new PECompanyPerformanceResultDto(new ArrayList<>(), resultDto.getStatus(), resultDto.getMessageRu(), resultDto.getMessageEn(), resultDto.getMessageKz());
         }
