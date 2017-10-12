@@ -59,12 +59,12 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
                 if (cashflowDto.getCompanyName() == null ||
                         cashflowDto.getCompanyName().equals("") ||
                         cashflowDto.getDate() == null) {
-                    return "Don't send null or empty company name or date!";
+                    return new PEGrossCashflowResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Don't send null or empty company name or date!", "");
                 }
                 if ((cashflowDto.getInvested() != null && cashflowDto.getInvested() > 0) ||
                         (cashflowDto.getRealized() != null && cashflowDto.getRealized() < 0) ||
                         (cashflowDto.getUnrealized() != null && cashflowDto.getUnrealized() < 0)) {
-                    return "Check the positiveness of the values!";
+                    return new PEGrossCashflowResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Check the positiveness of the values!", "");
                 }
             }
 
@@ -77,30 +77,41 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
                     }
                 }
                 if (i > 1) {
-                    return "The pairs (\"Company name\", \"Date of transaction\") must be unique!";
+                    return new PEGrossCashflowResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "The pairs (\"Company name\", \"Date of transaction\") must be unique!", "");
                 }
             }
 
             if (this.peFundService.get(fundId) == null) {
-                return "Fund doesn't exist!";
+                return new PEGrossCashflowResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");
             }
 
-            this.deleteByFundId(fundId);
+            for (PEGrossCashflow cashflow : this.repository.getEntitiesByFundId(fundId, new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName", "date")))) {
+                int i = 0;
+                for (PEGrossCashflowDto cashflowDto : cashflowDtoList) {
+                    if (cashflow.getId().equals(cashflowDto.getId())) {
+                        i++;
+                        break;
+                    }
+                }
+                if (i == 0) {
+                    this.repository.delete(cashflow);
+                }
+            }
 
             for (PEGrossCashflowDto cashflowDto : cashflowDtoList) {
-                this.save(cashflowDto, fundId);
+                Long id = this.save(cashflowDto, fundId);
+                if (id == null) {
+                    return new PEGrossCashflowResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error saving PE fund's gross cash flow", "");
+                } else {
+                    cashflowDto.setId(id);
+                }
             }
 
-            return "Ok";
+            return new PEGrossCashflowResultDto(new ArrayList<>(), StatusResultType.SUCCESS, "", "Successfully saved PE fund's gross cash flow", "");
         } catch (Exception ex) {
             logger.error("Error saving PE fund's gross cash flow: " + fundId, ex);
+            return new PEGrossCashflowResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error saving PE fund's gross cash flow", "");
         }
-        return "Error";
-
-
-
-        resultDto.setMessageEn("Successfully saved PE fund's gross cash flow");
-        resultDto.setMessageEn("Error saving fund's gross cash flow");
     }
 
     @Override

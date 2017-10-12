@@ -14,14 +14,11 @@ public class PEGrossCashflowEntityConverter extends BaseDozerEntityConverter<PEG
 
     @Override
     public PEGrossCashflow assemble(PEGrossCashflowDto dto){
-        PEGrossCashflow entity = super.assemble(dto);
-        entity.setId(null);
-        return entity;
+        return super.assemble(dto);
     }
 
     @Override
     public PEGrossCashflowDto disassemble(PEGrossCashflow entity){
-        PEGrossCashflowDto dto = super.disassemble(entity);
-        return dto;
+        return super.disassemble(entity);
     }
 }
