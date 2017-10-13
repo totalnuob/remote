@@ -115,6 +115,11 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
     }
 
     @Override
+    public PECompanyPerformanceResultDto recalculatePerformance(Long fundId) {
+        return null;
+    }
+
+    @Override
     public List<PECompanyPerformanceDto> findByFundId(Long fundId) {
         try {
             return this.converter.disassembleList(this.repository.getEntitiesByFundId(fundId));
