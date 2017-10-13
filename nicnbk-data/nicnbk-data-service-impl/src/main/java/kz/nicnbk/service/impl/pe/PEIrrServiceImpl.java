@@ -41,8 +41,37 @@ public class PEIrrServiceImpl implements PEIrrService {
     @Override
     public Double getIRR(List<PEGrossCashflowDto> cashflowDtoList) {
 
-        getNPV(cashflowDtoList,0.0001);
+        double a = 0.0;
+        double b = 0.0;
 
-        return 1.0;
+        for (int i = 0; i < 1000; i++) {
+            if (i == 999) {
+                return null;
+            }
+            if (getNPV(cashflowDtoList, - i / (double) (1 + i)) > 0) {
+                a = - i / (double) (1 + i);
+                break;
+            }
+        }
+
+        for (int i = 0; i < 1000; i++) {
+            if (i == 999) {
+                return null;
+            }
+            if (getNPV(cashflowDtoList, (double) i ) < 0) {
+                b = (double) i;
+                break;
+            }
+        }
+
+        while (Math.abs(getNPV(cashflowDtoList, a) - getNPV(cashflowDtoList, b)) > 0.000001) {
+            if (getNPV(cashflowDtoList, (a + b) / 2) > 0) {
+                a = (a + b) / 2;
+            } else {
+                b = (a + b) / 2;
+            }
+        }
+
+        return (Math.pow(1 + a, 365.0) - 1) * 100;
     }
 }
