@@ -163,6 +163,14 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
                 }
             }
 
+            for (PECompanyPerformanceDto performanceDto : performanceDtoList) {
+                performanceDto.setTotalValue(
+                        (performanceDto.getRealized() == null ? 0.0 : performanceDto.getRealized()) +
+                        (performanceDto.getUnrealized() == null ? 0.0 : performanceDto.getUnrealized())
+                );
+                performanceDto.setMultiple(performanceDto.getInvested() == null ? null : performanceDto.getTotalValue() / performanceDto.getInvested());
+            }
+
             return saveList(performanceDtoList, fundId);
         } catch (Exception ex) {
             logger.error("Error updating PE fund's company performance: " + fundId ,ex);
