@@ -15,7 +15,6 @@ public class PEIrrServiceImpl implements PEIrrService {
 
     @Override
     public Double getNPV(List<PEGrossCashflowDto> cashflowDtoList, double dailyRate) {
-
         try {
             if (cashflowDtoList == null || dailyRate == -1) {
                 return null;
