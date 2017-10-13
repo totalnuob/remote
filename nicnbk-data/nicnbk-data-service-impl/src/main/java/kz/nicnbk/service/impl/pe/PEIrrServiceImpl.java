@@ -13,7 +13,21 @@ import java.util.List;
 public class PEIrrServiceImpl implements PEIrrService {
 
     @Override
-    public Double getIrr(List<PEGrossCashflowDto> cashflowDtoList) {
+    public Double getNPV(List<PEGrossCashflowDto> cashflowDtoList, double rate) {
+
+        if (rate == -1) {
+            return null;
+        }
+
+
+
+
+
+
+    }
+
+    @Override
+    public Double getIRR(List<PEGrossCashflowDto> cashflowDtoList) {
         return 1.0;
     }
 }

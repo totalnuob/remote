@@ -9,5 +9,7 @@ import java.util.List;
  */
 public interface PEIrrService {
 
-    Double getIrr(List<PEGrossCashflowDto> cashflowDtoList);
+    Double getNPV(List<PEGrossCashflowDto> cashflowDtoList, double rate);
+
+    Double getIRR(List<PEGrossCashflowDto> cashflowDtoList);
 }

@@ -180,7 +180,7 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
                 if (cashflowDtoList == null) {
                     return new PECompanyPerformanceResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error updating PE fund's company performance", "");
                 }
-                performanceDto.setGrossIrr(this.irrService.getIrr(cashflowDtoList));
+                performanceDto.setGrossIrr(this.irrService.getIRR(cashflowDtoList));
             }
 
             return saveList(performanceDtoList, fundId);
