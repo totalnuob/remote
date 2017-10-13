@@ -643,6 +643,19 @@
             <br>
             <div class="row">
                 <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="pull-right">
+                                <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="savePerformance()" [disabled]="fund.id == 0 || fund.id == null">
+                                    SAVE
+                                </button>
+                                <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="savePerformanceAndRecalculateStatistics()" [disabled]="fund.id == 0 || fund.id == null">
+                                    SAVE and RECALCULATE the Key Fund Statistics
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
                     <table class="table table-hover table-responsive" style="font-size: smaller">
                         <tr>
                             <th>Company</th>
@@ -757,11 +770,6 @@
         </div>
         <div id="grossCashflow" class="tab-pane fade">
             <br>
-            <form #yourForm="ngForm" (ngSubmit)="onSubmitGrossCF()" *ngIf="canEdit()">
-                <h4>Upload a new portion of the Gross Cash Flow</h4>
-                <input type="file" #fileupload name="myFile" (change)="fileChange(fileupload.files)"/>
-                <button type="submit" class="btn btn-success" [disabled]="fund.id == 0 || fund.id == null">Submit</button>
-            </form>
             <br>
             <div class="row">
                 <div style="text-align: center">
@@ -771,6 +779,29 @@
             <br>
             <div class="row">
                 <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="pull-left">
+                                <form #yourForm="ngForm" (ngSubmit)="onSubmitGrossCF()" *ngIf="canEdit()">
+                                    <h4>Upload a new portion of the Gross Cash Flow</h4>
+                                    <input type="file" #fileupload name="myFile" (change)="fileChange(fileupload.files)"/>
+                                    <button type="submit" class="btn btn-success" [disabled]="fund.id == 0 || fund.id == null">Submit</button>
+                                </form>
+                            </div>
+                            <br>
+                            <br>
+                            <br>
+                            <div class="pull-right">
+                                <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="saveGrossCF()" [disabled]="fund.id == 0 || fund.id == null">
+                                    SAVE
+                                </button>
+                                <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="saveGrossCFAndRecalculatePerformance()" [disabled]="fund.id == 0 || fund.id == null">
+                                    SAVE and RECALCULATE the Performance
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
                     <table class="table table-hover table-responsive" style="font-size: smaller">
                         <tr>
                             <th>Company name</th>
