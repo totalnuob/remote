@@ -208,7 +208,7 @@ public class PEFundServiceImpl implements PEFundService {
     @Override
     public PECompanyPerformanceAndFundTrackRecordResultDto savePerformanceAndRecalculateStatistics(List<PECompanyPerformanceDto> performanceDtoList, Long fundId, String updater) {
 
-        PECompanyPerformanceResultDto performanceResultDto = this.savePerformance(performanceDtoList, fundId, updater);
+        PECompanyPerformanceResultDto performanceResultDto = savePerformance(performanceDtoList, fundId, updater);
 
         if (performanceResultDto.getStatus().equals(StatusResultType.FAIL)) {
             return new PECompanyPerformanceAndFundTrackRecordResultDto(
@@ -217,7 +217,7 @@ public class PEFundServiceImpl implements PEFundService {
                     StatusResultType.FAIL, performanceResultDto.getMessageRu(), performanceResultDto.getMessageEn(), performanceResultDto.getMessageKz());
         }
 
-        PEFundTrackRecordResultDto trackRecordResultDto = this.recalculateStatistics(fundId);
+        PEFundTrackRecordResultDto trackRecordResultDto = recalculateStatistics(fundId);
 
         if (trackRecordResultDto.getStatus().equals(StatusResultType.FAIL)) {
             return new PECompanyPerformanceAndFundTrackRecordResultDto(
@@ -248,7 +248,7 @@ public class PEFundServiceImpl implements PEFundService {
     @Override
     public PEGrossCashflowAndCompanyPerformanceResultDto saveGrossCFAndRecalculatePerformance(List<PEGrossCashflowDto> cashflowDtoList, Long fundId, String updater) {
 
-        PEGrossCashflowResultDto grossCFResultDto = this.saveGrossCF(cashflowDtoList, fundId, updater);
+        PEGrossCashflowResultDto grossCFResultDto = saveGrossCF(cashflowDtoList, fundId, updater);
 
         if (grossCFResultDto.getStatus().equals(StatusResultType.FAIL)) {
             return new PEGrossCashflowAndCompanyPerformanceResultDto(

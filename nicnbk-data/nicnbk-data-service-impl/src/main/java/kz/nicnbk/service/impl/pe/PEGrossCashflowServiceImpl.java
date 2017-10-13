@@ -102,7 +102,7 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
             }
 
             for (PEGrossCashflowDto cashflowDto : cashflowDtoList) {
-                Long id = this.save(cashflowDto, fundId);
+                Long id = save(cashflowDto, fundId);
                 if (id == null) {
                     return new PEGrossCashflowResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error saving PE fund's gross cash flow", "");
                 } else {
