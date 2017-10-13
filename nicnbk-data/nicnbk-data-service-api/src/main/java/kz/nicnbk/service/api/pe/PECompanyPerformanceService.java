@@ -14,6 +14,8 @@ public interface PECompanyPerformanceService {
 
     PECompanyPerformanceResultDto saveList(List<PECompanyPerformanceDto> performanceDtoList, Long fundId);
 
+    PECompanyPerformanceResultDto recalculatePerformance(Long fundId);
+
     List<PECompanyPerformanceDto> findByFundId(Long fundId);
 
     boolean deleteByFundId(Long fundId);

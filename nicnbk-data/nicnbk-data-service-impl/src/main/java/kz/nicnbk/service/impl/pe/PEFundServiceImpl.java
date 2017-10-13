@@ -214,7 +214,7 @@ public class PEFundServiceImpl implements PEFundService {
             return new PECompanyPerformanceAndFundTrackRecordResultDto(
                     new PEFundTrackRecordDto(),
                     new ArrayList<>(),
-                    performanceResultDto.getStatus(), performanceResultDto.getMessageRu(), performanceResultDto.getMessageEn(), performanceResultDto.getMessageKz());
+                    StatusResultType.FAIL, performanceResultDto.getMessageRu(), performanceResultDto.getMessageEn(), performanceResultDto.getMessageKz());
         }
 
         PEFundTrackRecordResultDto trackRecordResultDto = this.recalculateStatistics(fundId);
@@ -223,7 +223,7 @@ public class PEFundServiceImpl implements PEFundService {
             return new PECompanyPerformanceAndFundTrackRecordResultDto(
                     new PEFundTrackRecordDto(),
                     new ArrayList<>(),
-                    trackRecordResultDto.getStatus(), trackRecordResultDto.getMessageRu(), trackRecordResultDto.getMessageEn(), trackRecordResultDto.getMessageKz());
+                    StatusResultType.FAIL, trackRecordResultDto.getMessageRu(), trackRecordResultDto.getMessageEn(), trackRecordResultDto.getMessageKz());
         }
 
         return new PECompanyPerformanceAndFundTrackRecordResultDto(
@@ -255,6 +255,8 @@ public class PEFundServiceImpl implements PEFundService {
                     new ArrayList<>(),
                     StatusResultType.FAIL, grossCFResultDto.getMessageRu(), grossCFResultDto.getMessageEn(), grossCFResultDto.getMessageKz());
         }
+
+        PECompanyPerformanceResultDto performanceResultDto = this.performanceService.recalculatePerformance(fundId);
 
         return null;
     }
