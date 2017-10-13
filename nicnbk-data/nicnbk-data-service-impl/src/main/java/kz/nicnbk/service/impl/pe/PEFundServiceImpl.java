@@ -253,7 +253,7 @@ public class PEFundServiceImpl implements PEFundService {
             return new PEGrossCashflowAndCompanyPerformanceResultDto(
                     new ArrayList<>(),
                     new ArrayList<>(),
-                    grossCFResultDto.getStatus(), grossCFResultDto.getMessageRu(), grossCFResultDto.getMessageEn(), grossCFResultDto.getMessageKz());
+                    StatusResultType.FAIL, grossCFResultDto.getMessageRu(), grossCFResultDto.getMessageEn(), grossCFResultDto.getMessageKz());
         }
 
         return null;
