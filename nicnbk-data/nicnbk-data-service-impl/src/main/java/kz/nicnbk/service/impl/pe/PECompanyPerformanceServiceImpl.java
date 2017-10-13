@@ -128,35 +128,26 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
                 return new PECompanyPerformanceResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");
             }
 
-            this.deleteByFundId(fundId);
+            deleteByFundId(fundId);
 
             List<PECompanyPerformanceDto> performanceDtoList = new ArrayList<>();
 
             for (PEGrossCashflowDto cashflowDto : this.cashflowService.findByFundId(fundId)) {
                 boolean found = false;
                 for (PECompanyPerformanceDto performanceDto : performanceDtoList) {
-                    if (cashflowDto.getCompanyName().equals(performanceDto.getCompanyName())) {
+                    if (cashflowDto.getCompanyName().equalsIgnoreCase(performanceDto.getCompanyName())) {
                         found = true;
                         if (cashflowDto.getInvested() != null) {
-                            if (performanceDto.getInvested() != null) {
-                                performanceDto.setInvested(performanceDto.getInvested() - cashflowDto.getInvested());
-                            } else {
-                                performanceDto.setInvested(- cashflowDto.getInvested());
-                            }
+                            performanceDto.setInvested(performanceDto.getInvested() != null ?
+                                    (performanceDto.getInvested() - cashflowDto.getInvested()) : - cashflowDto.getInvested());
                         }
                         if (cashflowDto.getRealized() != null) {
-                            if (performanceDto.getRealized() != null) {
-                                performanceDto.setRealized(performanceDto.getRealized() - cashflowDto.getRealized());
-                            } else {
-                                performanceDto.setRealized(- cashflowDto.getRealized());
-                            }
+                            performanceDto.setRealized(performanceDto.getRealized() != null ?
+                                    (performanceDto.getRealized() + cashflowDto.getRealized()) : cashflowDto.getRealized());
                         }
                         if (cashflowDto.getUnrealized() != null) {
-                            if (performanceDto.getUnrealized() != null) {
-                                performanceDto.setUnrealized(performanceDto.getUnrealized() - cashflowDto.getUnrealized());
-                            } else {
-                                performanceDto.setUnrealized(- cashflowDto.getUnrealized());
-                            }
+                            performanceDto.setUnrealized(performanceDto.getUnrealized() != null ?
+                                    (performanceDto.getUnrealized() + cashflowDto.getUnrealized()) : cashflowDto.getUnrealized());
                         }
                         break;
                     }
@@ -165,7 +156,7 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
                     performanceDtoList.add(
                             new PECompanyPerformanceDto(
                                     cashflowDto.getCompanyName(),
-                                    cashflowDto.getInvested(),
+                                    (cashflowDto.getInvested() == null) ? null : - cashflowDto.getInvested(),
                                     cashflowDto.getRealized(),
                                     cashflowDto.getUnrealized(),
                                     null, null, null, null));
