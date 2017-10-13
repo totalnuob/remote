@@ -9,6 +9,7 @@ import kz.nicnbk.service.converter.pe.PECompanyPerformanceEntityConverter;
 import kz.nicnbk.service.dto.common.StatusResultType;
 import kz.nicnbk.service.dto.pe.PECompanyPerformanceDto;
 import kz.nicnbk.service.dto.pe.PECompanyPerformanceResultDto;
+import kz.nicnbk.service.dto.pe.PEFundDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,7 +117,23 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
 
     @Override
     public PECompanyPerformanceResultDto recalculatePerformance(Long fundId) {
-        return null;
+        try {
+            PEFundDto fundDto = this.peFundService.get(fundId);
+            if (fundDto == null) {
+                return new PECompanyPerformanceResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");
+            }
+
+            this.deleteByFundId(fundId);
+
+            List<PECompanyPerformanceDto> performanceDtoList = new ArrayList<>();
+
+            this.saveList(performanceDtoList, fundId);
+
+            return new PECompanyPerformanceResultDto(performanceDtoList, StatusResultType.SUCCESS, "", "Successfully updated PE fund's company performance", "");
+        } catch (Exception ex) {
+            logger.error("Error updating PE fund's company performance: " + fundId ,ex);
+            return new PECompanyPerformanceResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error updating PE fund's company performance", "");
+        }
     }
 
     @Override
