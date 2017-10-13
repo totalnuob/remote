@@ -508,7 +508,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
 
     addRowPerformance(){
         //console.log(this.fund.companyPerformance);
-        this.fund.companyPerformance.push({id:"", companyName:"", invested:"", realized:"", unrealized:"", totalValue:"", multiple:"", grossIrr:"", netIrr:""});
+        this.fund.companyPerformance.push({id:"", companyName:"", invested:"", realized:"", unrealized:"", totalValue:"", multiple:"", autoCalculation:true, grossIrr:"", netIrr:""});
     }
 
     removeRowPerformance(item){

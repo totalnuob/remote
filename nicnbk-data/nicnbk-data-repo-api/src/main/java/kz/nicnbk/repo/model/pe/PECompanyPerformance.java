@@ -20,6 +20,7 @@ public class PECompanyPerformance extends BaseEntity {
     private Double unrealized;
     private Double totalValue;
     private Double multiple;
+    private Boolean autoCalculation;
     private Double grossIrr;
     private Double netIrr;
     private PEFund fund;
@@ -78,6 +79,14 @@ public class PECompanyPerformance extends BaseEntity {
 
     public void setMultiple(Double multiple) {
         this.multiple = multiple;
+    }
+
+    public Boolean getAutoCalculation() {
+        return autoCalculation;
+    }
+
+    public void setAutoCalculation(Boolean autoCalculation) {
+        this.autoCalculation = autoCalculation;
     }
 
     public Double getGrossIrr() {

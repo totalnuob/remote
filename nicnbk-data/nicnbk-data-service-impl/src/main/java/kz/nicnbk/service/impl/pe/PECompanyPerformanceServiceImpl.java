@@ -159,7 +159,7 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
                                     (cashflowDto.getInvested() == null) ? null : - cashflowDto.getInvested(),
                                     cashflowDto.getRealized(),
                                     cashflowDto.getUnrealized(),
-                                    null, null, null, null));
+                                    null, null, true, null, null));
                 }
             }
 

@@ -14,6 +14,7 @@ public class PECompanyPerformanceDto extends BaseEntityDto<PECompanyPerformance>
     private Double unrealized;
     private Double totalValue;
     private Double multiple;
+    private Boolean autoCalculation;
     private Double grossIrr;
     private Double netIrr;
 //    private PEFundDto fund;
@@ -21,13 +22,14 @@ public class PECompanyPerformanceDto extends BaseEntityDto<PECompanyPerformance>
     public PECompanyPerformanceDto() {
     }
 
-    public PECompanyPerformanceDto(String companyName, Double invested, Double realized, Double unrealized, Double totalValue, Double multiple, Double grossIrr, Double netIrr) {
+    public PECompanyPerformanceDto(String companyName, Double invested, Double realized, Double unrealized, Double totalValue, Double multiple, Boolean autoCalculation, Double grossIrr, Double netIrr) {
         this.companyName = companyName;
         this.invested = invested;
         this.realized = realized;
         this.unrealized = unrealized;
         this.totalValue = totalValue;
         this.multiple = multiple;
+        this.autoCalculation = autoCalculation;
         this.grossIrr = grossIrr;
         this.netIrr = netIrr;
     }
@@ -78,6 +80,14 @@ public class PECompanyPerformanceDto extends BaseEntityDto<PECompanyPerformance>
 
     public void setMultiple(Double multiple) {
         this.multiple = multiple;
+    }
+
+    public Boolean getAutoCalculation() {
+        return autoCalculation;
+    }
+
+    public void setAutoCalculation(Boolean autoCalculation) {
+        this.autoCalculation = autoCalculation;
     }
 
     public Double getGrossIrr() {
