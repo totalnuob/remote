@@ -558,7 +558,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     autoCalculationTotalAndMultiple(item) {
         if (item.autoCalculation) {
             item.totalValue = Number(item.realized) + Number(item.unrealized);
-            if (item.invested === null || item.invested === 0) {
+            if (Number(item.invested) === 0) {
                 item.multiple = null;
             } else {
                 item.multiple = Number(item.totalValue) / Number(item.invested);
