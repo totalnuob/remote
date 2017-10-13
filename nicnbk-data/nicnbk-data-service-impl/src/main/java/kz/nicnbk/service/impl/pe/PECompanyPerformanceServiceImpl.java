@@ -1,5 +1,7 @@
 package kz.nicnbk.service.impl.pe;
 
+import in.satpathy.financial.XIRR;
+import in.satpathy.financial.XIRRData;
 import kz.nicnbk.repo.api.pe.PECompanyPerformanceRepository;
 import kz.nicnbk.repo.model.pe.PEFund;
 import kz.nicnbk.repo.model.pe.PECompanyPerformance;
@@ -172,6 +174,9 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
                 );
                 performanceDto.setMultiple(performanceDto.getInvested() == null ? null : performanceDto.getTotalValue() / performanceDto.getInvested());
             }
+
+            XIRR irrCalculator = new XIRR();
+            irrCalculator.xirr(new XIRRData());
 
             return saveList(performanceDtoList, fundId);
         } catch (Exception ex) {
