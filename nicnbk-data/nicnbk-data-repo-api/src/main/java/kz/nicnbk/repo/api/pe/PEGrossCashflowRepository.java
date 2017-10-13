@@ -17,6 +17,9 @@ public interface PEGrossCashflowRepository extends PagingAndSortingRepository<PE
     @Query("SELECT e from pe_gross_cashflow e where e.fund.id=?1")
     List<PEGrossCashflow> getEntitiesByFundId(Long fundId, Pageable pageable);
 
+    @Query("SELECT e from pe_gross_cashflow e where e.fund.id=?1 and e.companyName=?2")
+    List<PEGrossCashflow> getEntitiesByFundIdAndCompanyName(Long fundId, String name, Pageable pageable);
+
     @Modifying
     @Transactional
     @Query("DELETE from pe_gross_cashflow e where e.fund.id=?1")

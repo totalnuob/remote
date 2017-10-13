@@ -168,12 +168,16 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
             for (PECompanyPerformanceDto performanceDto : performanceDtoList) {
                 performanceDto.setTotalValue(
                         (performanceDto.getRealized() == null ? 0.0 : performanceDto.getRealized()) +
-                        (performanceDto.getUnrealized() == null ? 0.0 : performanceDto.getUnrealized())
-                );
+                        (performanceDto.getUnrealized() == null ? 0.0 : performanceDto.getUnrealized()));
+
                 performanceDto.setMultiple(performanceDto.getInvested() == null ? null : performanceDto.getTotalValue() / performanceDto.getInvested());
+
+                List<PEGrossCashflowDto> cashflowDtoList = this.cashflowService.findByFundIdAndCompanyName(fundId, performanceDto.getCompanyName());
+                if (cashflowDtoList == null) {
+                    return new PECompanyPerformanceResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error updating PE fund's company performance", "");
+                }
+                performanceDto.setGrossIrr(null);
             }
-
-
 
             return saveList(performanceDtoList, fundId);
         } catch (Exception ex) {
