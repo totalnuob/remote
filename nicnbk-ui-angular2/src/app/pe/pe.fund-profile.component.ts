@@ -555,6 +555,12 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
         }
     }
 
+    autoCalculationTotalAndMultiple(item) {
+        if (item.autoCalculation) {
+            item.totalValue = Number(item.realized) + Number(item.unrealized);
+        }
+    }
+
     autoCalculationGrossCF(item) {
         if (item.autoCalculation) {
             item.grossCF = Number(item.invested) + Number(item.realized) + Number(item.unrealized);
