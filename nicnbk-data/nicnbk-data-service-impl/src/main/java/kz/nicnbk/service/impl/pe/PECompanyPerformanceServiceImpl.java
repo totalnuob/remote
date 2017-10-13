@@ -105,7 +105,7 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
             }
 
             for (PECompanyPerformanceDto performanceDto : performanceDtoList) {
-                Long id = this.save(performanceDto, fundId);
+                Long id = save(performanceDto, fundId);
                 if (id == null) {
                     return new PECompanyPerformanceResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error saving PE fund's company performance", "");
                 } else {
@@ -163,7 +163,7 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
                 }
             }
 
-            return this.saveList(performanceDtoList, fundId);
+            return saveList(performanceDtoList, fundId);
         } catch (Exception ex) {
             logger.error("Error updating PE fund's company performance: " + fundId ,ex);
             return new PECompanyPerformanceResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error updating PE fund's company performance", "");
