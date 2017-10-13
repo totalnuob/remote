@@ -127,9 +127,7 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
 
             List<PECompanyPerformanceDto> performanceDtoList = new ArrayList<>();
 
-            this.saveList(performanceDtoList, fundId);
-
-            return new PECompanyPerformanceResultDto(performanceDtoList, StatusResultType.SUCCESS, "", "Successfully updated PE fund's company performance", "");
+            return this.saveList(performanceDtoList, fundId);
         } catch (Exception ex) {
             logger.error("Error updating PE fund's company performance: " + fundId ,ex);
             return new PECompanyPerformanceResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error updating PE fund's company performance", "");
