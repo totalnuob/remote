@@ -6,6 +6,7 @@ import kz.nicnbk.repo.model.pe.PECompanyPerformance;
 import kz.nicnbk.service.api.pe.PECompanyPerformanceService;
 import kz.nicnbk.service.api.pe.PEFundService;
 import kz.nicnbk.service.api.pe.PEGrossCashflowService;
+import kz.nicnbk.service.api.pe.PEIrrService;
 import kz.nicnbk.service.converter.pe.PECompanyPerformanceEntityConverter;
 import kz.nicnbk.service.dto.common.StatusResultType;
 import kz.nicnbk.service.dto.pe.PECompanyPerformanceDto;
@@ -41,6 +42,9 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
 
     @Autowired
     private PEGrossCashflowService cashflowService;
+
+    @Autowired
+    private PEIrrService irrService;
 
     @Override
     public Long save(PECompanyPerformanceDto performanceDto, Long fundId) {
@@ -176,7 +180,7 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
                 if (cashflowDtoList == null) {
                     return new PECompanyPerformanceResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error updating PE fund's company performance", "");
                 }
-                performanceDto.setGrossIrr(null);
+                performanceDto.setGrossIrr(this.irrService.getIrr(cashflowDtoList));
             }
 
             return saveList(performanceDtoList, fundId);
