@@ -15,6 +15,8 @@ import kz.nicnbk.service.dto.pe.PEGrossCashflowDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -181,7 +183,7 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
     @Override
     public List<PECompanyPerformanceDto> findByFundId(Long fundId) {
         try {
-            return this.converter.disassembleList(this.repository.getEntitiesByFundId(fundId));
+            return this.converter.disassembleList(this.repository.getEntitiesByFundId(fundId, new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName"))));
         } catch (Exception ex) {
             logger.error("Error loading PE fund's company performance: " + fundId, ex);
         }
