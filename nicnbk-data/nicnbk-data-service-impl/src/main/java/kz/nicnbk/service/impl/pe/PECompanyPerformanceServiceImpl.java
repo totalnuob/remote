@@ -5,11 +5,13 @@ import kz.nicnbk.repo.model.pe.PEFund;
 import kz.nicnbk.repo.model.pe.PECompanyPerformance;
 import kz.nicnbk.service.api.pe.PECompanyPerformanceService;
 import kz.nicnbk.service.api.pe.PEFundService;
+import kz.nicnbk.service.api.pe.PEGrossCashflowService;
 import kz.nicnbk.service.converter.pe.PECompanyPerformanceEntityConverter;
 import kz.nicnbk.service.dto.common.StatusResultType;
 import kz.nicnbk.service.dto.pe.PECompanyPerformanceDto;
 import kz.nicnbk.service.dto.pe.PECompanyPerformanceResultDto;
 import kz.nicnbk.service.dto.pe.PEFundDto;
+import kz.nicnbk.service.dto.pe.PEGrossCashflowDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,9 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
 
     @Autowired
     private PEFundService peFundService;
+
+    @Autowired
+    private PEGrossCashflowService cashflowService;
 
     @Override
     public Long save(PECompanyPerformanceDto performanceDto, Long fundId) {
@@ -126,6 +131,46 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
             this.deleteByFundId(fundId);
 
             List<PECompanyPerformanceDto> performanceDtoList = new ArrayList<>();
+
+            for (PEGrossCashflowDto cashflowDto : this.cashflowService.findByFundId(fundId)) {
+                int i = 0;
+                for (PECompanyPerformanceDto performanceDto : performanceDtoList) {
+                    i++;
+                    if (cashflowDto.getCompanyName().equals(performanceDto.getCompanyName())) {
+                        if (cashflowDto.getInvested() != null) {
+                            if (performanceDto.getInvested() != null) {
+                                performanceDto.setInvested(performanceDto.getInvested() - cashflowDto.getInvested());
+                            } else {
+                                performanceDto.setInvested(- cashflowDto.getInvested());
+                            }
+                        }
+                        if (cashflowDto.getRealized() != null) {
+                            if (performanceDto.getRealized() != null) {
+                                performanceDto.setRealized(performanceDto.getRealized() - cashflowDto.getRealized());
+                            } else {
+                                performanceDto.setRealized(- cashflowDto.getRealized());
+                            }
+                        }
+                        if (cashflowDto.getUnrealized() != null) {
+                            if (performanceDto.getUnrealized() != null) {
+                                performanceDto.setUnrealized(performanceDto.getUnrealized() - cashflowDto.getUnrealized());
+                            } else {
+                                performanceDto.setUnrealized(- cashflowDto.getUnrealized());
+                            }
+                        }
+                        break;
+                    }
+                    if (i == performanceDtoList.size()) {
+                        performanceDtoList.add(
+                                new PECompanyPerformanceDto(
+                                        cashflowDto.getCompanyName(),
+                                        cashflowDto.getInvested(),
+                                        cashflowDto.getRealized(),
+                                        cashflowDto.getUnrealized(),
+                                        null, null, null, null));
+                    }
+                }
+            }
 
             return this.saveList(performanceDtoList, fundId);
         } catch (Exception ex) {
