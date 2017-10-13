@@ -133,10 +133,10 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
             List<PECompanyPerformanceDto> performanceDtoList = new ArrayList<>();
 
             for (PEGrossCashflowDto cashflowDto : this.cashflowService.findByFundId(fundId)) {
-                int i = 0;
+                boolean found = false;
                 for (PECompanyPerformanceDto performanceDto : performanceDtoList) {
-                    i++;
                     if (cashflowDto.getCompanyName().equals(performanceDto.getCompanyName())) {
+                        found = true;
                         if (cashflowDto.getInvested() != null) {
                             if (performanceDto.getInvested() != null) {
                                 performanceDto.setInvested(performanceDto.getInvested() - cashflowDto.getInvested());
@@ -160,15 +160,15 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
                         }
                         break;
                     }
-                    if (i == performanceDtoList.size()) {
-                        performanceDtoList.add(
-                                new PECompanyPerformanceDto(
-                                        cashflowDto.getCompanyName(),
-                                        cashflowDto.getInvested(),
-                                        cashflowDto.getRealized(),
-                                        cashflowDto.getUnrealized(),
-                                        null, null, null, null));
-                    }
+                }
+                if (found == false) {
+                    performanceDtoList.add(
+                            new PECompanyPerformanceDto(
+                                    cashflowDto.getCompanyName(),
+                                    cashflowDto.getInvested(),
+                                    cashflowDto.getRealized(),
+                                    cashflowDto.getUnrealized(),
+                                    null, null, null, null));
                 }
             }
 
