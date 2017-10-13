@@ -249,6 +249,7 @@ public class PEFundServiceImpl implements PEFundService {
     public PEGrossCashflowAndCompanyPerformanceResultDto saveGrossCFAndRecalculatePerformance(List<PEGrossCashflowDto> cashflowDtoList, Long fundId, String updater) {
 
         PEGrossCashflowResultDto grossCFResultDto = this.saveGrossCF(cashflowDtoList, fundId, updater);
+
         if (grossCFResultDto.getStatus().equals(StatusResultType.FAIL)) {
             return new PEGrossCashflowAndCompanyPerformanceResultDto(
                     new ArrayList<>(),
@@ -258,7 +259,17 @@ public class PEFundServiceImpl implements PEFundService {
 
         PECompanyPerformanceResultDto performanceResultDto = this.performanceService.recalculatePerformance(fundId);
 
-        return null;
+        if (performanceResultDto.getStatus().equals(StatusResultType.FAIL)) {
+            return new PEGrossCashflowAndCompanyPerformanceResultDto(
+                    new ArrayList<>(),
+                    new ArrayList<>(),
+                    StatusResultType.FAIL, performanceResultDto.getMessageRu(), performanceResultDto.getMessageEn(), performanceResultDto.getMessageKz());
+        }
+
+        return new PEGrossCashflowAndCompanyPerformanceResultDto(
+                performanceResultDto.getPerformanceDtoList(),
+                grossCFResultDto.getCashflowDtoList(),
+                StatusResultType.SUCCESS, "", "Successfully saved PE fund's gross cash flow and updated company performance", "");
     }
 
     @Override
