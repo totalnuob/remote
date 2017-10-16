@@ -20,13 +20,13 @@ public class PEIrrServiceImpl implements PEIrrService {
                 return null;
             }
 
-            double sum = 0.0;
-
             if (cashflowDtoList.isEmpty()) {
-                return sum;
+                return 0.0;
             }
 
             Date initialDate = cashflowDtoList.get(0).getDate();
+
+            double sum = 0.0;
 
             for (PEGrossCashflowDto cashflowDto : cashflowDtoList) {
                 if (cashflowDto.getDate() == null) {
@@ -95,7 +95,8 @@ public class PEIrrServiceImpl implements PEIrrService {
                 }
             }
 
-            return Math.round((Math.pow(1 + a, 365.0) - 1) * 10000) / 100.0;
+            return (Math.pow(1 + a, 365.0) - 1) * 100;
+//            return Math.round((Math.pow(1 + a, 365.0) - 1) * 10000) / 100.0;
         }
 
         return null;
