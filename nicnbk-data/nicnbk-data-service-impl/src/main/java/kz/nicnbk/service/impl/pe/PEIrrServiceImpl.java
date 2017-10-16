@@ -56,6 +56,14 @@ public class PEIrrServiceImpl implements PEIrrService {
             }
         }
 
+        for (int i = 0; i < 100; i++) {
+            Double npv = getNPV(cashflowDtoList, (double) i );
+            if ( npv != null && npv <= 0) {
+                b = (double) i;
+                break;
+            }
+        }
+
         // long search
         if (a == null) {
             for (long i = 0; i < 2 * N; i++) {
@@ -67,15 +75,6 @@ public class PEIrrServiceImpl implements PEIrrService {
             }
         }
 
-        for (int i = 0; i < 100; i++) {
-            Double npv = getNPV(cashflowDtoList, (double) i );
-            if ( npv != null && npv <= 0) {
-                b = (double) i;
-                break;
-            }
-        }
-
-        // long search
         if (b == null) {
             for (long i = 0; i < 2 * N; i++) {
                 Double npv = getNPV(cashflowDtoList, i / (double) N - 1);
