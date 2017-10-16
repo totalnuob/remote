@@ -48,7 +48,7 @@ public class PEIrrServiceImpl implements PEIrrService {
                     if (cashflowDto.getGrossCF() != null) {
                         BigDecimal bigDecimalCF = new BigDecimal(cashflowDto.getGrossCF()).setScale(2000, BigDecimal.ROUND_HALF_UP);
                         double power = Math.pow(1 + dailyRate, (cashflowDto.getDate().getTime() - initialDate.getTime()) / 86400000);
-                        if (bigDecimalCF.doubleValue() == 0 || Double.isInfinite(power)) {
+                        if (bigDecimalCF.doubleValue() == 0.0 || Double.isInfinite(power)) {
                             continue;
                         }
                         BigDecimal bigDecimalPower = new BigDecimal(power).setScale(1000, BigDecimal.ROUND_HALF_UP);
