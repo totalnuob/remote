@@ -47,6 +47,7 @@ public class PEIrrServiceImpl implements PEIrrService {
                         System.out.println(cashflowDto.getDate());
                         System.out.println(dailyRate);
                         System.out.println((cashflowDto.getDate().getTime() - initialDate.getTime()) / 86400000);
+                        System.out.println(Math.pow(1 + dailyRate, (cashflowDto.getDate().getTime() - initialDate.getTime()) / 86400000));
                         BigDecimal a = new BigDecimal(Math.pow(1 + dailyRate, (cashflowDto.getDate().getTime() - initialDate.getTime()) / 86400000)).setScale(10, BigDecimal.ROUND_HALF_UP);
                         BigDecimal b = new BigDecimal(cashflowDto.getGrossCF()).setScale(100, BigDecimal.ROUND_HALF_UP);
                         BigDecimal c = b.divide(a, 10, BigDecimal.ROUND_HALF_UP);
