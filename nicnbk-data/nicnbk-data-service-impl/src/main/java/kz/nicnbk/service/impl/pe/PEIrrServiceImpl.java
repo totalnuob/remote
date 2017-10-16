@@ -65,7 +65,7 @@ public class PEIrrServiceImpl implements PEIrrService {
 
         if (a != null && b != null) {
 //            while (Math.abs(getNPV(cashflowDtoList, a) - getNPV(cashflowDtoList, b)) > 0.000001)
-            while (b - a > 0.0000000000000001) {
+            while (Math.abs(b - a) > 0.0000000000000001) {
                 if (getNPV(cashflowDtoList, (a + b) / 2) >= 0) {
                     a = (a + b) / 2;
                 } else {
