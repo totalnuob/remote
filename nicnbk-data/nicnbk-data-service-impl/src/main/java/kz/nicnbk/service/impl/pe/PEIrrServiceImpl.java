@@ -27,7 +27,7 @@ public class PEIrrServiceImpl implements PEIrrService {
 
             Date initialDate = cashflowDtoList.get(0).getDate();
 
-            double sum = 0.0;
+            double doubleSum = 0.0;
             BigDecimal bigDecimalSum = new BigDecimal(0);
 
             for (PEGrossCashflowDto cashflowDto : cashflowDtoList) {
@@ -35,7 +35,7 @@ public class PEIrrServiceImpl implements PEIrrService {
                     return null;
                 }
                 if (cashflowDto.getGrossCF() != null) {
-                    sum += cashflowDto.getGrossCF() / Math.pow(1 + dailyRate, (cashflowDto.getDate().getTime() - initialDate.getTime()) / 86400000);
+                    doubleSum += cashflowDto.getGrossCF() / Math.pow(1 + dailyRate, (cashflowDto.getDate().getTime() - initialDate.getTime()) / 86400000);
                     BigDecimal a = new BigDecimal(Math.pow(1 + dailyRate, (cashflowDto.getDate().getTime() - initialDate.getTime()) / 86400000));
                     BigDecimal b = new BigDecimal(cashflowDto.getGrossCF()).divide(a, 100, BigDecimal.ROUND_CEILING);
                     bigDecimalSum = bigDecimalSum.add(b);
@@ -43,7 +43,7 @@ public class PEIrrServiceImpl implements PEIrrService {
             }
 
 //            return bigDecimalSum.doubleValue();
-            return sum;
+            return doubleSum;
         } catch (Exception ex) {
             return null;
         }
