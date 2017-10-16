@@ -37,7 +37,7 @@ public class PEIrrServiceImpl implements PEIrrService {
                 if (cashflowDto.getGrossCF() != null) {
                     sum += cashflowDto.getGrossCF() / Math.pow(1 + dailyRate, (cashflowDto.getDate().getTime() - initialDate.getTime()) / 86400000);
                     BigDecimal a = new BigDecimal(Math.pow(1 + dailyRate, (cashflowDto.getDate().getTime() - initialDate.getTime()) / 86400000));
-                    BigDecimal b = new BigDecimal(cashflowDto.getGrossCF()).divide(a);
+                    BigDecimal b = new BigDecimal(cashflowDto.getGrossCF()).divide(a, 100, BigDecimal.ROUND_CEILING);
                     bigDecimalSum = bigDecimalSum.add(b);
                 }
             }
@@ -74,25 +74,25 @@ public class PEIrrServiceImpl implements PEIrrService {
         }
 
         // deep search
-        if (a == null) {
-            for (long i = 0; i < 2 * N; i++) {
-                Double npv = getNPV(cashflowDtoList, i / (double) N - 1);
-                if ( npv != null && npv >= 0) {
-                    a = i / (double) N - 1;
-                    break;
-                }
-            }
-        }
-
-        if (b == null) {
-            for (long i = 0; i < 2 * N; i++) {
-                Double npv = getNPV(cashflowDtoList, i / (double) N - 1);
-                if ( npv != null && npv <= 0) {
-                    b = i / (double) N - 1;
-                    break;
-                }
-            }
-        }
+//        if (a == null) {
+//            for (long i = 0; i < 2 * N; i++) {
+//                Double npv = getNPV(cashflowDtoList, i / (double) N - 1);
+//                if ( npv != null && npv >= 0) {
+//                    a = i / (double) N - 1;
+//                    break;
+//                }
+//            }
+//        }
+//
+//        if (b == null) {
+//            for (long i = 0; i < 2 * N; i++) {
+//                Double npv = getNPV(cashflowDtoList, i / (double) N - 1);
+//                if ( npv != null && npv <= 0) {
+//                    b = i / (double) N - 1;
+//                    break;
+//                }
+//            }
+//        }
 
         if (a != null && b != null) {
             while (Math.abs(b - a) > 0.0000000000000001) {
