@@ -4,6 +4,7 @@ import kz.nicnbk.service.api.pe.PEIrrService;
 import kz.nicnbk.service.dto.pe.PEGrossCashflowDto;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -27,14 +28,21 @@ public class PEIrrServiceImpl implements PEIrrService {
             Date initialDate = cashflowDtoList.get(0).getDate();
 
             double sum = 0.0;
+            BigDecimal bigDecimalSum = new BigDecimal(0);
 
             for (PEGrossCashflowDto cashflowDto : cashflowDtoList) {
                 if (cashflowDto.getDate() == null) {
                     return null;
                 }
-                sum += cashflowDto.getGrossCF() == null ? 0.0 : cashflowDto.getGrossCF() / Math.pow(1 + dailyRate, (cashflowDto.getDate().getTime() - initialDate.getTime()) / 86400000);
+                if (cashflowDto.getGrossCF() != null) {
+                    sum += cashflowDto.getGrossCF() / Math.pow(1 + dailyRate, (cashflowDto.getDate().getTime() - initialDate.getTime()) / 86400000);
+                    BigDecimal a = new BigDecimal(Math.pow(1 + dailyRate, (cashflowDto.getDate().getTime() - initialDate.getTime()) / 86400000));
+                    BigDecimal b = new BigDecimal(cashflowDto.getGrossCF()).divide(a);
+                    bigDecimalSum = bigDecimalSum.add(b);
+                }
             }
 
+//            return bigDecimalSum.doubleValue();
             return sum;
         } catch (Exception ex) {
             return null;
@@ -88,10 +96,13 @@ public class PEIrrServiceImpl implements PEIrrService {
 
         if (a != null && b != null) {
             while (Math.abs(b - a) > 0.0000000000000001) {
-                if (getNPV(cashflowDtoList, (a + b) / 2) >= 0) {
+                Double npv = getNPV(cashflowDtoList, (a + b) / 2);
+                if (npv != null && npv >= 0) {
                     a = (a + b) / 2;
-                } else {
+                } else if (npv != null && npv <= 0) {
                     b = (a + b) / 2;
+                } else {
+                    return null;
                 }
             }
 
