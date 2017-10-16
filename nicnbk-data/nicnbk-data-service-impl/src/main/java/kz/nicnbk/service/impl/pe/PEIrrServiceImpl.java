@@ -51,7 +51,8 @@ public class PEIrrServiceImpl implements PEIrrService {
             if (i == 999) {
                 return null;
             }
-            if (getNPV(cashflowDtoList, - i / (double) (1 + i)) >= 0) {
+            Double npv = getNPV(cashflowDtoList, - i / (double) (1 + i));
+            if ( npv != null && npv >= 0) {
                 a = - i / (double) (1 + i);
                 break;
             }
@@ -61,7 +62,8 @@ public class PEIrrServiceImpl implements PEIrrService {
             if (i == 999) {
                 return null;
             }
-            if (getNPV(cashflowDtoList, (double) i ) <= 0) {
+            Double npv = getNPV(cashflowDtoList, (double) i );
+            if ( npv != null && npv <= 0) {
                 b = (double) i;
                 break;
             }
