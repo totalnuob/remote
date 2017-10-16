@@ -40,7 +40,7 @@ public class PEIrrServiceImpl implements PEIrrService {
 
             BigDecimal bigDecimalSum = new BigDecimal(0).setScale(10, BigDecimal.ROUND_HALF_UP);
 
-//            try {
+            try {
 //                for (PEGrossCashflowDto cashflowDto : cashflowDtoList) {
 //                    if (cashflowDto.getGrossCF() != null) {
 //                        System.out.println(cashflowDto.getCompanyName());
@@ -52,9 +52,9 @@ public class PEIrrServiceImpl implements PEIrrService {
 //                        bigDecimalSum = bigDecimalSum.add(c);
 //                    }
 //                }
-//            } catch (Exception ex) {
-//                return null;
-//            }
+            } catch (Exception ex) {
+                return null;
+            }
 
 //            return bigDecimalSum.doubleValue();
             return doubleSum;
@@ -71,7 +71,7 @@ public class PEIrrServiceImpl implements PEIrrService {
         long N = 10000000;
 
         // fast search
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 2; i++) {
             Double npv = getNPV(cashflowDtoList, - i / (double) (1 + i));
             if ( npv != null && npv >= 0) {
                 a = - i / (double) (1 + i);
@@ -79,7 +79,7 @@ public class PEIrrServiceImpl implements PEIrrService {
             }
         }
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 2; i++) {
             Double npv = getNPV(cashflowDtoList, (double) i );
             if ( npv != null && npv <= 0) {
                 b = (double) i;
