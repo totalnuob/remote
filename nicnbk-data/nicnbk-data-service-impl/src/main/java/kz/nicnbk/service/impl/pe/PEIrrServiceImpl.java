@@ -38,22 +38,23 @@ public class PEIrrServiceImpl implements PEIrrService {
                 }
             }
 
-//            return doubleSum;
+            return doubleSum;
 
-            BigDecimal bigDecimalSum = new BigDecimal(0).setScale(1000, BigDecimal.ROUND_HALF_UP);
-
-            for (PEGrossCashflowDto cashflowDto : cashflowDtoList) {
-                if (cashflowDto.getDate() == null) {
-                    return null;
-                }
-                if (cashflowDto.getGrossCF() != null) {
-                    BigDecimal bigDecimalCF = new BigDecimal(cashflowDto.getGrossCF()).setScale(2000, BigDecimal.ROUND_HALF_UP);
-                    BigDecimal power = new BigDecimal(1 + dailyRate).pow((int) ((cashflowDto.getDate().getTime() - initialDate.getTime()) / 86400000));
-                    bigDecimalSum = bigDecimalSum.add(bigDecimalCF.divide(power, 1000, BigDecimal.ROUND_HALF_UP));
-                }
-            }
-
-            return bigDecimalSum.doubleValue();
+            //BigDecimal usage
+//            BigDecimal bigDecimalSum = new BigDecimal(0).setScale(1000, BigDecimal.ROUND_HALF_UP);
+//
+//            for (PEGrossCashflowDto cashflowDto : cashflowDtoList) {
+//                if (cashflowDto.getDate() == null) {
+//                    return null;
+//                }
+//                if (cashflowDto.getGrossCF() != null) {
+//                    BigDecimal bigDecimalCF = new BigDecimal(cashflowDto.getGrossCF()).setScale(2000, BigDecimal.ROUND_HALF_UP);
+//                    BigDecimal power = new BigDecimal(1 + dailyRate).pow((int) ((cashflowDto.getDate().getTime() - initialDate.getTime()) / 86400000));
+//                    bigDecimalSum = bigDecimalSum.add(bigDecimalCF.divide(power, 1000, BigDecimal.ROUND_HALF_UP));
+//                }
+//            }
+//
+//            return bigDecimalSum.doubleValue();
         } catch (Exception ex) {
             return null;
         }
@@ -84,6 +85,7 @@ public class PEIrrServiceImpl implements PEIrrService {
 
         // deep search
 //        long N = 10000000;
+//
 //        if (a == null) {
 //            for (long i = 0; i < 2 * N; i++) {
 //                Double npv = getNPV(cashflowDtoList, i / (double) N - 1);
