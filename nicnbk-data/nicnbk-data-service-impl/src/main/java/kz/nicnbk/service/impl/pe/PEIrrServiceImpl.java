@@ -47,8 +47,8 @@ public class PEIrrServiceImpl implements PEIrrService {
         double a = 0.0;
         double b = 0.0;
 
-        for (int i = 0; i < 1000; i++) {
-            if (i == 999) {
+        for (int i = 0; i < 100; i++) {
+            if (i == 99) {
                 return null;
             }
             Double npv = getNPV(cashflowDtoList, - i / (double) (1 + i));
@@ -58,8 +58,8 @@ public class PEIrrServiceImpl implements PEIrrService {
             }
         }
 
-        for (int i = 0; i < 1000; i++) {
-            if (i == 999) {
+        for (int i = 0; i < 100; i++) {
+            if (i == 99) {
                 return null;
             }
             Double npv = getNPV(cashflowDtoList, (double) i );
