@@ -40,33 +40,20 @@ public class PEIrrServiceImpl implements PEIrrService {
 
 //            return doubleSum;
 
-            Double infSum = null;
             BigDecimal bigDecimalSum = new BigDecimal(0).setScale(1000, BigDecimal.ROUND_HALF_UP);
 
             try {
                 for (PEGrossCashflowDto cashflowDto : cashflowDtoList) {
                     if (cashflowDto.getGrossCF() != null) {
                         BigDecimal bigDecimalCF = new BigDecimal(cashflowDto.getGrossCF()).setScale(2000, BigDecimal.ROUND_HALF_UP);
-                        double power = Math.pow(1 + dailyRate, (cashflowDto.getDate().getTime() - initialDate.getTime()) / 86400000);
-                        if (bigDecimalCF.doubleValue() == 0.0 || Double.isInfinite(power)) {
-                            continue;
-                        }
-                        BigDecimal bigDecimalPower = new BigDecimal(power).setScale(1000, BigDecimal.ROUND_HALF_UP);
-                        if (bigDecimalPower.doubleValue() == 0.0) {
-                            infSum = bigDecimalCF.doubleValue() > 0 ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
-                        } else {
-                            BigDecimal c = bigDecimalCF.divide(bigDecimalPower, 1000, BigDecimal.ROUND_HALF_UP);
-                            bigDecimalSum = bigDecimalSum.add(c);
-                        }
+                        BigDecimal power = new BigDecimal(1 + dailyRate).pow((int) ((cashflowDto.getDate().getTime() - initialDate.getTime()) / 86400000));
+                        BigDecimal c = bigDecimalCF.divide(power, 1000, BigDecimal.ROUND_HALF_UP);
+                        bigDecimalSum = bigDecimalSum.add(c);
                     }
                 }
             } catch (Exception ex) {
                 System.out.println("Return null !");
                 return null;
-            }
-
-            if (infSum != null && Double.isInfinite(infSum)) {
-                return infSum;
             }
 
             return bigDecimalSum.doubleValue();
