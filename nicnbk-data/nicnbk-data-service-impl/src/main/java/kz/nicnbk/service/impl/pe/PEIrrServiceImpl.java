@@ -46,16 +46,16 @@ public class PEIrrServiceImpl implements PEIrrService {
             try {
                 for (PEGrossCashflowDto cashflowDto : cashflowDtoList) {
                     if (cashflowDto.getGrossCF() != null) {
+                        BigDecimal bigDecimalCF = new BigDecimal(cashflowDto.getGrossCF()).setScale(2000, BigDecimal.ROUND_HALF_UP);
                         double power = Math.pow(1 + dailyRate, (cashflowDto.getDate().getTime() - initialDate.getTime()) / 86400000);
-                        if (Double.isInfinite(power)) {
+                        if (bigDecimalCF.doubleValue() == 0 || Double.isInfinite(power)) {
                             continue;
                         }
-                        BigDecimal a = new BigDecimal(power).setScale(330, BigDecimal.ROUND_HALF_UP);
-                        BigDecimal b = new BigDecimal(cashflowDto.getGrossCF()).setScale(1330, BigDecimal.ROUND_HALF_UP);
-                        if (a.doubleValue() == 0.0) {
-                            infSum = b.doubleValue() > 0 ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
+                        BigDecimal bigDecimalPower = new BigDecimal(power).setScale(1000, BigDecimal.ROUND_HALF_UP);
+                        if (bigDecimalPower.doubleValue() == 0.0) {
+                            infSum = bigDecimalCF.doubleValue() > 0 ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
                         } else {
-                            BigDecimal c = b.divide(a, 1000, BigDecimal.ROUND_HALF_UP);
+                            BigDecimal c = bigDecimalCF.divide(bigDecimalPower, 1000, BigDecimal.ROUND_HALF_UP);
                             bigDecimalSum = bigDecimalSum.add(c);
                         }
                     }
