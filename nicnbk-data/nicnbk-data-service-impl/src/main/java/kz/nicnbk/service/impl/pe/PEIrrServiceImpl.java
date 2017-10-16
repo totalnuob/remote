@@ -41,17 +41,18 @@ public class PEIrrServiceImpl implements PEIrrService {
             BigDecimal bigDecimalSum = new BigDecimal(0).setScale(10, BigDecimal.ROUND_HALF_UP);
 
             try {
-//                for (PEGrossCashflowDto cashflowDto : cashflowDtoList) {
-//                    if (cashflowDto.getGrossCF() != null) {
-//                        System.out.println(cashflowDto.getCompanyName());
-//                        System.out.println(cashflowDto.getDate());
-//                        System.out.println(dailyRate);
-//                        BigDecimal a = new BigDecimal(Math.pow(1 + dailyRate, (cashflowDto.getDate().getTime() - initialDate.getTime()) / 86400000)).setScale(10, BigDecimal.ROUND_HALF_UP);
-//                        BigDecimal b = new BigDecimal(cashflowDto.getGrossCF()).setScale(100, BigDecimal.ROUND_HALF_UP);
-//                        BigDecimal c = b.divide(a, 10, BigDecimal.ROUND_HALF_UP);
-//                        bigDecimalSum = bigDecimalSum.add(c);
-//                    }
-//                }
+                for (PEGrossCashflowDto cashflowDto : cashflowDtoList) {
+                    if (cashflowDto.getGrossCF() != null) {
+                        System.out.println(cashflowDto.getCompanyName());
+                        System.out.println(cashflowDto.getDate());
+                        System.out.println(dailyRate);
+                        System.out.println((cashflowDto.getDate().getTime() - initialDate.getTime()) / 86400000);
+                        BigDecimal a = new BigDecimal(Math.pow(1 + dailyRate, (cashflowDto.getDate().getTime() - initialDate.getTime()) / 86400000)).setScale(10, BigDecimal.ROUND_HALF_UP);
+                        BigDecimal b = new BigDecimal(cashflowDto.getGrossCF()).setScale(100, BigDecimal.ROUND_HALF_UP);
+                        BigDecimal c = b.divide(a, 10, BigDecimal.ROUND_HALF_UP);
+                        bigDecimalSum = bigDecimalSum.add(c);
+                    }
+                }
             } catch (Exception ex) {
                 return null;
             }
