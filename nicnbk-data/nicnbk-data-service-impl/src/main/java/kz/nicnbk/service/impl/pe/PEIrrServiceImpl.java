@@ -42,18 +42,12 @@ public class PEIrrServiceImpl implements PEIrrService {
 
             BigDecimal bigDecimalSum = new BigDecimal(0).setScale(1000, BigDecimal.ROUND_HALF_UP);
 
-            try {
-                for (PEGrossCashflowDto cashflowDto : cashflowDtoList) {
-                    if (cashflowDto.getGrossCF() != null) {
-                        BigDecimal bigDecimalCF = new BigDecimal(cashflowDto.getGrossCF()).setScale(2000, BigDecimal.ROUND_HALF_UP);
-                        BigDecimal power = new BigDecimal(1 + dailyRate).pow((int) ((cashflowDto.getDate().getTime() - initialDate.getTime()) / 86400000));
-                        BigDecimal c = bigDecimalCF.divide(power, 1000, BigDecimal.ROUND_HALF_UP);
-                        bigDecimalSum = bigDecimalSum.add(c);
-                    }
+            for (PEGrossCashflowDto cashflowDto : cashflowDtoList) {
+                if (cashflowDto.getGrossCF() != null) {
+                    BigDecimal bigDecimalCF = new BigDecimal(cashflowDto.getGrossCF()).setScale(2000, BigDecimal.ROUND_HALF_UP);
+                    BigDecimal power = new BigDecimal(1 + dailyRate).pow((int) ((cashflowDto.getDate().getTime() - initialDate.getTime()) / 86400000));
+                    bigDecimalSum = bigDecimalSum.add(bigDecimalCF.divide(power, 1000, BigDecimal.ROUND_HALF_UP));
                 }
-            } catch (Exception ex) {
-                System.out.println("Return null!");
-                return null;
             }
 
             return bigDecimalSum.doubleValue();
