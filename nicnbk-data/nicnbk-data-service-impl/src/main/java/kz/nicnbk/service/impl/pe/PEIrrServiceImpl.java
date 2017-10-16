@@ -38,28 +38,26 @@ public class PEIrrServiceImpl implements PEIrrService {
                 }
             }
 
-            BigDecimal bigDecimalSum = new BigDecimal(0).setScale(10, BigDecimal.ROUND_HALF_UP);
+//            return doubleSum;
+
+            Double infSum = null;
+            BigDecimal bigDecimalSum = new BigDecimal(0).setScale(1000, BigDecimal.ROUND_HALF_UP);
 
             try {
                 for (PEGrossCashflowDto cashflowDto : cashflowDtoList) {
                     if (cashflowDto.getGrossCF() != null) {
-                        System.out.println(cashflowDto.getCompanyName());
-                        System.out.println(cashflowDto.getDate());
-                        System.out.println(dailyRate);
-                        System.out.println((cashflowDto.getDate().getTime() - initialDate.getTime()) / 86400000);
-                        System.out.println(Math.pow(1 + dailyRate, (cashflowDto.getDate().getTime() - initialDate.getTime()) / 86400000));
                         double power = Math.pow(1 + dailyRate, (cashflowDto.getDate().getTime() - initialDate.getTime()) / 86400000);
-                        if(Double.isInfinite(power)){
+                        if (Double.isInfinite(power)) {
                             continue;
                         }
-                        BigDecimal a = new BigDecimal(power).setScale(10, BigDecimal.ROUND_HALF_UP);
-                        BigDecimal b = new BigDecimal(cashflowDto.getGrossCF()).setScale(100, BigDecimal.ROUND_HALF_UP);
-                        if(a.doubleValue() == 0.0){
-                            break;
-                            //return b.doubleValue() > 0 ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
+                        BigDecimal a = new BigDecimal(power).setScale(1000, BigDecimal.ROUND_HALF_UP);
+                        BigDecimal b = new BigDecimal(cashflowDto.getGrossCF()).setScale(2000, BigDecimal.ROUND_HALF_UP);
+                        if (a.doubleValue() == 0.0) {
+                            infSum = b.doubleValue() > 0 ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
+                        } else {
+                            BigDecimal c = b.divide(a, 1000, BigDecimal.ROUND_HALF_UP);
+                            bigDecimalSum = bigDecimalSum.add(c);
                         }
-                        BigDecimal c = b.divide(a, 10, BigDecimal.ROUND_HALF_UP);
-                        bigDecimalSum = bigDecimalSum.add(c);
                     }
                 }
             } catch (Exception ex) {
@@ -67,8 +65,11 @@ public class PEIrrServiceImpl implements PEIrrService {
                 return null;
             }
 
-//            return bigDecimalSum.doubleValue();
-            return doubleSum;
+            if (infSum != null && Double.isInfinite(infSum)) {
+                return infSum;
+            }
+
+            return bigDecimalSum.doubleValue();
         } catch (Exception ex) {
             return null;
         }
