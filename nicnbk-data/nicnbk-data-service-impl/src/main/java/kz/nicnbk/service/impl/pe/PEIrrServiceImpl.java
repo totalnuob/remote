@@ -50,8 +50,8 @@ public class PEIrrServiceImpl implements PEIrrService {
                         if (Double.isInfinite(power)) {
                             continue;
                         }
-                        BigDecimal a = new BigDecimal(power).setScale(1000, BigDecimal.ROUND_HALF_UP);
-                        BigDecimal b = new BigDecimal(cashflowDto.getGrossCF()).setScale(2000, BigDecimal.ROUND_HALF_UP);
+                        BigDecimal a = new BigDecimal(power).setScale(330, BigDecimal.ROUND_HALF_UP);
+                        BigDecimal b = new BigDecimal(cashflowDto.getGrossCF()).setScale(1330, BigDecimal.ROUND_HALF_UP);
                         if (a.doubleValue() == 0.0) {
                             infSum = b.doubleValue() > 0 ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
                         } else {
