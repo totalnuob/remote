@@ -44,13 +44,10 @@ public class PEIrrServiceImpl implements PEIrrService {
     @Override
     public Double getIRR(List<PEGrossCashflowDto> cashflowDtoList) {
 
-        double a = 0.0;
-        double b = 0.0;
+        Double a = null;
+        Double b = null;
 
         for (int i = 0; i < 100; i++) {
-            if (i == 99) {
-                return null;
-            }
             Double npv = getNPV(cashflowDtoList, - i / (double) (1 + i));
             if ( npv != null && npv >= 0) {
                 a = - i / (double) (1 + i);
@@ -59,9 +56,6 @@ public class PEIrrServiceImpl implements PEIrrService {
         }
 
         for (int i = 0; i < 100; i++) {
-            if (i == 99) {
-                return null;
-            }
             Double npv = getNPV(cashflowDtoList, (double) i );
             if ( npv != null && npv <= 0) {
                 b = (double) i;
@@ -69,16 +63,20 @@ public class PEIrrServiceImpl implements PEIrrService {
             }
         }
 
-//        while (Math.abs(getNPV(cashflowDtoList, a) - getNPV(cashflowDtoList, b)) > 0.000001)
-        while (b - a > 0.0000000000000001) {
-            if (getNPV(cashflowDtoList, (a + b) / 2) >= 0) {
-                a = (a + b) / 2;
-            } else {
-                b = (a + b) / 2;
+        if (a != null && b != null) {
+//            while (Math.abs(getNPV(cashflowDtoList, a) - getNPV(cashflowDtoList, b)) > 0.000001)
+            while (b - a > 0.0000000000000001) {
+                if (getNPV(cashflowDtoList, (a + b) / 2) >= 0) {
+                    a = (a + b) / 2;
+                } else {
+                    b = (a + b) / 2;
+                }
             }
+
+//            return (Math.pow(1 + a, 365.0) - 1) * 100;
+            return Math.round((Math.pow(1 + a, 365.0) - 1) * 10000) / 100.0;
         }
 
-        //        return (Math.pow(1 + a, 365.0) - 1) * 100;
-        return Math.round((Math.pow(1 + a, 365.0) - 1) * 10000) / 100.0;
+        return null;
     }
 }
