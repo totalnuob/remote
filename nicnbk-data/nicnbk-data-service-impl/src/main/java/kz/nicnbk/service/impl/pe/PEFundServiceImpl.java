@@ -131,23 +131,20 @@ public class PEFundServiceImpl implements PEFundService {
     @Override
     public PECompanyPerformanceResultDto savePerformance(List<PECompanyPerformanceDto> performanceDtoList, Long fundId, String updater) {
 
-        PECompanyPerformanceResultDto resultDto = this.performanceService.saveList(performanceDtoList, fundId);
-        if (resultDto.getStatus().equals(StatusResultType.FAIL)) {
-            return resultDto;
-        }
-
         try {
             if (this.peFundRepository.findOne(fundId) == null) {
                 return new PECompanyPerformanceResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");
             }
 
-            logger.info("PE fund's company performance updated: " + fundId + ", by " + updater);
+            PECompanyPerformanceResultDto resultDto = this.performanceService.saveList(performanceDtoList, fundId);
+            if (resultDto.getStatus().equals(StatusResultType.SUCCESS)) {
+                logger.info("PE fund's company performance updated: " + fundId + ", by " + updater);
+            }
+
             return resultDto;
         } catch (Exception ex) {
             logger.error("Error saving PE fund's company performance: " + fundId ,ex);
-            resultDto.setStatus(StatusResultType.FAIL);
-            resultDto.setMessageEn("Error saving PE fund's company performance");
-            return resultDto;
+            return new PECompanyPerformanceResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error saving PE fund's company performance", "");
         }
     }
 
@@ -158,6 +155,7 @@ public class PEFundServiceImpl implements PEFundService {
             if (this.peFundRepository.findOne(fundId) == null) {
                 return new PEFundTrackRecordResultDto(new PEFundTrackRecordDto(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");
             }
+
             return this.performanceService.calculateTrackRecord(fundId);
         } catch (Exception ex) {
             return new PEFundTrackRecordResultDto(new PEFundTrackRecordDto(), StatusResultType.FAIL, "", "Error calculating PE fund's Track Record", "");
@@ -199,34 +197,22 @@ public class PEFundServiceImpl implements PEFundService {
 
         try {
             if (this.peFundRepository.findOne(fundId) == null) {
-                return new PECompanyPerformanceAndFundTrackRecordResultDto(
-                        new PEFundTrackRecordDto(),
-                        new ArrayList<>(),
-                        StatusResultType.FAIL, "", "Fund doesn't exist!", "");
+                return new PECompanyPerformanceAndFundTrackRecordResultDto(new PEFundTrackRecordDto(), new ArrayList<>(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");
             }
         } catch (Exception ex) {
-            return new PECompanyPerformanceAndFundTrackRecordResultDto(
-                    new PEFundTrackRecordDto(),
-                    new ArrayList<>(),
-                    StatusResultType.FAIL, "", "Error", "");
+            return new PECompanyPerformanceAndFundTrackRecordResultDto(new PEFundTrackRecordDto(), new ArrayList<>(), StatusResultType.FAIL, "", "Error", "");
         }
 
         PECompanyPerformanceResultDto performanceResultDto = savePerformance(performanceDtoList, fundId, updater);
 
         if (performanceResultDto.getStatus().equals(StatusResultType.FAIL)) {
-            return new PECompanyPerformanceAndFundTrackRecordResultDto(
-                    new PEFundTrackRecordDto(),
-                    new ArrayList<>(),
-                    StatusResultType.FAIL, performanceResultDto.getMessageRu(), performanceResultDto.getMessageEn(), performanceResultDto.getMessageKz());
+            return new PECompanyPerformanceAndFundTrackRecordResultDto(new PEFundTrackRecordDto(), new ArrayList<>(), StatusResultType.FAIL, "", performanceResultDto.getMessageEn(), "");
         }
 
         PEFundTrackRecordResultDto trackRecordResultDto = recalculateStatistics(fundId);
 
         if (trackRecordResultDto.getStatus().equals(StatusResultType.FAIL)) {
-            return new PECompanyPerformanceAndFundTrackRecordResultDto(
-                    new PEFundTrackRecordDto(),
-                    new ArrayList<>(),
-                    StatusResultType.FAIL, trackRecordResultDto.getMessageRu(), trackRecordResultDto.getMessageEn(), trackRecordResultDto.getMessageKz());
+            return new PECompanyPerformanceAndFundTrackRecordResultDto(new PEFundTrackRecordDto(), new ArrayList<>(), StatusResultType.FAIL, "", trackRecordResultDto.getMessageEn(), "");
         }
 
         return new PECompanyPerformanceAndFundTrackRecordResultDto(
@@ -240,14 +226,10 @@ public class PEFundServiceImpl implements PEFundService {
 
         try {
             if (this.peFundRepository.findOne(fundId) == null) {
-                return new PEGrossCashflowResultDto(
-                        new ArrayList<>(),
-                        StatusResultType.FAIL, "", "Fund doesn't exist!", "");
+                return new PEGrossCashflowResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");
             }
         } catch (Exception ex) {
-            return new PEGrossCashflowResultDto(
-                    new ArrayList<>(),
-                    StatusResultType.FAIL, "", "Error", "");
+            return new PEGrossCashflowResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error", "");
         }
 
         PEGrossCashflowResultDto resultDto = this.grossCFService.saveList(cashflowDtoList, fundId);
@@ -265,34 +247,22 @@ public class PEFundServiceImpl implements PEFundService {
 
         try {
             if (this.peFundRepository.findOne(fundId) == null) {
-                return new PEGrossCashflowAndCompanyPerformanceIddResultDto(
-                        new ArrayList<>(),
-                        new ArrayList<>(),
-                        StatusResultType.FAIL, "", "Fund doesn't exist!", "");
+                return new PEGrossCashflowAndCompanyPerformanceIddResultDto(new ArrayList<>(), new ArrayList<>(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");
             }
         } catch (Exception ex) {
-            return new PEGrossCashflowAndCompanyPerformanceIddResultDto(
-                    new ArrayList<>(),
-                    new ArrayList<>(),
-                    StatusResultType.FAIL, "", "Error", "");
+            return new PEGrossCashflowAndCompanyPerformanceIddResultDto(new ArrayList<>(), new ArrayList<>(), StatusResultType.FAIL, "", "Error", "");
         }
 
         PEGrossCashflowResultDto grossCFResultDto = saveGrossCF(cashflowDtoList, fundId, updater);
 
         if (grossCFResultDto.getStatus().equals(StatusResultType.FAIL)) {
-            return new PEGrossCashflowAndCompanyPerformanceIddResultDto(
-                    new ArrayList<>(),
-                    new ArrayList<>(),
-                    StatusResultType.FAIL, grossCFResultDto.getMessageRu(), grossCFResultDto.getMessageEn(), grossCFResultDto.getMessageKz());
+            return new PEGrossCashflowAndCompanyPerformanceIddResultDto(new ArrayList<>(), new ArrayList<>(), StatusResultType.FAIL, "", grossCFResultDto.getMessageEn(), "");
         }
 
         PECompanyPerformanceIddResultDto performanceIddResultDto = this.performanceIddService.recalculatePerformanceIdd(fundId);
 
         if (performanceIddResultDto.getStatus().equals(StatusResultType.FAIL)) {
-            return new PEGrossCashflowAndCompanyPerformanceIddResultDto(
-                    new ArrayList<>(),
-                    new ArrayList<>(),
-                    StatusResultType.FAIL, performanceIddResultDto.getMessageRu(), performanceIddResultDto.getMessageEn(), performanceIddResultDto.getMessageKz());
+            return new PEGrossCashflowAndCompanyPerformanceIddResultDto(new ArrayList<>(), new ArrayList<>(), StatusResultType.FAIL, "", performanceIddResultDto.getMessageEn(), "");
         }
 
         return new PEGrossCashflowAndCompanyPerformanceIddResultDto(
