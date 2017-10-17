@@ -153,52 +153,29 @@ public class PEFundServiceImpl implements PEFundService {
 
     @Override
     public PEFundTrackRecordResultDto recalculateStatistics(Long fundId) {
+
         try {
+            PEFundTrackRecordResultDto trackRecordResultDto = this.performanceService.calculateTrackRecord(fundId);
+            if (trackRecordResultDto.getStatus().equals(StatusResultType.FAIL)) {
+                return trackRecordResultDto;
+            }
+
             PEFund fund = this.peFundRepository.findOne(fundId);
             if (fund == null) {
                 return new PEFundTrackRecordResultDto(new PEFundTrackRecordDto(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");
             }
 
-            fund.setNumberOfInvestments(0);
-            fund.setInvestedAmount(0.0);
-            fund.setRealized(0.0);
-            fund.setUnrealized(0.0);
-
-            for (PECompanyPerformanceDto performanceDto : this.performanceService.findByFundId(fundId)) {
-                fund.setNumberOfInvestments(fund.getNumberOfInvestments() + 1);
-                if (performanceDto.getInvested() != null) {
-                    fund.setInvestedAmount(fund.getInvestedAmount() + performanceDto.getInvested());
-                }
-                if (performanceDto.getRealized() != null) {
-                    fund.setRealized(fund.getRealized() + performanceDto.getRealized());
-                }
-                if (performanceDto.getUnrealized() != null) {
-                    fund.setUnrealized(fund.getUnrealized() + performanceDto.getUnrealized());
-                }
-            }
-
-            if (fund.getInvestedAmount() != 0) {
-                fund.setDpi(fund.getRealized()/fund.getInvestedAmount());
-                fund.setGrossTvpi((fund.getRealized() + fund.getUnrealized())/fund.getInvestedAmount());
-            } else {
-                fund.setDpi(null);
-                fund.setGrossTvpi(null);
-            }
+            fund.setNumberOfInvestments(trackRecordResultDto.getTrackRecordDTO().getNumberOfInvestments());
+            fund.setInvestedAmount(trackRecordResultDto.getTrackRecordDTO().getInvestedAmount());
+            fund.setRealized(trackRecordResultDto.getTrackRecordDTO().getRealized());
+            fund.setUnrealized(trackRecordResultDto.getTrackRecordDTO().getUnrealized());
+            fund.setDpi(trackRecordResultDto.getTrackRecordDTO().getDpi());
+            fund.setGrossTvpi(trackRecordResultDto.getTrackRecordDTO().getGrossTvpi());
 
             fund.setAutoCalculation(true);
             peFundRepository.save(fund);
 
-            return new PEFundTrackRecordResultDto(
-                    new PEFundTrackRecordDto(
-                            fund.getNumberOfInvestments(),
-                            fund.getInvestedAmount(),
-                            fund.getRealized(),
-                            fund.getUnrealized(),
-                            fund.getDpi(),
-                            null, null, null,
-                            fund.getGrossTvpi(),
-                            null, null, null, null),
-                    StatusResultType.SUCCESS, "", "Successfully updated PE fund's key statistics", "");
+            return trackRecordResultDto;
         } catch (Exception ex) {
             logger.error("Error updating PE fund's key statistics: " + fundId, ex);
             return new PEFundTrackRecordResultDto(new PEFundTrackRecordDto(), StatusResultType.FAIL, "", "Error updating PE fund's key statistics", "");
