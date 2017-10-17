@@ -131,6 +131,10 @@ public class PEFundServiceImpl implements PEFundService {
     @Override
     public PECompanyPerformanceResultDto savePerformance(List<PECompanyPerformanceDto> performanceDtoList, Long fundId, String updater) {
 
+        if (this.peFundRepository.findOne(fundId) == null) {
+            return new PECompanyPerformanceResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");
+        }
+
         PECompanyPerformanceResultDto resultDto = this.performanceService.saveList(performanceDtoList, fundId);
         if (resultDto.getStatus().equals(StatusResultType.FAIL)) {
             return resultDto;
@@ -153,8 +157,7 @@ public class PEFundServiceImpl implements PEFundService {
 
     @Override
     public PEFundTrackRecordResultDto calculateTrackRecord(Long fundId) {
-        PEFund fund = this.peFundRepository.findOne(fundId);
-        if (fund == null) {
+        if (this.peFundRepository.findOne(fundId) == null) {
             return new PEFundTrackRecordResultDto(new PEFundTrackRecordDto(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");
         }
         return this.performanceService.calculateTrackRecord(fundId);

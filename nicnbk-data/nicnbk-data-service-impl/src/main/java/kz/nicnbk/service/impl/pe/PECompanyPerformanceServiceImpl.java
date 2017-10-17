@@ -4,7 +4,6 @@ import kz.nicnbk.repo.api.pe.PECompanyPerformanceRepository;
 import kz.nicnbk.repo.model.pe.PEFund;
 import kz.nicnbk.repo.model.pe.PECompanyPerformance;
 import kz.nicnbk.service.api.pe.PECompanyPerformanceService;
-import kz.nicnbk.service.api.pe.PEFundService;
 import kz.nicnbk.service.api.pe.PEGrossCashflowService;
 import kz.nicnbk.service.api.pe.PEIrrService;
 import kz.nicnbk.service.converter.pe.PECompanyPerformanceEntityConverter;
@@ -33,9 +32,6 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
 
     @Autowired
     private PECompanyPerformanceEntityConverter converter;
-
-    @Autowired
-    private PEFundService peFundService;
 
 //    @Autowired
 //    private PEGrossCashflowService cashflowService;
@@ -88,10 +84,6 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
                 if (i > 1) {
                     return new PECompanyPerformanceResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Names must be unique!", "");
                 }
-            }
-
-            if (this.peFundService.get(fundId) == null) {
-                return new PECompanyPerformanceResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");
             }
 
             for (PECompanyPerformance performance : this.repository.getEntitiesByFundId(fundId, new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName")))) {
