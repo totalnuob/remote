@@ -153,6 +153,10 @@ public class PEFundServiceImpl implements PEFundService {
 
     @Override
     public PEFundTrackRecordResultDto calculateTrackRecord(Long fundId) {
+        PEFund fund = this.peFundRepository.findOne(fundId);
+        if (fund == null) {
+            return new PEFundTrackRecordResultDto(new PEFundTrackRecordDto(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");
+        }
         return this.performanceService.calculateTrackRecord(fundId);
     }
 

@@ -207,11 +207,6 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
     public PEFundTrackRecordResultDto calculateTrackRecord (Long fundId) {
 
         try {
-            PEFundDto fundDto = peFundService.get(fundId);
-            if (fundDto == null) {
-                return new PEFundTrackRecordResultDto(new PEFundTrackRecordDto(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");
-            }
-
             Integer numberOfInvestments = 0;
             Double investedAmount = 0.0;
             Double realized = 0.0;

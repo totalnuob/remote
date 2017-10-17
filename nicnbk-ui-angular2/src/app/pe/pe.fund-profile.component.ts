@@ -272,7 +272,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
         this.busy = this.fundService.calculateTrackRecord(this.fund.id)
             .subscribe(
                 (response) => {
-                    this.postAction(response.messageEn, null);
+                    //this.postAction(response.messageEn, null);
 
                     this.fund.numberOfInvestments = response.trackRecordDTO.numberOfInvestments;
                     this.fund.investedAmount = response.trackRecordDTO.investedAmount;
