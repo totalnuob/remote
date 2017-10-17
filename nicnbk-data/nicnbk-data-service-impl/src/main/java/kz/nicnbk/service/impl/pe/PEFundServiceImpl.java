@@ -70,24 +70,18 @@ public class PEFundServiceImpl implements PEFundService {
     @Override
     public PEFundDto get(Long fundId) {
         try {
-            PEFund entity = this.peFundRepository.findOne(fundId);
-            PEFundDto dto = this.converter.disassemble(entity);
+            PEFundDto dto = this.converter.disassemble(this.peFundRepository.findOne(fundId));
 
-            List<PEGrossCashflowDto> grossCFDto = this.grossCFService.findByFundId(fundId);
-            List<PENetCashflowDto> netCFDto = this.netCFService.findByFundId(fundId);
-            List<PECompanyPerformanceDto> performanceDto = this.performanceService.findByFundId(fundId);
-            List<PECompanyPerformanceIddDto> performanceIddDto = this.performanceIddService.findByFundId(fundId);
-
-            dto.setGrossCashflow(grossCFDto);
-            dto.setNetCashflow(netCFDto);
-            dto.setCompanyPerformance(performanceDto);
-            dto.setCompanyPerformanceIdd(performanceIddDto);
+            dto.setGrossCashflow(this.grossCFService.findByFundId(fundId));
+            dto.setNetCashflow(this.netCFService.findByFundId(fundId));
+            dto.setCompanyPerformance(this.performanceService.findByFundId(fundId));
+            dto.setCompanyPerformanceIdd(this.performanceIddService.findByFundId(fundId));
 //            calculatePerformanceParameters(grossCFDto, netCFDto, dto);
             return dto;
         } catch (Exception ex) {
             logger.error("Error loading PE fund: " + fundId, ex);
+            return null;
         }
-        return null;
     }
 
     @Override
@@ -124,8 +118,8 @@ public class PEFundServiceImpl implements PEFundService {
             return id;
         } catch (Exception ex) {
             logger.error("Error saving PE fund: " + (fundDto != null && fundDto.getId() != null ? fundDto.getId() : "new") ,ex);
+            return null;
         }
-        return null;
     }
 
     @Override
@@ -137,8 +131,11 @@ public class PEFundServiceImpl implements PEFundService {
             }
 
             PECompanyPerformanceResultDto resultDto = this.performanceService.saveList(performanceDtoList, fundId);
+
             if (resultDto.getStatus().equals(StatusResultType.SUCCESS)) {
                 logger.info("PE fund's company performance updated: " + fundId + ", by " + updater);
+            } else {
+                logger.error("Error saving PE fund's company performance: " + fundId);
             }
 
             return resultDto;
@@ -165,12 +162,12 @@ public class PEFundServiceImpl implements PEFundService {
     @Override
     public PEFundTrackRecordResultDto recalculateStatistics(Long fundId) {
 
-        try {
-            PEFundTrackRecordResultDto trackRecordResultDto = calculateTrackRecord(fundId);
-            if (trackRecordResultDto.getStatus().equals(StatusResultType.FAIL)) {
-                return trackRecordResultDto;
-            }
+        PEFundTrackRecordResultDto trackRecordResultDto = calculateTrackRecord(fundId);
+        if (trackRecordResultDto.getStatus().equals(StatusResultType.FAIL)) {
+            return trackRecordResultDto;
+        }
 
+        try {
             PEFund fund = this.peFundRepository.findOne(fundId);
             if (fund == null) {
                 return new PEFundTrackRecordResultDto(new PEFundTrackRecordDto(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");
@@ -233,6 +230,7 @@ public class PEFundServiceImpl implements PEFundService {
         }
 
         PEGrossCashflowResultDto resultDto = this.grossCFService.saveList(cashflowDtoList, fundId);
+
         if (resultDto.getStatus().equals(StatusResultType.FAIL)) {
             logger.error("Error saving PE fund's gross cash flow: " + fundId);
         } else {
