@@ -68,15 +68,15 @@ public class PEFundServiceImpl implements PEFundService {
     private PECompanyPerformanceIddService performanceIddService;
 
     @Override
-    public PEFundDto get(Long id) {
+    public PEFundDto get(Long fundId) {
         try {
-            PEFund entity = this.peFundRepository.findOne(id);
+            PEFund entity = this.peFundRepository.findOne(fundId);
             PEFundDto dto = this.converter.disassemble(entity);
 
-            List<PEGrossCashflowDto> grossCFDto = this.grossCFService.findByFundId(id);
-            List<PENetCashflowDto> netCFDto = this.netCFService.findByFundId(id);
-            List<PECompanyPerformanceDto> performanceDto = this.performanceService.findByFundId(id);
-            List<PECompanyPerformanceIddDto> performanceIddDto = this.performanceIddService.findByFundId(id);
+            List<PEGrossCashflowDto> grossCFDto = this.grossCFService.findByFundId(fundId);
+            List<PENetCashflowDto> netCFDto = this.netCFService.findByFundId(fundId);
+            List<PECompanyPerformanceDto> performanceDto = this.performanceService.findByFundId(fundId);
+            List<PECompanyPerformanceIddDto> performanceIddDto = this.performanceIddService.findByFundId(fundId);
 
             dto.setGrossCashflow(grossCFDto);
             dto.setNetCashflow(netCFDto);
@@ -85,7 +85,7 @@ public class PEFundServiceImpl implements PEFundService {
 //            calculatePerformanceParameters(grossCFDto, netCFDto, dto);
             return dto;
         } catch (Exception ex) {
-            logger.error("Error loading PE fund: " + id, ex);
+            logger.error("Error loading PE fund: " + fundId, ex);
         }
         return null;
     }
@@ -200,7 +200,7 @@ public class PEFundServiceImpl implements PEFundService {
                             null, null, null, null),
                     StatusResultType.SUCCESS, "", "Successfully updated PE fund's key statistics", "");
         } catch (Exception ex) {
-            logger.error("Error updating PE fund's key statistics: " + fundId ,ex);
+            logger.error("Error updating PE fund's key statistics: " + fundId, ex);
             return new PEFundTrackRecordResultDto(new PEFundTrackRecordDto(), StatusResultType.FAIL, "", "Error updating PE fund's key statistics", "");
         }
     }

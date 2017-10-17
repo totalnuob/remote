@@ -9,10 +9,7 @@ import kz.nicnbk.service.api.pe.PEGrossCashflowService;
 import kz.nicnbk.service.api.pe.PEIrrService;
 import kz.nicnbk.service.converter.pe.PECompanyPerformanceEntityConverter;
 import kz.nicnbk.service.dto.common.StatusResultType;
-import kz.nicnbk.service.dto.pe.PECompanyPerformanceDto;
-import kz.nicnbk.service.dto.pe.PECompanyPerformanceResultDto;
-import kz.nicnbk.service.dto.pe.PEFundDto;
-import kz.nicnbk.service.dto.pe.PEGrossCashflowDto;
+import kz.nicnbk.service.dto.pe.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -205,4 +202,55 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
 //        this.repository.deleteByFundId(fundId);
 //        return true;
 //    }
+
+    @Override
+    public PEFundTrackRecordResultDto calculateTrackRecord (Long fundId) {
+
+        try {
+            PEFundDto fundDto = peFundService.get(fundId);
+            if (fundDto == null) {
+                return new PEFundTrackRecordResultDto(new PEFundTrackRecordDto(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");
+            }
+
+            Integer numberOfInvestments = 0;
+            Double investedAmount = 0.0;
+            Double realized = 0.0;
+            Double unrealized = 0.0;
+            Double dpi = null;
+            Double grossTvpi = null;
+
+            for (PECompanyPerformanceDto performanceDto : findByFundId(fundId)) {
+                numberOfInvestments++;
+                if (performanceDto.getInvested() != null) {
+                    investedAmount += performanceDto.getInvested();
+                }
+                if (performanceDto.getRealized() != null) {
+                    realized += performanceDto.getRealized();
+                }
+                if (performanceDto.getUnrealized() != null) {
+                    unrealized += performanceDto.getUnrealized();
+                }
+            }
+
+            if (investedAmount != 0.0) {
+                dpi = realized / investedAmount;
+                grossTvpi = (realized + unrealized) / investedAmount;
+            }
+
+            return new PEFundTrackRecordResultDto(
+                    new PEFundTrackRecordDto(
+                            numberOfInvestments,
+                            investedAmount,
+                            realized,
+                            unrealized,
+                            dpi,
+                            null, null, null,
+                            grossTvpi,
+                            null, null, null, null),
+                    StatusResultType.SUCCESS, "", "Successfully updated PE fund's key statistics", "");
+        } catch (Exception ex) {
+            logger.error("Error calculating PE fund's key statistics: " + fundId, ex);
+            return new PEFundTrackRecordResultDto(new PEFundTrackRecordDto(), StatusResultType.FAIL, "", "Error calculating PE fund's key statistics", "");
+        }
+    }
 }
