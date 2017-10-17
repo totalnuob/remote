@@ -93,10 +93,6 @@ public class PECompanyPerformanceIddServiceImpl implements PECompanyPerformanceI
                 }
             }
 
-            if (this.peFundService.get(fundId) == null) {
-                return new PECompanyPerformanceIddResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");
-            }
-
             for (PECompanyPerformanceIdd performanceIdd : this.repository.getEntitiesByFundId(fundId, new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName")))) {
                 int i = 0;
                 for (PECompanyPerformanceIddDto performanceIddDto : performanceIddDtoList) {
@@ -129,8 +125,7 @@ public class PECompanyPerformanceIddServiceImpl implements PECompanyPerformanceI
     @Override
     public PECompanyPerformanceIddResultDto recalculatePerformanceIdd(Long fundId) {
         try {
-            PEFundDto fundDto = this.peFundService.get(fundId);
-            if (fundDto == null) {
+            if (this.peFundService.get(fundId) == null) {
                 return new PECompanyPerformanceIddResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");
             }
 
