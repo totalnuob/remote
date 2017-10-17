@@ -9,7 +9,10 @@ import kz.nicnbk.service.api.pe.PEGrossCashflowService;
 import kz.nicnbk.service.api.pe.PEIrrService;
 import kz.nicnbk.service.converter.pe.PECompanyPerformanceIddEntityConverter;
 import kz.nicnbk.service.dto.common.StatusResultType;
-import kz.nicnbk.service.dto.pe.*;
+import kz.nicnbk.service.dto.pe.PECompanyPerformanceIddDto;
+import kz.nicnbk.service.dto.pe.PECompanyPerformanceIddResultDto;
+import kz.nicnbk.service.dto.pe.PEFundDto;
+import kz.nicnbk.service.dto.pe.PEGrossCashflowDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,7 +95,7 @@ public class PECompanyPerformanceIddServiceImpl implements PECompanyPerformanceI
                 return new PECompanyPerformanceIddResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");
             }
 
-            for (PECompanyPerformanceIdd performanceIdd: this.repository.getEntitiesByFundId(fundId, new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName")))) {
+            for (PECompanyPerformanceIdd performanceIdd : this.repository.getEntitiesByFundId(fundId, new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName")))) {
                 int i = 0;
                 for (PECompanyPerformanceIddDto performanceIddDto : performanceIddDtoList) {
                     if (performanceIdd.getId().equals(performanceIddDto.getId())) {

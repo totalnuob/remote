@@ -97,7 +97,7 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
                 return new PECompanyPerformanceResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");
             }
 
-            for (PECompanyPerformance performance: this.repository.getEntitiesByFundId(fundId, new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName")))) {
+            for (PECompanyPerformance performance : this.repository.getEntitiesByFundId(fundId, new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName")))) {
                 int i = 0;
                 for (PECompanyPerformanceDto performanceDto : performanceDtoList) {
                     if (performance.getId().equals(performanceDto.getId())) {
