@@ -75,6 +75,18 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
     }
 
     @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/recalculate/{fundId}", method = RequestMethod.GET)
+    public ResponseEntity<?> recalculateStatistics(@PathVariable Long fundId) {
+        PEFundTrackRecordResultDto resultDto = this.service.recalculateStatistics(fundId);
+
+        if (resultDto.getStatus().equals(StatusResultType.SUCCESS)) {
+            return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/savePerformance/{fundId}/recalculate", method = RequestMethod.POST)
     public ResponseEntity<?> savePerformanceAndRecalculateStatistics(@RequestBody List<PECompanyPerformanceDto> performanceDtoList, @PathVariable Long fundId) {
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();

@@ -268,6 +268,29 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
             )
     }
 
+    recalculateStatistics() {
+        this.busy = this.fundService.recalculateStatistics(this.fund.id)
+            .subscribe(
+                (response) => {
+                    this.postAction(response.messageEn, null);
+
+                    this.fund.numberOfInvestments = response.trackRecordDTO.numberOfInvestments;
+                    this.fund.investedAmount = response.trackRecordDTO.investedAmount;
+                    this.fund.realized = response.trackRecordDTO.realized;
+                    this.fund.unrealized = response.trackRecordDTO.unrealized;
+                    this.fund.dpi = response.trackRecordDTO.dpi;
+                    this.fund.grossTvpi = response.trackRecordDTO.grossTvpi;
+
+                    this.fund.autoCalculation = true;
+                },
+                (error: ErrorResponse) => {
+                    this.processErrorMessage(error);
+                    this.postAction(null, error.message);
+                    console.log(error);
+                }
+            )
+    }
+
     savePerformanceAndRecalculateStatistics() {
         this.busy = this.fundService.savePerformanceAndRecalculateStatistics(this.fund.companyPerformance, this.fund.id)
             .subscribe(
@@ -565,7 +588,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
 
     statisticsAutoCalculation() {
         if (this.fund.calculationType == 1) {
-            this.savePerformanceAndRecalculateStatistics();
+            this.recalculateStatistics();
         }
     }
 
