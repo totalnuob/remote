@@ -639,7 +639,7 @@
                             </div>
                         </div>
                     </div>
-                    <div id="performanceFund" class="tab-pane fade in active">
+                    <div id="performanceFund" class="tab-pane fade">
                         <div style="position: relative;">
                             <div [ngBusy]="busy">
                                 <br>
@@ -657,9 +657,9 @@
                                                     <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="savePerformance()" [disabled]="fund.id == 0 || fund.id == null">
                                                         SAVE
                                                     </button>
-                                                    <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="savePerformanceAndRecalculateStatistics()" [disabled]="fund.id == 0 || fund.id == null">
-                                                        SAVE and RECALCULATE the Key Fund Statistics
-                                                    </button>
+                                                    <!--<button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="savePerformanceAndRecalculateStatistics()" [disabled]="fund.id == 0 || fund.id == null">-->
+                                                        <!--SAVE and RECALCULATE the Key Fund Statistics-->
+                                                    <!--</button>-->
                                                 </div>
                                             </div>
                                         </div>
@@ -767,12 +767,17 @@
                                                     <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="savePerformance()" [disabled]="fund.id == 0 || fund.id == null">
                                                         SAVE
                                                     </button>
-                                                    <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="savePerformanceAndRecalculateStatistics()" [disabled]="fund.id == 0 || fund.id == null">
-                                                        SAVE and RECALCULATE the Key Fund Statistics
-                                                    </button>
+                                                    <!--<button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="savePerformanceAndRecalculateStatistics()" [disabled]="fund.id == 0 || fund.id == null">-->
+                                                        <!--SAVE and RECALCULATE the Key Fund Statistics-->
+                                                    <!--</button>-->
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <hr style="border-top: 1px solid #B5AEAE"/>
                                     </div>
                                 </div>
                             </div>
@@ -876,10 +881,15 @@
                                         </table>
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <hr style="border-top: 1px solid #B5AEAE"/>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div id="grossCashflow" class="tab-pane fade in active">
+                    <div id="grossCashflow" class="tab-pane fade">
                         <div style="position: relative;">
                             <div [ngBusy]="busy">
                                 <br/>
@@ -904,11 +914,12 @@
                                                 <br>
                                                 <br>
                                                 <div class="pull-right">
-                                                    <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="saveGrossCF()" [disabled]="fund.id == 0 || fund.id == null">
-                                                        SAVE
-                                                    </button>
+                                                    <!--<button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="saveGrossCF()" [disabled]="fund.id == 0 || fund.id == null">-->
+                                                        <!--SAVE-->
+                                                    <!--</button>-->
                                                     <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="saveGrossCFAndRecalculatePerformance()" [disabled]="fund.id == 0 || fund.id == null">
-                                                        SAVE and RECALCULATE the Performance
+                                                        <!--SAVE and RECALCULATE the Performance-->
+                                                        SAVE
                                                     </button>
                                                 </div>
                                             </div>
@@ -991,15 +1002,21 @@
                                                     </button>
                                                 </div>
                                                 <div class="pull-right">
-                                                    <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="saveGrossCF()" [disabled]="fund.id == 0 || fund.id == null">
-                                                        SAVE
-                                                    </button>
+                                                    <!--<button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="saveGrossCF()" [disabled]="fund.id == 0 || fund.id == null">-->
+                                                        <!--SAVE-->
+                                                    <!--</button>-->
                                                     <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="saveGrossCFAndRecalculatePerformance()" [disabled]="fund.id == 0 || fund.id == null">
-                                                        SAVE and RECALCULATE the Performance
+                                                        <!--SAVE and RECALCULATE the Performance-->
+                                                        SAVE
                                                     </button>
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <hr style="border-top: 1px solid #B5AEAE"/>
                                     </div>
                                 </div>
                             </div>
