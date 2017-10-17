@@ -158,7 +158,7 @@ public class PECompanyPerformanceIddServiceImpl implements PECompanyPerformanceI
                         break;
                     }
                 }
-                if (found == false) {
+                if (!found) {
                     performanceIddDtoList.add(
                             new PECompanyPerformanceIddDto(
                                     cashflowDto.getCompanyName(),

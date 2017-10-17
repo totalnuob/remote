@@ -121,6 +121,10 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                         this.openingSoon = true;
                                     }
 
+                                    if(this.fund.calculationType == null){
+                                        this.fund.calculationType = 0;
+                                    }
+
                                     if(this.fund.companyPerformance == null){
                                         this.fund.companyPerformance = [];
                                     }

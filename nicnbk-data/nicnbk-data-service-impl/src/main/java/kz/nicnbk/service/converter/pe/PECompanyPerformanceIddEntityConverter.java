@@ -11,13 +11,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class PECompanyPerformanceIddEntityConverter extends BaseDozerEntityConverter<PECompanyPerformanceIdd, PECompanyPerformanceIddDto> {
 
-    @Override
-    public PECompanyPerformanceIdd assemble(PECompanyPerformanceIddDto dto){
-        return super.assemble(dto);
-    }
-
-    @Override
-    public PECompanyPerformanceIddDto disassemble(PECompanyPerformanceIdd entity){
-        return super.disassemble(entity);
-    }
+//    @Override
+//    public PECompanyPerformanceIdd assemble(PECompanyPerformanceIddDto dto){
+//        return super.assemble(dto);
+//    }
+//
+//    @Override
+//    public PECompanyPerformanceIddDto disassemble(PECompanyPerformanceIdd entity){
+//        return super.disassemble(entity);
+//    }
 }

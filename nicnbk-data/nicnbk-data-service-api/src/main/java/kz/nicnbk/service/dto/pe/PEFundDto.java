@@ -38,6 +38,7 @@ public class PEFundDto extends HistoryBaseEntityDto<PEFund> {
     private String nonsuitableReason;
 
     //KEY FUND STATISTICS
+    private Integer calculationType;
     private Boolean autoCalculation;
     private Integer numberOfInvestments;
     private Double investedAmount;
@@ -227,6 +228,14 @@ public class PEFundDto extends HistoryBaseEntityDto<PEFund> {
 
     public void setGeography(Set<BaseDictionaryDto> geography) {
         this.geography = geography;
+    }
+
+    public Integer getCalculationType() {
+        return calculationType;
+    }
+
+    public void setCalculationType(Integer calculationType) {
+        this.calculationType = calculationType;
     }
 
     public Boolean getAutoCalculation() {

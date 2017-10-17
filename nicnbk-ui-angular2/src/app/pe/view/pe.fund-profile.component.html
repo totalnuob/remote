@@ -341,18 +341,29 @@
                                         <hr>
                                         <div class="row withpadding">
                                             <h4>Key fund statistics</h4>
-                                            <h5>Auto calculation by PERFORMANCE tab</h5>
-                                            <div class="onoffswitch">
-                                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" [(ngModel)]="fund.autoCalculation" (ngModelChange)="autoCalculationStatistics()" unchecked>
-                                                <label class="onoffswitch-label" for="myonoffswitch">
-                                                    <span class="onoffswitch-inner"></span>
-                                                    <span class="onoffswitch-switch"></span>
-                                                </label>
+                                            <div class="col-md-1">
+                                                <label><b>Type of input</b></label>
                                             </div>
+                                            <div class="col-md-4">
+                                                <select id="calculationType" name="calculationType" class="form-control" [(ngModel)]="fund.calculationType">
+                                                    <option value="0" selected>Manual</option>
+                                                    <option value="1">Auto calculation by PERFORMANCE</option>
+                                                </select>
+                                            </div>
+                                            <!--<h5>Auto calculation by PERFORMANCE tab</h5>-->
+                                            <!--<div class="onoffswitch">-->
+                                                <!--<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" [(ngModel)]="fund.autoCalculation" (ngModelChange)="autoCalculationStatistics()" unchecked>-->
+                                                <!--<label class="onoffswitch-label" for="myonoffswitch">-->
+                                                    <!--<span class="onoffswitch-inner"></span>-->
+                                                    <!--<span class="onoffswitch-switch"></span>-->
+                                                <!--</label>-->
+                                            <!--</div>-->
+                                        </div>
+                                        <div class="row withpadding">
                                             <table class=" col-md-4 table-striped table-condensed">
                                                 <tr>
                                                     <td class="col-md-3"><b>Number of investments</b></td>
-                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="numberOfInv" [(ngModel)]="fund.numberOfInvestments" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.autoCalculation" #numOfInv="ngModel"/>
+                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="numberOfInv" [(ngModel)]="fund.numberOfInvestments" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType != 0" #numOfInv="ngModel"/>
                                                         <div [hidden]="numOfInv.valid || numOfInv.pristine" class="alert alert-danger">
                                                             Only positive number could be entered
                                                         </div>
@@ -361,7 +372,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td class="col-md-3"><b>Invested amount</b></td>
-                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="invested" [(ngModel)]="fund.investedAmount" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.autoCalculation" #invested="ngModel"/>
+                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="invested" [(ngModel)]="fund.investedAmount" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType != 0" #invested="ngModel"/>
                                                         <div [hidden]="invested.valid || invested.pristine" class="alert alert-danger">
                                                             Only positive number could be entered
                                                         </div>
@@ -371,7 +382,7 @@
 
                                                 <tr>
                                                     <td class="col-md-3"><b>Realized amount</b></td>
-                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="realized" [(ngModel)]="fund.realized" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.autoCalculation" #realized="ngModel"/>
+                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="realized" [(ngModel)]="fund.realized" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType != 0" #realized="ngModel"/>
                                                         <div [hidden]="realized.valid || realized.pristine" class="alert alert-danger">
                                                             Only positive number could be entered
                                                         </div>
@@ -394,7 +405,7 @@
                                             <table class=" col-md-4 table-striped table-condensed">
                                                 <tr>
                                                     <td class="col-md-3"><b>Unrealized amount</b></td>
-                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="unrealized" [(ngModel)]="fund.unrealized" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.autoCalculation" #unrealized="ngModel"/>
+                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="unrealized" [(ngModel)]="fund.unrealized" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType != 0" #unrealized="ngModel"/>
                                                         <div [hidden]="unrealized.valid || unrealized.pristine" class="alert alert-danger">
                                                             Only positive number could be entered
                                                         </div>
@@ -403,7 +414,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td class="col-md-3"><b>DPI</b></td>
-                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="dpi" [(ngModel)]="fund.dpi" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.autoCalculation" #dpi="ngModel"/>
+                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="dpi" [(ngModel)]="fund.dpi" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType != 0" #dpi="ngModel"/>
                                                         <div [hidden]="dpi.valid || dpi.pristine" class="alert alert-danger">
                                                             Only positive number could be entered
                                                         </div>
@@ -412,7 +423,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td class="col-md-3"><b>Gross TVPI</b></td>
-                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="grossTvpi" [(ngModel)]="fund.grossTvpi" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.autoCalculation" #grossTvpi="ngModel"/>
+                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="grossTvpi" [(ngModel)]="fund.grossTvpi" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType != 0" #grossTvpi="ngModel"/>
                                                         <div [hidden]="grossTvpi.valid || grossTvpi.pristine" class="alert alert-danger">
                                                             Only positive number could be entered
                                                         </div>

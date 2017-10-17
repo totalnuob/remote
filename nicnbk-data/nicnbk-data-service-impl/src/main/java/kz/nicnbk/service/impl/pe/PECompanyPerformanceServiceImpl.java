@@ -40,11 +40,11 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
     @Autowired
     private PEFundService peFundService;
 
-    @Autowired
-    private PEGrossCashflowService cashflowService;
+//    @Autowired
+//    private PEGrossCashflowService cashflowService;
 
-    @Autowired
-    private PEIrrService irrService;
+//    @Autowired
+//    private PEIrrService irrService;
 
     @Override
     public Long save(PECompanyPerformanceDto performanceDto, Long fundId) {
@@ -126,69 +126,69 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
         }
     }
 
-    @Override
-    public PECompanyPerformanceResultDto recalculatePerformance(Long fundId) {
-        try {
-            PEFundDto fundDto = this.peFundService.get(fundId);
-            if (fundDto == null) {
-                return new PECompanyPerformanceResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");
-            }
-
-            deleteByFundId(fundId);
-
-            List<PECompanyPerformanceDto> performanceDtoList = new ArrayList<>();
-
-            for (PEGrossCashflowDto cashflowDto : this.cashflowService.findByFundId(fundId)) {
-                boolean found = false;
-                for (PECompanyPerformanceDto performanceDto : performanceDtoList) {
-                    if (cashflowDto.getCompanyName().equalsIgnoreCase(performanceDto.getCompanyName())) {
-                        found = true;
-                        if (cashflowDto.getInvested() != null) {
-                            performanceDto.setInvested(performanceDto.getInvested() != null ?
-                                    (performanceDto.getInvested() - cashflowDto.getInvested()) : - cashflowDto.getInvested());
-                        }
-                        if (cashflowDto.getRealized() != null) {
-                            performanceDto.setRealized(performanceDto.getRealized() != null ?
-                                    (performanceDto.getRealized() + cashflowDto.getRealized()) : cashflowDto.getRealized());
-                        }
-                        if (cashflowDto.getUnrealized() != null) {
-                            performanceDto.setUnrealized(performanceDto.getUnrealized() != null ?
-                                    (performanceDto.getUnrealized() + cashflowDto.getUnrealized()) : cashflowDto.getUnrealized());
-                        }
-                        break;
-                    }
-                }
-                if (found == false) {
-                    performanceDtoList.add(
-                            new PECompanyPerformanceDto(
-                                    cashflowDto.getCompanyName(),
-                                    (cashflowDto.getInvested() == null) ? null : - cashflowDto.getInvested(),
-                                    cashflowDto.getRealized(),
-                                    cashflowDto.getUnrealized(),
-                                    null, null, true, null, null));
-                }
-            }
-
-            for (PECompanyPerformanceDto performanceDto : performanceDtoList) {
-                performanceDto.setTotalValue(
-                        (performanceDto.getRealized() == null ? 0.0 : performanceDto.getRealized()) +
-                        (performanceDto.getUnrealized() == null ? 0.0 : performanceDto.getUnrealized()));
-
-                performanceDto.setMultiple(performanceDto.getInvested() == null ? null : performanceDto.getTotalValue() / performanceDto.getInvested());
-
-                List<PEGrossCashflowDto> cashflowDtoList = this.cashflowService.findByFundIdAndCompanyName(fundId, performanceDto.getCompanyName());
-                if (cashflowDtoList == null) {
-                    return new PECompanyPerformanceResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error updating PE fund's company performance", "");
-                }
-                performanceDto.setGrossIrr(this.irrService.getIRR(cashflowDtoList));
-            }
-
-            return saveList(performanceDtoList, fundId);
-        } catch (Exception ex) {
-            logger.error("Error updating PE fund's company performance: " + fundId ,ex);
-            return new PECompanyPerformanceResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error updating PE fund's company performance", "");
-        }
-    }
+//    @Override
+//    public PECompanyPerformanceResultDto recalculatePerformance(Long fundId) {
+//        try {
+//            PEFundDto fundDto = this.peFundService.get(fundId);
+//            if (fundDto == null) {
+//                return new PECompanyPerformanceResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");
+//            }
+//
+//            deleteByFundId(fundId);
+//
+//            List<PECompanyPerformanceDto> performanceDtoList = new ArrayList<>();
+//
+//            for (PEGrossCashflowDto cashflowDto : this.cashflowService.findByFundId(fundId)) {
+//                boolean found = false;
+//                for (PECompanyPerformanceDto performanceDto : performanceDtoList) {
+//                    if (cashflowDto.getCompanyName().equalsIgnoreCase(performanceDto.getCompanyName())) {
+//                        found = true;
+//                        if (cashflowDto.getInvested() != null) {
+//                            performanceDto.setInvested(performanceDto.getInvested() != null ?
+//                                    (performanceDto.getInvested() - cashflowDto.getInvested()) : - cashflowDto.getInvested());
+//                        }
+//                        if (cashflowDto.getRealized() != null) {
+//                            performanceDto.setRealized(performanceDto.getRealized() != null ?
+//                                    (performanceDto.getRealized() + cashflowDto.getRealized()) : cashflowDto.getRealized());
+//                        }
+//                        if (cashflowDto.getUnrealized() != null) {
+//                            performanceDto.setUnrealized(performanceDto.getUnrealized() != null ?
+//                                    (performanceDto.getUnrealized() + cashflowDto.getUnrealized()) : cashflowDto.getUnrealized());
+//                        }
+//                        break;
+//                    }
+//                }
+//                if (!found) {
+//                    performanceDtoList.add(
+//                            new PECompanyPerformanceDto(
+//                                    cashflowDto.getCompanyName(),
+//                                    (cashflowDto.getInvested() == null) ? null : - cashflowDto.getInvested(),
+//                                    cashflowDto.getRealized(),
+//                                    cashflowDto.getUnrealized(),
+//                                    null, null, true, null, null));
+//                }
+//            }
+//
+//            for (PECompanyPerformanceDto performanceDto : performanceDtoList) {
+//                performanceDto.setTotalValue(
+//                        (performanceDto.getRealized() == null ? 0.0 : performanceDto.getRealized()) +
+//                        (performanceDto.getUnrealized() == null ? 0.0 : performanceDto.getUnrealized()));
+//
+//                performanceDto.setMultiple(performanceDto.getInvested() == null ? null : performanceDto.getTotalValue() / performanceDto.getInvested());
+//
+//                List<PEGrossCashflowDto> cashflowDtoList = this.cashflowService.findByFundIdAndCompanyName(fundId, performanceDto.getCompanyName());
+//                if (cashflowDtoList == null) {
+//                    return new PECompanyPerformanceResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error updating PE fund's company performance", "");
+//                }
+//                performanceDto.setGrossIrr(this.irrService.getIRR(cashflowDtoList));
+//            }
+//
+//            return saveList(performanceDtoList, fundId);
+//        } catch (Exception ex) {
+//            logger.error("Error updating PE fund's company performance: " + fundId ,ex);
+//            return new PECompanyPerformanceResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error updating PE fund's company performance", "");
+//        }
+//    }
 
     @Override
     public List<PECompanyPerformanceDto> findByFundId(Long fundId) {
@@ -200,9 +200,9 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
         return null;
     }
 
-    @Override
-    public boolean deleteByFundId(Long fundId) {
-        this.repository.deleteByFundId(fundId);
-        return true;
-    }
+//    @Override
+//    public boolean deleteByFundId(Long fundId) {
+//        this.repository.deleteByFundId(fundId);
+//        return true;
+//    }
 }
