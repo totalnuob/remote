@@ -4,7 +4,6 @@ import kz.nicnbk.repo.api.pe.PECompanyPerformanceIddRepository;
 import kz.nicnbk.repo.model.pe.PECompanyPerformanceIdd;
 import kz.nicnbk.repo.model.pe.PEFund;
 import kz.nicnbk.service.api.pe.PECompanyPerformanceIddService;
-import kz.nicnbk.service.api.pe.PEFundService;
 import kz.nicnbk.service.api.pe.PEGrossCashflowService;
 import kz.nicnbk.service.api.pe.PEIrrService;
 import kz.nicnbk.service.converter.pe.PECompanyPerformanceIddEntityConverter;
@@ -36,9 +35,6 @@ public class PECompanyPerformanceIddServiceImpl implements PECompanyPerformanceI
 
     @Autowired
     private PECompanyPerformanceIddEntityConverter converter;
-
-    @Autowired
-    private PEFundService peFundService;
 
     @Autowired
     private PEGrossCashflowService cashflowService;
@@ -125,10 +121,6 @@ public class PECompanyPerformanceIddServiceImpl implements PECompanyPerformanceI
     @Override
     public PECompanyPerformanceIddResultDto recalculatePerformanceIdd(Long fundId) {
         try {
-            if (this.peFundService.get(fundId) == null) {
-                return new PECompanyPerformanceIddResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");
-            }
-
             deleteByFundId(fundId);
 
             List<PECompanyPerformanceIddDto> performanceIddDtoList = new ArrayList<>();

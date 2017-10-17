@@ -237,6 +237,13 @@ public class PEFundServiceImpl implements PEFundService {
     @Override
     public PEGrossCashflowAndCompanyPerformanceIddResultDto saveGrossCFAndRecalculatePerformanceIdd(List<PEGrossCashflowDto> cashflowDtoList, Long fundId, String updater) {
 
+        if (this.peFundRepository.findOne(fundId) == null) {
+            return new PEGrossCashflowAndCompanyPerformanceIddResultDto(
+                    new ArrayList<>(),
+                    new ArrayList<>(),
+                    StatusResultType.FAIL, "", "Fund doesn't exist!", "");
+        }
+
         PEGrossCashflowResultDto grossCFResultDto = saveGrossCF(cashflowDtoList, fundId, updater);
 
         if (grossCFResultDto.getStatus().equals(StatusResultType.FAIL)) {
