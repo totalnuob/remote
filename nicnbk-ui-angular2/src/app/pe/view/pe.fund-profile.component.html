@@ -35,757 +35,746 @@
     <div class="tab-content">
         <div id="fund" class="tab-pane fade in active">
             <div style="position: relative;">
-                <div [ngBusy]="busy">
-                    <br/>
-                    <ul class="nav nav-tabs" id="tabs-fund">
-                        <li class="active">
-                            <a data-toggle="tab" href="#overviewFund">OVERVIEW</a>
-                        </li>
-                        <li>
-                            <a data-toggle="tab" href="#performanceFund">PERFORMANCE</a>
-                        </li>
-                    </ul>
-                    <div class="tab-content">
-                        <div id="overviewFund" class="tab-pane fade in active">
-                            <div style="position: relative;">
-                                <div [ngBusy]="busy">
-                                    <br/>
-                                    <div class="row withpadding">
-                                        <h4>Manager Details</h4>
-                                        <table class=" col-md-4 table-striped table-condensed">
-                                            <tr>
-                                                <td class="col-md-1"><b>GP Name</b></td>
-                                                <td class="col-md-3">
-                                                    <a [routerLink]="['/pe/firmProfile/', fund?.firm?.id]">{{fund?.firm?.firmName}}</a></td>
-                                            </tr>
-                                            <tr>
-                                                <td class="col-md-1"><b>AUM (mln)</b></td>
-                                                <td class="col-md-3">{{fund?.firm?.aum}}</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="col-md-1"><b>Inception</b></td>
-                                                <td class="col-md-3">{{fund?.firm?.foundedYear}}
-                                                </td>
-                                            </tr>
-                                        </table>
-                                        <table class=" col-md-4 table-striped table-condensed">
-                                            <tr>
-                                                <td class="col-md-3"><b>Inv team (ops team)</b></td>
-                                                <td class="col-md-3">{{fund?.firm?.invTeamSize}}({{fund?.firm?.opsTeamSize}})</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="col-md-1"><b>Strategy focus</b></td>
-                                                <td class="col-md-3">{{firmStrategyList.toString()}}</td>
-                                            </tr>
-                                        </table>
-                                        <table class=" col-md-4 table-striped table-condensed">
-                                            <tr>
-                                                <td class="col-md-1"><b>Industry focus</b></td>
-                                                <td class="col-md-3">{{firmIndustryList.toString()}}</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="col-md-1"><b>Geography focus</b></td>
-                                                <td class="col-md-3">{{firmGeographyList.toString()}}</td>
-                                            </tr>
-                                        </table>
+                <br/>
+                <ul class="nav nav-tabs" id="tabs-fund">
+                    <li class="active">
+                        <a data-toggle="tab" href="#overview">OVERVIEW</a>
+                    </li>
+                    <li>
+                        <a data-toggle="tab" href="#performanceFund">PERFORMANCE</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div id="overview" class="tab-pane fade in active">
+                        <div style="position: relative;">
+                            <div [ngBusy]="busy">
+                                <br/>
+                                <div class="row withpadding">
+                                    <h4>Manager Details</h4>
+                                    <table class=" col-md-4 table-striped table-condensed">
+                                        <tr>
+                                            <td class="col-md-1"><b>GP Name</b></td>
+                                            <td class="col-md-3">
+                                                <a [routerLink]="['/pe/firmProfile/', fund?.firm?.id]">{{fund?.firm?.firmName}}</a></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="col-md-1"><b>AUM (mln)</b></td>
+                                            <td class="col-md-3">{{fund?.firm?.aum}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="col-md-1"><b>Inception</b></td>
+                                            <td class="col-md-3">{{fund?.firm?.foundedYear}}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <table class=" col-md-4 table-striped table-condensed">
+                                        <tr>
+                                            <td class="col-md-3"><b>Inv team (ops team)</b></td>
+                                            <td class="col-md-3">{{fund?.firm?.invTeamSize}}({{fund?.firm?.opsTeamSize}})</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="col-md-1"><b>Strategy focus</b></td>
+                                            <td class="col-md-3">{{firmStrategyList.toString()}}</td>
+                                        </tr>
+                                    </table>
+                                    <table class=" col-md-4 table-striped table-condensed">
+                                        <tr>
+                                            <td class="col-md-1"><b>Industry focus</b></td>
+                                            <td class="col-md-3">{{firmIndustryList.toString()}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="col-md-1"><b>Geography focus</b></td>
+                                            <td class="col-md-3">{{firmGeographyList.toString()}}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <hr>
+                                <form (ngSubmit)="save()" #fundForm="ngForm" class="well span">
+                                    <div class="row">
+                                        <div class="col-md-1">
+                                            <label><b>Fund name</b></label>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input type="text" class="form-control" placeholder="Enter fund name..."
+                                                   name="fundName" [(ngModel)]="fund.fundName"/>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <label><b>Status</b></label>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <select id="fundStatus" class="form-control" name="status" [(ngModel)]="fund.status" (ngModelChange)="toggle()">
+                                                <option value="Closed" selected>Closed</option>
+                                                <option value="Open">Open</option>
+                                                <option value="Opening soon">Opening soon</option>
+                                            </select>
+                                        </div>
                                     </div>
-                                    <hr>
-                                    <form (ngSubmit)="save()" #fundForm="ngForm" class="well span">
+                                    <div [hidden]="!openingSoon">
                                         <div class="row">
                                             <div class="col-md-1">
-                                                <label><b>Fund name</b></label>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <input type="text" class="form-control" placeholder="Enter fund name..."
-                                                       name="fundName" [(ngModel)]="fund.fundName"/>
-                                            </div>
-                                            <div class="col-md-1">
-                                                <label><b>Status</b></label>
+                                                <label><b>Opening Schedule</b></label>
                                             </div>
                                             <div class="col-md-3">
-                                                <select id="fundStatus" class="form-control" name="status" [(ngModel)]="fund.status" (ngModelChange)="toggle()">
-                                                    <option value="Closed" selected>Closed</option>
-                                                    <option value="Open">Open</option>
-                                                    <option value="Opening soon">Opening soon</option>
+                                                <select id="openingSchedule" class="form-control" name="openingSchedule" [(ngModel)]="fund.openingSchedule">
+                                                    <option *ngFor="let item of openingScheduleList" [value]="item.code">{{item.nameEn}}</option>
                                                 </select>
                                             </div>
                                         </div>
-                                        <div [hidden]="!openingSoon">
+                                    </div>
+                                    <div [hidden]="!visible">
+                                        <br>
+                                        <div class="row withpadding">
                                             <div class="row">
-                                                <div class="col-md-1">
-                                                    <label><b>Opening Schedule</b></label>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <select id="openingSchedule" class="form-control" name="openingSchedule" [(ngModel)]="fund.openingSchedule">
-                                                        <option *ngFor="let item of openingScheduleList" [value]="item.code">{{item.nameEn}}</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div [hidden]="!visible">
-                                            <br>
-                                            <div class="row withpadding">
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <h4>Fund Details</h4>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="col-md-4"><b>As of date</b></div>
-                                                        <div class="col-md-6"><input type='text' class="form-control" id="asOfDateOpenFund" name="asOfDateOpenFund" [(ngModel)]="fund.asOfDate"/></div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <td class="col-md-4"><b>NIC status</b></td>
-                                                        <td class="col-md-6">
-                                                            <select id="nicStatus" class="form-control" name="nicStatus" [(ngModel)]="fund.nicStatus">
-                                                                <option value="None" selected>--</option>
-                                                                <option value="IDD">IDD</option>
-                                                                <option value="ODD">ODD</option>
-                                                            </select>
-                                                        </td>
-                                                    </div>
-                                                </div>
-                                                <table class=" col-md-4 table-striped table-condensed">
-                                                    <tr>
-                                                        <td class="col-md-1">Fund size</td>
-                                                        <td class="col-md-3"><input style="width: 100%" type="text" name="fundSize" [(ngModel)]="fund.fundSize" pattern="[+]?[0-9]*\.?[0-9]+" #fundSize2="ngModel"/>
-                                                            <div [hidden]="fundSize2.valid || fundSize2.pristine" class="alert alert-danger">
-                                                                Only positive number could be entered
-                                                            </div>
-                                                            <select id="currency" class="form-control" name="currency" [(ngModel)] = "fund.currency">
-                                                                <option *ngFor="let item of currencyList" name="code" [value]="item.code">{{item.nameEn}}</option>
-                                                            </select>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="col-md-1">Predecessor fund invested, %</td>
-                                                        <td class="col-md-3"><input style="width: 100%" type="text" name="predecessorInvestedPct" [(ngModel)]="fund.predecessorInvestedPct"
-                                                                                    pattern="[+]?[0-9]*\.?[0-9]+" #predecessorInvestedPct="ngModel"/>
-                                                            <div [hidden]="predecessorInvestedPct.valid || predecessorInvestedPct.pristine" class="alert alert-danger">
-                                                                Only positive number could be entered
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="col-md-1">Target size / Hard cap</td>
-                                                        <td class="col-md-3">
-                                                            <input style="width: 30%" type="text" name="targetSize" [(ngModel)]="fund.targetSize" pattern="[+]?[0-9]*\.?[0-9]+" #targetSize="ngModel"/><input style="width: 70%" type="text" name="targetHardCapComment" [(ngModel)]="fund.targetHardCapComment" placeholder="Comment"/>
-                                                            <div [hidden]="targetSize.valid || targetSize.pristine" class="alert alert-danger">
-                                                                Only positive number could be entered
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="col-md-1">GP commitment</td>
-                                                        <td class="col-md-3"><input style="width: 100%" type="text" name="gpCommitment" [(ngModel)]="fund.gpCommitment" pattern="[+]?[0-9]*\.?[0-9]+" #gpCommitment="ngModel"/>
-                                                            <div [hidden]="gpCommitment.valid || gpCommitment.pristine" class="alert alert-danger">
-                                                                Only positive number could be entered
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="col-md-1">Management fee</td>
-                                                        <td class="col-md-3"><input style="width: 100%" type="text" name="managementFee" [(ngModel)]="fund.managementFee" pattern="[+]?[0-9]*\.?[0-9]+" #managementFee="ngModel"/>
-                                                            <div [hidden]="managementFee.valid || managementFee.pristine" class="alert alert-danger">
-                                                                Only positive number could be entered
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="col-md-1">Management fee comment</td>
-                                                        <td class="col-md-3"><input style="width: 100%" type="text" name="managementFeeComment" [(ngModel)]="fund.managementFeeComment"/></td>
-                                                    </tr>
-                                                </table>
-                                                <table class=" col-md-4 table-striped table-condensed">
-                                                    <tr>
-                                                        <td class="col-md-1">Carried interest</td>
-                                                        <td class="col-md-3"><input style="width: 100%" type="text" name="carriedInterest" [(ngModel)]="fund.carriedInterest" pattern="[+]?[0-9]*\.?[0-9]+" #carriedInterest="ngModel"/>
-                                                            <div [hidden]="carriedInterest.valid || carriedInterest.pristine" class="alert alert-danger">
-                                                                Only positive number could be entered
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="col-md-1">Hurdle rate</td>
-                                                        <td class="col-md-3"><input style="width: 100%" type="text" name="hurdleRate" [(ngModel)]="fund.hurdleRate" pattern="[+]?[0-9]*\.?[0-9]+" #hurdleRate="ngModel"/>
-                                                            <div [hidden]="hurdleRate.valid || hurdleRate.pristine" class="alert alert-danger">
-                                                                Only positive number could be entered
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="col-md-1">Industry</td>
-                                                        <td class="col-md-3" *ngIf="industryList?.length > 0">
-                                                            <ng-select #industrySelect [initData]="fund.industry"
-                                                                       [multiple]="true"
-                                                                       [items]="industryList"
-                                                                       (data)="refreshIndustry($event)"
-                                                                       (selected)="selected($event)"
-                                                                       (removed)="removed($event)"
-                                                                       placeholder="No industry selected"></ng-select>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="col-md-1">Strategy</td>
-                                                        <td class="col-md-3" *ngIf="strategyList?.length > 0">
-                                                            <ng-select #strategySelect [initData]="fund.strategy"
-                                                                       [multiple]="true"
-                                                                       [items]="strategyList"
-                                                                       (data)="refreshStrategy($event)"
-                                                                       (selected)="selected($event)"
-                                                                       (removed)="removed($event)"
-                                                                       placeholder="No strategy selected"></ng-select>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="col-md-1">Geography</td>
-                                                        <td class="col-md-3" *ngIf="geographyList?.length > 0">
-                                                            <ng-select #geographySelect [initData]="fund.geography"
-                                                                       [multiple]="true"
-                                                                       [items]="geographyList"
-                                                                       (data)="refreshGeography($event)"
-                                                                       (selected)="selected($event)"
-                                                                       (removed)="removed($event)"
-                                                                       placeholder="No geography selected"></ng-select>
-                                                        </td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                        </div>
-
-                                        <form [hidden]="visible">
-                                            <div class="row">
-                                                <div class="col-md-1">
-                                                    <label><b>Vintage</b></label>
+                                                <div class="col-md-4">
+                                                    <h4>Fund Details</h4>
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <input type="text" class="form-control" placeholder="Enter vintage"
-                                                           name="vintage" [(ngModel)]="fund.vintage" pattern="[1-2][0-9][0-9][0-9]" #vintage="ngModel"/>
-                                                    <div [hidden]="vintage.valid || vintage.pristine" class="alert alert-danger">
-                                                        Please enter a valid year
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="row top-buffer">
-                                                <div class="col-md-1">
-                                                    <label><b>Fund size</b></label>
+                                                    <div class="col-md-4"><b>As of date</b></div>
+                                                    <div class="col-md-6"><input type='text' class="form-control" id="asOfDateOpenFund" name="asOfDateOpenFund" [(ngModel)]="fund.asOfDate"/></div>
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <input type="text" class="form-control" placeholder="Enter fund size"
-                                                           name="fundSize" [(ngModel)]="fund.fundSize" pattern="[+]?[0-9]*\.?[0-9]+" #fundSize="ngModel"/>
-                                                    <div [hidden]="fundSize.valid || fundSize.pristine" class="alert alert-danger">
-                                                        Only positive number could be entered
-                                                    </div>
+                                                    <td class="col-md-4"><b>NIC status</b></td>
+                                                    <td class="col-md-6">
+                                                        <select id="nicStatus" class="form-control" name="nicStatus" [(ngModel)]="fund.nicStatus">
+                                                            <option value="None" selected>--</option>
+                                                            <option value="IDD">IDD</option>
+                                                            <option value="ODD">ODD</option>
+                                                        </select>
+                                                    </td>
                                                 </div>
                                             </div>
-                                            <br>
-                                            <div class="row">
-                                                <div class="col-md-2">
-                                                    <label><b>Upload Gross Cash Flows</b></label>
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <a class="btn btn-info btn-sm" data-toggle="modal"
-                                                       data-target="#grossCfInputModal">
-                                                        <span class="glyphicon glyphicon-circle-arrow-up"></span>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-2">
-                                                    <label><b>Upload Net Cash Flows</b></label>
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <a class="btn btn-info btn-sm" data-toggle="modal"
-                                                       data-target="#netCfInputModal">
-                                                        <span class="glyphicon glyphicon-circle-arrow-up"></span>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="modal fade" id="grossCfInputModal" role="dialog">
-                                                    <div class="modal-dialog" style="overflow-y: scroll; max-height:85%; margin-top: 50px; margin-bottom: 50px;">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <textarea fz-elastic class="form-control" name="uploadedGrossCf" [(ngModel)]="uploadedGrossCf"></textarea>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
-                                                                <button type="button" class="btn btn-default pull-left" (click)="grossCfParse()" data-dismiss="modal" >Add</button>
-                                                            </div>
+                                            <table class=" col-md-4 table-striped table-condensed">
+                                                <tr>
+                                                    <td class="col-md-1">Fund size</td>
+                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="fundSize" [(ngModel)]="fund.fundSize" pattern="[+]?[0-9]*\.?[0-9]+" #fundSize2="ngModel"/>
+                                                        <div [hidden]="fundSize2.valid || fundSize2.pristine" class="alert alert-danger">
+                                                            Only positive number could be entered
                                                         </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="modal fade" id="netCfInputModal" role="dialog">
-                                                    <div class="modal-dialog" style="overflow-y: scroll; max-height:85%; margin-top: 50px; margin-bottom: 50px;">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <textarea fz-elastic class="form-control" name="uploadedNetCf" [(ngModel)]="uploadedNetCf"></textarea>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
-                                                                <button type="button" class="btn btn-default pull-left" (click)="netCfParse()" data-dismiss="modal" >Add</button>
-                                                            </div>
+                                                        <select id="currency" class="form-control" name="currency" [(ngModel)] = "fund.currency">
+                                                            <option *ngFor="let item of currencyList" name="code" [value]="item.code">{{item.nameEn}}</option>
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="col-md-1">Predecessor fund invested, %</td>
+                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="predecessorInvestedPct" [(ngModel)]="fund.predecessorInvestedPct"
+                                                                                pattern="[+]?[0-9]*\.?[0-9]+" #predecessorInvestedPct="ngModel"/>
+                                                        <div [hidden]="predecessorInvestedPct.valid || predecessorInvestedPct.pristine" class="alert alert-danger">
+                                                            Only positive number could be entered
                                                         </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </form>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="col-md-1">Target size / Hard cap</td>
+                                                    <td class="col-md-3">
+                                                        <input style="width: 30%" type="text" name="targetSize" [(ngModel)]="fund.targetSize" pattern="[+]?[0-9]*\.?[0-9]+" #targetSize="ngModel"/><input style="width: 70%" type="text" name="targetHardCapComment" [(ngModel)]="fund.targetHardCapComment" placeholder="Comment"/>
+                                                        <div [hidden]="targetSize.valid || targetSize.pristine" class="alert alert-danger">
+                                                            Only positive number could be entered
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="col-md-1">GP commitment</td>
+                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="gpCommitment" [(ngModel)]="fund.gpCommitment" pattern="[+]?[0-9]*\.?[0-9]+" #gpCommitment="ngModel"/>
+                                                        <div [hidden]="gpCommitment.valid || gpCommitment.pristine" class="alert alert-danger">
+                                                            Only positive number could be entered
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="col-md-1">Management fee</td>
+                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="managementFee" [(ngModel)]="fund.managementFee" pattern="[+]?[0-9]*\.?[0-9]+" #managementFee="ngModel"/>
+                                                        <div [hidden]="managementFee.valid || managementFee.pristine" class="alert alert-danger">
+                                                            Only positive number could be entered
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="col-md-1">Management fee comment</td>
+                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="managementFeeComment" [(ngModel)]="fund.managementFeeComment"/></td>
+                                                </tr>
+                                            </table>
+                                            <table class=" col-md-4 table-striped table-condensed">
+                                                <tr>
+                                                    <td class="col-md-1">Carried interest</td>
+                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="carriedInterest" [(ngModel)]="fund.carriedInterest" pattern="[+]?[0-9]*\.?[0-9]+" #carriedInterest="ngModel"/>
+                                                        <div [hidden]="carriedInterest.valid || carriedInterest.pristine" class="alert alert-danger">
+                                                            Only positive number could be entered
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="col-md-1">Hurdle rate</td>
+                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="hurdleRate" [(ngModel)]="fund.hurdleRate" pattern="[+]?[0-9]*\.?[0-9]+" #hurdleRate="ngModel"/>
+                                                        <div [hidden]="hurdleRate.valid || hurdleRate.pristine" class="alert alert-danger">
+                                                            Only positive number could be entered
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="col-md-1">Industry</td>
+                                                    <td class="col-md-3" *ngIf="industryList?.length > 0">
+                                                        <ng-select #industrySelect [initData]="fund.industry"
+                                                                   [multiple]="true"
+                                                                   [items]="industryList"
+                                                                   (data)="refreshIndustry($event)"
+                                                                   (selected)="selected($event)"
+                                                                   (removed)="removed($event)"
+                                                                   placeholder="No industry selected"></ng-select>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="col-md-1">Strategy</td>
+                                                    <td class="col-md-3" *ngIf="strategyList?.length > 0">
+                                                        <ng-select #strategySelect [initData]="fund.strategy"
+                                                                   [multiple]="true"
+                                                                   [items]="strategyList"
+                                                                   (data)="refreshStrategy($event)"
+                                                                   (selected)="selected($event)"
+                                                                   (removed)="removed($event)"
+                                                                   placeholder="No strategy selected"></ng-select>
+                                                </tr>
+                                                <tr>
+                                                    <td class="col-md-1">Geography</td>
+                                                    <td class="col-md-3" *ngIf="geographyList?.length > 0">
+                                                        <ng-select #geographySelect [initData]="fund.geography"
+                                                                   [multiple]="true"
+                                                                   [items]="geographyList"
+                                                                   (data)="refreshGeography($event)"
+                                                                   (selected)="selected($event)"
+                                                                   (removed)="removed($event)"
+                                                                   placeholder="No geography selected"></ng-select>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
 
-                                        <form [hidden]="openingSoon">
-                                            <hr>
-                                            <div class="row withpadding">
-                                                <h4>Key fund statistics</h4>
-                                                <h5>Auto calculation by PERFORMANCE tab</h5>
-                                                <div class="onoffswitch">
-                                                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" [(ngModel)]="fund.autoCalculation" (ngModelChange)="autoCalculationStatistics()" unchecked>
-                                                    <label class="onoffswitch-label" for="myonoffswitch">
-                                                        <span class="onoffswitch-inner"></span>
-                                                        <span class="onoffswitch-switch"></span>
-                                                    </label>
-                                                </div>
-                                                <table class=" col-md-4 table-striped table-condensed">
-                                                    <tr>
-                                                        <td class="col-md-3"><b>Number of investments</b></td>
-                                                        <td class="col-md-3"><input style="width: 100%" type="text" name="numberOfInv" [(ngModel)]="fund.numberOfInvestments" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.autoCalculation" #numOfInv="ngModel"/>
-                                                            <div [hidden]="numOfInv.valid || numOfInv.pristine" class="alert alert-danger">
-                                                                Only positive number could be entered
-                                                            </div>
-                                                        </td>
-                                                        <!--<td class="col-md-2">{{fund.numberOfInvestments}}</td>-->
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="col-md-3"><b>Invested amount</b></td>
-                                                        <td class="col-md-3"><input style="width: 100%" type="text" name="invested" [(ngModel)]="fund.investedAmount" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.autoCalculation" #invested="ngModel"/>
-                                                            <div [hidden]="invested.valid || invested.pristine" class="alert alert-danger">
-                                                                Only positive number could be entered
-                                                            </div>
-                                                        </td>
-                                                        <!--<td class="col-md-2">{{fund.investedAmount}}</td>-->
-                                                    </tr>
-
-                                                    <tr>
-                                                        <td class="col-md-3"><b>Realized amount</b></td>
-                                                        <td class="col-md-3"><input style="width: 100%" type="text" name="realized" [(ngModel)]="fund.realized" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.autoCalculation" #realized="ngModel"/>
-                                                            <div [hidden]="realized.valid || realized.pristine" class="alert alert-danger">
-                                                                Only positive number could be entered
-                                                            </div>
-                                                        </td>
-                                                        <!--<td class="col-md-2">{{fund.realized}}</td>-->
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="col-md-3"><b>Benchmark</b></td>
-                                                        <td class="col-md-3"><input style="width: 100%" type="text" name="benchmark" [(ngModel)]="fund.benchmarkName" placeholder="-"></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="col-md-3"><b>As of date</b></td>
-                                                        <td class="col-md-3">
-                                                            <div class="input-group">
-                                                                <input type='text' class="input-group-addon form-control" id="asOfDate" name="asOfDate" [(ngModel)]="fund.asOfDate" placeholder="-"/>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                </table>
-                                                <table class=" col-md-4 table-striped table-condensed">
-                                                    <tr>
-                                                        <td class="col-md-3"><b>Unrealized amount</b></td>
-                                                        <td class="col-md-3"><input style="width: 100%" type="text" name="unrealized" [(ngModel)]="fund.unrealized" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.autoCalculation" #unrealized="ngModel"/>
-                                                            <div [hidden]="unrealized.valid || unrealized.pristine" class="alert alert-danger">
-                                                                Only positive number could be entered
-                                                            </div>
-                                                        </td>
-                                                        <!--<td class="col-md-2">{{fund.unrealized}}</td>-->
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="col-md-3"><b>DPI</b></td>
-                                                        <td class="col-md-3"><input style="width: 100%" type="text" name="dpi" [(ngModel)]="fund.dpi" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.autoCalculation" #dpi="ngModel"/>
-                                                            <div [hidden]="dpi.valid || dpi.pristine" class="alert alert-danger">
-                                                                Only positive number could be entered
-                                                            </div>
-                                                        </td>
-                                                        <!--<td class="col-md-2">{{fund.dpi}}</td>-->
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="col-md-3"><b>Gross TVPI</b></td>
-                                                        <td class="col-md-3"><input style="width: 100%" type="text" name="grossTvpi" [(ngModel)]="fund.grossTvpi" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.autoCalculation" #grossTvpi="ngModel"/>
-                                                            <div [hidden]="grossTvpi.valid || grossTvpi.pristine" class="alert alert-danger">
-                                                                Only positive number could be entered
-                                                            </div>
-                                                        </td>
-                                                        <!--<td class="col-md-2">{{fund.grossTvpi}}</td>-->
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="col-md-3"><b>Benchmark NET IRR</b></td>
-                                                        <td class="col-md-3"><input style="width: 100%" type="text" name="benchmarkNetIrr" [(ngModel)]="fund.benchmarkNetIrr" placeholder="-" pattern="[+/-]?[0-9]*\.?[0-9]+" #benchmarkNetIrr="ngModel"/>
-                                                            <div [hidden]="benchmarkNetIrr.valid || benchmarkNetIrr.pristine" class="alert alert-danger">
-                                                                Only number could be entered
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                </table>
-                                                <table class=" col-md-4 table-striped table-condensed">
-                                                    <tr>
-                                                        <td class="col-md-3"><b>Gross IRR</b></td>
-                                                        <td class="col-md-3"><input style="width: 100%" type="text" name="grossIrr" [(ngModel)]="fund.grossIrr" placeholder="-" pattern="[+/-]?[0-9]*\.?[0-9]+" #grossIrr="ngModel"/>
-                                                            <div [hidden]="grossIrr.valid || grossIrr.pristine" class="alert alert-danger">
-                                                                Only number could be entered
-                                                            </div>
-                                                        </td>
-                                                        <!--<td class="col-md-2">{{fund.grossIrr}}</td>-->
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="col-md-3"><b>Net TVPI</b></td>
-                                                        <td class="col-md-3"><input style="width: 100%" type="text" name="netTvpi" [(ngModel)]="fund.netTvpi" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #netTvpi="ngModel"/>
-                                                            <div [hidden]="netTvpi.valid || netTvpi.pristine" class="alert alert-danger">
-                                                                Only positive number could be entered
-                                                            </div>
-                                                        </td>
-                                                        <!--<td class="col-md-2">{{fund.netTvpi}}</td>-->
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="col-md-3"><b>Net IRR</b></td>
-                                                        <td class="col-md-3"><input style="width: 100%" type="text" name="netIrr" [(ngModel)]="fund.netIrr" placeholder="-" pattern="[+/-]?[0-9]*\.?[0-9]+" #netIrr="ngModel"/>
-                                                            <div [hidden]="netIrr.valid || netIrr.pristine" class="alert alert-danger">
-                                                                Only number could be entered
-                                                            </div>
-                                                        </td>
-                                                        <!--<td class="col-md-2">{{fund.netIrr}}</td>-->
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="col-md-3"><b>Benchmark NET TVPI</b></td>
-                                                        <td class="col-md-3"><input style="width: 100%" type="text" name="benchmarkNetTvpi" [(ngModel)]="fund.benchmarkNetTvpi" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #benchmarkNetTvpi="ngModel"/>
-                                                            <div [hidden]="benchmarkNetTvpi.valid || benchmarkNetTvpi.pristine" class="alert alert-danger">
-                                                                Only positive number could be entered
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                </table>
+                                    <form [hidden]="visible">
+                                        <div class="row">
+                                            <div class="col-md-1">
+                                                <label><b>Vintage</b></label>
                                             </div>
-                                        </form>
-                                        <div [hidden]="!visible">
-                                            <div class="row withpadding">
-                                                <h4>Fund strategy</h4>
-                                                <table class=" col-md-4 table-striped table-condensed">
-                                                    <tr>
-                                                        <td class="col-md-1">Fund strategy comment</td>
-                                                        <td class="col-md-3"><textarea fz-elastic spellcheck="false"  class="form-control" name="strategyComment" [(ngModel)]="fund.strategyComment"></textarea></td>
-                                                    </tr>
-                                                </table>
+                                            <div class="col-md-4">
+                                                <input type="text" class="form-control" placeholder="Enter vintage"
+                                                       name="vintage" [(ngModel)]="fund.vintage" pattern="[1-2][0-9][0-9][0-9]" #vintage="ngModel"/>
+                                                <div [hidden]="vintage.valid || vintage.pristine" class="alert alert-danger">
+                                                    Please enter a valid year
+                                                </div>
                                             </div>
                                         </div>
-                                        <div [hidden]="!visible">
-                                            <div class="row withpadding">
-                                                <h4>Descriptive data</h4>
-                                                <table class=" col-md-4 table-striped table-condensed">
-                                                    <tr>
-                                                        <td class="col-md-1">Investment period</td>
-                                                        <td class="col-md-3"><input style="width: 100%" type="text" name="investmentPeriod" [(ngModel)]="fund.investmentPeriod"
-                                                                                    pattern="[+]?[0-9]*\.?[0-9]+" #investmentPeriod="ngModel"/>
-                                                            <div [hidden]="investmentPeriod.valid || investmentPeriod.pristine" class="alert alert-danger">
-                                                                Only positive number could be entered
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="col-md-1">Fund term</td>
-                                                        <td class="col-md-3">
-                                                            <input style="width: 30%" type="text" name="fundTerm" [(ngModel)]="fund.fundTerm" pattern="[+]?[0-9]*\.?[0-9]+" #fundTerm="ngModel"/><input style="width: 70%" type="text" name="fundTermComment" [(ngModel)]="fund.fundTermComment" placeholder="Comment"/>
-                                                            <div [hidden]="fundTerm.valid || fundTerm.pristine" class="alert alert-danger">
-                                                                Only positive number could be entered
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="col-md-1">Target inv. size range</td>
-                                                        <td class="col-md-3"><input style="width: 100%" type="text" name="targetInvSizeRange" [(ngModel)]="fund.targetInvSizeRange" pattern="[+]?[0-9]*\.?[0-9]+" #targetInvSizeRange="ngModel"/>
-                                                            <div [hidden]="targetInvSizeRange.valid || targetInvSizeRange.pristine" class="alert alert-danger">
-                                                                Only positive number could be entered
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                </table>
-                                                <table class=" col-md-4 table-striped table-condensed">
-                                                    <tr>
-                                                        <td class="col-md-1">Target EV range</td>
-                                                        <td class="col-md-3"><input style="width: 100%" type="text" name="targetEvRange" [(ngModel)]="fund.targetEvRange" pattern="[+]?[0-9]*\.?[0-9]+" #targetEvRange="ngModel"/>
-                                                            <div [hidden]="targetEvRange.valid || targetEvRange.pristine" class="alert alert-danger">
-                                                                Only positive number could be entered
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="col-md-1">Target number of inv.</td>
-                                                        <td class="col-md-3">
-                                                            <input style="width: 30%" type="text" name="targetNumberOfInv1" [(ngModel)]="fund.targetNumberOfInv1" pattern="[+]?[0-9]*\.?[0-9]+" #targetNumberOfInv1="ngModel"/><input style="width: 70%" type="text" name="targetNumberOfInv2" [(ngModel)]="fund.targetNumberOfInv2" pattern="[+]?[0-9]*\.?[0-9]+" #targetNumberOfInv2="ngModel"/>
-                                                            <div [hidden]="targetNumberOfInv1.valid || targetNumberOfInv1.pristine" class="alert alert-danger">
-                                                                Only positive number could be entered
-                                                            </div>
-                                                            <div [hidden]="targetNumberOfInv2.valid || targetNumberOfInv2.pristine" class="alert alert-danger">
-                                                                Only positive number could be entered
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="col-md-1">Expected annual number of inv.</td>
-                                                        <td class="col-md-3">
-                                                            <input style="width: 30%" type="text" name="expAnnualNumberOfInv1" [(ngModel)]="fund.expAnnualNumberOfInv1" pattern="[+]?[0-9]*\.?[0-9]+" #expAnnualNumberOfInv1="ngModel"/><input style="width: 70%" type="text" name="expAnnualNumberOfInv2" [(ngModel)]="fund.expAnnualNumberOfInv2" pattern="[+]?[0-9]*\.?[0-9]+" #expAnnualNumberOfInv2="ngModel"/>
-                                                            <div [hidden]="expAnnualNumberOfInv1.valid || expAnnualNumberOfInv1.pristine" class="alert alert-danger">
-                                                                Only positive number could be entered
-                                                            </div>
-                                                            <div [hidden]="expAnnualNumberOfInv2.valid || expAnnualNumberOfInv2.pristine" class="alert alert-danger">
-                                                                Only positive number could be entered
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                </table>
-                                            </div>
 
-                                            <div class="row withpadding">
-                                                <h4>Targeted closing information</h4>
-                                                <!--<div class="col-md-3">-->
-                                                <!--<div class='input-group date col-md-2' id='firstClose' style="width: 100%">-->
-                                                <!--<input type='text' class="form-control" id="firstCloseVal" [(ngModel)]="fund.firstClose"/>-->
-                                                <!--<span class="input-group-addon">-->
-                                                <!--<span class="glyphicon glyphicon-calendar">Start date</span>-->
-                                                <!--</span>-->
-                                                <!--</div>-->
-                                                <!--</div>-->
-                                                <!--<div class="col-md-3">-->
-                                                <!--<div class='input-group date col-md-2' id='finalClose' style="width: 100%">-->
-                                                <!--<input type='text' class="form-control" id="finalCloseVal" [(ngModel)]="fund.finalClose"/>-->
-                                                <!--<span class="input-group-addon">-->
-                                                <!--<span class="glyphicon glyphicon-calendar">End date</span>-->
-                                                <!--</span>-->
-                                                <!--</div>-->
-                                                <!--</div>-->
-                                                <table class="col-md-4 table-striped table-condensed">
-                                                    <tr>
-                                                        <td class="col-md-1">First close</td>
-                                                        <td class="col-md-3"><input type='text' class="form-control" id="firstClose" name="firstClose" [(ngModel)]="fund.firstClose"/></td>
-                                                    </tr>
-                                                </table>
-                                                <table class="col-md-4 table-striped table-condensed">
-                                                    <tr>
-                                                        <td class="col-md-1">Final close</td>
-                                                        <td class="col-md-3"><input type='text' class="form-control" id="finalClose" name="finalClose" [(ngModel)]="fund.finalClose"/></td>
-                                                    </tr>
-                                                </table>
+                                        <div class="row top-buffer">
+                                            <div class="col-md-1">
+                                                <label><b>Fund size</b></label>
                                             </div>
-                                            <div class="row withpadding">
-                                                <h4>Observations</h4>
-                                                <h5>General Partner</h5>
-                                                <table class=" col-md-4 table-striped table-condensed">
-                                                    <th>Merits</th>
-                                                    <tr>
-                                                        <td class="col-md-3"><textarea fz-elastic spellcheck="false"  class="form-control" name="generalPartnerMerits" [(ngModel)]="fund.generalPartnerMerits"></textarea></td>
-                                                    </tr>
-                                                </table>
-                                                <table class=" col-md-4 table-striped table-condensed">
-                                                    <th>Risks</th>
-                                                    <tr>
-                                                        <td class="col-md-3"><textarea  fz-elastic spellcheck="false"  class="form-control" name="generalPartnerRisks" [(ngModel)]="fund.generalPartnerRisks"></textarea></td>
-                                                    </tr>
-                                                </table>
+                                            <div class="col-md-4">
+                                                <input type="text" class="form-control" placeholder="Enter fund size"
+                                                       name="fundSize" [(ngModel)]="fund.fundSize" pattern="[+]?[0-9]*\.?[0-9]+" #fundSize="ngModel"/>
+                                                <div [hidden]="fundSize.valid || fundSize.pristine" class="alert alert-danger">
+                                                    Only positive number could be entered
+                                                </div>
                                             </div>
-                                            <div class="row withpadding">
-                                                <h5>Strategy/Structure</h5>
-                                                <table class=" col-md-4 table-striped table-condensed">
-                                                    <th>Merits</th>
-                                                    <tr>
-                                                        <td class="col-md-3"><textarea fz-elastic  spellcheck="false"  class="form-control" name="strategyStructureMerits" [(ngModel)]="fund.strategyStructureMerits"></textarea></td>
-                                                    </tr>
-                                                </table>
-                                                <table class=" col-md-4 table-striped table-condensed">
-                                                    <th>Risks</th>
-                                                    <tr>
-                                                        <td class="col-md-3"><textarea fz-elastic  spellcheck="false"  class="form-control" name="strategyStructureRisks" [(ngModel)]="fund.strategyStructureRisks"></textarea></td>
-                                                    </tr>
-                                                </table>
+                                        </div>
+                                        <br>
+                                        <div class="row">
+                                            <div class="col-md-2">
+                                                <label><b>Upload Gross Cash Flows</b></label>
                                             </div>
-                                            <div class="row withpadding">
-                                                <h5>Performance</h5>
-                                                <table class=" col-md-4 table-striped table-condensed">
-                                                    <th>Merits</th>
-                                                    <tr>
-                                                        <td class="col-md-3"><textarea fz-elastic  spellcheck="false"  class="form-control" name="performanceMerits" [(ngModel)]="fund.performanceMerits"></textarea></td>
-                                                    </tr>
-                                                </table>
-                                                <table class=" col-md-4 table-striped table-condensed">
-                                                    <th>Risks</th>
-                                                    <tr>
-                                                        <td class="col-md-3"><textarea fz-elastic  spellcheck="false"  class="form-control" name="performanceRisks" [(ngModel)]="fund.performanceRisks"></textarea></td>
-                                                    </tr>
-                                                </table>
+                                            <div class="col-md-1">
+                                                <a class="btn btn-info btn-sm" data-toggle="modal"
+                                                   data-target="#grossCfInputModal">
+                                                    <span class="glyphicon glyphicon-circle-arrow-up"></span>
+                                                </a>
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-md-12">
-                                                <div class="col-md-1 pull-right">
-                                                    <button type="submit" class="btn btn-success" [disabled]="!fundForm.form.valid" *ngIf="canEdit()">SAVE</button>
+                                            <div class="col-md-2">
+                                                <label><b>Upload Net Cash Flows</b></label>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <a class="btn btn-info btn-sm" data-toggle="modal"
+                                                   data-target="#netCfInputModal">
+                                                    <span class="glyphicon glyphicon-circle-arrow-up"></span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="modal fade" id="grossCfInputModal" role="dialog">
+                                                <div class="modal-dialog" style="overflow-y: scroll; max-height:85%; margin-top: 50px; margin-bottom: 50px;">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <textarea fz-elastic class="form-control" name="uploadedGrossCf" [(ngModel)]="uploadedGrossCf"></textarea>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+                                                            <button type="button" class="btn btn-default pull-left" (click)="grossCfParse()" data-dismiss="modal" >Add</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="modal fade" id="netCfInputModal" role="dialog">
+                                                <div class="modal-dialog" style="overflow-y: scroll; max-height:85%; margin-top: 50px; margin-bottom: 50px;">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <textarea fz-elastic class="form-control" name="uploadedNetCf" [(ngModel)]="uploadedNetCf"></textarea>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+                                                            <button type="button" class="btn btn-default pull-left" (click)="netCfParse()" data-dismiss="modal" >Add</button>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </form>
+
+                                    <form [hidden]="openingSoon">
+                                        <hr>
+                                        <div class="row withpadding">
+                                            <h4>Key fund statistics</h4>
+                                            <h5>Auto calculation by PERFORMANCE tab</h5>
+                                            <div class="onoffswitch">
+                                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" [(ngModel)]="fund.autoCalculation" (ngModelChange)="autoCalculationStatistics()" unchecked>
+                                                <label class="onoffswitch-label" for="myonoffswitch">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                            <table class=" col-md-4 table-striped table-condensed">
+                                                <tr>
+                                                    <td class="col-md-3"><b>Number of investments</b></td>
+                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="numberOfInv" [(ngModel)]="fund.numberOfInvestments" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.autoCalculation" #numOfInv="ngModel"/>
+                                                        <div [hidden]="numOfInv.valid || numOfInv.pristine" class="alert alert-danger">
+                                                            Only positive number could be entered
+                                                        </div>
+                                                    </td>
+                                                    <!--<td class="col-md-2">{{fund.numberOfInvestments}}</td>-->
+                                                </tr>
+                                                <tr>
+                                                    <td class="col-md-3"><b>Invested amount</b></td>
+                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="invested" [(ngModel)]="fund.investedAmount" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.autoCalculation" #invested="ngModel"/>
+                                                        <div [hidden]="invested.valid || invested.pristine" class="alert alert-danger">
+                                                            Only positive number could be entered
+                                                        </div>
+                                                    </td>
+                                                    <!--<td class="col-md-2">{{fund.investedAmount}}</td>-->
+                                                </tr>
+
+                                                <tr>
+                                                    <td class="col-md-3"><b>Realized amount</b></td>
+                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="realized" [(ngModel)]="fund.realized" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.autoCalculation" #realized="ngModel"/>
+                                                        <div [hidden]="realized.valid || realized.pristine" class="alert alert-danger">
+                                                            Only positive number could be entered
+                                                        </div>
+                                                    </td>
+                                                    <!--<td class="col-md-2">{{fund.realized}}</td>-->
+                                                </tr>
+                                                <tr>
+                                                    <td class="col-md-3"><b>Benchmark</b></td>
+                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="benchmark" [(ngModel)]="fund.benchmarkName" placeholder="-"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="col-md-3"><b>As of date</b></td>
+                                                    <td class="col-md-3">
+                                                        <div class="input-group">
+                                                            <input type='text' class="input-group-addon form-control" id="asOfDate" name="asOfDate" [(ngModel)]="fund.asOfDate" placeholder="-"/>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                            <table class=" col-md-4 table-striped table-condensed">
+                                                <tr>
+                                                    <td class="col-md-3"><b>Unrealized amount</b></td>
+                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="unrealized" [(ngModel)]="fund.unrealized" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.autoCalculation" #unrealized="ngModel"/>
+                                                        <div [hidden]="unrealized.valid || unrealized.pristine" class="alert alert-danger">
+                                                            Only positive number could be entered
+                                                        </div>
+                                                    </td>
+                                                    <!--<td class="col-md-2">{{fund.unrealized}}</td>-->
+                                                </tr>
+                                                <tr>
+                                                    <td class="col-md-3"><b>DPI</b></td>
+                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="dpi" [(ngModel)]="fund.dpi" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.autoCalculation" #dpi="ngModel"/>
+                                                        <div [hidden]="dpi.valid || dpi.pristine" class="alert alert-danger">
+                                                            Only positive number could be entered
+                                                        </div>
+                                                    </td>
+                                                    <!--<td class="col-md-2">{{fund.dpi}}</td>-->
+                                                </tr>
+                                                <tr>
+                                                    <td class="col-md-3"><b>Gross TVPI</b></td>
+                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="grossTvpi" [(ngModel)]="fund.grossTvpi" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.autoCalculation" #grossTvpi="ngModel"/>
+                                                        <div [hidden]="grossTvpi.valid || grossTvpi.pristine" class="alert alert-danger">
+                                                            Only positive number could be entered
+                                                        </div>
+                                                    </td>
+                                                    <!--<td class="col-md-2">{{fund.grossTvpi}}</td>-->
+                                                </tr>
+                                                <tr>
+                                                    <td class="col-md-3"><b>Benchmark NET IRR</b></td>
+                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="benchmarkNetIrr" [(ngModel)]="fund.benchmarkNetIrr" placeholder="-" pattern="[+/-]?[0-9]*\.?[0-9]+" #benchmarkNetIrr="ngModel"/>
+                                                        <div [hidden]="benchmarkNetIrr.valid || benchmarkNetIrr.pristine" class="alert alert-danger">
+                                                            Only number could be entered
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                            <table class=" col-md-4 table-striped table-condensed">
+                                                <tr>
+                                                    <td class="col-md-3"><b>Gross IRR</b></td>
+                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="grossIrr" [(ngModel)]="fund.grossIrr" placeholder="-" pattern="[+/-]?[0-9]*\.?[0-9]+" #grossIrr="ngModel"/>
+                                                        <div [hidden]="grossIrr.valid || grossIrr.pristine" class="alert alert-danger">
+                                                            Only number could be entered
+                                                        </div>
+                                                    </td>
+                                                    <!--<td class="col-md-2">{{fund.grossIrr}}</td>-->
+                                                </tr>
+                                                <tr>
+                                                    <td class="col-md-3"><b>Net TVPI</b></td>
+                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="netTvpi" [(ngModel)]="fund.netTvpi" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #netTvpi="ngModel"/>
+                                                        <div [hidden]="netTvpi.valid || netTvpi.pristine" class="alert alert-danger">
+                                                            Only positive number could be entered
+                                                        </div>
+                                                    </td>
+                                                    <!--<td class="col-md-2">{{fund.netTvpi}}</td>-->
+                                                </tr>
+                                                <tr>
+                                                    <td class="col-md-3"><b>Net IRR</b></td>
+                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="netIrr" [(ngModel)]="fund.netIrr" placeholder="-" pattern="[+/-]?[0-9]*\.?[0-9]+" #netIrr="ngModel"/>
+                                                        <div [hidden]="netIrr.valid || netIrr.pristine" class="alert alert-danger">
+                                                            Only number could be entered
+                                                        </div>
+                                                    </td>
+                                                    <!--<td class="col-md-2">{{fund.netIrr}}</td>-->
+                                                </tr>
+                                                <tr>
+                                                    <td class="col-md-3"><b>Benchmark NET TVPI</b></td>
+                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="benchmarkNetTvpi" [(ngModel)]="fund.benchmarkNetTvpi" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #benchmarkNetTvpi="ngModel"/>
+                                                        <div [hidden]="benchmarkNetTvpi.valid || benchmarkNetTvpi.pristine" class="alert alert-danger">
+                                                            Only positive number could be entered
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </form>
+                                    <div [hidden]="!visible">
+                                        <div class="row withpadding">
+                                            <h4>Fund strategy</h4>
+                                            <table class=" col-md-4 table-striped table-condensed">
+                                                <tr>
+                                                    <td class="col-md-1">Fund strategy comment</td>
+                                                    <td class="col-md-3"><textarea fz-elastic spellcheck="false"  class="form-control" name="strategyComment" [(ngModel)]="fund.strategyComment"></textarea></td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div [hidden]="!visible">
+                                        <div class="row withpadding">
+                                            <h4>Descriptive data</h4>
+                                            <table class=" col-md-4 table-striped table-condensed">
+                                                <tr>
+                                                    <td class="col-md-1">Investment period</td>
+                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="investmentPeriod" [(ngModel)]="fund.investmentPeriod"
+                                                                                pattern="[+]?[0-9]*\.?[0-9]+" #investmentPeriod="ngModel"/>
+                                                        <div [hidden]="investmentPeriod.valid || investmentPeriod.pristine" class="alert alert-danger">
+                                                            Only positive number could be entered
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="col-md-1">Fund term</td>
+                                                    <td class="col-md-3">
+                                                        <input style="width: 30%" type="text" name="fundTerm" [(ngModel)]="fund.fundTerm" pattern="[+]?[0-9]*\.?[0-9]+" #fundTerm="ngModel"/><input style="width: 70%" type="text" name="fundTermComment" [(ngModel)]="fund.fundTermComment" placeholder="Comment"/>
+                                                        <div [hidden]="fundTerm.valid || fundTerm.pristine" class="alert alert-danger">
+                                                            Only positive number could be entered
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="col-md-1">Target inv. size range</td>
+                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="targetInvSizeRange" [(ngModel)]="fund.targetInvSizeRange" pattern="[+]?[0-9]*\.?[0-9]+" #targetInvSizeRange="ngModel"/>
+                                                        <div [hidden]="targetInvSizeRange.valid || targetInvSizeRange.pristine" class="alert alert-danger">
+                                                            Only positive number could be entered
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                            <table class=" col-md-4 table-striped table-condensed">
+                                                <tr>
+                                                    <td class="col-md-1">Target EV range</td>
+                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="targetEvRange" [(ngModel)]="fund.targetEvRange" pattern="[+]?[0-9]*\.?[0-9]+" #targetEvRange="ngModel"/>
+                                                        <div [hidden]="targetEvRange.valid || targetEvRange.pristine" class="alert alert-danger">
+                                                            Only positive number could be entered
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="col-md-1">Target number of inv.</td>
+                                                    <td class="col-md-3">
+                                                        <input style="width: 30%" type="text" name="targetNumberOfInv1" [(ngModel)]="fund.targetNumberOfInv1" pattern="[+]?[0-9]*\.?[0-9]+" #targetNumberOfInv1="ngModel"/><input style="width: 70%" type="text" name="targetNumberOfInv2" [(ngModel)]="fund.targetNumberOfInv2" pattern="[+]?[0-9]*\.?[0-9]+" #targetNumberOfInv2="ngModel"/>
+                                                        <div [hidden]="targetNumberOfInv1.valid || targetNumberOfInv1.pristine" class="alert alert-danger">
+                                                            Only positive number could be entered
+                                                        </div>
+                                                        <div [hidden]="targetNumberOfInv2.valid || targetNumberOfInv2.pristine" class="alert alert-danger">
+                                                            Only positive number could be entered
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="col-md-1">Expected annual number of inv.</td>
+                                                    <td class="col-md-3">
+                                                        <input style="width: 30%" type="text" name="expAnnualNumberOfInv1" [(ngModel)]="fund.expAnnualNumberOfInv1" pattern="[+]?[0-9]*\.?[0-9]+" #expAnnualNumberOfInv1="ngModel"/><input style="width: 70%" type="text" name="expAnnualNumberOfInv2" [(ngModel)]="fund.expAnnualNumberOfInv2" pattern="[+]?[0-9]*\.?[0-9]+" #expAnnualNumberOfInv2="ngModel"/>
+                                                        <div [hidden]="expAnnualNumberOfInv1.valid || expAnnualNumberOfInv1.pristine" class="alert alert-danger">
+                                                            Only positive number could be entered
+                                                        </div>
+                                                        <div [hidden]="expAnnualNumberOfInv2.valid || expAnnualNumberOfInv2.pristine" class="alert alert-danger">
+                                                            Only positive number could be entered
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+
+                                        <div class="row withpadding">
+                                            <h4>Targeted closing information</h4>
+                                            <!--<div class="col-md-3">-->
+                                            <!--<div class='input-group date col-md-2' id='firstClose' style="width: 100%">-->
+                                            <!--<input type='text' class="form-control" id="firstCloseVal" [(ngModel)]="fund.firstClose"/>-->
+                                            <!--<span class="input-group-addon">-->
+                                            <!--<span class="glyphicon glyphicon-calendar">Start date</span>-->
+                                            <!--</span>-->
+                                            <!--</div>-->
+                                            <!--</div>-->
+                                            <!--<div class="col-md-3">-->
+                                            <!--<div class='input-group date col-md-2' id='finalClose' style="width: 100%">-->
+                                            <!--<input type='text' class="form-control" id="finalCloseVal" [(ngModel)]="fund.finalClose"/>-->
+                                            <!--<span class="input-group-addon">-->
+                                            <!--<span class="glyphicon glyphicon-calendar">End date</span>-->
+                                            <!--</span>-->
+                                            <!--</div>-->
+                                            <!--</div>-->
+                                            <table class="col-md-4 table-striped table-condensed">
+                                                <tr>
+                                                    <td class="col-md-1">First close</td>
+                                                    <td class="col-md-3"><input type='text' class="form-control" id="firstClose" name="firstClose" [(ngModel)]="fund.firstClose"/></td>
+                                                </tr>
+                                            </table>
+                                            <table class="col-md-4 table-striped table-condensed">
+                                                <tr>
+                                                    <td class="col-md-1">Final close</td>
+                                                    <td class="col-md-3"><input type='text' class="form-control" id="finalClose" name="finalClose" [(ngModel)]="fund.finalClose"/></td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <div class="row withpadding">
+                                            <h4>Observations</h4>
+                                            <h5>General Partner</h5>
+                                            <table class=" col-md-4 table-striped table-condensed">
+                                                <th>Merits</th>
+                                                <tr>
+                                                    <td class="col-md-3"><textarea fz-elastic spellcheck="false"  class="form-control" name="generalPartnerMerits" [(ngModel)]="fund.generalPartnerMerits"></textarea></td>
+                                                </tr>
+                                            </table>
+                                            <table class=" col-md-4 table-striped table-condensed">
+                                                <th>Risks</th>
+                                                <tr>
+                                                    <td class="col-md-3"><textarea  fz-elastic spellcheck="false"  class="form-control" name="generalPartnerRisks" [(ngModel)]="fund.generalPartnerRisks"></textarea></td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <div class="row withpadding">
+                                            <h5>Strategy/Structure</h5>
+                                            <table class=" col-md-4 table-striped table-condensed">
+                                                <th>Merits</th>
+                                                <tr>
+                                                    <td class="col-md-3"><textarea fz-elastic  spellcheck="false"  class="form-control" name="strategyStructureMerits" [(ngModel)]="fund.strategyStructureMerits"></textarea></td>
+                                                </tr>
+                                            </table>
+                                            <table class=" col-md-4 table-striped table-condensed">
+                                                <th>Risks</th>
+                                                <tr>
+                                                    <td class="col-md-3"><textarea fz-elastic  spellcheck="false"  class="form-control" name="strategyStructureRisks" [(ngModel)]="fund.strategyStructureRisks"></textarea></td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <div class="row withpadding">
+                                            <h5>Performance</h5>
+                                            <table class=" col-md-4 table-striped table-condensed">
+                                                <th>Merits</th>
+                                                <tr>
+                                                    <td class="col-md-3"><textarea fz-elastic  spellcheck="false"  class="form-control" name="performanceMerits" [(ngModel)]="fund.performanceMerits"></textarea></td>
+                                                </tr>
+                                            </table>
+                                            <table class=" col-md-4 table-striped table-condensed">
+                                                <th>Risks</th>
+                                                <tr>
+                                                    <td class="col-md-3"><textarea fz-elastic  spellcheck="false"  class="form-control" name="performanceRisks" [(ngModel)]="fund.performanceRisks"></textarea></td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <hr style="border-top: 1px solid #B5AEAE"/>
+                                            <div class="col-md-1 pull-right">
+                                                <button type="submit" class="btn btn-success" [disabled]="!fundForm.form.valid" *ngIf="canEdit()">SAVE</button>
+                                            </div>
                                         </div>
+                                    </div>
+                                </form>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <hr style="border-top: 1px solid #B5AEAE"/>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div id="performanceFund" class="tab-pane fade in active">
-                            <div style="position: relative;">
-                                <div [ngBusy]="busy">
-                                    Performance
-                                </div>
-                            </div>
-                        </div>
                     </div>
-
-
-
-                    <br/>
-
-                </div>
-            </div>
-        </div>
-        <div id="performance" class="tab-pane fade">
-            <br>
-            <br>
-            <div class="row">
-                <div style="text-align: center">
-                    <h4>{{fund.fundName}} Historical Investment Performance</h4>
-                </div>
-            </div>
-            <br>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="pull-right">
-                                <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="savePerformance()" [disabled]="fund.id == 0 || fund.id == null">
-                                    SAVE
-                                </button>
-                                <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="savePerformanceAndRecalculateStatistics()" [disabled]="fund.id == 0 || fund.id == null">
-                                    SAVE and RECALCULATE the Key Fund Statistics
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <br>
-                    <table class="table table-hover table-responsive" style="font-size: smaller">
-                        <tr>
-                            <th>Company</th>
-                            <th>Cash invested</th>
-                            <th>Realized Proceeds</th>
-                            <th>Unrealized Value</th>
-                            <th>Total Value</th>
-                            <th>Multiple</th>
-                            <th>Auto calculation of the Total Value and Multiple</th>
-                            <th>Gross IRR, %</th>
-                            <th>Net IRR, %</th>
-                        </tr>
-                        <tr *ngFor="let performance of fund.companyPerformance">
-                            <td>
-                                <input type="text" class="form-control" name="companyName" [(ngModel)]="performance.companyName" placeholder="-" pattern="[A-Za-z0-9 ()]{1,50}" #companyName="ngModel"/>
-                                <div [hidden]="companyName.valid || companyName.pristine" class="alert alert-danger">
-                                    Name must contain 1-50 characters A-Z, a-z, 0-9
+                    <div id="performanceFund" class="tab-pane fade in active">
+                        <div style="position: relative;">
+                            <div [ngBusy]="busy">
+                                <br>
+                                <div class="row">
+                                    <div style="text-align: center">
+                                        <h4>{{fund.fundName}} Historical Investment Performance</h4>
+                                    </div>
                                 </div>
-                            </td>
+                                <br>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="pull-right">
+                                                    <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="savePerformance()" [disabled]="fund.id == 0 || fund.id == null">
+                                                        SAVE
+                                                    </button>
+                                                    <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="savePerformanceAndRecalculateStatistics()" [disabled]="fund.id == 0 || fund.id == null">
+                                                        SAVE and RECALCULATE the Key Fund Statistics
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <table class="table table-hover table-responsive" style="font-size: smaller">
+                                            <tr>
+                                                <th>Company</th>
+                                                <th>Cash invested</th>
+                                                <th>Realized Proceeds</th>
+                                                <th>Unrealized Value</th>
+                                                <th>Total Value</th>
+                                                <th>Multiple</th>
+                                                <th>Auto calculation of the Total Value and Multiple</th>
+                                                <th>Gross IRR, %</th>
+                                                <th>Net IRR, %</th>
+                                            </tr>
+                                            <tr *ngFor="let performance of fund.companyPerformance">
+                                                <td>
+                                                    <input type="text" class="form-control" name="companyName" [(ngModel)]="performance.companyName" placeholder="-" pattern="[A-Za-z0-9 ()]{1,50}" #companyName="ngModel"/>
+                                                    <div [hidden]="companyName.valid || companyName.pristine" class="alert alert-danger">
+                                                        Name must contain 1-50 characters A-Z, a-z, 0-9
+                                                    </div>
+                                                </td>
 
-                            <td>
-                                <input type="text" class="form-control" name="invested" [(ngModel)]="performance.invested" (ngModelChange)="autoCalculationTotalAndMultiple(performance)" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #invested="ngModel"/>
-                                <div [hidden]="invested.valid || invested.pristine" class="alert alert-danger">
-                                    Only positive number could be entered
+                                                <td>
+                                                    <input type="text" class="form-control" name="invested" [(ngModel)]="performance.invested" (ngModelChange)="autoCalculationTotalAndMultiple(performance)" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #invested="ngModel"/>
+                                                    <div [hidden]="invested.valid || invested.pristine" class="alert alert-danger">
+                                                        Only positive number could be entered
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <input type="text" class="form-control" name="realized" [(ngModel)]="performance.realized" (ngModelChange)="autoCalculationTotalAndMultiple(performance)" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #realized="ngModel"/>
+                                                    <div [hidden]="realized.valid || realized.pristine" class="alert alert-danger">
+                                                        Only positive number could be entered
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <input type="text" class="form-control" name="unrealized" [(ngModel)]="performance.unrealized" (ngModelChange)="autoCalculationTotalAndMultiple(performance)" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #unrealized="ngModel"/>
+                                                    <div [hidden]="unrealized.valid || unrealized.pristine" class="alert alert-danger">
+                                                        Only positive number could be entered
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <input type="text" class="form-control" name="totalValue" [(ngModel)]="performance.totalValue" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="performance.autoCalculation" #totalValue="ngModel"/>
+                                                    <div [hidden]="totalValue.valid || totalValue.pristine" class="alert alert-danger">
+                                                        Only positive number could be entered
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <input type="text" class="form-control" name="multiple" [(ngModel)]="performance.multiple" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="performance.autoCalculation" #multiple="ngModel"/>
+                                                    <div [hidden]="multiple.valid || multiple.pristine" class="alert alert-danger">
+                                                        Only positive number could be entered
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <input type="checkbox" [(ngModel)]="performance.autoCalculation" (ngModelChange)="autoCalculationTotalAndMultiple(performance)">
+                                                </td>
+
+                                                <td>
+                                                    <input type="text" class="form-control" name="grossIrr" [(ngModel)]="performance.grossIrr" placeholder="-" pattern="[-]?[0-9]*\.?[0-9]+" #grossIrr="ngModel"/>
+                                                    <div [hidden]="grossIrr.valid || grossIrr.pristine" class="alert alert-danger">
+                                                        Only number could be entered
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <input type="text" class="form-control" name="netIrr" [(ngModel)]="performance.netIrr" placeholder="-" pattern="[-]?[0-9]*\.?[0-9]+" #netIrr="ngModel"/>
+                                                    <div [hidden]="netIrr.valid || netIrr.pristine" class="alert alert-danger">
+                                                        Only number could be entered
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRowPerformance(performance)">
+                                                        <span class="glyphicon glyphicon-minus"></span>
+                                                    </button>
+                                                </td>
+                                            </tr>
+
+                                            <!--<tr>-->
+                                            <!--<td>ACR Logistics</td>-->
+                                            <!--<td>46 500 000</td>-->
+                                            <!--<td>540 523 074</td>-->
+                                            <!--<td>-</td>-->
+                                            <!--<td>540 523 074</td>-->
+                                            <!--<td>11.6x</td>-->
+                                            <!--<td>284.1%</td>-->
+                                            <!--<td>-</td>-->
+                                            <!--</tr>-->
+                                        </table>
+
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="col-md-1 pull-left">
+                                                    <button type="button" class="btn btn-primary" *ngIf="canEdit()" (click)="addRowPerformance()">
+                                                        Add company
+                                                    </button>
+                                                </div>
+                                                <div class="pull-right">
+                                                    <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="savePerformance()" [disabled]="fund.id == 0 || fund.id == null">
+                                                        SAVE
+                                                    </button>
+                                                    <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="savePerformanceAndRecalculateStatistics()" [disabled]="fund.id == 0 || fund.id == null">
+                                                        SAVE and RECALCULATE the Key Fund Statistics
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </td>
-
-                            <td>
-                                <input type="text" class="form-control" name="realized" [(ngModel)]="performance.realized" (ngModelChange)="autoCalculationTotalAndMultiple(performance)" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #realized="ngModel"/>
-                                <div [hidden]="realized.valid || realized.pristine" class="alert alert-danger">
-                                    Only positive number could be entered
-                                </div>
-                            </td>
-
-                            <td>
-                                <input type="text" class="form-control" name="unrealized" [(ngModel)]="performance.unrealized" (ngModelChange)="autoCalculationTotalAndMultiple(performance)" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #unrealized="ngModel"/>
-                                <div [hidden]="unrealized.valid || unrealized.pristine" class="alert alert-danger">
-                                    Only positive number could be entered
-                                </div>
-                            </td>
-
-                            <td>
-                                <input type="text" class="form-control" name="totalValue" [(ngModel)]="performance.totalValue" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="performance.autoCalculation" #totalValue="ngModel"/>
-                                <div [hidden]="totalValue.valid || totalValue.pristine" class="alert alert-danger">
-                                    Only positive number could be entered
-                                </div>
-                            </td>
-
-                            <td>
-                                <input type="text" class="form-control" name="multiple" [(ngModel)]="performance.multiple" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="performance.autoCalculation" #multiple="ngModel"/>
-                                <div [hidden]="multiple.valid || multiple.pristine" class="alert alert-danger">
-                                    Only positive number could be entered
-                                </div>
-                            </td>
-
-                            <td>
-                                <input type="checkbox" [(ngModel)]="performance.autoCalculation" (ngModelChange)="autoCalculationTotalAndMultiple(performance)">
-                            </td>
-
-                            <td>
-                                <input type="text" class="form-control" name="grossIrr" [(ngModel)]="performance.grossIrr" placeholder="-" pattern="[-]?[0-9]*\.?[0-9]+" #grossIrr="ngModel"/>
-                                <div [hidden]="grossIrr.valid || grossIrr.pristine" class="alert alert-danger">
-                                    Only number could be entered
-                                </div>
-                            </td>
-
-                            <td>
-                                <input type="text" class="form-control" name="netIrr" [(ngModel)]="performance.netIrr" placeholder="-" pattern="[-]?[0-9]*\.?[0-9]+" #netIrr="ngModel"/>
-                                <div [hidden]="netIrr.valid || netIrr.pristine" class="alert alert-danger">
-                                    Only number could be entered
-                                </div>
-                            </td>
-
-                            <td>
-                                <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRowPerformance(performance)">
-                                    <span class="glyphicon glyphicon-minus"></span>
-                                </button>
-                            </td>
-                        </tr>
-
-                        <!--<tr>-->
-                        <!--<td>ACR Logistics</td>-->
-                        <!--<td>46 500 000</td>-->
-                        <!--<td>540 523 074</td>-->
-                        <!--<td>-</td>-->
-                        <!--<td>540 523 074</td>-->
-                        <!--<td>11.6x</td>-->
-                        <!--<td>284.1%</td>-->
-                        <!--<td>-</td>-->
-                        <!--</tr>-->
-                    </table>
-
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="col-md-1 pull-left">
-                                <button type="button" class="btn btn-primary" *ngIf="canEdit()" (click)="addRowPerformance()">
-                                    Add company
-                                </button>
-                            </div>
-                            <div class="pull-right">
-                                <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="savePerformance()" [disabled]="fund.id == 0 || fund.id == null">
-                                    SAVE
-                                </button>
-                                <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="savePerformanceAndRecalculateStatistics()" [disabled]="fund.id == 0 || fund.id == null">
-                                    SAVE and RECALCULATE the Key Fund Statistics
-                                </button>
                             </div>
                         </div>
                     </div>
@@ -793,130 +782,148 @@
             </div>
         </div>
         <div id="idd" class="tab-pane fade">
-            <br>
-            <ul class="nav nav-tabs" id="tabs-idd">
-                <li>
-                    <a data-toggle="tab" href="#performanceIdd">PERFORMANCE</a>
-                </li>
-                <li>
-                    <a data-toggle="tab" href="#grossCashflowIdd">GROSS CASHFLOW</a>
-                </li>
-            </ul>
-            <br>
-            <div class="row">
-                <div style="text-align: center">
-                    <h4>{{fund.fundName}} Gross Cashflow</h4>
-                </div>
-            </div>
-            <br>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="pull-left">
-                                <form #yourForm="ngForm" (ngSubmit)="onSubmitGrossCF()" *ngIf="canEdit()">
-                                    <h4>Upload a new portion of the Gross Cash Flow</h4>
-                                    <input type="file" #fileupload name="myFile" (change)="fileChange(fileupload.files)"/>
-                                    <button type="submit" class="btn btn-success" [disabled]="fund.id == 0 || fund.id == null">Submit</button>
-                                </form>
-                            </div>
-                            <br>
-                            <br>
-                            <br>
-                            <div class="pull-right">
-                                <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="saveGrossCF()" [disabled]="fund.id == 0 || fund.id == null">
-                                    SAVE
-                                </button>
-                                <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="saveGrossCFAndRecalculatePerformance()" [disabled]="fund.id == 0 || fund.id == null">
-                                    SAVE and RECALCULATE the Performance
-                                </button>
+            <div style="position: relative;">
+                <br/>
+                <ul class="nav nav-tabs" id="tabs-idd">
+                    <li class="active">
+                        <a data-toggle="tab" href="#performanceIdd">PERFORMANCE</a>
+                    </li>
+                    <li>
+                        <a data-toggle="tab" href="#grossCashflow">GROSS CASHFLOW</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div id="performanceIdd" class="tab-pane fade in active">
+                        <div style="position: relative;">
+                            <div [ngBusy]="busy">
+                                <br/>
+                                fsdfdsfsd
                             </div>
                         </div>
                     </div>
-                    <br>
-                    <table class="table table-hover table-responsive" style="font-size: smaller">
-                        <tr>
-                            <th>Company name</th>
-                            <th>Date of transaction</th>
-                            <th>Invested value</th>
-                            <th>Realized value</th>
-                            <th>Unrealized value</th>
-                            <th>Gross Cash Flow</th>
-                            <th>Auto calculation of the Gross Cash Flow</th>
-                        </tr>
-                        <tr *ngFor="let cf of fund.grossCashflow">
-                            <td>
-                                <input type="text" class="form-control" name="companyName" [(ngModel)]="cf.companyName" placeholder="-" pattern="[A-Za-z0-9 ()]{1,50}" #companyName="ngModel"/>
-                                <div [hidden]="companyName.valid || companyName.pristine" class="alert alert-danger">
-                                    Name must contain 1-50 characters A-Z, a-z, 0-9
+                    <div id="grossCashflow" class="tab-pane fade in active">
+                        <div style="position: relative;">
+                            <div [ngBusy]="busy">
+                                <br/>
+                                <div class="row">
+                                    <div style="text-align: center">
+                                        <h4>{{fund.fundName}} Gross Cashflow</h4>
+                                    </div>
                                 </div>
-                            </td>
+                                <br>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="pull-left">
+                                                    <form #yourForm="ngForm" (ngSubmit)="onSubmitGrossCF()" *ngIf="canEdit()">
+                                                        <h4>Upload a new portion of the Gross Cash Flow</h4>
+                                                        <input type="file" #fileupload name="myFile" (change)="fileChange(fileupload.files)"/>
+                                                        <button type="submit" class="btn btn-success" [disabled]="fund.id == 0 || fund.id == null">Submit</button>
+                                                    </form>
+                                                </div>
+                                                <br>
+                                                <br>
+                                                <br>
+                                                <div class="pull-right">
+                                                    <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="saveGrossCF()" [disabled]="fund.id == 0 || fund.id == null">
+                                                        SAVE
+                                                    </button>
+                                                    <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="saveGrossCFAndRecalculatePerformance()" [disabled]="fund.id == 0 || fund.id == null">
+                                                        SAVE and RECALCULATE the Performance
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <table class="table table-hover table-responsive" style="font-size: smaller">
+                                            <tr>
+                                                <th>Company name</th>
+                                                <th>Date of transaction</th>
+                                                <th>Invested value</th>
+                                                <th>Realized value</th>
+                                                <th>Unrealized value</th>
+                                                <th>Gross Cash Flow</th>
+                                                <th>Auto calculation of the Gross Cash Flow</th>
+                                            </tr>
+                                            <tr *ngFor="let cf of fund.grossCashflow">
+                                                <td>
+                                                    <input type="text" class="form-control" name="companyName" [(ngModel)]="cf.companyName" placeholder="-" pattern="[A-Za-z0-9 ()]{1,50}" #companyName="ngModel"/>
+                                                    <div [hidden]="companyName.valid || companyName.pristine" class="alert alert-danger">
+                                                        Name must contain 1-50 characters A-Z, a-z, 0-9
+                                                    </div>
+                                                </td>
 
-                            <td>
-                                <input type="text" class="form-control" name="date" [(ngModel)]="cf.date" placeholder="-" pattern="(0[1-9]|1[0-9]|2[0-9]|3[01])-(0[1-9]|1[012])-[1-2][0-9][0-9][0-9]" #date="ngModel"/>
-                                <div [hidden]="date.valid || date.pristine" class="alert alert-danger">
-                                    Enter date in format dd-mm-yyyy
+                                                <td>
+                                                    <input type="text" class="form-control" name="date" [(ngModel)]="cf.date" placeholder="-" pattern="(0[1-9]|1[0-9]|2[0-9]|3[01])-(0[1-9]|1[012])-[1-2][0-9][0-9][0-9]" #date="ngModel"/>
+                                                    <div [hidden]="date.valid || date.pristine" class="alert alert-danger">
+                                                        Enter date in format dd-mm-yyyy
+                                                    </div>
+                                                    <!--<div class="input-group">-->
+                                                    <!--<input type='text' class="input-group-addon form-control" id="dateGrossCF" name="dateGrossCF" [(ngModel)]="cf.date" placeholder="-"/>-->
+                                                    <!--</div>-->
+                                                </td>
+
+                                                <td>
+                                                    <input type="text" class="form-control" name="invested" [(ngModel)]="cf.invested" (ngModelChange)="autoCalculationGrossCF(cf)" placeholder="-" pattern="[-][0-9]*\.?[0-9]+" #invested="ngModel"/>
+                                                    <div [hidden]="invested.valid || invested.pristine" class="alert alert-danger">
+                                                        Only negative number could be entered
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <input type="text" class="form-control" name="realized" [(ngModel)]="cf.realized" (ngModelChange)="autoCalculationGrossCF(cf)" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #realized="ngModel"/>
+                                                    <div [hidden]="realized.valid || realized.pristine" class="alert alert-danger">
+                                                        Only positive number could be entered
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <input type="text" class="form-control" name="unrealized" [(ngModel)]="cf.unrealized" (ngModelChange)="autoCalculationGrossCF(cf)" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #unrealized="ngModel"/>
+                                                    <div [hidden]="unrealized.valid || unrealized.pristine" class="alert alert-danger">
+                                                        Only positive number could be entered
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <input type="text" class="form-control" name="grossCF" [(ngModel)]="cf.grossCF" placeholder="-" pattern="[-]?[0-9]*\.?[0-9]+" [disabled]="cf.autoCalculation" #grossCF="ngModel"/>
+                                                    <div [hidden]="grossCF.valid || grossCF.pristine" class="alert alert-danger">
+                                                        Only number could be entered
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <input type="checkbox" [(ngModel)]="cf.autoCalculation" (ngModelChange)="autoCalculationGrossCF(cf)">
+                                                </td>
+
+                                                <td>
+                                                    <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRowGrossCF(cf)">
+                                                        <span class="glyphicon glyphicon-minus"></span>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <!--<button type="button" class="btn-xs btn-primary" style="display: inline-block" (click)="addRowGrossCF()"><span class="glyphicon glyphicon-plus"></span></button>-->
+                                        </table>
+
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="col-md-1 pull-left">
+                                                    <button type="button" class="btn btn-primary" *ngIf="canEdit()" (click)="addRowGrossCF()">
+                                                        Add transaction
+                                                    </button>
+                                                </div>
+                                                <div class="pull-right">
+                                                    <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="saveGrossCF()" [disabled]="fund.id == 0 || fund.id == null">
+                                                        SAVE
+                                                    </button>
+                                                    <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="saveGrossCFAndRecalculatePerformance()" [disabled]="fund.id == 0 || fund.id == null">
+                                                        SAVE and RECALCULATE the Performance
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <!--<div class="input-group">-->
-                                    <!--<input type='text' class="input-group-addon form-control" id="dateGrossCF" name="dateGrossCF" [(ngModel)]="cf.date" placeholder="-"/>-->
-                                <!--</div>-->
-                            </td>
-
-                            <td>
-                                <input type="text" class="form-control" name="invested" [(ngModel)]="cf.invested" (ngModelChange)="autoCalculationGrossCF(cf)" placeholder="-" pattern="[-][0-9]*\.?[0-9]+" #invested="ngModel"/>
-                                <div [hidden]="invested.valid || invested.pristine" class="alert alert-danger">
-                                    Only negative number could be entered
-                                </div>
-                            </td>
-
-                            <td>
-                                <input type="text" class="form-control" name="realized" [(ngModel)]="cf.realized" (ngModelChange)="autoCalculationGrossCF(cf)" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #realized="ngModel"/>
-                                <div [hidden]="realized.valid || realized.pristine" class="alert alert-danger">
-                                    Only positive number could be entered
-                                </div>
-                            </td>
-
-                            <td>
-                                <input type="text" class="form-control" name="unrealized" [(ngModel)]="cf.unrealized" (ngModelChange)="autoCalculationGrossCF(cf)" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #unrealized="ngModel"/>
-                                <div [hidden]="unrealized.valid || unrealized.pristine" class="alert alert-danger">
-                                    Only positive number could be entered
-                                </div>
-                            </td>
-
-                            <td>
-                                <input type="text" class="form-control" name="grossCF" [(ngModel)]="cf.grossCF" placeholder="-" pattern="[-]?[0-9]*\.?[0-9]+" [disabled]="cf.autoCalculation" #grossCF="ngModel"/>
-                                <div [hidden]="grossCF.valid || grossCF.pristine" class="alert alert-danger">
-                                    Only number could be entered
-                                </div>
-                            </td>
-
-                            <td>
-                                <input type="checkbox" [(ngModel)]="cf.autoCalculation" (ngModelChange)="autoCalculationGrossCF(cf)">
-                            </td>
-
-                            <td>
-                                <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRowGrossCF(cf)">
-                                    <span class="glyphicon glyphicon-minus"></span>
-                                </button>
-                            </td>
-                        </tr>
-                        <!--<button type="button" class="btn-xs btn-primary" style="display: inline-block" (click)="addRowGrossCF()"><span class="glyphicon glyphicon-plus"></span></button>-->
-                    </table>
-
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="col-md-1 pull-left">
-                                <button type="button" class="btn btn-primary" *ngIf="canEdit()" (click)="addRowGrossCF()">
-                                    Add transaction
-                                </button>
-                            </div>
-                            <div class="pull-right">
-                                <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="saveGrossCF()" [disabled]="fund.id == 0 || fund.id == null">
-                                    SAVE
-                                </button>
-                                <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="saveGrossCFAndRecalculatePerformance()" [disabled]="fund.id == 0 || fund.id == null">
-                                    SAVE and RECALCULATE the Performance
-                                </button>
                             </div>
                         </div>
                     </div>
