@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.List;
 /**
  * Created by Pak on 17.10.2017.
  */
+@Service
 public class PECompanyPerformanceIddServiceImpl implements PECompanyPerformanceIddService {
 
     private static final Logger logger = LoggerFactory.getLogger(PEFundServiceImpl.class);

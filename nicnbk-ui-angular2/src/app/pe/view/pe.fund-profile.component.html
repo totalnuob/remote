@@ -796,8 +796,139 @@
                     <div id="performanceIdd" class="tab-pane fade in active">
                         <div style="position: relative;">
                             <div [ngBusy]="busy">
-                                <br/>
-                                fsdfdsfsd
+                                <br>
+                                <div class="row">
+                                    <div style="text-align: center">
+                                        <h4>{{fund.fundName}} Historical Investment Performance</h4>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="pull-right">
+                                                    <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="savePerformance()" [disabled]="fund.id == 0 || fund.id == null">
+                                                        SAVE
+                                                    </button>
+                                                    <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="savePerformanceAndRecalculateStatistics()" [disabled]="fund.id == 0 || fund.id == null">
+                                                        SAVE and RECALCULATE the Key Fund Statistics
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <table class="table table-hover table-responsive" style="font-size: smaller">
+                                            <tr>
+                                                <th>Company</th>
+                                                <th>Cash invested</th>
+                                                <th>Realized Proceeds</th>
+                                                <th>Unrealized Value</th>
+                                                <th>Total Value</th>
+                                                <th>Multiple</th>
+                                                <th>Auto calculation of the Total Value and Multiple</th>
+                                                <th>Gross IRR, %</th>
+                                                <th>Net IRR, %</th>
+                                            </tr>
+                                            <tr *ngFor="let performance of fund.companyPerformance">
+                                                <td>
+                                                    <input type="text" class="form-control" name="companyName" [(ngModel)]="performance.companyName" placeholder="-" pattern="[A-Za-z0-9 ()]{1,50}" #companyName="ngModel"/>
+                                                    <div [hidden]="companyName.valid || companyName.pristine" class="alert alert-danger">
+                                                        Name must contain 1-50 characters A-Z, a-z, 0-9
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <input type="text" class="form-control" name="invested" [(ngModel)]="performance.invested" (ngModelChange)="autoCalculationTotalAndMultiple(performance)" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #invested="ngModel"/>
+                                                    <div [hidden]="invested.valid || invested.pristine" class="alert alert-danger">
+                                                        Only positive number could be entered
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <input type="text" class="form-control" name="realized" [(ngModel)]="performance.realized" (ngModelChange)="autoCalculationTotalAndMultiple(performance)" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #realized="ngModel"/>
+                                                    <div [hidden]="realized.valid || realized.pristine" class="alert alert-danger">
+                                                        Only positive number could be entered
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <input type="text" class="form-control" name="unrealized" [(ngModel)]="performance.unrealized" (ngModelChange)="autoCalculationTotalAndMultiple(performance)" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #unrealized="ngModel"/>
+                                                    <div [hidden]="unrealized.valid || unrealized.pristine" class="alert alert-danger">
+                                                        Only positive number could be entered
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <input type="text" class="form-control" name="totalValue" [(ngModel)]="performance.totalValue" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="performance.autoCalculation" #totalValue="ngModel"/>
+                                                    <div [hidden]="totalValue.valid || totalValue.pristine" class="alert alert-danger">
+                                                        Only positive number could be entered
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <input type="text" class="form-control" name="multiple" [(ngModel)]="performance.multiple" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="performance.autoCalculation" #multiple="ngModel"/>
+                                                    <div [hidden]="multiple.valid || multiple.pristine" class="alert alert-danger">
+                                                        Only positive number could be entered
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <input type="checkbox" [(ngModel)]="performance.autoCalculation" (ngModelChange)="autoCalculationTotalAndMultiple(performance)">
+                                                </td>
+
+                                                <td>
+                                                    <input type="text" class="form-control" name="grossIrr" [(ngModel)]="performance.grossIrr" placeholder="-" pattern="[-]?[0-9]*\.?[0-9]+" #grossIrr="ngModel"/>
+                                                    <div [hidden]="grossIrr.valid || grossIrr.pristine" class="alert alert-danger">
+                                                        Only number could be entered
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <input type="text" class="form-control" name="netIrr" [(ngModel)]="performance.netIrr" placeholder="-" pattern="[-]?[0-9]*\.?[0-9]+" #netIrr="ngModel"/>
+                                                    <div [hidden]="netIrr.valid || netIrr.pristine" class="alert alert-danger">
+                                                        Only number could be entered
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRowPerformance(performance)">
+                                                        <span class="glyphicon glyphicon-minus"></span>
+                                                    </button>
+                                                </td>
+                                            </tr>
+
+                                            <!--<tr>-->
+                                            <!--<td>ACR Logistics</td>-->
+                                            <!--<td>46 500 000</td>-->
+                                            <!--<td>540 523 074</td>-->
+                                            <!--<td>-</td>-->
+                                            <!--<td>540 523 074</td>-->
+                                            <!--<td>11.6x</td>-->
+                                            <!--<td>284.1%</td>-->
+                                            <!--<td>-</td>-->
+                                            <!--</tr>-->
+                                        </table>
+
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="col-md-1 pull-left">
+                                                    <button type="button" class="btn btn-primary" *ngIf="canEdit()" (click)="addRowPerformance()">
+                                                        Add company
+                                                    </button>
+                                                </div>
+                                                <div class="pull-right">
+                                                    <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="savePerformance()" [disabled]="fund.id == 0 || fund.id == null">
+                                                        SAVE
+                                                    </button>
+                                                    <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="savePerformanceAndRecalculateStatistics()" [disabled]="fund.id == 0 || fund.id == null">
+                                                        SAVE and RECALCULATE the Key Fund Statistics
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

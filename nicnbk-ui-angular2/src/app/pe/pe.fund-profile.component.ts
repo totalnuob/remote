@@ -313,7 +313,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
 
                     this.fund.grossCashflow = response.cashflowDtoList;
 
-                    this.fund.companyPerformance = response.performanceDtoList;
+                    this.fund.companyPerformanceIdd = response.performanceIddDtoList;
                 },
                 (error: ErrorResponse) => {
                     this.processErrorMessage(error);
