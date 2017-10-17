@@ -89,20 +89,20 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
         }
     }
 
-    @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
-    @RequestMapping(value = "/saveGrossCF/{fundId}", method = RequestMethod.POST)
-    public ResponseEntity<?> saveGrossCF(@RequestBody List<PEGrossCashflowDto> grossCashflowDtoList, @PathVariable Long fundId) {
-        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
-        String username = this.tokenService.decode(token).getUsername();
-
-        PEGrossCashflowResultDto resultDto = this.service.saveGrossCF(grossCashflowDtoList, fundId, username);
-
-        if (resultDto.getStatus().equals(StatusResultType.SUCCESS)) {
-            return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+//    @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
+//    @RequestMapping(value = "/saveGrossCF/{fundId}", method = RequestMethod.POST)
+//    public ResponseEntity<?> saveGrossCF(@RequestBody List<PEGrossCashflowDto> grossCashflowDtoList, @PathVariable Long fundId) {
+//        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+//        String username = this.tokenService.decode(token).getUsername();
+//
+//        PEGrossCashflowResultDto resultDto = this.service.saveGrossCF(grossCashflowDtoList, fundId, username);
+//
+//        if (resultDto.getStatus().equals(StatusResultType.SUCCESS)) {
+//            return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
+//        } else {
+//            return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
 
     @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/saveGrossCF/{fundId}/recalculate", method = RequestMethod.POST)
