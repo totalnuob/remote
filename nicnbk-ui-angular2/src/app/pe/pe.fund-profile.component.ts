@@ -125,6 +125,10 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                         this.fund.companyPerformance = [];
                                     }
 
+                                    if(this.fund.companyPerformanceIdd == null){
+                                        this.fund.companyPerformanceIdd = [];
+                                    }
+
                                     if(this.fund.grossCashflow == null){
                                         this.fund.grossCashflow = [];
                                     }
