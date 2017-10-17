@@ -247,7 +247,7 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
                             null, null, null,
                             grossTvpi,
                             null, null, null, null),
-                    StatusResultType.SUCCESS, "", "Successfully updated PE fund's key statistics", "");
+                    StatusResultType.SUCCESS, "", "Successfully calculated PE fund's key statistics", "");
         } catch (Exception ex) {
             logger.error("Error calculating PE fund's key statistics: " + fundId, ex);
             return new PEFundTrackRecordResultDto(new PEFundTrackRecordDto(), StatusResultType.FAIL, "", "Error calculating PE fund's key statistics", "");

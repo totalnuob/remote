@@ -40,7 +40,7 @@ export class PEFundService extends CommonService {
             .catch(this.handleErrorResponse);
     }
 
-    recalculateStatistics(id) {
+    calculateTrackRecord(id) {
         return this.http.get(this.PE_BASE_URL + "recalculate/" + id, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);

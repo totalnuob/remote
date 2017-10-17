@@ -152,10 +152,15 @@ public class PEFundServiceImpl implements PEFundService {
     }
 
     @Override
+    public PEFundTrackRecordResultDto calculateTrackRecord(Long fundId) {
+        return this.performanceService.calculateTrackRecord(fundId);
+    }
+
+    @Override
     public PEFundTrackRecordResultDto recalculateStatistics(Long fundId) {
 
         try {
-            PEFundTrackRecordResultDto trackRecordResultDto = this.performanceService.calculateTrackRecord(fundId);
+            PEFundTrackRecordResultDto trackRecordResultDto = calculateTrackRecord(fundId);
             if (trackRecordResultDto.getStatus().equals(StatusResultType.FAIL)) {
                 return trackRecordResultDto;
             }
