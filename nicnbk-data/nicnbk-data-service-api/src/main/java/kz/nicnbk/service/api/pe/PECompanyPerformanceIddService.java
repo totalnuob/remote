@@ -14,7 +14,7 @@ public interface PECompanyPerformanceIddService {
 
     PECompanyPerformanceIddResultDto saveList(List<PECompanyPerformanceIddDto> performanceIddDtoList, Long fundId);
 
-    PECompanyPerformanceIddResultDto recalculatePerformance(Long fundId);
+    PECompanyPerformanceIddResultDto recalculatePerformanceIdd(Long fundId);
 
     List<PECompanyPerformanceIddDto> findByFundId(Long fundId);
 
