@@ -8,10 +8,7 @@ import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.pe.PEFund;
 import kz.nicnbk.repo.model.pe.PEGrossCashflow;
 import kz.nicnbk.repo.model.pe.PENetCashflow;
-import kz.nicnbk.service.api.pe.PECompanyPerformanceService;
-import kz.nicnbk.service.api.pe.PEGrossCashflowService;
-import kz.nicnbk.service.api.pe.PEFundService;
-import kz.nicnbk.service.api.pe.PENetCashflowService;
+import kz.nicnbk.service.api.pe.*;
 import kz.nicnbk.service.converter.pe.PEGrossCashflowEntityConverter;
 import kz.nicnbk.service.converter.pe.PEFundEntityConverter;
 import kz.nicnbk.service.converter.pe.PENetCashflowEntityConverter;
@@ -67,6 +64,9 @@ public class PEFundServiceImpl implements PEFundService {
     @Autowired
     private PECompanyPerformanceService performanceService;
 
+    @Autowired
+    private PECompanyPerformanceIddService performanceIddService;
+
     @Override
     public PEFundDto get(Long id) {
         try {
@@ -76,10 +76,12 @@ public class PEFundServiceImpl implements PEFundService {
             List<PEGrossCashflowDto> grossCFDto = this.grossCFService.findByFundId(id);
             List<PENetCashflowDto> netCFDto = this.netCFService.findByFundId(id);
             List<PECompanyPerformanceDto> performanceDto = this.performanceService.findByFundId(id);
+            List<PECompanyPerformanceIddDto> performanceIddDto = this.performanceIddService.findByFundId(id);
 
             dto.setGrossCashflow(grossCFDto);
             dto.setNetCashflow(netCFDto);
             dto.setCompanyPerformance(performanceDto);
+            dto.setCompanyPerformanceIdd(performanceIddDto);
 //            calculatePerformanceParameters(grossCFDto, netCFDto, dto);
             return dto;
         } catch (Exception ex) {
