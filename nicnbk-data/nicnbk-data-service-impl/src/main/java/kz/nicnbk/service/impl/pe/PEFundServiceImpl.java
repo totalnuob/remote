@@ -2,16 +2,10 @@ package kz.nicnbk.service.impl.pe;
 
 import kz.nicnbk.repo.api.employee.EmployeeRepository;
 import kz.nicnbk.repo.api.pe.PEFundRepository;
-import kz.nicnbk.repo.api.pe.PEGrossCashflowRepository;
-import kz.nicnbk.repo.api.pe.PENetCashflowRepository;
 import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.pe.PEFund;
-import kz.nicnbk.repo.model.pe.PEGrossCashflow;
-import kz.nicnbk.repo.model.pe.PENetCashflow;
 import kz.nicnbk.service.api.pe.*;
-import kz.nicnbk.service.converter.pe.PEGrossCashflowEntityConverter;
 import kz.nicnbk.service.converter.pe.PEFundEntityConverter;
-import kz.nicnbk.service.converter.pe.PENetCashflowEntityConverter;
 import kz.nicnbk.service.dto.common.StatusResultType;
 import kz.nicnbk.service.dto.pe.*;
 import org.slf4j.Logger;
@@ -41,22 +35,10 @@ public class PEFundServiceImpl implements PEFundService {
     private PEFundEntityConverter converter;
 
     @Autowired
-    private PEGrossCashflowRepository grossCFRepository;
-
-    @Autowired
     private PEGrossCashflowService grossCFService;
 
     @Autowired
-    private PEGrossCashflowEntityConverter grossCFConverter;
-
-    @Autowired
-    private PENetCashflowRepository netCFRepository;
-
-    @Autowired
     private PENetCashflowService netCFService;
-
-    @Autowired
-    private PENetCashflowEntityConverter netCFConverter;
 
     @Autowired
     private EmployeeRepository employeeRepository;
@@ -180,6 +162,8 @@ public class PEFundServiceImpl implements PEFundService {
             fund.setDpi(trackRecordResultDto.getTrackRecordDTO().getDpi());
             fund.setGrossTvpi(trackRecordResultDto.getTrackRecordDTO().getGrossTvpi());
 
+            fund.setCalculationType(1);
+
             peFundRepository.save(fund);
 
             return trackRecordResultDto;
@@ -276,10 +260,8 @@ public class PEFundServiceImpl implements PEFundService {
             List<PEFundDto> fundDtoList = this.converter.disassembleList(page.getContent());
             if (report) {
                 for (PEFundDto fundDto : fundDtoList) {
-                    List<PEGrossCashflow> grossCfEntity = this.grossCFRepository.getEntitiesByFundId(fundDto.getId(), new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName")));
-                    List<PENetCashflow> netCfEntity = this.netCFRepository.getEntitiesByFundId(fundDto.getId());
-                    List<PEGrossCashflowDto> grossCFDto = this.grossCFConverter.disassembleList(grossCfEntity);
-                    List<PENetCashflowDto> netCFDto = this.netCFConverter.disassembleList(netCfEntity);
+                    List<PEGrossCashflowDto> grossCFDto = this.grossCFService.findByFundId(fundDto.getId());
+                    List<PENetCashflowDto> netCFDto = this.netCFService.findByFundId(fundDto.getId());
 
                     fundDto.setGrossCashflow(grossCFDto);
                     fundDto.setNetCashflow(netCFDto);
