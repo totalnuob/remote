@@ -32,7 +32,7 @@ public class PEFundServiceImpl implements PEFundService {
 
     private static final Logger logger = LoggerFactory.getLogger(PEFundServiceImpl.class);
 
-    private static final double[] EMPTY_DOUBLE_ARRAY = null;
+//    private static final double[] EMPTY_DOUBLE_ARRAY = null;
 
     @Autowired
     private PEFundRepository peFundRepository;
@@ -287,10 +287,10 @@ public class PEFundServiceImpl implements PEFundService {
                     fundDto.setGrossCashflow(grossCFDto);
                     fundDto.setNetCashflow(netCFDto);
 
-                    if(!grossCFDto.isEmpty()) {
-                        //Commented by Pak
+                    //Commented by Pak
+//                    if(!grossCFDto.isEmpty()) {
 //                        calculatePerformanceParameters(grossCFDto, netCFDto, fundDto);
-                    }
+//                    }
                 }
             }
             return fundDtoList;
