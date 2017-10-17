@@ -258,7 +258,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
 
                     this.fund.companyPerformance = response.performanceDtoList;
 
-                    this.fund.autoCalculation = false;
+                    //this.fund.autoCalculation = false;
                 },
                 (error: ErrorResponse) => {
                     this.processErrorMessage(error);
@@ -272,8 +272,6 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
         this.busy = this.fundService.calculateTrackRecord(this.fund.id)
             .subscribe(
                 (response) => {
-                    //this.postAction(response.messageEn, null);
-
                     this.fund.numberOfInvestments = response.trackRecordDTO.numberOfInvestments;
                     this.fund.investedAmount = response.trackRecordDTO.investedAmount;
                     this.fund.realized = response.trackRecordDTO.realized;
@@ -281,7 +279,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     this.fund.dpi = response.trackRecordDTO.dpi;
                     this.fund.grossTvpi = response.trackRecordDTO.grossTvpi;
 
-                    this.fund.autoCalculation = true;
+                    //this.fund.autoCalculation = true;
                 },
                 (error: ErrorResponse) => {
                     this.processErrorMessage(error);
@@ -306,7 +304,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     this.fund.dpi = response.trackRecordDTO.dpi;
                     this.fund.grossTvpi = response.trackRecordDTO.grossTvpi;
 
-                    this.fund.autoCalculation = true;
+                    //this.fund.autoCalculation = true;
                 },
                 (error: ErrorResponse) => {
                     this.processErrorMessage(error);
@@ -579,12 +577,6 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     canEdit(){
         return this.moduleAccessChecker.checkAccessPrivateEquityEditor();
     }
-
-    //autoCalculationStatistics() {
-    //    if (this.fund.autoCalculation) {
-    //        this.savePerformanceAndRecalculateStatistics();
-    //    }
-    //}
 
     statisticsAutoCalculation() {
         if (this.fund.calculationType == 1) {

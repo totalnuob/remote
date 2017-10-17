@@ -22,7 +22,7 @@ export class PEFund {
     geography: any[];
 
     calculationType: number;
-    autoCalculation: boolean;
+    //autoCalculation: boolean;
     numberOfInvestments: number;
     investedAmount: number;
     realized: number;

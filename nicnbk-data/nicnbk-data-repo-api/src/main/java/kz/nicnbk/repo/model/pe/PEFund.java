@@ -45,7 +45,7 @@ public class PEFund extends CreateUpdateBaseEntity {
 
     //KEY FUND STATISTICS
     private Integer calculationType;
-    private Boolean autoCalculation;
+//    private Boolean autoCalculation;
     private Integer numberOfInvestments;
     private Double investedAmount;
     private Double realized;
@@ -285,13 +285,13 @@ public class PEFund extends CreateUpdateBaseEntity {
         this.calculationType = calculationType;
     }
 
-    public Boolean getAutoCalculation() {
-        return autoCalculation;
-    }
-
-    public void setAutoCalculation(Boolean autoCalculation) {
-        this.autoCalculation = autoCalculation;
-    }
+//    public Boolean getAutoCalculation() {
+//        return autoCalculation;
+//    }
+//
+//    public void setAutoCalculation(Boolean autoCalculation) {
+//        this.autoCalculation = autoCalculation;
+//    }
 
     @Column(name = "number_of_investments")
     public Integer getNumberOfInvestments() {

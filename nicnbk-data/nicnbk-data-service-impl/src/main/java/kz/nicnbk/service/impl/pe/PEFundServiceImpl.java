@@ -136,27 +136,16 @@ public class PEFundServiceImpl implements PEFundService {
         }
 
         PECompanyPerformanceResultDto resultDto = this.performanceService.saveList(performanceDtoList, fundId);
-        if (resultDto.getStatus().equals(StatusResultType.FAIL)) {
-            return resultDto;
-        }
-
-        try {
-            PEFund fund = peFundRepository.findOne(fundId);
-            fund.setAutoCalculation(false);
-            peFundRepository.save(fund);
-
+        if (resultDto.getStatus().equals(StatusResultType.SUCCESS)) {
             logger.info("PE fund's company performance updated: " + fundId + ", by " + updater);
-            return resultDto;
-        } catch (Exception ex) {
-            logger.error("Error saving PE fund's company performance: " + fundId ,ex);
-            resultDto.setStatus(StatusResultType.FAIL);
-            resultDto.setMessageEn("Error saving PE fund's company performance");
-            return resultDto;
         }
+
+        return resultDto;
     }
 
     @Override
     public PEFundTrackRecordResultDto calculateTrackRecord(Long fundId) {
+
         if (this.peFundRepository.findOne(fundId) == null) {
             return new PEFundTrackRecordResultDto(new PEFundTrackRecordDto(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");
         }

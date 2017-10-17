@@ -39,7 +39,7 @@ public class PEFundDto extends HistoryBaseEntityDto<PEFund> {
 
     //KEY FUND STATISTICS
     private Integer calculationType;
-    private Boolean autoCalculation;
+//    private Boolean autoCalculation;
     private Integer numberOfInvestments;
     private Double investedAmount;
     private Double realized;
@@ -238,13 +238,13 @@ public class PEFundDto extends HistoryBaseEntityDto<PEFund> {
         this.calculationType = calculationType;
     }
 
-    public Boolean getAutoCalculation() {
-        return autoCalculation;
-    }
-
-    public void setAutoCalculation(Boolean autoCalculation) {
-        this.autoCalculation = autoCalculation;
-    }
+//    public Boolean getAutoCalculation() {
+//        return autoCalculation;
+//    }
+//
+//    public void setAutoCalculation(Boolean autoCalculation) {
+//        this.autoCalculation = autoCalculation;
+//    }
 
     public Integer getNumberOfInvestments() {
         return numberOfInvestments;
