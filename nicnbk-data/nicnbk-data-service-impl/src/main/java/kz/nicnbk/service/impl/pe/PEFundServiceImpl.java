@@ -240,29 +240,29 @@ public class PEFundServiceImpl implements PEFundService {
     }
 
     @Override
-    public PEGrossCashflowAndCompanyPerformanceIddResultDto saveGrossCFAndRecalculatePerformanceIdd(List<PEGrossCashflowDto> cashflowDtoList, Long fundId, String updater) {
+    public PEGrossCashflowAndCompanyPerformanceIddAndFundTrackRecordResultDto saveGrossCFAndRecalculatePerformanceIdd(List<PEGrossCashflowDto> cashflowDtoList, Long fundId, String updater) {
 
         try {
             if (this.peFundRepository.findOne(fundId) == null) {
-                return new PEGrossCashflowAndCompanyPerformanceIddResultDto(new ArrayList<>(), new ArrayList<>(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");
+                return new PEGrossCashflowAndCompanyPerformanceIddAndFundTrackRecordResultDto(new ArrayList<>(), new ArrayList<>(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");
             }
         } catch (Exception ex) {
-            return new PEGrossCashflowAndCompanyPerformanceIddResultDto(new ArrayList<>(), new ArrayList<>(), StatusResultType.FAIL, "", "Error", "");
+            return new PEGrossCashflowAndCompanyPerformanceIddAndFundTrackRecordResultDto(new ArrayList<>(), new ArrayList<>(), StatusResultType.FAIL, "", "Error", "");
         }
 
         PEGrossCashflowResultDto grossCFResultDto = saveGrossCF(cashflowDtoList, fundId, updater);
 
         if (grossCFResultDto.getStatus().equals(StatusResultType.FAIL)) {
-            return new PEGrossCashflowAndCompanyPerformanceIddResultDto(new ArrayList<>(), new ArrayList<>(), StatusResultType.FAIL, "", grossCFResultDto.getMessageEn(), "");
+            return new PEGrossCashflowAndCompanyPerformanceIddAndFundTrackRecordResultDto(new ArrayList<>(), new ArrayList<>(), StatusResultType.FAIL, "", grossCFResultDto.getMessageEn(), "");
         }
 
         PECompanyPerformanceIddResultDto performanceIddResultDto = this.performanceIddService.recalculatePerformanceIdd(fundId);
 
         if (performanceIddResultDto.getStatus().equals(StatusResultType.FAIL)) {
-            return new PEGrossCashflowAndCompanyPerformanceIddResultDto(new ArrayList<>(), new ArrayList<>(), StatusResultType.FAIL, "", performanceIddResultDto.getMessageEn(), "");
+            return new PEGrossCashflowAndCompanyPerformanceIddAndFundTrackRecordResultDto(new ArrayList<>(), new ArrayList<>(), StatusResultType.FAIL, "", performanceIddResultDto.getMessageEn(), "");
         }
 
-        return new PEGrossCashflowAndCompanyPerformanceIddResultDto(
+        return new PEGrossCashflowAndCompanyPerformanceIddAndFundTrackRecordResultDto(
                 performanceIddResultDto.getPerformanceIddDtoList(),
                 grossCFResultDto.getCashflowDtoList(),
                 StatusResultType.SUCCESS, "", "Successfully saved PE fund's gross cash flow and updated company performance", "");
