@@ -18,9 +18,9 @@ public interface PEFundService extends BaseService {
 
     PEFundTrackRecordResultDto calculateTrackRecord(Long fundId);
 
-    PEFundTrackRecordResultDto recalculateStatistics(Long fundId);
+    PEFundTrackRecordResultDto updateStatistics(Long fundId);
 
-    PECompanyPerformanceAndFundTrackRecordResultDto savePerformanceAndRecalculateStatistics(List<PECompanyPerformanceDto> performanceDtoList, Long fundId, String username);
+    PECompanyPerformanceAndFundTrackRecordResultDto savePerformanceAndUpdateStatistics(List<PECompanyPerformanceDto> performanceDtoList, Long fundId, String username);
 
     PEGrossCashflowResultDto saveGrossCF(List<PEGrossCashflowDto> grossCashflowDtoList, Long fundId, String username);
 

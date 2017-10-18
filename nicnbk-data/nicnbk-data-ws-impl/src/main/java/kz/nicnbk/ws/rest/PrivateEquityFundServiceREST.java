@@ -59,20 +59,20 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
         }
     }
 
-    @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
-    @RequestMapping(value = "/savePerformance/{fundId}", method = RequestMethod.POST)
-    public ResponseEntity<?> savePerformance(@RequestBody List<PECompanyPerformanceDto> performanceDtoList, @PathVariable Long fundId) {
-        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
-        String username = this.tokenService.decode(token).getUsername();
-
-        PECompanyPerformanceResultDto resultDto = this.service.savePerformance(performanceDtoList, fundId, username);
-
-        if (resultDto.getStatus().equals(StatusResultType.SUCCESS)) {
-            return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+//    @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
+//    @RequestMapping(value = "/savePerformance/{fundId}", method = RequestMethod.POST)
+//    public ResponseEntity<?> savePerformance(@RequestBody List<PECompanyPerformanceDto> performanceDtoList, @PathVariable Long fundId) {
+//        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+//        String username = this.tokenService.decode(token).getUsername();
+//
+//        PECompanyPerformanceResultDto resultDto = this.service.savePerformance(performanceDtoList, fundId, username);
+//
+//        if (resultDto.getStatus().equals(StatusResultType.SUCCESS)) {
+//            return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
+//        } else {
+//            return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
 
     @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/recalculate/{fundId}", method = RequestMethod.GET)
@@ -88,11 +88,11 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
 
     @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/savePerformance/{fundId}/recalculate", method = RequestMethod.POST)
-    public ResponseEntity<?> savePerformanceAndRecalculateStatistics(@RequestBody List<PECompanyPerformanceDto> performanceDtoList, @PathVariable Long fundId) {
+    public ResponseEntity<?> savePerformanceAndUpdateStatistics(@RequestBody List<PECompanyPerformanceDto> performanceDtoList, @PathVariable Long fundId) {
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
-        PECompanyPerformanceAndFundTrackRecordResultDto resultDto = this.service.savePerformanceAndRecalculateStatistics(performanceDtoList, fundId, username);
+        PECompanyPerformanceAndFundTrackRecordResultDto resultDto = this.service.savePerformanceAndUpdateStatistics(performanceDtoList, fundId, username);
 
         if (resultDto.getStatus().equals(StatusResultType.SUCCESS)) {
             return new ResponseEntity<>(resultDto, null, HttpStatus.OK);

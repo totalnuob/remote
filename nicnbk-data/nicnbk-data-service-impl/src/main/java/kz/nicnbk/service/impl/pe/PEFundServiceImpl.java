@@ -142,12 +142,7 @@ public class PEFundServiceImpl implements PEFundService {
     }
 
     @Override
-    public PEFundTrackRecordResultDto recalculateStatistics(Long fundId) {
-
-        PEFundTrackRecordResultDto trackRecordResultDto = calculateTrackRecord(fundId);
-        if (trackRecordResultDto.getStatus().equals(StatusResultType.FAIL)) {
-            return trackRecordResultDto;
-        }
+    public PEFundTrackRecordResultDto updateStatistics(Long fundId) {
 
         try {
             PEFund fund = this.peFundRepository.findOne(fundId);
@@ -155,18 +150,42 @@ public class PEFundServiceImpl implements PEFundService {
                 return new PEFundTrackRecordResultDto(new PEFundTrackRecordDto(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");
             }
 
-            fund.setNumberOfInvestments(trackRecordResultDto.getTrackRecordDTO().getNumberOfInvestments());
-            fund.setInvestedAmount(trackRecordResultDto.getTrackRecordDTO().getInvestedAmount());
-            fund.setRealized(trackRecordResultDto.getTrackRecordDTO().getRealized());
-            fund.setUnrealized(trackRecordResultDto.getTrackRecordDTO().getUnrealized());
-            fund.setDpi(trackRecordResultDto.getTrackRecordDTO().getDpi());
-            fund.setGrossTvpi(trackRecordResultDto.getTrackRecordDTO().getGrossTvpi());
+            if (fund.getCalculationType() == 0) {
+                return new PEFundTrackRecordResultDto(
+                        new PEFundTrackRecordDto(
+                                0,
+                                fund.getNumberOfInvestments(),
+                                fund.getInvestedAmount(),
+                                fund.getRealized(),
+                                fund.getUnrealized(),
+                                fund.getDpi(),
+                                null, null, null,
+                                fund.getGrossTvpi(),
+                                null, null, null, null),
+                        StatusResultType.SUCCESS, "", "", "");
+            } else if (fund.getCalculationType() == 1) {
+                PEFundTrackRecordResultDto trackRecordResultDto = calculateTrackRecord(fundId);
+                if (trackRecordResultDto.getStatus().equals(StatusResultType.FAIL)) {
+                    return trackRecordResultDto;
+                }
 
-            fund.setCalculationType(1);
+                trackRecordResultDto.getTrackRecordDTO().setCalculationType(1);
 
-            peFundRepository.save(fund);
+                fund.setNumberOfInvestments(trackRecordResultDto.getTrackRecordDTO().getNumberOfInvestments());
+                fund.setInvestedAmount(trackRecordResultDto.getTrackRecordDTO().getInvestedAmount());
+                fund.setRealized(trackRecordResultDto.getTrackRecordDTO().getRealized());
+                fund.setUnrealized(trackRecordResultDto.getTrackRecordDTO().getUnrealized());
+                fund.setDpi(trackRecordResultDto.getTrackRecordDTO().getDpi());
+                fund.setGrossTvpi(trackRecordResultDto.getTrackRecordDTO().getGrossTvpi());
 
-            return trackRecordResultDto;
+                fund.setCalculationType(1);
+
+                peFundRepository.save(fund);
+
+                return trackRecordResultDto;
+            } else {
+                return new PEFundTrackRecordResultDto(new PEFundTrackRecordDto(), StatusResultType.FAIL, "", "Error updating PE fund's key statistics", "");
+            }
         } catch (Exception ex) {
             logger.error("Error updating PE fund's key statistics: " + fundId, ex);
             return new PEFundTrackRecordResultDto(new PEFundTrackRecordDto(), StatusResultType.FAIL, "", "Error updating PE fund's key statistics", "");
@@ -174,7 +193,7 @@ public class PEFundServiceImpl implements PEFundService {
     }
 
     @Override
-    public PECompanyPerformanceAndFundTrackRecordResultDto savePerformanceAndRecalculateStatistics(List<PECompanyPerformanceDto> performanceDtoList, Long fundId, String updater) {
+    public PECompanyPerformanceAndFundTrackRecordResultDto savePerformanceAndUpdateStatistics(List<PECompanyPerformanceDto> performanceDtoList, Long fundId, String updater) {
 
         try {
             if (this.peFundRepository.findOne(fundId) == null) {
@@ -190,7 +209,7 @@ public class PEFundServiceImpl implements PEFundService {
             return new PECompanyPerformanceAndFundTrackRecordResultDto(new PEFundTrackRecordDto(), new ArrayList<>(), StatusResultType.FAIL, "", performanceResultDto.getMessageEn(), "");
         }
 
-        PEFundTrackRecordResultDto trackRecordResultDto = recalculateStatistics(fundId);
+        PEFundTrackRecordResultDto trackRecordResultDto = updateStatistics(fundId);
 
         if (trackRecordResultDto.getStatus().equals(StatusResultType.FAIL)) {
             return new PECompanyPerformanceAndFundTrackRecordResultDto(new PEFundTrackRecordDto(), new ArrayList<>(), StatusResultType.FAIL, "", trackRecordResultDto.getMessageEn(), "");
