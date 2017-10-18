@@ -951,6 +951,7 @@
                                                     <!--<button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="saveGrossCF()" [disabled]="fund.id == 0 || fund.id == null">-->
                                                         <!--SAVE-->
                                                     <!--</button>-->
+                                                    {{this.grossCashFlowSaveTypeMessage}}
                                                     <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="saveGrossCFAndRecalculatePerformance()" [disabled]="fund.id == 0 || fund.id == null">
                                                         <!--SAVE and RECALCULATE the Performance-->
                                                         SAVE
