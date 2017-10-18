@@ -627,13 +627,13 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     performancesComparison(item) {
         for (let performance of this.fund.companyPerformanceIdd) {
             if (item.companyName == performance.companyName &&
-                item.invested == performance.invested &&
-                item.realized == performance.realized &&
-                item.unrealized == performance.unrealized &&
-                item.totalValue == performance.totalValue &&
-                item.multiple == performance.multiple &&
-                item.grossIrr == performance.grossIrr &&
-                item.netIrr == performance.netIrr) {
+                Math.abs(item.invested - performance.invested) <= 0.001 &&
+                Math.abs(item.realized - performance.realized) <= 0.001 &&
+                Math.abs(item.unrealized - performance.unrealized) <= 0.001 &&
+                Math.abs(item.totalValue - performance.totalValue) <= 0.001 &&
+                Math.abs(item.multiple - performance.multiple) <= 0.00001 &&
+                Math.abs(item.grossIrr - performance.grossIrr) <= 0.001 &&
+                Math.abs(item.netIrr - performance.netIrr) <= 0.001 ) {
                 return false;
             }
         }

@@ -689,6 +689,7 @@
                                                 <th>Auto calculation of the Total Value and Multiple</th>
                                                 <th>Gross IRR, %</th>
                                                 <th>Net IRR, %</th>
+                                                <th>Notice</th>
                                             </tr>
                                             <tr *ngFor="let performance of fund.companyPerformance">
                                                 <td>
@@ -752,15 +753,18 @@
                                                 </td>
 
                                                 <td>
-                                                    <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRowPerformance(performance)">
-                                                        <span class="glyphicon glyphicon-minus"></span>
-                                                    </button>
-                                                </td>
-
-                                                <td>
                                                     <div *ngIf="performancesComparison(performance)">
                                                         <p style="color:red;">The row does not match any of the IDD</p>
                                                     </div>
+                                                    <div *ngIf="!performancesComparison(performance)">
+                                                        <p>The row matches (to some extent) one of the IDD</p>
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRowPerformance(performance)">
+                                                        <span class="glyphicon glyphicon-minus"></span>
+                                                    </button>
                                                 </td>
                                             </tr>
 
@@ -883,7 +887,7 @@
                                                 </td>
 
                                                 <td style="font-size: small">
-                                                    {{performance.multiple | number:'1.0-1'}}x
+                                                    {{performance.multiple | number:'1.1-1'}}x
                                                     <!--<input type="text" class="form-control" name="multiple" [(ngModel)]="performance.multiple" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="true" #multiple="ngModel"/>-->
                                                     <!--<div [hidden]="multiple.valid || multiple.pristine" class="alert alert-danger">-->
                                                         <!--Only positive number could be entered-->
