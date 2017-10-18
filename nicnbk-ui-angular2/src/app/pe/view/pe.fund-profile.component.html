@@ -756,6 +756,12 @@
                                                         <span class="glyphicon glyphicon-minus"></span>
                                                     </button>
                                                 </td>
+
+                                                <td>
+                                                    <div *ngIf="performancesComparison(performance)">
+                                                        <p style="color:red;">The row does not match any of the IDD</p>
+                                                    </div>
+                                                </td>
                                             </tr>
 
                                             <!--<tr>-->
