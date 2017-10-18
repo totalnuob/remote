@@ -169,8 +169,6 @@ public class PEFundServiceImpl implements PEFundService {
                     return trackRecordResultDto;
                 }
 
-                trackRecordResultDto.getTrackRecordDTO().setCalculationType(1);
-
                 fund.setNumberOfInvestments(trackRecordResultDto.getTrackRecordDTO().getNumberOfInvestments());
                 fund.setInvestedAmount(trackRecordResultDto.getTrackRecordDTO().getInvestedAmount());
                 fund.setRealized(trackRecordResultDto.getTrackRecordDTO().getRealized());
@@ -178,9 +176,9 @@ public class PEFundServiceImpl implements PEFundService {
                 fund.setDpi(trackRecordResultDto.getTrackRecordDTO().getDpi());
                 fund.setGrossTvpi(trackRecordResultDto.getTrackRecordDTO().getGrossTvpi());
 
-                fund.setCalculationType(1);
-
                 peFundRepository.save(fund);
+
+                trackRecordResultDto.getTrackRecordDTO().setCalculationType(1);
 
                 return trackRecordResultDto;
             } else {
@@ -218,7 +216,7 @@ public class PEFundServiceImpl implements PEFundService {
         return new PECompanyPerformanceAndFundTrackRecordResultDto(
                 trackRecordResultDto.getTrackRecordDTO(),
                 performanceResultDto.getPerformanceDtoList(),
-                StatusResultType.SUCCESS, "", "Successfully saved PE fund's company performance and updated key statistics", "");
+                StatusResultType.SUCCESS, "", "Successfully saved PE fund's company performance and restored/updated key statistics", "");
     }
 
     @Override

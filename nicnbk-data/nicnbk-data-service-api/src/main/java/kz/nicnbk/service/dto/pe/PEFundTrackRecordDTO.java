@@ -7,6 +7,8 @@ import java.util.Date;
  */
 public class PEFundTrackRecordDto {
 
+    private Integer calculationType;
+
     //KEY FUND STATISTICS
     private Integer numberOfInvestments;
     private Double investedAmount;
@@ -25,7 +27,8 @@ public class PEFundTrackRecordDto {
     public PEFundTrackRecordDto() {
     }
 
-    public PEFundTrackRecordDto(Integer numberOfInvestments, Double investedAmount, Double realized, Double unrealized, Double dpi, Double netIrr, Double netTvpi, Double grossIrr, Double grossTvpi, Date asOfDate, Double benchmarkNetIrr, Double benchmarkNetTvpi, String benchmarkName) {
+    public PEFundTrackRecordDto(Integer calculationType, Integer numberOfInvestments, Double investedAmount, Double realized, Double unrealized, Double dpi, Double netIrr, Double netTvpi, Double grossIrr, Double grossTvpi, Date asOfDate, Double benchmarkNetIrr, Double benchmarkNetTvpi, String benchmarkName) {
+        this.calculationType = calculationType;
         this.numberOfInvestments = numberOfInvestments;
         this.investedAmount = investedAmount;
         this.realized = realized;
@@ -39,6 +42,14 @@ public class PEFundTrackRecordDto {
         this.benchmarkNetIrr = benchmarkNetIrr;
         this.benchmarkNetTvpi = benchmarkNetTvpi;
         this.benchmarkName = benchmarkName;
+    }
+
+    public Integer getCalculationType() {
+        return calculationType;
+    }
+
+    public void setCalculationType(Integer calculationType) {
+        this.calculationType = calculationType;
     }
 
     public Integer getNumberOfInvestments() {
