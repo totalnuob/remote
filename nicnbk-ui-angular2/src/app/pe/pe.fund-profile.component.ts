@@ -259,14 +259,14 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
 
     updateSaveTypeMessage() {
         if (this.fund.calculationType == 0) {
-            this.performanceSaveTypeMessage = "By pressing SAVE, the Performance will be saved and the Key fund statistics will be RESTORED to its original";
-            this.grossCashFlowSaveTypeMessage = "By pressing SAVE, the Gross cash flow will be saved and the Key fund statistics will be RESTORED to its original";
+            this.performanceSaveTypeMessage = "By pressing SAVE, the Performance will be SAVED and the Key fund statistics will be RESTORED to its original";
+            this.grossCashFlowSaveTypeMessage = "By pressing SAVE, the Gross cash flow will be SAVED, the Performance will be UPDATED and the Key fund statistics will be RESTORED to its original";
         } else if (this.fund.calculationType == 1) {
-            this.performanceSaveTypeMessage = "By pressing SAVE, the Performance will be saved and the Key fund statistics will be UPDATED";
-            this.grossCashFlowSaveTypeMessage = "By pressing SAVE, the Gross cash flow will be saved and the Key fund statistics will be RESTORED to its original";
+            this.performanceSaveTypeMessage = "By pressing SAVE, the Performance will be SAVED and the Key fund statistics will be UPDATED";
+            this.grossCashFlowSaveTypeMessage = "By pressing SAVE, the Gross cash flow will be SAVED, the Performance will be UPDATED and the Key fund statistics will be RESTORED to its original";
         } else if (this.fund.calculationType == 2) {
-            this.performanceSaveTypeMessage = "By pressing SAVE, the Performance will be saved and the Key fund statistics will be RESTORED to its original";
-            this.grossCashFlowSaveTypeMessage = "By pressing SAVE, the Gross cash flow will be saved and the Key fund statistics will be UPDATED";
+            this.performanceSaveTypeMessage = "By pressing SAVE, the Performance will be SAVED and the Key fund statistics will be RESTORED to its original";
+            this.grossCashFlowSaveTypeMessage = "By pressing SAVE, the Gross cash flow will be SAVED, the Performance will be UPDATED and the Key fund statistics will be UPDATED";
         }
     }
 
