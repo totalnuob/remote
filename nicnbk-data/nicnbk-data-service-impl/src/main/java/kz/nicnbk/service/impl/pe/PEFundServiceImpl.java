@@ -153,7 +153,7 @@ public class PEFundServiceImpl implements PEFundService {
             if (fund.getCalculationType() == 0) {
                 return new PEFundTrackRecordResultDto(
                         new PEFundTrackRecordDto(
-                                0,
+                                fund.getCalculationType(),
                                 fund.getNumberOfInvestments(),
                                 fund.getInvestedAmount(),
                                 fund.getRealized(),
@@ -178,7 +178,7 @@ public class PEFundServiceImpl implements PEFundService {
 
                 peFundRepository.save(fund);
 
-                trackRecordResultDto.getTrackRecordDTO().setCalculationType(1);
+                trackRecordResultDto.getTrackRecordDTO().setCalculationType(fund.getCalculationType());
 
                 return trackRecordResultDto;
             } else {
