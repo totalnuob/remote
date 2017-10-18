@@ -634,10 +634,10 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                 Math.abs(item.multiple - performance.multiple) <= 0.00001 &&
                 Math.abs(item.grossIrr - performance.grossIrr) <= 0.001 &&
                 Math.abs(item.netIrr - performance.netIrr) <= 0.001 ) {
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     fileChange(files: any){

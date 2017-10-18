@@ -753,10 +753,10 @@
                                                 </td>
 
                                                 <td>
-                                                    <div *ngIf="performancesComparison(performance)">
+                                                    <div *ngIf="!performancesComparison(performance)">
                                                         <p style="color:red;">The row does not match any of the IDD</p>
                                                     </div>
-                                                    <div *ngIf="!performancesComparison(performance)">
+                                                    <div *ngIf="performancesComparison(performance)">
                                                         <p>The row matches (to some extent) one of the IDD</p>
                                                     </div>
                                                 </td>
