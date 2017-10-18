@@ -57,6 +57,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
 
     myFiles: File[];
 
+    performanceSaveTypeMessage: string;
+
     private moduleAccessChecker: ModuleAccessCheckerService;
 
 
@@ -124,6 +126,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                     if(this.fund.calculationType == null){
                                         this.fund.calculationType = 0;
                                     }
+
+                                    this.updatePerformanceSaveTypeMessage();
 
                                     if(this.fund.companyPerformance == null){
                                         this.fund.companyPerformance = [];
@@ -237,6 +241,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     this.fund.id = response.entityId;
                     this.fund.creationDate = response.creationDate;
 
+                    this.updatePerformanceSaveTypeMessage();
+
                     this.postAction("Successfully saved.", null);
                 },
                 (error: ErrorResponse) => {
@@ -250,48 +256,39 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
             )
     }
 
+    updatePerformanceSaveTypeMessage() {
+        if(this.fund.calculationType == 0){
+            this.performanceSaveTypeMessage = "0000000000";
+        } else if (this.fund.calculationType == 1) {
+            this.performanceSaveTypeMessage = "1111111111";
+        }
+    }
+
     savePerformance() {
-        if (this.fund.calculationType == 0) {
-            this.busy = this.fundService.savePerformance(this.fund.companyPerformance, this.fund.id)
-                .subscribe(
-                    (response: SaveResponse) => {
-                        this.postAction(response.messageEn, null);
+        this.busy = this.fundService.savePerformanceAndUpdateStatistics(this.fund.companyPerformance, this.fund.id)
+            .subscribe(
+                (response) => {
+                    this.postAction(response.messageEn, null);
 
-                        this.fund.companyPerformance = response.performanceDtoList;
+                    this.fund.companyPerformance = response.performanceDtoList;
 
-                        //this.fund.autoCalculation = false;
-                    },
-                    (error: ErrorResponse) => {
-                        this.processErrorMessage(error);
-                        this.postAction(null, error.message);
-                        console.log(error);
-                    }
-                )
-        }
-        if (this.fund.calculationType == 1) {
-            this.busy = this.fundService.savePerformanceAndRecalculateStatistics(this.fund.companyPerformance, this.fund.id)
-                .subscribe(
-                    (response) => {
-                        this.postAction(response.messageEn, null);
+                    this.fund.calculationType = response.trackRecordDTO.calculationType;
 
-                        this.fund.companyPerformance = response.performanceDtoList;
+                    this.fund.numberOfInvestments = response.trackRecordDTO.numberOfInvestments;
+                    this.fund.investedAmount = response.trackRecordDTO.investedAmount;
+                    this.fund.realized = response.trackRecordDTO.realized;
+                    this.fund.unrealized = response.trackRecordDTO.unrealized;
+                    this.fund.dpi = response.trackRecordDTO.dpi;
+                    this.fund.grossTvpi = response.trackRecordDTO.grossTvpi;
 
-                        this.fund.numberOfInvestments = response.trackRecordDTO.numberOfInvestments;
-                        this.fund.investedAmount = response.trackRecordDTO.investedAmount;
-                        this.fund.realized = response.trackRecordDTO.realized;
-                        this.fund.unrealized = response.trackRecordDTO.unrealized;
-                        this.fund.dpi = response.trackRecordDTO.dpi;
-                        this.fund.grossTvpi = response.trackRecordDTO.grossTvpi;
-
-                        //this.fund.autoCalculation = true;
-                    },
-                    (error: ErrorResponse) => {
-                        this.processErrorMessage(error);
-                        this.postAction(null, error.message);
-                        console.log(error);
-                    }
-                )
-        }
+                    //this.fund.autoCalculation = true;
+                },
+                (error: ErrorResponse) => {
+                    this.processErrorMessage(error);
+                    this.postAction(null, error.message);
+                    console.log(error);
+                }
+            )
     }
 
     calculateTrackRecord() {
