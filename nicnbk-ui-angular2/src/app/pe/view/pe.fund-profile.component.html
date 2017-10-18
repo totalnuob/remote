@@ -348,6 +348,7 @@
                                                 <select id="calculationType" name="calculationType" class="form-control" [(ngModel)]="fund.calculationType" (ngModelChange)="statisticsAutoCalculation()">
                                                     <option value="0" selected>Manual</option>
                                                     <option value="1">Auto calculation by PERFORMANCE</option>
+                                                    <option value="2">Auto calculation by GROSS CASH FLOW</option>
                                                 </select>
                                             </div>
                                             <!--<h5>Auto calculation by PERFORMANCE tab</h5>-->
@@ -442,7 +443,7 @@
                                             <table class=" col-md-4 table-striped table-condensed">
                                                 <tr>
                                                     <td class="col-md-3"><b>Gross IRR</b></td>
-                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="grossIrr" [(ngModel)]="fund.grossIrr" placeholder="-" pattern="[+/-]?[0-9]*\.?[0-9]+" #grossIrr="ngModel"/>
+                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="grossIrr" [(ngModel)]="fund.grossIrr" placeholder="-" pattern="[+/-]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType == 2" #grossIrr="ngModel"/>
                                                         <div [hidden]="grossIrr.valid || grossIrr.pristine" class="alert alert-danger">
                                                             Only number could be entered
                                                         </div>
