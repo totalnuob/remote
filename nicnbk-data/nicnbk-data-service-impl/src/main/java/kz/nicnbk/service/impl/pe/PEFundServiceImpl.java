@@ -240,7 +240,7 @@ public class PEFundServiceImpl implements PEFundService {
     }
 
     @Override
-    public PEGrossCashflowAndCompanyPerformanceIddAndFundTrackRecordResultDto saveGrossCFAndRecalculatePerformanceIdd(List<PEGrossCashflowDto> cashflowDtoList, Long fundId, String updater) {
+    public PEGrossCashflowAndCompanyPerformanceIddAndFundTrackRecordResultDto saveGrossCFAndRecalculatePerformanceIddAndUpdateFundTrackRecord(List<PEGrossCashflowDto> cashflowDtoList, Long fundId, String updater) {
 
         try {
             if (this.peFundRepository.findOne(fundId) == null) {
