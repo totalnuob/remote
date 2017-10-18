@@ -359,8 +359,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     //        )
     //}
 
-    saveGrossCFAndRecalculatePerformance() {
-        this.busy = this.fundService.saveGrossCFAndRecalculatePerformance(this.fund.grossCashflow, this.fund.id)
+    saveGrossCFAndRecalculatePerformanceAndUpdateStatistics() {
+        this.busy = this.fundService.saveGrossCFAndRecalculatePerformanceAndUpdateStatistics(this.fund.grossCashflow, this.fund.id)
             .subscribe(
                 (response) => {
                     this.postAction(response.messageEn, null);
@@ -368,6 +368,17 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     this.fund.grossCashflow = response.cashflowDtoList;
 
                     this.fund.companyPerformanceIdd = response.performanceIddDtoList;
+
+                    this.fund.calculationType = response.trackRecordDTO.calculationType;
+
+                    this.fund.numberOfInvestments = response.trackRecordDTO.numberOfInvestments;
+                    this.fund.investedAmount = response.trackRecordDTO.investedAmount;
+                    this.fund.realized = response.trackRecordDTO.realized;
+                    this.fund.unrealized = response.trackRecordDTO.unrealized;
+                    this.fund.dpi = response.trackRecordDTO.dpi;
+                    this.fund.grossTvpi = response.trackRecordDTO.grossTvpi;
+
+                    this.fund.grossIrr = response.trackRecordDTO.grossIrr;
                 },
                 (error: ErrorResponse) => {
                     this.processErrorMessage(error);
