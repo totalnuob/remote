@@ -150,20 +150,7 @@ public class PEFundServiceImpl implements PEFundService {
                 return new PEFundTrackRecordResultDto(new PEFundTrackRecordDto(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");
             }
 
-            if (fund.getCalculationType() == 0) {
-                return new PEFundTrackRecordResultDto(
-                        new PEFundTrackRecordDto(
-                                fund.getCalculationType(),
-                                fund.getNumberOfInvestments(),
-                                fund.getInvestedAmount(),
-                                fund.getRealized(),
-                                fund.getUnrealized(),
-                                fund.getDpi(),
-                                null, null, null,
-                                fund.getGrossTvpi(),
-                                null, null, null, null),
-                        StatusResultType.SUCCESS, "", "", "");
-            } else if (fund.getCalculationType() == 1) {
+            if (fund.getCalculationType() == 1) {
                 PEFundTrackRecordResultDto trackRecordResultDto = calculateTrackRecord(fundId);
                 if (trackRecordResultDto.getStatus().equals(StatusResultType.FAIL)) {
                     return trackRecordResultDto;
@@ -182,7 +169,18 @@ public class PEFundServiceImpl implements PEFundService {
 
                 return trackRecordResultDto;
             } else {
-                return new PEFundTrackRecordResultDto(new PEFundTrackRecordDto(), StatusResultType.FAIL, "", "Error updating PE fund's key statistics", "");
+                return new PEFundTrackRecordResultDto(
+                        new PEFundTrackRecordDto(
+                                fund.getCalculationType(),
+                                fund.getNumberOfInvestments(),
+                                fund.getInvestedAmount(),
+                                fund.getRealized(),
+                                fund.getUnrealized(),
+                                fund.getDpi(),
+                                null, null, null,
+                                fund.getGrossTvpi(),
+                                null, null, null, null),
+                        StatusResultType.SUCCESS, "", "", "");
             }
         } catch (Exception ex) {
             logger.error("Error updating PE fund's key statistics: " + fundId, ex);
