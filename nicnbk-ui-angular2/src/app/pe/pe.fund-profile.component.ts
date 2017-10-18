@@ -624,6 +624,10 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
         }
     }
 
+    performancesComparison(item) {
+        return "true";
+    }
+
     fileChange(files: any){
         this.myFiles = files;
         console.log(this.myFiles);
