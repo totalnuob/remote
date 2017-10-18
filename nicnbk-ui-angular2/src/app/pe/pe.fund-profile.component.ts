@@ -58,6 +58,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     myFiles: File[];
 
     performanceSaveTypeMessage: string;
+    grossCashFlowSaveTypeMessage: string;
 
     private moduleAccessChecker: ModuleAccessCheckerService;
 
@@ -127,7 +128,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                         this.fund.calculationType = 0;
                                     }
 
-                                    this.updatePerformanceSaveTypeMessage();
+                                    this.updateSaveTypeMessage();
 
                                     if(this.fund.companyPerformance == null){
                                         this.fund.companyPerformance = [];
@@ -241,7 +242,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     this.fund.id = response.entityId;
                     this.fund.creationDate = response.creationDate;
 
-                    this.updatePerformanceSaveTypeMessage();
+                    this.updateSaveTypeMessage();
 
                     this.postAction("Successfully saved.", null);
                 },
@@ -256,11 +257,16 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
             )
     }
 
-    updatePerformanceSaveTypeMessage() {
-        if (this.fund.calculationType == 1) {
-            this.performanceSaveTypeMessage = "By pressing SAVE, the Performance will be saved and the Key fund statistics will be UPDATED";
-        } else {
+    updateSaveTypeMessage() {
+        if (this.fund.calculationType == 0) {
             this.performanceSaveTypeMessage = "By pressing SAVE, the Performance will be saved and the Key fund statistics will be RESTORED to its original";
+            this.grossCashFlowSaveTypeMessage = "By pressing SAVE, the Gross cash flow will be saved and the Key fund statistics will be RESTORED to its original";
+        } else if (this.fund.calculationType == 1) {
+            this.performanceSaveTypeMessage = "By pressing SAVE, the Performance will be saved and the Key fund statistics will be UPDATED";
+            this.grossCashFlowSaveTypeMessage = "By pressing SAVE, the Gross cash flow will be saved and the Key fund statistics will be RESTORED to its original";
+        } else if (this.fund.calculationType == 2) {
+            this.performanceSaveTypeMessage = "By pressing SAVE, the Performance will be saved and the Key fund statistics will be RESTORED to its original";
+            this.grossCashFlowSaveTypeMessage = "By pressing SAVE, the Gross cash flow will be saved and the Key fund statistics will be UPDATED";
         }
     }
 
