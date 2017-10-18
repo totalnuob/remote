@@ -118,8 +118,8 @@ public class PEIrrServiceImpl implements PEIrrService {
                 }
             }
 
-//            return (Math.pow(1 + a, 365.0) - 1) * 100;
-            return Math.round((Math.pow(1 + a, 365.0) - 1) * 10000) / 100.0;
+            return (Math.pow(1 + a, 365.0) - 1) * 100;
+//            return Math.round((Math.pow(1 + a, 365.0) - 1) * 10000) / 100.0;
         }
 
         return null;

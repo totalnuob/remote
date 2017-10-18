@@ -833,15 +833,15 @@
                                                 <th>Net IRR, %</th>
                                             </tr>
                                             <tr *ngFor="let performance of fund.companyPerformanceIdd">
-                                                <td>
-                                                    {{performance.companyName}}
+                                                <td style="font-size: small">
+                                                    {{performance.companyName | }}
                                                     <!--<input type="text" class="form-control" name="companyName" [(ngModel)]="performance.companyName" placeholder="-" pattern="[A-Za-z0-9 ()]{1,50}" [disabled]="true" #companyName="ngModel"/>-->
                                                     <!--<div [hidden]="companyName.valid || companyName.pristine" class="alert alert-danger">-->
                                                         <!--Name must contain 1-50 characters A-Z, a-z, 0-9-->
                                                     <!--</div>-->
                                                 </td>
 
-                                                <td>
+                                                <td style="font-size: small">
                                                     {{performance.invested}}
                                                     <!--<input type="text" class="form-control" name="invested" [(ngModel)]="performance.invested" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="true" #invested="ngModel"/>-->
                                                     <!--<div [hidden]="invested.valid || invested.pristine" class="alert alert-danger">-->
@@ -849,7 +849,7 @@
                                                     <!--</div>-->
                                                 </td>
 
-                                                <td>
+                                                <td style="font-size: small">
                                                     {{performance.realized}}
                                                     <!--<input type="text" class="form-control" name="realized" [(ngModel)]="performance.realized" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="true" #realized="ngModel"/>-->
                                                     <!--<div [hidden]="realized.valid || realized.pristine" class="alert alert-danger">-->
@@ -857,7 +857,7 @@
                                                     <!--</div>-->
                                                 </td>
 
-                                                <td>
+                                                <td style="font-size: small">
                                                     {{performance.unrealized}}
                                                     <!--<input type="text" class="form-control" name="unrealized" [(ngModel)]="performance.unrealized" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="true" #unrealized="ngModel"/>-->
                                                     <!--<div [hidden]="unrealized.valid || unrealized.pristine" class="alert alert-danger">-->
@@ -865,7 +865,7 @@
                                                     <!--</div>-->
                                                 </td>
 
-                                                <td>
+                                                <td style="font-size: small">
                                                     {{performance.totalValue}}
                                                     <!--<input type="text" class="form-control" name="totalValue" [(ngModel)]="performance.totalValue" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="true" #totalValue="ngModel"/>-->
                                                     <!--<div [hidden]="totalValue.valid || totalValue.pristine" class="alert alert-danger">-->
@@ -873,7 +873,7 @@
                                                     <!--</div>-->
                                                 </td>
 
-                                                <td>
+                                                <td style="font-size: small">
                                                     {{performance.multiple}}
                                                     <!--<input type="text" class="form-control" name="multiple" [(ngModel)]="performance.multiple" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="true" #multiple="ngModel"/>-->
                                                     <!--<div [hidden]="multiple.valid || multiple.pristine" class="alert alert-danger">-->
@@ -881,7 +881,7 @@
                                                     <!--</div>-->
                                                 </td>
 
-                                                <td>
+                                                <td style="font-size: small">
                                                     {{performance.grossIrr}}
                                                     <!--<input type="text" class="form-control" name="grossIrr" [(ngModel)]="performance.grossIrr" placeholder="-" pattern="[-]?[0-9]*\.?[0-9]+" [disabled]="true" #grossIrr="ngModel"/>-->
                                                     <!--<div [hidden]="grossIrr.valid || grossIrr.pristine" class="alert alert-danger">-->
@@ -889,7 +889,7 @@
                                                     <!--</div>-->
                                                 </td>
 
-                                                <td>
+                                                <td style="font-size: small">
                                                     {{performance.netIrr}}
                                                     <!--<input type="text" class="form-control" name="netIrr" [(ngModel)]="performance.netIrr" placeholder="-" pattern="[-]?[0-9]*\.?[0-9]+" [disabled]="true" #netIrr="ngModel"/>-->
                                                     <!--<div [hidden]="netIrr.valid || netIrr.pristine" class="alert alert-danger">-->
