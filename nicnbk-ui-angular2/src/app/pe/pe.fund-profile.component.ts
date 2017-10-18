@@ -257,10 +257,10 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     }
 
     updatePerformanceSaveTypeMessage() {
-        if (this.fund.calculationType == 0) {
-            this.performanceSaveTypeMessage = "By pressing SAVE, the Performance will be saved and the Key fund statistics will be RESTORED to its original";
-        } else if (this.fund.calculationType == 1) {
+        if (this.fund.calculationType == 1) {
             this.performanceSaveTypeMessage = "By pressing SAVE, the Performance will be saved and the Key fund statistics will be UPDATED";
+        } else {
+            this.performanceSaveTypeMessage = "By pressing SAVE, the Performance will be saved and the Key fund statistics will be RESTORED to its original";
         }
     }
 
