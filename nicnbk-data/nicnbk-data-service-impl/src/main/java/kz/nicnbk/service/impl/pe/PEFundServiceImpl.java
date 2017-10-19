@@ -150,7 +150,20 @@ public class PEFundServiceImpl implements PEFundService {
                 return new PEFundTrackRecordResultDto(new PEFundTrackRecordDto(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");
             }
 
-            if (fund.getCalculationType() == 1) {
+            if (fund.getCalculationType() == 0) {
+                return new PEFundTrackRecordResultDto(
+                        new PEFundTrackRecordDto(
+                                fund.getCalculationType(),
+                                fund.getNumberOfInvestments(),
+                                fund.getInvestedAmount(),
+                                fund.getRealized(),
+                                fund.getUnrealized(),
+                                fund.getDpi(),
+                                null, null, null,
+                                fund.getGrossTvpi(),
+                                null, null, null, null),
+                        StatusResultType.SUCCESS, "", "", "");
+            } else if (fund.getCalculationType() == 1) {
                 PEFundTrackRecordResultDto trackRecordResultDto = calculateTrackRecord(fundId);
                 if (trackRecordResultDto.getStatus().equals(StatusResultType.FAIL)) {
                     return trackRecordResultDto;
@@ -168,19 +181,8 @@ public class PEFundServiceImpl implements PEFundService {
                 trackRecordResultDto.getTrackRecordDTO().setCalculationType(fund.getCalculationType());
 
                 return trackRecordResultDto;
-            } else {
-                return new PEFundTrackRecordResultDto(
-                        new PEFundTrackRecordDto(
-                                fund.getCalculationType(),
-                                fund.getNumberOfInvestments(),
-                                fund.getInvestedAmount(),
-                                fund.getRealized(),
-                                fund.getUnrealized(),
-                                fund.getDpi(),
-                                null, null, null,
-                                fund.getGrossTvpi(),
-                                null, null, null, null),
-                        StatusResultType.SUCCESS, "", "", "");
+            } else if (fund.getCalculationType() == 2) {
+                fsdfds
             }
         } catch (Exception ex) {
             logger.error("Error updating PE fund's key statistics: " + fundId, ex);
@@ -240,7 +242,7 @@ public class PEFundServiceImpl implements PEFundService {
     }
 
     @Override
-    public PEGrossCashflowAndCompanyPerformanceIddAndFundTrackRecordResultDto saveGrossCFAndRecalculatePerformanceIddAndUpdateFundTrackRecord(List<PEGrossCashflowDto> cashflowDtoList, Long fundId, String updater) {
+    public PEGrossCashflowAndCompanyPerformanceIddAndFundTrackRecordResultDto saveGrossCFAndRecalculatePerformanceIddAndUpdateStatistics(List<PEGrossCashflowDto> cashflowDtoList, Long fundId, String updater) {
 
         try {
             if (this.peFundRepository.findOne(fundId) == null) {
@@ -270,6 +272,7 @@ public class PEFundServiceImpl implements PEFundService {
 
         return new PEGrossCashflowAndCompanyPerformanceIddAndFundTrackRecordResultDto(
                 performanceIddResultDto.getPerformanceIddDtoList(),
+                trackRecordResultDto.getTrackRecordDTO(),
                 grossCFResultDto.getCashflowDtoList(),
                 StatusResultType.SUCCESS, "", "Successfully saved PE fund's gross cash flow and updated company performance", "");
     }
