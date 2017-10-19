@@ -717,11 +717,14 @@
                                                     </div>
                                                 </td>
 
-                                                <td>
+                                                <td *ngIf="!performance.autoCalculation">
                                                     <input type="text" class="form-control" name="totalValue" [(ngModel)]="performance.totalValue" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="performance.autoCalculation" #totalValue="ngModel"/>
                                                     <div [hidden]="totalValue.valid || totalValue.pristine" class="alert alert-danger">
                                                         Only positive number could be entered
                                                     </div>
+                                                </td>
+                                                <td *ngIf="1performance.autoCalculation">
+                                                    {{performance.totalValue}}
                                                 </td>
 
                                                 <td>
