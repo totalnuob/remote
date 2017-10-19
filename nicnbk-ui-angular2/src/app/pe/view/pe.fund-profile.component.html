@@ -723,8 +723,8 @@
                                                         Only positive number could be entered
                                                     </div>
                                                 </td>
-                                                <td *ngIf="1performance.autoCalculation">
-                                                    {{performance.totalValue}}
+                                                <td *ngIf="performance.autoCalculation">
+                                                    {{performance.totalValue/1000000) | number:'1.1-2'}}m
                                                 </td>
 
                                                 <td>
