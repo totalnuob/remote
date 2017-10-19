@@ -262,11 +262,11 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
             this.performanceSaveTypeMessage = "By pressing SAVE, the Performance will be SAVED and the Key fund statistics will be RESTORED to its original";
             this.grossCashFlowSaveTypeMessage = "By pressing SAVE, the Gross cash flow will be SAVED, the Performance will be UPDATED and the Key fund statistics will be RESTORED to its original";
         } else if (this.fund.calculationType == 1) {
-            this.performanceSaveTypeMessage = "By pressing SAVE, the Performance will be SAVED and the Key fund statistics will be partially UPDATED";
+            this.performanceSaveTypeMessage = "By pressing SAVE, the Performance will be SAVED and the Key fund statistics will be partially RESTORED/UPDATED";
             this.grossCashFlowSaveTypeMessage = "By pressing SAVE, the Gross cash flow will be SAVED, the Performance will be UPDATED and the Key fund statistics will be RESTORED to its original";
         } else if (this.fund.calculationType == 2) {
             this.performanceSaveTypeMessage = "By pressing SAVE, the Performance will be SAVED and the Key fund statistics will be RESTORED to its original";
-            this.grossCashFlowSaveTypeMessage = "By pressing SAVE, the Gross cash flow will be SAVED, the Performance will be UPDATED and the Key fund statistics will be partially UPDATED";
+            this.grossCashFlowSaveTypeMessage = "By pressing SAVE, the Gross cash flow will be SAVED, the Performance will be UPDATED and the Key fund statistics will be partially RESTORED/UPDATED";
         }
     }
 
