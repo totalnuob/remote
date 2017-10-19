@@ -174,7 +174,6 @@ public class PEFundServiceImpl implements PEFundService {
 
                 resultDto.getTrackRecordDTO().setNetIrr(fund.getNetIrr());
                 resultDto.getTrackRecordDTO().setNetTvpi(fund.getNetTvpi());
-                resultDto.getTrackRecordDTO().setGrossIrr(fund.getGrossIrr());
                 resultDto.getTrackRecordDTO().setAsOfDate(fund.getAsOfDate());
                 resultDto.getTrackRecordDTO().setBenchmarkNetIrr(fund.getBenchmarkNetIrr());
                 resultDto.getTrackRecordDTO().setBenchmarkNetTvpi(fund.getBenchmarkNetTvpi());
@@ -209,12 +208,20 @@ public class PEFundServiceImpl implements PEFundService {
                 return trackRecordResultDto;
             }
 
+            fund.setCalculationType(trackRecordResultDto.getTrackRecordDTO().getCalculationType());
             fund.setNumberOfInvestments(trackRecordResultDto.getTrackRecordDTO().getNumberOfInvestments());
             fund.setInvestedAmount(trackRecordResultDto.getTrackRecordDTO().getInvestedAmount());
             fund.setRealized(trackRecordResultDto.getTrackRecordDTO().getRealized());
             fund.setUnrealized(trackRecordResultDto.getTrackRecordDTO().getUnrealized());
             fund.setDpi(trackRecordResultDto.getTrackRecordDTO().getDpi());
+            fund.setNetIrr(trackRecordResultDto.getTrackRecordDTO().getNetIrr());
+            fund.setNetTvpi(trackRecordResultDto.getTrackRecordDTO().getNetTvpi());
+            fund.setGrossIrr(trackRecordResultDto.getTrackRecordDTO().getGrossIrr());
             fund.setGrossTvpi(trackRecordResultDto.getTrackRecordDTO().getGrossTvpi());
+            fund.setAsOfDate(trackRecordResultDto.getTrackRecordDTO().getAsOfDate());
+            fund.setBenchmarkNetIrr(trackRecordResultDto.getTrackRecordDTO().getBenchmarkNetIrr());
+            fund.setBenchmarkNetTvpi(trackRecordResultDto.getTrackRecordDTO().getBenchmarkNetTvpi());
+            fund.setBenchmarkName(trackRecordResultDto.getTrackRecordDTO().getBenchmarkName());
 
             peFundRepository.save(fund);
 
