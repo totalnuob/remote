@@ -226,7 +226,7 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
 
             return new PEFundTrackRecordResultDto(
                     new PEFundTrackRecordDto(
-                            null,
+                            1,
                             numberOfInvestments,
                             investedAmount,
                             realized,

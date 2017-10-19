@@ -131,11 +131,31 @@ public class PEFundServiceImpl implements PEFundService {
     public PEFundTrackRecordResultDto calculateTrackRecord(Long fundId) {
 
         try {
-            if (this.peFundRepository.findOne(fundId) == null) {
+            PEFund fund = this.peFundRepository.findOne(fundId);
+            if (fund == null) {
                 return new PEFundTrackRecordResultDto(new PEFundTrackRecordDto(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");
             }
 
-            return this.performanceService.calculateTrackRecord(fundId);
+            if (fund.getCalculationType() == 0) {
+                return new PEFundTrackRecordResultDto(
+                        new PEFundTrackRecordDto(
+                                0,
+                                fund.getNumberOfInvestments(),
+                                fund.getInvestedAmount(),
+                                fund.getRealized(),
+                                fund.getUnrealized(),
+                                fund.getDpi(),
+                                null, null, null,
+                                fund.getGrossTvpi(),
+                                null, null, null, null),
+                        StatusResultType.SUCCESS, "", "", "");
+            } else if (fund.getCalculationType() == 1) {
+                return this.performanceService.calculateTrackRecord(fundId);
+            } else if (fund.getCalculationType() == 2) {
+                return this.grossCFService.calculateTrackRecord(fundId);
+            } else {
+                return new PEFundTrackRecordResultDto(new PEFundTrackRecordDto(), StatusResultType.FAIL, "", "Error calculating PE fund's Track Record", "");
+            }
         } catch (Exception ex) {
             return new PEFundTrackRecordResultDto(new PEFundTrackRecordDto(), StatusResultType.FAIL, "", "Error calculating PE fund's Track Record", "");
         }
@@ -150,40 +170,21 @@ public class PEFundServiceImpl implements PEFundService {
                 return new PEFundTrackRecordResultDto(new PEFundTrackRecordDto(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");
             }
 
-            if (fund.getCalculationType() == 0) {
-                return new PEFundTrackRecordResultDto(
-                        new PEFundTrackRecordDto(
-                                fund.getCalculationType(),
-                                fund.getNumberOfInvestments(),
-                                fund.getInvestedAmount(),
-                                fund.getRealized(),
-                                fund.getUnrealized(),
-                                fund.getDpi(),
-                                null, null, null,
-                                fund.getGrossTvpi(),
-                                null, null, null, null),
-                        StatusResultType.SUCCESS, "", "", "");
-            } else if (fund.getCalculationType() == 1) {
-                PEFundTrackRecordResultDto trackRecordResultDto = calculateTrackRecord(fundId);
-                if (trackRecordResultDto.getStatus().equals(StatusResultType.FAIL)) {
-                    return trackRecordResultDto;
-                }
-
-                fund.setNumberOfInvestments(trackRecordResultDto.getTrackRecordDTO().getNumberOfInvestments());
-                fund.setInvestedAmount(trackRecordResultDto.getTrackRecordDTO().getInvestedAmount());
-                fund.setRealized(trackRecordResultDto.getTrackRecordDTO().getRealized());
-                fund.setUnrealized(trackRecordResultDto.getTrackRecordDTO().getUnrealized());
-                fund.setDpi(trackRecordResultDto.getTrackRecordDTO().getDpi());
-                fund.setGrossTvpi(trackRecordResultDto.getTrackRecordDTO().getGrossTvpi());
-
-                peFundRepository.save(fund);
-
-                trackRecordResultDto.getTrackRecordDTO().setCalculationType(fund.getCalculationType());
-
+            PEFundTrackRecordResultDto trackRecordResultDto = calculateTrackRecord(fundId);
+            if (trackRecordResultDto.getStatus().equals(StatusResultType.FAIL)) {
                 return trackRecordResultDto;
-            } else if (fund.getCalculationType() == 2) {
-                fsdfds
             }
+
+            fund.setNumberOfInvestments(trackRecordResultDto.getTrackRecordDTO().getNumberOfInvestments());
+            fund.setInvestedAmount(trackRecordResultDto.getTrackRecordDTO().getInvestedAmount());
+            fund.setRealized(trackRecordResultDto.getTrackRecordDTO().getRealized());
+            fund.setUnrealized(trackRecordResultDto.getTrackRecordDTO().getUnrealized());
+            fund.setDpi(trackRecordResultDto.getTrackRecordDTO().getDpi());
+            fund.setGrossTvpi(trackRecordResultDto.getTrackRecordDTO().getGrossTvpi());
+
+            peFundRepository.save(fund);
+
+            return trackRecordResultDto;
         } catch (Exception ex) {
             logger.error("Error updating PE fund's key statistics: " + fundId, ex);
             return new PEFundTrackRecordResultDto(new PEFundTrackRecordDto(), StatusResultType.FAIL, "", "Error updating PE fund's key statistics", "");
