@@ -40,8 +40,8 @@ export class PEFundService extends CommonService {
     //        .catch(this.handleErrorResponse);
     //}
 
-    calculateTrackRecord(id) {
-        return this.http.get(this.PE_BASE_URL + "recalculate/" + id, this.getOptionsWithCredentials())
+    calculateTrackRecord(id, calculationType) {
+        return this.http.get(this.PE_BASE_URL + "recalculate/" + id + "/" + calculationType, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }

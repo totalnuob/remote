@@ -297,8 +297,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
             )
     }
 
-    calculateTrackRecord() {
-        this.busy = this.fundService.calculateTrackRecord(this.fund.id)
+    calculateTrackRecord(calculationType) {
+        this.busy = this.fundService.calculateTrackRecord(this.fund.id, calculationType)
             .subscribe(
                 (response) => {
                     this.fund.numberOfInvestments = response.trackRecordDTO.numberOfInvestments;
@@ -620,7 +620,9 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
 
     statisticsAutoCalculation() {
         if (this.fund.calculationType == 1) {
-            this.calculateTrackRecord();
+            this.calculateTrackRecord(1);
+        } else if (this.fund.calculationType == 2) {
+            this.calculateTrackRecord(2);
         }
     }
 
