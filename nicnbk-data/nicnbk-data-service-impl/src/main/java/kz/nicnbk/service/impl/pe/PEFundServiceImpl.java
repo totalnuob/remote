@@ -128,7 +128,7 @@ public class PEFundServiceImpl implements PEFundService {
     }
 
     @Override
-    public PEFundTrackRecordResultDto calculateTrackRecord(Long fundId) {
+    public PEFundTrackRecordResultDto calculateTrackRecord(Long fundId, int calculationType) {
 
         try {
             PEFund fund = this.peFundRepository.findOne(fundId);
@@ -136,7 +136,7 @@ public class PEFundServiceImpl implements PEFundService {
                 return new PEFundTrackRecordResultDto(new PEFundTrackRecordDto(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");
             }
 
-            if (fund.getCalculationType() == 0) {
+            if (calculationType == 0) {
                 return new PEFundTrackRecordResultDto(
                         new PEFundTrackRecordDto(
                                 0,
@@ -149,9 +149,9 @@ public class PEFundServiceImpl implements PEFundService {
                                 fund.getGrossTvpi(),
                                 null, null, null, null),
                         StatusResultType.SUCCESS, "", "", "");
-            } else if (fund.getCalculationType() == 1) {
+            } else if (calculationType == 1) {
                 return this.performanceService.calculateTrackRecord(fundId);
-            } else if (fund.getCalculationType() == 2) {
+            } else if (calculationType == 2) {
                 PEFundTrackRecordResultDto resultDto = this.performanceIddService.calculateTrackRecord(fundId);
                 resultDto.getTrackRecordDTO().setGrossIrr(1.11111111);
                 return resultDto;
@@ -172,7 +172,7 @@ public class PEFundServiceImpl implements PEFundService {
                 return new PEFundTrackRecordResultDto(new PEFundTrackRecordDto(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");
             }
 
-            PEFundTrackRecordResultDto trackRecordResultDto = calculateTrackRecord(fundId);
+            PEFundTrackRecordResultDto trackRecordResultDto = calculateTrackRecord(fundId, fund.getCalculationType());
             if (trackRecordResultDto.getStatus().equals(StatusResultType.FAIL)) {
                 return trackRecordResultDto;
             }
