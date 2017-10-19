@@ -370,8 +370,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     //        )
     //}
 
-    saveGrossCFAndRecalculatePerformanceAndUpdateStatistics() {
-        this.busy = this.fundService.saveGrossCFAndRecalculatePerformanceAndUpdateStatistics(this.fund.grossCashflow, this.fund.id)
+    saveGrossCFAndRecalculatePerformanceIddAndUpdateStatistics() {
+        this.busy = this.fundService.saveGrossCFAndRecalculatePerformanceIddAndUpdateStatistics(this.fund.grossCashflow, this.fund.id)
             .subscribe(
                 (response) => {
                     this.postAction(response.messageEn, null);

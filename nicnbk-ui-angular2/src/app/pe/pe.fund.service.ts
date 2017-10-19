@@ -62,7 +62,7 @@ export class PEFundService extends CommonService {
     //        .catch(this.handleErrorResponse);
     //}
 
-    saveGrossCFAndRecalculatePerformanceAndUpdateStatistics(entity, id) {
+    saveGrossCFAndRecalculatePerformanceIddAndUpdateStatistics(entity, id) {
         let body = JSON.stringify(entity);
 
         return this.http.post(this.PE_FUND_SAVE_GROSS_CF_URL + id + "/recalculate", body, this.getOptionsWithCredentials())
