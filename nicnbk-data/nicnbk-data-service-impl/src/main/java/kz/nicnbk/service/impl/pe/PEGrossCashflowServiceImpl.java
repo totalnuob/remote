@@ -7,6 +7,7 @@ import kz.nicnbk.service.api.pe.PEFundService;
 import kz.nicnbk.service.api.pe.PEGrossCashflowService;
 import kz.nicnbk.service.converter.pe.PEGrossCashflowEntityConverter;
 import kz.nicnbk.service.dto.common.StatusResultType;
+import kz.nicnbk.service.dto.pe.PEFundTrackRecordResultDto;
 import kz.nicnbk.service.dto.pe.PEGrossCashflowDto;
 import kz.nicnbk.service.dto.pe.PEGrossCashflowResultDto;
 import org.slf4j.Logger;
@@ -141,5 +142,10 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
     public boolean deleteByFundId(Long fundId) {
         this.repository.deleteByFundId(fundId);
         return true;
+    }
+
+    @Override
+    public PEFundTrackRecordResultDto calculateTrackRecord(Long fundId) {
+        return null;
     }
 }

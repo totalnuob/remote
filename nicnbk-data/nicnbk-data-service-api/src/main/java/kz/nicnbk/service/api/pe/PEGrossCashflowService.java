@@ -1,5 +1,6 @@
 package kz.nicnbk.service.api.pe;
 
+import kz.nicnbk.service.dto.pe.PEFundTrackRecordResultDto;
 import kz.nicnbk.service.dto.pe.PEGrossCashflowDto;
 import kz.nicnbk.service.dto.pe.PEGrossCashflowResultDto;
 
@@ -19,4 +20,6 @@ public interface PEGrossCashflowService {
     List<PEGrossCashflowDto> findByFundIdAndCompanyName(Long fundId, String companyName);
 
     boolean deleteByFundId(Long fundId);
+
+    PEFundTrackRecordResultDto calculateTrackRecord(Long fundId);
 }

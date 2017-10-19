@@ -21,5 +21,5 @@ public interface PECompanyPerformanceService {
 
 //    boolean deleteByFundId(Long fundId);
 
-    PEFundTrackRecordResultDto calculateTrackRecord (Long fundId);
+    PEFundTrackRecordResultDto calculateTrackRecord(Long fundId);
 }
