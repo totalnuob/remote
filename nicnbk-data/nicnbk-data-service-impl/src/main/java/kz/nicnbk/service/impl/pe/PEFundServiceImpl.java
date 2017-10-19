@@ -148,7 +148,8 @@ public class PEFundServiceImpl implements PEFundService {
                                 fund.getRealized(),
                                 fund.getUnrealized(),
                                 fund.getDpi(),
-                                null, null, null,
+                                null, null,
+                                fund.getGrossIrr(),
                                 fund.getGrossTvpi(),
                                 null, null, null, null),
                         StatusResultType.SUCCESS, "", "", "");
