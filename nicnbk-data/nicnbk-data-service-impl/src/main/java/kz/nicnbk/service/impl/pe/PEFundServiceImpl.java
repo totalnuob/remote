@@ -158,7 +158,17 @@ public class PEFundServiceImpl implements PEFundService {
                                 fund.getBenchmarkName()),
                         StatusResultType.SUCCESS, "", "", "");
             } else if (calculationType == 1) {
-                return this.performanceService.calculateTrackRecord(fundId);
+                PEFundTrackRecordResultDto resultDto = this.performanceService.calculateTrackRecord(fundId);
+
+                resultDto.getTrackRecordDTO().setNetIrr(fund.getNetIrr());
+                resultDto.getTrackRecordDTO().setNetTvpi(fund.getNetTvpi());
+                resultDto.getTrackRecordDTO().setGrossIrr(fund.getGrossIrr());
+                resultDto.getTrackRecordDTO().setAsOfDate(fund.getAsOfDate());
+                resultDto.getTrackRecordDTO().setBenchmarkNetIrr(fund.getBenchmarkNetIrr());
+                resultDto.getTrackRecordDTO().setBenchmarkNetTvpi(fund.getBenchmarkNetTvpi());
+                resultDto.getTrackRecordDTO().setBenchmarkName(fund.getBenchmarkName());
+
+                return resultDto;
             } else if (calculationType == 2) {
                 PEFundTrackRecordResultDto resultDto = this.performanceIddService.calculateTrackRecord(fundId);
 
