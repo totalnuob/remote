@@ -152,7 +152,9 @@ public class PEFundServiceImpl implements PEFundService {
             } else if (fund.getCalculationType() == 1) {
                 return this.performanceService.calculateTrackRecord(fundId);
             } else if (fund.getCalculationType() == 2) {
-                return this.grossCFService.calculateTrackRecord(fundId);
+                PEFundTrackRecordResultDto resultDto = this.performanceIddService.calculateTrackRecord(fundId);
+                resultDto.getTrackRecordDTO().setGrossIrr(1.11111111);
+                return resultDto;
             } else {
                 return new PEFundTrackRecordResultDto(new PEFundTrackRecordDto(), StatusResultType.FAIL, "", "Error calculating PE fund's Track Record", "");
             }

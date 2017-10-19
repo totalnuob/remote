@@ -2,6 +2,7 @@ package kz.nicnbk.service.api.pe;
 
 import kz.nicnbk.service.dto.pe.PECompanyPerformanceIddDto;
 import kz.nicnbk.service.dto.pe.PECompanyPerformanceIddResultDto;
+import kz.nicnbk.service.dto.pe.PEFundTrackRecordResultDto;
 
 import java.util.List;
 
@@ -19,4 +20,6 @@ public interface PECompanyPerformanceIddService {
     List<PECompanyPerformanceIddDto> findByFundId(Long fundId);
 
     boolean deleteByFundId(Long fundId);
+
+    PEFundTrackRecordResultDto calculateTrackRecord(Long fundId);
 }

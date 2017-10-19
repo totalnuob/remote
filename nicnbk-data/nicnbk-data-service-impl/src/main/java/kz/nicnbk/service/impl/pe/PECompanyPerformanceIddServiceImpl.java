@@ -8,10 +8,7 @@ import kz.nicnbk.service.api.pe.PEGrossCashflowService;
 import kz.nicnbk.service.api.pe.PEIrrService;
 import kz.nicnbk.service.converter.pe.PECompanyPerformanceIddEntityConverter;
 import kz.nicnbk.service.dto.common.StatusResultType;
-import kz.nicnbk.service.dto.pe.PECompanyPerformanceIddDto;
-import kz.nicnbk.service.dto.pe.PECompanyPerformanceIddResultDto;
-import kz.nicnbk.service.dto.pe.PEFundDto;
-import kz.nicnbk.service.dto.pe.PEGrossCashflowDto;
+import kz.nicnbk.service.dto.pe.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -191,5 +188,52 @@ public class PECompanyPerformanceIddServiceImpl implements PECompanyPerformanceI
     public boolean deleteByFundId(Long fundId) {
         this.repository.deleteByFundId(fundId);
         return true;
+    }
+
+    @Override
+    public PEFundTrackRecordResultDto calculateTrackRecord(Long fundId) {
+
+        try {
+            Integer numberOfInvestments = 0;
+            Double investedAmount = 0.0;
+            Double realized = 0.0;
+            Double unrealized = 0.0;
+            Double dpi = null;
+            Double grossTvpi = null;
+
+            for (PECompanyPerformanceIddDto performanceIddDto : findByFundId(fundId)) {
+                numberOfInvestments++;
+                if (performanceIddDto.getInvested() != null) {
+                    investedAmount += performanceIddDto.getInvested();
+                }
+                if (performanceIddDto.getRealized() != null) {
+                    realized += performanceIddDto.getRealized();
+                }
+                if (performanceIddDto.getUnrealized() != null) {
+                    unrealized += performanceIddDto.getUnrealized();
+                }
+            }
+
+            if (investedAmount != 0.0) {
+                dpi = realized / investedAmount;
+                grossTvpi = (realized + unrealized) / investedAmount;
+            }
+
+            return new PEFundTrackRecordResultDto(
+                    new PEFundTrackRecordDto(
+                            2,
+                            numberOfInvestments,
+                            investedAmount,
+                            realized,
+                            unrealized,
+                            dpi,
+                            null, null, null,
+                            grossTvpi,
+                            null, null, null, null),
+                    StatusResultType.SUCCESS, "", "Successfully calculated PE fund's key statistics", "");
+        } catch (Exception ex) {
+            logger.error("Error calculating PE fund's key statistics: " + fundId, ex);
+            return new PEFundTrackRecordResultDto(new PEFundTrackRecordDto(), StatusResultType.FAIL, "", "Error calculating PE fund's key statistics", "");
+        }
     }
 }

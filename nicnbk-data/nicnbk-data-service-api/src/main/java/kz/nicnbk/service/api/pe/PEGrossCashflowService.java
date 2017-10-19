@@ -20,6 +20,4 @@ public interface PEGrossCashflowService {
     List<PEGrossCashflowDto> findByFundIdAndCompanyName(Long fundId, String companyName);
 
     boolean deleteByFundId(Long fundId);
-
-    PEFundTrackRecordResultDto calculateTrackRecord(Long fundId);
 }
