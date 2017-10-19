@@ -385,9 +385,14 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     this.fund.realized = response.trackRecordDTO.realized;
                     this.fund.unrealized = response.trackRecordDTO.unrealized;
                     this.fund.dpi = response.trackRecordDTO.dpi;
-                    this.fund.grossTvpi = response.trackRecordDTO.grossTvpi;
-
+                    this.fund.netIrr = response.trackRecordDTO.netIrr;
+                    this.fund.netTvpi = response.trackRecordDTO.netTvpi;
                     this.fund.grossIrr = response.trackRecordDTO.grossIrr;
+                    this.fund.grossTvpi = response.trackRecordDTO.grossTvpi;
+                    this.fund.asOfDate = response.trackRecordDTO.asOfDate;
+                    this.fund.benchmarkNetIrr = response.trackRecordDTO.benchmarkNetIrr;
+                    this.fund.benchmarkNetTvpi = response.trackRecordDTO.benchmarkNetTvpi;
+                    this.fund.benchmarkName = response.trackRecordDTO.benchmarkName;
                 },
                 (error: ErrorResponse) => {
                     this.processErrorMessage(error);
