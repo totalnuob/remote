@@ -148,10 +148,14 @@ public class PEFundServiceImpl implements PEFundService {
                                 fund.getRealized(),
                                 fund.getUnrealized(),
                                 fund.getDpi(),
-                                null, null,
+                                fund.getNetIrr(),
+                                fund.getNetTvpi(),
                                 fund.getGrossIrr(),
                                 fund.getGrossTvpi(),
-                                null, null, null, null),
+                                fund.getAsOfDate(),
+                                fund.getBenchmarkNetIrr(),
+                                fund.getBenchmarkNetTvpi(),
+                                fund.getBenchmarkName()),
                         StatusResultType.SUCCESS, "", "", "");
             } else if (calculationType == 1) {
                 return this.performanceService.calculateTrackRecord(fundId);
