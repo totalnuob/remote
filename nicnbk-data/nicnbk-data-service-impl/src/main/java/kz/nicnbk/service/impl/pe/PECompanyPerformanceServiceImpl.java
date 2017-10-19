@@ -196,7 +196,7 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
 //    }
 
     @Override
-    public PEFundTrackRecordResultDto calculateTrackRecord (Long fundId) {
+    public PEFundTrackRecordResultDto calculateTrackRecord(Long fundId) {
 
         try {
             Integer numberOfInvestments = 0;
