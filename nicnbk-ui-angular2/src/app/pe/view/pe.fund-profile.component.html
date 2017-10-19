@@ -420,10 +420,13 @@
                                                 </tr>
                                                 <tr>
                                                     <td class="col-md-3"><b>Gross IRR</b></td>
-                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="grossIrr" [(ngModel)]="fund.grossIrr" placeholder="-" pattern="[+/-]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType == 2" #grossIrr="ngModel"/>
+                                                    <td class="col-md-3" *ngIf="fund.calculationType != 2"><input style="width: 100%" type="text" name="grossIrr" [(ngModel)]="fund.grossIrr" placeholder="-" pattern="[+/-]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType == 2" #grossIrr="ngModel"/>
                                                         <div [hidden]="grossIrr.valid || grossIrr.pristine" class="alert alert-danger">
                                                             Only number could be entered
                                                         </div>
+                                                    </td>
+                                                    <td class="col-md-3" *ngIf="fund.calculationType == 2">
+                                                        <div>{{fund.grossIrr}}</div>
                                                     </td>
                                                     <!--<td class="col-md-2">{{fund.grossIrr}}</td>-->
                                                 </tr>
