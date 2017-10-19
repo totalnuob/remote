@@ -313,8 +313,11 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     this.fund.realized = response.trackRecordDTO.realized;
                     this.fund.unrealized = response.trackRecordDTO.unrealized;
                     this.fund.dpi = response.trackRecordDTO.dpi;
-                    this.fund.grossIrr = response.trackRecordDTO.grossIrr;
                     this.fund.grossTvpi = response.trackRecordDTO.grossTvpi;
+
+                    if (calculationType == 2) {
+                        this.fund.grossIrr = response.trackRecordDTO.grossIrr;
+                    }
 
                     //this.fund.autoCalculation = true;
                 },
