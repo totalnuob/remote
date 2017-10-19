@@ -361,7 +361,7 @@
                                             <!--</div>-->
                                         </div>
                                         <div class="row withpadding">
-                                            <table class=" col-md-4 table-striped table-condensed">
+                                            <table class=" col-md-3 table-striped table-condensed">
                                                 <tr>
                                                     <td class="col-md-3"><b>Number of investments</b></td>
                                                     <td class="col-md-3"><input style="width: 100%" type="text" name="numberOfInv" [(ngModel)]="fund.numberOfInvestments" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType != 0" #numOfInv="ngModel"/>
@@ -380,7 +380,6 @@
                                                     </td>
                                                     <!--<td class="col-md-2">{{fund.investedAmount}}</td>-->
                                                 </tr>
-
                                                 <tr>
                                                     <td class="col-md-3"><b>Realized amount</b></td>
                                                     <td class="col-md-3"><input style="width: 100%" type="text" name="realized" [(ngModel)]="fund.realized" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType != 0" #realized="ngModel"/>
@@ -391,20 +390,6 @@
                                                     <!--<td class="col-md-2">{{fund.realized}}</td>-->
                                                 </tr>
                                                 <tr>
-                                                    <td class="col-md-3"><b>Benchmark</b></td>
-                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="benchmark" [(ngModel)]="fund.benchmarkName" placeholder="-"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="col-md-3"><b>As of date</b></td>
-                                                    <td class="col-md-3">
-                                                        <div class="input-group">
-                                                            <input type='text' class="input-group-addon form-control" id="asOfDate" name="asOfDate" [(ngModel)]="fund.asOfDate" placeholder="-"/>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                            <table class=" col-md-4 table-striped table-condensed">
-                                                <tr>
                                                     <td class="col-md-3"><b>Unrealized amount</b></td>
                                                     <td class="col-md-3"><input style="width: 100%" type="text" name="unrealized" [(ngModel)]="fund.unrealized" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType != 0" #unrealized="ngModel"/>
                                                         <div [hidden]="unrealized.valid || unrealized.pristine" class="alert alert-danger">
@@ -413,6 +398,8 @@
                                                     </td>
                                                     <!--<td class="col-md-2">{{fund.unrealized}}</td>-->
                                                 </tr>
+                                            </table>
+                                            <table class=" col-md-3 table-striped table-condensed">
                                                 <tr>
                                                     <td class="col-md-3"><b>DPI</b></td>
                                                     <td class="col-md-3"><input style="width: 100%" type="text" name="dpi" [(ngModel)]="fund.dpi" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType != 0" #dpi="ngModel"/>
@@ -432,16 +419,6 @@
                                                     <!--<td class="col-md-2">{{fund.grossTvpi}}</td>-->
                                                 </tr>
                                                 <tr>
-                                                    <td class="col-md-3"><b>Benchmark NET IRR</b></td>
-                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="benchmarkNetIrr" [(ngModel)]="fund.benchmarkNetIrr" placeholder="-" pattern="[+/-]?[0-9]*\.?[0-9]+" #benchmarkNetIrr="ngModel"/>
-                                                        <div [hidden]="benchmarkNetIrr.valid || benchmarkNetIrr.pristine" class="alert alert-danger">
-                                                            Only number could be entered
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                            <table class=" col-md-4 table-striped table-condensed">
-                                                <tr>
                                                     <td class="col-md-3"><b>Gross IRR</b></td>
                                                     <td class="col-md-3"><input style="width: 100%" type="text" name="grossIrr" [(ngModel)]="fund.grossIrr" placeholder="-" pattern="[+/-]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType == 2" #grossIrr="ngModel"/>
                                                         <div [hidden]="grossIrr.valid || grossIrr.pristine" class="alert alert-danger">
@@ -450,6 +427,8 @@
                                                     </td>
                                                     <!--<td class="col-md-2">{{fund.grossIrr}}</td>-->
                                                 </tr>
+                                            </table>
+                                            <table class=" col-md-3 table-striped table-condensed">
                                                 <tr>
                                                     <td class="col-md-3"><b>Net TVPI</b></td>
                                                     <td class="col-md-3"><input style="width: 100%" type="text" name="netTvpi" [(ngModel)]="fund.netTvpi" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #netTvpi="ngModel"/>
@@ -468,11 +447,33 @@
                                                     </td>
                                                     <!--<td class="col-md-2">{{fund.netIrr}}</td>-->
                                                 </tr>
+                                            </table>
+                                            <table class=" col-md-3 table-striped table-condensed">
+                                                <tr>
+                                                    <td class="col-md-3"><b>Benchmark</b></td>
+                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="benchmark" [(ngModel)]="fund.benchmarkName" placeholder="-"></td>
+                                                </tr>
                                                 <tr>
                                                     <td class="col-md-3"><b>Benchmark NET TVPI</b></td>
                                                     <td class="col-md-3"><input style="width: 100%" type="text" name="benchmarkNetTvpi" [(ngModel)]="fund.benchmarkNetTvpi" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #benchmarkNetTvpi="ngModel"/>
                                                         <div [hidden]="benchmarkNetTvpi.valid || benchmarkNetTvpi.pristine" class="alert alert-danger">
                                                             Only positive number could be entered
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="col-md-3"><b>Benchmark NET IRR</b></td>
+                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="benchmarkNetIrr" [(ngModel)]="fund.benchmarkNetIrr" placeholder="-" pattern="[+/-]?[0-9]*\.?[0-9]+" #benchmarkNetIrr="ngModel"/>
+                                                        <div [hidden]="benchmarkNetIrr.valid || benchmarkNetIrr.pristine" class="alert alert-danger">
+                                                            Only number could be entered
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="col-md-3"><b>As of date</b></td>
+                                                    <td class="col-md-3">
+                                                        <div class="input-group">
+                                                            <input type='text' class="input-group-addon form-control" id="asOfDate" name="asOfDate" [(ngModel)]="fund.asOfDate" placeholder="-"/>
                                                         </div>
                                                     </td>
                                                 </tr>
