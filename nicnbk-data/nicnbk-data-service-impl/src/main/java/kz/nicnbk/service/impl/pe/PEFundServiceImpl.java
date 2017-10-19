@@ -316,7 +316,7 @@ public class PEFundServiceImpl implements PEFundService {
                 performanceIddResultDto.getPerformanceIddDtoList(),
                 trackRecordResultDto.getTrackRecordDTO(),
                 grossCFResultDto.getCashflowDtoList(),
-                StatusResultType.SUCCESS, "", "Successfully saved PE fund's gross cash flow and updated company performance", "");
+                StatusResultType.SUCCESS, "", "Successfully saved PE fund's gross cash flow and updated company performance and restored/updated key statistics", "");
     }
 
     @Override
