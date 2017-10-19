@@ -402,21 +402,25 @@
                                             <table class=" col-md-3 table-striped table-condensed">
                                                 <tr>
                                                     <td class="col-md-3"><b>DPI</b></td>
-                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="dpi" [(ngModel)]="fund.dpi" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType != 0" #dpi="ngModel"/>
+                                                    <td class="col-md-3" *ngIf="fund.calculationType == 0"><input style="width: 100%" type="text" name="dpi" [(ngModel)]="fund.dpi" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType != 0" #dpi="ngModel"/>
                                                         <div [hidden]="dpi.valid || dpi.pristine" class="alert alert-danger">
                                                             Only positive number could be entered
                                                         </div>
                                                     </td>
-                                                    <!--<td class="col-md-2">{{fund.dpi}}</td>-->
+                                                    <td class="col-md-3" *ngIf="fund.calculationType != 0">
+                                                        {{fund.dpi | number:'1.2-2'}}
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td class="col-md-3"><b>Gross TVPI</b></td>
-                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="grossTvpi" [(ngModel)]="fund.grossTvpi" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType != 0" #grossTvpi="ngModel"/>
+                                                    <td class="col-md-3" *ngIf="fund.calculationType == 0"><input style="width: 100%" type="text" name="grossTvpi" [(ngModel)]="fund.grossTvpi" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType != 0" #grossTvpi="ngModel"/>
                                                         <div [hidden]="grossTvpi.valid || grossTvpi.pristine" class="alert alert-danger">
                                                             Only positive number could be entered
                                                         </div>
                                                     </td>
-                                                    <!--<td class="col-md-2">{{fund.grossTvpi}}</td>-->
+                                                    <td class="col-md-3" *ngIf="fund.calculationType != 0">
+                                                        {{fund.grossTvpi | number:'1.2-2'}}
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td class="col-md-3"><b>Gross IRR</b></td>
@@ -426,9 +430,8 @@
                                                         </div>
                                                     </td>
                                                     <td class="col-md-3" *ngIf="fund.calculationType == 2">
-                                                        <div>{{fund.grossIrr}}</div>
+                                                        {{fund.grossIrr | number:'1.0-2'}}%
                                                     </td>
-                                                    <!--<td class="col-md-2">{{fund.grossIrr}}</td>-->
                                                 </tr>
                                             </table>
                                             <table class=" col-md-3 table-striped table-condensed">
