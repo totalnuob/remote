@@ -363,7 +363,7 @@
                                         <div class="row withpadding">
                                             <table class="table-striped table-condensed">
                                                 <tr>
-                                                    <td class="col-md-1"><b>Number of investments</b></td>
+                                                    <td class="col-md-2"><b>Number of investments</b></td>
                                                     <td class="col-md-1" *ngIf="fund.calculationType == 0"><input style="width: 100%" type="text" name="numberOfInv" [(ngModel)]="fund.numberOfInvestments" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType != 0" #numOfInv="ngModel"/>
                                                         <div [hidden]="numOfInv.valid || numOfInv.pristine" class="alert alert-danger">
                                                             Only positive number could be entered
@@ -383,11 +383,11 @@
                                                     </td>
                                                     <td class="col-md-1"></td>
                                                     <td class="col-md-1"></td>
-                                                    <td class="col-md-1"><b>Benchmark</b></td>
+                                                    <td class="col-md-2"><b>Benchmark</b></td>
                                                     <td class="col-md-1"><input style="width: 100%" type="text" name="benchmark" [(ngModel)]="fund.benchmarkName" placeholder="-"></td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="col-md-1"><b>Invested amount</b></td>
+                                                    <td class="col-md-2"><b>Invested amount</b></td>
                                                     <td class="col-md-1" *ngIf="fund.calculationType == 0"><input style="width: 100%" type="text" name="invested" [(ngModel)]="fund.investedAmount" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType != 0" #invested="ngModel"/>
                                                         <div [hidden]="invested.valid || invested.pristine" class="alert alert-danger">
                                                             Only positive number could be entered
@@ -412,7 +412,7 @@
                                                         </div>
                                                     </td>
                                                     <!--<td class="col-md-1">{{fund.netTvpi}}</td>-->
-                                                    <td class="col-md-1"><b>Benchmark NET TVPI</b></td>
+                                                    <td class="col-md-2"><b>Benchmark NET TVPI</b></td>
                                                     <td class="col-md-1"><input style="width: 100%" type="text" name="benchmarkNetTvpi" [(ngModel)]="fund.benchmarkNetTvpi" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #benchmarkNetTvpi="ngModel"/>
                                                         <div [hidden]="benchmarkNetTvpi.valid || benchmarkNetTvpi.pristine" class="alert alert-danger">
                                                             Only positive number could be entered
@@ -420,7 +420,7 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="col-md-1"><b>Realized amount</b></td>
+                                                    <td class="col-md-2"><b>Realized amount</b></td>
                                                     <td class="col-md-1" *ngIf="fund.calculationType == 0"><input style="width: 100%" type="text" name="realized" [(ngModel)]="fund.realized" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType != 0" #realized="ngModel"/>
                                                         <div [hidden]="realized.valid || realized.pristine" class="alert alert-danger">
                                                             Only positive number could be entered
@@ -445,7 +445,7 @@
                                                         </div>
                                                     </td>
                                                     <!--<td class="col-md-1">{{fund.netIrr}}</td>-->
-                                                    <td class="col-md-1"><b>Benchmark NET IRR</b></td>
+                                                    <td class="col-md-2"><b>Benchmark NET IRR</b></td>
                                                     <td class="col-md-1"><input style="width: 100%" type="text" name="benchmarkNetIrr" [(ngModel)]="fund.benchmarkNetIrr" placeholder="-" pattern="[+/-]?[0-9]*\.?[0-9]+" #benchmarkNetIrr="ngModel"/>
                                                         <div [hidden]="benchmarkNetIrr.valid || benchmarkNetIrr.pristine" class="alert alert-danger">
                                                             Only number could be entered
@@ -453,7 +453,7 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="col-md-1"><b>Unrealized amount</b></td>
+                                                    <td class="col-md-2"><b>Unrealized amount</b></td>
                                                     <td class="col-md-1" *ngIf="fund.calculationType == 0"><input style="width: 100%" type="text" name="unrealized" [(ngModel)]="fund.unrealized" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType != 0" #unrealized="ngModel"/>
                                                         <div [hidden]="unrealized.valid || unrealized.pristine" class="alert alert-danger">
                                                             Only positive number could be entered
@@ -466,7 +466,7 @@
                                                     <td class="col-md-1"></td>
                                                     <td class="col-md-1"></td>
                                                     <td class="col-md-1"></td>
-                                                    <td class="col-md-1"><b>As of date</b></td>
+                                                    <td class="col-md-2"><b>As of date</b></td>
                                                     <td class="col-md-1">
                                                         <div class="input-group">
                                                             <input type='text' class="input-group-addon form-control" id="asOfDate" name="asOfDate" [(ngModel)]="fund.asOfDate" placeholder="-"/>
