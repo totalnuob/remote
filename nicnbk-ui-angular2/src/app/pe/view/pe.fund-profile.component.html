@@ -973,7 +973,7 @@
                                                 <th>Auto calculation of the Gross Cash Flow</th>
                                             </tr>
                                             <tr *ngFor="let cf of fund.grossCashflow">
-                                                <td>
+                                                <td class="col-md-2">
                                                     <input type="text" class="form-control" name="companyName" [(ngModel)]="cf.companyName" placeholder="-" pattern="[A-Za-z0-9 ()]{1,50}" #companyName="ngModel"/>
                                                     <div [hidden]="companyName.valid || companyName.pristine" class="alert alert-danger">
                                                         Name must contain 1-50 characters A-Z, a-z, 0-9
@@ -990,28 +990,28 @@
                                                     <!--</div>-->
                                                 </td>
 
-                                                <td>
+                                                <td class="col-md-2">
                                                     <input type="text" class="form-control" name="invested" [(ngModel)]="cf.invested" (ngModelChange)="autoCalculationGrossCF(cf)" placeholder="-" pattern="[-][0-9]*\.?[0-9]+" #invested="ngModel"/>
                                                     <div [hidden]="invested.valid || invested.pristine" class="alert alert-danger">
                                                         Only negative number could be entered
                                                     </div>
                                                 </td>
 
-                                                <td>
+                                                <td class="col-md-2">
                                                     <input type="text" class="form-control" name="realized" [(ngModel)]="cf.realized" (ngModelChange)="autoCalculationGrossCF(cf)" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #realized="ngModel"/>
                                                     <div [hidden]="realized.valid || realized.pristine" class="alert alert-danger">
                                                         Only positive number could be entered
                                                     </div>
                                                 </td>
 
-                                                <td>
+                                                <td class="col-md-2">
                                                     <input type="text" class="form-control" name="unrealized" [(ngModel)]="cf.unrealized" (ngModelChange)="autoCalculationGrossCF(cf)" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #unrealized="ngModel"/>
                                                     <div [hidden]="unrealized.valid || unrealized.pristine" class="alert alert-danger">
                                                         Only positive number could be entered
                                                     </div>
                                                 </td>
 
-                                                <td *ngIf="cf.autoCalculation == false">
+                                                <td class="col-md-2" *ngIf="cf.autoCalculation == false">
                                                     <input type="text" class="form-control" name="grossCF" [(ngModel)]="cf.grossCF" placeholder="-" pattern="[-]?[0-9]*\.?[0-9]+" [disabled]="cf.autoCalculation" #grossCF="ngModel"/>
                                                     <div [hidden]="grossCF.valid || grossCF.pristine" class="alert alert-danger">
                                                         Only number could be entered
