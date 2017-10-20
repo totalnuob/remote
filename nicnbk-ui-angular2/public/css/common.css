@@ -79,7 +79,4 @@ label {
     text-align: center !important;
 }
 
-.middleTDTable td{
-    text-align: center;
-    vertical-align: middle;
-}
+#t1 th {vertical-align: middle;}
