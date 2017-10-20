@@ -128,16 +128,13 @@ public class PECompanyPerformanceIddServiceImpl implements PECompanyPerformanceI
                     if (cashflowDto.getCompanyName().equalsIgnoreCase(performanceIddDto.getCompanyName())) {
                         found = true;
                         if (cashflowDto.getInvested() != null) {
-                            performanceIddDto.setInvested(performanceIddDto.getInvested() != null ?
-                                    (performanceIddDto.getInvested() - cashflowDto.getInvested()) : - cashflowDto.getInvested());
+                            performanceIddDto.setInvested(performanceIddDto.getInvested() - cashflowDto.getInvested());
                         }
                         if (cashflowDto.getRealized() != null) {
-                            performanceIddDto.setRealized(performanceIddDto.getRealized() != null ?
-                                    (performanceIddDto.getRealized() + cashflowDto.getRealized()) : cashflowDto.getRealized());
+                            performanceIddDto.setRealized(performanceIddDto.getRealized() + cashflowDto.getRealized());
                         }
                         if (cashflowDto.getUnrealized() != null) {
-                            performanceIddDto.setUnrealized(performanceIddDto.getUnrealized() != null ?
-                                    (performanceIddDto.getUnrealized() + cashflowDto.getUnrealized()) : cashflowDto.getUnrealized());
+                            performanceIddDto.setUnrealized(performanceIddDto.getUnrealized() + cashflowDto.getUnrealized());
                         }
                         break;
                     }
@@ -146,9 +143,9 @@ public class PECompanyPerformanceIddServiceImpl implements PECompanyPerformanceI
                     performanceIddDtoList.add(
                             new PECompanyPerformanceIddDto(
                                     cashflowDto.getCompanyName(),
-                                    (cashflowDto.getInvested() == null) ? null : - cashflowDto.getInvested(),
-                                    cashflowDto.getRealized(),
-                                    cashflowDto.getUnrealized(),
+                                    (cashflowDto.getInvested() == null) ? 0.0 : - cashflowDto.getInvested(),
+                                    (cashflowDto.getRealized() == null) ? 0.0 : cashflowDto.getRealized(),
+                                    (cashflowDto.getUnrealized() == null) ? 0.0 : cashflowDto.getUnrealized(),
                                     null, null, true, null, null));
                 }
             }
