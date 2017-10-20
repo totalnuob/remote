@@ -674,7 +674,7 @@
                                             </div>
                                         </div>
                                         <br>
-                                        <table class="table table-hover table-responsive" style="font-size: smaller">
+                                        <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
                                             <tr>
                                                 <th>Company</th>
                                                 <th>Cash invested</th>
@@ -723,7 +723,7 @@
                                                         Only positive number could be entered
                                                     </div>
                                                 </td>
-                                                <td *ngIf="performance.autoCalculation == true">
+                                                <td *ngIf="performance.autoCalculation == true" style="font-size: small">
                                                     {{(performance.totalValue/1000000) | number:'1.1-2'}}m
                                                 </td>
 
