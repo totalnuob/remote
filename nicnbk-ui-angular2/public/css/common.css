@@ -78,3 +78,8 @@ label {
     padding: 0px !important;
     text-align: center !important;
 }
+
+.middleTDTable td{
+    text-align: center;
+    vertical-align: middle;
+}
