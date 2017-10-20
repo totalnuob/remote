@@ -151,11 +151,9 @@ public class PECompanyPerformanceIddServiceImpl implements PECompanyPerformanceI
             }
 
             for (PECompanyPerformanceIddDto performanceIddDto : performanceIddDtoList) {
-                performanceIddDto.setTotalValue(
-                        (performanceIddDto.getRealized() == null ? 0.0 : performanceIddDto.getRealized()) +
-                                (performanceIddDto.getUnrealized() == null ? 0.0 : performanceIddDto.getUnrealized()));
+                performanceIddDto.setTotalValue(performanceIddDto.getRealized() + performanceIddDto.getUnrealized());
 
-                performanceIddDto.setMultiple(performanceIddDto.getInvested() == null ? null : performanceIddDto.getTotalValue() / performanceIddDto.getInvested());
+                performanceIddDto.setMultiple(performanceIddDto.getInvested() == 0.0 ? null : performanceIddDto.getTotalValue() / performanceIddDto.getInvested());
 
                 List<PEGrossCashflowDto> cashflowDtoList = this.cashflowService.findByFundIdAndCompanyName(fundId, performanceIddDto.getCompanyName());
                 if (cashflowDtoList == null) {
