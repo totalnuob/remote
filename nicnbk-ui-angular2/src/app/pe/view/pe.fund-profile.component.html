@@ -891,8 +891,7 @@
                                                 </td>
 
                                                 <td style="font-size: small">
-                                                    {{performance.multiple}}x
-                                                    <!--{{performance.multiple | number:'1.1-1'}}x-->
+                                                    {{performance.multiple | number:'1.1-1'}}x
                                                     <!--<input type="text" class="form-control" name="multiple" [(ngModel)]="performance.multiple" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="true" #multiple="ngModel"/>-->
                                                     <!--<div [hidden]="multiple.valid || multiple.pristine" class="alert alert-danger">-->
                                                         <!--Only positive number could be entered-->
@@ -900,8 +899,7 @@
                                                 </td>
 
                                                 <td style="font-size: small">
-                                                    {{performance.grossIrr}}
-                                                    <!--{{performance.grossIrr | number:'1.0-2'}}%-->
+                                                    {{performance.grossIrr | number:'1.0-2'}}%
                                                     <!--<input type="text" class="form-control" name="grossIrr" [(ngModel)]="performance.grossIrr" placeholder="-" pattern="[-]?[0-9]*\.?[0-9]+" [disabled]="true" #grossIrr="ngModel"/>-->
                                                     <!--<div [hidden]="grossIrr.valid || grossIrr.pristine" class="alert alert-danger">-->
                                                         <!--Only number could be entered-->
