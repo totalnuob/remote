@@ -1011,11 +1011,14 @@
                                                     </div>
                                                 </td>
 
-                                                <td>
+                                                <td *ngIf="cf.autoCalculation == false">
                                                     <input type="text" class="form-control" name="grossCF" [(ngModel)]="cf.grossCF" placeholder="-" pattern="[-]?[0-9]*\.?[0-9]+" [disabled]="cf.autoCalculation" #grossCF="ngModel"/>
                                                     <div [hidden]="grossCF.valid || grossCF.pristine" class="alert alert-danger">
                                                         Only number could be entered
                                                     </div>
+                                                </td>
+                                                <td *ngIf="cf.autoCalculation == true" style="font-size: small; vertical-align: middle">
+                                                    {{(cf.grossCF/1000000) | number:'1.1-2'}}m
                                                 </td>
 
                                                 <td>
