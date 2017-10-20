@@ -124,6 +124,65 @@ public class PEIrrServiceImpl implements PEIrrService {
 //            return Math.round((Math.pow(1 + a, 365.0) - 1) * 10000) / 100.0;
         }
 
+        a = null;
+        b = null;
+
+        // fast search
+        for (int i = 0; i < 10; i++) {
+            Double npv = getNPV(cashflowDtoList, - i / (double) (1 + i));
+            if ( npv != null && npv <= 0) {
+                a = - i / (double) (1 + i);
+                break;
+            }
+        }
+
+        for (int i = 0; i < 10; i++) {
+            Double npv = getNPV(cashflowDtoList, (double) i );
+            if ( npv != null && npv >= 0) {
+                b = (double) i;
+                break;
+            }
+        }
+
+        // deep search
+//        long N = 10000000;
+//
+//        if (a == null) {
+//            for (long i = 0; i < 2 * N; i++) {
+//                Double npv = getNPV(cashflowDtoList, i / (double) N - 1);
+//                if ( npv != null && npv >= 0) {
+//                    a = i / (double) N - 1;
+//                    break;
+//                }
+//            }
+//        }
+//
+//        if (b == null) {
+//            for (long i = 0; i < 2 * N; i++) {
+//                Double npv = getNPV(cashflowDtoList, i / (double) N - 1);
+//                if ( npv != null && npv <= 0) {
+//                    b = i / (double) N - 1;
+//                    break;
+//                }
+//            }
+//        }
+
+        if (a != null && b != null) {
+            while (Math.abs(b - a) > 0.0000000000000001) {
+                Double npv = getNPV(cashflowDtoList, (a + b) / 2);
+                if (npv != null && npv <= 0) {
+                    a = (a + b) / 2;
+                } else if (npv != null && npv >= 0) {
+                    b = (a + b) / 2;
+                } else {
+                    return null;
+                }
+            }
+
+            return (Math.pow(1 + a, 365.0) - 1) * 100;
+//            return Math.round((Math.pow(1 + a, 365.0) - 1) * 10000) / 100.0;
+        }
+
         return null;
     }
 }
