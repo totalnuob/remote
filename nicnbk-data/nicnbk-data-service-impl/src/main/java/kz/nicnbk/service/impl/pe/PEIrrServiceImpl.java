@@ -38,7 +38,7 @@ public class PEIrrServiceImpl implements PEIrrService {
                 }
             }
 
-            if (doubleSum != null) {
+            if (!doubleSum.isNaN()) {
                 return doubleSum;
             }
 
