@@ -690,9 +690,9 @@
                                             </tr>
                                             <tr *ngFor="let performance of fund.companyPerformance">
                                                 <td>
-                                                    <input type="text" class="form-control" name="companyName" [(ngModel)]="performance.companyName" placeholder="-" pattern="[A-Za-z0-9 ()]{1,50}" #companyName="ngModel"/>
+                                                    <input type="text" class="form-control" name="companyName" [(ngModel)]="performance.companyName" placeholder="-" pattern="[A-Za-z0-9 ().]{1,50}" #companyName="ngModel"/>
                                                     <div [hidden]="companyName.valid || companyName.pristine" class="alert alert-danger">
-                                                        Name must contain 1-50 characters A-Z, a-z, 0-9
+                                                        Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, '(', ')'
                                                     </div>
                                                 </td>
 
@@ -974,9 +974,9 @@
                                             </tr>
                                             <tr *ngFor="let cf of fund.grossCashflow">
                                                 <td class="col-md-2">
-                                                    <input type="text" class="form-control" name="companyName" [(ngModel)]="cf.companyName" placeholder="-" pattern="[A-Za-z0-9 ()]{1,50}" #companyName="ngModel"/>
+                                                    <input type="text" class="form-control" name="companyName" [(ngModel)]="cf.companyName" placeholder="-" pattern="[A-Za-z0-9 ().]{1,50}" #companyName="ngModel"/>
                                                     <div [hidden]="companyName.valid || companyName.pristine" class="alert alert-danger">
-                                                        Name must contain 1-50 characters A-Z, a-z, 0-9
+                                                        Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, '(', ')'
                                                     </div>
                                                 </td>
 
