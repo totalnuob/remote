@@ -133,16 +133,13 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
 //                    if (cashflowDto.getCompanyName().equalsIgnoreCase(performanceDto.getCompanyName())) {
 //                        found = true;
 //                        if (cashflowDto.getInvested() != null) {
-//                            performanceDto.setInvested(performanceDto.getInvested() != null ?
-//                                    (performanceDto.getInvested() - cashflowDto.getInvested()) : - cashflowDto.getInvested());
+//                            performanceDto.setInvested(performanceDto.getInvested() - cashflowDto.getInvested());
 //                        }
 //                        if (cashflowDto.getRealized() != null) {
-//                            performanceDto.setRealized(performanceDto.getRealized() != null ?
-//                                    (performanceDto.getRealized() + cashflowDto.getRealized()) : cashflowDto.getRealized());
+//                            performanceDto.setRealized(performanceDto.getRealized() + cashflowDto.getRealized());
 //                        }
 //                        if (cashflowDto.getUnrealized() != null) {
-//                            performanceDto.setUnrealized(performanceDto.getUnrealized() != null ?
-//                                    (performanceDto.getUnrealized() + cashflowDto.getUnrealized()) : cashflowDto.getUnrealized());
+//                            performanceDto.setUnrealized(performanceDto.getUnrealized() + cashflowDto.getUnrealized());
 //                        }
 //                        break;
 //                    }
@@ -151,19 +148,17 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
 //                    performanceDtoList.add(
 //                            new PECompanyPerformanceDto(
 //                                    cashflowDto.getCompanyName(),
-//                                    (cashflowDto.getInvested() == null) ? null : - cashflowDto.getInvested(),
-//                                    cashflowDto.getRealized(),
-//                                    cashflowDto.getUnrealized(),
+//                                    (cashflowDto.getInvested() == null) ? 0.0 : - cashflowDto.getInvested(),
+//                                    (cashflowDto.getRealized() == null) ? 0.0 : cashflowDto.getRealized(),
+//                                    (cashflowDto.getUnrealized() == null) ? 0.0 : cashflowDto.getUnrealized(),
 //                                    null, null, true, null, null));
 //                }
 //            }
 //
 //            for (PECompanyPerformanceDto performanceDto : performanceDtoList) {
-//                performanceDto.setTotalValue(
-//                        (performanceDto.getRealized() == null ? 0.0 : performanceDto.getRealized()) +
-//                        (performanceDto.getUnrealized() == null ? 0.0 : performanceDto.getUnrealized()));
+//                performanceDto.setTotalValue(performanceDto.getRealized() + performanceDto.getUnrealized());
 //
-//                performanceDto.setMultiple(performanceDto.getInvested() == null ? null : performanceDto.getTotalValue() / performanceDto.getInvested());
+//                performanceDto.setMultiple(performanceDto.getInvested() == 0.0 ? null : performanceDto.getTotalValue() / performanceDto.getInvested());
 //
 //                List<PEGrossCashflowDto> cashflowDtoList = this.cashflowService.findByFundIdAndCompanyName(fundId, performanceDto.getCompanyName());
 //                if (cashflowDtoList == null) {
