@@ -27,7 +27,7 @@ public class PEIrrServiceImpl implements PEIrrService {
 
             Date initialDate = cashflowDtoList.get(0).getDate();
 
-            double doubleSum = 0.0;
+            Double doubleSum = 0.0;
 
             for (PEGrossCashflowDto cashflowDto : cashflowDtoList) {
                 if (cashflowDto.getDate() == null) {
@@ -38,23 +38,25 @@ public class PEIrrServiceImpl implements PEIrrService {
                 }
             }
 
-            return doubleSum;
+            if (doubleSum != null) {
+                return doubleSum;
+            }
 
             //BigDecimal usage
-//            BigDecimal bigDecimalSum = new BigDecimal(0).setScale(1000, BigDecimal.ROUND_HALF_UP);
-//
-//            for (PEGrossCashflowDto cashflowDto : cashflowDtoList) {
-//                if (cashflowDto.getDate() == null) {
-//                    return null;
-//                }
-//                if (cashflowDto.getGrossCF() != null) {
-//                    BigDecimal bigDecimalCF = new BigDecimal(cashflowDto.getGrossCF()).setScale(2000, BigDecimal.ROUND_HALF_UP);
-//                    BigDecimal power = new BigDecimal(1 + dailyRate).pow((int) ((cashflowDto.getDate().getTime() - initialDate.getTime()) / 86400000));
-//                    bigDecimalSum = bigDecimalSum.add(bigDecimalCF.divide(power, 1000, BigDecimal.ROUND_HALF_UP));
-//                }
-//            }
-//
-//            return bigDecimalSum.doubleValue();
+            BigDecimal bigDecimalSum = new BigDecimal(0).setScale(1000, BigDecimal.ROUND_HALF_UP);
+
+            for (PEGrossCashflowDto cashflowDto : cashflowDtoList) {
+                if (cashflowDto.getDate() == null) {
+                    return null;
+                }
+                if (cashflowDto.getGrossCF() != null) {
+                    BigDecimal bigDecimalCF = new BigDecimal(cashflowDto.getGrossCF()).setScale(2000, BigDecimal.ROUND_HALF_UP);
+                    BigDecimal power = new BigDecimal(1 + dailyRate).pow((int) ((cashflowDto.getDate().getTime() - initialDate.getTime()) / 86400000));
+                    bigDecimalSum = bigDecimalSum.add(bigDecimalCF.divide(power, 1000, BigDecimal.ROUND_HALF_UP));
+                }
+            }
+
+            return bigDecimalSum.doubleValue();
         } catch (Exception ex) {
             return null;
         }
