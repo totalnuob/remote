@@ -12,7 +12,7 @@ public interface PEIrrService {
 
     List<PECashflowDto> checkAndCleanCF(List<PEGrossCashflowDto> cashflowDtoList);
 
-    Double getNPV(List<PEGrossCashflowDto> cashflowDtoList, double dailyRate);
+    Double getNPV(List<PECashflowDto> cashflowDtoList, double dailyRate);
 
     Double getIRR(List<PEGrossCashflowDto> cashflowDtoList);
 }
