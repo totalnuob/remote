@@ -1,6 +1,6 @@
 package kz.nicnbk.service.api.pe;
 
-import kz.nicnbk.service.dto.pe.PECashFlowDto;
+import kz.nicnbk.service.dto.pe.PECashflowDto;
 import kz.nicnbk.service.dto.pe.PEGrossCashflowDto;
 
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface PEIrrService {
 
-    List<PECashFlowDto> checkAndCleanCF(List<PEGrossCashflowDto> cashflowDtoList);
+    List<PECashflowDto> checkAndCleanCF(List<PEGrossCashflowDto> cashflowDtoList);
 
     Double getNPV(List<PEGrossCashflowDto> cashflowDtoList, double dailyRate);
 

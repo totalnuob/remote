@@ -1,7 +1,7 @@
 package kz.nicnbk.service.impl.pe;
 
 import kz.nicnbk.service.api.pe.PEIrrService;
-import kz.nicnbk.service.dto.pe.PECashFlowDto;
+import kz.nicnbk.service.dto.pe.PECashflowDto;
 import kz.nicnbk.service.dto.pe.PEGrossCashflowDto;
 import org.springframework.stereotype.Service;
 
@@ -17,22 +17,24 @@ import java.util.List;
 public class PEIrrServiceImpl implements PEIrrService {
 
     @Override
-    public List<PECashFlowDto> checkAndCleanCF(List<PEGrossCashflowDto> cashflowDtoList) {
+    public List<PECashflowDto> checkAndCleanCF(List<PEGrossCashflowDto> cashflowDtoList) {
 
         if (cashflowDtoList == null) {
             return null;
         }
 
-        List<PECashFlowDto> cashFlowTrimmed = new ArrayList<>();
+        List<PECashflowDto> cashFlowTrimmed = new ArrayList<>();
 
         for (PEGrossCashflowDto cashflowDto : cashflowDtoList) {
-            if (cashflowDto.getDate() == null || cashflowDto.getGrossCF() == null) {
+            if (cashflowDto.getCompanyName() == null || cashflowDto.getDate() == null || cashflowDto.getGrossCF() == null) {
                 return null;
             }
-            cashFlowTrimmed.add(new PECashFlowDto());
+            if (cashflowDto.getGrossCF() != 0.0) {
+                cashFlowTrimmed.add(new PECashflowDto(cashflowDto.getCompanyName(), cashflowDto.getDate(), cashflowDto.getGrossCF()));
+            }
         }
 
-        return ca;
+        return cashFlowTrimmed;
     }
 
     @Override

@@ -7,7 +7,7 @@ import java.util.Date;
 /**
  * Created by Pak on 23.10.2017.
  */
-public class PECashFlowDto {
+public class PECashflowDto {
 
     private String companyName;
 
@@ -16,10 +16,10 @@ public class PECashFlowDto {
 
     private Double cashFlow;
 
-    public PECashFlowDto() {
+    public PECashflowDto() {
     }
 
-    public PECashFlowDto(String companyName, Date date, Double cashFlow) {
+    public PECashflowDto(String companyName, Date date, Double cashFlow) {
         this.companyName = companyName;
         this.date = date;
         this.cashFlow = cashFlow;
