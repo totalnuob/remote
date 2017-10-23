@@ -94,7 +94,7 @@ public class PEIrrServiceImpl implements PEIrrService {
 
         // fast search
         for (int i = 0; i < 10; i++) {
-            Double npv = getNPV(cashflowDtoList, - i / (double) (1 + i));
+            Double npv = getNPV(cashflowDtoListTrimmed, - i / (double) (1 + i));
             if ( npv != null && npv >= 0) {
                 a = - i / (double) (1 + i);
                 break;
@@ -102,7 +102,7 @@ public class PEIrrServiceImpl implements PEIrrService {
         }
 
         for (int i = 0; i < 10; i++) {
-            Double npv = getNPV(cashflowDtoList, (double) i );
+            Double npv = getNPV(cashflowDtoListTrimmed, (double) i );
             if ( npv != null && npv <= 0) {
                 b = (double) i;
                 break;
@@ -136,7 +136,7 @@ public class PEIrrServiceImpl implements PEIrrService {
 
         if (a != null && b != null) {
             while (Math.abs(b - a) > 0.0000000000000001) {
-                Double npv = getNPV(cashflowDtoList, (a + b) / 2);
+                Double npv = getNPV(cashflowDtoListTrimmed, (a + b) / 2);
                 if (npv != null && npv >= 0) {
                     a = (a + b) / 2;
                 } else if (npv != null && npv <= 0) {
@@ -155,7 +155,7 @@ public class PEIrrServiceImpl implements PEIrrService {
 
         // fast search
         for (int i = 0; i < 10; i++) {
-            Double npv = getNPV(cashflowDtoList, - i / (double) (1 + i));
+            Double npv = getNPV(cashflowDtoListTrimmed, - i / (double) (1 + i));
             if ( npv != null && npv <= 0) {
                 a = - i / (double) (1 + i);
                 break;
@@ -163,7 +163,7 @@ public class PEIrrServiceImpl implements PEIrrService {
         }
 
         for (int i = 0; i < 10; i++) {
-            Double npv = getNPV(cashflowDtoList, (double) i );
+            Double npv = getNPV(cashflowDtoListTrimmed, (double) i );
             if ( npv != null && npv >= 0) {
                 b = (double) i;
                 break;
@@ -195,7 +195,7 @@ public class PEIrrServiceImpl implements PEIrrService {
 
         if (a != null && b != null) {
             while (Math.abs(b - a) > 0.0000000000000001) {
-                Double npv = getNPV(cashflowDtoList, (a + b) / 2);
+                Double npv = getNPV(cashflowDtoListTrimmed, (a + b) / 2);
                 if (npv != null && npv <= 0) {
                     a = (a + b) / 2;
                 } else if (npv != null && npv >= 0) {
