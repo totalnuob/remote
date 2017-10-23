@@ -12,14 +12,14 @@ public class PECashflowDto {
     @DateTimeFormat(pattern="dd-MM-yyyy")
     private Date date;
 
-    private Double cashFlow;
+    private Double cashflow;
 
     public PECashflowDto() {
     }
 
-    public PECashflowDto(Date date, Double cashFlow) {
+    public PECashflowDto(Date date, Double cashflow) {
         this.date = date;
-        this.cashFlow = cashFlow;
+        this.cashflow = cashflow;
     }
 
     public Date getDate() {
@@ -30,11 +30,11 @@ public class PECashflowDto {
         this.date = date;
     }
 
-    public Double getCashFlow() {
-        return cashFlow;
+    public Double getCashflow() {
+        return cashflow;
     }
 
-    public void setCashFlow(Double cashFlow) {
-        this.cashFlow = cashFlow;
+    public void setCashflow(Double cashflow) {
+        this.cashflow = cashflow;
     }
 }
