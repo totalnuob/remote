@@ -91,19 +91,24 @@ public class PEIrrServiceImpl implements PEIrrService {
 
         Double a = null;
         Double b = null;
+        Double npv;
+
+        npv = getNPV(cashflowDtoListTrimmed, 0.0);
+
+        if (npv != null && npv >= 0)
 
         // fast search
         for (int i = 0; i < 10; i++) {
-            Double npv = getNPV(cashflowDtoListTrimmed, - i / (double) (1 + i));
-            if ( npv != null && npv >= 0) {
+            npv = getNPV(cashflowDtoListTrimmed, - i / (double) (1 + i));
+            if (npv != null && npv >= 0) {
                 a = - i / (double) (1 + i);
                 break;
             }
         }
 
         for (int i = 0; i < 10; i++) {
-            Double npv = getNPV(cashflowDtoListTrimmed, (double) i );
-            if ( npv != null && npv <= 0) {
+            npv = getNPV(cashflowDtoListTrimmed, (double) i );
+            if (npv != null && npv <= 0) {
                 b = (double) i;
                 break;
             }
@@ -117,7 +122,7 @@ public class PEIrrServiceImpl implements PEIrrService {
 //        if (a == null) {
 //            for (long i = 0; i < 2 * N; i++) {
 //                Double npv = getNPV(cashflowDtoList, i / (double) N - 1);
-//                if ( npv != null && npv >= 0) {
+//                if (npv != null && npv >= 0) {
 //                    a = i / (double) N - 1;
 //                    break;
 //                }
@@ -127,7 +132,7 @@ public class PEIrrServiceImpl implements PEIrrService {
 //        if (b == null) {
 //            for (long i = 0; i < 2 * N; i++) {
 //                Double npv = getNPV(cashflowDtoList, i / (double) N - 1);
-//                if ( npv != null && npv <= 0) {
+//                if (npv != null && npv <= 0) {
 //                    b = i / (double) N - 1;
 //                    break;
 //                }
@@ -136,7 +141,7 @@ public class PEIrrServiceImpl implements PEIrrService {
 
         if (a != null && b != null) {
             while (Math.abs(b - a) > 0.0000000000000001) {
-                Double npv = getNPV(cashflowDtoListTrimmed, (a + b) / 2);
+                npv = getNPV(cashflowDtoListTrimmed, (a + b) / 2);
                 if (npv != null && npv >= 0) {
                     a = (a + b) / 2;
                 } else if (npv != null && npv <= 0) {
@@ -155,16 +160,16 @@ public class PEIrrServiceImpl implements PEIrrService {
 
         // fast search
         for (int i = 0; i < 10; i++) {
-            Double npv = getNPV(cashflowDtoListTrimmed, - i / (double) (1 + i));
-            if ( npv != null && npv <= 0) {
+            npv = getNPV(cashflowDtoListTrimmed, - i / (double) (1 + i));
+            if (npv != null && npv <= 0) {
                 a = - i / (double) (1 + i);
                 break;
             }
         }
 
         for (int i = 0; i < 10; i++) {
-            Double npv = getNPV(cashflowDtoListTrimmed, (double) i );
-            if ( npv != null && npv >= 0) {
+            npv = getNPV(cashflowDtoListTrimmed, (double) i );
+            if (npv != null && npv >= 0) {
                 b = (double) i;
                 break;
             }
@@ -195,7 +200,7 @@ public class PEIrrServiceImpl implements PEIrrService {
 
         if (a != null && b != null) {
             while (Math.abs(b - a) > 0.0000000000000001) {
-                Double npv = getNPV(cashflowDtoListTrimmed, (a + b) / 2);
+                npv = getNPV(cashflowDtoListTrimmed, (a + b) / 2);
                 if (npv != null && npv <= 0) {
                     a = (a + b) / 2;
                 } else if (npv != null && npv >= 0) {
