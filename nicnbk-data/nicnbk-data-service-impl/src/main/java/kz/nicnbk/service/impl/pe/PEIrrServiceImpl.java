@@ -19,13 +19,20 @@ public class PEIrrServiceImpl implements PEIrrService {
     @Override
     public List<PECashFlowDto> checkAndCleanCF(List<PEGrossCashflowDto> cashflowDtoList) {
 
-        List<PECashFlowDto> cashflowDtoListTrimmed = new ArrayList<>();
-
-        for (PEGrossCashflowDto cashflowDto : cashflowDtoList) {
-            cashflowDto
+        if (cashflowDtoList == null) {
+            return null;
         }
 
-        return cashflowDtoListTrimmed;
+        List<PECashFlowDto> cashFlowTrimmed = new ArrayList<>();
+
+        for (PEGrossCashflowDto cashflowDto : cashflowDtoList) {
+            if (cashflowDto.getDate() == null || cashflowDto.getGrossCF() == null) {
+                return null;
+            }
+            cashFlowTrimmed.add(new PECashFlowDto());
+        }
+
+        return ca;
     }
 
     @Override

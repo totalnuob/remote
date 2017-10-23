@@ -16,6 +16,15 @@ public class PECashFlowDto {
 
     private Double cashFlow;
 
+    public PECashFlowDto() {
+    }
+
+    public PECashFlowDto(String companyName, Date date, Double cashFlow) {
+        this.companyName = companyName;
+        this.date = date;
+        this.cashFlow = cashFlow;
+    }
+
     public String getCompanyName() {
         return companyName;
     }
