@@ -17,48 +17,44 @@ import java.util.List;
 public class PEIrrServiceImpl implements PEIrrService {
 
     @Override
-    public List<PECashflowDto> checkAndCleanCF(List<PEGrossCashflowDto> cashflowDtoList) {
+    public List<PECashflowDto> checkAndCleanCF(List<PEGrossCashflowDto> grossCashflowDtoList) {
 
-        if (cashflowDtoList == null) {
-            return null;
-        }
-
-        List<PECashflowDto> cashflowDtoListTrimmed = new ArrayList<>();
-
-        for (PEGrossCashflowDto cashflowDto : cashflowDtoList) {
-            if (cashflowDto.getDate() == null || cashflowDto.getGrossCF() == null) {
+        try {
+            if (grossCashflowDtoList == null) {
                 return null;
             }
-            if (cashflowDto.getGrossCF() != 0.0) {
-                cashflowDtoListTrimmed.add(new PECashflowDto(cashflowDto.getDate(), cashflowDto.getGrossCF()));
-            }
-        }
 
-        return cashflowDtoListTrimmed;
+            List<PECashflowDto> cashflowDtoList = new ArrayList<>();
+
+            for (PEGrossCashflowDto grossCashflowDto : grossCashflowDtoList) {
+                if (grossCashflowDto.getDate() == null || grossCashflowDto.getGrossCF() == null) {
+                    return null;
+                }
+                if (grossCashflowDto.getGrossCF() != 0.0) {
+                    cashflowDtoList.add(new PECashflowDto(grossCashflowDto.getDate(), grossCashflowDto.getGrossCF()));
+                }
+            }
+
+            return cashflowDtoList;
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
     @Override
-    public Double getNPV(List<PEGrossCashflowDto> cashflowDtoList, double dailyRate) {
-        try {
-            if (cashflowDtoList == null || dailyRate == -1) {
-                return null;
-            }
+    public Double getNPV(List<PECashflowDto> cashflowDtoList, double dailyRate) {
 
-            if (cashflowDtoList.isEmpty()) {
-                return 0.0;
+        try {
+            if (dailyRate == -1) {
+                return null;
             }
 
             Date initialDate = cashflowDtoList.get(0).getDate();
 
             Double doubleSum = 0.0;
 
-            for (PEGrossCashflowDto cashflowDto : cashflowDtoList) {
-                if (cashflowDto.getDate() == null) {
-                    return null;
-                }
-                if (cashflowDto.getGrossCF() != null) { // delete this check for null, move it to additional check
-                    doubleSum += cashflowDto.getGrossCF() / Math.pow(1 + dailyRate, (cashflowDto.getDate().getTime() - initialDate.getTime()) / 86400000);
-                }
+            for (PECashflowDto cashflowDto : cashflowDtoList) {
+                doubleSum += cashflowDto.getCashflow() / Math.pow(1 + dailyRate, (cashflowDto.getDate().getTime() - initialDate.getTime()) / 86400000);
             }
 
             if (!doubleSum.isNaN()) {
@@ -68,7 +64,7 @@ public class PEIrrServiceImpl implements PEIrrService {
             //BigDecimal usage
             BigDecimal bigDecimalSum = new BigDecimal(0).setScale(1000, BigDecimal.ROUND_HALF_UP);
 
-            for (PEGrossCashflowDto cashflowDto : cashflowDtoList) {
+            for (PECashflowDto cashflowDto : cashflowDtoList) {
                 if (cashflowDto.getDate() == null) {
                     return null;
                 }
@@ -87,6 +83,16 @@ public class PEIrrServiceImpl implements PEIrrService {
 
     @Override
     public Double getIRR(List<PEGrossCashflowDto> cashflowDtoList) {
+
+        List<PECashflowDto> cashflowDtoListTrimmed = checkAndCleanCF(cashflowDtoList);
+
+        if (cashflowDtoListTrimmed == null) {
+            return null;
+        }
+
+        if (cashflowDtoListTrimmed.isEmpty()) {
+            return 0.0;
+        }
 
         Double a = null;
         Double b = null;
