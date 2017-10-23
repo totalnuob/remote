@@ -95,24 +95,24 @@ public class PEIrrServiceImpl implements PEIrrService {
             Double npv;
 
             for (int i = 0; i < 3; i++) {
-                npv = getNPV(cashflowDtoListTrimmed, - i / (double) 100);
+                npv = getNPV(cashflowDtoListTrimmed, - i / 100.0);
 
                 if (npv != null && npv == 0.0) {
-                    return - i / (double) 100;
+                    return - i / 100.0;
                 } else if (npv != null && npv > 0.0 && a == null) {
-                    a = - i / (double) 100;
+                    a = - i / 100.0;
                 } else if (npv != null && npv < 0.0 && b == null) {
-                    b = - i / (double) 100;
+                    b = - i / 100.0;
                 }
 
-                npv = getNPV(cashflowDtoListTrimmed, i / (double) 100);
+                npv = getNPV(cashflowDtoListTrimmed, i / 100.0);
 
                 if (npv != null && npv == 0.0) {
-                    return i / (double) 100;
+                    return i / 100.0;
                 } else if (npv != null && npv > 0.0 && a == null) {
-                    a = i / (double) 100;
+                    a = i / 100.0;
                 } else if (npv != null && npv < 0.0 && b == null) {
-                    b = i / (double) 100;
+                    b = i / 100.0;
                 }
 
                 if (a != null && b != null) {
@@ -124,11 +124,14 @@ public class PEIrrServiceImpl implements PEIrrService {
 
             if (a != null && b != null) {
                 while (Math.abs(b - a) > 0.0000000000000001) {
-                    npv = getNPV(cashflowDtoListTrimmed, (a + b) / 2);
-                    if (npv != null && npv >= 0) {
-                        a = (a + b) / 2;
-                    } else if (npv != null && npv <= 0) {
-                        b = (a + b) / 2;
+                    npv = getNPV(cashflowDtoListTrimmed, (a + b) / 2.0);
+
+                    if (npv != null && npv == 0.0) {
+                        return (a + b) / 2.0;
+                    } else if (npv != null && npv > 0.0) {
+                        a = (a + b) / 2.0;
+                    } else if (npv != null && npv < 0.0) {
+                        b = (a + b) / 2.0;
                     } else {
                         return null;
                     }
