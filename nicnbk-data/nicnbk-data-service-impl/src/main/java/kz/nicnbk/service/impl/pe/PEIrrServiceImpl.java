@@ -79,141 +79,75 @@ public class PEIrrServiceImpl implements PEIrrService {
     @Override
     public Double getIRR(List<PEGrossCashflowDto> cashflowDtoList) {
 
-        List<PECashflowDto> cashflowDtoListTrimmed = checkAndCleanCF(cashflowDtoList);
+        try {
+            List<PECashflowDto> cashflowDtoListTrimmed = checkAndCleanCF(cashflowDtoList);
 
-        if (cashflowDtoListTrimmed == null) {
+            if (cashflowDtoListTrimmed == null) {
+                return null;
+            }
+
+            if (cashflowDtoListTrimmed.isEmpty()) {
+                return 0.0;
+            }
+
+            Double a = null;
+            Double b = null;
+            Double npv = getNPV(cashflowDtoListTrimmed, 0.0);
+
+            if (npv != null && npv == 0.0) {
+                return 0.0;
+            } else if (npv != null && npv > 0.0) {
+                a = 0.0;
+            } else if (npv != null && npv < 0.0) {
+                b = 0.0;
+            }
+
+            for (int i = 1; i < 3; i++) {
+                if (a != null && b != null) {
+                    break;
+                }
+
+                npv = getNPV(cashflowDtoListTrimmed, - i / (double) 100);
+
+                if (npv != null && npv == 0.0) {
+                    return - i / (double) 100;
+                } else if (npv != null && npv > 0.0 && a == null) {
+                    a = - i / (double) 100;
+                } else if (npv != null && npv < 0.0 && b == null) {
+                    b = - i / (double) 100;
+                }
+
+                npv = getNPV(cashflowDtoListTrimmed, i / (double) 100);
+
+                if (npv != null && npv == 0.0) {
+                    return i / (double) 100;
+                } else if (npv != null && npv > 0.0 && a == null) {
+                    a = i / (double) 100;
+                } else if (npv != null && npv < 0.0 && b == null) {
+                    b = i / (double) 100;
+                }
+            }
+
+            System.out.println(cashflowDtoList.get(0).getCompanyName() + " " + a + " " + b);
+
+            if (a != null && b != null) {
+                while (Math.abs(b - a) > 0.0000000000000001) {
+                    npv = getNPV(cashflowDtoListTrimmed, (a + b) / 2);
+                    if (npv != null && npv >= 0) {
+                        a = (a + b) / 2;
+                    } else if (npv != null && npv <= 0) {
+                        b = (a + b) / 2;
+                    } else {
+                        return null;
+                    }
+                }
+
+                return (Math.pow(1 + a, 365.0) - 1) * 100;
+            }
+
+            return null;
+        } catch (Exception ex) {
             return null;
         }
-
-        if (cashflowDtoListTrimmed.isEmpty()) {
-            return 0.0;
-        }
-
-        Double a = null;
-        Double b = null;
-        Double npv;
-
-        npv = getNPV(cashflowDtoListTrimmed, 0.0);
-
-        if (npv != null && npv >= 0)
-
-        // fast search
-        for (int i = 0; i < 10; i++) {
-            npv = getNPV(cashflowDtoListTrimmed, - i / (double) (1 + i));
-            if (npv != null && npv >= 0) {
-                a = - i / (double) (1 + i);
-                break;
-            }
-        }
-
-        for (int i = 0; i < 10; i++) {
-            npv = getNPV(cashflowDtoListTrimmed, (double) i );
-            if (npv != null && npv <= 0) {
-                b = (double) i;
-                break;
-            }
-        }
-
-        System.out.println(cashflowDtoList.get(0).getCompanyName() + " " + a + " " + b);
-
-        // deep search
-//        long N = 10000000;
-//
-//        if (a == null) {
-//            for (long i = 0; i < 2 * N; i++) {
-//                Double npv = getNPV(cashflowDtoList, i / (double) N - 1);
-//                if (npv != null && npv >= 0) {
-//                    a = i / (double) N - 1;
-//                    break;
-//                }
-//            }
-//        }
-//
-//        if (b == null) {
-//            for (long i = 0; i < 2 * N; i++) {
-//                Double npv = getNPV(cashflowDtoList, i / (double) N - 1);
-//                if (npv != null && npv <= 0) {
-//                    b = i / (double) N - 1;
-//                    break;
-//                }
-//            }
-//        }
-
-        if (a != null && b != null) {
-            while (Math.abs(b - a) > 0.0000000000000001) {
-                npv = getNPV(cashflowDtoListTrimmed, (a + b) / 2);
-                if (npv != null && npv >= 0) {
-                    a = (a + b) / 2;
-                } else if (npv != null && npv <= 0) {
-                    b = (a + b) / 2;
-                } else {
-                    return null;
-                }
-            }
-
-            return (Math.pow(1 + a, 365.0) - 1) * 100;
-//            return Math.round((Math.pow(1 + a, 365.0) - 1) * 10000) / 100.0;
-        }
-
-        a = null;
-        b = null;
-
-        // fast search
-        for (int i = 0; i < 10; i++) {
-            npv = getNPV(cashflowDtoListTrimmed, - i / (double) (1 + i));
-            if (npv != null && npv <= 0) {
-                a = - i / (double) (1 + i);
-                break;
-            }
-        }
-
-        for (int i = 0; i < 10; i++) {
-            npv = getNPV(cashflowDtoListTrimmed, (double) i );
-            if (npv != null && npv >= 0) {
-                b = (double) i;
-                break;
-            }
-        }
-
-        // deep search
-//        long N = 10000000;
-//
-//        if (a == null) {
-//            for (long i = 0; i < 2 * N; i++) {
-//                Double npv = getNPV(cashflowDtoList, i / (double) N - 1);
-//                if ( npv != null && npv >= 0) {
-//                    a = i / (double) N - 1;
-//                    break;
-//                }
-//            }
-//        }
-//
-//        if (b == null) {
-//            for (long i = 0; i < 2 * N; i++) {
-//                Double npv = getNPV(cashflowDtoList, i / (double) N - 1);
-//                if ( npv != null && npv <= 0) {
-//                    b = i / (double) N - 1;
-//                    break;
-//                }
-//            }
-//        }
-
-        if (a != null && b != null) {
-            while (Math.abs(b - a) > 0.0000000000000001) {
-                npv = getNPV(cashflowDtoListTrimmed, (a + b) / 2);
-                if (npv != null && npv <= 0) {
-                    a = (a + b) / 2;
-                } else if (npv != null && npv >= 0) {
-                    b = (a + b) / 2;
-                } else {
-                    return null;
-                }
-            }
-
-            return (Math.pow(1 + a, 365.0) - 1) * 100;
-//            return Math.round((Math.pow(1 + a, 365.0) - 1) * 10000) / 100.0;
-        }
-
-        return null;
     }
 }
