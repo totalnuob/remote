@@ -94,7 +94,7 @@ public class PEIrrServiceImpl implements PEIrrService {
             Double b = null;
             Double npv;
 
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 30; i++) {
                 npv = getNPV(cashflowDtoListTrimmed, i / 100.0);
 
                 if (npv != null && npv == 0.0) {
