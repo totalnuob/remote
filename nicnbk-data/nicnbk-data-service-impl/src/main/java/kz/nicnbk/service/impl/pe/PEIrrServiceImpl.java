@@ -23,18 +23,18 @@ public class PEIrrServiceImpl implements PEIrrService {
             return null;
         }
 
-        List<PECashflowDto> cashFlowTrimmed = new ArrayList<>();
+        List<PECashflowDto> cashflowDtoListTrimmed = new ArrayList<>();
 
         for (PEGrossCashflowDto cashflowDto : cashflowDtoList) {
-            if (cashflowDto.getCompanyName() == null || cashflowDto.getDate() == null || cashflowDto.getGrossCF() == null) {
+            if (cashflowDto.getDate() == null || cashflowDto.getGrossCF() == null) {
                 return null;
             }
             if (cashflowDto.getGrossCF() != 0.0) {
-                cashFlowTrimmed.add(new PECashflowDto(cashflowDto.getCompanyName(), cashflowDto.getDate(), cashflowDto.getGrossCF()));
+                cashflowDtoListTrimmed.add(new PECashflowDto(cashflowDto.getDate(), cashflowDto.getGrossCF()));
             }
         }
 
-        return cashFlowTrimmed;
+        return cashflowDtoListTrimmed;
     }
 
     @Override
