@@ -95,16 +95,6 @@ public class PEIrrServiceImpl implements PEIrrService {
             Double npv;
 
             for (int i = 0; i < 5; i++) {
-                npv = getNPV(cashflowDtoListTrimmed, - i / 100.0);
-
-                if (npv != null && npv == 0.0) {
-                    return - i / 100.0;
-                } else if (npv != null && npv > 0.0 && a == null) {
-                    a = - i / 100.0;
-                } else if (npv != null && npv < 0.0 && b == null) {
-                    b = - i / 100.0;
-                }
-
                 npv = getNPV(cashflowDtoListTrimmed, i / 100.0);
 
                 if (npv != null && npv == 0.0) {
@@ -113,6 +103,16 @@ public class PEIrrServiceImpl implements PEIrrService {
                     a = i / 100.0;
                 } else if (npv != null && npv < 0.0 && b == null) {
                     b = i / 100.0;
+                }
+
+                npv = getNPV(cashflowDtoListTrimmed, - i / 100.0);
+
+                if (npv != null && npv == 0.0) {
+                    return - i / 100.0;
+                } else if (npv != null && npv > 0.0 && a == null) {
+                    a = - i / 100.0;
+                } else if (npv != null && npv < 0.0 && b == null) {
+                    b = - i / 100.0;
                 }
 
                 if (a != null && b != null) {
