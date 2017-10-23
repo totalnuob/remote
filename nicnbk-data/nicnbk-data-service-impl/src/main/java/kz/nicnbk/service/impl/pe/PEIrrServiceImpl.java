@@ -1,10 +1,12 @@
 package kz.nicnbk.service.impl.pe;
 
 import kz.nicnbk.service.api.pe.PEIrrService;
+import kz.nicnbk.service.dto.pe.PECashFlowDto;
 import kz.nicnbk.service.dto.pe.PEGrossCashflowDto;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -13,6 +15,18 @@ import java.util.List;
  */
 @Service
 public class PEIrrServiceImpl implements PEIrrService {
+
+    @Override
+    public List<PECashFlowDto> checkAndCleanCF(List<PEGrossCashflowDto> cashflowDtoList) {
+
+        List<PECashFlowDto> cashflowDtoListTrimmed = new ArrayList<>();
+
+        for (PEGrossCashflowDto cashflowDto : cashflowDtoList) {
+            cashflowDto
+        }
+
+        return cashflowDtoListTrimmed;
+    }
 
     @Override
     public Double getNPV(List<PEGrossCashflowDto> cashflowDtoList, double dailyRate) {
