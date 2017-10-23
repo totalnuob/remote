@@ -33,7 +33,7 @@ public class PEIrrServiceImpl implements PEIrrService {
                 if (cashflowDto.getDate() == null) {
                     return null;
                 }
-                if (cashflowDto.getGrossCF() != null) {
+                if (cashflowDto.getGrossCF() != null) { // delete this check for null, move it to additional check
                     doubleSum += cashflowDto.getGrossCF() / Math.pow(1 + dailyRate, (cashflowDto.getDate().getTime() - initialDate.getTime()) / 86400000);
                 }
             }
@@ -49,7 +49,7 @@ public class PEIrrServiceImpl implements PEIrrService {
                 if (cashflowDto.getDate() == null) {
                     return null;
                 }
-                if (cashflowDto.getGrossCF() != null) {
+                if (cashflowDto.getGrossCF() != null) { // delete this check for null, move it to additional check
                     BigDecimal bigDecimalCF = new BigDecimal(cashflowDto.getGrossCF()).setScale(2000, BigDecimal.ROUND_HALF_UP);
                     BigDecimal power = new BigDecimal(1 + dailyRate).pow((int) ((cashflowDto.getDate().getTime() - initialDate.getTime()) / 86400000));
                     bigDecimalSum = bigDecimalSum.add(bigDecimalCF.divide(power, 1000, BigDecimal.ROUND_HALF_UP));
@@ -84,6 +84,8 @@ public class PEIrrServiceImpl implements PEIrrService {
                 break;
             }
         }
+
+        System.out.println(cashflowDtoList.get(0).getCompanyName() + " " + a + " " + b);
 
         // deep search
 //        long N = 10000000;

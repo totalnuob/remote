@@ -100,6 +100,14 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
             }
 
             for (PECompanyPerformanceDto performanceDto : performanceDtoList) {
+                if (performanceDto.getAutoCalculation()) {
+                    performanceDto.setTotalValue(
+                            (performanceDto.getRealized() == null ? 0.0 : performanceDto.getRealized()) +
+                                    (performanceDto.getUnrealized() == null ? 0.0 : performanceDto.getUnrealized()));
+                    performanceDto.setMultiple((performanceDto.getInvested() == null || performanceDto.getInvested() == 0.0) ? null : performanceDto.getTotalValue() / performanceDto.getInvested());
+                } else if (performanceDto.getTotalValue() == null) {
+                    performanceDto.setTotalValue(0.0);
+                }
                 Long id = save(performanceDto, fundId);
                 if (id == null) {
                     return new PECompanyPerformanceResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error saving PE fund's company performance", "");

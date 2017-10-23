@@ -104,6 +104,14 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
             }
 
             for (PEGrossCashflowDto cashflowDto : cashflowDtoList) {
+                if (cashflowDto.getAutoCalculation()) {
+                    cashflowDto.setGrossCF(
+                            (cashflowDto.getInvested() == null ? 0.0 : cashflowDto.getInvested()) +
+                                    (cashflowDto.getRealized() == null ? 0.0 : cashflowDto.getRealized()) +
+                                    (cashflowDto.getUnrealized() == null ? 0.0 : cashflowDto.getUnrealized()));
+                } else if (cashflowDto.getGrossCF() == null) {
+                    cashflowDto.setGrossCF(0.0);
+                }
                 Long id = save(cashflowDto, fundId);
                 if (id == null) {
                     return new PEGrossCashflowResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error saving PE fund's gross cash flow", "");
