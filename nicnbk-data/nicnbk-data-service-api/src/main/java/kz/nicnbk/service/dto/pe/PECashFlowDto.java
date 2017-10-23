@@ -9,8 +9,6 @@ import java.util.Date;
  */
 public class PECashflowDto {
 
-    private String companyName;
-
     @DateTimeFormat(pattern="dd-MM-yyyy")
     private Date date;
 
@@ -19,18 +17,9 @@ public class PECashflowDto {
     public PECashflowDto() {
     }
 
-    public PECashflowDto(String companyName, Date date, Double cashFlow) {
-        this.companyName = companyName;
+    public PECashflowDto(Date date, Double cashFlow) {
         this.date = date;
         this.cashFlow = cashFlow;
-    }
-
-    public String getCompanyName() {
-        return companyName;
-    }
-
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
     }
 
     public Date getDate() {
