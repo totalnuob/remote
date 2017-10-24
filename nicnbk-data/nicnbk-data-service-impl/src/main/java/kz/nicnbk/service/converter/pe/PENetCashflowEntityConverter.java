@@ -22,9 +22,8 @@ public class PENetCashflowEntityConverter extends BaseDozerEntityConverter<PENet
         return entity;
     }
 
-    @Override
-    public PENetCashflowDto disassemble(PENetCashflow entity){
-        PENetCashflowDto dto = super.disassemble(entity);
-        return dto;
-    }
+//    @Override
+//    public PENetCashflowDto disassemble(PENetCashflow entity){
+//        return super.disassemble(entity);
+//    }
 }
