@@ -20,4 +20,6 @@ public interface HFNOALService extends BaseService {
     boolean save(List<ReportingHFNOAL> entities);
 
     ConsolidatedReportRecordHolderDto get(Long reportId, int tranche);
+
+    boolean deleteByReportId(Long reportId, int tranche);
 }

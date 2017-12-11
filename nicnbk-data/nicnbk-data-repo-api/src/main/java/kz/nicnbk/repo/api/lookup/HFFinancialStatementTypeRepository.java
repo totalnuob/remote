@@ -1,17 +1,16 @@
 package kz.nicnbk.repo.api.lookup;
 
-import kz.nicnbk.repo.model.reporting.hedgefunds.HFFinancialStatementType;
-import kz.nicnbk.repo.model.reporting.privateequity.PEBalanceType;
+import kz.nicnbk.repo.model.reporting.hedgefunds.FinancialStatementCategory;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 /**
  * Created by zhambyl on 27-Mar-17.
  */
-public interface HFFinancialStatementTypeRepository extends PagingAndSortingRepository<HFFinancialStatementType, Long> {
+public interface HFFinancialStatementTypeRepository extends PagingAndSortingRepository<FinancialStatementCategory, Long> {
 
-    HFFinancialStatementType findByCode(String code);
+    FinancialStatementCategory findByCode(String code);
 
-    HFFinancialStatementType findByNameEnIgnoreCase(String name);
+    FinancialStatementCategory findByNameEnIgnoreCase(String name);
 
 
 

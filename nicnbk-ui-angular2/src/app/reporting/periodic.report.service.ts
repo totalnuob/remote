@@ -10,6 +10,18 @@ import {PeriodicReportRecordHolder} from "./model/periodic.report.record.holder"
 import {OtherInfoNBReporting} from "./model/other.info.nb.reporting";
 import {NICKMFReportingInfo} from "./model/nick.mf.reporting.info.nb.reporting";
 import {NICKMFReportingInfoHolder} from "./model/nick.mf.reporting.info.holder.nb.reporting";
+import {GeneratedGLFormRecord} from "./model/generated.form.record";
+import {ConsolidatedBalanceFormRecord} from "./model/consolidated.balance.form.record";
+import {PreviousYearInputRecord} from "./model/previous.year.input.record";
+import {ConsolidatedIncomeExpenseFormRecord} from "./model/consolidated.income.expense.form.record";
+import {ConsolidatedTotalIncomeFormRecord} from "./model/consolidated.total.income.form.record";
+import {ListResponse} from "./model/list.response";
+import {ConsolidatedKZTForm8Record} from "./model/consolidated.kzt.form.8.record";
+import {ConsolidatedKZTForm10Record} from "./model/consolidated.kzt.form.10.record";
+import {ConsolidatedKZTForm14Record} from "./model/consolidated.kzt.form.14.record";
+import {ConsolidatedKZTForm13Record} from "./model/consolidated.kzt.form.13.record";
+import {ConsolidatedKZTForm7Record} from "./model/consolidated.kzt.form.7.record";
+import {ReserveCalculationFormRecord} from "./model/reserve.calculation.form.record";
 
 var fileSaver = require("file-saver");
 
@@ -40,12 +52,47 @@ export class PeriodicReportService extends CommonService{
     private PERIODIC_REPORT_NICK_MF_REPORTING_INFO_URL = this.PERIODIC_REPORT_BASE_URL + "NICKMFReportingInfo/";
     private PERIODIC_REPORT_NICK_MF_REPORTING_INFO_PREVIOUS_MONTH_URL = this.PERIODIC_REPORT_BASE_URL + "NICKMFReportingInfoPreviousMonth/";
 
+    private PERIODIC_REPORT_SINGULAR_GENERATED_FORM_URL = this.PERIODIC_REPORT_BASE_URL + "singularGeneratedForm/";
+    private PERIODIC_REPORT_TARRAGON_GENERATED_FORM_URL = this.PERIODIC_REPORT_BASE_URL + "tarragonGeneratedForm/";
+    private PERIODIC_REPORT_TARRAGON_GENERATED_FROM_PREV_MONTH_URL = this.PERIODIC_REPORT_BASE_URL + "tarragonGeneratedFormDataFromPreviousMonth/";
+
     private PERIODIC_REPORT_OTHER_INFO_UPLOAD_URL = this.PERIODIC_REPORT_BASE_URL + "otherInfo/save/";
     private PERIODIC_REPORT_NICK_MF_REPORTING_INFO_SAVE_URL = this.PERIODIC_REPORT_BASE_URL + "NICKMFReportingInfo/save/";
+    private PERIODIC_REPORT_PE_GENERAL_LEDGER_FORM_DATA_SAVE_URL = this.PERIODIC_REPORT_BASE_URL + "PEGeneralLedgerFormData/save/";
+    private PERIODIC_REPORT_PE_GENERAL_LEDGER_FORM_DATA_DELETE_RECORD_URL = this.PERIODIC_REPORT_BASE_URL + "PEGeneralLedgerFormData/delete/";
+    private PERIODIC_REPORT_UPDATE_TARRAGON_INVESTMENT_URL = this.PERIODIC_REPORT_BASE_URL + "updatedTarragonInvestment/";
+
 
     private PERIODIC_REPORT_UPLOAD_URL = this.PERIODIC_REPORT_BASE_URL + "upload/";
     private PERIODIC_REPORT_UPLOAD_NONPARSED_URL = this.PERIODIC_REPORT_BASE_URL + "nonParsed/upload/";
     private MONTHLY_CASH_STATEMENT_FILE_DELETE_URL = this.PERIODIC_REPORT_BASE_URL + "monthlyCashStatementFile/delete/";
+
+    private PERIODIC_REPORT_CONSOLIDATED_BALANCE_USD_FORM_URL = this.PERIODIC_REPORT_BASE_URL + "consolidatedBalanceUSDForm/";
+    private PERIODIC_REPORT_CONSOLIDATED_INCOME_EXPENSE_USD_FORM_URL = this.PERIODIC_REPORT_BASE_URL + "consolidatedIncomeExpenseUSDForm/";
+    private PERIODIC_REPORT_CONSOLIDATED_TOTAL_INCOME_USD_FORM_URL = this.PERIODIC_REPORT_BASE_URL + "consolidatedTotalIncomeUSDForm/";
+
+    private PERIODIC_REPORT_PREVIOUS_YEAR_INPUT_URL = this.PERIODIC_REPORT_BASE_URL + "previousYearInput/";
+    private PERIODIC_REPORT_PREVIOUS_YEAR_INPUT_PREV_MONTH_URL = this.PERIODIC_REPORT_BASE_URL + "previousYearInputPrevMonth/";
+
+    private PERIODIC_REPORT_DELETE_FILE_URL = this.PERIODIC_REPORT_BASE_URL + "deleteFile/";
+
+    private PERIODIC_REPORT_MARK_REPORT_FINAL_URL = this.PERIODIC_REPORT_BASE_URL + "markReportFinal/";
+
+    private PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_8_URL = this.PERIODIC_REPORT_BASE_URL + "consolidatedBalanceKZTForm8/";
+    private PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_10_URL = this.PERIODIC_REPORT_BASE_URL + "consolidatedBalanceKZTForm10/";
+    private PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_14_URL = this.PERIODIC_REPORT_BASE_URL + "consolidatedBalanceKZTForm14/";
+    private PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_13_URL = this.PERIODIC_REPORT_BASE_URL + "consolidatedBalanceKZTForm13/";
+    private PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_7_URL = this.PERIODIC_REPORT_BASE_URL + "consolidatedBalanceKZTForm7/";
+    private PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_1_URL = this.PERIODIC_REPORT_BASE_URL + "consolidatedBalanceKZTForm1/";
+
+    private PERIODIC_REPORT_RESERVE_CALCULATION_FORM_URL = this.PERIODIC_REPORT_BASE_URL + "reserveCalculation/";
+    private PERIODIC_REPORT_RESERVE_CALCULATION_DELETE_RECORD_URL = this.PERIODIC_REPORT_BASE_URL + "reserveCalculationDeleteRecord/";
+    private PERIODIC_REPORT_RESERVE_CALCULATION_SAVE_URL = this.PERIODIC_REPORT_BASE_URL + "reserveCalculationSave/";
+
+
+
+
+
 
     loadAll(): Observable<any[]> {
         //return Promise.resolve(NEWS);
@@ -69,7 +116,7 @@ export class PeriodicReportService extends CommonService{
             .catch(this.handleErrorResponse);
     }
 
-    loadInputFilesList(reportId): Observable<any[]> {
+    loadInputFilesList(reportId): Observable<any> {
 
         return this.http.get(this.PERIODIC_REPORT_FILE_LIST_URL + reportId, this.getOptionsWithCredentials())
             .map(this.extractDataList)
@@ -139,8 +186,80 @@ export class PeriodicReportService extends CommonService{
             .catch(this.handleErrorResponse);
     }
 
+    getGeneratedSingularForm(reportId): Observable<GeneratedGLFormRecord[]>{
+        return this.http.get(this.PERIODIC_REPORT_SINGULAR_GENERATED_FORM_URL + reportId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    getGeneratedTarragonForm(reportId): Observable<ListResponse>{
+        return this.http.get(this.PERIODIC_REPORT_TARRAGON_GENERATED_FORM_URL + reportId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
     getNICKMFReportingInfoPreviousMonth(reportId): Observable<NICKMFReportingInfoHolder>{
         return this.http.get(this.PERIODIC_REPORT_NICK_MF_REPORTING_INFO_PREVIOUS_MONTH_URL + reportId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    getGeneratedTarragonFormDataFromPreviousMonth(reportId): Observable<GeneratedGLFormRecord[]>{
+        return this.http.get(this.PERIODIC_REPORT_TARRAGON_GENERATED_FROM_PREV_MONTH_URL + reportId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    getConsolidatedBalanceUSDForm(reportId): Observable<ConsolidatedBalanceFormRecord[]>{
+        return this.http.get(this.PERIODIC_REPORT_CONSOLIDATED_BALANCE_USD_FORM_URL + reportId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    getConsolidatedBalanceKZTForm1(reportId): Observable<ConsolidatedBalanceFormRecord[]>{
+        return this.http.get(this.PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_1_URL + reportId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    getConsolidatedKZTForm8(reportId): Observable<ConsolidatedKZTForm8Record[]>{
+        return this.http.get(this.PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_8_URL + reportId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    getConsolidatedKZTForm14(reportId): Observable<ConsolidatedKZTForm14Record[]>{
+        return this.http.get(this.PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_14_URL + reportId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    getConsolidatedKZTForm10(reportId): Observable<ConsolidatedKZTForm10Record[]>{
+        return this.http.get(this.PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_10_URL + reportId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    getConsolidatedKZTForm13(reportId): Observable<ConsolidatedKZTForm13Record[]>{
+        return this.http.get(this.PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_13_URL + reportId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    getConsolidatedKZTForm7(reportId): Observable<ConsolidatedKZTForm7Record[]>{
+        return this.http.get(this.PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_7_URL + reportId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    getConsolidatedIncomeExpenseUSDForm(reportId): Observable<ConsolidatedIncomeExpenseFormRecord[]>{
+        return this.http.get(this.PERIODIC_REPORT_CONSOLIDATED_INCOME_EXPENSE_USD_FORM_URL + reportId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    getConsolidatedTotalIncomeUSDForm(reportId): Observable<ConsolidatedTotalIncomeFormRecord[]>{
+        return this.http.get(this.PERIODIC_REPORT_CONSOLIDATED_TOTAL_INCOME_USD_FORM_URL + reportId, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }
@@ -152,6 +271,37 @@ export class PeriodicReportService extends CommonService{
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }
+
+    savePEGeneralLedgerFormData(records){
+        //let body = JSON.stringify(dto);
+        //console.log(body);
+        return this.http.post(this.PERIODIC_REPORT_PE_GENERAL_LEDGER_FORM_DATA_SAVE_URL, records, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    getReserveCalculationFormData(): Observable<ReserveCalculationFormRecord[]>{
+        return this.http.get(this.PERIODIC_REPORT_RESERVE_CALCULATION_FORM_URL, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    public deleteReserveCalculationFormDataRecord(recordId) {
+        return this.http.get(this.PERIODIC_REPORT_RESERVE_CALCULATION_DELETE_RECORD_URL + "/" + recordId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    saveReserveCalculationFormData(records){
+        let body = JSON.stringify(records);
+        //console.log(body);
+        return this.http.post(this.PERIODIC_REPORT_RESERVE_CALCULATION_SAVE_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+
+
 
     saveOtherInfo(dto){
         let body = JSON.stringify(dto);
@@ -167,4 +317,51 @@ export class PeriodicReportService extends CommonService{
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }
+
+    public deletePEGeneralLedgerFormDataRecord(recordId) {
+        return this.http.get(this.PERIODIC_REPORT_PE_GENERAL_LEDGER_FORM_DATA_DELETE_RECORD_URL + "/" + recordId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    updateTarragonInvestment(data){
+        let body = JSON.stringify(data);
+        //console.log(body);
+        return this.http.post(this.PERIODIC_REPORT_UPDATE_TARRAGON_INVESTMENT_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    getPreviousYearInput(reportId): Observable<PreviousYearInputRecord[]>{
+        return this.http.get(this.PERIODIC_REPORT_PREVIOUS_YEAR_INPUT_URL + reportId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    getPreviousYearInputDataFromPreviousMonth(reportId): Observable<PreviousYearInputRecord[]>{
+        return this.http.get(this.PERIODIC_REPORT_PREVIOUS_YEAR_INPUT_PREV_MONTH_URL + reportId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    savePreviousYearInput(records, reportId){
+        let body = JSON.stringify(records);
+        //console.log(body);
+        return this.http.post(this.PERIODIC_REPORT_PREVIOUS_YEAR_INPUT_URL + reportId, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    public deleteFile(fileId) {
+        return this.http.get(this.PERIODIC_REPORT_DELETE_FILE_URL + fileId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    public markReportAsFinal(reportId){
+        return this.http.post(this.PERIODIC_REPORT_MARK_REPORT_FINAL_URL + reportId, null, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
 }

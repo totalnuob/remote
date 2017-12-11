@@ -25,6 +25,7 @@ export class SingularityGeneralLedgerBalanceNBReportingComponent extends CommonN
     records: PeriodicReportRecordHolder;
     report;
 
+    prevPageSource;
 
     busy: Subscription;
 
@@ -41,6 +42,7 @@ export class SingularityGeneralLedgerBalanceNBReportingComponent extends CommonN
             .params
             .subscribe(params => {
                 this.reportId = +params['id'];
+                this.prevPageSource = params['prevPageSource'];
 
                 if(this.reportId > 0){
                     // load report data

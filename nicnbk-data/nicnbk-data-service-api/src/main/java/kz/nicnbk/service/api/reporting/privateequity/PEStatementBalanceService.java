@@ -4,6 +4,7 @@ import kz.nicnbk.repo.model.reporting.privateequity.ReportingPEStatementBalance;
 import kz.nicnbk.service.api.base.BaseService;
 import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordDto;
 import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordHolderDto;
+import kz.nicnbk.service.dto.reporting.StatementBalanceOperationsDto;
 
 import java.util.List;
 
@@ -19,4 +20,8 @@ public interface PEStatementBalanceService extends BaseService {
     boolean save(List<ReportingPEStatementBalance> entities);
 
     ConsolidatedReportRecordHolderDto get(Long reportId);
+
+    List<StatementBalanceOperationsDto> getStatementBalanceRecords(Long reportId);
+
+    boolean deleteByReportId(Long reportId);
 }

@@ -13,7 +13,8 @@ public class SingularityGeneralLedgerBalanceRecordDto extends GeneralLedgerBalan
     private String financialStatementCategoryDescription;
     private String chartAccountsDescription;
     private String chartAccountsLongDescription;
-//    private String segVal1;
+
+    private String segVal1;
 //    private String segVal2;
 //    private String segVal3;
 //    private String segVal4;
@@ -99,5 +100,13 @@ public class SingularityGeneralLedgerBalanceRecordDto extends GeneralLedgerBalan
 
     public void setFundCCY(String fundCCY) {
         this.fundCCY = fundCCY;
+    }
+
+    public String getSegVal1() {
+        return segVal1;
+    }
+
+    public void setSegVal1(String segVal1) {
+        this.segVal1 = segVal1;
     }
 }

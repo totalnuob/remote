@@ -4,6 +4,8 @@ import kz.nicnbk.repo.model.reporting.privateequity.ReportingPEScheduleInvestmen
 import kz.nicnbk.service.api.base.BaseService;
 import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordDto;
 import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordHolderDto;
+import kz.nicnbk.service.dto.reporting.ScheduleInvestmentsDto;
+import kz.nicnbk.service.dto.reporting.UpdateTarragonInvestmentDto;
 
 import java.util.List;
 
@@ -18,5 +20,17 @@ public interface PEScheduleInvestmentService extends BaseService {
 
     boolean save(List<ReportingPEScheduleInvestment> entities);
 
+    boolean save(ScheduleInvestmentsDto dto);
+
     ConsolidatedReportRecordHolderDto get(Long reportId);
+
+    List<ScheduleInvestmentsDto> getScheduleInvestments(Long reportId);
+
+    boolean updateScheduleInvestments(UpdateTarragonInvestmentDto updateDto);
+
+    ScheduleInvestmentsDto getScheduleInvestments(Long reportId, String fundName, int tranche);
+
+    boolean deleteByReportId(Long reportId);
+
+
 }

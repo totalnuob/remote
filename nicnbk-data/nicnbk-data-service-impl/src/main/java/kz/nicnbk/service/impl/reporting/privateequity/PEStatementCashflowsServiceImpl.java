@@ -134,11 +134,22 @@ public class PEStatementCashflowsServiceImpl implements PEStatementCashflowsServ
 
         result.setCashflows(records);
 
-        if(entities != null) {
+        if(entities != null && entities.size() > 0) {
             result.setReport(periodicReportConverter.disassemble(entities.get(0).getReport()));
         }
 
         return result;
+    }
+
+    @Override
+    public boolean deleteByReportId(Long reportId) {
+        try {
+            this.peStatementCashflowsRepository.deleteByReportId(reportId);
+            return true;
+        }catch (Exception ex){
+            logger.error("Error deleting schedule of investments records with report id=" + reportId);
+            return false;
+        }
     }
 
     private boolean isNetSum(String name){

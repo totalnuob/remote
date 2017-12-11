@@ -4,7 +4,7 @@
             <!--<a [routerLink]="['/reporting/inputFileUpload', 0]" class="btn btn-primary pull-right" *ngIf="canEdit()">New report</a>-->
         <!--</div>-->
         <div class="row withpadding">
-            <a class="btn btn-primary pull-right" data-toggle="modal" data-target="#newReportModal">NEW REPORT</a>
+            <a class="btn btn-primary pull-right" data-toggle="modal" data-target="#newReportModal">NEW</a>
         </div>
         <div class="row">
             <table [ngBusy]="busy" class="table table-hover">
@@ -16,14 +16,20 @@
                     <th>CREATED BY</th>
                     <!--<th>UPDATED</th>-->
                     <!--<th>UPDATED BY</th>-->
+                    <th>&nbsp;</th>
                 </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor = "let report of reportList" style="cursor: pointer" (click)="navigate(report.id)">
+                    <tr *ngFor = "let report of reportList" style="cursor: pointer" >
                         <td>{{getReportDateShortFormatted(report.reportDate)}}</td>
                         <td>{{report.status}}</td>
                         <td>{{report.creationDate}}</td>
                         <td>{{report.creator}}</td>
+                        <td>
+                            <button *ngIf="report.status != null && report.status != 'SUBMITTED'" class="btn btn-xs btn-success" [routerLink]="['/reporting/NBReporting/inputFileUpload/', report.id]" ><span class="glyphicon glyphicon-pencil"></span></button>
+                            <button *ngIf="report.status != null && report.status == 'SUBMITTED'" class="btn btn-xs btn-primary" [routerLink]="['/reporting/NBReporting/GeneratedReports/', report.id, 'REPORTS']">
+                                <span class="glyphicon glyphicon-list-alt"></span></button>
+                        </td>
                     </tr>
                 </tbody>
             </table>

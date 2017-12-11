@@ -2,9 +2,6 @@ package kz.nicnbk.service.dto.reporting;
 
 import kz.nicnbk.common.service.model.CreateUpdateBaseEntityDto;
 import kz.nicnbk.repo.model.reporting.NICKMFReportingData;
-import kz.nicnbk.repo.model.reporting.ReportOtherInfo;
-
-import java.util.Date;
 
 /**
  * Created by magzumov on 20.04.2017.
@@ -12,7 +9,9 @@ import java.util.Date;
 public class NICKMFReportingDataDto extends CreateUpdateBaseEntityDto<NICKMFReportingData> {
 
     private String nicChartOfAccountsCode;
+    private String nicChartOfAccountsName;
     private String nbChartOfAccountsCode;
+    private String nbChartOfAccountsName;
     private Double accountBalance;
 
     public String getNicChartOfAccountsCode() {
@@ -37,5 +36,21 @@ public class NICKMFReportingDataDto extends CreateUpdateBaseEntityDto<NICKMFRepo
 
     public void setNbChartOfAccountsCode(String nbChartOfAccountsCode) {
         this.nbChartOfAccountsCode = nbChartOfAccountsCode;
+    }
+
+    public String getNicChartOfAccountsName() {
+        return nicChartOfAccountsName;
+    }
+
+    public void setNicChartOfAccountsName(String nicChartOfAccountsName) {
+        this.nicChartOfAccountsName = nicChartOfAccountsName;
+    }
+
+    public String getNbChartOfAccountsName() {
+        return nbChartOfAccountsName;
+    }
+
+    public void setNbChartOfAccountsName(String nbChartOfAccountsName) {
+        this.nbChartOfAccountsName = nbChartOfAccountsName;
     }
 }

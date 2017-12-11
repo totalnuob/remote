@@ -64,8 +64,24 @@ import {SingularityNOALTrancheANBReportingComponent} from "./reporting/singulari
 import {SingularityNOALTrancheBNBReportingComponent} from "./reporting/singularity.noal.trancheb.nb.reporting.component";
 import {OtherInfoInputNBReportingComponent} from "./reporting/other.info.input.nb.reporting.component";
 import {FileAttachmentDownloaderComponent} from "./common/file-attachment-downloader.component";
-import {GenerateReportsNBReportingComponent} from "./reporting/generate.reports.nb.reporting.component";
+//import {GenerateReportsNBReportingComponent} from "./reporting/generate.reports.nb.reporting.component";
 import {NICKMFInputNBReportingComponent} from "./reporting/nick.mf.input.nb.reporting.component";
+import {SingularGeneratedFormNBReportingComponent} from "./reporting/singular.generated.form.nb.reporting.component";
+import {TarragonGeneratedFormNBReportingComponent} from "./reporting/tarragon.generated.form.nb.reporting.component";
+import {GeneratedReportsNBReportingComponent} from "./reporting/generated.reports.nb.reporting.component";
+import {ConsolidatedBalanceUSDFormNBReportingComponent} from "./reporting/consolidated.balance.usd.form.nb.reporting.component";
+import {PreviousYearInputNBReportingComponent} from "./reporting/previous.year.input.nb.reporting.component";
+import {ConsolidatedIncomeExpenseUSDFormNBReportingComponent} from "./reporting/consolidated.income.expense.usd.form.nb.reporting.component";
+import {ConsolidatedTotalIncomeUSDFormNBReportingComponent} from "./reporting/consolidated.total.income.usd.form.nb.reporting.component";
+import {NICKMFInputViewNBReportingComponent} from "./reporting/nick.mf.input.view.nb.reporting.component";
+import {TarragonGeneratedFormViewNBReportingComponent} from "./reporting/tarragon.generated.form.view.nb.reporting.component";
+import {ConsolidatedKZTForm8NBReportingComponent} from "./reporting/consolidated.kzt.form.8.nb.reporting.component";
+import {ConsolidatedKZTForm7NBReportingComponent} from "./reporting/consolidated.kzt.form.7.nb.reporting.component";
+import {ConsolidatedKZTForm10NBReportingComponent} from "./reporting/consolidated.kzt.form.10.nb.reporting.component";
+import {ConsolidatedKZTForm14NBReportingComponent} from "./reporting/consolidated.kzt.form.14.nb.reporting.component";
+import {ConsolidatedKZTForm13NBReportingComponent} from "./reporting/consolidated.kzt.form.13.nb.reporting.component";
+import {ConsolidatedKZTForm1NBReportingComponent} from "./reporting/consolidated.balance.kzt.form.1.nb.reporting.component";
+import {ReserveCalculationFormNBReportingComponent} from "./reporting/reserve.calculation.form.nb.reporting.component";
 
 @NgModule({
     imports: [
@@ -102,7 +118,11 @@ import {NICKMFInputNBReportingComponent} from "./reporting/nick.mf.input.nb.repo
         AccessDeniedComponent,NotFoundComponent,
         ScheduleInvestmentsNBReportingComponent, StatementBalanceOperationsNBReportingComponent, StatementCashflowsNBReportingComponent, StatementChangesNBReportingComponent,
         SingularityGeneralLedgerBalanceNBReportingComponent, SingularityNOALTrancheANBReportingComponent, SingularityNOALTrancheBNBReportingComponent,
-        OtherInfoInputNBReportingComponent, GenerateReportsNBReportingComponent, NICKMFInputNBReportingComponent
+        OtherInfoInputNBReportingComponent, /*GenerateReportsNBReportingComponent,*/ NICKMFInputNBReportingComponent, SingularGeneratedFormNBReportingComponent, TarragonGeneratedFormNBReportingComponent,
+        GeneratedReportsNBReportingComponent, ConsolidatedBalanceUSDFormNBReportingComponent, PreviousYearInputNBReportingComponent, ConsolidatedIncomeExpenseUSDFormNBReportingComponent,
+        ConsolidatedTotalIncomeUSDFormNBReportingComponent, NICKMFInputViewNBReportingComponent, TarragonGeneratedFormViewNBReportingComponent,
+        ConsolidatedKZTForm8NBReportingComponent, ConsolidatedKZTForm7NBReportingComponent, ConsolidatedKZTForm10NBReportingComponent, ConsolidatedKZTForm14NBReportingComponent, ConsolidatedKZTForm13NBReportingComponent,
+        ConsolidatedKZTForm1NBReportingComponent, ReserveCalculationFormNBReportingComponent
     ],
     bootstrap: [ AppComponent ]
 })

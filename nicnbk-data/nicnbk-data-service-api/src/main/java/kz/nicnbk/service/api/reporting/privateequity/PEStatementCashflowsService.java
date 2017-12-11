@@ -19,4 +19,6 @@ public interface PEStatementCashflowsService extends BaseService {
     boolean save(List<ReportingPEStatementCashflows> entities);
 
     ConsolidatedReportRecordHolderDto get(Long reportId);
+
+    boolean deleteByReportId(Long reportId);
 }

@@ -1,0 +1,208 @@
+<div class="container">
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting']">Reports Main</a></span>
+                </li>
+                <!--<li>-->
+                <!--<span *ngIf="reportId != null">-->
+                <!--<a [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">-->
+                <!--Input</a></span>-->
+                <!--</li>-->
+                <li *ngIf="reportId != null"><span><a [routerLink]="['/reporting/NBReporting/GeneratedReports/', reportId, 'REPORTS']">Generate report</a></span></li>
+                <li class="active">РТПДЗ - 8</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row top-buffer" *ngIf="errorMessage != null || successMessage != null">
+        <div class="col-md-12">
+            <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+            </div>
+            <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
+            </div>
+        </div>
+    </div>
+
+    <ul class="nav nav-tabs">
+        <li class="active">
+            <!--<li>-->
+            <a data-toggle="tab" href="#short">Short</a>
+        </li>
+        <li >
+            <!--<li >-->
+            <a data-toggle="tab" href="#full">Full</a>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <div id="short" class="tab-pane fade in active">
+            <br/>
+            <div class="row withpadding">
+                <table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small">
+                    <tr bgcolor="#e7e7e7">
+                        <td rowspan="2">Номер группы субсчетов</td>
+                        <td rowspan="2">Наименование дебитора</td>
+                        <td rowspan="2">Код строки</td>
+                        <td colspan="3">Движение задолженности за период</td>
+                        <td rowspan="2">Номер и дата начала-окончания срока договора</td>
+                        <td rowspan="2">Дата образования дебиторской задолженности</td>
+                        <!--<td colspan="4">Сумма просроченной задолженности</td>-->
+                        <!--<td colspan="4">Убытки от обесценения</td>-->
+                        <td rowspan="2">Балансовая стоимость на начало (гр.4+гр.14)</td>
+                        <td rowspan="2">Балансовая стоимость на конец (гр.5+гр.15)</td>
+                    </tr>
+
+                    <tr>
+                        <td rowspan="1">Сумма задолженности на начало отчетного периода</td>
+                        <td rowspan="1">Сумма задолженности на конец отчетного периода</td>
+                        <td rowspan="1">Изменение (гр.5-гр.4)</td>
+                        <!--<td colspan="3">в том числе</td>-->
+                        <!--<td rowspan="2">Всего просроченной задолженности (гр.9+гр.10+гр.11)</td>-->
+                        <!--<td rowspan="2">Дата создания резерва</td>-->
+                        <!--<td rowspan="2">Остаток на начало отчетного периода</td>-->
+                        <!--<td rowspan="2">Остаток на конец отчетного периода</td>-->
+                        <!--<td rowspan="2">Изменение (гр.15-гр.14)</td>-->
+                    </tr>
+                    <!--<tr>-->
+                        <!--<td>более 30 дней</td>-->
+                        <!--<td>более 90 дней</td>-->
+                        <!--<td>более 180 дней</td>-->
+                    <!--</tr>-->
+                    <tr>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>3</td>
+                        <td>4</td>
+                        <td>5</td>
+                        <td>6</td>
+                        <td>7</td>
+                        <td>8</td>
+                        <!--<td>9</td>-->
+                        <!--<td>10</td>-->
+                        <!--<td>11</td>-->
+                        <!--<td>12</td>-->
+                        <!--<td>13</td>-->
+                        <!--<td>14</td>-->
+                        <!--<td>15</td>-->
+                        <!--<td>16</td>-->
+                        <td>17</td>
+                        <td>18</td>
+                    </tr>
+                    <tr *ngFor="let record of records">
+                        <td>{{record.accountNumber}}</td>
+                        <td>{{record.name}}</td>
+                        <td>{{record.accountNumber == null ? record.lineNumber : ''}}</td>
+                        <td>{{record.debtStartPeriod != null && record.debtStartPeriod != 0 ? (record.debtStartPeriod | number:'1.2-2') : ''}}</td>
+                        <td>{{record.debtEndPeriod != null && record.debtEndPeriod != 0 ? (record.debtEndPeriod | number:'1.2-2') : ''}}</td>
+                        <td>{{record.debtDifference != null && record.debtDifference != 0 ? (record.debtDifference | number:'1.2-2') : ''}}</td>
+                        <td>{{record.agreementDescription}}</td>
+                        <td>{{record.debtStartDate}}</td>
+                        <!--<td>&nbsp;</td>-->
+                        <!--<td>&nbsp;</td>-->
+                        <!--<td>&nbsp;</td>-->
+                        <!--<td>&nbsp;</td>-->
+                        <!--<td>&nbsp;</td>-->
+                        <!--<td>&nbsp;</td>-->
+                        <!--<td>&nbsp;</td>-->
+                        <!--<td>&nbsp;</td>-->
+                        <td>{{record.startPeriodBalance != null && record.startPeriodBalance != 0 ? (record.startPeriodBalance | number:'1.2-2') : ''}}</td>
+                        <td>{{record.endPeriodBalance != null && record.endPeriodBalance != 0 ? (record.endPeriodBalance | number:'1.2-2') : ''}}</td>
+                    </tr>
+
+                </table>
+                <br/>
+                <br/>
+
+            </div>
+        </div>
+
+        <div id="full" class="tab-pane fade">
+            <br/>
+            <div class="row withpadding">
+                <button class="btn-xs btn-primary pull-right" (click)="export()"><span class="glyphicon glyphicon-list-alt"></span>&nbsp;Export</button>
+            </div>
+            <br/>
+            <div class="row withpadding" style="overflow-y: scroll;">
+                <table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small">
+                    <tr bgcolor="#e7e7e7">
+                        <td rowspan="3">Номер группы субсчетов</td>
+                        <td rowspan="3">Наименование дебитора</td>
+                        <td rowspan="3">Код строки</td>
+                        <td colspan="3">Движение задолженности за период</td>
+                        <td rowspan="3">Номер и дата начала-окончания срока договора</td>
+                        <td rowspan="3">Дата образования дебиторской задолженности</td>
+                        <td colspan="4">Сумма просроченной задолженности</td>
+                        <td colspan="4">Убытки от обесценения</td>
+                        <td rowspan="3">Балансовая стоимость на начало (гр.4+гр.14)</td>
+                        <td rowspan="3">Балансовая стоимость на конец (гр.5+гр.15)</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2">Сумма задолженности на начало отчетного периода</td>
+                        <td rowspan="2">Сумма задолженности на конец отчетного периода</td>
+                        <td rowspan="2">Изменение (гр.5-гр.4)</td>
+                        <td colspan="3">в том числе</td>
+                        <td rowspan="2">Всего просроченной задолженности (гр.9+гр.10+гр.11)</td>
+                        <td rowspan="2">Дата создания резерва</td>
+                        <td rowspan="2">Остаток на начало отчетного периода</td>
+                        <td rowspan="2">Остаток на конец отчетного периода</td>
+                        <td rowspan="2">Изменение (гр.15-гр.14)</td>
+                    </tr>
+                    <tr>
+                        <td>более 30 дней</td>
+                        <td>более 90 дней</td>
+                        <td>более 180 дней</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>3</td>
+                        <td>4</td>
+                        <td>5</td>
+                        <td>6</td>
+                        <td>7</td>
+                        <td>8</td>
+                        <td>9</td>
+                        <td>10</td>
+                        <td>11</td>
+                        <td>12</td>
+                        <td>13</td>
+                        <td>14</td>
+                        <td>15</td>
+                        <td>16</td>
+                        <td>17</td>
+                        <td>18</td>
+                    </tr>
+                    <tr *ngFor="let record of records">
+                        <td>{{record.accountNumber}}</td>
+                        <td>{{record.name}}</td>
+                        <td>{{record.accountNumber == null ? record.lineNumber : ''}}</td>
+                        <td>{{record.debtStartPeriod | number:'1.2-2'}}</td>
+                        <td>{{record.debtEndPeriod | number:'1.2-2'}}</td>
+                        <td>{{record.debtDifference | number:'1.2-2'}}</td>
+                        <td>{{record.agreementDescription}}</td>
+                        <td>{{record.debtStartDate}}</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>{{record.startPeriodBalance | number:'1.2-2'}}</td>
+                        <td>{{record.endPeriodBalance | number:'1.2-2'}}</td>
+                    </tr>
+
+                </table>
+                <br/>
+                <br/>
+
+            </div>
+        </div>
+
+
+    </div>
+
+</div>

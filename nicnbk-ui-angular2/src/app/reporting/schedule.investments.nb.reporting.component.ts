@@ -1,6 +1,6 @@
 import {Component} from "@angular/core";
 import {CommonFormViewComponent} from "../common/common.component";
-import {Router, ActivatedRoute} from '@angular/router';
+import {Router, ActivatedRoute, NavigationEnd} from '@angular/router';
 import {InputFilesNBReport} from "./model/input.files.nb.report";
 import {Subscription} from "rxjs/Subscription";
 import {PeriodicReportService} from "./periodic.report.service";
@@ -24,6 +24,7 @@ export class ScheduleInvestmentsNBReportingComponent extends CommonNBReportingCo
 
     records: PeriodicReportRecordHolder;
     report;
+    prevPageSource;
 
 
     busy: Subscription;
@@ -35,13 +36,13 @@ export class ScheduleInvestmentsNBReportingComponent extends CommonNBReportingCo
     ){
         super(router, route, periodicReportService);
 
-
         this.records = new PeriodicReportRecordHolder;
 
         this.sub = this.route
             .params
             .subscribe(params => {
                 this.reportId = +params['id'];
+                this.prevPageSource = params['prevPageSource'];
 
                 if(this.reportId > 0){
                     // load report data

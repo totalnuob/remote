@@ -1,7 +1,9 @@
 package kz.nicnbk.service.converter;
 
+import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.common.service.model.BaseDto;
 import kz.nicnbk.repo.model.base.BaseEntity;
+import kz.nicnbk.repo.model.base.BaseTypeEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,5 +35,14 @@ public abstract class BaseEntityConverter<E extends BaseEntity, DTO extends Base
             }
         }
         return dtoList;
+    }
+
+    public static BaseDictionaryDto disassembleTypeEntity(BaseTypeEntity entity){
+        BaseDictionaryDto dto = new BaseDictionaryDto();
+        dto.setCode(entity.getCode());
+        dto.setNameEn(entity.getNameEn());
+        dto.setNameRu(entity.getNameRu());
+        dto.setNameKz(entity.getNameKz());
+        return dto;
     }
 }

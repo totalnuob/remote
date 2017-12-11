@@ -1,10 +1,11 @@
 package kz.nicnbk.repo.api.reporting.hedgefunds;
 
 import kz.nicnbk.repo.model.reporting.hedgefunds.ReportingHFGeneralLedgerBalance;
-import kz.nicnbk.repo.model.reporting.privateequity.ReportingPEStatementChanges;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -15,5 +16,10 @@ public interface ReportingHFGeneralLedgerBalanceRepository extends PagingAndSort
 
     @Query("SELECT e from ReportingHFGeneralLedgerBalance e where e.report.id=?1")
     List<ReportingHFGeneralLedgerBalance> getEntitiesByReportId(Long reportId, Pageable pageable);
+
+    @Modifying
+    @Transactional
+    @Query("DELETE from ReportingHFGeneralLedgerBalance e where e.report.id=?1")
+    void deleteByReportId(long reportId);
 
 }

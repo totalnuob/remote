@@ -115,11 +115,22 @@ public class HFNOALServiceImpl implements HFNOALService {
             result.setNoalTrancheBList(records);
         }
 
-        if(entities != null) {
+        if(entities != null && !entities.isEmpty()) {
             result.setReport(periodicReportConverter.disassemble(entities.get(0).getReport()));
         }
 
         return result;
+    }
+
+    @Override
+    public boolean deleteByReportId(Long reportId, int tranche) {
+        try {
+            this.hfNOALRepository.deleteByReportIdAndTranche(reportId, tranche);
+            return true;
+        }catch (Exception ex){
+            logger.error("Error deleting schedule of investments records with report id=" + reportId);
+            return false;
+        }
     }
 
     public List<SingularityNOALRecordDto> disassembleList(List<ReportingHFNOAL> entities){

@@ -29,7 +29,7 @@ public class PeriodicReportFiles extends CreatorBaseEntity {
         this.file = files;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="report_id", nullable = false)
     public PeriodicReport getPeriodicReport() {
         return periodicReport;
@@ -39,7 +39,7 @@ public class PeriodicReportFiles extends CreatorBaseEntity {
         this.periodicReport = periodicReport;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="file_id", nullable = false)
     public Files getFile() {
         return file;

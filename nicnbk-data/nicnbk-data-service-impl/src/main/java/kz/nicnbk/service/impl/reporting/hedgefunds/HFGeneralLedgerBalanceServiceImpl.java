@@ -6,7 +6,7 @@ import kz.nicnbk.repo.api.lookup.HFFinancialStatementTypeRepository;
 import kz.nicnbk.repo.api.reporting.hedgefunds.ReportingHFGeneralLedgerBalanceRepository;
 import kz.nicnbk.repo.model.common.Currency;
 import kz.nicnbk.repo.model.reporting.PeriodicReport;
-import kz.nicnbk.repo.model.reporting.hedgefunds.HFFinancialStatementType;
+import kz.nicnbk.repo.model.reporting.hedgefunds.FinancialStatementCategory;
 import kz.nicnbk.repo.model.reporting.hedgefunds.ReportingHFGeneralLedgerBalance;
 import kz.nicnbk.service.api.reporting.hedgefunds.HFGeneralLedgerBalanceService;
 import kz.nicnbk.service.converter.reporting.PeriodicReportConverter;
@@ -54,7 +54,7 @@ public class HFGeneralLedgerBalanceServiceImpl implements HFGeneralLedgerBalance
         entity.setBalanceDate(dto.getBalanceDate());
 
         if(dto.getFinancialStatementCategory() != null) {
-            entity.setFinancialStatementCategory(this.lookupService.findByTypeAndCode(HFFinancialStatementType.class, dto.getFinancialStatementCategory()));
+            entity.setFinancialStatementCategory(this.lookupService.findByTypeAndCode(FinancialStatementCategory.class, dto.getFinancialStatementCategory()));
             if(entity.getFinancialStatementCategory() == null){
                 logger.error("Error parsing 'Singularity General Ledger Balance' file: financial statement type could not be determined - '" + dto.getFinancialStatementCategory() + "'");
                 throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: financial statement type could not be determined - '" + dto.getFinancialStatementCategory() + "'");
@@ -136,7 +136,7 @@ public class HFGeneralLedgerBalanceServiceImpl implements HFGeneralLedgerBalance
         }else if(tranche.intValue() == 1){
             return "SINGULAR";
         }else if(tranche.intValue() == 2){
-            return "SINGUALR B";
+            return "SINGULAR B";
         }else{
             logger.error("Error parsing 'Singularity General Ledger Balance' file: tranche could not be determined from tranche - " + tranche);
             throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: tranche could not be determined from tranche - " + tranche);
@@ -153,12 +153,24 @@ public class HFGeneralLedgerBalanceServiceImpl implements HFGeneralLedgerBalance
 
         result.setGeneralLedgerBalanceList(records);
 
-        if(entities != null) {
+        if(entities != null && !entities.isEmpty()) {
             result.setReport(periodicReportConverter.disassemble(entities.get(0).getReport()));
         }
 
         return result;
     }
+
+    @Override
+    public boolean deleteByReportId(Long reportId) {
+        try {
+            this.generalLedgerBalanceRepository.deleteByReportId(reportId);
+            return true;
+        }catch (Exception ex){
+            logger.error("Error deleting schedule of investments records with report id=" + reportId);
+            return false;
+        }
+    }
+
 
     public List<SingularityGeneralLedgerBalanceRecordDto> disassembleList(List<ReportingHFGeneralLedgerBalance> entities){
         List<SingularityGeneralLedgerBalanceRecordDto> records = new ArrayList<>();

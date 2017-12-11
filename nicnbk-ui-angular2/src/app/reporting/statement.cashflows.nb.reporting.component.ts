@@ -25,6 +25,7 @@ export class StatementCashflowsNBReportingComponent extends CommonNBReportingCom
     records: PeriodicReportRecordHolder;
     report;
 
+    prevPageSource;
 
     busy: Subscription;
 
@@ -42,6 +43,7 @@ export class StatementCashflowsNBReportingComponent extends CommonNBReportingCom
             .params
             .subscribe(params => {
                 this.reportId = +params['id'];
+                this.prevPageSource = params['prevPageSource'];
 
                 if(this.reportId > 0){
                     // load report data

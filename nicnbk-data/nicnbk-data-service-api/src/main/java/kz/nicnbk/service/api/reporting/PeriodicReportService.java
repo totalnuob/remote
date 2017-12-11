@@ -3,9 +3,11 @@ package kz.nicnbk.service.api.reporting;
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.service.api.base.BaseService;
 import kz.nicnbk.service.dto.common.FileUploadResultDto;
+import kz.nicnbk.service.dto.common.ListResponseDto;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.reporting.*;
 
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -21,7 +23,7 @@ public interface PeriodicReportService extends BaseService {
 
     List<PeriodicReportDto> getAll();
 
-    List<FilesDto> getPeriodicReportFiles(Long reportId);
+    PeriodicReportInputFilesHolder getPeriodicReportFiles(Long reportId);
 
     FilesDto getPeriodicReportFile(Long reportId, String type);
 
@@ -39,6 +41,15 @@ public interface PeriodicReportService extends BaseService {
 
     ConsolidatedReportRecordHolderDto getGeneralLedgerBalance(Long reportId);
 
+    List<GeneratedGeneralLedgerFormDto> getSingularGeneratedForm(Long reportId);
+
+    ListResponseDto getTarragonGeneratedForm(Long reportId);
+
+    List<ConsolidatedBalanceFormRecordDto> getConsolidatedBalanceUSDForm(Long reportId);
+
+    List<ConsolidatedBalanceFormRecordDto> getConsolidatedIncomeExpenseUSDForm(Long reportId);
+    List<ConsolidatedBalanceFormRecordDto> getConsolidatedTotalIncomeUSDForm(Long reportId);
+
     ConsolidatedReportRecordHolderDto getNOAL(Long reportId, int tranche);
 
     boolean saveOtherInfo(ReportOtherInfoDto dto);
@@ -52,4 +63,41 @@ public interface PeriodicReportService extends BaseService {
     NICKMFReportingDataHolderDto getNICKMFReportingDataFromPreviousMonth(Long reportId);
 
     boolean safeDelete(Long reportId, FileTypeLookup fileTypeLookup, String username);
+
+    boolean savePEGeneralLedgerFormData(PEGeneralLedgerFormDataHolderDto dataHolderDto);
+
+    boolean deletePEGeneralLedgerFormDataRecordById(Long recordId);
+
+    boolean saveUpdatedTarragonInvestment(UpdateTarragonInvestmentDto updateDto);
+
+    List<PreviousYearInputDataDto> getPreviousYearInputData(Long reportId);
+
+    List<PreviousYearInputDataDto> getPreviousYearInputDataFromPreviousMonth(Long reportId);
+
+    boolean savePreviousYearInputData(List<PreviousYearInputDataDto> records, Long reportId);
+
+    boolean safeDeleteFile(Long fileId);
+
+    boolean markReportAsFinal(Long reportId);
+
+    InputStream getExportFileStream(Long reportId, String type);
+
+    List<GeneratedGeneralLedgerFormDto> getTarragonGLAddedRecordsPreviousMonth(Long reportId);
+
+    List<ConsolidatedKZTForm8RecordDto> getConsolidatedBalanceKZTForm8(Long reportId);
+
+    List<ConsolidatedKZTForm10RecordDto> getConsolidatedBalanceKZTForm10(Long reportId);
+
+    List<ConsolidatedKZTForm14RecordDto> getConsolidatedBalanceKZTForm14(Long reportId);
+
+    List<ConsolidatedKZTForm13RecordDto> getConsolidatedBalanceKZTForm13(Long reportId);
+
+    List<ConsolidatedKZTForm7RecordDto> getConsolidatedBalanceKZTForm7(Long reportId);
+
+    List<ConsolidatedBalanceFormRecordDto> getConsolidatedBalanceKZTForm1(Long reportId);
+
+    List<ReserveCalculationDto> getReserveCalculation();
+
+    boolean saveReserveCalculation(List<ReserveCalculationDto> records);
+
 }

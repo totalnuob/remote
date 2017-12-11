@@ -1,5 +1,6 @@
 package kz.nicnbk.service.impl.reporting.privateequity;
 
+import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.api.lookup.CurrencyRepository;
 import kz.nicnbk.repo.api.lookup.PEInvestmentTypeRepository;
@@ -12,8 +13,11 @@ import kz.nicnbk.repo.model.reporting.privateequity.PEInvestmentType;
 import kz.nicnbk.repo.model.reporting.privateequity.ReportingPEScheduleInvestment;
 import kz.nicnbk.service.api.reporting.privateequity.PEScheduleInvestmentService;
 import kz.nicnbk.service.converter.reporting.PeriodicReportConverter;
+import kz.nicnbk.service.converter.reporting.ReportingPEScheduleInvestmentConverter;
 import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordDto;
 import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordHolderDto;
+import kz.nicnbk.service.dto.reporting.ScheduleInvestmentsDto;
+import kz.nicnbk.service.dto.reporting.UpdateTarragonInvestmentDto;
 import kz.nicnbk.service.dto.reporting.exception.ExcelFileParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +52,9 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
     @Autowired
     private PeriodicReportConverter periodicReportConverter;
 
+    @Autowired
+    private ReportingPEScheduleInvestmentConverter scheduleInvestmentConverter;
+
 
     @Override
     public ReportingPEScheduleInvestment assemble(ConsolidatedReportRecordDto dto, int tranche, Long reportId) {
@@ -57,6 +64,7 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
         entity.setCapitalCommitments(dto.getValues()[0]);
         entity.setNetCost(dto.getValues()[1]);
         entity.setFairValue(dto.getValues()[2]);
+        entity.setTotalSum(dto.isTotalSum());
 
         // report
         entity.setReport(new PeriodicReport(reportId));
@@ -120,7 +128,8 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
             for(String classification: dto.getClassifications()){
                 if(classification != null && !classification.equalsIgnoreCase("Fund Investments and Co-Investments") &&
                         !classification.equalsIgnoreCase(entity.getType().getNameEn())){
-                    entity.setDescription(classification.trim());
+                    entity.setDescription(dto.getName());
+                    entity.setName(classification.trim());
                 }
             }
 
@@ -162,6 +171,16 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
     }
 
     @Override
+    public boolean save(ScheduleInvestmentsDto dto) {
+        ReportingPEScheduleInvestment entity = this.scheduleInvestmentConverter.assemble(dto);
+        if(entity != null){
+            this.peScheduleInvestmentRepository.save(entity);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public ConsolidatedReportRecordHolderDto get(Long reportId) {
 
         List<ReportingPEScheduleInvestment> entitiesTrancheA = this.peScheduleInvestmentRepository.getEntitiesByReportIdAndTranche(reportId, 1,
@@ -190,7 +209,7 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
         if(entities != null){
             String investmentType = null;
             Strategy strategy = null;
-            String description = null;
+            String name = null;
             for(ReportingPEScheduleInvestment entity: entities){
                 boolean isPrivateEquityPartnerships = entity.getType() != null &&
                         entity.getType().getNameEn().equalsIgnoreCase(ReportingPEScheduleInvestment.TYPE_FUND_INVESTMENTS);
@@ -203,8 +222,8 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
                         // skip parent strategy header, e.g. Corporate Finance Buyout for Total Corporate Finance Buyout
                         (strategy.getParent() == null || !entity.getStrategy().getNameEn().equalsIgnoreCase(strategy.getParent().getNameEn()));
 
-                boolean descriptionSwitch = description != null && entity.getDescription() != null && isCoinvestments
-                        && !entity.getDescription().equalsIgnoreCase(description);
+                boolean nameSwitch = name != null && entity.getName() != null && isCoinvestments
+                        && !entity.getName().equalsIgnoreCase(name) && !entity.getName().equalsIgnoreCase("Total Co-Investments");
 
                 boolean investmentTypeSwitch = investmentType != null && entity.getType() != null
                         &&!entity.getType().getNameEn().equalsIgnoreCase(investmentType);
@@ -220,9 +239,9 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
                     records.add(new ConsolidatedReportRecordDto(strategy != null ? strategy.getNameEn() : null, null, null, null, true, false));
                 }
 
-                if(isCoinvestments && (description == null || descriptionSwitch)){
-                    description = entity.getDescription();
-                    records.add(new ConsolidatedReportRecordDto(description, null, null, null, true, false));
+                if(isCoinvestments && (name == null || nameSwitch)){
+                    name = entity.getName();
+                    records.add(new ConsolidatedReportRecordDto(name, null, null, null, true, false));
                 }
 
                 records.add(disassemble(entity));
@@ -232,6 +251,12 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
     }
 
     private ConsolidatedReportRecordDto disassemble(ReportingPEScheduleInvestment entity){
+        boolean isPrivateEquityPartnerships = entity.getType() != null &&
+                entity.getType().getNameEn().equalsIgnoreCase(ReportingPEScheduleInvestment.TYPE_FUND_INVESTMENTS);
+
+        boolean isCoinvestments = entity.getType() != null &&
+                entity.getType().getNameEn().equalsIgnoreCase(ReportingPEScheduleInvestment.TYPE_COINVESTMENTS);
+
         // values
         Double[] values = new Double[]{entity.getCapitalCommitments() != null ? entity.getCapitalCommitments().doubleValue() : null,
                 entity.getNetCost() != null ? entity.getNetCost().doubleValue() : null,
@@ -240,9 +265,11 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
         boolean isTotalStrategySum = isTotalTypeSum(entity.getName()) ||
                 entity.getStrategy() != null && entity.getName().equalsIgnoreCase("Total " + entity.getStrategy().getNameEn());
 
-        boolean isTotalDescriptionSum = isTotalTypeSum(entity.getName()) || entity.getName().equalsIgnoreCase("Total " + entity.getDescription());
+        boolean isTotalDescriptionSum = isTotalTypeSum(entity.getName()) || (entity.getDescription() != null && entity.getDescription().equalsIgnoreCase("Total " + entity.getName()));
 
-        ConsolidatedReportRecordDto recordDto = new ConsolidatedReportRecordDto(entity.getName(), null, values, null, isTotalStrategySum || isTotalDescriptionSum, isTotalStrategySum || isTotalDescriptionSum);
+        String name = isPrivateEquityPartnerships ? entity.getName() : isCoinvestments ? (StringUtils.isNotEmpty(entity.getDescription()) ? entity.getDescription() : entity.getName() ): entity.getName();
+
+        ConsolidatedReportRecordDto recordDto = new ConsolidatedReportRecordDto(name, null, values, null, isTotalStrategySum || isTotalDescriptionSum, isTotalStrategySum || isTotalDescriptionSum);
 
         return recordDto;
     }
@@ -251,6 +278,97 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
         return StringUtils.isNotEmpty(name) && (name.equalsIgnoreCase("Total Fund Investments") ||
                 name.equalsIgnoreCase("Total Co-Investments") ||
                 name.equalsIgnoreCase("Total Fund Investments and Co-Investments"));
+    }
+
+    @Override
+    public List<ScheduleInvestmentsDto> getScheduleInvestments(Long reportId){
+        List<ScheduleInvestmentsDto> records = new ArrayList<>();
+        List<ReportingPEScheduleInvestment> entitiesTrancheA =
+                this.peScheduleInvestmentRepository.getEntitiesByReportIdAndTranche(reportId, 1,new PageRequest(0, 1000, new Sort(Sort.Direction.ASC, "id")));
+        if(entitiesTrancheA != null){
+            for(ReportingPEScheduleInvestment entity: entitiesTrancheA){
+                records.add(disassembleDto(entity));
+            }
+            //return records;
+        }
+        List<ReportingPEScheduleInvestment> entitiesTrancheB =
+                this.peScheduleInvestmentRepository.getEntitiesByReportIdAndTranche(reportId, 2, new PageRequest(0, 1000, new Sort(Sort.Direction.ASC, "id")));
+        if(entitiesTrancheB != null){
+            for(ReportingPEScheduleInvestment entity: entitiesTrancheB){
+                records.add(disassembleDto(entity));
+            }
+            //return records;
+        }
+        return records;
+    }
+
+    @Override
+    public boolean updateScheduleInvestments(UpdateTarragonInvestmentDto updateDto) {
+        ReportingPEScheduleInvestment entity = this.peScheduleInvestmentRepository.getEntities(updateDto.getReportId(), updateDto.getTranche(), updateDto.getFundName());
+        if(entity != null){
+            if(entity.getReport().getStatus().getCode().equalsIgnoreCase("SUBMITTED")){
+                return false;
+            }
+            entity.setEditedFairValue(updateDto.getAccountBalance());
+            this.peScheduleInvestmentRepository.save(entity);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public ScheduleInvestmentsDto getScheduleInvestments(Long reportId, String fundName, int tranche) {
+        ReportingPEScheduleInvestment entity = this.peScheduleInvestmentRepository.getEntities(reportId, tranche, fundName);
+        if(entity != null){
+            return disassembleDto(entity);
+        }
+        return null;
+    }
+
+    @Override
+    public boolean deleteByReportId(Long reportId) {
+        try {
+            this.peScheduleInvestmentRepository.deleteByReportId(reportId);
+            return true;
+        }catch (Exception ex){
+            logger.error("Error deleting schedule of investments records with report id=" + reportId);
+            return false;
+        }
+    }
+
+    private ScheduleInvestmentsDto disassembleDto(ReportingPEScheduleInvestment entity){
+        if(entity != null){
+            ScheduleInvestmentsDto dto = new ScheduleInvestmentsDto();
+            dto.setId(entity.getId());
+            dto.setName(entity.getName());
+            dto.setCapitalCommitments(entity.getCapitalCommitments());
+            dto.setFairValue(entity.getFairValue());
+            dto.setNetCost(entity.getNetCost());
+            dto.setTranche(entity.getTranche());
+            dto.setDescription(entity.getDescription());
+            dto.setTotalSum(entity.getTotalSum());
+            dto.setEditedFairValue(entity.getEditedFairValue());
+
+            if(entity.getCurrency() != null) {
+                BaseDictionaryDto currency = new BaseDictionaryDto(entity.getCurrency().getCode(), entity.getCurrency().getNameEn(),
+                        entity.getCurrency().getNameRu(), entity.getCurrency().getNameKz());
+                dto.setCurrency(currency);
+            }
+            if(entity.getStrategy() != null) {
+                BaseDictionaryDto strategy = new BaseDictionaryDto(entity.getStrategy().getCode(), entity.getStrategy().getNameEn(),
+                        entity.getStrategy().getNameRu(), entity.getStrategy().getNameKz());
+                dto.setStrategy(strategy);
+            }
+            if(entity.getType() != null){
+                BaseDictionaryDto type = new BaseDictionaryDto(entity.getType().getCode(), entity.getType().getNameEn(),
+                        entity.getType().getNameRu(), entity.getType().getNameKz());
+                dto.setType(type);
+            }
+
+            dto.setReport(this.periodicReportConverter.disassemble(entity.getReport()));
+            return dto;
+        }
+        return null;
     }
 
     // TODO: refactor

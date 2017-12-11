@@ -8,6 +8,9 @@ export class NICKMFReportingInfo{
     nicChartOfAccountsCode: string;
     accountBalance: number;
 
+    nbChartOfAccountsName: string;
+    nicChartOfAccountsName: string;
+
     matchingNICChartOfAccounts: NICReportingChartOfAccounts[]; // handled in UI only
 
 }

@@ -6,10 +6,12 @@ import kz.nicnbk.repo.api.reporting.privateequity.ReportingPEStatementOperations
 import kz.nicnbk.repo.model.reporting.PeriodicReport;
 import kz.nicnbk.repo.model.reporting.privateequity.PEOperationsType;
 import kz.nicnbk.repo.model.reporting.privateequity.ReportingPEStatementOperations;
-import kz.nicnbk.service.api.reporting.privateequity.PEStatementOperatinsService;
+import kz.nicnbk.service.api.reporting.privateequity.PEStatementOperationsService;
 import kz.nicnbk.service.converter.reporting.PeriodicReportConverter;
+import kz.nicnbk.service.converter.reporting.ReportingPEStatementOperationsConverter;
 import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordDto;
 import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordHolderDto;
+import kz.nicnbk.service.dto.reporting.StatementBalanceOperationsDto;
 import kz.nicnbk.service.dto.reporting.exception.ExcelFileParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,13 +20,16 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by magzumov on 14.07.2017.
  */
 @Service
-public class PEStatementOperationsServiceImpl implements PEStatementOperatinsService {
+public class PEStatementOperationsServiceImpl implements PEStatementOperationsService {
 
     private static final Logger logger = LoggerFactory.getLogger(PEStatementOperationsServiceImpl.class);
 
@@ -36,6 +41,9 @@ public class PEStatementOperationsServiceImpl implements PEStatementOperatinsSer
 
     @Autowired
     private PeriodicReportConverter periodicReportConverter;
+
+    @Autowired
+    private ReportingPEStatementOperationsConverter statementOperationsConverter;
 
     @Override
     public ReportingPEStatementOperations assemble(ConsolidatedReportRecordDto dto, int tranche, Long reportId) {
@@ -49,6 +57,8 @@ public class PEStatementOperationsServiceImpl implements PEStatementOperatinsSer
         entity.setNICKMFShareTotal(dto.getValues()[4]);
         entity.setConsolidationAdjustments(dto.getValues()[5]);
         entity.setNICKMFShareConsolidated(dto.getValues()[6]);
+        entity.setTotalSum(dto.isTotalSum());
+
 
         // report
         entity.setReport(new PeriodicReport(reportId));
@@ -126,6 +136,45 @@ public class PEStatementOperationsServiceImpl implements PEStatementOperatinsSer
         }
 
         return result;
+    }
+
+    @Override
+    public List<StatementBalanceOperationsDto> getStatementOperationsRecords(Long reportId) {
+        List<ReportingPEStatementOperations> entitiesTrancheA = this.peStatementOperationsRepository.getEntitiesByReportIdAndTranche(reportId, 1,
+                new PageRequest(0, 1000, new Sort(Sort.Direction.ASC, "id")));
+
+        List<ReportingPEStatementOperations> entitiesTrancheB = this.peStatementOperationsRepository.getEntitiesByReportIdAndTranche(reportId, 2,
+                new PageRequest(0, 1000, new Sort(Sort.Direction.ASC, "id")));
+
+        List<StatementBalanceOperationsDto> dtoListTrancheA = disassembleStatementOperationsList(entitiesTrancheA);
+        List<StatementBalanceOperationsDto> dtoListTrancheB = disassembleStatementOperationsList(entitiesTrancheB);
+
+        dtoListTrancheA.addAll(dtoListTrancheB);
+        return dtoListTrancheA;
+    }
+
+    @Override
+    public boolean deleteByReportId(Long reportId) {
+        try {
+            this.peStatementOperationsRepository.deleteByReportId(reportId);
+            return true;
+        }catch (Exception ex){
+            logger.error("Error deleting schedule of investments records with report id=" + reportId);
+            return false;
+        }
+    }
+
+    private List<StatementBalanceOperationsDto> disassembleStatementOperationsList(List<ReportingPEStatementOperations> entities){
+        List<StatementBalanceOperationsDto> dtoList = new ArrayList<>();
+        if(entities != null){
+            for(ReportingPEStatementOperations entity: entities){
+                StatementBalanceOperationsDto dto = this.statementOperationsConverter.disassemble(entity);
+                if(dto != null){
+                    dtoList.add(dto);
+                }
+            }
+        }
+        return dtoList;
     }
 
     private List<ConsolidatedReportRecordDto> disassembleList(List<ReportingPEStatementOperations> entities){

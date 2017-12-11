@@ -7,7 +7,13 @@ import java.util.List;
 /**
  * Created by magzumov on 30.06.2017.
  */
+
+
+// TODO: change to specific
 public class ConsolidatedReportRecordHolderDto implements BaseDto {
+
+
+    // TODO: refactor, separate
 
     // Schedule of Investments
     private List<ConsolidatedReportRecordDto> trancheA;

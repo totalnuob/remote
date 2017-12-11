@@ -23,6 +23,7 @@ export class StatementBalanceOperationsNBReportingComponent extends CommonNBRepo
 
     records: PeriodicReportRecordHolder;
     report;
+    prevPageSource;
 
     busy: Subscription;
 
@@ -40,6 +41,7 @@ export class StatementBalanceOperationsNBReportingComponent extends CommonNBRepo
             .params
             .subscribe(params => {
                 this.reportId = +params['id'];
+                this.prevPageSource = params['prevPageSource'];
 
                 if(this.reportId > 0){
                     // load report data

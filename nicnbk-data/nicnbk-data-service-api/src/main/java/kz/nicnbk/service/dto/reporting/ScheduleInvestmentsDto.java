@@ -1,64 +1,130 @@
 package kz.nicnbk.service.dto.reporting;
 
-import java.util.List;
+import kz.nicnbk.common.service.model.BaseDictionaryDto;
+import kz.nicnbk.common.service.model.BaseDto;
 
 /**
  * Created by magzumov on 05.05.2017.
  */
-@Deprecated
-public class ScheduleInvestmentsDto extends InputFileReportDataDto{
 
-    private List<FundInvestmentDto> fundInvestments;
-    private List<CoInvestmentDto> coInvestments;
+public class ScheduleInvestmentsDto implements BaseDto{
 
-    private CommonInvestmentDto total;
+    private Long id;
+    private String name;
+    private Double capitalCommitments;
+    private Double netCost;
+    private Double fairValue;
+    private Double editedFairValue;
+    private PeriodicReportDto report;
 
+    private BaseDictionaryDto type;
+    private BaseDictionaryDto strategy;
+    private BaseDictionaryDto currency;
+    private Integer tranche;
+    private String description;
+    private Boolean isTotalSum;
 
-    public List<FundInvestmentDto> getFundInvestments() {
-        return fundInvestments;
+    public Long getId() {
+        return id;
     }
 
-    public void setFundInvestments(List<FundInvestmentDto> fundInvestments) {
-        this.fundInvestments = fundInvestments;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public List<CoInvestmentDto> getCoInvestments() {
-        return coInvestments;
+    public String getName() {
+        return name;
     }
 
-    public void setCoInvestments(List<CoInvestmentDto> coInvestments) {
-        this.coInvestments = coInvestments;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public CommonInvestmentDto getTotal() {
-        return total;
+    public Double getCapitalCommitments() {
+        return capitalCommitments;
     }
 
-    public void setTotal(CommonInvestmentDto total) {
-        this.total = total;
+    public void setCapitalCommitments(Double capitalCommitments) {
+        this.capitalCommitments = capitalCommitments;
     }
 
-        public void print(){
-            System.out.println("Fund Investments: ");
-            if(this.fundInvestments != null){
-                for(FundInvestmentDto dto: this.fundInvestments){
-                    System.out.println(dto.getInvestmentName() + " | " + dto.getCapitalCommitments() + " | " +
-                    dto.getNetCost() + " | " + dto.getFairValue() + " | " + dto.getCurrency() + " | " + dto.getStrategy());
-                }
-            }
+    public Double getNetCost() {
+        return netCost;
+    }
 
-            System.out.println("\nCo-Investments: ");
-            if(this.coInvestments != null){
-                for(CoInvestmentDto dto: this.coInvestments){
-                    System.out.println(dto.getInvestmentName() + " | " + dto.getCapitalCommitments() + " | " +
-                            dto.getNetCost() + " | " + dto.getFairValue() + " | " + dto.getCurrency() + " | " + dto.getDescription());
-                }
-            }
+    public void setNetCost(Double netCost) {
+        this.netCost = netCost;
+    }
 
-            if(this.total != null) {
-                System.out.println("\nTotal Fund Investments and Co-Investments | " + this.total.getCapitalCommitments()
-                        + " | " + this.total.getNetCost() + " | " + this.total.getFairValue() + " | " + this.total.getCurrency());
-            }
-            System.out.println("**************************************************");
+    public Double getFairValue() {
+        return fairValue;
+    }
+
+    public void setFairValue(Double fairValue) {
+        this.fairValue = fairValue;
+    }
+
+    public PeriodicReportDto getReport() {
+        return report;
+    }
+
+    public void setReport(PeriodicReportDto report) {
+        this.report = report;
+    }
+
+    public BaseDictionaryDto getType() {
+        return type;
+    }
+
+    public void setType(BaseDictionaryDto type) {
+        this.type = type;
+    }
+
+    public BaseDictionaryDto getStrategy() {
+        return strategy;
+    }
+
+    public void setStrategy(BaseDictionaryDto strategy) {
+        this.strategy = strategy;
+    }
+
+    public BaseDictionaryDto getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(BaseDictionaryDto currency) {
+        this.currency = currency;
+    }
+
+    public Integer getTranche() {
+        return tranche;
+    }
+
+    public void setTranche(Integer tranche) {
+        this.tranche = tranche;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Boolean getTotalSum() {
+        return isTotalSum;
+    }
+
+    public void setTotalSum(Boolean totalSum) {
+        isTotalSum = totalSum;
+    }
+
+    public Double getEditedFairValue() {
+        return editedFairValue;
+    }
+
+    public void setEditedFairValue(Double editedFairValue) {
+        this.editedFairValue = editedFairValue;
     }
 }

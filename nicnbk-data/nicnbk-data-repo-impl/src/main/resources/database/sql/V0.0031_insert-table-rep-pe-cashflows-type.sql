@@ -6,6 +6,8 @@ INSERT INTO rep_pe_cashflows_type(id, code, name_en, name_ru, name_kz, parent_id
 INSERT INTO rep_pe_cashflows_type(id, code, name_en, name_ru, name_kz, parent_id) VALUES(52, 'CHNG_AST_L', 'Change in assets and liabilities', '', '', 51);
 INSERT INTO rep_pe_cashflows_type(id, code, name_en, name_ru, name_kz, parent_id) VALUES(53, 'PREP_EXP', 'Prepaid expenses', '', '', 52);
 INSERT INTO rep_pe_cashflows_type(id, code, name_en, name_ru, name_kz, parent_id) VALUES(54, 'DIST_FUND', 'Distributions received from fund investments accounted for as', '', '', 51);
+INSERT INTO rep_pe_cashflows_type(id, code, name_en, name_ru, name_kz, parent_id) VALUES(55, 'DIST_FUND2', 'Distributions received from co-investments accounted for as', '', '', 51);
+
 
 INSERT INTO rep_pe_cashflows_type(id, code, name_en, name_ru, name_kz, parent_id) VALUES(101, 'SUPP_DISCL', 'Supplemental disclosure of cash flow information', '', '', null);
 

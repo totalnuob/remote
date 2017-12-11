@@ -1,37 +1,41 @@
 package kz.nicnbk.service.impl.reporting;
 
 import com.sun.org.apache.xalan.internal.xsltc.compiler.util.StringStack;
+import kz.nicnbk.common.service.model.BaseDictionaryDto;
+import kz.nicnbk.common.service.model.HierarchicalBaseDictionaryDto;
 import kz.nicnbk.common.service.util.*;
 import kz.nicnbk.repo.api.employee.EmployeeRepository;
 import kz.nicnbk.repo.api.lookup.StrategyRepository;
-import kz.nicnbk.repo.api.reporting.NICKMFReportingDataRepository;
-import kz.nicnbk.repo.api.reporting.PeriodReportRepository;
-import kz.nicnbk.repo.api.reporting.PeriodicReportFilesRepository;
-import kz.nicnbk.repo.api.reporting.ReportingOtherInfoRepository;
+import kz.nicnbk.repo.api.reporting.*;
+import kz.nicnbk.repo.api.reporting.hedgefunds.SingularityNICChartOfAccountsRepository;
+import kz.nicnbk.repo.api.reporting.privateequity.PEGeneralLedgerFormDataRepository;
+import kz.nicnbk.repo.api.reporting.privateequity.TarragonNICChartOfAccountsRepository;
+import kz.nicnbk.repo.model.base.BaseTypeEntity;
 import kz.nicnbk.repo.model.common.Strategy;
 import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
-import kz.nicnbk.repo.model.reporting.NICKMFReportingData;
-import kz.nicnbk.repo.model.reporting.PeriodicReport;
-import kz.nicnbk.repo.model.reporting.PeriodicReportFiles;
-import kz.nicnbk.repo.model.reporting.ReportOtherInfo;
+import kz.nicnbk.repo.model.reporting.*;
 import kz.nicnbk.repo.model.reporting.hedgefunds.ReportingHFGeneralLedgerBalance;
 import kz.nicnbk.repo.model.reporting.hedgefunds.ReportingHFNOAL;
+import kz.nicnbk.repo.model.reporting.hedgefunds.SingularityNICChartOfAccounts;
 import kz.nicnbk.repo.model.reporting.privateequity.*;
+import kz.nicnbk.service.api.common.CurrencyRatesService;
 import kz.nicnbk.service.api.files.FileService;
 import kz.nicnbk.service.api.reporting.PeriodicDataService;
 import kz.nicnbk.service.api.reporting.PeriodicReportService;
 import kz.nicnbk.service.api.reporting.hedgefunds.HFGeneralLedgerBalanceService;
 import kz.nicnbk.service.api.reporting.hedgefunds.HFNOALService;
 import kz.nicnbk.service.api.reporting.privateequity.*;
-import kz.nicnbk.service.converter.reporting.NICKMFReportingDataConverter;
-import kz.nicnbk.service.converter.reporting.PeriodicReportConverter;
-import kz.nicnbk.service.converter.reporting.ReportingOtherInfoConverter;
+import kz.nicnbk.service.converter.reporting.*;
+import kz.nicnbk.service.dto.common.CurrencyRatesDto;
 import kz.nicnbk.service.dto.common.FileUploadResultDto;
+import kz.nicnbk.service.dto.common.ListResponseDto;
 import kz.nicnbk.service.dto.common.StatusResultType;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.reporting.*;
 import kz.nicnbk.service.dto.reporting.exception.ExcelFileParseException;
+import kz.nicnbk.service.dto.reporting.privateequity.PEGeneralLedgerFormDataDto;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -41,12 +45,15 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 /**
@@ -57,11 +64,18 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
     private static final Logger logger = LoggerFactory.getLogger(PeriodicReportServiceImpl.class);
 
+    /* Root folder on the server */
+    @Value("${filestorage.root.directory}")
+    private String rootDirectory;
+
     @Autowired
     private PeriodReportRepository periodReportRepository;
 
     @Autowired
     private PeriodicReportConverter periodicReportConverter;
+
+    @Autowired
+    private ConsolidatedKZTForm7Converter consolidatedKZTForm7Converter;
 
     @Autowired
     private EmployeeRepository employeeRepository;
@@ -79,7 +93,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
     private PEStatementBalanceService statementBalanceService;
 
     @Autowired
-    private PEStatementOperatinsService statementOperatinsService;
+    private PEStatementOperationsService statementOperatinsService;
 
     @Autowired
     private StrategyRepository strategyRepository;
@@ -112,6 +126,37 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
     @Autowired
     private NICKMFReportingDataRepository nickmfReportingDataRepository;
 
+
+    @Autowired
+    private SingularityNICChartOfAccountsRepository singularityNICChartOfAccountsRepository;
+
+    @Autowired
+    private PEGeneralLedgerFormDataConverter peGeneralLedgerFormDataConverter;
+    @Autowired
+    private TarragonNICChartOfAccountsRepository tarragonNICChartOfAccountsRepository;
+
+    @Autowired
+    private PEGeneralLedgerFormDataRepository peGeneralLedgerFormDataRepository;
+
+    @Autowired
+    private PreviousYearInputDataRepository previousYearInputDataRepository;
+
+    @Autowired
+    private NICReportingChartOfAccountsRepository nicReportingChartOfAccountsRepository;
+
+    @Autowired
+    private CurrencyRatesService currencyRatesService;
+
+    @Autowired
+    private ConsolidatedReportKZTForm7Repository consolidatedReportKZTForm7Repository;
+
+    @Autowired
+    private ReserveCalculationService reserveCalculationService;
+
+
+    /* ****************************************************************************************************************/
+    /* ****************************************************************************************************************/
+
     /**
      * Assemble entity from DTO data, save to database and return entity id.
      * Set entity updater to specified username.
@@ -122,9 +167,6 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
      */
     @Override
     public Long save(PeriodicReportDto dto, String updater) {
-
-        List<String> strings = new ArrayList<>();
-
         try {
             PeriodicReport entity = this.periodicReportConverter.assemble(dto);
             if (dto.getId() == null) { // CREATE
@@ -218,8 +260,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
      * @return - list of DTOs
      */
     @Override
-    public List<FilesDto> getPeriodicReportFiles(Long reportId) {
+    public PeriodicReportInputFilesHolder getPeriodicReportFiles(Long reportId) {
         try {
+            PeriodicReportInputFilesHolder holder = new PeriodicReportInputFilesHolder();
             List<PeriodicReportFiles> entities = this.periodicReportFilesRepository.getEntitiesByReportId(reportId);
             List<FilesDto> files = new ArrayList<>();
             if (entities != null) {
@@ -230,8 +273,12 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                     fileDto.setFileName(entity.getFile().getFileName());
                     files.add(fileDto);
                 }
+                if(entities.size() > 0) {
+                    holder.setFiles(files);
+                    holder.setReport(this.periodicReportConverter.disassemble(entities.get(0).getPeriodicReport()));
+                }
             }
-            return files;
+            return holder;
         }catch(Exception ex){
             logger.error("Error getting periodic report files: report=" + reportId, ex);
         }
@@ -282,6 +329,2236 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             logger.error("Failed to delete(safe) attachment with exception: report id=" + reportId + ", file type=" + fileTypeLookup.getCode() + ", by " + username, ex);
         }
         return false;
+    }
+
+    @Transactional
+    @Override
+    public boolean savePEGeneralLedgerFormData(PEGeneralLedgerFormDataHolderDto dataHolderDto) {
+        try {
+            if(dataHolderDto != null && dataHolderDto.getRecords() != null){
+
+                checkPEGeneralLedgerFormData(dataHolderDto.getRecords());
+
+                // TODO: check report status
+                PeriodicReport periodicReport = this.periodReportRepository.findOne(dataHolderDto.getReport().getId());
+                if(periodicReport != null && periodicReport.getStatus().getCode().equalsIgnoreCase("SUBMITTED")){
+                    return false;
+                }
+
+                for(PEGeneralLedgerFormDataDto dto: dataHolderDto.getRecords()){
+                    PEGeneralLedgerFormData entity = this.peGeneralLedgerFormDataConverter.assemble(dto);
+                    entity.setReport(new PeriodicReport(dataHolderDto.getReport().getId()));
+                    this.peGeneralLedgerFormDataRepository.save(entity);
+                }
+                return true;
+            }
+        }catch (IllegalArgumentException ex){
+            logger.error("Error saving Tarragon GL Form data: input validation failed", ex);
+        }catch (Exception ex){
+            logger.error("Error saving Tarragon GL Form data.", ex);
+        }
+        return false;
+    }
+
+    private void checkPEGeneralLedgerFormData(List<PEGeneralLedgerFormDataDto> records){
+        if(records != null){
+            double totalAssets = 0.0;
+            double totalOther = 0.0;
+            for(PEGeneralLedgerFormDataDto record: records){
+                if(record.getTranche() != 1 && record.getTranche() != 2){
+                    throw new IllegalArgumentException("Tranche value invalid : " + record.getTranche() + "; expected values 1, 2");
+                }
+                if(!isValidFinancialStatementCategory(record.getFinancialStatementCategory())){
+                    throw new IllegalArgumentException("Financial statement category value invalid : " + record.getFinancialStatementCategory() + "; expected values A, L, E, X, I");
+                }
+                if(StringUtils.isEmpty(record.getTarragonNICChartOfAccountsName())){
+                    throw new IllegalArgumentException("Chart oof Accounts Name value missing");
+                }else{
+                    // check valid ?
+                }
+                if(record.getGLAccountBalance() == null){
+                    throw new IllegalArgumentException("Account Balance value missing");
+                }
+                if(record.getFinancialStatementCategory().equalsIgnoreCase("A")){
+                    totalAssets += record.getGLAccountBalance().doubleValue();
+                }else{
+                    totalOther += record.getGLAccountBalance().doubleValue();
+                }
+            }
+
+//            double difference = totalAssets - totalOther;
+//            if(difference > 2 || difference < -2){
+//                throw new IllegalArgumentException("Total Assets (" + totalAssets + ") not equal to Total Other (" + totalOther + "); difference can be between -1 and 1");
+//            }
+        }
+
+    }
+
+    private boolean isValidFinancialStatementCategory(String value){
+        return StringUtils.isNotEmpty(value) && (value.equalsIgnoreCase("A") || value.equalsIgnoreCase("L") ||
+                value.equalsIgnoreCase("E") || value.equalsIgnoreCase("X") || value.equalsIgnoreCase("I"));
+    }
+
+    @Override
+    public boolean deletePEGeneralLedgerFormDataRecordById(Long recordId) {
+        try {
+            PEGeneralLedgerFormData entity = this.peGeneralLedgerFormDataRepository.findOne(recordId);
+            if (entity != null) {
+                if(entity.getReport().getStatus().getCode().equalsIgnoreCase("SUBMITTED")){
+                    return false;
+                }
+                this.peGeneralLedgerFormDataRepository.delete(entity);
+                return true;
+            }
+        }catch (Exception ex){
+            logger.error("Error deleting PE General Ledger Record with id=" + recordId, ex);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean saveUpdatedTarragonInvestment(UpdateTarragonInvestmentDto updateDto) {
+        boolean saved = this.scheduleInvestmentService.updateScheduleInvestments(updateDto);
+        return saved;
+    }
+
+    @Override
+    public List<PreviousYearInputDataDto> getPreviousYearInputData(Long reportId) {
+        List<PreviousYearInputDataDto> records = new ArrayList<>();
+        List<PreviousYearInputData> entities = previousYearInputDataRepository.getEntitiesByReportId(reportId);
+        if(entities != null){
+            for(PreviousYearInputData entity: entities){
+                PreviousYearInputDataDto record = new PreviousYearInputDataDto();
+                if(entity.getChartOfAccounts() != null) {
+                    BaseDictionaryDto nicChartAccountsBaseDto = disassemble(entity.getChartOfAccounts());
+                    NICReportingChartOfAccountsDto nicChartAccountsDto = new NICReportingChartOfAccountsDto(nicChartAccountsBaseDto);
+                    if (entity.getChartOfAccounts().getNbChartOfAccounts() != null) {
+                        nicChartAccountsDto.setNBChartOfAccounts(disassemble(entity.getChartOfAccounts().getNbChartOfAccounts()));
+                    }
+                    record.setChartOfAccounts(nicChartAccountsDto);
+                }
+                record.setAccountBalance(entity.getAccountBalance());
+                record.setAccountBalanceKZT(entity.getAccountBalanceKZT());
+                if(entity.getReport() != null) {
+                    record.setReport(periodicReportConverter.disassemble(entity.getReport()));
+                }
+                records.add(record);
+            }
+        }
+        return records;
+    }
+
+    @Override
+    public List<PreviousYearInputDataDto> getPreviousYearInputDataFromPreviousMonth(Long reportId) {
+
+        List<PreviousYearInputDataDto> records = new ArrayList<>();
+
+        PeriodicReport currentReport = this.periodReportRepository.findOne(reportId);
+        if(currentReport != null) {
+            Date previousDate = DateUtils.getLastDayOfPreviousMonth(currentReport.getReportDate());
+            PeriodicReport previousReport = this.periodReportRepository.findByReportDate(previousDate);
+            List<PreviousYearInputData> entities = previousYearInputDataRepository.getEntitiesByReportId(previousReport.getId());
+            if (entities != null) {
+                for (PreviousYearInputData entity : entities) {
+                    PreviousYearInputDataDto record = new PreviousYearInputDataDto();
+                    if (entity.getChartOfAccounts() != null) {
+                        BaseDictionaryDto nicChartAccountsBaseDto = disassemble(entity.getChartOfAccounts());
+                        NICReportingChartOfAccountsDto nicChartAccountsDto = new NICReportingChartOfAccountsDto(nicChartAccountsBaseDto);
+                        if (entity.getChartOfAccounts().getNbChartOfAccounts() != null) {
+                            nicChartAccountsDto.setNBChartOfAccounts(disassemble(entity.getChartOfAccounts().getNbChartOfAccounts()));
+                        }
+                        record.setChartOfAccounts(nicChartAccountsDto);
+                    }
+                    record.setAccountBalance(entity.getAccountBalance());
+                    record.setAccountBalanceKZT(entity.getAccountBalanceKZT());
+                    if (entity.getReport() != null) {
+                        record.setReport(periodicReportConverter.disassemble(entity.getReport()));
+                    }
+                    records.add(record);
+                }
+            }
+        }
+
+        return records;
+    }
+
+    @Override
+    public boolean savePreviousYearInputData(List<PreviousYearInputDataDto> records, Long reportId) {
+        if(records != null && reportId != null){
+            try {
+
+                // TODO: check report status
+                PeriodicReport periodicReport = this.periodReportRepository.findOne(reportId);
+                if(periodicReport != null && periodicReport.getStatus().getCode().equalsIgnoreCase("SUBMITTED")){
+                    return false;
+                }
+
+                // TODO: rollback on error? Transactional?
+                this.previousYearInputDataRepository.deleteAllByReportId(reportId);
+
+                for (PreviousYearInputDataDto record : records) {
+                    PreviousYearInputData entity = new PreviousYearInputData();
+                    entity.setAccountBalance(record.getAccountBalance());
+                    entity.setAccountBalanceKZT(record.getAccountBalanceKZT());
+                    entity.setReport(new PeriodicReport(reportId));
+                    if (record.getChartOfAccounts() != null) {
+                        NICReportingChartOfAccounts nicReportingChartOfAccounts = this.nicReportingChartOfAccountsRepository.findByCode(record.getChartOfAccounts().getCode());
+                        if (nicReportingChartOfAccounts != null) {
+                            entity.setChartOfAccounts(nicReportingChartOfAccounts);
+                        } else {
+                            // TODO: throw error
+                        }
+                    } else {
+                        // TODO: throw error
+                    }
+
+                    this.previousYearInputDataRepository.save(entity);
+                }
+            }catch (Exception ex){
+
+                // TODO: rollback on error? Transactional?
+
+                logger.error("Error saving previous year input data for reportId=" + reportId, ex);
+                return false;
+            }
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean safeDeleteFile(Long fileId) {
+        try{
+            PeriodicReportFiles periodicReportFiles = this.periodicReportFilesRepository.getEntityByFileId(fileId);
+
+            if (periodicReportFiles != null) {
+
+                PeriodicReport periodicReport = periodicReportFiles.getPeriodicReport();
+
+                // TODO: check status
+                if(periodicReport == null || (periodicReport.getStatus() != null && periodicReport.getStatus().getCode().equalsIgnoreCase("SUBMITTED"))){
+
+                    // TODO: log error
+                    // TODO: error message
+
+                    return false;
+                }
+
+                boolean deleted = fileService.safeDelete(fileId);
+                if(!deleted){
+                    logger.error("Failed to delete(safe) reporting input file: reportId=" + periodicReport.getId() + ", file id=" + fileId);
+                }else{
+
+                    // delete table data
+                    deleted = deleteParsedFileData(periodicReport.getId(), periodicReportFiles.getFile().getType().getCode());
+                    if(deleted) {
+                        logger.info("Deleted(safe) reporting input file: reportId=" + periodicReport.getId() + ", file id=" + fileId);
+                    }else{
+
+                        // TODO: recover from error
+
+
+                        logger.error("Error deleting file: file id=" + fileId + ", report di=" + periodicReport.getId());
+                    }
+                }
+                return true;
+            }else{
+                logger.error("Failed to delete(safe) reporting input file: file id=" + fileId);
+            }
+        }catch (Exception ex){
+            logger.error("Failed to delete(safe) reporting input file: file id=" + fileId, ex);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean markReportAsFinal(Long reportId) {
+        try {
+            PeriodicReport report = this.periodReportRepository.findOne(reportId);
+
+            // TODO: which report can be made final
+
+            // save from 7
+            List<ConsolidatedKZTForm7RecordDto> records = getConsolidatedBalanceKZTForm7(reportId);
+            boolean saved = saveConsolidatedKZTForm7(records, reportId);
+            if(!saved){
+                // TODO: handle error
+
+                return false;
+            }
+
+            ReportStatus status = new ReportStatus();
+            status.setId(3);
+            report.setStatus(status);
+            this.periodReportRepository.save(report);
+            return true;
+        }catch (Exception ex){
+            logger.error("Error marking report as final: report id=" + reportId, ex);
+            return false;
+        }
+    }
+
+    private boolean saveConsolidatedKZTForm7(List<ConsolidatedKZTForm7RecordDto> records, Long reportId){
+        if(records != null){
+            try {
+                List<ConsolidatedReportKZTForm7> existingEntities = this.consolidatedReportKZTForm7Repository.getEntitiesByReportId(reportId);
+                this.consolidatedReportKZTForm7Repository.deleteAllByReportId(reportId);
+
+                List<ConsolidatedReportKZTForm7> entities = this.consolidatedKZTForm7Converter.assembleList(records, reportId);
+                this.consolidatedReportKZTForm7Repository.save(entities);
+            }catch (Exception ex){
+
+                // TODO: transactional !!
+
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public InputStream getExportFileStream(Long reportId, String type) {
+        if(reportId == null){
+            logger.error("Periodic Report export: report id not specified");
+            return null;
+        }
+        if(type == null){
+            logger.error("Periodic Report export: type not specified");
+            return null;
+        }
+
+        if(type.equalsIgnoreCase("CONS_BALANCE_USD")){
+            return getConsolidatedBalanceUSDReportInputStream(reportId);
+        }else if(type.equalsIgnoreCase("INCOME_EXP_USD")){
+            return getConsolidatedIncomeExpenseUSDReportInputStream(reportId);
+        }else if(type.equalsIgnoreCase("TOTAL_INCOME_USD")){
+            return getConsolidatedTotalIncomeUSDReportInputStream(reportId);
+        }
+
+        return null;
+    }
+
+    @Override
+    public List<GeneratedGeneralLedgerFormDto> getTarragonGLAddedRecordsPreviousMonth(Long reportId) {
+        List<GeneratedGeneralLedgerFormDto> records = new ArrayList<>();
+        PeriodicReport currentReport = this.periodReportRepository.findOne(reportId);
+        if(currentReport != null) {
+            Date previousDate = DateUtils.getLastDayOfPreviousMonth(currentReport.getReportDate());
+            PeriodicReport previousReport = this.periodReportRepository.findByReportDate(previousDate);
+            List<PEGeneralLedgerFormData> addedRecods =
+                    this.peGeneralLedgerFormDataRepository.getEntitiesByReportId(previousReport.getId(), new PageRequest(0, 1000, new Sort(Sort.Direction.ASC, "id")));
+            if (addedRecods != null) {
+                for (PEGeneralLedgerFormData entity : addedRecods) {
+                    PEGeneralLedgerFormDataDto addedRecordDto = this.peGeneralLedgerFormDataConverter.disassemble(entity);
+                    GeneratedGeneralLedgerFormDto recordDto = new GeneratedGeneralLedgerFormDto();
+                    recordDto.setAcronym(addedRecordDto.getTranche() == 1 ? "TARRAGON" : "TARRAGON B");
+                    if (addedRecordDto.getReport() != null) {
+                        recordDto.setBalanceDate(addedRecordDto.getReport().getReportDate());
+                    }
+                    recordDto.setFinancialStatementCategory(addedRecordDto.getFinancialStatementCategory());
+                    recordDto.setChartAccountsLongDescription(addedRecordDto.getTarragonNICChartOfAccountsName());
+                    recordDto.setNbAccountNumber(addedRecordDto.getNbAccountNumber());
+                    String entityName = addedRecordDto.getEntityName() != null ? " " + addedRecordDto.getEntityName() : "";
+                    recordDto.setNicAccountName(addedRecordDto.getNicAccountName() + entityName);
+                    recordDto.setSubscriptionRedemptionEntity(entityName);
+                    recordDto.setGLAccountBalance(addedRecordDto.getGLAccountBalance());
+                    recordDto.setAdded(true);
+                    recordDto.setAddedRecordId(entity.getId());
+                    records.add(recordDto);
+                }
+            }
+
+            setNICChartOfAccounts(records);
+        }
+        return records;
+    }
+
+    @Override
+    public List<ConsolidatedKZTForm8RecordDto> getConsolidatedBalanceKZTForm8(Long reportId) {
+
+        PeriodicReport report = this.periodReportRepository.findOne(reportId);
+        if(report == null){
+            logger.error("No report found for id=" + reportId);
+            return null;
+        }
+
+        Date rateDate = DateUtils.getFirstDayOfNextMonth(report.getReportDate());
+        // Find exchange rate
+        CurrencyRatesDto endCurrencyRatesDto = this.currencyRatesService.getRateForDateAndCurrency(rateDate, "USD");
+        if(endCurrencyRatesDto == null){
+            logger.error("No currency rate found for date '" + DateUtils.getDateFormatted(rateDate));
+
+            // TODO: return error message
+            return null;
+        }
+
+        Date previousRateDate = DateUtils.getFirstDayOfCurrentMonth(report.getReportDate());
+        CurrencyRatesDto startCurrencyRatesDto = this.currencyRatesService.getRateForDateAndCurrency(previousRateDate, "USD");
+        if(startCurrencyRatesDto == null){
+            logger.error("No currency rate found for date '" + DateUtils.getDateFormatted(rateDate));
+
+            // TODO: return error message
+            return null;
+        }
+
+
+        int index = 0;
+        List<ConsolidatedKZTForm8RecordDto> records = getConsolidatedBalanceKZTForm8LineHeaders();
+        for(int i = 0; i < records.size(); i++){
+            ConsolidatedKZTForm8RecordDto record = records.get(i);
+            if(record.getLineNumber() == 10){
+                index = i;
+                break;
+            }
+        }
+
+        Date previousDate = DateUtils.getLastDayOfPreviousMonth(report.getReportDate());
+        PeriodicReport previousReport = this.periodReportRepository.findByReportDate(previousDate);
+
+        List<SingularityNOALRecordDto> noalRecords = new ArrayList<>();
+        List<SingularityNOALRecordDto> currentNoalTrancheARecords = this.hfNOALService.get(report.getId(), 1).getNoalTrancheAList();
+        List<SingularityNOALRecordDto> currentNoalTrancheBRecords = this.hfNOALService.get(report.getId(), 2).getNoalTrancheBList();
+        List<SingularityNOALRecordDto> previousNoalTrancheARecords = this.hfNOALService.get(previousReport.getId(), 1).getNoalTrancheAList();
+        List<SingularityNOALRecordDto> previousNoalTrancheBRecords = this.hfNOALService.get(previousReport.getId(), 2).getNoalTrancheBList();
+        if(currentNoalTrancheARecords != null){
+            noalRecords.addAll(currentNoalTrancheARecords);
+        }
+        if(currentNoalTrancheBRecords != null){
+            noalRecords.addAll(currentNoalTrancheBRecords);
+        }
+        if(previousNoalTrancheARecords != null){
+            noalRecords.addAll(previousNoalTrancheARecords);
+        }
+        if(previousNoalTrancheBRecords != null){
+            noalRecords.addAll(previousNoalTrancheBRecords);
+        }
+
+        List<ConsolidatedBalanceFormRecordDto> USDFormRecords = getConsolidatedBalanceUSDForm(reportId);
+        ConsolidatedKZTForm8RecordDto totalRecord = new ConsolidatedKZTForm8RecordDto();
+        if(records != null && index > 0){
+            for(ConsolidatedBalanceFormRecordDto record: USDFormRecords){
+                if(record.getLineNumber() == 8 && record.getAccountNumber() != null){
+                    ConsolidatedKZTForm8RecordDto newRecord = new ConsolidatedKZTForm8RecordDto();
+                    newRecord.setLineNumber(9);
+                    newRecord.setName(record.getName());
+                    newRecord.setAccountNumber(record.getAccountNumber());
+                    newRecord.setDebtStartPeriod(convertByRate(record.getPreviousAccountBalance() != null ? record.getPreviousAccountBalance() : 0.0, startCurrencyRatesDto.getValue()));
+                    newRecord.setDebtEndPeriod(convertByRate(record.getCurrentAccountBalance() != null ? record.getCurrentAccountBalance() : 0.0, endCurrencyRatesDto.getValue()));
+                    if(newRecord.getDebtStartPeriod() != null && newRecord.getDebtEndPeriod() != null) {
+                        BigDecimal start = new BigDecimal(newRecord.getDebtStartPeriod());
+                        BigDecimal end = new BigDecimal(newRecord.getDebtEndPeriod());
+                        BigDecimal diff = end.subtract(start).setScale(2, RoundingMode.HALF_UP);
+                        newRecord.setDebtDifference(diff.doubleValue());
+                    }
+
+                    newRecord.setAgreementDescription("Investment Management Agreement of Singularity Ltd. from 14.07.2015");
+
+                    // TODO: Debt start date from NOAL
+                    Date date = null;
+                    for(SingularityNOALRecordDto noalRecord: noalRecords){
+                        if(newRecord.getAccountNumber() != null && newRecord.getAccountNumber().equalsIgnoreCase("1283.020")) {
+                            if (newRecord.getName().startsWith("Инвестиции к возврату")) {
+                                String name = newRecord.getName().substring(21).trim();
+                                if(StringUtils.isNotEmpty(name) && noalRecord.getName() != null && name.equalsIgnoreCase(noalRecord.getName())){
+                                    if(date == null || (noalRecord.getDate() != null && noalRecord.getDate().compareTo(date) < 0)){
+                                        date = noalRecord.getDate();
+                                    }
+                                }
+                            } else if (newRecord.getName().startsWith("Предварительная подписка")) {
+                                String name = newRecord.getName().substring(24).trim();
+                                if(StringUtils.isNotEmpty(name) && noalRecord.getName() != null && name.equalsIgnoreCase(noalRecord.getName())){
+                                    if(date == null || (noalRecord.getDate() != null && noalRecord.getDate().compareTo(date) < 0)){
+                                        date = noalRecord.getDate();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    newRecord.setDebtStartDate(date);
+                    newRecord.setStartPeriodBalance(newRecord.getDebtStartPeriod());
+                    newRecord.setEndPeriodBalance(newRecord.getDebtEndPeriod());
+
+                    records.add(index, newRecord);
+
+                    totalRecord.setDebtStartPeriod((totalRecord.getDebtStartPeriod() != null ? totalRecord.getDebtStartPeriod() : 0.0) + newRecord.getDebtStartPeriod());
+                    totalRecord.setDebtEndPeriod((totalRecord.getDebtEndPeriod() != null ? totalRecord.getDebtEndPeriod() : 0.0) + newRecord.getDebtEndPeriod());
+                    totalRecord.setDebtDifference((totalRecord.getDebtDifference() != null ? totalRecord.getDebtDifference() : 0.0) + newRecord.getDebtDifference());
+                    totalRecord.setStartPeriodBalance((totalRecord.getStartPeriodBalance() != null ? totalRecord.getStartPeriodBalance() : 0.0) + newRecord.getStartPeriodBalance());
+                    totalRecord.setEndPeriodBalance((totalRecord.getEndPeriodBalance() != null ? totalRecord.getEndPeriodBalance() : 0.0) + newRecord.getEndPeriodBalance());
+
+                    index ++;
+                }
+            }
+        }
+
+        // Set total sums
+        for(ConsolidatedKZTForm8RecordDto record: records){
+            if(record.getAccountNumber() == null && (record.getLineNumber() == 1 || record.getLineNumber() == 9 || record.getLineNumber() == 19)){
+                record.setDebtStartPeriod(totalRecord.getDebtStartPeriod());
+                record.setDebtEndPeriod(totalRecord.getDebtEndPeriod());
+                record.setDebtDifference(totalRecord.getDebtDifference());
+                record.setStartPeriodBalance(totalRecord.getStartPeriodBalance());
+                record.setEndPeriodBalance(totalRecord.getEndPeriodBalance());
+            }
+        }
+
+        return records;
+    }
+
+    @Override
+    public List<ConsolidatedKZTForm10RecordDto> getConsolidatedBalanceKZTForm10(Long reportId) {
+        PeriodicReport report = this.periodReportRepository.findOne(reportId);
+        if(report == null){
+            logger.error("No report found for id=" + reportId);
+            return null;
+        }
+
+        Date rateDate = DateUtils.getFirstDayOfNextMonth(report.getReportDate());
+        // Find exchange rate
+        CurrencyRatesDto endCurrencyRatesDto = this.currencyRatesService.getRateForDateAndCurrency(rateDate, "USD");
+        if(endCurrencyRatesDto == null){
+            logger.error("No currency rate found for date '" + DateUtils.getDateFormatted(rateDate));
+
+            // TODO: return error message
+            return null;
+        }
+
+        Date previousDate = DateUtils.getLastDayOfPreviousMonth(report.getReportDate());
+        PeriodicReport previousReport = this.periodReportRepository.findByReportDate(previousDate);
+        Date previousRateDate = DateUtils.getFirstDayOfNextMonth(previousReport.getReportDate());
+        // Find exchange rate
+        CurrencyRatesDto startCurrencyRatesDto = this.currencyRatesService.getRateForDateAndCurrency(previousRateDate, "USD");
+        if(startCurrencyRatesDto == null){
+            logger.error("No currency rate found for date '" + DateUtils.getDateFormatted(rateDate));
+
+            // TODO: return error message
+            return null;
+        }
+
+        int indexLineToAdd2 = 0;
+        int indexLineToAdd8 = 0;
+        Map<String,Integer> addedRecordNames = new HashMap<>();
+        List<ConsolidatedKZTForm10RecordDto> records = getConsolidatedBalanceKZTForm10LineHeaders();
+        for(int i = 0; i < records.size(); i++){
+            ConsolidatedKZTForm10RecordDto record = records.get(i);
+            if(record.getLineNumber() == 3){
+                indexLineToAdd2 = i;
+            }else if(record.getLineNumber() == 9){
+                indexLineToAdd8 = i;
+            }
+        }
+
+        List<ConsolidatedBalanceFormRecordDto> previousUSDFormRecords = getConsolidatedBalanceUSDForm(previousReport.getId());
+
+        String nameNICKMFMain = "Организационные расходы NICK MF";
+        String nameNICKMFOther = "Начисленная амортизация - Организационные расходы NICK MF";
+        int indexNICKMFMain = 0;
+
+        String nameSingularityMain = "Организационные расходы Singularity";
+        String nameSingularityOther = "Начисленная амортизация - Организационные расходы Singularity";
+        int indexSingularityMain = 0;
+        Double total1623StartPeriod = 0.0;
+        BigDecimal total2923StartPeriod = new BigDecimal("0");
+        if(records != null && (indexLineToAdd2 > 0 || indexLineToAdd8 > 0)){
+            for(ConsolidatedBalanceFormRecordDto record: previousUSDFormRecords){
+                if(record.getAccountNumber() != null && (record.getAccountNumber().equalsIgnoreCase("1623.010") || record.getAccountNumber().equalsIgnoreCase("2923.010"))){
+                    ConsolidatedKZTForm10RecordDto newRecord = new ConsolidatedKZTForm10RecordDto();
+                    newRecord.setAccountNumber(record.getAccountNumber());
+                    newRecord.setName(record.getName());
+                    newRecord.setLineNumber(record.getLineNumber());
+
+                    newRecord.setStartPeriodAssets(convertByRate(record.getCurrentAccountBalance() != null ? record.getCurrentAccountBalance() : 0.0, startCurrencyRatesDto.getValue()));
+
+                    if(record.getAccountNumber().equalsIgnoreCase("1623.010")) {
+                        records.add(indexLineToAdd2, newRecord);
+                        addedRecordNames.put(newRecord.getName(), indexLineToAdd2);
+
+                        indexLineToAdd2++;
+                        indexLineToAdd8++;
+                        total1623StartPeriod += convertByRate(record.getCurrentAccountBalance() != null ? record.getCurrentAccountBalance() : 0, startCurrencyRatesDto.getValue());
+                    }else if(record.getAccountNumber().equalsIgnoreCase("2923.010")) {
+                        if(record.getName().equalsIgnoreCase(nameNICKMFOther) || record.getName().equalsIgnoreCase(nameNICKMFMain)){
+                            if(indexNICKMFMain == 0){
+                                newRecord.setName(nameNICKMFMain);
+                                records.add(indexLineToAdd8, newRecord);
+                                addedRecordNames.put(newRecord.getName(), indexLineToAdd8);
+
+                                indexNICKMFMain = indexLineToAdd8;
+
+                                indexLineToAdd2++;
+                                indexLineToAdd8++;
+                            }else{
+                                ConsolidatedKZTForm10RecordDto recordNICKMFMain = records.get(indexNICKMFMain);
+                                double value = convertByRate(record.getCurrentAccountBalance() != null ? record.getCurrentAccountBalance() : 0.0, startCurrencyRatesDto.getValue());
+                                recordNICKMFMain.setStartPeriodAssets((recordNICKMFMain.getStartPeriodAssets() != null ? recordNICKMFMain.getStartPeriodAssets() : 0) + value);
+                            }
+                        }else if(record.getName().equalsIgnoreCase(nameSingularityOther) || record.getName().equalsIgnoreCase(nameSingularityMain)){
+                            if(indexSingularityMain == 0){
+                                newRecord.setName(nameSingularityMain);
+                                records.add(indexLineToAdd8, newRecord);
+                                addedRecordNames.put(newRecord.getName(), indexLineToAdd8);
+
+                                indexSingularityMain = indexLineToAdd8;
+                                indexLineToAdd2++;
+                                indexLineToAdd8++;
+                            }else{
+                                ConsolidatedKZTForm10RecordDto recordSingularityMain = records.get(indexSingularityMain);
+                                double value = convertByRate(record.getCurrentAccountBalance() != null ? record.getCurrentAccountBalance() : 0.0, startCurrencyRatesDto.getValue());
+                                recordSingularityMain.setStartPeriodAssets((recordSingularityMain.getStartPeriodAssets() != null ? recordSingularityMain.getStartPeriodAssets() : 0) + value);
+                            }
+                        }else{
+                            // TODO: error?
+                        }
+
+                        total2923StartPeriod = total2923StartPeriod.add(new BigDecimal(convertByRate(record.getCurrentAccountBalance() != null ? record.getCurrentAccountBalance() : 0, startCurrencyRatesDto.getValue())));
+                    }
+                }
+            }
+        }
+
+        indexNICKMFMain = 0;
+        indexSingularityMain = 0;
+        List<ConsolidatedBalanceFormRecordDto> USDFormRecords = getConsolidatedBalanceUSDForm(report.getId());
+        Double total1623EndPeriod = 0.0;
+        Double total2923EndPeriod = 0.0;
+        if(records != null && (indexLineToAdd2 > 0 || indexLineToAdd8 > 0)){
+            for(ConsolidatedBalanceFormRecordDto record: USDFormRecords){
+                if(record.getAccountNumber() != null && (record.getAccountNumber().equalsIgnoreCase("1623.010") || record.getAccountNumber().equalsIgnoreCase("2923.010"))){
+                    if(record.getAccountNumber().equalsIgnoreCase("1623.010")) {
+                        if(addedRecordNames.get(record.getName()) != null){
+                            ConsolidatedKZTForm10RecordDto existingRecord = records.get(addedRecordNames.get(record.getName()));
+                            existingRecord.setEndPeriodAssets(convertByRate(record.getCurrentAccountBalance() != null ? record.getCurrentAccountBalance() : 0.0, endCurrencyRatesDto.getValue()));
+
+                            double endPeriodAssets = existingRecord.getEndPeriodAssets() != null ? existingRecord.getEndPeriodAssets() : 0.0;
+                            double startPeriodAssets = existingRecord.getStartPeriodAssets() != null ? existingRecord.getStartPeriodAssets() : 0.0;
+                            existingRecord.setTurnoverOther( endPeriodAssets - startPeriodAssets);
+                        }else {
+                            ConsolidatedKZTForm10RecordDto newRecord = new ConsolidatedKZTForm10RecordDto();
+                            newRecord.setAccountNumber(record.getAccountNumber());
+                            newRecord.setName(record.getName());
+                            newRecord.setLineNumber(record.getLineNumber());
+
+                            newRecord.setEndPeriodAssets(convertByRate(record.getCurrentAccountBalance() != null ? record.getCurrentAccountBalance() : 0.0, endCurrencyRatesDto.getValue()));
+
+                            double endPeriodAssets = newRecord.getEndPeriodAssets() != null ? newRecord.getEndPeriodAssets() : 0.0;
+                            double startPeriodAssets = newRecord.getStartPeriodAssets() != null ? newRecord.getStartPeriodAssets() : 0.0;
+                            newRecord.setTurnoverOther( endPeriodAssets - startPeriodAssets);
+
+                            records.add(indexLineToAdd2, newRecord);
+
+                            indexLineToAdd2++;
+                            indexLineToAdd8++;
+                        }
+                        total1623EndPeriod += convertByRate(record.getCurrentAccountBalance() != null ? record.getCurrentAccountBalance() : 0, endCurrencyRatesDto.getValue());
+                    }else if(record.getAccountNumber().equalsIgnoreCase("2923.010")) {
+                        String name = null;
+                        if(record.getName().equalsIgnoreCase(nameNICKMFMain) || record.getName().equalsIgnoreCase(nameNICKMFOther)){
+                            name = nameNICKMFMain;
+                        }else if(record.getName().equalsIgnoreCase(nameSingularityMain) || record.getName().equalsIgnoreCase(nameSingularityOther)){
+                            name = nameSingularityMain;
+                        }else{
+
+                            // TODO: log error
+                            return null;
+                        }
+
+                        if(addedRecordNames.get(name) != null){
+                            ConsolidatedKZTForm10RecordDto existingRecord = records.get(addedRecordNames.get(name));
+
+                            double value = convertByRate(record.getCurrentAccountBalance() != null ? record.getCurrentAccountBalance() : 0.0, endCurrencyRatesDto.getValue());
+                            existingRecord.setEndPeriodAssets((existingRecord.getEndPeriodAssets() != null ? existingRecord.getEndPeriodAssets() : 0) + value);
+                            //existingRecord.setEndPeriodAssets(convertByRate(record.getCurrentAccountBalance() != null ? record.getCurrentAccountBalance() : 0.0, endCurrencyRatesDto.getValue()));
+
+                            double endPeriodAssets = existingRecord.getEndPeriodAssets() != null ? existingRecord.getEndPeriodAssets() : 0.0;
+                            double startPeriodAssets = existingRecord.getStartPeriodAssets() != null ? existingRecord.getStartPeriodAssets() : 0.0;
+                            existingRecord.setTurnoverOther( endPeriodAssets - startPeriodAssets);
+                        }else {
+                            ConsolidatedKZTForm10RecordDto newRecord = new ConsolidatedKZTForm10RecordDto();
+                            newRecord.setAccountNumber(record.getAccountNumber());
+                            newRecord.setName(record.getName());
+                            newRecord.setLineNumber(record.getLineNumber());
+
+                            newRecord.setEndPeriodAssets(convertByRate(record.getCurrentAccountBalance() != null ? record.getCurrentAccountBalance() : 0.0, endCurrencyRatesDto.getValue()));
+                            double endPeriodAssets = newRecord.getEndPeriodAssets() != null ? newRecord.getEndPeriodAssets() : 0.0;
+                            double startPeriodAssets = newRecord.getStartPeriodAssets() != null ? newRecord.getStartPeriodAssets() : 0.0;
+                            newRecord.setTurnoverOther( endPeriodAssets - startPeriodAssets);
+
+                            records.add(indexLineToAdd8, newRecord);
+
+                            indexLineToAdd2++;
+                            indexLineToAdd8++;
+                        }
+                        total2923EndPeriod += convertByRate(record.getCurrentAccountBalance() != null ? record.getCurrentAccountBalance() : 0, endCurrencyRatesDto.getValue());
+                    }
+                }
+            }
+        }
+
+        // Set total sums
+        for(ConsolidatedKZTForm10RecordDto record: records){
+            if(record.getAccountNumber() == null && (record.getLineNumber() == 1)){
+                record.setStartPeriodAssets(total1623StartPeriod);
+                record.setEndPeriodAssets(total1623EndPeriod);
+            }else if(record.getAccountNumber() == null && (record.getLineNumber() == 2)){
+                record.setStartPeriodAssets(total1623StartPeriod);
+                record.setEndPeriodAssets(total1623EndPeriod);
+            }else if(record.getAccountNumber() == null && (record.getLineNumber() == 8)){
+                record.setStartPeriodAssets(total2923StartPeriod.doubleValue());
+                record.setEndPeriodAssets(total2923EndPeriod);
+            }else if(record.getAccountNumber() == null && (record.getLineNumber() == 4)){
+                record.setStartPeriodAssets(total2923StartPeriod.doubleValue());
+                record.setEndPeriodAssets(total2923EndPeriod);
+            }else if(record.getAccountNumber() == null && (record.getLineNumber() == 11)){
+                record.setStartPeriodAssets(total1623StartPeriod + total2923StartPeriod.doubleValue());
+                record.setEndPeriodAssets(total1623EndPeriod + total2923EndPeriod);
+            }
+
+            double endPeriodAssets = record.getEndPeriodAssets() != null ? record.getEndPeriodAssets() : 0.0;
+            double startPeriodAssets = record.getStartPeriodAssets() != null ? record.getStartPeriodAssets() : 0.0;
+            record.setTurnoverOther(endPeriodAssets - startPeriodAssets);
+
+            record.setStartPeriodBalance(record.getStartPeriodAssets());
+            record.setEndPeriodBalance(record.getEndPeriodAssets());
+
+        }
+
+        return records;
+    }
+
+    @Override
+    public List<ConsolidatedKZTForm14RecordDto> getConsolidatedBalanceKZTForm14(Long reportId) {
+
+        PeriodicReport report = this.periodReportRepository.findOne(reportId);
+        if(report == null){
+            logger.error("No report found for id=" + reportId);
+            return null;
+        }
+
+        Date rateDate = DateUtils.getFirstDayOfNextMonth(report.getReportDate());
+        // Find exchange rate
+        CurrencyRatesDto endCurrencyRatesDto = this.currencyRatesService.getRateForDateAndCurrency(rateDate, "USD");
+        if(endCurrencyRatesDto == null){
+            logger.error("No currency rate found for date '" + DateUtils.getDateFormatted(rateDate));
+
+            // TODO: return error message
+            return null;
+        }
+
+        Date previousRateDate = DateUtils.getFirstDayOfCurrentMonth(report.getReportDate());
+        CurrencyRatesDto startCurrencyRatesDto = this.currencyRatesService.getRateForDateAndCurrency(previousRateDate, "USD");
+        if(startCurrencyRatesDto == null){
+            logger.error("No currency rate found for date '" + DateUtils.getDateFormatted(rateDate));
+
+            // TODO: return error message
+            return null;
+        }
+
+
+        int index = 0;
+        List<ConsolidatedKZTForm14RecordDto> records = getConsolidatedBalanceKZTForm14LineHeaders();
+        for(int i = 0; i < records.size(); i++){
+            ConsolidatedKZTForm14RecordDto record = records.get(i);
+            if(record.getLineNumber() == 9){
+                index = i;
+                break;
+            }
+        }
+
+        Date previousDate = DateUtils.getLastDayOfPreviousMonth(report.getReportDate());
+        PeriodicReport previousReport = this.periodReportRepository.findByReportDate(previousDate);
+
+        Map<String, Integer> addedRecords = new HashedMap();
+        ConsolidatedKZTForm14RecordDto totalRecord = new ConsolidatedKZTForm14RecordDto();
+        // Previous report date
+        List<ConsolidatedBalanceFormRecordDto> previousUSDFormRecords = getConsolidatedBalanceUSDForm(previousReport.getId());
+        if(records != null && index > 0){
+            for(ConsolidatedBalanceFormRecordDto record: previousUSDFormRecords){
+                if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase("3393.020")){
+                    ConsolidatedKZTForm14RecordDto newRecord = new ConsolidatedKZTForm14RecordDto();
+                    newRecord.setLineNumber(8);
+                    newRecord.setName(record.getName());
+                    newRecord.setAccountNumber(record.getAccountNumber());
+                    newRecord.setDebtStartPeriod(convertByRate(record.getCurrentAccountBalance() != null ? record.getCurrentAccountBalance() : 0.0, startCurrencyRatesDto.getValue()));
+                    newRecord.setDebtDifference(newRecord.getDebtStartPeriod());
+
+                    newRecord.setAgreementDescription("Investment Management Agreement of Singularity Ltd. from 14.07.2015");
+                    newRecord.setDebtStartDate(DateUtils.getLastDayOfPreviousMonth(report.getReportDate()));
+
+                    records.add(index, newRecord);
+                    addedRecords.put(newRecord.getName(), index);
+
+                    index ++;
+
+                    // total values
+                    double debtStartPeriodValue = totalRecord.getDebtStartPeriod() != null ? totalRecord.getDebtStartPeriod() : 0;
+                    totalRecord.setDebtStartPeriod(debtStartPeriodValue + newRecord.getDebtStartPeriod());
+
+//                    double debtDiffValue = totalRecord.getDebtDifference() != null ? totalRecord.getDebtDifference() : 0;
+//                    totalRecord.setDebtDifference(debtDiffValue + newRecord.getDebtDifference());
+                }
+            }
+        }
+
+        List<ConsolidatedBalanceFormRecordDto> USDFormRecords = getConsolidatedBalanceUSDForm(report.getId());
+        if(records != null && index > 0){
+            for(ConsolidatedBalanceFormRecordDto record: USDFormRecords){
+                if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase("3393.020")){
+                    if(addedRecords.get(record.getName()) != null){
+                        ConsolidatedKZTForm14RecordDto addedRecord = records.get(addedRecords.get(record.getName()));
+                        addedRecord.setDebtEndPeriod(convertByRate(record.getCurrentAccountBalance() != null ? record.getCurrentAccountBalance() : 0.0, endCurrencyRatesDto.getValue()));
+
+                        double debtSEndPeriodValue = totalRecord.getDebtEndPeriod() != null ? totalRecord.getDebtEndPeriod() : 0;
+                        totalRecord.setDebtEndPeriod(debtSEndPeriodValue + addedRecord.getDebtEndPeriod());
+
+                        if(addedRecord.getDebtStartPeriod() != null && addedRecord.getDebtEndPeriod() != null) {
+                            BigDecimal start = new BigDecimal(addedRecord.getDebtStartPeriod());
+                            BigDecimal end = new BigDecimal(addedRecord.getDebtEndPeriod());
+                            BigDecimal diff = end.subtract(start).setScale(2, RoundingMode.HALF_UP);
+                            addedRecord.setDebtDifference(diff.doubleValue());
+
+                            double debtDiffValue = totalRecord.getDebtDifference() != null ? totalRecord.getDebtDifference() : 0;
+                            totalRecord.setDebtDifference(debtDiffValue + addedRecord.getDebtDifference());
+                        }
+
+                    }else{
+                        ConsolidatedKZTForm14RecordDto newRecord = new ConsolidatedKZTForm14RecordDto();
+                        newRecord.setLineNumber(8);
+                        newRecord.setName(record.getName());
+                        newRecord.setAccountNumber(record.getAccountNumber());
+                        newRecord.setDebtStartPeriod(convertByRate(record.getCurrentAccountBalance() != null ? record.getCurrentAccountBalance() : 0.0, startCurrencyRatesDto.getValue()));
+                        newRecord.setDebtDifference(newRecord.getDebtStartPeriod());
+
+                        newRecord.setAgreementDescription("Investment Management Agreement of Singularity Ltd. from 14.07.2015");
+                        newRecord.setDebtStartDate(DateUtils.getLastDayOfPreviousMonth(report.getReportDate()));
+
+                        records.add(index, newRecord);
+
+                        index ++;
+
+                        // total values
+                        double debtStartPeriodValue = totalRecord.getDebtStartPeriod() != null ? totalRecord.getDebtStartPeriod() : 0;
+                        totalRecord.setDebtStartPeriod(debtStartPeriodValue + newRecord.getDebtEndPeriod());
+
+                        double debtDiffValue = totalRecord.getDebtDifference() != null ? totalRecord.getDebtDifference() : 0;
+                        totalRecord.setDebtDifference(debtDiffValue + newRecord.getDebtDifference());
+
+                    }
+
+
+                }
+            }
+        }
+
+        // Set total sums
+        for(ConsolidatedKZTForm14RecordDto record: records){
+            if(record.getAccountNumber() == null && (record.getLineNumber() == 1 || record.getLineNumber() == 8 || record.getLineNumber() == 17)){
+                record.setDebtStartPeriod(totalRecord.getDebtStartPeriod());
+                record.setDebtEndPeriod(totalRecord.getDebtEndPeriod());
+                record.setDebtDifference(totalRecord.getDebtDifference());
+            }
+        }
+
+        return records;
+    }
+
+    @Override
+    public List<ConsolidatedKZTForm13RecordDto> getConsolidatedBalanceKZTForm13(Long reportId) {
+        PeriodicReport report = this.periodReportRepository.findOne(reportId);
+        if(report == null){
+            logger.error("No report found for id=" + reportId);
+            return null;
+        }
+
+        Date rateDate = DateUtils.getFirstDayOfNextMonth(report.getReportDate());
+        // Find exchange rate
+        CurrencyRatesDto endCurrencyRatesDto = this.currencyRatesService.getRateForDateAndCurrency(rateDate, "USD");
+        if(endCurrencyRatesDto == null){
+            logger.error("No currency rate found for date '" + DateUtils.getDateFormatted(rateDate));
+
+            // TODO: return error message
+            return null;
+        }
+
+        Date previousRateDate = DateUtils.getFirstDayOfCurrentMonth(report.getReportDate());
+        CurrencyRatesDto startCurrencyRatesDto = this.currencyRatesService.getRateForDateAndCurrency(previousRateDate, "USD");
+        if(startCurrencyRatesDto == null){
+            logger.error("No currency rate found for date '" + DateUtils.getDateFormatted(rateDate));
+
+            // TODO: return error message
+            return null;
+        }
+
+
+        int index = 0;
+        List<ConsolidatedKZTForm13RecordDto> records = getConsolidatedBalanceKZTForm13LineHeaders();
+        for(int i = 0; i < records.size(); i++){
+            ConsolidatedKZTForm13RecordDto record = records.get(i);
+            if(record.getLineNumber() == 3){
+                index = i;
+                break;
+            }
+        }
+
+        ConsolidatedKZTForm13RecordDto newRecord = new ConsolidatedKZTForm13RecordDto();
+        newRecord.setAccountNumber("3013.010");
+        newRecord.setName("Банковские займы полученные");
+        newRecord.setLineNumber(2);
+        newRecord.setEntityName("Bank of Monreal");
+        Date startPeriod = DateUtils.getLastDayOfPreviousMonth(report.getReportDate());
+        newRecord.setStartPeriod(startPeriod);
+
+        String endPeriodDateText = "16.09." + DateUtils.getCurrentYear();
+        Date endPeriodDate = DateUtils.getDate(endPeriodDateText);
+        if(report.getReportDate().compareTo(endPeriodDate) < 0) {
+            newRecord.setEndPeriod(endPeriodDate);
+        }else{
+            newRecord.setEndPeriod(DateUtils.getDate("16.09." + (DateUtils.getCurrentYear() + 1)));
+        }
+        newRecord.setInterestRate("4%");
+        newRecord.setInterestPaymentCount(1);
+
+        boolean exists = false;
+        List<ConsolidatedBalanceFormRecordDto> currentUSDFormRecords = getConsolidatedBalanceUSDForm(report.getId());
+        if(records != null && index > 0){
+            for(ConsolidatedBalanceFormRecordDto record: currentUSDFormRecords){
+                if(record.getAccountNumber() != null && (record.getAccountNumber().equalsIgnoreCase("3013.010")) && newRecord.getName().equalsIgnoreCase(record.getName())){
+
+                    double debtStartPeriod = newRecord.getDebtStartPeriod() != null ? newRecord.getDebtStartPeriod() : 0;
+                    newRecord.setDebtStartPeriod(debtStartPeriod + convertByRate(record.getPreviousAccountBalance(), startCurrencyRatesDto.getValue()));
+
+                    double debtEndPeriod = newRecord.getDebtEndPeriod() != null ? newRecord.getDebtEndPeriod() : 0;
+                    newRecord.setDebtEndPeriod(debtEndPeriod + convertByRate(record.getCurrentAccountBalance(), endCurrencyRatesDto.getValue()));
+
+                    exists = true;
+
+                }else if(record.getAccountNumber() != null && (record.getAccountNumber().equalsIgnoreCase("3383.010"))){
+
+                    double interestStartPeriod = newRecord.getInterestStartPeriod() != null ? newRecord.getInterestStartPeriod() : 0;
+                    newRecord.setInterestStartPeriod(interestStartPeriod + convertByRate(record.getPreviousAccountBalance(), startCurrencyRatesDto.getValue()));
+
+                    double interestEndPeriod = newRecord.getInterestEndPeriod() != null ? newRecord.getInterestEndPeriod() : 0;
+                    newRecord.setInterestEndPeriod(interestEndPeriod + convertByRate(record.getCurrentAccountBalance(), endCurrencyRatesDto.getValue()));
+
+                    exists = true;
+
+                }
+
+            }
+        }
+
+        if(exists) {
+            //set totals
+            double totalStartPeriod = newRecord.getDebtStartPeriod() != null ? newRecord.getDebtStartPeriod() : 0;
+            totalStartPeriod += newRecord.getInterestStartPeriod() != null ? newRecord.getInterestStartPeriod() : 0;
+            newRecord.setTotalStartPeriod(totalStartPeriod);
+
+            double totalEndPeriod = newRecord.getDebtEndPeriod() != null ? newRecord.getDebtEndPeriod() : 0;
+            totalEndPeriod += newRecord.getInterestEndPeriod() != null ? newRecord.getInterestEndPeriod() : 0;
+            newRecord.setTotalEndPeriod(totalEndPeriod);
+
+            // set turnovers
+            double interestTurnover = newRecord.getInterestEndPeriod() != null ? newRecord.getInterestEndPeriod() : 0;
+            interestTurnover -= newRecord.getInterestStartPeriod() != null ? newRecord.getInterestStartPeriod() : 0;
+            newRecord.setInterestTurnover(interestTurnover);
+
+            double debtTurnover = newRecord.getDebtEndPeriod() != null ? newRecord.getDebtEndPeriod() : 0;
+            debtTurnover -= newRecord.getDebtStartPeriod() != null ? newRecord.getDebtStartPeriod() : 0;
+            newRecord.setInterestTurnover(debtTurnover);
+
+            records.add(index, newRecord);
+        }
+
+        return records;
+    }
+
+    @Override
+    public List<ConsolidatedKZTForm7RecordDto> getConsolidatedBalanceKZTForm7(Long reportId) {
+
+        PeriodicReport report = this.periodReportRepository.findOne(reportId);
+        if(report == null){
+            logger.error("No report found for id=" + reportId);
+            return null;
+        }
+        Date previousDate = DateUtils.getLastDayOfPreviousMonth(report.getReportDate());
+        PeriodicReport previousReport = this.periodReportRepository.findByReportDate(previousDate);
+
+        Map<String, ConsolidatedKZTForm7RecordDto> previousRecordsMap = new HashedMap();
+        List<ConsolidatedKZTForm7RecordDto> previousPeriodRecords = getConsolidatedBalanceKZTForm7Saved(previousReport.getId());
+        if(previousPeriodRecords != null && !previousPeriodRecords.isEmpty()){
+            for(ConsolidatedKZTForm7RecordDto record: previousPeriodRecords){
+                if(StringUtils.isEmpty(record.getAccountNumber())){
+                    // headers
+                    previousRecordsMap.put(record.getLineNumber() + "", record);
+                }else if(StringUtils.isNotEmpty(record.getEntityName())) {
+                    // funds
+                    previousRecordsMap.put(record.getEntityName(), record);
+                }
+            }
+        }else{
+            // TODO: handle error
+            // TODO: No previous KZT Form 7 data
+
+            return null;
+        }
+
+        List<ConsolidatedKZTForm7RecordDto> currentPeriodRecords = getConsolidatedBalanceKZTForm7CurrentPeriod(reportId);
+        ConsolidatedKZTForm7RecordDto totalRecord = new ConsolidatedKZTForm7RecordDto();
+        ConsolidatedKZTForm7RecordDto totalRecordPE = new ConsolidatedKZTForm7RecordDto();
+        ConsolidatedKZTForm7RecordDto totalRecordHF = new ConsolidatedKZTForm7RecordDto();
+        for(ConsolidatedKZTForm7RecordDto record: currentPeriodRecords){
+            if(record.getLineNumber() != 7 && record.getLineNumber() != 9 && record.getLineNumber() != 12){
+                continue;
+            }
+            ConsolidatedKZTForm7RecordDto previousRecord = StringUtils.isNotEmpty(record.getEntityName()) ? previousRecordsMap.get(record.getEntityName()) :
+                    previousRecordsMap.get(record.getLineNumber() + "");
+
+            // startPeriod
+            if(previousRecord != null){
+                record.setDebtStartPeriod(previousRecord.getDebtEndPeriod());
+                record.setFairValueAdjustmentsStartPeriod(previousRecord.getFairValueAdjustmentsEndPeriod());
+                record.setTotalStartPeriod(previousRecord.getTotalEndPeriod());
+            }
+
+            if(record.getAccountNumber() == null){
+                continue;
+            }
+
+            if(record.isBecameZero()){
+                record.setDebtTurnover(record.getDebtStartPeriod() != null ? 0 - record.getDebtStartPeriod().doubleValue() : null);
+            }
+
+            // debtEndPeriod
+            double debtEndPeriod = record.getDebtStartPeriod() != null ? record.getDebtStartPeriod() : 0;
+            debtEndPeriod += record.getDebtTurnover() != null ? record.getDebtTurnover() : 0;
+            record.setDebtEndPeriod(debtEndPeriod);
+
+            // fairValueAdjustmentsTurnover
+            double fairValueAdjustmentsTurnover = record.getTotalEndPeriod() != null ? record.getTotalEndPeriod() : 0;
+            fairValueAdjustmentsTurnover -= record.getDebtEndPeriod() != null ? record.getDebtEndPeriod() : 0;
+            fairValueAdjustmentsTurnover -= record.getFairValueAdjustmentsStartPeriod() != null ? record.getFairValueAdjustmentsStartPeriod() : 0;
+            if(fairValueAdjustmentsTurnover >=0 ){
+                record.setFairValueAdjustmentsTurnoverPositive(fairValueAdjustmentsTurnover);
+            }else{
+                record.setFairValueAdjustmentsTurnoverNegative(fairValueAdjustmentsTurnover);
+            }
+
+            // setFairValueAdjustmentsEndPeriod
+            double fairValueAdjustmentsEndPeriod = record.getFairValueAdjustmentsStartPeriod() != null ? record.getFairValueAdjustmentsStartPeriod() : 0;
+            fairValueAdjustmentsEndPeriod += fairValueAdjustmentsTurnover;
+            record.setFairValueAdjustmentsEndPeriod(fairValueAdjustmentsEndPeriod);
+
+            // set total values
+            addValuesKZTForm7(totalRecord, record);
+
+            if(record.getOtherName().equalsIgnoreCase("SINGULAR")) {
+                addValuesKZTForm7(totalRecordHF, record);
+            }else {
+                addValuesKZTForm7(totalRecordPE, record);
+            }
+
+        }
+
+        for(ConsolidatedKZTForm7RecordDto record: currentPeriodRecords){
+            if(record.getAccountNumber() == null && (record.getLineNumber() == 7 || record.getLineNumber() == 9 || record.getLineNumber() == 12)){
+                record.setDebtTurnover(totalRecord.getDebtTurnover());
+                record.setFairValueAdjustmentsTurnoverPositive(totalRecord.getFairValueAdjustmentsTurnoverPositive());
+                record.setFairValueAdjustmentsTurnoverNegative(totalRecord.getFairValueAdjustmentsTurnoverNegative());
+                record.setDebtEndPeriod(totalRecord.getDebtEndPeriod());
+                record.setFairValueAdjustmentsEndPeriod(totalRecord.getFairValueAdjustmentsEndPeriod());
+                record.setTotalEndPeriod(totalRecord.getTotalEndPeriod());
+            }
+        }
+
+        return currentPeriodRecords;
+    }
+
+    @Override
+    public List<ConsolidatedBalanceFormRecordDto> getConsolidatedBalanceKZTForm1(Long reportId) {
+        PeriodicReport currentReport = this.periodReportRepository.findOne(reportId);
+        if(currentReport == null){
+            logger.error("No report found for id=" + reportId);
+            return null;
+        }
+
+        Date rateDate = DateUtils.getFirstDayOfNextMonth(currentReport.getReportDate());
+        // Find exchange rate
+        CurrencyRatesDto endCurrencyRatesDto = this.currencyRatesService.getRateForDateAndCurrency(rateDate, "USD");
+        if(endCurrencyRatesDto == null || endCurrencyRatesDto.getValue() == null){
+            logger.error("No currency rate found for date '" + DateUtils.getDateFormatted(rateDate));
+
+            // TODO: return error message
+            return null;
+        }
+
+        Date averageRateDate = DateUtils.getLastDayOfCurrentMonth(currentReport.getReportDate());
+        Double averageRate = this.currencyRatesService.getAverageRateForDateAndCurrency(averageRateDate, "USD");
+        if(averageRate == null){
+            logger.error("No average currency rate found for date '" + DateUtils.getDateFormatted(averageRateDate));
+
+            // TODO: return error message
+            return null;
+        }
+
+        Map<Integer, Double> sums = new HashedMap();
+        for(int i = 1; i <= 52; i++){
+            sums.put(i, 0.0);
+        }
+        // Add line number headers
+        List<ConsolidatedBalanceFormRecordDto> records = getConsolidatedBalanceKZTForm1LineHeaders();
+
+        List<ConsolidatedBalanceFormRecordDto> recordsUSD = getConsolidatedBalanceUSDForm(reportId);
+
+        String record1033_010Name = "Деньги на текущих счетах";
+        String record1033_010AccountNumber = "1033.010";
+        double record1033_010 = 0;
+
+        String record5440_010Name = "Резерв по переоценке финансовых инвестиций, имеющихся в наличии для продажи";
+        String record5440_010ReportName = "Резерв на переоценку финансовых инвестиций, имеющихся в наличии для продажи";
+        String record5440_010AccountNumber = "5440.010";
+        double record5440_010 = 0;
+        if(recordsUSD != null){
+            for(ConsolidatedBalanceFormRecordDto record: recordsUSD){
+                if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(record1033_010AccountNumber) &&
+                        record.getName().equalsIgnoreCase(record1033_010Name)){
+                    record1033_010 += convertByRate(record.getCurrentAccountBalance(), endCurrencyRatesDto.getValue());
+                }else if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(record5440_010AccountNumber) &&
+                        record.getName().equalsIgnoreCase(record5440_010Name)){
+                    // Average rate
+                    record5440_010 += convertByRate(record.getCurrentAccountBalance(), averageRate);
+                }
+            }
+        }
+
+        String record1283_020Name = "Прочая краткосрочная дебиторская задолженность";
+        String record1283_020AccountNumber = "1283.020";
+        double record1283_020 = 0;
+        List<ConsolidatedKZTForm8RecordDto> form8Records = getConsolidatedBalanceKZTForm8(reportId);
+        if(form8Records != null){
+            for(ConsolidatedKZTForm8RecordDto record: form8Records){
+                if(record.getAccountNumber() == null && record.getLineNumber() == 9){
+                    record1283_020 = record.getDebtEndPeriod();
+                }
+            }
+        }
+
+        String record1623_010Name = "Расходы будущих периодов";
+        String record1623_010AccountNumber = "1623.010";
+        double record1623_010 = 0;
+
+        String record2923_010Name = "Расходы будущих периодов";
+        String record2923_010AccountNumber = "2923.010";
+        double record2923_010 = 0;
+
+        List<ConsolidatedKZTForm10RecordDto> form10Records = getConsolidatedBalanceKZTForm10(reportId);
+        if(form10Records != null){
+            for(ConsolidatedKZTForm10RecordDto record: form10Records){
+                if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(record1623_010AccountNumber)){
+                    record1623_010 += record.getEndPeriodBalance();
+                }else if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(record2923_010AccountNumber)){
+                    record2923_010 += record.getEndPeriodBalance();
+                }
+            }
+        }
+
+        String record2033_010Name = "Долгосрочные ценные бумаги, имеющиеся в наличии для продажи";
+        String record2033_010AccountNumber = "2033.010";
+        double record2033_010 = 0;
+
+        String record2033_040Name = "Положительная корректировка справедливой стоимости долгосрочных ценных бумаг, имеющихся в наличии для продажи";
+        String record2033_040AccountNumber = "2033.040";
+        double record2033_040 = 0;
+
+        String record2033_050Name = "Отрицательная корректировка справедливой стоимости долгосрочных ценных бумаг, имеющихся в наличии для продажи";
+        String record2033_050AccountNumber = "2033.050";
+        double record2033_050 = 0;
+        List<ConsolidatedKZTForm7RecordDto> form7Records = getConsolidatedBalanceKZTForm7(reportId);
+        if(form7Records != null){
+            for(ConsolidatedKZTForm7RecordDto record: form7Records){
+                if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(record2033_010AccountNumber)){
+                    record2033_010 += record.getDebtEndPeriod();
+                    if(record.getFairValueAdjustmentsEndPeriod() != null){
+                        record2033_040 += record.getFairValueAdjustmentsEndPeriod().doubleValue() >= 0 ? record.getFairValueAdjustmentsEndPeriod().doubleValue() : 0;
+                        record2033_050 += record.getFairValueAdjustmentsEndPeriod().doubleValue() < 0 ? record.getFairValueAdjustmentsEndPeriod().doubleValue() : 0;
+                    }
+                }
+            }
+        }
+
+        String record3013_010Name = "Краткосрочные банковские займы полученные";
+        String record3013_010AccountNumber = "3013.010";
+        double record3013_010 = 0;
+
+        String record3383_010Name = "Начисленные расходы в виде вознаграждения по краткосрочным банковским займам полученным";
+        String record3383_010AccountNumber = "3383.010";
+        double record3383_010 = 0;
+
+        List<ConsolidatedKZTForm13RecordDto> form13Records = getConsolidatedBalanceKZTForm13(reportId);
+        if(form13Records != null){
+            for(ConsolidatedKZTForm13RecordDto record: form13Records){
+                if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(record3013_010AccountNumber)){
+                    record3013_010 += record.getDebtEndPeriod();
+                }else if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(record3013_010AccountNumber)){
+                    record3383_010 += record.getInterestEndPeriod();
+                }
+            }
+        }
+
+        String record3393_020Name = "Прочая краткосрочная кредиторская задолженность";
+        String record3393_020AccountNumber = "3393.020";
+        double record3393_020 = 0;
+        List<ConsolidatedKZTForm14RecordDto> form14Records = getConsolidatedBalanceKZTForm14(reportId);
+        if(form14Records != null){
+            for(ConsolidatedKZTForm14RecordDto record: form14Records){
+                if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(record3393_020AccountNumber)){
+                    record3393_020 += record.getDebtEndPeriod() != null ? record.getDebtEndPeriod().doubleValue() : 0;
+                }
+            }
+        }
+
+        String record5440_010_previousYearName = "Резерв по переоценке финансовых инвестиций, имеющихся в наличии для продажи (прошлый год)";
+        String record5520_010Name = "Нераспределенная прибыль (непокрытый убыток) прошлых лет";
+        String record5520_010AccountNumber = "5520.010";
+        double record5520_010 = 0;
+        List<PreviousYearInputDataDto> previousYearInputData = getPreviousYearInputData(reportId);
+        if(previousYearInputData != null){
+            for(PreviousYearInputDataDto inputData: previousYearInputData){
+                if(inputData.getChartOfAccounts() != null && inputData.getChartOfAccounts().getCode().startsWith("5440.010") &&
+                        inputData.getChartOfAccounts().getNameRu().equalsIgnoreCase(record5440_010_previousYearName)){
+                    record5440_010 += inputData.getAccountBalanceKZT() != null ? inputData.getAccountBalanceKZT().doubleValue() : 0;
+                }else if(inputData.getChartOfAccounts() != null && inputData.getChartOfAccounts().getCode().startsWith(record5520_010AccountNumber) &&
+                        inputData.getChartOfAccounts().getNameRu().equalsIgnoreCase(record5520_010Name)){
+                    record5520_010 += inputData.getAccountBalanceKZT() != null ? inputData.getAccountBalanceKZT().doubleValue() : 0;
+                }
+            }
+        }
+
+        // TODO: ?
+
+        String record5021_010AccountNumber = "5021.010";
+        String record5022_010AccountNumber = "5022.010";
+
+        String record5021_010Name = "Простые акции";
+        String record5022_010Name = "Простые акции";
+
+        // TODO: ??
+        double record5022_010 = 18765;
+
+        // TODO: Refactor string literal
+        double record5021_010 = 0;
+        List<ReserveCalculationDto> reserveCalculations = this.reserveCalculationService.getReserveCalculationsByExpenseType("ADD");
+        if(reserveCalculations != null){
+            BigDecimal sum = new BigDecimal("0");
+            for(ReserveCalculationDto reserveCalculationDto: reserveCalculations){
+                sum = sum.add(new BigDecimal(reserveCalculationDto.getAmountKZT() != null ? reserveCalculationDto.getAmountKZT().doubleValue() : 0));
+            }
+            record5021_010 = sum.setScale(2, RoundingMode.HALF_UP).doubleValue() - record5022_010;
+        }
+
+        for(ConsolidatedBalanceFormRecordDto record: records){
+            if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(record1033_010AccountNumber) &&
+                    record.getName().equalsIgnoreCase(record1033_010Name)){
+                record.setCurrentAccountBalance(record1033_010);
+            }else if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(record1283_020AccountNumber) &&
+                    record.getName().equalsIgnoreCase(record1283_020Name)){
+                record.setCurrentAccountBalance(record1283_020);
+            }else if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(record1623_010AccountNumber) &&
+                    record.getName().equalsIgnoreCase(record1623_010Name)){
+                record.setCurrentAccountBalance(record1623_010);
+            }else if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(record2033_010AccountNumber) &&
+                    record.getName().equalsIgnoreCase(record2033_010Name)){
+                record.setCurrentAccountBalance(record2033_010);
+            }else if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(record2033_040AccountNumber) &&
+                    record.getName().equalsIgnoreCase(record2033_040Name)){
+                record.setCurrentAccountBalance(record2033_040);
+            }else if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(record2033_050AccountNumber) &&
+                    record.getName().equalsIgnoreCase(record2033_050Name)){
+                record.setCurrentAccountBalance(record2033_050);
+            }else if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(record2923_010AccountNumber) &&
+                    record.getName().equalsIgnoreCase(record2923_010Name)){
+                record.setCurrentAccountBalance(record2923_010);
+            }else if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(record3013_010AccountNumber) &&
+                    record.getName().equalsIgnoreCase(record3013_010Name)){
+                record.setCurrentAccountBalance(record3013_010);
+            }else if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(record3383_010AccountNumber) &&
+                    record.getName().equalsIgnoreCase(record3383_010Name)){
+                record.setCurrentAccountBalance(record3383_010);
+            }else if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(record3393_020AccountNumber) &&
+                    record.getName().equalsIgnoreCase(record3393_020Name)){
+                record.setCurrentAccountBalance(record3393_020);
+            }else if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(record3393_020AccountNumber) &&
+                    record.getName().equalsIgnoreCase(record3393_020Name)){
+                record.setCurrentAccountBalance(record3393_020);
+            }else if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(record5440_010AccountNumber) &&
+                    record.getName().equalsIgnoreCase(record5440_010ReportName)){
+                record.setCurrentAccountBalance(record5440_010);
+            }else if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(record5520_010AccountNumber) &&
+                    record.getName().equalsIgnoreCase(record5520_010Name)){
+                record.setCurrentAccountBalance(record5520_010);
+            }else if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(record5021_010AccountNumber) &&
+                    record.getName().equalsIgnoreCase(record5021_010Name)){
+                record.setCurrentAccountBalance(record5021_010);
+            }else if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(record5022_010AccountNumber) &&
+                    record.getName().equalsIgnoreCase(record5022_010Name)){
+                record.setCurrentAccountBalance(record5022_010);
+            }
+        }
+
+        return records;
+    }
+
+    @Override
+    public List<ReserveCalculationDto> getReserveCalculation() {
+        List<ReserveCalculationDto> records = this.reserveCalculationService.getReserveCalculations();
+        return records;
+    }
+
+    @Override
+    public boolean saveReserveCalculation(List<ReserveCalculationDto> records) {
+        boolean saved = this.reserveCalculationService.save(records);
+        return saved;
+    }
+
+    private void addValuesKZTForm7(ConsolidatedKZTForm7RecordDto totalRecord, ConsolidatedKZTForm7RecordDto record){
+        double debtTurnover = totalRecord.getDebtTurnover() != null ? totalRecord.getDebtTurnover().doubleValue() : 0;
+        debtTurnover += (record.getDebtTurnover() != null ? record.getDebtTurnover().doubleValue() : 0);
+        totalRecord.setDebtTurnover(debtTurnover);
+
+        double totalFairValueAdjustmentsTurnoverPositive = totalRecord.getFairValueAdjustmentsTurnoverPositive() != null ? totalRecord.getFairValueAdjustmentsTurnoverPositive().doubleValue() : 0;
+        totalFairValueAdjustmentsTurnoverPositive += (record.getFairValueAdjustmentsTurnoverPositive() != null ? record.getFairValueAdjustmentsTurnoverPositive().doubleValue() : 0);
+        totalRecord.setFairValueAdjustmentsTurnoverPositive(totalFairValueAdjustmentsTurnoverPositive);
+
+        double totalFairValueAdjustmentsTurnoverNegative = totalRecord.getFairValueAdjustmentsTurnoverNegative() != null ? totalRecord.getFairValueAdjustmentsTurnoverNegative().doubleValue() : 0;
+        totalFairValueAdjustmentsTurnoverNegative += (record.getFairValueAdjustmentsTurnoverNegative() != null ? record.getFairValueAdjustmentsTurnoverNegative().doubleValue() : 0);
+        totalRecord.setFairValueAdjustmentsTurnoverNegative(totalFairValueAdjustmentsTurnoverNegative);
+
+        double debtEndPeriod = totalRecord.getDebtEndPeriod() != null ? totalRecord.getDebtEndPeriod().doubleValue() : 0;
+        debtEndPeriod += (record.getDebtEndPeriod() != null ? record.getDebtEndPeriod().doubleValue() : 0);
+        totalRecord.setDebtEndPeriod(debtEndPeriod);
+
+        double fairValueAdjustmentsEndPeriod = totalRecord.getFairValueAdjustmentsEndPeriod() != null ? totalRecord.getFairValueAdjustmentsEndPeriod().doubleValue() : 0;
+        fairValueAdjustmentsEndPeriod += (record.getFairValueAdjustmentsEndPeriod() != null ? record.getFairValueAdjustmentsEndPeriod().doubleValue() : 0);
+        totalRecord.setFairValueAdjustmentsEndPeriod(fairValueAdjustmentsEndPeriod);
+
+        double totalEndPeriod = totalRecord.getTotalEndPeriod() != null ? totalRecord.getTotalEndPeriod().doubleValue() : 0;
+        totalEndPeriod += (record.getTotalEndPeriod() != null ? record.getTotalEndPeriod().doubleValue() : 0);
+        totalRecord.setTotalEndPeriod(totalEndPeriod);
+    }
+
+    private List<ConsolidatedKZTForm7RecordDto> getConsolidatedBalanceKZTForm7Saved(Long reportId){
+        List<ConsolidatedReportKZTForm7> entities = this.consolidatedReportKZTForm7Repository.getEntitiesByReportId(reportId);
+        List<ConsolidatedKZTForm7RecordDto> dtoList = this.consolidatedKZTForm7Converter.disassembleList(entities);
+
+        return dtoList;
+    }
+
+    private List<ConsolidatedKZTForm7RecordDto> getConsolidatedBalanceKZTForm7CurrentPeriod(Long reportId) {
+
+        PeriodicReport report = this.periodReportRepository.findOne(reportId);
+        if(report == null){
+            logger.error("No report found for id=" + reportId);
+            return null;
+        }
+
+        Date rateDate = DateUtils.getFirstDayOfNextMonth(report.getReportDate());
+        // Find exchange rate
+        CurrencyRatesDto endCurrencyRatesDto = this.currencyRatesService.getRateForDateAndCurrency(rateDate, "USD");
+        if(endCurrencyRatesDto == null){
+            logger.error("No currency rate found for date '" + DateUtils.getDateFormatted(rateDate));
+
+            // TODO: return error message
+            return null;
+        }
+
+        Date previousRateDate = DateUtils.getFirstDayOfCurrentMonth(report.getReportDate());
+        CurrencyRatesDto startCurrencyRatesDto = this.currencyRatesService.getRateForDateAndCurrency(previousRateDate, "USD");
+        if(startCurrencyRatesDto == null){
+            logger.error("No currency rate found for date '" + DateUtils.getDateFormatted(rateDate));
+
+            // TODO: return error message
+            return null;
+        }
+
+
+        int index = 0;
+        List<ConsolidatedKZTForm7RecordDto> records = getConsolidatedBalanceKZTForm7LineHeaders();
+        for(int i = 0; i < records.size(); i++){
+            ConsolidatedKZTForm7RecordDto record = records.get(i);
+            if(record.getLineNumber() == 10){
+                index = i;
+                break;
+            }
+        }
+
+        Date previousDate = DateUtils.getLastDayOfPreviousMonth(report.getReportDate());
+        PeriodicReport previousReport = this.periodReportRepository.findByReportDate(previousDate);
+
+
+        // TODO: same fund in both tranches !!
+
+        Map<String, Double> fundTurnoverPE = new HashedMap();
+        Map<String, Double> fundTurnoverHF = new HashedMap();
+        // TARRAGON
+        List<ScheduleInvestmentsDto> previousPeriodInvestments = this.scheduleInvestmentService.getScheduleInvestments(previousReport.getId());
+        if(previousPeriodInvestments != null) {
+            for (ScheduleInvestmentsDto investmentsDto: previousPeriodInvestments) {
+                if(investmentsDto.getNetCost() != null && investmentsDto.getNetCost().doubleValue() != 0 &&
+                        investmentsDto.getTotalSum() != null && !investmentsDto.getTotalSum().booleanValue()) {
+                    if (investmentsDto.getTranche() == 1) {
+                        fundTurnoverPE.put(investmentsDto.getName(), investmentsDto.getNetCost() * 0.99);
+                    } else {
+                        fundTurnoverPE.put(investmentsDto.getName(), investmentsDto.getNetCost());
+                    }
+                }
+            }
+        }
+        List<ScheduleInvestmentsDto> currentPeriodInvestments = this.scheduleInvestmentService.getScheduleInvestments(report.getId());
+        if(currentPeriodInvestments != null) {
+            for (ScheduleInvestmentsDto investmentsDto: currentPeriodInvestments) {
+                if(investmentsDto.getNetCost() != null && investmentsDto.getNetCost().doubleValue() != 0 &&
+                        investmentsDto.getTotalSum() != null && !investmentsDto.getTotalSum().booleanValue()) {
+                    double previousValue = fundTurnoverPE.get(investmentsDto.getName()) != null ? fundTurnoverPE.get(investmentsDto.getName()).doubleValue() : 0;
+                    double currentValue = investmentsDto.getNetCost() != null ? investmentsDto.getNetCost().doubleValue() : 0;
+                    if (investmentsDto.getTranche() == 1) {
+                        currentValue = currentValue * 0.99;
+                    }
+                    fundTurnoverPE.put(investmentsDto.getName(), currentValue - previousValue);
+                }
+            }
+        }
+
+        // Singularity NOAL
+
+
+        // TODO: Tranche B
+
+        // current NOAL
+        List<SingularityNOALRecordDto> currentNoalRecords = new ArrayList<>();
+        List<SingularityNOALRecordDto> currentNoalTrancheARecords = this.hfNOALService.get(report.getId(), 1).getNoalTrancheAList();
+        if(currentNoalTrancheARecords != null){
+            currentNoalRecords.addAll(currentNoalTrancheARecords);
+        }
+
+        for(SingularityNOALRecordDto noalRecordDto: currentNoalRecords){
+            Date date = DateUtils.getLastDayOfCurrentMonth(report.getReportDate());
+            if(noalRecordDto.getTransaction() != null && noalRecordDto.getTransaction().equalsIgnoreCase("Portfolio Fund Redemption/Withdrawal - Corp") &&
+                    noalRecordDto.getName() != null &&DateUtils.getDateFormatted(noalRecordDto.getDate()).equalsIgnoreCase(DateUtils.getDateFormatted(date))){
+                double value = fundTurnoverHF.get(noalRecordDto.getName()) != null ? fundTurnoverHF.get(noalRecordDto.getName()).doubleValue() : 0;
+                value += noalRecordDto.getTransactionAmount() != null ? noalRecordDto.getTransactionAmount().doubleValue() : 0;
+                fundTurnoverHF.put(noalRecordDto.getName(), value);
+            }
+        }
+
+        // previous NOAL
+        List<SingularityNOALRecordDto> previousNoalRecords = new ArrayList<>();
+        List<SingularityNOALRecordDto> previousNoalTrancheARecords = this.hfNOALService.get(previousReport.getId(), 1).getNoalTrancheAList();
+        if(previousNoalTrancheARecords != null){
+            previousNoalRecords.addAll(previousNoalTrancheARecords);
+        }
+
+        Date date = DateUtils.getLastDayOfCurrentMonth(previousReport.getReportDate());
+        for(SingularityNOALRecordDto prevNoalRecordDto: previousNoalRecords){
+            if(prevNoalRecordDto.getDate() != null && DateUtils.getDateFormatted(prevNoalRecordDto.getDate()).equalsIgnoreCase(DateUtils.getDateFormatted(date))){
+                for(SingularityNOALRecordDto currentNoalRecordDto: currentNoalRecords){
+                    if(prevNoalRecordDto.getTransaction() != null && prevNoalRecordDto.getTransaction().equalsIgnoreCase("Portfolio Fund Redemption/Withdrawal - Corp") &&
+                            currentNoalRecordDto.getTransaction() != null && currentNoalRecordDto.getTransaction().equalsIgnoreCase("Portfolio Fund Redemption/Withdrawal - Corp") &&
+                            prevNoalRecordDto.getName() != null && prevNoalRecordDto.getName().equalsIgnoreCase(currentNoalRecordDto.getName()) &&
+                            DateUtils.getDateFormatted(currentNoalRecordDto.getDate()).equalsIgnoreCase(DateUtils.getDateFormatted(date))){
+                        double prevValue = prevNoalRecordDto.getTransactionAmount() != null ? prevNoalRecordDto.getTransactionAmount().doubleValue() : 0;
+                        double currValue = currentNoalRecordDto.getTransactionAmount() != null ? currentNoalRecordDto.getTransactionAmount().doubleValue() : 0;
+                        if(prevValue != currValue){
+                            double value = fundTurnoverHF.get(currentNoalRecordDto.getName()) != null ? fundTurnoverHF.get(currentNoalRecordDto.getName()).doubleValue() : 0;
+                            value += currValue - prevValue;
+                            fundTurnoverHF.put(currentNoalRecordDto.getName(), value);
+                        }
+
+                    }
+                }
+            }
+
+        }
+
+        // Singularity - General Ledger
+
+        ConsolidatedReportRecordHolderDto currentDataHolder = this.generalLedgerBalanceService.get(reportId);
+        if(currentDataHolder != null && currentDataHolder.getGeneralLedgerBalanceList() != null){
+            for(SingularityGeneralLedgerBalanceRecordDto record: currentDataHolder.getGeneralLedgerBalanceList()){
+                if(record.getChartAccountsDescription() != null && record.getChartAccountsDescription().equalsIgnoreCase("Net Realized Gains/Losses")){
+                    String fundName = record.getChartAccountsLongDescription().substring("Net Realized Gains/Losses from Portfolio Funds".length()).trim();
+
+                    double value = fundTurnoverHF.get(fundName) != null ? fundTurnoverHF.get(fundName).doubleValue() : 0;
+                    value -= (record.getGLAccountBalance() != null ? record.getGLAccountBalance().doubleValue() : 0);
+                    fundTurnoverHF.put(fundName, value);
+                }
+            }
+        }
+
+        ConsolidatedReportRecordHolderDto previousDataHolder = this.generalLedgerBalanceService.get(previousReport.getId());
+        if(previousDataHolder != null && previousDataHolder.getGeneralLedgerBalanceList() != null){
+            for(SingularityGeneralLedgerBalanceRecordDto record: previousDataHolder.getGeneralLedgerBalanceList()){
+                if(record.getChartAccountsDescription() != null && record.getChartAccountsDescription().equalsIgnoreCase("Net Realized Gains/Losses")){
+                    String fundName = record.getChartAccountsLongDescription().substring("Net Realized Gains/Losses from Portfolio Funds".length()).trim();
+
+                    double value = fundTurnoverHF.get(fundName) != null ? fundTurnoverHF.get(fundName).doubleValue() : 0;
+                    value += (record.getGLAccountBalance() != null ? record.getGLAccountBalance().doubleValue() : 0);
+                    fundTurnoverHF.put(fundName, value);
+                }
+            }
+        }
+
+
+        List<ConsolidatedBalanceFormRecordDto> USDFormRecords = getConsolidatedBalanceUSDForm(report.getId());
+        if(records != null && index > 0){
+            for(ConsolidatedBalanceFormRecordDto record: USDFormRecords){
+                if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase("1283.020")
+                        && record.getOtherEntityName() != null && record.getOtherEntityName().startsWith("SINGULAR")){
+                    if (record.getName().startsWith("Предварительная подписка")) {
+                        String fundName = record.getName().substring("Предварительная подписка".length()).trim();
+
+                        double value = fundTurnoverPE.get(fundName) != null ? fundTurnoverPE.get(fundName).doubleValue() :
+                                fundTurnoverHF.get(fundName) != null ? fundTurnoverHF.get(fundName).doubleValue() : 0;
+                        value += record.getPreviousAccountBalance() != null ? record.getPreviousAccountBalance().doubleValue() : 0;
+
+                        if(record.getOtherEntityName().startsWith("TARRAGON")) {
+                            fundTurnoverPE.put(fundName, value);
+                        }else if(record.getOtherEntityName().startsWith("SINGULAR")){
+                            fundTurnoverHF.put(fundName, value);
+                        }
+                    }
+                }else if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase("2033.010")){
+                    String name = null;
+                    if(record.getOtherEntityName() != null && record.getOtherEntityName().startsWith("TARRAGON")){
+                        name = "Инвестиции в фонд частного капитала";
+                    }else if(record.getOtherEntityName() != null && record.getOtherEntityName().startsWith("SINGULAR")){
+                        name = "Инвестиции в хедж-фонд";
+                    }else{
+
+                        // TODO: error?
+                        return null;
+                    }
+                    int fundNameIndex = name.equalsIgnoreCase("Инвестиции в фонд частного капитала") ? "Инвестиции в фонд частного капитала".length() :
+                            "Инвестиции в фонд".length();
+                    String fundName = record.getName().substring(fundNameIndex).trim();
+
+                    ConsolidatedKZTForm7RecordDto newRecord = new ConsolidatedKZTForm7RecordDto();
+                    if(record.getPreviousAccountBalance() != null && record.getPreviousAccountBalance().doubleValue() != 0 &&
+                            (record.getCurrentAccountBalance() == null || record.getCurrentAccountBalance().doubleValue() == 0)){
+                        newRecord.setBecameZero(true);
+                    }
+                    newRecord.setName(name);
+                    newRecord.setAccountNumber(record.getAccountNumber());
+                    newRecord.setLineNumber(9);
+                    newRecord.setEntityName(fundName);
+                    newRecord.setOtherName(record.getOtherEntityName());
+                    //newRecord.setPurchaseDate();
+
+                    newRecord.setTotalEndPeriod(convertByRate(record.getCurrentAccountBalance() != null ? record.getCurrentAccountBalance() : 0.0, endCurrencyRatesDto.getValue()));
+
+                    if(record.getOtherEntityName().startsWith("TARRAGON")) {
+                        newRecord.setDebtTurnover(convertByRate((fundTurnoverPE.get(fundName) != null ? fundTurnoverPE.get(fundName).doubleValue() : 0), endCurrencyRatesDto.getValue()));
+                        fundTurnoverPE.put(fundName, null);
+                    }else if(record.getOtherEntityName().startsWith("SINGULAR")){
+                        newRecord.setDebtTurnover(convertByRate((fundTurnoverHF.get(fundName) != null ? fundTurnoverHF.get(fundName).doubleValue() : 0), endCurrencyRatesDto.getValue()));
+                        fundTurnoverHF.put(fundName, null);
+                    }
+
+                    records.add(index, newRecord);
+
+                    index ++;
+
+                }
+            }
+        }
+
+        // Add missing funds
+        Set<String> keySet = fundTurnoverPE.keySet();
+        if(keySet != null){
+            Iterator<String> iterator = keySet.iterator();
+            while(iterator.hasNext()){
+                String fundName = iterator.next();
+                if(fundTurnoverPE.get(fundName) != null) {
+                    String name = "Инвестиции в фонд частного капитала";
+                    ConsolidatedKZTForm7RecordDto newRecord = new ConsolidatedKZTForm7RecordDto();
+                    newRecord.setName(name);
+                    newRecord.setAccountNumber("2033.010");
+                    newRecord.setLineNumber(9);
+                    newRecord.setEntityName(fundName);
+                    newRecord.setOtherName("TARRAGON");
+                    //newRecord.setPurchaseDate();
+
+                    newRecord.setTotalEndPeriod(0.0);
+                    newRecord.setDebtTurnover(convertByRate((fundTurnoverPE.get(fundName) != null ? fundTurnoverPE.get(fundName).doubleValue() : 0), endCurrencyRatesDto.getValue()));
+
+                    records.add(index, newRecord);
+
+                    index ++;
+                }
+            }
+        }
+
+        Set<String> keySet2 = fundTurnoverHF.keySet();
+        if(keySet != null){
+            Iterator<String> iterator = keySet2.iterator();
+            while(iterator.hasNext()){
+                String fundName = iterator.next();
+                if(fundTurnoverHF.get(fundName) != null) {
+                    String name = "Инвестиции в хэдж-фонд";
+                    ConsolidatedKZTForm7RecordDto newRecord = new ConsolidatedKZTForm7RecordDto();
+                    newRecord.setName(name);
+                    newRecord.setAccountNumber("2033.010");
+                    newRecord.setLineNumber(9);
+                    newRecord.setEntityName(fundName);
+                    newRecord.setOtherName("SINGULAR");
+                    //newRecord.setPurchaseDate();
+
+                    newRecord.setTotalEndPeriod(0.0);
+                    newRecord.setDebtTurnover(convertByRate((fundTurnoverHF.get(fundName) != null ? fundTurnoverHF.get(fundName).doubleValue() : 0), endCurrencyRatesDto.getValue()));
+
+                    records.add(index, newRecord);
+
+                    index ++;
+                }
+            }
+        }
+
+        return records;
+    }
+
+    private Double convertByRate(Double value, Double rate){
+        if(value == null || rate == null){
+            return null;
+        }
+        if(value == 0.0){
+            return 0.0;
+        }
+
+        BigDecimal calculated = new BigDecimal(value);
+        calculated = calculated.multiply(new BigDecimal(rate)).setScale(2, RoundingMode.HALF_UP);
+        //calculated = calculated.multiply(new BigDecimal(rate));
+        return calculated.doubleValue();
+    }
+
+    private List<ConsolidatedKZTForm10RecordDto> getConsolidatedBalanceKZTForm10LineHeaders(){
+        List<ConsolidatedKZTForm10RecordDto> records = new ArrayList<>();
+        records.add(new ConsolidatedKZTForm10RecordDto("Прочие краткосрочные активы (сумма строк 2-3)", 1));
+        records.add(new ConsolidatedKZTForm10RecordDto("Расходы будущих периодов", 2));
+        records.add(new ConsolidatedKZTForm10RecordDto("Прочие краткосрочные активы", 3));
+        records.add(new ConsolidatedKZTForm10RecordDto("Прочие долгосрочные активы (сумма строк 5-10 )", 4));
+        records.add(new ConsolidatedKZTForm10RecordDto("Инвестиции в недвижимость", 5));
+        records.add(new ConsolidatedKZTForm10RecordDto("Биологические активы", 6));
+        records.add(new ConsolidatedKZTForm10RecordDto("Разведочные и оценочные активы", 7));
+        records.add(new ConsolidatedKZTForm10RecordDto("Расходы будущих периодов", 8));
+        records.add(new ConsolidatedKZTForm10RecordDto("Незавершенное строительство", 9));
+        records.add(new ConsolidatedKZTForm10RecordDto("Прочие долгосрочные активы", 10));
+        records.add(new ConsolidatedKZTForm10RecordDto("ВСЕГО  (сумма строк 1, 4)", 11));
+
+        return records;
+    }
+
+    private List<ConsolidatedKZTForm8RecordDto> getConsolidatedBalanceKZTForm8LineHeaders(){
+        List<ConsolidatedKZTForm8RecordDto> records = new ArrayList<>();
+        records.add(new ConsolidatedKZTForm8RecordDto("Краткосрочная торговая и прочая дебиторская задолженность (сумма строк 2-9)", 1));
+        records.add(new ConsolidatedKZTForm8RecordDto("Краткосрочная дебиторская задолженность покупателей и заказчиков", 2));
+        records.add(new ConsolidatedKZTForm8RecordDto("Краткосрочная дебиторская задолженность дочерних организаций", 3));
+        records.add(new ConsolidatedKZTForm8RecordDto("Краткосрочная дебиторская задолженность ассоциированных и совместных организаций", 4));
+        records.add(new ConsolidatedKZTForm8RecordDto("Краткосрочная дебиторская задолженность филиалов и представительств", 5));
+        records.add(new ConsolidatedKZTForm8RecordDto("Краткосрочная дебиторская задолженность работников", 6));
+        records.add(new ConsolidatedKZTForm8RecordDto("Краткосрочная дебиторская задолженность по аренде", 7));
+        records.add(new ConsolidatedKZTForm8RecordDto("Краткосрочные авансы выданные", 8));
+        records.add(new ConsolidatedKZTForm8RecordDto("Прочая краткосрочная дебиторская задолженность", 9));
+        records.add(new ConsolidatedKZTForm8RecordDto("Долгосрочная торговая и прочая дебиторская задолженность (сумма строк 11-18)", 10));
+        records.add(new ConsolidatedKZTForm8RecordDto("Долгосрочная задолженность покупателей и заказчиков", 11));
+        records.add(new ConsolidatedKZTForm8RecordDto("Долгосрочная дебиторская задолженность дочерних организаций", 12));
+        records.add(new ConsolidatedKZTForm8RecordDto("Долгосрочная дебиторская задолженность ассоциированных и совместных организаций", 13));
+        records.add(new ConsolidatedKZTForm8RecordDto("Долгосрочная дебиторская задолженность филиалов и представительств", 14));
+        records.add(new ConsolidatedKZTForm8RecordDto("Долгосрочная дебиторская задолженность работников", 15));
+        records.add(new ConsolidatedKZTForm8RecordDto("Долгосрочная дебиторская задолженность по аренде", 16));
+        records.add(new ConsolidatedKZTForm8RecordDto("Долгосрочные авансы выданные", 17));
+        records.add(new ConsolidatedKZTForm8RecordDto("Прочая долгосрочная дебиторская задолженность", 18));
+        records.add(new ConsolidatedKZTForm8RecordDto("ВСЕГО (сумма строк 1, 10)", 19));
+
+        return records;
+    }
+
+    private List<ConsolidatedKZTForm14RecordDto> getConsolidatedBalanceKZTForm14LineHeaders(){
+        List<ConsolidatedKZTForm14RecordDto> records = new ArrayList<>();
+        records.add(new ConsolidatedKZTForm14RecordDto("Краткосрочная торговая и прочая дебиторская задолженность (сумма строк 2-8)", 1));
+        records.add(new ConsolidatedKZTForm14RecordDto("Краткосрочная кредиторская задолженность поставщикам и подрядчикам", 2));
+        records.add(new ConsolidatedKZTForm14RecordDto("Краткосрочная кредиторская задолженность дочерним организациям", 3));
+        records.add(new ConsolidatedKZTForm14RecordDto("Краткосрочная кредиторская задолженность ассоциированным и совместным организациям", 4));
+        records.add(new ConsolidatedKZTForm14RecordDto("Краткосрочная кредиторская задолженность филиалам и представительствам", 5));
+        records.add(new ConsolidatedKZTForm14RecordDto("Краткосрочная задолженность по аренде", 6));
+        records.add(new ConsolidatedKZTForm14RecordDto("Краткосрочные авансы полученные", 7));
+        records.add(new ConsolidatedKZTForm14RecordDto("Прочая краткосрочная кредиторская задолженность", 8));
+        records.add(new ConsolidatedKZTForm14RecordDto("Долгосрочная торговая и прочая кредиторская задолженность (сумма строк 10-16)", 9));
+        records.add(new ConsolidatedKZTForm14RecordDto("Долгосрочная кредиторская задолженность поставщикам и подрядчикам", 10));
+        records.add(new ConsolidatedKZTForm14RecordDto("Долгосрочная кредиторская задолженность дочерним организациям", 11));
+        records.add(new ConsolidatedKZTForm14RecordDto("Долгосрочная кредиторская задолженность ассоциированным и совместным организациям", 12));
+        records.add(new ConsolidatedKZTForm14RecordDto("Долгосрочная кредиторская задолженность филиалам и представительствам", 13));
+        records.add(new ConsolidatedKZTForm14RecordDto("Долгосрочная задолженность по аренде", 14));
+        records.add(new ConsolidatedKZTForm14RecordDto("Долгосрочные авансы полученные", 15));
+        records.add(new ConsolidatedKZTForm14RecordDto("Прочая долгосрочная кредиторская задолженность", 16));
+        records.add(new ConsolidatedKZTForm14RecordDto("ВСЕГО (сумма строк 1, 9)", 17));
+
+        return records;
+    }
+
+    private List<ConsolidatedKZTForm13RecordDto> getConsolidatedBalanceKZTForm13LineHeaders(){
+        List<ConsolidatedKZTForm13RecordDto> records = new ArrayList<>();
+        records.add(new ConsolidatedKZTForm13RecordDto("Краткосрочные финансовые обязательства (сумма строк 2, 3)", 1));
+        records.add(new ConsolidatedKZTForm13RecordDto("Займы полученные", 2));
+        records.add(new ConsolidatedKZTForm13RecordDto("Прочие краткосрочные финансовые обязательства", 3));
+        records.add(new ConsolidatedKZTForm13RecordDto("Долгосрочные финансовые обязательства (сумма строк 5, 6)", 4));
+        records.add(new ConsolidatedKZTForm13RecordDto("Займы полученные", 5));
+        records.add(new ConsolidatedKZTForm13RecordDto("Прочие долгосрочные финансовые обязательства)", 6));
+        records.add(new ConsolidatedKZTForm13RecordDto("ВСЕГО (сумма строк 1, 4)", 7));
+
+        return records;
+    }
+
+    private List<ConsolidatedKZTForm7RecordDto> getConsolidatedBalanceKZTForm7LineHeaders(){
+        List<ConsolidatedKZTForm7RecordDto> records = new ArrayList<>();
+        records.add(new ConsolidatedKZTForm7RecordDto("Краткосрочные финансовые инвестиции (сумма строк 2-6)", 1));
+        records.add(new ConsolidatedKZTForm7RecordDto("Вклады размещенные, всего, в том числе", 2));
+        records.add(new ConsolidatedKZTForm7RecordDto("Финансовые инвестиции, оцениваемые по справедливой стоимости, изменения которой отражаются в составе прибыли или убытка, всего, в том числе", 3));
+        records.add(new ConsolidatedKZTForm7RecordDto("Финансовые инвестиции, имеющиеся в наличии для продажи, всего в том числе", 4));
+        records.add(new ConsolidatedKZTForm7RecordDto("Финансовые инвестиции, удерживаемые до погашения, всего, в том числе", 5));
+        records.add(new ConsolidatedKZTForm7RecordDto("Прочие краткосрочные финансовые инвестиции, всего, в том числ", 6));
+        records.add(new ConsolidatedKZTForm7RecordDto("Долгосрочные финансовые инвестиции (сумма строк 8-11)", 7));
+        records.add(new ConsolidatedKZTForm7RecordDto("Вклады размещенные, всего, в том числе", 8));
+        records.add(new ConsolidatedKZTForm7RecordDto("Финансовые инвестиции, имеющиеся в наличии для продажи, всего в том числе", 9));
+        records.add(new ConsolidatedKZTForm7RecordDto("Финансовые инвестиции, удерживаемые до погашения, всего, в том числе", 10));
+        records.add(new ConsolidatedKZTForm7RecordDto("Прочие долгосрочные финансовые инвестиции, всего, в том числе", 11));
+        records.add(new ConsolidatedKZTForm7RecordDto("ВСЕГО (сумма строк 1,7)", 12));
+        return records;
+    }
+
+    private List<ConsolidatedBalanceFormRecordDto> getConsolidatedBalanceKZTForm1LineHeaders(){
+// TODO: get from DB
+        List<ConsolidatedBalanceFormRecordDto> headers = new ArrayList<>();
+        headers.add(new ConsolidatedBalanceFormRecordDto("Краткосрочные активы", 1));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Деньги (1010-1060)", 2));
+
+        ConsolidatedBalanceFormRecordDto record2 = new ConsolidatedBalanceFormRecordDto("Деньги на текущих счетах", 2);
+        record2.setAccountNumber("1033.010");
+        headers.add(record2);
+
+        headers.add(new ConsolidatedBalanceFormRecordDto("Вклады размещенные (за вычетом резервов на обесценение) (1150.020-1150.100, 1160.070, 1160.080, 1270.090-1270.110, 1290.070, 1290.090)", 3));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Финансовые инвестиции, оцениваемые по справедливой стоимости, изменения которой отражаются в составе прибыли или убытка (1120, 1270.020, 1270.050)", 4));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Финансовые инвестиции, имеющиеся в наличии для продажи (за вычетом резервов на обесценение) (1140, 1160.050, 1160.060, 1270.040, 1270.070, 1290.050)", 5));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Финансовые инвестиции, удерживаемые до погашения (за вычетом резервов на обесценение) (1130, 1160.030, 1160.040, 1270.030, 1270.060, 1290.030)", 6));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие краткосрочные финансовые инвестиции (1110, 1150.010, 1150.110-1150.140, 1160.010, 1160.020, 1160.090, 1270.010, 1270.080, 1270.120, 1270.130, 1280.010, 1290.010, 1290.110, 1290.130)", 7));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Краткосрочная торговая и прочая дебиторская задолженность (1210-1260, 1280.020, 1290.130, 1610)", 8));
+
+        ConsolidatedBalanceFormRecordDto record8 = new ConsolidatedBalanceFormRecordDto("Прочая краткосрочная дебиторская задолженность", 8);
+        record8.setAccountNumber("1283.020");
+        headers.add(record8);
+
+        headers.add(new ConsolidatedBalanceFormRecordDto("Текущие налоговые активы (1410-1430)", 9));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Запасы (1310-1360)", 10));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие краткосрочные активы (1620, 1630)", 11));
+
+        ConsolidatedBalanceFormRecordDto record11 = new ConsolidatedBalanceFormRecordDto("Расходы будущих периодов", 11);
+        record11.setAccountNumber("1623.010");
+        headers.add(record11);
+
+        headers.add(new ConsolidatedBalanceFormRecordDto("Активы (или выбывающие группы), предназначенные для продажи (1510-1520)", 12));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Итого краткосрочных активов (сумма строк 2-12)", 13));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Долгосрочные активы", 14));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Вклады размещенные (за вычетом резервов на обесценение) (2040.010-2040.060, 2050.070, 2050.080, 2170.060, 2170.070, 1290.080, 1290.100)", 15));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Финансовые инвестиции, имеющиеся в наличии для продажи (за вычетом резервов на обесценение) (2030, 2050.050, 2050.060, 2170.030, 2170,050, 1290.060)", 16));
+
+        ConsolidatedBalanceFormRecordDto record16_1 = new ConsolidatedBalanceFormRecordDto("Долгосрочные ценные бумаги, имеющиеся в наличии для продажи", 16);
+        record16_1.setAccountNumber("2033.010");
+        headers.add(record16_1);
+
+        ConsolidatedBalanceFormRecordDto record16_2 = new ConsolidatedBalanceFormRecordDto("Положительная корректировка справедливой стоимости долгосрочных ценных бумаг, имеющихся в наличии для продажи", 16);
+        record16_2.setAccountNumber("2033.040");
+        headers.add(record16_2);
+
+        ConsolidatedBalanceFormRecordDto record16_3 = new ConsolidatedBalanceFormRecordDto("Отрицательная корректировка справедливой стоимости долгосрочных ценных бумаг, имеющихся в наличии для продажи", 16);
+        record16_3.setAccountNumber("2033.050");
+        headers.add(record16_3);
+
+        headers.add(new ConsolidatedBalanceFormRecordDto("Финансовые инвестиции, удерживаемые до погашения (за вычетом резервов на обесценение) (2020, 2050.030, 2050.040, 2170.020, 2170.040, 1290.040)", 17));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие долгосрочные финансовые инвестиции (2010, 2040.070-2040.100, 2050.010, 2050.020, 2170.010, 2170.080, 1290.020, 1290.120, 1290.130)", 18));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Долгосрочная торговая и прочая дебиторская задолженность (2110-2160, 2180, 2910)", 19));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Инвестиции, учитываемые методом долевого участия (2210)", 20));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Основные средства (2410-2430)", 21));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Нематериальные активы (2730-2750)", 22));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Отложенные налоговые активы (2810)", 23));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие долгосрочные активы (2310-2330, 2510-2520, 2610-2630, 2920-2940)", 24));
+
+        ConsolidatedBalanceFormRecordDto record24 = new ConsolidatedBalanceFormRecordDto("Расходы будущих периодов", 24);
+        record24.setAccountNumber("2923.010");
+        headers.add(record24);
+
+        headers.add(new ConsolidatedBalanceFormRecordDto("Итого долгосрочных активов (сумма строк 15-24)", 25));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Всего активы (сумма строк 13, 25)", 26));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Краткосрочные обязательства", 27));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Займы полученные (3010, 3020, 3380.010, 3380.020)", 28));
+
+        ConsolidatedBalanceFormRecordDto record28_1 = new ConsolidatedBalanceFormRecordDto("Краткосрочные банковские займы полученные", 28);
+        record28_1.setAccountNumber("3013.010");
+        headers.add(record28_1);
+
+        ConsolidatedBalanceFormRecordDto record28_2 = new ConsolidatedBalanceFormRecordDto("Начисленные расходы в виде вознаграждения по краткосрочным банковским займам полученным", 28);
+        record28_2.setAccountNumber("3383.010");
+        headers.add(record28_2);
+
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие краткосрочные финансовые обязательства (3040, 3050, 3380.030-3380.050, 3390.010)", 29));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Краткосрочная торговая и прочая кредиторская задолженность (3310-3340, 3360, 3390.020, 3510)", 30));
+
+        ConsolidatedBalanceFormRecordDto record30 = new ConsolidatedBalanceFormRecordDto("Прочая краткосрочная кредиторская задолженность", 30);
+        record30.setAccountNumber("3393.020");
+        headers.add(record30);
+
+
+        headers.add(new ConsolidatedBalanceFormRecordDto("Краткосрочные резервы (3410-3440)", 31));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Текущие налоговые обязательства (3110-3190, 3210-3240)", 32));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие краткосрочные обязательства (3030, 3350, 3370, 3520, 3540)", 33));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Обязательства выбывающих групп, предназначенных для продажи (3530)", 34));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Итого краткосрочных обязательств (сумма строк 28-34)", 35));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Долгосрочные  обязательства", 36));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Займы полученные (4010, 4020, 4160.010, 4160.020)", 37));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие долгосрочные финансовые обязательства (4030, 4160.030-4160.040)", 38));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Долгосрочная торговая и прочая кредиторская задолженность (4110-4150, 4170, 4410)", 39));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Долгосрочные резервы (4210-4240)", 40));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Отложенные налоговые обязательства (4310)", 41));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие долгосрочные обязательства (4420, 4430)", 42));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Итого долгосрочных обязательств (сумма строк 37-42)", 43));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Капитал", 44));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Уставный капитал (5010-5030)", 45));
+
+        ConsolidatedBalanceFormRecordDto record45_1 = new ConsolidatedBalanceFormRecordDto("Простые акции", 45);
+        record45_1.setAccountNumber("5021.010");
+        headers.add(record45_1);
+
+        ConsolidatedBalanceFormRecordDto record45_2 = new ConsolidatedBalanceFormRecordDto("Простые акции", 45);
+        record45_2.setAccountNumber("5022.010");
+        headers.add(record45_2);
+
+        headers.add(new ConsolidatedBalanceFormRecordDto("Эмиссионный доход (5310)", 46));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Выкупленные собственные долевые инструменты (5210)", 47));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Резервный капитал (5410, 5460)", 48));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие резервы (5420-5450)", 49));
+
+        ConsolidatedBalanceFormRecordDto record49_1 = new ConsolidatedBalanceFormRecordDto("Резерв на переоценку финансовых инвестиций, имеющихся в наличии для продажи", 49);
+        record49_1.setAccountNumber("5440.010");
+        headers.add(record49_1);
+
+        ConsolidatedBalanceFormRecordDto record49_2 = new ConsolidatedBalanceFormRecordDto("Резерв на пересчет иностранной валюты по зарубежной деятельности", 49);
+        record49_2.setAccountNumber("5450.010");
+        headers.add(record49_2);
+
+        headers.add(new ConsolidatedBalanceFormRecordDto("Нераспределенная прибыль (непокрытый убыток) (5510, 5520)", 50));
+
+
+        ConsolidatedBalanceFormRecordDto record50_1 = new ConsolidatedBalanceFormRecordDto("Нераспределенная прибыль (непокрытый убыток) отчетного года", 50);
+        record50_1.setAccountNumber("5510.010");
+        headers.add(record50_1);
+
+        ConsolidatedBalanceFormRecordDto record50_2 = new ConsolidatedBalanceFormRecordDto("Нераспределенная прибыль (непокрытый убыток) прошлых лет", 50);
+        record50_2.setAccountNumber("5520.010");
+        headers.add(record50_2);
+
+        headers.add(new ConsolidatedBalanceFormRecordDto("Итого капитал (сумма строк 45-50)", 51));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Всего обязательства и капитал (сумма строк 35, 43, 51)", 52));
+        return headers;
+    }
+
+    private Map<Integer, List<ConsolidatedBalanceFormRecordDto>> getConsolidatedBalanceUSDFormMap(Long reportId){
+
+        // TODO: return map from data, not from list ??
+        // TODO: or OK?
+        List<ConsolidatedBalanceFormRecordDto> records = getConsolidatedBalanceUSDForm(reportId);
+
+        Map<Integer, List<ConsolidatedBalanceFormRecordDto>> recordsMap = new HashedMap();
+        if(records != null){
+            int lineNumber = 0;
+            for(ConsolidatedBalanceFormRecordDto record: records){
+                if(record.getLineNumber() != null){
+                    lineNumber = record.getLineNumber();
+                }
+                if(lineNumber > 0){
+                    if(recordsMap.get(lineNumber) == null){
+                        List<ConsolidatedBalanceFormRecordDto> recordsList = new ArrayList<ConsolidatedBalanceFormRecordDto>();
+                        recordsList.add(record);
+                        recordsMap.put(lineNumber, recordsList);
+                    }else{
+                        recordsMap.get(lineNumber).add(record);
+                    }
+                }else{
+                    logger.error("Consolidated Balance USD - line number is null for one of the records: report id=" + reportId);
+                    throw new IllegalStateException("Consolidated Balance USD - line number is null for one of the records: report id=" + reportId);
+                }
+            }
+        }
+        return recordsMap;
+    }
+
+    private Map<Integer, List<ConsolidatedBalanceFormRecordDto>> getConsolidatedIncomeExpenseUSDFormMap(Long reportId){
+
+        // TODO: return map from data, not from list ??
+        // TODO: or OK?
+        List<ConsolidatedBalanceFormRecordDto> records = getConsolidatedIncomeExpenseUSDForm(reportId);
+
+        Map<Integer, List<ConsolidatedBalanceFormRecordDto>> recordsMap = new HashedMap();
+        if(records != null){
+            int lineNumber = 0;
+            for(ConsolidatedBalanceFormRecordDto record: records){
+                if(record.getLineNumber() != null){
+                    lineNumber = record.getLineNumber();
+                }
+                if(lineNumber > 0){
+                    if(recordsMap.get(lineNumber) == null){
+                        List<ConsolidatedBalanceFormRecordDto> recordsList = new ArrayList<>();
+                        recordsList.add(record);
+                        recordsMap.put(lineNumber, recordsList);
+                    }else{
+                        recordsMap.get(lineNumber).add(record);
+                    }
+                }else{
+                    logger.error("Consolidated Income Expense USD - line number is null for one of the records: report id=" + reportId);
+                    throw new IllegalStateException("Consolidated Income Expense USD - line number is null for one of the records: report id=" + reportId);
+                }
+            }
+        }
+        return recordsMap;
+    }
+
+    private InputStream getConsolidatedBalanceUSDReportInputStream(Long reportId){
+        Map<Integer, List<ConsolidatedBalanceFormRecordDto>> recordsMap = getConsolidatedBalanceUSDFormMap(reportId);
+
+        String tempaltePath = "C:\\Users\\magzumov\\Desktop\\TEMPLATE_ NICKMF_cons_USD.xlsx";
+
+        InputStream ExcelFileToRead = null;
+        try {
+            ExcelFileToRead = new FileInputStream(tempaltePath);
+            XSSFWorkbook  workbook = new XSSFWorkbook(ExcelFileToRead);
+            XSSFSheet sheet = workbook.getSheetAt(0);
+            Iterator<Row> rowIterator = sheet.iterator();
+            int rows = sheet.getLastRowNum();
+            //int rowNum = 0;
+            boolean startOfTable = false;
+            boolean endOfTable = false;
+            int addedRecords = 0;
+            while (rowIterator.hasNext() && !endOfTable) { // each row
+                Row row = rowIterator.next();
+                if (startOfTable) {
+                    Cell cell = row.getCell(1);
+                    if (cell != null && ExcelUtils.isCellStringValueEqualIgnoreCase(cell, "Всего обязательства и капитал (сумма строк 35, 43, 51)")) {
+                        endOfTable = true;
+                    }
+                    if (row.getCell(2) != null && row.getCell(2).getCellType() == Cell.CELL_TYPE_STRING && row.getCell(2).getStringCellValue() != null) {
+                        int lineNumber = Integer.parseInt(row.getCell(2).getStringCellValue());
+                        List<ConsolidatedBalanceFormRecordDto> records = recordsMap.get(lineNumber);
+                        int recordsNum = records != null ? records.size() : 0;
+                        if (recordsNum > 0 && row.getCell(1) != null && row.getCell(1).getCellType() == Cell.CELL_TYPE_STRING &&
+                                records.get(0).getName().equalsIgnoreCase(row.getCell(1).getStringCellValue())) {
+                            if(records.get(0).getCurrentAccountBalance() != null) {
+                                row.getCell(4).setCellValue(records.get(0).getCurrentAccountBalance());
+                            }
+                            if(records.get(0).getPreviousAccountBalance() != null) {
+                                row.getCell(5).setCellValue(records.get(0).getPreviousAccountBalance());
+                            }
+                        }
+                        if (recordsNum > 1) {
+                            sheet.shiftRows(row.getRowNum() + 1, rows + addedRecords, recordsNum - 1);
+                            //insertRows(rowNum, row, sheet, records);
+                            int index = 1;
+                            for (int i = 1; i < records.size(); i++) {
+                                Row newRow = sheet.createRow(row.getRowNum() + index);
+                                newRow.createCell(0).setCellValue(records.get(i).getAccountNumber());
+                                newRow.createCell(1).setCellValue(records.get(i).getName());
+                                newRow.createCell(2).setCellType(Cell.CELL_TYPE_STRING);
+                                if (records.get(i).getOtherEntityName() != null) {
+                                    newRow.createCell(3).setCellValue(records.get(i).getOtherEntityName());
+                                } else {
+                                    newRow.createCell(3).setCellType(Cell.CELL_TYPE_STRING);
+                                }
+                                if (records.get(i).getCurrentAccountBalance() != null) {
+                                    newRow.createCell(4).setCellValue(records.get(i).getCurrentAccountBalance());
+                                } else {
+                                    newRow.createCell(4).setCellType(Cell.CELL_TYPE_NUMERIC);
+                                }
+                                if (records.get(i).getPreviousAccountBalance() != null) {
+                                    newRow.createCell(5).setCellValue(records.get(i).getPreviousAccountBalance());
+                                } else {
+                                    newRow.createCell(5).setCellType(Cell.CELL_TYPE_NUMERIC);
+                                }
+
+                                // set styles
+                                newRow.getCell(0).setCellStyle(row.getCell(0).getCellStyle());
+                                newRow.getCell(1).setCellStyle(row.getCell(1).getCellStyle());
+                                newRow.getCell(2).setCellStyle(row.getCell(2).getCellStyle());
+                                newRow.getCell(3).setCellStyle(row.getCell(3).getCellStyle());
+                                if (row.getCell(4) != null && row.getCell(4).getCellStyle() != null) {
+                                    newRow.getCell(4).setCellStyle(row.getCell(4).getCellStyle());
+                                }
+                                newRow.getCell(5).setCellStyle(row.getCell(5).getCellStyle());
+                                index++;
+                                addedRecords++;
+                            }
+                        }
+                    }
+
+                    //rowNum++;
+                }
+                if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "Номер группы субсчетов") &&
+                        ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(1), "Наименование группы субсчетов") &&
+                        ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), "Код строки")){
+                    startOfTable = true;
+                }
+            }
+
+            //
+            File tmpDir = new File(this.rootDirectory + "/tmp");
+
+            String[]entries = tmpDir.list();
+            if(entries != null) {
+                for (String s : entries) {
+                    File currentFile = new File(tmpDir.getPath(), s);
+                    currentFile.delete();
+                }
+            }
+
+            // write to new
+            String filePath = this.rootDirectory + "/tmp/CONS_BLNC_USD_" + new Date().getTime() + ".xlsx";
+            try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
+                workbook.write(outputStream);
+            }
+
+            InputStream inputStream = new FileInputStream(filePath);
+            return inputStream;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    private InputStream getConsolidatedIncomeExpenseUSDReportInputStream(Long reportId){
+        Map<Integer, List<ConsolidatedBalanceFormRecordDto>> recordsMap = getConsolidatedIncomeExpenseUSDFormMap(reportId);
+
+        String tempaltePath = "C:\\Users\\magzumov\\Desktop\\TEMPLATE_ NICKMF_cons_USD_опиу.xlsx";
+
+        InputStream ExcelFileToRead = null;
+        try {
+            ExcelFileToRead = new FileInputStream(tempaltePath);
+            XSSFWorkbook  workbook = new XSSFWorkbook(ExcelFileToRead);
+            XSSFSheet sheet = workbook.getSheetAt(0);
+            Iterator<Row> rowIterator = sheet.iterator();
+            int rows = sheet.getLastRowNum();
+            //int rowNum = 0;
+            boolean startOfTable = false;
+            boolean endOfTable = false;
+            int addedRecords = 0;
+            while (rowIterator.hasNext() && !endOfTable) { // each row
+                Row row = rowIterator.next();
+                if (startOfTable) {
+                    Cell cell = row.getCell(1);
+                    if (cell != null && ExcelUtils.isCellStringValueEqualIgnoreCase(cell, "Чистая прибыль (убыток) (сумма строк 18, 19)")) {
+                        endOfTable = true;
+                    }
+                    if (row.getCell(2) != null && row.getCell(2).getCellType() == Cell.CELL_TYPE_NUMERIC){
+                        int lineNumber = (int) row.getCell(2).getNumericCellValue();
+                        List<ConsolidatedBalanceFormRecordDto> records = recordsMap.get(lineNumber);
+                        int recordsNum = records != null ? records.size() : 0;
+                        if (recordsNum > 0 && row.getCell(1) != null && row.getCell(1).getCellType() == Cell.CELL_TYPE_STRING &&
+                                records.get(0).getName().equalsIgnoreCase(row.getCell(1).getStringCellValue())) {
+                            if(records.get(0).getCurrentAccountBalance() != null) {
+                                row.getCell(4).setCellValue(records.get(0).getCurrentAccountBalance());
+                            }
+                            if(records.get(0).getPreviousAccountBalance() != null) {
+                                row.getCell(5).setCellValue(records.get(0).getPreviousAccountBalance());
+                            }
+                        }
+                        if (recordsNum > 1) {
+                            sheet.shiftRows(row.getRowNum() + 1, rows + addedRecords, recordsNum - 1);
+                            //insertRows(rowNum, row, sheet, records);
+                            int index = 1;
+                            for (int i = 1; i < records.size(); i++) {
+                                Row newRow = sheet.createRow(row.getRowNum() + index);
+                                newRow.createCell(0).setCellValue(records.get(i).getAccountNumber());
+                                newRow.createCell(1).setCellValue(records.get(i).getName());
+                                newRow.createCell(2).setCellType(Cell.CELL_TYPE_STRING);
+                                if (records.get(i).getOtherEntityName() != null) {
+                                    newRow.createCell(3).setCellValue(records.get(i).getOtherEntityName());
+                                } else {
+                                    newRow.createCell(3).setCellType(Cell.CELL_TYPE_STRING);
+                                }
+                                if (records.get(i).getCurrentAccountBalance() != null) {
+                                    newRow.createCell(4).setCellValue(records.get(i).getCurrentAccountBalance());
+                                } else {
+                                    newRow.createCell(4).setCellType(Cell.CELL_TYPE_NUMERIC);
+                                }
+                                if (records.get(i).getPreviousAccountBalance() != null) {
+                                    newRow.createCell(5).setCellValue(records.get(i).getPreviousAccountBalance());
+                                } else {
+                                    newRow.createCell(5).setCellType(Cell.CELL_TYPE_NUMERIC);
+                                }
+
+                                // set styles
+                                newRow.getCell(0).setCellStyle(row.getCell(0).getCellStyle());
+                                newRow.getCell(1).setCellStyle(row.getCell(1).getCellStyle());
+                                newRow.getCell(2).setCellStyle(row.getCell(2).getCellStyle());
+                                newRow.getCell(3).setCellStyle(row.getCell(3).getCellStyle());
+                                if (row.getCell(4) != null && row.getCell(4).getCellStyle() != null) {
+                                    newRow.getCell(4).setCellStyle(row.getCell(4).getCellStyle());
+                                }
+                                newRow.getCell(5).setCellStyle(row.getCell(5).getCellStyle());
+                                index++;
+                                addedRecords++;
+                            }
+                        }
+                    }
+
+                    //rowNum++;
+                }
+                if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "Номер группы субсчетов") &&
+                        ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(1), "Наименование группы субсчетов") &&
+                        ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), "Код строки")){
+                    startOfTable = true;
+                }
+            }
+
+            //
+            File tmpDir = new File(this.rootDirectory + "/tmp");
+
+            String[]entries = tmpDir.list();
+            if(entries != null) {
+                for (String s : entries) {
+                    File currentFile = new File(tmpDir.getPath(), s);
+                    currentFile.delete();
+                }
+            }
+
+            // write to new
+            String filePath = this.rootDirectory + "/tmp/INCOME_EXP_USD_" + new Date().getTime() + ".xlsx";
+            try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
+                workbook.write(outputStream);
+            }
+
+            InputStream inputStream = new FileInputStream(filePath);
+            return inputStream;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+
+    private InputStream getConsolidatedTotalIncomeUSDReportInputStream(Long reportId){
+        List<ConsolidatedBalanceFormRecordDto> records = getConsolidatedTotalIncomeUSDForm(reportId);
+
+        String tempaltePath = "C:\\Users\\magzumov\\Desktop\\TEMPLATE_ NICKMF_cons_USD_опсд.xlsx";
+
+        InputStream ExcelFileToRead = null;
+        try {
+            ExcelFileToRead = new FileInputStream(tempaltePath);
+            XSSFWorkbook  workbook = new XSSFWorkbook(ExcelFileToRead);
+            XSSFSheet sheet = workbook.getSheetAt(0);
+            Iterator<Row> rowIterator = sheet.iterator();
+            boolean startOfTable = false;
+            boolean endOfTable = false;
+            while (rowIterator.hasNext() && !endOfTable) { // each row
+                Row row = rowIterator.next();
+                if (startOfTable) {
+                    Cell cell = row.getCell(1);
+                    if (cell != null && ExcelUtils.isCellStringValueEqualIgnoreCase(cell, "Итого совокупного дохода (сумма строк 1, 5)")) {
+                        endOfTable = true;
+                    }
+                    if (row.getCell(0) != null) {
+                        for(ConsolidatedBalanceFormRecordDto record: records){
+                            if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), record.getName()) && record.getCurrentAccountBalance() != null){
+                                row.getCell(2).setCellValue(record.getCurrentAccountBalance());
+                            }
+                            if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), record.getName()) && record.getPreviousAccountBalance() != null){
+                                row.getCell(3).setCellValue(record.getPreviousAccountBalance());
+                            }
+                        }
+                    }
+
+                }
+                if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "Наименование показателей") &&
+                        ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(1), "Код строки") &&
+                        ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), "На отчетную дату текущего периода")){
+                    startOfTable = true;
+                }
+            }
+
+            //
+            File tmpDir = new File(this.rootDirectory + "/tmp");
+
+            String[]entries = tmpDir.list();
+            if(entries != null) {
+                for (String s : entries) {
+                    File currentFile = new File(tmpDir.getPath(), s);
+                    currentFile.delete();
+                }
+            }
+
+            // write to new
+            String filePath = this.rootDirectory + "/tmp/CONS_TOTAL_INCOME_USD_" + new Date().getTime() + ".xlsx";
+            try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
+                workbook.write(outputStream);
+            }
+
+            InputStream inputStream = new FileInputStream(filePath);
+            return inputStream;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    private boolean deleteParsedFileData(Long reportId, String fileType){
+
+        if (fileType.equalsIgnoreCase("NB_REP_T1")){
+            return this.scheduleInvestmentService.deleteByReportId(reportId);
+        }else if(fileType.equalsIgnoreCase("NB_REP_T2")){
+            boolean deleted = this.statementBalanceService.deleteByReportId(reportId);
+            if(deleted) {
+                return this.statementOperatinsService.deleteByReportId(reportId);
+            }else {
+
+
+                // TODO: recover from failure
+                return false;
+
+            }
+        }else if(fileType.equalsIgnoreCase("NB_REP_T3")){
+            return this.statementCashflowsService.deleteByReportId(reportId);
+        }else if(fileType.equalsIgnoreCase("NB_REP_T4")){
+            return this.statementChangesService.deleteByReportId(reportId);
+        }else if(fileType.equalsIgnoreCase("NB_REP_SGL")){
+            return this.generalLedgerBalanceService.deleteByReportId(reportId);
+        }else if (fileType.equalsIgnoreCase("NB_REP_SNA")) {
+            return this.hfNOALService.deleteByReportId(reportId, 1);
+        }else if(fileType.equalsIgnoreCase("NB_REP_SNB")) {
+            return this.hfNOALService.deleteByReportId(reportId, 2);
+        }
+
+        return false;
+    }
+
+    // TODO: refactor as common lookup converter
+    private BaseDictionaryDto disassemble(BaseTypeEntity entity){
+        BaseDictionaryDto dto = new BaseDictionaryDto();
+        dto.setCode(entity.getCode());
+        dto.setNameEn(entity.getNameEn());
+        dto.setNameRu(entity.getNameRu());
+        dto.setNameKz(entity.getNameKz());
+        return dto;
     }
 
     /**
@@ -388,8 +2665,20 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
     @Transactional
     @Override
     public boolean saveNICKMFReportingData(NICKMFReportingDataHolderDto dataHolderDto) {
+
+        // TODO: error message to REST (i.e. UI)
+
         try {
             if(dataHolderDto != null && dataHolderDto.getRecords() != null){
+
+                checkNICKMFReportingData(dataHolderDto.getRecords());
+
+                // TODO: check report status
+                PeriodicReport periodicReport = this.periodReportRepository.findOne(dataHolderDto.getReport().getId());
+                if(periodicReport != null && periodicReport.getStatus().getCode().equalsIgnoreCase("SUBMITTED")){
+                    return false;
+                }
+
                 this.nickmfReportingDataRepository.deleteAllByReportId(dataHolderDto.getReport().getId());
                 for(NICKMFReportingDataDto dto: dataHolderDto.getRecords()){
                     NICKMFReportingData entity = this.nickmfReportingDataConverter.assemble(dto);
@@ -398,10 +2687,47 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 }
                 return true;
             }
+        }catch (IllegalArgumentException ex){
+            logger.error("Error saving NICK MF Reporting data: input validation failed", ex);
+
+            // TODO: return error message from IllegalArgumentException
+
         }catch (Exception ex){
             logger.error("Error saving NICK MF Reporting data.", ex);
         }
         return false;
+    }
+
+    private void checkNICKMFReportingData(List<NICKMFReportingDataDto> records){
+        if(records != null){
+            double totalSum = 0.0;
+            Set<String> codes = new HashSet<>();
+            for(NICKMFReportingDataDto record: records){
+
+                if(codes.contains(record.getNicChartOfAccountsCode())){
+                    throw new IllegalArgumentException("Duplicate chart of accounts code: " + record.getNbChartOfAccountsCode());
+                }
+
+                if(StringUtils.isEmpty(record.getNicChartOfAccountsCode())){
+                    throw new IllegalArgumentException("Record missing 'NicChartOfAccountsCode' value");
+                }else{
+                    // check code exists ???
+                }
+
+                if(record.getAccountBalance() == null){
+                    throw new IllegalArgumentException("Record missing 'AccountBalance' value");
+                }else{
+                    totalSum += record.getAccountBalance().doubleValue();
+                }
+
+                codes.add(record.getNicChartOfAccountsCode());
+            }
+
+            //
+//            if(totalSum > 2 || totalSum < -2){
+//                throw new IllegalArgumentException("Total sum = " + totalSum +" ; expected value 0 (or between -1 and 1)");
+//            }
+        }
     }
 
     @Override
@@ -509,9 +2835,1520 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
      */
     @Override
     public ConsolidatedReportRecordHolderDto getGeneralLedgerBalance(Long reportId){
-        ConsolidatedReportRecordHolderDto statementChanges = this.generalLedgerBalanceService.get(reportId);
-        return statementChanges;
+        ConsolidatedReportRecordHolderDto generalLedgerRecordsHolder = this.generalLedgerBalanceService.get(reportId);
+        return generalLedgerRecordsHolder;
     }
+
+    @Override
+    public List<GeneratedGeneralLedgerFormDto> getSingularGeneratedForm(Long reportId) {
+        ConsolidatedReportRecordHolderDto generalLedgerRecordsHolder = this.generalLedgerBalanceService.get(reportId);
+        ConsolidatedReportRecordHolderDto noalTrancheARecordHolder = this.hfNOALService.get(reportId, 1);
+        ConsolidatedReportRecordHolderDto noalTrancheBRecordHolder = this.hfNOALService.get(reportId, 2);
+
+        Map<String, Double> noalTrancheASubscriptionsRecords = new HashMap<>();
+        Map<String, Double> noalTrancheARedemptionsRecords = new HashMap<>();
+        if(noalTrancheARecordHolder != null && noalTrancheARecordHolder.getNoalTrancheAList() != null){
+            for(SingularityNOALRecordDto noalRecordDto: noalTrancheARecordHolder.getNoalTrancheAList()){
+                if(noalRecordDto.getTransaction().equalsIgnoreCase("Ending Balance") || noalRecordDto.getTransaction().equalsIgnoreCase("Ending")) {
+                    if (noalRecordDto.getAccountNumber().startsWith("1500")) {
+                        if(noalTrancheASubscriptionsRecords.get(noalRecordDto.getName()) != null){
+                            BigDecimal a = getBigDecimal(noalTrancheASubscriptionsRecords.get(noalRecordDto.getName()));
+                            BigDecimal sum = a.add(getBigDecimal(noalRecordDto.getFunctionalAmount()));
+                            noalTrancheASubscriptionsRecords.put(noalRecordDto.getName(), sum.doubleValue());
+                        }else{
+                            noalTrancheASubscriptionsRecords.put(noalRecordDto.getName(), noalRecordDto.getFunctionalAmount());
+                        }
+
+                    }else if (noalRecordDto.getAccountNumber().startsWith("1550")) {
+                        if(noalTrancheARedemptionsRecords.get(noalRecordDto.getName()) != null){
+                            BigDecimal a = getBigDecimal(noalTrancheARedemptionsRecords.get(noalRecordDto.getName()));
+                            BigDecimal sum = a.add(getBigDecimal(noalRecordDto.getFunctionalAmount()));
+                            noalTrancheARedemptionsRecords.put(noalRecordDto.getName(), sum.doubleValue());
+                        }else{
+                            noalTrancheARedemptionsRecords.put(noalRecordDto.getName(), noalRecordDto.getFunctionalAmount());
+                        }
+
+                    }
+                }
+
+            }
+        }
+
+        Map<String, Double> noalTrancheBSubscriptionsRecords = new HashMap<>();
+        Map<String, Double> noalTrancheBRedemptionsRecords = new HashMap<>();
+        if(noalTrancheARecordHolder != null && noalTrancheBRecordHolder.getNoalTrancheAList() != null){
+            for(SingularityNOALRecordDto noalRecordDto: noalTrancheBRecordHolder.getNoalTrancheAList()){
+                if(noalRecordDto.getTransaction().equalsIgnoreCase("Ending Balance") || noalRecordDto.getTransaction().equalsIgnoreCase("Ending")) {
+                    if (noalRecordDto.getAccountNumber().startsWith("1500")) {
+                        if(noalTrancheBSubscriptionsRecords.get(noalRecordDto.getName()) != null){
+                            BigDecimal a = getBigDecimal(noalTrancheBSubscriptionsRecords.get(noalRecordDto.getName()));
+                            BigDecimal sum = a.add(getBigDecimal(noalRecordDto.getFunctionalAmount()));
+                            noalTrancheBSubscriptionsRecords.put(noalRecordDto.getName(), sum.doubleValue());
+                        }else{
+                            noalTrancheBSubscriptionsRecords.put(noalRecordDto.getName(), noalRecordDto.getFunctionalAmount());
+                        }
+                    }else if (noalRecordDto.getAccountNumber().startsWith("1550")) {
+                        if(noalTrancheBRedemptionsRecords.get(noalRecordDto.getName()) != null){
+                            BigDecimal a = getBigDecimal(noalTrancheBRedemptionsRecords.get(noalRecordDto.getName()));
+                            BigDecimal sum = a.add(getBigDecimal(noalRecordDto.getFunctionalAmount()));
+                            noalTrancheBRedemptionsRecords.put(noalRecordDto.getName(), sum.doubleValue());
+                        }else{
+                            noalTrancheBRedemptionsRecords.put(noalRecordDto.getName(), noalRecordDto.getFunctionalAmount());
+                        }
+                    }
+                }
+
+            }
+        }
+
+        List<GeneratedGeneralLedgerFormDto> records = new ArrayList<>();
+        if(generalLedgerRecordsHolder != null && !generalLedgerRecordsHolder.getGeneralLedgerBalanceList().isEmpty()){
+            for(SingularityGeneralLedgerBalanceRecordDto glRecordDto: generalLedgerRecordsHolder.getGeneralLedgerBalanceList()){
+                GeneratedGeneralLedgerFormDto record = new GeneratedGeneralLedgerFormDto();
+                record.setAcronym(glRecordDto.getAcronym());
+                record.setBalanceDate(glRecordDto.getBalanceDate());
+                record.setFinancialStatementCategory(glRecordDto.getFinancialStatementCategory());
+                record.setGLAccount(glRecordDto.getGLAccount());
+                record.setFinancialStatementCategoryDescription(glRecordDto.getFinancialStatementCategoryDescription());
+                record.setChartAccountsLongDescription(glRecordDto.getChartAccountsLongDescription());
+                record.setGLAccountBalance(glRecordDto.getGLAccountBalance());
+                record.setSegValCCY(glRecordDto.getSegValCCY());
+                record.setFundCCY(glRecordDto.getFundCCY());
+
+                String singularityAccountNumber = glRecordDto.getGLAccount() != null && glRecordDto.getGLAccount().split("-").length > 0
+                    ? glRecordDto.getGLAccount().split("-")[0] : null;
+
+                if(singularityAccountNumber == null){
+
+
+                    // TODO: check on parsing !!!
+
+
+                    logger.error("No matching NIC Chart of Accounts record found for Singularity Account Number '" + glRecordDto.getGLAccount() + "'");
+                    throw new IllegalStateException("No matching NIC Chart of Accounts record found for Singularity Account Number '" + glRecordDto.getGLAccount() + "'");
+                }
+                NICReportingChartOfAccountsDto accountDto = getNICChartOfAccountsFromSingularityAccount(singularityAccountNumber, record.getGLAccountBalance());
+                if(accountDto != null){
+                    record.setNbAccountNumber(accountDto.getNBChartOfAccounts().getCode());
+                    record.setNicAccountName(accountDto.getNameRu());
+                }else{
+                    logger.error("No matching NIC Chart of Accounts record found for Singularity Account Number '" + singularityAccountNumber + "'");
+                    throw new IllegalStateException("No matching NIC Chart of Accounts record found for Singularity Account Number '" + singularityAccountNumber + "'");
+                }
+
+
+               if(record.getGLAccount().startsWith("1500")){ // SUBSCRIPTIONS - Tranche A
+                   if(record.getAcronym().equalsIgnoreCase("SINGULAR")){
+                       for (String key : noalTrancheASubscriptionsRecords.keySet()) {
+                           GeneratedGeneralLedgerFormDto newRecordDto = new GeneratedGeneralLedgerFormDto(record);
+                           newRecordDto.setSubscriptionRedemptionEntity(key);
+                           newRecordDto.setGLAccountBalance(noalTrancheASubscriptionsRecords.get(key));
+                           setAccountNameAdditionalDescription(newRecordDto);
+                           records.add(newRecordDto);
+                       }
+
+                   }else if(record.getAcronym().equalsIgnoreCase("SINGULAR B")){ // SUBSCRIPTIONS - Tranche B
+                       for (String key : noalTrancheBSubscriptionsRecords.keySet()) {
+                           GeneratedGeneralLedgerFormDto newRecordDto = new GeneratedGeneralLedgerFormDto(record);
+                           newRecordDto.setSubscriptionRedemptionEntity(key);
+                           newRecordDto.setGLAccountBalance(noalTrancheBSubscriptionsRecords.get(key));
+                           setAccountNameAdditionalDescription(newRecordDto);
+                           records.add(newRecordDto);
+                       }
+                   }else{
+                       // TODO: ??
+                   }
+                }else if(record.getGLAccount().startsWith("1550")){ // REDEMPTIONS - Tranche A
+                   if(record.getAcronym().equalsIgnoreCase("SINGULAR")){
+                       for (String key : noalTrancheARedemptionsRecords.keySet()) {
+                           GeneratedGeneralLedgerFormDto newRecordDto = new GeneratedGeneralLedgerFormDto(record);
+                           newRecordDto.setSubscriptionRedemptionEntity(key);
+                           newRecordDto.setGLAccountBalance(noalTrancheARedemptionsRecords.get(key));
+                           setAccountNameAdditionalDescription(newRecordDto);
+                           records.add(newRecordDto);
+                       }
+
+                   }else if(record.getAcronym().equalsIgnoreCase("SINGULAR B")){ // REDEMPTIONS - Tranche B
+                       for (String key : noalTrancheBRedemptionsRecords.keySet()) {
+                           GeneratedGeneralLedgerFormDto newRecordDto = new GeneratedGeneralLedgerFormDto(record);
+                           newRecordDto.setSubscriptionRedemptionEntity(key);
+                           newRecordDto.setGLAccountBalance(noalTrancheBRedemptionsRecords.get(key));
+                           setAccountNameAdditionalDescription(newRecordDto);
+                           records.add(newRecordDto);
+                       }
+                   }else{
+                       // TODO: ??
+                   }
+               }else {
+                   setAccountNameAdditionalDescription(record);
+                   records.add(record);
+               }
+            }
+        }
+        return records;
+    }
+
+    @Override
+    public ListResponseDto getTarragonGeneratedForm(Long reportId){
+        ListResponseDto responseDto = new ListResponseDto();
+        List<GeneratedGeneralLedgerFormDto> records = new ArrayList<>();
+
+        // Balance and Operations
+        List<StatementBalanceOperationsDto> balanceRecords = this.statementBalanceService.getStatementBalanceRecords(reportId);
+        records.addAll(processBalance(balanceRecords));
+
+        List<StatementBalanceOperationsDto> operationsRecords = this.statementOperatinsService.getStatementOperationsRecords(reportId);
+        records.addAll(processOperations(operationsRecords));
+
+        // Investments
+        List<ScheduleInvestmentsDto> investments = this.scheduleInvestmentService.getScheduleInvestments(reportId);
+        records.addAll(processScheduleInvestments(investments));
+
+        // Statement changes
+        List<StatementChangesDto> changes = this.statementChangesService.getStatementChanges(reportId);
+        records.addAll(processStatementChanges(changes));
+
+        // update account balance
+        List<GeneratedGeneralLedgerFormDto> updatedRecords = new ArrayList<>();
+        BigDecimal sum = new BigDecimal("0");
+        for(GeneratedGeneralLedgerFormDto record: records){
+            if(record.getGLAccountBalance() != null && record.getGLAccountBalance().doubleValue() != 0.0){
+                if(record.getGLAccountBalance() != null && record.getFinancialStatementCategory() != null &&
+                        !record.getFinancialStatementCategory().equalsIgnoreCase("A")){
+                    BigDecimal newValue = new BigDecimal(record.getGLAccountBalance()).multiply(new BigDecimal(-1));
+                    record.setGLAccountBalance(newValue.doubleValue());
+                    sum = sum.add(newValue);
+                }
+                updatedRecords.add(record);
+            }else{
+                // skip zero-values
+            }
+        }
+
+        // Added records
+        Double netRealizedTrancheA = 0.0;
+        Double netRealizedTrancheB = 0.0;
+        List<PEGeneralLedgerFormData> addedRecods =
+                this.peGeneralLedgerFormDataRepository.getEntitiesByReportId(reportId, new PageRequest(0, 1000, new Sort(Sort.Direction.ASC, "id")));
+        if(addedRecods != null) {
+            for(PEGeneralLedgerFormData entity: addedRecods) {
+                PEGeneralLedgerFormDataDto addedRecordDto = this.peGeneralLedgerFormDataConverter.disassemble(entity);
+                GeneratedGeneralLedgerFormDto recordDto = new GeneratedGeneralLedgerFormDto();
+                recordDto.setAcronym(addedRecordDto.getTranche() == 1 ? "TARRAGON" : "TARRAGON B");
+                if(addedRecordDto.getReport() != null) {
+                    recordDto.setBalanceDate(addedRecordDto.getReport().getReportDate());
+                }
+                recordDto.setFinancialStatementCategory(addedRecordDto.getFinancialStatementCategory());
+                recordDto.setChartAccountsLongDescription(addedRecordDto.getTarragonNICChartOfAccountsName());
+                recordDto.setNbAccountNumber(addedRecordDto.getNbAccountNumber());
+                String entityName = addedRecordDto.getEntityName() != null ? " " + addedRecordDto.getEntityName() : "";
+                recordDto.setNicAccountName(addedRecordDto.getNicAccountName() + entityName);
+                recordDto.setSubscriptionRedemptionEntity(entityName);
+                recordDto.setGLAccountBalance(addedRecordDto.getGLAccountBalance());
+                recordDto.setAdded(true);
+                recordDto.setAddedRecordId(entity.getId());
+                updatedRecords.add(recordDto);
+
+                if(recordDto.getChartAccountsLongDescription().equalsIgnoreCase("Net Realized Gains/Losses from Portfolio Funds")){
+                    switch(recordDto.getAcronym()) {
+                        case "TARRAGON":
+                            netRealizedTrancheA += recordDto.getGLAccountBalance();
+                            break;
+                        case "TARRAGON B":
+                            netRealizedTrancheB += recordDto.getGLAccountBalance();
+                            break;
+                    }
+                }
+            }
+        }
+
+        setNICChartOfAccounts(updatedRecords);
+        Collections.sort(updatedRecords);
+
+
+        // Check Net Realized Gains Losses
+        if(operationsRecords != null) {
+            for (StatementBalanceOperationsDto record : operationsRecords) {
+                if (record.getName().equalsIgnoreCase("Net realized gain on investments")) {
+                    double value = record.getNICKMFShareConsolidated() != null ? record.getNICKMFShareConsolidated().doubleValue() : 0.0;
+                    if (record.getTranche() == 1 && ((netRealizedTrancheA + value) < -2 ||
+                            (netRealizedTrancheA + value) > 2)) {
+                        String errorMessage = "{Tranche A] Statement of operations 'Net realized gain on investments' = " + value +
+                                ", sum of net realized gains/losses = " + netRealizedTrancheA;
+                        logger.error(errorMessage);
+                        responseDto.setMessageEn(errorMessage);
+                        responseDto.setStatus(StatusResultType.FAIL);
+                    } else if (record.getTranche() == 2 && ((netRealizedTrancheB + value) < -2 ||
+                            (netRealizedTrancheB + value) > 2)) {
+                        String errorMessage = "{Tranche B] Statement of operations 'Net realized gain on investments' = " + value +
+                                ", sum of net realized gains/losses = " + netRealizedTrancheB;
+                        logger.error(errorMessage);
+                        responseDto.setMessageEn(errorMessage);
+                        responseDto.setStatus(StatusResultType.FAIL);
+                    }
+                }
+            }
+        }
+
+        responseDto.setRecords(updatedRecords);
+        if(responseDto.getStatus() == null){
+            responseDto.setStatus(StatusResultType.SUCCESS);
+        }
+        return responseDto;
+    }
+
+
+    @Override
+    public List<ConsolidatedBalanceFormRecordDto> getConsolidatedBalanceUSDForm(Long reportId){
+        PeriodicReport currentReport = this.periodReportRepository.findOne(reportId);
+        if(currentReport == null){
+            logger.error("No report found for id=" + reportId);
+            return null;
+        }
+
+        List<ConsolidatedBalanceFormRecordDto> currentPeriodRecords = getConsolidatedBalanceUSDFormCurrent(reportId);
+
+        // Set previous month account balance
+        Date previousDate = DateUtils.getLastDayOfPreviousMonth(currentReport.getReportDate());
+        PeriodicReport previousReport = this.periodReportRepository.findByReportDate(previousDate);
+        if(previousReport != null && previousReport.getStatus().getCode().equalsIgnoreCase("SUBMITTED")){
+            List<ConsolidatedBalanceFormRecordDto> previousPeriodRecords = getConsolidatedBalanceUSDFormCurrent(previousReport.getId());
+            if(previousPeriodRecords != null){
+                List<ConsolidatedBalanceFormRecordDto> toAdd = new ArrayList<>();
+                List<Integer> toAddIndex = new ArrayList<>();
+                for(ConsolidatedBalanceFormRecordDto previousRecord: previousPeriodRecords){
+                    int header1Index = 0; // Инвестиции к возврату
+                    int header2Index = 0; // Предварительная подписка
+                    for(int i = 0; i < currentPeriodRecords.size(); i++){
+                        ConsolidatedBalanceFormRecordDto currentRecord = currentPeriodRecords.get(i);
+                        if(currentRecord.getName().equalsIgnoreCase("Инвестиции к возврату") && currentRecord.getAccountNumber() == null){
+                            header1Index = i;
+                        }else if(currentRecord.getName().equalsIgnoreCase("Предварительная подписка") && currentRecord.getAccountNumber() == null){
+                            header2Index = i;
+                        }
+
+                        if(previousRecord.getLineNumber() + 1 == (currentRecord.getLineNumber())){
+                            // next line number
+                            if(previousRecord.getName().startsWith("Инвестиции к возврату") && previousRecord.getAccountNumber() != null){
+                                toAddIndex.add(header1Index + 1);
+                            }else if(previousRecord.getName().startsWith("Предварительная подписка") && previousRecord.getAccountNumber() != null){
+                                toAddIndex.add(header2Index + 1);
+                            }else {
+                                toAddIndex.add(i);
+                            }
+                            toAdd.add(previousRecord);
+                            break;
+                        }
+                        if(currentRecord.getName().equalsIgnoreCase(previousRecord.getName())){
+                            currentRecord.setPreviousAccountBalance(previousRecord.getCurrentAccountBalance());
+                            break;
+                        }
+                    }
+                }
+                int added = 0;
+                for(int i = 0; i < toAdd.size(); i++) {
+                    ConsolidatedBalanceFormRecordDto recordToAdd = toAdd.get(i);
+                    recordToAdd.setPreviousAccountBalance(recordToAdd.getCurrentAccountBalance());
+                    recordToAdd.setCurrentAccountBalance(null);
+                    currentPeriodRecords.add(toAddIndex.get(i) + added, recordToAdd);
+                    added++;
+                }
+
+            }
+        }else{
+            logger.error("ConsolidatedBalanceUSDForm: No previous month report or report status is not 'SUBMITTED'");
+        }
+
+        return currentPeriodRecords;
+    }
+
+
+    private List<ConsolidatedBalanceFormRecordDto> getConsolidatedBalanceUSDFormCurrent(Long reportId) {
+        PeriodicReport currentReport = this.periodReportRepository.findOne(reportId);
+        if(currentReport == null){
+            logger.error("No report found for id=" + reportId);
+            return null;
+        }
+
+        Map<Integer, Double> sums = new HashedMap();
+        for(int i = 1; i <= 52; i++){
+            sums.put(i, 0.0);
+        }
+        // Add line number headers
+        List<ConsolidatedBalanceFormRecordDto> records = getConsolidatedBalanceUSDFormLineHeaders();
+
+        // Add NICK MF records
+        NICKMFReportingDataHolderDto nickmfReportingDataHolderDto = getNICKMFReportingData(reportId);
+        if(nickmfReportingDataHolderDto != null && nickmfReportingDataHolderDto.getRecords() != null){
+            for(NICKMFReportingDataDto nickMFRecord: nickmfReportingDataHolderDto.getRecords()){
+                if(nickMFRecord.getNbChartOfAccountsCode().equalsIgnoreCase("5440.010") &&
+                        !nickMFRecord.getNicChartOfAccountsName().equalsIgnoreCase("Резерв по переоценке финансовых инвестиций, имеющихся в наличии для продажи")){
+                    // include only 'Резерв на переоценку  финансовых инвестиций, имеющихся в наличии для продажи'
+                    continue;
+                }else if(nickMFRecord.getNbChartOfAccountsCode().equalsIgnoreCase("5520.010")){
+                    // exclude '5520.010' records
+                    continue;
+                }
+                ConsolidatedBalanceFormRecordDto recordDto = new ConsolidatedBalanceFormRecordDto();
+                recordDto.setAccountNumber(nickMFRecord.getNbChartOfAccountsCode());
+                recordDto.setName(nickMFRecord.getNicChartOfAccountsName());
+                int lineNumber = getConsolidatedBalanceUSDFormLineNumberByAccountNumber(nickMFRecord.getNbChartOfAccountsCode());
+                if(lineNumber > 0){
+                    recordDto.setLineNumber(lineNumber);
+                }else{
+                    // TODO: ERROR
+                    continue;
+                }
+                //recordDto.setOtherEntityName();
+                recordDto.setCurrentAccountBalance(lineNumber == 30 || lineNumber == 45 || lineNumber == 49
+                        ? 0 - nickMFRecord.getAccountBalance() : nickMFRecord.getAccountBalance());
+
+                //recordDto.setPreviousAccountBalance();
+                records.add(recordDto);
+
+
+                if(StringUtils.isNotEmpty(recordDto.getAccountNumber()) && recordDto.getLineNumber() != null && recordDto.getCurrentAccountBalance() != null){
+                    Double sum = sums.get(recordDto.getLineNumber());
+                    sum = sum != null ? sum : 0.0;
+                    sum += recordDto.getCurrentAccountBalance();
+                    sums.put(recordDto.getLineNumber(), sum);
+                }
+            }
+        }
+
+        // Add Singular records
+        List<GeneratedGeneralLedgerFormDto> singularRecords = getSingularGeneratedForm(reportId);
+        if(singularRecords != null){
+            for(GeneratedGeneralLedgerFormDto singularRecord: singularRecords){
+                if(singularRecord.getNbAccountNumber().equalsIgnoreCase("5440.010") &&
+                        !singularRecord.getNicAccountName().equalsIgnoreCase("Резерв по переоценке финансовых инвестиций, имеющихся в наличии для продажи")){
+                    // include only 'Резерв на переоценку  финансовых инвестиций, имеющихся в наличии для продажи'
+                    continue;
+                }else if(singularRecord.getNbAccountNumber().equalsIgnoreCase("5520.010")){
+                    // exclude '5520.010' records
+                    continue;
+                }
+                ConsolidatedBalanceFormRecordDto recordDto = new ConsolidatedBalanceFormRecordDto();
+                recordDto.setAccountNumber(singularRecord.getNbAccountNumber());
+                recordDto.setName(singularRecord.getNicAccountName());
+                int lineNumber = getConsolidatedBalanceUSDFormLineNumberByAccountNumber(singularRecord.getNbAccountNumber());
+                if(lineNumber > 0){
+                    recordDto.setLineNumber(lineNumber);
+                }else{
+                    // TODO: ERROR
+                    continue;
+                }
+                recordDto.setOtherEntityName(singularRecord.getAcronym());
+                recordDto.setCurrentAccountBalance(lineNumber == 30 || lineNumber == 45  || lineNumber == 49
+                        ? 0 - singularRecord.getGLAccountBalance() : singularRecord.getGLAccountBalance());
+                //recordDto.setPreviousAccountBalance();
+                records.add(recordDto);
+
+                if(StringUtils.isNotEmpty(recordDto.getAccountNumber()) && recordDto.getLineNumber() != null && recordDto.getCurrentAccountBalance() != null){
+                    Double sum = sums.get(recordDto.getLineNumber());
+                    sum = sum != null ? sum : 0.0;
+                    sum += recordDto.getCurrentAccountBalance();
+                    sums.put(recordDto.getLineNumber(), sum);
+                }
+            }
+        }
+
+        // Add Tarragon records
+        List<GeneratedGeneralLedgerFormDto> tarragonRecords = getTarragonGeneratedForm(reportId).getRecords();
+        if(singularRecords != null){
+            for(GeneratedGeneralLedgerFormDto tarragonRecord: tarragonRecords){
+                if(tarragonRecord.getNbAccountNumber() != null && tarragonRecord.getNbAccountNumber().equalsIgnoreCase("5440.010") &&
+                        !tarragonRecord.getNicAccountName().equalsIgnoreCase("Резерв по переоценке финансовых инвестиций, имеющихся в наличии для продажи")){
+                    // include only 'Резерв на переоценку  финансовых инвестиций, имеющихся в наличии для продажи'
+                    continue;
+                }else if(tarragonRecord.getNbAccountNumber() != null && tarragonRecord.getNbAccountNumber().equalsIgnoreCase("5520.010")){
+                    // exclude '5520.010' records
+                    continue;
+                }
+                ConsolidatedBalanceFormRecordDto recordDto = new ConsolidatedBalanceFormRecordDto();
+                recordDto.setAccountNumber(tarragonRecord.getNbAccountNumber());
+                recordDto.setName(tarragonRecord.getNicAccountName());
+                int lineNumber = getConsolidatedBalanceUSDFormLineNumberByAccountNumber(tarragonRecord.getNbAccountNumber());
+                if(lineNumber > 0){
+                    recordDto.setLineNumber(lineNumber);
+                }else{
+                    // TODO: ERROR
+                    continue;
+                }
+                recordDto.setOtherEntityName(tarragonRecord.getAcronym());
+                recordDto.setCurrentAccountBalance(lineNumber == 30 || lineNumber == 45  || lineNumber == 49
+                        ? 0 - tarragonRecord.getGLAccountBalance() : tarragonRecord.getGLAccountBalance());
+                //recordDto.setPreviousAccountBalance();
+                records.add(recordDto);
+
+                if(StringUtils.isNotEmpty(recordDto.getAccountNumber()) && recordDto.getLineNumber() != null && recordDto.getCurrentAccountBalance() != null){
+                    Double sum = sums.get(recordDto.getLineNumber());
+                    sum = sum != null ? sum : 0.0;
+                    sum += recordDto.getCurrentAccountBalance();
+                    sums.put(recordDto.getLineNumber(), sum);
+                }
+            }
+        }
+
+        // Add previous year input
+        List<PreviousYearInputDataDto> previousYearRecords = getPreviousYearInputData(reportId);
+        if(previousYearRecords != null){
+            for(PreviousYearInputDataDto previousRecord: previousYearRecords){
+                ConsolidatedBalanceFormRecordDto recordDto = new ConsolidatedBalanceFormRecordDto();
+                recordDto.setName(previousRecord.getChartOfAccounts().getNameRu());
+                recordDto.setCurrentAccountBalance(previousRecord.getAccountBalance());
+                recordDto.setAccountNumber(previousRecord.getChartOfAccounts().getNBChartOfAccounts().getCode());
+                int lineNumber = getConsolidatedBalanceUSDFormLineNumberByAccountNumber(previousRecord.getChartOfAccounts().getNBChartOfAccounts().getCode());
+                if(lineNumber > 0){
+                    recordDto.setLineNumber(lineNumber);
+                }else{
+                    // TODO: error
+                    continue;
+                }
+                records.add(recordDto);
+
+                if(StringUtils.isNotEmpty(recordDto.getAccountNumber()) && recordDto.getLineNumber() != null && recordDto.getCurrentAccountBalance() != null){
+                    Double sum = sums.get(recordDto.getLineNumber());
+                    sum = sum != null ? sum : 0.0;
+                    sum += recordDto.getCurrentAccountBalance();
+                    sums.put(recordDto.getLineNumber(), sum);
+                }
+            }
+        }
+
+        List<ConsolidatedBalanceFormRecordDto> incomeExpenseRecords = getConsolidatedIncomeExpenseUSDForm(reportId);
+        if(incomeExpenseRecords != null && !incomeExpenseRecords.isEmpty()){
+            for(int i = incomeExpenseRecords.size() - 1; i < incomeExpenseRecords.size(); i--){
+                ConsolidatedBalanceFormRecordDto inRecordDto = incomeExpenseRecords.get(i);
+                if(inRecordDto.getLineNumber() == 20){
+                    ConsolidatedBalanceFormRecordDto recordDto = new ConsolidatedBalanceFormRecordDto();
+                    recordDto.setAccountNumber("5510.010");
+                    recordDto.setName("Нераспределенная прибыль (непокрытый убыток) отчетного года");
+                    recordDto.setLineNumber(50);
+                    recordDto.setCurrentAccountBalance(inRecordDto.getCurrentAccountBalance());
+                    records.add(recordDto);
+
+                    if(StringUtils.isNotEmpty(recordDto.getAccountNumber()) && recordDto.getLineNumber() != null && recordDto.getCurrentAccountBalance() != null){
+                        Double sum = sums.get(recordDto.getLineNumber());
+                        sum = sum != null ? sum : 0.0;
+                        sum += recordDto.getCurrentAccountBalance();
+                        sums.put(recordDto.getLineNumber(), sum);
+                    }
+                    break;
+                }
+            }
+        }
+
+        // Sort
+        Collections.sort(records);
+
+
+        // Add sums
+        for(ConsolidatedBalanceFormRecordDto record: records){
+            if(StringUtils.isEmpty(record.getAccountNumber()) && record.getLineNumber() != null){
+                Double sum = sums.get(record.getLineNumber());
+                record.setCurrentAccountBalance(sum);
+            }else{
+            }
+        }
+
+        // Join "duplicate" records into one, exclude records without line number
+        List<ConsolidatedBalanceFormRecordDto> recordsNoDuplicates = new ArrayList<>();
+                ConsolidatedBalanceFormRecordDto previousRecord = null;
+        for(ConsolidatedBalanceFormRecordDto record: records){
+            if(previousRecord != null && previousRecord.getAccountNumber() != null && previousRecord.getName() != null){
+                if(record.getAccountNumber() != null && record.getName() != null &&
+                        previousRecord.getAccountNumber().equalsIgnoreCase(record.getAccountNumber()) &&
+                        previousRecord.getName().equalsIgnoreCase(record.getName())){
+                    Double sum = previousRecord.getCurrentAccountBalance() != null && record.getCurrentAccountBalance() != null ?
+                            previousRecord.getCurrentAccountBalance() + record.getCurrentAccountBalance() :
+                            previousRecord.getCurrentAccountBalance() != null ? previousRecord.getCurrentAccountBalance() : record.getCurrentAccountBalance();
+                    previousRecord.setCurrentAccountBalance(sum);
+                    continue;
+                }
+            }
+
+            if(record.getLineNumber() != null) {
+                recordsNoDuplicates.add(record);
+                previousRecord = record;
+            }
+        }
+
+        // Set line number sums
+        setConsolidatedBalanceUSDFormHeaderSumsAndClearOtherEntityName(recordsNoDuplicates, sums);
+
+        // set additional headers
+        recordsNoDuplicates = setConsolidatedBalanceUSDFormAdditionalHeadersAndClearLineNumbers(recordsNoDuplicates);
+
+        // TODO: Check : Assets = Liabilities + Capital
+
+        //return records;
+        return recordsNoDuplicates;
+    }
+
+    @Override
+    public List<ConsolidatedBalanceFormRecordDto> getConsolidatedIncomeExpenseUSDForm(Long reportId){
+        PeriodicReport currentReport = this.periodReportRepository.findOne(reportId);
+        if(currentReport == null){
+            logger.error("No report found for id=" + reportId);
+            return null;
+        }
+
+        List<ConsolidatedBalanceFormRecordDto> currentPeriodRecords = getConsolidatedIncomeExpenseUSDFormCurrent(reportId);
+
+        // Set previous month account balance
+        Date previousDate = DateUtils.getLastDayOfPreviousMonth(currentReport.getReportDate());
+        PeriodicReport previousReport = this.periodReportRepository.findByReportDate(previousDate);
+        if(previousReport != null && previousReport.getStatus().getCode().equalsIgnoreCase("SUBMITTED")){
+            List<ConsolidatedBalanceFormRecordDto> previousPeriodRecords = getConsolidatedIncomeExpenseUSDFormCurrent(previousReport.getId());
+            if(previousPeriodRecords != null){
+                List<ConsolidatedBalanceFormRecordDto> toAdd = new ArrayList<>();
+                List<Integer> toAddIndex = new ArrayList<>();
+                for(ConsolidatedBalanceFormRecordDto previousRecord: previousPeriodRecords){
+                    int header1Index = 0; // Доходы от изменения справедливой стоимости долгосрочных финансовых инвестиций, имеющихся в наличии для продажи
+                    int header2Index = 0; // Расходы от изменения справедливой стоимости долгосрочных финансовых инвестиций, имеющихся в наличии для продажи
+                    for(int i = 0; i < currentPeriodRecords.size(); i++){
+                        ConsolidatedBalanceFormRecordDto currentRecord = currentPeriodRecords.get(i);
+                        if(currentRecord.getName().equalsIgnoreCase("Доходы от изменения справедливой стоимости долгосрочных финансовых инвестиций, имеющихся в наличии для продажи") &&
+                                currentRecord.getAccountNumber() == null){
+                            header1Index = i;
+                        }else if(currentRecord.getName().equalsIgnoreCase("Расходы от изменения справедливой стоимости долгосрочных финансовых инвестиций, имеющихся в наличии для продажи") &&
+                                currentRecord.getAccountNumber() == null){
+                            header2Index = i;
+                        }
+
+                        if(previousRecord.getLineNumber() + 1 == (currentRecord.getLineNumber())){
+                            // next line number
+                            if(previousRecord.getAccountNumber() != null && previousRecord.getAccountNumber().equalsIgnoreCase("6150.030")){
+                                toAddIndex.add(header1Index + 1);
+                            }else if(previousRecord.getAccountNumber() != null && previousRecord.getAccountNumber().equalsIgnoreCase("7330.030")){
+                                toAddIndex.add(header2Index + 1);
+                            }else {
+                                toAddIndex.add(i);
+                            }
+                            toAdd.add(previousRecord);
+                            break;
+                        }
+
+                        if(currentRecord.getName().equalsIgnoreCase(previousRecord.getName())){
+                            currentRecord.setPreviousAccountBalance(previousRecord.getCurrentAccountBalance());
+                            break;
+                        }
+                    }
+                }
+                int added = 0;
+                for(int i = 0; i < toAdd.size(); i++) {
+                    ConsolidatedBalanceFormRecordDto recordToAdd = toAdd.get(i);
+                    recordToAdd.setPreviousAccountBalance(recordToAdd.getCurrentAccountBalance());
+                    recordToAdd.setCurrentAccountBalance(null);
+                    currentPeriodRecords.add(toAddIndex.get(i) + added, recordToAdd);
+                    added++;
+                }
+
+            }
+        }else{
+            logger.error("ConsolidatedIncomeExpenseUSDForm: No previous month report or report status is not 'SUBMITTED'");
+        }
+
+        return currentPeriodRecords;
+    }
+
+    public List<ConsolidatedBalanceFormRecordDto> getConsolidatedIncomeExpenseUSDFormCurrent(Long reportId) {
+        Map<Integer, Double> sums = new HashedMap();
+        for(int i = 1; i <= 20; i++){
+            sums.put(i, 0.0);
+        }
+        // Add line number headers
+        List<ConsolidatedBalanceFormRecordDto> records = getConsolidatedIncomeExpenseUSDFormLineHeaders();
+
+        // Add NICK MF records
+        NICKMFReportingDataHolderDto nickmfReportingDataHolderDto = getNICKMFReportingData(reportId);
+        if(nickmfReportingDataHolderDto != null && nickmfReportingDataHolderDto.getRecords() != null){
+            for(NICKMFReportingDataDto nickMFRecord: nickmfReportingDataHolderDto.getRecords()){
+                ConsolidatedBalanceFormRecordDto recordDto = new ConsolidatedBalanceFormRecordDto();
+                recordDto.setAccountNumber(nickMFRecord.getNbChartOfAccountsCode());
+                recordDto.setName(nickMFRecord.getNicChartOfAccountsName());
+                int lineNumber = getConsolidatedIncomeExpenseUSDFormLineNumberByAccountNumber(nickMFRecord.getNbChartOfAccountsCode());
+                if(lineNumber > 0){
+                    recordDto.setLineNumber(lineNumber);
+                }else{
+                    // TODO: ERROR
+                    continue;
+                }
+                //recordDto.setOtherEntityName();
+                recordDto.setCurrentAccountBalance(lineNumber == 8 || lineNumber == 10 || lineNumber == 12 || lineNumber == 15
+                        ? 0 - nickMFRecord.getAccountBalance() : nickMFRecord.getAccountBalance());
+
+                //recordDto.setPreviousAccountBalance();
+                records.add(recordDto);
+
+
+                if(StringUtils.isNotEmpty(recordDto.getAccountNumber()) && recordDto.getLineNumber() != null && recordDto.getCurrentAccountBalance() != null){
+                    Double sum = sums.get(recordDto.getLineNumber());
+                    sum = sum != null ? sum : 0.0;
+                    sum += recordDto.getCurrentAccountBalance();
+                    sums.put(recordDto.getLineNumber(), sum);
+                }
+            }
+        }
+
+        // Add Singular records
+        List<GeneratedGeneralLedgerFormDto> singularRecords = getSingularGeneratedForm(reportId);
+        if(singularRecords != null){
+            for(GeneratedGeneralLedgerFormDto singularRecord: singularRecords){
+                ConsolidatedBalanceFormRecordDto recordDto = new ConsolidatedBalanceFormRecordDto();
+                recordDto.setAccountNumber(singularRecord.getNbAccountNumber());
+                recordDto.setName(singularRecord.getNicAccountName());
+                int lineNumber = getConsolidatedIncomeExpenseUSDFormLineNumberByAccountNumber(singularRecord.getNbAccountNumber());
+                if(lineNumber > 0){
+                    recordDto.setLineNumber(lineNumber);
+                }else{
+                    // TODO: ERROR
+                    continue;
+                }
+                recordDto.setOtherEntityName(singularRecord.getAcronym());
+                recordDto.setCurrentAccountBalance(lineNumber == 8 || lineNumber == 10 || lineNumber == 12 || lineNumber == 15
+                        ? 0 - singularRecord.getGLAccountBalance() : singularRecord.getGLAccountBalance());
+                //recordDto.setPreviousAccountBalance();
+                records.add(recordDto);
+
+                if(StringUtils.isNotEmpty(recordDto.getAccountNumber()) && recordDto.getLineNumber() != null && recordDto.getCurrentAccountBalance() != null){
+                    Double sum = sums.get(recordDto.getLineNumber());
+                    sum = sum != null ? sum : 0.0;
+                    sum += recordDto.getCurrentAccountBalance();
+                    sums.put(recordDto.getLineNumber(), sum);
+                }
+            }
+        }
+
+        // Add Tarragon records
+        List<GeneratedGeneralLedgerFormDto> tarragonRecords = getTarragonGeneratedForm(reportId).getRecords();
+        if(singularRecords != null){
+            for(GeneratedGeneralLedgerFormDto tarragonRecord: tarragonRecords){
+                ConsolidatedBalanceFormRecordDto recordDto = new ConsolidatedBalanceFormRecordDto();
+                recordDto.setAccountNumber(tarragonRecord.getNbAccountNumber());
+                recordDto.setName(tarragonRecord.getNicAccountName());
+                int lineNumber = getConsolidatedIncomeExpenseUSDFormLineNumberByAccountNumber(tarragonRecord.getNbAccountNumber());
+                if(lineNumber > 0){
+                    recordDto.setLineNumber(lineNumber);
+                }else{
+                    // TODO: ERROR
+                    continue;
+                }
+                recordDto.setOtherEntityName(tarragonRecord.getAcronym());
+                recordDto.setCurrentAccountBalance(lineNumber == 8 || lineNumber == 10 || lineNumber == 12 || lineNumber == 15
+                        ? 0 - tarragonRecord.getGLAccountBalance() : tarragonRecord.getGLAccountBalance());
+                //recordDto.setPreviousAccountBalance();
+                records.add(recordDto);
+
+                if(StringUtils.isNotEmpty(recordDto.getAccountNumber()) && recordDto.getLineNumber() != null && recordDto.getCurrentAccountBalance() != null){
+                    Double sum = sums.get(recordDto.getLineNumber());
+                    sum = sum != null ? sum : 0.0;
+                    sum += recordDto.getCurrentAccountBalance();
+                    sums.put(recordDto.getLineNumber(), sum);
+                }
+            }
+        }
+
+
+        // Sort
+        Collections.sort(records);
+
+
+        // Add sums
+        for(ConsolidatedBalanceFormRecordDto record: records){
+            if(StringUtils.isEmpty(record.getAccountNumber()) && record.getLineNumber() != null){
+                Double sum = sums.get(record.getLineNumber());
+                record.setCurrentAccountBalance(sum);
+            }else{
+            }
+        }
+
+        // Join "duplicate" records into one, exclude records without line number
+        List<ConsolidatedBalanceFormRecordDto> recordsNoDuplicates = new ArrayList<>();
+        ConsolidatedBalanceFormRecordDto previousRecord = null;
+        for(ConsolidatedBalanceFormRecordDto record: records){
+            if(previousRecord != null && previousRecord.getAccountNumber() != null && previousRecord.getName() != null){
+                if(record.getAccountNumber() != null && record.getName() != null &&
+                        previousRecord.getAccountNumber().equalsIgnoreCase(record.getAccountNumber()) &&
+                        previousRecord.getName().equalsIgnoreCase(record.getName())){
+                    Double sum = previousRecord.getCurrentAccountBalance() != null && record.getCurrentAccountBalance() != null ?
+                            previousRecord.getCurrentAccountBalance() + record.getCurrentAccountBalance() :
+                            previousRecord.getCurrentAccountBalance() != null ? previousRecord.getCurrentAccountBalance() : record.getCurrentAccountBalance();
+                    previousRecord.setCurrentAccountBalance(sum);
+                    continue;
+                }
+            }
+
+            if(record.getLineNumber() != null) {
+                recordsNoDuplicates.add(record);
+                previousRecord = record;
+            }
+        }
+
+        // Set line number sums
+        setConsolidatedIncomeExpenseUSDFormHeaderSumsAndClearOtherEntityName(recordsNoDuplicates, sums);
+
+        // set additional headers
+        recordsNoDuplicates = setConsolidatedIncomeExpenseUSDFormAdditionalHeadersAndClearLineNumbers(recordsNoDuplicates);
+
+        // TODO: Check : Assets = Liabilities + Capital
+
+        //return records;
+        return recordsNoDuplicates;
+    }
+
+    @Override
+    public List<ConsolidatedBalanceFormRecordDto> getConsolidatedTotalIncomeUSDForm(Long reportId){
+        PeriodicReport currentReport = this.periodReportRepository.findOne(reportId);
+        if(currentReport == null){
+            logger.error("No report found for id=" + reportId);
+            return null;
+        }
+
+        List<ConsolidatedBalanceFormRecordDto> currentPeriodRecords = getConsolidatedTotalIncomeUSDFormCurrent(reportId);
+
+        // Set previous month account balance
+        Date previousDate = DateUtils.getLastDayOfPreviousMonth(currentReport.getReportDate());
+        PeriodicReport previousReport = this.periodReportRepository.findByReportDate(previousDate);
+        if(previousReport != null && previousReport.getStatus().getCode().equalsIgnoreCase("SUBMITTED")){
+            List<ConsolidatedBalanceFormRecordDto> previousPeriodRecords = getConsolidatedTotalIncomeUSDFormCurrent(previousReport.getId());
+            if(previousPeriodRecords != null){
+                for(ConsolidatedBalanceFormRecordDto previousRecord: previousPeriodRecords){
+                    for(ConsolidatedBalanceFormRecordDto currentRecord: currentPeriodRecords){
+                        if(currentRecord.getName().equalsIgnoreCase(previousRecord.getName())){
+                            currentRecord.setPreviousAccountBalance(previousRecord.getCurrentAccountBalance());
+                            break;
+                        }
+                    }
+                }
+            }
+        }else{
+            logger.error("ConsolidatedTotalIncomeUSDForm: No previous month report or report status is not 'SUBMITTED'");
+        }
+
+        return currentPeriodRecords;
+    }
+
+    public List<ConsolidatedBalanceFormRecordDto> getConsolidatedTotalIncomeUSDFormCurrent(Long reportId) {
+        Map<Integer, Double> sums = new HashedMap();
+        for(int i = 1; i <= 6; i++){
+            sums.put(i, 0.0);
+        }
+        // Add line number headers
+        List<ConsolidatedBalanceFormRecordDto> records = getConsolidatedTotalIncomeUSDFormLineHeaders();
+
+        // Get consolidated income expense
+        Double header_1_Balance = null;
+        List<ConsolidatedBalanceFormRecordDto> incomeExpenseFormRecords = getConsolidatedIncomeExpenseUSDForm(reportId);
+        if(incomeExpenseFormRecords != null && !incomeExpenseFormRecords.isEmpty()){
+            for(ConsolidatedBalanceFormRecordDto inRecordDto: incomeExpenseFormRecords){
+                if(inRecordDto.getLineNumber() != null && inRecordDto.getLineNumber() == 20){
+                    header_1_Balance = inRecordDto.getCurrentAccountBalance();
+
+//                    if(StringUtils.isNotEmpty(recordDto.getAccountNumber()) && recordDto.getLineNumber() != null && recordDto.getCurrentAccountBalance() != null){
+//                        Double sum = sums.get(recordDto.getLineNumber());
+//                        sum = sum != null ? sum : 0.0;
+//                        sum += recordDto.getCurrentAccountBalance();
+//                        sums.put(recordDto.getLineNumber(), sum);
+//                    }
+                    break;
+                }
+            }
+        }
+
+        // Get consolidated balance
+        Double header_3_1_Balance = null;
+        List<ConsolidatedBalanceFormRecordDto> balanceFormRecords = getConsolidatedBalanceUSDForm(reportId);
+        if(balanceFormRecords != null && !balanceFormRecords.isEmpty()){
+            for(ConsolidatedBalanceFormRecordDto balanceRecordDto: balanceFormRecords){
+                if(balanceRecordDto.getAccountNumber() != null && balanceRecordDto.getAccountNumber().equalsIgnoreCase("5440.010") &&
+                        balanceRecordDto.getName().equalsIgnoreCase("Резерв по переоценке финансовых инвестиций, имеющихся в наличии для продажи")){
+                    header_3_1_Balance = balanceRecordDto.getCurrentAccountBalance();
+
+//                    if(StringUtils.isNotEmpty(recordDto.getAccountNumber()) && recordDto.getLineNumber() != null && recordDto.getCurrentAccountBalance() != null){
+//                        Double sum = sums.get(recordDto.getLineNumber());
+//                        sum = sum != null ? sum : 0.0;
+//                        sum += recordDto.getCurrentAccountBalance();
+//                        sums.put(recordDto.getLineNumber(), sum);
+//                    }
+                    break;
+                }
+            }
+        }
+
+        // Set values from other reports
+        for(ConsolidatedBalanceFormRecordDto record: records){
+            if(record.getLineNumber() != null){
+                if(record.getLineNumber() == 1){
+                    record.setCurrentAccountBalance(header_1_Balance);
+                }else if(record.getLineNumber() == 3 && record.getSubLineNumber() != null && record.getSubLineNumber() == 1){
+                    record.setCurrentAccountBalance(header_3_1_Balance);
+                }
+
+                if(record.getCurrentAccountBalance() != null) {
+                    Double sum = sums.get(record.getLineNumber()) != null ? sums.get(record.getLineNumber()) : 0.0;
+                    sums.put(record.getLineNumber(), sum + record.getCurrentAccountBalance());
+                }
+            }
+        }
+
+        // Sort
+        Collections.sort(records);
+
+        // Set total sums
+        for(ConsolidatedBalanceFormRecordDto record: records){
+            if(record.getLineNumber() != null){
+                if((record.getLineNumber() == 3 || record.getLineNumber() == 4) && record.getSubLineNumber() == null){
+                    record.setCurrentAccountBalance(sums.get(record.getLineNumber()));
+                }else if(record.getLineNumber() == 5 && record.getSubLineNumber() == null){
+                    record.setCurrentAccountBalance(sums.get(3) + sums.get(4));
+                    sums.put(5, record.getCurrentAccountBalance());
+                }else if(record.getLineNumber() == 6  && record.getSubLineNumber() == null){
+                    record.setCurrentAccountBalance(sums.get(1) + sums.get(5));
+                    sums.put(6, record.getCurrentAccountBalance());
+                }
+
+            }
+        }
+
+        return records;
+    }
+
+    private List<ConsolidatedBalanceFormRecordDto> getConsolidatedTotalIncomeUSDFormLineHeaders(){
+        // TODO: get from DB
+        List<ConsolidatedBalanceFormRecordDto> headers = new ArrayList<>();
+        headers.add(new ConsolidatedBalanceFormRecordDto("Чистая прибыль (убыток)", 1));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прочий совокупный доход", 2));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Резерв по переоценке финансовых активов, имеющихся в наличии для продажи всего (сумма строк 3.1-3.3)", 3));
+        headers.add(new ConsolidatedBalanceFormRecordDto("- чистое изменение справедливой стоимости", 3, 1));
+        headers.add(new ConsolidatedBalanceFormRecordDto("- чистое изменение справедливой стоимости, перенесенное в состав прибыли или убытка", 3, 2));
+        headers.add(new ConsolidatedBalanceFormRecordDto("- обесценение, перенесенное в состав прибыли или убытка ", 3, 3));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Переоценка основных средств всего (сумма строк 4.1-4.3)", 4));
+        headers.add(new ConsolidatedBalanceFormRecordDto("- изменение стоимости от переоценки", 4, 1));
+        headers.add(new ConsolidatedBalanceFormRecordDto("- перенос переоценки основных средств при амортизации", 4, 2));
+        headers.add(new ConsolidatedBalanceFormRecordDto("- перенос переоценки основных средств при выбытии", 4, 3));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прочий совокупный доход (сумма строк 3, 4)", 5));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Итого совокупного дохода (сумма строк 1, 5)", 6));
+
+        return headers;
+    }
+
+    private void setConsolidatedBalanceUSDFormHeaderSumsAndClearOtherEntityName(List<ConsolidatedBalanceFormRecordDto> records, Map<Integer, Double> sums){
+        if(records != null && sums != null) {
+            for (int i = 0; i < records.size(); i++) {
+                ConsolidatedBalanceFormRecordDto record = records.get(i);
+                if (record.getAccountNumber() == null) {
+                    if (record.getLineNumber() == 1) {
+                        record.setCurrentAccountBalance(sums.get(2) + sums.get(8) + sums.get(11));
+                        sums.put(1, record.getCurrentAccountBalance());
+                    } else if (record.getLineNumber() == 13) {
+                        record.setCurrentAccountBalance(sums.get(2) + sums.get(3) + sums.get(4) + sums.get(5) + sums.get(6) +
+                                sums.get(7) + sums.get(8) + sums.get(9) + sums.get(10) + sums.get(11) + sums.get(12));
+                        sums.put(13, record.getCurrentAccountBalance());
+                    } else if (record.getLineNumber() == 14) {
+                        record.setCurrentAccountBalance(sums.get(16) + sums.get(24));
+                        sums.put(14, record.getCurrentAccountBalance());
+                    } else if (record.getLineNumber() == 25) {
+                        record.setCurrentAccountBalance(sums.get(15) + sums.get(16) + sums.get(17) + sums.get(18) + sums.get(19) +
+                                sums.get(20) + sums.get(21) + sums.get(22) + sums.get(23) + sums.get(24));
+                        sums.put(25, record.getCurrentAccountBalance());
+                    } else if (record.getLineNumber() == 26) {
+                        record.setCurrentAccountBalance(sums.get(13) + sums.get(25));
+                        sums.put(26, record.getCurrentAccountBalance());
+                    } else if (record.getLineNumber() == 35) {
+                        record.setCurrentAccountBalance(sums.get(28) + sums.get(29) + sums.get(30) + sums.get(31) + sums.get(32) +
+                                sums.get(33) + sums.get(34));
+                        sums.put(35, record.getCurrentAccountBalance());
+                    } else if (record.getLineNumber() == 43) {
+                        record.setCurrentAccountBalance(sums.get(37) + sums.get(38) + sums.get(39) + sums.get(40) + sums.get(41) + sums.get(42));
+                        sums.put(43, record.getCurrentAccountBalance());
+                    } else if (record.getLineNumber() == 51) {
+                        record.setCurrentAccountBalance(sums.get(45) + sums.get(46) + sums.get(47) + sums.get(48) + sums.get(49) + sums.get(50));
+                        sums.put(51, record.getCurrentAccountBalance());
+                    } else if (record.getLineNumber() == 52) {
+                        record.setCurrentAccountBalance(sums.get(35) + sums.get(43) + sums.get(51));
+                        sums.put(52, record.getCurrentAccountBalance());
+                    }
+
+                    if(record.getCurrentAccountBalance() == 0.0){
+                        record.setCurrentAccountBalance(null);
+                    }
+                }else{
+                    if(record.getLineNumber() != 16 && record.getLineNumber() != 8){
+                        record.setOtherEntityName(null);
+                    }
+                }
+            }
+        }
+    }
+
+    private void setConsolidatedIncomeExpenseUSDFormHeaderSumsAndClearOtherEntityName(List<ConsolidatedBalanceFormRecordDto> records, Map<Integer, Double> sums){
+        if(records != null && sums != null) {
+            for (int i = 0; i < records.size(); i++) {
+                ConsolidatedBalanceFormRecordDto record = records.get(i);
+                if (record.getAccountNumber() == null) {
+                    if (record.getLineNumber() == 16) {
+                        record.setCurrentAccountBalance(sums.get(3) + sums.get(4) + sums.get(5) + sums.get(6) + sums.get(7) +
+                                sums.get(8) + sums.get(9) + sums.get(10) + sums.get(11) + sums.get(12) + sums.get(13) + sums.get(14) + sums.get(15));
+                        sums.put(16, record.getCurrentAccountBalance());
+                    }else if (record.getLineNumber() == 18) {
+                        record.setCurrentAccountBalance(sums.get(16) + sums.get(17));
+                        sums.put(18, record.getCurrentAccountBalance());
+                    }else if (record.getLineNumber() == 20) {
+                        record.setCurrentAccountBalance(sums.get(18) + sums.get(19));
+                        sums.put(20, record.getCurrentAccountBalance());
+                    }
+
+                    if(record.getCurrentAccountBalance() == 0.0){
+                        record.setCurrentAccountBalance(null);
+                    }
+                }else{
+                    if(record.getLineNumber() != 8){
+                        record.setOtherEntityName(null);
+                    }
+                }
+            }
+        }
+    }
+
+    private List<ConsolidatedBalanceFormRecordDto> setConsolidatedBalanceUSDFormAdditionalHeadersAndClearLineNumbers(List<ConsolidatedBalanceFormRecordDto> records){
+        List<ConsolidatedBalanceFormRecordDto> newRecords = new ArrayList<>();
+        boolean header1283020aAdded = false;
+        ConsolidatedBalanceFormRecordDto header1283020aRecord = new ConsolidatedBalanceFormRecordDto("Инвестиции к возврату", 8);
+        //header1283020aRecord.setAccountNumber("1283.020");
+        ConsolidatedBalanceFormRecordDto header1283020bRecord = new ConsolidatedBalanceFormRecordDto("Предварительная подписка", 8);
+        //header1283020bRecord.setAccountNumber("1283.020");
+        boolean header1283020bAdded = false;
+        if(records != null) {
+            for (int i = 0; i < records.size(); i++) {
+                ConsolidatedBalanceFormRecordDto record = records.get(i);
+                if (record.getLineNumber() == 8 && record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase("1283.020")) {
+                    if (record.getName().startsWith("Инвестиции к возврату")) {
+                        if (!header1283020aAdded) {
+                            header1283020aRecord.setCurrentAccountBalance(record.getCurrentAccountBalance());
+                            newRecords.add(header1283020aRecord);
+                            header1283020aAdded = true;
+                        } else {
+                            header1283020aRecord.setCurrentAccountBalance(header1283020aRecord.getCurrentAccountBalance() + record.getCurrentAccountBalance());
+                        }
+                    }
+                    if (record.getName().startsWith("Предварительная подписка")) {
+                        if (!header1283020bAdded) {
+                            header1283020bRecord.setCurrentAccountBalance(record.getCurrentAccountBalance());
+                            newRecords.add(header1283020bRecord);
+                            header1283020bAdded = true;
+                        } else {
+                            header1283020bRecord.setCurrentAccountBalance(header1283020bRecord.getCurrentAccountBalance() + record.getCurrentAccountBalance());
+                        }
+                    }
+                }
+
+                if(record.getAccountNumber() != null){
+                    //record.setLineNumber(null);
+                }
+                newRecords.add(record);
+            }
+        }
+
+        // if 1283.020 headers are missing
+        if(!header1283020aAdded || !header1283020bAdded){
+            int index = 0;
+            for(int i = 0; i < newRecords.size(); i++){
+                ConsolidatedBalanceFormRecordDto record = newRecords.get(i);
+                if(record.getLineNumber() != null && record.getLineNumber() == 9){
+                    index = i;
+                    break;
+                }
+            }
+            if(index > 0){
+                if(!header1283020aAdded){
+                    header1283020aRecord.setCurrentAccountBalance(0.0);
+                    newRecords.add(index, header1283020aRecord);
+                    index++;
+                }
+                if(!header1283020bAdded){
+                    header1283020bRecord.setCurrentAccountBalance(0.0);
+                    newRecords.add(index, header1283020bRecord);
+                }
+            }
+        }
+
+        return newRecords;
+    }
+
+    private List<ConsolidatedBalanceFormRecordDto> setConsolidatedIncomeExpenseUSDFormAdditionalHeadersAndClearLineNumbers(List<ConsolidatedBalanceFormRecordDto> records){
+        List<ConsolidatedBalanceFormRecordDto> newRecords = new ArrayList<>();
+        boolean header6150030Added = false;
+        boolean header7330030Added = false;
+        boolean header7313010Added = false;
+        ConsolidatedBalanceFormRecordDto header6150030Record =
+                new ConsolidatedBalanceFormRecordDto("Доходы от изменения справедливой стоимости долгосрочных финансовых инвестиций, имеющихся в наличии для продажи", 8);
+        ConsolidatedBalanceFormRecordDto header7330030Record =
+                new ConsolidatedBalanceFormRecordDto("Расходы от изменения справедливой стоимости долгосрочных финансовых инвестиций, имеющихся в наличии для продажи", 8);
+        ConsolidatedBalanceFormRecordDto header7313010Record =
+                new ConsolidatedBalanceFormRecordDto("Расходы по вознаграждениям по краткосрочным банковским займам", 12);
+        if(records != null) {
+            for (int i = 0; i < records.size(); i++) {
+                ConsolidatedBalanceFormRecordDto record = records.get(i);
+                if (record.getLineNumber() == 8 && record.getAccountNumber() != null /* && record.getName().startsWith("Реализованные доходы/расходы по инвестициям")*/) {
+                    if (record.getAccountNumber().equalsIgnoreCase("6150.030")){
+                        if (!header6150030Added) {
+                            header6150030Record.setCurrentAccountBalance(record.getCurrentAccountBalance());
+                            newRecords.add(header6150030Record);
+                            header6150030Added = true;
+                        } else {
+                            header6150030Record.setCurrentAccountBalance(header6150030Record.getCurrentAccountBalance() + record.getCurrentAccountBalance());
+                        }
+                    }else if (record.getAccountNumber().equalsIgnoreCase("7330.030")) {
+                        if (!header7330030Added) {
+                            header7330030Record.setCurrentAccountBalance(record.getCurrentAccountBalance());
+                            newRecords.add(header7330030Record);
+                            header7330030Added = true;
+                        } else {
+                            header7330030Record.setCurrentAccountBalance(header7330030Record.getCurrentAccountBalance() + record.getCurrentAccountBalance());
+                        }
+                    }
+                }else if (record.getLineNumber() == 12 && record.getAccountNumber() != null /* && record.getName().startsWith("Реализованные доходы/расходы по инвестициям")*/) {
+                    if (record.getAccountNumber().equalsIgnoreCase("7313.010")){
+                        if (!header7313010Added) {
+                            header7313010Record.setCurrentAccountBalance(record.getCurrentAccountBalance());
+                            newRecords.add(header7313010Record);
+                            header7313010Added = true;
+                        } else {
+                            header7313010Record.setCurrentAccountBalance(header7313010Record.getCurrentAccountBalance() + record.getCurrentAccountBalance());
+                        }
+                    }
+                }
+
+                // clear line number for non-headers
+                if(record.getAccountNumber() != null){
+                    //record.setLineNumber(null);
+                }
+                newRecords.add(record);
+            }
+        }
+
+        return newRecords;
+    }
+
+    private int getConsolidatedBalanceUSDFormLineNumberByAccountNumber(String accountNumber){
+
+        // TODO: load from DB
+
+        if(accountNumber == null){
+            return 0;
+        }else if(accountNumber.equalsIgnoreCase("1033.010")){
+            return 2;
+        }else if(accountNumber.equalsIgnoreCase("1283.020")){
+            return 8;
+        }else if(accountNumber.equalsIgnoreCase("1623.010")) {
+            return 11;
+        }else if(accountNumber.equalsIgnoreCase("2033.010")){
+            return 16;
+        }else if(accountNumber.equalsIgnoreCase("2923.010")){
+            return 24;
+        }else if(accountNumber.equalsIgnoreCase("3013.010") || accountNumber.equalsIgnoreCase("3383.010")){
+            return 28;
+        }else if(accountNumber.equalsIgnoreCase("3393.020")){
+            return 30;
+        }else if(accountNumber.equalsIgnoreCase("5021.010") || accountNumber.equalsIgnoreCase("5022.010")){
+            return 45;
+        }else if(accountNumber.equalsIgnoreCase("5440.010")){
+            return 49;
+        }else if(accountNumber.equalsIgnoreCase("5510.010") || accountNumber.equalsIgnoreCase("5520.010")){
+            return 50;
+        }
+
+        return 0;
+    }
+
+    private int getConsolidatedIncomeExpenseUSDFormLineNumberByAccountNumber(String accountNumber) {
+
+        // TODO: load from DB
+
+        if(accountNumber == null){
+            return 0;
+        }else if (accountNumber.equalsIgnoreCase("6150.020") || accountNumber.equalsIgnoreCase("6150.030") ||
+                accountNumber.equalsIgnoreCase("7330.020") || accountNumber.equalsIgnoreCase("7330.030")) {
+            return 8;
+        }else if(accountNumber.equalsIgnoreCase("6283.080")){
+            return 10;
+        }else if(accountNumber.equalsIgnoreCase("7313.010")){
+            return 12;
+        }else if(accountNumber.equalsIgnoreCase("7473.080")){
+            return 15;
+        }
+
+        return 0;
+    }
+
+    private List<ConsolidatedBalanceFormRecordDto> getConsolidatedBalanceUSDFormLineHeaders(){
+
+        // TODO: get from DB
+        List<ConsolidatedBalanceFormRecordDto> headers = new ArrayList<>();
+        headers.add(new ConsolidatedBalanceFormRecordDto("Краткосрочные активы", 1));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Деньги (1010-1060)", 2));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Вклады размещенные (за вычетом резервов на обесценение) (1150.020-1150.100, 1160.070, 1160.080, 1270.090-1270.110, 1290.070, 1290.090)", 3));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Финансовые инвестиции, оцениваемые по справедливой стоимости, изменения которой отражаются в составе прибыли или убытка (1120, 1270.020, 1270.050)", 4));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Финансовые инвестиции, имеющиеся в наличии для продажи (за вычетом резервов на обесценение) (1140, 1160.050, 1160.060, 1270.040, 1270.070, 1290.050)", 5));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Финансовые инвестиции, удерживаемые до погашения (за вычетом резервов на обесценение) (1130, 1160.030, 1160.040, 1270.030, 1270.060, 1290.030)", 6));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие краткосрочные финансовые инвестиции (1110, 1150.010, 1150.110-1150.140, 1160.010, 1160.020, 1160.090, 1270.010, 1270.080, 1270.120, 1270.130, 1280.010, 1290.010, 1290.110, 1290.130)", 7));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Краткосрочная торговая и прочая дебиторская задолженность (1210-1260, 1280.020, 1290.130, 1610)", 8));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Текущие налоговые активы (1410-1430)", 9));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Запасы (1310-1360)", 10));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие краткосрочные активы (1620, 1630)", 11));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Активы (или выбывающие группы), предназначенные для продажи (1510-1520)", 12));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Итого краткосрочных активов (сумма строк 2-12)", 13));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Долгосрочные активы", 14));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Вклады размещенные (за вычетом резервов на обесценение) (2040.010-2040.060, 2050.070, 2050.080, 2170.060, 2170.070, 1290.080, 1290.100)", 15));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Финансовые инвестиции, имеющиеся в наличии для продажи (за вычетом резервов на обесценение) (2030, 2050.050, 2050.060, 2170.030, 2170,050, 1290.060)", 16));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Финансовые инвестиции, удерживаемые до погашения (за вычетом резервов на обесценение) (2020, 2050.030, 2050.040, 2170.020, 2170.040, 1290.040)", 17));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие долгосрочные финансовые инвестиции (2010, 2040.070-2040.100, 2050.010, 2050.020, 2170.010, 2170.080, 1290.020, 1290.120, 1290.130)", 18));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Долгосрочная торговая и прочая дебиторская задолженность (2110-2160, 2180, 2910)", 19));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Инвестиции, учитываемые методом долевого участия (2210)", 20));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Основные средства (2410-2430)", 21));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Нематериальные активы (2730-2750)", 22));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Отложенные налоговые активы (2810)", 23));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие долгосрочные активы (2310-2330, 2510-2520, 2610-2630, 2920-2940)", 24));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Итого долгосрочных активов (сумма строк 15-24)", 25));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Всего активы (сумма строк 13, 25)", 26));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Краткосрочные обязательства", 27));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Займы полученные (3010, 3020, 3380.010, 3380.020)", 28));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие краткосрочные финансовые обязательства (3040, 3050, 3380.030-3380.050, 3390.010)", 29));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Краткосрочная торговая и прочая кредиторская задолженность (3310-3340, 3360, 3390.020, 3510)", 30));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Краткосрочные резервы (3410-3440)", 31));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Текущие налоговые обязательства (3110-3190, 3210-3240)", 32));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие краткосрочные обязательства (3030, 3350, 3370, 3520, 3540)", 33));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Обязательства выбывающих групп, предназначенных для продажи (3530)", 34));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Итого краткосрочных обязательств (сумма строк 28-34)", 35));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Долгосрочные  обязательства", 36));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Займы полученные (4010, 4020, 4160.010, 4160.020)", 37));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие долгосрочные финансовые обязательства (4030, 4160.030-4160.040)", 38));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Долгосрочная торговая и прочая кредиторская задолженность (4110-4150, 4170, 4410)", 39));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Долгосрочные резервы (4210-4240)", 40));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Отложенные налоговые обязательства (4310)", 41));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие долгосрочные обязательства (4420, 4430)", 42));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Итого долгосрочных обязательств (сумма строк 37-42)", 43));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Капитал", 44));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Уставный капитал (5010-5030)", 45));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Эмиссионный доход (5310)", 46));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Выкупленные собственные долевые инструменты (5210)", 47));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Резервный капитал (5410, 5460)", 48));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие резервы (5420-5450)", 49));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Нераспределенная прибыль (непокрытый убыток) (5510, 5520)", 50));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Итого капитал (сумма строк 45-50)", 51));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Всего обязательства и капитал (сумма строк 35, 43, 51)", 52));
+        return headers;
+    }
+
+    private List<ConsolidatedBalanceFormRecordDto> getConsolidatedIncomeExpenseUSDFormLineHeaders(){
+
+        // TODO: get from DB
+        List<ConsolidatedBalanceFormRecordDto> headers = new ArrayList<>();
+        headers.add(new ConsolidatedBalanceFormRecordDto("Выручка (6010-6030)", 1));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Себестоимость реализованной продукции и услуг (7010)", 2));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Валовая прибыль (убыток) (сумма строк 1, 2)", 3));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Доходы в виде вознаграждения по размещенным вкладам (6110.090-6110.130, 6110.210-6110.250)", 4));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Доходы в виде вознаграждения по приобретенным ценным бумагам (6110.030-6110.070, 6110.170-6110.200)", 5));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Доходы (расходы) от купли-продажи ценных бумаг (6280.010-6280.030, 7470.010-7470.030)", 6));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Доходы (расходы) от изменения стоимости ценных бумаг, оцениваемых по справедливой стоимости, изменения которой отражаются в составе прибыли или убытка (6150.010, 7330.010)", 7));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Доходы (расходы) от изменения стоимости ценных бумаг, имеющихся в наличии для продажи (6150.020, 6150.030, 7330.020, 7330.030)", 8));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Доходы (расходы) от переоценки иностранной валюты (6250, 7430)", 9));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие доходы (6210-6240, 6260, 6270, 6110.010, 6110.020, 6110.080, 6110.140, 6110.260, 6110.270, 6110.320, 6110.330, 6120, 6130, 6140, 6150.040, 6150.050,6160, 6280.040-6280.080, 6290, 6110.150, 6110.160, 6110.280-6110.310) ", 10));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Расходы в виде вознаграждения по приобретенным ценным бумагам (7310.100-7310.130)", 11));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Расходы в виде вознаграждения по полученным займам и финансовой аренде (7310.010-7310.040, 7310.080, 7310.090, 7310.190-7310.220, 7320.010)", 12));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Расходы по реализации (7110)", 13));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Административные расходы (7210)", 14));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие расходы (7310.050-7310.070, 7310.140-7310.180, 7310.230, 7310.240, 7330.040, 7330.050, 7340.010-7340.030, 7410, 7420, 7440-7460, 7470.040-7470.080, 7480)", 15));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прибыль (убыток) до налогообложения (сумма строк 3-15)", 16));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Расходы по подоходному налогу (7710)", 17));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прибыль (убыток) после налогообложения от продолжающейся деятельности (сумма строк 16, 17)", 18));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прибыль (убыток) от прекращенной деятельности (6310, 7510)", 19));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Чистая прибыль (убыток) (сумма строк 18, 19)", 20));
+        return headers;
+    }
+
+    private void setNICChartOfAccounts(List<GeneratedGeneralLedgerFormDto> records){
+        if(records != null) {
+            for(GeneratedGeneralLedgerFormDto record: records){
+                if(record.getNicAccountName() == null) {
+                    TarragonNICChartOfAccounts nicChartOfAccounts =
+                            this.tarragonNICChartOfAccountsRepository.findByTarragonChartOfAccountsNameAndAddable(record.getChartAccountsLongDescription(), false);
+                    if (nicChartOfAccounts != null) {
+                        record.setNicAccountName(nicChartOfAccounts.getNicReportingChartOfAccounts().getNameRu());
+                        if (nicChartOfAccounts.getNicReportingChartOfAccounts().getNbChartOfAccounts() != null) {
+                            record.setNbAccountNumber(nicChartOfAccounts.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode());
+                        }
+                    }else{
+                        // no match found
+                    }
+                }
+            }
+        }
+    }
+
+    private List<GeneratedGeneralLedgerFormDto> processStatementChanges(List<StatementChangesDto> changes){
+        List<GeneratedGeneralLedgerFormDto> records = new ArrayList<>();
+        if(changes != null){
+            for(StatementChangesDto dto: changes){
+                if(dto.getTotalSum() != null && dto.getTotalSum().booleanValue()){
+                    // skip total sums
+                    continue;
+                }
+                if(dto.getName().equalsIgnoreCase("Capital Contributions") || dto.getName().equalsIgnoreCase("Distributions") ||
+                        dto.getName().equalsIgnoreCase("Unrealized Gain (Loss)") || dto.getName().equalsIgnoreCase("Unrealized Gain (Loss), Net of Related Taxes")){
+
+                    GeneratedGeneralLedgerFormDto trancheARecord = new GeneratedGeneralLedgerFormDto();
+                    String acronym = "TARRAGON";
+                    trancheARecord.setAcronym(acronym);
+                    trancheARecord.setBalanceDate(dto.getReport().getReportDate());
+                    trancheARecord.setChartAccountsLongDescription(dto.getName());
+                    trancheARecord.setFinancialStatementCategory("E");
+                    //record.setSegVal1("");
+                    //record.setNbAccountNumber("");
+                    //record.setNicAccountName("");
+                    trancheARecord.setGLAccountBalance(dto.getTrancheA());
+                    //record.setFundCCY();
+                    //record.setSegValCCY();
+
+                    GeneratedGeneralLedgerFormDto trancheBRecord = new GeneratedGeneralLedgerFormDto(trancheARecord);
+                    trancheBRecord.setAcronym("TARRAGON B");
+                    trancheBRecord.setGLAccountBalance(dto.getTrancheB());
+
+                    records.add(trancheARecord);
+                    records.add(trancheBRecord);
+                }
+
+            }
+        }
+        return records;
+    }
+
+    private List<GeneratedGeneralLedgerFormDto> processOperations(List<StatementBalanceOperationsDto> operationsRecords){
+        List<GeneratedGeneralLedgerFormDto> records = new ArrayList<>();
+        if(operationsRecords != null){
+            for(StatementBalanceOperationsDto balanceRecord: operationsRecords){
+                if(balanceRecord.getTotalSum() != null && balanceRecord.getTotalSum().booleanValue()){
+                    // skip total sums
+                    continue;
+                }
+                GeneratedGeneralLedgerFormDto record = new GeneratedGeneralLedgerFormDto();
+                if(isIncome(balanceRecord)){
+                    record.setFinancialStatementCategory("I");
+                }else if(isExpenses(balanceRecord)){
+                    record.setFinancialStatementCategory("X");
+                }else{
+                    continue;
+                }
+//                if(isEquity(balanceRecord)){
+//                    record.setFinancialStatementCategory("E");
+//                }
+
+                String acronym = balanceRecord.getTranche() != null && balanceRecord.getTranche() == 1 ? "TARRAGON" :
+                        balanceRecord.getTranche() != null && balanceRecord.getTranche() == 2 ? "TARRAGON B" : "UNMATCHED";
+                record.setAcronym(acronym);
+                record.setBalanceDate(balanceRecord.getReport().getReportDate());
+                record.setChartAccountsLongDescription(balanceRecord.getName());
+                //record.setSegVal1("");
+                //record.setNbAccountNumber("");
+                //record.setNicAccountName("");
+                Double accountBalance = balanceRecord.getNICKMFShareConsolidated();
+                record.setGLAccountBalance(accountBalance);
+                //record.setFundCCY();
+                //record.setSegValCCY();
+
+                records.add(record);
+            }
+        }
+        return records;
+    }
+
+    private List<GeneratedGeneralLedgerFormDto> processBalance(List<StatementBalanceOperationsDto> balanceRecords){
+        List<GeneratedGeneralLedgerFormDto> records = new ArrayList<>();
+        if(balanceRecords != null){
+            for(StatementBalanceOperationsDto balanceRecord: balanceRecords){
+                if(balanceRecord.getTotalSum() != null && balanceRecord.getTotalSum().booleanValue()){
+                    // skip total sums
+                    continue;
+                }
+                if(balanceRecord.getType() != null && balanceRecord.getType().getCode().equalsIgnoreCase("PRTN_CAP")){
+                    // skip Partners capital
+                    continue;
+                }
+                if(balanceRecord.getType() != null && balanceRecord.getType().getCode().equalsIgnoreCase("FAIR_VAL")){
+                    // skip 'Investments at fair value'
+                    continue;
+                }
+                GeneratedGeneralLedgerFormDto record = new GeneratedGeneralLedgerFormDto();
+                if(isAssets(balanceRecord)){
+                    record.setFinancialStatementCategory("A");
+                }else if(isLiabilities(balanceRecord)){
+                    record.setFinancialStatementCategory("L");
+                }else{
+                    // ?
+                }
+
+                String acronym = balanceRecord.getTranche() != null && balanceRecord.getTranche() == 1 ? "TARRAGON" :
+                        balanceRecord.getTranche() != null && balanceRecord.getTranche() == 2 ? "TARRAGON B" : "UNMATCHED";
+                record.setAcronym(acronym);
+                record.setBalanceDate(balanceRecord.getReport().getReportDate());
+                record.setChartAccountsLongDescription(balanceRecord.getName());
+                //record.setSegVal1("");
+                //record.setNbAccountNumber("");
+                //record.setNicAccountName("");
+                Double accountBalance = balanceRecord.getNICKMFShareConsolidated();
+                record.setGLAccountBalance(accountBalance);
+                //record.setFundCCY();
+                //record.setSegValCCY();
+
+                records.add(record);
+            }
+        }
+        return records;
+    }
+
+    private boolean isIncome(StatementBalanceOperationsDto dto){
+        if(dto != null){
+            HierarchicalBaseDictionaryDto type = dto.getType();
+            while(type != null){
+                if(type.getCode().equalsIgnoreCase("INCOME") && !dto.getName().equalsIgnoreCase("FDAP tax expense")){
+                    return true;
+                }
+                type = type.getParent();
+            }
+        }
+        return false;
+    }
+
+    private boolean isExpenses(StatementBalanceOperationsDto dto){
+        if(dto != null){
+            if(dto.getName() != null && dto.getName().equalsIgnoreCase("FDAP tax expense")){
+                return true;
+            }
+            HierarchicalBaseDictionaryDto type = dto.getType();
+            while(type != null){
+                if(type.getCode().equalsIgnoreCase("EXPENSES")){
+                    return true;
+                }
+                type = type.getParent();
+            }
+        }
+        return false;
+    }
+
+    private boolean isAssets(StatementBalanceOperationsDto dto){
+        if(dto != null){
+            HierarchicalBaseDictionaryDto type = dto.getType();
+            while(type != null){
+                if(type.getCode().equalsIgnoreCase("ASSETS")){
+                 return true;
+                }
+                type = type.getParent();
+            }
+        }
+        return false;
+    }
+
+    private boolean isLiabilities(StatementBalanceOperationsDto dto){
+        if(dto != null){
+            HierarchicalBaseDictionaryDto type = dto.getType();
+            while(type != null){
+                if(type.getCode().equalsIgnoreCase("LIABLTY")){
+                    return true;
+                }
+                type = type.getParent();
+            }
+        }
+        return false;
+    }
+
+    private List<GeneratedGeneralLedgerFormDto>  processScheduleInvestments(List<ScheduleInvestmentsDto> investments){
+        List<GeneratedGeneralLedgerFormDto> records = new ArrayList<>();
+        if(investments != null ){
+            boolean madeEditable = false;
+            for(ScheduleInvestmentsDto investment: investments){
+                if(investment.getTotalSum() != null && !investment.getTotalSum()) { // total sum records not added
+                    String acronym = investment.getTranche() != null && investment.getTranche() == 1 ? "TARRAGON" :
+                            investment.getTranche() != null && investment.getTranche() == 2 ? "TARRAGON B" : "UNMATCHED";
+                    GeneratedGeneralLedgerFormDto record = new GeneratedGeneralLedgerFormDto();
+                    record.setAcronym(acronym);
+                    record.setBalanceDate(investment.getReport().getReportDate());
+                    record.setFinancialStatementCategory("A");
+                    record.setChartAccountsLongDescription(investment.getName());
+                    record.setSegVal1("1200");
+                    record.setNbAccountNumber("2033.010");
+                    record.setNicAccountName("Инвестиции в фонд частного капитала " + investment.getName());
+                    Double accountBalance = investment.getFairValue() != null && investment.getTranche() != null ?
+                            (investment.getTranche() == 1 ? investment.getFairValue().doubleValue() * 0.99 : investment.getFairValue().doubleValue()) : null;
+                    record.setGLAccountBalance(investment.getEditedFairValue() != null ? investment.getEditedFairValue() : accountBalance);
+                    //record.setFundCCY();
+                    //record.setSegValCCY();
+
+                    if(!madeEditable && investment.getTranche() != null && investment.getTranche() == 1){
+                        record.setEditable(true);
+                        madeEditable = true;
+                    }
+                    records.add(record);
+                }
+            }
+        }
+        return records;
+    }
+
+    private void setAccountNameAdditionalDescription(GeneratedGeneralLedgerFormDto record){
+        if(record == null){
+            return;
+        }
+        if(record.getNbAccountNumber().equalsIgnoreCase("2033.010")){
+            String fundName = record.getChartAccountsLongDescription() != null && record.getChartAccountsLongDescription().startsWith("Investment in Portfolio Fund") ?
+                    " " + record.getChartAccountsLongDescription().substring("Investment in Portfolio Fund".length()).trim() : "";
+            record.setNicAccountName(record.getNicAccountName() + fundName);
+        }else if(record.getNbAccountNumber().equalsIgnoreCase("1283.020")){
+            String entityName = record.getSubscriptionRedemptionEntity() != null ? " " + record.getSubscriptionRedemptionEntity() : "";
+            record.setNicAccountName(record.getNicAccountName() + entityName);
+        }else if(record.getNbAccountNumber().equalsIgnoreCase("7330.030") || record.getNbAccountNumber().equalsIgnoreCase("6150.030")){
+            String fundName = record.getChartAccountsLongDescription() != null && record.getChartAccountsLongDescription().startsWith("Net Realized Gains/Losses from Portfolio Funds") ?
+                    " " + record.getChartAccountsLongDescription().substring("Net Realized Gains/Losses from Portfolio Funds".length()).trim() : "";
+            record.setNicAccountName(record.getNicAccountName() + fundName);
+            //Net Realized Gains/Losses from Portfolio Fund
+        }
+    }
+
+    private NICReportingChartOfAccountsDto getNICChartOfAccountsFromSingularityAccount(String accountNumber, Double accountBalance){
+        List<SingularityNICChartOfAccounts> entities = this.singularityNICChartOfAccountsRepository.findBySingularityAccountNumber(accountNumber);
+        if(entities != null && !entities.isEmpty()){
+            SingularityNICChartOfAccounts entity = entities.get(0);
+            if(accountNumber.equalsIgnoreCase("4200") || accountNumber.equalsIgnoreCase("4900")){
+                for(SingularityNICChartOfAccounts anEntity: entities){
+                    if(accountBalance > 0){ // 7330.030
+                        if(anEntity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode().equalsIgnoreCase("7330.030")){
+                            entity = anEntity;
+                        }
+                    }else{ // 6150.030
+                        if(anEntity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode().equalsIgnoreCase("6150.030")){
+                            entity = anEntity;
+                        }
+                    }
+
+                }
+            }
+
+            NICReportingChartOfAccountsDto dto = new NICReportingChartOfAccountsDto();
+            dto.setCode(entity.getNicReportingChartOfAccounts().getCode());
+            dto.setNameRu(entity.getNicReportingChartOfAccounts().getNameRu());
+            if(entity.getNicReportingChartOfAccounts().getNbChartOfAccounts() != null) {
+                BaseDictionaryDto nbChartOfAccounts = new BaseDictionaryDto();
+                nbChartOfAccounts.setCode(entity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode());
+                dto.setNBChartOfAccounts(nbChartOfAccounts);
+            }
+            return dto;
+        }
+
+        return null;
+    }
+
+
 
 
     /**
@@ -740,7 +4577,6 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         recordDto.setCurrency(ExcelUtils.getCellCurrency(row.getCell(2)));
 
                         recordDto.setWithSumFormula(isSumFormulaCell(row.getCell(2)) || isSumFormulaCell(row.getCell(3)) || isSumFormulaCell(row.getCell(4)));
-                        records.add(recordDto);
 
                         // check if total classification
                         boolean reset = false;
@@ -751,8 +4587,13 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                                     (name.equalsIgnoreCase("Total " + classifications[i]) || name.equalsIgnoreCase("Net " + classifications[i]))){
                                 classifications[i] = null;
                                 reset = true;
+                                recordDto.setTotalSum(true);
+                            }else if(name.equalsIgnoreCase("Total Fund Investments and Co-Investments")){
+                                // TODO: refactor total value
+                                recordDto.setTotalSum(true);
                             }
                         }
+                        records.add(recordDto);
                     }
                 }
             }
@@ -1006,15 +4847,20 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         String totalRecordName = "Net increase (decrease) in partners' capital resulting from operations";
         if(records != null){
             for(ConsolidatedReportRecordDto record: records){
-                if(record.getName().equalsIgnoreCase("Net increase (decrease) in partners' capital resulting from operations") ||
-                        record.getName().equalsIgnoreCase("Net increase (decrease) in partner's capital resulting from operations") ||
-                        record.getName().equalsIgnoreCase("Net increase (decrease) in partners capital resulting from operations")){
+                if(isStatementOperationsTotalRecordName(record.getName())){
                     // total record
                     return record.getName().trim();
                 }
             }
         }
         return totalRecordName;
+    }
+
+    private boolean isStatementOperationsTotalRecordName(String name){
+        return StringUtils.isNotEmpty(name) &&
+                (name.equalsIgnoreCase("Net increase (decrease) in partners' capital resulting from operations") ||
+                name.equalsIgnoreCase("Net increase (decrease) in partner's capital resulting from operations") ||
+                name.equalsIgnoreCase("Net increase (decrease) in partners capital resulting from operations"));
     }
 
     /**
@@ -1089,7 +4935,6 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         recordDto.setClassifications(Arrays.copyOf((String[]) classifications, 5));
                         // total sum
                         recordDto.setWithSumFormula(isSumFormulaCell(row.getCell(2)));
-                        records.add(recordDto);
 
                         boolean reset = false;
                         for(int i = 0; i < classifications.length; i++){
@@ -1102,13 +4947,14 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                                     name.equalsIgnoreCase("net " + classifications[i]) ||
                                     (name + ":").equalsIgnoreCase("net " + classifications[i]) ||
                                     (name).equalsIgnoreCase("net " + classifications[i] + ":") ||
-                                    ((name.startsWith("Total") || name.startsWith("Net")) && name.equalsIgnoreCase(classifications[i])))){
+                                    ((name.startsWith("Total") || name.startsWith("Net")) && name.equalsIgnoreCase(classifications[i])) ||
+                                    isStatementOperationsTotalRecordName(name))){
                                 classifications[i] = null;
                                 reset = true;
+                                recordDto.setTotalSum(true);
                             }
                         }
-
-
+                        records.add(recordDto);
                     }
 
                 }else if(ExcelUtils.isNotEmptyCell(row.getCell(2)) || ExcelUtils.isNotEmptyCell(row.getCell(4)) ||
@@ -1135,38 +4981,38 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
     private void checkStatementAssetsLiabilitiesTrancheATableHeader(Row row, int rowNum){
         if(rowNum == 1){
             Cell cell = row.getCell(2);
-            if (!ExcelUtils.isCellStringValueEqual(cell, "Tarragon Master Fund LP")) {
+            if (!ExcelUtils.isCellStringValueEqualIgnoreCase(cell, "Tarragon Master Fund LP")) {
                 logger.error("Table header check failed (Tranche A) for 'Statement of Assets, Liabilities and Partners Capital' file. " +
                         "Expected: 'Tarragon Master Fund LP', found '" + ExcelUtils.getStringValueFromCell(cell) + "'");
                 throw new ExcelFileParseException("Table header check failed (Tranche A) for 'Statement of Assets, Liabilities and Partners Capital' file. " +
                         "Expected: 'Tarragon Master Fund LP', found '" + ExcelUtils.getStringValueFromCell(cell) + "'");
             }
         }else if(rowNum == 2){
-            if(!ExcelUtils.isCellStringValueEqual(row.getCell(14), "NICK Master")){
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(14), "NICK Master")){
                 logger.error("Table header check failed (Tranche A) for 'Statement of Assets, Liabilities and Partners Capital' file. " +
                         "Expected: 'NICK Master', found '" + ExcelUtils.getStringValueFromCell(row.getCell(14)) + "'");
                 throw new ExcelFileParseException("Table header check failed (Tranche A) for 'Statement of Assets, Liabilities and Partners Capital' file. " +
                         "Expected: 'NICK Master', found '" + ExcelUtils.getStringValueFromCell(row.getCell(14)) + "'");
             }
         }else if (rowNum == 3){
-            if (!ExcelUtils.isCellStringValueEqual(row.getCell(10), "NICK Master")) {
+            if (!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(10), "NICK Master")) {
                 logger.error("Table header check failed (Tranche A) for 'Statement of Assets, Liabilities and Partners Capital' file. " +
                         "Expected: 'NICK Master', found '"  + ExcelUtils.getStringValueFromCell(row.getCell(10)) + "'");
                 throw new ExcelFileParseException("Table header check failed (Tranche A) for 'Statement of Assets, Liabilities and Partners Capital' file. " +
                         "Expected: 'NICK Master', found '"  + ExcelUtils.getStringValueFromCell(row.getCell(10)) + "'");
             }
-            if (!ExcelUtils.isCellStringValueEqual(row.getCell(14), "Fund Ltd.'s Share")) {
+            if (!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(14), "Fund Ltd.'s Share")) {
                 logger.error("Table header check failed (Tranche A) for 'Statement of Assets, Liabilities and Partners Capital' file. " +
                         "Expected: 'Fund Ltd.'s Share', foudn '" + ExcelUtils.getStringValueFromCell(row.getCell(14)) + "'");
                 throw new ExcelFileParseException("Table header check failed (Tranche A) for 'Statement of Assets, Liabilities and Partners Capital' file. " +
                         "Expected: 'Fund Ltd.'s Share', foudn '" + ExcelUtils.getStringValueFromCell(row.getCell(14)) + "'");
             }
         }else if (rowNum == 4){
-            boolean tableHeaders = ExcelUtils.isCellStringValueEqual(row.getCell(4), "Tarragon GP") &&
-                    ExcelUtils.isCellStringValueEqual(row.getCell(6), "NICK Master") &&
-                    ExcelUtils.isCellStringValueEqual(row.getCell(10), "Fund Ltd.'s") &&
-                    ExcelUtils.isCellStringValueEqual(row.getCell(12), "Consolidation") &&
-                    ExcelUtils.isCellStringValueEqual(row.getCell(14), "of Tranche A");
+            boolean tableHeaders = ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(4), "Tarragon GP") &&
+                    ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(6), "NICK Master") &&
+                    ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(10), "Fund Ltd.'s") &&
+                    ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(12), "Consolidation") &&
+                    ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(14), "of Tranche A");
             if (!tableHeaders) {
                 logger.error("Table header check failed (Tranche A) for 'Statement of Assets, Liabilities and Partners Capital' file. " +
                         "Expected 'Tarragon GP', 'NICK Master', 'Fund Ltd.'s', 'Consolidation', 'of Tranche A'");
@@ -1174,13 +5020,13 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         "Expected 'Tarragon GP', 'NICK Master', 'Fund Ltd.'s', 'Consolidation', 'of Tranche A'");
             }
         }else if (rowNum == 5){
-            boolean tableHeaders = ExcelUtils.isCellStringValueEqual(row.getCell(2),"Total*") &&
-                    ExcelUtils.isCellStringValueEqual(row.getCell(4), "LLC's Share") &&
-                    ExcelUtils.isCellStringValueEqual(row.getCell(6), "Fund Ltd.'s Share") &&
-                    ExcelUtils.isCellStringValueEqual(row.getCell(8), "Tarragon LP") &&
-                    ExcelUtils.isCellStringValueEqual(row.getCell(10), "Share of Total") &&
-                    ExcelUtils.isCellStringValueEqual(row.getCell(12), "Adjustments") &&
-                    ExcelUtils.isCellStringValueEqual(row.getCell(14), "Consolidated");
+            boolean tableHeaders = ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2),"Total*") &&
+                    ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(4), "LLC's Share") &&
+                    ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(6), "Fund Ltd.'s Share") &&
+                    ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(8), "Tarragon LP") &&
+                    ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(10), "Share of Total") &&
+                    ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(12), "Adjustments") &&
+                    ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(14), "Consolidated");
             if(!tableHeaders){
                 logger.error("Table header check failed (Tranche A) for 'Statement of Assets, Liabilities and Partners Capital' file. " +
                         "Expected 'Total*', 'LLC's Share', 'Fund Ltd.'s Share', 'Tarragon LP', 'Share of Total', 'Adjustments', 'Consolidated'.");
@@ -1198,44 +5044,44 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
      */
     private void checkStatementAssetsLiabilitiesTrancheBTableHeader(Row row, int rowNum){
         if(rowNum == 1){
-            if(!ExcelUtils.isCellStringValueEqual(row.getCell(2), "Tarragon")){
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), "Tarragon")){
                 logger.error("Table header check failed (Tranche B) for 'Statement of Assets, Liabilities and Partners Capital' file. " +
                         "Expected: 'Tarragon', found '" + ExcelUtils.getStringValueFromCell(row.getCell(2)) + "'");
                 throw new ExcelFileParseException("Table header check failed (Tranche B) for 'Statement of Assets, Liabilities and Partners Capital' file. " +
                         "Expected: 'Tarragon', found '" + ExcelUtils.getStringValueFromCell(row.getCell(2)) + "'");
-            }else if(!ExcelUtils.isCellStringValueEqual(row.getCell(8), "Consolidation")){
+            }else if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(8), "Consolidation")){
                 logger.error("Table header check failed (Tranche B) for 'Statement of Assets, Liabilities and Partners Capital' file. " +
                         "Expected: 'Consolidation', found '" + ExcelUtils.getStringValueFromCell(row.getCell(8)) + "'");
                 throw new ExcelFileParseException("Table header check failed (Tranche B) for 'Statement of Assets, Liabilities and Partners Capital' file. " +
                         "Expected: 'Consolidation', found '" + ExcelUtils.getStringValueFromCell(row.getCell(8)) + "'");
-            }else if(!ExcelUtils.isCellStringValueEqual(row.getCell(10), "Tranche B")){
+            }else if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(10), "Tranche B")){
                 logger.error("Table header check failed (Tranche B) for 'Statement of Assets, Liabilities and Partners Capital' file. " +
                         "Expected: 'Tranche B', found '" + ExcelUtils.getStringValueFromCell(row.getCell(10)) + "'");
                 throw new ExcelFileParseException("Table header check failed (Tranche B) for 'Statement of Assets, Liabilities and Partners Capital' file. " +
                         "Expected: 'Tranche B', found '" + ExcelUtils.getStringValueFromCell(row.getCell(10)) + "'");
             }
         }else if(rowNum == 2){
-            if(!ExcelUtils.isCellStringValueEqual(row.getCell(2), "Master Fund LP")){
+            if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), "Master Fund LP")){
                 logger.error("Table header check failed (Tranche B) for 'Statement of Assets, Liabilities and Partners Capital' file. " +
                         "Expected 'Master Fund LP', found '" + ExcelUtils.getStringValueFromCell(row.getCell(2)) + "'");
                 throw new ExcelFileParseException("Table header check failed (Tranche B) for 'Statement of Assets, Liabilities and Partners Capital' file. " +
                         "Expected 'Master Fund LP', found '" + ExcelUtils.getStringValueFromCell(row.getCell(2)) + "'");
-            }else if(!ExcelUtils.isCellStringValueEqual(row.getCell(4), "Tarragon LP")){
+            }else if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(4), "Tarragon LP")){
                 logger.error("Table header check failed (Tranche B) for 'Statement of Assets, Liabilities and Partners Capital' file. " +
                         "Expected 'Tarragon LP', found '" + ExcelUtils.getStringValueFromCell(row.getCell(4)) + "'");
                 throw new ExcelFileParseException("Table header check failed (Tranche B) for 'Statement of Assets, Liabilities and Partners Capital' file. " +
                         "Expected 'Tarragon LP', found '" + ExcelUtils.getStringValueFromCell(row.getCell(4)) + "'");
-            }else if(!ExcelUtils.isCellStringValueEqual(row.getCell(6), "Total")){
+            }else if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(6), "Total")){
                 logger.error("Table header check failed (Tranche B) for 'Statement of Assets, Liabilities and Partners Capital' file. " +
                         "Expected 'Total', found '" + ExcelUtils.getStringValueFromCell(row.getCell(6)) + "'");
                 throw new ExcelFileParseException("Table header check failed (Tranche B) for 'Statement of Assets, Liabilities and Partners Capital' file. " +
                         "Expected 'Total', found '" + ExcelUtils.getStringValueFromCell(row.getCell(6)) + "'");
-            }else if(!ExcelUtils.isCellStringValueEqual(row.getCell(8), "Adjustments")){
+            }else if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(8), "Adjustments")){
                 logger.error("Table header check failed (Tranche B) for 'Statement of Assets, Liabilities and Partners Capital' file. " +
                         "Expected 'Adjustments', found '" + ExcelUtils.getStringValueFromCell(row.getCell(8)) + "'");
                 throw new ExcelFileParseException("Table header check failed (Tranche B) for 'Statement of Assets, Liabilities and Partners Capital' file. " +
                         "Expected 'Adjustments', found '" + ExcelUtils.getStringValueFromCell(row.getCell(8)) + "'");
-            }else if(!ExcelUtils.isCellStringValueEqual(row.getCell(10), "Consolidated")){
+            }else if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(10), "Consolidated")){
                 logger.error("Table header check failed (Tranche B) for 'Statement of Assets, Liabilities and Partners Capital' file. " +
                         "Expected 'Consolidated', found '" + ExcelUtils.getStringValueFromCell(row.getCell(10)) + "'");
                 throw new ExcelFileParseException("Table header check failed (Tranche B) for 'Statement of Assets, Liabilities and Partners Capital' file. " +
@@ -1429,7 +5275,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
     private void checkStatementCashFlowsFileHeader(Row row, int rowNum){
         if(rowNum == 0){
             Cell cell = row.getCell(0);
-            if (!ExcelUtils.isCellStringValueEqual(cell, "Tarragon LP")) {
+            if (!ExcelUtils.isCellStringValueEqualIgnoreCase(cell, "Tarragon LP")) {
                 logger.error("File header check failed for 'Statement of Cashflows' file. Expected 'Tarragon LP', " +
                         "found '" + ExcelUtils.getStringValueFromCell(cell) + "'");
                 throw new ExcelFileParseException("File header check failed for 'Statement of Cashflows' file. Expected 'Tarragon LP', " +
@@ -1437,7 +5283,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             }
         }else if(rowNum == 1){
             Cell cell = row.getCell(0);
-            if (!ExcelUtils.isCellStringValueEqual(cell, "Consolidated Statement of Cash Flows for NICK Master Fund Ltd.")) {
+            if (!ExcelUtils.isCellStringValueEqualIgnoreCase(cell, "Consolidated Statement of Cash Flows for NICK Master Fund Ltd.")) {
                 logger.error("File header check failed for 'Statement of Cashflows' file: row=2, cell=1. " +
                         "Expected: 'Consolidated Statement of Cash Flows for NICK Master Fund Ltd.', found '" + ExcelUtils.getStringValueFromCell(cell) + "'");
                 throw new ExcelFileParseException("File header check failed for 'Statement of Cashflows' file: row=2, cell=1. " +
@@ -1604,7 +5450,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
     private void checkStatementChangesFileHeaders(Row row, int rowNum){
         if(rowNum == 0){
             Cell cell = row.getCell(0);
-            if (!ExcelUtils.isCellStringValueEqual(cell, "Tarragon LP")) {
+            if (!ExcelUtils.isCellStringValueEqualIgnoreCase(cell, "Tarragon LP")) {
                 logger.error("File header check failed for 'Statement of Changes in Partners Capital' file. " +
                         "Expected 'Tarragon LP', found '" + ExcelUtils.getStringValueFromCell(cell) + "'");
                 throw new ExcelFileParseException("File header check failed for 'Statement of Changes in Partners Capital' file. " +
@@ -1612,7 +5458,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             }
         }else if(rowNum == 1){
             Cell cell = row.getCell(0);
-            String header =  "Consolidated Statement of Changes in Partner's Capital for NICK Master Fund Ltd.";
+            String header =  "Consolidated Statement of Changes in Partner’s Capital for NICK Master Fund Ltd.";
             if (!ExcelUtils.isCellStringValueEqualIgnoreCase(cell, header)) {
                 logger.error("File header check failed for 'Statement of Changes in Partners Capital' file. " +
                         "Expected '" + header + "', found '" + ExcelUtils.getStringValueFromCell(cell) + "'");
@@ -1627,7 +5473,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             // empty rows are skipped
             //checkStatementChangesTableHeader(row, indicesWithValues);
             Cell cell = row.getCell(5);
-            if (!ExcelUtils.isCellStringValueEqual(cell, "Net Investment Income (Loss)")) {
+            if (!ExcelUtils.isCellStringValueEqualIgnoreCase(cell, "Net Investment Income (Loss)")) {
                 //logger.error("Table header check failed for 'Statement of Changes in Partners Capital' file. " +
                 //        "Expected 'Net Investment Income (Loss)', found '" + ExcelUtils.getStringValueFromCell(cell) + "'");
                 //throw new ExcelFileParseException("Table header check failed for 'Statement of Changes in Partners Capital' file. " +
@@ -1640,6 +5486,11 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         List<ConsolidatedReportRecordDto> records = new ArrayList<>();
         int rowNum = 0;
         List<Integer> valueIndices = new ArrayList<>();
+
+        String requiredHeaderVersion1 = "Unrealized Gain (Loss), Net of Related Taxes";
+        String requiredHeaderVersion2 = "Unrealized Gain (Loss)";
+        boolean requiredHeaderAdded = false;
+
         while (rowIterator.hasNext()) { // each row
             Row row = rowIterator.next();
             if(rowNum < 4){
@@ -1655,6 +5506,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         recordDto.setName(cell.getStringCellValue());
                         valueIndices.add(cellNum);
                         records.add(recordDto);
+                        if(recordDto.getName().equalsIgnoreCase(requiredHeaderVersion1) || recordDto.getName().equalsIgnoreCase(requiredHeaderVersion2)){
+                            requiredHeaderAdded = true;
+                        }
 
                         consecEmptyCellCount = 0;
                     }else{
@@ -1684,6 +5538,10 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             }
 
             rowNum++;
+        }
+        if(!requiredHeaderAdded){
+            logger.error("Missing required value: '" + requiredHeaderVersion1 + "' or '" + requiredHeaderVersion2 + "'");
+            throw new ExcelFileParseException("Missing required value: '" + requiredHeaderVersion1 + "' or '" + requiredHeaderVersion2 + "'");
         }
 
         //printRecords(records);
@@ -1793,13 +5651,13 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
             if(rowNum == 0){
                 Cell cell = row.getCell(0);
-                if (!ExcelUtils.isCellStringValueEqual(cell, "Tarragon LP")) {
+                if (!ExcelUtils.isCellStringValueEqualIgnoreCase(cell, "Tarragon LP")) {
                     logger.error("File header check failed for 'Statement of Changes in Partners Capital' file: row=1, cell=1. Expected 'Tarragon LP'");
                     throw new ExcelFileParseException("File header check failed : row=1, cell=1. Expected 'Tarragon LP'");
                 }
             }else if(rowNum == 1){
                 Cell cell = row.getCell(0);
-                if (!ExcelUtils.isCellStringValueEqual(cell, "Consolidated Statement of Changes in Partner’s Capital for NICK Master Fund Ltd.")) {
+                if (!ExcelUtils.isCellStringValueEqualIgnoreCase(cell, "Consolidated Statement of Changes in Partner’s Capital for NICK Master Fund Ltd.")) {
                     logger.error("File header check failed for 'Statement of Changes in Partners Capital' file: row=2, cell=1. Expected 'Consolidated Statement of Changes in Partner’s Capital for NICK Master Fund Ltd.'");
                     throw new ExcelFileParseException("File header check failed : row=2, cell=1. Expected 'Consolidated Statement of Changes in Partner’s Capital for NICK Master Fund Ltd.'");
                 }
@@ -2278,15 +6136,15 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
     }
 
     private void checkNOALTotalSums(List<SingularityNOALRecordDto> records, String trancheName){
-        BigDecimal functionalSum = getBigDecimal(0.0);
-        BigDecimal endingBalanceSum = getBigDecimal(0.0);
+        BigDecimal functionalSum = getBigDecimal(0.0).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal endingBalanceSum = getBigDecimal(0.0).setScale(2, RoundingMode.HALF_UP);
         if(records != null){
             for(SingularityNOALRecordDto record: records){
                 if(record.getTransaction() == null){
                     logger.error(trancheName + "NOAL 'Transaction' value is missing");
                     throw new ExcelFileParseException(trancheName + "NOAL 'Transaction' value is missing");
                 } else if(record.getTransaction().equalsIgnoreCase("Ending Balance") || record.getTransaction().equalsIgnoreCase("Ending")){
-                    if(endingBalanceSum.doubleValue() != NumberUtils.getDouble(record.getFunctionalAmount())){
+                    if(endingBalanceSum.setScale(2, RoundingMode.HALF_UP).doubleValue() != NumberUtils.getDouble(record.getFunctionalAmount())){
                         logger.error(trancheName + "NOAL Ending Balance does not match for '" + record.getName() +
                                 "': found " + NumberUtils.getDouble(record.getFunctionalAmount()) + ", expected " + endingBalanceSum);
                         throw new ExcelFileParseException(trancheName + "NOAL Ending Balance does not match for '" + record.getName() +
@@ -2294,7 +6152,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                     }
                     endingBalanceSum = getBigDecimal(0.0);
                 }else if(record.getTransaction().equalsIgnoreCase("REPORT TOTAL")){
-                    if(functionalSum.doubleValue() != NumberUtils.getDouble(record.getFunctionalAmount())){
+                    if(functionalSum.setScale(2, RoundingMode.HALF_UP).doubleValue() != NumberUtils.getDouble(record.getFunctionalAmount())){
                         logger.error(trancheName + "NOAL 'Report Total' does not match: found " +
                                 NumberUtils.getDouble(record.getFunctionalAmount()) + ", expected " + functionalSum);
                         throw new ExcelFileParseException(trancheName + "NOAL 'Report Total' does not match: found " +
@@ -3277,4 +7135,6 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
     private BigDecimal getBigDecimal(Double value){
         return new BigDecimal(NumberUtils.getDouble(value)).setScale(2, BigDecimal.ROUND_HALF_UP);
     }
+
+
 }

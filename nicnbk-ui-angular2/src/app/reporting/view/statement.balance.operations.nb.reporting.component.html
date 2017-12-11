@@ -3,11 +3,12 @@
         <div class="col-md-12">
             <ol class="breadcrumb">
                 <li>
-                    <span><a [routerLink]="['/reporting/NBReporting']">NB Reporting</a></span>
+                    <span><a [routerLink]="['/reporting/NBReporting']">Reports Main</a></span>
                 </li>
-                <li>
-                    <span *ngIf="report != null"><a [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">Parsed input files</a></span>
+                <li *ngIf="reportId != null && report != null && report.status != 'SUBMITTED'">
+                    <span><a [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">Input</a></span>
                 </li>
+                <li *ngIf="reportId != null && prevPageSource == 'REPORTS'"><span><a [routerLink]="['/reporting/NBReporting/GeneratedReports/', reportId, 'INPUT']">Generate report</a></span></li>
                 <li class="active">Statement of Assets, Liabilities and ...</li>
             </ol>
         </div>
@@ -74,28 +75,29 @@
                         <td>&nbsp;</td>
                         <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[6] != null ? (record.values[6] | number:'1.0-0'): ''}}</td>
                     </tr>
-                </table>
-                <br/>
 
-                <table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small">
+                <!--</table>-->
+                <!--<br/>-->
+
+                <!--<table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small">-->
                     <tr bgcolor="#a8a6a6">
                         <td colspan="14" style="font-weight: bold; border: 1pt solid black" > Consolidated Statement of Operations</td>
                     </tr>
                     <tr bgcolor="#e7e7e7">
                         <td>Name</td>
-                        <td>Tarragon Master Fund LP</td>
+                        <td>Total*</td>
                         <td>&nbsp;</td>
-                        <td>Tarragon GP Share</td>
+                        <td>Tarragon GP LLC'sShare</td>
                         <td>&nbsp;</td>
-                        <td>Tarragon NICK Share</td>
+                        <td>NICK Master Fund Ltd.'s Share</td>
                         <td>&nbsp;</td>
                         <td>Tarragon LP</td>
                         <td>&nbsp;</td>
-                        <td>Total</td>
+                        <td>NICK Master Fund Ltd.'s Share of Total</td>
                         <td>&nbsp;</td>
                         <td>Consolidated Adjustments</td>
                         <td>&nbsp;</td>
-                        <td>Tranche A Consolidated</td>
+                        <td>NICK Master Fund Ltd.'s Share of Tranche A Consolidated</td>
                     </tr>
                     <tr *ngFor="let record of records.operationsTrancheA">
                         <td [style.font-weight]="record.header ? 'bold': ''" [align]="record.totalSum ? 'right' : 'left'">{{record.name}}</td>
@@ -151,9 +153,9 @@
                         <td>&nbsp;</td>
                         <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[6] != null ? (record.values[6] | number:'1.0-0'): ''}}</td>
                     </tr>
-                </table>
-                <br/>
-                <table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small">
+                <!--</table>-->
+                <!--<br/>-->
+                <!--<table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small">-->
                     <tr bgcolor="#a8a6a6">
                         <td colspan="14" style="font-weight: bold; border: 1pt solid black" > Consolidated Statement of Operations</td>
                     </tr>

@@ -38,6 +38,12 @@ public class DateUtils {
         return calendar.get(Calendar.MONTH);
     }
 
+    public static int getDay(Date date){
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(date);
+        return calendar.get(Calendar.DAY_OF_MONTH);
+    }
+
     public static Date getDate(String date){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
         try {
@@ -79,7 +85,7 @@ public class DateUtils {
         cal.set(Calendar.YEAR, getYear(date));
         cal.set(Calendar.DAY_OF_MONTH, 1);// This is necessary to get proper results
         cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
-        System.out.println(cal.getTime());
+        //System.out.println(cal.getTime());
         return cal.getTime();
     }
 
@@ -89,7 +95,27 @@ public class DateUtils {
         cal.set(Calendar.YEAR, getYear(date));
         cal.set(Calendar.DAY_OF_MONTH, 1);// This is necessary to get proper results
         cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
-        System.out.println(cal.getTime());
+        //System.out.println(cal.getTime());
+        return cal.getTime();
+    }
+
+    public static Date getFirstDayOfCurrentMonth(Date date){
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.MONTH, getMonth(date));
+        cal.set(Calendar.YEAR, getYear(date));
+        cal.set(Calendar.DAY_OF_MONTH, 1);// This is necessary to get proper results
+        cal.set(Calendar.DATE, cal.getActualMinimum(Calendar.DATE));
+        //System.out.println(cal.getTime());
+        return cal.getTime();
+    }
+
+    public static Date getFirstDayOfNextMonth(Date date){
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.MONTH, getMonth(date) + 1);
+        cal.set(Calendar.YEAR, getYear(date));
+        cal.set(Calendar.DAY_OF_MONTH, 1);// This is necessary to get proper results
+        cal.set(Calendar.DATE, cal.getActualMinimum(Calendar.DATE));
+        //System.out.println(cal.getTime());
         return cal.getTime();
     }
 
@@ -99,7 +125,26 @@ public class DateUtils {
         cal.set(Calendar.YEAR, getYear(date));
         cal.set(Calendar.DAY_OF_MONTH, 1);// This is necessary to get proper results
         cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
-        System.out.println(cal.getTime());
+        //System.out.println(cal.getTime());
         return cal.getTime();
+    }
+
+    public static Date getFirstDayOfDateYear(Date date){
+        String firstDay = "01.01." + getYear(date);
+        return getDate(firstDay);
+    }
+
+    public static Date getNextDay(Date date){
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.MONTH, getMonth(date));
+        cal.set(Calendar.YEAR, getYear(date));
+        cal.set(Calendar.DAY_OF_MONTH, 1);// This is necessary to get proper results
+        cal.set(Calendar.DATE, getDay(date) + 1);
+        //System.out.println(cal.getTime());
+        return cal.getTime();
+    }
+
+    public static Date getDateOnly(Date date){
+        return getDate(getDateFormatted(date));
     }
 }

@@ -5,8 +5,10 @@ import kz.nicnbk.repo.model.reporting.PeriodicReport;
 import kz.nicnbk.repo.model.reporting.privateequity.ReportingPEStatementChanges;
 import kz.nicnbk.service.api.reporting.privateequity.PEStatementChangesService;
 import kz.nicnbk.service.converter.reporting.PeriodicReportConverter;
+import kz.nicnbk.service.converter.reporting.ReportingPEStatementChangesConverter;
 import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordDto;
 import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordHolderDto;
+import kz.nicnbk.service.dto.reporting.StatementChangesDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +16,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by magzumov on 17.07.2017.
@@ -29,6 +32,9 @@ public class PEStatementChangesServiceImpl implements PEStatementChangesService 
 
     @Autowired
     private PeriodicReportConverter periodicReportConverter;
+
+    @Autowired
+    private ReportingPEStatementChangesConverter statementChangesConverter;
 
     @Override
     public ReportingPEStatementChanges assemble(ConsolidatedReportRecordDto dto, Long reportId) {
@@ -81,6 +87,39 @@ public class PEStatementChangesServiceImpl implements PEStatementChangesService 
         }
 
         return result;
+    }
+
+    @Override
+    public List<StatementChangesDto> getStatementChanges(Long reportId) {
+        List<ReportingPEStatementChanges> entities = this.peStatementChangesRepository.getEntitiesByReportId(reportId,
+                new PageRequest(0, 1000, new Sort(Sort.Direction.ASC, "id")));
+
+        List<StatementChangesDto> dtoList = disassembleStatementChangesList(entities);
+        return dtoList;
+    }
+
+    @Override
+    public boolean deleteByReportId(Long reportId) {
+        try {
+            this.peStatementChangesRepository.deleteByReportId(reportId);
+            return true;
+        }catch (Exception ex){
+            logger.error("Error deleting schedule of investments records with report id=" + reportId);
+            return false;
+        }
+    }
+
+    private List<StatementChangesDto> disassembleStatementChangesList(List<ReportingPEStatementChanges> entities){
+        List<StatementChangesDto> dtoList = new ArrayList<>();
+        if(entities != null){
+            for(ReportingPEStatementChanges entity: entities){
+                StatementChangesDto dto = this.statementChangesConverter.disassemble(entity);
+                if(dto != null){
+                    dtoList.add(dto);
+                }
+            }
+        }
+        return dtoList;
     }
 
 

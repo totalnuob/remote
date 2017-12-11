@@ -1,15 +1,10 @@
 package kz.nicnbk.service.converter.reporting;
 
-import kz.nicnbk.common.service.model.BaseDictionaryDto;
-import kz.nicnbk.common.service.util.StringUtils;
-import kz.nicnbk.repo.api.reporting.NICReportingChartOfAccountsRepository;
-import kz.nicnbk.repo.model.reporting.*;
+import kz.nicnbk.repo.model.reporting.NICKMFReportingData;
+import kz.nicnbk.repo.model.reporting.NICReportingChartOfAccounts;
 import kz.nicnbk.service.converter.dozer.BaseDozerEntityConverter;
 import kz.nicnbk.service.datamanager.LookupService;
 import kz.nicnbk.service.dto.reporting.NICKMFReportingDataDto;
-import kz.nicnbk.service.dto.reporting.NICReportingChartOfAccountsDto;
-import kz.nicnbk.service.dto.reporting.PeriodicReportDto;
-import org.bouncycastle.jcajce.provider.symmetric.ARC4;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,15 +16,6 @@ public class NICKMFReportingDataConverter extends BaseDozerEntityConverter<NICKM
 
     @Autowired
     private LookupService lookupService;
-
-    @Autowired
-    private PeriodicReportConverter reportConverter;
-
-    @Autowired
-    private PeriodicReportConverter periodicReportConverter;
-
-    @Autowired
-    private NICReportingChartOfAccountsRepository nicReportingChartOfAccountsRepository;
 
     @Override
     public NICKMFReportingData assemble(NICKMFReportingDataDto dto) {
@@ -57,8 +43,10 @@ public class NICKMFReportingDataConverter extends BaseDozerEntityConverter<NICKM
 
         if(entity.getNicReportingChartOfAccounts() != null){
             dto.setNicChartOfAccountsCode(entity.getNicReportingChartOfAccounts().getCode());
+            dto.setNicChartOfAccountsName(entity.getNicReportingChartOfAccounts().getNameRu());
             if(entity.getNicReportingChartOfAccounts().getNbChartOfAccounts() != null){
                 dto.setNbChartOfAccountsCode(entity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode());
+                dto.setNbChartOfAccountsName(entity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getNameRu());
             }
         }
 

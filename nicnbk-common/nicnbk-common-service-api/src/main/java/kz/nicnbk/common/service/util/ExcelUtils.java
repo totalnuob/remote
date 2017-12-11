@@ -89,7 +89,7 @@ public class ExcelUtils {
         }
     }
 
-    public static boolean isCellStringValueEqual(Cell cell, String value){
+    public static boolean isCellStringValueEqualMatchCase(Cell cell, String value){
         if(cell == null || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())){
          return false;
         }

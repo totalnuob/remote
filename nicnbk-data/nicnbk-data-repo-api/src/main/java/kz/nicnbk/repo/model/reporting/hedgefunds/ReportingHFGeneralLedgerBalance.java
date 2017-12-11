@@ -17,7 +17,7 @@ public class ReportingHFGeneralLedgerBalance extends CreateUpdateBaseEntity{
 
     private int tranche;
     private Date balanceDate;
-    private HFFinancialStatementType financialStatementCategory;
+    private FinancialStatementCategory financialStatementCategory;
     private String GLAccount;
     private HFChartOfAccountsType chartAccountsType;
     private String chartAccountsLongDescription;
@@ -45,11 +45,11 @@ public class ReportingHFGeneralLedgerBalance extends CreateUpdateBaseEntity{
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fin_statmnt_type_id"/*, nullable = false*/)
-    public HFFinancialStatementType getFinancialStatementCategory() {
+    public FinancialStatementCategory getFinancialStatementCategory() {
         return financialStatementCategory;
     }
 
-    public void setFinancialStatementCategory(HFFinancialStatementType financialStatementCategory) {
+    public void setFinancialStatementCategory(FinancialStatementCategory financialStatementCategory) {
         this.financialStatementCategory = financialStatementCategory;
     }
 

@@ -5,7 +5,7 @@ import kz.nicnbk.common.service.model.BaseDictionaryDto;
 /**
  * Created by magzumov on 28.09.2017.
  */
-public class NICReportingChartOfAccountsDto extends BaseDictionaryDto {
+public class NICReportingChartOfAccountsDto extends BaseDictionaryDto implements Comparable{
 
     private BaseDictionaryDto NBChartOfAccounts;
 
@@ -24,5 +24,15 @@ public class NICReportingChartOfAccountsDto extends BaseDictionaryDto {
 
     public void setNBChartOfAccounts(BaseDictionaryDto NBChartOfAccounts) {
         this.NBChartOfAccounts = NBChartOfAccounts;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        NICReportingChartOfAccountsDto other = (NICReportingChartOfAccountsDto) o;
+        if(this.getCode() != null && other.getCode() != null){
+            return this.getCode().compareTo(other.getCode());
+        }else{
+            return 0;
+        }
     }
 }

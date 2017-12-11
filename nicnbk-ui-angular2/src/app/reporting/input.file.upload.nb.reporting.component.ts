@@ -8,6 +8,7 @@ import {ErrorResponse} from "../common/error-response";
 import {DATA_APP_URL} from "../common/common.service.constants";
 import {FileUploadResult} from "./model/file.uopload.result";
 import {InputFilesInfoLookupNBReport} from "./model/input.files.info.lookup.nb.report";
+import {PeriodicReport} from "./model/periodic.report";
 
 var fileSaver = require("file-saver");
 
@@ -28,6 +29,7 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
     private selectedInfoContent;
 
     private report: InputFilesNBReport;
+    private periodicReport: PeriodicReport;
 
     private fileTarragonScheduleInvestment;
     private fileTarragonStatementAssets;
@@ -70,7 +72,8 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                                 this.busy = this.periodicReportService.loadInputFilesList(this.reportId)
                                     .subscribe(
                                         response  => {
-                                            this.convertToViewModel(response);
+                                            this.convertToViewModel(response.files);
+                                            this.periodicReport = response.report;
                                         },
                                         (error: ErrorResponse) => {
                                             this.successMessage = null;
@@ -615,18 +618,144 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
         return this.showDownloadButton(fileType);
     }
 
+    showDeleteButton(fileType){
+        return this.periodicReport != null && this.periodicReport.status != 'SUBMITTED' && this.showViewButton(fileType);
+
+        // TODO: check report status
+    }
+
+    deleteFile(fileType){
+        if(confirm("Are you sure want to delete this file?")) {
+            if (fileType === 'tarragon_schedule_investment' && this.report != null && this.report.tarragonScheduleInvestmentFileId > 0) {
+                this.periodicReportService.deleteFile(this.report.tarragonScheduleInvestmentFileId)
+                    .subscribe(
+                        response => {
+                            this.report.tarragonScheduleInvestmentFileId = null;
+                            this.report.tarragonScheduleInvestmentFileName = null;
+                            this.postAction("File deleted.", null);
+                        },
+                        (error: ErrorResponse) => {
+                            this.errorMessage = "Error deleting file";
+                            if(error && !error.isEmpty()){
+                                this.processErrorMessage(error);
+                            }
+                            this.postAction(null, this.errorMessage);
+                        }
+                    );
+            } else if (fileType === 'tarragon_statement_assets' && this.report != null && this.report.tarragonStatementAssetsFileId > 0) {
+                this.periodicReportService.deleteFile(this.report.tarragonStatementAssetsFileId)
+                    .subscribe(
+                        response => {
+                            this.report.tarragonStatementAssetsFileId = null;
+                            this.report.tarragonStatementAssetsFileName = null;
+                            this.postAction("File deleted.", null);
+                        },
+                        (error: ErrorResponse) => {
+                            this.errorMessage = "Error deleting file";
+                            if(error && !error.isEmpty()){
+                                this.processErrorMessage(error);
+                            }
+                            this.postAction(null, this.errorMessage);
+                        }
+                    );
+            } else if (fileType === 'tarragon_statement_cashflows' && this.report != null && this.report.tarragonStatementCashflowsFileId > 0) {
+                this.periodicReportService.deleteFile(this.report.tarragonStatementCashflowsFileId)
+                    .subscribe(
+                        response => {
+                            this.report.tarragonStatementCashflowsFileId = null;
+                            this.report.tarragonStatementCashflowsFileName = null;
+                            this.postAction("File deleted.", null);
+                        },
+                        (error: ErrorResponse) => {
+                            this.errorMessage = "Error deleting file";
+                            if(error && !error.isEmpty()){
+                                this.processErrorMessage(error);
+                            }
+                            this.postAction(null, this.errorMessage);
+                        }
+                    );
+            } else if (fileType === 'tarragon_statement_changes' && this.report != null && this.report.tarragonStatementChangesFileId > 0) {
+                this.periodicReportService.deleteFile(this.report.tarragonStatementChangesFileId)
+                    .subscribe(
+                        response => {
+                            this.report.tarragonStatementChangesFileId = null;
+                            this.report.tarragonStatementChangesFileName = null;
+                            this.postAction("File deleted.", null);
+                        },
+                        (error: ErrorResponse) => {
+                            this.errorMessage = "Error deleting file";
+                            if(error && !error.isEmpty()){
+                                this.processErrorMessage(error);
+                            }
+                            this.postAction(null, this.errorMessage);
+                        }
+                    );
+            } else if (fileType === 'singularity_general_ledger' && this.report != null && this.report.singularityGeneralLedgerFileId > 0) {
+                this.periodicReportService.deleteFile(this.report.singularityGeneralLedgerFileId)
+                    .subscribe(
+                        response => {
+                            this.report.singularityGeneralLedgerFileId = null;
+                            this.report.singularityGeneralLedgerFileName = null;
+                            this.postAction("File deleted.", null);
+                        },
+                        (error: ErrorResponse) => {
+                            this.errorMessage = "Error deleting file";
+                            if(error && !error.isEmpty()){
+                                this.processErrorMessage(error);
+                            }
+                            this.postAction(null, this.errorMessage);
+                        }
+                    );
+            } else if (fileType === 'singularity_noal_a' && this.report != null && this.report.singularityNOALTrancheAFileId > 0) {
+                this.periodicReportService.deleteFile(this.report.singularityNOALTrancheAFileId)
+                    .subscribe(
+                        response => {
+                            this.report.singularityNOALTrancheAFileId = null;
+                            this.report.singularityNOALTrancheAFileName = null;
+                            this.postAction("File deleted.", null);
+                        },
+                        (error: ErrorResponse) => {
+                            this.errorMessage = "Error deleting file";
+                            if(error && !error.isEmpty()){
+                                this.processErrorMessage(error);
+                            }
+                            this.postAction(null, this.errorMessage);
+                        }
+                    );
+            } else if (fileType === 'singularity_noal_b' && this.report != null && this.report.singularityNOALTrancheBFileId > 0) {
+                this.periodicReportService.deleteFile(this.report.singularityNOALTrancheBFileId)
+                    .subscribe(
+                        response => {
+                            this.report.singularityNOALTrancheBFileId = null;
+                            this.report.singularityNOALTrancheBFileName = null;
+                            this.postAction("File deleted.", null);
+                        },
+                        (error: ErrorResponse) => {
+                            this.errorMessage = "Error deleting file";
+                            if(error && !error.isEmpty()){
+                                this.processErrorMessage(error);
+                            }
+                            this.postAction(null, this.errorMessage);
+                        }
+                    );
+            }
+        }
+    }
+
     showNextButton() {
-        //if (this.report != null && !this.report.tarragonScheduleInvestmentFileId) {
-        //    return false;
-        //} else if (this.report != null && !this.report.tarragonStatementAssetsFileId) {
-        //    return false;
-        //} else if (this.report != null && !this.report.tarragonStatementCashflowsFileId) {
-        //    return false;
-        //} else if(this.report != null && !this.report.singularityGeneralLedgerFileId){
-        //    return false
-        //} else if(this.report != null && !this.report.singularityNOALTrancheAFileId){
-        //    return false
-        //}
+        if (this.report != null && !this.report.tarragonScheduleInvestmentFileId) {
+            return false;
+        } else if (this.report != null && !this.report.tarragonStatementAssetsFileId) {
+            return false;
+        } else if (this.report != null && !this.report.tarragonStatementCashflowsFileId) {
+            return false;
+        } else if (this.report != null && !this.report.tarragonStatementChangesFileId) {
+            return false;
+        } else if(this.report != null && !this.report.singularityGeneralLedgerFileId){
+            return false
+        } else if(this.report != null && !this.report.singularityNOALTrancheAFileId){
+            return false
+        }
 
 
         //else if (this.report != null && !this.report.tarragonStatementChangesFileId) {

@@ -10,12 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -40,7 +35,7 @@ public abstract class CommonServiceREST {
         Response response = new Response();
         response.setSuccess(false);
         ResponseMessage message = new ResponseMessage();
-        message.setNameEn("Accees denied");
+        message.setNameEn("Access denied");
         response.setMessage(message);
         return new ResponseEntity<>(response, null, HttpStatus.UNAUTHORIZED);
     }
@@ -85,6 +80,9 @@ public abstract class CommonServiceREST {
     }
 
     public ResponseEntity<?> buildDeleteResponseEntity(boolean deleted){
+
+        // TODO: StatusResultDto, etc
+
         if(deleted) {
             Response response = new Response();
             response.setSuccess(deleted);

@@ -3,14 +3,15 @@ package kz.nicnbk.ws.rest;
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.service.datamanager.LookupService;
 import kz.nicnbk.service.dto.reporting.NICReportingChartOfAccountsDto;
+import kz.nicnbk.service.dto.reporting.TarragonNICReportingChartOfAccountsDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -105,12 +106,33 @@ public class LookupServiceREST extends CommonServiceREST{
     @RequestMapping(value = "/NICReportingChartOfAccounts/{code}", method = RequestMethod.GET)
     public ResponseEntity getNICReportingChartOfAccountsByCode(@PathVariable String code){
         List<NICReportingChartOfAccountsDto> lookups = this.lookupService.getNICReportingChartOfAccounts(code);
+        Collections.sort(lookups);
         return buildResponse(lookups);
     }
 
     @RequestMapping(value = "/NICReportingChartOfAccounts/", method = RequestMethod.GET)
     public ResponseEntity getNICReportingChartOfAccounts(){
         List<NICReportingChartOfAccountsDto> lookups = this.lookupService.getNICReportingChartOfAccounts(null);
+        Collections.sort(lookups);
+        return buildResponse(lookups);
+    }
+
+    @RequestMapping(value = "/AddableTarragonNICReportingChartOfAccounts/", method = RequestMethod.GET)
+    public ResponseEntity getAddableTarragonNICReportingChartOfAccounts(){
+        List<TarragonNICReportingChartOfAccountsDto> lookups = this.lookupService.getAddableTarragonNICReportingChartOfAccounts();
+        return buildResponse(lookups);
+    }
+
+    @RequestMapping(value = "/ReserveCalculationExpenseTypes/", method = RequestMethod.GET)
+    public ResponseEntity getReserveCalculationExpenseTypeLookup(){
+        List<BaseDictionaryDto> lookups = this.lookupService.getReserveCalculationExpenseTypeLookup();
+        return buildResponse(lookups);
+    }
+
+
+    @RequestMapping(value = "/ReserveCalculationEntityTypes/", method = RequestMethod.GET)
+    public ResponseEntity getReserveCalculationEntityTypeLookup(){
+        List<BaseDictionaryDto> lookups = this.lookupService.getReserveCalculationEntityTypeLookup();
         return buildResponse(lookups);
     }
 }

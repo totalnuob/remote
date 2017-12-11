@@ -7,6 +7,8 @@ import java.io.Serializable;
  */
 public class ResponseMessage implements Serializable {
 
+    // TODO: StatusResultDto, MessageResultDto
+
     public static final String TYPE_ERROR = "ERROR";
     public static final String TYPE_SUCCESS = "SUCCESS";
 

@@ -20,7 +20,7 @@ public interface PeriodicReportFilesRepository extends PagingAndSortingRepositor
     PeriodicReportFiles getEntityByReportIdAndFileType(Long reportId, String type);
 
     @Query("SELECT e from periodic_report_files e where e.file.id=?1 and (e.file.deleted is null or e.file.deleted=false)")
-    PeriodicReportFiles getEntitiesByFileId(Long fileId);
+    PeriodicReportFiles getEntityByFileId(Long fileId);
 
     @Modifying
     @Transactional

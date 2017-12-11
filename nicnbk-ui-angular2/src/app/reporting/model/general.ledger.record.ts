@@ -6,7 +6,10 @@ export class GeneralLedgerRecord{
     financialStatementCategoryDescription: string;
     chartAccountsDescription: string;
     chartAccountsLongDescription: string;
-    GLAccountBalanc: number;
+    glaccountBalance: number;
     segValCCY: string;
     fundCCY: string;
+
+    tranche: number;
+    tarragonNICChartOfAccountsName: string;
 }

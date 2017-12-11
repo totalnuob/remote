@@ -50,8 +50,23 @@ import {SingularityGeneralLedgerBalanceNBReportingComponent} from "./reporting/s
 import {SingularityNOALTrancheANBReportingComponent} from "./reporting/singularity.noal.tranchea.nb.reporting.component";
 import {SingularityNOALTrancheBNBReportingComponent} from "./reporting/singularity.noal.trancheb.nb.reporting.component";
 import {OtherInfoInputNBReportingComponent} from "./reporting/other.info.input.nb.reporting.component";
-import {GenerateReportsNBReportingComponent} from "./reporting/generate.reports.nb.reporting.component";
 import {NICKMFInputNBReportingComponent} from "./reporting/nick.mf.input.nb.reporting.component";
+import {SingularGeneratedFormNBReportingComponent} from "./reporting/singular.generated.form.nb.reporting.component";
+import {TarragonGeneratedFormNBReportingComponent} from "./reporting/tarragon.generated.form.nb.reporting.component";
+import {GeneratedReportsNBReportingComponent} from "./reporting/generated.reports.nb.reporting.component";
+import {ConsolidatedBalanceUSDFormNBReportingComponent} from "./reporting/consolidated.balance.usd.form.nb.reporting.component";
+import {PreviousYearInputNBReportingComponent} from "./reporting/previous.year.input.nb.reporting.component";
+import {ConsolidatedIncomeExpenseUSDFormNBReportingComponent} from "./reporting/consolidated.income.expense.usd.form.nb.reporting.component";
+import {ConsolidatedTotalIncomeUSDFormNBReportingComponent} from "./reporting/consolidated.total.income.usd.form.nb.reporting.component";
+import {NICKMFInputViewNBReportingComponent} from "./reporting/nick.mf.input.view.nb.reporting.component";
+import {TarragonGeneratedFormViewNBReportingComponent} from "./reporting/tarragon.generated.form.view.nb.reporting.component";
+import {ConsolidatedKZTForm8NBReportingComponent} from "./reporting/consolidated.kzt.form.8.nb.reporting.component";
+import {ConsolidatedKZTForm7NBReportingComponent} from "./reporting/consolidated.kzt.form.7.nb.reporting.component";
+import {ConsolidatedKZTForm10NBReportingComponent} from "./reporting/consolidated.kzt.form.10.nb.reporting.component";
+import {ConsolidatedKZTForm14NBReportingComponent} from "./reporting/consolidated.kzt.form.14.nb.reporting.component";
+import {ConsolidatedKZTForm13NBReportingComponent} from "./reporting/consolidated.kzt.form.13.nb.reporting.component";
+import {ConsolidatedKZTForm1NBReportingComponent} from "./reporting/consolidated.balance.kzt.form.1.nb.reporting.component";
+import {ReserveCalculationFormNBReportingComponent} from "./reporting/reserve.calculation.form.nb.reporting.component";
 
 
 const routes: Routes  = [
@@ -125,6 +140,7 @@ const routes: Routes  = [
         component: GeneralMemoEditComponent,
         canActivate: [AuthGuard]
     },
+
 
     /* TripMemo *************************************/
     {
@@ -275,37 +291,37 @@ const routes: Routes  = [
         canActivate: [AuthGuard]
     },
     {
-        path: 'reporting/NBReporting/pe/scheduleInvestments/:id',
+        path: 'reporting/NBReporting/pe/scheduleInvestments/:id/:prevPageSource',
         component: ScheduleInvestmentsNBReportingComponent,
         canActivate: [AuthGuard]
     },
     {
-        path: 'reporting/NBReporting/pe/statementBalanceOperations/:id',
+        path: 'reporting/NBReporting/pe/statementBalanceOperations/:id/:prevPageSource',
         component: StatementBalanceOperationsNBReportingComponent,
         canActivate: [AuthGuard]
     },
     {
-        path: 'reporting/NBReporting/pe/statementCashflows/:id',
+        path: 'reporting/NBReporting/pe/statementCashflows/:id/:prevPageSource',
         component: StatementCashflowsNBReportingComponent,
         canActivate: [AuthGuard]
     },
     {
-        path: 'reporting/NBReporting/pe/statementChanges/:id',
+        path: 'reporting/NBReporting/pe/statementChanges/:id/:prevPageSource',
         component: StatementChangesNBReportingComponent,
         canActivate: [AuthGuard]
     },
     {
-        path: 'reporting/NBReporting/hf/generalLedgerBalance/:id',
+        path: 'reporting/NBReporting/hf/generalLedgerBalance/:id/:prevPageSource',
         component: SingularityGeneralLedgerBalanceNBReportingComponent,
         canActivate: [AuthGuard]
     },
     {
-        path: 'reporting/NBReporting/hf/noalA/:id',
+        path: 'reporting/NBReporting/hf/noalA/:id/:prevPageSource',
         component: SingularityNOALTrancheANBReportingComponent,
         canActivate: [AuthGuard]
     },
     {
-        path: 'reporting/NBReporting/hf/noalB/:id',
+        path: 'reporting/NBReporting/hf/noalB/:id/:prevPageSource',
         component: SingularityNOALTrancheBNBReportingComponent,
         canActivate: [AuthGuard]
     },
@@ -314,16 +330,98 @@ const routes: Routes  = [
         component: OtherInfoInputNBReportingComponent,
         canActivate: [AuthGuard]
     },
-    {
-        path: 'reporting/NBReporting/generateReports/:id',
-        component: GenerateReportsNBReportingComponent,
-        canActivate: [AuthGuard]
-    },
+    //{
+    //    path: 'reporting/NBReporting/generateReports/:id',
+    //    component: GenerateReportsNBReportingComponent,
+    //    canActivate: [AuthGuard]
+    //},
     {
         path: 'reporting/NBReporting/NICKMFInput/:id',
         component: NICKMFInputNBReportingComponent,
         canActivate: [AuthGuard]
     },
+    {
+        path: 'reporting/NBReporting/SingularGeneratedForm/:id',
+        component: SingularGeneratedFormNBReportingComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'reporting/NBReporting/TarragonGeneratedForm/:id',
+        component: TarragonGeneratedFormNBReportingComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'reporting/NBReporting/GeneratedReports/:id/:showInputList',
+        component: GeneratedReportsNBReportingComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'reporting/NBReporting/consolidatedBalanceUSDForm/:id',
+        component: ConsolidatedBalanceUSDFormNBReportingComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'reporting/NBReporting/previousYearInput/:id',
+        component: PreviousYearInputNBReportingComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'reporting/NBReporting/consolidatedIncomeExpenseUSDForm/:id',
+        component: ConsolidatedIncomeExpenseUSDFormNBReportingComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'reporting/NBReporting/consolidatedTotalIncomeUSDForm/:id',
+        component: ConsolidatedTotalIncomeUSDFormNBReportingComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'reporting/NBReporting/nickMFInputView/:id',
+        component: NICKMFInputViewNBReportingComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'reporting/NBReporting/TarragonGeneratedFormView/:id',
+        component: TarragonGeneratedFormViewNBReportingComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'reporting/NBReporting/consolidatedKZTForm8/:id',
+        component: ConsolidatedKZTForm8NBReportingComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'reporting/NBReporting/consolidatedKZTForm7/:id',
+        component: ConsolidatedKZTForm7NBReportingComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'reporting/NBReporting/consolidatedKZTForm10/:id',
+        component: ConsolidatedKZTForm10NBReportingComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'reporting/NBReporting/consolidatedKZTForm14/:id',
+        component: ConsolidatedKZTForm14NBReportingComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'reporting/NBReporting/consolidatedKZTForm13/:id',
+        component: ConsolidatedKZTForm13NBReportingComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'reporting/NBReporting/consolidatedKZTForm1/:id',
+        component: ConsolidatedKZTForm1NBReportingComponent,
+        canActivate: [AuthGuard]
+    },
+
+    {
+        path: 'reporting/NBReporting/reserveCalculation',
+        component: ReserveCalculationFormNBReportingComponent,
+        canActivate: [AuthGuard]
+    },
+
 
 
 

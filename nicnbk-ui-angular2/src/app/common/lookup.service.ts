@@ -24,6 +24,10 @@ import {NIC_REPORTING_CHART_OF_ACCOUNTS_URL} from "./lookup.service.url";
 import {NICReportingChartOfAccounts} from "../reporting/model/nic.reporting.chart.of.accounts.";
 import {OptionsBehavior} from "ng2-select/index";
 import {BaseDictionary} from "./model/base-dictionary";
+import {TarragonNICReportingChartOfAccounts} from "../reporting/model/tarragon,.nic.reporting.chart.of.accounts.";
+import {TARRAGON_NIC_REPORTING_CHART_OF_ACCOUNTS_URL} from "./lookup.service.url";
+import {RESERVE_CALCULATION_EXPENSE_TYPE_URL} from "./lookup.service.url";
+import {RESERVE_CALCULATION_ENTITY_TYPE_URL} from "./lookup.service.url";
 
 
 @Injectable()
@@ -208,6 +212,26 @@ export class LookupService extends CommonService{
         }
 
     }
+
+    getAddableTarragonNICReportingChartOfAccounts(code): Observable<TarragonNICReportingChartOfAccounts[]>{
+        return this.http.get(TARRAGON_NIC_REPORTING_CHART_OF_ACCOUNTS_URL, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+
+    getReserveCalculationExpenseTypeLookup(): Observable<BaseDictionary[]>{
+        return this.http.get(RESERVE_CALCULATION_EXPENSE_TYPE_URL, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+
+    getReserveCalculationEntityTypeLookup(): Observable<BaseDictionary[]>{
+        return this.http.get(RESERVE_CALCULATION_ENTITY_TYPE_URL, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+
+
 
     getManagerStatuses(){
         var list = [];

@@ -5,12 +5,8 @@ import kz.nicnbk.repo.model.base.DataConstraints;
 import kz.nicnbk.repo.model.common.Currency;
 import kz.nicnbk.repo.model.common.Strategy;
 import kz.nicnbk.repo.model.reporting.PeriodicReport;
-import kz.nicnbk.repo.model.reporting.PeriodicReportType;
-import kz.nicnbk.repo.model.reporting.ReportStatus;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-import java.util.Date;
 
 /**
  * Created by magzumov on 20.04.2017.
@@ -28,6 +24,7 @@ public class ReportingPEScheduleInvestment extends CreateUpdateBaseEntity{
     private Double capitalCommitments;
     private Double netCost;
     private Double fairValue;
+    private Double editedFairValue;
     private PeriodicReport report;
 
     private PEInvestmentType type;
@@ -35,6 +32,7 @@ public class ReportingPEScheduleInvestment extends CreateUpdateBaseEntity{
     private Currency currency;
     private Integer tranche;
     private String description;
+    private Boolean isTotalSum;
 
     @Column(name = "name", length = DataConstraints.C_TYPE_ENTITY_NAME, nullable = false)
     public String getName() {
@@ -128,5 +126,23 @@ public class ReportingPEScheduleInvestment extends CreateUpdateBaseEntity{
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Column(name="is_total_sum")
+    public Boolean getTotalSum() {
+        return isTotalSum;
+    }
+
+    public void setTotalSum(Boolean totalSum) {
+        isTotalSum = totalSum;
+    }
+
+    @Column(name="edited_fair_value")
+    public Double getEditedFairValue() {
+        return editedFairValue;
+    }
+
+    public void setEditedFairValue(Double editedFairValue) {
+        this.editedFairValue = editedFairValue;
     }
 }

@@ -1,10 +1,11 @@
 package kz.nicnbk.repo.api.reporting.privateequity;
 
 import kz.nicnbk.repo.model.reporting.privateequity.ReportingPEStatementCashflows;
-import kz.nicnbk.repo.model.reporting.privateequity.ReportingPEStatementOperations;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -15,5 +16,10 @@ public interface ReportingPEStatementCashflowsRepository extends PagingAndSortin
 
     @Query("SELECT e from ReportingPEStatementCashflows e where e.report.id=?1")
     List<ReportingPEStatementCashflows> getEntitiesByReportId(Long reportId, Pageable pageable);
+
+    @Modifying
+    @Transactional
+    @Query("DELETE from ReportingPEStatementCashflows e where e.report.id=?1")
+    void deleteByReportId(long reportId);
 
 }

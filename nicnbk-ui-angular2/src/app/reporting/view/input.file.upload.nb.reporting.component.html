@@ -3,10 +3,10 @@
         <div class="col-md-12">
             <ol class="breadcrumb">
                 <li>
-                    <span><a [routerLink]="['/reporting/NBReporting']">NB Reporting</a></span>
+                    <span><a [routerLink]="['/reporting/NBReporting']">Reports Main</a></span>
                 </li>
                 <!--<li *ngIf="report != null" class="active">{{getReportDateShortFormatted(report.reportDate)}}</li>-->
-                <li *ngIf="report != null" class="active">Parsed input files</li>
+                <li *ngIf="report != null" class="active">Input</li>
             </ol>
         </div>
     </div>
@@ -21,7 +21,7 @@
     </div>
     <br/>
     <div class="row withpadding">
-        <h3 *ngIf="report != null">{{getReportDateShortFormatted(report.reportDate)}}</h3>
+        <h3 *ngIf="report != null">1. Input files {{ ' - ' + getReportDateShortFormatted(report.reportDate)}}</h3>
     </div>
     <div class="row withpadding">
         <table [ngBusy]="busy" class="table table-responsive">
@@ -54,8 +54,11 @@
                     </button>
 
                     <button *ngIf="showViewButton('tarragon_schedule_investment')" class="btn btn-xs btn-primary"
-                            [routerLink]="['/reporting/NBReporting/pe/scheduleInvestments/', report.id]">
+                            [routerLink]="['/reporting/NBReporting/pe/scheduleInvestments/', report.id, 'INPUT']">
                             <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                    <button *ngIf="showDeleteButton('tarragon_schedule_investment')" class="btn btn-xs btn-danger" (click)="deleteFile('tarragon_schedule_investment')">
+                        <span class="glyphicon glyphicon-trash"></span>
                     </button>
 
                     <a data-toggle="modal" data-target="#infoModal" (click)="getInfo('tarragon_schedule_investment')" style="cursor: pointer">
@@ -87,8 +90,11 @@
                         <span class="glyphicon glyphicon-trash"></span>
                     </button>
                     <button *ngIf="showViewButton('tarragon_statement_assets')" class="btn btn-xs btn-primary"
-                        [routerLink]="['/reporting/NBReporting/pe/statementBalanceOperations/', report.id]">
+                        [routerLink]="['/reporting/NBReporting/pe/statementBalanceOperations/', report.id, 'INPUT']">
                         <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                    <button *ngIf="showDeleteButton('tarragon_statement_assets')" class="btn btn-xs btn-danger" (click)="deleteFile('tarragon_statement_assets')">
+                        <span class="glyphicon glyphicon-trash"></span>
                     </button>
 
                     <a data-toggle="modal" data-target="#infoModal" (click)="getInfo('tarragon_statement_assets')" style="cursor: pointer">
@@ -120,8 +126,11 @@
                         <span class="glyphicon glyphicon-trash"></span>
                     </button>
                     <button *ngIf="showViewButton('tarragon_statement_cashflows')" class="btn btn-xs btn-primary"
-                            [routerLink]="['/reporting/NBReporting/pe/statementCashflows/', report.id]">
+                            [routerLink]="['/reporting/NBReporting/pe/statementCashflows/', report.id, 'INPUT']">
                         <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                    <button *ngIf="showDeleteButton('tarragon_statement_cashflows')" class="btn btn-xs btn-danger" (click)="deleteFile('tarragon_statement_cashflows')">
+                        <span class="glyphicon glyphicon-trash"></span>
                     </button>
 
                     <a data-toggle="modal" data-target="#infoModal" (click)="getInfo('tarragon_statement_cashflows')" style="cursor: pointer">
@@ -130,7 +139,7 @@
                 </td>
             </tr>
             <tr>
-                <td>Statement of Changes </td>
+                <td><span style="color: red;">*&nbsp;</span>Statement of Changes </td>
                 <td>
                     <label class="btn btn-xs btn-default" for="attachmentFileT4" *ngIf="showUploadButton('tarragon_statement_changes')">
                         <input type="file" id="attachmentFileT4" (change)="onFileChange($event, 'tarragon_statement_changes')" name="attachmentFileT4" style="display:none;"/>
@@ -153,8 +162,11 @@
                         <span class="glyphicon glyphicon-trash"></span>
                     </button>
                     <button *ngIf="showViewButton('tarragon_statement_changes')" class="btn btn-xs btn-primary"
-                            [routerLink]="['/reporting/NBReporting/pe/statementChanges/', report.id]">
+                            [routerLink]="['/reporting/NBReporting/pe/statementChanges/', report.id, 'INPUT']">
                         <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                    <button *ngIf="showDeleteButton('tarragon_statement_changes')" class="btn btn-xs btn-danger" (click)="deleteFile('tarragon_statement_changes')">
+                        <span class="glyphicon glyphicon-trash"></span>
                     </button>
 
                     <a data-toggle="modal" data-target="#infoModal" (click)="getInfo('tarragon_statement_changes')" style="cursor: pointer">
@@ -415,8 +427,11 @@
                         <span class="glyphicon glyphicon-trash"></span>
                     </button>
                     <button *ngIf="showViewButton('singularity_general_ledger')" class="btn btn-xs btn-primary"
-                            [routerLink]="['/reporting/NBReporting/hf/generalLedgerBalance/', report.id]">
+                            [routerLink]="['/reporting/NBReporting/hf/generalLedgerBalance/', report.id, 'INPUT']">
                         <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                    <button *ngIf="showDeleteButton('singularity_general_ledger')" class="btn btn-xs btn-danger" (click)="deleteFile('singularity_general_ledger')">
+                        <span class="glyphicon glyphicon-trash"></span>
                     </button>
 
                     <a data-toggle="modal" data-target="#infoModal" (click)="getInfo('singularity_general_ledger')" style="cursor: pointer">
@@ -447,8 +462,11 @@
                         <span class="glyphicon glyphicon-trash"></span>
                     </button>
                     <button *ngIf="showViewButton('singularity_noal_a')" class="btn btn-xs btn-primary"
-                            [routerLink]="['/reporting/NBReporting/hf/noalA/', report.id]">
+                            [routerLink]="['/reporting/NBReporting/hf/noalA/', report.id, 'INPUT']">
                         <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                    <button *ngIf="showDeleteButton('singularity_noal_a')" class="btn btn-xs btn-danger" (click)="deleteFile('singularity_noal_a')">
+                        <span class="glyphicon glyphicon-trash"></span>
                     </button>
 
                     <a data-toggle="modal" data-target="#infoModal" (click)="getInfo('singularity_noal_a')" style="cursor: pointer">
@@ -456,39 +474,39 @@
                     </a>
                 </td>
             </tr>
-            <tr>
-                <td>SINGULARITY - NOAL - Tranche B</td>
-                <td>
-                    <label class="btn btn-xs btn-default" for="attachmentFileSNOALTrancheB" *ngIf="showUploadButton('singularity_noal_b')">
-                        <input type="file" id="attachmentFileSNOALTrancheB" (change)="onFileChange($event, 'singularity_noal_b')" name="attachmentFileSNOALTrancheB" style="display:none;"/>
-                        <span class="glyphicon glyphicon-circle-arrow-up"></span>
-                    </label>
-                    <label *ngIf="fileSingularityNOALTrancheB != null" class="label label-info">{{fileSingularityNOALTrancheB[0].name}}</label>
+            <!--<tr>-->
+                <!--<td>SINGULARITY - NOAL - Tranche B</td>-->
+                <!--<td>-->
+                    <!--<label class="btn btn-xs btn-default" for="attachmentFileSNOALTrancheB" *ngIf="showUploadButton('singularity_noal_b')">-->
+                        <!--<input type="file" id="attachmentFileSNOALTrancheB" (change)="onFileChange($event, 'singularity_noal_b')" name="attachmentFileSNOALTrancheB" style="display:none;"/>-->
+                        <!--<span class="glyphicon glyphicon-circle-arrow-up"></span>-->
+                    <!--</label>-->
+                    <!--<label *ngIf="fileSingularityNOALTrancheB != null" class="label label-info">{{fileSingularityNOALTrancheB[0].name}}</label>-->
 
-                    <button *ngIf="showDownloadButton('singularity_noal_b')" class="btn btn-xs btn-default"
-                            (click)="download('NB_REP_SNB', report.singularityNOALTrancheBFileId, report.singularityNOALTrancheBFileName)">
-                        <span class="glyphicon glyphicon-download-alt"></span>
-                        <i class="glyphicon glyphicon-refresh" *ngIf="pending"></i>
-                    </button>
+                    <!--<button *ngIf="showDownloadButton('singularity_noal_b')" class="btn btn-xs btn-default"-->
+                            <!--(click)="download('NB_REP_SNB', report.singularityNOALTrancheBFileId, report.singularityNOALTrancheBFileName)">-->
+                        <!--<span class="glyphicon glyphicon-download-alt"></span>-->
+                        <!--<i class="glyphicon glyphicon-refresh" *ngIf="pending"></i>-->
+                    <!--</button>-->
 
-                    <button *ngIf="showProcessButton('singularity_noal_b')" class="btn btn-xs btn-success"
-                            (click)="uploadFile('singularity_noal_b')">
-                        <span class="glyphicon glyphicon-play-circle"></span>
-                    </button>
-                    <button *ngIf="showProcessButton('singularity_noal_b')" class="btn btn-xs btn-danger"
-                            (click)="clearFile('singularity_noal_b')">
-                        <span class="glyphicon glyphicon-trash"></span>
-                    </button>
-                    <button *ngIf="showViewButton('singularity_noal_b')" class="btn btn-xs btn-primary"
-                            [routerLink]="['/reporting/NBReporting/hf/noalB/', report.id]">
-                        <span class="glyphicon glyphicon-search"></span>
-                    </button>
+                    <!--<button *ngIf="showProcessButton('singularity_noal_b')" class="btn btn-xs btn-success"-->
+                            <!--(click)="uploadFile('singularity_noal_b')">-->
+                        <!--<span class="glyphicon glyphicon-play-circle"></span>-->
+                    <!--</button>-->
+                    <!--<button *ngIf="showProcessButton('singularity_noal_b')" class="btn btn-xs btn-danger"-->
+                            <!--(click)="clearFile('singularity_noal_b')">-->
+                        <!--<span class="glyphicon glyphicon-trash"></span>-->
+                    <!--</button>-->
+                    <!--<button *ngIf="showViewButton('singularity_noal_b')" class="btn btn-xs btn-primary"-->
+                            <!--[routerLink]="['/reporting/NBReporting/hf/noalB/', report.id, 'INPUT']">-->
+                        <!--<span class="glyphicon glyphicon-search"></span>-->
+                    <!--</button>-->
 
-                    <a data-toggle="modal" data-target="#infoModal" (click)="getInfo('singularity_noal_b')" style="cursor: pointer">
-                        <span class="glyphicon glyphicon-question-sign"></span>
-                    </a>
-                </td>
-            </tr>
+                    <!--<a data-toggle="modal" data-target="#infoModal" (click)="getInfo('singularity_noal_b')" style="cursor: pointer">-->
+                        <!--<span class="glyphicon glyphicon-question-sign"></span>-->
+                    <!--</a>-->
+                <!--</td>-->
+            <!--</tr>-->
         </table>
     </div>
     <div class="row">

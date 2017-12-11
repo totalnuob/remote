@@ -27,6 +27,7 @@ public class ReportingPEStatementOperations extends CreateUpdateBaseEntity{
 
     private PEOperationsType type;
     private Integer tranche;
+    private Boolean totalSum;
 
     @Column(name = "name", length = DataConstraints.C_TYPE_ENTITY_NAME, nullable = false)
     public String getName() {
@@ -127,5 +128,14 @@ public class ReportingPEStatementOperations extends CreateUpdateBaseEntity{
 
     public void setTranche(Integer tranche) {
         this.tranche = tranche;
+    }
+
+    @Column(name = "is_total_sum")
+    public Boolean getTotalSum() {
+        return totalSum;
+    }
+
+    public void setTotalSum(Boolean totalSum) {
+        this.totalSum = totalSum;
     }
 }

@@ -14,11 +14,14 @@ import {NICKMFReportingInfoHolder} from "./model/nick.mf.reporting.info.holder.n
 import {PeriodicReport} from "./model/periodic.report";
 import {isNumeric} from "rxjs/util/isNumeric";
 
+import {Observable} from 'rxjs/Observable';
+import 'rxjs/add/observable/forkJoin';
+
 declare var $:any
 
 @Component({
     selector: 'mick-mf-input-nb-reporting',
-    templateUrl: 'view/nick.mf..input.nb.reporting.component.html',
+    templateUrl: 'view/nick.mf.input.nb.reporting.component.html',
     styleUrls: [],
     providers: [],
 })
@@ -45,109 +48,139 @@ export class NICKMFInputNBReportingComponent extends CommonNBReportingComponent 
         this.data = new NICKMFReportingInfoHolder();
         this.data.records = [];
 
-        this.loadLookups();
+        Observable.forkJoin(
+            // Load lookups
+            this.lookupService.getNBChartOfAccounts(),
+            this.lookupService.getNICReportingChartOfAccounts(null)
+            )
+            .subscribe(
+                ([data1, data2]) => {
+                    this. nbChartOfAccounts = data1;
+                    this.nicReportingChartOfAccounts = data2;
 
-        this.sub = this.route
-            .params
-            .subscribe(params => {
-                this.reportId = +params['id'];
-                if(this.reportId > 0){
-                    // load report data
+                    // load data
+                    this.sub = this.route
+                        .params
+                        .subscribe(params => {
+                            this.reportId = +params['id'];
+                            if(this.reportId > 0){
+                                // load report data
 
-                    this.data.report = new PeriodicReport();
-                    this.data.report.id = this.reportId;
+                                this.data.report = new PeriodicReport();
+                                this.data.report.id = this.reportId;
 
-                    this.busy = this.periodicReportService.getNICKMFReportingInfo(this.reportId)
-                        .subscribe(
-                            response  => {
-                                if(response){
-                                    this.data.records = response.records;
-                                    for(var i = 0; i < this.data.records.length; i++){
-                                        this.nbChartOfAccountsChanged(this.data.records[i]);
+                                this.busy = this.periodicReportService.getNICKMFReportingInfo(this.reportId)
+                                    .subscribe(
+                                        response  => {
+                                            if(response){
+                                                this.data = response;
+                                                if(this.data.records){
+                                                    for(var i = 0; i < this.data.records.length; i++) {
+                                                        this.nbChartOfAccountsChanged(this.data.records[i], true);
+                                                    }
 
-                                    }
-                                    //console.log(this.data);
-                                }
-                            },
-                            (error: ErrorResponse) => {
-                                this.successMessage = null;
-                                this.errorMessage = "Error loading NICK MF data";
-                                if(error && !error.isEmpty()){
-                                    this.processErrorMessage(error);
-                                }
-                                this.postAction(null, null);
+                                                }
+                                                //console.log(this.data);
+                                            }
+                                        },
+                                        (error: ErrorResponse) => {
+                                            this.successMessage = null;
+                                            this.errorMessage = "Error loading NICK MF data";
+                                            if(error && !error.isEmpty()){
+                                                this.processErrorMessage(error);
+                                            }
+                                            this.postAction(this.successMessage, this.errorMessage);
+                                        }
+                                    );
+                            }else{
+                                // TODO: ??
+                                console.log("No report id")
                             }
-                        );
-                }else{
-                    // TODO: ??
-                    console.log("No report id")
+                        });
+
+                },
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, this.errorMessage);
                 }
-            });
+            );
+
     }
 
     ngOnInit(): any {
     }
 
-    loadLookups(){
-        this.lookupService.getNBChartOfAccounts()
-            .subscribe(
-                data => {
-                    this. nbChartOfAccounts = data;
-                },
-                (error: ErrorResponse) => {
-                    this.errorMessage = "Error loading lookups";
-                    if(error && !error.isEmpty()){
-                        this.processErrorMessage(error);
-                    }
-                    this.postAction(null, null);
-                }
-            );
-
-        this.lookupService.getNICReportingChartOfAccounts(null)
-            .subscribe(
-                data => {
-                    this.nicReportingChartOfAccounts = data;
-                },
-                (error: ErrorResponse) => {
-                    this.errorMessage = "Error loading lookups";
-                    if(error && !error.isEmpty()){
-                        this.processErrorMessage(error);
-                    }
-                    this.postAction(null, null);
-                }
-            );
-    }
-
-
     save(){
-        this.periodicReportService.saveNICKMFReportingInfo(this.data)
-            .subscribe(
-                response  => {
-                    var creationDate = response.creationDate;
 
-                    this.successMessage = "Successfully saved information";
-                    this.errorMessage = null;
-                },
-                (error: ErrorResponse) => {
-                    this.successMessage = null;
-                    this.errorMessage = "Error saving information";
-                    if(error && !error.isEmpty()){
-                        this.processErrorMessage(error);
+        if(this.checkRecords()) {
+
+            this.periodicReportService.saveNICKMFReportingInfo(this.data)
+                .subscribe(
+                    response => {
+                        var creationDate = response.creationDate;
+
+                        this.successMessage = "Successfully saved information";
+                        this.errorMessage = null;
+                        this.postAction(this.successMessage, this.errorMessage);
+                    },
+                    (error:ErrorResponse) => {
+                        this.successMessage = null;
+                        this.errorMessage = "Error saving information";
+                        if (error && !error.isEmpty()) {
+                            this.processErrorMessage(error);
+                        }
+                        this.postAction(this.successMessage, this.errorMessage);
                     }
-                    this.postAction(null, null);
+                )
+        }
+    }
+
+    private checkRecords(){
+        if(this.data.records){
+            let codes = new Set();
+            for(var i=0; i < this.data.records.length; i++){
+                if(codes.has(this.data.records[i].nicChartOfAccountsCode)){
+                    this.postAction(null, "Duplicate chart of accounts for '" + this.data.records[i].nbChartOfAccountsCode + "'");
+                    return false;
                 }
-            )
+                codes.add(this.data.records[i].nicChartOfAccountsCode);
+            }
+        }
+
+        return true;
     }
 
 
-    nbChartOfAccountsChanged(record){
+    nbChartOfAccountsChanged(record, loaded){
         record.matchingNICChartOfAccounts = [];
-        for(var i = 0; i < this.nicReportingChartOfAccounts.length; i++){
-            if(this.nicReportingChartOfAccounts[i].nbchartOfAccounts.code === record.nbChartOfAccountsCode){
-                record.matchingNICChartOfAccounts.push(new BaseDictionary(this.nicReportingChartOfAccounts[i].code,
-                    this.nicReportingChartOfAccounts[i].nameEn,
-                    this.nicReportingChartOfAccounts[i].nameRu,
-                    this.nicReportingChartOfAccounts[i].nameKz));
+        if(this.nicReportingChartOfAccounts) {
+            for (var i = 0; i < this.nicReportingChartOfAccounts.length; i++) {
+                if (this.nicReportingChartOfAccounts[i].nbchartOfAccounts.code === record.nbChartOfAccountsCode) {
+                    var alreadyAdded = false;
+                    for(var j = 0; !loaded && j < this.data.records.length; j++){
+                        if(this.data.records[j].nicChartOfAccountsCode === this.nicReportingChartOfAccounts[i].code){
+                            alreadyAdded = true;
+                        }
+                    }
+
+                    if(!alreadyAdded){
+                        record.matchingNICChartOfAccounts.push(new BaseDictionary(this.nicReportingChartOfAccounts[i].code,
+                            this.nicReportingChartOfAccounts[i].nameEn,
+                            this.nicReportingChartOfAccounts[i].nameRu,
+                            this.nicReportingChartOfAccounts[i].nameKz));
+                    }
+                }
+            }
+        }
+
+    }
+
+    nicChartOfAccountsChanged(record){
+        if(this.data.records != null && this.data.records.length > 0){
+            for(var i = 0; i < this.nicReportingChartOfAccounts.length; i++){
             }
         }
     }
@@ -171,9 +204,53 @@ export class NICKMFInputNBReportingComponent extends CommonNBReportingComponent 
         }
     }
 
+    showCalculateSumButton(record){
+        if(record.nbChartOfAccountsCode === '2923.010' && record.nicChartOfAccountsName === 'Начисленная амортизация - Организационные расходы NICK MF'){
+            return true;
+        }else if(record.nbChartOfAccountsCode === '3393.020' && record.nicChartOfAccountsName === 'Комиссия за администрирование к оплате NICK MF'){
+            return true;
+        }else if(record.nbChartOfAccountsCode === '7473.080' && record.nicChartOfAccountsName === 'Расходы за администрирование NICK MF'){
+            return true;
+        }else if(record.nbChartOfAccountsCode === '7473.080' && record.nicChartOfAccountsName === 'Амортизация организационных расходов NICK MF'){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    calculateSum(record){
+        if(record.nbChartOfAccountsCode === '2923.010' && record.nicChartOfAccountsName === 'Начисленная амортизация - Организационные расходы NICK MF'){
+            if(this.data.report.reportDate != null) {
+                var month = Number(this.data.report.reportDate.split('-')[1]);
+                var sum = Number(0 - 4238 - (14963 / 60 * month)).toFixed(2);
+                record.accountBalance = sum;
+            }
+        }else if(record.nbChartOfAccountsCode === '3393.020' && record.nicChartOfAccountsName === 'Комиссия за администрирование к оплате NICK MF'){
+            if(this.data.report.reportDate != null) {
+                var month = Number(this.data.report.reportDate.split('-')[1]);
+                var sum = Number(0 - (40000/12 * month) + 9999.99 + 9999.99).toFixed(2);
+                record.accountBalance = sum;
+            }
+        }else if(record.nbChartOfAccountsCode === '7473.080' && record.nicChartOfAccountsName === 'Расходы за администрирование NICK MF'){
+            if(this.data.report.reportDate != null) {
+                var month = Number(this.data.report.reportDate.split('-')[1]);
+                var sum = Number(40000/12 * month).toFixed(2);
+                record.accountBalance = sum;
+            }
+        }else if(record.nbChartOfAccountsCode === '7473.080' && record.nicChartOfAccountsName === 'Амортизация организационных расходов NICK MF'){
+            if(this.data.report.reportDate != null) {
+                var month = Number(this.data.report.reportDate.split('-')[1]);
+                var sum = Number(14963/60 * month).toFixed(2);
+                record.accountBalance = sum;
+            }
+        }else{
+            alert("No formula exists for this account number and name");
+        }
+    }
+
     checkTotal(){
         var sum = this.calculateTotal();
-        return (sum > -1 && sum < 1);
+        return (sum > -2 && sum < 2);
     }
 
     calculateTotal(){
@@ -198,7 +275,7 @@ export class NICKMFInputNBReportingComponent extends CommonNBReportingComponent 
                         for (var i = 0; i < response.records.length; i++) {
                             //console.log(response.records[i]);
                             this.data.records.push(response.records[i]);
-                            this.nbChartOfAccountsChanged(response.records[i]);
+                            this.nbChartOfAccountsChanged(response.records[i], true);
                         }
                         this.postAction("Successfully loaded " + response.records.length + " records from previous month", null);
                     }else {
@@ -211,8 +288,12 @@ export class NICKMFInputNBReportingComponent extends CommonNBReportingComponent 
                     if(error && !error.isEmpty()){
                         this.processErrorMessage(error);
                     }
-                    this.postAction(null, null);
+                    this.postAction(this.successMessage, this.errorMessage);
                 }
             );
+    }
+
+    public showNextButton(){
+        return this.checkTotal();
     }
 }

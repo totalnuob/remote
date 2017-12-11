@@ -1,8 +1,9 @@
 package kz.nicnbk.service.dto.reporting;
 
 import kz.nicnbk.common.service.model.BaseDto;
-import kz.nicnbk.common.service.util.DateUtils;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 
 /**
@@ -57,7 +58,9 @@ public class SingularityNOALRecordDto implements BaseDto, Comparable {
     }
 
     public void setTransactionAmount(Double transactionAmount) {
-        this.transactionAmount = transactionAmount;
+        if(transactionAmount != null) {
+            this.transactionAmount = new BigDecimal(transactionAmount).setScale(2, RoundingMode.HALF_UP).doubleValue();
+        }
     }
 
     public String getTransactionAmountCCY() {
@@ -73,7 +76,9 @@ public class SingularityNOALRecordDto implements BaseDto, Comparable {
     }
 
     public void setFunctionalAmount(Double functionalAmount) {
-        this.functionalAmount = functionalAmount;
+        if(functionalAmount != null) {
+            this.functionalAmount = new BigDecimal(functionalAmount).setScale(2, RoundingMode.HALF_UP).doubleValue();
+        }
     }
 
     public String getFunctionalAmountCCY() {

@@ -3,11 +3,12 @@
         <div class="col-md-12">
             <ol class="breadcrumb">
                 <li>
-                    <span><a [routerLink]="['/reporting/NBReporting']">NB Reporting</a></span>
+                    <span><a [routerLink]="['/reporting/NBReporting']">Reports Main</a></span>
                 </li>
-                <li>
-                    <span *ngIf="report != null"><a [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">Parsed input files</a></span>
+                <li *ngIf="reportId != null && report != null && report.status != 'SUBMITTED'">
+                    <span><a [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">Input</a></span>
                 </li>
+                <li *ngIf="reportId != null && prevPageSource == 'REPORTS'"><span><a [routerLink]="['/reporting/NBReporting/GeneratedReports/', reportId, 'INPUT']">Generate report</a></span></li>
                 <li class="active">Singularity NOAL - Tranche B</li>
             </ol>
         </div>

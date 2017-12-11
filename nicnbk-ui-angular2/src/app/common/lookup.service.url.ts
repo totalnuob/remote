@@ -22,5 +22,10 @@ export const SIDE_POCKET_URL = LOOKUP_SERVICE_URL + "SidePocket";
 export const NB_CHART_OF_ACCOUNTS_URL =  LOOKUP_SERVICE_URL +"NBChartOfAccounts";
 export const NIC_REPORTING_CHART_OF_ACCOUNTS_URL =  LOOKUP_SERVICE_URL +"NICReportingChartOfAccounts/";
 
+export const TARRAGON_NIC_REPORTING_CHART_OF_ACCOUNTS_URL = LOOKUP_SERVICE_URL +"AddableTarragonNICReportingChartOfAccounts/";
+
 
 export const PE_INDUSTRY_FOCUS_URL = LOOKUP_SERVICE_URL + "PEIndustry";
+
+export const RESERVE_CALCULATION_EXPENSE_TYPE_URL = LOOKUP_SERVICE_URL + "ReserveCalculationExpenseTypes/";
+export const RESERVE_CALCULATION_ENTITY_TYPE_URL = LOOKUP_SERVICE_URL + "ReserveCalculationEntityTypes/";

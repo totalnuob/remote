@@ -15,4 +15,6 @@ export class BaseDictionary extends UpdatedEntity {
         this.nameRu = nameRu;
         this.nameKz = nameKz;
     }
+
+    constructor(){}
 }

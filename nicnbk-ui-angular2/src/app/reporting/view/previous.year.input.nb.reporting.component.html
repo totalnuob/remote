@@ -1,0 +1,106 @@
+<div class="container">
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting']">Reports Main</a></span>
+                </li>
+                <!--<li>-->
+                    <!--<span *ngIf="reportId != null">-->
+                        <!--<a [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">-->
+                        <!--Parsed input files</a></span>-->
+                <!--</li>-->
+                <!--<li class="active">NICK MF Input</li>-->
+                <li class="active">Input</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row top-buffer" *ngIf="errorMessage != null || successMessage != null">
+        <div class="col-md-12">
+            <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+            </div>
+            <div class="alert alert-info" *ngIf="!submitted && successMessage != null"><span>{{successMessage}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="row withpadding">
+        <h3 *ngIf="reportId != null">4. Previous Year Input</h3>
+    </div>
+    <div [ngBusy]="busy" class="row withpadding" style="min-height: 500px">
+
+        <form (ngSubmit)="save()" #previousYearInputForm="ngForm" class="well span">
+            <div class="row">
+                <button class="btn btn-xs btn-primary" type="button" (click)="addRecord()"
+                        [disabled]="false">
+                    <span role="button" class="glyphicon glyphicon-plus">Add</span>
+                </button>
+
+                <button class="btn btn-xs btn-primary pull-right" type="button" (click)="copyFromPrevious()"
+                        [disabled]="false">Copy from previous month</button>
+            </div>
+            <br/>
+            <div *ngIf="records != null">
+                <table class="table table-hover table-responsive table-condensed">
+                    <thead>
+                    <tr bgcolor="#e7e7e7">
+                        <td>Номер/Наименование группы субсчетов</td>
+                        <!--<td>Наименование группы субсчетов</td>-->
+                        <td>Баланс</td>
+                        <td>Баланс KZT</td>
+                        <td>&nbsp;</td>
+                    </tr>
+
+                    </thead>
+                        <tr  *ngFor="let record of records">
+                            <td>
+                                <select required class="form-control" style="width: 100%" [(ngModel)]="record.chartOfAccounts.code" [ngModelOptions]="{standalone: true}">
+                                    <option *ngFor="let item of nicReportingChartOfAccounts" [value]="item.code">{{item.nbchartOfAccounts.code + '-' + item.nameRu}}</option>
+                                </select>
+                            </td>
+                            <!--<td>{{record.accountNumber}}</td>-->
+                            <td>
+                                <input required type="number" step="0.01" class="form-control" [(ngModel)]="record.accountBalance" [ngModelOptions]="{standalone: true}"/>
+                            </td>
+                            <td>
+                                <input required type="number" step="0.01" class="form-control" [(ngModel)]="record.accountBalanceKZT" [ngModelOptions]="{standalone: true}"/>
+                            </td>
+                            <td>
+                                <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRecord(record)">
+                                    <span class="glyphicon glyphicon-minus"></span>
+                                </button>
+                            </td>
+                        </tr>
+                </table>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                        <button type="submit" class="btn btn-success pull-right" [disabled]="!previousYearInputForm.form.valid" >Save</button>
+                </div>
+            </div>
+        </form>
+        <!--<div class="row">-->
+            <!--<div class="col-md-12">-->
+                <!--<button class="btn btn-default pull-left" [routerLink]="['/reporting/NBReporting/SingularGeneratedForm/', reportId]" [disabled]="!checkTotal()" >Singular</button>-->
+            <!--</div>-->
+            <!--<div class="col-md-12">-->
+                <!--<button class="btn btn-default pull-left" [routerLink]="['/reporting/NBReporting/TarragonGeneratedForm/', reportId]" [disabled]="!checkTotal()" >Tarragon</button>-->
+            <!--</div>-->
+        <!--</div>-->
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="col-md-1 pull-left">
+                    <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/TarragonGeneratedForm/', reportId]">PREVIOUS</button>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="col-md-1 pull-right">
+                    <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/GeneratedReports/', reportId, 'REPORTS']" [disabled]="!showNextButton()">NEXT</button>
+                </div>
+            </div>
+
+        </div>
+        <br/><br/>
+    </div>
+</div>
