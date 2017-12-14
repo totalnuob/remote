@@ -1,7 +1,7 @@
 import { Component, OnInit  } from '@angular/core';
 import { Router} from '@angular/router';
 import {LookupService} from "../common/lookup.service";
-import {MemoSearchParams} from "./model/memo-search-params";
+import {MemoSearchParams} from "./model/memo-search-params-new";
 import {MemoService} from "./memo.service";
 import {CommonFormViewComponent} from "../common/common.component";
 import {Memo} from "./model/memo";
