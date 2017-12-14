@@ -76,7 +76,9 @@
                     </div>
                 </div>
                 <div class="row">
-
+                    <td class="col-md-1">
+                        <input type="checkbox" [(ngModel)]="performance.autoCalculation" (ngModelChange)="autoCalculationTotalAndMultiple(performance)">
+                    </td>
                 </div>
                 <!--<div class="row">-->
                     <!--<div class="col-md-12">-->
