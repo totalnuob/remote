@@ -20,6 +20,6 @@ public class MemoSearchParamsExtended extends MemoSearchParams {
         return StringUtils.isEmpty(this.getFirmName()) && StringUtils.isEmpty(this.getFundName()) &&
                 this.getFromDate() == null && this.getToDate() == null &&
                 (StringUtils.isEmpty(this.getMeetingType()) || this.getMeetingType().equals(StringUtils.VALUE_NONE)) &&
-                (getMemoType() == null || getMemoType().intValue() == 0) && this.isOnlyMyOwn() == false;
+                (getMemoType() == null || getMemoType().intValue() == 0) && !this.isOnlyMyOwn();
     }
 }
