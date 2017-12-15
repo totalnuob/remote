@@ -60,4 +60,5 @@ public interface MeetingMemoRepository extends PagingAndSortingRepository<Meetin
                                  @Param("dateTo") @Temporal(TemporalType.DATE) Date dateTo, Pageable pageable);
 
 
+
 }
