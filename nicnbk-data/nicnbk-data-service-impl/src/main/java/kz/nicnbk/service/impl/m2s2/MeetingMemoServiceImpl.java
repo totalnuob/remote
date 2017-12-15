@@ -175,7 +175,7 @@ public class MeetingMemoServiceImpl implements MeetingMemoService {
     }
 
     @Override
-    public MemoPagedSearchResult searchExtended(MemoSearchParamsExtended searchParams) {
+    public MemoPagedSearchResult searchExtended(MemoSearchParamsExtended searchParams, String username) {
 
         try {
             Page<MeetingMemo> memoPage = null;
@@ -187,7 +187,7 @@ public class MeetingMemoServiceImpl implements MeetingMemoService {
             } else {
                 page = searchParams.getPage() > 0 ? searchParams.getPage() - 1 : 0;
                 if (searchParams.getFromDate() == null && searchParams.getToDate() == null) {
-                    memoPage = memoRepository.findWithoutDates(StringUtils.isValue(searchParams.getMeetingType()) ? searchParams.getMeetingType() : null,
+                    memoPage = memoRepository.findWithoutDatesExtended(StringUtils.isValue(searchParams.getMeetingType()) ? searchParams.getMeetingType() : null,
                             searchParams.getMemoType(),
                             searchParams.getFirmName(),
                             searchParams.getFundName(),
