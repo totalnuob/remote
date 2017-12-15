@@ -5,47 +5,47 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.Temporal;
-import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 import javax.persistence.TemporalType;
 import java.util.Date;
 
 /**
- * Created by magzumov on 05.07.2016.
+ * Created by Pak on 15/12/2017.
  */
-public interface MeetingMemoRepository extends PagingAndSortingRepository<MeetingMemo, Long> {
-
-    Page<MeetingMemo> findAllByOrderByMeetingDateDesc(Pageable pageable);
+public interface MeetingMemoExtendedRepository extends MeetingMemoRepository {
 
     @Query("select memo from MeetingMemo memo where (memo.meetingType.code=:meetingType or :meetingType is null) " +
             " and (memo.memoType=:memoType or :memoType is null or :memoType=0) " +
             " and (UPPER(memo.firmName) LIKE UPPER(CONCAT('%',:firmName,'%')) or :firmName is null or :firmName = '') " +
             " and (UPPER(memo.fundName) LIKE UPPER(CONCAT('%',:fundName,'%')) or :fundName is null or :fundName = '')" +
+            " and memo.creator.username=:username " +
             " ORDER BY memo.meetingDate DESC")
-    Page<MeetingMemo> findWithoutDates(@Param("meetingType") String meetingType, @Param("memoType") Integer memoType,
-                                       @Param("firmName")String firmName, @Param("fundName")String fundName, Pageable pageable);
+    Page<MeetingMemo> findWithoutDatesExtended(@Param("meetingType") String meetingType, @Param("memoType") Integer memoType,
+                                               @Param("firmName")String firmName, @Param("fundName")String fundName, @Param("username")String username, Pageable pageable);
 
     @Query("select memo from MeetingMemo memo where (memo.meetingType.code=:meetingType or :meetingType is null) " +
             " and (memo.memoType=:memoType or :memoType is null or :memoType=0) " +
             " and (UPPER(memo.firmName) LIKE UPPER(CONCAT('%',:firmName,'%')) or :firmName is null or :firmName = '') " +
             " and (UPPER(memo.fundName) LIKE UPPER(CONCAT('%',:fundName,'%')) or :fundName is null or :fundName = '') " +
             " and (memo.meetingDate >= :dateFrom) and (memo.meetingDate <= :dateTo)" +
+            " and memo.creator.username=:username " +
             " ORDER BY memo.meetingDate DESC")
-    Page<MeetingMemo> findBothDates(@Param("meetingType") String meetingType, @Param("memoType") Integer memoType,
-                                    @Param("firmName")String firmName,
-                                    @Param("fundName")String fundName, @Param("dateFrom")@Temporal(TemporalType.DATE) Date dateFrom,
-                                    @Param("dateTo") @Temporal(TemporalType.DATE) Date dateTo, Pageable pageable);
+    Page<MeetingMemo> findBothDatesExtended(@Param("meetingType") String meetingType, @Param("memoType") Integer memoType,
+                                            @Param("firmName")String firmName,
+                                            @Param("fundName")String fundName, @Param("dateFrom")@Temporal(TemporalType.DATE) Date dateFrom,
+                                            @Param("dateTo") @Temporal(TemporalType.DATE) Date dateTo, @Param("username")String username, Pageable pageable);
 
     @Query("select memo from MeetingMemo memo where (memo.meetingType.code=:meetingType or :meetingType is null) " +
             " and (memo.memoType=:memoType or :memoType is null or :memoType=0) " +
             " and (UPPER(memo.firmName) LIKE UPPER(CONCAT('%',:firmName,'%')) or :firmName is null or :firmName = '') " +
             " and (UPPER(memo.fundName) LIKE UPPER(CONCAT('%',:fundName,'%')) or :fundName is null or :fundName = '') " +
             " and (memo.meetingDate >= :dateFrom)" +
+            " and memo.creator.username=:username " +
             " ORDER BY memo.meetingDate DESC")
-    Page<MeetingMemo> findDateFrom(@Param("meetingType") String meetingType, @Param("memoType") Integer memoType,
-                                   @Param("firmName")String firmName,
-                                   @Param("fundName")String fundName, @Temporal(TemporalType.DATE) @Param("dateFrom") Date dateFrom, Pageable pageable);
+    Page<MeetingMemo> findDateFromExtended(@Param("meetingType") String meetingType, @Param("memoType") Integer memoType,
+                                           @Param("firmName")String firmName,
+                                           @Param("fundName")String fundName, @Temporal(TemporalType.DATE) @Param("dateFrom") Date dateFrom, @Param("username")String username, Pageable pageable);
 
 
     @Query("select memo from MeetingMemo memo where (memo.meetingType.code=:meetingType or :meetingType is null) " +
@@ -53,11 +53,11 @@ public interface MeetingMemoRepository extends PagingAndSortingRepository<Meetin
             " and (UPPER(memo.firmName) LIKE UPPER(CONCAT('%',:firmName,'%')) or :firmName is null or :firmName = '') " +
             " and (UPPER(memo.fundName) LIKE UPPER(CONCAT('%',:fundName,'%')) or :fundName is null or :fundName = '') " +
             " and (memo.meetingDate <= :dateTo)" +
+            " and memo.creator.username=:username " +
             " ORDER BY memo.meetingDate DESC")
-    Page<MeetingMemo> findDateTo(@Param("meetingType") String meetingType, @Param("memoType") Integer memoType,
-                                 @Param("firmName")String firmName,
-                                 @Param("fundName")String fundName,
-                                 @Param("dateTo") @Temporal(TemporalType.DATE) Date dateTo, Pageable pageable);
-
+    Page<MeetingMemo> findDateToExtended(@Param("meetingType") String meetingType, @Param("memoType") Integer memoType,
+                                         @Param("firmName")String firmName,
+                                         @Param("fundName")String fundName,
+                                         @Param("dateTo") @Temporal(TemporalType.DATE) Date dateTo, @Param("username")String username, Pageable pageable);
 
 }
