@@ -1,7 +1,7 @@
 import { Component, OnInit  } from '@angular/core';
 import { Router} from '@angular/router';
 import {LookupService} from "../common/lookup.service";
-import {MemoSearchParamsNew} from "./model/memo-search-params-new";
+import {MemoSearchParamsExtended} from "./model/memo-search-params-extended";
 import {MemoService} from "./memo.service";
 import {CommonFormViewComponent} from "../common/common.component";
 import {Memo} from "./model/memo";
@@ -25,7 +25,7 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
 
     public sub: any;
 
-    searchParams = new MemoSearchParamsNew;
+    searchParams = new MemoSearchParamsExtended;
     busy: Subscription;
 
     memoTypes = [];
