@@ -67,9 +67,12 @@ public interface MeetingMemoRepository extends PagingAndSortingRepository<Meetin
             " and (memo.memoType=:memoType or :memoType is null or :memoType=0) " +
             " and (UPPER(memo.firmName) LIKE UPPER(CONCAT('%',:firmName,'%')) or :firmName is null or :firmName = '') " +
             " and (UPPER(memo.fundName) LIKE UPPER(CONCAT('%',:fundName,'%')) or :fundName is null or :fundName = '')" +
+//            " and :username='1'" +
             " ORDER BY memo.meetingDate DESC")
     Page<MeetingMemo> findWithoutDatesExtended(@Param("meetingType") String meetingType, @Param("memoType") Integer memoType,
-                                       @Param("firmName")String firmName, @Param("fundName")String fundName, @Param("insertedBy")String username, Pageable pageable);
+                                       @Param("firmName")String firmName, @Param("fundName")String fundName,
+//                                               @Param("insertedBy")String username,
+                                               Pageable pageable);
 
     @Query("select memo from MeetingMemo memo where (memo.meetingType.code=:meetingType or :meetingType is null) " +
             " and (memo.memoType=:memoType or :memoType is null or :memoType=0) " +
