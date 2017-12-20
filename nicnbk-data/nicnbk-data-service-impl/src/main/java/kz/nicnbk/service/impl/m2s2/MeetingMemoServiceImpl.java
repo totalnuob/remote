@@ -4,10 +4,8 @@ import kz.nicnbk.common.service.util.PaginationUtils;
 import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.api.m2s2.*;
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
-import kz.nicnbk.repo.model.m2s2.HedgeFundsMeetingMemo;
 import kz.nicnbk.repo.model.m2s2.MeetingMemo;
 import kz.nicnbk.repo.model.m2s2.MemoFiles;
-import kz.nicnbk.repo.model.m2s2.PrivateEquityMeetingMemo;
 import kz.nicnbk.service.api.files.FileService;
 import kz.nicnbk.service.api.m2s2.MeetingMemoService;
 import kz.nicnbk.service.converter.m2s2.MeetingMemoEntityConverter;
@@ -103,21 +101,21 @@ public class MeetingMemoServiceImpl implements MeetingMemoService {
             } else {
                 page = searchParams.getPage() > 0 ? searchParams.getPage() - 1 : 0;
                 if (searchParams.getFromDate() == null && searchParams.getToDate() == null) {
-                    memoPage = memoRepository.findWithoutDatesExtended(StringUtils.isValue(searchParams.getMeetingType()) ? searchParams.getMeetingType() : null,
+                    memoPage = memoRepository.findWithoutDates(StringUtils.isValue(searchParams.getMeetingType()) ? searchParams.getMeetingType() : null,
                             searchParams.getMemoType(),
                             searchParams.getFirmName(),
                             searchParams.getFundName(),
                             null,
                             new PageRequest(page, pageSize, new Sort(Sort.Direction.DESC, "meetingDate", "id")));
                 } else if (searchParams.getFromDate() != null && searchParams.getToDate() != null) {
-                    memoPage = memoRepository.findBothDatesExtended(StringUtils.isValue(searchParams.getMeetingType()) ? searchParams.getMeetingType() : null,
+                    memoPage = memoRepository.findBothDates(StringUtils.isValue(searchParams.getMeetingType()) ? searchParams.getMeetingType() : null,
                             //StringUtils.isValue(searchParams.getMemoType()) ? searchParams.getMemoType() : null,
                             searchParams.getMemoType(),
                             searchParams.getFirmName(), searchParams.getFundName(), searchParams.getFromDate(), searchParams.getToDate(),
                             null,
                             new PageRequest(page, pageSize, new Sort(Sort.Direction.DESC, "meetingDate", "id")));
                 } else if (searchParams.getFromDate() != null) {
-                    memoPage = memoRepository.findDateFromExtended(StringUtils.isValue(searchParams.getMeetingType()) ? searchParams.getMeetingType() : null,
+                    memoPage = memoRepository.findDateFrom(StringUtils.isValue(searchParams.getMeetingType()) ? searchParams.getMeetingType() : null,
                             //StringUtils.isValue(searchParams.getMemoType()) ? searchParams.getMemoType() : null,
                             searchParams.getMemoType(),
                             searchParams.getFirmName(), searchParams.getFundName(), searchParams.getFromDate(),
@@ -125,7 +123,7 @@ public class MeetingMemoServiceImpl implements MeetingMemoService {
                             new PageRequest(page, pageSize, new Sort(Sort.Direction.DESC, "meetingDate", "id")));
 
                 } else {
-                    memoPage = memoRepository.findDateToExtended(StringUtils.isValue(searchParams.getMeetingType()) ? searchParams.getMeetingType() : null,
+                    memoPage = memoRepository.findDateTo(StringUtils.isValue(searchParams.getMeetingType()) ? searchParams.getMeetingType() : null,
                             //StringUtils.isValue(searchParams.getMemoType()) ? searchParams.getMemoType() : null,
                             searchParams.getMemoType(),
                             searchParams.getFirmName(), searchParams.getFundName(), searchParams.getToDate(),
@@ -191,21 +189,21 @@ public class MeetingMemoServiceImpl implements MeetingMemoService {
                 }
                 page = searchParams.getPage() > 0 ? searchParams.getPage() - 1 : 0;
                 if (searchParams.getFromDate() == null && searchParams.getToDate() == null) {
-                    memoPage = memoRepository.findWithoutDatesExtended(StringUtils.isValue(searchParams.getMeetingType()) ? searchParams.getMeetingType() : null,
+                    memoPage = memoRepository.findWithoutDates(StringUtils.isValue(searchParams.getMeetingType()) ? searchParams.getMeetingType() : null,
                             searchParams.getMemoType(),
                             searchParams.getFirmName(),
                             searchParams.getFundName(),
                             username,
                             new PageRequest(page, pageSize, new Sort(Sort.Direction.DESC, "meetingDate", "id")));
                 } else if (searchParams.getFromDate() != null && searchParams.getToDate() != null) {
-                    memoPage = memoRepository.findBothDatesExtended(StringUtils.isValue(searchParams.getMeetingType()) ? searchParams.getMeetingType() : null,
+                    memoPage = memoRepository.findBothDates(StringUtils.isValue(searchParams.getMeetingType()) ? searchParams.getMeetingType() : null,
                             //StringUtils.isValue(searchParams.getMemoType()) ? searchParams.getMemoType() : null,
                             searchParams.getMemoType(),
                             searchParams.getFirmName(), searchParams.getFundName(), searchParams.getFromDate(), searchParams.getToDate(),
                             username,
                             new PageRequest(page, pageSize, new Sort(Sort.Direction.DESC, "meetingDate", "id")));
                 } else if (searchParams.getFromDate() != null) {
-                    memoPage = memoRepository.findDateFromExtended(StringUtils.isValue(searchParams.getMeetingType()) ? searchParams.getMeetingType() : null,
+                    memoPage = memoRepository.findDateFrom(StringUtils.isValue(searchParams.getMeetingType()) ? searchParams.getMeetingType() : null,
                             //StringUtils.isValue(searchParams.getMemoType()) ? searchParams.getMemoType() : null,
                             searchParams.getMemoType(),
                             searchParams.getFirmName(), searchParams.getFundName(), searchParams.getFromDate(),
@@ -213,7 +211,7 @@ public class MeetingMemoServiceImpl implements MeetingMemoService {
                             new PageRequest(page, pageSize, new Sort(Sort.Direction.DESC, "meetingDate", "id")));
 
                 } else {
-                    memoPage = memoRepository.findDateToExtended(StringUtils.isValue(searchParams.getMeetingType()) ? searchParams.getMeetingType() : null,
+                    memoPage = memoRepository.findDateTo(StringUtils.isValue(searchParams.getMeetingType()) ? searchParams.getMeetingType() : null,
                             //StringUtils.isValue(searchParams.getMemoType()) ? searchParams.getMemoType() : null,
                             searchParams.getMemoType(),
                             searchParams.getFirmName(), searchParams.getFundName(), searchParams.getToDate(),

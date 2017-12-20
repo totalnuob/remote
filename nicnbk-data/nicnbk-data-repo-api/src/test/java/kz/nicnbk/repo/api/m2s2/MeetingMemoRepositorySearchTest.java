@@ -52,12 +52,12 @@ public class MeetingMemoRepositorySearchTest {
     public void testMeetingMemoRepoFindWithoutDates(){
         int pageNumber = 0;
         int pageSize = 2;
-        Page<MeetingMemo> page = repository.findWithoutDatesExtended("CALL", 2, "Other party 1", null, null,
+        Page<MeetingMemo> page = repository.findWithoutDates("CALL", 2, "Other party 1", null, null,
                 new PageRequest(pageNumber, pageSize, new Sort(Sort.Direction.DESC, "meetingDate", "id")));
         assert(page.getContent().size() == 1);
 
         pageSize = 100; // find all
-        page = repository.findWithoutDatesExtended("CALL", 2, "Other party", null, null,
+        page = repository.findWithoutDates("CALL", 2, "Other party", null, null,
                 new PageRequest(pageNumber, pageSize, new Sort(Sort.Direction.DESC, "meetingDate", "id")));
         assert(page.getContent().size() == 3);
     }
@@ -72,7 +72,7 @@ public class MeetingMemoRepositorySearchTest {
         try {
             Date fromDate = simpleDateFormat.parse("01.02.2016");
             Date toDate = simpleDateFormat.parse("03.03.2016");
-            Page<MeetingMemo> page = repository.findBothDatesExtended("CALL", 2, null, null, fromDate, toDate, null,
+            Page<MeetingMemo> page = repository.findBothDates("CALL", 2, null, null, fromDate, toDate, null,
                     new PageRequest(pageNumber, pageSize, new Sort(Sort.Direction.DESC, "meetingDate", "id")));
             assert(page.getContent().size() == 2);
         } catch (ParseException e) {
