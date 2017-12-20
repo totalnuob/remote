@@ -6,6 +6,7 @@ export class GeneralLedgerRecord{
     financialStatementCategoryDescription: string;
     chartAccountsDescription: string;
     chartAccountsLongDescription: string;
+    shortName: string;
     glaccountBalance: number;
     segValCCY: string;
     fundCCY: string;

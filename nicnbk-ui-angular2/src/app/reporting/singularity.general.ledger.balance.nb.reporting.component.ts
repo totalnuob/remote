@@ -46,7 +46,6 @@ export class SingularityGeneralLedgerBalanceNBReportingComponent extends CommonN
 
                 if(this.reportId > 0){
                     // load report data
-
                     this.busy = this.periodicReportService.getGeneralLedgerBalance(this.reportId)
                         .subscribe(
                             response  => {

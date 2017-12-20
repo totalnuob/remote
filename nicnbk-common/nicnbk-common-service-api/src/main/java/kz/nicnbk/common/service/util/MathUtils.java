@@ -3,6 +3,7 @@ package kz.nicnbk.common.service.util;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * Created by magzumov on 05.01.2017.
@@ -38,6 +39,18 @@ public class MathUtils {
 
         }
         return x1;
+    }
+
+    public static Double subtract(Double a, Double b){
+        a = a != null ? a : 0;
+        b = b != null ? b : 0;
+        return new BigDecimal(a).setScale(2, RoundingMode.HALF_UP).subtract(new BigDecimal(b).setScale(2, RoundingMode.HALF_UP)).doubleValue();
+    }
+
+    public static Double add(Double a, Double b){
+        a = a != null ? a : 0;
+        b = b != null ? b : 0;
+        return new BigDecimal(a).setScale(2, RoundingMode.HALF_UP).add(new BigDecimal(b).setScale(2, RoundingMode.HALF_UP)).doubleValue();
     }
 
 

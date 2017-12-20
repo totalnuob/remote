@@ -96,6 +96,14 @@ public interface PeriodicReportService extends BaseService {
 
     List<ConsolidatedBalanceFormRecordDto> getConsolidatedBalanceKZTForm1(Long reportId);
 
+    List<ConsolidatedBalanceFormRecordDto> getConsolidatedIncomeExpenseKZTForm2(Long reportId);
+
+    List<ConsolidatedBalanceFormRecordDto> getConsolidatedTotalIncomeKZTForm3(Long reportId);
+
+    List<ConsolidatedKZTForm19RecordDto> getConsolidatedBalanceKZTForm19(Long reportId);
+
+    List<ConsolidatedKZTForm22RecordDto> getConsolidatedBalanceKZTForm22(Long reportId);
+
     List<ReserveCalculationDto> getReserveCalculation();
 
     boolean saveReserveCalculation(List<ReserveCalculationDto> records);

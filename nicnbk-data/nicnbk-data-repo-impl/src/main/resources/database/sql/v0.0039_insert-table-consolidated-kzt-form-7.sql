@@ -27,9 +27,6 @@ debt_start_period,fair_value_adj_start_period, total_start_period, debt_turnover
 VALUES (31,null, 'Финансовые инвестиции, имеющиеся в наличии для продажи, всего в том числе', 9, null, null, null,
 93516732352.5500, 9155746376.28, 102672478728.83, 359651146.0500, 3056920913.6700,	-133967871.7600, 	93876383498.60, 12078699418.19, 105955082916.79);
 
-
-
-
 INSERT INTO rep_report_form_7(report_id,account_number, name, line_number, entity_name, other_name, purchase_date, debt_start_period,
 fair_value_adj_start_period, total_start_period, debt_turnover, fair_value_adj_turnover_pos, fair_value_adj_turnover_neg, debt_end_period, fair_value_adj_end_period, total_end_period)
 VALUES(31,'2033.010', 'Инвестиции в хедж-фонд', 9, 'Anchorage Capital Partners Offshore, Ltd.', 'Singularity', '2016-06-01', 2072621000.0000, 93291568.60, 2165912568.60, null, 63445798.90, null, 	2072621000.00, 156737367.50, 2229358367.50);
@@ -193,9 +190,6 @@ VALUES(31,'2033.010', 'Инвестиции в фонд частного кап�
 INSERT INTO rep_report_form_7(report_id,account_number, name, line_number, entity_name, other_name, purchase_date, debt_start_period,
 fair_value_adj_start_period, total_start_period, debt_turnover, fair_value_adj_turnover_pos, fair_value_adj_turnover_neg, debt_end_period, fair_value_adj_end_period, total_end_period)
 VALUES(31,'2033.010', 'Инвестиции в фонд частного капитала', 9,'Warburg Pincus Private Equity XII, L.P.'	,'Tarragon',	'2015-12-21',2860689153.0000,-34388328.84,2826300824.16,93144870.00, 99060871.08,null, 2953834023.00,64672542.24,3018506565.24);
-
-
-
 
 INSERT INTO rep_report_form_7(report_id,account_number, name, line_number, entity_name, other_name, purchase_date, debt_start_period,
 fair_value_adj_start_period, total_start_period, debt_turnover, fair_value_adj_turnover_pos, fair_value_adj_turnover_neg, debt_end_period, fair_value_adj_end_period, total_end_period)

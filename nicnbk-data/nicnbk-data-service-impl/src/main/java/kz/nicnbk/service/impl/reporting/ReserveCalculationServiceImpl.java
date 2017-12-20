@@ -80,8 +80,6 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
             return null;
         }
         return records;
-
-
     }
 
     @Override
@@ -131,7 +129,7 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
     }
 
     private void load(){
-        String csvFile = "C:/Users/magzumov/Desktop/rates.csv";
+        String csvFile = "C:/Users/magzumov/Desktop/123.csv";
         BufferedReader br = null;
         String line = "";
         String cvsSplitBy = ";";

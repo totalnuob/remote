@@ -21,6 +21,7 @@ public class ReportingHFGeneralLedgerBalance extends CreateUpdateBaseEntity{
     private String GLAccount;
     private HFChartOfAccountsType chartAccountsType;
     private String chartAccountsLongDescription;
+    private String shortName;
     private Double GLAccountBalance;
     private Currency segValCCY;
     private Currency fundCCY;
@@ -117,4 +118,12 @@ public class ReportingHFGeneralLedgerBalance extends CreateUpdateBaseEntity{
         this.report = report;
     }
 
+    @Column(name="short_name")
+    public String getShortName() {
+        return shortName;
+    }
+
+    public void setShortName(String shortName) {
+        this.shortName = shortName;
+    }
 }

@@ -380,6 +380,34 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
     }
 
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/consolidatedBalanceKZTForm2/{reportId}", method = RequestMethod.GET)
+    public ResponseEntity getConsolidatedKZTForm2(@PathVariable Long reportId) {
+        List<ConsolidatedBalanceFormRecordDto> records = this.periodicReportService.getConsolidatedIncomeExpenseKZTForm2(reportId);
+        return buildResponse(records);
+    }
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/consolidatedBalanceKZTForm3/{reportId}", method = RequestMethod.GET)
+    public ResponseEntity getConsolidatedKZTForm3(@PathVariable Long reportId) {
+        List<ConsolidatedBalanceFormRecordDto> records = this.periodicReportService.getConsolidatedTotalIncomeKZTForm3(reportId);
+        return buildResponse(records);
+    }
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/consolidatedBalanceKZTForm19/{reportId}", method = RequestMethod.GET)
+    public ResponseEntity getConsolidatedKZTForm19(@PathVariable Long reportId) {
+        List<ConsolidatedKZTForm19RecordDto> records = this.periodicReportService.getConsolidatedBalanceKZTForm19(reportId);
+        return buildResponse(records);
+    }
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/consolidatedBalanceKZTForm22/{reportId}", method = RequestMethod.GET)
+    public ResponseEntity getConsolidatedKZTForm22(@PathVariable Long reportId) {
+        List<ConsolidatedKZTForm22RecordDto> records = this.periodicReportService.getConsolidatedBalanceKZTForm22(reportId);
+        return buildResponse(records);
+    }
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/previousYearInput/{reportId}", method = RequestMethod.GET)
     public ResponseEntity getPreviousYearInputData(@PathVariable Long reportId) {
         List<PreviousYearInputDataDto> records = this.periodicReportService.getPreviousYearInputData(reportId);

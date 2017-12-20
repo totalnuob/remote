@@ -1,6 +1,7 @@
 package kz.nicnbk.service.impl.common;
 
 import kz.nicnbk.common.service.util.DateUtils;
+import kz.nicnbk.common.service.util.MathUtils;
 import kz.nicnbk.repo.api.common.CurrencyRatesRepository;
 import kz.nicnbk.repo.model.common.Currency;
 import kz.nicnbk.repo.model.common.CurrencyRates;
@@ -48,10 +49,11 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
     }
 
     @Override
-    public Double getAverageRateForDateAndCurrency(Date date, String currencyCode) {
+    public Double getAverageRateForDateAndCurrency(Date date, String currencyCode, int scale) {
         Date dateFormatted = DateUtils.getDateOnly(date);
         Date firstDay = DateUtils.getFirstDayOfDateYear(dateFormatted);
-        List<CurrencyRates> rates = this.currencyRatesRepository.getRatesAfterDateAndCurrency(firstDay, currencyCode);
+        Date dateTo = DateUtils.getDate("31.12." + DateUtils.getYear(date));
+        List<CurrencyRates> rates = this.currencyRatesRepository.getRatesAfterDateAndCurrency(firstDay, dateTo, currencyCode);
         if(rates != null){
             BigDecimal sum = new BigDecimal("0");
             int count = 0;
@@ -61,7 +63,9 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
                     count++;
                 }
             }
-            return sum.divide(new BigDecimal(count)).setScale(2, RoundingMode.HALF_UP).doubleValue();
+            if(count > 0) {
+                return MathUtils.divide(sum, new BigDecimal(count)).setScale(scale, RoundingMode.HALF_UP).doubleValue();
+            }
         }
         return null;
     }

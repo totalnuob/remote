@@ -67,6 +67,10 @@ import {ConsolidatedKZTForm14NBReportingComponent} from "./reporting/consolidate
 import {ConsolidatedKZTForm13NBReportingComponent} from "./reporting/consolidated.kzt.form.13.nb.reporting.component";
 import {ConsolidatedKZTForm1NBReportingComponent} from "./reporting/consolidated.balance.kzt.form.1.nb.reporting.component";
 import {ReserveCalculationFormNBReportingComponent} from "./reporting/reserve.calculation.form.nb.reporting.component";
+import {ConsolidatedKZTForm2NBReportingComponent} from "./reporting/consolidated.kzt.form.2.nb.reporting.component";
+import {ConsolidatedKZTForm19NBReportingComponent} from "./reporting/consolidated.kzt.form.19.nb.reporting.component";
+import {ConsolidatedKZTForm22NBReportingComponent} from "./reporting/consolidated.kzt.form.22.nb.reporting.component";
+import {ConsolidatedKZTForm3NBReportingComponent} from "./reporting/consolidated.kzt.form.3.nb.reporting.component";
 
 
 const routes: Routes  = [
@@ -415,13 +419,31 @@ const routes: Routes  = [
         component: ConsolidatedKZTForm1NBReportingComponent,
         canActivate: [AuthGuard]
     },
-
+    {
+        path: 'reporting/NBReporting/consolidatedKZTForm2/:id',
+        component: ConsolidatedKZTForm2NBReportingComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'reporting/NBReporting/consolidatedKZTForm19/:id',
+        component: ConsolidatedKZTForm19NBReportingComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'reporting/NBReporting/consolidatedKZTForm22/:id',
+        component: ConsolidatedKZTForm22NBReportingComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'reporting/NBReporting/consolidatedKZTForm3/:id',
+        component: ConsolidatedKZTForm3NBReportingComponent,
+        canActivate: [AuthGuard]
+    },
     {
         path: 'reporting/NBReporting/reserveCalculation',
         component: ReserveCalculationFormNBReportingComponent,
         canActivate: [AuthGuard]
     },
-
 
 
 

@@ -70,6 +70,7 @@ public class HFGeneralLedgerBalanceServiceImpl implements HFGeneralLedgerBalance
 
         entity.setGLAccount(dto.getGLAccount());
         entity.setChartAccountsLongDescription(dto.getChartAccountsLongDescription());
+        entity.setShortName(dto.getShortName());
         entity.setGLAccountBalance(dto.getGLAccountBalance());
 
         if(dto.getSegValCCY() != null){
@@ -197,6 +198,7 @@ public class HFGeneralLedgerBalanceServiceImpl implements HFGeneralLedgerBalance
                 dto.setFinancialStatementCategoryDescription(entity.getChartAccountsType().getNameEn());
             }
             dto.setChartAccountsLongDescription(entity.getChartAccountsLongDescription());
+            dto.setShortName(entity.getShortName());
             dto.setGLAccountBalance(entity.getGLAccountBalance());
             if(entity.getSegValCCY() != null) {
                 dto.setSegValCCY(entity.getSegValCCY().getCode());
