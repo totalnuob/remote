@@ -1113,6 +1113,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 noalRecords.addAll(previousNoalTrancheBRecords);
             }
 
+            Set<Integer> previousRecordsAddedIndices = new HashSet<>();
             List<ConsolidatedBalanceFormRecordDto> USDFormRecords = getConsolidatedBalanceUSDForm(reportId);
             ConsolidatedKZTForm8RecordDto totalRecord = new ConsolidatedKZTForm8RecordDto();
             if(records != null && index > 0){
@@ -1124,13 +1125,16 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         newRecord.setAccountNumber(record.getAccountNumber());
 
                         // Set start period (Previous Period Report)
-                        for(ConsolidatedKZTForm8RecordDto previousRecord: previousRecords){
+                        for(int i = 0; i < previousRecords.size(); i++){
+                            ConsolidatedKZTForm8RecordDto previousRecord = previousRecords.get(i);
                             if(newRecord.getName() != null && previousRecord.getName() != null &&
                                     newRecord.getName().equalsIgnoreCase(previousRecord.getName()) &&
                                     newRecord.getLineNumber() != null&& previousRecord.getLineNumber() != null &&
                                     newRecord.getLineNumber() == previousRecord.getLineNumber()){
                                 newRecord.setDebtStartPeriod(previousRecord.getDebtEndPeriod());
                                 newRecord.setStartPeriodBalance(previousRecord.getEndPeriodBalance());
+                                previousRecordsAddedIndices.add(i);
+                                break;
                             }
                         }
                         //newRecord.setDebtStartPeriod(convertByRate(record.getPreviousAccountBalance() != null ? record.getPreviousAccountBalance() : 0.0, startCurrencyRatesDto.getValue()));
@@ -1187,6 +1191,29 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         }
 
                         index ++;
+                    }
+                }
+
+                int toAddIndex = 0;
+                for(int i =0; i < records.size(); i++){
+                    ConsolidatedKZTForm8RecordDto record = records.get(i);
+                    if(record.getAccountNumber() == null && record.getLineNumber() != null && record.getLineNumber() == 10){
+                        toAddIndex = i;
+                        break;
+                    }
+                }
+                for(int i = 0; i < previousRecords.size(); i++) {
+                    ConsolidatedKZTForm8RecordDto previousRecord = previousRecords.get(i);
+                    if(!previousRecordsAddedIndices.contains(i) && previousRecord.getAccountNumber() != null &&
+                            previousRecord.getLineNumber() != null && previousRecord.getLineNumber() == 9){
+
+                        previousRecord.setDebtStartPeriod(previousRecord.getDebtEndPeriod());
+                        previousRecord.setDebtEndPeriod(null);
+                        previousRecord.setDebtDifference(null);
+                        previousRecord.setStartPeriodBalance(previousRecord.getEndPeriodBalance());
+                        previousRecord.setEndPeriodBalance(null);
+                        records.add(toAddIndex, previousRecord);
+                        toAddIndex++;
                     }
                 }
             }
@@ -1439,6 +1466,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             List<ConsolidatedBalanceFormRecordDto> USDFormRecords = getConsolidatedBalanceUSDForm(report.getId());
             if(records != null && index > 0){
                 for(ConsolidatedBalanceFormRecordDto recordUSD: USDFormRecords){
+                    boolean exists = false;
                     if(recordUSD.getAccountNumber() != null && recordUSD.getAccountNumber().equalsIgnoreCase("3393.020")){
                         for(ConsolidatedKZTForm14RecordDto record: records){
                             if(record.getAccountNumber() != null && recordUSD.getAccountNumber().equalsIgnoreCase(record.getAccountNumber()) &&
@@ -1459,31 +1487,35 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                                     double debtDiffValue = totalRecord.getDebtDifference() != null ? totalRecord.getDebtDifference() : 0;
                                     totalRecord.setDebtDifference(debtDiffValue + record.getDebtDifference());
                                 }
+
+                                exists = true;
                             }else{
-                                ConsolidatedKZTForm14RecordDto newRecord = new ConsolidatedKZTForm14RecordDto();
-                                newRecord.setLineNumber(8);
-                                newRecord.setName(record.getName());
-                                newRecord.setAccountNumber(record.getAccountNumber());
-
-                                newRecord.setDebtEndPeriod(convertByRate(recordUSD.getCurrentAccountBalance() != null ? recordUSD.getCurrentAccountBalance() : 0.0, endCurrencyRatesDto.getValue()));
-                                newRecord.setDebtDifference(newRecord.getDebtEndPeriod());
-
-                                newRecord.setAgreementDescription("Investment Management Agreement of Singularity Ltd. from 14.07.2015");
-                                newRecord.setDebtStartDate(DateUtils.getLastDayOfPreviousMonth(report.getReportDate()));
-
-                                //records.add(index, newRecord);
-                                toAddRecords.add(newRecord);
-                                toAddIndices.add(index);
-
-                                index ++;
-
-                                // total values
-                                double debtEndPeriodValue = totalRecord.getDebtEndPeriod() != null ? totalRecord.getDebtEndPeriod() : 0;
-                                totalRecord.setDebtEndPeriod(debtEndPeriodValue + newRecord.getDebtEndPeriod());
-
-                                double debtDiffValue = totalRecord.getDebtDifference() != null ? totalRecord.getDebtDifference() : 0;
-                                totalRecord.setDebtDifference(debtDiffValue + (newRecord.getDebtDifference() != null ? newRecord.getDebtDifference() : 0));
                             }
+                        }
+                        if(!exists){
+                            ConsolidatedKZTForm14RecordDto newRecord = new ConsolidatedKZTForm14RecordDto();
+                            newRecord.setLineNumber(8);
+                            newRecord.setName(recordUSD.getName());
+                            newRecord.setAccountNumber(recordUSD.getAccountNumber());
+
+                            newRecord.setDebtEndPeriod(convertByRate(recordUSD.getCurrentAccountBalance() != null ? recordUSD.getCurrentAccountBalance() : 0.0, endCurrencyRatesDto.getValue()));
+                            newRecord.setDebtDifference(newRecord.getDebtEndPeriod());
+
+                            newRecord.setAgreementDescription("Investment Management Agreement of Singularity Ltd. from 14.07.2015");
+                            newRecord.setDebtStartDate(DateUtils.getLastDayOfPreviousMonth(report.getReportDate()));
+
+                            //records.add(index, newRecord);
+                            toAddRecords.add(newRecord);
+                            toAddIndices.add(index);
+
+                            index ++;
+
+                            // total values
+                            double debtEndPeriodValue = totalRecord.getDebtEndPeriod() != null ? totalRecord.getDebtEndPeriod() : 0;
+                            totalRecord.setDebtEndPeriod(debtEndPeriodValue + newRecord.getDebtEndPeriod());
+
+                            double debtDiffValue = totalRecord.getDebtDifference() != null ? totalRecord.getDebtDifference() : 0;
+                            totalRecord.setDebtDifference(debtDiffValue + (newRecord.getDebtDifference() != null ? newRecord.getDebtDifference() : 0));
                         }
 
 
@@ -1724,6 +1756,37 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                     addValuesKZTForm7(totalRecordPE, record);
                 }
 
+            }
+
+            int addIndex = 0;
+            for(int i =0; i < currentPeriodRecords.size(); i++){
+                ConsolidatedKZTForm7RecordDto record = currentPeriodRecords.get(i);
+                if(record.getAccountNumber() == null && record.getLineNumber() != null && record.getLineNumber() == 10){
+                    addIndex = i;
+                    break;
+                }
+            }
+
+            Set<String> keySet = previousRecordsMap.keySet();
+            if(keySet != null && addIndex > 0){
+                for(String key: keySet){
+                    if(previousRecordsMap.get(key) != null){
+                        ConsolidatedKZTForm7RecordDto record = previousRecordsMap.get(key);
+                        record.setDebtStartPeriod(record.getDebtEndPeriod());
+                        record.setFairValueAdjustmentsStartPeriod(record.getFairValueAdjustmentsEndPeriod());
+                        record.setTotalStartPeriod(record.getTotalEndPeriod());
+
+                        record.setDebtTurnover(null);
+                        record.setFairValueAdjustmentsTurnoverPositive(null);
+                        record.setFairValueAdjustmentsTurnoverNegative(null);
+                        record.setDebtEndPeriod(null);
+                        record.setFairValueAdjustmentsEndPeriod(null);
+                        record.setFairValueAdjustmentsEndPeriod(null);
+
+                        currentPeriodRecords.add(addIndex, record);
+                        addIndex++;
+                    }
+                }
             }
 
             for(ConsolidatedKZTForm7RecordDto record: currentPeriodRecords){
@@ -2383,6 +2446,8 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 }
             }
 
+            // TODO: records in previous not int current?
+
             return currentRecords;
         }
 
@@ -2495,6 +2560,8 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                     }
                 }
             }
+
+            // TODO: records in previous not int current?
 
             return currentRecords;
         }
