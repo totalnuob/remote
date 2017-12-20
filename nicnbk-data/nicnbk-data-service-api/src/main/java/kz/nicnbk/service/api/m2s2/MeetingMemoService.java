@@ -26,9 +26,7 @@ public interface MeetingMemoService extends BaseService {
 
     int getMemoType(Long id);
 
-    MemoPagedSearchResult search(MemoSearchParams searchParams);
-
-    MemoPagedSearchResult searchExtended(MemoSearchParamsExtended searchParams, String username);
+    MemoPagedSearchResult search(MemoSearchParamsExtended searchParams, String username);
 
     boolean deleteAttachment(Long memoId, Long fileId, String username);
 
