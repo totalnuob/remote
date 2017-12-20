@@ -6,30 +6,24 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
- * Created by zhambyl on 05-Jan-17.
+ * Created by Pak on 17.10.2017.
  */
-@Entity(name = "pe_gross_cashflow")
-public class PEGrossCashflow extends BaseEntity {
+@Entity(name = "pe_company_performance_idd")
+public class PECompanyPerformanceIdd extends BaseEntity {
+
+    private Date date;
 
     @Column(nullable = false)
     private String companyName;
-    @Column(nullable = false)
-    private Date date;
     private Double invested;
     private Double realized;
     private Double unrealized;
-    private Double grossCF;
+    private Double totalValue;
+    private Double multiple;
     private Boolean autoCalculation;
-//    private Double irr;
+    private Double grossIrr;
+    private Double netIrr;
     private PEFund fund;
-
-    public String getCompanyName() {
-        return companyName;
-    }
-
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
-    }
 
     public Date getDate() {
         return date;
@@ -37,6 +31,14 @@ public class PEGrossCashflow extends BaseEntity {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 
     public Double getInvested() {
@@ -63,12 +65,20 @@ public class PEGrossCashflow extends BaseEntity {
         this.unrealized = unrealized;
     }
 
-    public Double getGrossCF() {
-        return grossCF;
+    public Double getTotalValue() {
+        return totalValue;
     }
 
-    public void setGrossCF(Double grossCF) {
-        this.grossCF = grossCF;
+    public void setTotalValue(Double totalValue) {
+        this.totalValue = totalValue;
+    }
+
+    public Double getMultiple() {
+        return multiple;
+    }
+
+    public void setMultiple(Double multiple) {
+        this.multiple = multiple;
     }
 
     public Boolean getAutoCalculation() {
@@ -79,13 +89,21 @@ public class PEGrossCashflow extends BaseEntity {
         this.autoCalculation = autoCalculation;
     }
 
-//    public Double getIrr() {
-//        return irr;
-//    }
-//
-//    public void setIrr(Double irr) {
-//        this.irr = irr;
-//    }
+    public Double getGrossIrr() {
+        return grossIrr;
+    }
+
+    public void setGrossIrr(Double grossIrr) {
+        this.grossIrr = grossIrr;
+    }
+
+    public Double getNetIrr() {
+        return netIrr;
+    }
+
+    public void setNetIrr(Double netIrr) {
+        this.netIrr = netIrr;
+    }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="fund_id", nullable = false)

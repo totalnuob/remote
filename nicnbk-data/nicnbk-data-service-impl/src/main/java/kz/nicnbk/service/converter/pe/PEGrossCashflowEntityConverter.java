@@ -12,19 +12,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class PEGrossCashflowEntityConverter extends BaseDozerEntityConverter<PEGrossCashflow, PEGrossCashflowDto> {
 
-    @Override
-    public PEGrossCashflow assemble(PEGrossCashflowDto dto){
-        PEGrossCashflow entity = super.assemble(dto);
-
-        PEFund PEFund = new PEFund();
-        PEFund.setId(dto.getFund().getId());
-        entity.setFund(PEFund);
-        return entity;
-    }
-
-    @Override
-    public PEGrossCashflowDto disassemble(PEGrossCashflow entity){
-        PEGrossCashflowDto dto = super.disassemble(entity);
-        return dto;
-    }
+//    @Override
+//    public PEGrossCashflow assemble(PEGrossCashflowDto dto){
+//        return super.assemble(dto);
+//    }
+//
+//    @Override
+//    public PEGrossCashflowDto disassemble(PEGrossCashflow entity){
+//        return super.disassemble(entity);
+//    }
 }

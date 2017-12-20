@@ -20,5 +20,4 @@ public interface PENetCashflowRepository extends PagingAndSortingRepository<PENe
     @Transactional
     @Query("DELETE from pe_net_cashflow e where e.fund.id=?1")
     void deleteByFundId(long fundId);
-
 }

@@ -2,18 +2,17 @@ package kz.nicnbk.ws.rest;
 
 import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.pe.PEFundService;
-import kz.nicnbk.service.dto.pe.PEFundDto;
-import kz.nicnbk.service.dto.pe.PESearchParams;
-import kz.nicnbk.ws.model.EntitySaveResponse;
+import kz.nicnbk.service.dto.common.StatusResultDto;
+import kz.nicnbk.service.dto.common.StatusResultType;
+import kz.nicnbk.service.dto.pe.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -60,6 +59,78 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
         }
     }
 
+//    @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
+//    @RequestMapping(value = "/savePerformance/{fundId}", method = RequestMethod.POST)
+//    public ResponseEntity<?> savePerformance(@RequestBody List<PECompanyPerformanceDto> performanceDtoList, @PathVariable Long fundId) {
+//        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+//        String username = this.tokenService.decode(token).getUsername();
+//
+//        PECompanyPerformanceResultDto resultDto = this.service.savePerformance(performanceDtoList, fundId, username);
+//
+//        if (resultDto.getStatus().equals(StatusResultType.SUCCESS)) {
+//            return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
+//        } else {
+//            return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+
+    @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/recalculate/{fundId}/{calculationType}", method = RequestMethod.GET)
+    public ResponseEntity<?> recalculateStatistics(@PathVariable Long fundId, @PathVariable int calculationType) {
+        PEFundTrackRecordResultDto resultDto = this.service.calculateTrackRecord(fundId, calculationType);
+
+        if (resultDto.getStatus().equals(StatusResultType.SUCCESS)) {
+            return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/savePerformance/{fundId}/recalculate", method = RequestMethod.POST)
+    public ResponseEntity<?> savePerformanceAndUpdateStatistics(@RequestBody List<PECompanyPerformanceDto> performanceDtoList, @PathVariable Long fundId) {
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        PECompanyPerformanceAndFundTrackRecordResultDto resultDto = this.service.savePerformanceAndUpdateStatistics(performanceDtoList, fundId, username);
+
+        if (resultDto.getStatus().equals(StatusResultType.SUCCESS)) {
+            return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+//    @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
+//    @RequestMapping(value = "/saveGrossCF/{fundId}", method = RequestMethod.POST)
+//    public ResponseEntity<?> saveGrossCF(@RequestBody List<PEGrossCashflowDto> grossCashflowDtoList, @PathVariable Long fundId) {
+//        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+//        String username = this.tokenService.decode(token).getUsername();
+//
+//        PEGrossCashflowResultDto resultDto = this.service.saveGrossCF(grossCashflowDtoList, fundId, username);
+//
+//        if (resultDto.getStatus().equals(StatusResultType.SUCCESS)) {
+//            return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
+//        } else {
+//            return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+
+    @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/saveGrossCF/{fundId}/recalculate", method = RequestMethod.POST)
+    public ResponseEntity<?> saveGrossCFAndRecalculatePerformanceIdd(@RequestBody List<PEGrossCashflowDto> grossCashflowDtoList, @PathVariable Long fundId) {
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        PEGrossCashflowAndCompanyPerformanceIddAndFundTrackRecordResultDto resultDto = this.service.saveGrossCFAndRecalculatePerformanceIddAndUpdateStatistics(grossCashflowDtoList, fundId, username);
+
+        if (resultDto.getStatus().equals(StatusResultType.SUCCESS)) {
+            return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_VIEWER') OR hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public ResponseEntity search(@RequestBody PESearchParams searchParams){
@@ -67,4 +138,34 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
         return buildResponse(funds);
     }
 
+    @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/uploadGrossCF/{fundId}", method = RequestMethod.POST)
+    public ResponseEntity<?> uploadGrossCF(@RequestParam(value = "file", required = false) MultipartFile[] files, @PathVariable Long fundId) {
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        return new ResponseEntity<>(new StatusResultDto(StatusResultType.SUCCESS, "", "Pseudo done!", ""), null, HttpStatus.OK);
+
+//        StatusResultDto resultDto = this.service.uploadGrossCF(dsasadas, fundId, username);
+//
+//        if (resultDto.getStatus().getCode().equals("SUCCESS")) {
+//            return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
+//        } else {
+//            return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+
+
+
+//        Set<FilesDto> filesDtoSet = buildFilesDtoFromMultipart(files, FileTypeLookup.MEMO_ATTACHMENT.getCode());
+//        if(filesDtoSet != null){
+//            Set<FilesDto> savedAttachments = this.tripMemoService.saveAttachments(tripMemoId, filesDtoSet);
+//            if(savedAttachments == null){
+//                // error occurred
+//                return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+//            }else{
+//                return new ResponseEntity<>(savedAttachments, null, HttpStatus.OK);
+//            }
+//        }
+//        return new ResponseEntity<>(null, null, HttpStatus.OK);
+    }
 }

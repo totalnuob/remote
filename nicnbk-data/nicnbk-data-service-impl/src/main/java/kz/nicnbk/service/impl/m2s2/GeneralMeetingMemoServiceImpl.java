@@ -126,6 +126,8 @@ public class GeneralMeetingMemoServiceImpl implements GeneralMeetingMemoService 
                     boolean access = meetingMemo.getCreator() == null || (employeeDto.getId() == meetingMemo.getCreator().getId());
                     if(!access){
                         logger.error("General memo owner check failed: employee=" + employeeDto.getUsername()+ ", memo=" + memoId);
+                    } else {
+                        return true;
                     }
                 }
             }

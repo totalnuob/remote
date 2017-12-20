@@ -21,6 +21,8 @@ export class PEFund {
     strategyComment: string;
     geography: any[];
 
+    calculationType: number;
+    //autoCalculation: boolean;
     numberOfInvestments: number;
     investedAmount: number;
     realized: number;
@@ -62,7 +64,8 @@ export class PEFund {
 
     grossCashflow = [];
     netCashflow = [];
-    fundCompanyPerformance = [];
+    companyPerformance = [];
+    companyPerformanceIdd = [];
 
     predecessorInvestedPct: number;
     openingSchedule: string;

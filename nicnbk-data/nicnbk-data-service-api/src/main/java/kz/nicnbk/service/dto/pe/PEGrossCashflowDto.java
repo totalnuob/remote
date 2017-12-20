@@ -10,17 +10,19 @@ import java.util.Date;
  * Created by zhambyl on 05-Jan-17.
  */
 public class PEGrossCashflowDto extends BaseEntityDto<PEGrossCashflow> implements Comparable<PEGrossCashflowDto>{
+
     private String companyName;
 
     @DateTimeFormat(pattern="dd-MM-yyyy")
     private Date date;
 
-    private double invested;
-    private double realized;
-    private double unrealized;
-    private double grossCF;
-    private double irr;
-    private PEFundDto fund;
+    private Double invested;
+    private Double realized;
+    private Double unrealized;
+    private Double grossCF;
+    private Boolean autoCalculation;
+//    private Double irr;
+//    private PEFundDto fund;
 
     public String getCompanyName() {
         return companyName;
@@ -38,53 +40,61 @@ public class PEGrossCashflowDto extends BaseEntityDto<PEGrossCashflow> implement
         this.date = date;
     }
 
-    public double getInvested() {
+    public Double getInvested() {
         return invested;
     }
 
-    public void setInvested(double invested) {
+    public void setInvested(Double invested) {
         this.invested = invested;
     }
 
-    public double getRealized() {
+    public Double getRealized() {
         return realized;
     }
 
-    public void setRealized(double realized) {
+    public void setRealized(Double realized) {
         this.realized = realized;
     }
 
-    public double getUnrealized() {
+    public Double getUnrealized() {
         return unrealized;
     }
 
-    public void setUnrealized(double unrealized) {
+    public void setUnrealized(Double unrealized) {
         this.unrealized = unrealized;
     }
 
-    public double getGrossCF() {
+    public Double getGrossCF() {
         return grossCF;
     }
 
-    public void setGrossCF(double grossCF) {
+    public void setGrossCF(Double grossCF) {
         this.grossCF = grossCF;
     }
 
-    public double getIrr() {
-        return irr;
+    public Boolean getAutoCalculation() {
+        return autoCalculation;
     }
 
-    public void setIrr(double irr) {
-        this.irr = irr;
+    public void setAutoCalculation(Boolean autoCalculation) {
+        this.autoCalculation = autoCalculation;
     }
 
-    public PEFundDto getFund() {
-        return fund;
-    }
+    //    public Double getIrr() {
+//        return irr;
+//    }
 
-    public void setFund(PEFundDto fund) {
-        this.fund = fund;
-    }
+//    public void setIrr(Double irr) {
+//        this.irr = irr;
+//    }
+
+//    public PEFundDto getFund() {
+//        return fund;
+//    }
+
+//    public void setFund(PEFundDto fund) {
+//        this.fund = fund;
+//    }
 
     @Override
     public int compareTo(PEGrossCashflowDto dto) {
