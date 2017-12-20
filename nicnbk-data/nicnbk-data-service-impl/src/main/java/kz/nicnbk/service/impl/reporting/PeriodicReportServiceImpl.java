@@ -1433,6 +1433,8 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 }
             }
 
+            List<ConsolidatedKZTForm14RecordDto> toAddRecords = new ArrayList<>();
+            List<Integer> toAddIndices = new ArrayList<>();
             ConsolidatedKZTForm14RecordDto totalRecord = new ConsolidatedKZTForm14RecordDto();
             List<ConsolidatedBalanceFormRecordDto> USDFormRecords = getConsolidatedBalanceUSDForm(report.getId());
             if(records != null && index > 0){
@@ -1469,7 +1471,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                                 newRecord.setAgreementDescription("Investment Management Agreement of Singularity Ltd. from 14.07.2015");
                                 newRecord.setDebtStartDate(DateUtils.getLastDayOfPreviousMonth(report.getReportDate()));
 
-                                records.add(index, newRecord);
+                                //records.add(index, newRecord);
+                                toAddRecords.add(newRecord);
+                                toAddIndices.add(index);
 
                                 index ++;
 
@@ -1485,6 +1489,11 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
 
                     }
+                }
+
+                for(int i = 0; i < toAddRecords.size(); i++){
+                    ConsolidatedKZTForm14RecordDto record = toAddRecords.get(i);
+                    records.add(toAddIndices.get(i), record);
                 }
             }
 
@@ -1670,6 +1679,12 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                     record.setDebtStartPeriod(previousRecord.getDebtEndPeriod());
                     record.setFairValueAdjustmentsStartPeriod(previousRecord.getFairValueAdjustmentsEndPeriod());
                     record.setTotalStartPeriod(previousRecord.getTotalEndPeriod());
+
+                    if(StringUtils.isNotEmpty(record.getEntityName())){
+                        previousRecordsMap.put(record.getEntityName(), null);
+                    }else{
+                        previousRecordsMap.put(record.getLineNumber() + "", null);
+                    }
                 }
 
                 if(record.getAccountNumber() == null){
@@ -1740,17 +1755,40 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
             Date previousDate = DateUtils.getLastDayOfPreviousMonth(currentReport.getReportDate());
             PeriodicReport previousReport = this.periodReportRepository.findByReportDate(previousDate);
+
+            List<ConsolidatedBalanceFormRecordDto> toAddRecords = new ArrayList<>();
+            List<Integer> toAddIndices = new ArrayList<>();
             if (previousReport != null) {
                 List<ConsolidatedBalanceFormRecordDto> previousRecords = getConsolidatedBalanceKZTForm1Saved(previousReport.getId());
                 if(previousRecords != null){
-                    for(ConsolidatedBalanceFormRecordDto currentRecord: currentRecrods){
-                        for(ConsolidatedBalanceFormRecordDto prevRecord: previousRecords){
-                            if(currentRecord.getName() != null && prevRecord.getName() != null &&
-                                    currentRecord.getName().equalsIgnoreCase(prevRecord.getName()) &&
-                                    currentRecord.getLineNumber() != null && prevRecord.getLineNumber() != null &&
-                                    currentRecord.getLineNumber() == prevRecord.getLineNumber()){
-                                currentRecord.setPreviousAccountBalance(prevRecord.getCurrentAccountBalance());
+                    for(ConsolidatedBalanceFormRecordDto previousRecord: previousRecords){
+                        for(int i = 0; i < currentRecrods.size(); i++){
+                            ConsolidatedBalanceFormRecordDto currentRecord = currentRecrods.get(i);
+                            if(currentRecord.getName() != null && previousRecord.getName() != null &&
+                                    currentRecord.getName().equalsIgnoreCase(previousRecord.getName()) &&
+                                    currentRecord.getLineNumber() != null && previousRecord.getLineNumber() != null &&
+                                    currentRecord.getLineNumber() == previousRecord.getLineNumber()){
+                                currentRecord.setPreviousAccountBalance(previousRecord.getCurrentAccountBalance());
+                                break;
                             }
+
+                            //next line number, means record was not found, possibly  need to add
+                            if(previousRecord.getLineNumber() + 1 == (currentRecord.getLineNumber())){
+                                toAddIndices.add(i);
+                                toAddRecords.add(previousRecord);
+                                break;
+                            }
+                        }
+                    }
+
+                    int added = 0;
+                    for(int i = 0; i < toAddRecords.size(); i++) {
+                        ConsolidatedBalanceFormRecordDto recordToAdd = toAddRecords.get(i);
+                        if(recordToAdd.getCurrentAccountBalance() != null && recordToAdd.getCurrentAccountBalance() != 0) {
+                            recordToAdd.setPreviousAccountBalance(recordToAdd.getCurrentAccountBalance());
+                            recordToAdd.setCurrentAccountBalance(null);
+                            currentRecrods.add(toAddIndices.get(i) + added, recordToAdd);
+                            added++;
                         }
                     }
                 }
@@ -2163,20 +2201,42 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 }
             }
 
+            List<ConsolidatedBalanceFormRecordDto> toAddRecords = new ArrayList<>();
+            List<Integer> toAddIndices = new ArrayList<>();
+
             Date previousDate = DateUtils.getLastDayOfPreviousMonth(report.getReportDate());
             PeriodicReport previousReport = this.periodReportRepository.findByReportDate(previousDate);
             if (previousReport != null) {
                 List<ConsolidatedBalanceFormRecordDto> previousRecords = getConsolidatedBalanceKZTForm2Saved(previousReport.getId());
                 if(previousRecords != null){
-                    for(ConsolidatedBalanceFormRecordDto currentRecord: records){
-                        for(ConsolidatedBalanceFormRecordDto prevRecord: previousRecords){
-                            if(currentRecord.getName() != null && prevRecord.getName() != null &&
-                                    currentRecord.getName().equalsIgnoreCase(prevRecord.getName()) &&
-                                    currentRecord.getLineNumber() != null && prevRecord.getLineNumber() != null &&
-                                    currentRecord.getLineNumber() == prevRecord.getLineNumber()){
-                                currentRecord.setPreviousAccountBalance(prevRecord.getCurrentAccountBalance());
+                    for(ConsolidatedBalanceFormRecordDto previousRecord: previousRecords){
+                        for(int i = 0; i < records.size(); i++){
+                            ConsolidatedBalanceFormRecordDto currentRecord = records.get(i);
+                            if(currentRecord.getName() != null && previousRecord.getName() != null &&
+                                    currentRecord.getName().equalsIgnoreCase(previousRecord.getName()) &&
+                                    currentRecord.getLineNumber() != null && previousRecord.getLineNumber() != null &&
+                                    currentRecord.getLineNumber() == previousRecord.getLineNumber()){
+                                currentRecord.setPreviousAccountBalance(previousRecord.getCurrentAccountBalance());
                                 break;
                             }
+
+                            //next line number, means record was not found, possibly  need to add
+                            if(previousRecord.getLineNumber() + 1 == (currentRecord.getLineNumber())){
+                                toAddIndices.add(i);
+                                toAddRecords.add(previousRecord);
+                                break;
+                            }
+                        }
+                    }
+
+                    int added = 0;
+                    for(int i = 0; i < toAddRecords.size(); i++) {
+                        ConsolidatedBalanceFormRecordDto recordToAdd = toAddRecords.get(i);
+                        if(recordToAdd.getCurrentAccountBalance() != null && recordToAdd.getCurrentAccountBalance() != 0) {
+                            recordToAdd.setPreviousAccountBalance(recordToAdd.getCurrentAccountBalance());
+                            recordToAdd.setCurrentAccountBalance(null);
+                            records.add(toAddIndices.get(i) + added, recordToAdd);
+                            added++;
                         }
                     }
                 }
@@ -2212,6 +2272,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                                         currentRecord.getName().equalsIgnoreCase(prevRecord.getName()) &&
                                         currentRecord.getLineNumber() == prevRecord.getLineNumber()){
                                     currentRecord.setPreviousAccountBalance(prevRecord.getCurrentAccountBalance());
+                                    break;
                                 }
                             }
                         }
@@ -2875,7 +2936,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         return null;
                     }
                     int fundNameIndex = name.equalsIgnoreCase("Инвестиции в фонд частного капитала") ? "Инвестиции в фонд частного капитала".length() :
-                            "Инвестиции в фонд".length();
+                            "Инвестиции в хэдж-фонд".length();
                     String fundName = record.getName().substring(fundNameIndex).trim();
 
                     ConsolidatedKZTForm7RecordDto newRecord = new ConsolidatedKZTForm7RecordDto();
@@ -4304,7 +4365,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                                 }else if(previousRecord.getName().startsWith("Предварительная подписка") && previousRecord.getAccountNumber() != null){
                                     toAddIndex.add(header2Index);
                                 }else {
-                                    toAddIndex.add(i + 1);
+                                    toAddIndex.add(i);
                                 }
                                 toAdd.add(previousRecord);
                                 break;
