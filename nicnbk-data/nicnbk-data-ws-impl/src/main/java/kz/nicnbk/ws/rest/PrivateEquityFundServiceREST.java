@@ -46,9 +46,7 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
         // set creator
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
-        if(fundDto.getId() == null){
-            fundDto.setOwner(username);
-        }
+
         Long id = this.service.save(fundDto, username);
         if(id == null){
             // error occurred
