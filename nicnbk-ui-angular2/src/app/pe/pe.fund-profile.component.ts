@@ -160,6 +160,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                 this.postAction(null, null);
                             }
                         );
+                }else{
+                    this.fund.calculationType = 0;
                 }
                 if(this.firmIdParam > 0){
                     this.firmService.get(this.firmIdParam)
