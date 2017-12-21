@@ -19,9 +19,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by zhambyl on 16-Nov-16.
@@ -92,7 +91,7 @@ public class PEFirmServiceImpl implements PEFirmService {
     @Override
     public List<PEFirmDto> findAll() {
         try {
-            return converter.disassembleList(peFirmRepository.findAllByOrderByFirmNameDesc());
+            return converter.disassembleList(peFirmRepository.findAllByOrderByFirmNameAsc());
         }catch (Exception ex){
             logger.error("Failed to load all PE firms", ex);
         }
