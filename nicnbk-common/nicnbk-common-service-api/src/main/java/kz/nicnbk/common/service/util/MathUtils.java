@@ -53,6 +53,14 @@ public class MathUtils {
         return new BigDecimal(a).setScale(2, RoundingMode.HALF_UP).add(new BigDecimal(b).setScale(2, RoundingMode.HALF_UP)).doubleValue();
     }
 
+    public static Double add(Double a, Double b, Double c){
+        a = a != null ? a : 0;
+        b = b != null ? b : 0;
+        c = c != null ? c : 0;
+        return new BigDecimal(a).setScale(2, RoundingMode.HALF_UP).add(new BigDecimal(b).setScale(2, RoundingMode.HALF_UP))
+                .add(new BigDecimal(c).setScale(2, RoundingMode.HALF_UP)).doubleValue();
+    }
+
 
     public static void main (String[] args){
         testSlope1();

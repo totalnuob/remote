@@ -1,12 +1,10 @@
 package kz.nicnbk.repo.model.reporting;
 
 import kz.nicnbk.repo.model.base.CreateUpdateBaseEntity;
-import kz.nicnbk.repo.model.employee.Employee;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.Set;
 
 /**
  * Created by magzumov on 20.04.2017.
@@ -20,6 +18,8 @@ public class ReportOtherInfo extends CreateUpdateBaseEntity{
     private Date exchangeRateDate;
     private Double exchangeRate;
     private PeriodicReport report;
+
+    private String test;
 
     @Column(name="closing_balance", nullable = false)
     public Double getClosingBalance() {
@@ -60,4 +60,12 @@ public class ReportOtherInfo extends CreateUpdateBaseEntity{
         this.report = report;
     }
 
+    @Column(nullable = false)
+    public String getTest() {
+        return test;
+    }
+
+    public void setTest(String test) {
+        this.test = test;
+    }
 }
