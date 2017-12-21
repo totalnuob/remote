@@ -78,8 +78,8 @@ public class PEFundServiceImpl implements PEFundService {
             if (fundDto.getId() == null){
                 fundDto.setOwner(updater);
             }
-            if (fundDto.getFundName() == null || fundDto.getFundName() == "") {
-                logger.error("Error saving PE fund: " + (fundDto != null && fundDto.getId() != null ? fundDto.getId() : "new") + ", null or empty FundName");
+            if (fundDto.getFundName() == null || fundDto.getFundName().equals("")) {
+                logger.error("Error saving PE fund: " + (fundDto.getId() != null ? fundDto.getId() : "new") + ", null or empty FundName");
                 return null;
             }
             PEFund entity = converter.assemble(fundDto);
