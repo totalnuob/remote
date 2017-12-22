@@ -160,6 +160,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                 this.postAction(null, null);
                             }
                         );
+                }else{
+                    this.fund.calculationType = 0;
                 }
                 if(this.firmIdParam > 0){
                     this.firmService.get(this.firmIdParam)
@@ -593,7 +595,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
 
     addRowPerformance(){
         //console.log(this.fund.companyPerformance);
-        this.fund.companyPerformance.push({id:"", companyName:"", invested:"", realized:"", unrealized:"", totalValue:"", multiple:"", autoCalculation:true, grossIrr:"", netIrr:""});
+        this.fund.companyPerformance.push({id:"", companyName:"", invested:"", realized:"", unrealized:"", totalValue:"", multiple:null, autoCalculation:true, grossIrr:"", netIrr:""});
     }
 
     removeRowPerformance(item){

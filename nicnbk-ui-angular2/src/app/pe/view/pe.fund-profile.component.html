@@ -96,7 +96,8 @@
                                         </div>
                                         <div class="col-md-4">
                                             <input type="text" class="form-control" placeholder="Enter fund name..."
-                                                   name="fundName" [(ngModel)]="fund.fundName"/>
+                                                   name="fundName" [(ngModel)]="fund.fundName" required #name="ngModel"/>
+                                            <div [hidden]="name.valid || name.pristine" class="alert alert-danger">Name is required</div>
                                         </div>
                                         <div class="col-md-1">
                                             <label><b>Status</b></label>
@@ -346,7 +347,7 @@
                                             </div>
                                             <div class="col-md-4">
                                                 <select id="calculationType" name="calculationType" class="form-control" [(ngModel)]="fund.calculationType" (ngModelChange)="statisticsAutoCalculation()">
-                                                    <option value="0" selected>Manual</option>
+                                                    <option value="0">Manual</option>
                                                     <option value="1">Auto calculation by PERFORMANCE</option>
                                                     <option value="2">Auto calculation by GROSS CASH FLOW</option>
                                                 </select>
