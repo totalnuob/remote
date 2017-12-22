@@ -120,7 +120,7 @@ public class PEIrrServiceImpl implements PEIrrService {
                 }
             }
 
-            System.out.println(cashflowDtoList.get(0).getCompanyName() + " " + a + " " + b);
+//            System.out.println(cashflowDtoList.get(0).getCompanyName() + " " + a + " " + b);
 
             if (a != null && b != null) {
                 while (Math.abs(b - a) > 0.0000000000000001) {
