@@ -2,7 +2,7 @@ package kz.nicnbk.ws.rest;
 
 import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.pe.PEFundService;
-import kz.nicnbk.service.dto.common.StatusResultDto;
+import kz.nicnbk.service.api.pe.PEGrossCashflowService;
 import kz.nicnbk.service.dto.common.StatusResultType;
 import kz.nicnbk.service.dto.pe.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +24,9 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
 
     @Autowired
     private PEFundService service;
+
+    @Autowired
+    private PEGrossCashflowService cashflowService;
 
     @Autowired
     private TokenService tokenService;
@@ -140,7 +143,7 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
     @RequestMapping(value = "/uploadGrossCF", method = RequestMethod.POST)
     public ResponseEntity<?> uploadGrossCF(@RequestParam(value = "file", required = false) MultipartFile[] files) {
 
-        PEGrossCashflowResultDto resultDto = this.service.uploadGrossCF(files);
+        PEGrossCashflowResultDto resultDto = this.cashflowService.uploadGrossCF(files);
 
         if (resultDto.getStatus().getCode().equals("SUCCESS")) {
             return new ResponseEntity<>(resultDto, null, HttpStatus.OK);

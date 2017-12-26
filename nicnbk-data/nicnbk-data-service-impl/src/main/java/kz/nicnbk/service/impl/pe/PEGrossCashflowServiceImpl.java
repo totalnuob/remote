@@ -17,8 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -125,6 +127,22 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
             logger.error("Error saving PE fund's gross cash flow: " + fundId, ex);
             return new PEGrossCashflowResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error saving PE fund's gross cash flow", "");
         }
+    }
+
+    @Override
+    public PEGrossCashflowResultDto uploadGrossCF(MultipartFile[] files) {
+        try {
+            List<PEGrossCashflowDto> cashflowDtoList = new ArrayList<>();
+
+            cashflowDtoList.add(new PEGrossCashflowDto("AAA", new Date(), -1000000.0, 2000000.0, 3000000.0, 1000000.0, false));
+            cashflowDtoList.add(new PEGrossCashflowDto("BBB", new Date(), -5000000.0, 6000000.0, 7000000.0, 1000000.0, false));
+            cashflowDtoList.add(new PEGrossCashflowDto("%^*()&^$!#", new Date(), -1.0, null, 7000000.0, 1000000.0, false));
+
+            return new PEGrossCashflowResultDto(cashflowDtoList, StatusResultType.SUCCESS, "", "A new portion of the Gross Cash Flow has been successfully uploaded, but NOT saved!", "");
+        } catch (Exception ex) {
+            logger.error("Failed to upload PE fund's gross cash flow", ex);
+        }
+        return new PEGrossCashflowResultDto(null, StatusResultType.FAIL, "", "Failed to upload PE fund's Gross Cash Flow!", "");
     }
 
     @Override
