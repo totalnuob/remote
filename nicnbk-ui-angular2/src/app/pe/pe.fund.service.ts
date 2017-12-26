@@ -84,7 +84,7 @@ export class PEFundService extends CommonService {
             .catch(this.handleErrorResponse);
     }
 
-    postFiles(files, id) {
-        return this.uploadService.postFiles(this.PE_FUND_UPLOAD_GROSS_CF_URL + id, [], files);
+    postFiles(files) {
+        return this.uploadService.postFiles(this.PE_FUND_UPLOAD_GROSS_CF_URL, [], files);
     }
 }

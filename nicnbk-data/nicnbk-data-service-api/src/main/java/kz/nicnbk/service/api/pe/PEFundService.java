@@ -27,7 +27,7 @@ public interface PEFundService extends BaseService {
 
     PEGrossCashflowAndCompanyPerformanceIddAndFundTrackRecordResultDto saveGrossCFAndRecalculatePerformanceIddAndUpdateStatistics(List<PEGrossCashflowDto> grossCashflowDtoList, Long fundId, String username);
 
-    PEGrossCashflowResultDto uploadGrossCF(MultipartFile[] files, Long fundId, String username);
+    PEGrossCashflowResultDto uploadGrossCF(MultipartFile[] files);
 
     List<PEFundDto> loadFirmFunds(Long firmId, boolean report);
 }

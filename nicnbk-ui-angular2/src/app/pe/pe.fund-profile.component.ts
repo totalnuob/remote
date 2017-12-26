@@ -683,7 +683,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     }
 
     onSubmitGrossCF() {
-        this.busy = this.fundService.postFiles(this.myFiles, this.fund.id)
+        this.busy = this.fundService.postFiles(this.myFiles)
             .subscribe(
                 (response) => {
                     for (var i = 0; i < response.cashflowDtoList.length; i++) {
