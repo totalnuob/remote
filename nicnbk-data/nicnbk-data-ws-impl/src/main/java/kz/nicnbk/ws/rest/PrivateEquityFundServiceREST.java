@@ -141,9 +141,9 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
 
     @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/uploadGrossCF", method = RequestMethod.POST)
-    public ResponseEntity<?> uploadGrossCF(@RequestParam(value = "file", required = false) MultipartFile[] files) {
+    public ResponseEntity<?> uploadGrossCF(@RequestParam(value = "file", required = false) MultipartFile file) {
 
-        PEGrossCashflowResultDto resultDto = this.cashflowService.uploadGrossCF(files);
+        PEGrossCashflowResultDto resultDto = this.cashflowService.uploadGrossCF(file);
 
         if (resultDto.getStatus().getCode().equals("SUCCESS")) {
             return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
