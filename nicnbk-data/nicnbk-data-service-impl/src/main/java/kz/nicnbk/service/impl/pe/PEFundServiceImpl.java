@@ -329,12 +329,18 @@ public class PEFundServiceImpl implements PEFundService {
 
     @Override
     public PEGrossCashflowResultDto uploadGrossCF(MultipartFile[] files, Long fundId, String username) {
-        List<PEGrossCashflowDto> cashflowDtoList = new ArrayList<>();
+        try {
+            List<PEGrossCashflowDto> cashflowDtoList = new ArrayList<>();
 
-        cashflowDtoList.add(new PEGrossCashflowDto("AAA", new Date(), -1000000.0, 2000000.0, 3000000.0, 1000000.0, false));
-        cashflowDtoList.add(new PEGrossCashflowDto("BBB", new Date(), -5000000.0, 6000000.0, 7000000.0, 1000000.0, false));
+            cashflowDtoList.add(new PEGrossCashflowDto("AAA", new Date(), -1000000.0, 2000000.0, 3000000.0, 1000000.0, false));
+            cashflowDtoList.add(new PEGrossCashflowDto("BBB", new Date(), -5000000.0, 6000000.0, 7000000.0, 1000000.0, false));
+            cashflowDtoList.add(new PEGrossCashflowDto("%^*()&^$!#", new Date(), -1.0, null, 7000000.0, 1000000.0, false));
 
-        return new PEGrossCashflowResultDto(cashflowDtoList, StatusResultType.SUCCESS, "", "A new portion of the Gross Cash Flow has been successfully uploaded, but NOT saved!", "");
+            return new PEGrossCashflowResultDto(cashflowDtoList, StatusResultType.SUCCESS, "", "A new portion of the Gross Cash Flow has been successfully uploaded, but NOT saved!", "");
+        } catch (Exception ex) {
+            logger.error("Failed to upload PE fund's gross cash flow: fund=" + fundId, ex);
+        }
+        return new PEGrossCashflowResultDto(null, StatusResultType.FAIL, "", "Failed to upload PE fund's Gross Cash Flow!", "");
     }
 
     @Override
