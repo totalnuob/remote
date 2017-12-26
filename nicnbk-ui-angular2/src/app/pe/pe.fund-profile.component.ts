@@ -688,9 +688,9 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                 (response) => {
                     this.postAction(response.messageEn, null);
                 },
-                (error: ErrorResponse) => {
+                (error) => {
                     this.processErrorMessage(error);
-                    this.postAction(null, error.message);
+                    this.postAction(null, JSON.parse(error).messageEn);
                     console.log(error);
                 }
             )
