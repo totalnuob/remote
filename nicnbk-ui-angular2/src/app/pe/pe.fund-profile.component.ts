@@ -687,9 +687,10 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
             .subscribe(
                 (response) => {
                     this.postAction(response.messageEn, null);
-                    this.dsdsadsadsadsa;
                     console.log(response);
                     console.log(response.cashflowDtoList[0].companyName);
+                    console.log(response.cashflowDtoList);
+                    this.fund.grossCashflow.push({id:"", companyName:"", date:"", invested:"", realized:"", unrealized:"", grossCF:"", autoCalculation:true});
                 },
                 (error) => {
                     this.processErrorMessage(error);
@@ -698,9 +699,4 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                 }
             )
     }
-
-    //addRowGrossCF(){
-    //    //console.log(this.fund.grossCashflow);
-    //    this.fund.grossCashflow.push({id:"", companyName:"", date:"", invested:"", realized:"", unrealized:"", grossCF:"", autoCalculation:true});
-    //}
 }
