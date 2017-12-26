@@ -24,6 +24,19 @@ public class PEGrossCashflowDto extends BaseEntityDto<PEGrossCashflow> implement
 //    private Double irr;
 //    private PEFundDto fund;
 
+    public PEGrossCashflowDto() {
+    }
+
+    public PEGrossCashflowDto(String companyName, Date date, Double invested, Double realized, Double unrealized, Double grossCF, Boolean autoCalculation) {
+        this.companyName = companyName;
+        this.date = date;
+        this.invested = invested;
+        this.realized = realized;
+        this.unrealized = unrealized;
+        this.grossCF = grossCF;
+        this.autoCalculation = autoCalculation;
+    }
+
     public String getCompanyName() {
         return companyName;
     }
