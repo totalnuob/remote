@@ -2,6 +2,7 @@ package kz.nicnbk.service.api.pe;
 
 import kz.nicnbk.service.api.base.BaseService;
 import kz.nicnbk.service.dto.pe.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -25,6 +26,8 @@ public interface PEFundService extends BaseService {
     PEGrossCashflowResultDto saveGrossCF(List<PEGrossCashflowDto> grossCashflowDtoList, Long fundId, String username);
 
     PEGrossCashflowAndCompanyPerformanceIddAndFundTrackRecordResultDto saveGrossCFAndRecalculatePerformanceIddAndUpdateStatistics(List<PEGrossCashflowDto> grossCashflowDtoList, Long fundId, String username);
+
+    PEGrossCashflowResultDto uploadGrossCF(MultipartFile[] files, Long fundId, String username);
 
     List<PEFundDto> loadFirmFunds(Long firmId, boolean report);
 }

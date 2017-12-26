@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
@@ -324,6 +325,12 @@ public class PEFundServiceImpl implements PEFundService {
                 trackRecordResultDto.getTrackRecordDTO(),
                 grossCFResultDto.getCashflowDtoList(),
                 StatusResultType.SUCCESS, "", "Successfully saved PE fund's gross cash flow and updated company performance and restored/updated key statistics", "");
+    }
+
+    @Override
+    public PEGrossCashflowResultDto uploadGrossCF(MultipartFile[] files, Long fundId, String username) {
+//        return null;
+        return new PEGrossCashflowResultDto(null, StatusResultType.SUCCESS, "", "Done!", "");
     }
 
     @Override
