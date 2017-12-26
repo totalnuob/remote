@@ -329,8 +329,7 @@ public class PEFundServiceImpl implements PEFundService {
 
     @Override
     public PEGrossCashflowResultDto uploadGrossCF(MultipartFile[] files, Long fundId, String username) {
-//        return null;
-        return new PEGrossCashflowResultDto(null, StatusResultType.SUCCESS, "", "Done!", "");
+        return new PEGrossCashflowResultDto(null, StatusResultType.FAIL, "", "Done!", "");
     }
 
     @Override
