@@ -331,8 +331,8 @@ public class PEFundServiceImpl implements PEFundService {
     public PEGrossCashflowResultDto uploadGrossCF(MultipartFile[] files, Long fundId, String username) {
         List<PEGrossCashflowDto> cashflowDtoList = new ArrayList<>();
 
-        cashflowDtoList.add(new PEGrossCashflowDto("AAA", new Date(), 1.0, 2.0, 3.0, 4.0, false));
-        cashflowDtoList.add(new PEGrossCashflowDto("BBB", new Date(), 5.0, 6.0, 7.0, 8.0, false));
+        cashflowDtoList.add(new PEGrossCashflowDto("AAA", new Date(), -1000000.0, 2000000.0, 3000000.0, 1000000.0, false));
+        cashflowDtoList.add(new PEGrossCashflowDto("BBB", new Date(), -5000000.0, 6000000.0, 7000000.0, 1000000.0, false));
 
         return new PEGrossCashflowResultDto(cashflowDtoList, StatusResultType.SUCCESS, "", "A new portion of the Gross Cash Flow has been successfully uploaded, but NOT saved!", "");
     }

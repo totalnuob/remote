@@ -686,11 +686,18 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
         this.busy = this.fundService.postFiles(this.myFiles, this.fund.id)
             .subscribe(
                 (response) => {
+                    for (var i = 0; i < response.cashflowDtoList.length; i++) {
+                        this.fund.grossCashflow.push({
+                            id:"",
+                            companyName:response.cashflowDtoList[i].companyName,
+                            date:response.cashflowDtoList[i].date,
+                            invested:response.cashflowDtoList[i].invested,
+                            realized:response.cashflowDtoList[i].realized,
+                            unrealized:response.cashflowDtoList[i].unrealized,
+                            grossCF:response.cashflowDtoList[i].grossCF,
+                            autoCalculation:response.cashflowDtoList[i].autoCalculation});
+                    }
                     this.postAction(response.messageEn, null);
-                    console.log(response);
-                    console.log(response.cashflowDtoList[0].companyName);
-                    console.log(response.cashflowDtoList);
-                    this.fund.grossCashflow.push({id:"", companyName:"", date:"", invested:"", realized:"", unrealized:"", grossCF:"", autoCalculation:true});
                 },
                 (error) => {
                     this.processErrorMessage(error);
