@@ -135,13 +135,12 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
         try {
             List<PEGrossCashflowDto> cashflowDtoList = new ArrayList<>();
 
-            if (filesDtoSet != null) {
-                FilesDto filesDto = filesDtoSet.iterator().next();
+            FilesDto filesDto = filesDtoSet.iterator().next();
 
-                Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
+            Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
 
-                cashflowDtoList.add(new PEGrossCashflowDto("AAA", new Date(), -1000000.0, 2000000.0, 3000000.0, 7000000.0, false));
-            }
+            cashflowDtoList.add(new PEGrossCashflowDto("AAA", new Date(), -1000000.0, 2000000.0, 3000000.0, 7000000.0, false));
+
             return new PEGrossCashflowResultDto(cashflowDtoList, StatusResultType.SUCCESS, "", "A new portion of the Gross Cash Flow has been successfully uploaded, but NOT saved!", "");
         } catch (Exception ex) {
             logger.error("Failed to upload PE fund's gross cash flow", ex);
