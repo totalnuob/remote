@@ -1,5 +1,6 @@
 package kz.nicnbk.service.impl.pe;
 
+import kz.nicnbk.common.service.util.ExcelUtils;
 import kz.nicnbk.repo.api.pe.PEGrossCashflowRepository;
 import kz.nicnbk.repo.model.pe.PEFund;
 import kz.nicnbk.repo.model.pe.PEGrossCashflow;
@@ -145,8 +146,13 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
                 if (rowNum != 0) {
                     cashflowDtoList.add(new PEGrossCashflowDto("AAA", new Date(), -1000000.0, 2000000.0, 3000000.0, 7000000.0, false));
                     cashflowDtoList.add(new PEGrossCashflowDto(
-                            ExcelUtils.getStringValueFromCell(row.getCell(0)),
-                            new Date(), -1000000.0, 2000000.0, 3000000.0, 7000000.0, false));
+                            ExcelUtils.getTextValueFromAnyCell(row.getCell(0)),
+                            row.getCell(1).getDateCellValue(),
+                            ExcelUtils.getDoubleValueFromCell(row.getCell(2)),
+                            ExcelUtils.getDoubleValueFromCell(row.getCell(3)),
+                            ExcelUtils.getDoubleValueFromCell(row.getCell(4)),
+                            ExcelUtils.getDoubleValueFromCell(row.getCell(5)),
+                            false));
                 }
                 rowNum++;
             }
