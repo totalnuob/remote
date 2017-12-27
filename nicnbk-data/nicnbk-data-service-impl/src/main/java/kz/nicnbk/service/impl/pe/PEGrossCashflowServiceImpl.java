@@ -136,12 +136,20 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
             List<PEGrossCashflowDto> cashflowDtoList = new ArrayList<>();
 
             FilesDto filesDto = filesDtoSet.iterator().next();
-
             Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
 
-            //Use rowIterator
+            int rowNum = 0;
 
-            cashflowDtoList.add(new PEGrossCashflowDto("AAA", new Date(), -1000000.0, 2000000.0, 3000000.0, 7000000.0, false));
+            while (rowIterator.hasNext()) {
+                Row row = rowIterator.next();
+                if (rowNum != 0) {
+                    cashflowDtoList.add(new PEGrossCashflowDto("AAA", new Date(), -1000000.0, 2000000.0, 3000000.0, 7000000.0, false));
+                    cashflowDtoList.add(new PEGrossCashflowDto(
+                            ExcelUtils.getStringValueFromCell(row.getCell(0)),
+                            new Date(), -1000000.0, 2000000.0, 3000000.0, 7000000.0, false));
+                }
+                rowNum++;
+            }
 
             return new PEGrossCashflowResultDto(cashflowDtoList, StatusResultType.SUCCESS, "", "A new portion of the Gross Cash Flow has been successfully uploaded, but NOT saved!", "");
         } catch (Exception ex) {
