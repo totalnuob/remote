@@ -65,13 +65,13 @@ public class PECompanyPerformanceIddServiceImpl implements PECompanyPerformanceI
                 if (performanceIddDto.getCompanyName() == null || performanceIddDto.getCompanyName().equals("")) {
                     return new PECompanyPerformanceIddResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Don't send null or empty company name!", "");
                 }
-                if ((performanceIddDto.getInvested() != null && performanceIddDto.getInvested() < 0) ||
-                        (performanceIddDto.getRealized() != null && performanceIddDto.getRealized() < 0) ||
-                        (performanceIddDto.getUnrealized() != null && performanceIddDto.getUnrealized() < 0) ||
-                        (performanceIddDto.getTotalValue() != null && performanceIddDto.getTotalValue() < 0) ||
-                        (performanceIddDto.getMultiple() != null && performanceIddDto.getMultiple() < 0)) {
-                    return new PECompanyPerformanceIddResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Don't send negative numbers!", "");
-                }
+//                if ((performanceIddDto.getInvested() != null && performanceIddDto.getInvested() < 0) ||
+//                        (performanceIddDto.getRealized() != null && performanceIddDto.getRealized() < 0) ||
+//                        (performanceIddDto.getUnrealized() != null && performanceIddDto.getUnrealized() < 0) ||
+//                        (performanceIddDto.getTotalValue() != null && performanceIddDto.getTotalValue() < 0) ||
+//                        (performanceIddDto.getMultiple() != null && performanceIddDto.getMultiple() < 0)) {
+//                    return new PECompanyPerformanceIddResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Don't send negative numbers!", "");
+//                }
             }
 
             for (PECompanyPerformanceIddDto performanceIddDto1 : performanceIddDtoList) {
