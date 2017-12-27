@@ -1,10 +1,11 @@
 package kz.nicnbk.service.api.pe;
 
+import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.pe.PEGrossCashflowDto;
 import kz.nicnbk.service.dto.pe.PEGrossCashflowResultDto;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by zhambyl on 05-Jan-17.
@@ -15,7 +16,7 @@ public interface PEGrossCashflowService {
 
     PEGrossCashflowResultDto saveList(List<PEGrossCashflowDto> cashflowDtoList, Long fundId);
 
-    PEGrossCashflowResultDto uploadGrossCF(MultipartFile file);
+    PEGrossCashflowResultDto uploadGrossCF(Set<FilesDto> filesDtoSet);
 
     List<PEGrossCashflowDto> findByFundId(Long fundId);
 

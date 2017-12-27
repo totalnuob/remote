@@ -4,6 +4,7 @@ import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.pe.PEFundService;
 import kz.nicnbk.service.api.pe.PEGrossCashflowService;
 import kz.nicnbk.service.dto.common.StatusResultType;
+import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.pe.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by zhambyl on 16-Nov-16.
@@ -141,9 +143,11 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
 
     @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/uploadGrossCF", method = RequestMethod.POST)
-    public ResponseEntity<?> uploadGrossCF(@RequestParam(value = "file", required = false) MultipartFile file) {
+    public ResponseEntity<?> uploadGrossCF(@RequestParam(value = "file", required = false) MultipartFile[] files) {
 
-        PEGrossCashflowResultDto resultDto = this.cashflowService.uploadGrossCF(file);
+        Set<FilesDto> filesDtoSet = buildFilesDtoFromMultipart(files, null);
+
+        PEGrossCashflowResultDto resultDto = this.cashflowService.uploadGrossCF(filesDtoSet);
 
         if (resultDto.getStatus().getCode().equals("SUCCESS")) {
             return new ResponseEntity<>(resultDto, null, HttpStatus.OK);

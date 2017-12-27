@@ -7,6 +7,7 @@ import kz.nicnbk.service.api.pe.PEFundService;
 import kz.nicnbk.service.api.pe.PEGrossCashflowService;
 import kz.nicnbk.service.converter.pe.PEGrossCashflowEntityConverter;
 import kz.nicnbk.service.dto.common.StatusResultType;
+import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.pe.PEGrossCashflowDto;
 import kz.nicnbk.service.dto.pe.PEGrossCashflowResultDto;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -18,15 +19,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by zhambyl on 05-Jan-17.
@@ -135,19 +131,17 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
     }
 
     @Override
-    public PEGrossCashflowResultDto uploadGrossCF(MultipartFile file) {
+    public PEGrossCashflowResultDto uploadGrossCF(Set<FilesDto> filesDtoSet) {
         try {
             List<PEGrossCashflowDto> cashflowDtoList = new ArrayList<>();
 
-            cashflowDtoList.add(new PEGrossCashflowDto("AAA", new Date(), -1000000.0, 2000000.0, 3000000.0, 7000000.0, false));
+            if (filesDtoSet != null) {
+                FilesDto filesDto = filesDtoSet.iterator().next();
 
+                Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
 
-
-            Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
-
-
-
-
+                cashflowDtoList.add(new PEGrossCashflowDto("AAA", new Date(), -1000000.0, 2000000.0, 3000000.0, 7000000.0, false));
+            }
             return new PEGrossCashflowResultDto(cashflowDtoList, StatusResultType.SUCCESS, "", "A new portion of the Gross Cash Flow has been successfully uploaded, but NOT saved!", "");
         } catch (Exception ex) {
             logger.error("Failed to upload PE fund's gross cash flow", ex);
