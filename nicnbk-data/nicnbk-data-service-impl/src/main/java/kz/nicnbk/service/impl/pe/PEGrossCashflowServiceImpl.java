@@ -70,11 +70,11 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
                         cashflowDto.getDate() == null) {
                     return new PEGrossCashflowResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Don't send null or empty company name or date!", "");
                 }
-                if ((cashflowDto.getInvested() != null && cashflowDto.getInvested() > 0) ||
-                        (cashflowDto.getRealized() != null && cashflowDto.getRealized() < 0) ||
-                        (cashflowDto.getUnrealized() != null && cashflowDto.getUnrealized() < 0)) {
-                    return new PEGrossCashflowResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Check the positiveness of the values!", "");
-                }
+//                if ((cashflowDto.getInvested() != null && cashflowDto.getInvested() > 0) ||
+//                        (cashflowDto.getRealized() != null && cashflowDto.getRealized() < 0) ||
+//                        (cashflowDto.getUnrealized() != null && cashflowDto.getUnrealized() < 0)) {
+//                    return new PEGrossCashflowResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Check the positiveness of the values!", "");
+//                }
             }
 
             for (PEGrossCashflowDto cashflowDto1 : cashflowDtoList) {
