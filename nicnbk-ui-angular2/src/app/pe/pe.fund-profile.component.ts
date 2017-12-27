@@ -697,7 +697,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                             grossCF:response.cashflowDtoList[i].grossCF,
                             autoCalculation:response.cashflowDtoList[i].autoCalculation});
                     }
-                    this.postAction(response.messageEn, null);
+                    this.postAction(response.messageEn + ' (a total of ' + response.cashflowDtoList.length + ' new transactions)', null);
                 },
                 (error) => {
                     this.processErrorMessage(error);
