@@ -144,7 +144,7 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
             while (rowIterator.hasNext()) {
                 Row row = rowIterator.next();
                 if (rowNum != 0) {
-                    cashflowDtoList.add(new PEGrossCashflowDto("AAA", new Date(), -1000000.0, 2000000.0, 3000000.0, 7000000.0, false));
+//                    cashflowDtoList.add(new PEGrossCashflowDto("AAA", new Date(), -1000000.0, 2000000.0, 3000000.0, 7000000.0, false));
                     cashflowDtoList.add(new PEGrossCashflowDto(
                             ExcelUtils.getTextValueFromAnyCell(row.getCell(0)),
                             row.getCell(1).getDateCellValue(),
