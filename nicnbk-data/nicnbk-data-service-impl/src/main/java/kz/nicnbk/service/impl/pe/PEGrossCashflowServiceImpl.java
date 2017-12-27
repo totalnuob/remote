@@ -9,6 +9,9 @@ import kz.nicnbk.service.converter.pe.PEGrossCashflowEntityConverter;
 import kz.nicnbk.service.dto.common.StatusResultType;
 import kz.nicnbk.service.dto.pe.PEGrossCashflowDto;
 import kz.nicnbk.service.dto.pe.PEGrossCashflowResultDto;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +20,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -134,11 +141,42 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
 
             cashflowDtoList.add(new PEGrossCashflowDto("AAA", new Date(), -1000000.0, 2000000.0, 3000000.0, 7000000.0, false));
 
+
+
+            Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
+
+
+
+
             return new PEGrossCashflowResultDto(cashflowDtoList, StatusResultType.SUCCESS, "", "A new portion of the Gross Cash Flow has been successfully uploaded, but NOT saved!", "");
         } catch (Exception ex) {
             logger.error("Failed to upload PE fund's gross cash flow", ex);
         }
         return new PEGrossCashflowResultDto(null, StatusResultType.FAIL, "", "Failed to upload PE fund's Gross Cash Flow!", "");
+    }
+
+    private Iterator<Row> getRowIterator(FilesDto filesDto, int sheetNumber){
+        InputStream inputFile = null;
+        try {
+            inputFile = new ByteArrayInputStream(filesDto.getBytes());
+            String extension = filesDto.getFileName().substring(filesDto.getFileName().lastIndexOf(".") + 1,
+                    filesDto.getFileName().length());
+            if (extension.equalsIgnoreCase("xls")) {
+                HSSFWorkbook workbook = new HSSFWorkbook(inputFile);
+                HSSFSheet sheet = workbook.getSheetAt(sheetNumber);
+                return sheet.iterator();
+            }
+        }catch (Exception ex){
+            // TODO: log error
+        }finally {
+            try {
+                inputFile.close();
+            } catch (Exception e) {
+                //e.printStackTrace();
+                // TODO: log error
+            }
+        }
+        return null;
     }
 
     @Override
