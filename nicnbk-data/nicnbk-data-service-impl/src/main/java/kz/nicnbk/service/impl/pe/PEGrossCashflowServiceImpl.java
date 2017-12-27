@@ -145,12 +145,12 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
 
             return new PEGrossCashflowResultDto(cashflowDtoList, StatusResultType.SUCCESS, "", "A new portion of the Gross Cash Flow has been successfully uploaded, but NOT saved!", "");
         } catch (Exception ex) {
-            logger.error("Failed to upload PE fund's gross cash flow", ex);
+            logger.error("Failed to upload PE fund's gross cash flow, ", ex);
         }
         return new PEGrossCashflowResultDto(null, StatusResultType.FAIL, "", "Failed to upload PE fund's Gross Cash Flow!", "");
     }
 
-    private Iterator<Row> getRowIterator(FilesDto filesDto, int sheetNumber){
+    private Iterator<Row> getRowIterator(FilesDto filesDto, int sheetNumber) {
         InputStream inputFile = null;
         try {
             inputFile = new ByteArrayInputStream(filesDto.getBytes());
@@ -161,14 +161,13 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
                 HSSFSheet sheet = workbook.getSheetAt(sheetNumber);
                 return sheet.iterator();
             }
-        }catch (Exception ex){
-            // TODO: log error
-        }finally {
+        } catch (Exception ex) {
+            logger.error("Failed to get file iterator, ", ex);
+        } finally {
             try {
                 inputFile.close();
             } catch (Exception e) {
-                //e.printStackTrace();
-                // TODO: log error
+                logger.error("Failed to close the file, ", e);
             }
         }
         return null;
