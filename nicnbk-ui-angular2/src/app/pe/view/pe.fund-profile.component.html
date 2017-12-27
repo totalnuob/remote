@@ -992,23 +992,26 @@
                                                 </td>
 
                                                 <td>
-                                                    <input type="text" class="form-control" name="invested" [(ngModel)]="cf.invested" (ngModelChange)="autoCalculationGrossCF(cf)" placeholder="-" pattern="[-][0-9]*\.?[0-9]+" #invested="ngModel"/>
+                                                    <input type="text" class="form-control" name="invested" [(ngModel)]="cf.invested" (ngModelChange)="autoCalculationGrossCF(cf)" placeholder="-" pattern="[-]?[0-9]*\.?[0-9]+" #invested="ngModel"/>
                                                     <div [hidden]="invested.valid || invested.pristine" class="alert alert-danger">
-                                                        Only negative number could be entered
+                                                        <!--Only negative number could be entered-->
+                                                        Only number could be entered
                                                     </div>
                                                 </td>
 
                                                 <td>
-                                                    <input type="text" class="form-control" name="realized" [(ngModel)]="cf.realized" (ngModelChange)="autoCalculationGrossCF(cf)" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #realized="ngModel"/>
+                                                    <input type="text" class="form-control" name="realized" [(ngModel)]="cf.realized" (ngModelChange)="autoCalculationGrossCF(cf)" placeholder="-" pattern="[-]?[0-9]*\.?[0-9]+" #realized="ngModel"/>
                                                     <div [hidden]="realized.valid || realized.pristine" class="alert alert-danger">
-                                                        Only positive number could be entered
+                                                        <!--Only positive number could be entered-->
+                                                        Only number could be entered
                                                     </div>
                                                 </td>
 
                                                 <td>
-                                                    <input type="text" class="form-control" name="unrealized" [(ngModel)]="cf.unrealized" (ngModelChange)="autoCalculationGrossCF(cf)" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #unrealized="ngModel"/>
+                                                    <input type="text" class="form-control" name="unrealized" [(ngModel)]="cf.unrealized" (ngModelChange)="autoCalculationGrossCF(cf)" placeholder="-" pattern="[-]?[0-9]*\.?[0-9]+" #unrealized="ngModel"/>
                                                     <div [hidden]="unrealized.valid || unrealized.pristine" class="alert alert-danger">
-                                                        Only positive number could be entered
+                                                        <!--Only positive number could be entered-->
+                                                        Only number could be entered
                                                     </div>
                                                 </td>
 
