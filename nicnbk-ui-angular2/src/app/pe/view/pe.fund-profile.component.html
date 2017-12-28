@@ -825,6 +825,9 @@
                     <li>
                         <a data-toggle="tab" href="#grossCashflow">GROSS CASHFLOW</a>
                     </li>
+                    <li>
+                        <a data-toggle="tab" href="#portfolioInfo">PORTFOLIO INFO</a>
+                    </li>
                 </ul>
                 <div class="tab-content">
                     <div id="performanceIdd" class="tab-pane fade in active">
@@ -1059,6 +1062,25 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <hr style="border-top: 1px solid #B5AEAE"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="portfolioInfo" class="tab-pane fade in active">
+                        <div style="position: relative;">
+                            <div [ngBusy]="busy">
+                                <br/>
+                                <div class="row">
+                                    <div style="text-align: center">
+                                        <h4>{{fund.fundName}} Portfolio Info</h4>
+                                    </div>
+                                </div>
+                                <br>
+
                                 <div class="row">
                                     <div class="col-md-12">
                                         <hr style="border-top: 1px solid #B5AEAE"/>
