@@ -1082,6 +1082,16 @@
                                 <br>
                                 <div class="row">
                                     <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="pull-right">
+                                                    <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="savePortfolioInfo()" [disabled]="fund.id == 0 || fund.id == null">
+                                                        SAVE
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br>
                                         <table class="table table-hover table-responsive" style="font-size: smaller">
                                             <tr>
                                                 <th>Company name</th>
@@ -1094,8 +1104,11 @@
                                                 <th>Currency</th>
                                             </tr>
                                             <tr *ngFor="let performance of fund.companyPerformanceIdd">
-                                                <td style="font-size: small">
-                                                    {{performance.companyName}}
+                                                <td>
+                                                    <input type="text" class="form-control" name="companyName" [(ngModel)]="performance.companyName" placeholder="-" pattern="[A-Za-z0-9 ().-]{1,50}" #companyName="ngModel"/>
+                                                    <div [hidden]="companyName.valid || companyName.pristine" class="alert alert-danger">
+                                                        Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'
+                                                    </div>
                                                 </td>
 
                                                 <td style="font-size: small">
@@ -1127,6 +1140,15 @@
                                                 </td>
                                             </tr>
                                         </table>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="pull-right">
+                                                    <button type="submit" class="btn btn-success" *ngIf="canEdit()" (click)="savePortfolioInfo()" [disabled]="fund.id == 0 || fund.id == null">
+                                                        SAVE
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row">

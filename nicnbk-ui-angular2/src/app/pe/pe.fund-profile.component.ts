@@ -306,6 +306,10 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
             )
     }
 
+    savePortfolioInfo() {
+        console.log("Portfolio Info has been saved!");
+    }
+
     calculateTrackRecord(calculationType) {
         this.busy = this.fundService.calculateTrackRecord(this.fund.id, calculationType)
             .subscribe(
