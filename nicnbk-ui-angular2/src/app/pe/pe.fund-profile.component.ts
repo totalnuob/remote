@@ -47,6 +47,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     public fundIdParam: number;
     public firmIdParam: number;
 
+    public irrParam = [];
+
     private visible = false;
     private openingSoon = false;
 

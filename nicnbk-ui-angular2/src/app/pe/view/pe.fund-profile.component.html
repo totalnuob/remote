@@ -1203,55 +1203,51 @@
                                                 <th>Deal source</th>
                                                 <th>Currency</th>
                                             </tr>
-                                            <tr *ngFor="let performance of fund.companyPerformanceIdd">
-                                                <td style="font-size: small">
-                                                    {{performance.companyName}}
-                                                </td>
-
+                                            <tr>
                                                 <td>
-                                                    <input type="text" class="form-control" name="companyDescription" [(ngModel)]="performance.companyDescription" placeholder="-" pattern="[A-Za-z0-9 ().-]{1,50}" #companyDescription="ngModel"/>
+                                                    <input type="text" class="form-control" name="companyDescription" [(ngModel)]="irrParam.companyDescription" placeholder="-" pattern="[A-Za-z0-9 ().-]{1,50}" #companyDescription="ngModel"/>
                                                     <div [hidden]="companyDescription.valid || companyDescription.pristine" class="alert alert-danger">
                                                         Company description must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'
                                                     </div>
                                                 </td>
 
                                                 <td>
-                                                    <input type="text" class="form-control" name="industry" [(ngModel)]="performance.industry" placeholder="-" pattern="[A-Za-z0-9 ().-]{1,50}" #industry="ngModel"/>
+                                                    <input type="text" class="form-control" name="industry" [(ngModel)]="irrParam.industry" placeholder="-" pattern="[A-Za-z0-9 ().-]{1,50}" #industry="ngModel"/>
                                                     <div [hidden]="industry.valid || industry.pristine" class="alert alert-danger">
                                                         Industry must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'
                                                     </div>
                                                 </td>
 
                                                 <td>
-                                                    <input type="text" class="form-control" name="country" [(ngModel)]="performance.country" placeholder="-" pattern="[A-Za-z0-9 ().-]{1,50}" #country="ngModel"/>
+                                                    <input type="text" class="form-control" name="country" [(ngModel)]="irrParam.country" placeholder="-" pattern="[A-Za-z0-9 ().-]{1,50}" #country="ngModel"/>
                                                     <div [hidden]="country.valid || country.pristine" class="alert alert-danger">
                                                         Country must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'
                                                     </div>
                                                 </td>
 
                                                 <td>
-                                                    <input type="text" class="form-control" name="typeOfInvestment" [(ngModel)]="performance.typeOfInvestment" placeholder="-" pattern="[A-Za-z0-9 ().-]{1,50}" #typeOfInvestment="ngModel"/>
+                                                    <input type="text" class="form-control" name="typeOfInvestment" [(ngModel)]="irrParam.typeOfInvestment" placeholder="-" pattern="[A-Za-z0-9 ().-]{1,50}" #typeOfInvestment="ngModel"/>
                                                     <div [hidden]="typeOfInvestment.valid || typeOfInvestment.pristine" class="alert alert-danger">
                                                         Type of investment must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'
                                                     </div>
                                                 </td>
 
                                                 <td>
-                                                    <input type="text" class="form-control" name="control" [(ngModel)]="performance.control" placeholder="-" pattern="[A-Za-z0-9 ().-]{1,50}" #control="ngModel"/>
+                                                    <input type="text" class="form-control" name="control" [(ngModel)]="irrParam.control" placeholder="-" pattern="[A-Za-z0-9 ().-]{1,50}" #control="ngModel"/>
                                                     <div [hidden]="control.valid || control.pristine" class="alert alert-danger">
                                                         Control must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'
                                                     </div>
                                                 </td>
 
                                                 <td>
-                                                    <input type="text" class="form-control" name="dealSource" [(ngModel)]="performance.dealSource" placeholder="-" pattern="[A-Za-z0-9 ().-]{1,50}" #dealSource="ngModel"/>
+                                                    <input type="text" class="form-control" name="dealSource" [(ngModel)]="irrParam.dealSource" placeholder="-" pattern="[A-Za-z0-9 ().-]{1,50}" #dealSource="ngModel"/>
                                                     <div [hidden]="dealSource.valid || dealSource.pristine" class="alert alert-danger">
                                                         Deal source must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'
                                                     </div>
                                                 </td>
 
                                                 <td>
-                                                    <input type="text" class="form-control" name="currency" [(ngModel)]="performance.currency" placeholder="-" pattern="[A-Za-z0-9 ().-]{1,50}" #currency="ngModel"/>
+                                                    <input type="text" class="form-control" name="currency" [(ngModel)]="irrParam.currency" placeholder="-" pattern="[A-Za-z0-9 ().-]{1,50}" #currency="ngModel"/>
                                                     <div [hidden]="currency.valid || currency.pristine" class="alert alert-danger">
                                                         Currency must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'
                                                     </div>
