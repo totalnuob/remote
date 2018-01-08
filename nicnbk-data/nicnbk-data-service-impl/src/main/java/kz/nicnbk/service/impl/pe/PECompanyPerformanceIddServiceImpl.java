@@ -110,16 +110,16 @@ public class PECompanyPerformanceIddServiceImpl implements PECompanyPerformanceI
             for (PECompanyPerformanceIddDto performanceIddDto : performanceIddDtoList) {
                 Long id = save(performanceIddDto, fundId);
                 if (id == null) {
-                    return new PECompanyPerformanceIddResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error saving PE fund's company performance / portfolio info", "");
+                    return new PECompanyPerformanceIddResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error saving PE fund's company performance or portfolio info", "");
                 } else {
                     performanceIddDto.setId(id);
                 }
             }
 
-            return new PECompanyPerformanceIddResultDto(performanceIddDtoList, StatusResultType.SUCCESS, "", "Successfully saved PE fund's company performance / portfolio info", "");
+            return new PECompanyPerformanceIddResultDto(performanceIddDtoList, StatusResultType.SUCCESS, "", "Successfully saved PE fund's company performance or portfolio info", "");
         } catch (Exception ex) {
             logger.error("Error saving PE fund's company performance: " + fundId, ex);
-            return new PECompanyPerformanceIddResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error saving PE fund's company performance / portfolio info", "");
+            return new PECompanyPerformanceIddResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error saving PE fund's company performance or portfolio info", "");
         }
     }
 
