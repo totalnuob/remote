@@ -89,7 +89,15 @@ public class PECompanyPerformanceIddServiceImpl implements PECompanyPerformanceI
             for (PECompanyPerformanceIdd performanceIdd : this.repository.getEntitiesByFundId(fundId, new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName")))) {
                 int i = 0;
                 for (PECompanyPerformanceIddDto performanceIddDto : performanceIddDtoList) {
-                    if (performanceIdd.getId().equals(performanceIddDto.getId())) {
+                    if (performanceIddDto.getCompanyName().equals(performanceIdd.getCompanyName()) && performanceIddDto.getId() == null) {
+                        performanceIddDto.setId(performanceIdd.getId());
+                        performanceIddDto.setCompanyDescription(performanceIdd.getCompanyDescription());
+                        performanceIddDto.setIndustry(performanceIdd.getIndustry());
+                        performanceIddDto.setCountry(performanceIdd.getCountry());
+                        performanceIddDto.setTypeOfInvestment(performanceIdd.getTypeOfInvestment());
+                        performanceIddDto.setControl(performanceIdd.getControl());
+                        performanceIddDto.setDealSource(performanceIdd.getDealSource());
+                        performanceIddDto.setCurrency(performanceIdd.getCurrency());
                         i++;
                         break;
                     }
@@ -118,7 +126,7 @@ public class PECompanyPerformanceIddServiceImpl implements PECompanyPerformanceI
     @Override
     public PECompanyPerformanceIddResultDto recalculatePerformanceIdd(Long fundId) {
         try {
-            deleteByFundId(fundId);
+//            deleteByFundId(fundId);
 
             List<PECompanyPerformanceIddDto> performanceIddDtoList = new ArrayList<>();
 
@@ -146,7 +154,7 @@ public class PECompanyPerformanceIddServiceImpl implements PECompanyPerformanceI
                                     (cashflowDto.getInvested() == null) ? 0.0 : - cashflowDto.getInvested(),
                                     (cashflowDto.getRealized() == null) ? 0.0 : cashflowDto.getRealized(),
                                     (cashflowDto.getUnrealized() == null) ? 0.0 : cashflowDto.getUnrealized(),
-                                    null, null, true, null, null));
+                                    null, null, true, null, null, null, null, null, null, null, null, null));
                 }
             }
 
@@ -179,11 +187,11 @@ public class PECompanyPerformanceIddServiceImpl implements PECompanyPerformanceI
         return null;
     }
 
-    @Override
-    public boolean deleteByFundId(Long fundId) {
-        this.repository.deleteByFundId(fundId);
-        return true;
-    }
+//    @Override
+//    public boolean deleteByFundId(Long fundId) {
+//        this.repository.deleteByFundId(fundId);
+//        return true;
+//    }
 
     @Override
     public PEFundTrackRecordResultDto calculateTrackRecord(Long fundId) {

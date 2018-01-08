@@ -17,8 +17,8 @@ public interface PECompanyPerformanceIddRepository extends PagingAndSortingRepos
     @Query("SELECT e from pe_company_performance_idd e where e.fund.id=?1")
     List<PECompanyPerformanceIdd> getEntitiesByFundId(Long fundId, Pageable pageable);
 
-    @Modifying
-    @Transactional
-    @Query("DELETE from pe_company_performance_idd e where e.fund.id=?1")
-    void deleteByFundId(Long fundId);
+//    @Modifying
+//    @Transactional
+//    @Query("DELETE from pe_company_performance_idd e where e.fund.id=?1")
+//    void deleteByFundId(Long fundId);
 }

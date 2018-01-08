@@ -19,7 +19,7 @@ public interface PECompanyPerformanceIddService {
 
     List<PECompanyPerformanceIddDto> findByFundId(Long fundId);
 
-    boolean deleteByFundId(Long fundId);
+//    boolean deleteByFundId(Long fundId);
 
     PEFundTrackRecordResultDto calculateTrackRecord(Long fundId);
 }

@@ -19,10 +19,33 @@ public class PECompanyPerformanceIddDto extends BaseEntityDto<PECompanyPerforman
     private Double netIrr;
 //    private PEFundDto fund;
 
+    private String companyDescription;
+    private String industry;
+    private String country;
+    private String typeOfInvestment;
+    private String control;
+    private String dealSource;
+    private String currency;
+
     public PECompanyPerformanceIddDto() {
     }
 
-    public PECompanyPerformanceIddDto(String companyName, Double invested, Double realized, Double unrealized, Double totalValue, Double multiple, Boolean autoCalculation, Double grossIrr, Double netIrr) {
+    public PECompanyPerformanceIddDto(String companyName,
+                                      Double invested,
+                                      Double realized,
+                                      Double unrealized,
+                                      Double totalValue,
+                                      Double multiple,
+                                      Boolean autoCalculation,
+                                      Double grossIrr,
+                                      Double netIrr,
+                                      String companyDescription,
+                                      String industry,
+                                      String country,
+                                      String typeOfInvestment,
+                                      String control,
+                                      String dealSource,
+                                      String currency) {
         this.companyName = companyName;
         this.invested = invested;
         this.realized = realized;
@@ -32,6 +55,13 @@ public class PECompanyPerformanceIddDto extends BaseEntityDto<PECompanyPerforman
         this.autoCalculation = autoCalculation;
         this.grossIrr = grossIrr;
         this.netIrr = netIrr;
+        this.companyDescription = companyDescription;
+        this.industry = industry;
+        this.country = country;
+        this.typeOfInvestment = typeOfInvestment;
+        this.control = control;
+        this.dealSource = dealSource;
+        this.currency = currency;
     }
 
     public String getCompanyName() {
@@ -113,4 +143,61 @@ public class PECompanyPerformanceIddDto extends BaseEntityDto<PECompanyPerforman
 //    public void setFund(PEFundDto fund) {
 //        this.fund = fund;
 //    }
+
+
+    public String getCompanyDescription() {
+        return companyDescription;
+    }
+
+    public void setCompanyDescription(String companyDescription) {
+        this.companyDescription = companyDescription;
+    }
+
+    public String getIndustry() {
+        return industry;
+    }
+
+    public void setIndustry(String industry) {
+        this.industry = industry;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getTypeOfInvestment() {
+        return typeOfInvestment;
+    }
+
+    public void setTypeOfInvestment(String typeOfInvestment) {
+        this.typeOfInvestment = typeOfInvestment;
+    }
+
+    public String getControl() {
+        return control;
+    }
+
+    public void setControl(String control) {
+        this.control = control;
+    }
+
+    public String getDealSource() {
+        return dealSource;
+    }
+
+    public void setDealSource(String dealSource) {
+        this.dealSource = dealSource;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
 }
