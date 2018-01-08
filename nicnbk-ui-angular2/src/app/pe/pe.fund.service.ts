@@ -15,6 +15,7 @@ export class PEFundService extends CommonService {
     private PE_FUND_SEARCH_URL = this.PE_BASE_URL + "search/";
     private PE_FUND_UPLOAD_GROSS_CF_URL = this.PE_BASE_URL + "uploadGrossCF/";
     private PE_FUND_SAVE_COMPANY_PERFORMANCE_URL = this.PE_BASE_URL + "savePerformance/";
+    private PE_FUND_SAVE_PORTFOLIO_INFO_URL = this.PE_BASE_URL + "savePortfolioInfo/";
     private PE_FUND_SAVE_GROSS_CF_URL = this.PE_BASE_URL + "saveGrossCF/";
 
     constructor(
@@ -50,6 +51,14 @@ export class PEFundService extends CommonService {
         let body = JSON.stringify(entity);
 
         return this.http.post(this.PE_FUND_SAVE_COMPANY_PERFORMANCE_URL + id + "/recalculate", body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    savePortfolioInfo(entity, id) {
+        let body = JSON.stringify(entity);
+
+        return this.http.post(this.PE_FUND_SAVE_PORTFOLIO_INFO_URL + id, body, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }

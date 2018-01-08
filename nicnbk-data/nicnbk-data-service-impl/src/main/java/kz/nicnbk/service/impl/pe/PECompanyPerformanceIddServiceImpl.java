@@ -89,15 +89,15 @@ public class PECompanyPerformanceIddServiceImpl implements PECompanyPerformanceI
             for (PECompanyPerformanceIdd performanceIdd : this.repository.getEntitiesByFundId(fundId, new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName")))) {
                 int i = 0;
                 for (PECompanyPerformanceIddDto performanceIddDto : performanceIddDtoList) {
-                    if (performanceIddDto.getCompanyName().equals(performanceIdd.getCompanyName()) && performanceIddDto.getId() == null) {
+                    if (performanceIddDto.getCompanyName().equals(performanceIdd.getCompanyName())) {
                         performanceIddDto.setId(performanceIdd.getId());
-                        performanceIddDto.setCompanyDescription(performanceIdd.getCompanyDescription());
-                        performanceIddDto.setIndustry(performanceIdd.getIndustry());
-                        performanceIddDto.setCountry(performanceIdd.getCountry());
-                        performanceIddDto.setTypeOfInvestment(performanceIdd.getTypeOfInvestment());
-                        performanceIddDto.setControl(performanceIdd.getControl());
-                        performanceIddDto.setDealSource(performanceIdd.getDealSource());
-                        performanceIddDto.setCurrency(performanceIdd.getCurrency());
+//                        performanceIddDto.setCompanyDescription(performanceIdd.getCompanyDescription());
+//                        performanceIddDto.setIndustry(performanceIdd.getIndustry());
+//                        performanceIddDto.setCountry(performanceIdd.getCountry());
+//                        performanceIddDto.setTypeOfInvestment(performanceIdd.getTypeOfInvestment());
+//                        performanceIddDto.setControl(performanceIdd.getControl());
+//                        performanceIddDto.setDealSource(performanceIdd.getDealSource());
+//                        performanceIddDto.setCurrency(performanceIdd.getCurrency());
                         i++;
                         break;
                     }
@@ -168,6 +168,19 @@ public class PECompanyPerformanceIddServiceImpl implements PECompanyPerformanceI
                     return new PECompanyPerformanceIddResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error updating PE fund's company performance", "");
                 }
                 performanceIddDto.setGrossIrr(this.irrService.getIRR(cashflowDtoList));
+
+                for (PECompanyPerformanceIdd performanceIdd : this.repository.getEntitiesByFundId(fundId, new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName")))) {
+                    if (performanceIddDto.getCompanyName().equals(performanceIdd.getCompanyName())) {
+                        performanceIddDto.setCompanyDescription(performanceIdd.getCompanyDescription());
+                        performanceIddDto.setIndustry(performanceIdd.getIndustry());
+                        performanceIddDto.setCountry(performanceIdd.getCountry());
+                        performanceIddDto.setTypeOfInvestment(performanceIdd.getTypeOfInvestment());
+                        performanceIddDto.setControl(performanceIdd.getControl());
+                        performanceIddDto.setDealSource(performanceIdd.getDealSource());
+                        performanceIddDto.setCurrency(performanceIdd.getCurrency());
+                        break;
+                    }
+                }
             }
 
             return saveList(performanceIddDtoList, fundId);

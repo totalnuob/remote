@@ -1,6 +1,8 @@
 package kz.nicnbk.ws.rest;
 
 import kz.nicnbk.service.api.authentication.TokenService;
+import kz.nicnbk.service.api.pe.PECompanyPerformanceIddService;
+import kz.nicnbk.service.api.pe.PECompanyPerformanceService;
 import kz.nicnbk.service.api.pe.PEFundService;
 import kz.nicnbk.service.api.pe.PEGrossCashflowService;
 import kz.nicnbk.service.dto.common.StatusResultType;
@@ -29,6 +31,9 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
 
     @Autowired
     private PEGrossCashflowService cashflowService;
+
+    @Autowired
+    private PECompanyPerformanceIddService performanceIddService;
 
     @Autowired
     private TokenService tokenService;
@@ -96,6 +101,21 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
         String username = this.tokenService.decode(token).getUsername();
 
         PECompanyPerformanceAndFundTrackRecordResultDto resultDto = this.service.savePerformanceAndUpdateStatistics(performanceDtoList, fundId, username);
+
+        if (resultDto.getStatus().equals(StatusResultType.SUCCESS)) {
+            return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/savePortfolioInfo/{fundId}", method = RequestMethod.POST)
+    public ResponseEntity<?> savePortfolioInfo(@RequestBody List<PECompanyPerformanceIddDto> performanceIddDtoList, @PathVariable Long fundId) {
+//        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+//        String username = this.tokenService.decode(token).getUsername();
+
+        PECompanyPerformanceIddResultDto resultDto = this.performanceIddService.saveList(performanceIddDtoList, fundId);
 
         if (resultDto.getStatus().equals(StatusResultType.SUCCESS)) {
             return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
