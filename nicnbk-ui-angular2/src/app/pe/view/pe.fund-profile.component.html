@@ -1192,7 +1192,24 @@
                                 <br>
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <br>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="meetingType">Meeting Type</label>
+                                                <select class="form-control" id="meetingType" [(ngModel)]="irrParam.meetingType">
+                                                    <option value="NONE">---</option>
+                                                    <!--<option *ngFor = "let type of meetingTypes" [value]="type.code">{{type.nameEn}}</option>-->
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="memoType">Memo Type</label>
+                                                <select class="form-control" id="memoType" [(ngModel)]="irrParam.memoType">
+                                                    <option value="0">---</option>
+                                                    <!--<option *ngFor = "let type of memoTypes" [value]="type.code">{{type.nameEn}}</option>-->
+                                                </select>
+                                            </div>
+                                        </div>
                                         <table class="table table-hover table-responsive" style="font-size: smaller">
                                             <tr>
                                                 <th>Company description</th>
