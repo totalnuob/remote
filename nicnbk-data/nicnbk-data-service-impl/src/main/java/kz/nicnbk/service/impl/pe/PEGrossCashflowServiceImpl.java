@@ -224,17 +224,21 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
     }
 
     @Override
+    public List<PEGrossCashflowDto> findByFundIdAndPortfolioInfo(Long fundId, PEPortfolioInfoDto portfolioInfoDto) {
+        return null;
+    }
+
+    @Override
     public PEIrrResultDto calculateIRR(PEPortfolioInfoDto portfolioInfoDto, Long fundId) {
         try {
-            List<PEGrossCashflowDto> cashflowDtoList = this.cashflowService.findByFundIdAndCompanyName(fundId, portfolioInfoDto);
-            if (cashflowDtoList == null) {
-                return new PEIrrResultDto(null, StatusResultType.FAIL, "", "Error calculating PE fund's IRR", "");
-            }
+            List<PEGrossCashflowDto> cashflowDtoList = this.findByFundIdAndPortfolioInfo(fundId, portfolioInfoDto);
 
-            Double irr = this.irrService.getIRR(cashflowDtoList);
+            if (cashflowDtoList != null) {
+                Double irr = this.irrService.getIRR(cashflowDtoList);
 
-            if (irr != null) {
-                return new PEIrrResultDto(irr, StatusResultType.SUCCESS, "", "Successfully calculated PE fund's IRR", "");
+                if (irr != null) {
+                    return new PEIrrResultDto(irr, StatusResultType.SUCCESS, "", "Successfully calculated PE fund's IRR", "");
+                }
             }
         } catch (Exception ex) {
             logger.error("Failed to calculate PE fund's IRR, ", ex);

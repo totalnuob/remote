@@ -26,6 +26,8 @@ public interface PEGrossCashflowService {
 
     List<PEGrossCashflowDto> findByFundIdAndCompanyName(Long fundId, String companyName);
 
+    List<PEGrossCashflowDto> findByFundIdAndPortfolioInfo(Long fundId, PEPortfolioInfoDto portfolioInfoDto);
+
     PEIrrResultDto calculateIRR(PEPortfolioInfoDto portfolioInfoDto, Long fundId);
 
     boolean deleteByFundId(Long fundId);
