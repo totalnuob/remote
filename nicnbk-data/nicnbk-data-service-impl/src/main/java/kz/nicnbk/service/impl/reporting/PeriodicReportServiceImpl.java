@@ -46,6 +46,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -1015,6 +1017,26 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             return getConsolidatedIncomeExpenseUSDReportInputStream(reportId);
         }else if(type.equalsIgnoreCase("TOTAL_INCOME_USD")){
             return getConsolidatedTotalIncomeUSDReportInputStream(reportId);
+        }else if(type.equalsIgnoreCase("KZT_FORM_1")){
+            return getConsolidatedForm1KZTReportInputStream(reportId);
+        }else if(type.equalsIgnoreCase("KZT_FORM_2")){
+            return getConsolidatedForm2KZTReportInputStream(reportId);
+        }else if(type.equalsIgnoreCase("KZT_FORM_3")){
+            return getConsolidatedForm3KZTReportInputStream(reportId);
+        }else if(type.equalsIgnoreCase("KZT_FORM_7")){
+            return getConsolidatedForm7KZTReportInputStream(reportId);
+        }else if(type.equalsIgnoreCase("KZT_FORM_8")){
+            return getConsolidatedForm8KZTReportInputStream(reportId);
+        }else if(type.equalsIgnoreCase("KZT_FORM_10")){
+            return getConsolidatedForm10KZTReportInputStream(reportId);
+        }else if(type.equalsIgnoreCase("KZT_FORM_13")){
+            return getConsolidatedForm13KZTReportInputStream(reportId);
+        }else if(type.equalsIgnoreCase("KZT_FORM_14")){
+            return getConsolidatedForm14KZTReportInputStream(reportId);
+        }else if(type.equalsIgnoreCase("KZT_FORM_19")){
+            return getConsolidatedForm19KZTReportInputStream(reportId);
+        }else if(type.equalsIgnoreCase("KZT_FORM_22")){
+            return getConsolidatedForm22KZTReportInputStream(reportId);
         }
 
         return null;
@@ -1763,7 +1785,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 }
 
                 // TODO: compare PREV CURRENT ????
-                if(record.isBecameZero()){
+                if(currentRecord.isBecameZero()){
                     record.setDebtTurnover(record.getDebtStartPeriod() != null ? 0 - record.getDebtStartPeriod().doubleValue() : null);
                 }
 
@@ -1975,6 +1997,20 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         }
     }
 
+    private boolean equalRecords(ConsolidatedBalanceFormRecordDto record1, ConsolidatedBalanceFormRecordDto record2){
+        if((record1.getAccountNumber() == null && record2.getAccountNumber() != null) ||
+                (record2.getAccountNumber() == null && record1.getAccountNumber() != null)){
+            return false;
+        }
+        boolean accountNumberCheck = (record1.getAccountNumber() == null && record2.getAccountNumber() == null) ||
+                record1.getAccountNumber() != null && record2.getAccountNumber() != null &&
+                record1.getAccountNumber().equalsIgnoreCase(record2.getAccountNumber());
+        return accountNumberCheck && record1.getName() != null && record2.getName() != null &&
+                record1.getName().equalsIgnoreCase(record2.getName()) &&
+                record1.getLineNumber() != null && record2.getLineNumber() != null &&
+                record1.getLineNumber() == record2.getLineNumber();
+    }
+
     @Override
     public List<ConsolidatedBalanceFormRecordDto> getConsolidatedBalanceKZTForm1(Long reportId) {
         PeriodicReport currentReport = this.periodReportRepository.findOne(reportId);
@@ -1998,10 +2034,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                     for(ConsolidatedBalanceFormRecordDto previousRecord: previousRecords){
                         for(int i = 0; i < currentRecrods.size(); i++){
                             ConsolidatedBalanceFormRecordDto currentRecord = currentRecrods.get(i);
-                            if(currentRecord.getName() != null && previousRecord.getName() != null &&
-                                    currentRecord.getName().equalsIgnoreCase(previousRecord.getName()) &&
-                                    currentRecord.getLineNumber() != null && previousRecord.getLineNumber() != null &&
-                                    currentRecord.getLineNumber() == previousRecord.getLineNumber()){
+                            if(equalRecords(currentRecord, previousRecord)){
                                 currentRecord.setPreviousAccountBalance(previousRecord.getCurrentAccountBalance());
                                 break;
                             }
@@ -2211,7 +2244,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         if(reserveCalculations != null){
             BigDecimal sum = new BigDecimal("0");
             for(ReserveCalculationDto reserveCalculationDto: reserveCalculations){
-                sum = sum.add(new BigDecimal(reserveCalculationDto.getAmountKZT() != null ? reserveCalculationDto.getAmountKZT().doubleValue() : 0));
+                if(reserveCalculationDto.getDate().compareTo(currentReport.getReportDate()) < 0) {
+                    sum = sum.add(new BigDecimal(reserveCalculationDto.getAmountKZT() != null ? reserveCalculationDto.getAmountKZT().doubleValue() : 0));
+                }
             }
             record5021_010 = sum.setScale(2, RoundingMode.HALF_UP).doubleValue() - record5022_010;
         }
@@ -2283,9 +2318,11 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             }else if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(record5021_010AccountNumber) &&
                     record.getName().equalsIgnoreCase(record5021_010Name)){
                 record.setCurrentAccountBalance(record5021_010);
+                record.setOtherEntityName("НБРК");
             }else if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(record5022_010AccountNumber) &&
                     record.getName().equalsIgnoreCase(record5022_010Name)){
                 record.setCurrentAccountBalance(record5022_010);
+                record.setOtherEntityName("НИК");
             }else if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(record5450_010AccountNumber) &&
                     record.getName().equalsIgnoreCase(record5450_010Name)){
                 record.setCurrentAccountBalance(record5450_010);
@@ -2334,6 +2371,32 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             }
         }
 
+        double totalSumCheck = 0;
+        int correctionRecordIndex = 0;
+        double value = 0;
+        for(int i = 0; i < records.size(); i++){
+            ConsolidatedBalanceFormRecordDto record = records.get(i);
+            if(record.getAccountNumber() == null && record.getLineNumber() != null && record.getLineNumber() == 26){
+                totalSumCheck = MathUtils.add(totalSumCheck, record.getCurrentAccountBalance());
+            }else if(record.getAccountNumber() == null && record.getLineNumber() != null &&
+                    (record.getLineNumber() == 27 || record.getLineNumber() == 45 || record.getLineNumber() == 50)){
+                totalSumCheck = MathUtils.subtract(totalSumCheck, record.getCurrentAccountBalance());
+            }else if(record.getLineNumber() != null && record.getLineNumber() == 49 && record.getAccountNumber()!= null &&
+                    record.getAccountNumber().equalsIgnoreCase("5440.010")){
+                totalSumCheck = MathUtils.subtract(totalSumCheck, record.getCurrentAccountBalance());
+            }else if(record.getLineNumber() != null && record.getLineNumber() == 49 && record.getAccountNumber()!= null &&
+                    record.getAccountNumber().equalsIgnoreCase("5450.010")){
+                correctionRecordIndex = i;
+                value = record.getCurrentAccountBalance();
+            }
+        }
+
+        double difference = MathUtils.subtract(value, totalSumCheck);
+        if(difference > -1 && difference < 1 && correctionRecordIndex > 0){
+            records.get(correctionRecordIndex).setCurrentAccountBalance(totalSumCheck);
+        }else if(difference > 1 || difference < -1){
+            // TODO: error ?
+        }
 
         return records;
     }
@@ -2446,10 +2509,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                     for(ConsolidatedBalanceFormRecordDto previousRecord: previousRecords){
                         for(int i = 0; i < records.size(); i++){
                             ConsolidatedBalanceFormRecordDto currentRecord = records.get(i);
-                            if(currentRecord.getName() != null && previousRecord.getName() != null &&
-                                    currentRecord.getName().equalsIgnoreCase(previousRecord.getName()) &&
-                                    currentRecord.getLineNumber() != null && previousRecord.getLineNumber() != null &&
-                                    currentRecord.getLineNumber() == previousRecord.getLineNumber()){
+                            if(equalRecords(currentRecord, previousRecord)){
                                 currentRecord.setPreviousAccountBalance(previousRecord.getCurrentAccountBalance());
                                 break;
                             }
@@ -2499,15 +2559,24 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 if (previousReport != null) {
                     List<ConsolidatedBalanceFormRecordDto> previousRecords = getConsolidatedBalanceKZTForm3Saved(previousReport.getId());
                     if (previousRecords != null) {
+                        double added = 0;
                         for (ConsolidatedBalanceFormRecordDto currentRecord : currentRecords) {
                             for (ConsolidatedBalanceFormRecordDto prevRecord : previousRecords) {
-                                if(currentRecord.getName() != null && currentRecord.getLineNumber() != null &&
-                                        prevRecord.getName() != null && prevRecord.getLineNumber() != null &&
-                                        currentRecord.getName().equalsIgnoreCase(prevRecord.getName()) &&
-                                        currentRecord.getLineNumber() == prevRecord.getLineNumber()){
+                                if(equalRecords(currentRecord, prevRecord)){
                                     currentRecord.setPreviousAccountBalance(prevRecord.getCurrentAccountBalance());
+                                    if(currentRecord.getLineNumber() != null && currentRecord.getLineNumber() == 5 &&
+                                            ((currentRecord.getSubLineNumber() == null || currentRecord.getSubLineNumber() == 1))){
+                                        currentRecord.setCurrentAccountBalance(MathUtils.add(currentRecord.getCurrentAccountBalance(), currentRecord.getPreviousAccountBalance()));
+                                        added = currentRecord.getPreviousAccountBalance();
+                                    }
                                     break;
                                 }
+                            }
+                        }
+
+                        for (ConsolidatedBalanceFormRecordDto currentRecord : currentRecords) {
+                            if(currentRecord.getLineNumber() != null && (currentRecord.getLineNumber() == 6 || currentRecord.getLineNumber() == 7)){
+                                currentRecord.setCurrentAccountBalance(MathUtils.add(currentRecord.getCurrentAccountBalance(), added));
                             }
                         }
                     }
@@ -2808,10 +2877,13 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             BigDecimal sumKZTInitial = new BigDecimal("0");
             BigDecimal sumKZTOnReportDate = new BigDecimal("0");
             for(ReserveCalculationDto reserveCalculationDto: reserveCalculations){
-                sumKZTInitial = sumKZTInitial.add(new BigDecimal(reserveCalculationDto.getAmountKZT() != null ? reserveCalculationDto.getAmountKZT().doubleValue() : 0));
-                BigDecimal calculatedAmount = reserveCalculationDto.getAmount() != null ?
-                        new BigDecimal(reserveCalculationDto.getAmount().doubleValue()).multiply(new BigDecimal(currencyRatesDto.getValue())) : new BigDecimal("0");
-                sumKZTOnReportDate = sumKZTOnReportDate.add(calculatedAmount);
+                if(reserveCalculationDto.getDate().compareTo(reportDate) < 0) {
+                    sumKZTInitial = sumKZTInitial.add(new BigDecimal(reserveCalculationDto.getAmountKZT() != null ? reserveCalculationDto.getAmountKZT().doubleValue() : 0));
+                    BigDecimal calculatedAmount = reserveCalculationDto.getAmount() != null ?
+                            new BigDecimal(reserveCalculationDto.getAmount().doubleValue()).multiply(new BigDecimal(currencyRatesDto.getValue())) : new BigDecimal("0");
+
+                    sumKZTOnReportDate = sumKZTOnReportDate.add(calculatedAmount);
+                }
             }
             total = total.add(sumKZTOnReportDate).subtract(sumKZTInitial);
         }
@@ -3033,14 +3105,18 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         List<ScheduleInvestmentsDto> currentPeriodInvestments = this.scheduleInvestmentService.getScheduleInvestments(report.getId());
         if(currentPeriodInvestments != null) {
             for (ScheduleInvestmentsDto investmentsDto: currentPeriodInvestments) {
-                if(investmentsDto.getNetCost() != null && investmentsDto.getNetCost().doubleValue() != 0 &&
-                        (investmentsDto.getTotalSum() == null || !investmentsDto.getTotalSum().booleanValue())) {
+                if(investmentsDto.getTotalSum() == null || !investmentsDto.getTotalSum().booleanValue()) {
                     double previousValue = fundTurnoverPE.get(investmentsDto.getName()) != null ? fundTurnoverPE.get(investmentsDto.getName()).doubleValue() : 0;
                     double currentValue = investmentsDto.getNetCost() != null ? investmentsDto.getNetCost().doubleValue() : 0;
                     if (investmentsDto.getTranche() == 1) {
                         currentValue = currentValue * 0.99;
                     }
-                    fundTurnoverPE.put(investmentsDto.getName(), currentValue - previousValue);
+                    if(currentValue == 0){
+                        // net cost is zero in current schedule of investments
+                        fundTurnoverPE.put(investmentsDto.getName(), null);
+                    }else {
+                        fundTurnoverPE.put(investmentsDto.getName(), currentValue - previousValue);
+                    }
                 }
             }
         }
@@ -3061,7 +3137,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             if(noalRecordDto.getTransaction() != null && noalRecordDto.getTransaction().equalsIgnoreCase("Portfolio Fund Redemption/Withdrawal - Corp") &&
                     noalRecordDto.getName() != null &&DateUtils.getDateFormatted(noalRecordDto.getDate()).equalsIgnoreCase(DateUtils.getDateFormatted(date))){
                 double value = fundTurnoverHF.get(noalRecordDto.getName()) != null ? fundTurnoverHF.get(noalRecordDto.getName()).doubleValue() : 0;
-                value += noalRecordDto.getTransactionAmount() != null ? noalRecordDto.getTransactionAmount().doubleValue() : 0;
+                value = MathUtils.subtract(value, noalRecordDto.getTransactionAmount() != null ? noalRecordDto.getTransactionAmount().doubleValue() : 0);
                 fundTurnoverHF.put(noalRecordDto.getName(), value);
             }
         }
@@ -3085,7 +3161,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         double currValue = currentNoalRecordDto.getTransactionAmount() != null ? currentNoalRecordDto.getTransactionAmount().doubleValue() : 0;
                         if(prevValue != currValue){
                             double value = fundTurnoverHF.get(currentNoalRecordDto.getName()) != null ? fundTurnoverHF.get(currentNoalRecordDto.getName()).doubleValue() : 0;
-                            value += currValue - prevValue;
+                            value = MathUtils.subtract(MathUtils.subtract(value, currValue), prevValue);
                             fundTurnoverHF.put(currentNoalRecordDto.getName(), value);
                         }
 
@@ -3105,7 +3181,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                     String fundName = record.getShortName();
 
                     double value = fundTurnoverHF.get(fundName) != null ? fundTurnoverHF.get(fundName).doubleValue() : 0;
-                    value -= (record.getGLAccountBalance() != null ? record.getGLAccountBalance().doubleValue() : 0);
+                    value = MathUtils.add(value, (record.getGLAccountBalance() != null ? record.getGLAccountBalance().doubleValue() : 0));
                     fundTurnoverHF.put(fundName, value);
                 }
             }
@@ -3119,7 +3195,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                     String fundName = record.getShortName() != null ? record.getShortName() : "";
 
                     double value = fundTurnoverHF.get(fundName) != null ? fundTurnoverHF.get(fundName).doubleValue() : 0;
-                    value += (record.getGLAccountBalance() != null ? record.getGLAccountBalance().doubleValue() : 0);
+                    value = MathUtils.subtract(value, (record.getGLAccountBalance() != null ? record.getGLAccountBalance().doubleValue() : 0));
                     fundTurnoverHF.put(fundName, value);
                 }
             }
@@ -3166,6 +3242,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                             (recordUSD.getCurrentAccountBalance() == null || recordUSD.getCurrentAccountBalance().doubleValue() == 0)){
                         newRecord.setBecameZero(true);
                     }
+
                     newRecord.setName(name);
                     newRecord.setAccountNumber(recordUSD.getAccountNumber());
                     newRecord.setLineNumber(9);
@@ -3176,8 +3253,13 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                     newRecord.setTotalEndPeriod(convertByRate(recordUSD.getCurrentAccountBalance(), endCurrencyRatesDto.getValue()));
 
                     if(recordUSD.getOtherEntityName().startsWith("TARRAGON")) {
-                        newRecord.setDebtTurnover(convertByRate(fundTurnoverPE.get(fundName), endCurrencyRatesDto.getValue()));
-                        fundTurnoverPE.put(fundName, null);
+                        if(fundTurnoverPE.get(fundName) == null) {
+                            newRecord.setDebtTurnover(null);
+                            newRecord.setBecameZero(true);
+                        }else{
+                            newRecord.setDebtTurnover(convertByRate(fundTurnoverPE.get(fundName), endCurrencyRatesDto.getValue()));
+                            fundTurnoverPE.put(fundName, null);
+                        }
                     }else if(recordUSD.getOtherEntityName().startsWith("SINGULAR")){
                         newRecord.setDebtTurnover(convertByRate(fundTurnoverHF.get(fundName), endCurrencyRatesDto.getValue()));
                         fundTurnoverHF.put(fundName, null);
@@ -3195,28 +3277,28 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
         // TODO: need this ???
         // Add missing funds
-//        Set<String> keySet = fundTurnoverPE.keySet();
-//        if(keySet != null){
-//            Iterator<String> iterator = keySet.iterator();
-//            while(iterator.hasNext()){
-//                String fundName = iterator.next();
-//                if(fundTurnoverPE.get(fundName) != null) {
-//                    String name = "Инвестиции в фонд частного капитала";
-//                    ConsolidatedKZTForm7RecordDto newRecord = new ConsolidatedKZTForm7RecordDto();
-//                    newRecord.setName(name);
-//                    newRecord.setAccountNumber("2033.010");
-//                    newRecord.setLineNumber(9);
-//                    newRecord.setEntityName(fundName);
-//                    newRecord.setOtherName("TARRAGON");
-//                    //newRecord.setPurchaseDate();
-//
-//                    newRecord.setTotalEndPeriod(0.0);
-//                    newRecord.setDebtTurnover(convertByRate(fundTurnoverPE.get(fundName), endCurrencyRatesDto.getValue()));
-//
-//                    recordsPE.add( newRecord);
-//                }
-//            }
-//        }
+        Set<String> keySet = fundTurnoverPE.keySet();
+        if(keySet != null){
+            Iterator<String> iterator = keySet.iterator();
+            while(iterator.hasNext()){
+                String fundName = iterator.next();
+                if(fundTurnoverPE.get(fundName) != null) {
+                    String name = "Инвестиции в фонд частного капитала";
+                    ConsolidatedKZTForm7RecordDto newRecord = new ConsolidatedKZTForm7RecordDto();
+                    newRecord.setName(name);
+                    newRecord.setAccountNumber("2033.010");
+                    newRecord.setLineNumber(9);
+                    newRecord.setEntityName(fundName);
+                    newRecord.setOtherName("TARRAGON");
+                    //newRecord.setPurchaseDate();
+
+                    newRecord.setTotalEndPeriod(0.0);
+                    newRecord.setDebtTurnover(convertByRate(fundTurnoverPE.get(fundName), endCurrencyRatesDto.getValue()));
+
+                    recordsPE.add( newRecord);
+                }
+            }
+        }
 //
 //        Set<String> keySet2 = fundTurnoverHF.keySet();
 //        if(keySet != null){
@@ -3885,7 +3967,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         headers.add(new ConsolidatedBalanceFormRecordDto("- резерв на пересчет иностранной валюты по зарубежной деятельности", 5, 1));
         headers.add(new ConsolidatedBalanceFormRecordDto("- прочие", 5, 2));
         headers.add(new ConsolidatedBalanceFormRecordDto("Прочий совокупный доход (сумма строк 3, 4, 5)", 6));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Итого совокупного дохода (сумма строк 1, 5)", 7));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Итого совокупного дохода (сумма строк 1, 6)", 7));
 
         return headers;
     }
@@ -3950,15 +4032,329 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         return recordsMap;
     }
 
-    private InputStream getConsolidatedBalanceUSDReportInputStream(Long reportId){
+    private Map<Integer, List<ConsolidatedBalanceFormRecordDto>> getConsolidatedBalanceKZTForm1Map(Long reportId){
+
+        // TODO: return map from data, not from list ??
+        // TODO: or OK?
+        List<ConsolidatedBalanceFormRecordDto> records = getConsolidatedBalanceKZTForm1(reportId);
+
+        Map<Integer, List<ConsolidatedBalanceFormRecordDto>> recordsMap = new HashedMap();
+        if(records != null){
+            int lineNumber = 0;
+            for(ConsolidatedBalanceFormRecordDto record: records){
+                if(record.getLineNumber() != null){
+                    lineNumber = record.getLineNumber();
+                }
+                if(lineNumber > 0){
+                    if(recordsMap.get(lineNumber) == null){
+                        List<ConsolidatedBalanceFormRecordDto> recordsList = new ArrayList<>();
+                        recordsList.add(record);
+                        recordsMap.put(lineNumber, recordsList);
+                    }else{
+                        recordsMap.get(lineNumber).add(record);
+                    }
+                }else{
+                    logger.error("Consolidated KZT Form 1 - line number is null for one of the records: report id=" + reportId);
+                    throw new IllegalStateException("Consolidated KZT Form 1 - line number is null for one of the records: report id=" + reportId);
+                }
+            }
+        }
+        return recordsMap;
+    }
+
+    private Map<Integer, List<ConsolidatedBalanceFormRecordDto>> getConsolidatedBalanceKZTForm2Map(Long reportId){
+
+        // TODO: return map from data, not from list ??
+        // TODO: or OK?
+        List<ConsolidatedBalanceFormRecordDto> records = getConsolidatedIncomeExpenseKZTForm2(reportId);
+
+        Map<Integer, List<ConsolidatedBalanceFormRecordDto>> recordsMap = new HashedMap();
+        if(records != null){
+            int lineNumber = 0;
+            for(ConsolidatedBalanceFormRecordDto record: records){
+                if(record.getLineNumber() != null){
+                    lineNumber = record.getLineNumber();
+                }
+                if(lineNumber > 0){
+                    if(recordsMap.get(lineNumber) == null){
+                        List<ConsolidatedBalanceFormRecordDto> recordsList = new ArrayList<>();
+                        recordsList.add(record);
+                        recordsMap.put(lineNumber, recordsList);
+                    }else{
+                        recordsMap.get(lineNumber).add(record);
+                    }
+                }else{
+                    logger.error("Consolidated KZT Form 2 - line number is null for one of the records: report id=" + reportId);
+                    throw new IllegalStateException("Consolidated KZT Form 2 - line number is null for one of the records: report id=" + reportId);
+                }
+            }
+        }
+        return recordsMap;
+    }
+
+    private Map<Integer, List<ConsolidatedBalanceFormRecordDto>> getConsolidatedBalanceKZTForm3Map(Long reportId){
+
+        // TODO: return map from data, not from list ??
+        // TODO: or OK?
+        List<ConsolidatedBalanceFormRecordDto> records = getConsolidatedTotalIncomeKZTForm3(reportId);
+
+        Map<Integer, List<ConsolidatedBalanceFormRecordDto>> recordsMap = new HashedMap();
+        if(records != null){
+            int lineNumber = 0;
+            for(ConsolidatedBalanceFormRecordDto record: records){
+                if(record.getLineNumber() != null){
+                    lineNumber = record.getLineNumber();
+                }
+                if(lineNumber > 0){
+                    if(recordsMap.get(lineNumber) == null){
+                        List<ConsolidatedBalanceFormRecordDto> recordsList = new ArrayList<>();
+                        recordsList.add(record);
+                        recordsMap.put(lineNumber, recordsList);
+                    }else{
+                        recordsMap.get(lineNumber).add(record);
+                    }
+                }else{
+                    logger.error("Consolidated KZT Form 3 - line number is null for one of the records: report id=" + reportId);
+                    throw new IllegalStateException("Consolidated KZT Form 3 - line number is null for one of the records: report id=" + reportId);
+                }
+            }
+        }
+        return recordsMap;
+    }
+
+    private Map<Integer, List<ConsolidatedKZTForm7RecordDto>> getConsolidatedBalanceKZTForm7Map(Long reportId){
+
+        // TODO: return map from data, not from list ??
+        // TODO: or OK?
+        List<ConsolidatedKZTForm7RecordDto> records = getConsolidatedBalanceKZTForm7(reportId);
+
+        Map<Integer, List<ConsolidatedKZTForm7RecordDto>> recordsMap = new HashedMap();
+        if(records != null){
+            int lineNumber = 0;
+            for(ConsolidatedKZTForm7RecordDto record: records){
+                if(record.getLineNumber() != null){
+                    lineNumber = record.getLineNumber();
+                }
+                if(lineNumber > 0){
+                    if(recordsMap.get(lineNumber) == null){
+                        List<ConsolidatedKZTForm7RecordDto> recordsList = new ArrayList<>();
+                        recordsList.add(record);
+                        recordsMap.put(lineNumber, recordsList);
+                    }else{
+                        recordsMap.get(lineNumber).add(record);
+                    }
+                }else{
+                    logger.error("Consolidated KZT Form 7 - line number is null for one of the records: report id=" + reportId);
+                    throw new IllegalStateException("Consolidated KZT Form 7 - line number is null for one of the records: report id=" + reportId);
+                }
+            }
+        }
+        return recordsMap;
+    }
+
+    private Map<Integer, List<ConsolidatedKZTForm8RecordDto>> getConsolidatedBalanceKZTForm8Map(Long reportId){
+
+        // TODO: return map from data, not from list ??
+        // TODO: or OK?
+        List<ConsolidatedKZTForm8RecordDto> records = getConsolidatedBalanceKZTForm8(reportId);
+
+        Map<Integer, List<ConsolidatedKZTForm8RecordDto>> recordsMap = new HashedMap();
+        if(records != null){
+            int lineNumber = 0;
+            for(ConsolidatedKZTForm8RecordDto record: records){
+                if(record.getLineNumber() != null){
+                    lineNumber = record.getLineNumber();
+                }
+                if(lineNumber > 0){
+                    if(recordsMap.get(lineNumber) == null){
+                        List<ConsolidatedKZTForm8RecordDto> recordsList = new ArrayList<>();
+                        recordsList.add(record);
+                        recordsMap.put(lineNumber, recordsList);
+                    }else{
+                        recordsMap.get(lineNumber).add(record);
+                    }
+                }else{
+                    logger.error("Consolidated KZT Form 8 - line number is null for one of the records: report id=" + reportId);
+                    throw new IllegalStateException("Consolidated KZT Form 8 - line number is null for one of the records: report id=" + reportId);
+                }
+            }
+        }
+        return recordsMap;
+    }
+
+    private Map<Integer, List<ConsolidatedKZTForm10RecordDto>> getConsolidatedBalanceKZTForm10Map(Long reportId){
+
+        // TODO: return map from data, not from list ??
+        // TODO: or OK?
+        List<ConsolidatedKZTForm10RecordDto> records = getConsolidatedBalanceKZTForm10(reportId);
+
+        Map<Integer, List<ConsolidatedKZTForm10RecordDto>> recordsMap = new HashedMap();
+        if(records != null){
+            int lineNumber = 0;
+            for(ConsolidatedKZTForm10RecordDto record: records){
+                if(record.getLineNumber() != null){
+                    lineNumber = record.getLineNumber();
+                }
+                if(lineNumber > 0){
+                    if(recordsMap.get(lineNumber) == null){
+                        List<ConsolidatedKZTForm10RecordDto> recordsList = new ArrayList<>();
+                        recordsList.add(record);
+                        recordsMap.put(lineNumber, recordsList);
+                    }else{
+                        recordsMap.get(lineNumber).add(record);
+                    }
+                }else{
+                    logger.error("Consolidated KZT Form 10 - line number is null for one of the records: report id=" + reportId);
+                    throw new IllegalStateException("Consolidated KZT Form 10 - line number is null for one of the records: report id=" + reportId);
+                }
+            }
+        }
+        return recordsMap;
+    }
+
+    private Map<Integer, List<ConsolidatedKZTForm13RecordDto>> getConsolidatedBalanceKZTForm13Map(Long reportId){
+
+        // TODO: return map from data, not from list ??
+        // TODO: or OK?
+        List<ConsolidatedKZTForm13RecordDto> records = getConsolidatedBalanceKZTForm13(reportId);
+
+        Map<Integer, List<ConsolidatedKZTForm13RecordDto>> recordsMap = new HashedMap();
+        if(records != null){
+            int lineNumber = 0;
+            for(ConsolidatedKZTForm13RecordDto record: records){
+                if(record.getLineNumber() != null){
+                    lineNumber = record.getLineNumber();
+                }
+                if(lineNumber > 0){
+                    if(recordsMap.get(lineNumber) == null){
+                        List<ConsolidatedKZTForm13RecordDto> recordsList = new ArrayList<>();
+                        recordsList.add(record);
+                        recordsMap.put(lineNumber, recordsList);
+                    }else{
+                        recordsMap.get(lineNumber).add(record);
+                    }
+                }else{
+                    logger.error("Consolidated KZT Form 13 - line number is null for one of the records: report id=" + reportId);
+                    throw new IllegalStateException("Consolidated KZT Form 13 - line number is null for one of the records: report id=" + reportId);
+                }
+            }
+        }
+        return recordsMap;
+    }
+
+    private Map<Integer, List<ConsolidatedKZTForm14RecordDto>> getConsolidatedBalanceKZTForm14Map(Long reportId){
+
+        // TODO: return map from data, not from list ??
+        // TODO: or OK?
+        List<ConsolidatedKZTForm14RecordDto> records = getConsolidatedBalanceKZTForm14(reportId);
+
+        Map<Integer, List<ConsolidatedKZTForm14RecordDto>> recordsMap = new HashedMap();
+        if(records != null){
+            int lineNumber = 0;
+            for(ConsolidatedKZTForm14RecordDto record: records){
+                if(record.getLineNumber() != null){
+                    lineNumber = record.getLineNumber();
+                }
+                if(lineNumber > 0){
+                    if(recordsMap.get(lineNumber) == null){
+                        List<ConsolidatedKZTForm14RecordDto> recordsList = new ArrayList<>();
+                        recordsList.add(record);
+                        recordsMap.put(lineNumber, recordsList);
+                    }else{
+                        recordsMap.get(lineNumber).add(record);
+                    }
+                }else{
+                    logger.error("Consolidated KZT Form 14 - line number is null for one of the records: report id=" + reportId);
+                    throw new IllegalStateException("Consolidated KZT Form 14 - line number is null for one of the records: report id=" + reportId);
+                }
+            }
+        }
+        return recordsMap;
+    }
+
+    private Map<Integer, List<ConsolidatedKZTForm19RecordDto>> getConsolidatedBalanceKZTForm19Map(Long reportId){
+
+        // TODO: return map from data, not from list ??
+        // TODO: or OK?
+        List<ConsolidatedKZTForm19RecordDto> records = getConsolidatedBalanceKZTForm19(reportId);
+
+        Map<Integer, List<ConsolidatedKZTForm19RecordDto>> recordsMap = new HashedMap();
+        if(records != null){
+            int lineNumber = 0;
+            for(ConsolidatedKZTForm19RecordDto record: records){
+                if(record.getLineNumber() != null){
+                    lineNumber = record.getLineNumber();
+                }
+                if(lineNumber > 0){
+                    if(recordsMap.get(lineNumber) == null){
+                        List<ConsolidatedKZTForm19RecordDto> recordsList = new ArrayList<>();
+                        recordsList.add(record);
+                        recordsMap.put(lineNumber, recordsList);
+                    }else{
+                        recordsMap.get(lineNumber).add(record);
+                    }
+                }else{
+                    logger.error("Consolidated KZT Form 19 - line number is null for one of the records: report id=" + reportId);
+                    throw new IllegalStateException("Consolidated KZT Form 19 - line number is null for one of the records: report id=" + reportId);
+                }
+            }
+        }
+        return recordsMap;
+    }
+
+    private Map<Integer, List<ConsolidatedKZTForm22RecordDto>> getConsolidatedBalanceKZTForm22Map(Long reportId){
+
+        // TODO: return map from data, not from list ??
+        // TODO: or OK?
+        List<ConsolidatedKZTForm22RecordDto> records = getConsolidatedBalanceKZTForm22(reportId);
+
+        Map<Integer, List<ConsolidatedKZTForm22RecordDto>> recordsMap = new HashedMap();
+        if(records != null){
+            int lineNumber = 0;
+            for(ConsolidatedKZTForm22RecordDto record: records){
+                if(record.getLineNumber() != null){
+                    lineNumber = record.getLineNumber();
+                }
+                if(lineNumber > 0){
+                    if(recordsMap.get(lineNumber) == null){
+                        List<ConsolidatedKZTForm22RecordDto> recordsList = new ArrayList<>();
+                        recordsList.add(record);
+                        recordsMap.put(lineNumber, recordsList);
+                    }else{
+                        recordsMap.get(lineNumber).add(record);
+                    }
+                }else{
+                    logger.error("Consolidated KZT Form 22 - line number is null for one of the records: report id=" + reportId);
+                    throw new IllegalStateException("Consolidated KZT Form 22 - line number is null for one of the records: report id=" + reportId);
+                }
+            }
+        }
+        return recordsMap;
+    }
+
+    private InputStream getConsolidatedBalanceUSDReportInputStream(Long reportId) {
+        PeriodicReport report = this.periodReportRepository.findOne(reportId);
+        if(report == null){
+            logger.error("No report found for id=" + reportId);
+            return null;
+        }
+
         Map<Integer, List<ConsolidatedBalanceFormRecordDto>> recordsMap = getConsolidatedBalanceUSDFormMap(reportId);
 
-        String tempaltePath = "C:\\Users\\magzumov\\Desktop\\TEMPLATE_ NICKMF_cons_USD.xlsx";
-
-        InputStream ExcelFileToRead = null;
+        Resource resource = new ClassPathResource("export_template/TEMPLATE_NICKMF_cons_USD_1.xlsx");
+        File file = null;
         try {
-            ExcelFileToRead = new FileInputStream(tempaltePath);
-            XSSFWorkbook  workbook = new XSSFWorkbook(ExcelFileToRead);
+            file = resource.getFile();
+        } catch (IOException e) {
+            logger.error("Reporting: Export file template not found: 'TEMPLATE_NICKMF_cons_USD_1.xlsx'");
+            return null;
+            //e.printStackTrace();
+        }
+
+        InputStream excelFileToRead = null;
+        try {
+            excelFileToRead = new FileInputStream(file);
+            XSSFWorkbook  workbook = new XSSFWorkbook(excelFileToRead);
             XSSFSheet sheet = workbook.getSheetAt(0);
             Iterator<Row> rowIterator = sheet.iterator();
             int rows = sheet.getLastRowNum();
@@ -4027,11 +4423,13 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                     }
 
                     //rowNum++;
-                }
-                if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "Номер группы субсчетов") &&
+                }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "Номер группы субсчетов") &&
                         ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(1), "Наименование группы субсчетов") &&
                         ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), "Код строки")){
                     startOfTable = true;
+                }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "по состоянию на дату")){
+                    String date = DateUtils.getDateRussianTextualDate(report.getReportDate());
+                    row.getCell(0).setCellValue("по состоянию на " + date);
                 }
             }
 
@@ -4055,22 +4453,40 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             InputStream inputStream = new FileInputStream(filePath);
             return inputStream;
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            // TODO: log error
+            //e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
+
+            // TODO: log error
+            //e.printStackTrace();
         }
 
         return null;
     }
 
     private InputStream getConsolidatedIncomeExpenseUSDReportInputStream(Long reportId){
+
+        PeriodicReport report = this.periodReportRepository.findOne(reportId);
+        if(report == null){
+            logger.error("No report found for id=" + reportId);
+            return null;
+        }
+
         Map<Integer, List<ConsolidatedBalanceFormRecordDto>> recordsMap = getConsolidatedIncomeExpenseUSDFormMap(reportId);
 
-        String tempaltePath = "C:\\Users\\magzumov\\Desktop\\TEMPLATE_ NICKMF_cons_USD_опиу.xlsx";
+        Resource resource = new ClassPathResource("export_template/TEMPLATE_NICKMF_cons_USD_2.xlsx");
+        File file = null;
+        try {
+            file = resource.getFile();
+        } catch (IOException e) {
+            logger.error("Reporting: Export file template not found: 'TEMPLATE_NICKMF_cons_USD_2.xlsx'");
+            return null;
+            //e.printStackTrace();
+        }
 
         InputStream ExcelFileToRead = null;
         try {
-            ExcelFileToRead = new FileInputStream(tempaltePath);
+            ExcelFileToRead = new FileInputStream(file);
             XSSFWorkbook  workbook = new XSSFWorkbook(ExcelFileToRead);
             XSSFSheet sheet = workbook.getSheetAt(0);
             Iterator<Row> rowIterator = sheet.iterator();
@@ -4140,11 +4556,13 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                     }
 
                     //rowNum++;
-                }
-                if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "Номер группы субсчетов") &&
+                }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "Номер группы субсчетов") &&
                         ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(1), "Наименование группы субсчетов") &&
                         ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), "Код строки")){
                     startOfTable = true;
+                }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "по состоянию на дату")){
+                    String date = DateUtils.getDateRussianTextualDate(report.getReportDate());
+                    row.getCell(0).setCellValue("по состоянию на " + date);
                 }
             }
 
@@ -4176,15 +4594,27 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         return null;
     }
 
-
     private InputStream getConsolidatedTotalIncomeUSDReportInputStream(Long reportId){
+        PeriodicReport report = this.periodReportRepository.findOne(reportId);
+        if(report == null){
+            logger.error("No report found for id=" + reportId);
+            return null;
+        }
         List<ConsolidatedBalanceFormRecordDto> records = getConsolidatedTotalIncomeUSDForm(reportId);
 
-        String tempaltePath = "C:\\Users\\magzumov\\Desktop\\TEMPLATE_ NICKMF_cons_USD_опсд.xlsx";
+        Resource resource = new ClassPathResource("export_template/TEMPLATE_NICKMF_cons_USD_3.xlsx");
+        File file = null;
+        try {
+            file = resource.getFile();
+        } catch (IOException e) {
+            logger.error("Reporting: Export file template not found: 'TEMPLATE_NICKMF_cons_USD_3.xlsx'");
+            return null;
+            //e.printStackTrace();
+        }
 
         InputStream ExcelFileToRead = null;
         try {
-            ExcelFileToRead = new FileInputStream(tempaltePath);
+            ExcelFileToRead = new FileInputStream(file);
             XSSFWorkbook  workbook = new XSSFWorkbook(ExcelFileToRead);
             XSSFSheet sheet = workbook.getSheetAt(0);
             Iterator<Row> rowIterator = sheet.iterator();
@@ -4208,11 +4638,13 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         }
                     }
 
-                }
-                if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "Наименование показателей") &&
+                }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "Наименование показателей") &&
                         ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(1), "Код строки") &&
                         ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), "На отчетную дату текущего периода")){
                     startOfTable = true;
+                }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "по состоянию на дату")){
+                    String date = DateUtils.getDateRussianTextualDate(report.getReportDate());
+                    row.getCell(0).setCellValue("по состоянию на " + date);
                 }
             }
 
@@ -4243,6 +4675,1573 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
         return null;
     }
+
+    private InputStream getConsolidatedForm1KZTReportInputStream(Long reportId) {
+        PeriodicReport report = this.periodReportRepository.findOne(reportId);
+        if(report == null){
+            logger.error("No report found for id=" + reportId);
+            return null;
+        }
+        Map<Integer, List<ConsolidatedBalanceFormRecordDto>> recordsMap = getConsolidatedBalanceKZTForm1Map(reportId);
+
+        Resource resource = new ClassPathResource("export_template/TEMPLATE_NICKMF_cons_KZT_1.xlsx");
+        File file = null;
+        try {
+            file = resource.getFile();
+        } catch (IOException e) {
+            logger.error("Reporting: Export file template not found: 'TEMPLATE_NICKMF_cons_KZT_1.xlsx'");
+            return null;
+            //e.printStackTrace();
+        }
+
+        InputStream excelFileToRead = null;
+        try {
+            excelFileToRead = new FileInputStream(file);
+            XSSFWorkbook  workbook = new XSSFWorkbook(excelFileToRead);
+            XSSFSheet sheet = workbook.getSheetAt(0);
+            Iterator<Row> rowIterator = sheet.iterator();
+            int rows = sheet.getLastRowNum();
+            //int rowNum = 0;
+            boolean startOfTable = false;
+            boolean endOfTable = false;
+            int addedRecords = 0;
+            while (rowIterator.hasNext() && !endOfTable) { // each row
+                Row row = rowIterator.next();
+                if (startOfTable) {
+                    Cell cell = row.getCell(1);
+                    if (cell != null && ExcelUtils.isCellStringValueEqualIgnoreCase(cell, "Всего обязательства и капитал (сумма строк 35, 43, 51)")) {
+                        endOfTable = true;
+                    }
+                    if (row.getCell(2) != null && row.getCell(2).getCellType() == Cell.CELL_TYPE_STRING && row.getCell(2).getStringCellValue() != null) {
+                        int lineNumber = Integer.parseInt(row.getCell(2).getStringCellValue());
+                        List<ConsolidatedBalanceFormRecordDto> records = recordsMap.get(lineNumber);
+                        int recordsNum = records != null ? records.size() : 0;
+                        if (recordsNum > 0 && row.getCell(1) != null && row.getCell(1).getCellType() == Cell.CELL_TYPE_STRING &&
+                                records.get(0).getName().equalsIgnoreCase(row.getCell(1).getStringCellValue())) {
+                            if(records.get(0).getCurrentAccountBalance() != null) {
+                                row.getCell(4).setCellValue(records.get(0).getCurrentAccountBalance());
+                            }
+                            if(records.get(0).getPreviousAccountBalance() != null) {
+                                row.getCell(5).setCellValue(records.get(0).getPreviousAccountBalance());
+                            }
+                        }
+                        if (recordsNum > 1) {
+                            sheet.shiftRows(row.getRowNum() + 1, rows + addedRecords, recordsNum - 1);
+                            //insertRows(rowNum, row, sheet, records);
+                            int index = 1;
+                            for (int i = 1; i < records.size(); i++) {
+                                Row newRow = sheet.createRow(row.getRowNum() + index);
+                                newRow.createCell(0).setCellValue(records.get(i).getAccountNumber());
+                                newRow.createCell(1).setCellValue(records.get(i).getName());
+                                newRow.createCell(2).setCellType(Cell.CELL_TYPE_STRING);
+                                if (records.get(i).getOtherEntityName() != null) {
+                                    newRow.createCell(3).setCellValue(records.get(i).getOtherEntityName());
+                                } else {
+                                    newRow.createCell(3).setCellType(Cell.CELL_TYPE_STRING);
+                                }
+                                if (records.get(i).getCurrentAccountBalance() != null) {
+                                    newRow.createCell(4).setCellValue(records.get(i).getCurrentAccountBalance());
+                                } else {
+                                    newRow.createCell(4).setCellType(Cell.CELL_TYPE_NUMERIC);
+                                }
+                                if (records.get(i).getPreviousAccountBalance() != null) {
+                                    newRow.createCell(5).setCellValue(records.get(i).getPreviousAccountBalance());
+                                } else {
+                                    newRow.createCell(5).setCellType(Cell.CELL_TYPE_NUMERIC);
+                                }
+
+                                // set styles
+                                newRow.getCell(0).setCellStyle(row.getCell(0).getCellStyle());
+                                newRow.getCell(1).setCellStyle(row.getCell(1).getCellStyle());
+                                newRow.getCell(2).setCellStyle(row.getCell(2).getCellStyle());
+                                newRow.getCell(3).setCellStyle(row.getCell(3).getCellStyle());
+                                if (row.getCell(4) != null && row.getCell(4).getCellStyle() != null) {
+                                    newRow.getCell(4).setCellStyle(row.getCell(4).getCellStyle());
+                                }
+                                newRow.getCell(5).setCellStyle(row.getCell(5).getCellStyle());
+                                index++;
+                                addedRecords++;
+                            }
+                        }
+                    }
+
+                    //rowNum++;
+                }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "Номер группы субсчетов") &&
+                        ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(1), "Наименование группы субсчетов") &&
+                        ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), "Код строки")){
+                    startOfTable = true;
+                }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "по состоянию на дату")){
+                    String date = DateUtils.getDateRussianTextualDate(report.getReportDate());
+                    row.getCell(0).setCellValue("по состоянию на " + date);
+                }
+            }
+
+            //
+            File tmpDir = new File(this.rootDirectory + "/tmp");
+
+            String[]entries = tmpDir.list();
+            if(entries != null) {
+                for (String s : entries) {
+                    File currentFile = new File(tmpDir.getPath(), s);
+                    currentFile.delete();
+                }
+            }
+
+            // write to new
+            String filePath = this.rootDirectory + "/tmp/CONS_KZT_FORM_1_" + new Date().getTime() + ".xlsx";
+            try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
+                workbook.write(outputStream);
+            }
+
+            InputStream inputStream = new FileInputStream(filePath);
+            return inputStream;
+        } catch (FileNotFoundException e) {
+            // TODO: log error
+            //e.printStackTrace();
+        } catch (IOException e) {
+
+            // TODO: log error
+            //e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    private InputStream getConsolidatedForm2KZTReportInputStream(Long reportId) {
+        PeriodicReport report = this.periodReportRepository.findOne(reportId);
+        if(report == null){
+            logger.error("No report found for id=" + reportId);
+            return null;
+        }
+        Map<Integer, List<ConsolidatedBalanceFormRecordDto>> recordsMap = getConsolidatedBalanceKZTForm2Map(reportId);
+
+        Resource resource = new ClassPathResource("export_template/TEMPLATE_NICKMF_cons_KZT_2.xlsx");
+        File file = null;
+        try {
+            file = resource.getFile();
+        } catch (IOException e) {
+            logger.error("Reporting: Export file template not found: 'TEMPLATE_NICKMF_cons_KZT_2.xlsx'");
+            return null;
+            //e.printStackTrace();
+        }
+
+        InputStream excelFileToRead = null;
+        try {
+            excelFileToRead = new FileInputStream(file);
+            XSSFWorkbook  workbook = new XSSFWorkbook(excelFileToRead);
+            XSSFSheet sheet = workbook.getSheetAt(0);
+            Iterator<Row> rowIterator = sheet.iterator();
+            int rows = sheet.getLastRowNum();
+            //int rowNum = 0;
+            boolean startOfTable = false;
+            boolean endOfTable = false;
+            int addedRecords = 0;
+            while (rowIterator.hasNext() && !endOfTable) { // each row
+                Row row = rowIterator.next();
+                if (startOfTable) {
+                    Cell cell = row.getCell(1);
+                    if (cell != null && ExcelUtils.isCellStringValueEqualIgnoreCase(cell, "Чистая прибыль (убыток) (сумма строк 18, 19)")) {
+                        endOfTable = true;
+                    }
+                    if (row.getCell(2) != null && row.getCell(2).getCellType() == Cell.CELL_TYPE_NUMERIC && row.getCell(2).getNumericCellValue() > 0) {
+                        int lineNumber = (int) row.getCell(2).getNumericCellValue();
+                        List<ConsolidatedBalanceFormRecordDto> records = recordsMap.get(lineNumber);
+                        int recordsNum = records != null ? records.size() : 0;
+                        if (recordsNum > 0 && row.getCell(1) != null && row.getCell(1).getCellType() == Cell.CELL_TYPE_STRING &&
+                                records.get(0).getName().equalsIgnoreCase(row.getCell(1).getStringCellValue())) {
+                            if(records.get(0).getCurrentAccountBalance() != null) {
+                                row.getCell(4).setCellValue(records.get(0).getCurrentAccountBalance());
+                            }
+                            if(records.get(0).getPreviousAccountBalance() != null) {
+                                row.getCell(5).setCellValue(records.get(0).getPreviousAccountBalance());
+                            }
+                        }
+                        if (recordsNum > 1) {
+                            sheet.shiftRows(row.getRowNum() + 1, rows + addedRecords, recordsNum - 1);
+                            //insertRows(rowNum, row, sheet, records);
+                            int index = 1;
+                            for (int i = 1; i < records.size(); i++) {
+                                Row newRow = sheet.createRow(row.getRowNum() + index);
+                                newRow.createCell(0).setCellValue(records.get(i).getAccountNumber());
+                                newRow.createCell(1).setCellValue(records.get(i).getName());
+                                newRow.createCell(2).setCellType(Cell.CELL_TYPE_STRING);
+                                if (records.get(i).getOtherEntityName() != null) {
+                                    newRow.createCell(3).setCellValue(records.get(i).getOtherEntityName());
+                                } else {
+                                    newRow.createCell(3).setCellType(Cell.CELL_TYPE_STRING);
+                                }
+                                if (records.get(i).getCurrentAccountBalance() != null) {
+                                    newRow.createCell(4).setCellValue(records.get(i).getCurrentAccountBalance());
+                                } else {
+                                    newRow.createCell(4).setCellType(Cell.CELL_TYPE_NUMERIC);
+                                }
+                                if (records.get(i).getPreviousAccountBalance() != null) {
+                                    newRow.createCell(5).setCellValue(records.get(i).getPreviousAccountBalance());
+                                } else {
+                                    newRow.createCell(5).setCellType(Cell.CELL_TYPE_NUMERIC);
+                                }
+
+                                // set styles
+                                newRow.getCell(0).setCellStyle(row.getCell(0).getCellStyle());
+                                newRow.getCell(1).setCellStyle(row.getCell(1).getCellStyle());
+                                newRow.getCell(2).setCellStyle(row.getCell(2).getCellStyle());
+                                newRow.getCell(3).setCellStyle(row.getCell(3).getCellStyle());
+                                if (row.getCell(4) != null && row.getCell(4).getCellStyle() != null) {
+                                    newRow.getCell(4).setCellStyle(row.getCell(4).getCellStyle());
+                                }
+                                newRow.getCell(5).setCellStyle(row.getCell(5).getCellStyle());
+                                index++;
+                                addedRecords++;
+                            }
+                        }
+                    }
+
+                    //rowNum++;
+                }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "Номер группы субсчетов") &&
+                        ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(1), "Наименование группы субсчетов") &&
+                        ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), "Код строки")){
+                    startOfTable = true;
+                }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "по состоянию на дату")){
+                    String date = DateUtils.getDateRussianTextualDate(report.getReportDate());
+                    row.getCell(0).setCellValue("по состоянию на " + date);
+                }
+            }
+
+            //
+            File tmpDir = new File(this.rootDirectory + "/tmp");
+
+            String[]entries = tmpDir.list();
+            if(entries != null) {
+                for (String s : entries) {
+                    File currentFile = new File(tmpDir.getPath(), s);
+                    currentFile.delete();
+                }
+            }
+
+            // write to new
+            String filePath = this.rootDirectory + "/tmp/CONS_KZT_FORM_2_" + new Date().getTime() + ".xlsx";
+            try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
+                workbook.write(outputStream);
+            }
+
+            InputStream inputStream = new FileInputStream(filePath);
+            return inputStream;
+        } catch (FileNotFoundException e) {
+            // TODO: log error
+            //e.printStackTrace();
+        } catch (IOException e) {
+
+            // TODO: log error
+            //e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    private InputStream getConsolidatedForm3KZTReportInputStream(Long reportId) {
+        PeriodicReport report = this.periodReportRepository.findOne(reportId);
+        if(report == null){
+            logger.error("No report found for id=" + reportId);
+            return null;
+        }
+        Map<Integer, List<ConsolidatedBalanceFormRecordDto>> recordsMap = getConsolidatedBalanceKZTForm3Map(reportId);
+
+        Resource resource = new ClassPathResource("export_template/TEMPLATE_NICKMF_cons_KZT_3.xlsx");
+        File file = null;
+        try {
+            file = resource.getFile();
+        } catch (IOException e) {
+            logger.error("Reporting: Export file template not found: 'TEMPLATE_NICKMF_cons_KZT_3.xlsx'");
+            return null;
+            //e.printStackTrace();
+        }
+
+        InputStream excelFileToRead = null;
+        try {
+            excelFileToRead = new FileInputStream(file);
+            XSSFWorkbook  workbook = new XSSFWorkbook(excelFileToRead);
+            XSSFSheet sheet = workbook.getSheetAt(0);
+            Iterator<Row> rowIterator = sheet.iterator();
+
+            boolean startOfTable = false;
+            boolean endOfTable = false;
+            while (rowIterator.hasNext() && !endOfTable) { // each row
+                Row row = rowIterator.next();
+                if (startOfTable) {
+                    Cell cell = row.getCell(0);
+                    if (cell != null && ExcelUtils.isCellStringValueEqualIgnoreCase(cell, "Итого совокупного дохода (сумма строк 1, 6)")) {
+                        endOfTable = true;
+                    }
+                    int lineNumber = 0;
+                    int sublineNumber = 0;
+                    if(row.getCell(1) != null && row.getCell(1).getCellType() == Cell.CELL_TYPE_NUMERIC){
+                        lineNumber = (int) row.getCell(1).getNumericCellValue();
+                    } else if (row.getCell(1) != null && row.getCell(1).getCellType() == Cell.CELL_TYPE_STRING && row.getCell(1).getStringCellValue() != null) {
+                        String lineNumberText = row.getCell(1).getStringCellValue();
+
+                        if (lineNumberText.contains(".")) {
+                            lineNumber = Integer.parseInt(lineNumberText.split("\\.")[0]);
+                            sublineNumber = Integer.parseInt(lineNumberText.split("\\.")[1]);
+                        }
+                    }
+
+                    if(lineNumber > 0){
+                        List<ConsolidatedBalanceFormRecordDto> records = recordsMap.get(lineNumber);
+                        for(ConsolidatedBalanceFormRecordDto record: records){
+                            if(row.getCell(0) != null && row.getCell(0).getCellType() == Cell.CELL_TYPE_STRING &&
+                                    record.getName().equalsIgnoreCase(row.getCell(0).getStringCellValue())){
+                                if(record.getSubLineNumber() == null || (sublineNumber > 0 && record.getSubLineNumber() == sublineNumber)){
+                                        if(record.getCurrentAccountBalance() != null) {
+                                            row.getCell(2).setCellValue(record.getCurrentAccountBalance());
+                                        }
+                                        if(record.getPreviousAccountBalance() != null) {
+                                            row.getCell(3).setCellValue(record.getPreviousAccountBalance());
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                    //rowNum++;
+                }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "Наименование показателей") &&
+                        ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(1), "Код строки")){
+                    startOfTable = true;
+                }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "по состоянию на дату")){
+                    String date = DateUtils.getDateRussianTextualDate(report.getReportDate());
+                    row.getCell(0).setCellValue("по состоянию на " + date);
+                }
+            }
+
+            //
+            File tmpDir = new File(this.rootDirectory + "/tmp");
+
+            String[]entries = tmpDir.list();
+            if(entries != null) {
+                for (String s : entries) {
+                    File currentFile = new File(tmpDir.getPath(), s);
+                    currentFile.delete();
+                }
+            }
+
+            // write to new
+            String filePath = this.rootDirectory + "/tmp/CONS_KZT_FORM_3_" + new Date().getTime() + ".xlsx";
+            try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
+                workbook.write(outputStream);
+            }
+
+            InputStream inputStream = new FileInputStream(filePath);
+            return inputStream;
+        } catch (FileNotFoundException e) {
+            // TODO: log error
+            //e.printStackTrace();
+        } catch (IOException e) {
+
+            // TODO: log error
+            //e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    private InputStream getConsolidatedForm7KZTReportInputStream(Long reportId) {
+        PeriodicReport report = this.periodReportRepository.findOne(reportId);
+        if(report == null){
+            logger.error("No report found for id=" + reportId);
+            return null;
+        }
+        long start = System.currentTimeMillis();
+        Map<Integer, List<ConsolidatedKZTForm7RecordDto>> recordsMap = getConsolidatedBalanceKZTForm7Map(reportId);
+        long end = System.currentTimeMillis();
+        System.out.println((end-start) / 1000 + " seconds - generating report data");
+
+        Resource resource = new ClassPathResource("export_template/TEMPLATE_NICKMF_cons_KZT_7.xlsx");
+        File file = null;
+        try {
+            file = resource.getFile();
+        } catch (IOException e) {
+            logger.error("Reporting: Export file template not found: 'TEMPLATE_NICKMF_cons_KZT_7.xlsx'");
+            return null;
+            //e.printStackTrace();
+        }
+
+        InputStream excelFileToRead = null;
+        try {
+            excelFileToRead = new FileInputStream(file);
+            start = System.currentTimeMillis();
+            XSSFWorkbook  workbook = new XSSFWorkbook(excelFileToRead);
+            end = System.currentTimeMillis();
+            System.out.println((end-start) / 1000 + " seconds -creating workbook instance from template file");
+
+            start = System.currentTimeMillis();
+
+            XSSFSheet sheet = workbook.getSheetAt(0);
+            Iterator<Row> rowIterator = sheet.iterator();
+            int rows = sheet.getLastRowNum();
+            //int rowNum = 0;
+            boolean startOfTable = false;
+            boolean endOfTable = false;
+            int addedRecords = 0;
+            while (rowIterator.hasNext() && !endOfTable) { // each row
+                Row row = rowIterator.next();
+                if (startOfTable) {
+                    if (row.getCell(0) != null && ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "ВСЕГО (сумма строк 1,7)")) {
+                        endOfTable = true;
+                    }
+                    if (row.getCell(2) != null && row.getCell(2).getCellType() == Cell.CELL_TYPE_NUMERIC) {
+                        int lineNumber = (int) row.getCell(2).getNumericCellValue();
+                        List<ConsolidatedKZTForm7RecordDto> records = recordsMap.get(lineNumber);
+                        int recordsNum = records != null ? records.size() : 0;
+                        Cell nameCell = endOfTable ? row.getCell(0) : row.getCell(1);
+                        if (recordsNum > 0 && nameCell != null && nameCell.getCellType() == Cell.CELL_TYPE_STRING &&
+                                records.get(0).getName().equalsIgnoreCase(nameCell.getStringCellValue())) {
+                            // Set cell values
+                            if(records.get(0).getEntityName() != null) {
+                                row.getCell(3).setCellValue(records.get(0).getEntityName());
+                            }
+                            if(records.get(0).getOtherName() != null) {
+                                row.getCell(4).setCellValue(records.get(0).getOtherName());
+                            }
+                            if(records.get(0).getPurchaseDate() != null) {
+                                row.getCell(5).setCellValue(DateUtils.getDateFormatted(records.get(0).getPurchaseDate()));
+                            }
+                            if(records.get(0).getDebtStartPeriod() != null) {
+                                row.getCell(10).setCellValue(records.get(0).getDebtStartPeriod());
+                            }
+                            if(records.get(0).getFairValueAdjustmentsStartPeriod() != null) {
+                                row.getCell(15).setCellValue(records.get(0).getFairValueAdjustmentsStartPeriod());
+                            }
+                            if(records.get(0).getTotalStartPeriod() != null) {
+                                row.getCell(17).setCellValue(records.get(0).getTotalStartPeriod());
+                            }
+                            if(records.get(0).getDebtTurnover() != null) {
+                                row.getCell(19).setCellValue(records.get(0).getDebtTurnover());
+                            }
+                            if(records.get(0).getFairValueAdjustmentsTurnoverPositive() != null) {
+                                row.getCell(24).setCellValue(records.get(0).getFairValueAdjustmentsTurnoverPositive());
+                            }
+                            if(records.get(0).getFairValueAdjustmentsTurnoverNegative() != null) {
+                                row.getCell(25).setCellValue(records.get(0).getFairValueAdjustmentsTurnoverNegative());
+                            }
+                            if(records.get(0).getDebtEndPeriod() != null) {
+                                row.getCell(28).setCellValue(records.get(0).getDebtEndPeriod());
+                            }
+                            if(records.get(0).getFairValueAdjustmentsEndPeriod() != null) {
+                                row.getCell(33).setCellValue(records.get(0).getFairValueAdjustmentsEndPeriod());
+                            }
+                            if(records.get(0).getTotalEndPeriod() != null) {
+                                row.getCell(35).setCellValue(records.get(0).getTotalEndPeriod());
+                            }
+                        }
+                        if (recordsNum > 1) {
+                            sheet.shiftRows(row.getRowNum() + 1, rows + addedRecords, recordsNum - 1);
+                            //insertRows(rowNum, row, sheet, records);
+                            int index = 1;
+                            for (int i = 1; i < records.size(); i++) {
+                                Row newRow = sheet.createRow(row.getRowNum() + index);
+                                newRow.createCell(0).setCellValue(records.get(i).getAccountNumber());
+                                newRow.createCell(1).setCellValue(records.get(i).getName());
+
+                                if(records.get(i).getEntityName() != null) {
+                                    newRow.createCell(3).setCellValue(records.get(i).getEntityName());
+                                }
+                                if(records.get(i).getOtherName() != null) {
+                                    newRow.createCell(4).setCellValue(records.get(i).getOtherName());
+                                }
+                                if(records.get(i).getPurchaseDate() != null) {
+                                    newRow.createCell(5).setCellValue(DateUtils.getDateFormatted(records.get(i).getPurchaseDate()));
+                                }
+                                if(records.get(i).getPurchaseDate() != null) {
+                                    newRow.createCell(5).setCellValue(records.get(i).getPurchaseDate());
+                                }
+                                if(records.get(i).getDebtStartPeriod() != null) {
+                                    newRow.createCell(10).setCellValue(records.get(i).getDebtStartPeriod());
+                                }
+                                if(records.get(i).getFairValueAdjustmentsStartPeriod() != null) {
+                                    newRow.createCell(15).setCellValue(records.get(i).getFairValueAdjustmentsStartPeriod());
+                                }
+                                if(records.get(i).getTotalStartPeriod() != null) {
+                                    newRow.createCell(17).setCellValue(records.get(i).getTotalStartPeriod());
+                                }
+                                if(records.get(i).getDebtTurnover() != null) {
+                                    newRow.createCell(19).setCellValue(records.get(i).getDebtTurnover());
+                                }
+                                if(records.get(i).getFairValueAdjustmentsTurnoverPositive() != null) {
+                                    newRow.createCell(24).setCellValue(records.get(i).getFairValueAdjustmentsTurnoverPositive());
+                                }
+                                if(records.get(i).getFairValueAdjustmentsTurnoverNegative() != null) {
+                                    newRow.createCell(25).setCellValue(records.get(i).getFairValueAdjustmentsTurnoverNegative());
+                                }
+                                if(records.get(i).getDebtEndPeriod() != null) {
+                                    newRow.createCell(28).setCellValue(records.get(i).getDebtEndPeriod());
+                                }
+                                if(records.get(i).getFairValueAdjustmentsEndPeriod() != null) {
+                                    newRow.createCell(33).setCellValue(records.get(i).getFairValueAdjustmentsEndPeriod());
+                                }
+                                if(records.get(i).getTotalEndPeriod() != null) {
+                                    newRow.createCell(35).setCellValue(records.get(i).getTotalEndPeriod());
+                                }
+
+                                // set styles
+                                for(int j = 0; j < 36; j++){
+                                    if(newRow.getCell(j) == null){
+                                        newRow.createCell(j);
+                                    }
+                                    if(row.getCell(j) != null && row.getCell(j).getCellStyle() != null) {
+                                        newRow.getCell(j).setCellStyle(row.getCell(j).getCellStyle());
+                                    }
+                                }
+                                index++;
+                                addedRecords++;
+                            }
+                        }
+                    }
+
+                    //rowNum++;
+                }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "Номер группы субсчетов") &&
+                        ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(1), "Вид финансовых инвестиций") &&
+                        ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), "Код строки")){
+                    startOfTable = true;
+                }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "по состоянию на дату")){
+                    String date = DateUtils.getDateRussianTextualDate(report.getReportDate());
+                    row.getCell(0).setCellValue("по состоянию на " + date);
+                }
+            }
+
+            end = System.currentTimeMillis();
+            System.out.println((end-start) / 1000 + " seconds - updating workbook instance");
+
+            //
+            File tmpDir = new File(this.rootDirectory + "/tmp");
+
+            String[]entries = tmpDir.list();
+            if(entries != null) {
+                for (String s : entries) {
+                    File currentFile = new File(tmpDir.getPath(), s);
+                    currentFile.delete();
+                }
+            }
+
+            start = System.currentTimeMillis();
+            // write to new
+            String filePath = this.rootDirectory + "/tmp/CONS_KZT_FORM_7_" + new Date().getTime() + ".xlsx";
+            try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
+                workbook.write(outputStream);
+            }
+
+            end = System.currentTimeMillis();
+            System.out.println((end-start) / 1000 + " seconds - writing workbook to output file");
+
+            InputStream inputStream = new FileInputStream(filePath);
+            return inputStream;
+        } catch (FileNotFoundException e) {
+            // TODO: log error
+            //e.printStackTrace();
+        } catch (IOException e) {
+
+            // TODO: log error
+            //e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    private InputStream getConsolidatedForm8KZTReportInputStream(Long reportId) {
+        PeriodicReport report = this.periodReportRepository.findOne(reportId);
+        if(report == null){
+            logger.error("No report found for id=" + reportId);
+            return null;
+        }
+        long start = System.currentTimeMillis();
+        Map<Integer, List<ConsolidatedKZTForm8RecordDto>> recordsMap = getConsolidatedBalanceKZTForm8Map(reportId);
+        long end = System.currentTimeMillis();
+        System.out.println((end-start) / 1000 + " seconds - generating report data");
+
+        Resource resource = new ClassPathResource("export_template/TEMPLATE_NICKMF_cons_KZT_8.xlsx");
+        File file = null;
+        try {
+            file = resource.getFile();
+        } catch (IOException e) {
+            logger.error("Reporting: Export file template not found: 'TEMPLATE_NICKMF_cons_KZT_8.xlsx'");
+            return null;
+            //e.printStackTrace();
+        }
+
+        InputStream excelFileToRead = null;
+        try {
+            excelFileToRead = new FileInputStream(file);
+            start = System.currentTimeMillis();
+            XSSFWorkbook  workbook = new XSSFWorkbook(excelFileToRead);
+            end = System.currentTimeMillis();
+            System.out.println((end-start) / 1000 + " seconds -creating workbook instance from template file");
+
+            start = System.currentTimeMillis();
+
+            XSSFSheet sheet = workbook.getSheetAt(0);
+            Iterator<Row> rowIterator = sheet.iterator();
+            int rows = sheet.getLastRowNum();
+            //int rowNum = 0;
+            boolean startOfTable = false;
+            boolean endOfTable = false;
+            int addedRecords = 0;
+            while (rowIterator.hasNext() && !endOfTable) { // each row
+                Row row = rowIterator.next();
+                if (startOfTable) {
+                    if (row.getCell(0) != null && ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "ВСЕГО (сумма строк 1, 10)")) {
+                        endOfTable = true;
+                    }
+                    if (row.getCell(2) != null && row.getCell(2).getCellType() == Cell.CELL_TYPE_NUMERIC) {
+                        int lineNumber = (int) row.getCell(2).getNumericCellValue();
+                        List<ConsolidatedKZTForm8RecordDto> records = recordsMap.get(lineNumber);
+                        int recordsNum = records != null ? records.size() : 0;
+                        Cell nameCell = endOfTable ? row.getCell(0) : row.getCell(1);
+                        if (recordsNum > 0 && nameCell != null && nameCell.getCellType() == Cell.CELL_TYPE_STRING &&
+                                records.get(0).getName().equalsIgnoreCase(nameCell.getStringCellValue())) {
+                            // Set cell values
+                            if(records.get(0).getDebtStartPeriod() != null) {
+                                row.getCell(3).setCellValue(records.get(0).getDebtStartPeriod());
+                            }
+                            if(records.get(0).getDebtEndPeriod() != null) {
+                                row.getCell(4).setCellValue(records.get(0).getDebtEndPeriod());
+                            }
+                            if(records.get(0).getDebtDifference() != null) {
+                                row.getCell(5).setCellValue(records.get(0).getDebtDifference());
+                            }
+                            if(records.get(0).getAgreementDescription() != null) {
+                                row.getCell(6).setCellValue(records.get(0).getAgreementDescription());
+                            }
+                            if(records.get(0).getDebtStartDate() != null) {
+                                row.getCell(7).setCellValue(DateUtils.getDateFormatted(records.get(0).getDebtStartDate()));
+                            }
+                            if(records.get(0).getStartPeriodBalance() != null) {
+                                row.getCell(16).setCellValue(records.get(0).getStartPeriodBalance());
+                            }
+                            if(records.get(0).getEndPeriodBalance() != null) {
+                                row.getCell(17).setCellValue(records.get(0).getEndPeriodBalance());
+                            }
+
+                        }
+                        if (recordsNum > 1) {
+                            sheet.shiftRows(row.getRowNum() + 1, rows + addedRecords, recordsNum - 1);
+                            //insertRows(rowNum, row, sheet, records);
+                            int index = 1;
+                            for (int i = 1; i < records.size(); i++) {
+                                Row newRow = sheet.createRow(row.getRowNum() + index);
+                                newRow.createCell(0).setCellValue(records.get(i).getAccountNumber());
+                                newRow.createCell(1).setCellValue(records.get(i).getName());
+
+                                if(records.get(i).getDebtStartPeriod() != null) {
+                                    newRow.createCell(3).setCellValue(records.get(i).getDebtStartPeriod());
+                                }
+                                if(records.get(i).getDebtEndPeriod() != null) {
+                                    newRow.createCell(4).setCellValue(records.get(i).getDebtEndPeriod());
+                                }
+                                if(records.get(i).getDebtDifference() != null) {
+                                    newRow.createCell(5).setCellValue(records.get(i).getDebtDifference());
+                                }
+                                if(records.get(i).getAgreementDescription() != null) {
+                                    newRow.createCell(6).setCellValue(records.get(i).getAgreementDescription());
+                                }
+                                if(records.get(i).getDebtStartDate() != null) {
+                                    newRow.createCell(7).setCellValue(DateUtils.getDateFormatted(records.get(i).getDebtStartDate()));
+                                }
+                                if(records.get(i).getStartPeriodBalance() != null) {
+                                    newRow.createCell(16).setCellValue(records.get(i).getStartPeriodBalance());
+                                }
+                                if(records.get(i).getEndPeriodBalance() != null) {
+                                    newRow.createCell(17).setCellValue(records.get(i).getEndPeriodBalance());
+                                }
+
+                                // set styles
+                                for(int j = 0; j < 18; j++){
+                                    if(newRow.getCell(j) == null){
+                                        newRow.createCell(j);
+                                    }
+                                    if(row.getCell(j) != null && row.getCell(j).getCellStyle() != null) {
+                                        newRow.getCell(j).setCellStyle(row.getCell(j).getCellStyle());
+                                    }
+                                }
+                                index++;
+                                addedRecords++;
+                            }
+                        }
+                    }
+
+                    //rowNum++;
+                }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "Номер группы субсчетов") &&
+                        ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(1), "Наименование дебитора") &&
+                        ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), "Код строки")){
+                    startOfTable = true;
+                }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "по состоянию на дату")){
+                    String date = DateUtils.getDateRussianTextualDate(report.getReportDate());
+                    row.getCell(0).setCellValue("по состоянию на " + date);
+                }
+            }
+
+            end = System.currentTimeMillis();
+            System.out.println((end-start) / 1000 + " seconds - updating workbook instance");
+
+            //
+            File tmpDir = new File(this.rootDirectory + "/tmp");
+
+            String[]entries = tmpDir.list();
+            if(entries != null) {
+                for (String s : entries) {
+                    File currentFile = new File(tmpDir.getPath(), s);
+                    currentFile.delete();
+                }
+            }
+
+            start = System.currentTimeMillis();
+            // write to new
+            String filePath = this.rootDirectory + "/tmp/CONS_KZT_FORM_7_" + new Date().getTime() + ".xlsx";
+            try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
+                workbook.write(outputStream);
+            }
+
+            end = System.currentTimeMillis();
+            System.out.println((end-start) / 1000 + " seconds - writing workbook to output file");
+
+            InputStream inputStream = new FileInputStream(filePath);
+            return inputStream;
+        } catch (FileNotFoundException e) {
+            // TODO: log error
+            //e.printStackTrace();
+        } catch (IOException e) {
+
+            // TODO: log error
+            //e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    private InputStream getConsolidatedForm10KZTReportInputStream(Long reportId) {
+        PeriodicReport report = this.periodReportRepository.findOne(reportId);
+        if(report == null){
+            logger.error("No report found for id=" + reportId);
+            return null;
+        }
+        long start = System.currentTimeMillis();
+        Map<Integer, List<ConsolidatedKZTForm10RecordDto>> recordsMap = getConsolidatedBalanceKZTForm10Map(reportId);
+        long end = System.currentTimeMillis();
+        System.out.println((end-start) / 1000 + " seconds - generating report data");
+
+        Resource resource = new ClassPathResource("export_template/TEMPLATE_NICKMF_cons_KZT_10.xlsx");
+        File file = null;
+        try {
+            file = resource.getFile();
+        } catch (IOException e) {
+            logger.error("Reporting: Export file template not found: 'TEMPLATE_NICKMF_cons_KZT_10.xlsx'");
+            return null;
+            //e.printStackTrace();
+        }
+
+        InputStream excelFileToRead = null;
+        try {
+            excelFileToRead = new FileInputStream(file);
+            start = System.currentTimeMillis();
+            XSSFWorkbook  workbook = new XSSFWorkbook(excelFileToRead);
+            end = System.currentTimeMillis();
+            System.out.println((end-start) / 1000 + " seconds -creating workbook instance from template file");
+
+            start = System.currentTimeMillis();
+
+            XSSFSheet sheet = workbook.getSheetAt(0);
+            Iterator<Row> rowIterator = sheet.iterator();
+            int rows = sheet.getLastRowNum();
+            //int rowNum = 0;
+            boolean startOfTable = false;
+            boolean endOfTable = false;
+            int addedRecords = 0;
+            while (rowIterator.hasNext() && !endOfTable) { // each row
+                Row row = rowIterator.next();
+                if (startOfTable) {
+                    if (row.getCell(0) != null && ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "ВСЕГО  (сумма строк 1, 4)")) {
+                        endOfTable = true;
+                    }
+
+                    if (row.getCell(2) != null && row.getCell(2).getCellType() == Cell.CELL_TYPE_NUMERIC) {
+                        int lineNumber = (int) row.getCell(2).getNumericCellValue();
+                        List<ConsolidatedKZTForm10RecordDto> records = recordsMap.get(lineNumber);
+                        int recordsNum = records != null ? records.size() : 0;
+                        Cell nameCell = endOfTable ? row.getCell(0) : row.getCell(1);
+                        if (recordsNum > 0 && nameCell != null && nameCell.getCellType() == Cell.CELL_TYPE_STRING &&
+                                records.get(0).getName().equalsIgnoreCase(nameCell.getStringCellValue())) {
+                            // Set cell values
+                            if(records.get(0).getStartPeriodAssets() != null) {
+                                row.getCell(4).setCellValue(records.get(0).getStartPeriodAssets());
+                            }
+                            if(records.get(0).getTurnoverOther() != null) {
+                                row.getCell(14).setCellValue(records.get(0).getTurnoverOther());
+                            }
+                            if(records.get(0).getEndPeriodAssets() != null) {
+                                row.getCell(16).setCellValue(records.get(0).getEndPeriodAssets());
+                            }
+                            if(records.get(0).getStartPeriodBalance() != null) {
+                                row.getCell(24).setCellValue(records.get(0).getStartPeriodBalance());
+                            }
+                            if(records.get(0).getEndPeriodBalance() != null) {
+                                row.getCell(25).setCellValue(records.get(0).getEndPeriodBalance());
+                            }
+
+                        }
+                        if (recordsNum > 1) {
+                            sheet.shiftRows(row.getRowNum() + 1, rows + addedRecords, recordsNum - 1);
+                            //insertRows(rowNum, row, sheet, records);
+                            int index = 1;
+                            for (int i = 1; i < records.size(); i++) {
+                                Row newRow = sheet.createRow(row.getRowNum() + index);
+                                newRow.createCell(0).setCellValue(records.get(i).getAccountNumber());
+                                newRow.createCell(1).setCellValue(records.get(i).getName());
+
+                                if(records.get(0).getStartPeriodAssets() != null) {
+                                    newRow.createCell(4).setCellValue(records.get(0).getStartPeriodAssets());
+                                }
+                                if(records.get(0).getTurnoverOther() != null) {
+                                    newRow.createCell(14).setCellValue(records.get(0).getTurnoverOther());
+                                }
+                                if(records.get(0).getEndPeriodAssets() != null) {
+                                    newRow.createCell(16).setCellValue(records.get(0).getEndPeriodAssets());
+                                }
+                                if(records.get(0).getStartPeriodBalance() != null) {
+                                    newRow.createCell(24).setCellValue(records.get(0).getStartPeriodBalance());
+                                }
+                                if(records.get(0).getEndPeriodBalance() != null) {
+                                    newRow.createCell(25).setCellValue(records.get(0).getEndPeriodBalance());
+                                }
+
+                                // set styles
+                                for(int j = 0; j < 26; j++){
+                                    if(newRow.getCell(j) == null){
+                                        newRow.createCell(j);
+                                    }
+                                    if(row.getCell(j) != null && row.getCell(j).getCellStyle() != null) {
+                                        newRow.getCell(j).setCellStyle(row.getCell(j).getCellStyle());
+                                    }
+                                }
+                                index++;
+                                addedRecords++;
+                            }
+                        }
+                    }
+
+                    //rowNum++;
+                }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "Номер группы субсчетов") &&
+                        ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(1), "Наименование актива/дебитора") &&
+                        ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), "Код строки")){
+                    startOfTable = true;
+                }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "по состоянию на дату")){
+                    String date = DateUtils.getDateRussianTextualDate(report.getReportDate());
+                    row.getCell(0).setCellValue("по состоянию на " + date);
+                }
+            }
+
+            end = System.currentTimeMillis();
+            System.out.println((end-start) / 1000 + " seconds - updating workbook instance");
+
+            //
+            File tmpDir = new File(this.rootDirectory + "/tmp");
+
+            String[]entries = tmpDir.list();
+            if(entries != null) {
+                for (String s : entries) {
+                    File currentFile = new File(tmpDir.getPath(), s);
+                    currentFile.delete();
+                }
+            }
+
+            start = System.currentTimeMillis();
+            // write to new
+            String filePath = this.rootDirectory + "/tmp/CONS_KZT_FORM_10_" + new Date().getTime() + ".xlsx";
+            try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
+                workbook.write(outputStream);
+            }
+
+            end = System.currentTimeMillis();
+            System.out.println((end-start) / 1000 + " seconds - writing workbook to output file");
+
+            InputStream inputStream = new FileInputStream(filePath);
+            return inputStream;
+        } catch (FileNotFoundException e) {
+            // TODO: log error
+            //e.printStackTrace();
+        } catch (IOException e) {
+
+            // TODO: log error
+            //e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    private InputStream getConsolidatedForm13KZTReportInputStream(Long reportId) {
+        PeriodicReport report = this.periodReportRepository.findOne(reportId);
+        if(report == null){
+            logger.error("No report found for id=" + reportId);
+            return null;
+        }
+        long start = System.currentTimeMillis();
+        Map<Integer, List<ConsolidatedKZTForm13RecordDto>> recordsMap = getConsolidatedBalanceKZTForm13Map(reportId);
+        long end = System.currentTimeMillis();
+        System.out.println((end-start) / 1000 + " seconds - generating report data");
+
+        Resource resource = new ClassPathResource("export_template/TEMPLATE_NICKMF_cons_KZT_13.xlsx");
+        File file = null;
+        try {
+            file = resource.getFile();
+        } catch (IOException e) {
+            logger.error("Reporting: Export file template not found: 'TEMPLATE_NICKMF_cons_KZT_13.xlsx'");
+            return null;
+            //e.printStackTrace();
+        }
+
+        InputStream excelFileToRead = null;
+        try {
+            excelFileToRead = new FileInputStream(file);
+            start = System.currentTimeMillis();
+            XSSFWorkbook  workbook = new XSSFWorkbook(excelFileToRead);
+            end = System.currentTimeMillis();
+            System.out.println((end-start) / 1000 + " seconds -creating workbook instance from template file");
+
+            start = System.currentTimeMillis();
+
+            XSSFSheet sheet = workbook.getSheetAt(0);
+            Iterator<Row> rowIterator = sheet.iterator();
+            int rows = sheet.getLastRowNum();
+            //int rowNum = 0;
+            boolean startOfTable = false;
+            boolean endOfTable = false;
+            int addedRecords = 0;
+            while (rowIterator.hasNext() && !endOfTable) { // each row
+                Row row = rowIterator.next();
+                if (startOfTable) {
+                    if (row.getCell(0) != null && ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "ВСЕГО (сумма строк 1, 4)")) {
+                        endOfTable = true;
+                    }
+
+                    if (row.getCell(2) != null && row.getCell(2).getCellType() == Cell.CELL_TYPE_NUMERIC) {
+                        int lineNumber = (int) row.getCell(2).getNumericCellValue();
+                        List<ConsolidatedKZTForm13RecordDto> records = recordsMap.get(lineNumber);
+                        int recordsNum = records != null ? records.size() : 0;
+                        Cell nameCell = endOfTable ? row.getCell(0) : row.getCell(1);
+                        if (recordsNum > 0 && nameCell != null && nameCell.getCellType() == Cell.CELL_TYPE_STRING &&
+                                records.get(0).getName().equalsIgnoreCase(nameCell.getStringCellValue())) {
+                            // Set cell values
+
+                            if(records.get(0).getEntityName() != null) {
+                                row.getCell(3).setCellValue(records.get(0).getEntityName());
+                            }
+                            if(records.get(0).getStartPeriod() != null) {
+                                row.getCell(4).setCellValue(DateUtils.getDateFormatted(records.get(0).getStartPeriod()));
+                            }
+                            if(records.get(0).getEndPeriod() != null) {
+                                row.getCell(5).setCellValue(DateUtils.getDateFormatted(records.get(0).getEndPeriod()));
+                            }
+                            if(records.get(0).getInterestRate() != null) {
+                                row.getCell(6).setCellValue(records.get(0).getInterestRate());
+                            }
+                            if(records.get(0).getInterestPaymentCount() != null) {
+                                row.getCell(7).setCellValue(records.get(0).getInterestPaymentCount());
+                            }
+                            if(records.get(0).getDebtStartPeriod() != null) {
+                                row.getCell(9).setCellValue(records.get(0).getDebtStartPeriod());
+                            }
+                            if(records.get(0).getInterestStartPeriod() != null) {
+                                row.getCell(12).setCellValue(records.get(0).getInterestStartPeriod());
+                            }
+                            if(records.get(0).getTotalStartPeriod() != null) {
+                                row.getCell(15).setCellValue(records.get(0).getTotalStartPeriod());
+                            }
+                            if(records.get(0).getDebtTurnover() != null) {
+                                row.getCell(17).setCellValue(records.get(0).getDebtTurnover());
+                            }
+                            if(records.get(0).getInterestTurnover() != null) {
+                                row.getCell(20).setCellValue(records.get(0).getInterestTurnover());
+                            }
+                            if(records.get(0).getDebtEndPeriod() != null) {
+                                row.getCell(24).setCellValue(records.get(0).getDebtEndPeriod());
+                            }
+                            if(records.get(0).getInterestEndPeriod() != null) {
+                                row.getCell(27).setCellValue(records.get(0).getInterestEndPeriod());
+                            }
+                            if(records.get(0).getTotalEndPeriod() != null) {
+                                row.getCell(30).setCellValue(records.get(0).getTotalEndPeriod());
+                            }
+
+                        }
+                        if (recordsNum > 1) {
+                            sheet.shiftRows(row.getRowNum() + 1, rows + addedRecords, recordsNum - 1);
+                            //insertRows(rowNum, row, sheet, records);
+                            int index = 1;
+                            for (int i = 1; i < records.size(); i++) {
+                                Row newRow = sheet.createRow(row.getRowNum() + index);
+                                newRow.createCell(0).setCellValue(records.get(i).getAccountNumber());
+                                newRow.createCell(1).setCellValue(records.get(i).getName());
+
+                                if(records.get(i).getEntityName() != null) {
+                                    newRow.createCell(3).setCellValue(records.get(i).getEntityName());
+                                }
+                                if(records.get(i).getStartPeriod() != null) {
+                                    newRow.createCell(4).setCellValue(DateUtils.getDateFormatted(records.get(i).getStartPeriod()));
+                                }
+                                if(records.get(i).getEndPeriod() != null) {
+                                    newRow.createCell(5).setCellValue(DateUtils.getDateFormatted(records.get(i).getEndPeriod()));
+                                }
+                                if(records.get(i).getInterestRate() != null) {
+                                    newRow.createCell(6).setCellValue(records.get(i).getInterestRate());
+                                }
+                                if(records.get(i).getInterestPaymentCount() != null) {
+                                    newRow.createCell(7).setCellValue(records.get(i).getInterestPaymentCount());
+                                }
+                                if(records.get(i).getDebtStartPeriod() != null) {
+                                    newRow.createCell(9).setCellValue(records.get(i).getDebtStartPeriod());
+                                }
+                                if(records.get(i).getInterestStartPeriod() != null) {
+                                    newRow.createCell(12).setCellValue(records.get(i).getInterestStartPeriod());
+                                }
+                                if(records.get(i).getTotalStartPeriod() != null) {
+                                    newRow.createCell(15).setCellValue(records.get(i).getTotalStartPeriod());
+                                }
+                                if(records.get(i).getDebtTurnover() != null) {
+                                    newRow.createCell(17).setCellValue(records.get(i).getDebtTurnover());
+                                }
+                                if(records.get(i).getInterestTurnover() != null) {
+                                    newRow.createCell(20).setCellValue(records.get(i).getInterestTurnover());
+                                }
+                                if(records.get(i).getDebtEndPeriod() != null) {
+                                    newRow.createCell(24).setCellValue(records.get(i).getDebtEndPeriod());
+                                }
+                                if(records.get(i).getInterestEndPeriod() != null) {
+                                    newRow.createCell(27).setCellValue(records.get(i).getInterestEndPeriod());
+                                }
+                                if(records.get(i).getTotalEndPeriod() != null) {
+                                    newRow.createCell(30).setCellValue(records.get(i).getTotalEndPeriod());
+                                }
+
+                                // set styles
+                                for(int j = 0; j < 31; j++){
+                                    if(newRow.getCell(j) == null){
+                                        newRow.createCell(j);
+                                    }
+                                    if(row.getCell(j) != null && row.getCell(j).getCellStyle() != null) {
+                                        newRow.getCell(j).setCellStyle(row.getCell(j).getCellStyle());
+                                    }
+                                }
+                                index++;
+                                addedRecords++;
+                            }
+                        }
+                    }
+
+                    //rowNum++;
+                }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "Номер группы субсчетов") &&
+                        ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(1), "Вид финансовых обязательств") &&
+                        ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), "Код строки")){
+                    startOfTable = true;
+                }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "по состоянию на дату")){
+                    String date = DateUtils.getDateRussianTextualDate(report.getReportDate());
+                    row.getCell(0).setCellValue("по состоянию на " + date);
+                }
+            }
+
+            end = System.currentTimeMillis();
+            System.out.println((end-start) / 1000 + " seconds - updating workbook instance");
+
+            //
+            File tmpDir = new File(this.rootDirectory + "/tmp");
+
+            String[]entries = tmpDir.list();
+            if(entries != null) {
+                for (String s : entries) {
+                    File currentFile = new File(tmpDir.getPath(), s);
+                    currentFile.delete();
+                }
+            }
+
+            start = System.currentTimeMillis();
+            // write to new
+            String filePath = this.rootDirectory + "/tmp/CONS_KZT_FORM_13_" + new Date().getTime() + ".xlsx";
+            try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
+                workbook.write(outputStream);
+            }
+
+            end = System.currentTimeMillis();
+            System.out.println((end-start) / 1000 + " seconds - writing workbook to output file");
+
+            InputStream inputStream = new FileInputStream(filePath);
+            return inputStream;
+        } catch (FileNotFoundException e) {
+            // TODO: log error
+            //e.printStackTrace();
+        } catch (IOException e) {
+
+            // TODO: log error
+            //e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    private InputStream getConsolidatedForm14KZTReportInputStream(Long reportId) {
+        PeriodicReport report = this.periodReportRepository.findOne(reportId);
+        if(report == null){
+            logger.error("No report found for id=" + reportId);
+            return null;
+        }
+        long start = System.currentTimeMillis();
+        Map<Integer, List<ConsolidatedKZTForm14RecordDto>> recordsMap = getConsolidatedBalanceKZTForm14Map(reportId);
+        long end = System.currentTimeMillis();
+        System.out.println((end-start) / 1000 + " seconds - generating report data");
+
+        Resource resource = new ClassPathResource("export_template/TEMPLATE_NICKMF_cons_KZT_14.xlsx");
+        File file = null;
+        try {
+            file = resource.getFile();
+        } catch (IOException e) {
+            logger.error("Reporting: Export file template not found: 'TEMPLATE_NICKMF_cons_KZT_14.xlsx'");
+            return null;
+            //e.printStackTrace();
+        }
+
+        InputStream excelFileToRead = null;
+        try {
+            excelFileToRead = new FileInputStream(file);
+            start = System.currentTimeMillis();
+            XSSFWorkbook  workbook = new XSSFWorkbook(excelFileToRead);
+            end = System.currentTimeMillis();
+            System.out.println((end-start) / 1000 + " seconds -creating workbook instance from template file");
+
+            start = System.currentTimeMillis();
+
+            XSSFSheet sheet = workbook.getSheetAt(0);
+            Iterator<Row> rowIterator = sheet.iterator();
+            int rows = sheet.getLastRowNum();
+            //int rowNum = 0;
+            boolean startOfTable = false;
+            boolean endOfTable = false;
+            int addedRecords = 0;
+            while (rowIterator.hasNext() && !endOfTable) { // each row
+                Row row = rowIterator.next();
+                if (startOfTable) {
+                    if (row.getCell(0) != null && ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "ВСЕГО (сумма строк 1, 9)")) {
+                        endOfTable = true;
+                    }
+
+                    if (row.getCell(2) != null && row.getCell(2).getCellType() == Cell.CELL_TYPE_NUMERIC) {
+                        int lineNumber = (int) row.getCell(2).getNumericCellValue();
+                        List<ConsolidatedKZTForm14RecordDto> records = recordsMap.get(lineNumber);
+                        int recordsNum = records != null ? records.size() : 0;
+                        Cell nameCell = endOfTable ? row.getCell(0) : row.getCell(1);
+                        if (recordsNum > 0 && nameCell != null && nameCell.getCellType() == Cell.CELL_TYPE_STRING &&
+                                records.get(0).getName().equalsIgnoreCase(nameCell.getStringCellValue())) {
+                            // Set cell values
+
+                            if(records.get(0).getDebtStartPeriod() != null) {
+                                row.getCell(3).setCellValue(records.get(0).getDebtStartPeriod());
+                            }
+                            if(records.get(0).getDebtEndPeriod() != null) {
+                                row.getCell(4).setCellValue(records.get(0).getDebtEndPeriod());
+                            }
+                            if(records.get(0).getDebtDifference() != null) {
+                                row.getCell(5).setCellValue(records.get(0).getDebtDifference());
+                            }
+                            if(records.get(0).getAgreementDescription() != null) {
+                                row.getCell(6).setCellValue(records.get(0).getAgreementDescription());
+                            }
+                            if(records.get(0).getDebtStartDate() != null) {
+                                row.getCell(7).setCellValue(DateUtils.getDateFormatted(records.get(0).getDebtStartDate()));
+                            }
+
+                        }
+                        if (recordsNum > 1) {
+                            sheet.shiftRows(row.getRowNum() + 1, rows + addedRecords, recordsNum - 1);
+                            //insertRows(rowNum, row, sheet, records);
+                            int index = 1;
+                            for (int i = 1; i < records.size(); i++) {
+                                Row newRow = sheet.createRow(row.getRowNum() + index);
+                                newRow.createCell(0).setCellValue(records.get(i).getAccountNumber());
+                                newRow.createCell(1).setCellValue(records.get(i).getName());
+
+                                if(records.get(i).getDebtStartPeriod() != null) {
+                                    newRow.createCell(3).setCellValue(records.get(i).getDebtStartPeriod());
+                                }
+                                if(records.get(i).getDebtEndPeriod() != null) {
+                                    newRow.createCell(4).setCellValue(records.get(i).getDebtEndPeriod());
+                                }
+                                if(records.get(i).getDebtDifference() != null) {
+                                    newRow.createCell(5).setCellValue(records.get(i).getDebtDifference());
+                                }
+                                if(records.get(i).getAgreementDescription() != null) {
+                                    newRow.createCell(6).setCellValue(records.get(i).getAgreementDescription());
+                                }
+                                if(records.get(i).getDebtStartDate() != null) {
+                                    newRow.createCell(7).setCellValue(DateUtils.getDateFormatted(records.get(i).getDebtStartDate()));
+                                }
+
+                                // set styles
+                                for(int j = 0; j < 12; j++){
+                                    if(newRow.getCell(j) == null){
+                                        newRow.createCell(j);
+                                    }
+                                    if(row.getCell(j) != null && row.getCell(j).getCellStyle() != null) {
+                                        newRow.getCell(j).setCellStyle(row.getCell(j).getCellStyle());
+                                    }
+                                }
+                                index++;
+                                addedRecords++;
+                            }
+                        }
+                    }
+
+                    //rowNum++;
+                }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "Номер группы субсчетов") &&
+                        ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(1), "Наименование кредитора") &&
+                        ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), "Код строки")){
+                    startOfTable = true;
+                }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "по состоянию на дату")){
+                    String date = DateUtils.getDateRussianTextualDate(report.getReportDate());
+                    row.getCell(0).setCellValue("по состоянию на " + date);
+                }
+            }
+
+            end = System.currentTimeMillis();
+            System.out.println((end-start) / 1000 + " seconds - updating workbook instance");
+
+            //
+            File tmpDir = new File(this.rootDirectory + "/tmp");
+
+            String[]entries = tmpDir.list();
+            if(entries != null) {
+                for (String s : entries) {
+                    File currentFile = new File(tmpDir.getPath(), s);
+                    currentFile.delete();
+                }
+            }
+
+            start = System.currentTimeMillis();
+            // write to new
+            String filePath = this.rootDirectory + "/tmp/CONS_KZT_FORM_14_" + new Date().getTime() + ".xlsx";
+            try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
+                workbook.write(outputStream);
+            }
+
+            end = System.currentTimeMillis();
+            System.out.println((end-start) / 1000 + " seconds - writing workbook to output file");
+
+            InputStream inputStream = new FileInputStream(filePath);
+            return inputStream;
+        } catch (FileNotFoundException e) {
+            // TODO: log error
+            //e.printStackTrace();
+        } catch (IOException e) {
+
+            // TODO: log error
+            //e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    private InputStream getConsolidatedForm19KZTReportInputStream(Long reportId) {
+        PeriodicReport report = this.periodReportRepository.findOne(reportId);
+        if(report == null){
+            logger.error("No report found for id=" + reportId);
+            return null;
+        }
+        long start = System.currentTimeMillis();
+        Map<Integer, List<ConsolidatedKZTForm19RecordDto>> recordsMap = getConsolidatedBalanceKZTForm19Map(reportId);
+        long end = System.currentTimeMillis();
+        System.out.println((end-start) / 1000 + " seconds - generating report data");
+
+        Resource resource = new ClassPathResource("export_template/TEMPLATE_NICKMF_cons_KZT_19.xlsx");
+        File file = null;
+        try {
+            file = resource.getFile();
+        } catch (IOException e) {
+            logger.error("Reporting: Export file template not found: 'TEMPLATE_NICKMF_cons_KZT_19.xlsx'");
+            return null;
+            //e.printStackTrace();
+        }
+
+        InputStream excelFileToRead = null;
+        try {
+            excelFileToRead = new FileInputStream(file);
+            start = System.currentTimeMillis();
+            XSSFWorkbook  workbook = new XSSFWorkbook(excelFileToRead);
+            end = System.currentTimeMillis();
+            System.out.println((end-start) / 1000 + " seconds -creating workbook instance from template file");
+
+            start = System.currentTimeMillis();
+
+            XSSFSheet sheet = workbook.getSheetAt(0);
+            Iterator<Row> rowIterator = sheet.iterator();
+            int rows = sheet.getLastRowNum();
+            //int rowNum = 0;
+            boolean startOfTable = false;
+            boolean endOfTable = false;
+            int addedRecords = 0;
+            while (rowIterator.hasNext() && !endOfTable) { // each row
+                Row row = rowIterator.next();
+                if (startOfTable) {
+                    if (row.getCell(0) != null && ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "ВСЕГО (сумма строк 1, 12, 22, 29, 32, 37 и 42)")) {
+                        endOfTable = true;
+                    }
+
+                    if (row.getCell(2) != null && row.getCell(2).getCellType() == Cell.CELL_TYPE_NUMERIC) {
+                        int lineNumber = (int) row.getCell(2).getNumericCellValue();
+                        List<ConsolidatedKZTForm19RecordDto> records = recordsMap.get(lineNumber);
+                        int recordsNum = records != null ? records.size() : 0;
+                        Cell nameCell = endOfTable ? row.getCell(0) : row.getCell(1);
+                        if (recordsNum > 0 && nameCell != null && nameCell.getCellType() == Cell.CELL_TYPE_STRING &&
+                                records.get(0).getName().equalsIgnoreCase(nameCell.getStringCellValue())) {
+                            // Set cell values
+
+                            if(records.get(0).getOtherEntityName() != null) {
+                                row.getCell(3).setCellValue(records.get(0).getOtherEntityName());
+                            }
+                            if(records.get(0).getPreviousAccountBalance() != null) {
+                                row.getCell(4).setCellValue(records.get(0).getPreviousAccountBalance());
+                            }
+                            if(records.get(0).getTurnover() != null) {
+                                row.getCell(5).setCellValue(records.get(0).getTurnover());
+                            }
+                            if(records.get(0).getCurrentAccountBalance() != null) {
+                                row.getCell(6).setCellValue(records.get(0).getCurrentAccountBalance());
+                            }
+                        }
+                        if (recordsNum > 1) {
+                            sheet.shiftRows(row.getRowNum() + 1, rows + addedRecords, recordsNum - 1);
+                            //insertRows(rowNum, row, sheet, records);
+                            int index = 1;
+                            for (int i = 1; i < records.size(); i++) {
+                                Row newRow = sheet.createRow(row.getRowNum() + index);
+                                newRow.createCell(0).setCellValue(records.get(i).getAccountNumber());
+                                newRow.createCell(1).setCellValue(records.get(i).getName());
+
+                                if(records.get(i).getOtherEntityName() != null) {
+                                    newRow.createCell(3).setCellValue(records.get(i).getOtherEntityName());
+                                }
+                                if(records.get(i).getPreviousAccountBalance() != null) {
+                                    newRow.createCell(4).setCellValue(records.get(i).getPreviousAccountBalance());
+                                }
+                                if(records.get(i).getTurnover() != null) {
+                                    newRow.createCell(5).setCellValue(records.get(i).getTurnover());
+                                }
+                                if(records.get(i).getCurrentAccountBalance() != null) {
+                                    newRow.createCell(6).setCellValue(records.get(i).getCurrentAccountBalance());
+                                }
+
+                                // set styles
+                                for(int j = 0; j < 7; j++){
+                                    if(newRow.getCell(j) == null){
+                                        newRow.createCell(j);
+                                    }
+                                    if(row.getCell(j) != null && row.getCell(j).getCellStyle() != null) {
+                                        newRow.getCell(j).setCellStyle(row.getCell(j).getCellStyle());
+                                    }
+                                }
+                                index++;
+                                addedRecords++;
+                            }
+                        }
+                    }
+
+                    //rowNum++;
+                }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "Номер группы субсчетов") &&
+                        ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(1), "Вид финансовых инвестиций") &&
+                        ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), "Код строки")){
+                    startOfTable = true;
+                }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "по состоянию на дату")){
+                    String date = DateUtils.getDateRussianTextualDate(report.getReportDate());
+                    row.getCell(0).setCellValue("по состоянию на " + date);
+                }
+            }
+
+            end = System.currentTimeMillis();
+            System.out.println((end-start) / 1000 + " seconds - updating workbook instance");
+
+            //
+            File tmpDir = new File(this.rootDirectory + "/tmp");
+
+            String[]entries = tmpDir.list();
+            if(entries != null) {
+                for (String s : entries) {
+                    File currentFile = new File(tmpDir.getPath(), s);
+                    currentFile.delete();
+                }
+            }
+
+            start = System.currentTimeMillis();
+            // write to new
+            String filePath = this.rootDirectory + "/tmp/CONS_KZT_FORM_19_" + new Date().getTime() + ".xlsx";
+            try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
+                workbook.write(outputStream);
+            }
+
+            end = System.currentTimeMillis();
+            System.out.println((end-start) / 1000 + " seconds - writing workbook to output file");
+
+            InputStream inputStream = new FileInputStream(filePath);
+            return inputStream;
+        } catch (FileNotFoundException e) {
+            // TODO: log error
+            //e.printStackTrace();
+        } catch (IOException e) {
+
+            // TODO: log error
+            //e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    private InputStream getConsolidatedForm22KZTReportInputStream(Long reportId) {
+        PeriodicReport report = this.periodReportRepository.findOne(reportId);
+        if(report == null){
+            logger.error("No report found for id=" + reportId);
+            return null;
+        }
+        long start = System.currentTimeMillis();
+        Map<Integer, List<ConsolidatedKZTForm22RecordDto>> recordsMap = getConsolidatedBalanceKZTForm22Map(reportId);
+        long end = System.currentTimeMillis();
+        System.out.println((end-start) / 1000 + " seconds - generating report data");
+
+        Resource resource = new ClassPathResource("export_template/TEMPLATE_NICKMF_cons_KZT_22.xlsx");
+        File file = null;
+        try {
+            file = resource.getFile();
+        } catch (IOException e) {
+            logger.error("Reporting: Export file template not found: 'TEMPLATE_NICKMF_cons_KZT_22.xlsx'");
+            return null;
+            //e.printStackTrace();
+        }
+
+        InputStream excelFileToRead = null;
+        try {
+            excelFileToRead = new FileInputStream(file);
+            start = System.currentTimeMillis();
+            XSSFWorkbook  workbook = new XSSFWorkbook(excelFileToRead);
+            end = System.currentTimeMillis();
+            System.out.println((end-start) / 1000 + " seconds -creating workbook instance from template file");
+
+            start = System.currentTimeMillis();
+
+            XSSFSheet sheet = workbook.getSheetAt(0);
+            Iterator<Row> rowIterator = sheet.iterator();
+            int rows = sheet.getLastRowNum();
+            //int rowNum = 0;
+            boolean startOfTable = false;
+            boolean endOfTable = false;
+            int addedRecords = 0;
+            while (rowIterator.hasNext() && !endOfTable) { // each row
+                Row row = rowIterator.next();
+                if (startOfTable) {
+                    if (row.getCell(0) != null && ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "ВСЕГО (сумма строк 1, 2)")) {
+                        endOfTable = true;
+                    }
+
+                    if (row.getCell(2) != null && row.getCell(2).getCellType() == Cell.CELL_TYPE_NUMERIC) {
+                        int lineNumber = (int) row.getCell(2).getNumericCellValue();
+                        List<ConsolidatedKZTForm22RecordDto> records = recordsMap.get(lineNumber);
+                        int recordsNum = records != null ? records.size() : 0;
+                        Cell nameCell = endOfTable ? row.getCell(0) : row.getCell(1);
+                        if (recordsNum > 0 && nameCell != null && nameCell.getCellType() == Cell.CELL_TYPE_STRING &&
+                                records.get(0).getName().equalsIgnoreCase(nameCell.getStringCellValue())) {
+                            // Set cell values
+
+                            if(records.get(0).getPreviousAccountBalance() != null) {
+                                row.getCell(3).setCellValue(records.get(0).getPreviousAccountBalance());
+                            }
+                            if(records.get(0).getTurnover() != null) {
+                                row.getCell(4).setCellValue(records.get(0).getTurnover());
+                            }
+                            if(records.get(0).getCurrentAccountBalance() != null) {
+                                row.getCell(5).setCellValue(records.get(0).getCurrentAccountBalance());
+                            }
+                        }
+                        if (recordsNum > 1) {
+                            sheet.shiftRows(row.getRowNum() + 1, rows + addedRecords, recordsNum - 1);
+                            //insertRows(rowNum, row, sheet, records);
+                            int index = 1;
+                            for (int i = 1; i < records.size(); i++) {
+                                Row newRow = sheet.createRow(row.getRowNum() + index);
+                                newRow.createCell(0).setCellValue(records.get(i).getAccountNumber());
+                                newRow.createCell(1).setCellValue(records.get(i).getName());
+
+                                if(records.get(i).getPreviousAccountBalance() != null) {
+                                    newRow.createCell(3).setCellValue(records.get(i).getPreviousAccountBalance());
+                                }
+                                if(records.get(i).getTurnover() != null) {
+                                    newRow.createCell(4).setCellValue(records.get(i).getTurnover());
+                                }
+                                if(records.get(i).getCurrentAccountBalance() != null) {
+                                    newRow.createCell(5).setCellValue(records.get(i).getCurrentAccountBalance());
+                                }
+
+                                // set styles
+                                for(int j = 0; j < 7; j++){
+                                    if(newRow.getCell(j) == null){
+                                        newRow.createCell(j);
+                                    }
+                                    if(row.getCell(j) != null && row.getCell(j).getCellStyle() != null) {
+                                        newRow.getCell(j).setCellStyle(row.getCell(j).getCellStyle());
+                                    }
+                                }
+                                index++;
+                                addedRecords++;
+                            }
+                        }
+                    }
+
+                    //rowNum++;
+                }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "Номер группы субсчетов") &&
+                        ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(1), "Вид дохода/расхода") &&
+                        ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), "Код строки")){
+                    startOfTable = true;
+                }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "по состоянию на дату")){
+                    String date = DateUtils.getDateRussianTextualDate(report.getReportDate());
+                    row.getCell(0).setCellValue("по состоянию на " + date);
+                }
+            }
+
+            end = System.currentTimeMillis();
+            System.out.println((end-start) / 1000 + " seconds - updating workbook instance");
+
+            //
+            File tmpDir = new File(this.rootDirectory + "/tmp");
+
+            String[]entries = tmpDir.list();
+            if(entries != null) {
+                for (String s : entries) {
+                    File currentFile = new File(tmpDir.getPath(), s);
+                    currentFile.delete();
+                }
+            }
+
+            start = System.currentTimeMillis();
+            // write to new
+            String filePath = this.rootDirectory + "/tmp/CONS_KZT_FORM_22_" + new Date().getTime() + ".xlsx";
+            try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
+                workbook.write(outputStream);
+            }
+
+            end = System.currentTimeMillis();
+            System.out.println((end-start) / 1000 + " seconds - writing workbook to output file");
+
+            InputStream inputStream = new FileInputStream(filePath);
+            return inputStream;
+        } catch (FileNotFoundException e) {
+            // TODO: log error
+            //e.printStackTrace();
+        } catch (IOException e) {
+
+            // TODO: log error
+            //e.printStackTrace();
+        }
+
+        return null;
+    }
+
 
     private boolean deleteParsedFileData(Long reportId, String fileType){
 
@@ -5170,8 +7169,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                                 break;
                             }
 
-                            if(currentRecord.getName().equalsIgnoreCase(previousRecord.getName()) && currentRecord.getLineNumber() != null &&
-                                    previousRecord.getLineNumber() != null && previousRecord.getLineNumber() == currentRecord.getLineNumber()){
+                            if(equalRecords(currentRecord, previousRecord)){
                                 currentRecord.setPreviousAccountBalance(previousRecord.getCurrentAccountBalance());
                                 break;
                             }
@@ -5808,7 +7806,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         headers.add(new ConsolidatedBalanceFormRecordDto("Доходы (расходы) от изменения стоимости ценных бумаг, оцениваемых по справедливой стоимости, изменения которой отражаются в составе прибыли или убытка (6150.010, 7330.010)", 7));
         headers.add(new ConsolidatedBalanceFormRecordDto("Доходы (расходы) от изменения стоимости ценных бумаг, имеющихся в наличии для продажи (6150.020, 6150.030, 7330.020, 7330.030)", 8));
         headers.add(new ConsolidatedBalanceFormRecordDto("Доходы (расходы) от переоценки иностранной валюты (6250, 7430)", 9));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие доходы (6210-6240, 6260, 6270, 6110.010, 6110.020, 6110.080, 6110.140, 6110.260, 6110.270, 6110.320, 6110.330, 6120, 6130, 6140, 6150.040, 6150.050,6160, 6280.040-6280.080, 6290, 6110.150, 6110.160, 6110.280-6110.310) ", 10));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие доходы (6210-6240, 6260, 6270, 6110.010, 6110.020, 6110.080, 6110.140, 6110.260, 6110.270, 6110.320, 6110.330, 6120, 6130, 6140, 6150.040, 6150.050,6160, 6280.040-6280.080, 6290, 6110.150, 6110.160, 6110.280-6110.310)", 10));
         headers.add(new ConsolidatedBalanceFormRecordDto("Расходы в виде вознаграждения по приобретенным ценным бумагам (7310.100-7310.130)", 11));
         headers.add(new ConsolidatedBalanceFormRecordDto("Расходы в виде вознаграждения по полученным займам и финансовой аренде (7310.010-7310.040, 7310.080, 7310.090, 7310.190-7310.220, 7320.010)", 12));
         headers.add(new ConsolidatedBalanceFormRecordDto("Расходы по реализации (7110)", 13));
@@ -5843,9 +7841,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         headers.add(record7330_030);
 
         headers.add(new ConsolidatedBalanceFormRecordDto("Доходы (расходы) от переоценки иностранной валюты (6250, 7430)", 9));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие доходы (6210-6240, 6260, 6270, 6110.010, 6110.020, 6110.080, 6110.140, 6110.260, 6110.270, 6110.320, 6110.330, 6120, 6130, 6140, 6150.040, 6150.050,6160, 6280.040-6280.080, 6290, 6110.150, 6110.160, 6110.280-6110.310) ", 10));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие доходы (6210-6240, 6260, 6270, 6110.010, 6110.020, 6110.080, 6110.140, 6110.260, 6110.270, 6110.320, 6110.330, 6120, 6130, 6140, 6150.040, 6150.050,6160, 6280.040-6280.080, 6290, 6110.150, 6110.160, 6110.280-6110.310, 6400)", 10));
 
-        ConsolidatedBalanceFormRecordDto record6283_080 = new ConsolidatedBalanceFormRecordDto("Прочие расходы", 10);
+        ConsolidatedBalanceFormRecordDto record6283_080 = new ConsolidatedBalanceFormRecordDto("Прочие доходы", 10);
         record6283_080.setAccountNumber("6283.080");
         headers.add(record6283_080);
 
@@ -5858,7 +7856,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
         headers.add(new ConsolidatedBalanceFormRecordDto("Расходы по реализации (7110)", 13));
         headers.add(new ConsolidatedBalanceFormRecordDto("Административные расходы (7210)", 14));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие расходы (7310.050-7310.070, 7310.140-7310.180, 7310.230, 7310.240, 7330.040, 7330.050, 7340.010-7340.030, 7410, 7420, 7440-7460, 7470.040-7470.080, 7480)", 15));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие расходы (7310.050-7310.070, 7310.140-7310.180, 7310.230, 7310.240, 7330.040, 7330.050, 7340.010-7340.030, 7410, 7420, 7440-7460, 7470.040-7470.080, 7480, 7600)", 15));
 
         ConsolidatedBalanceFormRecordDto record7473_080 = new ConsolidatedBalanceFormRecordDto("Прочие расходы", 15);
         record7473_080.setAccountNumber("7473.080");

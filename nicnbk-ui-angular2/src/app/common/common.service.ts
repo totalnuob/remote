@@ -11,11 +11,13 @@ export class CommonService{
     }
 
     public extractData(res: Response) {
+        console.log("extractData");
         let body = res.json();
         return body || {};
     }
 
     public handleErrorResponse (error: any) {
+        console.log("handleErrorResponse");
         var errorResponse = new ErrorResponse;
         if(error.message){
             //console.log(error);

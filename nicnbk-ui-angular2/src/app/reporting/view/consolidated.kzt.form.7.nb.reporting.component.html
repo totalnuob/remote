@@ -37,8 +37,8 @@
 
     <div class="tab-content">
         <div id="short" class="tab-pane fade in active">
-            <div class="row withpadding" style="overflow-y: scroll;">
-                <table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small">
+            <div [ngBusy]="{busy: busyExport, message: 'Exporting...'}" class="row withpadding" style="overflow-y: scroll;">
+                <table [ngBusy]="[busy]" class="table table-hover table-condensed" style="font-size: small">
                     <tr bgcolor="#e7e7e7">
                         <td rowspan="2">Номер группы субсчетов</td>
                         <td rowspan="2">Вид финансовых инвестиций</td>
@@ -145,8 +145,8 @@
                         <!--<td>&nbsp;</td>-->
                         <!--<td>&nbsp;</td>-->
                         <!--<td>&nbsp;</td>-->
-                        <td>{{record.fairValueAdjustmentsTurnover != null && record.fairValueAdjustmentsTurnover >= 0 ? (record.fairValueAdjustmentsTurnover | number:'1.2-2') : ''}}</td>
-                        <td>{{record.fairValueAdjustmentsTurnover != null && record.fairValueAdjustmentsTurnover < 0 ? (record.fairValueAdjustmentsTurnover | number:'1.2-2') : ''}}</td>
+                        <td>{{record.fairValueAdjustmentsTurnoverPositive != null ? (record.fairValueAdjustmentsTurnoverPositive | number:'1.2-2') : ''}}</td>
+                        <td>{{record.fairValueAdjustmentsTurnoverNegative != null ? (record.fairValueAdjustmentsTurnoverNegative | number:'1.2-2') : ''}}</td>
                         <!--<td>&nbsp;</td>-->
                         <!--<td>&nbsp;</td>-->
                         <td>{{record.debtEndPeriod != null && record.debtEndPeriod != 0 ? (record.debtEndPeriod | number:'1.2-2') : ''}}</td>
@@ -164,11 +164,12 @@
 
         <div id="full" class="tab-pane fade">
             <div class="row withpadding">
+                <br/>
                 <button class="btn-xs btn-primary pull-right" (click)="export()"><span class="glyphicon glyphicon-list-alt"></span>&nbsp;Export</button>
             </div>
             <br/>
-            <div class="row withpadding" style="overflow-y: scroll;">
-                <table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small">
+            <div [ngBusy]="{busy: busyExport, message: 'Exporting...'}" class="row withpadding" style="overflow-y: scroll;">
+                <table [ngBusy]="[busy]" class="table table-hover table-condensed" style="font-size: small">
                     <tr bgcolor="#e7e7e7">
                         <td rowspan="2">Номер группы субсчетов</td>
                         <td rowspan="2">Вид финансовых инвестиций</td>
@@ -275,8 +276,8 @@
                         <td>&nbsp;</td>
                         <td>&nbsp;</td>
                         <td>&nbsp;</td>
-                        <td>{{record.fairValueAdjustmentsTurnover != null && record.fairValueAdjustmentsTurnover >= 0 ? (record.fairValueAdjustmentsTurnover | number:'1.2-2') : ''}}</td>
-                        <td>{{record.fairValueAdjustmentsTurnover != null && record.fairValueAdjustmentsTurnover < 0 ? (record.fairValueAdjustmentsTurnover | number:'1.2-2') : ''}}</td>
+                        <td>{{record.fairValueAdjustmentsTurnoverPositive != null ? (record.fairValueAdjustmentsTurnoverPositive | number:'1.2-2') : ''}}</td>
+                        <td>{{record.fairValueAdjustmentsTurnoverNegative != null ? (record.fairValueAdjustmentsTurnoverNegative | number:'1.2-2') : ''}}</td>
                         <td>&nbsp;</td>
                         <td>&nbsp;</td>
                         <td>{{record.debtEndPeriod != null && record.debtEndPeriod != 0 ? (record.debtEndPeriod | number:'1.2-2') : ''}}</td>

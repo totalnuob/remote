@@ -96,9 +96,10 @@
                 <br/>
                 <button class="btn-xs btn-primary pull-right" (click)="export()"><span class="glyphicon glyphicon-list-alt"></span>&nbsp;Export</button>
             </div>
+
             <br/>
-            <div class="row withpadding" style="overflow-y: scroll;">
-                <table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small">
+            <div [ngBusy]="{busy: busyExport, message: 'Exporting...'}" class="row withpadding" style="overflow-y: scroll;">
+                <table [ngBusy]="[busy]" class="table table-hover table-condensed" style="font-size: small">
                     <tr bgcolor="#e7e7e7">
                         <td rowspan="3">Номер группы субсчетов</td>
                         <td rowspan="3">Наименование актива/дебитора</td>

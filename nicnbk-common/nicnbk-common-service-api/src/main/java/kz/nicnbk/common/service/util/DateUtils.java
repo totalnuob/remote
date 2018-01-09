@@ -2,9 +2,13 @@ package kz.nicnbk.common.service.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 /**
  * Created by magzumov on 05.01.2017.
@@ -146,5 +150,22 @@ public class DateUtils {
 
     public static Date getDateOnly(Date date){
         return getDate(getDateFormatted(date));
+    }
+
+    public static String getDateRussianTextualDate(Date date){
+        int day = getDay(date);
+        int month = getMonth(date);
+        int year = getYear(date);
+
+        if(month < 11){
+            month = month + 2;
+        }else{
+            // за декабрь - 1 января
+            month = 1;
+            year = year + 1;
+        }
+
+        String dateRu = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(new Locale("ru")).format(LocalDate.of(year, month, 1));
+        return dateRu;
     }
 }

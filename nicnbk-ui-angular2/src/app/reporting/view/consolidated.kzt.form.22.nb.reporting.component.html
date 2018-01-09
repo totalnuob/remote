@@ -35,8 +35,8 @@
         <button class="btn-xs btn-primary pull-right" (click)="export()"><span class="glyphicon glyphicon-list-alt"></span>&nbsp;Export</button>
     </div>
     <br/>
-    <div class="row withpadding">
-        <table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small">
+    <div [ngBusy]="{busy: busyExport, message: 'Exporting...'}" class="row withpadding">
+        <table [ngBusy]="[busy]" class="table table-hover table-condensed" style="font-size: small">
             <tr bgcolor="#e7e7e7">
                 <td>Номер группы субсчетов</td>
                 <td>Наименование группы субсчетов</td>

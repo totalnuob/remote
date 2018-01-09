@@ -35,8 +35,8 @@
         <button class="btn-xs btn-primary pull-right" (click)="export()"><span class="glyphicon glyphicon-list-alt"></span>&nbsp;Export</button>
     </div>
     <br/>
-    <div class="row withpadding">
-        <table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small">
+    <div [ngBusy]="{busy: busyExport, message: 'Exporting...'}" class="row withpadding">
+        <table [ngBusy]="[busy]" class="table table-hover table-condensed" style="font-size: small">
             <tr bgcolor="#e7e7e7">
                 <td>Наименование показателей</td>
                 <td>Код строки</td>
@@ -51,7 +51,7 @@
             </tr>
             <tr *ngFor="let record of records">
                 <td>{{record.name}}</td>
-                <td>{{record.lineNumber}}</td>
+                <td>{{record.subLineNumber == null ? record.lineNumber : record.lineNumber + '.' + record.subLineNumber}}</td>
                 <td>{{record.currentAccountBalance != null && record.currentAccountBalance != 0 ? (record.currentAccountBalance | number:'1.2-2') : ''}}</td>
                 <td>{{record.previousAccountBalance != null && record.previousAccountBalance != 0 ? (record.previousAccountBalance | number:'1.2-2') : ''}}</td>
             </tr>
