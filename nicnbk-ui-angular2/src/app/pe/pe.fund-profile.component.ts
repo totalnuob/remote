@@ -385,7 +385,6 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     this.postAction(response.messageEn, null);
 
                     this.dynamicIRR = response.irr;
-                    this.dynamicIRR = 55;
                 },
                 (error: ErrorResponse) => {
                     this.dynamicIRR = null;
