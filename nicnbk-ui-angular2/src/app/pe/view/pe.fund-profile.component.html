@@ -842,16 +842,26 @@
                                         <h4>{{fund.fundName}} Historical Investment Performance</h4>
                                     </div>
                                 </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="rounding">Rounding in</label>
+                                        <select class="form-control" id="rounding" [(ngModel)]="rounding">
+                                            <option value="1000">thousands</option>
+                                            <option value="1000000">millions</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <br>
                                 <br>
                                 <div class="row">
                                     <div class="col-md-12">
                                         <table class="table table-hover table-responsive" style="font-size: smaller">
                                             <tr>
                                                 <th>Company</th>
-                                                <th>Cash invested, mm</th>
-                                                <th>Realized Proceeds, mm</th>
-                                                <th>Unrealized Value, mm</th>
-                                                <th>Total Value, mm</th>
+                                                <th>Cash invested</th>
+                                                <th>Realized Proceeds</th>
+                                                <th>Unrealized Value</th>
+                                                <th>Total Value</th>
                                                 <th>Multiple</th>
                                                 <th>Gross IRR</th>
                                                 <th>Net IRR</th>
@@ -866,7 +876,7 @@
                                                 </td>
 
                                                 <td style="font-size: small">
-                                                    {{(performance.invested/1000000) | number:'1.1-2'}}
+                                                    {{(performance.invested/rounding) | number:'1.1-2'}}
                                                     <!--<input type="text" class="form-control" name="invested" [(ngModel)]="performance.invested" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="true" #invested="ngModel"/>-->
                                                     <!--<div [hidden]="invested.valid || invested.pristine" class="alert alert-danger">-->
                                                         <!--Only positive number could be entered-->
@@ -874,7 +884,7 @@
                                                 </td>
 
                                                 <td style="font-size: small">
-                                                    {{(performance.realized/1000000) | number:'1.1-2'}}
+                                                    {{(performance.realized/rounding) | number:'1.1-2'}}
                                                     <!--<input type="text" class="form-control" name="realized" [(ngModel)]="performance.realized" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="true" #realized="ngModel"/>-->
                                                     <!--<div [hidden]="realized.valid || realized.pristine" class="alert alert-danger">-->
                                                         <!--Only positive number could be entered-->
@@ -882,7 +892,7 @@
                                                 </td>
 
                                                 <td style="font-size: small">
-                                                    {{(performance.unrealized/1000000) | number:'1.1-2'}}
+                                                    {{(performance.unrealized/rounding) | number:'1.1-2'}}
                                                     <!--<input type="text" class="form-control" name="unrealized" [(ngModel)]="performance.unrealized" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="true" #unrealized="ngModel"/>-->
                                                     <!--<div [hidden]="unrealized.valid || unrealized.pristine" class="alert alert-danger">-->
                                                         <!--Only positive number could be entered-->
@@ -890,7 +900,7 @@
                                                 </td>
 
                                                 <td style="font-size: small">
-                                                    {{(performance.totalValue/1000000) | number:'1.1-2'}}
+                                                    {{(performance.totalValue/rounding) | number:'1.1-2'}}
                                                     <!--<input type="text" class="form-control" name="totalValue" [(ngModel)]="performance.totalValue" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="true" #totalValue="ngModel"/>-->
                                                     <!--<div [hidden]="totalValue.valid || totalValue.pristine" class="alert alert-danger">-->
                                                         <!--Only positive number could be entered-->

@@ -84,18 +84,18 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
 //                }
             }
 
-            for (PEGrossCashflowDto cashflowDto1 : cashflowDtoList) {
-                int i = 0;
-                for (PEGrossCashflowDto cashflowDto2 : cashflowDtoList) {
-                    if (cashflowDto1.getCompanyName().equals(cashflowDto2.getCompanyName()) &&
-                            cashflowDto1.getDate().equals(cashflowDto2.getDate())) {
-                        i++;
-                    }
-                }
-                if (i > 1) {
-                    return new PEGrossCashflowResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "The pairs (\"Company name\", \"Date of transaction\") must be unique!", "");
-                }
-            }
+//            for (PEGrossCashflowDto cashflowDto1 : cashflowDtoList) {
+//                int i = 0;
+//                for (PEGrossCashflowDto cashflowDto2 : cashflowDtoList) {
+//                    if (cashflowDto1.getCompanyName().equals(cashflowDto2.getCompanyName()) &&
+//                            cashflowDto1.getDate().equals(cashflowDto2.getDate())) {
+//                        i++;
+//                    }
+//                }
+//                if (i > 1) {
+//                    return new PEGrossCashflowResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "The pairs (\"Company name\", \"Date of transaction\") must be unique!", "");
+//                }
+//            }
 
             if (this.peFundService.get(fundId) == null) {
                 return new PEGrossCashflowResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");

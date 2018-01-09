@@ -48,6 +48,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     public fundIdParam: number;
     public firmIdParam: number;
 
+    public rounding = 1000000;
+
     public dynamicIRR: number;
     public irrParam = new PEIrrParam();
     public companyDescriptionIRRList = [];
