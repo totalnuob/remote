@@ -130,9 +130,9 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
 //        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
 //        String username = this.tokenService.decode(token).getUsername();
 
-//        PEIrrResultDto resultDto = this.someService.calculateIRR(portfolioInfoDto, fundId);
+        PEIrrResultDto resultDto = this.cashflowService.calculateIRR(portfolioInfoDto, fundId);
 //        PEIrrResultDto resultDto = new PEIrrResultDto(1.0, StatusResultType.FAIL, "", "Here is your IRR", "");
-        PEIrrResultDto resultDto = new PEIrrResultDto(1.0, StatusResultType.SUCCESS, "", "Here is your IRR", "");
+//        PEIrrResultDto resultDto = new PEIrrResultDto(1.0, StatusResultType.SUCCESS, "", "Here is your IRR", "");
 
         if (resultDto.getStatus().equals(StatusResultType.SUCCESS)) {
             return new ResponseEntity<>(resultDto, null, HttpStatus.OK);

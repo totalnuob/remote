@@ -11,6 +11,7 @@ import {LookupService} from "../common/lookup.service";
 import {Subscription} from 'rxjs';
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 import {ErrorResponse} from "../common/error-response";
+import {PEIrrParam} from "./model/pe.irrParam";
 
 declare var $:any
 
@@ -48,7 +49,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     public firmIdParam: number;
 
     public dynamicIRR: number;
-    public irrParam = [];
+    public irrParam = new PEIrrParam();
     public companyDescriptionIRRList = [];
     public industryIRRList = [];
     public countryIRRList = [];
