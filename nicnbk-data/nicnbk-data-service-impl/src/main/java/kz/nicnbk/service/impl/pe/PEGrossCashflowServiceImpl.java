@@ -238,15 +238,30 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
             String currency = portfolioInfoDto.getCurrency();
 
             for (PEGrossCashflowDto cashflowDto : cashflowDtoList) {
-                if (companyDescription != null && companyDescription.equals("NONE") == false) {
-                    PECompanyPerformanceIddDto a = this.performanceIddService.findByFundIdAndCompanyName(fundId, cashflowDto.getCompanyName());
+                PECompanyPerformanceIddDto performanceIddDto = this.performanceIddService.findByFundIdAndCompanyName(fundId, cashflowDto.getCompanyName());
+
+                if (companyDescription != null && !companyDescription.equals("NONE") && !companyDescription.equals(performanceIddDto.getCompanyDescription())) {
+                    cashflowDtoList.remove(cashflowDto);
+                }
+                if (industry != null && !industry.equals("NONE") && !industry.equals(performanceIddDto.getIndustry())) {
+                    cashflowDtoList.remove(cashflowDto);
+                }
+                if (country != null && !country.equals("NONE") && !country.equals(performanceIddDto.getCountry())) {
+                    cashflowDtoList.remove(cashflowDto);
+                }
+                if (typeOfInvestment != null && !typeOfInvestment.equals("NONE") && !typeOfInvestment.equals(performanceIddDto.getTypeOfInvestment())) {
+                    cashflowDtoList.remove(cashflowDto);
+                }
+                if (control != null && !control.equals("NONE") && !control.equals(performanceIddDto.getControl())) {
+                    cashflowDtoList.remove(cashflowDto);
+                }
+                if (dealSource != null && !dealSource.equals("NONE") && !dealSource.equals(performanceIddDto.getDealSource())) {
+                    cashflowDtoList.remove(cashflowDto);
+                }
+                if (currency != null && !currency.equals("NONE") && !currency.equals(performanceIddDto.getCurrency())) {
                     cashflowDtoList.remove(cashflowDto);
                 }
             }
-
-
-
-
 
             return cashflowDtoList;
         } catch (Exception ex) {
