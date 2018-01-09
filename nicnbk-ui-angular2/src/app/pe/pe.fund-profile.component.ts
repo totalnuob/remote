@@ -500,20 +500,95 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
             )
     }
 
-    orderPerformanceIdd(orderType) {
-        this.busy = this.fundService.orderPerformanceIdd(this.fund.id, orderType)
-            .subscribe(
-                (response) => {
-                    this.postAction(response.messageEn, null);
-
-                    this.fund.companyPerformanceIdd = response.performanceIddDtoList;
-                },
-                (error: ErrorResponse) => {
-                    this.processErrorMessage(error);
-                    this.postAction(null, error.message);
-                    console.log(error);
+    sortPerformanceIdd(sortType) {
+        if (sortType === 11 || sortType === 13) {
+            this.fund.companyPerformanceIdd.sort( function(name1, name2) {
+                if ( name1.companyName < name2.companyName ){
+                    return sortType - 12;
+                }else if( name1.companyName > name2.companyName ){
+                    return 12 - sortType;
+                }else{
+                    return 0;
                 }
-            )
+            });
+        }
+        if (sortType === 21 || sortType === 23) {
+            this.fund.companyPerformanceIdd.sort( function(name1, name2) {
+                if ( name1.invested < name2.invested ){
+                    return sortType - 22;
+                }else if( name1.invested > name2.invested ){
+                    return 22 - sortType;
+                }else{
+                    return 0;
+                }
+            });
+        }
+        if (sortType === 31 || sortType === 33) {
+            this.fund.companyPerformanceIdd.sort( function(name1, name2) {
+                if ( name1.realized < name2.realized ){
+                    return sortType - 32;
+                }else if( name1.realized > name2.realized ){
+                    return 32 - sortType;
+                }else{
+                    return 0;
+                }
+            });
+        }
+        if (sortType === 41 || sortType === 43) {
+            this.fund.companyPerformanceIdd.sort( function(name1, name2) {
+                if ( name1.unrealized < name2.unrealized ){
+                    return sortType - 42;
+                }else if( name1.unrealized > name2.unrealized ){
+                    return 42 - sortType;
+                }else{
+                    return 0;
+                }
+            });
+        }
+        if (sortType === 51 || sortType === 53) {
+            this.fund.companyPerformanceIdd.sort( function(name1, name2) {
+                if ( name1.totalValue < name2.totalValue ){
+                    return sortType - 52;
+                }else if( name1.totalValue > name2.totalValue ){
+                    return 52 - sortType;
+                }else{
+                    return 0;
+                }
+            });
+        }
+        if (sortType === 61 || sortType === 63) {
+            this.fund.companyPerformanceIdd.sort( function(name1, name2) {
+                if ( name1.multiple < name2.multiple ){
+                    return sortType - 62;
+                }else if( name1.multiple > name2.multiple ){
+                    return 62 - sortType;
+                }else{
+                    return 0;
+                }
+            });
+        }
+        if (sortType === 71 || sortType === 73) {
+            this.fund.companyPerformanceIdd.sort( function(name1, name2) {
+                if ( name1.grossIrr < name2.grossIrr ){
+                    return sortType - 72;
+                }else if( name1.grossIrr > name2.grossIrr ){
+                    return 72 - sortType;
+                }else{
+                    return 0;
+                }
+            });
+        }
+        if (sortType === 81 || sortType === 83) {
+            this.fund.companyPerformanceIdd.sort( function(name1, name2) {
+                if ( name1.netIrr < name2.netIrr ){
+                    return sortType - 82;
+                }else if( name1.netIrr > name2.netIrr ){
+                    return 82 - sortType;
+                }else{
+                    return 0;
+                }
+            });
+        }
     }
 
     postAction(successMessage, errorMessage) {
