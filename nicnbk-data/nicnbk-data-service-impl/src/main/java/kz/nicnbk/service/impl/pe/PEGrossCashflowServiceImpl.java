@@ -11,6 +11,8 @@ import kz.nicnbk.service.dto.common.StatusResultType;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.pe.PEGrossCashflowDto;
 import kz.nicnbk.service.dto.pe.PEGrossCashflowResultDto;
+import kz.nicnbk.service.dto.pe.PEIrrResultDto;
+import kz.nicnbk.service.dto.pe.PEPortfolioInfoDto;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
@@ -215,6 +217,11 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
             logger.error("Error loading PE fund's gross cash flow: " + fundId, ex);
         }
         return null;
+    }
+
+    @Override
+    public PEIrrResultDto calculateIRR(PEPortfolioInfoDto portfolioInfoDto, Long fundId) {
+        return new PEIrrResultDto(1.0, StatusResultType.SUCCESS, "", "Here is your IRR", "");
     }
 
     @Override

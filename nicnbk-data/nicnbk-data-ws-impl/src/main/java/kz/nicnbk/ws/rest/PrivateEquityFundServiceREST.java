@@ -112,8 +112,6 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
     @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/savePortfolioInfo/{fundId}", method = RequestMethod.POST)
     public ResponseEntity<?> savePortfolioInfo(@RequestBody List<PECompanyPerformanceIddDto> performanceIddDtoList, @PathVariable Long fundId) {
-//        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
-//        String username = this.tokenService.decode(token).getUsername();
 
         PECompanyPerformanceIddResultDto resultDto = this.performanceIddService.saveList(performanceIddDtoList, fundId);
 
@@ -127,12 +125,8 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
     @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/calculateIRR/{fundId}", method = RequestMethod.POST)
     public ResponseEntity<?> calculateIRR(@RequestBody PEPortfolioInfoDto portfolioInfoDto, @PathVariable Long fundId) {
-//        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
-//        String username = this.tokenService.decode(token).getUsername();
 
         PEIrrResultDto resultDto = this.cashflowService.calculateIRR(portfolioInfoDto, fundId);
-//        PEIrrResultDto resultDto = new PEIrrResultDto(1.0, StatusResultType.FAIL, "", "Here is your IRR", "");
-//        PEIrrResultDto resultDto = new PEIrrResultDto(1.0, StatusResultType.SUCCESS, "", "Here is your IRR", "");
 
         if (resultDto.getStatus().equals(StatusResultType.SUCCESS)) {
             return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
