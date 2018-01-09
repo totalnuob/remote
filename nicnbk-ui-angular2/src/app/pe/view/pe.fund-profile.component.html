@@ -1230,7 +1230,7 @@
                                         </div>
                                         <div class="col-md-3">
                                             <div class="form-group">
-                                                <label for="control">control</label>
+                                                <label for="control">Control</label>
                                                 <select class="form-control" id="control" [(ngModel)]="irrParam.control">
                                                     <option value="NONE">---</option>
                                                     <option *ngFor = "let control of controlIRRList" [value]="control">{{control}}</option>
@@ -1255,67 +1255,6 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <table class="table table-hover table-responsive" style="font-size: smaller">
-                                            <tr>
-                                                <th>Company description</th>
-                                                <th>Industry</th>
-                                                <th>Country</th>
-                                                <th>Type of investment</th>
-                                                <th>Control</th>
-                                                <th>Deal source</th>
-                                                <th>Currency</th>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <input type="text" class="form-control" name="companyDescription" [(ngModel)]="irrParam.companyDescription" placeholder="-" pattern="[A-Za-z0-9 ().-]{1,50}" #companyDescription="ngModel"/>
-                                                    <div [hidden]="companyDescription.valid || companyDescription.pristine" class="alert alert-danger">
-                                                        Company description must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <input type="text" class="form-control" name="industry" [(ngModel)]="irrParam.industry" placeholder="-" pattern="[A-Za-z0-9 ().-]{1,50}" #industry="ngModel"/>
-                                                    <div [hidden]="industry.valid || industry.pristine" class="alert alert-danger">
-                                                        Industry must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <input type="text" class="form-control" name="country" [(ngModel)]="irrParam.country" placeholder="-" pattern="[A-Za-z0-9 ().-]{1,50}" #country="ngModel"/>
-                                                    <div [hidden]="country.valid || country.pristine" class="alert alert-danger">
-                                                        Country must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <input type="text" class="form-control" name="typeOfInvestment" [(ngModel)]="irrParam.typeOfInvestment" placeholder="-" pattern="[A-Za-z0-9 ().-]{1,50}" #typeOfInvestment="ngModel"/>
-                                                    <div [hidden]="typeOfInvestment.valid || typeOfInvestment.pristine" class="alert alert-danger">
-                                                        Type of investment must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <input type="text" class="form-control" name="control" [(ngModel)]="irrParam.control" placeholder="-" pattern="[A-Za-z0-9 ().-]{1,50}" #control="ngModel"/>
-                                                    <div [hidden]="control.valid || control.pristine" class="alert alert-danger">
-                                                        Control must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <input type="text" class="form-control" name="dealSource" [(ngModel)]="irrParam.dealSource" placeholder="-" pattern="[A-Za-z0-9 ().-]{1,50}" #dealSource="ngModel"/>
-                                                    <div [hidden]="dealSource.valid || dealSource.pristine" class="alert alert-danger">
-                                                        Deal source must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <input type="text" class="form-control" name="currency" [(ngModel)]="irrParam.currency" placeholder="-" pattern="[A-Za-z0-9 ().-]{1,50}" #currency="ngModel"/>
-                                                    <div [hidden]="currency.valid || currency.pristine" class="alert alert-danger">
-                                                        Currency must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </table>
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <div class="pull-left">
