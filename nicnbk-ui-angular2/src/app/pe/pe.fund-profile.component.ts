@@ -352,6 +352,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
             var control = this.fund.companyPerformanceIdd[i].control;
             var dealSource = this.fund.companyPerformanceIdd[i].dealSource;
             var currency = this.fund.companyPerformanceIdd[i].currency;
+
             if (companyDescription != null && companyDescription != '' && this.companyDescriptionIRRList.includes(companyDescription) == false) {
                 this.companyDescriptionIRRList.push(companyDescription);
             }
@@ -374,13 +375,6 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                 this.currencyIRRList.push(currency);
             }
         }
-        console.log(this.companyDescriptionIRRList);
-        console.log(this.industryIRRList);
-        console.log(this.countryIRRList);
-        console.log(this.typeOfInvestmentIRRList);
-        console.log(this.controlIRRList);
-        console.log(this.dealSourceIRRList);
-        console.log(this.currencyIRRList);
     }
 
     calculateIRR() {

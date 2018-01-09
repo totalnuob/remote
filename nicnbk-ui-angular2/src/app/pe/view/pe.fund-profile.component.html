@@ -1201,6 +1201,60 @@
                                                 </select>
                                             </div>
                                         </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="industry">Industry</label>
+                                                <select class="form-control" id="industry" [(ngModel)]="irrParam.industry">
+                                                    <option value="NONE">---</option>
+                                                    <option *ngFor = "let industry of industryIRRList" [value]="industry">{{industry}}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="country">Country</label>
+                                                <select class="form-control" id="country" [(ngModel)]="irrParam.country">
+                                                    <option value="NONE">---</option>
+                                                    <option *ngFor = "let country of countryIRRList" [value]="country">{{country}}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="typeOfInvestment">Type of investment</label>
+                                                <select class="form-control" id="typeOfInvestment" [(ngModel)]="irrParam.typeOfInvestment">
+                                                    <option value="NONE">---</option>
+                                                    <option *ngFor = "let typeOfInvestment of typeOfInvestmentIRRList" [value]="typeOfInvestment">{{typeOfInvestment}}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="control">control</label>
+                                                <select class="form-control" id="control" [(ngModel)]="irrParam.control">
+                                                    <option value="NONE">---</option>
+                                                    <option *ngFor = "let control of controlIRRList" [value]="control">{{control}}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="dealSource">Deal source</label>
+                                                <select class="form-control" id="dealSource" [(ngModel)]="irrParam.dealSource">
+                                                    <option value="NONE">---</option>
+                                                    <option *ngFor = "let dealSource of dealSourceIRRList" [value]="dealSource">{{dealSource}}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="currency">Currency</label>
+                                                <select class="form-control" id="currency" [(ngModel)]="irrParam.currency">
+                                                    <option value="NONE">---</option>
+                                                    <option *ngFor = "let currency of currencyIRRList" [value]="currency">{{currency}}</option>
+                                                </select>
+                                            </div>
+                                        </div>
                                         <table class="table table-hover table-responsive" style="font-size: smaller">
                                             <tr>
                                                 <th>Company description</th>
