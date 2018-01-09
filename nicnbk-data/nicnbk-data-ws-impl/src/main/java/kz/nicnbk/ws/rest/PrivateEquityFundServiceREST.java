@@ -124,6 +124,21 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
         }
     }
 
+    @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/savePortfolioInfo/{fundId}", method = RequestMethod.POST)
+    public ResponseEntity<?> calculateIRR(@RequestBody List<PECompanyPerformanceIddDto> performanceIddDtoList, @PathVariable Long fundId) {
+//        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+//        String username = this.tokenService.decode(token).getUsername();
+
+        PECompanyPerformanceIddResultDto resultDto = this.performanceIddService.calculateIRR(performanceIddDtoList, fundId);
+
+        if (resultDto.getStatus().equals(StatusResultType.SUCCESS)) {
+            return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 //    @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
 //    @RequestMapping(value = "/saveGrossCF/{fundId}", method = RequestMethod.POST)
 //    public ResponseEntity<?> saveGrossCF(@RequestBody List<PEGrossCashflowDto> grossCashflowDtoList, @PathVariable Long fundId) {
