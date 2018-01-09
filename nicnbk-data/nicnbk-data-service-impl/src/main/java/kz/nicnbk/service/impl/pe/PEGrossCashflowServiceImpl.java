@@ -226,10 +226,7 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
     @Override
     public List<PEGrossCashflowDto> findByFundIdAndPortfolioInfo(Long fundId, PEPortfolioInfoDto portfolioInfoDto) {
         try {
-            List<PEGrossCashflowDto> cashflowDtoList = this.converter.disassembleList(this.repository.getEntitiesByFundId(fundId, new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "date"))));
-
-
-
+            List<PEGrossCashflowDto> cashflowDtoList = this.findByFundIdSortedByDate(fundId);
 
 
 

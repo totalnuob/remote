@@ -1261,7 +1261,7 @@
                                                     <button type="submit" class="btn btn-success" (click)="calculateIRR()" [disabled]="fund.id == 0 || fund.id == null">
                                                         CALCULATE
                                                     </button>
-                                                    Your IRR is {{dynamicIRR}}
+                                                    Your IRR is {{dynamicIRR | number:'1.0-2'}}%
                                                 </div>
                                             </div>
                                         </div>
