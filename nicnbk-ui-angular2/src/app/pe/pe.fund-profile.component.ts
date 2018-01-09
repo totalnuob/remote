@@ -501,7 +501,19 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     }
 
     orderPerformanceIdd(orderType) {
-        console.log(orderType);
+        this.busy = this.fundService.orderPerformanceIdd(this.fund.id, orderType)
+            .subscribe(
+                (response) => {
+                    this.postAction(response.messageEn, null);
+
+                    this.fund.companyPerformanceIdd = response.performanceIddDtoList;
+                },
+                (error: ErrorResponse) => {
+                    this.processErrorMessage(error);
+                    this.postAction(null, error.message);
+                    console.log(error);
+                }
+            )
     }
 
     postAction(successMessage, errorMessage) {
