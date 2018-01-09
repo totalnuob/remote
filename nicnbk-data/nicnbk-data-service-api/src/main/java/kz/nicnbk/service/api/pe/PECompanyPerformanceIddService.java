@@ -19,6 +19,8 @@ public interface PECompanyPerformanceIddService {
 
     List<PECompanyPerformanceIddDto> findByFundId(Long fundId);
 
+    PECompanyPerformanceIddDto findByFundIdAndCompanyName(Long fundId, String companyName);
+
 //    boolean deleteByFundId(Long fundId);
 
     PEFundTrackRecordResultDto calculateTrackRecord(Long fundId);

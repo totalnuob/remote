@@ -200,6 +200,16 @@ public class PECompanyPerformanceIddServiceImpl implements PECompanyPerformanceI
         return null;
     }
 
+    @Override
+    public PECompanyPerformanceIddDto findByFundIdAndCompanyName(Long fundId, String companyName) {
+        try {
+            return this.converter.disassemble(this.repository.getEntitiesByFundIdAndCompanyName(fundId, companyName));
+        } catch (Exception ex) {
+            logger.error("Error loading PE fund's company performance: " + fundId, ex);
+        }
+        return null;
+    }
+
 //    @Override
 //    public boolean deleteByFundId(Long fundId) {
 //        this.repository.deleteByFundId(fundId);

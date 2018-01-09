@@ -4,16 +4,14 @@ import kz.nicnbk.common.service.util.ExcelUtils;
 import kz.nicnbk.repo.api.pe.PEGrossCashflowRepository;
 import kz.nicnbk.repo.model.pe.PEFund;
 import kz.nicnbk.repo.model.pe.PEGrossCashflow;
+import kz.nicnbk.service.api.pe.PECompanyPerformanceIddService;
 import kz.nicnbk.service.api.pe.PEFundService;
 import kz.nicnbk.service.api.pe.PEGrossCashflowService;
 import kz.nicnbk.service.api.pe.PEIrrService;
 import kz.nicnbk.service.converter.pe.PEGrossCashflowEntityConverter;
 import kz.nicnbk.service.dto.common.StatusResultType;
 import kz.nicnbk.service.dto.files.FilesDto;
-import kz.nicnbk.service.dto.pe.PEGrossCashflowDto;
-import kz.nicnbk.service.dto.pe.PEGrossCashflowResultDto;
-import kz.nicnbk.service.dto.pe.PEIrrResultDto;
-import kz.nicnbk.service.dto.pe.PEPortfolioInfoDto;
+import kz.nicnbk.service.dto.pe.*;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
@@ -47,6 +45,9 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
 
     @Autowired
     private PEIrrService irrService;
+
+    @Autowired
+    private PECompanyPerformanceIddService performanceIddService;
 
     @Override
     public Long save(PEGrossCashflowDto cashflowDto, Long fundId) {
@@ -228,6 +229,20 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
         try {
             List<PEGrossCashflowDto> cashflowDtoList = this.findByFundIdSortedByDate(fundId);
 
+            String companyDescription = portfolioInfoDto.getCompanyDescription();
+            String industry = portfolioInfoDto.getIndustry();
+            String country = portfolioInfoDto.getCountry();
+            String typeOfInvestment = portfolioInfoDto.getTypeOfInvestment();
+            String control = portfolioInfoDto.getControl();
+            String dealSource = portfolioInfoDto.getDealSource();
+            String currency = portfolioInfoDto.getCurrency();
+
+            for (PEGrossCashflowDto cashflowDto : cashflowDtoList) {
+                if (companyDescription != null && companyDescription.equals("NONE") == false) {
+                    PECompanyPerformanceIddDto a = this.performanceIddService.findByFundIdAndCompanyName(fundId, cashflowDto.getCompanyName());
+                    cashflowDtoList.remove(cashflowDto);
+                }
+            }
 
 
 
