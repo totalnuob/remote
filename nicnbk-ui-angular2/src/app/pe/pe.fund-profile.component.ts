@@ -147,6 +147,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                         this.fund.companyPerformanceIdd = [];
                                     }
 
+                                    this.updateIRRParamList();
+
                                     if(this.fund.grossCashflow == null){
                                         this.fund.grossCashflow = [];
                                     }

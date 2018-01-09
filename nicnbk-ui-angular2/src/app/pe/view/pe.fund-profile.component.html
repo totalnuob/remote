@@ -1197,7 +1197,7 @@
                                                 <label for="companyDescription">Company description</label>
                                                 <select class="form-control" id="companyDescription" [(ngModel)]="irrParam.companyDescription">
                                                     <option value="NONE">---</option>
-                                                    <option *ngFor = "let type of meetingTypes" [value]="type.code">{{type.nameEn}}</option>
+                                                    <option *ngFor = "let companyDescription of companyDescriptionIRRList" [value]="companyDescription">{{companyDescription}}</option>
                                                 </select>
                                             </div>
                                         </div>
