@@ -6,6 +6,7 @@ import kz.nicnbk.repo.model.pe.PEFund;
 import kz.nicnbk.repo.model.pe.PEGrossCashflow;
 import kz.nicnbk.service.api.pe.PEFundService;
 import kz.nicnbk.service.api.pe.PEGrossCashflowService;
+import kz.nicnbk.service.api.pe.PEIrrService;
 import kz.nicnbk.service.converter.pe.PEGrossCashflowEntityConverter;
 import kz.nicnbk.service.dto.common.StatusResultType;
 import kz.nicnbk.service.dto.files.FilesDto;
@@ -43,6 +44,9 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
 
     @Autowired
     private PEFundService peFundService;
+
+    @Autowired
+    private PEIrrService irrService;
 
     @Override
     public Long save(PEGrossCashflowDto cashflowDto, Long fundId) {
@@ -221,7 +225,21 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
 
     @Override
     public PEIrrResultDto calculateIRR(PEPortfolioInfoDto portfolioInfoDto, Long fundId) {
-        return new PEIrrResultDto(1.0, StatusResultType.SUCCESS, "", "Here is your IRR", "");
+        try {
+            List<PEGrossCashflowDto> cashflowDtoList = this.cashflowService.findByFundIdAndCompanyName(fundId, portfolioInfoDto);
+            if (cashflowDtoList == null) {
+                return new PEIrrResultDto(null, StatusResultType.FAIL, "", "Error calculating PE fund's IRR", "");
+            }
+
+            Double irr = this.irrService.getIRR(cashflowDtoList);
+
+            if (irr != null) {
+                return new PEIrrResultDto(irr, StatusResultType.SUCCESS, "", "Successfully calculated PE fund's IRR", "");
+            }
+        } catch (Exception ex) {
+            logger.error("Failed to calculate PE fund's IRR, ", ex);
+        }
+        return new PEIrrResultDto(null, StatusResultType.FAIL, "", "Error calculating PE fund's IRR", "");
     }
 
     @Override
