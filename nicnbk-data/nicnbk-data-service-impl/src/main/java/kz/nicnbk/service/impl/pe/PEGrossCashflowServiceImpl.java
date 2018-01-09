@@ -228,6 +228,7 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
     public List<PEGrossCashflowDto> findByFundIdAndPortfolioInfo(Long fundId, PEPortfolioInfoDto portfolioInfoDto) {
         try {
             List<PEGrossCashflowDto> cashflowDtoList = this.findByFundIdSortedByDate(fundId);
+            List<PEGrossCashflowDto> cashflowDtoListNew = new ArrayList<>();
 
             String companyDescription = portfolioInfoDto.getCompanyDescription();
             String industry = portfolioInfoDto.getIndustry();
@@ -240,30 +241,35 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
             for (PEGrossCashflowDto cashflowDto : cashflowDtoList) {
                 PECompanyPerformanceIddDto performanceIddDto = this.performanceIddService.findByFundIdAndCompanyName(fundId, cashflowDto.getCompanyName());
 
+                Boolean add = true;
                 if (companyDescription != null && !companyDescription.equals("NONE") && !companyDescription.equals(performanceIddDto.getCompanyDescription())) {
-                    cashflowDtoList.remove(cashflowDto);
+                    add = false;
                 }
                 if (industry != null && !industry.equals("NONE") && !industry.equals(performanceIddDto.getIndustry())) {
-                    cashflowDtoList.remove(cashflowDto);
+                    add = false;
                 }
                 if (country != null && !country.equals("NONE") && !country.equals(performanceIddDto.getCountry())) {
-                    cashflowDtoList.remove(cashflowDto);
+                    add = false;
                 }
                 if (typeOfInvestment != null && !typeOfInvestment.equals("NONE") && !typeOfInvestment.equals(performanceIddDto.getTypeOfInvestment())) {
-                    cashflowDtoList.remove(cashflowDto);
+                    add = false;
                 }
                 if (control != null && !control.equals("NONE") && !control.equals(performanceIddDto.getControl())) {
-                    cashflowDtoList.remove(cashflowDto);
+                    add = false;
                 }
                 if (dealSource != null && !dealSource.equals("NONE") && !dealSource.equals(performanceIddDto.getDealSource())) {
-                    cashflowDtoList.remove(cashflowDto);
+                    add = false;
                 }
                 if (currency != null && !currency.equals("NONE") && !currency.equals(performanceIddDto.getCurrency())) {
-                    cashflowDtoList.remove(cashflowDto);
+                    add = false;
+                }
+
+                if (add) {
+                    cashflowDtoListNew.add(cashflowDto);
                 }
             }
 
-            return cashflowDtoList;
+            return cashflowDtoListNew;
         } catch (Exception ex) {
             logger.error("Error loading PE fund's gross cash flow: " + fundId, ex);
         }
