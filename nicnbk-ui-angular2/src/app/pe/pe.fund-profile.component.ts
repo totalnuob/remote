@@ -48,6 +48,13 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     public firmIdParam: number;
 
     public irrParam = [];
+    public companyDescriptionIRRList = [];
+    public industryIRRList = [];
+    public countryIRRList = [];
+    public typeOfInvestmentIRRList = [];
+    public controlIRRList = [];
+    public dealSourceIRRList = [];
+    public currencyIRRList = [];
 
     private visible = false;
     private openingSoon = false;
@@ -315,6 +322,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     this.postAction(response.messageEn, null);
 
                     this.fund.companyPerformanceIdd = response.performanceIddDtoList;
+
+                    this.updateIRRParamList();
                 },
                 (error: ErrorResponse) => {
                     this.processErrorMessage(error);
@@ -322,6 +331,54 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     console.log(error);
                 }
             )
+    }
+
+    updateIRRParamList() {
+        this.companyDescriptionIRRList = [];
+        this.industryIRRList = [];
+        this.countryIRRList = [];
+        this.typeOfInvestmentIRRList = [];
+        this.controlIRRList = [];
+        this.dealSourceIRRList = [];
+        this.currencyIRRList = [];
+
+        for (var i = 0; i < this.fund.companyPerformanceIdd.length; i++) {
+            var companyDescription = this.fund.companyPerformanceIdd[i].companyDescription;
+            var industry = this.fund.companyPerformanceIdd[i].industry;
+            var country = this.fund.companyPerformanceIdd[i].country;
+            var typeOfInvestment = this.fund.companyPerformanceIdd[i].typeOfInvestment;
+            var control = this.fund.companyPerformanceIdd[i].control;
+            var dealSource = this.fund.companyPerformanceIdd[i].dealSource;
+            var currency = this.fund.companyPerformanceIdd[i].currency;
+            if (companyDescription != null && companyDescription != '') {
+                this.companyDescriptionIRRList.push(companyDescription);
+            }
+            if (industry != null && industry != '') {
+                this.industryIRRList.push(industry);
+            }
+            if (country != null && country != '') {
+                this.countryIRRList.push(country);
+            }
+            if (typeOfInvestment != null && typeOfInvestment != '') {
+                this.typeOfInvestmentIRRList.push(typeOfInvestment);
+            }
+            if (control != null && control != '') {
+                this.controlIRRList.push(control);
+            }
+            if (dealSource != null && dealSource != '') {
+                this.dealSourceIRRList.push(dealSource);
+            }
+            if (currency != null && currency != '') {
+                this.currencyIRRList.push(currency);
+            }
+        }
+        console.log(this.companyDescriptionIRRList);
+        console.log(this.industryIRRList);
+        console.log(this.countryIRRList);
+        console.log(this.typeOfInvestmentIRRList);
+        console.log(this.controlIRRList);
+        console.log(this.dealSourceIRRList);
+        console.log(this.currencyIRRList);
     }
 
     calculateIRR() {
@@ -403,6 +460,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     this.fund.grossCashflow = response.cashflowDtoList;
 
                     this.fund.companyPerformanceIdd = response.performanceIddDtoList;
+
+                    this.updateIRRParamList();
 
                     this.fund.calculationType = response.trackRecordDTO.calculationType;
 
