@@ -352,25 +352,25 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
             var control = this.fund.companyPerformanceIdd[i].control;
             var dealSource = this.fund.companyPerformanceIdd[i].dealSource;
             var currency = this.fund.companyPerformanceIdd[i].currency;
-            if (companyDescription != null && companyDescription != '') {
+            if (companyDescription != null && companyDescription != '' && this.companyDescriptionIRRList.includes(companyDescription) == false) {
                 this.companyDescriptionIRRList.push(companyDescription);
             }
-            if (industry != null && industry != '') {
+            if (industry != null && industry != '' && this.industryIRRList.includes(industry) == false) {
                 this.industryIRRList.push(industry);
             }
-            if (country != null && country != '') {
+            if (country != null && country != '' && this.countryIRRList.includes(country) == false) {
                 this.countryIRRList.push(country);
             }
-            if (typeOfInvestment != null && typeOfInvestment != '') {
+            if (typeOfInvestment != null && typeOfInvestment != '' && this.typeOfInvestmentIRRList.includes(typeOfInvestment) == false) {
                 this.typeOfInvestmentIRRList.push(typeOfInvestment);
             }
-            if (control != null && control != '') {
+            if (control != null && control != '' && this.controlIRRList.includes(control) == false) {
                 this.controlIRRList.push(control);
             }
-            if (dealSource != null && dealSource != '') {
+            if (dealSource != null && dealSource != '' && this.dealSourceIRRList.includes(dealSource) == false) {
                 this.dealSourceIRRList.push(dealSource);
             }
-            if (currency != null && currency != '') {
+            if (currency != null && currency != '' && this.currencyIRRList.includes(currency) == false) {
                 this.currencyIRRList.push(currency);
             }
         }
