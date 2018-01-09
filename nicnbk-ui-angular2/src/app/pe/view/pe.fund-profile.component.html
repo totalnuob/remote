@@ -857,14 +857,46 @@
                                     <div class="col-md-12">
                                         <table class="table table-hover table-responsive" style="font-size: smaller">
                                             <tr>
-                                                <th>Company</th>
-                                                <th>Cash invested</th>
-                                                <th>Realized Proceeds</th>
-                                                <th>Unrealized Value</th>
-                                                <th>Total Value</th>
-                                                <th>Multiple</th>
-                                                <th>Gross IRR</th>
-                                                <th>Net IRR</th>
+                                                <th>
+                                                    <button type="submit" class="btn btn-link" (click)="orderPerformanceIdd(1)" [disabled]="fund.id == 0 || fund.id == null">
+                                                        Company
+                                                    </button>
+                                                </th>
+                                                <th>
+                                                    <button type="submit" class="btn btn-link" (click)="orderPerformanceIdd(2)" [disabled]="fund.id == 0 || fund.id == null">
+                                                        Cash invested
+                                                    </button>
+                                                </th>
+                                                <th>
+                                                    <button type="submit" class="btn btn-link" (click)="orderPerformanceIdd(3)" [disabled]="fund.id == 0 || fund.id == null">
+                                                        Realized Proceeds
+                                                    </button>
+                                                </th>
+                                                <th>
+                                                    <button type="submit" class="btn btn-link" (click)="orderPerformanceIdd(4)" [disabled]="fund.id == 0 || fund.id == null">
+                                                        Unrealized Value
+                                                    </button>
+                                                </th>
+                                                <th>
+                                                    <button type="submit" class="btn btn-link" (click)="orderPerformanceIdd(5)" [disabled]="fund.id == 0 || fund.id == null">
+                                                        Total Value
+                                                    </button>
+                                                </th>
+                                                <th>
+                                                    <button type="submit" class="btn btn-link" (click)="orderPerformanceIdd(6)" [disabled]="fund.id == 0 || fund.id == null">
+                                                        Multiple
+                                                    </button>
+                                                </th>
+                                                <th>
+                                                    <button type="submit" class="btn btn-link" (click)="orderPerformanceIdd(7)" [disabled]="fund.id == 0 || fund.id == null">
+                                                        Gross IRR
+                                                    </button>
+                                                </th>
+                                                <th>
+                                                    <button type="submit" class="btn btn-link" (click)="orderPerformanceIdd(8)" [disabled]="fund.id == 0 || fund.id == null">
+                                                        Net IRR
+                                                    </button>
+                                                </th>
                                             </tr>
                                             <tr *ngFor="let performance of fund.companyPerformanceIdd">
                                                 <td style="font-size: small">

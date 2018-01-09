@@ -398,6 +398,10 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
             )
     }
 
+    orderPerformanceIdd(orderType) {
+        console.log(orderType);
+    }
+
     calculateTrackRecord(calculationType) {
         this.busy = this.fundService.calculateTrackRecord(this.fund.id, calculationType)
             .subscribe(
