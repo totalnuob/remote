@@ -829,7 +829,7 @@
                         <a data-toggle="tab" href="#portfolioInfo">PORTFOLIO INFO</a>
                     </li>
                     <li>
-                        <a data-toggle="tab" href="#dynamicIRR">DYNAMIC IRR CALCULATOR</a>
+                        <a data-toggle="tab" href="#dynamicIRR">IRR CALCULATOR</a>
                     </li>
                 </ul>
                 <div class="tab-content">
@@ -1186,7 +1186,7 @@
                                 <br>
                                 <div class="row">
                                     <div style="text-align: center">
-                                        <h4>{{fund.fundName}} Dynamic IRR calculator</h4>
+                                        <h4>{{fund.fundName}} IRR calculator</h4>
                                     </div>
                                 </div>
                                 <br>
@@ -1261,6 +1261,7 @@
                                                     <button type="submit" class="btn btn-success" (click)="calculateIRR()" [disabled]="fund.id == 0 || fund.id == null">
                                                         CALCULATE
                                                     </button>
+                                                    Your IRR is {{dynamicIRR}}
                                                 </div>
                                             </div>
                                         </div>

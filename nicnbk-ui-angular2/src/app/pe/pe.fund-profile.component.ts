@@ -47,6 +47,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     public fundIdParam: number;
     public firmIdParam: number;
 
+    public dynamicIRR: number;
     public irrParam = [];
     public companyDescriptionIRRList = [];
     public industryIRRList = [];
@@ -383,9 +384,11 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                 (response) => {
                     this.postAction(response.messageEn, null);
 
-                    //this.fund.companyPerformanceIdd = response.performanceIddDtoList;
+                    this.dynamicIRR = response.irr;
+                    this.dynamicIRR = 55;
                 },
                 (error: ErrorResponse) => {
+                    this.dynamicIRR = null;
                     this.processErrorMessage(error);
                     this.postAction(null, error.message);
                     console.log(error);
