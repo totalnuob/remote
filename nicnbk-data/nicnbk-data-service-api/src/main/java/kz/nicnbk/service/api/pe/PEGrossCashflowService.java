@@ -30,5 +30,5 @@ public interface PEGrossCashflowService {
 
     PEIrrResultDto calculateIRR(PEPortfolioInfoDto portfolioInfoDto, Long fundId);
 
-    boolean deleteByFundId(Long fundId);
+//    boolean deleteByFundId(Long fundId);
 }

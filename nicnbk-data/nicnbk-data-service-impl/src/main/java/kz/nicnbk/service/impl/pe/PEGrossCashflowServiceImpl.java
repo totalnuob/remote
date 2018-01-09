@@ -225,6 +225,11 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
 
     @Override
     public List<PEGrossCashflowDto> findByFundIdAndPortfolioInfo(Long fundId, PEPortfolioInfoDto portfolioInfoDto) {
+        try {
+            return this.converter.disassembleList(this.repository.getEntitiesByFundIdAndCompanyName(fundId, companyName, new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "date"))));
+        } catch (Exception ex) {
+            logger.error("Error loading PE fund's gross cash flow: " + fundId, ex);
+        }
         return null;
     }
 
@@ -246,9 +251,9 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
         return new PEIrrResultDto(null, StatusResultType.FAIL, "", "Error calculating PE fund's IRR", "");
     }
 
-    @Override
-    public boolean deleteByFundId(Long fundId) {
-        this.repository.deleteByFundId(fundId);
-        return true;
-    }
+//    @Override
+//    public boolean deleteByFundId(Long fundId) {
+//        this.repository.deleteByFundId(fundId);
+//        return true;
+//    }
 }
