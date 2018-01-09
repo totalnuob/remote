@@ -378,7 +378,19 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     }
 
     calculateIRR() {
-        console.log("Dynamic IRR");
+            this.busy = this.fundService.calculateIRR(this.irrParam, this.fund.id)
+            .subscribe(
+                (response) => {
+                    this.postAction(response.messageEn, null);
+
+                    //this.fund.companyPerformanceIdd = response.performanceIddDtoList;
+                },
+                (error: ErrorResponse) => {
+                    this.processErrorMessage(error);
+                    this.postAction(null, error.message);
+                    console.log(error);
+                }
+            )
     }
 
     calculateTrackRecord(calculationType) {
