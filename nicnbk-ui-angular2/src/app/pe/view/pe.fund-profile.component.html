@@ -995,6 +995,32 @@
                                                     <!--</div>-->
                                                 </td>
                                             </tr>
+                                            <tr>
+                                                <th>
+                                                    Total
+                                                </th>
+                                                <th>
+                                                    {{(performanceIddTotal.invested/rounding) | number:'1.1-2'}}
+                                                </th>
+                                                <th>
+                                                    {{(performanceIddTotal.realized/rounding) | number:'1.1-2'}}
+                                                </th>
+                                                <th>
+                                                    {{(performanceIddTotal.unrealized/rounding) | number:'1.1-2'}}
+                                                </th>
+                                                <th>
+                                                    {{(performanceIddTotal.totalValue/rounding) | number:'1.1-2'}}
+                                                </th>
+                                                <th>
+                                                    {{performanceIddTotal.multiple | number:'1.1-1'}}x
+                                                </th>
+                                                <th>
+                                                    {{performanceIddTotal.grossIrr | number:'1.0-2'}}%
+                                                </th>
+                                                <th>
+                                                    Net IRR
+                                                </th>
+                                            </tr>
                                         </table>
                                     </div>
                                 </div>

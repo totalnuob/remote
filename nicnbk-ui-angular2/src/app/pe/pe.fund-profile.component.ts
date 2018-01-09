@@ -50,6 +50,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
 
     public rounding = 1000000;
 
+    public performanceIddTotal = [];
+
     public dynamicIRR: number;
     public irrParam = new PEIrrParam();
     public companyDescriptionIRRList = [];
@@ -152,6 +154,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                     }
 
                                     this.updateIRRParamList();
+
+                                    this.updatePerformanceIddTotal();
 
                                     if(this.fund.grossCashflow == null){
                                         this.fund.grossCashflow = [];
@@ -423,6 +427,33 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
             )
     }
 
+    updatePerformanceIddTotal() {
+        this.busy = this.fundService.calculateTrackRecord(this.fund.id, 2)
+            .subscribe(
+                (response) => {
+                    this.performanceIddTotal = [];
+
+                    this.performanceIddTotal.invested = response.trackRecordDTO.investedAmount;
+                    this.performanceIddTotal.realized = response.trackRecordDTO.realized;
+                    this.performanceIddTotal.unrealized = response.trackRecordDTO.unrealized;
+
+                    this.performanceIddTotal.totalValue = Number(this.performanceIddTotal.realized) + Number(this.performanceIddTotal.unrealized);
+                    if (Number(this.performanceIddTotal.invested) === 0) {
+                        this.performanceIddTotal.multiple = null;
+                    } else {
+                        this.performanceIddTotal.multiple = Number(this.performanceIddTotal.totalValue) / Number(this.performanceIddTotal.invested);
+                    }
+
+                    this.performanceIddTotal.grossIrr = response.trackRecordDTO.grossIrr;
+                },
+                (error: ErrorResponse) => {
+                    this.processErrorMessage(error);
+                    this.postAction(null, error.message);
+                    console.log(error);
+                }
+            )
+    }
+
     //savePerformanceAndRecalculateStatistics() {
     //    this.busy = this.fundService.savePerformanceAndRecalculateStatistics(this.fund.companyPerformance, this.fund.id)
     //        .subscribe(
@@ -475,6 +506,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     this.fund.companyPerformanceIdd = response.performanceIddDtoList;
 
                     this.updateIRRParamList();
+
+                    this.updatePerformanceIddTotal();
 
                     this.fund.calculationType = response.trackRecordDTO.calculationType;
 
