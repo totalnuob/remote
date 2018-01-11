@@ -65,13 +65,13 @@ public class PECompanyPerformanceIddServiceImpl implements PECompanyPerformanceI
                 if (performanceIddDto.getCompanyName() == null || performanceIddDto.getCompanyName().equals("")) {
                     return new PECompanyPerformanceIddResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Don't send null or empty company name!", "");
                 }
-                if ((performanceIddDto.getInvested() != null && performanceIddDto.getInvested() < 0) ||
-                        (performanceIddDto.getRealized() != null && performanceIddDto.getRealized() < 0) ||
-                        (performanceIddDto.getUnrealized() != null && performanceIddDto.getUnrealized() < 0) ||
-                        (performanceIddDto.getTotalValue() != null && performanceIddDto.getTotalValue() < 0) ||
-                        (performanceIddDto.getMultiple() != null && performanceIddDto.getMultiple() < 0)) {
-                    return new PECompanyPerformanceIddResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Don't send negative numbers!", "");
-                }
+//                if ((performanceIddDto.getInvested() != null && performanceIddDto.getInvested() < 0) ||
+//                        (performanceIddDto.getRealized() != null && performanceIddDto.getRealized() < 0) ||
+//                        (performanceIddDto.getUnrealized() != null && performanceIddDto.getUnrealized() < 0) ||
+//                        (performanceIddDto.getTotalValue() != null && performanceIddDto.getTotalValue() < 0) ||
+//                        (performanceIddDto.getMultiple() != null && performanceIddDto.getMultiple() < 0)) {
+//                    return new PECompanyPerformanceIddResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Don't send negative numbers!", "");
+//                }
             }
 
             for (PECompanyPerformanceIddDto performanceIddDto1 : performanceIddDtoList) {
@@ -89,7 +89,15 @@ public class PECompanyPerformanceIddServiceImpl implements PECompanyPerformanceI
             for (PECompanyPerformanceIdd performanceIdd : this.repository.getEntitiesByFundId(fundId, new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName")))) {
                 int i = 0;
                 for (PECompanyPerformanceIddDto performanceIddDto : performanceIddDtoList) {
-                    if (performanceIdd.getId().equals(performanceIddDto.getId())) {
+                    if (performanceIddDto.getCompanyName().equals(performanceIdd.getCompanyName())) {
+                        performanceIddDto.setId(performanceIdd.getId());
+//                        performanceIddDto.setCompanyDescription(performanceIdd.getCompanyDescription());
+//                        performanceIddDto.setIndustry(performanceIdd.getIndustry());
+//                        performanceIddDto.setCountry(performanceIdd.getCountry());
+//                        performanceIddDto.setTypeOfInvestment(performanceIdd.getTypeOfInvestment());
+//                        performanceIddDto.setControl(performanceIdd.getControl());
+//                        performanceIddDto.setDealSource(performanceIdd.getDealSource());
+//                        performanceIddDto.setCurrency(performanceIdd.getCurrency());
                         i++;
                         break;
                     }
@@ -102,23 +110,23 @@ public class PECompanyPerformanceIddServiceImpl implements PECompanyPerformanceI
             for (PECompanyPerformanceIddDto performanceIddDto : performanceIddDtoList) {
                 Long id = save(performanceIddDto, fundId);
                 if (id == null) {
-                    return new PECompanyPerformanceIddResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error saving PE fund's company performance", "");
+                    return new PECompanyPerformanceIddResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error saving PE fund's company performance / portfolio info", "");
                 } else {
                     performanceIddDto.setId(id);
                 }
             }
 
-            return new PECompanyPerformanceIddResultDto(performanceIddDtoList, StatusResultType.SUCCESS, "", "Successfully saved PE fund's company performance", "");
+            return new PECompanyPerformanceIddResultDto(performanceIddDtoList, StatusResultType.SUCCESS, "", "Successfully saved PE fund's company performance / portfolio info", "");
         } catch (Exception ex) {
             logger.error("Error saving PE fund's company performance: " + fundId, ex);
-            return new PECompanyPerformanceIddResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error saving PE fund's company performance", "");
+            return new PECompanyPerformanceIddResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error saving PE fund's company performance / portfolio info", "");
         }
     }
 
     @Override
     public PECompanyPerformanceIddResultDto recalculatePerformanceIdd(Long fundId) {
         try {
-            deleteByFundId(fundId);
+//            deleteByFundId(fundId);
 
             List<PECompanyPerformanceIddDto> performanceIddDtoList = new ArrayList<>();
 
@@ -146,7 +154,7 @@ public class PECompanyPerformanceIddServiceImpl implements PECompanyPerformanceI
                                     (cashflowDto.getInvested() == null) ? 0.0 : - cashflowDto.getInvested(),
                                     (cashflowDto.getRealized() == null) ? 0.0 : cashflowDto.getRealized(),
                                     (cashflowDto.getUnrealized() == null) ? 0.0 : cashflowDto.getUnrealized(),
-                                    null, null, true, null, null));
+                                    null, null, true, null, null, null, null, null, null, null, null, null));
                 }
             }
 
@@ -160,6 +168,19 @@ public class PECompanyPerformanceIddServiceImpl implements PECompanyPerformanceI
                     return new PECompanyPerformanceIddResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error updating PE fund's company performance", "");
                 }
                 performanceIddDto.setGrossIrr(this.irrService.getIRR(cashflowDtoList));
+
+                for (PECompanyPerformanceIdd performanceIdd : this.repository.getEntitiesByFundId(fundId, new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName")))) {
+                    if (performanceIddDto.getCompanyName().equals(performanceIdd.getCompanyName())) {
+                        performanceIddDto.setCompanyDescription(performanceIdd.getCompanyDescription());
+                        performanceIddDto.setIndustry(performanceIdd.getIndustry());
+                        performanceIddDto.setCountry(performanceIdd.getCountry());
+                        performanceIddDto.setTypeOfInvestment(performanceIdd.getTypeOfInvestment());
+                        performanceIddDto.setControl(performanceIdd.getControl());
+                        performanceIddDto.setDealSource(performanceIdd.getDealSource());
+                        performanceIddDto.setCurrency(performanceIdd.getCurrency());
+                        break;
+                    }
+                }
             }
 
             return saveList(performanceIddDtoList, fundId);
@@ -180,10 +201,20 @@ public class PECompanyPerformanceIddServiceImpl implements PECompanyPerformanceI
     }
 
     @Override
-    public boolean deleteByFundId(Long fundId) {
-        this.repository.deleteByFundId(fundId);
-        return true;
+    public PECompanyPerformanceIddDto findByFundIdAndCompanyName(Long fundId, String companyName) {
+        try {
+            return this.converter.disassemble(this.repository.getEntitiesByFundIdAndCompanyName(fundId, companyName));
+        } catch (Exception ex) {
+            logger.error("Error loading PE fund's company performance: " + fundId, ex);
+        }
+        return null;
     }
+
+//    @Override
+//    public boolean deleteByFundId(Long fundId) {
+//        this.repository.deleteByFundId(fundId);
+//        return true;
+//    }
 
     @Override
     public PEFundTrackRecordResultDto calculateTrackRecord(Long fundId) {

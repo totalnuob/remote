@@ -1,9 +1,12 @@
 package kz.nicnbk.ws.rest;
 
 import kz.nicnbk.service.api.authentication.TokenService;
+import kz.nicnbk.service.api.pe.PECompanyPerformanceIddService;
+import kz.nicnbk.service.api.pe.PECompanyPerformanceService;
 import kz.nicnbk.service.api.pe.PEFundService;
-import kz.nicnbk.service.dto.common.StatusResultDto;
+import kz.nicnbk.service.api.pe.PEGrossCashflowService;
 import kz.nicnbk.service.dto.common.StatusResultType;
+import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.pe.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by zhambyl on 16-Nov-16.
@@ -24,6 +28,12 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
 
     @Autowired
     private PEFundService service;
+
+    @Autowired
+    private PEGrossCashflowService cashflowService;
+
+    @Autowired
+    private PECompanyPerformanceIddService performanceIddService;
 
     @Autowired
     private TokenService tokenService;
@@ -99,6 +109,32 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
         }
     }
 
+    @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/savePortfolioInfo/{fundId}", method = RequestMethod.POST)
+    public ResponseEntity<?> savePortfolioInfo(@RequestBody List<PECompanyPerformanceIddDto> performanceIddDtoList, @PathVariable Long fundId) {
+
+        PECompanyPerformanceIddResultDto resultDto = this.performanceIddService.saveList(performanceIddDtoList, fundId);
+
+        if (resultDto.getStatus().equals(StatusResultType.SUCCESS)) {
+            return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/calculateIRR/{fundId}", method = RequestMethod.POST)
+    public ResponseEntity<?> calculateIRR(@RequestBody PEPortfolioInfoDto portfolioInfoDto, @PathVariable Long fundId) {
+
+        PEIrrResultDto resultDto = this.cashflowService.calculateIRR(portfolioInfoDto, fundId);
+
+        if (resultDto.getStatus().equals(StatusResultType.SUCCESS)) {
+            return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 //    @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
 //    @RequestMapping(value = "/saveGrossCF/{fundId}", method = RequestMethod.POST)
 //    public ResponseEntity<?> saveGrossCF(@RequestBody List<PEGrossCashflowDto> grossCashflowDtoList, @PathVariable Long fundId) {
@@ -137,22 +173,18 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
     }
 
     @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
-    @RequestMapping(value = "/uploadGrossCF/{fundId}", method = RequestMethod.POST)
-    public ResponseEntity<?> uploadGrossCF(@RequestParam(value = "file", required = false) MultipartFile[] files, @PathVariable Long fundId) {
-        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
-        String username = this.tokenService.decode(token).getUsername();
+    @RequestMapping(value = "/uploadGrossCF", method = RequestMethod.POST)
+    public ResponseEntity<?> uploadGrossCF(@RequestParam(value = "file", required = false) MultipartFile[] files) {
 
-        return new ResponseEntity<>(new StatusResultDto(StatusResultType.SUCCESS, "", "Pseudo done!", ""), null, HttpStatus.OK);
+        Set<FilesDto> filesDtoSet = buildFilesDtoFromMultipart(files, null);
 
-//        StatusResultDto resultDto = this.service.uploadGrossCF(dsasadas, fundId, username);
-//
-//        if (resultDto.getStatus().getCode().equals("SUCCESS")) {
-//            return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
-//        } else {
-//            return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
+        PEGrossCashflowResultDto resultDto = this.cashflowService.uploadGrossCF(filesDtoSet);
 
-
+        if (resultDto.getStatus().getCode().equals("SUCCESS")) {
+            return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
 //        Set<FilesDto> filesDtoSet = buildFilesDtoFromMultipart(files, FileTypeLookup.MEMO_ATTACHMENT.getCode());
 //        if(filesDtoSet != null){

@@ -1,16 +1,20 @@
 package kz.nicnbk.service.impl.pe;
 
+import kz.nicnbk.common.service.util.ExcelUtils;
 import kz.nicnbk.repo.api.pe.PEGrossCashflowRepository;
 import kz.nicnbk.repo.model.pe.PEFund;
 import kz.nicnbk.repo.model.pe.PEGrossCashflow;
+import kz.nicnbk.service.api.pe.PECompanyPerformanceIddService;
 import kz.nicnbk.service.api.pe.PEFundService;
 import kz.nicnbk.service.api.pe.PEGrossCashflowService;
+import kz.nicnbk.service.api.pe.PEIrrService;
 import kz.nicnbk.service.converter.pe.PEGrossCashflowEntityConverter;
 import kz.nicnbk.service.dto.common.StatusResultType;
-import kz.nicnbk.service.dto.pe.PEFundTrackRecordDto;
-import kz.nicnbk.service.dto.pe.PEFundTrackRecordResultDto;
-import kz.nicnbk.service.dto.pe.PEGrossCashflowDto;
-import kz.nicnbk.service.dto.pe.PEGrossCashflowResultDto;
+import kz.nicnbk.service.dto.files.FilesDto;
+import kz.nicnbk.service.dto.pe.*;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +22,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.*;
 
 /**
  * Created by zhambyl on 05-Jan-17.
@@ -37,6 +42,12 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
 
     @Autowired
     private PEFundService peFundService;
+
+    @Autowired
+    private PEIrrService irrService;
+
+    @Autowired
+    private PECompanyPerformanceIddService performanceIddService;
 
     @Override
     public Long save(PEGrossCashflowDto cashflowDto, Long fundId) {
@@ -66,25 +77,25 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
                         cashflowDto.getDate() == null) {
                     return new PEGrossCashflowResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Don't send null or empty company name or date!", "");
                 }
-                if ((cashflowDto.getInvested() != null && cashflowDto.getInvested() > 0) ||
-                        (cashflowDto.getRealized() != null && cashflowDto.getRealized() < 0) ||
-                        (cashflowDto.getUnrealized() != null && cashflowDto.getUnrealized() < 0)) {
-                    return new PEGrossCashflowResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Check the positiveness of the values!", "");
-                }
+//                if ((cashflowDto.getInvested() != null && cashflowDto.getInvested() > 0) ||
+//                        (cashflowDto.getRealized() != null && cashflowDto.getRealized() < 0) ||
+//                        (cashflowDto.getUnrealized() != null && cashflowDto.getUnrealized() < 0)) {
+//                    return new PEGrossCashflowResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Check the positiveness of the values!", "");
+//                }
             }
 
-            for (PEGrossCashflowDto cashflowDto1 : cashflowDtoList) {
-                int i = 0;
-                for (PEGrossCashflowDto cashflowDto2 : cashflowDtoList) {
-                    if (cashflowDto1.getCompanyName().equals(cashflowDto2.getCompanyName()) &&
-                            cashflowDto1.getDate().equals(cashflowDto2.getDate())) {
-                        i++;
-                    }
-                }
-                if (i > 1) {
-                    return new PEGrossCashflowResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "The pairs (\"Company name\", \"Date of transaction\") must be unique!", "");
-                }
-            }
+//            for (PEGrossCashflowDto cashflowDto1 : cashflowDtoList) {
+//                int i = 0;
+//                for (PEGrossCashflowDto cashflowDto2 : cashflowDtoList) {
+//                    if (cashflowDto1.getCompanyName().equals(cashflowDto2.getCompanyName()) &&
+//                            cashflowDto1.getDate().equals(cashflowDto2.getDate())) {
+//                        i++;
+//                    }
+//                }
+//                if (i > 1) {
+//                    return new PEGrossCashflowResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "The pairs (\"Company name\", \"Date of transaction\") must be unique!", "");
+//                }
+//            }
 
             if (this.peFundService.get(fundId) == null) {
                 return new PEGrossCashflowResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");
@@ -128,6 +139,62 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
     }
 
     @Override
+    public PEGrossCashflowResultDto uploadGrossCF(Set<FilesDto> filesDtoSet) {
+        try {
+            List<PEGrossCashflowDto> cashflowDtoList = new ArrayList<>();
+
+            FilesDto filesDto = filesDtoSet.iterator().next();
+            Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
+
+            int rowNum = 0;
+
+            while (rowIterator.hasNext()) {
+                Row row = rowIterator.next();
+                if (rowNum != 0) {
+//                    cashflowDtoList.add(new PEGrossCashflowDto("AAA", new Date(), -1000000.0, 2000000.0, 3000000.0, 7000000.0, false));
+                    cashflowDtoList.add(new PEGrossCashflowDto(
+                            ExcelUtils.getTextValueFromAnyCell(row.getCell(0)),
+                            row.getCell(1).getDateCellValue(),
+                            ExcelUtils.getDoubleValueFromCell(row.getCell(2)),
+                            ExcelUtils.getDoubleValueFromCell(row.getCell(3)),
+                            ExcelUtils.getDoubleValueFromCell(row.getCell(4)),
+                            ExcelUtils.getDoubleValueFromCell(row.getCell(5)),
+                            false));
+                }
+                rowNum++;
+            }
+
+            return new PEGrossCashflowResultDto(cashflowDtoList, StatusResultType.SUCCESS, "", "A new portion of the Gross Cash Flow has been successfully uploaded, but NOT saved!", "");
+        } catch (Exception ex) {
+            logger.error("Failed to upload PE fund's gross cash flow, ", ex);
+        }
+        return new PEGrossCashflowResultDto(null, StatusResultType.FAIL, "", "Failed to upload PE fund's Gross Cash Flow!", "");
+    }
+
+    private Iterator<Row> getRowIterator(FilesDto filesDto, int sheetNumber) {
+        InputStream inputFile = null;
+        try {
+            inputFile = new ByteArrayInputStream(filesDto.getBytes());
+            String extension = filesDto.getFileName().substring(filesDto.getFileName().lastIndexOf(".") + 1,
+                    filesDto.getFileName().length());
+            if (extension.equalsIgnoreCase("xls")) {
+                HSSFWorkbook workbook = new HSSFWorkbook(inputFile);
+                HSSFSheet sheet = workbook.getSheetAt(sheetNumber);
+                return sheet.iterator();
+            }
+        } catch (Exception ex) {
+            logger.error("Failed to get file iterator, ", ex);
+        } finally {
+            try {
+                inputFile.close();
+            } catch (Exception e) {
+                logger.error("Failed to close the file, ", e);
+            }
+        }
+        return null;
+    }
+
+    @Override
     public List<PEGrossCashflowDto> findByFundId(Long fundId) {
         try {
             return this.converter.disassembleList(this.repository.getEntitiesByFundId(fundId, new PageRequest(0, Integer.MAX_VALUE, new Sort(Sort.Direction.ASC, "companyName", "date"))));
@@ -158,8 +225,78 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
     }
 
     @Override
-    public boolean deleteByFundId(Long fundId) {
-        this.repository.deleteByFundId(fundId);
-        return true;
+    public List<PEGrossCashflowDto> findByFundIdAndPortfolioInfo(Long fundId, PEPortfolioInfoDto portfolioInfoDto) {
+        try {
+            List<PEGrossCashflowDto> cashflowDtoList = this.findByFundIdSortedByDate(fundId);
+            List<PEGrossCashflowDto> cashflowDtoListNew = new ArrayList<>();
+
+            String companyDescription = portfolioInfoDto.getCompanyDescription();
+            String industry = portfolioInfoDto.getIndustry();
+            String country = portfolioInfoDto.getCountry();
+            String typeOfInvestment = portfolioInfoDto.getTypeOfInvestment();
+            String control = portfolioInfoDto.getControl();
+            String dealSource = portfolioInfoDto.getDealSource();
+            String currency = portfolioInfoDto.getCurrency();
+
+            for (PEGrossCashflowDto cashflowDto : cashflowDtoList) {
+                PECompanyPerformanceIddDto performanceIddDto = this.performanceIddService.findByFundIdAndCompanyName(fundId, cashflowDto.getCompanyName());
+
+                Boolean add = true;
+                if (companyDescription != null && !companyDescription.equals("NONE") && !companyDescription.equals(performanceIddDto.getCompanyDescription())) {
+                    add = false;
+                }
+                if (industry != null && !industry.equals("NONE") && !industry.equals(performanceIddDto.getIndustry())) {
+                    add = false;
+                }
+                if (country != null && !country.equals("NONE") && !country.equals(performanceIddDto.getCountry())) {
+                    add = false;
+                }
+                if (typeOfInvestment != null && !typeOfInvestment.equals("NONE") && !typeOfInvestment.equals(performanceIddDto.getTypeOfInvestment())) {
+                    add = false;
+                }
+                if (control != null && !control.equals("NONE") && !control.equals(performanceIddDto.getControl())) {
+                    add = false;
+                }
+                if (dealSource != null && !dealSource.equals("NONE") && !dealSource.equals(performanceIddDto.getDealSource())) {
+                    add = false;
+                }
+                if (currency != null && !currency.equals("NONE") && !currency.equals(performanceIddDto.getCurrency())) {
+                    add = false;
+                }
+
+                if (add) {
+                    cashflowDtoListNew.add(cashflowDto);
+                }
+            }
+
+            return cashflowDtoListNew;
+        } catch (Exception ex) {
+            logger.error("Error loading PE fund's gross cash flow: " + fundId, ex);
+        }
+        return null;
     }
+
+    @Override
+    public PEIrrResultDto calculateIRR(PEPortfolioInfoDto portfolioInfoDto, Long fundId) {
+        try {
+            List<PEGrossCashflowDto> cashflowDtoList = this.findByFundIdAndPortfolioInfo(fundId, portfolioInfoDto);
+
+            if (cashflowDtoList != null) {
+                Double irr = this.irrService.getIRR(cashflowDtoList);
+
+                if (irr != null) {
+                    return new PEIrrResultDto(irr, StatusResultType.SUCCESS, "", "Successfully calculated PE fund's IRR", "");
+                }
+            }
+        } catch (Exception ex) {
+            logger.error("Failed to calculate PE fund's IRR, ", ex);
+        }
+        return new PEIrrResultDto(null, StatusResultType.FAIL, "", "Error calculating PE fund's IRR", "");
+    }
+
+//    @Override
+//    public boolean deleteByFundId(Long fundId) {
+//        this.repository.deleteByFundId(fundId);
+//        return true;
+//    }
 }

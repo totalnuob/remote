@@ -11,6 +11,7 @@ import {LookupService} from "../common/lookup.service";
 import {Subscription} from 'rxjs';
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 import {ErrorResponse} from "../common/error-response";
+import {PEIrrParam} from "./model/pe.irrParam";
 
 declare var $:any
 
@@ -46,6 +47,20 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     public sub:any;
     public fundIdParam: number;
     public firmIdParam: number;
+
+    public rounding = 1000000;
+
+    public performanceIddTotal = [];
+
+    public dynamicIRR: number;
+    public irrParam = new PEIrrParam();
+    public companyDescriptionIRRList = [];
+    public industryIRRList = [];
+    public countryIRRList = [];
+    public typeOfInvestmentIRRList = [];
+    public controlIRRList = [];
+    public dealSourceIRRList = [];
+    public currencyIRRList = [];
 
     private visible = false;
     private openingSoon = false;
@@ -137,6 +152,10 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                     if(this.fund.companyPerformanceIdd == null){
                                         this.fund.companyPerformanceIdd = [];
                                     }
+
+                                    this.updateIRRParamList();
+
+                                    this.updatePerformanceIddTotal();
 
                                     if(this.fund.grossCashflow == null){
                                         this.fund.grossCashflow = [];
@@ -306,6 +325,83 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
             )
     }
 
+    savePortfolioInfo() {
+        this.busy = this.fundService.savePortfolioInfo(this.fund.companyPerformanceIdd, this.fund.id)
+            .subscribe(
+                (response) => {
+                    this.postAction(response.messageEn, null);
+
+                    this.fund.companyPerformanceIdd = response.performanceIddDtoList;
+
+                    this.updateIRRParamList();
+                },
+                (error: ErrorResponse) => {
+                    this.processErrorMessage(error);
+                    this.postAction(null, error.message);
+                    console.log(error);
+                }
+            )
+    }
+
+    updateIRRParamList() {
+        this.companyDescriptionIRRList = [];
+        this.industryIRRList = [];
+        this.countryIRRList = [];
+        this.typeOfInvestmentIRRList = [];
+        this.controlIRRList = [];
+        this.dealSourceIRRList = [];
+        this.currencyIRRList = [];
+
+        for (var i = 0; i < this.fund.companyPerformanceIdd.length; i++) {
+            var companyDescription = this.fund.companyPerformanceIdd[i].companyDescription;
+            var industry = this.fund.companyPerformanceIdd[i].industry;
+            var country = this.fund.companyPerformanceIdd[i].country;
+            var typeOfInvestment = this.fund.companyPerformanceIdd[i].typeOfInvestment;
+            var control = this.fund.companyPerformanceIdd[i].control;
+            var dealSource = this.fund.companyPerformanceIdd[i].dealSource;
+            var currency = this.fund.companyPerformanceIdd[i].currency;
+
+            if (companyDescription != null && companyDescription != '' && this.companyDescriptionIRRList.includes(companyDescription) == false) {
+                this.companyDescriptionIRRList.push(companyDescription);
+            }
+            if (industry != null && industry != '' && this.industryIRRList.includes(industry) == false) {
+                this.industryIRRList.push(industry);
+            }
+            if (country != null && country != '' && this.countryIRRList.includes(country) == false) {
+                this.countryIRRList.push(country);
+            }
+            if (typeOfInvestment != null && typeOfInvestment != '' && this.typeOfInvestmentIRRList.includes(typeOfInvestment) == false) {
+                this.typeOfInvestmentIRRList.push(typeOfInvestment);
+            }
+            if (control != null && control != '' && this.controlIRRList.includes(control) == false) {
+                this.controlIRRList.push(control);
+            }
+            if (dealSource != null && dealSource != '' && this.dealSourceIRRList.includes(dealSource) == false) {
+                this.dealSourceIRRList.push(dealSource);
+            }
+            if (currency != null && currency != '' && this.currencyIRRList.includes(currency) == false) {
+                this.currencyIRRList.push(currency);
+            }
+        }
+    }
+
+    calculateIRR() {
+            this.busy = this.fundService.calculateIRR(this.irrParam, this.fund.id)
+            .subscribe(
+                (response) => {
+                    this.postAction(response.messageEn, null);
+
+                    this.dynamicIRR = response.irr;
+                },
+                (error: ErrorResponse) => {
+                    this.dynamicIRR = null;
+                    this.processErrorMessage(error);
+                    this.postAction(null, error.message);
+                    console.log(error);
+                }
+            )
+    }
+
     calculateTrackRecord(calculationType) {
         this.busy = this.fundService.calculateTrackRecord(this.fund.id, calculationType)
             .subscribe(
@@ -322,6 +418,33 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     }
 
                     //this.fund.autoCalculation = true;
+                },
+                (error: ErrorResponse) => {
+                    this.processErrorMessage(error);
+                    this.postAction(null, error.message);
+                    console.log(error);
+                }
+            )
+    }
+
+    updatePerformanceIddTotal() {
+        this.busy = this.fundService.calculateTrackRecord(this.fund.id, 2)
+            .subscribe(
+                (response) => {
+                    this.performanceIddTotal = [];
+
+                    this.performanceIddTotal.invested = response.trackRecordDTO.investedAmount;
+                    this.performanceIddTotal.realized = response.trackRecordDTO.realized;
+                    this.performanceIddTotal.unrealized = response.trackRecordDTO.unrealized;
+
+                    this.performanceIddTotal.totalValue = Number(this.performanceIddTotal.realized) + Number(this.performanceIddTotal.unrealized);
+                    if (Number(this.performanceIddTotal.invested) === 0) {
+                        this.performanceIddTotal.multiple = null;
+                    } else {
+                        this.performanceIddTotal.multiple = Number(this.performanceIddTotal.totalValue) / Number(this.performanceIddTotal.invested);
+                    }
+
+                    this.performanceIddTotal.grossIrr = response.trackRecordDTO.grossIrr;
                 },
                 (error: ErrorResponse) => {
                     this.processErrorMessage(error);
@@ -382,6 +505,10 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
 
                     this.fund.companyPerformanceIdd = response.performanceIddDtoList;
 
+                    this.updateIRRParamList();
+
+                    this.updatePerformanceIddTotal();
+
                     this.fund.calculationType = response.trackRecordDTO.calculationType;
 
                     this.fund.numberOfInvestments = response.trackRecordDTO.numberOfInvestments;
@@ -404,6 +531,97 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     console.log(error);
                 }
             )
+    }
+
+    sortPerformanceIdd(sortType) {
+        if (sortType === 11 || sortType === 13) {
+            this.fund.companyPerformanceIdd.sort( function(name1, name2) {
+                if ( name1.companyName < name2.companyName ){
+                    return sortType - 12;
+                }else if( name1.companyName > name2.companyName ){
+                    return 12 - sortType;
+                }else{
+                    return 0;
+                }
+            });
+        }
+        if (sortType === 21 || sortType === 23) {
+            this.fund.companyPerformanceIdd.sort( function(name1, name2) {
+                if ( name1.invested < name2.invested ){
+                    return sortType - 22;
+                }else if( name1.invested > name2.invested ){
+                    return 22 - sortType;
+                }else{
+                    return 0;
+                }
+            });
+        }
+        if (sortType === 31 || sortType === 33) {
+            this.fund.companyPerformanceIdd.sort( function(name1, name2) {
+                if ( name1.realized < name2.realized ){
+                    return sortType - 32;
+                }else if( name1.realized > name2.realized ){
+                    return 32 - sortType;
+                }else{
+                    return 0;
+                }
+            });
+        }
+        if (sortType === 41 || sortType === 43) {
+            this.fund.companyPerformanceIdd.sort( function(name1, name2) {
+                if ( name1.unrealized < name2.unrealized ){
+                    return sortType - 42;
+                }else if( name1.unrealized > name2.unrealized ){
+                    return 42 - sortType;
+                }else{
+                    return 0;
+                }
+            });
+        }
+        if (sortType === 51 || sortType === 53) {
+            this.fund.companyPerformanceIdd.sort( function(name1, name2) {
+                if ( name1.totalValue < name2.totalValue ){
+                    return sortType - 52;
+                }else if( name1.totalValue > name2.totalValue ){
+                    return 52 - sortType;
+                }else{
+                    return 0;
+                }
+            });
+        }
+        if (sortType === 61 || sortType === 63) {
+            this.fund.companyPerformanceIdd.sort( function(name1, name2) {
+                if ( name1.multiple < name2.multiple ){
+                    return sortType - 62;
+                }else if( name1.multiple > name2.multiple ){
+                    return 62 - sortType;
+                }else{
+                    return 0;
+                }
+            });
+        }
+        if (sortType === 71 || sortType === 73) {
+            this.fund.companyPerformanceIdd.sort( function(name1, name2) {
+                if ( name1.grossIrr < name2.grossIrr ){
+                    return sortType - 72;
+                }else if( name1.grossIrr > name2.grossIrr ){
+                    return 72 - sortType;
+                }else{
+                    return 0;
+                }
+            });
+        }
+        if (sortType === 81 || sortType === 83) {
+            this.fund.companyPerformanceIdd.sort( function(name1, name2) {
+                if ( name1.netIrr < name2.netIrr ){
+                    return sortType - 82;
+                }else if( name1.netIrr > name2.netIrr ){
+                    return 82 - sortType;
+                }else{
+                    return 0;
+                }
+            });
+        }
     }
 
     postAction(successMessage, errorMessage) {
@@ -683,14 +901,25 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     }
 
     onSubmitGrossCF() {
-        this.busy = this.fundService.postFiles(this.myFiles, this.fund.id)
+        this.busy = this.fundService.postFiles(this.myFiles)
             .subscribe(
                 (response) => {
-                    this.postAction(response.messageEn, null);
+                    for (var i = 0; i < response.cashflowDtoList.length; i++) {
+                        this.fund.grossCashflow.push({
+                            id:"",
+                            companyName:response.cashflowDtoList[i].companyName,
+                            date:response.cashflowDtoList[i].date,
+                            invested:response.cashflowDtoList[i].invested,
+                            realized:response.cashflowDtoList[i].realized,
+                            unrealized:response.cashflowDtoList[i].unrealized,
+                            grossCF:response.cashflowDtoList[i].grossCF,
+                            autoCalculation:response.cashflowDtoList[i].autoCalculation});
+                    }
+                    this.postAction(response.messageEn + ' (a total of ' + response.cashflowDtoList.length + ' new transactions)', null);
                 },
-                (error: ErrorResponse) => {
+                (error) => {
                     this.processErrorMessage(error);
-                    this.postAction(null, error.message);
+                    this.postAction(null, JSON.parse(error).messageEn);
                     console.log(error);
                 }
             )
