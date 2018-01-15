@@ -27,6 +27,7 @@ export class GeneratedReportsNBReportingComponent extends CommonNBReportingCompo
     private reportId;
 
     busy: Subscription;
+    busyFinal: Subscription;
     private report: InputFilesNBReport;
     private periodicReport: PeriodicReport;
 
@@ -87,7 +88,7 @@ export class GeneratedReportsNBReportingComponent extends CommonNBReportingCompo
 
     markAsFinal(){
         if(confirm("Are you sure want to mark report 'FINAL'? You will not be able to edit any data.")) {
-            this.busy = this.periodicReportService.markReportAsFinal(this.reportId)
+            this.busyFinal = this.periodicReportService.markReportAsFinal(this.reportId)
                 .subscribe(
                     response => {
                         if (response && response.success) {

@@ -43,7 +43,7 @@
         </li>
     </ul>
 
-    <div class="tab-content">
+    <div  [ngBusy]="[busy, busyFinal]" class="tab-content">
         <div id="reports" [ngClass]="getReportsTabDivClass()">
         <!--<div id="reports" class="tab-pane fade in active">-->
             <table class="table table-hover table-responsive table-condensed">
