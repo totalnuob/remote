@@ -76,10 +76,10 @@ export class AppComponent {
     }
 
     logout() {
+        console.log("logging out...");
         this.authenticationService.logout()
             .subscribe(
-                response => {
-
+                res => {
                     localStorage.removeItem("authenticatedUser");
                     localStorage.removeItem("authenticatedUserRoles");
                     //location.reload();
@@ -87,7 +87,7 @@ export class AppComponent {
 
                 },
                 error =>  {
-
+                    console.log("Logout request error");
                     // TODO: error message
 
                     //this.errorMsg = 'Failed to login';

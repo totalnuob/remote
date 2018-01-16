@@ -14,7 +14,7 @@ export class CommonFormViewComponent {
     errorMessage: string;
 
     constructor(
-        private _router: Router
+        private _router?: Router
     ){}
 
     convertToServiceModel(list){

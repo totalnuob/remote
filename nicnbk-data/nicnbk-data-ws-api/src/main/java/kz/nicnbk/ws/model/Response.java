@@ -9,6 +9,13 @@ public class Response implements Serializable {
     private Boolean success;
     private ResponseMessage message;
 
+    public Response(){}
+
+    public Response(Boolean success, ResponseMessage message){
+        this.success = success;
+        this.message = message;;
+    }
+
     public Boolean getSuccess() {
         return success;
     }

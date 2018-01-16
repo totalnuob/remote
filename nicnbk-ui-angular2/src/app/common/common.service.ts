@@ -11,13 +11,11 @@ export class CommonService{
     }
 
     public extractData(res: Response) {
-        console.log("extractData");
         let body = res.json();
         return body || {};
     }
 
     public handleErrorResponse (error: any) {
-        console.log("handleErrorResponse");
         var errorResponse = new ErrorResponse;
         if(error.message){
             //console.log(error);
@@ -34,7 +32,6 @@ export class CommonService{
     public handleError(error: any){
         let errMsg = (error.message) ? error.message :
             error.status ? `${error.status} - ${error.statusText}` : 'Server error';
-        console.error(error); // log to console instead
         return Observable.throw(errMsg);
     }
 

@@ -5,10 +5,9 @@ export class PeriodicReport{
     type: string;
     status: string;
 
-    constructor(){
-    }
-
-    constructor(id){
-        this.id = id
+    constructor(id?: number){
+        if(id != null) {
+            this.id = id
+        }
     }
 }

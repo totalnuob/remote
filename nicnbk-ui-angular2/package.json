@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "nicnbk ui-angular2",
   "scripts": {
-    "start": "webpack-dev-server --progress --port 8080 --host 10.10.163.151",
+    "start": "webpack-dev-server --progress --port 8088 --host 10.10.163.151",
     "test": "karma start",
     "build": "rimraf dist && webpack --config config/webpack.prod.js --progress --profile --bail",
     "postinstall": "typings install"

@@ -73,13 +73,13 @@ export class ConsolidatedBalanceUSDFormNBReportingComponent extends CommonNBRepo
     checkSums(){
         if(this.records != null){
             for(var i = 0; i < this.records.length; i++) {
-                if (this.records[i].accountNumber == null && this.records[i].lineNumber == 26) {
+                if (this.records[i].accountNumber == null && this.records[i].lineNumber === '26') {
                     var assets = new Number(this.records[i].currentAccountBalance).toFixed(2);
-                } else if (this.records[i].accountNumber == null && this.records[i].lineNumber == 52) {
+                } else if (this.records[i].accountNumber == null && this.records[i].lineNumber === '52') {
                     var liabilitiesAndCapital = new Number(this.records[i].currentAccountBalance).toFixed(2);
                 }
             }
-            var diff = assets - liabilitiesAndCapital;
+            var diff = Number(assets) - Number(liabilitiesAndCapital);
             if(diff > 2 || diff < -2){
                 this.postAction(null, "#26  = " + assets + ", #52 = " + liabilitiesAndCapital + " (difference = " + diff.toFixed(2) + ")");
             }

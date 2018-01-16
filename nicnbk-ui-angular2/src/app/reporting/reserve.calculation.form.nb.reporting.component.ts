@@ -17,7 +17,6 @@ import {GeneratedGLFormRecord} from "./model/generated.form.record";
 import {TarragonNICReportingChartOfAccounts} from "./model/tarragon,.nic.reporting.chart.of.accounts.";
 import {PEGeneralLedgerFormDataHolder} from "./model/pe.general.ledger.form.data.holder.nb.reporting";
 import {PEGeneralLedgerFormDataRecord} from "./model/pe.general.ledger.form.data.record";
-import readConfigFile = ts.readConfigFile;
 import {ReserveCalculationFormRecord} from "./model/reserve.calculation.form.record";
 
 import {Observable} from 'rxjs/Observable';

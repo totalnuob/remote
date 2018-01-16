@@ -6,7 +6,7 @@ export class BaseDictionary extends UpdatedEntity {
     nameRu: string;
     nameKz: string;
 
-    constructor(code, nameEn, nameRu, nameKz){
+    constructor(code?: string, nameEn?: string, nameRu?: string, nameKz?: string){
 
         super();
 
@@ -16,5 +16,4 @@ export class BaseDictionary extends UpdatedEntity {
         this.nameKz = nameKz;
     }
 
-    constructor(){}
 }

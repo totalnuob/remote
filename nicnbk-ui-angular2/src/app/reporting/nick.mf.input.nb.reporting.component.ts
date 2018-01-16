@@ -165,7 +165,6 @@ export class NICKMFInputNBReportingComponent extends CommonNBReportingComponent 
                             alreadyAdded = true;
                         }
                     }
-
                     if(!alreadyAdded){
                         record.matchingNICChartOfAccounts.push(new BaseDictionary(this.nicReportingChartOfAccounts[i].code,
                             this.nicReportingChartOfAccounts[i].nameEn,
