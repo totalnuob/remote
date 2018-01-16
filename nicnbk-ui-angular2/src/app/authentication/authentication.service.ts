@@ -20,13 +20,20 @@ export class AuthenticationService extends CommonService{
     }
 
     private LOGIN_URL = DATA_APP_URL + "authenticate";
+    private LOGOUT_URL = DATA_APP_URL + "signout";
     //private CHECK_TOKEN_URL = DATA_APP_URL + "checkToken";
 
-        login(user){
+    login(user){
 
         let body = JSON.stringify(user);
         return this.http.post(this.LOGIN_URL, body, this.getOptionsWithCredentials())
-        // TODO: parse json with extractData()
+            .map(this.extractData)
+            .catch(this.handleError);
+
+    }
+
+    logout(){
+        return this.http.post(this.LOGOUT_URL, null, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleError);
 

@@ -5,6 +5,7 @@ import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.dto.authentication.AuthenticatedUserDto;
 import kz.nicnbk.service.dto.authentication.TokenUserInfo;
 import kz.nicnbk.service.dto.authentication.UserCredentialsDto;
+import kz.nicnbk.ws.model.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,7 +52,7 @@ public class AuthenticationServiceREST {
     @RequestMapping(value="/signout", method = RequestMethod.POST)
     public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response){
         response.addCookie(getClearTokenCookie());
-        return new ResponseEntity<>(null, null, HttpStatus.OK);
+        return new ResponseEntity<>(new Response(true, null), null, HttpStatus.OK);
     }
 
 
