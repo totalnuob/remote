@@ -2,7 +2,7 @@
 
 <configuration>
     <!-- LOG FILE DIR -->
-    <property name="LOG_DIR" value="C:/APP/TEST/LOGS" />
+    <property name="LOG_DIR" value="/home/unic/bin/unic-service/logging" />
 
     <!-- CONSOLE LOGGING -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
