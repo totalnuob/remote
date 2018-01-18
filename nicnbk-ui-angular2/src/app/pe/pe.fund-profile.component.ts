@@ -924,4 +924,20 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                 }
             )
     }
+
+    createOnePager() {
+        this.busy = this.fundService.createOnePager(this.fund.id)
+            .subscribe(
+                (response) => {
+                    this.postAction(response.messageEn, null);
+
+                    console.log(response.irr);
+                },
+                (error: ErrorResponse) => {
+                    this.processErrorMessage(error);
+                    this.postAction(null, error.message);
+                    console.log(error);
+                }
+            )
+    }
 }

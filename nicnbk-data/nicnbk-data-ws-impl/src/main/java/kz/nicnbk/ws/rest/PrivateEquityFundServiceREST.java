@@ -198,4 +198,17 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
 //        }
 //        return new ResponseEntity<>(null, null, HttpStatus.OK);
     }
+
+    @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/createOnePager/{fundId}", method = RequestMethod.GET)
+    public ResponseEntity<?> createOnePager(@PathVariable Long fundId) {
+
+        PEIrrResultDto resultDto = new PEIrrResultDto(222.0, StatusResultType.SUCCESS, "", "SUCCESS", "");
+
+        if (resultDto.getStatus().equals(StatusResultType.SUCCESS)) {
+            return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

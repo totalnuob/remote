@@ -49,6 +49,13 @@
                         <div style="position: relative;">
                             <div [ngBusy]="busy">
                                 <br/>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="col-md-1 pull-left">
+                                            <button type="submit" class="btn btn-success" (click)="createOnePager()" [disabled]="fund.id == 0 || fund.id == null">CREATE ONE PAGER</button>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="row withpadding">
                                     <h4>Manager Details</h4>
                                     <table class=" col-md-4 table-striped table-condensed">

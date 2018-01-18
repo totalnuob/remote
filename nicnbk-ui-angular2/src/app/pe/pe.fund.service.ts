@@ -18,6 +18,7 @@ export class PEFundService extends CommonService {
     private PE_FUND_SAVE_PORTFOLIO_INFO_URL = this.PE_BASE_URL + "savePortfolioInfo/";
     private PE_FUND_CALCULATE_IRR_URL = this.PE_BASE_URL + "calculateIRR/";
     private PE_FUND_SAVE_GROSS_CF_URL = this.PE_BASE_URL + "saveGrossCF/";
+    private PE_FUND_CREATE_ONE_PAGER_URL = this.PE_BASE_URL + "createOnePager/";
 
     constructor(
         private http: Http,
@@ -104,5 +105,11 @@ export class PEFundService extends CommonService {
 
     postFiles(files) {
         return this.uploadService.postFiles(this.PE_FUND_UPLOAD_GROSS_CF_URL, [], files);
+    }
+
+    createOnePager(id) {
+        return this.http.get(this.PE_FUND_CREATE_ONE_PAGER_URL + id, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
     }
 }
