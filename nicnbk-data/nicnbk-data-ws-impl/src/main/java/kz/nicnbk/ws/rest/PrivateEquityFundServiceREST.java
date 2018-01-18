@@ -203,7 +203,13 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
     @RequestMapping(value = "/createOnePager/{fundId}", method = RequestMethod.GET)
     public ResponseEntity<?> createOnePager(@PathVariable Long fundId) {
 
-        PEIrrResultDto resultDto = new PEIrrResultDto(222.0, StatusResultType.SUCCESS, "", "SUCCESS", "");
+        PEIrrResultDto resultDto;
+
+        if (fundId % 2 == 0) {
+            resultDto = new PEIrrResultDto(222.0, StatusResultType.SUCCESS, "", "SUCCESS", "");
+        } else {
+            resultDto = new PEIrrResultDto(111.0, StatusResultType.FAIL, "", "FAIL", "");
+        }
 
         if (resultDto.getStatus().equals(StatusResultType.SUCCESS)) {
             return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
