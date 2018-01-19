@@ -5,13 +5,10 @@ import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.files.FileService;
 import kz.nicnbk.service.api.tripmemo.TripMemoService;
 import kz.nicnbk.service.dto.files.FilesDto;
-import kz.nicnbk.service.dto.m2s2.MemoPagedSearchResult;
 import kz.nicnbk.service.dto.tripmemo.TripMemoDto;
 import kz.nicnbk.service.dto.tripmemo.TripMemoPagedSearchResult;
 import kz.nicnbk.service.dto.tripmemo.TripMemoSearchParamsDto;
-import kz.nicnbk.ws.model.EntitySaveResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -19,8 +16,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.InputStream;
 import java.util.Set;
 
 /**
@@ -44,13 +39,13 @@ public class TripMemoServiceREST extends CommonServiceREST{
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public ResponseEntity<?> search(@RequestBody TripMemoSearchParamsDto searchParams) {
         TripMemoPagedSearchResult searchResult = tripMemoService.search(searchParams);
-        return buildResponse(searchResult);
+        return buildNonNullResponse(searchResult);
     }
 
     @RequestMapping(value = "/get/{tripMemoId}", method = RequestMethod.GET)
     public ResponseEntity get(@PathVariable long tripMemoId) {
         TripMemoDto tripMemoDto = tripMemoService.get(tripMemoId);
-        return buildResponse(tripMemoDto);
+        return buildNonNullResponse(tripMemoDto);
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
@@ -115,6 +110,6 @@ public class TripMemoServiceREST extends CommonServiceREST{
     @RequestMapping(value = "/attachment/list/{tripMemoId}", method = RequestMethod.GET)
     private ResponseEntity getFiles(@PathVariable("tripMemoId") long tripMemoId){
         Set<FilesDto> files = this.tripMemoService.getAttachments(tripMemoId);
-        return buildResponse(files);
+        return buildNonNullResponse(files);
     }
 }

@@ -5,16 +5,12 @@ import kz.nicnbk.service.api.hf.HedgeFundService;
 import kz.nicnbk.service.dto.hf.HedgeFundDto;
 import kz.nicnbk.service.dto.hf.HedgeFundPagedSearchResult;
 import kz.nicnbk.service.dto.hf.HedgeFundSearchParams;
-import kz.nicnbk.ws.model.EntitySaveResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Date;
 
 /**
  * Created by magzumov on 20.07.2016.
@@ -34,7 +30,7 @@ public class HedgeFundServiceREST extends CommonServiceREST{
     @RequestMapping(value = "/get/{id}", method = RequestMethod.GET)
     public ResponseEntity get(@PathVariable long id){
         HedgeFundDto hedgeFundDto = this.service.get(id);
-        return buildResponse(hedgeFundDto);
+        return buildNonNullResponse(hedgeFundDto);
     }
 
     @PreAuthorize("hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
@@ -61,6 +57,6 @@ public class HedgeFundServiceREST extends CommonServiceREST{
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public ResponseEntity search(@RequestBody HedgeFundSearchParams searchParams){
         HedgeFundPagedSearchResult searchResult = this.service.findByName(searchParams);
-        return buildResponse(searchResult);
+        return buildNonNullResponse(searchResult);
     }
 }

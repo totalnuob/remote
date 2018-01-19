@@ -7,10 +7,10 @@ public enum FileTypeLookup {
 
     MEMO_ATTACHMENT("MEMO_ATT", "memo"),
 
-    NB_REP_T1("NB_REP_T1", "reporting/nbrk"),
-    NB_REP_T2("NB_REP_T2", "reporting/nbrk"),
-    NB_REP_T3("NB_REP_T3", "reporting/nbrk"),
-    NB_REP_T4("NB_REP_T4", "reporting/nbrk"),
+    NB_REP_TARR_SCHED_INVEST("NB_REP_T1", "reporting/nbrk"),
+    NB_REP_TARR_STMT_BALANCE_OPERATIONS("NB_REP_T2", "reporting/nbrk"),
+    NB_REP_TARR_STMT_CASHFLOW("NB_REP_T3", "reporting/nbrk"),
+    NB_REP_TARR_STMT_CHANGES("NB_REP_T4", "reporting/nbrk"),
     NB_REP_S1A("NB_REP_S1A", "reporting/nbrk"),
     NB_REP_S2A("NB_REP_S2A", "reporting/nbrk"),
     NB_REP_S3A("NB_REP_S3A", "reporting/nbrk"),

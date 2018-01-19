@@ -5,6 +5,8 @@ import kz.nicnbk.common.service.model.BaseDto;
 /**
  * Created by magzumov on 08.07.2016.
  */
+
+@Deprecated
 public class MessageResultDto implements BaseDto {
 
     private String messageEn;

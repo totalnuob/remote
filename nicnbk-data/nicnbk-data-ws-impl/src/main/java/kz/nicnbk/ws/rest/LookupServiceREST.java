@@ -28,111 +28,111 @@ public class LookupServiceREST extends CommonServiceREST{
     @RequestMapping(value = "/PEStrategy", method = RequestMethod.GET)
     public ResponseEntity getPEStrategies(){
         List<BaseDictionaryDto> lookups = this.lookupService.getPrivateEquityStrategies();
-        return buildResponse(lookups);
+        return buildNonNullResponse(lookups);
     }
 
     @RequestMapping(value = "/HFStrategy", method = RequestMethod.GET)
     public ResponseEntity getHFStrategies(){
         List<BaseDictionaryDto> lookups = this.lookupService.getHedgeFundsStrategies();
-        return buildResponse(lookups);
+        return buildNonNullResponse(lookups);
     }
 
     @RequestMapping(value = "/HFSubStrategy/{strategy}", method = RequestMethod.GET)
     public ResponseEntity getHFSubStrategies(@PathVariable String strategy){
         List<BaseDictionaryDto> lookups = this.lookupService.getHedgeFundsSubStrategies(strategy);
-        return buildResponse(lookups);
+        return buildNonNullResponse(lookups);
     }
 
     @RequestMapping(value = "/REStrategy", method = RequestMethod.GET)
     public ResponseEntity getREStrategies(){
         List<BaseDictionaryDto> lookups = this.lookupService.getRealEstateStrategies();
-        return buildResponse(lookups);
+        return buildNonNullResponse(lookups);
     }
 
     @RequestMapping(value = "/Geography", method = RequestMethod.GET)
     public ResponseEntity getGeographies(){
         List<BaseDictionaryDto> lookups = this.lookupService.getGeographies();
-        return buildResponse(lookups);
+        return buildNonNullResponse(lookups);
     }
 
     @RequestMapping(value = "/Currency", method = RequestMethod.GET)
     public ResponseEntity getCurrencies(){
         List<BaseDictionaryDto> lookups = this.lookupService.getCurrencies();
-        return buildResponse(lookups);
+        return buildNonNullResponse(lookups);
     }
 
     @RequestMapping(value = "/HedgeFundStatus", method = RequestMethod.GET)
     public ResponseEntity getHedgeFundStatuses(){
         List<BaseDictionaryDto> lookups = this.lookupService.getHedgeFundStatuses();
-        return buildResponse(lookups);
+        return buildNonNullResponse(lookups);
     }
 
     @RequestMapping(value = "/SubscriptionFrequency", method = RequestMethod.GET)
     public ResponseEntity getSubscriptionFrequencies(){
         List<BaseDictionaryDto> lookups = this.lookupService.getSubscriptionFrequencies();
-        return buildResponse(lookups);
+        return buildNonNullResponse(lookups);
     }
 
     @RequestMapping(value = "/RedemptionFrequency", method = RequestMethod.GET)
     public ResponseEntity getRedemptionFrequencies(){
         List<BaseDictionaryDto> lookups = this.lookupService.getRedemptionFrequencies();
-        return buildResponse(lookups);
+        return buildNonNullResponse(lookups);
     }
 
     @RequestMapping(value = "/RedemptionNoticePeriods", method = RequestMethod.GET)
     public ResponseEntity getRedemptionNoticePeriods(){
         List<BaseDictionaryDto> lookups = this.lookupService.getRedemptionNoticePeriods();
-        return buildResponse(lookups);
+        return buildNonNullResponse(lookups);
     }
 
     @RequestMapping(value = "/SidePocket", method = RequestMethod.GET)
     public ResponseEntity getSidePockets(){
         List<BaseDictionaryDto> lookups = this.lookupService.getSidePockets();
-        return buildResponse(lookups);
+        return buildNonNullResponse(lookups);
     }
 
     @RequestMapping(value = "/PEIndustry", method = RequestMethod.GET)
     public ResponseEntity getPEIndustry(){
         List<BaseDictionaryDto> lookups = this.lookupService.getPEIndustry();
-        return buildResponse(lookups);
+        return buildNonNullResponse(lookups);
     }
 
     @RequestMapping(value = "/NBChartOfAccounts", method = RequestMethod.GET)
     public ResponseEntity getNBChartOfAccounts(){
         List<BaseDictionaryDto> lookups = this.lookupService.getNBChartOfAccounts();
-        return buildResponse(lookups);
+        return buildNonNullResponse(lookups);
     }
 
     @RequestMapping(value = "/NICReportingChartOfAccounts/{code}", method = RequestMethod.GET)
     public ResponseEntity getNICReportingChartOfAccountsByCode(@PathVariable String code){
         List<NICReportingChartOfAccountsDto> lookups = this.lookupService.getNICReportingChartOfAccounts(code);
         Collections.sort(lookups);
-        return buildResponse(lookups);
+        return buildNonNullResponse(lookups);
     }
 
     @RequestMapping(value = "/NICReportingChartOfAccounts/", method = RequestMethod.GET)
     public ResponseEntity getNICReportingChartOfAccounts(){
         List<NICReportingChartOfAccountsDto> lookups = this.lookupService.getNICReportingChartOfAccounts(null);
         Collections.sort(lookups);
-        return buildResponse(lookups);
+        return buildNonNullResponse(lookups);
     }
 
     @RequestMapping(value = "/AddableTarragonNICReportingChartOfAccounts/", method = RequestMethod.GET)
     public ResponseEntity getAddableTarragonNICReportingChartOfAccounts(){
         List<TarragonNICReportingChartOfAccountsDto> lookups = this.lookupService.getAddableTarragonNICReportingChartOfAccounts();
-        return buildResponse(lookups);
+        return buildNonNullResponse(lookups);
     }
 
     @RequestMapping(value = "/ReserveCalculationExpenseTypes/", method = RequestMethod.GET)
     public ResponseEntity getReserveCalculationExpenseTypeLookup(){
         List<BaseDictionaryDto> lookups = this.lookupService.getReserveCalculationExpenseTypeLookup();
-        return buildResponse(lookups);
+        return buildNonNullResponse(lookups);
     }
 
 
     @RequestMapping(value = "/ReserveCalculationEntityTypes/", method = RequestMethod.GET)
     public ResponseEntity getReserveCalculationEntityTypeLookup(){
         List<BaseDictionaryDto> lookups = this.lookupService.getReserveCalculationEntityTypeLookup();
-        return buildResponse(lookups);
+        return buildNonNullResponse(lookups);
     }
 }

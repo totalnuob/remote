@@ -24,6 +24,19 @@ public class MathUtils {
         return a.divide(b, DEFAULT_SCALE, BigDecimal.ROUND_HALF_UP);
     }
 
+    public static Double multiply(Double value1, Double value2){
+        if(value1 == null || value2 == null){
+            return null;
+        }
+        if(value1 == 0.0 || value2 == 0.0){
+            return 0.0;
+        }
+
+        BigDecimal calculated = new BigDecimal(value1);
+        calculated = calculated.multiply(new BigDecimal(value2)).setScale(2, RoundingMode.HALF_UP);
+        return calculated.doubleValue();
+    }
+
     public static BigDecimal sqrt(BigDecimal number){
         return sqrt(number, DEFAULT_SCALE);
     }
@@ -60,7 +73,6 @@ public class MathUtils {
         return new BigDecimal(a).setScale(2, RoundingMode.HALF_UP).add(new BigDecimal(b).setScale(2, RoundingMode.HALF_UP))
                 .add(new BigDecimal(c).setScale(2, RoundingMode.HALF_UP)).doubleValue();
     }
-
 
     public static void main (String[] args){
         testSlope1();

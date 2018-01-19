@@ -1,4 +1,5 @@
-export class ListResponse{
+export class
+ListResponse{
     records: any[];
     status;
     messageRu;

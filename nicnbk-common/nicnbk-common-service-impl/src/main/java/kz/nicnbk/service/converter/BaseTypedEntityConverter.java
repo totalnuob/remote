@@ -2,7 +2,6 @@ package kz.nicnbk.service.converter;
 
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.common.service.model.BaseDto;
-import kz.nicnbk.repo.model.base.BaseEntity;
 import kz.nicnbk.repo.model.base.BaseTypeEntity;
 
 import java.util.ArrayList;
@@ -11,7 +10,7 @@ import java.util.List;
 /**
  * Created by magzumov on 07.07.2016.
  */
-public abstract class BaseEntityConverter<E extends BaseEntity, DTO extends BaseDto> extends BaseConverter{
+public abstract class BaseTypedEntityConverter<E extends BaseTypeEntity, DTO extends BaseDto> extends BaseConverter{
 
     public abstract E assemble(DTO dto);
 

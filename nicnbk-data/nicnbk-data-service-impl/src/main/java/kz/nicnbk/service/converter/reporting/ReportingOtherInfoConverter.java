@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 /**
  * Created by magzumov on 20.04.2017.
  */
+@Deprecated
 @Component
 public class ReportingOtherInfoConverter extends BaseDozerEntityConverter<ReportOtherInfo, ReportOtherInfoDto> {
 

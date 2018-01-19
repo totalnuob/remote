@@ -1,13 +1,13 @@
-package kz.nicnbk.ws.model;
+package kz.nicnbk.service.dto.common;
 
 import java.util.Date;
 
 /**
- * Created by magzumov on 09.08.2016.
+ * Dto class for entity save response.
+ *
+ * Created by magzumov.
  */
-
-@Deprecated
-public class EntitySaveResponse extends Response {
+public class EntitySaveResponseDto extends ResponseDto {
 
     private Long entityId;
     private Date creationDate;

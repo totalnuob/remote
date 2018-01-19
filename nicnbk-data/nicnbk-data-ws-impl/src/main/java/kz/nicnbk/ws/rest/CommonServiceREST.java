@@ -1,9 +1,10 @@
 package kz.nicnbk.ws.rest;
 
+import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
+import kz.nicnbk.service.dto.common.ResponseDto;
+import kz.nicnbk.service.dto.common.ResponseMessageDto;
+import kz.nicnbk.service.dto.common.ResponseStatusType;
 import kz.nicnbk.service.dto.files.FilesDto;
-import kz.nicnbk.ws.model.EntitySaveResponse;
-import kz.nicnbk.ws.model.Response;
-import kz.nicnbk.ws.model.ResponseMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -16,13 +17,29 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ *  Common REST Service class.
+ *  Child REST Service classes inherit common functions such as building response entity, etc.
+ *
  * Created by magzumov on 24.03.2017.
  */
 public abstract class CommonServiceREST {
 
     private static final Logger logger = LoggerFactory.getLogger(CommonServiceREST.class);
 
-    public ResponseEntity buildResponse(Object response){
+    public ResponseEntity buildOKResponse(){
+        ResponseDto response = new ResponseDto();
+        response.setStatus(ResponseStatusType.SUCCESS);
+        return new ResponseEntity<>(response, null, HttpStatus.OK);
+    }
+
+    /**
+     * Returns ResponseEntity with object as response body.
+     * Returns ResponseEntity with status status OK 200 if response not null, status 500 Error otherwise.
+     *
+     * @param response - response body
+     * @return - ResponseEntity object
+     */
+    public ResponseEntity buildNonNullResponse(Object response){
         if(response != null){
             return new ResponseEntity<>(response, null, HttpStatus.OK);
         }else{
@@ -31,17 +48,30 @@ public abstract class CommonServiceREST {
         }
     }
 
-    public ResponseEntity<Response> buildUnauthorizedResponse(){
-        Response response = new Response();
-        response.setSuccess(false);
-        ResponseMessage message = new ResponseMessage();
+    /**
+     * Returns ResponseEntity with status 401 Unauthorized.
+     * Sets corresponding response body.
+     * @return - ResponseEntity object
+     */
+    public ResponseEntity<ResponseDto> buildUnauthorizedResponse(){
+        ResponseDto response = new ResponseDto();
+        response.setStatus(ResponseStatusType.FAIL);
+        ResponseMessageDto message = new ResponseMessageDto();
         message.setNameEn("Access denied");
         response.setMessage(message);
         return new ResponseEntity<>(response, null, HttpStatus.UNAUTHORIZED);
     }
 
-    public ResponseEntity<EntitySaveResponse> buildEntitySaveResponse(Long id, Date creationDate){
-        EntitySaveResponse response = new EntitySaveResponse();
+    /**
+     * Returns ResponseEntity for save request with status OK.
+     * Sets corresponding response body.
+     *
+     * @param id - entity id
+     * @param creationDate - entity creation date
+     * @return - ResponseEntity object
+     */
+    public ResponseEntity<EntitySaveResponseDto> buildEntitySaveResponse(Long id, Date creationDate){
+        EntitySaveResponseDto response = new EntitySaveResponseDto();
         response.setEntityId(id);
         if (creationDate == null) {
             response.setCreationDate(new Date());
@@ -51,12 +81,26 @@ public abstract class CommonServiceREST {
         return new ResponseEntity<>(response, null, HttpStatus.OK);
     }
 
+    /**
+     * Returns FilesDto built from MultipartFile and file type.
+     *
+     * @param file - file
+     * @param fileType - file type
+     * @return - FilesDto object
+     */
     public FilesDto buildFilesDtoFromMultipart(MultipartFile file, String fileType){
         MultipartFile[] files = new MultipartFile[1];
         files[0] = file;
         return (FilesDto) buildFilesDtoFromMultipart(files, fileType).toArray()[0];
     }
 
+    /**
+     * Returns set of FilesDto's built from MultipartFile array and file type.
+     *
+     * @param files - files
+     * @param fileType - files type
+     * @return - FilesDto set
+     */
     public Set<FilesDto> buildFilesDtoFromMultipart(MultipartFile[] files, String fileType){
         Set<FilesDto> filesDtoSet = new HashSet<>();
         if(files != null && files.length > 0) {
@@ -79,13 +123,17 @@ public abstract class CommonServiceREST {
         }
     }
 
+    /**
+     * Returns ResponseEntity for delete request.
+     * Returns status OK 200 if deleted is true, status 500 Error otherwise.
+     *
+     * @param deleted - true/false
+     * @return - ResponseEntity object
+     */
     public ResponseEntity<?> buildDeleteResponseEntity(boolean deleted){
-
-        // TODO: StatusResultDto, etc
-
         if(deleted) {
-            Response response = new Response();
-            response.setSuccess(deleted);
+            ResponseDto response = new ResponseDto();
+            response.setStatus(ResponseStatusType.SUCCESS);
             return new ResponseEntity<>(response, null, HttpStatus.OK);
         }else{
             return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);

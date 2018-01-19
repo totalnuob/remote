@@ -502,4 +502,5 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
 //        totalSums[1] += values[1] != null ? values[1] : 0.0;
 //        totalSums[2] += values[2] != null ? values[2] : 0.0;
 //    }
+
 }

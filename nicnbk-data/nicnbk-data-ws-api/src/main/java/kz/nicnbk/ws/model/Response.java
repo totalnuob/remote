@@ -3,8 +3,12 @@ package kz.nicnbk.ws.model;
 import java.io.Serializable;
 
 /**
+ *
+ *
  * Created by magzumov on 09.08.2016.
  */
+
+@Deprecated
 public class Response implements Serializable {
     private Boolean success;
     private ResponseMessage message;

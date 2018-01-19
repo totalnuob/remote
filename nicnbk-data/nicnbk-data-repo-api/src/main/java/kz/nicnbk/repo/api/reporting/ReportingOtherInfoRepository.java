@@ -10,6 +10,7 @@ import java.util.List;
 /**
  * Created by magzumov on 20.04.2017.
  */
+@Deprecated
 public interface ReportingOtherInfoRepository extends PagingAndSortingRepository<ReportOtherInfo, Long> {
 
     @Query("SELECT e from ReportOtherInfo e where e.report.id=?1")

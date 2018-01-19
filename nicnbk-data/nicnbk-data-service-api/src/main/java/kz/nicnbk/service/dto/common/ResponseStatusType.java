@@ -1,16 +1,16 @@
 package kz.nicnbk.service.dto.common;
 
 /**
- * Created by magzumov on 05.05.2017.
+ * Response status type enum.
+ *
+ * Created by magzumov.
  */
-
-@Deprecated
-public enum StatusResultType {
+public enum ResponseStatusType {
 
     SUCCESS("SUCCESS"),
     FAIL("FAIL");
 
-    StatusResultType(String code){
+    ResponseStatusType(String code){
         this.code = code;
     }
 

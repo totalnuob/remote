@@ -1,29 +1,19 @@
-package kz.nicnbk.ws.model;
+package kz.nicnbk.service.dto.common;
 
-import java.io.Serializable;
+import kz.nicnbk.common.service.model.BaseDto;
 
 /**
- * Created by magzumov on 09.08.2016.
+ * Dto class for response message.
+ *
+ * Created by magzumov.
  */
-
-@Deprecated
-public class ResponseMessage implements Serializable {
-
-    // TODO: StatusResultDto, MessageResultDto
-
-    public static final String TYPE_ERROR = "ERROR";
-    public static final String TYPE_SUCCESS = "SUCCESS";
+public class ResponseMessageDto implements BaseDto {
 
     private String type;
     private String code;
     private String nameEn;
     private String nameKz;
     private String nameRu;
-
-    public String getName(){
-        // default name
-        return this.nameEn;
-    }
 
     public String getType() {
         return type;

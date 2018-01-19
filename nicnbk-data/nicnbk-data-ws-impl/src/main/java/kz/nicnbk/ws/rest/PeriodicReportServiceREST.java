@@ -2,13 +2,18 @@ package kz.nicnbk.ws.rest;
 
 import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.files.FileService;
+import kz.nicnbk.service.api.reporting.PeriodicReportFileParseService;
+import kz.nicnbk.service.api.reporting.PeriodicReportNICKMFService;
+import kz.nicnbk.service.api.reporting.PeriodicReportPrevYearInputService;
 import kz.nicnbk.service.api.reporting.PeriodicReportService;
+import kz.nicnbk.service.api.reporting.hedgefunds.HFGeneralLedgerBalanceService;
+import kz.nicnbk.service.api.reporting.hedgefunds.PeriodicReportHFService;
+import kz.nicnbk.service.api.reporting.privateequity.*;
 import kz.nicnbk.service.dto.common.FileUploadResultDto;
 import kz.nicnbk.service.dto.common.ListResponseDto;
-import kz.nicnbk.service.dto.common.StatusResultType;
+import kz.nicnbk.service.dto.common.ResponseStatusType;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.reporting.*;
-import kz.nicnbk.ws.model.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +32,9 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by zhambyl on 04-Aug-16.
+ * REST Service class for periodic reports.
+ *
+ * Created by magzumov.
  */
 
 @RestController
@@ -40,37 +47,75 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
     private PeriodicReportService periodicReportService;
 
     @Autowired
+    private PeriodicReportPEService periodicReportPEService;
+
+    @Autowired
+    private PeriodicReportHFService periodicReportHFService;
+
+    @Autowired
+    private PeriodicReportNICKMFService periodicReportNICKMFService;
+
+    @Autowired
+    private PeriodicReportFileParseService periodicReportFileParseService;
+
+    @Autowired
+    private PEScheduleInvestmentService peScheduleInvestmentService;
+
+    @Autowired
+    private PEStatementCashflowsService peStatementCashflowsService;
+
+    @Autowired
+    private HFGeneralLedgerBalanceService hfGeneralLedgerBalanceService;
+
+    @Autowired
+    private PEStatementChangesService peStatementChangesService;
+
+    @Autowired
+    private PeriodicReportPrevYearInputService prevYearInputService;
+
+    @Autowired
+    private ReserveCalculationService reserveCalculationService;
+
+    @Autowired
     private FileService fileService;
 
     @Autowired
     private TokenService tokenService;
 
+    /**
+     * Returns periodic report dto with status ok 200, status 500 error if not found.
+     * @param id - report id
+     * @return - periodic report dto
+     */
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/get/{id}", method = RequestMethod.GET)
-    public ResponseEntity get(@PathVariable Long id) {
-        PeriodicReportDto periodicReportDto = this.periodicReportService.get(id);
-        return buildResponse(periodicReportDto);
+    public ResponseEntity getPeriodicReport(@PathVariable Long id) {
+        PeriodicReportDto periodicReportDto = this.periodicReportService.getPeriodicReport(id);
+        return buildNonNullResponse(periodicReportDto);
     }
 
+    /**
+     * Returns
+     * @return
+     */
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/getAll", method = RequestMethod.GET)
-    public ResponseEntity getAll() {
-        List<PeriodicReportDto> periodicReportsList = this.periodicReportService.getAll();
-        return buildResponse(periodicReportsList);
+    public ResponseEntity getAllPeriodicReports() {
+        List<PeriodicReportDto> periodicReportsList = this.periodicReportService.getAllPeriodicReports();
+        return buildNonNullResponse(periodicReportsList);
     }
 
     @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public ResponseEntity<?> save(@RequestBody PeriodicReportDto dto) {
+    public ResponseEntity<?> savePeriodicReport(@RequestBody PeriodicReportDto dto) {
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
-        // check access by owner
         if(dto.getId() == null){
             // set creator
             dto.setCreator(username);
         }
 
-        Long id = periodicReportService.save(dto, username);
+        Long id = periodicReportService.savePeriodicReport(dto, username);
         if(id == null){
             // error occurred
             return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -83,39 +128,17 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/inputFilesList/{reportId}", method = RequestMethod.GET)
     public ResponseEntity getInputFilesList(@PathVariable Long reportId) {
-        PeriodicReportInputFilesHolder holder = this.periodicReportService.getPeriodicReportFiles(reportId);
-        return buildResponse(holder);
-    }
-
-    @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
-    @RequestMapping(method = RequestMethod.POST, value = "/otherInfo/save")
-    public ResponseEntity<?> saveOtherInfo(@RequestBody ReportOtherInfoDto dto){
-        boolean saved = this.periodicReportService.saveOtherInfo(dto);
-        if(saved){
-            // TODO: response from DB, not UI
-            return buildEntitySaveResponse(null, dto.getCreationDate());
-        }else {
-            // error occurred
-            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
-    @RequestMapping(value = "/get/otherInfo/{id}", method = RequestMethod.GET)
-    public ResponseEntity getOtherInfo(@PathVariable Long id) {
-        ReportOtherInfoDto otherInfo = this.periodicReportService.getOtherInfo(id);
-        return new ResponseEntity<>(otherInfo, null, HttpStatus.OK);
+        PeriodicReportInputFilesHolder holder = this.periodicReportService.getPeriodicReportInputFiles(reportId);
+        return buildNonNullResponse(holder);
     }
 
     @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(method = RequestMethod.POST, value = "/NICKMFReportingInfo/save")
     public ResponseEntity<?> saveNICKMFReportingData(@RequestBody NICKMFReportingDataHolderDto dataHolderDto){
-        boolean saved = this.periodicReportService.saveNICKMFReportingData(dataHolderDto);
+        boolean saved = this.periodicReportNICKMFService.saveNICKMFReportingData(dataHolderDto);
         if(saved){
-
             // TODO: response from DB, not UI
             Date createDate = new Date();
-
             return buildEntitySaveResponse(null, createDate);
         }else {
             // error occurred
@@ -124,52 +147,24 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
     }
 
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/NICKMFReportingInfo/{reportId}", method = RequestMethod.GET)
+    public ResponseEntity getNICKMFReportingData(@PathVariable Long reportId) {
+        NICKMFReportingDataHolderDto holderDto = this.periodicReportNICKMFService.getNICKMFReportingData(reportId);
+        return new ResponseEntity<>(holderDto, null, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/NICKMFReportingInfoPreviousMonth/{reportId}", method = RequestMethod.GET)
     public ResponseEntity getNICKMFReportingDataFromPreviousMonth(@PathVariable Long reportId) {
-        NICKMFReportingDataHolderDto holderDto = this.periodicReportService.getNICKMFReportingDataFromPreviousMonth(reportId);
+        NICKMFReportingDataHolderDto holderDto = this.periodicReportNICKMFService.getNICKMFReportingDataFromPreviousMonth(reportId);
         return new ResponseEntity<>(holderDto, null, HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/tarragonGeneratedFormDataFromPreviousMonth/{reportId}", method = RequestMethod.GET)
     public ResponseEntity getTarragonGLAddedRecordsPreviousMonth(@PathVariable Long reportId) {
-        List<GeneratedGeneralLedgerFormDto> records = this.periodicReportService.getTarragonGLAddedRecordsPreviousMonth(reportId);
+        List<GeneratedGeneralLedgerFormDto> records = this.periodicReportPEService.getTarragonGLAddedRecordsPreviousMonth(reportId);
         return new ResponseEntity<>(records, null, HttpStatus.OK);
-    }
-
-    @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
-    @RequestMapping(value = "/NICKMFReportingInfo/{reportId}", method = RequestMethod.GET)
-    public ResponseEntity getNICKMFReportingData(@PathVariable Long reportId) {
-        NICKMFReportingDataHolderDto holderDto = this.periodicReportService.getNICKMFReportingData(reportId);
-        return new ResponseEntity<>(holderDto, null, HttpStatus.OK);
-    }
-
-    @RequestMapping(method = RequestMethod.POST, value = "/nonParsed/upload/{reportId}")
-    public ResponseEntity<?> handleNonParsedFileUpload(@PathVariable("reportId") Long reportId,
-                                              @RequestParam(value = "file", required = true) MultipartFile file,
-                                              @RequestParam(value = "fileType", required = true) String fileType) {
-
-        // TODO: control file upload by user role
-
-        FilesDto filesDto = buildFilesDtoFromMultipart(file, fileType);
-        if(filesDto != null){
-            // save file
-            FilesDto savedFile = this.periodicReportService.saveInputFile(reportId, filesDto);
-
-            if(savedFile == null){
-                // error occurred
-
-                // TODO: check error
-                FileUploadResultDto result = new FileUploadResultDto(StatusResultType.FAIL, null, "File upload failed: error saving file", null);
-
-                return new ResponseEntity<>(result, null, HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-            FileUploadResultDto result = new FileUploadResultDto(StatusResultType.SUCCESS, null, "Successfully uploaded file", null);
-            result.setFileId(savedFile.getId());
-            result.setFileName(savedFile.getFileName());
-            return new ResponseEntity<>(result, null, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/upload/{reportId}")
@@ -183,28 +178,23 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
         if(filesDto != null){
             // save file
             FilesDto savedFile = this.periodicReportService.saveInputFile(reportId, filesDto);
-
             if(savedFile == null){
                 // error occurred
-
                 // TODO: check error
-                FileUploadResultDto result = new FileUploadResultDto(StatusResultType.FAIL, null, "File upload failed: error saving file", null);
-
+                FileUploadResultDto result = new FileUploadResultDto(ResponseStatusType.FAIL, null, "File upload failed: error saving file", null);
                 return new ResponseEntity<>(result, null, HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
             // parse file
-            FileUploadResultDto result = this.periodicReportService.parseFile(fileType, filesDto, reportId);
-            result.setFileName(filesDto.getFileName());
-            result.setFileId(savedFile.getId());
-
-            if(result != null && result.getStatus() == StatusResultType.SUCCESS){
+            FileUploadResultDto result = this.periodicReportFileParseService.parseFile(fileType, filesDto, reportId);
+            if(result != null && result.getStatus() == ResponseStatusType.SUCCESS){
+                result.setFileName(filesDto.getFileName());
+                result.setFileId(savedFile.getId());
                 return new ResponseEntity<>(result, null, HttpStatus.OK);
             }else{
-
                 // TODO: check error
                 // remove file
-                boolean deleted = periodicReportService.deleteFile(savedFile.getId());
+                boolean deleted = periodicReportService.deletePeriodicReportFileAssociationById(savedFile.getId());
                 if(deleted){
                     deleted = fileService.delete(savedFile.getId());
                 }
@@ -212,21 +202,21 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
                 if(deleted){
                     return new ResponseEntity<>(result, null, HttpStatus.INTERNAL_SERVER_ERROR);
                 }else{
-                    return new ResponseEntity<>(new FileUploadResultDto(StatusResultType.FAIL, null,
-                            "File upload failed: error when deleting file to undo actions", null), null, HttpStatus.INTERNAL_SERVER_ERROR);
+                    return new ResponseEntity<>(new FileUploadResultDto(ResponseStatusType.FAIL, null,
+                            "File upload failed: error when deleting file to undo actions (contact administrator)", null), null, HttpStatus.INTERNAL_SERVER_ERROR);
                 }
             }
+        }else {
+            return new ResponseEntity<>(new FileUploadResultDto(ResponseStatusType.FAIL, null,
+                    "File upload failed: no file could be found, please check your files", null), null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 
     @RequestMapping(value="/deleteFile/{fileId}", method=RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<?> safeDeleteFile(@PathVariable(value="fileId") Long fileId){
-
-        //TODO: ? check rights ?
-
+        //TODO: ? check rights
         boolean deleted = this.periodicReportService.safeDeleteFile(fileId);
         return buildDeleteResponseEntity(deleted);
     }
@@ -234,8 +224,8 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/get/scheduleInvestments/{id}", method = RequestMethod.GET)
     public ResponseEntity getScheduleInvestments(@PathVariable Long id) {
-        ConsolidatedReportRecordHolderDto recordsHolder = this.periodicReportService.getScheduleInvestments(id);
-        return buildResponse(recordsHolder);
+        ConsolidatedReportRecordHolderDto recordsHolder = this.peScheduleInvestmentService.get(id);
+        return buildNonNullResponse(recordsHolder);
     }
 
 
@@ -243,69 +233,69 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
     @RequestMapping(value = "/get/balanceOperations/{id}", method = RequestMethod.GET)
     public ResponseEntity getBalanceOperations(@PathVariable Long id) {
         ConsolidatedReportRecordHolderDto recordsHolder = this.periodicReportService.getStatementBalanceOperations(id);
-        return buildResponse(recordsHolder);
+        return buildNonNullResponse(recordsHolder);
     }
 
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/get/cashflows/{id}", method = RequestMethod.GET)
     public ResponseEntity getStatementCashflows(@PathVariable Long id) {
-        ConsolidatedReportRecordHolderDto recordsHolder = this.periodicReportService.getStatementCashflows(id);
-        return buildResponse(recordsHolder);
+        ConsolidatedReportRecordHolderDto recordsHolder = this.peStatementCashflowsService.get(id);
+        return buildNonNullResponse(recordsHolder);
     }
 
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/get/changes/{id}", method = RequestMethod.GET)
     public ResponseEntity getStatementChanges(@PathVariable Long id) {
-        ConsolidatedReportRecordHolderDto recordsHolder = this.periodicReportService.getStatementChanges(id);
-        return buildResponse(recordsHolder);
+        ConsolidatedReportRecordHolderDto recordsHolder = this.peStatementChangesService.get(id);
+        return buildNonNullResponse(recordsHolder);
     }
 
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/get/generalLedgerBalance/{id}", method = RequestMethod.GET)
     public ResponseEntity getGeneralLedgerBalance(@PathVariable Long id) {
-        ConsolidatedReportRecordHolderDto recordsHolder = this.periodicReportService.getGeneralLedgerBalance(id);
-        return buildResponse(recordsHolder);
+        ConsolidatedReportRecordHolderDto recordsHolder = this.hfGeneralLedgerBalanceService.get(id);
+        return buildNonNullResponse(recordsHolder);
     }
 
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/get/noalA/{id}", method = RequestMethod.GET)
     public ResponseEntity getNOALTrancheA(@PathVariable Long id) {
         ConsolidatedReportRecordHolderDto recordsHolder = this.periodicReportService.getNOAL(id, 1);
-        return buildResponse(recordsHolder);
+        return buildNonNullResponse(recordsHolder);
     }
 
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/get/noalB/{id}", method = RequestMethod.GET)
     public ResponseEntity getNOALTrancheB(@PathVariable Long id) {
         ConsolidatedReportRecordHolderDto recordsHolder = this.periodicReportService.getNOAL(id, 2);
-        return buildResponse(recordsHolder);
+        return buildNonNullResponse(recordsHolder);
     }
 
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/singularGeneratedForm/{reportId}", method = RequestMethod.GET)
     public ResponseEntity getSingularGeneratedForm(@PathVariable Long reportId) {
-        List<GeneratedGeneralLedgerFormDto> records = this.periodicReportService.getSingularGeneratedForm(reportId);
-        return buildResponse(records);
+        List<GeneratedGeneralLedgerFormDto> records = this.periodicReportHFService.getSingularGeneratedForm(reportId);
+        return buildNonNullResponse(records);
     }
 
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/tarragonGeneratedForm/{reportId}", method = RequestMethod.GET)
     public ResponseEntity getTarragonGeneratedForm(@PathVariable Long reportId) {
-        ListResponseDto responseDto  = this.periodicReportService.getTarragonGeneratedForm(reportId);
-        return buildResponse(responseDto);
+        ListResponseDto responseDto  = this.periodicReportPEService.getTarragonGeneratedForm(reportId);
+        return buildNonNullResponse(responseDto);
     }
 
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/reserveCalculation/", method = RequestMethod.GET)
-    public ResponseEntity getReserveCalculation() {
-        List<ReserveCalculationDto> responseDto  = this.periodicReportService.getReserveCalculation();
-        return buildResponse(responseDto);
+    public ResponseEntity getReserveCalculationRecords() {
+        List<ReserveCalculationDto> responseDto  = this.reserveCalculationService.getReserveCalculations();
+        return buildNonNullResponse(responseDto);
     }
 
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/reserveCalculationSave/", method = RequestMethod.POST)
     public ResponseEntity saveReserveCalculation( @RequestBody List<ReserveCalculationDto> records) {
-        boolean saved = this.periodicReportService.saveReserveCalculation(records);
+        boolean saved = this.reserveCalculationService.save(records);
         if(saved){
             // TODO: response from DB, not UI
             return buildEntitySaveResponse(null, new Date());
@@ -318,117 +308,115 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/consolidatedBalanceUSDForm/{reportId}", method = RequestMethod.GET)
     public ResponseEntity getConsolidatedBalanceUSDForm(@PathVariable Long reportId) {
-        List<ConsolidatedBalanceFormRecordDto> records = this.periodicReportService.getConsolidatedBalanceUSDForm(reportId);
-        return buildResponse(records);
+        List<ConsolidatedBalanceFormRecordDto> records = this.periodicReportService.generateConsolidatedBalanceUSDForm(reportId);
+        return buildNonNullResponse(records);
     }
 
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/consolidatedIncomeExpenseUSDForm/{reportId}", method = RequestMethod.GET)
     public ResponseEntity getConsolidatedIncomeExpenseUSDForm(@PathVariable Long reportId) {
-        List<ConsolidatedBalanceFormRecordDto> records = this.periodicReportService.getConsolidatedIncomeExpenseUSDForm(reportId);
-        return buildResponse(records);
+        List<ConsolidatedBalanceFormRecordDto> records = this.periodicReportService.generateConsolidatedIncomeExpenseUSDForm(reportId);
+        return buildNonNullResponse(records);
     }
 
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/consolidatedTotalIncomeUSDForm/{reportId}", method = RequestMethod.GET)
     public ResponseEntity getConsolidatedTotalIncomeUSDForm(@PathVariable Long reportId) {
-        List<ConsolidatedBalanceFormRecordDto> records = this.periodicReportService.getConsolidatedTotalIncomeUSDForm(reportId);
-        return buildResponse(records);
+        List<ConsolidatedBalanceFormRecordDto> records = this.periodicReportService.generateConsolidatedTotalIncomeUSDForm(reportId);
+        return buildNonNullResponse(records);
     }
 
 
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/consolidatedBalanceKZTForm8/{reportId}", method = RequestMethod.GET)
-    public ResponseEntity getConsolidatedBalanceKZTForm8(@PathVariable Long reportId) {
-        List<ConsolidatedKZTForm8RecordDto> records = this.periodicReportService.getConsolidatedBalanceKZTForm8(reportId);
-        return buildResponse(records);
+    public ResponseEntity getConsolidatedKZTForm8(@PathVariable Long reportId) {
+        List<ConsolidatedKZTForm8RecordDto> records = this.periodicReportService.generateConsolidatedBalanceKZTForm8(reportId);
+        return buildNonNullResponse(records);
     }
 
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/consolidatedBalanceKZTForm10/{reportId}", method = RequestMethod.GET)
-    public ResponseEntity getConsolidatedBalanceKZTForm10(@PathVariable Long reportId) {
-        List<ConsolidatedKZTForm10RecordDto> records = this.periodicReportService.getConsolidatedBalanceKZTForm10(reportId);
-        return buildResponse(records);
+    public ResponseEntity getConsolidatedKZTForm10(@PathVariable Long reportId) {
+        List<ConsolidatedKZTForm10RecordDto> records = this.periodicReportService.generateConsolidatedBalanceKZTForm10(reportId);
+        return buildNonNullResponse(records);
     }
 
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/consolidatedBalanceKZTForm14/{reportId}", method = RequestMethod.GET)
-    public ResponseEntity getConsolidatedBalanceKZTForm14(@PathVariable Long reportId) {
-        List<ConsolidatedKZTForm14RecordDto> records = this.periodicReportService.getConsolidatedBalanceKZTForm14(reportId);
-        return buildResponse(records);
+    public ResponseEntity getConsolidatedKZTForm14(@PathVariable Long reportId) {
+        List<ConsolidatedKZTForm14RecordDto> records = this.periodicReportService.generateConsolidatedBalanceKZTForm14(reportId);
+        return buildNonNullResponse(records);
     }
 
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/consolidatedBalanceKZTForm13/{reportId}", method = RequestMethod.GET)
-    public ResponseEntity getConsolidatedBalanceKZTForm13(@PathVariable Long reportId) {
-        List<ConsolidatedKZTForm13RecordDto> records = this.periodicReportService.getConsolidatedBalanceKZTForm13(reportId);
-        return buildResponse(records);
+    public ResponseEntity getConsolidatedKZTForm13(@PathVariable Long reportId) {
+        List<ConsolidatedKZTForm13RecordDto> records = this.periodicReportService.generateConsolidatedBalanceKZTForm13(reportId);
+        return buildNonNullResponse(records);
     }
 
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/consolidatedBalanceKZTForm7/{reportId}", method = RequestMethod.GET)
-    public ResponseEntity getConsolidatedBalanceKZTForm7(@PathVariable Long reportId) {
-        List<ConsolidatedKZTForm7RecordDto> records = this.periodicReportService.getConsolidatedBalanceKZTForm7(reportId);
-        return buildResponse(records);
+    public ResponseEntity getConsolidatedKZTForm7(@PathVariable Long reportId) {
+        List<ConsolidatedKZTForm7RecordDto> records = this.periodicReportService.generateConsolidatedBalanceKZTForm7(reportId);
+        return buildNonNullResponse(records);
     }
 
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/consolidatedBalanceKZTForm1/{reportId}", method = RequestMethod.GET)
-    public ResponseEntity getConsolidatedBalanceKZTForm1(@PathVariable Long reportId) {
-        List<ConsolidatedBalanceFormRecordDto> records = this.periodicReportService.getConsolidatedBalanceKZTForm1(reportId);
-        return buildResponse(records);
+    public ResponseEntity getConsolidatedKZTForm1(@PathVariable Long reportId) {
+        List<ConsolidatedBalanceFormRecordDto> records = this.periodicReportService.generateConsolidatedBalanceKZTForm1(reportId);
+        return buildNonNullResponse(records);
     }
 
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/consolidatedBalanceKZTForm2/{reportId}", method = RequestMethod.GET)
     public ResponseEntity getConsolidatedKZTForm2(@PathVariable Long reportId) {
-        List<ConsolidatedBalanceFormRecordDto> records = this.periodicReportService.getConsolidatedIncomeExpenseKZTForm2(reportId);
-        return buildResponse(records);
+        List<ConsolidatedBalanceFormRecordDto> records = this.periodicReportService.generateConsolidatedIncomeExpenseKZTForm2(reportId);
+        return buildNonNullResponse(records);
     }
 
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/consolidatedBalanceKZTForm3/{reportId}", method = RequestMethod.GET)
     public ResponseEntity getConsolidatedKZTForm3(@PathVariable Long reportId) {
-        List<ConsolidatedBalanceFormRecordDto> records = this.periodicReportService.getConsolidatedTotalIncomeKZTForm3(reportId);
-        return buildResponse(records);
+        List<ConsolidatedBalanceFormRecordDto> records = this.periodicReportService.generateConsolidatedTotalIncomeKZTForm3(reportId);
+        return buildNonNullResponse(records);
     }
 
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/consolidatedBalanceKZTForm19/{reportId}", method = RequestMethod.GET)
     public ResponseEntity getConsolidatedKZTForm19(@PathVariable Long reportId) {
-        List<ConsolidatedKZTForm19RecordDto> records = this.periodicReportService.getConsolidatedBalanceKZTForm19(reportId);
-        return buildResponse(records);
+        List<ConsolidatedKZTForm19RecordDto> records = this.periodicReportService.generateConsolidatedBalanceKZTForm19(reportId);
+        return buildNonNullResponse(records);
     }
 
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/consolidatedBalanceKZTForm22/{reportId}", method = RequestMethod.GET)
     public ResponseEntity getConsolidatedKZTForm22(@PathVariable Long reportId) {
-        List<ConsolidatedKZTForm22RecordDto> records = this.periodicReportService.getConsolidatedBalanceKZTForm22(reportId);
-        return buildResponse(records);
+        List<ConsolidatedKZTForm22RecordDto> records = this.periodicReportService.generateConsolidatedBalanceKZTForm22(reportId);
+        return buildNonNullResponse(records);
     }
 
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/previousYearInput/{reportId}", method = RequestMethod.GET)
     public ResponseEntity getPreviousYearInputData(@PathVariable Long reportId) {
-        List<PreviousYearInputDataDto> records = this.periodicReportService.getPreviousYearInputData(reportId);
-        return buildResponse(records);
+        List<PreviousYearInputDataDto> records = this.prevYearInputService.getPreviousYearInputData(reportId);
+        return buildNonNullResponse(records);
     }
 
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/previousYearInputPrevMonth/{reportId}", method = RequestMethod.GET)
     public ResponseEntity getPreviousYearInputDataFromPreviousMonth(@PathVariable Long reportId) {
-        List<PreviousYearInputDataDto> records = this.periodicReportService.getPreviousYearInputDataFromPreviousMonth(reportId);
-        return buildResponse(records);
+        List<PreviousYearInputDataDto> records = this.prevYearInputService.getPreviousYearInputDataFromPreviousMonth(reportId);
+        return buildNonNullResponse(records);
     }
 
     @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/previousYearInput/{reportId}", method = RequestMethod.POST)
     public ResponseEntity savePreviousYearInputData(@PathVariable Long reportId, @RequestBody List<PreviousYearInputDataDto> records) {
-        boolean saved = this.periodicReportService.savePreviousYearInputData(records, reportId);
+        boolean saved = this.prevYearInputService.savePreviousYearInputData(records, reportId);
         if(saved){
-
             // TODO: response from DB, not UI
-
             return buildEntitySaveResponse(null, new Date());
         }else {
             // error occurred
@@ -439,11 +427,9 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
     @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(method = RequestMethod.POST, value = "/PEGeneralLedgerFormData/save")
     public ResponseEntity<?> savePEGeneralLedgerFormData(@RequestBody PEGeneralLedgerFormDataHolderDto dataHolderDto){
-        boolean saved = this.periodicReportService.savePEGeneralLedgerFormData(dataHolderDto);
+        boolean saved = this.periodicReportPEService.savePEGeneralLedgerFormData(dataHolderDto);
         if(saved){
-
             // TODO: response from DB, not UI
-
             return buildEntitySaveResponse(null, new Date());
         }else {
             // error occurred
@@ -454,11 +440,9 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
     @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(method = RequestMethod.POST, value = "/updatedTarragonInvestment")
     public ResponseEntity<?> saveUpdatedTarragonInvestment(@RequestBody UpdateTarragonInvestmentDto updateDto){
-        boolean saved = this.periodicReportService.saveUpdatedTarragonInvestment(updateDto);
+        boolean saved = this.peScheduleInvestmentService.updateScheduleInvestments(updateDto);
         if(saved){
-
             // TODO: response from DB, not UI
-
             return buildEntitySaveResponse(null, new Date());
         }else {
             // error occurred
@@ -467,31 +451,24 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
     }
 
 
+    @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value="/PEGeneralLedgerFormData/delete/{recordId}", method=RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<?> deletePEGeneralLedgerFormDataRecord(@PathVariable(value="recordId") Long recordId){
         //check rights
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
-
-
-        // TODO: check rights
-
-
-        boolean deleted = this.periodicReportService.deletePEGeneralLedgerFormDataRecordById(recordId);
-
+        boolean deleted = this.periodicReportPEService.deletePEGeneralLedgerFormDataRecordById(recordId);
         return buildDeleteResponseEntity(deleted);
     }
 
-    //@PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(method = RequestMethod.POST, value = "/markReportFinal/{reportId}")
     public ResponseEntity<?> markReportAsFinal(@PathVariable Long reportId){
 
         boolean marked = this.periodicReportService.markReportAsFinal(reportId);
         if(marked) {
-            Response response = new Response();
-            response.setSuccess(marked);
-            return new ResponseEntity<>(response, null, HttpStatus.OK);
+            return buildOKResponse();
         }else{
             return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -508,15 +485,12 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
 
         InputStream inputStream = this.periodicReportService.getExportFileStream(reportId, type);
         if(inputStream == null){
-
             // TODO: handle error ??/
             return;
             //return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-
-        //String fileName = "Конс_баланс_USD"; // TODO: change file name by report type
         try {
             //fileName = URLEncoder.encode(fileName, "UTF-8");
             //fileName = URLDecoder.decode(fileName, "ISO8859_1");
@@ -525,17 +499,16 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
             org.apache.commons.io.IOUtils.copy(inputStream, response.getOutputStream());
             response.flushBuffer();
         } catch (UnsupportedEncodingException e) {
-            logger.error("File download request failed: unsupported encoding", e);
+            logger.error("(PeriodicReport) File export request failed: unsupported encoding", e);
         } catch (IOException e) {
-            logger.error("File download request failed: io exception", e);
+            logger.error("(PeriodicReport) File export request failed: io exception", e);
         } catch (Exception e){
-            logger.error("File download request failed", e);
+            logger.error("(PeriodicReport) File export request failed", e);
         }
-
         try {
             inputStream.close();
         } catch (IOException e) {
-            logger.error("File download: failed to close input stream");
+            logger.error("(PeriodicReport) File export: failed to close input stream");
         }
     }
 
