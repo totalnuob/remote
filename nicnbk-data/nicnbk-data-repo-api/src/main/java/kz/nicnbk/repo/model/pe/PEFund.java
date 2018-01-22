@@ -44,6 +44,8 @@ public class PEFund extends CreateUpdateBaseEntity {
     private String nonsuitableReason;
 
     //KEY FUND STATISTICS
+    private Integer calculationType;
+//    private Boolean autoCalculation;
     private Integer numberOfInvestments;
     private Double investedAmount;
     private Double realized;
@@ -81,6 +83,12 @@ public class PEFund extends CreateUpdateBaseEntity {
     private String strategyStructureRisks;
     private String performanceMerits;
     private String performanceRisks;
+
+    public PEFund() {}
+
+    public PEFund(Long id) {
+        this.setId(id);
+    }
 
     @Column(name = "fund_name")
     public String getFundName() {
@@ -268,6 +276,22 @@ public class PEFund extends CreateUpdateBaseEntity {
     public void setGeography(Set<Geography> geography) {
         this.geography = geography;
     }
+
+    public Integer getCalculationType() {
+        return calculationType;
+    }
+
+    public void setCalculationType(Integer calculationType) {
+        this.calculationType = calculationType;
+    }
+
+//    public Boolean getAutoCalculation() {
+//        return autoCalculation;
+//    }
+//
+//    public void setAutoCalculation(Boolean autoCalculation) {
+//        this.autoCalculation = autoCalculation;
+//    }
 
     @Column(name = "number_of_investments")
     public Integer getNumberOfInvestments() {

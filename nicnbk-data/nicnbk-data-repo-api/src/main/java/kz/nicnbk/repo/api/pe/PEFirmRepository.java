@@ -1,7 +1,6 @@
 package kz.nicnbk.repo.api.pe;
 
 import kz.nicnbk.repo.model.pe.PEFirm;
-import kz.nicnbk.repo.model.pe.PEFund;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -15,8 +14,8 @@ import java.util.List;
  */
 public interface PEFirmRepository extends PagingAndSortingRepository<PEFirm, Long> {
 
-    List<PEFirm> findAllByOrderByFirmNameDesc();
+    List<PEFirm> findAllByOrderByFirmNameAsc();
 
-    @Query("select firm from PEFirm firm where UPPER(firm.firmName) LIKE UPPER(CONCAT('%',:firmName, '%'))")
+    @Query("select firm from PEFirm firm where UPPER(firm.firmName) LIKE UPPER(CONCAT('%',:firmName, '%')) order by firm.firmName")
     Page<PEFirm> findByName(@Param("firmName") String firmName, Pageable pageable);
 }

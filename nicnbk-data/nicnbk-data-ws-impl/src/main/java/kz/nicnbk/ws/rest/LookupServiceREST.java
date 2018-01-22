@@ -1,6 +1,8 @@
 package kz.nicnbk.ws.rest;
 
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
+import kz.nicnbk.repo.model.m2s2.MeetingType;
+import kz.nicnbk.repo.model.m2s2.MemoType;
 import kz.nicnbk.service.datamanager.LookupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,18 @@ public class LookupServiceREST extends CommonServiceREST{
 
     @Autowired
     private LookupService lookupService;
+
+    @RequestMapping(value = "/MemoType", method = RequestMethod.GET)
+    public ResponseEntity getAllMemoTypes(){
+        List<BaseDictionaryDto> lookups = this.lookupService.getAllMemoTypes();
+        return buildResponse(lookups);
+    }
+
+    @RequestMapping(value = "/MeetingType", method = RequestMethod.GET)
+    public ResponseEntity getAllMeetingTypes(){
+        List<BaseDictionaryDto> lookups = this.lookupService.getAllMeetingTypes();
+        return buildResponse(lookups);
+    }
 
     @RequestMapping(value = "/PEStrategy", method = RequestMethod.GET)
     public ResponseEntity getPEStrategies(){

@@ -193,7 +193,20 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
     loadLookups(){
 
         //meeting types
-        this.lookupService.getMeetingTypes().then(meetingTypes => this.meetingTypes = meetingTypes);
+        //this.lookupService.getMeetingTypes().then(meetingTypes => this.meetingTypes = meetingTypes);
+        this.lookupService.getMeetingTypes()
+            .subscribe(
+                meetingTypes => {
+                    this.meetingTypes = meetingTypes;
+                },
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
+            );
 
         //load strategies
         this.lookupService.getPEStrategies()

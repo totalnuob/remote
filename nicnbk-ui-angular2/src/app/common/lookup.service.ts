@@ -20,6 +20,8 @@ import {PE_INDUSTRY_FOCUS_URL} from "./lookup.service.url";
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 import {TRIP_TYPES} from "./mock.news.lookups";
 import {MM_FIELDS_URL} from "./lookup.service.url";
+import {MEETING_TYPE_URL} from "./lookup.service.url";
+import {MEMO_TYPE_URL} from "./lookup.service.url";
 
 
 @Injectable()
@@ -38,7 +40,10 @@ export class LookupService extends CommonService{
     }
 
     getMemoTypes(){
-        return Promise.resolve(MEMO_TYPES);
+        //return Promise.resolve(MEMO_TYPES);
+        return this.http.get(MEMO_TYPE_URL, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
 
         //if(localStorage.getItem("authenticatedUserRoles").indexOf("ADMIN") != -1){
         //    return Promise.resolve(MEMO_TYPES);
@@ -62,7 +67,10 @@ export class LookupService extends CommonService{
     }
 
     getMeetingTypes(){
-        return Promise.resolve(MEETING_TYPES);
+        //return Promise.resolve(MEETING_TYPES);
+        return this.http.get(MEETING_TYPE_URL, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
     }
 
     getClosingSchedules(){

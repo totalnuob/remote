@@ -1,19 +1,34 @@
 package kz.nicnbk.service.api.pe;
 
-import kz.nicnbk.service.api.base.BaseService;
+import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.pe.PEGrossCashflowDto;
+import kz.nicnbk.service.dto.pe.PEGrossCashflowResultDto;
+import kz.nicnbk.service.dto.pe.PEIrrResultDto;
+import kz.nicnbk.service.dto.pe.PEPortfolioInfoDto;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by zhambyl on 05-Jan-17.
  */
-public interface PEGrossCashflowService extends BaseService {
-    Long save(PEGrossCashflowDto dto);
+public interface PEGrossCashflowService {
 
-    boolean deleteByFundId(Long fundId);
+    Long save(PEGrossCashflowDto cashflowDto, Long fundId);
 
-    PEGrossCashflowDto get(Long id);
+    PEGrossCashflowResultDto saveList(List<PEGrossCashflowDto> cashflowDtoList, Long fundId);
 
-    List<PEGrossCashflowDto> findByFundId(Long id);
+    PEGrossCashflowResultDto uploadGrossCF(Set<FilesDto> filesDtoSet);
+
+    List<PEGrossCashflowDto> findByFundId(Long fundId);
+
+    List<PEGrossCashflowDto> findByFundIdSortedByDate(Long fundId);
+
+    List<PEGrossCashflowDto> findByFundIdAndCompanyName(Long fundId, String companyName);
+
+    List<PEGrossCashflowDto> findByFundIdAndPortfolioInfo(Long fundId, PEPortfolioInfoDto portfolioInfoDto);
+
+    PEIrrResultDto calculateIRR(PEPortfolioInfoDto portfolioInfoDto, Long fundId);
+
+//    boolean deleteByFundId(Long fundId);
 }

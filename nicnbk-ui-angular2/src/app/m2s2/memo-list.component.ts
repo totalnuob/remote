@@ -1,7 +1,7 @@
 import { Component, OnInit  } from '@angular/core';
 import { Router} from '@angular/router';
 import {LookupService} from "../common/lookup.service";
-import {MemoSearchParams} from "./model/memo-search-params";
+import {MemoSearchParamsExtended} from "./model/memo-search-params-extended";
 import {MemoService} from "./memo.service";
 import {CommonFormViewComponent} from "../common/common.component";
 import {Memo} from "./model/memo";
@@ -25,7 +25,7 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
 
     public sub: any;
 
-    searchParams = new MemoSearchParams;
+    searchParams = new MemoSearchParamsExtended;
     busy: Subscription;
 
     memoTypes = [];
@@ -118,10 +118,36 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
 
     loadLookups(){
         // memo types
-        this.lookupService.getMemoTypes().then(memoTypes => {this.memoTypes = memoTypes});
+        //this.lookupService.getMemoTypes().then(memoTypes => {this.memoTypes = memoTypes});
+        this.lookupService.getMemoTypes()
+            .subscribe(
+                memoTypes => {
+                    this.memoTypes = memoTypes;
+                },
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
+            );
 
         //meeting types
-        this.lookupService.getMeetingTypes().then(meetingTypes => this.meetingTypes = meetingTypes);
+        //this.lookupService.getMeetingTypes().then(meetingTypes => this.meetingTypes = meetingTypes);
+        this.lookupService.getMeetingTypes()
+            .subscribe(
+                meetingTypes => {
+                    this.meetingTypes = meetingTypes;
+                },
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
+            );
     }
 
     search(page){

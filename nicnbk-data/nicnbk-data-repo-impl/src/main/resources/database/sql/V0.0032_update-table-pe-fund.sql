@@ -1,0 +1,1 @@
+UPDATE pe_fund SET calculation_type = 0 where calculation_type IS NULL;

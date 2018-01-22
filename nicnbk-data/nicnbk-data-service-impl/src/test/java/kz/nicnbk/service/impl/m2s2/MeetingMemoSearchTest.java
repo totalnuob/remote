@@ -7,7 +7,7 @@ import kz.nicnbk.repo.model.m2s2.PrivateEquityMeetingMemo;
 import kz.nicnbk.service.CommonTest;
 import kz.nicnbk.service.api.m2s2.MeetingMemoService;
 import kz.nicnbk.service.dto.m2s2.MemoPagedSearchResult;
-import kz.nicnbk.service.dto.m2s2.MemoSearchParams;
+import kz.nicnbk.service.dto.m2s2.MemoSearchParamsExtended;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -30,19 +30,19 @@ public class MeetingMemoSearchTest extends CommonTest{
     @Test
     @DatabaseSetup({"classpath:datasets/m2s2/meeting_memo_search.xml"})
     public void testSearchEmpty(){
-        MemoPagedSearchResult result = service.search(null);
+        MemoPagedSearchResult result = service.search(null, null);
         assert (result.getMemos().size() == 5);
     }
 
     @Test
     @DatabaseSetup("classpath:datasets/m2s2/meeting_memo_search.xml")
     public void testSearchByType(){
-        MemoSearchParams searchParams = new MemoSearchParams();
+        MemoSearchParamsExtended searchParams = new MemoSearchParamsExtended();
         //searchParams.setMemoType(MemoTypeLookup.PRIVATE_EQUITY.getCode());
         searchParams.setMemoType(PrivateEquityMeetingMemo.PE_DISCRIMINATOR);
 
         searchParams.setMeetingType(MeetingTypeLookup.MEETING.getCode());
-        MemoPagedSearchResult result = service.search(searchParams);
+        MemoPagedSearchResult result = service.search(searchParams, null);
         assert (result.getMemos().size() == 2);
     }
 }

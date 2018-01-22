@@ -4,6 +4,7 @@ import kz.nicnbk.service.api.base.BaseService;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.m2s2.MemoPagedSearchResult;
 import kz.nicnbk.service.dto.m2s2.MemoSearchParams;
+import kz.nicnbk.service.dto.m2s2.MemoSearchParamsExtended;
 
 import java.util.Set;
 
@@ -25,7 +26,7 @@ public interface MeetingMemoService extends BaseService {
 
     int getMemoType(Long id);
 
-    MemoPagedSearchResult search(MemoSearchParams searchParams);
+    MemoPagedSearchResult search(MemoSearchParamsExtended searchParams, String username);
 
     boolean deleteAttachment(Long memoId, Long fileId, String username);
 

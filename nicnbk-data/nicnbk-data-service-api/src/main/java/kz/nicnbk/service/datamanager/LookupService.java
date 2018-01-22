@@ -3,6 +3,8 @@ package kz.nicnbk.service.datamanager;
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.repo.model.base.BaseTypeEntity;
 import kz.nicnbk.repo.model.lookup.BaseLookup;
+import kz.nicnbk.repo.model.m2s2.MeetingType;
+import kz.nicnbk.repo.model.m2s2.MemoType;
 import kz.nicnbk.service.api.base.BaseService;
 
 import java.util.List;
@@ -29,4 +31,7 @@ public interface LookupService extends BaseService {
 
     List<BaseDictionaryDto> getPEIndustry();
     List<BaseDictionaryDto> getMMFields();
+
+    List<BaseDictionaryDto> getAllMemoTypes();
+    List<BaseDictionaryDto> getAllMeetingTypes();
 }

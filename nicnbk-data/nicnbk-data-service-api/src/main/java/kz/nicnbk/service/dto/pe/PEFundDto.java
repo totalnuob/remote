@@ -2,8 +2,6 @@ package kz.nicnbk.service.dto.pe;
 
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.common.service.model.HistoryBaseEntityDto;
-import kz.nicnbk.repo.model.pe.PEBenchmark;
-import kz.nicnbk.repo.model.pe.PEFirm;
 import kz.nicnbk.repo.model.pe.PEFund;
 
 import java.util.Date;
@@ -40,15 +38,17 @@ public class PEFundDto extends HistoryBaseEntityDto<PEFund> {
     private String nonsuitableReason;
 
     //KEY FUND STATISTICS
-    private int numberOfInvestments;
-    private double investedAmount;
-    private double realized;
-    private double unrealized;
-    private double dpi;
-    private double netIrr;
-    private double netTvpi; // MOIC
-    private double grossIrr;
-    private double grossTvpi;
+    private Integer calculationType;
+//    private Boolean autoCalculation;
+    private Integer numberOfInvestments;
+    private Double investedAmount;
+    private Double realized;
+    private Double unrealized;
+    private Double dpi;
+    private Double netIrr;
+    private Double netTvpi; // MOIC
+    private Double grossIrr;
+    private Double grossTvpi;
     private Date asOfDate;
     private Double benchmarkNetIrr;
     private Double benchmarkNetTvpi;
@@ -83,7 +83,8 @@ public class PEFundDto extends HistoryBaseEntityDto<PEFund> {
     //cashflows
     private List<PEGrossCashflowDto> grossCashflow;
     private List<PENetCashflowDto> netCashflow;
-    private List<PEFundCompaniesPerformanceDto> fundCompanyPerformance;
+    private List<PECompanyPerformanceDto> companyPerformance;
+    private List<PECompanyPerformanceIddDto> companyPerformanceIdd;
 
     public String getFundName() {
         return fundName;
@@ -229,75 +230,91 @@ public class PEFundDto extends HistoryBaseEntityDto<PEFund> {
         this.geography = geography;
     }
 
-    public int getNumberOfInvestments() {
+    public Integer getCalculationType() {
+        return calculationType;
+    }
+
+    public void setCalculationType(Integer calculationType) {
+        this.calculationType = calculationType;
+    }
+
+//    public Boolean getAutoCalculation() {
+//        return autoCalculation;
+//    }
+//
+//    public void setAutoCalculation(Boolean autoCalculation) {
+//        this.autoCalculation = autoCalculation;
+//    }
+
+    public Integer getNumberOfInvestments() {
         return numberOfInvestments;
     }
 
-    public void setNumberOfInvestments(int numberOfInvestments) {
+    public void setNumberOfInvestments(Integer numberOfInvestments) {
         this.numberOfInvestments = numberOfInvestments;
     }
 
-    public double getInvestedAmount() {
+    public Double getInvestedAmount() {
         return investedAmount;
     }
 
-    public void setInvestedAmount(double investedAmount) {
+    public void setInvestedAmount(Double investedAmount) {
         this.investedAmount = investedAmount;
     }
 
-    public double getRealized() {
+    public Double getRealized() {
         return realized;
     }
 
-    public void setRealized(double realized) {
+    public void setRealized(Double realized) {
         this.realized = realized;
     }
 
-    public double getUnrealized() {
+    public Double getUnrealized() {
         return unrealized;
     }
 
-    public void setUnrealized(double unrealized) {
+    public void setUnrealized(Double unrealized) {
         this.unrealized = unrealized;
     }
 
-    public double getDpi() {
+    public Double getDpi() {
         return dpi;
     }
 
-    public void setDpi(double dpi) {
+    public void setDpi(Double dpi) {
         this.dpi = dpi;
     }
 
-    public double getNetIrr() {
+    public Double getNetIrr() {
         return netIrr;
     }
 
-    public void setNetIrr(double netIrr) {
+    public void setNetIrr(Double netIrr) {
         this.netIrr = netIrr;
     }
 
-    public double getNetTvpi() {
+    public Double getNetTvpi() {
         return netTvpi;
     }
 
-    public void setNetTvpi(double netTvpi) {
+    public void setNetTvpi(Double netTvpi) {
         this.netTvpi = netTvpi;
     }
 
-    public double getGrossIrr() {
+    public Double getGrossIrr() {
         return grossIrr;
     }
 
-    public void setGrossIrr(double grossIrr) {
+    public void setGrossIrr(Double grossIrr) {
         this.grossIrr = grossIrr;
     }
 
-    public double getGrossTvpi() {
+    public Double getGrossTvpi() {
         return grossTvpi;
     }
 
-    public void setGrossTvpi(double grossTvpi) {
+    public void setGrossTvpi(Double grossTvpi) {
         this.grossTvpi = grossTvpi;
     }
 
@@ -485,12 +502,20 @@ public class PEFundDto extends HistoryBaseEntityDto<PEFund> {
         this.grossCashflow = grossCashflow;
     }
 
-    public List<PEFundCompaniesPerformanceDto> getFundCompanyPerformance() {
-        return fundCompanyPerformance;
+    public List<PECompanyPerformanceDto> getCompanyPerformance() {
+        return companyPerformance;
     }
 
-    public void setFundCompanyPerformance(List<PEFundCompaniesPerformanceDto> fundCompanyPerformance) {
-        this.fundCompanyPerformance = fundCompanyPerformance;
+    public void setCompanyPerformance(List<PECompanyPerformanceDto> companyPerformance) {
+        this.companyPerformance = companyPerformance;
+    }
+
+    public List<PECompanyPerformanceIddDto> getCompanyPerformanceIdd() {
+        return companyPerformanceIdd;
+    }
+
+    public void setCompanyPerformanceIdd(List<PECompanyPerformanceIddDto> companyPerformanceIdd) {
+        this.companyPerformanceIdd = companyPerformanceIdd;
     }
 
     public List<PENetCashflowDto> getNetCashflow() {

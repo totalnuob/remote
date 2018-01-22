@@ -49,8 +49,10 @@ public class MemoServiceREST extends CommonServiceREST {
 
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
-    public ResponseEntity<?> search(@RequestBody MemoSearchParams searchParams){
-        MemoPagedSearchResult searchResult = memoService.search(searchParams);
+    public ResponseEntity<?> search(@RequestBody MemoSearchParamsExtended searchParams){
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+        MemoPagedSearchResult searchResult = memoService.search(searchParams, username);
         if(searchResult != null){
             return new ResponseEntity<>(searchResult, null, HttpStatus.OK);
         }else{

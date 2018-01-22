@@ -5,6 +5,8 @@ import kz.nicnbk.repo.model.pe.PENetCashflow;
 import kz.nicnbk.service.api.pe.PENetCashflowService;
 import kz.nicnbk.service.converter.pe.PENetCashflowEntityConverter;
 import kz.nicnbk.service.dto.pe.PENetCashflowDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,18 +18,19 @@ import java.util.List;
 @Service
 public class PENetCashflowServiceImpl implements PENetCashflowService {
 
-    @Autowired
-    private PENetCashflowRepository peNetCfRepository;
+    private static final Logger logger = LoggerFactory.getLogger(PEFundServiceImpl.class);
 
     @Autowired
-    private PENetCashflowEntityConverter peNetCfEntityConverter;
+    private PENetCashflowRepository repository;
 
+    @Autowired
+    private PENetCashflowEntityConverter converter;
 
     @Override
     public Long save(PENetCashflowDto dto) {
         try {
-            PENetCashflow entity = this.peNetCfEntityConverter.assemble(dto);
-            Long id = this.peNetCfRepository.save(entity).getId();
+            PENetCashflow entity = this.converter.assemble(dto);
+            Long id = this.repository.save(entity).getId();
             return id;
         } catch(Exception ex){
             ex.printStackTrace();
@@ -36,19 +39,18 @@ public class PENetCashflowServiceImpl implements PENetCashflowService {
     }
 
     @Override
-    public boolean deleteByFundId(Long fundId) {
-        this.peNetCfRepository.deleteByFundId(fundId);
-        return true;
-    }
-
-    @Override
-    public PENetCashflowDto get(Long id) {
+    public List<PENetCashflowDto> findByFundId(Long fundId) {
+        try {
+            return this.converter.disassembleList(this.repository.getEntitiesByFundId(fundId));
+        } catch (Exception ex) {
+            logger.error("Error loading PE fund's net cash flow: " + fundId, ex);
+        }
         return null;
     }
 
     @Override
-    public List<PENetCashflowDto> findByFundId(Long id) {
-        List<PENetCashflow> entities = this.peNetCfRepository.getEntitiesByFundId(id);
-        return this.peNetCfEntityConverter.disassembleList(entities);
+    public boolean deleteByFundId(Long fundId) {
+        this.repository.deleteByFundId(fundId);
+        return true;
     }
 }

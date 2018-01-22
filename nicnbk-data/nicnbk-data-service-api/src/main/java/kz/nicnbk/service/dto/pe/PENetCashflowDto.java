@@ -28,7 +28,7 @@ public class PENetCashflowDto extends BaseEntityDto<PENetCashflow> implements Co
 
     private String typeOfFundTransaction;
 
-    private PEFundDto fund;
+//    private PEFundDto fund;
 
     public String getFundName() {
         return fundName;
@@ -94,13 +94,13 @@ public class PENetCashflowDto extends BaseEntityDto<PENetCashflow> implements Co
         this.typeOfFundTransaction = typeOfFundTransaction;
     }
 
-    public PEFundDto getFund() {
-        return fund;
-    }
-
-    public void setFund(PEFundDto fund) {
-        this.fund = fund;
-    }
+//    public PEFundDto getFund() {
+//        return fund;
+//    }
+//
+//    public void setFund(PEFundDto fund) {
+//        this.fund = fund;
+//    }
 
     @Override
     public int compareTo(PENetCashflowDto dto) {

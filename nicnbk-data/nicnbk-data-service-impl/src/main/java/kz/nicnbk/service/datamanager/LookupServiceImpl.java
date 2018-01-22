@@ -14,6 +14,7 @@ import kz.nicnbk.repo.model.files.FilesType;
 import kz.nicnbk.repo.model.hf.*;
 import kz.nicnbk.repo.model.m2s2.MeetingArrangedBy;
 import kz.nicnbk.repo.model.m2s2.MeetingType;
+import kz.nicnbk.repo.model.m2s2.MemoType;
 import kz.nicnbk.repo.model.macromonitor.MacroMonitorField;
 import kz.nicnbk.repo.model.macromonitor.MacroMonitorType;
 import kz.nicnbk.repo.model.news.NewsType;
@@ -78,6 +79,9 @@ public class LookupServiceImpl implements LookupService {
 
     @Autowired
     private NewsTypeRepository newsTypeRepository;
+
+    @Autowired
+    private MemoTypeRepository memoTypeRepository;
 
     @Autowired
     private MeetingTypeRepository meetingTypeRepository;
@@ -388,4 +392,37 @@ public class LookupServiceImpl implements LookupService {
         return dto;
     }
 
+    @Override
+    public List<BaseDictionaryDto> getAllMemoTypes() {
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            Iterator<MemoType> iterator = this.memoTypeRepository.findAll().iterator();
+            while (iterator.hasNext()) {
+                MemoType entity = iterator.next();
+                BaseDictionaryDto dto = disassemble(entity);
+                dtoList.add(dto);
+            }
+            return dtoList;
+        } catch (Exception ex) {
+            logger.error("Failed to load lookup: MemoType", ex);
+        }
+        return null;
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getAllMeetingTypes() {
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            Iterator<MeetingType> iterator = this.meetingTypeRepository.findAll().iterator();
+            while (iterator.hasNext()) {
+                MeetingType entity = iterator.next();
+                BaseDictionaryDto dto = disassemble(entity);
+                dtoList.add(dto);
+            }
+            return dtoList;
+        } catch (Exception ex) {
+            logger.error("Failed to load lookup: MeetingType", ex);
+        }
+        return null;
+    }
 }

@@ -48,11 +48,16 @@
             <!--<artifactId>javax.el-api</artifactId>-->
             <!--<version>3.0.0</version>-->
         <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>postgresql</groupId>-->
+            <!--<artifactId>postgresql</artifactId>-->
+            <!--<version>9.1-901-1.jdbc4</version>-->
+            <!--&lt;!&ndash;<version>9.4.1208-jdbc42-atlassian-hosted</version>&ndash;&gt;-->
+        <!--</dependency>-->
         <dependency>
-            <groupId>postgresql</groupId>
+            <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>9.1-901.jdbc4</version>
-            <!--<version>9.4.1208-jdbc42-atlassian-hosted</version>-->
+            <version>42.1.4</version>
         </dependency>
         <dependency>
             <groupId>kz.nicnbk</groupId>
