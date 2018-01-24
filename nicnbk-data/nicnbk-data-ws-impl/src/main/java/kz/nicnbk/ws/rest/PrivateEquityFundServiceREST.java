@@ -1,10 +1,7 @@
 package kz.nicnbk.ws.rest;
 
 import kz.nicnbk.service.api.authentication.TokenService;
-import kz.nicnbk.service.api.pe.PECompanyPerformanceIddService;
-import kz.nicnbk.service.api.pe.PECompanyPerformanceService;
-import kz.nicnbk.service.api.pe.PEFundService;
-import kz.nicnbk.service.api.pe.PEGrossCashflowService;
+import kz.nicnbk.service.api.pe.*;
 import kz.nicnbk.service.dto.common.StatusResultType;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.pe.*;
@@ -34,6 +31,9 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
 
     @Autowired
     private PECompanyPerformanceIddService performanceIddService;
+
+    @Autowired
+    private PEPdfService pdfService;
 
     @Autowired
     private TokenService tokenService;
@@ -202,6 +202,8 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
     @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/createOnePager/{fundId}", method = RequestMethod.GET)
     public ResponseEntity<?> createOnePager(@PathVariable Long fundId) {
+
+        pdfService.createOnePager();
 
         PEIrrResultDto resultDto;
 
