@@ -20,6 +20,13 @@ import org.springframework.stereotype.Service;
 //import com.itextpdf.text.pdf.PdfPTable;
 //import com.itextpdf.text.pdf.PdfWriter;
 
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
+
+import java.io.File;
+
 /**
  * Created by Pak on 24/01/2018.
  */
@@ -29,7 +36,23 @@ public class PEPdfServiceImpl implements PEPdfService {
     public void createOnePager() {
         System.out.println("PDF");
 
-        String FILE = "D:/temp/FirstPdf.pdf";
-//        Font catFont = new Font(Font.FontFamily.TIMES_ROMAN, 18, Font.BOLD);
+        String DEST = "D:/temp/FirstPdf.pdf";
+
+        File file = new File(DEST);
+        file.getParentFile().mkdirs();
+
+        PdfWriter writer = new PdfWriter(DEST);
+
+        //Initialize PDF document
+        PdfDocument pdf = new PdfDocument(writer);
+
+        // Initialize document
+        Document document = new Document(pdf);
+
+        //Add paragraph to the document
+        document.add(new Paragraph("Hello World!"));
+
+        //Close document
+        document.close();
     }
 }
