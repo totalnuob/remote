@@ -26,6 +26,7 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 /**
  * Created by Pak on 24/01/2018.
@@ -41,18 +42,22 @@ public class PEPdfServiceImpl implements PEPdfService {
         File file = new File(DEST);
         file.getParentFile().mkdirs();
 
-        PdfWriter writer = new PdfWriter(DEST);
+        try {
+            PdfWriter writer = new PdfWriter(DEST);
 
-        //Initialize PDF document
-        PdfDocument pdf = new PdfDocument(writer);
+            //Initialize PDF document
+            PdfDocument pdf = new PdfDocument(writer);
 
-        // Initialize document
-        Document document = new Document(pdf);
+            // Initialize document
+            Document document = new Document(pdf);
 
-        //Add paragraph to the document
-        document.add(new Paragraph("Hello World!"));
+            //Add paragraph to the document
+            document.add(new Paragraph("Hello World!"));
 
-        //Close document
-        document.close();
+            //Close document
+            document.close();
+        }catch (FileNotFoundException ex){
+            ex.printStackTrace();
+        }
     }
 }
