@@ -241,21 +241,6 @@ public class MemoServiceREST extends CommonServiceREST {
     }
 
 
-    @RequestMapping(value="/attachment/{id}", method=RequestMethod.GET)
-    @ResponseBody
-    public void downloadFile(@PathVariable(value="id") Long fileId, HttpServletResponse response) {
-
-        // TODO: control file download by user role
-        // TODO: Check rights
-
-        InputStream inputStream = fileService.getFileInputStream(fileId, FileTypeLookup.MEMO_ATTACHMENT.getCode());
-        if(inputStream == null){
-            // TODO: handle error
-        }
-        sendFileDownloadResponse(response, fileService.getFileInfo(fileId), inputStream);
-    }
-
-
     @RequestMapping(value="/attachment/delete/{memoId}/{fileId}", method=RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<?> deleteFile(@PathVariable(value="memoId") Long memoId, @PathVariable(value="fileId") Long fileId){

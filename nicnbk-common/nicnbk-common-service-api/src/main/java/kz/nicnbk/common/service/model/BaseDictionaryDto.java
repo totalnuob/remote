@@ -10,6 +10,15 @@ public class BaseDictionaryDto implements BaseDto{
     private String nameRu;
     private String nameKz;
 
+    public BaseDictionaryDto(){}
+
+    public BaseDictionaryDto(String code, String nameEn, String nameRu, String nameKz){
+        this.code = code;
+        this.nameEn = nameEn;
+        this.nameRu = nameRu;
+        this.nameKz = nameKz;
+    }
+
 //    public Integer getId() {
 //        return id;
 //    }

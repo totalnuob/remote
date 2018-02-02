@@ -1,0 +1,303 @@
+<div class="container">
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting']">Reports Main</a></span>
+                </li>
+                <!--<li>-->
+                    <!--<span *ngIf="reportId != null">-->
+                        <!--<a [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">-->
+                            <!--Parsed input files</a></span>-->
+                <!--</li>-->
+                <!--<li><span *ngIf="reportId != null"><a [routerLink]="['/reporting/NBReporting/NICKMFInput/', reportId]">NICK MF Input</a></span></li>-->
+                <!--<li><span *ngIf="reportId != null"><a [routerLink]="['/reporting/NBReporting/TarragonGeneratedForm/', reportId]">Tarragon - Generated Form</a></span></li>-->
+                <li *ngIf="periodicReport != null && periodicReport.status != 'SUBMITTED'">
+                    <span *ngIf="reportId != null">
+                        <a [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">Input</a>
+                    </span>
+                </li>
+                <li class="active">Generate report</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row top-buffer" *ngIf="errorMessage != null || successMessage != null">
+        <div class="col-md-12">
+            <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+            </div>
+            <div class="alert alert-info" *ngIf="!submitted && successMessage != null"><span>{{successMessage}}</span>
+            </div>
+        </div>
+    </div>
+    <br/>
+
+    <ul class="nav nav-tabs">
+        <li [ngClass]="getReportsTabClass()">
+        <!--<li class="active">-->
+            <a data-toggle="tab" href="#reports">Reports</a>
+        </li>
+        <li [ngClass]="getInputTabClass()">
+        <!--<li>-->
+            <a data-toggle="tab" href="#input_data">Input</a>
+        </li>
+    </ul>
+
+    <div  [ngBusy]="[busy, busyFinal]" class="tab-content">
+        <div id="reports" [ngClass]="getReportsTabDivClass()">
+        <!--<div id="reports" class="tab-pane fade in active">-->
+            <table class="table table-hover table-responsive table-condensed">
+                <tr>
+                    <td>Конс баланс NICK MF</td>
+                    <td>
+                        <button class="btn btn-xs btn-primary"
+                                [routerLink]="['/reporting/NBReporting/consolidatedBalanceUSDForm/', reportId]">REPORT</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Конс опиу NICK MF</td>
+                    <td>
+                        <button class="btn btn-xs btn-primary"
+                                [routerLink]="['/reporting/NBReporting/consolidatedIncomeExpenseUSDForm/', reportId]">REPORT</button>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td>Конс опсд  NICK MF</td>
+                    <td>
+                        <button class="btn btn-xs btn-primary"
+                                [routerLink]="['/reporting/NBReporting/consolidatedTotalIncomeUSDForm/', reportId]">REPORT</button>
+                    </td>
+                </tr>
+                <tr bgcolor="#e7e7e7">
+                    <td colspan="2">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td>1 - ОФП</td>
+                    <td>
+                        <button class="btn btn-xs btn-primary"
+                                [routerLink]="['/reporting/NBReporting/consolidatedKZTForm1/', reportId]">REPORT</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>2 - ОПиУ</td>
+                    <td>
+                        <button class="btn btn-xs btn-primary"
+                                [routerLink]="['/reporting/NBReporting/consolidatedKZTForm2/', reportId]">REPORT</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>3 - ОПСД</td>
+                    <td>
+                        <button class="btn btn-xs btn-primary"
+                                [routerLink]="['/reporting/NBReporting/consolidatedKZTForm3/', reportId]">REPORT</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>6 - ОИК</td>
+                    <td>
+                        <button class="btn btn-xs btn-primary"
+                                [routerLink]="['/reporting/NBReporting/consolidatedKZTForm6/', reportId]">REPORT</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>7 - РФИ</td>
+                    <td>
+                        <button class="btn btn-xs btn-primary"
+                                [routerLink]="['/reporting/NBReporting/consolidatedKZTForm7/', reportId]">REPORT</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>8 - РТПДЗ</td>
+                    <td>
+                        <button class="btn btn-xs btn-primary"
+                                [routerLink]="['/reporting/NBReporting/consolidatedKZTForm8/', reportId]">REPORT</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>10 - РПА</td>
+                    <td>
+                        <button class="btn btn-xs btn-primary"
+                                [routerLink]="['/reporting/NBReporting/consolidatedKZTForm10/', reportId]">REPORT</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>13 - РФО</td>
+                    <td>
+                        <button class="btn btn-xs btn-primary"
+                                [routerLink]="['/reporting/NBReporting/consolidatedKZTForm13/', reportId]">REPORT</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>14 - РТПКЗ</td>
+                    <td>
+                        <button class="btn btn-xs btn-primary"
+                                [routerLink]="['/reporting/NBReporting/consolidatedKZTForm14/', reportId]">REPORT</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>19 - РДХФИ</td>
+                    <td>
+                        <button class="btn btn-xs btn-primary"
+                                [routerLink]="['/reporting/NBReporting/consolidatedKZTForm19/', reportId]">REPORT</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>22 - РПДХ</td>
+                    <td>
+                        <button class="btn btn-xs btn-primary"
+                                [routerLink]="['/reporting/NBReporting/consolidatedKZTForm22/', reportId]">REPORT</button>
+                    </td>
+                </tr>
+
+            </table>
+
+            <br/>
+            <div class="row">
+                <div class="col-md-2">Report Status</div>
+                <div class="col-md-2"> <label class="label-info" *ngIf="periodicReport != null && periodicReport.status != null">{{periodicReport.status}}</label></div>
+                <div class="col-md-2" *ngIf="periodicReport != null && periodicReport.status != null && periodicReport.status != 'SUBMITTED'">
+                    <button class="btn btn-primary" (click)="markAsFinal()">Mark as final</button>
+                </div>
+            </div>
+        </div>
+        <div id="input_data" [ngClass]="getInputTabDivClass()">
+        <!--<div id="input_data" class="tab-pane fade">-->
+                <!--<button id="toggleButton" type="button" data-toggle="collapse" class="btn btn-default"  data-target="#inputData"-->
+                        <!--(click)="toggleInputList()">-->
+                    <!--{{ isShowInputList() ? 'Hide input &#9660;' : 'Show input &#9658;'}}</button>-->
+                <!--<br/>-->
+                <!--<br/>-->
+
+                <!--<a data-toggle="collapse" data-parent="#accordion" href="#inputData" (click)="toggleInputList()">-->
+                    <!--{{ showInputList? 'Hide input &#9660;' : 'Show input &#9658;' }}</a>-->
+                <!--<br/><br/>-->
+
+                <!--<div id="inputData" [ngClass]="{'collapse in': showInputList, 'collapse': showInputList}">-->
+            <table class="table table-hover table-responsive table-condensed">
+                <tr>
+                    <td>Schedule of Investments</td>
+                    <td>
+                        <button class="btn btn-xs btn-default" (click)="download('NB_REP_T1', report.tarragonScheduleInvestmentFileId, report.tarragonScheduleInvestmentFileName)">
+                        <span class="glyphicon glyphicon-download-alt"></span>
+                        <i class="glyphicon glyphicon-refresh" *ngIf="pending"></i>
+                        </button>
+                        <button class="btn btn-xs btn-primary" [routerLink]="['/reporting/NBReporting/pe/scheduleInvestments/', reportId, 'REPORTS']">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Statement of Assets, Liabilities, and PC</td>
+                    <td>
+                        <button class="btn btn-xs btn-default" (click)="download('NB_REP_T2', report.tarragonStatementAssetsFileId, report.tarragonStatementAssetsFileName)">
+                        <span class="glyphicon glyphicon-download-alt"></span>
+                        <i class="glyphicon glyphicon-refresh" *ngIf="pending"></i>
+                        </button>
+
+                        <button class="btn btn-xs btn-primary"
+                                [routerLink]="['/reporting/NBReporting/pe/statementBalanceOperations/', reportId, 'REPORTS']">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Statement of Cash flows</td>
+                    <td>
+
+                        <button  class="btn btn-xs btn-default"
+                                 (click)="download('NB_REP_T3', report.tarragonStatementCashflowsFileId, report.tarragonStatementCashflowsFileName)">
+                        <span class="glyphicon glyphicon-download-alt"></span>
+                        <i class="glyphicon glyphicon-refresh" *ngIf="pending"></i>
+                        </button>
+                        <button class="btn btn-xs btn-primary"
+                                [routerLink]="['/reporting/NBReporting/pe/statementCashflows/', reportId, 'REPORTS']">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Statement of Changes in PC</td>
+                    <td>
+                        <button class="btn btn-xs btn-default"
+                                (click)="download('NB_REP_T4', report.tarragonStatementChangesFileId, report.tarragonStatementChangesFileName)">
+                            <span class="glyphicon glyphicon-download-alt"></span>
+                            <i class="glyphicon glyphicon-refresh" *ngIf="pending"></i>
+                        </button>
+                        <button class="btn btn-xs btn-primary"
+                                [routerLink]="['/reporting/NBReporting/pe/statementChanges/', reportId, 'REPORTS']">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Singularity - General Ledger</td>
+                    <td>
+                        <button class="btn btn-xs btn-default"
+                                (click)="download('NB_REP_SGL', report.singularityGeneralLedgerFileId, report.singularityGeneralLedgerFileName)">
+                        <span class="glyphicon glyphicon-download-alt"></span>
+                        <i class="glyphicon glyphicon-refresh" *ngIf="pending"></i>
+                        </button>
+                        <button class="btn btn-xs btn-primary"
+                                [routerLink]="['/reporting/NBReporting/hf/generalLedgerBalance/', reportId, 'REPORTS']">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Singularity - NOAL Tranche A</td>
+                    <td>
+                        <button class="btn btn-xs btn-default"
+                                (click)="download('NB_REP_SNA', report.singularityNOALTrancheAFileId, report.singularityNOALTrancheAFileName)">
+                        <span class="glyphicon glyphicon-download-alt"></span>
+                        <i class="glyphicon glyphicon-refresh" *ngIf="pending"></i>
+                        </button>
+                        <button class="btn btn-xs btn-primary"
+                                [routerLink]="['/reporting/NBReporting/hf/noalA/', reportId, 'REPORTS']">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </td>
+                </tr>
+                <!--<tr>-->
+                    <!--<td>Singularity - NOAL Tranche B</td>-->
+                    <!--<td>-->
+                        <!--<button class="btn btn-xs btn-default"-->
+                                 <!--(click)="download('NB_REP_SNB', report.singularityNOALTrancheBFileId, report.singularityNOALTrancheBFileName)">-->
+                        <!--<span class="glyphicon glyphicon-download-alt"></span>-->
+                        <!--<i class="glyphicon glyphicon-refresh" *ngIf="pending"></i>-->
+                        <!--</button>-->
+                        <!--<button class="btn btn-xs btn-primary"-->
+                                <!--[routerLink]="['/reporting/NBReporting/hf/noalB/', reportId, 'REPORTS']">-->
+                            <!--<span class="glyphicon glyphicon-search"></span>-->
+                        <!--</button>-->
+                    <!--</td>-->
+                <!--</tr>-->
+                <tr bgcolor="#e7e7e7">
+                    <td colspan="2">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td>NICK Master Fund</td>
+                    <td>
+                        <button class="btn btn-xs btn-primary " [routerLink]="['/reporting/NBReporting/nickMFInputView/', reportId]">
+                            <span class="glyphicon glyphicon-search"></span></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Tarragon - General Ledger Form</td>
+                    <td>
+                        <button class="btn btn-xs btn-primary " [routerLink]="['/reporting/NBReporting/TarragonGeneratedFormView/', reportId]">
+                            <span class="glyphicon glyphicon-search"></span></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Singularity - General Ledger (NIC Chart of Accounts)</td>
+                    <td>
+                        <button class="btn btn-xs btn-primary " [routerLink]="['/reporting/NBReporting/SingularGeneratedForm/', reportId]">
+                            <span class="glyphicon glyphicon-search"></span></button>
+                    </td>
+                </tr>
+            </table>
+
+        </div>
+    </div>
+</div>

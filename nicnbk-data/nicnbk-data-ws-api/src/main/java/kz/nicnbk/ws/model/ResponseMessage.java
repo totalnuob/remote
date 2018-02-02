@@ -5,7 +5,11 @@ import java.io.Serializable;
 /**
  * Created by magzumov on 09.08.2016.
  */
+
+@Deprecated
 public class ResponseMessage implements Serializable {
+
+    // TODO: StatusResultDto, MessageResultDto
 
     public static final String TYPE_ERROR = "ERROR";
     public static final String TYPE_SUCCESS = "SUCCESS";

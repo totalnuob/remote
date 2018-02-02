@@ -19,4 +19,6 @@ public interface FileService extends BaseService {
     boolean safeDelete(Long id);
 
     InputStream getFileInputStream(Long fileId, String fileType);
+
+    String getCatalogByFileCode(String code);
 }

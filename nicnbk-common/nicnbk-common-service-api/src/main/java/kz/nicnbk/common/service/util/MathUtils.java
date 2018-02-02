@@ -3,6 +3,7 @@ package kz.nicnbk.common.service.util;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * Created by magzumov on 05.01.2017.
@@ -23,6 +24,19 @@ public class MathUtils {
         return a.divide(b, DEFAULT_SCALE, BigDecimal.ROUND_HALF_UP);
     }
 
+    public static Double multiply(Double value1, Double value2){
+        if(value1 == null || value2 == null){
+            return null;
+        }
+        if(value1 == 0.0 || value2 == 0.0){
+            return 0.0;
+        }
+
+        BigDecimal calculated = new BigDecimal(value1).setScale(2, RoundingMode.HALF_UP);
+        calculated = calculated.multiply(new BigDecimal(value2).setScale(2, RoundingMode.HALF_UP)).setScale(2, RoundingMode.HALF_UP);
+        return calculated.doubleValue();
+    }
+
     public static BigDecimal sqrt(BigDecimal number){
         return sqrt(number, DEFAULT_SCALE);
     }
@@ -40,6 +54,41 @@ public class MathUtils {
         return x1;
     }
 
+    public static Double subtract(Double a, Double b){
+        a = a != null ? a : 0;
+        b = b != null ? b : 0;
+        return new BigDecimal(a).setScale(2, RoundingMode.HALF_UP).subtract(new BigDecimal(b).setScale(2, RoundingMode.HALF_UP)).setScale(2, RoundingMode.HALF_UP).doubleValue();
+    }
+
+
+//    public static Double add(Double a, Double b, Double c){
+//        a = a != null ? a : 0;
+//        b = b != null ? b : 0;
+//        c = c != null ? c : 0;
+//        return new BigDecimal(a).setScale(2, RoundingMode.HALF_UP).add(new BigDecimal(b).setScale(2, RoundingMode.HALF_UP))
+//                .add(new BigDecimal(c).setScale(2, RoundingMode.HALF_UP)).doubleValue();
+//    }
+
+    public static Double add(Double... args){
+        BigDecimal sum = new BigDecimal("0");
+        for(Double arg: args){
+            BigDecimal value = arg != null ? new BigDecimal(arg).setScale(2, RoundingMode.HALF_UP) : new BigDecimal("0");
+            sum = add(sum ,value);
+        }
+        return sum.doubleValue();
+    }
+
+//    public static BigDecimal add(BigDecimal a, BigDecimal b){
+//        return a.setScale(2, RoundingMode.HALF_UP).add(b.setScale(2, RoundingMode.HALF_UP)).setScale(2, RoundingMode.HALF_UP);
+//    }
+
+    public static BigDecimal add(BigDecimal... args){
+        BigDecimal sum = new BigDecimal("0");
+        for(BigDecimal arg: args){
+            sum = sum.add(arg.setScale(2, RoundingMode.HALF_UP)).setScale(2, RoundingMode.HALF_UP);
+        }
+        return sum;
+    }
 
     public static void main (String[] args){
         testSlope1();

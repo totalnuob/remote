@@ -19,6 +19,15 @@ import {SIDE_POCKET_URL} from "./lookup.service.url";
 import {PE_INDUSTRY_FOCUS_URL} from "./lookup.service.url";
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 import {TRIP_TYPES} from "./mock.news.lookups";
+import {NB_CHART_OF_ACCOUNTS_URL} from "./lookup.service.url";
+import {NIC_REPORTING_CHART_OF_ACCOUNTS_URL} from "./lookup.service.url";
+import {NICReportingChartOfAccounts} from "../reporting/model/nic.reporting.chart.of.accounts.";
+import {OptionsBehavior} from "ng2-select/index";
+import {BaseDictionary} from "./model/base-dictionary";
+import {TarragonNICReportingChartOfAccounts} from "../reporting/model/tarragon,.nic.reporting.chart.of.accounts.";
+import {TARRAGON_NIC_REPORTING_CHART_OF_ACCOUNTS_URL} from "./lookup.service.url";
+import {RESERVE_CALCULATION_EXPENSE_TYPE_URL} from "./lookup.service.url";
+import {RESERVE_CALCULATION_ENTITY_TYPE_URL} from "./lookup.service.url";
 import {MM_FIELDS_URL} from "./lookup.service.url";
 import {MEETING_TYPE_URL} from "./lookup.service.url";
 import {MEMO_TYPE_URL} from "./lookup.service.url";
@@ -193,6 +202,45 @@ export class LookupService extends CommonService{
             .map(this.extractDataList)
             .catch(this.handleErrorResponse);
     }
+
+    getNBChartOfAccounts(): Observable<BaseDictionary[]>{
+        return this.http.get(NB_CHART_OF_ACCOUNTS_URL, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+
+    getNICReportingChartOfAccounts(code): Observable<NICReportingChartOfAccounts[]>{
+        if(code){
+            return this.http.get(NIC_REPORTING_CHART_OF_ACCOUNTS_URL + code, this.getOptionsWithCredentials())
+                .map(this.extractDataList)
+                .catch(this.handleErrorResponse);
+        }else{
+            return this.http.get(NIC_REPORTING_CHART_OF_ACCOUNTS_URL, this.getOptionsWithCredentials())
+                .map(this.extractDataList)
+                .catch(this.handleErrorResponse);
+        }
+
+    }
+
+    getAddableTarragonNICReportingChartOfAccounts(): Observable<TarragonNICReportingChartOfAccounts[]>{
+        return this.http.get(TARRAGON_NIC_REPORTING_CHART_OF_ACCOUNTS_URL, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+
+    getReserveCalculationExpenseTypeLookup(): Observable<BaseDictionary[]>{
+        return this.http.get(RESERVE_CALCULATION_EXPENSE_TYPE_URL, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+
+    getReserveCalculationEntityTypeLookup(): Observable<BaseDictionary[]>{
+        return this.http.get(RESERVE_CALCULATION_ENTITY_TYPE_URL, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+
+
 
     getManagerStatuses(){
         var list = [];

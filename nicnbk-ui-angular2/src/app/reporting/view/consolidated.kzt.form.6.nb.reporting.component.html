@@ -1,0 +1,71 @@
+<div class="container">
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting']">Reports Main</a></span>
+                </li>
+                <!--<li>-->
+                <!--<span *ngIf="reportId != null">-->
+                <!--<a [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">-->
+                <!--Input</a></span>-->
+                <!--</li>-->
+                <li *ngIf="reportId != null"><span><a [routerLink]="['/reporting/NBReporting/GeneratedReports/', reportId, 'REPORTS']">Generate report</a></span></li>
+                <li class="active">ОИК - 6</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row top-buffer" *ngIf="errorMessage != null || successMessage != null">
+        <div class="col-md-12">
+            <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+            </div>
+            <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="row withpadding">
+        <button class="btn-xs btn-primary pull-right" (click)="export()"><span class="glyphicon glyphicon-list-alt"></span>&nbsp;Export</button>
+    </div>
+    <br/>
+    <div [ngBusy]="{busy: busyExport, message: 'Exporting...'}" class="row withpadding">
+        <table [ngBusy]="[busy]" class="table table-hover table-condensed" style="font-size: small">
+            <tr bgcolor="#e7e7e7">
+                <td>Наименование показателей</td>
+                <td>Код строки</td>
+                <td>Уставный капитал</td>
+                <td>Дополнительно оплаченный капитал</td>
+                <td>Выкупленные собственные долевые инструменты</td>
+                <td>Резервный капитал</td>
+                <td>Прочие резервы</td>
+                <td>Нераспределенная прибыль (непокрытый убыток)</td>
+                <td>Всего (гр.3+гр.4+гр.5+гр.6+гр.7+гр.8)</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>2</td>
+                <td>3</td>
+                <td>4</td>
+                <td>5</td>
+                <td>6</td>
+                <td>7</td>
+                <td>8</td>
+                <td>9</td>
+            </tr>
+            <tr *ngFor="let record of records">
+                <td>{{record.name}}</td>
+                <td>{{record.accountNumber == null ? record.lineNumber : ''}}</td>
+                <td>{{(record.shareholderEquity  != null && record.shareholderEquity != 0 ? (record.shareholderEquity | number:'1.2-2') : '' )}}</td>
+                <td>{{(record.additionalPaidinCapital  != null && record.additionalPaidinCapital != 0 ? (record.additionalPaidinCapital | number:'1.2-2') : '' )}}</td>
+                <td>{{(record.redeemedOwnEquityInstruments  != null && record.redeemedOwnEquityInstruments != 0 ? (record.redeemedOwnEquityInstruments | number:'1.2-2') : '' )}}</td>
+                <td>{{(record.reserveCapital  != null && record.reserveCapital != 0 ? (record.reserveCapital | number:'1.2-2') : '' )}}</td>
+                <td>{{(record.otherReserves  != null && record.otherReserves != 0 ? (record.otherReserves | number:'1.2-2') : '' )}}</td>
+                <td>{{(record.retainedEarnings  != null && record.retainedEarnings != 0 ? (record.retainedEarnings | number:'1.2-2') : '' )}}</td>
+                <td>{{(record.total  != null && record.total != 0 ? (record.total | number:'1.2-2') : '' )}}</td>
+            </tr>
+
+        </table>
+        <br/>
+        <br/>
+    </div>
+</div>

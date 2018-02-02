@@ -1,6 +1,7 @@
 import {Lookup} from "../common/lookup";
 import {Component} from '@angular/core';
 import {Router} from '@angular/router';
+import {ErrorResponse} from "./error-response";
 
 declare var $:any;
 
@@ -14,7 +15,7 @@ export class CommonFormViewComponent {
     errorMessage: string;
 
     constructor(
-        private _router: Router
+        private _router?: Router
     ){}
 
     convertToServiceModel(list){
@@ -45,15 +46,37 @@ export class CommonFormViewComponent {
     }
 
     postAction(successMessage, errorMessage){
-        if(successMessage && successMessage != null) {
+        //if(successMessage && successMessage != null) {
             this.successMessage = successMessage;
-        }
-        if(errorMessage && errorMessage != null) {
+        //}
+        //if(errorMessage && errorMessage != null) {
             this.errorMessage = errorMessage;
-        }
+        //}
 
         // TODO: non jQuery
         $('html, body').animate({ scrollTop: 0 }, 'fast');
+    }
+
+    processErrorResponse(errorResponse: ErrorResponse, errorMessage?: string){
+        this.errorMessage = errorMessage != null ? errorMessage : "Error occurred processing your request";
+
+        if(errorResponse != null && (errorResponse.message != null || errorResponse.messageRu != null || errorResponse.messageKz != null)){
+            this.errorMessage = errorResponse.message;
+        }
+
+        if(errorResponse.status){
+            if(errorResponse.status == 401){
+                this.errorMessage = "Access Denied";
+
+                alert("Access Denied. Please re-login");
+                localStorage.removeItem("authenticatedUser");
+                localStorage.removeItem("authenticatedUserRoles");
+                //location.reload();
+                this._router.navigate(['login']);
+                return;
+            }
+        }
+        this.postAction(null, this.errorMessage);
     }
 
     processErrorMessage(errorResponse){

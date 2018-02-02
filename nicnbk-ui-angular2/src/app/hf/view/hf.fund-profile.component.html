@@ -111,7 +111,7 @@
                                             <tr>
                                                 <td>Strategy</td>
                                                 <td>
-                                                    <select class="form-control" style="width: 100%" name="strategy" [(ngModel)]="fund.strategy" (ngModelChange)="strategyChanged()"
+                                                    <select class="form-control" style="width: 100%" name="strategy"  [(ngModel)]="fund.strategy" (ngModelChange)="strategyChanged()"
                                                             [disabled]="fund.strategyBreakdownList != null && fund.strategyBreakdownList.length > 0">
                                                         <option value="-">---</option>
                                                         <option *ngFor="let item of strategyLookup" [value]="item.code">{{item.nameEn}}</option>

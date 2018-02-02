@@ -4,7 +4,6 @@ import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.news.NewsService;
 import kz.nicnbk.service.dto.news.NewsDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,7 +32,7 @@ public class NewsServiceREST extends CommonServiceREST{
     @RequestMapping(value = "/load", method = RequestMethod.GET)
     public ResponseEntity<?> getNewsShort(){
         List<NewsDto> news = newsService.loadNewsShort(DEFAULT_PAGE_SIZE);
-        return buildResponse(news);
+        return buildNonNullResponse(news);
     }
 
 //    @RequestMapping(value = "/load/{pageSize}", method = RequestMethod.GET)
@@ -46,7 +45,7 @@ public class NewsServiceREST extends CommonServiceREST{
     @RequestMapping(value = "/load/{pageSize}/{newsType}/{page}", method = RequestMethod.GET)
     public ResponseEntity<?> getNewsShort(@PathVariable Integer pageSize, @PathVariable String newsType, @PathVariable Integer page){
         List<NewsDto> news = newsService.loadNewsShort(newsType, page, Math.min(pageSize, MAX_PAGE_SIZE));
-        return buildResponse(news);
+        return buildNonNullResponse(news);
     }
 
     @PreAuthorize("hasRole('ROLE_NEWS_EDITOR') OR hasRole('ROLE_ADMIN')")
@@ -73,7 +72,7 @@ public class NewsServiceREST extends CommonServiceREST{
     @RequestMapping(value="/get/{id}", method = RequestMethod.GET)
     public ResponseEntity<?> get(@PathVariable Long id){
         NewsDto newsDto = this.newsService.get(id);
-        return buildResponse(newsDto);
+        return buildNonNullResponse(newsDto);
     }
 
 //    private HttpHeaders getHeaders(){

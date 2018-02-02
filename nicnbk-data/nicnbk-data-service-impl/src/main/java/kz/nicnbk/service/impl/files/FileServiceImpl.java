@@ -86,13 +86,25 @@ public class FileServiceImpl implements FileService {
         return null;
     }
 
+    @Override
+    public String getCatalogByFileCode(String code) {
+        for(FileTypeLookup lookup: FileTypeLookup.values()){
+            if(lookup.getCode().equals(code)){
+                return lookup.getCatalog();
+            }
+        }
+        return null;
+    }
+
     private String getCatalogByFileType(String fileType)  throws IllegalArgumentException{
         // TODO: refactor
         if(fileType == null ){
             throw new IllegalArgumentException("Illegal file tyoe: null");
         }
-        if(fileType.equals(FileTypeLookup.MEMO_ATTACHMENT.getCode())){
-            return FileTypeLookup.MEMO_ATTACHMENT.getCatalog();
+        for(FileTypeLookup lookup: FileTypeLookup.values()){
+            if(fileType.equals(lookup.getCode())){
+                return lookup.getCatalog();
+            }
         }
         throw new IllegalArgumentException("Illegal file tyoe: " + fileType);
     }

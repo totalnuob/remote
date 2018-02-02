@@ -40,6 +40,23 @@
             <!--<systemPath>${project.basedir}/lib/jxirr-1.0.1-SNAPSHOT.jar</systemPath>-->
         </dependency>
 
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>kernel</artifactId>
+            <version>7.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>layout</artifactId>
+            <version>7.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>pdftest</artifactId>
+            <version>7.0.1</version>
+        </dependency>
+
         <!-- EXTERNAL -->
         <dependency>
             <groupId>net.sf.dozer</groupId>
@@ -68,11 +85,6 @@
             <artifactId>commons-lang</artifactId>
             <version>2.5</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi</artifactId>
-            <version>3.7</version>
-        </dependency>
 
         <!--JWT lib-->
         <dependency>
@@ -80,6 +92,7 @@
             <artifactId>java-jwt</artifactId>
             <version>3.1.0</version>
         </dependency>
+
     </dependencies>
 
 

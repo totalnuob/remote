@@ -32,6 +32,8 @@ import {AlbourneService} from "./hf/hf.albourne.service";
 
 import '../../public/js/jquery.ns-autogrow.min.js';
 import {ModuleAccessCheckerService} from "./authentication/module.access.checker.service";
+import {PeriodicReportService} from "./reporting/periodic.report.service";
+import {AuthenticationService} from "./authentication/authentication.service";
 import {MacroMonitorService} from "./macromonitor/macromonitor.service";
 import {AuthenticationService} from "./authentication/authentication.service";
 
@@ -59,6 +61,7 @@ import {AuthenticationService} from "./authentication/authentication.service";
         AlbourneService,
         ModuleAccessCheckerService,
         MacroMonitorService
+        PeriodicReportService
     ]
 })
 @NgModule({
@@ -69,26 +72,30 @@ export class AppComponent {
     private moduleAccessChecker: ModuleAccessCheckerService;
 
     constructor(
-        private _router: Router,
-        private authenticationService: AuthenticationService
+        private authenticationService: AuthenticationService,
+        private _router: Router
     ){
         this.moduleAccessChecker = new ModuleAccessCheckerService;
     }
 
     logout() {
+        console.log("logging out...");
         this.authenticationService.logout()
             .subscribe(
-                response => {
+                res => {
                     localStorage.removeItem("authenticatedUser");
                     localStorage.removeItem("authenticatedUserRoles");
                     //location.reload();
                     this._router.navigate(['login']);
+
                 },
                 error =>  {
+                    console.log("Logout request error");
                     // TODO: error message
+
                     //this.errorMsg = 'Failed to login';
                 }
-        )
+            );
     }
 
     // TODO: refactor
@@ -117,7 +124,12 @@ export class AppComponent {
 
     showRealEstate(){
         //return false;
-        return this.moduleAccessChecker.checkAccessRealEstate();
+        return this.moduleAccessChecker.checkAccessReporting();
+    }
+
+    showReporting(){
+        //return false;
+        return this.moduleAccessChecker.checkAccessReporting();
     }
 }
 

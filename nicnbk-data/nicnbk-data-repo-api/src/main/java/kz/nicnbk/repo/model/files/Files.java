@@ -26,7 +26,7 @@ public class Files extends CreateUpdateBaseEntity  implements TypedEntity<FilesT
 
 
     @Override
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "type_id")
     public FilesType getType() {
         return type;

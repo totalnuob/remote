@@ -1,0 +1,58 @@
+<div class="container">
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting']">Reports Main</a></span>
+                </li>
+                <li *ngIf="reportId != null && report != null && report.status != 'SUBMITTED'">
+                    <span>
+                        <a [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">
+                            Input</a></span>
+                </li>
+                <!--<li><span *ngIf="reportId != null"><a [routerLink]="['/reporting/NBReporting/NICKMFInput/', reportId]">NICK MF Input</a></span></li>-->
+                <!--<li><span *ngIf="reportId != null"><a [routerLink]="['/reporting/NBReporting/TarragonGeneratedForm/', reportId, 'INPUT']">Tarragon - Generated Form</a></span></li>-->
+                <li><span *ngIf="reportId != null"><a [routerLink]="['/reporting/NBReporting/GeneratedReports/', reportId, 'INPUT']">Generate report</a></span></li>
+                <li class="active">NICK MF Input</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row top-buffer" *ngIf="errorMessage != null || successMessage != null">
+        <div class="col-md-12">
+            <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+            </div>
+            <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="row withpadding">
+        <h3 *ngIf="reportId != null">NICK Master Fund</h3>
+    </div>
+    <div [ngBusy]="busy" class="row withpadding" style="min-height: 500px">
+        <br/>
+        <div *ngIf="data != null && data.records != null">
+            <table class="table table-hover table-responsive table-condensed">
+                <thead>
+                <tr *ngIf="data != null && data.records != null && data.records.length > 0" bgcolor="#e7e7e7">
+                    <td>NB Chart of Accounts</td>
+                    <td>Description</td>
+                    <td>Account Balance</td>
+                </tr>
+
+                </thead>
+                    <tr  *ngFor="let record of data.records">
+                        <td width="40%">{{record.nbChartOfAccountsCode + '-' + record.nbChartOfAccountsName}}</td>
+                        <td width="40%">{{record.nicChartOfAccountsName}}</td>
+                        <td width="20%">{{record.accountBalance | number:'1.0-2': ''}}</td>
+                    </tr>
+                    <tr *ngIf="data.records != null && data.records.length > 0">
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td style="font-style: italic" align="right">Total: {{calculateTotal() | number:'1.0-2': ''}}</td>
+                    </tr>
+            </table>
+        </div>
+        <br/><br/>
+    </div>
+</div>

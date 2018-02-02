@@ -66,6 +66,7 @@ public class HedgeFund extends CreateUpdateBaseEntity {
 
     private Boolean GCMApproved;
     private Boolean NICApproved;
+    private Double sum;
 
     @Column (name = "name")
     public String getName() {

@@ -76,6 +76,7 @@ public class AuthenticationServiceREST {
     private Cookie getTokenCookie(String value){
         Cookie cookie = new Cookie("token", value);
         //cookie.setPath(?);
+        cookie.setMaxAge(-1);
         cookie.setHttpOnly(true);
         return cookie;
     }

@@ -1,0 +1,124 @@
+<div class="container">
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <!--<ol class="breadcrumb">-->
+                <!--<li>-->
+                    <!--<span><a [routerLink]="['/reporting/NBReporting']">Reports Main</a></span>-->
+                <!--</li>-->
+            <!--</ol>-->
+        </div>
+    </div>
+
+    <div class="row top-buffer" *ngIf="errorMessage != null || successMessage != null">
+        <div class="col-md-12">
+            <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+            </div>
+            <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <div class="row withpadding">
+        <h3 *ngIf="reportId != null">Reserve Calculation</h3>
+    </div>
+
+    <form (ngSubmit)="saveAddedRecords()" #addedRecordsForm="ngForm" class="well span">
+        <div class="row withpadding">
+            <button class="btn btn-xs btn-primary pull-right" type="button" (click)="addRecord()"
+                    [disabled]="addedRecords != null && addedRecords.length > 0">
+                <span role="button" class="glyphicon glyphicon-plus">Add</span>
+            </button>
+
+            <div *ngIf="addedRecords!= null && addedRecords.length > 0">
+                <table class="table table-hover table-responsive table-condensed" style="font-size: small">
+                    <thead>
+                    <tr style="font-weight: bold; font-size: small">
+                        <td>Статья</td>
+                        <td>Источник</td>
+                        <td>Получатель</td>
+                        <td>Дата</td>
+                        <td>Сумма USD</td>
+                        <td>&nbsp;</td>
+                    </tr>
+                    </thead>
+                    <tr  *ngFor="let addedRecord of addedRecords" style="font-size: small">
+                        <td>
+                            <select required class="form-control" style="width: 100%" [ngModelOptions]="{standalone: true}" [(ngModel)]="addedRecord.expenseType.code">
+                                <option *ngFor="let item of expenseTypeLookup" [value]="item.code">{{item.nameRu}}</option>
+                            </select>
+
+                        </td>
+                        <td>
+                            <select required class="form-control" style="width: 100%" [ngModelOptions]="{standalone: true}" [(ngModel)]="addedRecord.source.code">
+                                <option *ngFor="let item of entityTypeLookup" [value]="item.code">{{item.nameRu}}</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select required class="form-control" style="width: 100%" [ngModelOptions]="{standalone: true}" [(ngModel)]="addedRecord.recipient.code">
+                                <option *ngFor="let item of entityTypeLookup" [value]="item.code">{{item.nameRu}}</option>
+                            </select>
+                        </td>
+                        <!--<td id='dateDTPicker' class="input-group date">-->
+                            <!--&lt;!&ndash;<input type="text" class="form-control" class="form-control"  [(ngModel)]="addedRecord.date" [ngModelOptions]="{standalone: true}"/>&ndash;&gt;-->
+                            <!--<input type="text" class="form-control" id="inceptionDateValue" name="inceptionDate" [(ngModel)]="addedRecord.date"/>-->
+                                        <!--<span class="input-group-addon">-->
+                                            <!--<span class="glyphicon glyphicon-calendar"></span>-->
+                                        <!--</span>-->
+                        <!--</td>-->
+
+                        <td class="input-group">
+                            <input type="text" class="input-group-addon form-control datepicker" name="dateVal" id="dateVal" [(ngModel)]="addedRecord.date"/>
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                        </td>
+                        <td>
+                            <input type="number" step="0.01" class="form-control" class="form-control"  [(ngModel)]="addedRecord.amount" [ngModelOptions]="{standalone: true}"/>
+                        </td>
+                        <td>
+                            <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRecord(addedRecord)">
+                                <span class="glyphicon glyphicon-minus"></span>
+                            </button>
+                        </td>
+                    </tr>
+                </table>
+                <div class="row">
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-success pull-right" [disabled]="!addedRecordsForm.form.valid">Save added</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <br/>
+
+    <div class="row withpadding">
+        <table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small" *ngIf="records != null">
+            <tr bgcolor="#e7e7e7" style="font-weight: bold; font-size: small">
+                <td>Статья</td>
+                <td>Источник</td>
+                <td>Получатель</td>
+                <td>Дата</td>
+                <td>Сумма USD</td>
+                <td>Курс</td>
+                <td>Сумма KZT</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr *ngFor="let record of records">
+                <td>{{record.expenseType != null ? record.expenseType.nameRu : ''}}</td>
+                <td>{{record.source != null ? record.source.nameRu : ''}}</td>
+                <td>{{record.recipient != null ? record.recipient.nameRu : ''}}</td>
+                <td>{{record.date}}</td>
+                <td>{{record.amount | number:'1.2-2'}}</td>
+                <td>{{record.currencyRate | number:'1.2-2'}}</td>
+                <td>{{record.amountKZT | number:'1.2-2'}}</td>
+                <td>
+                    <button *ngIf="record.added" type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeSavedRecord(record)">
+                        <span class="glyphicon glyphicon-minus"></span>
+                    </button>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <br/><br/>
+</div>

@@ -8,6 +8,11 @@ import kz.nicnbk.repo.api.lookup.StrategyRepository;
 import kz.nicnbk.repo.api.macromonitor.MacroMonitorFieldRepository;
 import kz.nicnbk.repo.api.macromonitor.MacroMonitorTypeRepository;
 import kz.nicnbk.repo.api.pe.IndustryRepository;
+import kz.nicnbk.repo.api.reporting.NBChartOfAccountsRepository;
+import kz.nicnbk.repo.api.reporting.NICReportingChartOfAccountsRepository;
+import kz.nicnbk.repo.api.reporting.ReserveCalculationEntityTypeRepository;
+import kz.nicnbk.repo.api.reporting.ReserveCalculationExpenseTypeRepository;
+import kz.nicnbk.repo.api.reporting.privateequity.TarragonNICChartOfAccountsRepository;
 import kz.nicnbk.repo.model.base.BaseTypeEntity;
 import kz.nicnbk.repo.model.common.*;
 import kz.nicnbk.repo.model.files.FilesType;
@@ -19,10 +24,17 @@ import kz.nicnbk.repo.model.macromonitor.MacroMonitorField;
 import kz.nicnbk.repo.model.macromonitor.MacroMonitorType;
 import kz.nicnbk.repo.model.news.NewsType;
 import kz.nicnbk.repo.model.pe.PEIndustry;
+import kz.nicnbk.repo.model.reporting.*;
+import kz.nicnbk.repo.model.reporting.hedgefunds.FinancialStatementCategory;
+import kz.nicnbk.repo.model.reporting.privateequity.PEInvestmentType;
+import kz.nicnbk.repo.model.reporting.privateequity.TarragonNICChartOfAccounts;
 import kz.nicnbk.repo.model.tripmemo.TripType;
+import kz.nicnbk.service.dto.reporting.NICReportingChartOfAccountsDto;
+import kz.nicnbk.service.dto.reporting.TarragonNICReportingChartOfAccountsDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -101,6 +113,33 @@ public class LookupServiceImpl implements LookupService {
     @Autowired
     private TripTypeRepository tripTypeRepository;
 
+    @Autowired
+    private PeriodicReportTypeRepository periodicReportTypeRepository;
+
+    @Autowired
+    private ReportStatusRepository reportStatusRepository;
+
+    @Autowired
+    private PEInvestmentTypeRepository peInvestmentTypeRepository;
+
+    @Autowired
+    private HFFinancialStatementTypeRepository hfFinancialStatementTypeRepository;
+
+    @Autowired
+    private NBChartOfAccountsRepository nbChartOfAccountsRepository;
+
+    @Autowired
+    private NICReportingChartOfAccountsRepository nicReportingChartOfAccountsRepository;
+
+    @Autowired
+    private TarragonNICChartOfAccountsRepository tarragonNICChartOfAccountsRepository;
+
+    @Autowired
+    private ReserveCalculationExpenseTypeRepository reserveCalculationExpenseTypeRepository;
+
+    @Autowired
+    private ReserveCalculationEntityTypeRepository reserveCalculationEntityTypeRepository;
+
     @Override
     public <T extends BaseTypeEntity> T findByTypeAndCode(Class<T> clazz, String code) {
 
@@ -109,7 +148,10 @@ public class LookupServiceImpl implements LookupService {
         try {
             if (code == null) {
                 return null;
+            }else{
+                code = code.trim();
             }
+
             if (clazz.equals(NewsType.class)) {
                 return (T) this.newsTypeRepository.findByCode(code);
             } else if (clazz.equals(MeetingType.class)) {
@@ -152,7 +194,21 @@ public class LookupServiceImpl implements LookupService {
                 return (T) this.macroMonitorFieldRepository.findByCodeOrderByIdAsc(code);
             } else if(clazz.equals(MacroMonitorType.class)){
                 return (T) this.macroMonitorTypeRepository.findByCode(code);
-            } else{
+            }else if (clazz.equals(PeriodicReportType.class)) {
+                return (T) this.periodicReportTypeRepository.findByCode(code);
+            } else if (clazz.equals(ReportStatus.class)) {
+                return (T) this.reportStatusRepository.findByCode(code);
+            } else if (clazz.equals(PEInvestmentType.class)) {
+                return (T) this.peInvestmentTypeRepository.findByCode(code);
+            } else if (clazz.equals(FinancialStatementCategory.class)) {
+                return (T) this.hfFinancialStatementTypeRepository.findByCode(code);
+            } else if (clazz.equals(NICReportingChartOfAccounts.class)) {
+                return (T) this.nicReportingChartOfAccountsRepository.findByCode(code);
+            } else if (clazz.equals(ReserveCalculationExpenseType.class)) {
+                return (T) this.reserveCalculationExpenseTypeRepository.findByCode(code);
+            } else if (clazz.equals(ReserveCalculationEntityType.class)) {
+                return (T) this.reserveCalculationEntityTypeRepository.findByCode(code);
+            }else{
                 logger.error("Failed to load lookups for clazz=" + clazz + ", code=" + code);
             }
         }catch (Exception ex){
@@ -373,6 +429,104 @@ public class LookupServiceImpl implements LookupService {
     }
 
     @Override
+    public List<BaseDictionaryDto> getNBChartOfAccounts() {
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            Iterator<NBChartOfAccounts> iterator = this.nbChartOfAccountsRepository.findAll(new Sort(Sort.Direction.ASC, "code")).iterator();
+            while (iterator.hasNext()) {
+                NBChartOfAccounts entity = iterator.next();
+                BaseDictionaryDto dto = disassemble(entity);
+                dtoList.add(dto);
+            }
+            return dtoList;
+        }catch (Exception ex){
+            logger.error("Failed to load lookup: NBChartOfAccounts", ex);
+        }
+        return null;
+    }
+
+    @Override
+    public List<NICReportingChartOfAccountsDto> getNICReportingChartOfAccounts(String code) {
+        try {
+            List<NICReportingChartOfAccountsDto> dtoList = new ArrayList<>();
+            Iterator<NICReportingChartOfAccounts> iterator = null;
+            if(code != null){
+                iterator = this.nicReportingChartOfAccountsRepository.findByNBChartOfAccountsCode(code).iterator();
+            }else{
+                iterator = this.nicReportingChartOfAccountsRepository.findAll(new Sort(Sort.Direction.ASC, "code")).iterator();
+            }
+            while (iterator.hasNext()) {
+                NICReportingChartOfAccounts entity = iterator.next();
+                BaseDictionaryDto baseDictionaryDto = disassemble(entity);
+                NICReportingChartOfAccountsDto dto = new NICReportingChartOfAccountsDto(baseDictionaryDto);
+                if(entity.getNbChartOfAccounts() != null) {
+                    dto.setNBChartOfAccounts(disassemble(entity.getNbChartOfAccounts()));
+                }
+                dtoList.add(dto);
+            }
+            return dtoList;
+        }catch (Exception ex){
+            logger.error("Failed to load lookup: NICReportingChartOfAccounts", ex);
+        }
+        return null;
+
+    }
+
+    @Override
+    public List<TarragonNICReportingChartOfAccountsDto> getAddableTarragonNICReportingChartOfAccounts() {
+        try {
+            List<TarragonNICReportingChartOfAccountsDto> dtoList = new ArrayList<>();
+            List<TarragonNICChartOfAccounts> entities = this.tarragonNICChartOfAccountsRepository.findByAddable(true);
+
+            if(entities != null){
+                for(TarragonNICChartOfAccounts entity: entities){
+                    TarragonNICReportingChartOfAccountsDto dto = new TarragonNICReportingChartOfAccountsDto();
+                    dto.setTarragonChartOfAccountsName(entity.getTarragonChartOfAccountsName());
+                    if(entity.getNicReportingChartOfAccounts() != null) {
+                        BaseDictionaryDto nicChartAccountsBaseDto = disassemble(entity.getNicReportingChartOfAccounts());
+                        NICReportingChartOfAccountsDto nicChartAccountsDto = new NICReportingChartOfAccountsDto(nicChartAccountsBaseDto);
+                        if (entity.getNicReportingChartOfAccounts().getNbChartOfAccounts() != null) {
+                            nicChartAccountsDto.setNBChartOfAccounts(disassemble(entity.getNicReportingChartOfAccounts().getNbChartOfAccounts()));
+                        }
+                        dto.setNICChartOfAccounts(nicChartAccountsDto);
+                    }
+                    dtoList.add(dto);
+                }
+            }
+
+            return dtoList;
+        }catch (Exception ex){
+            logger.error("Failed to load lookup: NICReportingChartOfAccounts", ex);
+        }
+        return null;
+
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getReserveCalculationExpenseTypeLookup() {
+        List<BaseDictionaryDto> dtoList = new ArrayList<>();
+        Iterator<ReserveCalculationExpenseType>  iterator = this.reserveCalculationExpenseTypeRepository.findAll().iterator();
+        while (iterator.hasNext()) {
+            ReserveCalculationExpenseType entity = iterator.next();
+            BaseDictionaryDto type = disassemble(entity);
+            dtoList.add(type);
+        }
+        return dtoList;
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getReserveCalculationEntityTypeLookup() {
+        List<BaseDictionaryDto> dtoList = new ArrayList<>();
+        Iterator<ReserveCalculationEntityType>  iterator = this.reserveCalculationEntityTypeRepository.findAll().iterator();
+        while (iterator.hasNext()) {
+            ReserveCalculationEntityType entity = iterator.next();
+            BaseDictionaryDto type = disassemble(entity);
+            dtoList.add(type);
+        }
+        return dtoList;
+    }
+
+    @Override
     public List<BaseDictionaryDto> getMMFields(){
         List<BaseDictionaryDto> dtoList = new ArrayList<>();
         Iterator<MacroMonitorField> iterator = this.macroMonitorFieldRepository.findAll().iterator();
@@ -389,6 +543,8 @@ public class LookupServiceImpl implements LookupService {
         BaseDictionaryDto dto = new BaseDictionaryDto();
         dto.setCode(entity.getCode());
         dto.setNameEn(entity.getNameEn());
+        dto.setNameRu(entity.getNameRu());
+        dto.setNameKz(entity.getNameKz());
         return dto;
     }
 

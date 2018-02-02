@@ -2,6 +2,7 @@ package kz.nicnbk.service.dto.hf;
 
 import kz.nicnbk.common.service.model.BaseDto;
 import kz.nicnbk.common.service.util.DateUtils;
+import kz.nicnbk.common.service.util.MathUtils;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -432,40 +433,40 @@ public class ReturnDto implements BaseDto, Comparable{
 
     public void scaleReturnsToNumber(){
         if(this.january != null){
-            this.january = BigDecimal.valueOf(this.january).divide(new BigDecimal("100.0")).doubleValue();
+            this.january = MathUtils.divide(BigDecimal.valueOf(this.january), new BigDecimal("100.0")).doubleValue();
         }
         if(this.february != null){
-            this.february = BigDecimal.valueOf(this.february).divide(new BigDecimal("100.0")).doubleValue();
+            this.february = MathUtils.divide(BigDecimal.valueOf(this.february), new BigDecimal("100.0")).doubleValue();
         }
         if(this.march != null){
-            this.march = BigDecimal.valueOf(this.march).divide(new BigDecimal("100.0")).doubleValue();
+            this.march = MathUtils.divide(BigDecimal.valueOf(this.march), new BigDecimal("100.0")).doubleValue();
         }
         if(this.april != null){
-            this.april = BigDecimal.valueOf(this.april).divide(new BigDecimal("100.0")).doubleValue();
+            this.april = MathUtils.divide(BigDecimal.valueOf(this.april), new BigDecimal("100.0")).doubleValue();
         }
         if(this.may != null){
-            this.may = BigDecimal.valueOf(this.may).divide(new BigDecimal("100.0")).doubleValue();
+            this.may = MathUtils.divide(BigDecimal.valueOf(this.may), new BigDecimal("100.0")).doubleValue();
         }
         if(this.june != null){
-            this.june = BigDecimal.valueOf(this.june).divide(new BigDecimal("100.0")).doubleValue();
+            this.june = MathUtils.divide(BigDecimal.valueOf(this.june), new BigDecimal("100.0")).doubleValue();
         }
         if(this.july != null){
-            this.july = BigDecimal.valueOf(this.july).divide(new BigDecimal("100.0")).doubleValue();
+            this.july = MathUtils.divide(BigDecimal.valueOf(this.july), new BigDecimal("100.0")).doubleValue();
         }
         if(this.august != null){
-            this.august = BigDecimal.valueOf(this.august).divide(new BigDecimal("100.0")).doubleValue();
+            this.august = MathUtils.divide(BigDecimal.valueOf(this.august), new BigDecimal("100.0")).doubleValue();
         }
         if(this.september != null){
-            this.september = BigDecimal.valueOf(this.september).divide(new BigDecimal("100.0")).doubleValue();
+            this.september = MathUtils.divide(BigDecimal.valueOf(this.september), new BigDecimal("100.0")).doubleValue();
         }
         if(this.october != null){
-            this.october = BigDecimal.valueOf(this.october).divide(new BigDecimal("100.0")).doubleValue();
+            this.october = MathUtils.divide(BigDecimal.valueOf(this.october), new BigDecimal("100.0")).doubleValue();
         }
         if(this.november != null){
-            this.november = BigDecimal.valueOf(this.november).divide(new BigDecimal("100.0")).doubleValue();
+            this.november = MathUtils.divide(BigDecimal.valueOf(this.november), new BigDecimal("100.0")).doubleValue();
         }
         if(this.december != null){
-            this.december = BigDecimal.valueOf(this.december).divide(new BigDecimal("100.0")).doubleValue();
+            this.december = MathUtils.divide(BigDecimal.valueOf(this.december), new BigDecimal("100.0")).doubleValue();
         }
     }
 

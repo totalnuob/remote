@@ -1,0 +1,60 @@
+<div class="container">
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting']">Reports Main</a></span>
+                </li>
+                <li *ngIf="reportId != null && report != null && report.status != 'SUBMITTED'">
+                    <span><a [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">Input</a></span>
+                </li>
+                <li *ngIf="reportId != null && prevPageSource == 'REPORTS'"><span><a [routerLink]="['/reporting/NBReporting/GeneratedReports/', reportId, 'INPUT']">Generate report</a></span></li>
+                <li class="active">Singularity NOAL - Tranche B</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row top-buffer" *ngIf="errorMessage != null || successMessage != null">
+        <div class="col-md-12">
+            <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+            </div>
+            <div class="alert alert-info" *ngIf="!submitted && successMessage != null"><span>{{successMessage}}</span>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <div class="row withpadding">
+        <h3 *ngIf="report != null">{{getReportDateShortFormatted(report.reportDate)}} - Singularity NOAL - Tranche B</h3>
+    </div>
+    <div class="row withpadding">
+        <table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small">
+            <tr bgcolor="#e7e7e7">
+                <td>&nbsp;</td>
+                <td>Date</td>
+                <td>Transaction</td>
+                <td>Investor Account/Portfolio Fund</td>
+                <td>Effective Date</td>
+                <td>Amount</td>
+                <td>CCY</td>
+                <td>Amount</td>
+                <td>CCY</td>
+            </tr>
+            <tr *ngFor="let record of records.noalTrancheBList">
+                <td>{{record.accountNumber}}</td>
+                <td>{{record.date}}</td>
+                <td>{{record.transaction}}</td>
+                <td>{{record.name}}</td>
+                <td>{{record.effectiveDate}}</td>
+                <td>{{record.transactionAmount != null ? (record.transactionAmount | number:'1.2-2'): ''}}</td>
+                <td>{{record.transactionAmountCCY}}</td>
+                <td>{{record.functionalAmount != null ? (record.functionalAmount | number:'1.2-2'): ''}}</td>
+                <td>{{record.functionalAmountCCY}}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+        </div>
+    </div>
+</div>
