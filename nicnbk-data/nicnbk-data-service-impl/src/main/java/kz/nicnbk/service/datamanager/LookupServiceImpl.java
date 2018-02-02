@@ -194,8 +194,7 @@ public class LookupServiceImpl implements LookupService {
                 return (T) this.macroMonitorFieldRepository.findByCodeOrderByIdAsc(code);
             } else if(clazz.equals(MacroMonitorType.class)){
                 return (T) this.macroMonitorTypeRepository.findByCode(code);
-            } else{
-            } else if (clazz.equals(PeriodicReportType.class)) {
+            }else if (clazz.equals(PeriodicReportType.class)) {
                 return (T) this.periodicReportTypeRepository.findByCode(code);
             } else if (clazz.equals(ReportStatus.class)) {
                 return (T) this.reportStatusRepository.findByCode(code);

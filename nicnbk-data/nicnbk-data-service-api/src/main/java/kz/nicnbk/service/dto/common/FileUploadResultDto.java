@@ -15,15 +15,15 @@ public class FileUploadResultDto extends ResponseDto {
         super(status, messageRu, messageEn, messageKz);
     }
 
-    public FileUploadResultDto(StatusResultType status, String messageRu, String messageEn, String messageKz){
-        super(status, messageRu, messageEn, messageKz);
-    }
+//    public FileUploadResultDto(StatusResultType status, String messageRu, String messageEn, String messageKz){
+//        super(status, messageRu, messageEn, messageKz);
+//    }
 
-    public FileUploadResultDto(Long fileId, String fileName, StatusResultType status, String messageRu, String messageEn, String messageKz){
-        super(status, messageRu, messageEn, messageKz);
-        this.fileId = fileId;
-        this.fileName = fileName;
-    }
+//    public FileUploadResultDto(Long fileId, String fileName, StatusResultType status, String messageRu, String messageEn, String messageKz){
+//        super(status, messageRu, messageEn, messageKz);
+//        this.fileId = fileId;
+//        this.fileName = fileName;
+//    }
 
     public Long getFileId() {
         return fileId;
