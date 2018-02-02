@@ -60,4 +60,14 @@ public class ResponseDto implements BaseDto {
         }
         this.message.setNameKz(messageKz);
     }
+
+    public void setErrorMessageEn(String messageEn){
+        this.setStatus(ResponseStatusType.FAIL);
+        this.setMessageEn(messageEn);
+    }
+
+    public void setSuccessMessageEn(String messageEn){
+        this.setStatus(ResponseStatusType.SUCCESS);
+        this.setMessageEn(messageEn);
+    }
 }

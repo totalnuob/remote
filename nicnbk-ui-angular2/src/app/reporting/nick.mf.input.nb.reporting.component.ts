@@ -84,12 +84,7 @@ export class NICKMFInputNBReportingComponent extends CommonNBReportingComponent 
                                             }
                                         },
                                         (error: ErrorResponse) => {
-                                            this.successMessage = null;
-                                            this.errorMessage = "Error loading NICK MF data";
-                                            if(error && !error.isEmpty()){
-                                                this.processErrorMessage(error);
-                                            }
-                                            this.postAction(this.successMessage, this.errorMessage);
+                                            this.processErrorResponse(error);
                                         }
                                     );
                             }else{
@@ -114,25 +109,17 @@ export class NICKMFInputNBReportingComponent extends CommonNBReportingComponent 
     }
 
     save(){
-
         if(this.checkRecords()) {
-
             this.periodicReportService.saveNICKMFReportingInfo(this.data)
                 .subscribe(
                     response => {
-                        var creationDate = response.creationDate;
-
-                        this.successMessage = "Successfully saved information";
+                        this.successMessage = response.message.nameEn != null ? response.message.nameEn : "Successfully saved NICK MF records";
                         this.errorMessage = null;
+
                         this.postAction(this.successMessage, this.errorMessage);
                     },
                     (error:ErrorResponse) => {
-                        this.successMessage = null;
-                        this.errorMessage = "Error saving information";
-                        if (error && !error.isEmpty()) {
-                            this.processErrorMessage(error);
-                        }
-                        this.postAction(this.successMessage, this.errorMessage);
+                        this.processErrorResponse(error);
                     }
                 )
         }
@@ -282,12 +269,7 @@ export class NICKMFInputNBReportingComponent extends CommonNBReportingComponent 
                     }
                 },
                 (error: ErrorResponse) => {
-                    this.successMessage = null;
-                    this.errorMessage = "Error loading NICK MF data from previous month";
-                    if(error && !error.isEmpty()){
-                        this.processErrorMessage(error);
-                    }
-                    this.postAction(this.successMessage, this.errorMessage);
+                    this.processErrorResponse(error)
                 }
             );
     }

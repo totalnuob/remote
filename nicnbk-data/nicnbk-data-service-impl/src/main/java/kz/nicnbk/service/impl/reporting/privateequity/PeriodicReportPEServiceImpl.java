@@ -11,6 +11,7 @@ import kz.nicnbk.repo.model.reporting.privateequity.TarragonNICChartOfAccounts;
 import kz.nicnbk.service.api.reporting.PeriodicReportService;
 import kz.nicnbk.service.api.reporting.privateequity.*;
 import kz.nicnbk.service.converter.reporting.PEGeneralLedgerFormDataConverter;
+import kz.nicnbk.service.dto.common.EntityListSaveResponseDto;
 import kz.nicnbk.service.dto.common.ListResponseDto;
 import kz.nicnbk.service.dto.common.ResponseStatusType;
 import kz.nicnbk.service.dto.reporting.*;
@@ -63,14 +64,18 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
 
     @Transactional
     @Override
-    public boolean savePEGeneralLedgerFormData(PEGeneralLedgerFormDataHolderDto dataHolderDto) {
+    public EntityListSaveResponseDto savePEGeneralLedgerFormData(PEGeneralLedgerFormDataHolderDto dataHolderDto) {
+        EntityListSaveResponseDto entityListSaveResponseDto = new EntityListSaveResponseDto();
         try {
             if(dataHolderDto != null && dataHolderDto.getRecords() != null){
                 checkPEGeneralLedgerFormData(dataHolderDto.getRecords());
-                // TODO: check report status
+                // check report status
                 PeriodicReportDto periodicReport = this.periodicReportService.getPeriodicReport(dataHolderDto.getReport().getId());
                 if(periodicReport == null || periodicReport.getStatus().equalsIgnoreCase(PeriodicReportType.SUBMITTED.getCode())){
-                    return false;
+                    Long reportId = periodicReport != null ? periodicReport.getId() : null;
+                    logger.error("Cannot edit report with status 'SUBMITTED': report id " + reportId);
+                    entityListSaveResponseDto.setErrorMessageEn("Cannot edit report with status 'SUBMITTED': report id ");
+                    return entityListSaveResponseDto;
                 }
 
                 for(PEGeneralLedgerFormDataDto dto: dataHolderDto.getRecords()){
@@ -78,14 +83,16 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
                     entity.setReport(new PeriodicReport(dataHolderDto.getReport().getId()));
                     this.peGeneralLedgerFormDataRepository.save(entity);
                 }
-                return true;
+                entityListSaveResponseDto.setSuccessMessageEn("Successfully saved records");
+                return entityListSaveResponseDto;
             }
         }catch (IllegalArgumentException ex){
-            logger.error("Error saving Tarragon GL Form data: input validation failed", ex);
+            entityListSaveResponseDto.setErrorMessageEn("Input validation failed. " + ex.getMessage());
         }catch (Exception ex){
-            logger.error("Error saving Tarragon GL Form data.", ex);
+            logger.error("Error saving Tarragon GL Form data", ex);
+            entityListSaveResponseDto.setErrorMessageEn("Error saving Tarragon GL Form data");
         }
-        return false;
+        return entityListSaveResponseDto;
     }
 
     private void checkPEGeneralLedgerFormData(List<PEGeneralLedgerFormDataDto> records){
@@ -129,8 +136,10 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
 
     @Override
     public boolean deletePEGeneralLedgerFormDataRecordById(Long recordId) {
+        Long reportId = null;
         try {
             PEGeneralLedgerFormData entity = this.peGeneralLedgerFormDataRepository.findOne(recordId);
+            reportId = entity.getReport().getId();
             if (entity != null) {
                 if(entity.getReport().getStatus().getCode().equalsIgnoreCase(PeriodicReportType.SUBMITTED.getCode())){
                     return false;
@@ -139,44 +148,49 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
                 return true;
             }
         }catch (Exception ex){
-            logger.error("Error deleting PE General Ledger Record with id=" + recordId, ex);
+            logger.error("Error deleting PE General Ledger Record: report id " + reportId +  ", record id " + recordId, ex);
         }
         return false;
     }
 
     @Override
     public List<GeneratedGeneralLedgerFormDto> getTarragonGLAddedRecordsPreviousMonth(Long reportId) {
-        List<GeneratedGeneralLedgerFormDto> records = new ArrayList<>();
-        PeriodicReportDto currentReport = this.periodicReportService.getPeriodicReport(reportId);
-        if(currentReport != null) {
-            Date previousDate = DateUtils.getLastDayOfPreviousMonth(currentReport.getReportDate());
-            PeriodicReportDto previousReport = this.periodicReportService.findReportByReportDate(previousDate);
-            List<PEGeneralLedgerFormData> addedRecods =
-                    this.peGeneralLedgerFormDataRepository.getEntitiesByReportId(previousReport.getId(), new PageRequest(0, 1000, new Sort(Sort.Direction.ASC, "id")));
-            if (addedRecods != null) {
-                for (PEGeneralLedgerFormData entity : addedRecods) {
-                    PEGeneralLedgerFormDataDto addedRecordDto = this.peGeneralLedgerFormDataConverter.disassemble(entity);
-                    GeneratedGeneralLedgerFormDto recordDto = new GeneratedGeneralLedgerFormDto();
-                    recordDto.setAcronym(addedRecordDto.getTranche() == 1 ? "TARRAGON" : "TARRAGON B");
-                    if (addedRecordDto.getReport() != null) {
-                        recordDto.setBalanceDate(addedRecordDto.getReport().getReportDate());
+        try {
+            List<GeneratedGeneralLedgerFormDto> records = new ArrayList<>();
+            PeriodicReportDto currentReport = this.periodicReportService.getPeriodicReport(reportId);
+            if (currentReport != null) {
+                Date previousDate = DateUtils.getLastDayOfPreviousMonth(currentReport.getReportDate());
+                PeriodicReportDto previousReport = this.periodicReportService.findReportByReportDate(previousDate);
+                List<PEGeneralLedgerFormData> addedRecods =
+                        this.peGeneralLedgerFormDataRepository.getEntitiesByReportId(previousReport.getId(), new PageRequest(0, 1000, new Sort(Sort.Direction.ASC, "id")));
+                if (addedRecods != null) {
+                    for (PEGeneralLedgerFormData entity : addedRecods) {
+                        PEGeneralLedgerFormDataDto addedRecordDto = this.peGeneralLedgerFormDataConverter.disassemble(entity);
+                        GeneratedGeneralLedgerFormDto recordDto = new GeneratedGeneralLedgerFormDto();
+                        recordDto.setAcronym(addedRecordDto.getTranche() == 1 ? "TARRAGON" : "TARRAGON B");
+                        if (addedRecordDto.getReport() != null) {
+                            recordDto.setBalanceDate(addedRecordDto.getReport().getReportDate());
+                        }
+                        recordDto.setFinancialStatementCategory(addedRecordDto.getFinancialStatementCategory());
+                        recordDto.setChartAccountsLongDescription(addedRecordDto.getTarragonNICChartOfAccountsName());
+                        recordDto.setNbAccountNumber(addedRecordDto.getNbAccountNumber());
+                        String entityName = addedRecordDto.getEntityName() != null ? " " + addedRecordDto.getEntityName() : "";
+                        recordDto.setNicAccountName(addedRecordDto.getNicAccountName() + entityName);
+                        recordDto.setSubscriptionRedemptionEntity(entityName);
+                        recordDto.setGLAccountBalance(addedRecordDto.getGLAccountBalance());
+                        recordDto.setAdded(true);
+                        recordDto.setAddedRecordId(entity.getId());
+                        records.add(recordDto);
                     }
-                    recordDto.setFinancialStatementCategory(addedRecordDto.getFinancialStatementCategory());
-                    recordDto.setChartAccountsLongDescription(addedRecordDto.getTarragonNICChartOfAccountsName());
-                    recordDto.setNbAccountNumber(addedRecordDto.getNbAccountNumber());
-                    String entityName = addedRecordDto.getEntityName() != null ? " " + addedRecordDto.getEntityName() : "";
-                    recordDto.setNicAccountName(addedRecordDto.getNicAccountName() + entityName);
-                    recordDto.setSubscriptionRedemptionEntity(entityName);
-                    recordDto.setGLAccountBalance(addedRecordDto.getGLAccountBalance());
-                    recordDto.setAdded(true);
-                    recordDto.setAddedRecordId(entity.getId());
-                    records.add(recordDto);
                 }
-            }
 
-            setNICChartOfAccounts(records);
+                setNICChartOfAccounts(records);
+            }
+            return records;
+        }catch(Exception ex){
+            logger.error("Error loading Tarragon Generated form: report id " + reportId, ex);
+            return null;
         }
-        return records;
     }
 
     private void setNICChartOfAccounts(List<GeneratedGeneralLedgerFormDto> records){
@@ -200,111 +214,112 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
 
     @Override
     public ListResponseDto getTarragonGeneratedForm(Long reportId){
-        ListResponseDto responseDto = new ListResponseDto();
-        List<GeneratedGeneralLedgerFormDto> records = new ArrayList<>();
+        try {
+            ListResponseDto responseDto = new ListResponseDto();
+            List<GeneratedGeneralLedgerFormDto> records = new ArrayList<>();
 
-        // Balance and Operations
-        List<StatementBalanceOperationsDto> balanceRecords = this.statementBalanceService.getStatementBalanceRecords(reportId);
-        records.addAll(processBalance(balanceRecords));
+            // Balance and Operations
+            List<StatementBalanceOperationsDto> balanceRecords = this.statementBalanceService.getStatementBalanceRecords(reportId);
+            records.addAll(processBalance(balanceRecords));
 
-        List<StatementBalanceOperationsDto> operationsRecords = this.statementOperationsService.getStatementOperationsRecords(reportId);
-        records.addAll(processOperations(operationsRecords));
+            List<StatementBalanceOperationsDto> operationsRecords = this.statementOperationsService.getStatementOperationsRecords(reportId);
+            records.addAll(processOperations(operationsRecords));
 
-        // Investments
-        List<ScheduleInvestmentsDto> investments = this.scheduleInvestmentService.getScheduleInvestments(reportId);
-        records.addAll(processScheduleInvestments(investments));
+            // Investments
+            List<ScheduleInvestmentsDto> investments = this.scheduleInvestmentService.getScheduleInvestments(reportId);
+            records.addAll(processScheduleInvestments(investments));
 
-        // Statement changes
-        List<StatementChangesDto> changes = this.statementChangesService.getStatementChanges(reportId);
-        records.addAll(processStatementChanges(changes));
+            // Statement changes
+            List<StatementChangesDto> changes = this.statementChangesService.getStatementChanges(reportId);
+            records.addAll(processStatementChanges(changes));
 
-        // update account balance
-        List<GeneratedGeneralLedgerFormDto> updatedRecords = new ArrayList<>();
-        BigDecimal sum = new BigDecimal("0");
-        for(GeneratedGeneralLedgerFormDto record: records){
-            if(record.getGLAccountBalance() != null && record.getGLAccountBalance().doubleValue() != 0.0){
-                if(record.getGLAccountBalance() != null && record.getFinancialStatementCategory() != null &&
-                        !record.getFinancialStatementCategory().equalsIgnoreCase("A")){
-                    BigDecimal newValue = new BigDecimal(record.getGLAccountBalance()).multiply(new BigDecimal(-1));
-                    record.setGLAccountBalance(newValue.doubleValue());
-                    sum = sum.add(newValue);
+            // update account balance
+            List<GeneratedGeneralLedgerFormDto> updatedRecords = new ArrayList<>();
+            BigDecimal sum = new BigDecimal("0");
+            for (GeneratedGeneralLedgerFormDto record : records) {
+                if (record.getGLAccountBalance() != null && record.getGLAccountBalance().doubleValue() != 0.0) {
+                    if (record.getGLAccountBalance() != null && record.getFinancialStatementCategory() != null &&
+                            !record.getFinancialStatementCategory().equalsIgnoreCase("A")) {
+                        BigDecimal newValue = new BigDecimal(record.getGLAccountBalance()).multiply(new BigDecimal(-1));
+                        record.setGLAccountBalance(newValue.doubleValue());
+                        sum = sum.add(newValue);
+                    }
+                    updatedRecords.add(record);
+                } else {
+                    // skip zero-values
                 }
-                updatedRecords.add(record);
-            }else{
-                // skip zero-values
             }
-        }
 
-        // Added records
-        Double netRealizedTrancheA = 0.0;
-        Double netRealizedTrancheB = 0.0;
-        List<PEGeneralLedgerFormData> addedRecods =
-                this.peGeneralLedgerFormDataRepository.getEntitiesByReportId(reportId, new PageRequest(0, 1000, new Sort(Sort.Direction.ASC, "id")));
-        if(addedRecods != null) {
-            for(PEGeneralLedgerFormData entity: addedRecods) {
-                PEGeneralLedgerFormDataDto addedRecordDto = this.peGeneralLedgerFormDataConverter.disassemble(entity);
-                GeneratedGeneralLedgerFormDto recordDto = new GeneratedGeneralLedgerFormDto();
-                recordDto.setAcronym(addedRecordDto.getTranche() == 1 ? "TARRAGON" : "TARRAGON B");
-                if(addedRecordDto.getReport() != null) {
-                    recordDto.setBalanceDate(addedRecordDto.getReport().getReportDate());
-                }
-                recordDto.setFinancialStatementCategory(addedRecordDto.getFinancialStatementCategory());
-                recordDto.setChartAccountsLongDescription(addedRecordDto.getTarragonNICChartOfAccountsName());
-                recordDto.setNbAccountNumber(addedRecordDto.getNbAccountNumber());
-                String entityName = addedRecordDto.getEntityName() != null ? " " + addedRecordDto.getEntityName() : "";
-                recordDto.setNicAccountName(addedRecordDto.getNicAccountName() + entityName);
-                recordDto.setSubscriptionRedemptionEntity(entityName);
-                recordDto.setGLAccountBalance(addedRecordDto.getGLAccountBalance());
-                recordDto.setAdded(true);
-                recordDto.setAddedRecordId(entity.getId());
-                updatedRecords.add(recordDto);
+            // Added records
+            Double netRealizedTrancheA = 0.0;
+            Double netRealizedTrancheB = 0.0;
+            List<PEGeneralLedgerFormData> addedRecods =
+                    this.peGeneralLedgerFormDataRepository.getEntitiesByReportId(reportId, new PageRequest(0, 1000, new Sort(Sort.Direction.ASC, "id")));
+            if (addedRecods != null) {
+                for (PEGeneralLedgerFormData entity : addedRecods) {
+                    PEGeneralLedgerFormDataDto addedRecordDto = this.peGeneralLedgerFormDataConverter.disassemble(entity);
+                    GeneratedGeneralLedgerFormDto recordDto = new GeneratedGeneralLedgerFormDto();
+                    recordDto.setAcronym(addedRecordDto.getTranche() == 1 ? "TARRAGON" : "TARRAGON B");
+                    if (addedRecordDto.getReport() != null) {
+                        recordDto.setBalanceDate(addedRecordDto.getReport().getReportDate());
+                    }
+                    recordDto.setFinancialStatementCategory(addedRecordDto.getFinancialStatementCategory());
+                    recordDto.setChartAccountsLongDescription(addedRecordDto.getTarragonNICChartOfAccountsName());
+                    recordDto.setNbAccountNumber(addedRecordDto.getNbAccountNumber());
+                    String entityName = addedRecordDto.getEntityName() != null ? " " + addedRecordDto.getEntityName() : "";
+                    recordDto.setNicAccountName(addedRecordDto.getNicAccountName() + entityName);
+                    recordDto.setSubscriptionRedemptionEntity(entityName);
+                    recordDto.setGLAccountBalance(addedRecordDto.getGLAccountBalance());
+                    recordDto.setAdded(true);
+                    recordDto.setAddedRecordId(entity.getId());
+                    updatedRecords.add(recordDto);
 
-                if(recordDto.getChartAccountsLongDescription().equalsIgnoreCase("Net Realized Gains/Losses from Portfolio Funds")){
-                    switch(recordDto.getAcronym()) {
-                        case "TARRAGON":
-                            netRealizedTrancheA += recordDto.getGLAccountBalance();
-                            break;
-                        case "TARRAGON B":
-                            netRealizedTrancheB += recordDto.getGLAccountBalance();
-                            break;
+                    if (recordDto.getChartAccountsLongDescription().equalsIgnoreCase("Net Realized Gains/Losses from Portfolio Funds")) {
+                        switch (recordDto.getAcronym()) {
+                            case "TARRAGON":
+                                netRealizedTrancheA += recordDto.getGLAccountBalance();
+                                break;
+                            case "TARRAGON B":
+                                netRealizedTrancheB += recordDto.getGLAccountBalance();
+                                break;
+                        }
                     }
                 }
             }
-        }
 
-        setNICChartOfAccounts(updatedRecords);
-        Collections.sort(updatedRecords);
+            setNICChartOfAccounts(updatedRecords);
+            Collections.sort(updatedRecords);
 
 
-        // Check Net Realized Gains Losses
-        if(operationsRecords != null) {
-            for (StatementBalanceOperationsDto record : operationsRecords) {
-                if (record.getName().equalsIgnoreCase("Net realized gain on investments")) {
-                    double value = record.getNICKMFShareConsolidated() != null ? record.getNICKMFShareConsolidated().doubleValue() : 0.0;
-                    if (record.getTranche() == 1 && ((netRealizedTrancheA + value) < -2 ||
-                            (netRealizedTrancheA + value) > 2)) {
-                        String errorMessage = "{Tranche A] Statement of operations 'Net realized gain on investments' = " + value +
-                                ", sum of net realized gains/losses = " + netRealizedTrancheA;
-                        logger.error(errorMessage);
-                        responseDto.setMessageEn(errorMessage);
-                        responseDto.setStatus(ResponseStatusType.FAIL);
-                    } else if (record.getTranche() == 2 && ((netRealizedTrancheB + value) < -2 ||
-                            (netRealizedTrancheB + value) > 2)) {
-                        String errorMessage = "{Tranche B] Statement of operations 'Net realized gain on investments' = " + value +
-                                ", sum of net realized gains/losses = " + netRealizedTrancheB;
-                        logger.error(errorMessage);
-                        responseDto.setMessageEn(errorMessage);
-                        responseDto.setStatus(ResponseStatusType.FAIL);
+            // Check Net Realized Gains Losses
+            if (operationsRecords != null) {
+                for (StatementBalanceOperationsDto record : operationsRecords) {
+                    if (record.getName().equalsIgnoreCase("Net realized gain on investments")) {
+                        double value = record.getNICKMFShareConsolidated() != null ? record.getNICKMFShareConsolidated().doubleValue() : 0.0;
+                        if (record.getTranche() == 1 && ((netRealizedTrancheA + value) < -2 ||
+                                (netRealizedTrancheA + value) > 2)) {
+                            String errorMessage = "{Tranche A] Statement of operations 'Net realized gain on investments' = " + value +
+                                    ", sum of net realized gains/losses = " + netRealizedTrancheA;
+                            logger.error(errorMessage);
+                            responseDto.setErrorMessageEn(errorMessage);
+                        } else if (record.getTranche() == 2 && ((netRealizedTrancheB + value) < -2 ||
+                                (netRealizedTrancheB + value) > 2)) {
+                            String errorMessage = "{Tranche B] Statement of operations 'Net realized gain on investments' = " + value +
+                                    ", sum of net realized gains/losses = " + netRealizedTrancheB;
+                            logger.error(errorMessage);
+                            responseDto.setErrorMessageEn(errorMessage);
+                        }
                     }
                 }
             }
-        }
 
-        responseDto.setRecords(updatedRecords);
-        if(responseDto.getStatus() == null){
+            responseDto.setRecords(updatedRecords);
             responseDto.setStatus(ResponseStatusType.SUCCESS);
+            return responseDto;
+        }catch (Exception ex){
+            logger.error("Error loading Tarragon Generated form: report id " + reportId, ex);
+            return null;
         }
-        return responseDto;
     }
 
     private List<GeneratedGeneralLedgerFormDto> processStatementChanges(List<StatementChangesDto> changes){

@@ -1,4 +1,4 @@
-package kz.nicnbk.service.dto.common;
+package kz.nicnbk.service.dto.lookup;
 
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.common.service.model.BaseDto;

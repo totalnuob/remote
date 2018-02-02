@@ -1542,8 +1542,8 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                     if(ExcelUtils.isNotEmptyCell(row.getCell(1)) && row.getCell(1).getCellType() == Cell.CELL_TYPE_NUMERIC){
                         Date date = row.getCell(1).getDateCellValue();
                         if(date == null){
-                            logger.error("Error parsing 'Singularity NOAL' file: date is invalid");
-                            throw new ExcelFileParseException("Error parsing 'Singularity NOAL' file: date is invalid");
+                            logger.error("Error parsing 'Singularity NOAL' file: date is invalid '" + ExcelUtils.getTextValueFromAnyCell(row.getCell(1)) + "'");
+                            throw new ExcelFileParseException("Error parsing 'Singularity NOAL' file: date is invalid '" + ExcelUtils.getTextValueFromAnyCell(row.getCell(1)) + "'");
                         }else{
                             record.setDate(date);
                         }
@@ -1645,32 +1645,32 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
     }
 
     private void checkNOALTotalSums(List<SingularityNOALRecordDto> records, String trancheName){
-        BigDecimal functionalSum = NumberUtils.getBigDecimal(0.0).setScale(2, RoundingMode.HALF_UP);
-        BigDecimal endingBalanceSum = NumberUtils.getBigDecimal(0.0).setScale(2, RoundingMode.HALF_UP);
+        Double functionalSum = 0.0;
+        Double endingBalanceSum = 0.0;
         if(records != null){
             for(SingularityNOALRecordDto record: records){
                 if(record.getTransaction() == null){
                     logger.error(trancheName + "NOAL 'Transaction' value is missing");
                     throw new ExcelFileParseException(trancheName + "NOAL 'Transaction' value is missing");
                 } else if(record.getTransaction().equalsIgnoreCase("Ending Balance") || record.getTransaction().equalsIgnoreCase("Ending")){
-                    if(endingBalanceSum.setScale(2, RoundingMode.HALF_UP).doubleValue() != NumberUtils.getDouble(record.getFunctionalAmount())){
+                    if(endingBalanceSum.doubleValue() != NumberUtils.getDouble(record.getFunctionalAmount())){
                         logger.error(trancheName + "NOAL Ending Balance does not match for '" + record.getName() +
                                 "': found " + NumberUtils.getDouble(record.getFunctionalAmount()) + ", expected " + endingBalanceSum);
                         throw new ExcelFileParseException(trancheName + "NOAL Ending Balance does not match for '" + record.getName() +
                                 "': found " + NumberUtils.getDouble(record.getFunctionalAmount()) + ", expected " + endingBalanceSum);
                     }
-                    endingBalanceSum = NumberUtils.getBigDecimal(0.0);
+                    endingBalanceSum = 0.0;
                 }else if(record.getTransaction().equalsIgnoreCase("REPORT TOTAL")){
-                    if(functionalSum.setScale(2, RoundingMode.HALF_UP).doubleValue() != NumberUtils.getDouble(record.getFunctionalAmount())){
+                    if(functionalSum.doubleValue() != NumberUtils.getDouble(record.getFunctionalAmount())){
                         logger.error(trancheName + "NOAL 'Report Total' does not match: found " +
                                 NumberUtils.getDouble(record.getFunctionalAmount()) + ", expected " + functionalSum);
                         throw new ExcelFileParseException(trancheName + "NOAL 'Report Total' does not match: found " +
                                 NumberUtils.getDouble(record.getFunctionalAmount()) + ", expected " + functionalSum);
                     }
-                    functionalSum = NumberUtils.getBigDecimal(0.0);
+                    functionalSum = 0.0;
                 }else{
-                    endingBalanceSum = endingBalanceSum.add(NumberUtils.getBigDecimal(record.getFunctionalAmount()));
-                    functionalSum = functionalSum.add(NumberUtils.getBigDecimal(record.getFunctionalAmount()));
+                    endingBalanceSum = MathUtils.add(endingBalanceSum, record.getFunctionalAmount());
+                    functionalSum = MathUtils.add(functionalSum, record.getFunctionalAmount());
                 }
             }
         }
@@ -1840,7 +1840,7 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                             double[] values = sums.get(classification);
                             if(values != null){
                                 for(int i = 0; i < values.length; i++){
-                                    values[i] += recordDto.getValues()[i] != null ? recordDto.getValues()[i] : 0.0;
+                                    values[i] = MathUtils.add(values[i], recordDto.getValues()[i] != null ? recordDto.getValues()[i] : 0.0);
                                 }
                             }else{
                                 // values is null, total already handled
@@ -1865,7 +1865,7 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                         double[] totalSum = sums.get(totalRecordName);
                         if(totalSum != null) {
                             for (int i = 0; i < size; i++) {
-                                totalSum[i] += recordDto.getValues()[i] != null ? recordDto.getValues()[i] : 0.0;
+                                totalSum[i] = MathUtils.add(totalSum[i], recordDto.getValues()[i] != null ? recordDto.getValues()[i] : 0.0);
                             }
                         }
                     }

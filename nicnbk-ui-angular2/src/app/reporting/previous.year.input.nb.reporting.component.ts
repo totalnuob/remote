@@ -79,12 +79,13 @@ export class PreviousYearInputNBReportingComponent extends CommonNBReportingComp
                                             }
                                         },
                                         (error: ErrorResponse) => {
-                                            this.successMessage = null;
-                                            this.errorMessage = "Error loading data";
-                                            if(error && !error.isEmpty()){
-                                                this.processErrorMessage(error);
-                                            }
-                                            this.postAction(this.successMessage, this.errorMessage);
+                                            this.processErrorResponse(error);
+                                            //this.successMessage = null;
+                                            //this.errorMessage = "Error loading data";
+                                            //if(error && !error.isEmpty()){
+                                            //    this.processErrorMessage(error);
+                                            //}
+                                            //this.postAction(this.successMessage, this.errorMessage);
                                         }
                                     );
                             }else{
@@ -113,19 +114,19 @@ export class PreviousYearInputNBReportingComponent extends CommonNBReportingComp
             .subscribe(
                 response  => {
                     var creationDate = response.creationDate;
-
                     this.checkRecords();
 
                     this.successMessage = "Successfully saved records";
                     this.postAction(this.successMessage, this.errorMessage);
                 },
                 (error: ErrorResponse) => {
-                    this.successMessage = null;
-                    this.errorMessage = "Error saving records";
-                    if(error && !error.isEmpty()){
-                        this.processErrorMessage(error);
-                    }
-                    this.postAction(this.successMessage, this.errorMessage);
+                    this.processErrorMessage(error);
+                    //this.successMessage = null;
+                    //this.errorMessage = "Error saving records";
+                    //if(error && !error.isEmpty()){
+                    //    this.processErrorMessage(error);
+                    //}
+                    //this.postAction(this.successMessage, this.errorMessage);
                 }
             )
     }
@@ -164,12 +165,13 @@ export class PreviousYearInputNBReportingComponent extends CommonNBReportingComp
                     }
                 },
                 (error: ErrorResponse) => {
-                    this.successMessage = null;
-                    this.errorMessage = "Error loading previous year input data from previous month";
-                    if(error && !error.isEmpty()){
-                        this.processErrorMessage(error);
-                    }
-                    this.postAction(this.successMessage, this.errorMessage);
+                    this.processErrorResponse(error);
+                    //this.successMessage = null;
+                    //this.errorMessage = "Error loading previous year input data from previous month";
+                    //if(error && !error.isEmpty()){
+                    //    this.processErrorMessage(error);
+                    //}
+                    //this.postAction(this.successMessage, this.errorMessage);
                 }
             );
     }

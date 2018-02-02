@@ -71,6 +71,7 @@ import {ConsolidatedKZTForm2NBReportingComponent} from "./reporting/consolidated
 import {ConsolidatedKZTForm19NBReportingComponent} from "./reporting/consolidated.kzt.form.19.nb.reporting.component";
 import {ConsolidatedKZTForm22NBReportingComponent} from "./reporting/consolidated.kzt.form.22.nb.reporting.component";
 import {ConsolidatedKZTForm3NBReportingComponent} from "./reporting/consolidated.kzt.form.3.nb.reporting.component";
+import {ConsolidatedKZTForm6NBReportingComponent} from "./reporting/consolidated.kzt.form.6.nb.reporting.component";
 
 
 const routes: Routes  = [
@@ -437,6 +438,11 @@ const routes: Routes  = [
     {
         path: 'reporting/NBReporting/consolidatedKZTForm3/:id',
         component: ConsolidatedKZTForm3NBReportingComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'reporting/NBReporting/consolidatedKZTForm6/:id',
+        component: ConsolidatedKZTForm6NBReportingComponent,
         canActivate: [AuthGuard]
     },
     {

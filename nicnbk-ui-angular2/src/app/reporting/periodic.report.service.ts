@@ -15,7 +15,7 @@ import {ConsolidatedBalanceFormRecord} from "./model/consolidated.balance.form.r
 import {PreviousYearInputRecord} from "./model/previous.year.input.record";
 import {ConsolidatedIncomeExpenseFormRecord} from "./model/consolidated.income.expense.form.record";
 import {ConsolidatedTotalIncomeFormRecord} from "./model/consolidated.total.income.form.record";
-import {ListResponse} from "./model/list.response";
+import {ListResponse} from "./../common/list.response.ts";
 import {ConsolidatedKZTForm8Record} from "./model/consolidated.kzt.form.8.record";
 import {ConsolidatedKZTForm10Record} from "./model/consolidated.kzt.form.10.record";
 import {ConsolidatedKZTForm14Record} from "./model/consolidated.kzt.form.14.record";
@@ -25,6 +25,8 @@ import {ReserveCalculationFormRecord} from "./model/reserve.calculation.form.rec
 import {ConsolidatedBalanceForm19Record} from "./model/consolidated.balance.form.19.record";
 import {ConsolidatedBalanceForm22Record} from "./model/consolidated.balance.form.22.record";
 import {NEWS} from "../news/model/mock-news";
+import {PeriodicReport} from "./model/periodic.report";
+import {ConsolidatedKZTForm6Record} from "./model/consolidated.kzt.form.6.record";
 
 var fileSaver = require("file-saver");
 
@@ -81,6 +83,7 @@ export class PeriodicReportService extends CommonService{
 
     private PERIODIC_REPORT_MARK_REPORT_FINAL_URL = this.PERIODIC_REPORT_BASE_URL + "markReportFinal/";
 
+    private PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_6_URL = this.PERIODIC_REPORT_BASE_URL + "consolidatedBalanceKZTForm6/";
     private PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_8_URL = this.PERIODIC_REPORT_BASE_URL + "consolidatedBalanceKZTForm8/";
     private PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_10_URL = this.PERIODIC_REPORT_BASE_URL + "consolidatedBalanceKZTForm10/";
     private PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_14_URL = this.PERIODIC_REPORT_BASE_URL + "consolidatedBalanceKZTForm14/";
@@ -97,11 +100,7 @@ export class PeriodicReportService extends CommonService{
     private PERIODIC_REPORT_RESERVE_CALCULATION_SAVE_URL = this.PERIODIC_REPORT_BASE_URL + "reserveCalculationSave/";
 
 
-
-
-
-
-    loadAll(): Observable<any[]> {
+    loadAll(): Observable<PeriodicReport[]> {
         return this.http.get(this.PERIODIC_REPORT_LIST_URL, this.getOptionsWithCredentials())
             .map(this.extractDataList)
             .catch(this.handleErrorResponse);
@@ -115,7 +114,7 @@ export class PeriodicReportService extends CommonService{
             .catch(this.handleErrorResponse);
     }
 
-    get(reportId):  Observable<InputFilesNBReport>{
+    get(reportId):  Observable<PeriodicReport>{
         return this.http.get(this.PERIODIC_REPORT_GET_URL + reportId, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
@@ -241,6 +240,12 @@ export class PeriodicReportService extends CommonService{
 
     getConsolidatedKZTForm8(reportId): Observable<ConsolidatedKZTForm8Record[]>{
         return this.http.get(this.PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_8_URL + reportId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    getConsolidatedKZTForm6(reportId): Observable<ConsolidatedKZTForm6Record[]>{
+        return this.http.get(this.PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_6_URL + reportId, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }

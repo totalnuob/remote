@@ -2,6 +2,7 @@ package kz.nicnbk.service.api.reporting;
 
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.service.api.base.BaseService;
+import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
 import kz.nicnbk.service.dto.common.FileUploadResultDto;
 import kz.nicnbk.service.dto.common.ListResponseDto;
 import kz.nicnbk.service.dto.files.FilesDto;
@@ -16,7 +17,7 @@ import java.util.List;
  */
 public interface PeriodicReportService extends BaseService {
 
-    Long savePeriodicReport(PeriodicReportDto dto, String updater);
+    EntitySaveResponseDto savePeriodicReport(PeriodicReportDto dto, String updater);
 
     boolean deletePeriodicReportFileAssociationById(Long fileId);
 
@@ -47,6 +48,8 @@ public interface PeriodicReportService extends BaseService {
     boolean markReportAsFinal(Long reportId);
 
     InputStream getExportFileStream(Long reportId, String type);
+
+    List<ConsolidatedKZTForm6RecordDto> generateConsolidatedBalanceKZTForm6(Long reportId);
 
     List<ConsolidatedKZTForm8RecordDto> generateConsolidatedBalanceKZTForm8(Long reportId);
 

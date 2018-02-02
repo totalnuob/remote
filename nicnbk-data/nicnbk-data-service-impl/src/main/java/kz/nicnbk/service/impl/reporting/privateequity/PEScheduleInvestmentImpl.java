@@ -14,6 +14,7 @@ import kz.nicnbk.repo.model.reporting.privateequity.ReportingPEScheduleInvestmen
 import kz.nicnbk.service.api.reporting.privateequity.PEScheduleInvestmentService;
 import kz.nicnbk.service.converter.reporting.PeriodicReportConverter;
 import kz.nicnbk.service.converter.reporting.ReportingPEScheduleInvestmentConverter;
+import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
 import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordDto;
 import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordHolderDto;
 import kz.nicnbk.service.dto.reporting.ScheduleInvestmentsDto;
@@ -303,17 +304,31 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
     }
 
     @Override
-    public boolean updateScheduleInvestments(UpdateTarragonInvestmentDto updateDto) {
-        ReportingPEScheduleInvestment entity = this.peScheduleInvestmentRepository.getEntities(updateDto.getReportId(), updateDto.getTranche(), updateDto.getFundName());
-        if(entity != null){
-            if(entity.getReport().getStatus().getCode().equalsIgnoreCase("SUBMITTED")){
-                return false;
+    public EntitySaveResponseDto updateScheduleInvestments(UpdateTarragonInvestmentDto updateDto) {
+        EntitySaveResponseDto entitySaveResponseDto = new EntitySaveResponseDto();
+        try {
+            ReportingPEScheduleInvestment entity = this.peScheduleInvestmentRepository.getEntities(updateDto.getReportId(), updateDto.getTranche(), updateDto.getFundName());
+            if (entity != null) {
+                if (entity.getReport().getStatus().getCode().equalsIgnoreCase("SUBMITTED")) {
+                    Long reportId = entity.getReport() != null ? entity.getReport().getId() : null;
+                    logger.error("Cannot edit report with status 'SUBMITTED': report id " + reportId);
+                    entitySaveResponseDto.setErrorMessageEn("Cannot edit report with status 'SUBMITTED': report id ");
+                    return entitySaveResponseDto;
+                }
+                entity.setEditedFairValue(updateDto.getAccountBalance());
+                this.peScheduleInvestmentRepository.save(entity);
+                entitySaveResponseDto.setSuccessMessageEn("Successfully saved schedule of investment record");
+                return entitySaveResponseDto;
+            }else{
+                logger.error("Failed to update schedule of investment record: No record found to update");
+                entitySaveResponseDto.setErrorMessageEn("Failed to update schedule of investment record - no record found to update: fund name = " + updateDto.getFundName());
+                return entitySaveResponseDto;
             }
-            entity.setEditedFairValue(updateDto.getAccountBalance());
-            this.peScheduleInvestmentRepository.save(entity);
-            return true;
+        }catch (Exception ex){
+            logger.error("Error updating schedule of investment record: fund name = " + updateDto.getFundName(), ex);
+            entitySaveResponseDto.setErrorMessageEn("Error updating schedule of investment record: fund name = " + updateDto.getFundName());
+            return entitySaveResponseDto;
         }
-        return false;
     }
 
     @Override

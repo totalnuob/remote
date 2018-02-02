@@ -8,6 +8,8 @@ import {PeriodicReport} from "./model/periodic.report";
 import {ErrorResponse} from "../common/error-response";
 import {Subscription} from "rxjs/Subscription";
 import {CommonNBReportingComponent} from "./common.nb.reporting.component";
+import {OKResponse} from "../common/ok-response";
+import {SaveResponse} from "../common/save-response";
 
 declare var $:any
 
@@ -41,12 +43,7 @@ export class MainNBReportingComponent extends CommonNBReportingComponent impleme
                     this.reportList = response;
                 },
                 (error: ErrorResponse) => {
-                    this.successMessage = null;
-                    this.errorMessage = "Error loading reports";
-                    if(error && !error.isEmpty()){
-                        this.processErrorMessage(error);
-                    }
-                    this.postAction(null, null);
+                    this.processErrorResponse(error);
                 }
             )
     }
@@ -57,15 +54,11 @@ export class MainNBReportingComponent extends CommonNBReportingComponent impleme
     }
 
     createNewReport(){
-        console.log(this.reportMonth);
-        console.log(this.reportYear);
-
         this.report = new PeriodicReport();
         this.report.reportDate = '01-' + this.reportMonth + '-' + this.reportYear;
-
         if(this.reportList && this.reportList.length > 0){
             for(var i = 0; i < this.reportList.length; i++){
-                if(this.report.reportDate === this.reportList[i].reportDate){
+                if(this.report.reportDate.substring(3) === this.reportList[i].reportDate.substring(3)){
                     this.errorMessage = "Report date already exists";
                     this.report = null;
                     return false;
@@ -77,26 +70,19 @@ export class MainNBReportingComponent extends CommonNBReportingComponent impleme
         this.report.type = 'NB_NICK';
         this.report.status = 'NEW';
 
-        console.log(this.report);
         this.periodicReportService.save(this.report)
             .subscribe(
-                response  => {
+                (response: SaveResponse)  => {
                     this.report.id = response.entityId;
-                    var creationDate = response.creationDate;
-
-                    this.successMessage = "New Report Created";
+                    this.successMessage = response.message.nameEn != null ? response.message.nameEn : "Successfully saved report";
                     this.errorMessage = null;
                     this.reportMonth = null;
                     this.reportYear = null;
+
+                    this.postAction(this.successMessage, this.errorMessage);
                 },
-                (error: ErrorResponse) => {
-                    this.successMessage = null;
-                    this.errorMessage = "Error creating new report";
-                    this.report = null;
-                    if(error && !error.isEmpty()){
-                        this.processErrorMessage(error);
-                    }
-                    this.postAction(null, null);
+                (error) => {
+                    this.processErrorResponse(error);
                 }
             )
     }
@@ -120,13 +106,14 @@ export class MainNBReportingComponent extends CommonNBReportingComponent impleme
                         this.report = null;
                     },
                     (error: ErrorResponse) => {
-                        this.successMessage = null;
-                        this.errorMessage = "Error loading reports";
-                        this.report = null;
-                        if(error && !error.isEmpty()){
-                            this.processErrorMessage(error);
-                        }
-                        this.postAction(null, null);
+                        this.processErrorResponse(error);
+                        //this.successMessage = null;
+                        //this.errorMessage = "Error loading reports";
+                        //this.report = null;
+                        //if(error && !error.isEmpty()){
+                        //    this.processErrorMessage(error);
+                        //}
+                        //this.postAction(null, null);
                     }
                 )
         }

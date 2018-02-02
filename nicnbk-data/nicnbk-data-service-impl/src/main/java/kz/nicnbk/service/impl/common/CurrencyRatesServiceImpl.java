@@ -7,7 +7,7 @@ import kz.nicnbk.repo.model.common.Currency;
 import kz.nicnbk.repo.model.common.CurrencyRates;
 import kz.nicnbk.service.api.common.CurrencyRatesService;
 import kz.nicnbk.service.datamanager.LookupService;
-import kz.nicnbk.service.dto.common.CurrencyRatesDto;
+import kz.nicnbk.service.dto.lookup.CurrencyRatesDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

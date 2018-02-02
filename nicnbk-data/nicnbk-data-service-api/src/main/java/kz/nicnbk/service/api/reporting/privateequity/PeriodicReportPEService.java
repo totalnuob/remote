@@ -1,5 +1,6 @@
 package kz.nicnbk.service.api.reporting.privateequity;
 
+import kz.nicnbk.service.dto.common.EntityListSaveResponseDto;
 import kz.nicnbk.service.dto.common.ListResponseDto;
 import kz.nicnbk.service.dto.reporting.GeneratedGeneralLedgerFormDto;
 import kz.nicnbk.service.dto.reporting.PEGeneralLedgerFormDataHolderDto;
@@ -11,7 +12,7 @@ import java.util.List;
  */
 public interface PeriodicReportPEService {
 
-    boolean savePEGeneralLedgerFormData(PEGeneralLedgerFormDataHolderDto dataHolderDto);
+    EntityListSaveResponseDto savePEGeneralLedgerFormData(PEGeneralLedgerFormDataHolderDto dataHolderDto);
 
     boolean deletePEGeneralLedgerFormDataRecordById(Long recordId);
 

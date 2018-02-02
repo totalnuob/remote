@@ -1,7 +1,7 @@
 package kz.nicnbk.service.api.common;
 
 import kz.nicnbk.service.api.base.BaseService;
-import kz.nicnbk.service.dto.common.CurrencyRatesDto;
+import kz.nicnbk.service.dto.lookup.CurrencyRatesDto;
 
 import java.util.Date;
 

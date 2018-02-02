@@ -12,7 +12,10 @@ public final class PeriodicReportConstants {
 
 
     public static final String SINGULAR_CAPITAL_CASE = "SINGULAR";
+    public static final String SINGULARITY_LOWER_CASE = "Singularity";
+
     public static final String TARRAGON_CAPITAL_CASE = "TARRAGON";
+    public static final String TARRAGON_LOWER_CASE = "Tarragon";
 
 
     /* REPORT TYPE CODE ***********************************************************************************************/
@@ -22,6 +25,7 @@ public final class PeriodicReportConstants {
     public static final String KZT_FORM_1 = "KZT_FORM_1";
     public static final String KZT_FORM_2 = "KZT_FORM_2";
     public static final String KZT_FORM_3 = "KZT_FORM_3";
+    public static final String KZT_FORM_6 = "KZT_FORM_6";
     public static final String KZT_FORM_7 = "KZT_FORM_7";
     public static final String KZT_FORM_8 = "KZT_FORM_8";
     public static final String KZT_FORM_10 = "KZT_FORM_10";
@@ -47,6 +51,7 @@ public final class PeriodicReportConstants {
     public static final String INCOME_EXPENSE_TYPE = "Вид дохода/расхода";
 
     public static final String KZT_REPORT_HEADER_DATE_PLACEHOLDER = "по состоянию на дату";
+    public static final String KZT_REPORT_HEADER_DATE_PLACEHOLDER_DATE_ONLY = "<dd.MM.yyyy>";
     public static final String KZT_REPORT_HEADER_DATE_TEXT = "по состоянию на ";
 
     public static final String RU_INVESTMENTS_TO_RETURN = "Инвестиции к возврату";
@@ -59,7 +64,9 @@ public final class PeriodicReportConstants {
 
     public static final String EN_NOAL_PORTFOLIO_REDEMPTION = "Portfolio Fund Redemption/Withdrawal - Corp";
     public static final String EN_NET_REALIZED_GAIN_LOSS = "Net Realized Gains/Losses";
-    public static final String SINGULARITY_AGGREEMENT_DESC = "Investment Management Agreement of Singularity Ltd. from 14.07.2015";
+    public static final String SINGULARITY_AGREEMENT_DESC = "Investment Management Agreement of Singularity Ltd. from 14.07.2015";
+    public static final String TARRAGON_AGREEMENT_DESC = "Limited Partnership Agreement Tarragon LP from 18.12.2014";
+    public static final String NICK_MF_AGREEMENT_DESC = "Administrative services agreement of NICK Master Fund from 24.07.2015";
 
 
     public static final String BANK_LOANS_RECEIVED = "Банковские займы полученные";
@@ -138,6 +145,7 @@ public final class PeriodicReportConstants {
     public static final String USD_FORM_2_LAST_RECORD = "Чистая прибыль (убыток) (сумма строк 18, 19)";
     public static final String USD_FORM_3_LAST_RECORD = "Итого совокупного дохода (сумма строк 1, 5)";
     public static final String KZT_FORM_3_LAST_RECORD = "Итого совокупного дохода (сумма строк 1, 6)";
+    public static final String KZT_FORM_6_LAST_RECORD = "Остаток на конец текущего отчетного периода (сумма строк 3, 6, 14)";
     public static final String KZT_FORM_7_LAST_RECORD = "ВСЕГО (сумма строк 1,7)";
     public static final String KZT_FORM_8_LAST_RECORD = "ВСЕГО (сумма строк 1, 10)";
     public static final String KZT_FORM_10_LAST_RECORD = "ВСЕГО  (сумма строк 1, 4)";

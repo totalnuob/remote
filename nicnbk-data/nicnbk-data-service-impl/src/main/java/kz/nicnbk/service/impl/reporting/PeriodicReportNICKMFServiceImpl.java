@@ -8,6 +8,7 @@ import kz.nicnbk.repo.model.reporting.PeriodicReport;
 import kz.nicnbk.service.api.reporting.PeriodicReportNICKMFService;
 import kz.nicnbk.service.api.reporting.PeriodicReportService;
 import kz.nicnbk.service.converter.reporting.NICKMFReportingDataConverter;
+import kz.nicnbk.service.dto.common.EntityListSaveResponseDto;
 import kz.nicnbk.service.dto.reporting.NICKMFReportingDataDto;
 import kz.nicnbk.service.dto.reporting.NICKMFReportingDataHolderDto;
 import kz.nicnbk.service.dto.reporting.PeriodicReportDto;
@@ -39,38 +40,34 @@ public class PeriodicReportNICKMFServiceImpl implements PeriodicReportNICKMFServ
 
     @Transactional
     @Override
-    public boolean saveNICKMFReportingData(NICKMFReportingDataHolderDto dataHolderDto) {
-
-        // TODO: error message to REST (i.e. UI)
-
+    public EntityListSaveResponseDto saveNICKMFReportingData(NICKMFReportingDataHolderDto dataHolderDto) {
+        EntityListSaveResponseDto entityListSaveResponseDto = new EntityListSaveResponseDto();
         try {
             if(dataHolderDto != null && dataHolderDto.getRecords() != null){
-
                 checkNICKMFReportingData(dataHolderDto.getRecords());
-
-                // TODO: check report status
+                // check report status
                 PeriodicReportDto periodicReport = this.periodicReportService.getPeriodicReport(dataHolderDto.getReport().getId());
                 if(periodicReport != null && periodicReport.getStatus().equalsIgnoreCase(PeriodicReportType.SUBMITTED.getCode())){
-                    return false;
+                    entityListSaveResponseDto.setErrorMessageEn("Cannot edit report with status 'SUBMITTED'");
+                    return entityListSaveResponseDto;
                 }
-
                 this.nickmfReportingDataRepository.deleteAllByReportId(dataHolderDto.getReport().getId());
                 for(NICKMFReportingDataDto dto: dataHolderDto.getRecords()){
                     NICKMFReportingData entity = this.nickmfReportingDataConverter.assemble(dto);
                     entity.setReport(new PeriodicReport(dataHolderDto.getReport().getId()));
                     this.nickmfReportingDataRepository.save(entity);
                 }
-                return true;
+                entityListSaveResponseDto.setSuccessMessageEn("NICK MF records successfully saved");
             }
         }catch (IllegalArgumentException ex){
             logger.error("Error saving NICK MF Reporting data: input validation failed", ex);
-
-            // TODO: return error message from IllegalArgumentException
+            entityListSaveResponseDto.setErrorMessageEn("Input validation failed. " + ex.getMessage());
 
         }catch (Exception ex){
-            logger.error("Error saving NICK MF Reporting data.", ex);
+            logger.error("Error saving NICK MF Reporting data", ex);
+            entityListSaveResponseDto.setErrorMessageEn("Error saving NICK MF Reporting data");
         }
-        return false;
+        return entityListSaveResponseDto;
     }
 
     private void checkNICKMFReportingData(List<NICKMFReportingDataDto> records){
@@ -84,13 +81,13 @@ public class PeriodicReportNICKMFServiceImpl implements PeriodicReportNICKMFServ
                 }
 
                 if(StringUtils.isEmpty(record.getNicChartOfAccountsCode())){
-                    throw new IllegalArgumentException("Record missing 'NicChartOfAccountsCode' value");
+                    throw new IllegalArgumentException("Record missing NIC Chart of accounts code value: " + record.getNbChartOfAccountsCode());
                 }else{
                     // check code exists ???
                 }
 
                 if(record.getAccountBalance() == null){
-                    throw new IllegalArgumentException("Record missing 'AccountBalance' value");
+                    throw new IllegalArgumentException("Record missing 'Account Balance' value");
                 }else{
                     totalSum += record.getAccountBalance().doubleValue();
                 }
@@ -107,46 +104,56 @@ public class PeriodicReportNICKMFServiceImpl implements PeriodicReportNICKMFServ
 
     @Override
     public NICKMFReportingDataHolderDto getNICKMFReportingData(Long reportId){
-        NICKMFReportingDataHolderDto holderDto = new NICKMFReportingDataHolderDto();
-        List<NICKMFReportingData> entities = this.nickmfReportingDataRepository.getEntitiesByReportId(reportId);
-        PeriodicReportDto report = this.periodicReportService.getPeriodicReport(reportId);
-        if(report != null){
-            holderDto.setReport(report);
-        }
-        if(entities != null) {
-            List<NICKMFReportingDataDto> records = new ArrayList<>();
-            for(NICKMFReportingData entity: entities){
-                NICKMFReportingDataDto dto = this.nickmfReportingDataConverter.disassemble(entity);
-                records.add(dto);
+        try {
+            NICKMFReportingDataHolderDto holderDto = new NICKMFReportingDataHolderDto();
+            List<NICKMFReportingData> entities = this.nickmfReportingDataRepository.getEntitiesByReportId(reportId);
+            PeriodicReportDto report = this.periodicReportService.getPeriodicReport(reportId);
+            if (report != null) {
+                holderDto.setReport(report);
             }
-            holderDto.setRecords(records);
+            if (entities != null) {
+                List<NICKMFReportingDataDto> records = new ArrayList<>();
+                for (NICKMFReportingData entity : entities) {
+                    NICKMFReportingDataDto dto = this.nickmfReportingDataConverter.disassemble(entity);
+                    records.add(dto);
+                }
+                holderDto.setRecords(records);
+            }
+            return holderDto;
+        }catch(Exception ex){
+            logger.error("Error loading NICK MG reporting data: report id " + reportId, ex);
+            return null;
         }
-        return holderDto;
     }
 
     @Override
     public NICKMFReportingDataHolderDto getNICKMFReportingDataFromPreviousMonth(Long reportId){
-        NICKMFReportingDataHolderDto holderDto = new NICKMFReportingDataHolderDto();
-        PeriodicReportDto currentReport = this.periodicReportService.getPeriodicReport(reportId);
-        if(currentReport != null){
-            Date previousDate = DateUtils.getLastDayOfPreviousMonth(currentReport.getReportDate());
-            PeriodicReportDto previousReport = this.periodicReportService.findReportByReportDate(previousDate);
-            if(previousReport != null){
-                List<NICKMFReportingData> entities = this.nickmfReportingDataRepository.getEntitiesByReportId(previousReport.getId());
-                if(currentReport != null){
-                    holderDto.setReport(currentReport);
-                }
-                if(entities != null) {
-                    List<NICKMFReportingDataDto> records = new ArrayList<>();
-                    for(NICKMFReportingData entity: entities){
-                        NICKMFReportingDataDto dto = this.nickmfReportingDataConverter.disassemble(entity);
-                        records.add(dto);
+        try {
+            NICKMFReportingDataHolderDto holderDto = new NICKMFReportingDataHolderDto();
+            PeriodicReportDto currentReport = this.periodicReportService.getPeriodicReport(reportId);
+            if (currentReport != null) {
+                Date previousDate = DateUtils.getLastDayOfPreviousMonth(currentReport.getReportDate());
+                PeriodicReportDto previousReport = this.periodicReportService.findReportByReportDate(previousDate);
+                if (previousReport != null) {
+                    List<NICKMFReportingData> entities = this.nickmfReportingDataRepository.getEntitiesByReportId(previousReport.getId());
+                    if (currentReport != null) {
+                        holderDto.setReport(currentReport);
                     }
-                    holderDto.setRecords(records);
+                    if (entities != null) {
+                        List<NICKMFReportingDataDto> records = new ArrayList<>();
+                        for (NICKMFReportingData entity : entities) {
+                            NICKMFReportingDataDto dto = this.nickmfReportingDataConverter.disassemble(entity);
+                            records.add(dto);
+                        }
+                        holderDto.setRecords(records);
+                    }
                 }
             }
-        }
 
-        return holderDto;
+            return holderDto;
+        }catch (Exception ex){
+            logger.error("Error loading NICK MF reporting data for previous month: report id " + reportId, ex);
+            return null;
+        }
     }
 }

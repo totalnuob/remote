@@ -86,6 +86,7 @@ import {ConsolidatedKZTForm2NBReportingComponent} from "./reporting/consolidated
 import {ConsolidatedKZTForm19NBReportingComponent} from "./reporting/consolidated.kzt.form.19.nb.reporting.component";
 import {ConsolidatedKZTForm22NBReportingComponent} from "./reporting/consolidated.kzt.form.22.nb.reporting.component";
 import {ConsolidatedKZTForm3NBReportingComponent} from "./reporting/consolidated.kzt.form.3.nb.reporting.component";
+import {ConsolidatedKZTForm6NBReportingComponent} from "./reporting/consolidated.kzt.form.6.nb.reporting.component";
 
 @NgModule({
     imports: [
@@ -127,7 +128,7 @@ import {ConsolidatedKZTForm3NBReportingComponent} from "./reporting/consolidated
         ConsolidatedTotalIncomeUSDFormNBReportingComponent, NICKMFInputViewNBReportingComponent, TarragonGeneratedFormViewNBReportingComponent,
         ConsolidatedKZTForm8NBReportingComponent, ConsolidatedKZTForm7NBReportingComponent, ConsolidatedKZTForm10NBReportingComponent, ConsolidatedKZTForm14NBReportingComponent, ConsolidatedKZTForm13NBReportingComponent,
         ConsolidatedKZTForm1NBReportingComponent, ReserveCalculationFormNBReportingComponent,ConsolidatedKZTForm2NBReportingComponent, ConsolidatedKZTForm19NBReportingComponent, ConsolidatedKZTForm22NBReportingComponent,
-        ConsolidatedKZTForm3NBReportingComponent
+        ConsolidatedKZTForm3NBReportingComponent, ConsolidatedKZTForm6NBReportingComponent
     ],
     bootstrap: [ AppComponent ]
 })

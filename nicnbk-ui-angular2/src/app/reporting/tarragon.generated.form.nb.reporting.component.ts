@@ -18,6 +18,10 @@ import {TarragonNICReportingChartOfAccounts} from "./model/tarragon,.nic.reporti
 import {PEGeneralLedgerFormDataHolder} from "./model/pe.general.ledger.form.data.holder.nb.reporting";
 import {PEGeneralLedgerFormDataRecord} from "./model/pe.general.ledger.form.data.record";
 
+import {Observable} from 'rxjs/Observable';
+import 'rxjs/add/observable/forkJoin';
+import {ListResponse} from "./../common/list.response.ts";
+
 declare var $:any
 
 @Component({
@@ -50,60 +54,65 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
     ){
         super(router, route, periodicReportService);
 
-        this.loadLookups();
+        //this.loadLookups();
+        //
 
         this.records = [];
         this.addedRecordsHolder = new PEGeneralLedgerFormDataHolder();
         this.addedRecordsHolder.records = [];
 
-        this.sub = this.route
-            .params
-            .subscribe(params => {
-                this.reportId = +params['id'];
-                if(this.reportId > 0){
-                    // load report data
-                    this.addedRecordsHolder.report = new PeriodicReport();
-                    this.addedRecordsHolder.report.id = this.reportId;
-
-
-                this.busy = this.periodicReportService.getGeneratedTarragonForm(this.reportId)
-                    .subscribe(
-                        response  => {
-                            if(response){
-                                this.records = response.records;
-                                if(response.status === 'FAIL' && response.messageEn != null){
-                                    this.errorMessage = response.messageEn;
-                                    this.recordsValid = false;
-                                }else {
-                                    this.checkRecords();
-                                }
-                            }
-                        },
-                        (error: ErrorResponse) => {
-                            this.successMessage = null;
-                            this.errorMessage = "Error loading data";
-                            if(error && !error.isEmpty()){
-                                this.processErrorMessage(error);
-                            }
-                                        this.postAction(null, this.errorMessage);
-                        }
-                    );
-                }else{
-                    // TODO: ??
-                    console.log("No report id")
-                }
-            });
-    }
-
-    ngOnInit(): any {
-    }
-
-    loadLookups(){
-
-        this.lookupService.getAddableTarragonNICReportingChartOfAccounts(null)
+        Observable.forkJoin(
+            // Load lookups
+            this.lookupService.getAddableTarragonNICReportingChartOfAccounts()
+            )
             .subscribe(
-                data => {
+                ([data]) => {
                     this.tarragonNICReportingChartOfAccounts = data;
+
+                    this.sub = this.route
+                        .params
+                        .subscribe(params => {
+                            this.reportId = +params['id'];
+                            if (this.reportId > 0) {
+                                // load report data
+                                this.addedRecordsHolder.report = new PeriodicReport();
+                                this.addedRecordsHolder.report.id = this.reportId;
+
+                                this.busy = this.periodicReportService.getGeneratedTarragonForm(this.reportId)
+                                    .subscribe(
+                                        (response: ListResponse) => {
+                                            if (response) {
+                                                this.records = response.records;
+                                                if (response.status === 'FAIL') {
+                                                    if(response.message != null){
+                                                        this.errorMessage = response.message.nameEn ? response.message.nameEn :
+                                                            response.message.nameKz ? response.message.nameKz : response.message.nameRu ? response.message.nameRu : null;
+                                                    }
+                                                    if(this.errorMessage == null){
+                                                        this.errorMessage = "Error loading Tarragon General Ledger data";
+                                                    }
+                                                    this.recordsValid = false;
+                                                    this.postAction(null, this.errorMessage);
+                                                } else {
+                                                    this.checkRecords();
+                                                }
+                                            }
+                                        },
+                                        (error:ErrorResponse) => {
+                                            this.processErrorResponse(error);
+                                            //this.successMessage = null;
+                                            //this.errorMessage = "Error loading data";
+                                            //if(error && !error.isEmpty()){
+                                            //    this.processErrorMessage(error);
+                                            //}
+                                            //this.postAction(null, this.errorMessage);
+                                        }
+                                    );
+                            } else {
+                                // TODO: ??
+                                console.log("No report id")
+                            }
+                        });
                 },
                 (error: ErrorResponse) => {
                     this.errorMessage = "Error loading lookups";
@@ -115,6 +124,9 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
             );
     }
 
+    ngOnInit(): any {
+    }
+
 
     addRecord(){
         this.addedRecordsHolder.records.push(new PEGeneralLedgerFormDataRecord());
@@ -124,7 +136,6 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
         this.busy = this.periodicReportService.getGeneratedTarragonFormDataFromPreviousMonth(this.reportId)
             .subscribe(
                 response  => {
-                    console.log(response);
                     if(response && response.length > 0) {
                         for (var i = 0; i < response.length; i++) {
                             let record = new PEGeneralLedgerFormDataRecord();
@@ -150,12 +161,13 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
                     }
                 },
                 (error: ErrorResponse) => {
-                    this.successMessage = null;
-                    this.errorMessage = "Error loading Tarragon GL added data from previous month";
-                    if(error && !error.isEmpty()){
-                        this.processErrorMessage(error);
-                    }
-                    this.postAction(this.successMessage, this.errorMessage);
+                    this.processErrorResponse(error);
+                    //this.successMessage = null;
+                    //this.errorMessage = "Error loading Tarragon GL added data from previous month";
+                    //if(error && !error.isEmpty()){
+                    //    this.processErrorMessage(error);
+                    //}
+                    //this.postAction(this.successMessage, this.errorMessage);
                 }
             );
     }
@@ -189,47 +201,47 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
             this.periodicReportService.deletePEGeneralLedgerFormDataRecord(record.addedRecordId)
                 .subscribe(
                     response => {
+                        this.successMessage ="Successfully deleted record";
                         // get tarragon records
                         this.busy = this.periodicReportService.getGeneratedTarragonForm(this.reportId)
                             .subscribe(
-                                response  => {
-                                    if(response){
+                                (response: ListResponse) => {
+                                    if (response) {
                                         this.records = response.records;
-                                        if(response.status === 'FAIL' && response.messageEn != null){
-                                            this.errorMessage = response.messageEn;
+                                        if (response.status === 'FAIL') {
+                                            if (response.message != null) {
+                                                this.errorMessage = response.message.nameEn ? response.message.nameEn :
+                                                    response.message.nameKz ? response.message.nameKz : response.message.nameRu ? response.message.nameRu : null;
+                                            }
+                                            if (this.errorMessage == null) {
+                                                this.errorMessage = "Error loading Tarragon General Ledger data";
+                                            }
                                             this.recordsValid = false;
-                                        }else {
+                                            this.postAction(this.successMessage, this.errorMessage);
+                                        } else {
                                             this.checkRecords();
                                         }
-
-                                        this.postAction("Record successfully deleted", this.errorMessage);
                                     }
                                 },
                                 (error: ErrorResponse) => {
-                                    this.successMessage = null;
-                                    this.errorMessage = "Error loading data";
-                                    if(error && !error.isEmpty()){
-                                        this.processErrorMessage(error);
-                                    }
-                                    this.postAction(null, this.errorMessage);
+                                    this.processErrorResponse(error, "Error loading Tarragon General Ledger data");
+                                    //this.errorMessage = "Error loading Tarragon General Ledger data";
+                                    //if(error && !error.isEmpty()){
+                                    //    this.processErrorMessage(error);
+                                    //}
+                                    //this.postAction(this.successMessage, this.errorMessage);
                                 }
                             );
 
-                        //if (this.records) {
-                        //    for (var i = this.records.length; i--;) {
-                        //        if (this.records[i] === record) {
-                        //            this.records.splice(i, 1);
-                        //        }
-                        //    }
-                        //}
-
                     },
-                    (error:ErrorResponse) => {
-                        this.errorMessage = "Error deleting record";
-                        if (error && !error.isEmpty()) {
-                            this.processErrorMessage(error);
-                        }
-                        this.postAction(null, this.errorMessage);
+                    (error: ErrorResponse) => {
+                        this.processErrorResponse(error);
+                        //this.errorMessage = "Error deleting record";
+                        //if (error && !error.isEmpty()) {
+                        //    console.log("Error");
+                        //    this.processErrorMessage(error);
+                        //}
+                        //this.postAction(null, this.errorMessage);
                     }
                 );
         }
@@ -285,37 +297,44 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
 
                     this.busy = this.periodicReportService.getGeneratedTarragonForm(this.reportId)
                         .subscribe(
-                            response  => {
-                                if(response){
+                            (response: ListResponse) => {
+                                if (response) {
                                     this.records = response.records;
-                                    if(response.status === 'FAIL' && response.messageEn != null){
-                                        this.errorMessage = response.messageEn;
+                                    if (response.status === 'FAIL') {
+                                        if (response.message != null) {
+                                            this.errorMessage = response.message.nameEn ? response.message.nameEn :
+                                                response.message.nameKz ? response.message.nameKz : response.message.nameRu ? response.message.nameRu : null;
+                                        }
+                                        if (this.errorMessage == null) {
+                                            this.errorMessage = "Error loading Tarragon General Ledger data";
+                                        }
                                         this.recordsValid = false;
-                                    }else {
+                                        this.postAction(this.successMessage, this.errorMessage);
+                                    } else {
                                         this.checkRecords();
                                     }
-
-                                    this.postAction("Successfully saved new records", this.errorMessage);
                                 }
                             },
                             (error: ErrorResponse) => {
-                                this.successMessage = null;
-                                this.errorMessage = "Error loading records";
-                                if(error && !error.isEmpty()){
-                                    this.processErrorMessage(error);
-                                }
-                                this.postAction(null, this.errorMessage);
+                                this.processErrorResponse(error);
+                                //this.successMessage = null;
+                                //this.errorMessage = "Error loading records";
+                                //if(error && !error.isEmpty()){
+                                //    this.processErrorMessage(error);
+                                //}
+                                //this.postAction(null, this.errorMessage);
                             }
                         );
                 },
                 (error: ErrorResponse) => {
-                    this.successMessage = null;
-                    this.errorMessage = "Error saving new records";
-                    if(error && !error.isEmpty()){
-                        this.processErrorMessage(error);
-                    }else {
-                        this.postAction(null, this.errorMessage);
-                    }
+                    this.processErrorResponse(error);
+                    //this.successMessage = null;
+                    //this.errorMessage = "Error saving new records";
+                    //if(error && !error.isEmpty()){
+                    //    this.processErrorMessage(error);
+                    //}else {
+                    //    this.postAction(null, this.errorMessage);
+                    //}
                 }
             )
     }
@@ -331,18 +350,19 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
             .subscribe(
                 response  => {
                     if(response){
-                        //this.records = response;
+                        this.postAction("Record successfully updated", null);
                         this.checkRecords();
                         record.editing = false;
                     }
                 },
                 (error: ErrorResponse) => {
-                    this.successMessage = null;
-                    this.errorMessage = "Error updating account balance";
-                    if(error && !error.isEmpty()){
-                        this.processErrorMessage(error);
-                    }
-                    this.postAction(null, this.errorMessage);
+                    this.processErrorResponse(error);
+                    //this.successMessage = null;
+                    //this.errorMessage = "Error updating account balance";
+                    //if(error && !error.isEmpty()){
+                    //    this.processErrorMessage(error);
+                    //}
+                    //this.postAction(null, this.errorMessage);
                 }
             );
     }

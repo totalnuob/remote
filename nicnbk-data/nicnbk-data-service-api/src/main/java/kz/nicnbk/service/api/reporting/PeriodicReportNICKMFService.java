@@ -1,5 +1,6 @@
 package kz.nicnbk.service.api.reporting;
 
+import kz.nicnbk.service.dto.common.EntityListSaveResponseDto;
 import kz.nicnbk.service.dto.reporting.NICKMFReportingDataHolderDto;
 
 /**
@@ -7,7 +8,7 @@ import kz.nicnbk.service.dto.reporting.NICKMFReportingDataHolderDto;
  */
 public interface PeriodicReportNICKMFService {
 
-    boolean saveNICKMFReportingData(NICKMFReportingDataHolderDto dataHolderDto);
+    EntityListSaveResponseDto saveNICKMFReportingData(NICKMFReportingDataHolderDto dataHolderDto);
 
     NICKMFReportingDataHolderDto getNICKMFReportingData(Long reportId);
 

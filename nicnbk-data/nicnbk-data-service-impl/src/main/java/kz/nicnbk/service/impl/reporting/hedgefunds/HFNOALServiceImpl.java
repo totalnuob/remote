@@ -76,7 +76,8 @@ public class HFNOALServiceImpl implements HFNOALService {
             SingularityNOALRecordDto previous = null;
             for(SingularityNOALRecordDto dto: dtoList){
                 ReportingHFNOAL entity = assemble(dto, reportId);
-                if(entity.getTransaction() != null && entity.getTransaction().equalsIgnoreCase("Ending Balance")){
+                if(entity.getTransaction() != null && (entity.getTransaction().equalsIgnoreCase("Ending Balance") ||
+                        entity.getTransaction().equalsIgnoreCase("Ending"))){
                     if(StringUtils.isEmpty(entity.getName())){
                         entity.setName(previous != null ? previous.getName() : null);
                     }

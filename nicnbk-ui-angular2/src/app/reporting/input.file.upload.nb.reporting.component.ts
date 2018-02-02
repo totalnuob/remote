@@ -65,8 +65,13 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     this.busy = this.periodicReportService.get(this.reportId)
                         .subscribe(
                             response  => {
-                                this.report = response;
-                                this.report.reportId = this.reportId;
+                                this.periodicReport = response;
+                                this.report = new InputFilesNBReport();
+                                this.report.reportId = this.periodicReport.id;
+                                if(this.periodicReport == null || this.periodicReport.id == null){
+                                    this.postAction(null, "Report not loaded for id " + this.reportId);
+                                    return;
+                                }
 
                                 // load existing report files info
                                 this.busy = this.periodicReportService.loadInputFilesList(this.reportId)
@@ -82,18 +87,18 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                                             if(error && !error.isEmpty()){
                                                 this.processErrorMessage(error);
                                             }
-                                            this.postAction(null, null);
+                                            this.postAction(null,  this.errorMessage);
                                         }
                                     )
                             },
                             (error: ErrorResponse) => {
                                 this.successMessage = null;
-                                this.errorMessage = "Error loading report";
+                                this.errorMessage = "Error loading report: id " + this.reportId;
                                 this.report = null;
                                 if(error && !error.isEmpty()){
                                     this.processErrorMessage(error);
                                 }
-                                this.postAction(null, null);
+                                this.postAction(null, this.errorMessage);
                             }
                         );
 

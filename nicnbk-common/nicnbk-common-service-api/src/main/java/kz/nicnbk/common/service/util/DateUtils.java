@@ -94,6 +94,7 @@ public class DateUtils {
     }
 
     public static Date getLastDayOfNextMonth(Date date){
+        // TODO: december-january
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.MONTH, getMonth(date) + 1);
         cal.set(Calendar.YEAR, getYear(date));
@@ -114,6 +115,7 @@ public class DateUtils {
     }
 
     public static Date getFirstDayOfNextMonth(Date date){
+        // TODO: december-january
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.MONTH, getMonth(date) + 1);
         cal.set(Calendar.YEAR, getYear(date));
@@ -124,6 +126,7 @@ public class DateUtils {
     }
 
     public static Date getLastDayOfPreviousMonth(Date date){
+        // TODO: december-january
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.MONTH, getMonth(date) -1);
         cal.set(Calendar.YEAR, getYear(date));
@@ -166,6 +169,9 @@ public class DateUtils {
         }
 
         String dateRu = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(new Locale("ru")).format(LocalDate.of(year, month, 1));
+        if(dateRu != null && dateRu.startsWith("1 ")){
+            dateRu = "0" + dateRu;
+        }
         return dateRu;
     }
 }

@@ -213,7 +213,7 @@ export class LookupService extends CommonService{
 
     }
 
-    getAddableTarragonNICReportingChartOfAccounts(code): Observable<TarragonNICReportingChartOfAccounts[]>{
+    getAddableTarragonNICReportingChartOfAccounts(): Observable<TarragonNICReportingChartOfAccounts[]>{
         return this.http.get(TARRAGON_NIC_REPORTING_CHART_OF_ACCOUNTS_URL, this.getOptionsWithCredentials())
             .map(this.extractDataList)
             .catch(this.handleErrorResponse);

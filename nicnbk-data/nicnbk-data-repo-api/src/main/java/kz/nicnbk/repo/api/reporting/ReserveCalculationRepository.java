@@ -5,6 +5,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -17,4 +18,7 @@ public interface ReserveCalculationRepository extends PagingAndSortingRepository
 
     @Override
     Iterable<ReserveCalculation> findAll(Sort sort);
+
+    @Query("SELECT e from ReserveCalculation e where e.expenseType.code=?1 AND e.date >= ?2 AND e.date < ?3")
+    List<ReserveCalculation> getEntitiesByExpenseTypeBetweenDates(String code, Date from, Date to);
 }

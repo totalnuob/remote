@@ -15,11 +15,20 @@ export class CommonService{
         return body || {};
     }
 
+
     public handleErrorResponse (error: any) {
         var errorResponse = new ErrorResponse;
         if(error.message){
-            //console.log(error);
             errorResponse.message = error.message;
+        }
+        if(error._body != null){
+            try {
+                var body = error.json();
+                errorResponse.message = body.message.nameEn;
+                errorResponse.messageKz = body.message.nameKz;
+                errorResponse.messageRu = body.message.nameRu;
+            }catch(e){
+            }
         }
         if(error.status){
             errorResponse.status = error.status;

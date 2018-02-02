@@ -1,9 +1,6 @@
 package kz.nicnbk.ws.rest;
 
-import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
-import kz.nicnbk.service.dto.common.ResponseDto;
-import kz.nicnbk.service.dto.common.ResponseMessageDto;
-import kz.nicnbk.service.dto.common.ResponseStatusType;
+import kz.nicnbk.service.dto.common.*;
 import kz.nicnbk.service.dto.files.FilesDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +46,24 @@ public abstract class CommonServiceREST {
     }
 
     /**
+     * Returns ResponseEntity with status from response dto parameter.
+     * If status is null, then returns error response.
+     * If status is not null, then return status based on response dto status field.
+     *
+     * @param responseDto - response dto
+     * @return - ResponseEntity object
+     */
+    public ResponseEntity buildNonNullResponseWithStatus(ResponseDto responseDto){
+        if(responseDto == null || responseDto.getStatus() == null){
+            // error occurred
+            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }else{
+            HttpStatus httpStatus = responseDto.getStatus() == ResponseStatusType.SUCCESS ? HttpStatus.OK : HttpStatus.INTERNAL_SERVER_ERROR;
+            return new ResponseEntity<>(responseDto, null, httpStatus);
+        }
+    }
+
+    /**
      * Returns ResponseEntity with status 401 Unauthorized.
      * Sets corresponding response body.
      * @return - ResponseEntity object
@@ -70,6 +85,7 @@ public abstract class CommonServiceREST {
      * @param creationDate - entity creation date
      * @return - ResponseEntity object
      */
+    @Deprecated
     public ResponseEntity<EntitySaveResponseDto> buildEntitySaveResponse(Long id, Date creationDate){
         EntitySaveResponseDto response = new EntitySaveResponseDto();
         response.setEntityId(id);
@@ -80,6 +96,30 @@ public abstract class CommonServiceREST {
         }
         return new ResponseEntity<>(response, null, HttpStatus.OK);
     }
+
+
+    public ResponseEntity<EntitySaveResponseDto> buildEntitySaveResponse(EntitySaveResponseDto entitySaveResponseDto){
+        if(entitySaveResponseDto == null || entitySaveResponseDto.getStatus() == null){
+            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        HttpStatus httpStatus = entitySaveResponseDto.getStatus() == ResponseStatusType.SUCCESS ? HttpStatus.OK :
+                HttpStatus.INTERNAL_SERVER_ERROR;
+//            // TODO: fix create date
+//            if (entitySaveResponseDto.getCreationDate() == null) {
+//                entitySaveResponseDto.setCreationDate(new Date());
+//            }
+        return new ResponseEntity<>(entitySaveResponseDto, null, httpStatus);
+    }
+
+    public ResponseEntity<EntityListSaveResponseDto> buildEntityListSaveResponse(EntityListSaveResponseDto entityListSaveResponseDto){
+        if(entityListSaveResponseDto == null || entityListSaveResponseDto.getStatus() == null){
+            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        HttpStatus httpStatus = entityListSaveResponseDto.getStatus() == ResponseStatusType.SUCCESS ? HttpStatus.OK : HttpStatus.INTERNAL_SERVER_ERROR;
+        return new ResponseEntity<>(entityListSaveResponseDto, null, httpStatus);
+    }
+
+
 
     /**
      * Returns FilesDto built from MultipartFile and file type.

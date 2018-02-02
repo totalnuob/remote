@@ -3,6 +3,7 @@ package kz.nicnbk.service.api.reporting.privateequity;
 import kz.nicnbk.service.api.base.BaseService;
 import kz.nicnbk.service.dto.reporting.ReserveCalculationDto;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -11,6 +12,10 @@ import java.util.List;
 public interface ReserveCalculationService extends BaseService {
 
     List<ReserveCalculationDto> getReserveCalculations();
+
+    List<ReserveCalculationDto> getReserveCalculationsForMonth(String code, Date date);
+
+    Double getReserveCalculationSumForMonth(String code, Date date);
 
     boolean save(List<ReserveCalculationDto> records);
 

@@ -27,4 +27,14 @@ public class EntitySaveResponseDto extends ResponseDto {
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
+
+    public void setErrorMessageEn(String messageEn){
+        this.setStatus(ResponseStatusType.FAIL);
+        this.setMessageEn(messageEn);
+    }
+
+    public void setSuccessMessageEn(String messageEn){
+        this.setStatus(ResponseStatusType.SUCCESS);
+        this.setMessageEn(messageEn);
+    }
 }

@@ -75,7 +75,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default pull-left" (click)="closeModal()" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary pull-right" (click)="createNewReport()" [disabled]="report != null" *ngIf="report == null">Create</button>
+                        <button type="button" class="btn btn-primary pull-right" (click)="createNewReport()" [disabled]="reportMonth == null || reportYear  == null" *ngIf="report == null">Create</button>
 
                         <button type="button" class="btn btn-primary pull-right" (click)="closeModal()" *ngIf="report != null">OK</button>
 
