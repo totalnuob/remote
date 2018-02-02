@@ -34,7 +34,7 @@ public abstract class BaseTypeEntity implements Identity<Integer>, Serializable 
         this.id = id;
     }
 
-    @Column(name = "code", length = DataConstraints.C_TYPE_ENTITY_CODE, nullable = false)
+    @Column(name = "code", length = DataConstraints.C_TYPE_ENTITY_CODE, nullable = false, unique = true)
     public String getCode() {
         return code;
     }

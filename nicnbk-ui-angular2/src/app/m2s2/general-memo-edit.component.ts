@@ -5,7 +5,6 @@ import {GeneralMemo} from "./model/general-memo";
 import {CommonFormViewComponent} from "../common/common.component";
 import {MemoService} from "./memo.service";
 import {EmployeeService} from "../employee/employee.service";
-import {MemoAttachmentDownloaderComponent} from "./memo-attachment-downloader.component";
 import {Subscription} from 'rxjs';
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 import {ErrorResponse} from "../common/error-response";

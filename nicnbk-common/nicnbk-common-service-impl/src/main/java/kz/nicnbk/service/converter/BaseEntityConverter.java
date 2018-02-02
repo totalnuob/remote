@@ -1,7 +1,9 @@
 package kz.nicnbk.service.converter;
 
+import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.common.service.model.BaseDto;
 import kz.nicnbk.repo.model.base.BaseEntity;
+import kz.nicnbk.repo.model.base.BaseTypeEntity;
 
 import java.util.ArrayList;
 import java.util.List;

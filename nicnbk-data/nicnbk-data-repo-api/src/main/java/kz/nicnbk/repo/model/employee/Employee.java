@@ -1,7 +1,6 @@
 package kz.nicnbk.repo.model.employee;
 
 import kz.nicnbk.repo.model.base.BaseEntity;
-import kz.nicnbk.repo.model.base.CreateUpdateBaseEntity;
 
 import javax.persistence.*;
 import java.util.Date;

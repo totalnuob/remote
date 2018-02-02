@@ -40,6 +40,15 @@ public class StringUtils {
         return isNotEmpty(value) && !value.equals(StringUtils.VALUE_NONE);
     }
 
+    public static boolean isEqualWithoutSpaces(String a, String b){
+        if(a.replaceAll("\\s+","").equalsIgnoreCase(b.replaceAll("\\s+",""))) {
+            // this will also take care of spaces like tabs etc.
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     /**
      * Returns a list of strings from the string array.
      * E.g. ["a", "b", "c"] into java.util.List object containing three strings in the original order.

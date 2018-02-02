@@ -1,15 +1,19 @@
 package kz.nicnbk.service.dto.common;
 
+
 /**
  * Created by magzumov on 08.07.2016.
  */
-public class FileUploadResultDto extends StatusResultDto {
+public class FileUploadResultDto extends ResponseDto {
 
     private Long fileId;
-
     private String fileName;
 
     public FileUploadResultDto(){}
+
+    public FileUploadResultDto(ResponseStatusType status, String messageRu, String messageEn, String messageKz){
+        super(status, messageRu, messageEn, messageKz);
+    }
 
     public FileUploadResultDto(StatusResultType status, String messageRu, String messageEn, String messageKz){
         super(status, messageRu, messageEn, messageKz);

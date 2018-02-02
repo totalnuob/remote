@@ -6,6 +6,7 @@ import {ROLE_RE_EDIT} from "./roles.constants";
 import {ROLE_HF_EDIT} from "./roles.constants";
 import {ROLE_PE_EDIT} from "./roles.constants";
 import {ROLE_MM_EDIT} from "./roles.constants";
+import {ROLE_REPORTING_EDIT} from "./roles.constants";
 
 export class ModuleAccessCheckerService extends CommonService{
 
@@ -45,6 +46,14 @@ export class ModuleAccessCheckerService extends CommonService{
 
     public checkAccessNewsEdit(){
         return this.checkAccess(ROLE_NEWS_EDIT);
+    }
+
+    public checkAccessReporting(){
+        return this.checkAccess("ROLE_REPORTING");
+    }
+
+    public checkAccessReportingEditor(){
+        return this.checkAccess(ROLE_REPORTING_EDIT);
     }
 
     public checkAccessAdmin(){

@@ -5,16 +5,13 @@ import kz.nicnbk.service.api.hf.HFManagerService;
 import kz.nicnbk.service.dto.hf.HFManagerDto;
 import kz.nicnbk.service.dto.hf.HedgeFundManagerPagedSearchResult;
 import kz.nicnbk.service.dto.hf.HedgeFundSearchParams;
-import kz.nicnbk.ws.model.EntitySaveResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -35,7 +32,7 @@ public class HedgeFundManagerServiceREST extends CommonServiceREST{
     @RequestMapping(value = "/get/{id}", method = RequestMethod.GET)
     public ResponseEntity get(@PathVariable long id){
         HFManagerDto firmDto = this.service.get(id);
-        return buildResponse(firmDto);
+        return buildNonNullResponse(firmDto);
     }
 
     @PreAuthorize("hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
@@ -61,12 +58,12 @@ public class HedgeFundManagerServiceREST extends CommonServiceREST{
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public ResponseEntity search(@RequestBody HedgeFundSearchParams searchParams){
         HedgeFundManagerPagedSearchResult searchResult = this.service.findByName(searchParams);
-        return buildResponse(searchResult);
+        return buildNonNullResponse(searchResult);
     }
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public ResponseEntity getManagers(){
         List<HFManagerDto> managers = this.service.findAll();
-        return buildResponse(managers);
+        return buildNonNullResponse(managers);
     }
 }

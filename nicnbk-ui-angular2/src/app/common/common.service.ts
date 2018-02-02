@@ -11,10 +11,10 @@ export class CommonService{
     }
 
     public extractData(res: Response) {
-        // TODO: check res is empty
         let body = res.json();
         return body || {};
     }
+
 
     public handleErrorResponse (error: any) {
         var errorResponse = new ErrorResponse;
@@ -22,8 +22,16 @@ export class CommonService{
             errorResponse.message = error.json().messageEn;
         }
         if(error.message){
-            //console.log(error);
             errorResponse.message = error.message;
+        }
+        if(error._body != null){
+            try {
+                var body = error.json();
+                errorResponse.message = body.message.nameEn;
+                errorResponse.messageKz = body.message.nameKz;
+                errorResponse.messageRu = body.message.nameRu;
+            }catch(e){
+            }
         }
         if(error.status){
             errorResponse.status = error.status;
@@ -36,7 +44,6 @@ export class CommonService{
     public handleError(error: any){
         let errMsg = (error.message) ? error.message :
             error.status ? `${error.status} - ${error.statusText}` : 'Server error';
-        console.error(error); // log to console instead
         return Observable.throw(errMsg);
     }
 

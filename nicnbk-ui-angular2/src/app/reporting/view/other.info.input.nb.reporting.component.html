@@ -1,0 +1,113 @@
+<div class="container">
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting']">NB Reporting</a></span>
+                </li>
+                <li>
+                    <span *ngIf="reportId != null">
+                        <a [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">
+                        Parsed input files</a></span>
+                </li>
+                <li class="active">Other info</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row top-buffer" *ngIf="errorMessage != null || successMessage != null">
+        <div class="col-md-12">
+            <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+            </div>
+            <div class="alert alert-info" *ngIf="!submitted && successMessage != null"><span>{{successMessage}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="row withpadding">
+        <h3 *ngIf="otherInfo.report != null">{{getReportDateShortFormatted(otherInfo.report.reportDate) != null ?
+            getReportDateShortFormatted(otherInfo.report.reportDate) + ' - ' : ''}}Other info</h3>
+    </div>
+    <div [ngBusy]="busy" class="row withpadding" style="min-height: 500px">
+        <form (ngSubmit)="save()" #otherInfoForm="ngForm" class="well span">
+            <div class="row top-buffer">
+                <div class="col-md-12">
+                    <label class="form-group col-md-2">Closing Balance (USD)</label>
+                    <!--<div class="form-group col-md-2">-->
+                        <!--<label for="localAmount" class="control-label">Local Amount</label>-->
+                        <!--<input class="form-control" id="localAmount" name="localAmount" [(ngModel)]="otherInfo.localAmount" required/>-->
+                    <!--</div>-->
+                    <div class="form-group col-md-2">
+                        <!--<label for="reportingEquivalent" class="control-label">Reporting Equivalent</label>-->
+                        <input class="form-control" id="reportingEquivalent" name="reportEquivalent" [(ngModel)]="otherInfo.closingBalance" required />
+                        <!--<span class="glyphicon glyphicon-calendar"></span>-->
+                    </div>
+                </div>
+            </div>
+            <div class="row top-buffer">
+                <div class="col-md-12">
+                    <label class="form-group col-md-2">Exchange Rate</label>
+
+                    <div class="form-group col-md-2">
+                        <label for="exchangeRateDate" class="control-label">Date</label>
+                        <div class='input-group date' id='exchangeRateDateDiv'>
+                            <input type='text' class="form-control" id="exchangeRateDate" name="exchangeRateDate" [(ngModel)]="otherInfo.exchangeRateDate"
+                                   #exchangeRateDate="ngModel"/>
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-2">
+                        <label for="exchangeRate" class="control-label">Rate</label>
+                        <input class="form-control" id="exchangeRate" name="exchangeRate" [(ngModel)]="otherInfo.exchangeRate" required/>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-success pull-right" [disabled]="!otherInfoForm.form.valid" >Save</button>
+                </div>
+            </div>
+        </form>
+
+        <h4>Monthly Cash Statement (PDF)</h4>
+        <div class="row col-md-12" *ngIf="otherInfo.monthlyCashStatementFileId == null">
+                <label class="btn btn-primary" for="attachmentFile">
+                    <input type="file" id="attachmentFile" (change)="onFileChange($event)" name="attachmentFile" style="display:none;"/>
+                    <span class="glyphicon glyphicon-circle-arrow-up">&nbsp; Upload</span>
+                </label>
+
+                <button *ngIf="monthlyCashStatementFile != null" class="btn btn-xs btn-success"
+                        (click)="uploadFile()">
+                    <span class="glyphicon glyphicon-play-circle"></span>
+                </button>
+
+                <button *ngIf="monthlyCashStatementFile != null" class="btn btn-xs btn-danger"
+                        (click)="clearFile()">
+                    <span class="glyphicon glyphicon-trash"></span>
+                </button>
+
+                <label *ngIf="monthlyCashStatementFile != null" class="label label-info">{{monthlyCashStatementFile[0].name}}</label>
+        </div>
+
+        <div class="row withpadding" *ngIf="otherInfo.monthlyCashStatementFileId > 0">
+            <file-attachment-downloader fileId="{{otherInfo.monthlyCashStatementFileId}}"
+                                        fileName="{{otherInfo.monthlyCashStatementFileName}}"
+                                        fileType="NB_REP_MCS">
+            </file-attachment-downloader>
+            <a (click)="deleteMonthlyCashStatementFile()">
+                <i class="glyphicon glyphicon-trash"></i>
+            </a>
+
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <button [routerLink]="['/reporting/NBReporting/generateReports/', reportId]" class="btn btn-primary pull-right"
+                        [disabled]="!otherInfoSaved" >NEXT</button>
+            </div>
+
+        </div>
+    </div>
+</div>

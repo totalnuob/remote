@@ -55,6 +55,40 @@ import {EmployeeProfileComponent} from "./employee/employee.profile.component";
 import {MMEditComponent} from "./macromonitor/macromonitor.edit.component";
 import {MMViewComponent} from "./macromonitor/macromonitor.view.component";
 import {NotFoundComponent} from "./page-not-found.component";
+import {MainNBReportingComponent} from "./reporting/main.nb.reporting.component";
+import {InputFileUploadNBReportingComponent} from "./reporting/input.file.upload.nb.reporting.component";
+import {ScheduleInvestmentsNBReportingComponent} from "./reporting/schedule.investments.nb.reporting.component";
+import {StatementBalanceOperationsNBReportingComponent} from "./reporting/statement.balance.operations.nb.reporting.component";
+import {StatementCashflowsNBReportingComponent} from "./reporting/statement.cashflows.nb.reporting.component";
+import {StatementChangesNBReportingComponent} from "./reporting/statement.changes.nb.reporting.component";
+import {SingularityGeneralLedgerBalanceNBReportingComponent} from "./reporting/singularity.general.ledger.balance.nb.reporting.component";
+import {SingularityNOALTrancheANBReportingComponent} from "./reporting/singularity.noal.tranchea.nb.reporting.component";
+import {SingularityNOALTrancheBNBReportingComponent} from "./reporting/singularity.noal.trancheb.nb.reporting.component";
+import {OtherInfoInputNBReportingComponent} from "./reporting/other.info.input.nb.reporting.component";
+import {FileAttachmentDownloaderComponent} from "./common/file-attachment-downloader.component";
+//import {GenerateReportsNBReportingComponent} from "./reporting/generate.reports.nb.reporting.component";
+import {NICKMFInputNBReportingComponent} from "./reporting/nick.mf.input.nb.reporting.component";
+import {SingularGeneratedFormNBReportingComponent} from "./reporting/singular.generated.form.nb.reporting.component";
+import {TarragonGeneratedFormNBReportingComponent} from "./reporting/tarragon.generated.form.nb.reporting.component";
+import {GeneratedReportsNBReportingComponent} from "./reporting/generated.reports.nb.reporting.component";
+import {ConsolidatedBalanceUSDFormNBReportingComponent} from "./reporting/consolidated.balance.usd.form.nb.reporting.component";
+import {PreviousYearInputNBReportingComponent} from "./reporting/previous.year.input.nb.reporting.component";
+import {ConsolidatedIncomeExpenseUSDFormNBReportingComponent} from "./reporting/consolidated.income.expense.usd.form.nb.reporting.component";
+import {ConsolidatedTotalIncomeUSDFormNBReportingComponent} from "./reporting/consolidated.total.income.usd.form.nb.reporting.component";
+import {NICKMFInputViewNBReportingComponent} from "./reporting/nick.mf.input.view.nb.reporting.component";
+import {TarragonGeneratedFormViewNBReportingComponent} from "./reporting/tarragon.generated.form.view.nb.reporting.component";
+import {ConsolidatedKZTForm8NBReportingComponent} from "./reporting/consolidated.kzt.form.8.nb.reporting.component";
+import {ConsolidatedKZTForm7NBReportingComponent} from "./reporting/consolidated.kzt.form.7.nb.reporting.component";
+import {ConsolidatedKZTForm10NBReportingComponent} from "./reporting/consolidated.kzt.form.10.nb.reporting.component";
+import {ConsolidatedKZTForm14NBReportingComponent} from "./reporting/consolidated.kzt.form.14.nb.reporting.component";
+import {ConsolidatedKZTForm13NBReportingComponent} from "./reporting/consolidated.kzt.form.13.nb.reporting.component";
+import {ConsolidatedKZTForm1NBReportingComponent} from "./reporting/consolidated.balance.kzt.form.1.nb.reporting.component";
+import {ReserveCalculationFormNBReportingComponent} from "./reporting/reserve.calculation.form.nb.reporting.component";
+import {ConsolidatedKZTForm2NBReportingComponent} from "./reporting/consolidated.kzt.form.2.nb.reporting.component";
+import {ConsolidatedKZTForm19NBReportingComponent} from "./reporting/consolidated.kzt.form.19.nb.reporting.component";
+import {ConsolidatedKZTForm22NBReportingComponent} from "./reporting/consolidated.kzt.form.22.nb.reporting.component";
+import {ConsolidatedKZTForm3NBReportingComponent} from "./reporting/consolidated.kzt.form.3.nb.reporting.component";
+import {ConsolidatedKZTForm6NBReportingComponent} from "./reporting/consolidated.kzt.form.6.nb.reporting.component";
 
 @NgModule({
     imports: [
@@ -78,15 +112,25 @@ import {NotFoundComponent} from "./page-not-found.component";
         LoginComponent, EmployeeProfileComponent,
         NewsListComponent, NewsEditComponent, NewsViewComponent,
         MemoListComponent,
-        MemoAttachmentDownloaderComponent,
+        MemoAttachmentDownloaderComponent, FileAttachmentDownloaderComponent,
         GeneralMemoEditComponent, PrivateEquityMemoEditComponent, HedgeFundsMemoEditComponent, RealEstateMemoEditComponent,
         TripMemoListComponent, TripMemoEditComponent, RiskManagementAxiomaReportingComponent, MonitoringHedgeFundsComponent, MonitoringLiquidPortfolioComponent,
         MonitoringMacroMonitorComponent, MonitoringPortfolioComponent, MonitoringPrivateEquityComponent, MonitoringPrivateEquityFundComponent,
         MonitoringHedgeFunds2Component,
+        MainNBReportingComponent, InputFileUploadNBReportingComponent,
 
         HFDashboardComponent, HFFundSearchComponent, HFFundSelectionComponent, HFPortfolioComponent, HFReportComponent,
         HFFundProfileComponent, HFManagerProfileComponent, HFManagerSearchComponent,
         PEFundProfileComponent, PEFirmProfileComponent, PEFirmSearchComponent, PEFundReportComponent,
+        AccessDeniedComponent,NotFoundComponent,
+        ScheduleInvestmentsNBReportingComponent, StatementBalanceOperationsNBReportingComponent, StatementCashflowsNBReportingComponent, StatementChangesNBReportingComponent,
+        SingularityGeneralLedgerBalanceNBReportingComponent, SingularityNOALTrancheANBReportingComponent, SingularityNOALTrancheBNBReportingComponent,
+        OtherInfoInputNBReportingComponent, /*GenerateReportsNBReportingComponent,*/ NICKMFInputNBReportingComponent, SingularGeneratedFormNBReportingComponent, TarragonGeneratedFormNBReportingComponent,
+        GeneratedReportsNBReportingComponent, ConsolidatedBalanceUSDFormNBReportingComponent, PreviousYearInputNBReportingComponent, ConsolidatedIncomeExpenseUSDFormNBReportingComponent,
+        ConsolidatedTotalIncomeUSDFormNBReportingComponent, NICKMFInputViewNBReportingComponent, TarragonGeneratedFormViewNBReportingComponent,
+        ConsolidatedKZTForm8NBReportingComponent, ConsolidatedKZTForm7NBReportingComponent, ConsolidatedKZTForm10NBReportingComponent, ConsolidatedKZTForm14NBReportingComponent, ConsolidatedKZTForm13NBReportingComponent,
+        ConsolidatedKZTForm1NBReportingComponent, ReserveCalculationFormNBReportingComponent,ConsolidatedKZTForm2NBReportingComponent, ConsolidatedKZTForm19NBReportingComponent, ConsolidatedKZTForm22NBReportingComponent,
+        ConsolidatedKZTForm3NBReportingComponent, ConsolidatedKZTForm6NBReportingComponent
         AccessDeniedComponent, MMEditComponent, MMViewComponent,NotFoundComponent
     ],
     bootstrap: [ AppComponent ]

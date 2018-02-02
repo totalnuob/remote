@@ -5,6 +5,8 @@ import java.util.Date;
 /**
  * Created by magzumov on 09.08.2016.
  */
+
+@Deprecated
 public class EntitySaveResponse extends Response {
 
     private Long entityId;

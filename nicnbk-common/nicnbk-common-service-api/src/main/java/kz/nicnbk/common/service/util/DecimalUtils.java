@@ -4,6 +4,8 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
+
+@Deprecated
 /**
  * Utility class for decimal numbers.
  *

@@ -1,0 +1,68 @@
+<div class="container">
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting']">Reports Main</a></span>
+                </li>
+                <!--<li>-->
+                    <!--<span *ngIf="reportId != null">-->
+                        <!--<a [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">-->
+                            <!--Parsed input files</a></span>-->
+                <!--</li>-->
+                <!--<li><span *ngIf="reportId != null"><a [routerLink]="['/reporting/NBReporting/NICKMFInput/', reportId]">NICK MF Input</a></span></li>-->
+                <!--<li><span *ngIf="reportId != null"><a [routerLink]="['/reporting/NBReporting/TarragonGeneratedForm/', reportId]">Tarragon - Generated Form</a></span></li>-->
+                <li>
+                <span *ngIf="reportId != null">
+                <a [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">
+                Input</a></span>
+                </li>
+                <li *ngIf="reportId != null"><span><a [routerLink]="['/reporting/NBReporting/GeneratedReports/', reportId, 'REPORTS']">Generate report</a></span></li>
+                <li class="active">Конс опиу NICK MF</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row top-buffer" *ngIf="errorMessage != null || successMessage != null">
+        <div class="col-md-12">
+            <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+            </div>
+            <div class="alert alert-info" *ngIf="!submitted && successMessage != null"><span>{{successMessage}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="row withpadding">
+        <button class="btn-xs btn-primary pull-right" (click)="export()"><span class="glyphicon glyphicon-list-alt"></span>&nbsp;Export</button>
+    </div>
+    <br/>
+    <div [ngBusy]="{busy: busyExport, message: 'Exporting...'}" class="row withpadding">
+        <table [ngBusy]="[busy]" class="table table-hover table-condensed" style="font-size: small">
+            <tr bgcolor="#e7e7e7">
+                <td width="5%">Номер группы субсчетов</td>
+                <td width="40%">Наименование группы субсчетов</td>
+                <td width="5%">Код строки</td>
+                <td width="20%">Наименование контрагента/эмитента</td>
+                <td width="15%">На отчетную дату текущего периода</td>
+                <td width="15%">На отчетную дату предыдущего периода</td>
+            </tr>
+            <tr>
+                <td width="5%">1</td>
+                <td width="40%">2</td>
+                <td width="5%">3</td>
+                <td width="20%">4</td>
+                <td width="15%">5</td>
+                <td width="15%">6</td>
+            </tr>
+            <tr *ngFor="let record of records">
+                <td>{{record.accountNumber}}</td>
+                <td>{{record.name}}</td>
+                <td>{{record.accountNumber == null ? record.lineNumber : ''}}</td>
+                <!--<td>{{record.lineNumber}}</td>-->
+                <td>{{record.otherEntityName}}</td>
+                <td>{{record.currentAccountBalance | number:'1.2-2'}}</td>
+                <td>{{record.previousAccountBalance | number:'1.2-2'}}</td>
+            </tr>
+
+        </table>
+    </div>
+</div>

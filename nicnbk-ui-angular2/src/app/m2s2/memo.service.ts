@@ -87,7 +87,7 @@ export class MemoService extends CommonService{
     }
 
     postFiles(memoId, params, files){
-        return this.uploadService.postFiles(this.MEMO_ATTACHMENT_UPLOAD_URL + memoId, [], files);
+        return this.uploadService.postFiles(this.MEMO_ATTACHMENT_UPLOAD_URL + memoId, [], files, null);
     }
 
     get(type, id): Observable<any> {

@@ -4,6 +4,8 @@ import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.pe.PECompanyPerformanceIddService;
 import kz.nicnbk.service.api.pe.PECompanyPerformanceService;
 import kz.nicnbk.service.api.pe.PEFundService;
+import kz.nicnbk.service.dto.pe.PEFundDto;
+import kz.nicnbk.service.dto.pe.PESearchParams;
 import kz.nicnbk.service.api.pe.PEGrossCashflowService;
 import kz.nicnbk.service.dto.common.StatusResultType;
 import kz.nicnbk.service.dto.files.FilesDto;
@@ -56,7 +58,9 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
         // set creator
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
-
+        if(fundDto.getId() == null){
+            fundDto.setOwner(username);
+        }
         Long id = this.service.save(fundDto, username);
         if(id == null){
             // error occurred
@@ -169,7 +173,7 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public ResponseEntity search(@RequestBody PESearchParams searchParams){
         List<PEFundDto> funds = this.service.loadFirmFunds(searchParams.getId(), searchParams.getReport());
-        return buildResponse(funds);
+        return buildNonNullResponse(funds);
     }
 
     @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")

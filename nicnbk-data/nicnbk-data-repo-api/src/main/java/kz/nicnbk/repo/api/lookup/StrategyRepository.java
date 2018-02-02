@@ -12,4 +12,6 @@ public interface StrategyRepository extends PagingAndSortingRepository<Strategy,
     List<Strategy> findByGroupType(int groupType);
 
     Strategy findByCode(String code);
+
+    Strategy findByNameEnAndGroupType(String nameEn, int groupType);
 }

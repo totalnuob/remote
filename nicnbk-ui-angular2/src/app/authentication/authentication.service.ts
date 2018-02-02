@@ -39,6 +39,15 @@ export class AuthenticationService extends CommonService{
 
     }
 
+    logout(){
+
+        return this.http.post(this.LOGOUT_URL, null, this.getOptionsWithCredentials())
+            // TODO: parse json with extractData()
+            .map(this.extractData)
+            .catch(this.handleError);
+
+    }
+
     //checkToken(){
     //    return this.http.post(this.CHECK_TOKEN_URL, null, this.getOptionsWithCredentials())
     //        .map(this.extractData)

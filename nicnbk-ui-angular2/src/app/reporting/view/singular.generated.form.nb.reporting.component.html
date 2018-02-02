@@ -1,0 +1,67 @@
+<div class="container">
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting']">Reports Main</a></span>
+                </li>
+                <li *ngIf="reportId != null && report != null && report.status != 'SUBMITTED'">
+                    <span>
+                        <a [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">
+                            Input</a></span>
+                </li>
+                <!--<li><span *ngIf="reportId != null"><a [routerLink]="['/reporting/NBReporting/NICKMFInput/', reportId]">NICK MF Input</a></span></li>-->
+                <!--<li><span *ngIf="reportId != null"><a [routerLink]="['/reporting/NBReporting/TarragonGeneratedForm/', reportId, 'INPUT']">Tarragon - Generated Form</a></span></li>-->
+                <li><span *ngIf="reportId != null"><a [routerLink]="['/reporting/NBReporting/GeneratedReports/', reportId, 'INPUT']">Generate report</a></span></li>
+                <li class="active">Singularity - Generated Form</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row top-buffer" *ngIf="errorMessage != null || successMessage != null">
+        <div class="col-md-12">
+            <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+            </div>
+            <div class="alert alert-info" *ngIf="!submitted && successMessage != null"><span>{{successMessage}}</span>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <div class="row withpadding">
+        <table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small" *ngIf="records != null">
+            <tr bgcolor="#e7e7e7">
+                <td>Acronym</td>
+                <td>Balance Date</td>
+                <td>Financial Statement Category</td>
+                <td>GL Account</td>
+                <td>Financial Statement Category Description</td>
+                <td>Chart of Accounts Long Description</td>
+                <td>Investor Account/Portfolio Fund</td>
+                <td>NB Account Number</td>
+                <td>NIC Account Name</td>
+                <td>GL Account Balance</td>
+                <td>Seg Val CCY</td>
+                <td>Fund CCY</td>
+            </tr>
+            <tr *ngFor="let record of records">
+                <td>{{record.acronym}}</td>
+                <td>{{record.balanceDate}}</td>
+                <td>{{record.financialStatementCategory}}</td>
+                <td>{{record.glaccount}}</td>
+                <td>{{record.financialStatementCategoryDescription}}</td>
+                <td>{{record.chartAccountsLongDescription}}</td>
+                <td>{{record.subscriptionRedemptionEntity}}</td>
+                <td>{{record.nbAccountNumber}}</td>
+                <td>{{record.nicAccountName}}</td>
+                <td>{{record.glaccountBalance != null ? (record.glaccountBalance | number:'1.2-2'): ''}}</td>
+                <td>{{record.segValCCY}}</td>
+                <td>{{record.fundCCY}}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+        </div>
+    </div>
+</div>
