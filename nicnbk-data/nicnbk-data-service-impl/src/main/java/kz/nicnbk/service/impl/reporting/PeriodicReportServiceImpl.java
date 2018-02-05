@@ -4938,18 +4938,16 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         Map<Integer, List<ConsolidatedBalanceFormRecordDto>> recordsMap = getConsolidatedBalanceUSDFormMap(reportId);
 
         Resource resource = new ClassPathResource("export_template/TEMPLATE_NICKMF_cons_USD_1.xlsx");
-        File file = null;
+        InputStream excelFileToRead = null;
         try {
-            file = resource.getFile();
+            excelFileToRead = resource.getInputStream();
         } catch (IOException e) {
             logger.error("Reporting: Export file template not found: 'TEMPLATE_NICKMF_cons_USD_1.xlsx'");
             return null;
             //e.printStackTrace();
         }
 
-        InputStream excelFileToRead = null;
         try {
-            excelFileToRead = new FileInputStream(file);
             XSSFWorkbook  workbook = new XSSFWorkbook(excelFileToRead);
             XSSFSheet sheet = workbook.getSheetAt(0);
             Iterator<Row> rowIterator = sheet.iterator();
@@ -5048,13 +5046,8 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
             InputStream inputStream = new FileInputStream(filePath);
             return inputStream;
-        } catch (FileNotFoundException e) {
-            // TODO: log error
-            //e.printStackTrace();
-        } catch (IOException e) {
-
-            // TODO: log error
-            //e.printStackTrace();
+        }  catch (IOException e) {
+            logger.error("IO Exception when exporting USD_FORM_1", e);
         }
 
         return null;
@@ -5071,18 +5064,15 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         Map<Integer, List<ConsolidatedBalanceFormRecordDto>> recordsMap = getConsolidatedIncomeExpenseUSDFormMap(reportId);
 
         Resource resource = new ClassPathResource("export_template/TEMPLATE_NICKMF_cons_USD_2.xlsx");
-        File file = null;
+        InputStream ExcelFileToRead = null;
         try {
-            file = resource.getFile();
+            ExcelFileToRead = resource.getInputStream();
         } catch (IOException e) {
             logger.error("Reporting: Export file template not found: 'TEMPLATE_NICKMF_cons_USD_2.xlsx'");
             return null;
             //e.printStackTrace();
         }
-
-        InputStream ExcelFileToRead = null;
         try {
-            ExcelFileToRead = new FileInputStream(file);
             XSSFWorkbook  workbook = new XSSFWorkbook(ExcelFileToRead);
             XSSFSheet sheet = workbook.getSheetAt(0);
             Iterator<Row> rowIterator = sheet.iterator();
@@ -5181,10 +5171,8 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
             InputStream inputStream = new FileInputStream(filePath);
             return inputStream;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("IO Exception when exporting USD_FORM_2", e);
         }
 
         return null;
@@ -5199,18 +5187,16 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         List<ConsolidatedBalanceFormRecordDto> records = generateConsolidatedTotalIncomeUSDForm(reportId);
 
         Resource resource = new ClassPathResource("export_template/TEMPLATE_NICKMF_cons_USD_3.xlsx");
-        File file = null;
+        InputStream ExcelFileToRead = null;
         try {
-            file = resource.getFile();
+            ExcelFileToRead = resource.getInputStream();
         } catch (IOException e) {
             logger.error("Reporting: Export file template not found: 'TEMPLATE_NICKMF_cons_USD_3.xlsx'");
             return null;
             //e.printStackTrace();
         }
 
-        InputStream ExcelFileToRead = null;
         try {
-            ExcelFileToRead = new FileInputStream(file);
             XSSFWorkbook  workbook = new XSSFWorkbook(ExcelFileToRead);
             XSSFSheet sheet = workbook.getSheetAt(0);
             Iterator<Row> rowIterator = sheet.iterator();
@@ -5263,10 +5249,8 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
             InputStream inputStream = new FileInputStream(filePath);
             return inputStream;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("IO Exception when exporting USD_FORM_3", e);
         }
 
         return null;
@@ -5281,18 +5265,15 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         Map<Integer, List<ConsolidatedBalanceFormRecordDto>> recordsMap = getConsolidatedBalanceKZTForm1Map(reportId);
 
         Resource resource = new ClassPathResource("export_template/TEMPLATE_NICKMF_cons_KZT_1.xlsx");
-        File file = null;
+        InputStream excelFileToRead = null;
         try {
-            file = resource.getFile();
+            excelFileToRead = resource.getInputStream();
         } catch (IOException e) {
             logger.error("Reporting: Export file template not found: 'TEMPLATE_NICKMF_cons_KZT_1.xlsx'");
             return null;
             //e.printStackTrace();
         }
-
-        InputStream excelFileToRead = null;
         try {
-            excelFileToRead = new FileInputStream(file);
             XSSFWorkbook  workbook = new XSSFWorkbook(excelFileToRead);
             XSSFSheet sheet = workbook.getSheetAt(0);
             Iterator<Row> rowIterator = sheet.iterator();
@@ -5394,13 +5375,10 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
             InputStream inputStream = new FileInputStream(filePath);
             return inputStream;
-        } catch (FileNotFoundException e) {
+        } catch (IOException ex) {
             // TODO: log error
             //e.printStackTrace();
-        } catch (IOException e) {
-
-            // TODO: log error
-            //e.printStackTrace();
+            logger.error("IO Exception when exporting KZT_FORM_1", ex);
         }
 
         return null;
@@ -5415,18 +5393,15 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         Map<Integer, List<ConsolidatedBalanceFormRecordDto>> recordsMap = getConsolidatedBalanceKZTForm2Map(reportId);
 
         Resource resource = new ClassPathResource("export_template/TEMPLATE_NICKMF_cons_KZT_2.xlsx");
-        File file = null;
+        InputStream excelFileToRead = null;
         try {
-            file = resource.getFile();
+            excelFileToRead = resource.getInputStream();
         } catch (IOException e) {
             logger.error("Reporting: Export file template not found: 'TEMPLATE_NICKMF_cons_KZT_2.xlsx'");
             return null;
             //e.printStackTrace();
         }
-
-        InputStream excelFileToRead = null;
         try {
-            excelFileToRead = new FileInputStream(file);
             XSSFWorkbook  workbook = new XSSFWorkbook(excelFileToRead);
             XSSFSheet sheet = workbook.getSheetAt(0);
             Iterator<Row> rowIterator = sheet.iterator();
@@ -5528,13 +5503,10 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
             InputStream inputStream = new FileInputStream(filePath);
             return inputStream;
-        } catch (FileNotFoundException e) {
+        }catch (IOException ex) {
             // TODO: log error
             //e.printStackTrace();
-        } catch (IOException e) {
-
-            // TODO: log error
-            //e.printStackTrace();
+            logger.error("IO Exception when exporting KZT_FORM_2", ex);
         }
 
         return null;
@@ -5549,18 +5521,15 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         Map<Integer, List<ConsolidatedBalanceFormRecordDto>> recordsMap = getConsolidatedBalanceKZTForm3Map(reportId);
 
         Resource resource = new ClassPathResource("export_template/TEMPLATE_NICKMF_cons_KZT_3.xlsx");
-        File file = null;
+        InputStream excelFileToRead = null;
         try {
-            file = resource.getFile();
+            excelFileToRead = resource.getInputStream();
         } catch (IOException e) {
             logger.error("Reporting: Export file template not found: 'TEMPLATE_NICKMF_cons_KZT_3.xlsx'");
             return null;
             //e.printStackTrace();
         }
-
-        InputStream excelFileToRead = null;
         try {
-            excelFileToRead = new FileInputStream(file);
             XSSFWorkbook  workbook = new XSSFWorkbook(excelFileToRead);
             XSSFSheet sheet = workbook.getSheetAt(0);
             Iterator<Row> rowIterator = sheet.iterator();
@@ -5638,13 +5607,11 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
             InputStream inputStream = new FileInputStream(filePath);
             return inputStream;
-        } catch (FileNotFoundException e) {
-            // TODO: log error
-            //e.printStackTrace();
-        } catch (IOException e) {
+        }catch (IOException e) {
 
             // TODO: log error
             //e.printStackTrace();
+            logger.error("IO Exception when exporting KZT_FORM_3", e);
         }
 
         return null;
@@ -5659,18 +5626,15 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         Map<Integer, List<ConsolidatedKZTForm6RecordDto>> recordsMap = getConsolidatedBalanceKZTForm6Map(reportId);
 
         Resource resource = new ClassPathResource("export_template/TEMPLATE_NICKMF_cons_KZT_6.xlsx");
-        File file = null;
+        InputStream excelFileToRead = null;
         try {
-            file = resource.getFile();
+            excelFileToRead = resource.getInputStream();
         } catch (IOException e) {
             logger.error("Reporting: Export file template not found: 'TEMPLATE_NICKMF_cons_KZT_6.xlsx'");
             return null;
             //e.printStackTrace();
         }
-
-        InputStream excelFileToRead = null;
         try {
-            excelFileToRead = new FileInputStream(file);
             XSSFWorkbook  workbook = new XSSFWorkbook(excelFileToRead);
             XSSFSheet sheet = workbook.getSheetAt(0);
             Iterator<Row> rowIterator = sheet.iterator();
@@ -5755,13 +5719,11 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
             InputStream inputStream = new FileInputStream(filePath);
             return inputStream;
-        } catch (FileNotFoundException e) {
-            // TODO: log error
-            //e.printStackTrace();
-        } catch (IOException e) {
+        }catch (IOException e) {
 
             // TODO: log error
             //e.printStackTrace();
+            logger.error("IO Exception when exporting KZT_FORM_6", e);
         }
 
         return null;
@@ -5779,18 +5741,15 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         System.out.println((end-start) / 1000 + " seconds - generating report data");
 
         Resource resource = new ClassPathResource("export_template/TEMPLATE_NICKMF_cons_KZT_7.xlsx");
-        File file = null;
+        InputStream excelFileToRead = null;
         try {
-            file = resource.getFile();
+            excelFileToRead = resource.getInputStream();
         } catch (IOException e) {
             logger.error("Reporting: Export file template not found: 'TEMPLATE_NICKMF_cons_KZT_7.xlsx'");
             return null;
             //e.printStackTrace();
         }
-
-        InputStream excelFileToRead = null;
         try {
-            excelFileToRead = new FileInputStream(file);
             start = System.currentTimeMillis();
             XSSFWorkbook  workbook = new XSSFWorkbook(excelFileToRead);
             end = System.currentTimeMillis();
@@ -5960,13 +5919,10 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
             InputStream inputStream = new FileInputStream(filePath);
             return inputStream;
-        } catch (FileNotFoundException e) {
-            // TODO: log error
-            //e.printStackTrace();
         } catch (IOException e) {
-
             // TODO: log error
             //e.printStackTrace();
+            logger.error("IO Exception when exporting KZT_FORM_7", e);
         }
 
         return null;
@@ -5984,18 +5940,15 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         System.out.println((end-start) / 1000 + " seconds - generating report data");
 
         Resource resource = new ClassPathResource("export_template/TEMPLATE_NICKMF_cons_KZT_8.xlsx");
-        File file = null;
+        InputStream excelFileToRead = null;
         try {
-            file = resource.getFile();
+            excelFileToRead = resource.getInputStream();
         } catch (IOException e) {
             logger.error("Reporting: Export file template not found: 'TEMPLATE_NICKMF_cons_KZT_8.xlsx'");
             return null;
             //e.printStackTrace();
         }
-
-        InputStream excelFileToRead = null;
         try {
-            excelFileToRead = new FileInputStream(file);
             start = System.currentTimeMillis();
             XSSFWorkbook  workbook = new XSSFWorkbook(excelFileToRead);
             end = System.currentTimeMillis();
@@ -6133,13 +6086,10 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
             InputStream inputStream = new FileInputStream(filePath);
             return inputStream;
-        } catch (FileNotFoundException e) {
-            // TODO: log error
-            //e.printStackTrace();
         } catch (IOException e) {
-
             // TODO: log error
             //e.printStackTrace();
+            logger.error("IO Exception when exporting KZT_FORM_8", e);
         }
 
         return null;
@@ -6157,18 +6107,17 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         System.out.println((end-start) / 1000 + " seconds - generating report data");
 
         Resource resource = new ClassPathResource("export_template/TEMPLATE_NICKMF_cons_KZT_10.xlsx");
-        File file = null;
+        InputStream excelFileToRead = null;
         try {
-            file = resource.getFile();
+            excelFileToRead = resource.getInputStream();
         } catch (IOException e) {
             logger.error("Reporting: Export file template not found: 'TEMPLATE_NICKMF_cons_KZT_10.xlsx'");
             return null;
             //e.printStackTrace();
         }
 
-        InputStream excelFileToRead = null;
+
         try {
-            excelFileToRead = new FileInputStream(file);
             start = System.currentTimeMillis();
             XSSFWorkbook  workbook = new XSSFWorkbook(excelFileToRead);
             end = System.currentTimeMillis();
@@ -6295,13 +6244,10 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
             InputStream inputStream = new FileInputStream(filePath);
             return inputStream;
-        } catch (FileNotFoundException e) {
-            // TODO: log error
-            //e.printStackTrace();
         } catch (IOException e) {
-
             // TODO: log error
             //e.printStackTrace();
+            logger.error("IO Exception when exporting KZT_FORM_10", e);
         }
 
         return null;
@@ -6319,18 +6265,15 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         System.out.println((end-start) / 1000 + " seconds - generating report data");
 
         Resource resource = new ClassPathResource("export_template/TEMPLATE_NICKMF_cons_KZT_13.xlsx");
-        File file = null;
+        InputStream excelFileToRead = null;
         try {
-            file = resource.getFile();
+            excelFileToRead = resource.getInputStream();
         } catch (IOException e) {
             logger.error("Reporting: Export file template not found: 'TEMPLATE_NICKMF_cons_KZT_13.xlsx'");
             return null;
             //e.printStackTrace();
         }
-
-        InputStream excelFileToRead = null;
         try {
-            excelFileToRead = new FileInputStream(file);
             start = System.currentTimeMillis();
             XSSFWorkbook  workbook = new XSSFWorkbook(excelFileToRead);
             end = System.currentTimeMillis();
@@ -6506,13 +6449,10 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
             InputStream inputStream = new FileInputStream(filePath);
             return inputStream;
-        } catch (FileNotFoundException e) {
+        }catch (IOException e) {
             // TODO: log error
             //e.printStackTrace();
-        } catch (IOException e) {
-
-            // TODO: log error
-            //e.printStackTrace();
+            logger.error("IO Exception when exporting KZT_FORM_13", e);
         }
 
         return null;
@@ -6530,18 +6470,16 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         System.out.println((end-start) / 1000 + " seconds - generating report data");
 
         Resource resource = new ClassPathResource("export_template/TEMPLATE_NICKMF_cons_KZT_14.xlsx");
-        File file = null;
+        InputStream excelFileToRead = null;
         try {
-            file = resource.getFile();
+            excelFileToRead = resource.getInputStream();
         } catch (IOException e) {
             logger.error("Reporting: Export file template not found: 'TEMPLATE_NICKMF_cons_KZT_14.xlsx'");
             return null;
             //e.printStackTrace();
         }
 
-        InputStream excelFileToRead = null;
         try {
-            excelFileToRead = new FileInputStream(file);
             start = System.currentTimeMillis();
             XSSFWorkbook  workbook = new XSSFWorkbook(excelFileToRead);
             end = System.currentTimeMillis();
@@ -6669,13 +6607,10 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
             InputStream inputStream = new FileInputStream(filePath);
             return inputStream;
-        } catch (FileNotFoundException e) {
-            // TODO: log error
-            //e.printStackTrace();
         } catch (IOException e) {
-
             // TODO: log error
             //e.printStackTrace();
+            logger.error("IO Exception when exporting KZT_FORM_14", e);
         }
 
         return null;
@@ -6693,18 +6628,17 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         System.out.println((end-start) / 1000 + " seconds - generating report data");
 
         Resource resource = new ClassPathResource("export_template/TEMPLATE_NICKMF_cons_KZT_19.xlsx");
-        File file = null;
+        InputStream excelFileToRead = null;
         try {
-            file = resource.getFile();
+            excelFileToRead = resource.getInputStream();
         } catch (IOException e) {
             logger.error("Reporting: Export file template not found: 'TEMPLATE_NICKMF_cons_KZT_19.xlsx'");
             return null;
             //e.printStackTrace();
         }
 
-        InputStream excelFileToRead = null;
+
         try {
-            excelFileToRead = new FileInputStream(file);
             start = System.currentTimeMillis();
             XSSFWorkbook  workbook = new XSSFWorkbook(excelFileToRead);
             end = System.currentTimeMillis();
@@ -6825,13 +6759,10 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
             InputStream inputStream = new FileInputStream(filePath);
             return inputStream;
-        } catch (FileNotFoundException e) {
-            // TODO: log error
-            //e.printStackTrace();
         } catch (IOException e) {
-
             // TODO: log error
             //e.printStackTrace();
+            logger.error("IO Exception when exporting KZT_FORM_19", e);
         }
 
         return null;
@@ -6849,18 +6780,16 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         System.out.println((end-start) / 1000 + " seconds - generating report data");
 
         Resource resource = new ClassPathResource("export_template/TEMPLATE_NICKMF_cons_KZT_22.xlsx");
-        File file = null;
+        InputStream excelFileToRead = null;
         try {
-            file = resource.getFile();
+            excelFileToRead = resource.getInputStream();
         } catch (IOException e) {
             logger.error("Reporting: Export file template not found: 'TEMPLATE_NICKMF_cons_KZT_22.xlsx'");
             return null;
             //e.printStackTrace();
         }
 
-        InputStream excelFileToRead = null;
         try {
-            excelFileToRead = new FileInputStream(file);
             start = System.currentTimeMillis();
             XSSFWorkbook  workbook = new XSSFWorkbook(excelFileToRead);
             end = System.currentTimeMillis();
@@ -6975,13 +6904,10 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
             InputStream inputStream = new FileInputStream(filePath);
             return inputStream;
-        } catch (FileNotFoundException e) {
-            // TODO: log error
-            //e.printStackTrace();
         } catch (IOException e) {
-
             // TODO: log error
             //e.printStackTrace();
+            logger.error("IO Exception when exporting KZT_FORM_22", e);
         }
 
         return null;
