@@ -1,5 +1,5 @@
 INSERT INTO rep_singularity_nic_chart_of_accounts(id, singularity_account_number, nic_chart_accounts_id) VALUES(1, '1010', 1);
-INSERT INTO rep_singularity_nic_chart_of_accounts(id, singularity_account_number, nic_chart_accounts_id) VALUES(2, '', 2;
+INSERT INTO rep_singularity_nic_chart_of_accounts(id, singularity_account_number, nic_chart_accounts_id) VALUES(2, '', 2);
 INSERT INTO rep_singularity_nic_chart_of_accounts(id, singularity_account_number, nic_chart_accounts_id) VALUES(3, '', 3 );
 INSERT INTO rep_singularity_nic_chart_of_accounts(id, singularity_account_number, nic_chart_accounts_id) VALUES(4, '', 4 );
 INSERT INTO rep_singularity_nic_chart_of_accounts(id, singularity_account_number, nic_chart_accounts_id) VALUES(5, '3010', 5 );
