@@ -203,7 +203,7 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
     @RequestMapping(value = "/createOnePager/{fundId}", method = RequestMethod.GET)
     public ResponseEntity<?> createOnePager(@PathVariable Long fundId) {
 
-        pdfService.createOnePager();
+        pdfService.createOnePager(fundId);
 
         PEIrrResultDto resultDto;
 

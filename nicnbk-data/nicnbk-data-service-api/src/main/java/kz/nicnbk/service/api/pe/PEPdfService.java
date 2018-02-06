@@ -5,5 +5,5 @@ package kz.nicnbk.service.api.pe;
  */
 public interface PEPdfService {
 
-    void createOnePager();
+    void createOnePager(Long fundId);
 }
