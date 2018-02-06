@@ -14,5 +14,5 @@ public interface PeriodicDataService extends BaseService{
 
     PeriodicDataDto getCashflowBeginningPeriod(Date date, int tranche);
 
-    PeriodicDataDto getCashflowBeginningPeriod(int tranche);
+    PeriodicDataDto getCashflowBeginningPeriodForYear(int year, int tranche);
 }

@@ -43,8 +43,8 @@ public class PeriodicDataServiceImpl implements PeriodicDataService {
     }
 
     @Override
-    public PeriodicDataDto getCashflowBeginningPeriod(int tranche) {
-        Date date = DateUtils.getFirstDayCurrentYear();
+    public PeriodicDataDto getCashflowBeginningPeriodForYear(int year, int tranche) {
+        Date date = DateUtils.getFirstDayYear(year);
         return getCashflowBeginningPeriod(date, tranche);
     }
 }

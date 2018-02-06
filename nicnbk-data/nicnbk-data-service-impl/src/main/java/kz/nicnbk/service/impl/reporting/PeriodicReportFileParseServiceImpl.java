@@ -5,21 +5,20 @@ import kz.nicnbk.common.service.util.*;
 import kz.nicnbk.repo.api.lookup.StrategyRepository;
 import kz.nicnbk.repo.model.common.Strategy;
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
+import kz.nicnbk.repo.model.reporting.PeriodicReport;
 import kz.nicnbk.repo.model.reporting.hedgefunds.ReportingHFGeneralLedgerBalance;
 import kz.nicnbk.repo.model.reporting.hedgefunds.ReportingHFNOAL;
 import kz.nicnbk.repo.model.reporting.privateequity.*;
 import kz.nicnbk.service.api.reporting.PeriodicDataService;
 import kz.nicnbk.service.api.reporting.PeriodicReportFileParseService;
+import kz.nicnbk.service.api.reporting.PeriodicReportService;
 import kz.nicnbk.service.api.reporting.hedgefunds.HFGeneralLedgerBalanceService;
 import kz.nicnbk.service.api.reporting.hedgefunds.HFNOALService;
 import kz.nicnbk.service.api.reporting.privateequity.*;
 import kz.nicnbk.service.dto.common.FileUploadResultDto;
 import kz.nicnbk.service.dto.common.ResponseStatusType;
 import kz.nicnbk.service.dto.files.FilesDto;
-import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordDto;
-import kz.nicnbk.service.dto.reporting.PeriodicDataDto;
-import kz.nicnbk.service.dto.reporting.SingularityGeneralLedgerBalanceRecordDto;
-import kz.nicnbk.service.dto.reporting.SingularityNOALRecordDto;
+import kz.nicnbk.service.dto.reporting.*;
 import kz.nicnbk.service.dto.reporting.exception.ExcelFileParseException;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -46,6 +45,9 @@ import java.util.*;
 public class PeriodicReportFileParseServiceImpl implements PeriodicReportFileParseService {
 
     private static final Logger logger = LoggerFactory.getLogger(PeriodicReportFileParseServiceImpl.class);
+
+    @Autowired
+    private PeriodicReportService periodicReportService;
 
     @Autowired
     private PEScheduleInvestmentService scheduleInvestmentService;
@@ -900,8 +902,9 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
             }
 
             /* CHECK SUMS/TOTALS ***********************************************************************************/
+            PeriodicReportDto report = this.periodicReportService.getPeriodicReport(reportId);
             checkTotalSumsGeneric(records, 3, "Net increase (decrease) in cash and cash equivalents", 0);
-            checkSumsStatementCashFlows(records);
+            checkSumsStatementCashFlows(records, report.getReportDate());
 
 
             /* CHECK ENTITIES AND ASSEMBLE *************************************************************************/
@@ -1038,7 +1041,7 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
      *
      * @param records - cash flows
      */
-    private void checkSumsStatementCashFlows(List<ConsolidatedReportRecordDto> records){
+    private void checkSumsStatementCashFlows(List<ConsolidatedReportRecordDto> records, Date reportDate){
         //List<ConsolidatedReportRecordDto> resultList = new ArrayList<>();
         Double[] totals = new Double[]{0.0, 0.0, 0.0};
         if(records != null){
@@ -1047,8 +1050,8 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                 if(record.getName().equalsIgnoreCase("Cash and cash equivalents - beginning of period")){
                     previousPeriod = record.getValues();
 
-                    PeriodicDataDto periodicDataDtoTrancheA = this.periodicDataService.getCashflowBeginningPeriod(1);
-                    PeriodicDataDto periodicDataDtoTrancheB = this.periodicDataService.getCashflowBeginningPeriod(2);
+                    PeriodicDataDto periodicDataDtoTrancheA = this.periodicDataService.getCashflowBeginningPeriodForYear(DateUtils.getYear(reportDate), 1);
+                    PeriodicDataDto periodicDataDtoTrancheB = this.periodicDataService.getCashflowBeginningPeriodForYear(DateUtils.getYear(reportDate), 2);
 
                     if(periodicDataDtoTrancheA == null || periodicDataDtoTrancheB == null){
                         throw new ExcelFileParseException("Missing beginning of period data for '" + record.getName() + "'");

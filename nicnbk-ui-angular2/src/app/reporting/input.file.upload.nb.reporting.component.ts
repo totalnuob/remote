@@ -117,11 +117,11 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     // set file id
                     this.report.tarragonScheduleInvestmentFileId = res.fileId;
                     this.report.tarragonScheduleInvestmentFileName = res.fileName;
-                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - Schedule of Investments", null);
+                    this.postAction(res != null && res.message != null && res.message.nameEn != null ? res.message.nameEn : "Successfully uploaded file - Schedule of Investments", null);
                 },
                 error => {
                     var result = JSON.parse(error);
-                    var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    var message = result != null && result.message != null && result.message.nameEn != null ? result.message.nameEn : null;
                     this.fileTarragonScheduleInvestment = null;
                     this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
@@ -134,11 +134,11 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     // set file id
                     this.report.tarragonStatementAssetsFileId = res.fileId;
                     this.report.tarragonStatementAssetsFileName = res.fileName;
-                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - Statement of Assets, Liabilities and Partners Capital", null);
+                    this.postAction(res != null && res.message != null && res.message.nameEn != null ? res.message.nameEn : "Successfully uploaded file - Statement of Assets, Liabilities and Partners Capital", null);
                 },
                 (error) => {
                     var result = JSON.parse(error);
-                    var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    var message = result != null && result.message != null && result.message.nameEn != null ? result.message.nameEn : null;
                     this.fileTarragonStatementAssets = null;
                     this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
@@ -150,11 +150,11 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     // set file id
                     this.report.tarragonStatementCashflowsFileId = res.fileId;
                     this.report.tarragonStatementCashflowsFileName = res.fileName;
-                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - Statment of Cashflows", null);
+                    this.postAction(res != null && res.message != null && res.message.nameEn != null ? res.message.nameEn : "Successfully uploaded file - Statment of Cashflows", null);
                 },
                 error => {
                     var result = JSON.parse(error);
-                    var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    var message = result != null && result.message != null && result.message.nameEn != null ? result.message.nameEn : null;
                     this.fileTarragonStatementCashflows = null;
                     this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
@@ -166,11 +166,11 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     // set file id
                     this.report.tarragonStatementChangesFileId = res.fileId;
                     this.report.tarragonStatementChangesFileName = res.fileName;
-                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - Statement of Changes", null);
+                    this.postAction(res != null && res.message != null && res.message.nameEn != null ? res.message.nameEn : "Successfully uploaded file - Statement of Changes", null);
                 },
                 error => {
                     var result = JSON.parse(error);
-                    var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    var message = result != null && result.message != null && result.message.nameEn != null ? result.message.nameEn : null;
                     this.fileTarragonStatementChanges = null;
                     this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
@@ -182,11 +182,11 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     // set file id
                     this.report.singularityBSTrancheAFileId = res.fileId;
                     this.report.singularityBSTrancheAFileName = res.fileName;
-                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - BS Singular Tranche A", null);
+                    this.postAction(res != null && res.message != null && res.message.nameEn != null ? res.message.nameEn : "Successfully uploaded file - BS Singular Tranche A", null);
                 },
                 error => {
                     var result = JSON.parse(error);
-                    var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    var message = result != null && result.message != null && result.message.nameEn != null ? result.message.nameEn : null;
                     this.fileSingularityBSTrancheA = null;
                     this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
@@ -198,11 +198,11 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     // set file id
                     this.report.singularityIMDRTrancheAFileId = res.fileId;
                     this.report.singularityIMDRTrancheAFileName = res.fileName;
-                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - IMDR Singular Tranche A", null);
+                    this.postAction(res != null && res.message != null && res.message.nameEn != null ? res.message.nameEn : "Successfully uploaded file - IMDR Singular Tranche A", null);
                 },
                 error => {
                     var result = JSON.parse(error);
-                    var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    var message = result != null && result.message != null && result.message.nameEn != null ? result.message.nameEn : null;
                     this.fileSingularityIMDRTrancheA = null;
                     this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
@@ -214,11 +214,11 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     // set file id
                     this.report.singularityPARTrancheAFileId = res.fileId;
                     this.report.singularityPARTrancheAFileName = res.fileName;
-                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - PAR Singular Tranche A", null);
+                    this.postAction(res != null && res.message != null && res.message.nameEn != null ? res.message.nameEn : "Successfully uploaded file - PAR Singular Tranche A", null);
                 },
                 error => {
                     var result = JSON.parse(error);
-                    var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    var message = result != null && result.message != null && result.message.nameEn != null ? result.message.nameEn : null;
                     this.fileSingularityPARTrancheA = null;
                     this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
@@ -230,11 +230,11 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     // set file id
                     this.report.singularityISTrancheAFileId = res.fileId;
                     this.report.singularityISTrancheAFileName = res.fileName;
-                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - IS Singular Tranche A", null);
+                    this.postAction(res != null && res.message != null && res.message.nameEn != null ? res.message.nameEn : "Successfully uploaded file - IS Singular Tranche A", null);
                 },
                 error => {
                     var result = JSON.parse(error);
-                    var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    var message = result != null && result.message != null && result.message.nameEn != null ? result.message.nameEn : null;
                     this.fileSingularityISTrancheA = null;
                     this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
@@ -246,11 +246,11 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     // set file id
                     this.report.singularityBSTrancheBFileId = res.fileId;
                     this.report.singularityBSTrancheBFileName = res.fileName;
-                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - BS Singular Tranche B", null);
+                    this.postAction(res != null && res.message != null && res.message.nameEn != null ? res.message.nameEn : "Successfully uploaded file - BS Singular Tranche B", null);
                 },
                 error => {
                     var result = JSON.parse(error);
-                    var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    var message = result != null && result.message != null && result.message.nameEn != null ? result.message.nameEn : null;
                     this.fileSingularityBSTrancheB = null;
                     this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
@@ -262,11 +262,11 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     // set file id
                     this.report.singularityIMDRTrancheBFileId = res.fileId;
                     this.report.singularityIMDRTrancheBFileName = res.fileName;
-                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - IMDR Singular Tranche B", null);
+                    this.postAction(res != null && res.message != null && res.message.nameEn != null ? res.message.nameEn : "Successfully uploaded file - IMDR Singular Tranche B", null);
                 },
                 error => {
                     var result = JSON.parse(error);
-                    var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    var message = result != null && result.message != null && result.message.nameEn != null ? result.message.nameEn : null;
                     this.fileSingularityIMDRTrancheB = null;
                     this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
@@ -278,11 +278,11 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     // set file id
                     this.report.singularityPARTrancheBFileId = res.fileId;
                     this.report.singularityPARTrancheBFileName = res.fileName;
-                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - PAR Singular Tranche B", null);
+                    this.postAction(res != null && res.message != null && res.message.nameEn != null ? res.message.nameEn : "Successfully uploaded file - PAR Singular Tranche B", null);
                 },
                 error => {
                     var result = JSON.parse(error);
-                    var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    var message = result != null && result.message != null && result.message.nameEn != null ? result.message.nameEn : null;
                     this.fileSingularityPARTrancheB = null;
                     this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
@@ -294,11 +294,11 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     // set file id
                     this.report.singularityISTrancheBFileId = res.fileId;
                     this.report.singularityISTrancheBFileName = res.fileName;
-                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - IS Singular Tranche B", null);
+                    this.postAction(res != null && res.message != null && res.message.nameEn != null ? res.message.nameEn : "Successfully uploaded file - IS Singular Tranche B", null);
                 },
                 error => {
                     var result = JSON.parse(error);
-                    var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    var message = result != null && result.message != null && result.message.nameEn != null ? result.message.nameEn : null;
                     this.fileSingularityISTrancheB = null;
                     this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
@@ -310,11 +310,11 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     // set file id
                     this.report.singularityGeneralLedgerFileId = res.fileId;
                     this.report.singularityGeneralLedgerFileName = res.fileName;
-                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - Singularity General Ledger", null);
+                    this.postAction(res != null && res.message != null && res.message.nameEn != null ? res.message.nameEn : "Successfully uploaded file - Singularity General Ledger", null);
                 },
                 error => {
                     var result = JSON.parse(error);
-                    var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    var message = result != null && result.message != null && result.message.nameEn != null ? result.message.nameEn : null;
                     this.fileSingularityGeneralLedger = null;
                     this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
@@ -326,11 +326,11 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     // set file id
                     this.report.singularityNOALTrancheAFileId = res.fileId;
                     this.report.singularityNOALTrancheAFileName = res.fileName;
-                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - Singularity NOAL Tranche A", null);
+                    this.postAction(res != null && res.message != null && res.message.nameEn != null ? res.message.nameEn : "Successfully uploaded file - Singularity NOAL Tranche A", null);
                 },
                 error => {
                     var result = JSON.parse(error);
-                    var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    var message = result != null && result.message != null && result.message.nameEn != null ? result.message.nameEn : null;
                     this.fileSingularityNOALTrancheA = null;
                     this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
@@ -342,11 +342,11 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     // set file id
                     this.report.singularityNOALTrancheBFileId = res.fileId;
                     this.report.singularityNOALTrancheBFileName = res.fileName;
-                    this.postAction(res != null && res.messageEn != null ? res.messageEn : "Successfully uploaded file - Singularity NOAL Tranche B", null);
+                    this.postAction(res != null && res.message != null && res.message.nameEn != null ? res.message.nameEn : "Successfully uploaded file - Singularity NOAL Tranche B", null);
                 },
                 error => {
                     var result = JSON.parse(error);
-                    var message = result != null && result.messageEn != null ? result.messageEn : null;
+                    var message = result != null && result.message != null && result.message.nameEn != null ? result.message.nameEn : null;
                     this.fileSingularityNOALTrancheB = null;
                     this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
