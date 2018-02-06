@@ -7,7 +7,7 @@ VALUES(2, 'Остаток на начало текущего отчетного 
 INSERT INTO rep_report_form_6(report_id, name, line_number, shareholder_equity, additional_capital, redeemed_own_instrum, reserve_capital, other_reserves, retained_earnings, total)
 VALUES(2, 'Чистая прибыль (убыток) за период', 4, null, null, null, null, null, 18541146.45, 18541146.45);
 INSERT INTO rep_report_form_6(report_id, name, line_number, shareholder_equity, additional_capital, redeemed_own_instrum, reserve_capital, other_reserves, retained_earnings, total)
-VALUES(2, 'Прочий совокупный доход за период ', 5, null, null, null, null, 4642350403.02, null, 4642350403.02);
+VALUES(2, 'Прочий совокупный доход за период', 5, null, null, null, null, 4642350403.02, null, 4642350403.02);
 INSERT INTO rep_report_form_6(report_id, name, line_number, shareholder_equity, additional_capital, redeemed_own_instrum, reserve_capital, other_reserves, retained_earnings, total)
 VALUES(2, 'Всего совокупного дохода за период (сумма строк 4, 5)', 6, null, null, null, null,4642350403.02,18541146.45,4660891549.47);
 INSERT INTO rep_report_form_6(report_id, name, line_number, shareholder_equity, additional_capital, redeemed_own_instrum, reserve_capital, other_reserves, retained_earnings, total)
