@@ -54,7 +54,7 @@
                     </button>
 
                     <button *ngIf="showViewButton('tarragon_schedule_investment')" class="btn btn-xs btn-primary"
-                            [routerLink]="['/reporting/NBReporting/pe/scheduleInvestments/', report.id, 'INPUT']">
+                            [routerLink]="['/reporting/NBReporting/pe/scheduleInvestments/', periodicReport.id, 'INPUT']">
                             <span class="glyphicon glyphicon-search"></span>
                     </button>
                     <button *ngIf="showDeleteButton('tarragon_schedule_investment')" class="btn btn-xs btn-danger" (click)="deleteFile('tarragon_schedule_investment')">
@@ -90,7 +90,7 @@
                         <span class="glyphicon glyphicon-trash"></span>
                     </button>
                     <button *ngIf="showViewButton('tarragon_statement_assets')" class="btn btn-xs btn-primary"
-                        [routerLink]="['/reporting/NBReporting/pe/statementBalanceOperations/', report.id, 'INPUT']">
+                        [routerLink]="['/reporting/NBReporting/pe/statementBalanceOperations/', periodicReport.id, 'INPUT']">
                         <span class="glyphicon glyphicon-search"></span>
                     </button>
                     <button *ngIf="showDeleteButton('tarragon_statement_assets')" class="btn btn-xs btn-danger" (click)="deleteFile('tarragon_statement_assets')">
@@ -126,7 +126,7 @@
                         <span class="glyphicon glyphicon-trash"></span>
                     </button>
                     <button *ngIf="showViewButton('tarragon_statement_cashflows')" class="btn btn-xs btn-primary"
-                            [routerLink]="['/reporting/NBReporting/pe/statementCashflows/', report.id, 'INPUT']">
+                            [routerLink]="['/reporting/NBReporting/pe/statementCashflows/', periodicReport.id, 'INPUT']">
                         <span class="glyphicon glyphicon-search"></span>
                     </button>
                     <button *ngIf="showDeleteButton('tarragon_statement_cashflows')" class="btn btn-xs btn-danger" (click)="deleteFile('tarragon_statement_cashflows')">
@@ -162,7 +162,7 @@
                         <span class="glyphicon glyphicon-trash"></span>
                     </button>
                     <button *ngIf="showViewButton('tarragon_statement_changes')" class="btn btn-xs btn-primary"
-                            [routerLink]="['/reporting/NBReporting/pe/statementChanges/', report.id, 'INPUT']">
+                            [routerLink]="['/reporting/NBReporting/pe/statementChanges/', periodicReport.id, 'INPUT']">
                         <span class="glyphicon glyphicon-search"></span>
                     </button>
                     <button *ngIf="showDeleteButton('tarragon_statement_changes')" class="btn btn-xs btn-danger" (click)="deleteFile('tarragon_statement_changes')">
@@ -427,7 +427,7 @@
                         <span class="glyphicon glyphicon-trash"></span>
                     </button>
                     <button *ngIf="showViewButton('singularity_general_ledger')" class="btn btn-xs btn-primary"
-                            [routerLink]="['/reporting/NBReporting/hf/generalLedgerBalance/', report.id, 'INPUT']">
+                            [routerLink]="['/reporting/NBReporting/hf/generalLedgerBalance/', periodicReport.id, 'INPUT']">
                         <span class="glyphicon glyphicon-search"></span>
                     </button>
                     <button *ngIf="showDeleteButton('singularity_general_ledger')" class="btn btn-xs btn-danger" (click)="deleteFile('singularity_general_ledger')">
@@ -462,7 +462,7 @@
                         <span class="glyphicon glyphicon-trash"></span>
                     </button>
                     <button *ngIf="showViewButton('singularity_noal_a')" class="btn btn-xs btn-primary"
-                            [routerLink]="['/reporting/NBReporting/hf/noalA/', report.id, 'INPUT']">
+                            [routerLink]="['/reporting/NBReporting/hf/noalA/', periodicReport.id, 'INPUT']">
                         <span class="glyphicon glyphicon-search"></span>
                     </button>
                     <button *ngIf="showDeleteButton('singularity_noal_a')" class="btn btn-xs btn-danger" (click)="deleteFile('singularity_noal_a')">

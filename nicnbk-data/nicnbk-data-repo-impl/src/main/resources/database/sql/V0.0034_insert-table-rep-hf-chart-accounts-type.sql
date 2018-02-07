@@ -1,5 +1,5 @@
 INSERT INTO rep_hf_chart_accounts_type(id, code, name_en, name_ru, name_kz, parent_id) VALUES(1, 'CASH_EQUIV', 'Cash and Cash Equivalents', '', '', null);
-INSERT INTO rep_hf_chart_accounts_type(id, code, name_en, name_ru, name_kz, parent_id) VALUES(2, 'INV_P_FUNDS', 'Investments in Portfolio Funds', '', '', null);
+INSERT INTO rep_hf_chart_accounts_type(id, code, name_en, name_ru, name_kz, parent_id) VALUES(2, 'INV_P_FUND', 'Investments in Portfolio Funds', '', '', null);
 INSERT INTO rep_hf_chart_accounts_type(id, code, name_en, name_ru, name_kz, parent_id) VALUES(3, 'ACC_EXP', 'Accrued Expenses and Other', '', '', null);
 INSERT INTO rep_hf_chart_accounts_type(id, code, name_en, name_ru, name_kz, parent_id) VALUES(4, 'ADM_FEES', 'Administrative Fees', '', '', null);
 INSERT INTO rep_hf_chart_accounts_type(id, code, name_en, name_ru, name_kz, parent_id) VALUES(5, 'BANK_LOANS', 'Bank Loans', '', '', null);

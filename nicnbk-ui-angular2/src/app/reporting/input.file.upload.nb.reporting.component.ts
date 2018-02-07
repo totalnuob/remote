@@ -54,6 +54,8 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
     ){
         super(router);
 
+        this.periodicReport = new PeriodicReport();
+
         this.sub = this.route
             .params
             .subscribe(params => {

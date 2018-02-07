@@ -12,6 +12,7 @@ public final class PeriodicReportConstants {
 
 
     public static final String SINGULAR_CAPITAL_CASE = "SINGULAR";
+    public static final String SINGULAR_LOWER_CASE = "Singular";
     public static final String SINGULARITY_LOWER_CASE = "Singularity";
 
     public static final String TARRAGON_CAPITAL_CASE = "TARRAGON";

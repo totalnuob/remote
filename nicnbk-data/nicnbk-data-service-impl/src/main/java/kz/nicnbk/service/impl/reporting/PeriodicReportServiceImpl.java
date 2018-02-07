@@ -1330,7 +1330,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         // Find exchange rate
         CurrencyRatesDto endCurrencyRatesDto = this.currencyRatesService.getRateForDateAndCurrency(rateDate, CurrencyLookup.USD.getCode());
         if(endCurrencyRatesDto == null || endCurrencyRatesDto.getValue() == null){
-            logger.error("No currency rate found for date '" + DateUtils.getDateFormatted(rateDate));
+            logger.error("No currency rate found for date '" + DateUtils.getDateFormatted(rateDate) + "'");
 
             // TODO: return error message
             return null;
@@ -2305,13 +2305,16 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 }else if(recordUSD.getAccountNumber() != null && recordUSD.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_2033_010)){
                     String name = null;
                     if(recordUSD.getOtherEntityName() != null && (recordUSD.getOtherEntityName().startsWith(PeriodicReportConstants.TARRAGON_CAPITAL_CASE) ||
-                            recordUSD.getOtherEntityName().startsWith(PeriodicReportConstants.TARRAGON_CAPITAL_CASE))){
+                            recordUSD.getOtherEntityName().startsWith(PeriodicReportConstants.TARRAGON_LOWER_CASE))){
                         name = PeriodicReportConstants.RU_PE_FUND_INVESTMENT;
                     }else if(recordUSD.getOtherEntityName() != null && (recordUSD.getOtherEntityName().startsWith(PeriodicReportConstants.SINGULAR_CAPITAL_CASE) ||
-                            recordUSD.getOtherEntityName().startsWith(PeriodicReportConstants.SINGULAR_CAPITAL_CASE))){
+                            recordUSD.getOtherEntityName().startsWith(PeriodicReportConstants.SINGULAR_LOWER_CASE))){
                         name = PeriodicReportConstants.RU_HEDGE_FUND_INVESTMENT;
                     }else{
 
+                        logger.error("Entity name unexpected: " + recordUSD.getOtherEntityName() + ". Expected starting with : " +
+                                PeriodicReportConstants.TARRAGON_CAPITAL_CASE + ", or " + PeriodicReportConstants.TARRAGON_LOWER_CASE +
+                                PeriodicReportConstants.SINGULAR_CAPITAL_CASE + ", or " + PeriodicReportConstants.SINGULAR_LOWER_CASE);
                         // TODO: log error? report error to UI
                         return null;
                     }
@@ -2952,12 +2955,12 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 Date startPeriod = DateUtils.getLastDayOfPreviousMonth(report.getReportDate());
                 record3013_010.setStartPeriod(startPeriod);
 
-                String endPeriodDateText = "16.09." + DateUtils.getCurrentYear();
+                String endPeriodDateText = "16.09." + DateUtils.getYear(report.getReportDate());
                 Date endPeriodDate = DateUtils.getDate(endPeriodDateText);
                 if (report.getReportDate().compareTo(endPeriodDate) < 0) {
                     record3013_010.setEndPeriod(endPeriodDate);
                 } else {
-                    record3013_010.setEndPeriod(DateUtils.getDate("16.09." + (DateUtils.getCurrentYear() + 1)));
+                    record3013_010.setEndPeriod(DateUtils.getDate("16.09." + (DateUtils.getYear(report.getReportDate()) + 1)));
                 }
                 record3013_010.setInterestRate(PeriodicReportConstants.KZT_13_INTEREST_RATE);
                 record3013_010.setInterestPaymentCount(1);
@@ -3362,7 +3365,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
                 index1++;
                 index2++;
-                record2Sum = MathUtils.add(record2Sum, new BigDecimal(newRecord.getCurrentAccountBalance()));
+                record2Sum = MathUtils.add(record2Sum, new BigDecimal(newRecord.getCurrentAccountBalance() != null ? newRecord.getCurrentAccountBalance() : 0));
             }
         }
         for(ConsolidatedKZTForm22RecordDto record: records){
