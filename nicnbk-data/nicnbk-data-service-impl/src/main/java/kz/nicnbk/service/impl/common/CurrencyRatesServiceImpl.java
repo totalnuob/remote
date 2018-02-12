@@ -54,6 +54,9 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
         Date firstDay = DateUtils.getFirstDayOfDateYear(dateFormatted);
         Date dateTo = DateUtils.getDate("31.12." + DateUtils.getYear(date));
         List<CurrencyRates> rates = this.currencyRatesRepository.getRatesAfterDateAndCurrency(firstDay, dateTo, currencyCode);
+
+        // TODO: no currency rates
+
         if(rates != null){
             BigDecimal sum = new BigDecimal("0");
             int count = 0;

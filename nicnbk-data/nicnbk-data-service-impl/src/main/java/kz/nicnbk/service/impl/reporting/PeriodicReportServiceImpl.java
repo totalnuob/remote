@@ -1986,6 +1986,103 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
     }
 
     @Override
+    public List<ConsolidatedKZTForm6RecordDto> generateConsolidatedBalanceKZTForm6(Long reportId) {
+
+        PeriodicReport report = this.periodReportRepository.findOne(reportId);
+        if(report == null){
+            logger.error("No report found for id=" + reportId);
+            return null;
+        }
+
+        if(report.getStatus().getCode().equalsIgnoreCase(PeriodicReportType.SUBMITTED.getCode())){
+            return getConsolidatedBalanceKZTForm6Saved(report.getId());
+        }else{
+
+            Date previousDate = DateUtils.getLastDayOfPreviousMonth(report.getReportDate());
+            PeriodicReport previousReport = this.periodReportRepository.findByReportDate(previousDate);
+            List<ConsolidatedKZTForm6RecordDto> previousRecords = getConsolidatedBalanceKZTForm6Saved(previousReport.getId());
+
+
+            // KZT 3 records
+            Double formKZT3LineNumber1Difference = 0.0;
+            Double formKZT3LineNumber6Difference = 0.0;
+
+            List<ConsolidatedBalanceFormRecordDto> formKZT3Records = generateConsolidatedTotalIncomeKZTForm3(reportId);
+            if(formKZT3Records != null){
+                for(ConsolidatedBalanceFormRecordDto form3Record: formKZT3Records){
+                    // 1
+                    if(form3Record.getLineNumber() != null && form3Record.getLineNumber() == 1){
+                        formKZT3LineNumber1Difference = MathUtils.subtract(form3Record.getCurrentAccountBalance(), form3Record.getPreviousAccountBalance());
+                    }else if(form3Record.getLineNumber() != null && form3Record.getLineNumber() == 6){
+                        formKZT3LineNumber6Difference = MathUtils.subtract(form3Record.getCurrentAccountBalance(), form3Record.getPreviousAccountBalance());
+                    }
+                }
+            }
+
+            // Previous period
+            ConsolidatedKZTForm6RecordDto previousPeriodRecord = null;
+            for(int i = previousRecords.size() - 1; i >= 0; i--){
+                ConsolidatedKZTForm6RecordDto record = previousRecords.get(i);
+                if(record.getLineNumber() != null && record.getLineNumber() == 15){
+                    previousPeriodRecord = new ConsolidatedKZTForm6RecordDto(record);
+                    previousPeriodRecord.setName(null);
+                    break;
+                }
+            }
+
+            Double reservesSum = this.reserveCalculationService.getReserveCalculationSumForMonth(ReserveCalculationsExpenseTypeLookup.ADD.getCode(), report.getReportDate());
+
+            ConsolidatedKZTForm6RecordDto sumLineNumber3Record = new ConsolidatedKZTForm6RecordDto();
+            ConsolidatedKZTForm6RecordDto sumLineNumber6Record = new ConsolidatedKZTForm6RecordDto();
+            ConsolidatedKZTForm6RecordDto sumLineNumber14Record = new ConsolidatedKZTForm6RecordDto();
+            List<ConsolidatedKZTForm6RecordDto> records = getConsolidatedBalanceKZTForm6LineHeaders();
+            for(ConsolidatedKZTForm6RecordDto record: records) {
+                if(record.getLineNumber() != null && record.getLineNumber() == 1 && previousPeriodRecord != null){
+                    record.setShareholderEquity(previousPeriodRecord.getShareholderEquity());
+                    record.setAdditionalPaidinCapital(previousPeriodRecord.getAdditionalPaidinCapital());
+                    record.setRedeemedOwnEquityInstruments(previousPeriodRecord.getRedeemedOwnEquityInstruments());
+                    record.setReserveCapital(previousPeriodRecord.getReserveCapital());
+                    record.setOtherReserves(previousPeriodRecord.getOtherReserves());
+                    record.setRetainedEarnings(previousPeriodRecord.getRetainedEarnings());
+                    record.setTotal(previousPeriodRecord.getTotal());
+
+                    sumLineNumber3Record.addValues(record);
+
+                }else if(record.getLineNumber() != null && record.getLineNumber() == 2){
+                    sumLineNumber3Record.addValues(record);
+                }else if(record.getLineNumber() != null && record.getLineNumber() == 3){
+                    record.addValues(sumLineNumber3Record);
+                }else if(record.getLineNumber() != null && record.getLineNumber() == 4){
+                    record.setRetainedEarnings(formKZT3LineNumber1Difference);
+                    record.setTotal(formKZT3LineNumber1Difference);
+
+                    sumLineNumber6Record.addValues(record);
+                }else if(record.getLineNumber() != null && record.getLineNumber() == 5){
+                    record.setOtherReserves(formKZT3LineNumber6Difference);
+                    record.setTotal(formKZT3LineNumber6Difference);
+
+                    sumLineNumber6Record.addValues(record);
+                }else if(record.getLineNumber() != null && record.getLineNumber() == 6){
+                    record.addValues(sumLineNumber6Record);
+                }else if(record.getLineNumber() != null && record.getLineNumber() == 8){
+                    record.setShareholderEquity(reservesSum);
+                    record.setTotal(reservesSum);
+
+                    sumLineNumber14Record.addValues(record);
+                }else if(record.getLineNumber() != null && record.getLineNumber() == 14) {
+                    record.addValues(sumLineNumber14Record);
+                }else if(record.getLineNumber() != null && record.getLineNumber() == 15) {
+                    record.addValues(sumLineNumber3Record);
+                    record.addValues(sumLineNumber6Record);
+                    record.addValues(sumLineNumber14Record);
+                }
+
+            }
+            return records;
+        }
+    }
+
+    @Override
     public List<ConsolidatedKZTForm7RecordDto> generateConsolidatedBalanceKZTForm7(Long reportId) {
 
         PeriodicReport report = this.periodReportRepository.findOne(reportId);
@@ -2083,7 +2180,6 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                     newRecord = true;
                 }
 
-                // TODO: compare PREV CURRENT ????
                 if(currentRecord.isBecameZero()){
                     record.setDebtTurnover(record.getDebtStartPeriod() != null ? MathUtils.subtract(0.0, record.getDebtStartPeriod()) : null);
                 }
@@ -2126,6 +2222,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
             }
 
+            List<ConsolidatedKZTForm7RecordDto> nonEmptyRecords = new ArrayList();
             for(ConsolidatedKZTForm7RecordDto record: records){
                 if(record.getAccountNumber() == null && (record.getLineNumber() == 7 || record.getLineNumber() == 9 || record.getLineNumber() == 12)){
                     record.setDebtTurnover(totalRecord.getDebtTurnover());
@@ -2135,9 +2232,16 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                     record.setFairValueAdjustmentsEndPeriod(totalRecord.getFairValueAdjustmentsEndPeriod());
                     record.setTotalEndPeriod(totalRecord.getTotalEndPeriod());
                 }
+
+                if(record.getAccountNumber() != null && record.getLineNumber() != null && record.getLineNumber() == 9 &&
+                        record.isEmpty()){
+                    // do not add
+                }else{
+                    nonEmptyRecords.add(record);
+                }
             }
 
-            return records;
+            return nonEmptyRecords;
         }
     }
 
@@ -2243,7 +2347,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         double currValue = currentNoalRecordDto.getTransactionAmount() != null ? currentNoalRecordDto.getTransactionAmount().doubleValue() : 0;
                         if(prevValue != currValue){
                             double value = fundTurnoverHF.get(currentNoalRecordDto.getName()) != null ? fundTurnoverHF.get(currentNoalRecordDto.getName()).doubleValue() : 0;
-                            value = MathUtils.subtract(MathUtils.subtract(value, currValue), prevValue);
+                            value = MathUtils.subtract(MathUtils.add(value, currValue), prevValue);
                             fundTurnoverHF.put(currentNoalRecordDto.getName(), value);
                         }
 
@@ -2288,19 +2392,15 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         if(USDFormRecords != null){
             for(ConsolidatedBalanceFormRecordDto recordUSD: USDFormRecords){
                 if(recordUSD.getAccountNumber() != null && recordUSD.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_1283_020)
-                        && recordUSD.getOtherEntityName() != null && recordUSD.getOtherEntityName().startsWith(PeriodicReportConstants.SINGULAR_CAPITAL_CASE)){
+                        && recordUSD.getOtherEntityName() != null && (recordUSD.getOtherEntityName().startsWith(PeriodicReportConstants.SINGULAR_CAPITAL_CASE) ||
+                        recordUSD.getOtherEntityName().startsWith(PeriodicReportConstants.SINGULAR_LOWER_CASE))){
                     if (recordUSD.getName().startsWith(PeriodicReportConstants.RU_PRE_SUBSCRIPTION)) {
                         String fundName = recordUSD.getName().substring(PeriodicReportConstants.RU_PRE_SUBSCRIPTION.length()).trim();
 
-                        double value = fundTurnoverPE.get(fundName) != null ? fundTurnoverPE.get(fundName).doubleValue() :
-                                fundTurnoverHF.get(fundName) != null ? fundTurnoverHF.get(fundName).doubleValue() : 0;
+                        double value = fundTurnoverHF.get(fundName) != null ? fundTurnoverHF.get(fundName).doubleValue() : 0;
                         value = MathUtils.add(value, recordUSD.getPreviousAccountBalance());
 
-                        if(recordUSD.getOtherEntityName().startsWith(PeriodicReportConstants.TARRAGON_CAPITAL_CASE)) {
-                            fundTurnoverPE.put(fundName, value);
-                        }else if(recordUSD.getOtherEntityName().startsWith(PeriodicReportConstants.SINGULAR_CAPITAL_CASE)){
-                            fundTurnoverHF.put(fundName, value);
-                        }
+                        fundTurnoverHF.put(fundName, value);
                     }
                 }else if(recordUSD.getAccountNumber() != null && recordUSD.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_2033_010)){
                     String name = null;
@@ -2337,15 +2437,18 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
                     newRecord.setTotalEndPeriod(MathUtils.multiply(recordUSD.getCurrentAccountBalance(), endCurrencyRatesDto.getValue()));
 
-                    if(recordUSD.getOtherEntityName().startsWith(PeriodicReportConstants.TARRAGON_CAPITAL_CASE)) {
+                    if(recordUSD.getOtherEntityName().startsWith(PeriodicReportConstants.TARRAGON_CAPITAL_CASE) ||
+                            recordUSD.getOtherEntityName().startsWith(PeriodicReportConstants.TARRAGON_LOWER_CASE)) {
                         if(fundTurnoverPE.get(fundName) == null) {
+                            // case when schedule investment record current period is zero
                             newRecord.setDebtTurnover(null);
                             newRecord.setBecameZero(true);
                         }else{
                             newRecord.setDebtTurnover(MathUtils.multiply(fundTurnoverPE.get(fundName), endCurrencyRatesDto.getValue()));
                             fundTurnoverPE.put(fundName, null);
                         }
-                    }else if(recordUSD.getOtherEntityName().startsWith(PeriodicReportConstants.SINGULAR_CAPITAL_CASE)){
+                    }else if(recordUSD.getOtherEntityName().startsWith(PeriodicReportConstants.SINGULAR_CAPITAL_CASE) ||
+                            recordUSD.getOtherEntityName().startsWith(PeriodicReportConstants.SINGULAR_LOWER_CASE)){
                         newRecord.setDebtTurnover(MathUtils.multiply(fundTurnoverHF.get(fundName), endCurrencyRatesDto.getValue()));
                         fundTurnoverHF.put(fundName, null);
                     }
@@ -2359,8 +2462,6 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             }
         }
 
-
-        // TODO: need this ???
         // Add missing funds
         Set<String> keySet = fundTurnoverPE.keySet();
         if(keySet != null){
@@ -2436,103 +2537,6 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         double totalEndPeriod = totalRecord.getTotalEndPeriod() != null ? totalRecord.getTotalEndPeriod().doubleValue() : 0;
         totalEndPeriod = MathUtils.add(totalEndPeriod, (record.getTotalEndPeriod() != null ? record.getTotalEndPeriod().doubleValue() : 0));
         totalRecord.setTotalEndPeriod(totalEndPeriod);
-    }
-
-    @Override
-    public List<ConsolidatedKZTForm6RecordDto> generateConsolidatedBalanceKZTForm6(Long reportId) {
-
-        PeriodicReport report = this.periodReportRepository.findOne(reportId);
-        if(report == null){
-            logger.error("No report found for id=" + reportId);
-            return null;
-        }
-
-        if(report.getStatus().getCode().equalsIgnoreCase(PeriodicReportType.SUBMITTED.getCode())){
-            return getConsolidatedBalanceKZTForm6Saved(report.getId());
-        }else{
-
-            Date previousDate = DateUtils.getLastDayOfPreviousMonth(report.getReportDate());
-            PeriodicReport previousReport = this.periodReportRepository.findByReportDate(previousDate);
-            List<ConsolidatedKZTForm6RecordDto> previousRecords = getConsolidatedBalanceKZTForm6Saved(previousReport.getId());
-
-
-            // KZT 3 records
-            Double formKZT3LineNumber1Difference = 0.0;
-            Double formKZT3LineNumber6Difference = 0.0;
-
-            List<ConsolidatedBalanceFormRecordDto> formKZT3Records = generateConsolidatedTotalIncomeKZTForm3(reportId);
-            if(formKZT3Records != null){
-                for(ConsolidatedBalanceFormRecordDto form3Record: formKZT3Records){
-                    // 1
-                    if(form3Record.getLineNumber() != null && form3Record.getLineNumber() == 1){
-                        formKZT3LineNumber1Difference = MathUtils.subtract(form3Record.getCurrentAccountBalance(), form3Record.getPreviousAccountBalance());
-                    }else if(form3Record.getLineNumber() != null && form3Record.getLineNumber() == 6){
-                        formKZT3LineNumber6Difference = MathUtils.subtract(form3Record.getCurrentAccountBalance(), form3Record.getPreviousAccountBalance());
-                    }
-                }
-            }
-
-            // Previous period
-            ConsolidatedKZTForm6RecordDto previousPeriodRecord = null;
-            for(int i = previousRecords.size() - 1; i >= 0; i--){
-                ConsolidatedKZTForm6RecordDto record = previousRecords.get(i);
-                if(record.getLineNumber() != null && record.getLineNumber() == 15){
-                    previousPeriodRecord = new ConsolidatedKZTForm6RecordDto(record);
-                    previousPeriodRecord.setName(null);
-                    break;
-                }
-            }
-
-            Double reservesSum = this.reserveCalculationService.getReserveCalculationSumForMonth(ReserveCalculationsExpenseTypeLookup.ADD.getCode(), report.getReportDate());
-
-            ConsolidatedKZTForm6RecordDto sumLineNumber3Record = new ConsolidatedKZTForm6RecordDto();
-            ConsolidatedKZTForm6RecordDto sumLineNumber6Record = new ConsolidatedKZTForm6RecordDto();
-            ConsolidatedKZTForm6RecordDto sumLineNumber14Record = new ConsolidatedKZTForm6RecordDto();
-            List<ConsolidatedKZTForm6RecordDto> records = getConsolidatedBalanceKZTForm6LineHeaders();
-            for(ConsolidatedKZTForm6RecordDto record: records) {
-                if(record.getLineNumber() != null && record.getLineNumber() == 1 && previousPeriodRecord != null){
-                    record.setShareholderEquity(previousPeriodRecord.getShareholderEquity());
-                    record.setAdditionalPaidinCapital(previousPeriodRecord.getAdditionalPaidinCapital());
-                    record.setRedeemedOwnEquityInstruments(previousPeriodRecord.getRedeemedOwnEquityInstruments());
-                    record.setReserveCapital(previousPeriodRecord.getReserveCapital());
-                    record.setOtherReserves(previousPeriodRecord.getOtherReserves());
-                    record.setRetainedEarnings(previousPeriodRecord.getRetainedEarnings());
-                    record.setTotal(previousPeriodRecord.getTotal());
-
-                    sumLineNumber3Record.addValues(record);
-
-                }else if(record.getLineNumber() != null && record.getLineNumber() == 2){
-                    sumLineNumber3Record.addValues(record);
-                }else if(record.getLineNumber() != null && record.getLineNumber() == 3){
-                    record.addValues(sumLineNumber3Record);
-                }else if(record.getLineNumber() != null && record.getLineNumber() == 4){
-                    record.setRetainedEarnings(formKZT3LineNumber1Difference);
-                    record.setTotal(formKZT3LineNumber1Difference);
-
-                    sumLineNumber6Record.addValues(record);
-                }else if(record.getLineNumber() != null && record.getLineNumber() == 5){
-                    record.setOtherReserves(formKZT3LineNumber6Difference);
-                    record.setTotal(formKZT3LineNumber6Difference);
-
-                    sumLineNumber6Record.addValues(record);
-                }else if(record.getLineNumber() != null && record.getLineNumber() == 6){
-                    record.addValues(sumLineNumber6Record);
-                }else if(record.getLineNumber() != null && record.getLineNumber() == 8){
-                    record.setShareholderEquity(reservesSum);
-                    record.setTotal(reservesSum);
-
-                    sumLineNumber14Record.addValues(record);
-                }else if(record.getLineNumber() != null && record.getLineNumber() == 14) {
-                    record.addValues(sumLineNumber14Record);
-                }else if(record.getLineNumber() != null && record.getLineNumber() == 15) {
-                    record.addValues(sumLineNumber3Record);
-                    record.addValues(sumLineNumber6Record);
-                    record.addValues(sumLineNumber14Record);
-                }
-
-            }
-            return records;
-        }
     }
 
     @Override
@@ -2652,7 +2656,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
                             newRecord.setAgreementDescription(PeriodicReportConstants.SINGULARITY_AGREEMENT_DESC);
 
-                            // TODO: Debt start date from NOAL
+                            // Debt start date from NOAL
                             Date date = null;
                             for (SingularityNOALRecordDto noalRecord : noalRecords) {
                                 if (newRecord.getAccountNumber() != null && newRecord.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_1283_020)) {
@@ -2776,8 +2780,8 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                             for(ConsolidatedKZTForm10RecordDto record: records){
                                 if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_1623_010) &&
                                         record.getName().equalsIgnoreCase(recordUSD.getName())){
-                                    double endPeriodAssetsUSDValue = MathUtils.multiply(recordUSD.getCurrentAccountBalance() != null ? recordUSD.getCurrentAccountBalance() : 0.0, endCurrencyRatesDto.getValue());
-                                    record.setEndPeriodAssets(MathUtils.add(endPeriodAssetsUSDValue, record.getEndPeriodAssets()));
+                                    double endPeriodAssetsValue = MathUtils.multiply(recordUSD.getCurrentAccountBalance() != null ? recordUSD.getCurrentAccountBalance() : 0.0, endCurrencyRatesDto.getValue());
+                                    record.setEndPeriodAssets(MathUtils.add(endPeriodAssetsValue, record.getEndPeriodAssets()));
 
                                     double endPeriodAssets = record.getEndPeriodAssets() != null ? record.getEndPeriodAssets() : 0.0;
                                     double startPeriodAssets = record.getStartPeriodAssets() != null ? record.getStartPeriodAssets() : 0.0;
@@ -2971,15 +2975,15 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             if(currentUSDFormRecords != null){
                 for(ConsolidatedBalanceFormRecordDto record: currentUSDFormRecords){
                     if(record.getAccountNumber() != null && (record.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_3013_010)) && record3013_010.getName().equalsIgnoreCase(record.getName())){
-                        double debtEndPeriod = record3013_010.getDebtEndPeriod() != null ? record3013_010.getDebtEndPeriod() : 0;
+//                        double debtEndPeriod = record3013_010.getDebtEndPeriod() != null ? record3013_010.getDebtEndPeriod() : 0;
                         double currentValue = record3013_010.getDebtEndPeriod() != null ? record3013_010.getDebtEndPeriod() : 0;
-                        record3013_010.setDebtEndPeriod(MathUtils.add(currentValue, debtEndPeriod, MathUtils.multiply(record.getCurrentAccountBalance(), endCurrencyRatesDto.getValue())));
+                        record3013_010.setDebtEndPeriod(MathUtils.add(currentValue, /*debtEndPeriod,*/ MathUtils.multiply(record.getCurrentAccountBalance(), endCurrencyRatesDto.getValue())));
 
                         currentExists = true;
                     }else if(record.getAccountNumber() != null && (record.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_3383_010))){
-                        double interestEndPeriod = record3013_010.getInterestEndPeriod() != null ? record3013_010.getInterestEndPeriod() : 0;
+//                        double interestEndPeriod = record3013_010.getInterestEndPeriod() != null ? record3013_010.getInterestEndPeriod() : 0;
                         double currentValue = record3013_010.getInterestEndPeriod() != null ? record3013_010.getInterestEndPeriod() : 0;
-                        record3013_010.setInterestEndPeriod(MathUtils.add(currentValue, interestEndPeriod, MathUtils.multiply(record.getCurrentAccountBalance(), endCurrencyRatesDto.getValue())));
+                        record3013_010.setInterestEndPeriod(MathUtils.add(currentValue, /*interestEndPeriod,*/ MathUtils.multiply(record.getCurrentAccountBalance(), endCurrencyRatesDto.getValue())));
 
                         currentExists = true;
                     }
@@ -3219,16 +3223,20 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         List<ConsolidatedBalanceFormRecordDto> incomeExpenseUSDRecords = generateConsolidatedIncomeExpenseUSDForm(reportId);
         for(ConsolidatedBalanceFormRecordDto recordDto: incomeExpenseUSDRecords){
             if(recordDto.getAccountNumber() != null && recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_6150_030) &&
-                    recordDto.getOtherEntityName() != null && (recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.SINGULAR_CAPITAL_CASE) || recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.SINGULAR_CAPITAL_CASE))){
+                    recordDto.getOtherEntityName() != null && (recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.SINGULAR_CAPITAL_CASE) ||
+                    recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.SINGULAR_LOWER_CASE))){
                 record6150_030HF = MathUtils.add(record6150_030HF, new BigDecimal(MathUtils.multiply(recordDto.getCurrentAccountBalance(), averageRate)));
             }else if(recordDto.getAccountNumber() != null && recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_6150_030) &&
-                    recordDto.getOtherEntityName() != null && (recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.TARRAGON_CAPITAL_CASE) || recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.TARRAGON_CAPITAL_CASE))){
+                    recordDto.getOtherEntityName() != null && (recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.TARRAGON_CAPITAL_CASE) ||
+                    recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.TARRAGON_LOWER_CASE))){
                 record6150_030PE = MathUtils.add(record6150_030PE, new BigDecimal(MathUtils.multiply(recordDto.getCurrentAccountBalance(), averageRate)));
             }else if(recordDto.getAccountNumber() != null && recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_7330_030) &&
-                    recordDto.getOtherEntityName() != null && (recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.TARRAGON_CAPITAL_CASE) || recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.TARRAGON_CAPITAL_CASE))){
+                    recordDto.getOtherEntityName() != null && (recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.TARRAGON_CAPITAL_CASE) ||
+                    recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.TARRAGON_LOWER_CASE))){
                 record7330_030PE = MathUtils.add(record7330_030PE, new BigDecimal(MathUtils.multiply(recordDto.getCurrentAccountBalance(), averageRate)));
             }else if(recordDto.getAccountNumber() != null && recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_7330_030) &&
-                    recordDto.getOtherEntityName() != null && (recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.SINGULAR_CAPITAL_CASE) || recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.SINGULAR_CAPITAL_CASE))){
+                    recordDto.getOtherEntityName() != null && (recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.SINGULAR_CAPITAL_CASE) ||
+                    recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.SINGULAR_LOWER_CASE))){
                 record7330_030HF =  MathUtils.add(record7330_030HF, new BigDecimal(MathUtils.multiply(recordDto.getCurrentAccountBalance(), averageRate)));
             }else if(recordDto.getAccountNumber() != null && recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_7313_010)){
                 record7313_010 =  MathUtils.add(record7313_010, new BigDecimal(MathUtils.multiply(recordDto.getCurrentAccountBalance(), averageRate)));
