@@ -8,6 +8,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.*;
+import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.List;
 import kz.nicnbk.service.api.pe.PECompanyPerformanceIddService;
 import kz.nicnbk.service.api.pe.PEPdfService;
@@ -22,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
@@ -120,6 +122,8 @@ public class PEPdfServiceImpl implements PEPdfService {
                     "Category", "Score",
                     dataset, PlotOrientation.VERTICAL,
                     true, true, false);
+
+            barChart.getPlot().setBackgroundPaint(Color.WHITE);
 
             int width = 640;    /* Width of the image */
             int height = 480;   /* Height of the image */
