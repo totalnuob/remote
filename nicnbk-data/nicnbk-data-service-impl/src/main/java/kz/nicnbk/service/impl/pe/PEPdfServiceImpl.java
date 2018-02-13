@@ -75,8 +75,8 @@ public class PEPdfServiceImpl implements PEPdfService {
 
             barChart.getPlot().setBackgroundPaint(Color.WHITE);
 
-            int width = 640;    /* Width of the image */
-            int height = 480;   /* Height of the image */
+            int width = 256;    /* Width of the image */
+            int height = 192;   /* Height of the image */
             File BarChart = new File( "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/BarChart.jpeg" );
             ChartUtilities.saveChartAsJPEG( BarChart , barChart , width , height );
 
