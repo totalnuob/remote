@@ -49,13 +49,29 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
     }
 
     @Override
-    public Double getAverageRateForDateAndCurrency(Date date, String currencyCode, int scale) {
+    public Double getAverageRateForFixedDateAndCurrency(Date date, String currencyCode){
+        Date dateFormatted = DateUtils.getDateOnly(date);
+
+        CurrencyRates rates = this.currencyRatesRepository.getRateForDateAndCurrency(dateFormatted, currencyCode);
+
+        if(rates != null && rates.getAverageValue() != null) {
+            return rates.getAverageValue();
+        }else{
+            String errorMessage = "Average USD rate for date " + DateUtils.getDateFormatted(date) +" not found.";
+            logger.error(errorMessage);
+            throw new IllegalStateException(errorMessage);
+        }
+    }
+
+    @Override
+    public Double getAverageRateForAllMonthsBeforeDateAndCurrency(Date date, String currencyCode, int scale) {
         Date dateFormatted = DateUtils.getDateOnly(date);
         Date firstDay = DateUtils.getFirstDayOfDateYear(dateFormatted);
-        Date dateTo = DateUtils.getDate("31.12." + DateUtils.getYear(date));
-        List<CurrencyRates> rates = this.currencyRatesRepository.getRatesAfterDateAndCurrency(firstDay, dateTo, currencyCode);
 
-        // TODO: no currency rates
+        Date dateTo = DateUtils.getFirstDayOfNextMonth(date);
+
+        List<CurrencyRates> rates = this.currencyRatesRepository.getAverageRatesAfterDateAndCurrency(firstDay, dateTo, currencyCode);
+        int months = DateUtils.getMonthsDifference(firstDay, dateTo);
 
         if(rates != null){
             BigDecimal sum = new BigDecimal("0");
@@ -65,6 +81,12 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
                     sum  = sum.add(new BigDecimal(rate.getAverageValue().doubleValue()));
                     count++;
                 }
+            }
+            if(months != count){
+                String errorMessage = "Average Monthly USD rate calculation error on date " + DateUtils.getDateFormatted(date) +
+                        " (since " + DateUtils.getDateFormatted(firstDay) + ") : expected rate records for " + months + " months, found " + count + " rate records";
+                logger.error(errorMessage);
+                throw new IllegalStateException(errorMessage);
             }
             if(count > 0) {
                 return MathUtils.divide(sum, new BigDecimal(count)).setScale(scale, RoundingMode.HALF_UP).doubleValue();

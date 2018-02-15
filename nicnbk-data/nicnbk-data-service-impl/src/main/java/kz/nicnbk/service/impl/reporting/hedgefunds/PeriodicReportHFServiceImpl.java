@@ -2,12 +2,16 @@ package kz.nicnbk.service.impl.reporting.hedgefunds;
 
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.common.service.util.NumberUtils;
+import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.api.reporting.hedgefunds.SingularityNICChartOfAccountsRepository;
 import kz.nicnbk.repo.model.reporting.hedgefunds.SingularityNICChartOfAccounts;
 import kz.nicnbk.service.api.reporting.hedgefunds.HFGeneralLedgerBalanceService;
 import kz.nicnbk.service.api.reporting.hedgefunds.HFNOALService;
 import kz.nicnbk.service.api.reporting.hedgefunds.PeriodicReportHFService;
+import kz.nicnbk.service.dto.common.ListResponseDto;
 import kz.nicnbk.service.dto.reporting.*;
+import kz.nicnbk.service.impl.reporting.PeriodicReportConstants;
+import org.apache.poi.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +41,8 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
     private SingularityNICChartOfAccountsRepository singularityNICChartOfAccountsRepository;
 
     @Override
-    public List<GeneratedGeneralLedgerFormDto> getSingularGeneratedForm(Long reportId) {
+    public ListResponseDto getSingularGeneratedForm(Long reportId) {
+        ListResponseDto responseDto = new ListResponseDto();
         ConsolidatedReportRecordHolderDto generalLedgerRecordsHolder = this.generalLedgerBalanceService.get(reportId);
         ConsolidatedReportRecordHolderDto noalTrancheARecordHolder = this.hfNOALService.get(reportId, 1);
         ConsolidatedReportRecordHolderDto noalTrancheBRecordHolder = this.hfNOALService.get(reportId, 2);
@@ -116,27 +121,23 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
                 String singularityAccountNumber = glRecordDto.getGLAccount() != null && glRecordDto.getGLAccount().split("-").length > 0
                         ? glRecordDto.getGLAccount().split("-")[0] : null;
 
-                if(singularityAccountNumber == null){
-
-
-                    // TODO: check on parsing !!!
-
-
-                    logger.error("No matching NIC Chart of Accounts record found for Singularity Account Number '" + glRecordDto.getGLAccount() + "'");
-                    throw new IllegalStateException("No matching NIC Chart of Accounts record found for Singularity Account Number '" + glRecordDto.getGLAccount() + "'");
-                }
-                NICReportingChartOfAccountsDto accountDto = getNICChartOfAccountsFromSingularityAccount(singularityAccountNumber, record.getGLAccountBalance());
-                if(accountDto != null){
-                    record.setNbAccountNumber(accountDto.getNBChartOfAccounts().getCode());
-                    record.setNicAccountName(accountDto.getNameRu());
-                }else{
-                    logger.error("No matching NIC Chart of Accounts record found for Singularity Account Number '" + singularityAccountNumber + "'");
-                    throw new IllegalStateException("No matching NIC Chart of Accounts record found for Singularity Account Number '" + singularityAccountNumber + "'");
+                if(StringUtils.isEmpty(singularityAccountNumber)){
+                    logger.error("Invalid Singularity Account Number: expected 'XXXX-XXXX-XXX-XXX' (four parts delimited with - ), found '" + glRecordDto.getGLAccount() + "'");
+                    responseDto.setErrorMessageEn("Invalid Singularity Account Number: expected 'XXXX-XXXX-XXX-XXX' (four parts delimited with - ), found '" + glRecordDto.getGLAccount() + "'");
+                }else {
+                    NICReportingChartOfAccountsDto accountDto = getNICChartOfAccountsFromSingularityAccount(singularityAccountNumber, record.getGLAccountBalance());
+                    if (accountDto != null) {
+                        record.setNbAccountNumber(accountDto.getNBChartOfAccounts().getCode());
+                        record.setNicAccountName(accountDto.getNameRu());
+                    } else {
+                        logger.error("No matching NIC Chart of Accounts record found for Singularity Account Number '" + singularityAccountNumber + "'");
+                        responseDto.setErrorMessageEn("No matching NIC Chart of Accounts record found for Singularity Account Number '" + singularityAccountNumber + "'");
+                    }
                 }
 
 
-                if(record.getGLAccount().startsWith("1500")){ // SUBSCRIPTIONS - Tranche A
-                    if(record.getAcronym().equalsIgnoreCase("SINGULAR")){
+                if(record.getGLAccount().startsWith(PeriodicReportConstants.GROSVENOR_ACCOUNT_NUMBER_1500)){ // SUBSCRIPTIONS - Tranche A
+                    if(record.getAcronym().equalsIgnoreCase(PeriodicReportConstants.SINGULAR_CAPITAL_CASE)){
                         for (String key : noalTrancheASubscriptionsRecords.keySet()) {
                             GeneratedGeneralLedgerFormDto newRecordDto = new GeneratedGeneralLedgerFormDto(record);
                             newRecordDto.setSubscriptionRedemptionEntity(key);
@@ -145,7 +146,7 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
                             records.add(newRecordDto);
                         }
 
-                    }else if(record.getAcronym().equalsIgnoreCase("SINGULAR B")){ // SUBSCRIPTIONS - Tranche B
+                    }else if(record.getAcronym().equalsIgnoreCase(PeriodicReportConstants.SINGULAR_B_CAPITAL_CASE)){ // SUBSCRIPTIONS - Tranche B
                         for (String key : noalTrancheBSubscriptionsRecords.keySet()) {
                             GeneratedGeneralLedgerFormDto newRecordDto = new GeneratedGeneralLedgerFormDto(record);
                             newRecordDto.setSubscriptionRedemptionEntity(key);
@@ -154,10 +155,13 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
                             records.add(newRecordDto);
                         }
                     }else{
-                        // TODO: ??
+                        logger.error("Invalid Acronym value: expected '" + PeriodicReportConstants.SINGULAR_CAPITAL_CASE +
+                                "' or '" + PeriodicReportConstants.SINGULAR_B_CAPITAL_CASE + "'");
+                        responseDto.setErrorMessageEn("Invalid Acronym value: expected '" + PeriodicReportConstants.SINGULAR_CAPITAL_CASE +
+                                "' or '" + PeriodicReportConstants.SINGULAR_B_CAPITAL_CASE + "'");
                     }
-                }else if(record.getGLAccount().startsWith("1550")){ // REDEMPTIONS - Tranche A
-                    if(record.getAcronym().equalsIgnoreCase("SINGULAR")){
+                }else if(record.getGLAccount().startsWith(PeriodicReportConstants.GROSVENOR_ACCOUNT_NUMBER_1550)){ // REDEMPTIONS - Tranche A
+                    if(record.getAcronym().equalsIgnoreCase(PeriodicReportConstants.SINGULAR_CAPITAL_CASE)){
                         for (String key : noalTrancheARedemptionsRecords.keySet()) {
                             GeneratedGeneralLedgerFormDto newRecordDto = new GeneratedGeneralLedgerFormDto(record);
                             newRecordDto.setSubscriptionRedemptionEntity(key);
@@ -166,7 +170,7 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
                             records.add(newRecordDto);
                         }
 
-                    }else if(record.getAcronym().equalsIgnoreCase("SINGULAR B")){ // REDEMPTIONS - Tranche B
+                    }else if(record.getAcronym().equalsIgnoreCase(PeriodicReportConstants.SINGULAR_B_CAPITAL_CASE)){ // REDEMPTIONS - Tranche B
                         for (String key : noalTrancheBRedemptionsRecords.keySet()) {
                             GeneratedGeneralLedgerFormDto newRecordDto = new GeneratedGeneralLedgerFormDto(record);
                             newRecordDto.setSubscriptionRedemptionEntity(key);
@@ -175,7 +179,10 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
                             records.add(newRecordDto);
                         }
                     }else{
-                        // TODO: ??
+                        logger.error("Invalid Acronym value: expected '" + PeriodicReportConstants.SINGULAR_CAPITAL_CASE +
+                                "' or '" + PeriodicReportConstants.SINGULAR_B_CAPITAL_CASE + "'");
+                        responseDto.setErrorMessageEn("Invalid Acronym value: expected '" + PeriodicReportConstants.SINGULAR_CAPITAL_CASE +
+                                "' or '" + PeriodicReportConstants.SINGULAR_B_CAPITAL_CASE + "'");
                     }
                 }else {
                     setAccountNameAdditionalDescription(record);
@@ -183,11 +190,12 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
                 }
             }
         }
-        return records;
+        responseDto.setRecords(records);
+        return responseDto;
     }
 
     private void setAccountNameAdditionalDescription(GeneratedGeneralLedgerFormDto record){
-        if(record == null){
+        if(record == null ||  record.getNbAccountNumber() == null){
             return;
         }
         if(record.getNbAccountNumber().equalsIgnoreCase("2033.010")){

@@ -46,8 +46,19 @@ export class ConsolidatedBalanceUSDFormNBReportingComponent extends CommonNBRepo
                         .subscribe(
                             response  => {
                                 if(response){
-                                    this.records = response;
-                                    this.checkSums();
+                                    if (response.status === 'FAIL') {
+                                        if(response.message != null){
+                                            this.errorMessage = response.message.nameEn ? response.message.nameEn :
+                                                response.message.nameKz ? response.message.nameKz : response.message.nameRu ? response.message.nameRu : null;
+                                        }
+                                        if(this.errorMessage == null){
+                                            this.errorMessage = "Error loading Tarragon General Ledger data";
+                                        }
+                                        this.postAction(null, this.errorMessage);
+                                    } else {
+                                        this.checkSums();
+                                    }
+                                    this.records = response.records;
                                 }
                             },
                             (error: ErrorResponse) => {

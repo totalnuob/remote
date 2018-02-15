@@ -12,7 +12,9 @@ public interface CurrencyRatesService extends BaseService {
 
     CurrencyRatesDto getRateForDateAndCurrency(Date date, String currencyCode);
 
-    Double getAverageRateForDateAndCurrency(Date date, String currencyCode, int scale);
+    Double getAverageRateForAllMonthsBeforeDateAndCurrency(Date date, String currencyCode, int scale);
+
+    Double getAverageRateForFixedDateAndCurrency(Date date, String currencyCode);
 
     boolean save(CurrencyRatesDto dto);
 }

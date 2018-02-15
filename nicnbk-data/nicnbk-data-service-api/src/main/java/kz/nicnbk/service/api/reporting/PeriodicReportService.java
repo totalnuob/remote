@@ -37,38 +37,38 @@ public interface PeriodicReportService extends BaseService {
 
     ConsolidatedReportRecordHolderDto getNOAL(Long reportId, int tranche);
 
-    List<ConsolidatedBalanceFormRecordDto> generateConsolidatedBalanceUSDForm(Long reportId);
+    ListResponseDto generateConsolidatedBalanceUSDForm(Long reportId);
 
     List<ConsolidatedBalanceFormRecordDto> generateConsolidatedIncomeExpenseUSDForm(Long reportId);
 
     List<ConsolidatedBalanceFormRecordDto> generateConsolidatedTotalIncomeUSDForm(Long reportId);
 
-    boolean safeDeleteFile(Long fileId);
+    boolean safeDeleteFile(Long fileId, String username);
 
     boolean markReportAsFinal(Long reportId);
 
     InputStream getExportFileStream(Long reportId, String type);
 
-    List<ConsolidatedKZTForm6RecordDto> generateConsolidatedBalanceKZTForm6(Long reportId);
+    ListResponseDto generateConsolidatedBalanceKZTForm6(Long reportId);
 
-    List<ConsolidatedKZTForm8RecordDto> generateConsolidatedBalanceKZTForm8(Long reportId);
+    ListResponseDto generateConsolidatedBalanceKZTForm8(Long reportId);
 
-    List<ConsolidatedKZTForm10RecordDto> generateConsolidatedBalanceKZTForm10(Long reportId);
+    ListResponseDto generateConsolidatedBalanceKZTForm10(Long reportId);
 
-    List<ConsolidatedKZTForm14RecordDto> generateConsolidatedBalanceKZTForm14(Long reportId);
+    ListResponseDto generateConsolidatedBalanceKZTForm14(Long reportId);
 
-    List<ConsolidatedKZTForm13RecordDto> generateConsolidatedBalanceKZTForm13(Long reportId);
+    ListResponseDto generateConsolidatedBalanceKZTForm13(Long reportId);
 
-    List<ConsolidatedKZTForm7RecordDto> generateConsolidatedBalanceKZTForm7(Long reportId);
+    ListResponseDto generateConsolidatedBalanceKZTForm7(Long reportId);
 
-    List<ConsolidatedBalanceFormRecordDto> generateConsolidatedBalanceKZTForm1(Long reportId);
+    ListResponseDto generateConsolidatedBalanceKZTForm1(Long reportId);
 
-    List<ConsolidatedBalanceFormRecordDto> generateConsolidatedIncomeExpenseKZTForm2(Long reportId);
+    ListResponseDto generateConsolidatedIncomeExpenseKZTForm2(Long reportId);
 
-    List<ConsolidatedBalanceFormRecordDto> generateConsolidatedTotalIncomeKZTForm3(Long reportId);
+    ListResponseDto generateConsolidatedTotalIncomeKZTForm3(Long reportId);
 
-    List<ConsolidatedKZTForm19RecordDto> generateConsolidatedBalanceKZTForm19(Long reportId);
+    ListResponseDto generateConsolidatedBalanceKZTForm19(Long reportId);
 
-    List<ConsolidatedKZTForm22RecordDto> generateConsolidatedBalanceKZTForm22(Long reportId);
+    ListResponseDto generateConsolidatedBalanceKZTForm22(Long reportId);
 
 }

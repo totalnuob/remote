@@ -30,6 +30,10 @@ public class DateUtils {
         return diffMonth;
     }
 
+    public static int getDaysDifference(Date d1, Date d2){
+        return (int)( (d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24));
+    }
+
     public static int getYear(Date date){
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(date);
@@ -59,6 +63,9 @@ public class DateUtils {
     }
 
     public static String getDateFormatted(Date date){
+        if(date == null){
+            return null;
+        }
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
         return simpleDateFormat.format(date);
     }

@@ -29,17 +29,17 @@ export class MonitoringHedgeFundsComponent extends GoogleChartComponent {
         //this.tableDate = $("#tableDate option:last").val();
     }
 
-    drawGraph(){
-        var tableDate = this.getAllDates()[0];
-        this.tableDate = tableDate;
+        drawGraph(){
+            var tableDate = this.getAllDates()[0];
+            this.tableDate = tableDate;
 
-        this.drawPortfolioTable(tableDate);
-        this.drawPerformanceTable(tableDate);
-        this.drawNAV();
-        this.drawPerformanceCharts();
-        this.drawHoldings(tableDate);
-        this.drawAllocations();
-    }
+            this.drawPortfolioTable(tableDate);
+            this.drawPerformanceTable(tableDate);
+            this.drawNAV();
+            this.drawPerformanceCharts();
+            this.drawHoldings(tableDate);
+            this.drawAllocations();
+        }
 
     redraw(){
         this.tableDate = $("#tableDate").val();

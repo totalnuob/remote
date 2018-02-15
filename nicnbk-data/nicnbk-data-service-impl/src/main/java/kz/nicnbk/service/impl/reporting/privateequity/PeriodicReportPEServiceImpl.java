@@ -97,14 +97,14 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
 
     private void checkPEGeneralLedgerFormData(List<PEGeneralLedgerFormDataDto> records){
         if(records != null){
-            double totalAssets = 0.0;
-            double totalOther = 0.0;
+//            double totalAssets = 0.0;
+//            double totalOther = 0.0;
             for(PEGeneralLedgerFormDataDto record: records){
                 if(record.getTranche() != 1 && record.getTranche() != 2){
                     throw new IllegalArgumentException("Tranche value invalid : " + record.getTranche() + "; expected values 1, 2");
                 }
                 if(!isValidFinancialStatementCategory(record.getFinancialStatementCategory())){
-                    throw new IllegalArgumentException("Financial statement category value invalid : " + record.getFinancialStatementCategory() + "; expected values A, L, E, X, I");
+                    throw new IllegalArgumentException("Financial statement category value invalid : '" + record.getFinancialStatementCategory() + "'; expected values A, L, E, X, I");
                 }
                 if(StringUtils.isEmpty(record.getTarragonNICChartOfAccountsName())){
                     throw new IllegalArgumentException("Chart oof Accounts Name value missing");
@@ -114,11 +114,11 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
                 if(record.getGLAccountBalance() == null){
                     throw new IllegalArgumentException("Account Balance value missing");
                 }
-                if(record.getFinancialStatementCategory().equalsIgnoreCase("A")){
-                    totalAssets += record.getGLAccountBalance().doubleValue();
-                }else{
-                    totalOther += record.getGLAccountBalance().doubleValue();
-                }
+//                if(record.getFinancialStatementCategory().equalsIgnoreCase("A")){
+//                    totalAssets += record.getGLAccountBalance().doubleValue();
+//                }else{
+//                    totalOther += record.getGLAccountBalance().doubleValue();
+//                }
             }
 
 //            double difference = totalAssets - totalOther;
@@ -139,8 +139,12 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
         Long reportId = null;
         try {
             PEGeneralLedgerFormData entity = this.peGeneralLedgerFormDataRepository.findOne(recordId);
+            if(entity == null){
+                logger.error("No record found to delete: record id " + recordId);
+                return false;
+            }
             reportId = entity.getReport().getId();
-            if (entity != null) {
+            if (entity.getReport().getStatus() != null) {
                 if(entity.getReport().getStatus().getCode().equalsIgnoreCase(PeriodicReportType.SUBMITTED.getCode())){
                     return false;
                 }

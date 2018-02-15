@@ -15,6 +15,8 @@ public final class PeriodicReportConstants {
     public static final String SINGULAR_LOWER_CASE = "Singular";
     public static final String SINGULARITY_LOWER_CASE = "Singularity";
 
+    public static final String SINGULAR_B_CAPITAL_CASE = "SINGULAR B";
+
     public static final String TARRAGON_CAPITAL_CASE = "TARRAGON";
     public static final String TARRAGON_LOWER_CASE = "Tarragon";
 
@@ -78,6 +80,10 @@ public final class PeriodicReportConstants {
 
 
     /* ACCOUNT NUMBERS AND NAMES **************************************************************************************/
+    public static final String GROSVENOR_ACCOUNT_NUMBER_1500 = "1500"; // Subscriptions
+    public static final String GROSVENOR_ACCOUNT_NUMBER_1550 = "1550"; // Redemptions
+
+
     public static final String ACC_NUM_5440_010 = "5440.010";
     // TODO: when a when b?
     public static final String RU_5440_010_a = "Резерв по переоценке финансовых инвестиций, имеющихся в наличии для продажи";

@@ -168,6 +168,7 @@ public class PeriodicReportPrevYearInputServiceImpl implements PeriodicReportPre
                         this.previousYearInputDataRepository.save(entity);
                     }
                     entityListSaveResponseDto.setSuccessMessageEn("Successfully saved records");
+                    logger.info("Successfully saved Previous Year input data for report id " + reportId);
                     return entityListSaveResponseDto;
                 } catch (Exception ex) {
                     logger.error("Error saving previous year input data for report id " + reportId, ex);

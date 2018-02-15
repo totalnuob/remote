@@ -91,24 +91,26 @@ export class GeneratedReportsNBReportingComponent extends CommonNBReportingCompo
             this.busyFinal = this.periodicReportService.markReportAsFinal(this.reportId)
                 .subscribe(
                     response => {
-                        if (response && response.success) {
-                            this.postAction("Successfully marked report as final (Submitted)", null);
+                        if (response && response.status != 'FAIL') {
+                            this.postAction("Successfully marked report as final (SUBMITTED)", null);
                             this.periodicReport.status = "SUBMITTED";
-                        } else if (response && !response.success) {
-                            this.postAction(null, "Error marking report as final");
+                        } else if (response && response.status === 'FAIL') {
+                            var errorMessage = response.message != null && response.message.nameEn != null ? response.message.nameEn : "Error marking report as final";
+                            this.postAction(null, errorMessage);
                         } else {
-
-                            // TODO: other error?
+                            this.postAction(null, "Unexptected return from server.");
+                            return;
                         }
                     },
-                    (error:ErrorResponse) => {
+                    (error: ErrorResponse) => {
                         this.successMessage = null;
                         this.errorMessage = "Error marking report as final";
                         this.report = null;
                         if (error && !error.isEmpty()) {
                             this.processErrorMessage(error);
+                        }else {
+                            this.postAction(null, this.errorMessage);
                         }
-                        this.postAction(null, null);
                     }
                 )
         }

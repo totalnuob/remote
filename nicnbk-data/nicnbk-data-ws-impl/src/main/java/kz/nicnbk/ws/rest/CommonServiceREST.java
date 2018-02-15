@@ -29,6 +29,13 @@ public abstract class CommonServiceREST {
         return new ResponseEntity<>(response, null, HttpStatus.OK);
     }
 
+    public ResponseEntity buildOKWithErrorResponse(String message){
+        ResponseDto response = new ResponseDto();
+        response.setErrorMessageEn(message);
+        return new ResponseEntity<>(response, null, HttpStatus.OK);
+    }
+
+
     /**
      * Returns ResponseEntity with object as response body.
      * Returns ResponseEntity with status status OK 200 if response not null, status 500 Error otherwise.

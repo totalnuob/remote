@@ -27,6 +27,7 @@ import {ConsolidatedBalanceForm22Record} from "./model/consolidated.balance.form
 import {NEWS} from "../news/model/mock-news";
 import {PeriodicReport} from "./model/periodic.report";
 import {ConsolidatedKZTForm6Record} from "./model/consolidated.kzt.form.6.record";
+import {OKResponse} from "../common/ok-response";
 
 var fileSaver = require("file-saver");
 
@@ -190,7 +191,7 @@ export class PeriodicReportService extends CommonService{
             .catch(this.handleErrorResponse);
     }
 
-    getGeneratedSingularForm(reportId): Observable<GeneratedGLFormRecord[]>{
+    getGeneratedSingularForm(reportId): Observable<ListResponse>{
         return this.http.get(this.PERIODIC_REPORT_SINGULAR_GENERATED_FORM_URL + reportId, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
@@ -214,73 +215,73 @@ export class PeriodicReportService extends CommonService{
             .catch(this.handleErrorResponse);
     }
 
-    getConsolidatedBalanceUSDForm(reportId): Observable<ConsolidatedBalanceFormRecord[]>{
+    getConsolidatedBalanceUSDForm(reportId): Observable<ListResponse>{
         return this.http.get(this.PERIODIC_REPORT_CONSOLIDATED_BALANCE_USD_FORM_URL + reportId, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }
 
-    getConsolidatedBalanceKZTForm1(reportId): Observable<ConsolidatedBalanceFormRecord[]>{
+    getConsolidatedBalanceKZTForm1(reportId): Observable<ListResponse>{
         return this.http.get(this.PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_1_URL + reportId, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }
 
-    getConsolidatedKZTForm2(reportId): Observable<ConsolidatedIncomeExpenseFormRecord[]>{
+    getConsolidatedKZTForm2(reportId): Observable<ListResponse>{
         return this.http.get(this.PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_2_URL + reportId, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }
 
-    getConsolidatedKZTForm3(reportId): Observable<ConsolidatedBalanceFormRecord[]>{
+    getConsolidatedKZTForm3(reportId): Observable<ListResponse>{
         return this.http.get(this.PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_3_URL + reportId, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }
 
-    getConsolidatedKZTForm8(reportId): Observable<ConsolidatedKZTForm8Record[]>{
+    getConsolidatedKZTForm8(reportId): Observable<ListResponse>{
         return this.http.get(this.PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_8_URL + reportId, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }
 
-    getConsolidatedKZTForm6(reportId): Observable<ConsolidatedKZTForm6Record[]>{
+    getConsolidatedKZTForm6(reportId): Observable<ListResponse>{
         return this.http.get(this.PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_6_URL + reportId, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }
 
-    getConsolidatedKZTForm14(reportId): Observable<ConsolidatedKZTForm14Record[]>{
+    getConsolidatedKZTForm14(reportId): Observable<ListResponse>{
         return this.http.get(this.PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_14_URL + reportId, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }
 
-    getConsolidatedKZTForm10(reportId): Observable<ConsolidatedKZTForm10Record[]>{
+    getConsolidatedKZTForm10(reportId): Observable<ListResponse>{
         return this.http.get(this.PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_10_URL + reportId, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }
 
-    getConsolidatedKZTForm13(reportId): Observable<ConsolidatedKZTForm13Record[]>{
+    getConsolidatedKZTForm13(reportId): Observable<ListResponse>{
         return this.http.get(this.PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_13_URL + reportId, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }
 
-    getConsolidatedKZTForm7(reportId): Observable<ConsolidatedKZTForm7Record[]>{
+    getConsolidatedKZTForm7(reportId): Observable<ListResponse>{
         return this.http.get(this.PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_7_URL + reportId, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }
 
-    getConsolidatedKZTForm19(reportId): Observable<ConsolidatedBalanceForm19Record[]>{
+    getConsolidatedKZTForm19(reportId): Observable<ListResponse>{
         return this.http.get(this.PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_19_URL + reportId, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }
 
-    getConsolidatedKZTForm22(reportId): Observable<ConsolidatedBalanceForm22Record[]>{
+    getConsolidatedKZTForm22(reportId): Observable<ListResponse>{
         return this.http.get(this.PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_22_URL + reportId, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
@@ -392,7 +393,7 @@ export class PeriodicReportService extends CommonService{
             .catch(this.handleErrorResponse);
     }
 
-    public markReportAsFinal(reportId){
+    public markReportAsFinal(reportId): Observable<OKResponse>{
         return this.http.post(this.PERIODIC_REPORT_MARK_REPORT_FINAL_URL + reportId, null, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
@@ -423,7 +424,8 @@ export class PeriodicReportService extends CommonService{
                             var blob = new Blob([this.response], {type: this.response.type});
                             fileSaver.saveAs(blob, fileName);
                         }else {
-                            console.log("ErorR - " + xhr.status);
+                            console.log("Error - " + xhr.status);
+                            console.log(xhr);
                             reject(xhr.response);
                         }
                     }

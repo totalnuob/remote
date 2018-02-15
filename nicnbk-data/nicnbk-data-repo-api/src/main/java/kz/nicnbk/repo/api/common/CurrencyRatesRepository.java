@@ -23,4 +23,9 @@ public interface CurrencyRatesRepository extends PagingAndSortingRepository<Curr
     List<CurrencyRates> getRatesAfterDateAndCurrency(@Param("dateFrom") @Temporal(TemporalType.DATE) Date dateFrom,
                                                      @Param("dateTo") @Temporal(TemporalType.DATE) Date dateTo,
                                                   @Param("currencyCode") String currencyCode);
+
+    @Query("SELECT entity FROM CurrencyRates entity WHERE entity.date >= ?1 AND entity.date <= ?2 AND entity.currency.code = ?3 AND entity.averageValue IS NOT NULL")
+    List<CurrencyRates> getAverageRatesAfterDateAndCurrency(@Param("dateFrom") @Temporal(TemporalType.DATE) Date dateFrom,
+                                                     @Param("dateTo") @Temporal(TemporalType.DATE) Date dateTo,
+                                                     @Param("currencyCode") String currencyCode);
 }

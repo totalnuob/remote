@@ -42,7 +42,7 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
     ReserveCalculationConverter reserveCalculationConverter;
 
     @Override
-    public List<ReserveCalculationDto> getReserveCalculations(){
+    public List<ReserveCalculationDto> getAllReserveCalculations(){
         List<ReserveCalculationDto> records = new ArrayList<>();
         try {
             Iterator<ReserveCalculation> entitiesIterator = this.reserveCalculationRepository.findAll(new Sort(Sort.Direction.ASC, "date", "id")).iterator();
@@ -86,8 +86,8 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
      * @param date - date
      * @return - reserve calculation records
      */
-    @Override
-    public List<ReserveCalculationDto> getReserveCalculationsForMonth(String code, Date date) {
+    //@Override
+    private List<ReserveCalculationDto> getReserveCalculationsForMonth(String code, Date date) {
         Date fromDate = DateUtils.getFirstDayOfCurrentMonth(date);
         Date toDate = DateUtils.getFirstDayOfNextMonth(date);
         List<ReserveCalculation> entities = this.reserveCalculationRepository.getEntitiesByExpenseTypeBetweenDates(
@@ -117,12 +117,18 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
     }
 
     @Override
-    public Double getReserveCalculationSumForMonth(String code, Date date) {
+    public Double getReserveCalculationSumKZTForMonth(String code, Date date) {
         List<ReserveCalculationDto> records = getReserveCalculationsForMonth(code, date);
         Double sum = 0.0;
         if(records != null){
             for(ReserveCalculationDto record: records){
-                sum = MathUtils.add(sum, record.getAmountKZT());
+                if(record.getCurrencyRate() != null) {
+                    sum = MathUtils.add(sum, record.getAmountKZT());
+                }else{
+                    String errorMessage = "Reserve Calculations sum: one of records has no currency rate. Date '" + DateUtils.getDateFormatted(record.getDate()) + "'";
+                    logger.error(errorMessage);
+                    throw new IllegalStateException(errorMessage);
+                }
             }
         }
         return sum;
@@ -158,8 +164,8 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
                 CurrencyRatesDto currencyRatesDto = this.currencyRatesService.getRateForDateAndCurrency(nextDay, "USD");
                 if(currencyRatesDto == null || currencyRatesDto.getValue() == null){
                     // TODO: error message
-                    logger.error("No currency rate for date '" + nextDay + "', currency='USD'" );
-                    return null;
+                    logger.error("No currency rate for date '" + DateUtils.getDateFormatted(nextDay) + "', currency='USD'" );
+                    throw new IllegalStateException("No currency rate for date '" + DateUtils.getDateFormatted(nextDay) + "', currency='USD'" );
                 }
                 dto.setCurrencyRate(currencyRatesDto.getValue());
 
