@@ -74,6 +74,7 @@ import {ConsolidatedKZTForm19NBReportingComponent} from "./reporting/consolidate
 import {ConsolidatedKZTForm22NBReportingComponent} from "./reporting/consolidated.kzt.form.22.nb.reporting.component";
 import {ConsolidatedKZTForm3NBReportingComponent} from "./reporting/consolidated.kzt.form.3.nb.reporting.component";
 import {ConsolidatedKZTForm6NBReportingComponent} from "./reporting/consolidated.kzt.form.6.nb.reporting.component";
+import {MonitoringHedgeFunds2PrintComponent} from "./monitoring/monitoring-hedge-funds-2-print.component";
 
 
 const routes: Routes  = [
@@ -204,6 +205,12 @@ const routes: Routes  = [
     {
         path: 'monitoring/hf2',
         component: MonitoringHedgeFunds2Component,
+        canActivate: [AuthGuard]
+    },
+
+    {
+        path: 'monitoring/hf2Print',
+        component: MonitoringHedgeFunds2PrintComponent,
         canActivate: [AuthGuard]
     },
     /* Hedge Funds ************************************/

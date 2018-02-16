@@ -1,6 +1,7 @@
 import {Component, ElementRef, Compiler, OnInit  } from '@angular/core';
 import { RuntimeCompiler} from '@angular/compiler';
 import {Router, ActivatedRoute} from '@angular/router';
+import {Subscription} from 'rxjs';
 import {AuthenticationService, User} from './authentication.service'
 import lastIndexOf = require("core-js/fn/array/last-index-of");
 
@@ -19,6 +20,8 @@ export class LoginComponent implements OnInit{
     returnUrl: string;
     url: string;
     params: string;
+
+    busy: Subscription;
 
     constructor(
         private router: Router,
@@ -41,7 +44,7 @@ export class LoginComponent implements OnInit{
     }
 
     login() {
-        this.authenticationService.login(this.user)
+        this.busy = this.authenticationService.login(this.user)
             .subscribe(
                 response => {
 

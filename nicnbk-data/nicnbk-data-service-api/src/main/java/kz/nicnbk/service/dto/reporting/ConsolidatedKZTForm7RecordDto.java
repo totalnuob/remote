@@ -165,4 +165,19 @@ public class ConsolidatedKZTForm7RecordDto implements BaseDto {
     public void setBecameZero(boolean becameZero) {
         this.becameZero = becameZero;
     }
+
+    public boolean isEmpty(){
+        return (this.debtStartPeriod == null || this.debtStartPeriod == 0) &&
+                (this.fairValueAdjustmentsStartPeriod == null || this.fairValueAdjustmentsStartPeriod == 0) &&
+                (this.totalStartPeriod == null || this.totalStartPeriod == 0) &&
+                (this.debtTurnover == null || this.debtTurnover == 0) &&
+                (this.fairValueAdjustmentsTurnoverPositive == null || this.fairValueAdjustmentsTurnoverPositive == 0) &&
+                (this.fairValueAdjustmentsTurnoverNegative == null || this.fairValueAdjustmentsTurnoverNegative == 0) &&
+                (this.debtEndPeriod == null || this.debtEndPeriod == 0) &&
+                (this.fairValueAdjustmentsEndPeriod == null || this.fairValueAdjustmentsEndPeriod == 0) &&
+                (this.totalEndPeriod == null || this.totalEndPeriod == 0);
+    }
+
+
+
 }

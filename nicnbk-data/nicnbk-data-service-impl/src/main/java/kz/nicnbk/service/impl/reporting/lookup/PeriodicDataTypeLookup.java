@@ -5,17 +5,23 @@ package kz.nicnbk.service.impl.reporting.lookup;
  */
 public enum PeriodicDataTypeLookup {
 
-    NET_PROFIT("NET_PROFIT"),
-    RESERVE_REVALUATION("RSRV_REVAL");
+    NET_PROFIT("NET_PROFIT", "Чистая прибыль"),
+    RESERVE_REVALUATION("RSRV_REVAL", "Резерв по переоценке");
 
     private String code;
+    private String name;
 
 
-    PeriodicDataTypeLookup(String code) {
+    PeriodicDataTypeLookup(String code, String name) {
         this.code = code;
+        this.name = name;
     }
 
     public String getCode() {
         return code;
+    }
+
+    public String getName() {
+        return name;
     }
 }

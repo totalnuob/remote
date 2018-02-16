@@ -139,6 +139,13 @@ public class FileServiceImpl implements FileService {
         return rows == 1;
     }
 
+    @Override
+    public boolean revertSafeDeleteFile(Long id) {
+        int rows = filesRepository.revertDeleted(id);
+        // logging done in upper service layer
+        return rows == 1;
+    }
+
 
     private void writeFile(byte[] bytes, String path, String fileName) throws IllegalArgumentException, IOException {
         checkFolder(path);

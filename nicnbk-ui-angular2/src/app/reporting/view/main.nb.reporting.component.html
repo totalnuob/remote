@@ -34,8 +34,9 @@
                 </tbody>
             </table>
         </div>
+
         <div class="modal fade" id="newReportModal" role="dialog">
-            <div class="modal-dialog" style="overflow-y: scroll; min-height: 100px; max-height:85%;  margin-top: 100px; margin-bottom:50px; width:65%;">
+            <div [ngBusy]="busyCreate" class="modal-dialog" style="overflow-y: scroll; min-height: 100px; max-height:85%;  margin-top: 100px; margin-bottom:50px; width:65%;">
                 <div class="modal-content">
                     <div class="modal-body">
                         <div class="row">
@@ -69,7 +70,7 @@
                                 <select class="form-control" [(ngModel)]="reportYear">
                                     <option value="2016">2016</option>
                                     <option value="2017">2017</option>
-                                    <option value="2017">2018</option>
+                                    <option value="2018">2018</option>
                                 </select>
                             </div>
                         </div>

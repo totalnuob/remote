@@ -72,7 +72,6 @@ public class PeriodicReportNICKMFServiceImpl implements PeriodicReportNICKMFServ
 
     private void checkNICKMFReportingData(List<NICKMFReportingDataDto> records){
         if(records != null){
-            double totalSum = 0.0;
             Set<String> codes = new HashSet<>();
             for(NICKMFReportingDataDto record: records){
 
@@ -88,8 +87,6 @@ public class PeriodicReportNICKMFServiceImpl implements PeriodicReportNICKMFServ
 
                 if(record.getAccountBalance() == null){
                     throw new IllegalArgumentException("Record missing 'Account Balance' value");
-                }else{
-                    totalSum += record.getAccountBalance().doubleValue();
                 }
 
                 codes.add(record.getNicChartOfAccountsCode());

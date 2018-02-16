@@ -320,7 +320,7 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
                 entitySaveResponseDto.setSuccessMessageEn("Successfully saved schedule of investment record");
                 return entitySaveResponseDto;
             }else{
-                logger.error("Failed to update schedule of investment record: No record found to update");
+                logger.error("Failed to update schedule of investment record: No record found to update: fund name = " + updateDto.getFundName());
                 entitySaveResponseDto.setErrorMessageEn("Failed to update schedule of investment record - no record found to update: fund name = " + updateDto.getFundName());
                 return entitySaveResponseDto;
             }

@@ -51,8 +51,18 @@ export class ConsolidatedKZTForm22NBReportingComponent extends CommonNBReporting
                         .subscribe(
                             response  => {
                                 if(response){
-                                    console.log(response);
-                                    this.records = response;
+                                    if (response.status === 'FAIL') {
+                                        if(response.message != null){
+                                            this.errorMessage = response.message.nameEn ? response.message.nameEn :
+                                                response.message.nameKz ? response.message.nameKz : response.message.nameRu ? response.message.nameRu : null;
+                                        }
+                                        if(this.errorMessage == null){
+                                            this.errorMessage = "Error loading KZT Form 7";
+                                        }
+                                        this.postAction(null, this.errorMessage);
+                                    }else {
+                                        this.records = response.records;
+                                    }
                                 }
                             },
                             (error: ErrorResponse) => {

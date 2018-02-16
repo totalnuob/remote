@@ -34,7 +34,7 @@ export class MainNBReportingComponent extends CommonNBReportingComponent impleme
     private report;
     private reportList: PeriodicReport[];
 
-    busy: Subscription;
+    busy, busyCreate: Subscription;
 
     ngOnInit():void {
         this.busy = this.periodicReportService.loadAll()
@@ -70,7 +70,7 @@ export class MainNBReportingComponent extends CommonNBReportingComponent impleme
         this.report.type = 'NB_NICK';
         this.report.status = 'NEW';
 
-        this.periodicReportService.save(this.report)
+        this.busyCreate = this.periodicReportService.save(this.report)
             .subscribe(
                 (response: SaveResponse)  => {
                     this.report.id = response.entityId;

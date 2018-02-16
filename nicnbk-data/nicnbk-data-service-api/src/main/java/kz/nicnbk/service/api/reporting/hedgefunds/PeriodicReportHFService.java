@@ -1,5 +1,6 @@
 package kz.nicnbk.service.api.reporting.hedgefunds;
 
+import kz.nicnbk.service.dto.common.ListResponseDto;
 import kz.nicnbk.service.dto.reporting.GeneratedGeneralLedgerFormDto;
 import kz.nicnbk.service.dto.reporting.PEGeneralLedgerFormDataHolderDto;
 
@@ -10,6 +11,6 @@ import java.util.List;
  */
 public interface PeriodicReportHFService {
 
-    List<GeneratedGeneralLedgerFormDto> getSingularGeneratedForm(Long reportId);
+    ListResponseDto getSingularGeneratedForm(Long reportId);
 
 }
