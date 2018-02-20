@@ -5004,7 +5004,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
     private boolean saveConsolidatedUSDFormBalance(List<ConsolidatedBalanceFormRecordDto> records, Long reportId){
         if(records != null){
             try {
-                List<ConsolidatedReportUSDFormBalance> existingEntities = this.consolidatedReportUSDFormBalanceRepository.getEntitiesByReportId(reportId);
+                //List<ConsolidatedReportUSDFormBalance> existingEntities = this.consolidatedReportUSDFormBalanceRepository.getEntitiesByReportId(reportId);
                 this.consolidatedReportUSDFormBalanceRepository.deleteAllByReportId(reportId);
 
                 List<ConsolidatedReportUSDFormBalance> entities = this.consolidatedUSDFormBalanceConverter.assembleList(records, reportId);
@@ -5022,7 +5022,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
     private boolean saveConsolidatedUSDFormIncomeExpense(List<ConsolidatedBalanceFormRecordDto> records, Long reportId){
         if(records != null){
             try {
-                List<ConsolidatedReportUSDFormIncomeExpense> existingEntities = this.consolidatedReportUSDFormIncomeExpenseRepository.getEntitiesByReportId(reportId);
+                //List<ConsolidatedReportUSDFormIncomeExpense> existingEntities = this.consolidatedReportUSDFormIncomeExpenseRepository.getEntitiesByReportId(reportId);
                 this.consolidatedReportUSDFormIncomeExpenseRepository.deleteAllByReportId(reportId);
 
                 List<ConsolidatedReportUSDFormIncomeExpense> entities = this.consolidatedUSDFormIncomeExpenseConverter.assembleList(records, reportId);
@@ -5040,7 +5040,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
     private boolean saveConsolidatedUSDFormTotalIncome(List<ConsolidatedBalanceFormRecordDto> records, Long reportId){
         if(records != null){
             try {
-                List<ConsolidatedReportUSDFormTotalIncome> existingEntities = this.consolidatedReportUSDFormTotalIncomeRepository.getEntitiesByReportId(reportId);
+                //List<ConsolidatedReportUSDFormTotalIncome> existingEntities = this.consolidatedReportUSDFormTotalIncomeRepository.getEntitiesByReportId(reportId);
                 this.consolidatedReportUSDFormTotalIncomeRepository.deleteAllByReportId(reportId);
 
                 List<ConsolidatedReportUSDFormTotalIncome> entities = this.consolidatedUSDFormTotalIncomeConverter.assembleList(records, reportId);
@@ -5072,7 +5072,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
     private boolean saveConsolidatedKZTForm1(List<ConsolidatedBalanceFormRecordDto> records, Long reportId){
         if(records != null){
             try {
-                List<ConsolidatedReportKZTForm1> existingEntities = this.consolidatedReportKZTForm1Repository.getEntitiesByReportId(reportId);
+                //List<ConsolidatedReportKZTForm1> existingEntities = this.consolidatedReportKZTForm1Repository.getEntitiesByReportId(reportId);
                 this.consolidatedReportKZTForm1Repository.deleteAllByReportId(reportId);
 
                 List<ConsolidatedReportKZTForm1> entities = this.consolidatedKZTForm1Converter.assembleList(records, reportId);
@@ -5090,7 +5090,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
     private boolean saveConsolidatedKZTForm2(List<ConsolidatedBalanceFormRecordDto> records, Long reportId){
         if(records != null){
             try {
-                List<ConsolidatedReportKZTForm2> existingEntities = this.consolidatedReportKZTForm2Repository.getEntitiesByReportId(reportId);
+                //List<ConsolidatedReportKZTForm2> existingEntities = this.consolidatedReportKZTForm2Repository.getEntitiesByReportId(reportId);
                 this.consolidatedReportKZTForm2Repository.deleteAllByReportId(reportId);
 
                 List<ConsolidatedReportKZTForm2> entities = this.consolidatedKZTForm2Converter.assembleList(records, reportId);
@@ -5108,7 +5108,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
     private boolean saveConsolidatedKZTForm3(List<ConsolidatedBalanceFormRecordDto> records, Long reportId){
         if(records != null){
             try {
-                List<ConsolidatedReportKZTForm3> existingEntities = this.consolidatedReportKZTForm3Repository.getEntitiesByReportId(reportId);
+                //List<ConsolidatedReportKZTForm3> existingEntities = this.consolidatedReportKZTForm3Repository.getEntitiesByReportId(reportId);
                 this.consolidatedReportKZTForm3Repository.deleteAllByReportId(reportId);
 
                 List<ConsolidatedReportKZTForm3> entities = this.consolidatedKZTForm3Converter.assembleList(records, reportId);
@@ -5126,7 +5126,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
     private boolean saveConsolidatedKZTForm6(List<ConsolidatedKZTForm6RecordDto> records, Long reportId){
         if(records != null){
             try {
-                List<ConsolidatedReportKZTForm6> existingEntities = this.consolidatedReportKZTForm6Repository.getEntitiesByReportId(reportId);
+                //List<ConsolidatedReportKZTForm6> existingEntities = this.consolidatedReportKZTForm6Repository.getEntitiesByReportId(reportId);
                 this.consolidatedReportKZTForm7Repository.deleteAllByReportId(reportId);
 
                 List<ConsolidatedReportKZTForm6> entities = this.consolidatedKZTForm6Converter.assembleList(records, reportId);
@@ -5144,7 +5144,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
     private boolean saveConsolidatedKZTForm7(List<ConsolidatedKZTForm7RecordDto> records, Long reportId){
         if(records != null){
             try {
-                List<ConsolidatedReportKZTForm7> existingEntities = this.consolidatedReportKZTForm7Repository.getEntitiesByReportId(reportId);
+                //List<ConsolidatedReportKZTForm7> existingEntities = this.consolidatedReportKZTForm7Repository.getEntitiesByReportId(reportId);
                 this.consolidatedReportKZTForm7Repository.deleteAllByReportId(reportId);
 
                 List<ConsolidatedReportKZTForm7> entities = this.consolidatedKZTForm7Converter.assembleList(records, reportId);
@@ -5162,7 +5162,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
     private boolean saveConsolidatedKZTForm8(List<ConsolidatedKZTForm8RecordDto> records, Long reportId){
         if(records != null){
             try {
-                List<ConsolidatedReportKZTForm8> existingEntities = this.consolidatedReportKZTForm8Repository.getEntitiesByReportId(reportId);
+                //List<ConsolidatedReportKZTForm8> existingEntities = this.consolidatedReportKZTForm8Repository.getEntitiesByReportId(reportId);
                 this.consolidatedReportKZTForm8Repository.deleteAllByReportId(reportId);
 
                 List<ConsolidatedReportKZTForm8> entities = this.consolidatedKZTForm8Converter.assembleList(records, reportId);
@@ -5180,7 +5180,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
     private boolean saveConsolidatedKZTForm10(List<ConsolidatedKZTForm10RecordDto> records, Long reportId){
         if(records != null){
             try {
-                List<ConsolidatedReportKZTForm10> existingEntities = this.consolidatedReportKZTForm10Repository.getEntitiesByReportId(reportId);
+                //List<ConsolidatedReportKZTForm10> existingEntities = this.consolidatedReportKZTForm10Repository.getEntitiesByReportId(reportId);
                 this.consolidatedReportKZTForm10Repository.deleteAllByReportId(reportId);
 
                 List<ConsolidatedReportKZTForm10> entities = this.consolidatedKZTForm10Converter.assembleList(records, reportId);
@@ -5198,7 +5198,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
     private boolean saveConsolidatedKZTForm13(List<ConsolidatedKZTForm13RecordDto> records, Long reportId){
         if(records != null){
             try {
-                List<ConsolidatedReportKZTForm13> existingEntities = this.consolidatedReportKZTForm13Repository.getEntitiesByReportId(reportId);
+                //List<ConsolidatedReportKZTForm13> existingEntities = this.consolidatedReportKZTForm13Repository.getEntitiesByReportId(reportId);
                 this.consolidatedReportKZTForm13Repository.deleteAllByReportId(reportId);
 
                 List<ConsolidatedReportKZTForm13> entities = this.consolidatedKZTForm13Converter.assembleList(records, reportId);
@@ -5216,7 +5216,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
     private boolean saveConsolidatedKZTForm14(List<ConsolidatedKZTForm14RecordDto> records, Long reportId){
         if(records != null){
             try {
-                List<ConsolidatedReportKZTForm14> existingEntities = this.consolidatedReportKZTForm14Repository.getEntitiesByReportId(reportId);
+                //List<ConsolidatedReportKZTForm14> existingEntities = this.consolidatedReportKZTForm14Repository.getEntitiesByReportId(reportId);
                 this.consolidatedReportKZTForm14Repository.deleteAllByReportId(reportId);
 
                 List<ConsolidatedReportKZTForm14> entities = this.consolidatedKZTForm14Converter.assembleList(records, reportId);
@@ -5234,7 +5234,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
     private boolean saveConsolidatedKZTForm19(List<ConsolidatedKZTForm19RecordDto> records, Long reportId){
         if(records != null){
             try {
-                List<ConsolidatedReportKZTForm19> existingEntities = this.consolidatedReportKZTForm19Repository.getEntitiesByReportId(reportId);
+                //List<ConsolidatedReportKZTForm19> existingEntities = this.consolidatedReportKZTForm19Repository.getEntitiesByReportId(reportId);
                 this.consolidatedReportKZTForm19Repository.deleteAllByReportId(reportId);
 
                 List<ConsolidatedReportKZTForm19> entities = this.consolidatedKZTForm19Converter.assembleList(records, reportId);
@@ -5252,7 +5252,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
     private boolean saveConsolidatedKZTForm22(List<ConsolidatedKZTForm22RecordDto> records, Long reportId){
         if(records != null){
             try {
-                List<ConsolidatedReportKZTForm22> existingEntities = this.consolidatedReportKZTForm22Repository.getEntitiesByReportId(reportId);
+                //List<ConsolidatedReportKZTForm22> existingEntities = this.consolidatedReportKZTForm22Repository.getEntitiesByReportId(reportId);
                 this.consolidatedReportKZTForm22Repository.deleteAllByReportId(reportId);
 
                 List<ConsolidatedReportKZTForm22> entities = this.consolidatedKZTForm22Converter.assembleList(records, reportId);
