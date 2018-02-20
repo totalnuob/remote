@@ -95,11 +95,15 @@ public class HFNOALServiceImpl implements HFNOALService {
 
     @Override
     public boolean save(List<ReportingHFNOAL> entities) {
-        // TODO: boolean result, check for error?
-        if(entities != null){
-            this.hfNOALRepository.save(entities);
+        try {
+            if (entities != null) {
+                this.hfNOALRepository.save(entities);
+            }
+            return true;
+        }catch (Exception ex){
+            logger.error("Error saving NOAL entities. ", ex);
+            return false;
         }
-        return true;
     }
 
     @Override

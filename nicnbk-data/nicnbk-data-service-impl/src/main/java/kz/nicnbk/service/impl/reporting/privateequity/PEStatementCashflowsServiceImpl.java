@@ -117,11 +117,15 @@ public class PEStatementCashflowsServiceImpl implements PEStatementCashflowsServ
 
     @Override
     public boolean save(List<ReportingPEStatementCashflows> entities) {
-        // TODO: boolean result, check for error?
-        if(entities != null){
-            this.peStatementCashflowsRepository.save(entities);
+        try {
+            if (entities != null) {
+                this.peStatementCashflowsRepository.save(entities);
+            }
+            return true;
+        }catch (Exception ex){
+            logger.error("Error saving Statement of Cash flows entities. ", ex);
+            return false;
         }
-        return true;
     }
 
     @Override

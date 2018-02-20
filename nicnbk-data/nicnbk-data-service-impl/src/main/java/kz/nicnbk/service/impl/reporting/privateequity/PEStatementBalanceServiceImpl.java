@@ -125,11 +125,15 @@ public class PEStatementBalanceServiceImpl implements PEStatementBalanceService 
 
     @Override
     public boolean save(List<ReportingPEStatementBalance> entities) {
-        // TODO: boolean result, check for error?
-        if(entities != null){
-            peStatementBalanceRepository.save(entities);
+        try {
+            if (entities != null) {
+                peStatementBalanceRepository.save(entities);
+            }
+            return true;
+        }catch (Exception ex){
+            logger.error("Error saving Statement of Balance entities. ", ex);
+            return false;
         }
-        return true;
     }
 
     @Override

@@ -344,9 +344,9 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
 
         boolean deleted = this.periodicReportService.safeDeleteFile(fileId, username);
         if(deleted){
-            logger.info("Successfully deleted (safe) file : file id " + fileId + " [user + " + username + "]");
+            logger.info("Successfully deleted (safe) file : file id " + fileId + " [user " + username + "]");
         }else{
-            logger.info("Error deleting(safe) file : file id " + fileId + " [user + " + username + "]");
+            logger.info("Error deleting(safe) file : file id " + fileId + " [user " + username + "]");
         }
         return buildDeleteResponseEntity(deleted);
     }

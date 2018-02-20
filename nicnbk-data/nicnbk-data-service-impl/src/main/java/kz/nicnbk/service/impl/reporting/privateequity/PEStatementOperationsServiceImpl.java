@@ -107,11 +107,15 @@ public class PEStatementOperationsServiceImpl implements PEStatementOperationsSe
 
     @Override
     public boolean save(List<ReportingPEStatementOperations> entities) {
-        // TODO: boolean result, check for error?
-        if(entities != null){
-            peStatementOperationsRepository.save(entities);
+        try {
+            if (entities != null) {
+                peStatementOperationsRepository.save(entities);
+            }
+            return true;
+        }catch (Exception ex){
+            logger.error("Error saving Statement of Operations entities. ", ex);
+            return false;
         }
-        return true;
     }
 
     @Override

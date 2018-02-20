@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -162,13 +163,18 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
         return entities;
     }
 
+    //@Transactional
     @Override
     public boolean save(List<ReportingPEScheduleInvestment> entities) {
-        // TODO: boolean result, check for error?
-        if(entities != null){
-            peScheduleInvestmentRepository.save(entities);
+        try {
+            if (entities != null) {
+                peScheduleInvestmentRepository.save(entities);
+            }
+            return true;
+        }catch (Exception ex){
+            logger.error("Error saving Schedule of Investments entities", ex);
+            return false;
         }
-        return true;
     }
 
     @Override
@@ -340,6 +346,7 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
         return null;
     }
 
+    @Transactional
     @Override
     public boolean deleteByReportId(Long reportId) {
         try {

@@ -62,7 +62,7 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
     @Autowired
     private PEStatementChangesService statementChangesService;
 
-    @Transactional
+    @Transactional // if DB operation fails, no record will be saved, i.e. no partial commits
     @Override
     public EntityListSaveResponseDto savePEGeneralLedgerFormData(PEGeneralLedgerFormDataHolderDto dataHolderDto) {
         EntityListSaveResponseDto entityListSaveResponseDto = new EntityListSaveResponseDto();

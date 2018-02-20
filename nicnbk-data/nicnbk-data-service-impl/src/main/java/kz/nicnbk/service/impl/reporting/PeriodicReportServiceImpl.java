@@ -338,9 +338,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 }
                 if(entities.size() > 0) {
                     holder.setFiles(files);
-                    holder.setReport(this.periodicReportConverter.disassemble(entities.get(0).getPeriodicReport()));
                 }
             }
+            holder.setReport(getPeriodicReport(reportId));
             return holder;
         }catch(Exception ex){
             logger.error("Error getting periodic report files: report=" + reportId, ex);
@@ -405,6 +405,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                     deleted = deleteParsedFileData(periodicReport.getId(), periodicReportFiles.getFile().getType().getCode());
                     if(deleted) {
                         logger.info("Deleted(safe) reporting input file: reportId=" + periodicReport.getId() + ", file id=" + fileId);
+                        return true;
                     }else{
                         // recover from error
                         boolean reverted = fileService.revertSafeDeleteFile(fileId);
@@ -414,7 +415,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         logger.error("Error deleting file: file id=" + fileId + ", report di=" + periodicReport.getId());
                     }
                 }
-                return true;
+                return false;
             }else{
                 logger.error("Failed to delete(safe) reporting input file - no file found : file id=" + fileId);
             }
@@ -502,6 +503,8 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
      * @param reportId - report id
      * @return - true/false
      */
+
+    @Transactional
     @Override
     public boolean markReportAsFinal(Long reportId) {
         PeriodicReport report = this.periodReportRepository.findOne(reportId);
@@ -718,7 +721,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 throw new IllegalStateException("Failed to mark report FINAL: error saving KZT FORM 22 records");
             }
         }catch (IllegalStateException ex){
-            clearSavedReportsTables(reportId);
+            //clearSavedReportsTables(reportId);
             throw ex;
             //return false;
         }

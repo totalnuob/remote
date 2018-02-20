@@ -154,8 +154,7 @@
 
             <br/>
             <div class="row">
-                <div class="col-md-2">Report Status</div>
-                <div class="col-md-2"> <label class="label-info" *ngIf="periodicReport != null && periodicReport.status != null">{{periodicReport.status}}</label></div>
+                <div class="col-md-2 ">Report Status: <label class="label-info" *ngIf="periodicReport != null && periodicReport.status != null">{{periodicReport.status}}</label></div>
                 <div class="col-md-2" *ngIf="periodicReport != null && periodicReport.status != null && periodicReport.status != 'SUBMITTED'">
                     <button class="btn btn-primary" (click)="markAsFinal()">Mark as final</button>
                 </div>

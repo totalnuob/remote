@@ -38,7 +38,7 @@ public class PeriodicReportNICKMFServiceImpl implements PeriodicReportNICKMFServ
     @Autowired
     private NICKMFReportingDataConverter nickmfReportingDataConverter;
 
-    @Transactional
+    @Transactional // if DB operation fails, no record will be saved, i.e. no partial commits
     @Override
     public EntityListSaveResponseDto saveNICKMFReportingData(NICKMFReportingDataHolderDto dataHolderDto) {
         EntityListSaveResponseDto entityListSaveResponseDto = new EntityListSaveResponseDto();
