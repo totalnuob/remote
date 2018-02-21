@@ -827,19 +827,15 @@
                                 <br>
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div class="pull-right">
-                                                    <button type="submit" class="btn btn-success" (click)="createOnePager()" [disabled]="fund.id == 0 || fund.id == null">CREATE</button>
-                                                </div>
-                                            </div>
+                                        <div class="pull-right">
+                                            <button type="submit" class="btn btn-success" (click)="createOnePager()" [disabled]="fund.id == 0 || fund.id == null">CREATE</button>
                                         </div>
-                                        <br>
                                         <div class="pull-left">
-                                            <form #yourForm="ngForm" (ngSubmit)="onSubmitGrossCF()" *ngIf="canEdit()">
-                                                <h4>Upload a new portion of the Gross Cash Flow</h4>
-                                                <input type="file" #fileupload name="myFile" (change)="fileChange(fileupload.files)"/>
-                                                <button type="submit" class="btn btn-success" [disabled]="fund.id == 0 || fund.id == null">Submit</button>
+                                            <form>
+                                                <h4>Upload a GP's logo</h4>
+                                                <input type="file" #fileUploadGP (change)="fileLogoChange(fileUploadGP.files, 'GP')"/>
+                                                <h4>Upload an NIC's logo</h4>
+                                                <input type="file" #fileUploadNIC (change)="fileLogoChange(fileUploadNIC.files, 'NIC')"/>
                                             </form>
                                         </div>
                                         <br>
