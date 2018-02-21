@@ -11,8 +11,10 @@ import com.itextpdf.layout.element.*;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.List;
 import kz.nicnbk.service.api.pe.PECompanyPerformanceIddService;
+import kz.nicnbk.service.api.pe.PEFundService;
 import kz.nicnbk.service.api.pe.PEPdfService;
 import kz.nicnbk.service.dto.pe.PECompanyPerformanceIddDto;
+import kz.nicnbk.service.dto.pe.PEFundDto;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
@@ -38,10 +40,19 @@ public class PEPdfServiceImpl implements PEPdfService {
     @Autowired
     private PECompanyPerformanceIddService performanceIddService;
 
+    @Autowired
+    private PEFundService fundService;
+
     @Override
     public void createOnePager(Long fundId) {
 
         try {
+
+            PEFundDto fundDto = fundService.get(fundId);
+
+            String fundName = fundDto.getFundName();
+
+//            ##########################################################################################
 
             final String fiat = "FIAT";
             final String audi = "AUDI";
