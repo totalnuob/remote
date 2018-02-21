@@ -48,6 +48,16 @@ public class PEPdfServiceImpl implements PEPdfService {
 
         try {
 
+            String dest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/OnePager.pdf";
+            String nicLogo = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/NIClogo.png";
+
+            File file = new File(dest);
+            file.getParentFile().mkdirs();
+
+            PdfWriter writer = new PdfWriter(dest);
+            PdfDocument pdf = new PdfDocument(writer);
+            Document document = new Document(pdf);
+
             PEFundDto fundDto = fundService.get(fundId);
 
             String fundName = fundDto.getFundName();
@@ -93,17 +103,8 @@ public class PEPdfServiceImpl implements PEPdfService {
 
 //            ##########################################################################################
 
-            String DEST = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/hello_world.pdf";
             String DOG = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/dog.bmp";
-//            String FOX = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/fox.bmp";
-            String FOX = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/BarChart.jpeg";
-
-            File file = new File(DEST);
-            file.getParentFile().mkdirs();
-
-            PdfWriter writer = new PdfWriter(DEST);
-            PdfDocument pdf = new PdfDocument(writer);
-            Document document = new Document(pdf);
+            String FOX = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/fox.bmp";
 
             PdfFont fontTimes = PdfFontFactory.createFont(FontConstants.TIMES_ROMAN);
             PdfFont font = PdfFontFactory.createFont(FontConstants.HELVETICA);
