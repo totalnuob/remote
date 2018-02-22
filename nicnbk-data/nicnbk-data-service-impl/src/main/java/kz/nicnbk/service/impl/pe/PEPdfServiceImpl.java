@@ -58,7 +58,6 @@ public class PEPdfServiceImpl implements PEPdfService {
             Document document = new Document(pdf);
 
             PEFundDto fundDto = fundService.get(fundId);
-
             String fundName = fundDto.getFundName();
 
             document.add(new Paragraph(fundName));
