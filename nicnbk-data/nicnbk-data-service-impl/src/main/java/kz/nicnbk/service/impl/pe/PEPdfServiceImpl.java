@@ -54,14 +54,14 @@ public class PEPdfServiceImpl implements PEPdfService {
             File file = new File(dest);
             file.getParentFile().mkdirs();
 
-            PdfWriter writer = new PdfWriter(dest);
-            PdfDocument pdf = new PdfDocument(writer);
+            PdfDocument pdf = new PdfDocument(new PdfWriter(dest));
             Document document = new Document(pdf);
 
             PEFundDto fundDto = fundService.get(fundId);
 
             String fundName = fundDto.getFundName();
 
+            document.add(new Paragraph(fundName));
 
 
 
