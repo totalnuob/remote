@@ -123,6 +123,14 @@ public class PEPdfServiceImpl implements PEPdfService {
 
             document.add(new Paragraph(fundName));
 
+            Image fox = new Image(ImageDataFactory.create(foxImageDest));
+            Image dog = new Image(ImageDataFactory.create(dogImageDest));
+            Paragraph p = new Paragraph("The quick brown ")
+                    .add(fox)
+                    .add(" jumps over the lazy ")
+                    .add(dog);
+            document.add(p);
+
             //Set column parameters
             int offSet = 36;
             int columnWidth = (int) (ps.getWidth() - offSet * 2 - 10) / 3;
@@ -144,16 +152,8 @@ public class PEPdfServiceImpl implements PEPdfService {
             String articleInstagram = new String(Files.readAllBytes(Paths.get(fox_TXT)), StandardCharsets.UTF_8);
             this.addArticle(document, "Instagram May Change Your Feed, Personalizing It With an Algorithm","By MIKE ISAAC MARCH 15, 2016", inst, articleInstagram);
 
-
-
-
-
-
-//            document.close();
-
-
-
-
+            Rectangle[] columnsDefault = {new Rectangle(offSet, offSet, ps.getWidth() - offSet * 2, ps.getHeight() - offSet * 2)};
+            document.setRenderer(new ColumnDocumentRenderer(document, columnsDefault));
 
             document.add(new Paragraph("Hello World!"));
             document.add(new Paragraph("iText is:").setFont(timesNewRoman));
@@ -169,14 +169,6 @@ public class PEPdfServiceImpl implements PEPdfService {
                     .add(new ListItem("Never gonna say goodbye"))
                     .add(new ListItem("Never gonna tell a lie and hurt you"));
             document.add(list);
-
-            Image fox = new Image(ImageDataFactory.create(foxImageDest));
-            Image dog = new Image(ImageDataFactory.create(dogImageDest));
-            Paragraph p = new Paragraph("The quick brown ")
-                    .add(fox)
-                    .add(" jumps over the lazy ")
-                    .add(dog);
-            document.add(p);
 
             java.util.List<PECompanyPerformanceIddDto> performanceIddDtoList = performanceIddService.findByFundId(fundId);
             Table table = new Table(new float[]{3, 2, 2, 2, 2, 1, 1});
