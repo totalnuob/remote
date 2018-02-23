@@ -66,14 +66,13 @@ public class PEPdfServiceImpl implements PEPdfService {
             String foxImageDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/fox.bmp";
 
             String barChart_TXT = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/txt/barChart.txt";
-            String dog_TXT = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/txt/barChart.txt";
-            String fox_TXT = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/txt/barChart.txt";
 
             timesNewRoman = PdfFontFactory.createFont(FontConstants.TIMES_ROMAN);
             timesNewRomanBold = PdfFontFactory.createFont(FontConstants.TIMES_BOLD);
             PdfFont helvetica = PdfFontFactory.createFont(FontConstants.HELVETICA);
             PdfFont helveticaBold = PdfFontFactory.createFont(FontConstants.HELVETICA_BOLD);
 
+//            ##########################################################################################
 //            Chart creation
             final String fiat = "FIAT";
             final String audi = "AUDI";
@@ -137,22 +136,22 @@ public class PEPdfServiceImpl implements PEPdfService {
             int columnHeight = (int) (ps.getHeight() - offSet * 2);
 
             //Define column areas
-            Rectangle[] columns = {new Rectangle(offSet - 5, offSet, columnWidth, columnHeight),
-                    new Rectangle(offSet + columnWidth, offSet, columnWidth, columnHeight),
-                    new Rectangle(offSet + columnWidth * 2 + 5, offSet, columnWidth, columnHeight)};
+            Rectangle[] columns = {new Rectangle(offSet - 5, offSet + 300, columnWidth, columnHeight - 500),
+                    new Rectangle(offSet + columnWidth, offSet + 300, columnWidth, columnHeight - 500),
+                    new Rectangle(offSet + columnWidth * 2 + 5, offSet + 300, columnWidth, columnHeight - 500)};
             document.setRenderer(new ColumnDocumentRenderer(document, columns));
 
             Image apple = new Image(ImageDataFactory.create(barChartDest)).setWidth(columnWidth);
             String articleApple = new String(Files.readAllBytes(Paths.get(barChart_TXT)), StandardCharsets.UTF_8);
             this.addArticle(document, "Apple Encryption Engineers, if Ordered to Unlock iPhone, Might Resist", "By JOHN MARKOFF MARCH 18, 2016", apple, articleApple);
             Image facebook = new Image(ImageDataFactory.create(dogImageDest)).setWidth(columnWidth);
-            String articleFB = new String(Files.readAllBytes(Paths.get(dog_TXT)), StandardCharsets.UTF_8);
+            String articleFB = new String(Files.readAllBytes(Paths.get(barChart_TXT)), StandardCharsets.UTF_8);
             this.addArticle(document, "With \"Smog Jog\" Through Beijing, Zuckerberg Stirs Debate on Air Pollution", "By PAUL MOZUR MARCH 18, 2016", facebook, articleFB);
             Image inst = new Image(ImageDataFactory.create(foxImageDest)).setWidth(columnWidth);
-            String articleInstagram = new String(Files.readAllBytes(Paths.get(fox_TXT)), StandardCharsets.UTF_8);
+            String articleInstagram = new String(Files.readAllBytes(Paths.get(barChart_TXT)), StandardCharsets.UTF_8);
             this.addArticle(document, "Instagram May Change Your Feed, Personalizing It With an Algorithm","By MIKE ISAAC MARCH 15, 2016", inst, articleInstagram);
 
-            Rectangle[] columnsDefault = {new Rectangle(offSet, offSet, ps.getWidth() - offSet * 2, ps.getHeight() - offSet * 2)};
+            Rectangle[] columnsDefault = {new Rectangle(offSet, offSet, ps.getWidth() - offSet * 2, 300)};
             document.setRenderer(new ColumnDocumentRenderer(document, columnsDefault));
 
             document.add(new Paragraph("Hello World!"));
