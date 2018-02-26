@@ -101,7 +101,11 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
                         dto.setAmountKZT(new BigDecimal(currencyRatesDto.getValue().doubleValue()).multiply(new BigDecimal(dto.getAmount())).setScale(2, RoundingMode.HALF_UP).doubleValue());
                     }
 
-                    dto.setCanDelete(dto.getDate().compareTo(mostRecentFinalReportDate) <= 0 ? false : true);
+                    if(dto.getDate() != null) {
+                        dto.setCanDelete(dto.getDate().compareTo(mostRecentFinalReportDate) <= 0 ? false : true);
+                    }else{
+                        dto.setCanDelete(false);
+                    }
 
                     records.add(dto);
                 }
