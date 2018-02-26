@@ -97,7 +97,7 @@ export class PeriodicReportService extends CommonService{
     private PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_22_URL = this.PERIODIC_REPORT_BASE_URL + "consolidatedBalanceKZTForm22/";
 
     private PERIODIC_REPORT_RESERVE_CALCULATION_FORM_URL = this.PERIODIC_REPORT_BASE_URL + "reserveCalculation/";
-    private PERIODIC_REPORT_RESERVE_CALCULATION_DELETE_RECORD_URL = this.PERIODIC_REPORT_BASE_URL + "reserveCalculationDeleteRecord/";
+    private PERIODIC_REPORT_RESERVE_CALCULATION_DELETE_RECORD_URL = this.PERIODIC_REPORT_BASE_URL + "reserveCalculation/delete/";
     private PERIODIC_REPORT_RESERVE_CALCULATION_SAVE_URL = this.PERIODIC_REPORT_BASE_URL + "reserveCalculationSave/";
 
 
@@ -334,8 +334,6 @@ export class PeriodicReportService extends CommonService{
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }
-
-
 
 
     saveOtherInfo(dto){

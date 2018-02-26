@@ -41,7 +41,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
 import java.math.BigDecimal;
@@ -5543,7 +5542,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), PeriodicReportConstants.LINE_CODE)){
                     startOfTable = true;
                 }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), PeriodicReportConstants.KZT_REPORT_HEADER_DATE_PLACEHOLDER)){
-                    String date = DateUtils.getDateRussianTextualDate(report.getReportDate());
+                    String date = DateUtils.getDateRussianTextualDateOnFirstDayNextMonth(report.getReportDate());
                     row.getCell(0).setCellValue(PeriodicReportConstants.KZT_REPORT_HEADER_DATE_TEXT + date);
                 }
             }
@@ -5668,7 +5667,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), PeriodicReportConstants.LINE_CODE)){
                     startOfTable = true;
                 }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), PeriodicReportConstants.KZT_REPORT_HEADER_DATE_PLACEHOLDER)){
-                    String date = DateUtils.getDateRussianTextualDate(report.getReportDate());
+                    String date = DateUtils.getDateRussianTextualDateOnFirstDayNextMonth(report.getReportDate());
                     row.getCell(0).setCellValue(PeriodicReportConstants.KZT_REPORT_HEADER_DATE_TEXT + date);
                 }
             }
@@ -5746,7 +5745,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), PeriodicReportConstants.ON_CURRENT_PERIOD_DATE)){
                     startOfTable = true;
                 }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), PeriodicReportConstants.KZT_REPORT_HEADER_DATE_PLACEHOLDER)){
-                    String date = DateUtils.getDateRussianTextualDate(report.getReportDate());
+                    String date = DateUtils.getDateRussianTextualDateOnFirstDayNextMonth(report.getReportDate());
                     row.getCell(0).setCellValue(PeriodicReportConstants.KZT_REPORT_HEADER_DATE_TEXT + date);
                 }
             }
@@ -5875,7 +5874,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), PeriodicReportConstants.LINE_CODE)){
                     startOfTable = true;
                 }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), PeriodicReportConstants.KZT_REPORT_HEADER_DATE_PLACEHOLDER)){
-                    String date = DateUtils.getDateRussianTextualDate(report.getReportDate());
+                    String date = DateUtils.getDateRussianTextualDateOnFirstDayNextMonth(report.getReportDate());
                     row.getCell(0).setCellValue(PeriodicReportConstants.KZT_REPORT_HEADER_DATE_TEXT + date);
                 }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), PeriodicReportConstants.KZT_REPORT_HEADER_DATE_PLACEHOLDER_DATE_ONLY)){
                     Date date = DateUtils.getFirstDayOfNextMonth(report.getReportDate());
@@ -6008,7 +6007,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), PeriodicReportConstants.LINE_CODE)){
                     startOfTable = true;
                 }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), PeriodicReportConstants.KZT_REPORT_HEADER_DATE_PLACEHOLDER)){
-                    String date = DateUtils.getDateRussianTextualDate(report.getReportDate());
+                    String date = DateUtils.getDateRussianTextualDateOnFirstDayNextMonth(report.getReportDate());
                     row.getCell(0).setCellValue(PeriodicReportConstants.KZT_REPORT_HEADER_DATE_TEXT + date);
                 }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), PeriodicReportConstants.KZT_REPORT_HEADER_DATE_PLACEHOLDER_DATE_ONLY)){
                     Date date = DateUtils.getFirstDayOfNextMonth(report.getReportDate());
@@ -6117,7 +6116,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(1), PeriodicReportConstants.LINE_CODE)){
                     startOfTable = true;
                 }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), PeriodicReportConstants.KZT_REPORT_HEADER_DATE_PLACEHOLDER)){
-                    String date = DateUtils.getDateRussianTextualDate(report.getReportDate());
+                    String date = DateUtils.getDateRussianTextualDateOnFirstDayNextMonth(report.getReportDate());
                     row.getCell(0).setCellValue(PeriodicReportConstants.KZT_REPORT_HEADER_DATE_TEXT + date);
                 }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), PeriodicReportConstants.KZT_REPORT_HEADER_DATE_PLACEHOLDER_DATE_ONLY)){
                     Date date = DateUtils.getFirstDayOfNextMonth(report.getReportDate());
@@ -6234,7 +6233,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(1), PeriodicReportConstants.LINE_CODE)){
                     startOfTable = true;
                 }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), PeriodicReportConstants.KZT_REPORT_HEADER_DATE_PLACEHOLDER)){
-                    String date = DateUtils.getDateRussianTextualDate(report.getReportDate());
+                    String date = DateUtils.getDateRussianTextualDateOnFirstDayNextMonth(report.getReportDate());
                     row.getCell(0).setCellValue(PeriodicReportConstants.KZT_REPORT_HEADER_DATE_TEXT + date);
                 }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), PeriodicReportConstants.KZT_REPORT_HEADER_DATE_PLACEHOLDER_DATE_ONLY)){
                     Date date = DateUtils.getFirstDayOfNextMonth(report.getReportDate());
@@ -6433,7 +6432,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), PeriodicReportConstants.LINE_CODE)){
                     startOfTable = true;
                 }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), PeriodicReportConstants.KZT_REPORT_HEADER_DATE_PLACEHOLDER)){
-                    String date = DateUtils.getDateRussianTextualDate(report.getReportDate());
+                    String date = DateUtils.getDateRussianTextualDateOnFirstDayNextMonth(report.getReportDate());
                     row.getCell(0).setCellValue(PeriodicReportConstants.KZT_REPORT_HEADER_DATE_TEXT + date);
                 }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), PeriodicReportConstants.KZT_REPORT_HEADER_DATE_PLACEHOLDER_DATE_ONLY)){
                     Date date = DateUtils.getFirstDayOfNextMonth(report.getReportDate());
@@ -6606,7 +6605,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), PeriodicReportConstants.LINE_CODE)){
                     startOfTable = true;
                 }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), PeriodicReportConstants.KZT_REPORT_HEADER_DATE_PLACEHOLDER)){
-                    String date = DateUtils.getDateRussianTextualDate(report.getReportDate());
+                    String date = DateUtils.getDateRussianTextualDateOnFirstDayNextMonth(report.getReportDate());
                     row.getCell(0).setCellValue(PeriodicReportConstants.KZT_REPORT_HEADER_DATE_TEXT + date);
                 }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), PeriodicReportConstants.KZT_REPORT_HEADER_DATE_PLACEHOLDER_DATE_ONLY)){
                     Date date = DateUtils.getFirstDayOfNextMonth(report.getReportDate());
@@ -6769,7 +6768,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), PeriodicReportConstants.LINE_CODE)){
                     startOfTable = true;
                 }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), PeriodicReportConstants.KZT_REPORT_HEADER_DATE_PLACEHOLDER)){
-                    String date = DateUtils.getDateRussianTextualDate(report.getReportDate());
+                    String date = DateUtils.getDateRussianTextualDateOnFirstDayNextMonth(report.getReportDate());
                     row.getCell(0).setCellValue(PeriodicReportConstants.KZT_REPORT_HEADER_DATE_TEXT + date);
                 }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), PeriodicReportConstants.KZT_REPORT_HEADER_DATE_PLACEHOLDER_DATE_ONLY)){
                     Date date = DateUtils.getFirstDayOfNextMonth(report.getReportDate());
@@ -6979,7 +6978,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), PeriodicReportConstants.LINE_CODE)){
                     startOfTable = true;
                 }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), PeriodicReportConstants.KZT_REPORT_HEADER_DATE_PLACEHOLDER)){
-                    String date = DateUtils.getDateRussianTextualDate(report.getReportDate());
+                    String date = DateUtils.getDateRussianTextualDateOnFirstDayNextMonth(report.getReportDate());
                     row.getCell(0).setCellValue(PeriodicReportConstants.KZT_REPORT_HEADER_DATE_TEXT + date);
                 }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), PeriodicReportConstants.KZT_REPORT_HEADER_DATE_PLACEHOLDER_DATE_ONLY)){
                     Date date = DateUtils.getFirstDayOfNextMonth(report.getReportDate());
@@ -7142,7 +7141,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), PeriodicReportConstants.LINE_CODE)){
                     startOfTable = true;
                 }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), PeriodicReportConstants.KZT_REPORT_HEADER_DATE_PLACEHOLDER)){
-                    String date = DateUtils.getDateRussianTextualDate(report.getReportDate());
+                    String date = DateUtils.getDateRussianTextualDateOnFirstDayNextMonth(report.getReportDate());
                     row.getCell(0).setCellValue(PeriodicReportConstants.KZT_REPORT_HEADER_DATE_TEXT + date);
                 }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), PeriodicReportConstants.KZT_REPORT_HEADER_DATE_PLACEHOLDER_DATE_ONLY)){
                     Date date = DateUtils.getFirstDayOfNextMonth(report.getReportDate());
@@ -7300,7 +7299,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), PeriodicReportConstants.LINE_CODE)){
                     startOfTable = true;
                 }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), PeriodicReportConstants.KZT_REPORT_HEADER_DATE_PLACEHOLDER)){
-                    String date = DateUtils.getDateRussianTextualDate(report.getReportDate());
+                    String date = DateUtils.getDateRussianTextualDateOnFirstDayNextMonth(report.getReportDate());
                     row.getCell(0).setCellValue(PeriodicReportConstants.KZT_REPORT_HEADER_DATE_TEXT + date);
                 }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), PeriodicReportConstants.KZT_REPORT_HEADER_DATE_PLACEHOLDER_DATE_ONLY)){
                     Date date = DateUtils.getFirstDayOfNextMonth(report.getReportDate());
@@ -7450,7 +7449,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), PeriodicReportConstants.LINE_CODE)){
                     startOfTable = true;
                 }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), PeriodicReportConstants.KZT_REPORT_HEADER_DATE_PLACEHOLDER)){
-                    String date = DateUtils.getDateRussianTextualDate(report.getReportDate());
+                    String date = DateUtils.getDateRussianTextualDateOnFirstDayNextMonth(report.getReportDate());
                     row.getCell(0).setCellValue(PeriodicReportConstants.KZT_REPORT_HEADER_DATE_TEXT + date);
                 }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), PeriodicReportConstants.KZT_REPORT_HEADER_DATE_PLACEHOLDER_DATE_ONLY)){
                     Date date = DateUtils.getFirstDayOfNextMonth(report.getReportDate());

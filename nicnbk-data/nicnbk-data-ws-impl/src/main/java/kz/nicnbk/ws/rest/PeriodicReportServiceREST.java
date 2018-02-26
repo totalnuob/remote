@@ -577,14 +577,83 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
 
         boolean saved = this.reserveCalculationService.save(records);
         if(saved){
-            logger.info("Successfully saved reserve calculation records " + "[user " + username + "]");
+            logger.info("Successfully saved reserve calculation records [user " + username + "]");
 
             // TODO: response from DB, not UI
             return buildEntitySaveResponse(null, new Date());
         }else {
             // error occurred
-            logger.error("Failed to save reserve calculation records " + "[user " + username + "]");
+            logger.error("Failed to save reserve calculation records [user " + username + "]");
             return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value="/reserveCalculation/delete/{recordId}", method=RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<?> deleteReserveCalculationRecord(@PathVariable(value="recordId") Long recordId){
+        //check rights
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+
+        boolean deleted = this.reserveCalculationService.deleteReserveCalculationRecord(recordId);
+        if(deleted){
+            logger.info("Successfully deleted Reserve Calculation record: record id " + recordId + " [user " + username + "]");
+        }else{
+            logger.error("Failed to delete  Reserve Calculation record: record id " + recordId + " [user " + username + "]");
+        }
+        return buildDeleteResponseEntity(deleted);
+    }
+
+    @RequestMapping(value="reserveCalculation/export/{recordId}/{type}", method= RequestMethod.GET)
+    @ResponseBody
+    public void exportCapitalCall(@PathVariable(value="recordId") Long recordId,
+                                      @PathVariable(value = "type") String type,
+                                      HttpServletResponse response) {
+
+        // TODO: control file download by user role
+        // TODO: Check rights
+
+        InputStream inputStream = null;
+        try{
+            inputStream = this.reserveCalculationService.getExportFileStream(recordId, type);
+        }catch (IllegalStateException ex){
+            inputStream = null;
+        }
+
+        if(inputStream == null){
+            try {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                return;
+            } catch (IOException e) {
+                return;
+            }
+        }
+
+        if(type.equalsIgnoreCase("ORDER")) {
+            response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+        }else{
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        }
+        try {
+            //fileName = URLEncoder.encode(fileName, "UTF-8");
+            //fileName = URLDecoder.decode(fileName, "ISO8859_1");
+            //response.setHeader("Content-disposition", "attachment; filename=\""+ fileName + "\"");
+            response.setHeader("Content-disposition", "attachment;");
+            org.apache.commons.io.IOUtils.copy(inputStream, response.getOutputStream());
+            response.flushBuffer();
+        } catch (UnsupportedEncodingException e) {
+            logger.error("(PeriodicReport) File export request failed: unsupported encoding", e);
+        } catch (IOException e) {
+            logger.error("(PeriodicReport) File export request failed: io exception", e);
+        } catch (Exception e){
+            logger.error("(PeriodicReport) File export request failed", e);
+        }
+        try {
+            inputStream.close();
+        } catch (IOException e) {
+            logger.error("(PeriodicReport) File export: failed to close input stream");
         }
     }
     /* ****************************************************************************************************************/

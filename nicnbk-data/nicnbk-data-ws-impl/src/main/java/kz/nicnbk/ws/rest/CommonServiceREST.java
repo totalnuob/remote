@@ -183,7 +183,9 @@ public abstract class CommonServiceREST {
             response.setStatus(ResponseStatusType.SUCCESS);
             return new ResponseEntity<>(response, null, HttpStatus.OK);
         }else{
-            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+            ResponseDto response = new ResponseDto();
+            response.setStatus(ResponseStatusType.FAIL);
+            return new ResponseEntity<>(response, null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
