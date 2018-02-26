@@ -101,10 +101,10 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
                         dto.setAmountKZT(new BigDecimal(currencyRatesDto.getValue().doubleValue()).multiply(new BigDecimal(dto.getAmount())).setScale(2, RoundingMode.HALF_UP).doubleValue());
                     }
 
-                    if(dto.getDate() != null) {
+                    if(mostRecentFinalReportDate == null || dto.getDate() == null){
+                        dto.setCanDelete(true);
+                    }else { //mostRecentFinalReportDate != null && dto.getDate() != null
                         dto.setCanDelete(dto.getDate().compareTo(mostRecentFinalReportDate) <= 0 ? false : true);
-                    }else{
-                        dto.setCanDelete(false);
                     }
 
                     records.add(dto);
@@ -128,6 +128,19 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
      */
     //@Override
     private List<ReserveCalculationDto> getReserveCalculationsForMonth(String code, Date date) {
+
+        Date mostRecentFinalReportDate = null;
+        List<PeriodicReportDto> periodicReportDtos = this.periodicReportService.getAllPeriodicReports();
+        if(periodicReportDtos != null){
+            for(PeriodicReportDto periodicReportDto: periodicReportDtos){
+                if(periodicReportDto.getStatus() != null && periodicReportDto.getStatus().equalsIgnoreCase(PeriodicReportType.SUBMITTED.getCode())) {
+                    if (mostRecentFinalReportDate == null || mostRecentFinalReportDate.compareTo(periodicReportDto.getReportDate()) < 0) {
+                        mostRecentFinalReportDate = periodicReportDto.getReportDate();
+                    }
+                }
+            }
+        }
+
         Date fromDate = DateUtils.getFirstDayOfCurrentMonth(date);
         Date toDate = DateUtils.getFirstDayOfNextMonth(date);
         List<ReserveCalculation> entities = this.reserveCalculationRepository.getEntitiesByExpenseTypeBetweenDates(
@@ -145,6 +158,12 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
                 //return null;
             } else {
                 record.setCurrencyRate(currencyRatesDto.getValue());
+            }
+
+            if(mostRecentFinalReportDate == null || record.getDate() == null){
+                record.setCanDelete(true);
+            }else { //mostRecentFinalReportDate != null && dto.getDate() != null
+                record.setCanDelete(record.getDate().compareTo(mostRecentFinalReportDate) <= 0 ? false : true);
             }
 
             // set amount kzt
@@ -191,6 +210,18 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
 
     @Override
     public List<ReserveCalculationDto> getReserveCalculationsByExpenseType(String code) {
+        Date mostRecentFinalReportDate = null;
+        List<PeriodicReportDto> periodicReportDtos = this.periodicReportService.getAllPeriodicReports();
+        if(periodicReportDtos != null){
+            for(PeriodicReportDto periodicReportDto: periodicReportDtos){
+                if(periodicReportDto.getStatus() != null && periodicReportDto.getStatus().equalsIgnoreCase(PeriodicReportType.SUBMITTED.getCode())) {
+                    if (mostRecentFinalReportDate == null || mostRecentFinalReportDate.compareTo(periodicReportDto.getReportDate()) < 0) {
+                        mostRecentFinalReportDate = periodicReportDto.getReportDate();
+                    }
+                }
+            }
+        }
+
         List<ReserveCalculationDto> records = new ArrayList<>();
         List<ReserveCalculation> entities = this.reserveCalculationRepository.getEntitiesByExpenseType(code);
         if (entities != null) {
@@ -210,6 +241,12 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
                 // set amount kzt
                 if (dto.getAmount() != null) {
                     dto.setAmountKZT(new BigDecimal(currencyRatesDto.getValue().doubleValue()).multiply(new BigDecimal(dto.getAmount())).setScale(2, RoundingMode.HALF_UP).doubleValue());
+                }
+
+                if(mostRecentFinalReportDate == null || dto.getDate() == null){
+                    dto.setCanDelete(true);
+                }else { //mostRecentFinalReportDate != null && dto.getDate() != null
+                    dto.setCanDelete(dto.getDate().compareTo(mostRecentFinalReportDate) <= 0 ? false : true);
                 }
 
                 records.add(dto);
@@ -263,7 +300,7 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
             }
 
             // cannot delete record with date earlier than most recent SUBMITTED report date
-            if(entity.getDate().compareTo(mostRecentFinalReportDate) <= 0){
+            if(mostRecentFinalReportDate != null && entity.getDate().compareTo(mostRecentFinalReportDate) <= 0){
                 logger.error("Reserve Calculation delete record failed for record id " + recordId +
                         ": finalized report exists with date '" + DateUtils.getDateFormatted(mostRecentFinalReportDate) +
                         "', record date '" + DateUtils.getDateFormatted(entity.getDate()) + "'");
