@@ -18,6 +18,7 @@ public class ReserveCalculation extends CreateUpdateBaseEntity{
     private ReserveCalculationEntityType source;
     private ReserveCalculationEntityType recipient;
     private Date date;
+    private Date valueDate;
     private Double amount;
 
 
@@ -71,7 +72,14 @@ public class ReserveCalculation extends CreateUpdateBaseEntity{
         this.amount = amount;
     }
 
+    @Column(name="value_date")
+    @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern="dd-MM-yyyy")
+    public Date getValueDate() {
+        return valueDate;
+    }
 
-
-
+    public void setValueDate(Date valueDate) {
+        this.valueDate = valueDate;
+    }
 }
