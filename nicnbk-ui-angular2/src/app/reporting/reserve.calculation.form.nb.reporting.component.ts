@@ -153,7 +153,7 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
                                 response  => {
                                     if(response){
                                         this.records = response;
-                                        this.postAction("Record successfully deleted", this.errorMessage);
+                                        this.postAction("Record successfully deleted", null);
                                         this.checkRecords();
                                     }
                                 },
@@ -208,7 +208,7 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
                             response  => {
                                 if(response){
                                     this.records = response;
-                                    this.postAction("Records successfully saved", this.errorMessage);
+                                    this.postAction("Records successfully saved", null);
                                     this.checkRecords();
                                 }
                             },
