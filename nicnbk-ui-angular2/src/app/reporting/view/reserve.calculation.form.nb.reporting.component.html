@@ -108,21 +108,21 @@
                 <td>Источник</td>
                 <td>Получатель</td>
                 <td>Дата</td>
-                <td>Дата валютирования</td>
+                <td>Дата валютирования (для экспорта)</td>
                 <td>Сумма USD</td>
                 <td>Курс</td>
                 <td>Сумма KZT</td>
                 <td>Экспорт</td>
                 <td>&nbsp;</td>
             </tr>
-            <tr *ngFor="let record of records">
+            <tr *ngFor="let record of records" [style.color]="record.currencyRate == null ? 'red' : 'black' ">
                 <td>{{record.expenseType != null ? record.expenseType.nameRu : ''}}</td>
                 <td>{{record.source != null ? record.source.nameRu : ''}}</td>
                 <td>{{record.recipient != null ? record.recipient.nameRu : ''}}</td>
                 <td>{{record.date}}</td>
                 <td>{{record.valueDate}}</td>
                 <td>{{record.amount | number:'1.2-2'}}</td>
-                <td>{{record.currencyRate | number:'1.2-2'}}</td>
+                <td>{{record.currencyRate  != null ? (record.currencyRate | number:'1.2-2') : '-----'}}</td>
                 <td>{{record.amountKZT | number:'1.2-2'}}</td>
                 <td>
                     <button *ngIf="record.expenseType.code === 'ADD'" class="btn btn-xs btn-primary" style="margin-left: 10px;" type="button" (click)="exportOrder(record)">

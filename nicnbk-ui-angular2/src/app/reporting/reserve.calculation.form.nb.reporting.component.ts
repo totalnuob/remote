@@ -70,6 +70,7 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
                             response  => {
                                 if(response){
                                     this.records = response;
+                                    this.checkRecords();
                                 }
                             },
                             (error: ErrorResponse) => {
@@ -94,6 +95,17 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
     }
 
     ngOnInit(): any {
+    }
+
+    checkRecords(){
+        if(this.records != null && this.records.length > 0){
+            for (var i = 0; i < this.records.length; i++) {
+                if(this.records[i].currencyRate == null){
+                    this.postAction(this.successMessage, "Record missing value for column 'Курс'. Please check currency rate for the record date.");
+                    return;
+                }
+            }
+        }
     }
 
     addRecord(){
@@ -142,6 +154,7 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
                                     if(response){
                                         this.records = response;
                                         this.postAction("Record successfully deleted", this.errorMessage);
+                                        this.checkRecords();
                                     }
                                 },
                                 (error: ErrorResponse) => {
@@ -196,6 +209,7 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
                                 if(response){
                                     this.records = response;
                                     this.postAction("Records successfully saved", this.errorMessage);
+                                    this.checkRecords();
                                 }
                             },
                             (error: ErrorResponse) => {
