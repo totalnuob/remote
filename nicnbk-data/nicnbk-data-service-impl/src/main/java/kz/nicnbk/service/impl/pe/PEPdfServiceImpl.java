@@ -132,8 +132,8 @@ public class PEPdfServiceImpl implements PEPdfService {
 
             Table fundSummary = new Table(new float[]{1, 1, 1, 1, 1, 1});
             fundSummary.setWidth(ps.getWidth() - offSet * 2);
-            fundSummary.addCell(new Cell().add(new Paragraph("Target Fund Size").setBold()));
-            fundSummary.addCell(new Cell().add(new Paragraph("Target Fund Size")));
+            fundSummary.addCell(new Cell().add(new Paragraph("Fund Size").setBold()));
+            fundSummary.addCell(new Cell().add(new Paragraph(fundDto.getFundSize() != null ? fundDto.getFundSize().toString() : "")));
             fundSummary.addCell(new Cell().add(new Paragraph("Mgt. fee").setBold()));
             fundSummary.addCell(new Cell().add(new Paragraph("Mgt. fee")));
             fundSummary.addCell(new Cell().add(new Paragraph("Industry").setBold()));
