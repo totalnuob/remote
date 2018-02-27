@@ -45,6 +45,7 @@ public class PEPdfServiceImpl implements PEPdfService {
             //Colors
             Color greenColor = new DeviceCmyk(0.78f, 0, 0.81f, 0.21f);
             Color redColor = new DeviceCmyk(0, 0.76f, 0.86f, 0.01f);
+            Color whiteColor = new DeviceCmyk(0, 0, 0, 0);
 
             //Margins
             Float offSet = 36f;
@@ -95,7 +96,7 @@ public class PEPdfServiceImpl implements PEPdfService {
             organizationOverviewTitle.addCell(new Cell()
                     .add(new Paragraph("Organization Overview"))
                     .setBackgroundColor(greenColor)
-                    .setFontColor(redColor));
+                    .setFontColor(whiteColor));
             document.add(organizationOverviewTitle);
 
             document.close();
