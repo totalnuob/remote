@@ -74,6 +74,8 @@ public class PEPdfServiceImpl implements PEPdfService {
             //Initialize document
             Document document = new Document(pdf, ps);
 
+            document.setFontSize(10);
+
             PEFundDto fundDto = fundService.get(fundId);
 
             //Header
@@ -84,7 +86,9 @@ public class PEPdfServiceImpl implements PEPdfService {
                     .setTextAlignment(TextAlignment.LEFT));
             tableHeader.addCell(new Cell()
                     .setWidth(ps.getWidth() - offSet * 2 - logoMaxWidth * 2)
-                    .add(new Paragraph(fundDto.getFundName()).setBold())
+                    .add(new Paragraph(fundDto.getFundName())
+                            .setBold()
+                            .setFontSize(12))
                     .setTextAlignment(TextAlignment.CENTER));
             tableHeader.addCell(new Cell()
                     .setWidth(logoMaxWidth)
@@ -95,7 +99,7 @@ public class PEPdfServiceImpl implements PEPdfService {
             Table organizationOverviewTitle = new Table(new float[]{1});
             organizationOverviewTitle.addCell(new Cell()
                     .setWidth(ps.getWidth() - offSet * 2)
-                    .add(new Paragraph("Organization Overview").setFontSize(20))
+                    .add(new Paragraph("Organization Overview"))
                     .setBackgroundColor(greenColor)
                     .setFontColor(whiteColor));
             document.add(organizationOverviewTitle);
@@ -119,7 +123,7 @@ public class PEPdfServiceImpl implements PEPdfService {
             Table fundSummaryTitle = new Table(new float[]{1});
             fundSummaryTitle.addCell(new Cell()
                     .setWidth(ps.getWidth() - offSet * 2)
-                    .add(new Paragraph("Fund Summary").setFontSize(20))
+                    .add(new Paragraph("Fund Summary"))
                     .setBackgroundColor(greenColor)
                     .setFontColor(whiteColor));
             document.add(fundSummaryTitle);
