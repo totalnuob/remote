@@ -1,6 +1,8 @@
 package kz.nicnbk.service.impl.pe;
 
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.DeviceCmyk;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -40,6 +42,11 @@ public class PEPdfServiceImpl implements PEPdfService {
             String gpLogoDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/SilverLakeLogo.png";
             String nicLogoDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/NIClogo.png";
 
+            //Colors
+            Color greenColor = new DeviceCmyk(0.78f, 0, 0.81f, 0.21f);
+            Color redColor = new DeviceCmyk(0, 0.76f, 0.86f, 0.01f);
+
+            //Margins
             Float offSet = 36f;
             Float logoMaxHeight = 24f;
             Float logoMaxWidth = 72f;
@@ -83,6 +90,13 @@ public class PEPdfServiceImpl implements PEPdfService {
                     .add(new Paragraph().add(nicLogo))
                     .setTextAlignment(TextAlignment.RIGHT));
             document.add(tableHeader);
+
+            Table organizationOverviewTitle = new Table(new float[]{1});
+            organizationOverviewTitle.addCell(new Cell()
+                    .add(new Paragraph("Organization Overview"))
+                    .setBackgroundColor(greenColor)
+                    .setFontColor(redColor));
+            document.add(organizationOverviewTitle);
 
             document.close();
         } catch (IOException ex) {
