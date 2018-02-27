@@ -14,6 +14,7 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.TextAlignment;
 import kz.nicnbk.service.api.pe.PEFundService;
 import kz.nicnbk.service.api.pe.PEPdfService;
+import kz.nicnbk.service.dto.pe.PEFirmDto;
 import kz.nicnbk.service.dto.pe.PEFundDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,6 +78,7 @@ public class PEPdfServiceImpl implements PEPdfService {
             document.setFontSize(8);
 
             PEFundDto fundDto = fundService.get(fundId);
+            PEFirmDto firmDto = fundDto.getFirm();
 
             //Header
             Table tableHeader = new Table(new float[]{1, 1, 1});
@@ -107,17 +109,17 @@ public class PEPdfServiceImpl implements PEPdfService {
             Table organizationOverview = new Table(new float[]{1, 1, 1, 1, 1, 1});
             organizationOverview.setWidth(ps.getWidth() - offSet * 2);
             organizationOverview.addCell(new Cell().add(new Paragraph("GP Name").setBold()));
-            organizationOverview.addCell(new Cell().add(new Paragraph("GP Name")));
+            organizationOverview.addCell(new Cell().add(new Paragraph(firmDto.getFirmName() != null ? firmDto.getFirmName() : "")));
             organizationOverview.addCell(new Cell().add(new Paragraph("Strategy AUM").setBold()));
-            organizationOverview.addCell(new Cell().add(new Paragraph("Strategy AUM")));
+            organizationOverview.addCell(new Cell().add(new Paragraph(firmDto.getAum() != null ? String.format("%.2fm", firmDto.getAum()) : "")));
             organizationOverview.addCell(new Cell().add(new Paragraph("Locations").setBold()));
-            organizationOverview.addCell(new Cell().add(new Paragraph("Locations")));
+            organizationOverview.addCell(new Cell().add(new Paragraph(firmDto.getLocations() != null ? firmDto.getLocations() : "")));
             organizationOverview.addCell(new Cell().add(new Paragraph("Firm Inception").setBold()));
-            organizationOverview.addCell(new Cell().add(new Paragraph("Firm Inception")));
+            organizationOverview.addCell(new Cell().add(new Paragraph(firmDto.getFoundedYear() != null ? firmDto.getFoundedYear().toString() : "")));
             organizationOverview.addCell(new Cell().add(new Paragraph("Inv. + Oper. Team").setBold()));
-            organizationOverview.addCell(new Cell().add(new Paragraph("Inv. + Oper. Team")));
+            organizationOverview.addCell(new Cell().add(new Paragraph((firmDto.getInvTeamSize() != null ? firmDto.getInvTeamSize() : "?") + " + " + (firmDto.getOpsTeamSize() != null ? firmDto.getOpsTeamSize() : "?"))));
             organizationOverview.addCell(new Cell().add(new Paragraph("Peers").setBold()));
-            organizationOverview.addCell(new Cell().add(new Paragraph("Peers")));
+            organizationOverview.addCell(new Cell().add(new Paragraph(firmDto.getPeers() != null ? firmDto.getPeers() : "")));
             document.add(organizationOverview);
 
             Table fundSummaryTitle = new Table(new float[]{1});
