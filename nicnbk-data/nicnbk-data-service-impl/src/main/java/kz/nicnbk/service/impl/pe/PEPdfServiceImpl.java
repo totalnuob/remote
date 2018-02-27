@@ -74,7 +74,7 @@ public class PEPdfServiceImpl implements PEPdfService {
             //Initialize document
             Document document = new Document(pdf, ps);
 
-            document.setFontSize(10);
+            document.setFontSize(8);
 
             PEFundDto fundDto = fundService.get(fundId);
 
@@ -88,7 +88,7 @@ public class PEPdfServiceImpl implements PEPdfService {
                     .setWidth(ps.getWidth() - offSet * 2 - logoMaxWidth * 2)
                     .add(new Paragraph(fundDto.getFundName())
                             .setBold()
-                            .setFontSize(12))
+                            .setFontSize(10))
                     .setTextAlignment(TextAlignment.CENTER));
             tableHeader.addCell(new Cell()
                     .setWidth(logoMaxWidth)
