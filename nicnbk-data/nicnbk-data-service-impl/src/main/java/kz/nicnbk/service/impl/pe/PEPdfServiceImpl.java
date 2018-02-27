@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by Pak on 24/01/2018.
@@ -79,6 +80,7 @@ public class PEPdfServiceImpl implements PEPdfService {
 
             PEFundDto fundDto = fundService.get(fundId);
             PEFirmDto firmDto = fundDto.getFirm();
+            List<PEFundDto> fundDtoList = fundService.loadFirmFunds(firmDto.getId(), true);
 
             //Header
             Table tableHeader = new Table(new float[]{1, 1, 1});
