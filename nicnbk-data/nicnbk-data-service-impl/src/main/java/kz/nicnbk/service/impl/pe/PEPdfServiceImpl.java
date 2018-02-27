@@ -162,7 +162,7 @@ public class PEPdfServiceImpl implements PEPdfService {
                     .setFontColor(whiteColor));
             keyFundStatisticsTitle.addCell(new Cell()
                     .setWidth(ps.getWidth() - offSet * 2)
-                    .add(new Paragraph((firmDto.getFirmName() != null ? firmDto.getFirmName() : "") + "Investment Performance Data as of ??????" + "($mln)").setBold())
+                    .add(new Paragraph((firmDto.getFirmName() != null ? firmDto.getFirmName() : "") + " Investment Performance Data as of ?????? " + "($mln)").setBold())
                     .setTextAlignment(TextAlignment.CENTER));
             document.add(keyFundStatisticsTitle);
 
