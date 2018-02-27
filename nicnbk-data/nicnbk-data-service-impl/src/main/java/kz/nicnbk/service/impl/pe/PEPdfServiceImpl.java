@@ -154,6 +154,18 @@ public class PEPdfServiceImpl implements PEPdfService {
             fundSummary.addCell(new Cell().add(new Paragraph("Geography")));
             document.add(fundSummary);
 
+            Table keyFundStatisticsTitle = new Table(new float[]{1});
+            keyFundStatisticsTitle.addCell(new Cell()
+                    .setWidth(ps.getWidth() - offSet * 2)
+                    .add(new Paragraph("Key fund statistics"))
+                    .setBackgroundColor(greenColor)
+                    .setFontColor(whiteColor));
+            keyFundStatisticsTitle.addCell(new Cell()
+                    .setWidth(ps.getWidth() - offSet * 2)
+                    .add(new Paragraph(firmDto.getFirmName() != null ? firmDto.getFirmName() : "" + "Investment Performance Data as of ??????" + "($mln)").setBold())
+                    .setTextAlignment(TextAlignment.CENTER));
+            document.add(keyFundStatisticsTitle);
+
             document.close();
         } catch (IOException ex) {
             logger.error("Error creating PE fund's One Pager: " + fundId, ex);
