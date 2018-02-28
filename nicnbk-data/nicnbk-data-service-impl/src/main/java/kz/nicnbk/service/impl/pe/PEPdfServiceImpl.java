@@ -209,7 +209,7 @@ public class PEPdfServiceImpl implements PEPdfService {
         Double totalRealized = 0.0;
         Double totalUnrealized = 0.0;
         Double totalGrossMOIC = null;
-        Double totalGrossIrr = irrService.getIRR(fundDtoList, 0);
+        Double totalGrossIrr = irrService.getIrrByFundList(fundDtoList);
         boolean areAllKeyFundStatisticsCalculatedByGrossCF = true;
 
         table.setWidth(width);

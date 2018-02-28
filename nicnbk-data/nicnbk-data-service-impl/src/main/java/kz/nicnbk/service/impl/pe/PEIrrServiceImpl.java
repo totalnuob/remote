@@ -148,7 +148,7 @@ public class PEIrrServiceImpl implements PEIrrService {
     }
 
     @Override
-    public Double getIRR(List<PEFundDto> fundDtoList, int a) {
+    public Double getIrrByFundList(List<PEFundDto> fundDtoList) {
         return null;
     }
 }

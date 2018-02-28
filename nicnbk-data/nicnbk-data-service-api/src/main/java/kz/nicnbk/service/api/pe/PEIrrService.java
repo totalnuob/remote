@@ -17,5 +17,5 @@ public interface PEIrrService {
 
     Double getIRR(List<PEGrossCashflowDto> cashflowDtoList);
 
-    Double getIRR(List<PEFundDto> fundDtoList, int a);
+    Double getIrrByFundList(List<PEFundDto> fundDtoList);
 }
