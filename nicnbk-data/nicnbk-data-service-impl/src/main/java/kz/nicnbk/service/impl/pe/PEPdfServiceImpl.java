@@ -113,7 +113,7 @@ public class PEPdfServiceImpl implements PEPdfService {
             //Key Fund Statistics Title
             Table keyFundStatisticsTitle = new Table(new float[]{1});
             this.addGreenTitle(keyFundStatisticsTitle, "Key fund statistics", ps.getWidth() - offSet * 2);
-            this.addWhiteTitle(keyFundStatisticsTitle, unNullifier(firmDto.getFirmName()) + " Investment Performance Data as of ?????? " + "($mln)", ps.getWidth() - offSet * 2);
+            this.addWhiteTitle(keyFundStatisticsTitle, unNullifierToEmptyString(firmDto.getFirmName()) + " Investment Performance Data as of ?????? " + "($mln)", ps.getWidth() - offSet * 2);
             document.add(keyFundStatisticsTitle);
 
             //Key Fund Statistics Table
@@ -134,7 +134,7 @@ public class PEPdfServiceImpl implements PEPdfService {
                 .setTextAlignment(TextAlignment.LEFT));
         table.addCell(new Cell()
                 .setWidth(width - logoMaxWidth * 2)
-                .add(new Paragraph(unNullifier(fundDto.getFundName()))
+                .add(new Paragraph(unNullifierToEmptyString(fundDto.getFundName()))
                         .setBold()
                         .setFontSize(10))
                 .setTextAlignment(TextAlignment.CENTER));
@@ -147,7 +147,7 @@ public class PEPdfServiceImpl implements PEPdfService {
     private void addGreenTitle(Table table, String title, Float width) {
         table.addCell(new Cell()
                 .setWidth(width)
-                .add(new Paragraph(unNullifier(title)))
+                .add(new Paragraph(unNullifierToEmptyString(title)))
                 .setBackgroundColor(greenColor)
                 .setFontColor(whiteColor));
     }
@@ -155,24 +155,24 @@ public class PEPdfServiceImpl implements PEPdfService {
     private void addWhiteTitle(Table table, String title, Float width) {
         table.addCell(new Cell()
                 .setWidth(width)
-                .add(new Paragraph(unNullifier(title)).setBold())
+                .add(new Paragraph(unNullifierToEmptyString(title)).setBold())
                 .setTextAlignment(TextAlignment.CENTER));
     }
 
     private void addOrganizationOverview(Table table, PEFirmDto firmDto, Float width) {
         table.setWidth(width);
         table.addCell(new Cell().add(new Paragraph("GP Name").setBold()));
-        table.addCell(new Cell().add(new Paragraph(unNullifier(firmDto.getFirmName()))));
+        table.addCell(new Cell().add(new Paragraph(unNullifierToEmptyString(firmDto.getFirmName()))));
         table.addCell(new Cell().add(new Paragraph("Strategy AUM ($mln)").setBold()));
         table.addCell(new Cell().add(new Paragraph(mlnFormat(firmDto.getAum() * 1000000))));
         table.addCell(new Cell().add(new Paragraph("Locations").setBold()));
-        table.addCell(new Cell().add(new Paragraph(unNullifier(firmDto.getLocations()))));
+        table.addCell(new Cell().add(new Paragraph(unNullifierToEmptyString(firmDto.getLocations()))));
         table.addCell(new Cell().add(new Paragraph("Firm Inception").setBold()));
-        table.addCell(new Cell().add(new Paragraph(unNullifier(firmDto.getFoundedYear()))));
+        table.addCell(new Cell().add(new Paragraph(unNullifierToEmptyString(firmDto.getFoundedYear()))));
         table.addCell(new Cell().add(new Paragraph("Inv. + Oper. Team").setBold()));
         table.addCell(new Cell().add(new Paragraph((firmDto.getInvTeamSize() != null ? firmDto.getInvTeamSize() : "?") + " + " + (firmDto.getOpsTeamSize() != null ? firmDto.getOpsTeamSize() : "?"))));
         table.addCell(new Cell().add(new Paragraph("Peers").setBold()));
-        table.addCell(new Cell().add(new Paragraph(unNullifier(firmDto.getPeers()))));
+        table.addCell(new Cell().add(new Paragraph(unNullifierToEmptyString(firmDto.getPeers()))));
     }
 
     private void addFundSummary(Table table, PEFundDto fundDto, Float width) {
@@ -211,10 +211,21 @@ public class PEPdfServiceImpl implements PEPdfService {
         table.addHeaderCell(new Cell().add(new Paragraph("Net MOIC").setBold()));
         table.addHeaderCell(new Cell().add(new Paragraph("Net IRR").setBold()));
 
+        int totalNumberOfInvestments = 0;
+        Double totalInvested = 0.0;
+        Double totalRealized = 0.0;
+        Double totalUnrealized = 0.0;
+        Double totalGrossMOIC = null;
+
         for (PEFundDto fundDto : fundDtoList) {
-            table.addCell(new Cell().add(new Paragraph(unNullifier(fundDto.getFundName()))));
+            totalNumberOfInvestments += unNullifierToZero(fundDto.getNumberOfInvestments());
+            totalInvested += unNullifierToZero(fundDto.getInvestedAmount());
+            totalRealized += unNullifierToZero(fundDto.getRealized());
+            totalUnrealized += unNullifierToZero(fundDto.getUnrealized());
+
+            table.addCell(new Cell().add(new Paragraph(unNullifierToEmptyString(fundDto.getFundName()))));
             table.addCell(new Cell().add(new Paragraph(Integer.toString(fundDto.getVintage()))));
-            table.addCell(new Cell().add(new Paragraph(unNullifier(fundDto.getNumberOfInvestments()))));
+            table.addCell(new Cell().add(new Paragraph(unNullifierToEmptyString(fundDto.getNumberOfInvestments()))));
             table.addCell(new Cell().add(new Paragraph(mlnFormat(fundDto.getFundSize()))));
             table.addCell(new Cell().add(new Paragraph(mlnFormat(fundDto.getInvestedAmount()))));
             table.addCell(new Cell().add(new Paragraph(mlnFormat(fundDto.getRealized()))));
@@ -225,10 +236,38 @@ public class PEPdfServiceImpl implements PEPdfService {
             table.addCell(new Cell().add(new Paragraph(irrFormat(fundDto.getNetIrr()))));
         }
 
+        if (totalInvested != 0.0) {
+            totalGrossMOIC = (totalRealized + totalUnrealized) / totalInvested;
+        }
 
+        table.addHeaderCell(new Cell().add(new Paragraph("Total").setBold()));
+        table.addHeaderCell(new Cell());
+        table.addHeaderCell(new Cell().add(new Paragraph(Integer.toString(totalNumberOfInvestments)).setBold()));
+        table.addHeaderCell(new Cell().add(new Paragraph("Fund Size").setBold()));
+        table.addHeaderCell(new Cell().add(new Paragraph(mlnFormat(totalInvested)).setBold()));
+        table.addHeaderCell(new Cell().add(new Paragraph(mlnFormat(totalRealized)).setBold()));
+        table.addHeaderCell(new Cell().add(new Paragraph(mlnFormat(totalUnrealized)).setBold()));
+        table.addHeaderCell(new Cell().add(new Paragraph(moicFormat(totalGrossMOIC)).setBold()));
+        table.addHeaderCell(new Cell().add(new Paragraph("Gross IRR").setBold()));
+        table.addHeaderCell(new Cell().add(new Paragraph("Net MOIC").setBold()));
+        table.addHeaderCell(new Cell().add(new Paragraph("Net IRR").setBold()));
     }
 
-    private String unNullifier(Object st) {
+    private int unNullifierToZero(Integer a) {
+        if (a != null) {
+            return a;
+        }
+        return 0;
+    }
+
+    private double unNullifierToZero(Double a) {
+        if (a != null) {
+            return a;
+        }
+        return 0.0;
+    }
+
+    private String unNullifierToEmptyString(Object st) {
         if (st != null) { return st.toString(); }
         return "";
     }
