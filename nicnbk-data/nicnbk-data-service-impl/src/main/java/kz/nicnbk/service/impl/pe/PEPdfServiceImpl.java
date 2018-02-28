@@ -232,7 +232,10 @@ public class PEPdfServiceImpl implements PEPdfService {
     }
 
     private String mlnFormat(Object amount) {
-        if (amount != null && (amount instanceof Float || amount instanceof Double)) {
+        if (amount != null && amount instanceof Float) {
+            return String.format("%.0f", (float) amount / 1000000);
+        }
+        if (amount != null && amount instanceof Double) {
             return String.format("%.0f", (double) amount / 1000000);
         }
         return "";
