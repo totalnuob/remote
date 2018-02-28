@@ -113,7 +113,7 @@ public class PEPdfServiceImpl implements PEPdfService {
             //Key Fund Statistics Title
             Table keyFundStatisticsTitle = new Table(new float[]{1});
             this.addGreenTitle(keyFundStatisticsTitle, "Key fund statistics", ps.getWidth() - offSet * 2);
-            this.addWhiteTitle(keyFundStatisticsTitle, (firmDto.getFirmName() != null ? firmDto.getFirmName() : "") + " Investment Performance Data as of ?????? " + "($mln)", ps.getWidth() - offSet * 2);
+            this.addWhiteTitle(keyFundStatisticsTitle, unNullifier(firmDto.getFirmName()) + " Investment Performance Data as of ?????? " + "($mln)", ps.getWidth() - offSet * 2);
             document.add(keyFundStatisticsTitle);
 
             //Key Fund Statistics Table
@@ -168,7 +168,7 @@ public class PEPdfServiceImpl implements PEPdfService {
         table.addCell(new Cell().add(new Paragraph("Locations").setBold()));
         table.addCell(new Cell().add(new Paragraph(unNullifier(firmDto.getLocations()))));
         table.addCell(new Cell().add(new Paragraph("Firm Inception").setBold()));
-        table.addCell(new Cell().add(new Paragraph(firmDto.getFoundedYear() != null ? firmDto.getFoundedYear().toString() : "")));
+        table.addCell(new Cell().add(new Paragraph(unNullifier(firmDto.getFoundedYear()))));
         table.addCell(new Cell().add(new Paragraph("Inv. + Oper. Team").setBold()));
         table.addCell(new Cell().add(new Paragraph((firmDto.getInvTeamSize() != null ? firmDto.getInvTeamSize() : "?") + " + " + (firmDto.getOpsTeamSize() != null ? firmDto.getOpsTeamSize() : "?"))));
         table.addCell(new Cell().add(new Paragraph("Peers").setBold()));
