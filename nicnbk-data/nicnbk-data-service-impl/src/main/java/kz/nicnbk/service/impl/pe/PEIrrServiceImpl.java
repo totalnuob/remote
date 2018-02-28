@@ -149,6 +149,20 @@ public class PEIrrServiceImpl implements PEIrrService {
 
     @Override
     public Double getIrrByFundList(List<PEFundDto> fundDtoList) {
-        return 555.0;
+
+        try {
+            List<PEGrossCashflowDto> cashflowDtoList = new ArrayList<>();
+            for (PEFundDto fundDto : fundDtoList) {
+                if (fundDto.getGrossCashflow() != null) {
+                    cashflowDtoList.addAll(fundDto.getGrossCashflow());
+                }
+            }
+            for (PEGrossCashflowDto cashflowDto : cashflowDtoList) {
+                System.out.println(cashflowDto.getDate());
+            }
+            return 555.0;
+        } catch (Exception ex) {
+            return null;
+        }
     }
 }
