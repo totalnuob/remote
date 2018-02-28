@@ -36,26 +36,29 @@ public class PEPdfServiceImpl implements PEPdfService {
     @Autowired
     private PEFundService fundService;
 
+    //File locations
+    String onePagerDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/OnePager.pdf";
+    String gpLogoDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/SilverLakeLogo.png";
+    String nicLogoDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/NIClogo.png";
+
+    //Margins
+    Float offSet = 36f;
+    Float logoMaxHeight = 24f;
+    Float logoMaxWidth = 72f;
+
+    //Colors
+    Color greenColor = new DeviceCmyk(0.78f, 0, 0.81f, 0.21f);
+    Color whiteColor = new DeviceCmyk(0, 0, 0, 0);
+
+    //GP's and NIC's logos
+    Image gpLogo;
+    Image nicLogo;
+
     @Override
     public void createOnePager(Long fundId) {
         try {
-            //File locations
-            String onePagerDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/OnePager.pdf";
-            String gpLogoDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/SilverLakeLogo.png";
-            String nicLogoDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/NIClogo.png";
-
-            //Colors
-            Color greenColor = new DeviceCmyk(0.78f, 0, 0.81f, 0.21f);
-            Color whiteColor = new DeviceCmyk(0, 0, 0, 0);
-
-            //Margins
-            Float offSet = 36f;
-            Float logoMaxHeight = 24f;
-            Float logoMaxWidth = 72f;
-
-            //GP's and NIC's logos
-            Image gpLogo = new Image(ImageDataFactory.create(gpLogoDest));
-            Image nicLogo = new Image(ImageDataFactory.create(nicLogoDest));
+            gpLogo = new Image(ImageDataFactory.create(gpLogoDest));
+            nicLogo = new Image(ImageDataFactory.create(nicLogoDest));
 
             //Setting logo size
             if (gpLogo.getImageHeight() / gpLogo.getImageWidth() > logoMaxHeight / logoMaxWidth) {
@@ -74,7 +77,6 @@ public class PEPdfServiceImpl implements PEPdfService {
 
             //Initialize document
             Document document = new Document(pdf, ps);
-
             document.setFontSize(8);
 
             PEFundDto fundDto = fundService.get(fundId);
@@ -83,20 +85,7 @@ public class PEPdfServiceImpl implements PEPdfService {
 
             //Header
             Table tableHeader = new Table(new float[]{1, 1, 1});
-            tableHeader.addCell(new Cell()
-                    .setWidth(logoMaxWidth)
-                    .add(new Paragraph().add(gpLogo))
-                    .setTextAlignment(TextAlignment.LEFT));
-            tableHeader.addCell(new Cell()
-                    .setWidth(ps.getWidth() - offSet * 2 - logoMaxWidth * 2)
-                    .add(new Paragraph(fundDto.getFundName())
-                            .setBold()
-                            .setFontSize(10))
-                    .setTextAlignment(TextAlignment.CENTER));
-            tableHeader.addCell(new Cell()
-                    .setWidth(logoMaxWidth)
-                    .add(new Paragraph().add(nicLogo))
-                    .setTextAlignment(TextAlignment.RIGHT));
+            this.addTableHeader(tableHeader, fundDto, ps);
             document.add(tableHeader);
 
             Table organizationOverviewTitle = new Table(new float[]{1});
@@ -165,9 +154,28 @@ public class PEPdfServiceImpl implements PEPdfService {
                     .setTextAlignment(TextAlignment.CENTER));
             document.add(keyFundStatisticsTitle);
 
+            Table keyFundStatistics = new Table(new float[]{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1});
+
             document.close();
         } catch (IOException ex) {
             logger.error("Error creating PE fund's One Pager: " + fundId, ex);
         }
+    }
+
+    private void addTableHeader(Table table, PEFundDto fundDto, PageSize ps) {
+        table.addCell(new Cell()
+                .setWidth(logoMaxWidth)
+                .add(new Paragraph().add(gpLogo))
+                .setTextAlignment(TextAlignment.LEFT));
+        table.addCell(new Cell()
+                .setWidth(ps.getWidth() - offSet * 2 - logoMaxWidth * 2)
+                .add(new Paragraph(fundDto.getFundName())
+                        .setBold()
+                        .setFontSize(10))
+                .setTextAlignment(TextAlignment.CENTER));
+        table.addCell(new Cell()
+                .setWidth(logoMaxWidth)
+                .add(new Paragraph().add(nicLogo))
+                .setTextAlignment(TextAlignment.RIGHT));
     }
 }
