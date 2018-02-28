@@ -87,39 +87,33 @@ public class PEPdfServiceImpl implements PEPdfService {
 
             //Header
             Table headerTable = new Table(new float[]{1, 1, 1});
-            this.addTableHeader(headerTable, fundDto, ps);
+            this.addHeader(headerTable, fundDto, ps.getWidth() - offSet * 2);
             document.add(headerTable);
 
             //Organization Overview Title
             Table organizationOverviewTitle = new Table(new float[]{1});
-            this.addGreenTitle(organizationOverviewTitle, "Organization Overview", ps);
+            this.addGreenTitle(organizationOverviewTitle, "Organization Overview", ps.getWidth() - offSet * 2);
             document.add(organizationOverviewTitle);
 
             //Organization Overview Table
             Table organizationOverviewTable = new Table(new float[]{1, 1, 1, 1, 1, 1});
-            this.addOrganizationOverview(organizationOverviewTable, firmDto, ps);
+            this.addOrganizationOverview(organizationOverviewTable, firmDto, ps.getWidth() - offSet * 2);
             document.add(organizationOverviewTable);
 
             //Fund Summary Title
             Table fundSummaryTitle = new Table(new float[]{1});
-            this.addGreenTitle(fundSummaryTitle, "Fund Summary", ps);
+            this.addGreenTitle(fundSummaryTitle, "Fund Summary", ps.getWidth() - offSet * 2);
             document.add(fundSummaryTitle);
 
             //Fund Summary Table
             Table fundSummaryTable = new Table(new float[]{1, 1, 1, 1, 1, 1});
-            this.addFundSummary(fundSummaryTable, fundDto, ps);
+            this.addFundSummary(fundSummaryTable, fundDto, ps.getWidth() - offSet * 2);
             document.add(fundSummaryTable);
 
+            //Key Fund Statistics Title
             Table keyFundStatisticsTitle = new Table(new float[]{1});
-            keyFundStatisticsTitle.addCell(new Cell()
-                    .setWidth(ps.getWidth() - offSet * 2)
-                    .add(new Paragraph("Key fund statistics"))
-                    .setBackgroundColor(greenColor)
-                    .setFontColor(whiteColor));
-            keyFundStatisticsTitle.addCell(new Cell()
-                    .setWidth(ps.getWidth() - offSet * 2)
-                    .add(new Paragraph((firmDto.getFirmName() != null ? firmDto.getFirmName() : "") + " Investment Performance Data as of ?????? " + "($mln)").setBold())
-                    .setTextAlignment(TextAlignment.CENTER));
+            this.addGreenTitle(keyFundStatisticsTitle, "Key fund statistics", ps.getWidth() - offSet * 2);
+            this.addWhiteTitle(keyFundStatisticsTitle, (firmDto.getFirmName() != null ? firmDto.getFirmName() : "") + " Investment Performance Data as of ?????? " + "($mln)", ps.getWidth() - offSet * 2);
             document.add(keyFundStatisticsTitle);
 
             Table keyFundStatistics = new Table(new float[]{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1});
@@ -130,13 +124,13 @@ public class PEPdfServiceImpl implements PEPdfService {
         }
     }
 
-    private void addTableHeader(Table table, PEFundDto fundDto, PageSize ps) {
+    private void addHeader(Table table, PEFundDto fundDto, Float width) {
         table.addCell(new Cell()
                 .setWidth(logoMaxWidth)
                 .add(new Paragraph().add(gpLogo))
                 .setTextAlignment(TextAlignment.LEFT));
         table.addCell(new Cell()
-                .setWidth(ps.getWidth() - offSet * 2 - logoMaxWidth * 2)
+                .setWidth(width - logoMaxWidth * 2)
                 .add(new Paragraph(fundDto.getFundName())
                         .setBold()
                         .setFontSize(10))
@@ -147,16 +141,23 @@ public class PEPdfServiceImpl implements PEPdfService {
                 .setTextAlignment(TextAlignment.RIGHT));
     }
 
-    private void addGreenTitle(Table table, String title, PageSize ps) {
+    private void addGreenTitle(Table table, String title, Float width) {
         table.addCell(new Cell()
-                .setWidth(ps.getWidth() - offSet * 2)
+                .setWidth(width)
                 .add(new Paragraph(title))
                 .setBackgroundColor(greenColor)
                 .setFontColor(whiteColor));
     }
 
-    private void addOrganizationOverview(Table table, PEFirmDto firmDto, PageSize ps) {
-        table.setWidth(ps.getWidth() - offSet * 2);
+    private void addWhiteTitle(Table table, String title, Float width) {
+        table.addCell(new Cell()
+                .setWidth(width)
+                .add(new Paragraph(title).setBold())
+                .setTextAlignment(TextAlignment.CENTER));
+    }
+
+    private void addOrganizationOverview(Table table, PEFirmDto firmDto, Float width) {
+        table.setWidth(width);
         table.addCell(new Cell().add(new Paragraph("GP Name").setBold()));
         table.addCell(new Cell().add(new Paragraph(firmDto.getFirmName() != null ? firmDto.getFirmName() : "")));
         table.addCell(new Cell().add(new Paragraph("Strategy AUM").setBold()));
@@ -171,8 +172,8 @@ public class PEPdfServiceImpl implements PEPdfService {
         table.addCell(new Cell().add(new Paragraph(firmDto.getPeers() != null ? firmDto.getPeers() : "")));
     }
 
-    private void addFundSummary(Table table, PEFundDto fundDto, PageSize ps) {
-        table.setWidth(ps.getWidth() - offSet * 2);
+    private void addFundSummary(Table table, PEFundDto fundDto, Float width) {
+        table.setWidth(width);
         table.addCell(new Cell().add(new Paragraph("Fund Size").setBold()));
         table.addCell(new Cell().add(new Paragraph(fundDto.getFundSize() != null ? String.format("%.2fm", fundDto.getFundSize()) : "")));
         table.addCell(new Cell().add(new Paragraph("Mgt. fee").setBold()));
