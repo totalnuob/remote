@@ -57,6 +57,7 @@ public class PEPdfServiceImpl implements PEPdfService {
     @Override
     public void createOnePager(Long fundId) {
         try {
+            //Logo initialization
             gpLogo = new Image(ImageDataFactory.create(gpLogoDest));
             nicLogo = new Image(ImageDataFactory.create(nicLogoDest));
 
@@ -68,6 +69,7 @@ public class PEPdfServiceImpl implements PEPdfService {
             }
             nicLogo.setHeight(logoMaxHeight);
 
+            //Folder creation
             File file = new File(onePagerDest);
             file.getParentFile().mkdirs();
 
@@ -84,63 +86,29 @@ public class PEPdfServiceImpl implements PEPdfService {
             List<PEFundDto> fundDtoList = fundService.loadFirmFunds(firmDto.getId(), true);
 
             //Header
-            Table tableHeader = new Table(new float[]{1, 1, 1});
-            this.addTableHeader(tableHeader, fundDto, ps);
-            document.add(tableHeader);
+            Table headerTable = new Table(new float[]{1, 1, 1});
+            this.addTableHeader(headerTable, fundDto, ps);
+            document.add(headerTable);
 
+            //Organization Overview Title
             Table organizationOverviewTitle = new Table(new float[]{1});
-            organizationOverviewTitle.addCell(new Cell()
-                    .setWidth(ps.getWidth() - offSet * 2)
-                    .add(new Paragraph("Organization Overview"))
-                    .setBackgroundColor(greenColor)
-                    .setFontColor(whiteColor));
+            this.addGreenTitle(organizationOverviewTitle, "Organization Overview", ps);
             document.add(organizationOverviewTitle);
 
-            Table organizationOverview = new Table(new float[]{1, 1, 1, 1, 1, 1});
-            organizationOverview.setWidth(ps.getWidth() - offSet * 2);
-            organizationOverview.addCell(new Cell().add(new Paragraph("GP Name").setBold()));
-            organizationOverview.addCell(new Cell().add(new Paragraph(firmDto.getFirmName() != null ? firmDto.getFirmName() : "")));
-            organizationOverview.addCell(new Cell().add(new Paragraph("Strategy AUM").setBold()));
-            organizationOverview.addCell(new Cell().add(new Paragraph(firmDto.getAum() != null ? String.format("%.2fm", firmDto.getAum()) : "")));
-            organizationOverview.addCell(new Cell().add(new Paragraph("Locations").setBold()));
-            organizationOverview.addCell(new Cell().add(new Paragraph(firmDto.getLocations() != null ? firmDto.getLocations() : "")));
-            organizationOverview.addCell(new Cell().add(new Paragraph("Firm Inception").setBold()));
-            organizationOverview.addCell(new Cell().add(new Paragraph(firmDto.getFoundedYear() != null ? firmDto.getFoundedYear().toString() : "")));
-            organizationOverview.addCell(new Cell().add(new Paragraph("Inv. + Oper. Team").setBold()));
-            organizationOverview.addCell(new Cell().add(new Paragraph((firmDto.getInvTeamSize() != null ? firmDto.getInvTeamSize() : "?") + " + " + (firmDto.getOpsTeamSize() != null ? firmDto.getOpsTeamSize() : "?"))));
-            organizationOverview.addCell(new Cell().add(new Paragraph("Peers").setBold()));
-            organizationOverview.addCell(new Cell().add(new Paragraph(firmDto.getPeers() != null ? firmDto.getPeers() : "")));
-            document.add(organizationOverview);
+            //Organization Overview Table
+            Table organizationOverviewTable = new Table(new float[]{1, 1, 1, 1, 1, 1});
+            this.addOrganizationOverview(organizationOverviewTable, firmDto, ps);
+            document.add(organizationOverviewTable);
 
+            //Fund Summary Title
             Table fundSummaryTitle = new Table(new float[]{1});
-            fundSummaryTitle.addCell(new Cell()
-                    .setWidth(ps.getWidth() - offSet * 2)
-                    .add(new Paragraph("Fund Summary"))
-                    .setBackgroundColor(greenColor)
-                    .setFontColor(whiteColor));
+            this.addGreenTitle(fundSummaryTitle, "Fund Summary", ps);
             document.add(fundSummaryTitle);
 
-            Table fundSummary = new Table(new float[]{1, 1, 1, 1, 1, 1});
-            fundSummary.setWidth(ps.getWidth() - offSet * 2);
-            fundSummary.addCell(new Cell().add(new Paragraph("Fund Size").setBold()));
-            fundSummary.addCell(new Cell().add(new Paragraph(fundDto.getFundSize() != null ? String.format("%.2fm", fundDto.getFundSize()) : "")));
-            fundSummary.addCell(new Cell().add(new Paragraph("Mgt. fee").setBold()));
-            fundSummary.addCell(new Cell().add(new Paragraph("Mgt. fee")));
-            fundSummary.addCell(new Cell().add(new Paragraph("Industry").setBold()));
-            fundSummary.addCell(new Cell().add(new Paragraph("Industry")));
-            fundSummary.addCell(new Cell().add(new Paragraph("Hard cap").setBold()));
-            fundSummary.addCell(new Cell().add(new Paragraph("Hard cap")));
-            fundSummary.addCell(new Cell().add(new Paragraph("Carry").setBold()));
-            fundSummary.addCell(new Cell().add(new Paragraph("Carry")));
-            fundSummary.addCell(new Cell().add(new Paragraph("Strategy").setBold()));
-            fundSummary.addCell(new Cell().add(new Paragraph("Strategy")));
-            fundSummary.addCell(new Cell().add(new Paragraph("GP Commitment").setBold()));
-            fundSummary.addCell(new Cell().add(new Paragraph("GP Commitment")));
-            fundSummary.addCell(new Cell().add(new Paragraph("Hurdle").setBold()));
-            fundSummary.addCell(new Cell().add(new Paragraph("Hurdle")));
-            fundSummary.addCell(new Cell().add(new Paragraph("Geography").setBold()));
-            fundSummary.addCell(new Cell().add(new Paragraph("Geography")));
-            document.add(fundSummary);
+            //Fund Summary Table
+            Table fundSummaryTable = new Table(new float[]{1, 1, 1, 1, 1, 1});
+            this.addFundSummary(fundSummaryTable, fundDto, ps);
+            document.add(fundSummaryTable);
 
             Table keyFundStatisticsTitle = new Table(new float[]{1});
             keyFundStatisticsTitle.addCell(new Cell()
@@ -177,5 +145,51 @@ public class PEPdfServiceImpl implements PEPdfService {
                 .setWidth(logoMaxWidth)
                 .add(new Paragraph().add(nicLogo))
                 .setTextAlignment(TextAlignment.RIGHT));
+    }
+
+    private void addGreenTitle(Table table, String title, PageSize ps) {
+        table.addCell(new Cell()
+                .setWidth(ps.getWidth() - offSet * 2)
+                .add(new Paragraph(title))
+                .setBackgroundColor(greenColor)
+                .setFontColor(whiteColor));
+    }
+
+    private void addOrganizationOverview(Table table, PEFirmDto firmDto, PageSize ps) {
+        table.setWidth(ps.getWidth() - offSet * 2);
+        table.addCell(new Cell().add(new Paragraph("GP Name").setBold()));
+        table.addCell(new Cell().add(new Paragraph(firmDto.getFirmName() != null ? firmDto.getFirmName() : "")));
+        table.addCell(new Cell().add(new Paragraph("Strategy AUM").setBold()));
+        table.addCell(new Cell().add(new Paragraph(firmDto.getAum() != null ? String.format("%.2fm", firmDto.getAum()) : "")));
+        table.addCell(new Cell().add(new Paragraph("Locations").setBold()));
+        table.addCell(new Cell().add(new Paragraph(firmDto.getLocations() != null ? firmDto.getLocations() : "")));
+        table.addCell(new Cell().add(new Paragraph("Firm Inception").setBold()));
+        table.addCell(new Cell().add(new Paragraph(firmDto.getFoundedYear() != null ? firmDto.getFoundedYear().toString() : "")));
+        table.addCell(new Cell().add(new Paragraph("Inv. + Oper. Team").setBold()));
+        table.addCell(new Cell().add(new Paragraph((firmDto.getInvTeamSize() != null ? firmDto.getInvTeamSize() : "?") + " + " + (firmDto.getOpsTeamSize() != null ? firmDto.getOpsTeamSize() : "?"))));
+        table.addCell(new Cell().add(new Paragraph("Peers").setBold()));
+        table.addCell(new Cell().add(new Paragraph(firmDto.getPeers() != null ? firmDto.getPeers() : "")));
+    }
+
+    private void addFundSummary(Table table, PEFundDto fundDto, PageSize ps) {
+        table.setWidth(ps.getWidth() - offSet * 2);
+        table.addCell(new Cell().add(new Paragraph("Fund Size").setBold()));
+        table.addCell(new Cell().add(new Paragraph(fundDto.getFundSize() != null ? String.format("%.2fm", fundDto.getFundSize()) : "")));
+        table.addCell(new Cell().add(new Paragraph("Mgt. fee").setBold()));
+        table.addCell(new Cell().add(new Paragraph("Mgt. fee")));
+        table.addCell(new Cell().add(new Paragraph("Industry").setBold()));
+        table.addCell(new Cell().add(new Paragraph("Industry")));
+        table.addCell(new Cell().add(new Paragraph("Hard cap").setBold()));
+        table.addCell(new Cell().add(new Paragraph("Hard cap")));
+        table.addCell(new Cell().add(new Paragraph("Carry").setBold()));
+        table.addCell(new Cell().add(new Paragraph("Carry")));
+        table.addCell(new Cell().add(new Paragraph("Strategy").setBold()));
+        table.addCell(new Cell().add(new Paragraph("Strategy")));
+        table.addCell(new Cell().add(new Paragraph("GP Commitment").setBold()));
+        table.addCell(new Cell().add(new Paragraph("GP Commitment")));
+        table.addCell(new Cell().add(new Paragraph("Hurdle").setBold()));
+        table.addCell(new Cell().add(new Paragraph("Hurdle")));
+        table.addCell(new Cell().add(new Paragraph("Geography").setBold()));
+        table.addCell(new Cell().add(new Paragraph("Geography")));
     }
 }
