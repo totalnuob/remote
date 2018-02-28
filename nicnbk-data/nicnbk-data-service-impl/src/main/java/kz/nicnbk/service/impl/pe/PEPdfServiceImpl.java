@@ -240,17 +240,17 @@ public class PEPdfServiceImpl implements PEPdfService {
             totalGrossMOIC = (totalRealized + totalUnrealized) / totalInvested;
         }
 
-        table.addHeaderCell(new Cell().add(new Paragraph("Total").setBold()));
-        table.addHeaderCell(new Cell());
-        table.addHeaderCell(new Cell().add(new Paragraph(Integer.toString(totalNumberOfInvestments)).setBold()));
-        table.addHeaderCell(new Cell().add(new Paragraph("Fund Size").setBold()));
-        table.addHeaderCell(new Cell().add(new Paragraph(mlnFormat(totalInvested)).setBold()));
-        table.addHeaderCell(new Cell().add(new Paragraph(mlnFormat(totalRealized)).setBold()));
-        table.addHeaderCell(new Cell().add(new Paragraph(mlnFormat(totalUnrealized)).setBold()));
-        table.addHeaderCell(new Cell().add(new Paragraph(moicFormat(totalGrossMOIC)).setBold()));
-        table.addHeaderCell(new Cell().add(new Paragraph("Gross IRR").setBold()));
-        table.addHeaderCell(new Cell().add(new Paragraph("Net MOIC").setBold()));
-        table.addHeaderCell(new Cell().add(new Paragraph("Net IRR").setBold()));
+        table.addCell(new Cell().add(new Paragraph("Total").setBold()));
+        table.addCell(new Cell());
+        table.addCell(new Cell().add(new Paragraph(Integer.toString(totalNumberOfInvestments)).setBold()));
+        table.addCell(new Cell().add(new Paragraph("Fund Size").setBold()));
+        table.addCell(new Cell().add(new Paragraph(mlnFormat(totalInvested)).setBold()));
+        table.addCell(new Cell().add(new Paragraph(mlnFormat(totalRealized)).setBold()));
+        table.addCell(new Cell().add(new Paragraph(mlnFormat(totalUnrealized)).setBold()));
+        table.addCell(new Cell().add(new Paragraph(moicFormat(totalGrossMOIC)).setBold()));
+        table.addCell(new Cell().add(new Paragraph("Gross IRR").setBold()));
+        table.addCell(new Cell().add(new Paragraph("Net MOIC").setBold()));
+        table.addCell(new Cell().add(new Paragraph("Net IRR").setBold()));
     }
 
     private int unNullifierToZero(Integer a) {
