@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -157,10 +158,8 @@ public class PEIrrServiceImpl implements PEIrrService {
                     cashflowDtoList.addAll(fundDto.getGrossCashflow());
                 }
             }
-            for (PEGrossCashflowDto cashflowDto : cashflowDtoList) {
-                System.out.println(cashflowDto.getDate());
-            }
-            return 555.0;
+            Collections.sort(cashflowDtoList);
+            return this.getIRR(cashflowDtoList);
         } catch (Exception ex) {
             return null;
         }
