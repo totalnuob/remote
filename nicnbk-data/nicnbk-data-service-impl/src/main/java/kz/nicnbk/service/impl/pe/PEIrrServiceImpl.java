@@ -2,6 +2,7 @@ package kz.nicnbk.service.impl.pe;
 
 import kz.nicnbk.service.api.pe.PEIrrService;
 import kz.nicnbk.service.dto.pe.PECashflowDto;
+import kz.nicnbk.service.dto.pe.PEFundDto;
 import kz.nicnbk.service.dto.pe.PEGrossCashflowDto;
 import org.springframework.stereotype.Service;
 
@@ -144,5 +145,10 @@ public class PEIrrServiceImpl implements PEIrrService {
         } catch (Exception ex) {
             return null;
         }
+    }
+
+    @Override
+    public Double getIRR(List<PEFundDto> fundDtoList, int a) {
+        return null;
     }
 }
