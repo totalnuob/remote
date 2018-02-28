@@ -260,7 +260,7 @@ public class PEPdfServiceImpl implements PEPdfService {
         table.addCell(new Cell().add(new Paragraph(mlnFormat(totalRealized)).setBold()));
         table.addCell(new Cell().add(new Paragraph(mlnFormat(totalUnrealized)).setBold()));
         table.addCell(new Cell().add(new Paragraph(moicFormat(totalGrossMOIC)).setBold()));
-        table.addCell(new Cell().add(new Paragraph("Gross IRR").setBold()));
+        table.addCell(new Cell().add(new Paragraph(irrFormat(totalGrossIrr)).setBold()));
         table.addCell(new Cell().add(new Paragraph("Net MOIC").setBold()));
         table.addCell(new Cell().add(new Paragraph("Net IRR").setBold()));
     }
