@@ -224,6 +224,8 @@ public class PEPdfServiceImpl implements PEPdfService {
             table.addCell(new Cell().add(new Paragraph(moicFormat(fundDto.getNetTvpi()))));
             table.addCell(new Cell().add(new Paragraph(irrFormat(fundDto.getNetIrr()))));
         }
+
+
     }
 
     private String unNullifier(Object st) {
