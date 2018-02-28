@@ -46,7 +46,6 @@ public class PEPdfServiceImpl implements PEPdfService {
 
             //Colors
             Color greenColor = new DeviceCmyk(0.78f, 0, 0.81f, 0.21f);
-            Color redColor = new DeviceCmyk(0, 0.76f, 0.86f, 0.01f);
             Color whiteColor = new DeviceCmyk(0, 0, 0, 0);
 
             //Margins
