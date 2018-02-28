@@ -116,6 +116,7 @@ public class PEPdfServiceImpl implements PEPdfService {
             this.addWhiteTitle(keyFundStatisticsTitle, (firmDto.getFirmName() != null ? firmDto.getFirmName() : "") + " Investment Performance Data as of ?????? " + "($mln)", ps.getWidth() - offSet * 2);
             document.add(keyFundStatisticsTitle);
 
+            //Key Fund Statistics Table
             Table keyFundStatisticsTable = new Table(new float[]{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1});
 
             document.close();
