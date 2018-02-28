@@ -134,7 +134,7 @@ public class PEPdfServiceImpl implements PEPdfService {
                 .setTextAlignment(TextAlignment.LEFT));
         table.addCell(new Cell()
                 .setWidth(width - logoMaxWidth * 2)
-                .add(new Paragraph(fundDto.getFundName())
+                .add(new Paragraph(unNullifier(fundDto.getFundName()))
                         .setBold()
                         .setFontSize(10))
                 .setTextAlignment(TextAlignment.CENTER));
@@ -147,7 +147,7 @@ public class PEPdfServiceImpl implements PEPdfService {
     private void addGreenTitle(Table table, String title, Float width) {
         table.addCell(new Cell()
                 .setWidth(width)
-                .add(new Paragraph(title))
+                .add(new Paragraph(unNullifier(title)))
                 .setBackgroundColor(greenColor)
                 .setFontColor(whiteColor));
     }
@@ -155,30 +155,30 @@ public class PEPdfServiceImpl implements PEPdfService {
     private void addWhiteTitle(Table table, String title, Float width) {
         table.addCell(new Cell()
                 .setWidth(width)
-                .add(new Paragraph(title).setBold())
+                .add(new Paragraph(unNullifier(title)).setBold())
                 .setTextAlignment(TextAlignment.CENTER));
     }
 
     private void addOrganizationOverview(Table table, PEFirmDto firmDto, Float width) {
         table.setWidth(width);
         table.addCell(new Cell().add(new Paragraph("GP Name").setBold()));
-        table.addCell(new Cell().add(new Paragraph(firmDto.getFirmName() != null ? firmDto.getFirmName() : "")));
-        table.addCell(new Cell().add(new Paragraph("Strategy AUM").setBold()));
-        table.addCell(new Cell().add(new Paragraph(firmDto.getAum() != null ? String.format("%.2fm", firmDto.getAum()) : "")));
+        table.addCell(new Cell().add(new Paragraph(unNullifier(firmDto.getFirmName()))));
+        table.addCell(new Cell().add(new Paragraph("Strategy AUM ($mln)").setBold()));
+        table.addCell(new Cell().add(new Paragraph(mlnFormat(firmDto.getAum() * 1000000))));
         table.addCell(new Cell().add(new Paragraph("Locations").setBold()));
-        table.addCell(new Cell().add(new Paragraph(firmDto.getLocations() != null ? firmDto.getLocations() : "")));
+        table.addCell(new Cell().add(new Paragraph(unNullifier(firmDto.getLocations()))));
         table.addCell(new Cell().add(new Paragraph("Firm Inception").setBold()));
         table.addCell(new Cell().add(new Paragraph(firmDto.getFoundedYear() != null ? firmDto.getFoundedYear().toString() : "")));
         table.addCell(new Cell().add(new Paragraph("Inv. + Oper. Team").setBold()));
         table.addCell(new Cell().add(new Paragraph((firmDto.getInvTeamSize() != null ? firmDto.getInvTeamSize() : "?") + " + " + (firmDto.getOpsTeamSize() != null ? firmDto.getOpsTeamSize() : "?"))));
         table.addCell(new Cell().add(new Paragraph("Peers").setBold()));
-        table.addCell(new Cell().add(new Paragraph(firmDto.getPeers() != null ? firmDto.getPeers() : "")));
+        table.addCell(new Cell().add(new Paragraph(unNullifier(firmDto.getPeers()))));
     }
 
     private void addFundSummary(Table table, PEFundDto fundDto, Float width) {
         table.setWidth(width);
-        table.addCell(new Cell().add(new Paragraph("Fund Size").setBold()));
-        table.addCell(new Cell().add(new Paragraph(fundDto.getFundSize() != null ? String.format("%.2fm", fundDto.getFundSize()) : "")));
+        table.addCell(new Cell().add(new Paragraph("Fund Size ($mln)").setBold()));
+        table.addCell(new Cell().add(new Paragraph(mlnFormat(fundDto.getFundSize()))));
         table.addCell(new Cell().add(new Paragraph("Mgt. fee").setBold()));
         table.addCell(new Cell().add(new Paragraph("Mgt. fee")));
         table.addCell(new Cell().add(new Paragraph("Industry").setBold()));
@@ -210,5 +210,41 @@ public class PEPdfServiceImpl implements PEPdfService {
         table.addHeaderCell(new Cell().add(new Paragraph("Gross IRR").setBold()));
         table.addHeaderCell(new Cell().add(new Paragraph("Net MOIC").setBold()));
         table.addHeaderCell(new Cell().add(new Paragraph("Net IRR").setBold()));
+
+        for (PEFundDto fundDto : fundDtoList) {
+            table.addCell(new Cell().add(new Paragraph(unNullifier(fundDto.getFundName()))));
+            table.addCell(new Cell().add(new Paragraph(Integer.toString(fundDto.getVintage()))));
+            table.addCell(new Cell().add(new Paragraph(unNullifier(fundDto.getNumberOfInvestments()))));
+            table.addCell(new Cell().add(new Paragraph(mlnFormat(fundDto.getFundSize()))));
+            table.addCell(new Cell().add(new Paragraph(mlnFormat(fundDto.getInvestedAmount()))));
+            table.addCell(new Cell().add(new Paragraph(mlnFormat(fundDto.getRealized()))));
+            table.addCell(new Cell().add(new Paragraph(mlnFormat(fundDto.getUnrealized()))));
+            table.addCell(new Cell().add(new Paragraph(moicFormat(fundDto.getGrossTvpi()))));
+            table.addCell(new Cell().add(new Paragraph(irrFormat(fundDto.getGrossIrr()))));
+            table.addCell(new Cell().add(new Paragraph(moicFormat(fundDto.getNetTvpi()))));
+            table.addCell(new Cell().add(new Paragraph(irrFormat(fundDto.getNetIrr()))));
+        }
+    }
+
+    private String unNullifier(Object st) {
+        if (st != null) { return st.toString(); }
+        return "";
+    }
+
+    private String mlnFormat(Object amount) {
+        if (amount != null && (amount instanceof Float || amount instanceof Double)) {
+            return String.format("%.0f", (double) amount / 1000000);
+        }
+        return "";
+    }
+
+    private String moicFormat(Double amount) {
+        if (amount != null) { return String.format("%.1fx", amount); }
+        return "";
+    }
+
+    private String irrFormat(Double amount) {
+        if (amount != null) { return String.format("%.0f%%", amount); }
+        return "";
     }
 }
