@@ -118,6 +118,8 @@ public class PEPdfServiceImpl implements PEPdfService {
 
             //Key Fund Statistics Table
             Table keyFundStatisticsTable = new Table(new float[]{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1});
+            this.addKeyFundStatistics(keyFundStatisticsTable, fundDtoList, ps.getWidth() - offSet * 2);
+            document.add(keyFundStatisticsTable);
 
             document.close();
         } catch (IOException ex) {
@@ -193,5 +195,20 @@ public class PEPdfServiceImpl implements PEPdfService {
         table.addCell(new Cell().add(new Paragraph("Hurdle")));
         table.addCell(new Cell().add(new Paragraph("Geography").setBold()));
         table.addCell(new Cell().add(new Paragraph("Geography")));
+    }
+
+    private void addKeyFundStatistics(Table table, List<PEFundDto> fundDtoList, Float width) {
+        table.setWidth(width);
+        table.addHeaderCell(new Cell());
+        table.addHeaderCell(new Cell().add(new Paragraph("Vintage").setBold()));
+        table.addHeaderCell(new Cell().add(new Paragraph("# of Inv.").setBold()));
+        table.addHeaderCell(new Cell().add(new Paragraph("Fund Size").setBold()));
+        table.addHeaderCell(new Cell().add(new Paragraph("Invested").setBold()));
+        table.addHeaderCell(new Cell().add(new Paragraph("Realized").setBold()));
+        table.addHeaderCell(new Cell().add(new Paragraph("Unrealized").setBold()));
+        table.addHeaderCell(new Cell().add(new Paragraph("Gross MOIC").setBold()));
+        table.addHeaderCell(new Cell().add(new Paragraph("Gross IRR").setBold()));
+        table.addHeaderCell(new Cell().add(new Paragraph("Net MOIC").setBold()));
+        table.addHeaderCell(new Cell().add(new Paragraph("Net IRR").setBold()));
     }
 }
