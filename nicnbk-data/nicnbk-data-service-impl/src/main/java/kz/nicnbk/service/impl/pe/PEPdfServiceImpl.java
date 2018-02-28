@@ -37,22 +37,22 @@ public class PEPdfServiceImpl implements PEPdfService {
     private PEFundService fundService;
 
     //File locations
-    String onePagerDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/OnePager.pdf";
-    String gpLogoDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/SilverLakeLogo.png";
-    String nicLogoDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/NIClogo.png";
+    private String onePagerDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/OnePager.pdf";
+    private String gpLogoDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/SilverLakeLogo.png";
+    private String nicLogoDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/NIClogo.png";
 
     //Margins
-    Float offSet = 36f;
-    Float logoMaxHeight = 24f;
-    Float logoMaxWidth = 72f;
+    private Float offSet = 36f;
+    private Float logoMaxHeight = 24f;
+    private Float logoMaxWidth = 72f;
 
     //Colors
-    Color greenColor = new DeviceCmyk(0.78f, 0, 0.81f, 0.21f);
-    Color whiteColor = new DeviceCmyk(0, 0, 0, 0);
+    private Color greenColor = new DeviceCmyk(0.78f, 0, 0.81f, 0.21f);
+    private Color whiteColor = new DeviceCmyk(0, 0, 0, 0);
 
     //GP's and NIC's logos
-    Image gpLogo;
-    Image nicLogo;
+    private Image gpLogo;
+    private Image nicLogo;
 
     @Override
     public void createOnePager(Long fundId) {
