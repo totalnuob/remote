@@ -209,7 +209,7 @@ public class PEPdfServiceImpl implements PEPdfService {
         Double totalRealized = 0.0;
         Double totalUnrealized = 0.0;
         Double totalGrossMOIC = null;
-        Double totalGrossIrr = irrService.getIrrByFundList(fundDtoList);
+        Double totalGrossIrr = null;
         boolean areAllKeyFundStatisticsCalculatedByGrossCF = true;
 
         table.setWidth(width);
@@ -250,6 +250,9 @@ public class PEPdfServiceImpl implements PEPdfService {
 
         if (totalInvested != 0.0) {
             totalGrossMOIC = (totalRealized + totalUnrealized) / totalInvested;
+        }
+        if (areAllKeyFundStatisticsCalculatedByGrossCF) {
+            totalGrossIrr  = irrService.getIrrByFundList(fundDtoList);
         }
 
         table.addCell(new Cell().add(new Paragraph("Total").setBold()));
