@@ -12,10 +12,14 @@ import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.TextAlignment;
+import kz.nicnbk.repo.model.pe.PEGrossCashflow;
 import kz.nicnbk.service.api.pe.PEFundService;
+import kz.nicnbk.service.api.pe.PEGrossCashflowService;
+import kz.nicnbk.service.api.pe.PEIrrService;
 import kz.nicnbk.service.api.pe.PEPdfService;
 import kz.nicnbk.service.dto.pe.PEFirmDto;
 import kz.nicnbk.service.dto.pe.PEFundDto;
+import kz.nicnbk.service.dto.pe.PEGrossCashflowDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,6 +40,9 @@ public class PEPdfServiceImpl implements PEPdfService {
 
     @Autowired
     private PEFundService fundService;
+
+    @Autowired
+    private PEIrrService irrService;
 
     //File locations
     private String onePagerDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/OnePager.pdf";
@@ -198,6 +206,14 @@ public class PEPdfServiceImpl implements PEPdfService {
     }
 
     private void addKeyFundStatistics(Table table, List<PEFundDto> fundDtoList, Float width) {
+
+        int totalNumberOfInvestments = 0;
+        Double totalInvested = 0.0;
+        Double totalRealized = 0.0;
+        Double totalUnrealized = 0.0;
+        Double totalGrossMOIC = null;
+        boolean areAllKeyFundStatisticsCalculatedByGrossCF = true;
+
         table.setWidth(width);
         table.addHeaderCell(new Cell());
         table.addHeaderCell(new Cell().add(new Paragraph("Vintage").setBold()));
@@ -211,17 +227,15 @@ public class PEPdfServiceImpl implements PEPdfService {
         table.addHeaderCell(new Cell().add(new Paragraph("Net MOIC").setBold()));
         table.addHeaderCell(new Cell().add(new Paragraph("Net IRR").setBold()));
 
-        int totalNumberOfInvestments = 0;
-        Double totalInvested = 0.0;
-        Double totalRealized = 0.0;
-        Double totalUnrealized = 0.0;
-        Double totalGrossMOIC = null;
-
         for (PEFundDto fundDto : fundDtoList) {
             totalNumberOfInvestments += unNullifierToZero(fundDto.getNumberOfInvestments());
             totalInvested += unNullifierToZero(fundDto.getInvestedAmount());
             totalRealized += unNullifierToZero(fundDto.getRealized());
             totalUnrealized += unNullifierToZero(fundDto.getUnrealized());
+
+            if (fundDto.getCalculationType() == null || fundDto.getCalculationType() !=2) {
+                areAllKeyFundStatisticsCalculatedByGrossCF = false;
+            }
 
             table.addCell(new Cell().add(new Paragraph(unNullifierToEmptyString(fundDto.getFundName()))));
             table.addCell(new Cell().add(new Paragraph(Integer.toString(fundDto.getVintage()))));
