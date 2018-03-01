@@ -164,7 +164,7 @@ public class PEPdfServiceImpl implements PEPdfService {
                     " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd"));
 
             //Define column areas
-            Rectangle[] columnTwo = {new Rectangle(offSet, offSet + columnOneWidth + 7, columnTwoWidth, columnHeight)};
+            Rectangle[] columnTwo = {new Rectangle(offSet + columnOneWidth + 7, offSet, columnTwoWidth, columnHeight)};
             document.setRenderer(new ColumnDocumentRenderer(document, columnTwo));
 
             //Second column
