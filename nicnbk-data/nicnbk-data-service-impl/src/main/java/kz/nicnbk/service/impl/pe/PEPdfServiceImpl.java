@@ -134,8 +134,8 @@ public class PEPdfServiceImpl implements PEPdfService {
             }
 
             //Define columns' widths and heights
-            Float columnOneWidth = (ps.getWidth() - offSet * 2 - 7) * 3 / 4;
-            Float columnTwoWidth = (ps.getWidth() - offSet * 2 - 7) * 1 / 4;
+            Float columnOneWidth = (ps.getWidth() - offSet * 2 - 3) * 3 / 4;
+            Float columnTwoWidth = (ps.getWidth() - offSet * 2 - 3) * 1 / 4;
             Float columnHeight = ps.getHeight() - offSet - topColunmOffSet;
 
             //First column
