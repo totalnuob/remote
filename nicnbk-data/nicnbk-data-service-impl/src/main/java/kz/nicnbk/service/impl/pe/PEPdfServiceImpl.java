@@ -44,19 +44,13 @@ public class PEPdfServiceImpl implements PEPdfService {
     private PEIrrService irrService;
 
     //File locations
-    private String onePagerDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/OnePager.pdf";
-    private String gpLogoDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/SilverLakeLogo.png";
-    private String nicLogoDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/NIClogo.png";
-
-    //Margins
-    private Float offSet = 36f;
-    private Float logoMaxHeight = 24f;
-    private Float logoMaxWidth = 72f;
-    private Float topColunmOffSet = 182f;
+    private static final String onePagerDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/OnePager.pdf";
+    private static final String gpLogoDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/SilverLakeLogo.png";
+    private static final String nicLogoDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/NIClogo.png";
 
     //Colors
-    private Color greenColor = new DeviceCmyk(0.78f, 0, 0.81f, 0.21f);
-    private Color whiteColor = new DeviceCmyk(0, 0, 0, 0);
+    private static final Color greenColor = new DeviceCmyk(0.78f, 0, 0.81f, 0.21f);
+    private static final Color whiteColor = new DeviceCmyk(0, 0, 0, 0);
 
     //GP's and NIC's logos
     private Image gpLogo;
@@ -65,6 +59,12 @@ public class PEPdfServiceImpl implements PEPdfService {
     @Override
     public void createOnePager(Long fundId) {
         try {
+            //Margins
+            Float offSet = 36f;
+            Float logoMaxHeight = 24f;
+            Float logoMaxWidth = 72f;
+            Float topColunmOffSet = 182f;
+
             //Logo initialization
             gpLogo = new Image(ImageDataFactory.create(gpLogoDest));
             nicLogo = new Image(ImageDataFactory.create(nicLogoDest));
@@ -95,7 +95,7 @@ public class PEPdfServiceImpl implements PEPdfService {
 
             //Header
             Table headerTable = new Table(new float[]{1, 1, 1});
-            this.addHeader(headerTable, fundDto, ps.getWidth() - offSet * 2);
+            this.addHeader(headerTable, fundDto, ps.getWidth() - offSet * 2, logoMaxWidth);
             document.add(headerTable);
 
             //Organization Overview Title
@@ -130,7 +130,7 @@ public class PEPdfServiceImpl implements PEPdfService {
                 this.addKeyFundStatistics(keyFundStatisticsTable, fundDtoList, ps.getWidth() - offSet * 2);
                 document.add(keyFundStatisticsTable);
 
-                topColunmOffSet += (4 + fundDtoList.size()) * 16;
+                topColunmOffSet += (4 + fundDtoList.size()) * 16.5f;
             }
 
             //Define column areas
@@ -146,19 +146,19 @@ public class PEPdfServiceImpl implements PEPdfService {
         }
     }
 
-    private void addHeader(Table table, PEFundDto fundDto, Float width) {
+    private void addHeader(Table table, PEFundDto fundDto, Float width, Float logoWidth) {
         table.addCell(new Cell()
-                .setWidth(logoMaxWidth)
+                .setWidth(logoWidth)
                 .add(new Paragraph().add(gpLogo))
                 .setTextAlignment(TextAlignment.LEFT));
         table.addCell(new Cell()
-                .setWidth(width - logoMaxWidth * 2)
+                .setWidth(width - logoWidth * 2)
                 .add(new Paragraph(unNullifierToEmptyString(fundDto.getFundName()))
                         .setBold()
                         .setFontSize(10))
                 .setTextAlignment(TextAlignment.CENTER));
         table.addCell(new Cell()
-                .setWidth(logoMaxWidth)
+                .setWidth(logoWidth)
                 .add(new Paragraph().add(nicLogo))
                 .setTextAlignment(TextAlignment.RIGHT));
     }
