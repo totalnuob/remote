@@ -197,15 +197,7 @@ public class DateUtils {
         int month = getMonth(date);
         int year = getYear(date);
 
-        if(month < 11){
-            month = month + 1;
-        }else{
-            // за декабрь - 1 января
-            month = 1;
-            year = year + 1;
-        }
-
-        String dateEn = DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).withLocale(new Locale("en")).format(LocalDate.of(year, month, day));
+        String dateEn = DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).withLocale(new Locale("en")).format(LocalDate.of(year, (month + 1), day));
         if(dateEn != null && dateEn.startsWith("1 ")){
             dateEn = "0" + dateEn;
         }

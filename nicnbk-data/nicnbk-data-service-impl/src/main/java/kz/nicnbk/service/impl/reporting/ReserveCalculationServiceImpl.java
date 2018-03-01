@@ -11,12 +11,9 @@ import kz.nicnbk.service.api.reporting.PeriodicReportService;
 import kz.nicnbk.service.api.reporting.privateequity.ReserveCalculationService;
 import kz.nicnbk.service.converter.reporting.ReserveCalculationConverter;
 import kz.nicnbk.service.dto.lookup.CurrencyRatesDto;
-import kz.nicnbk.service.dto.reporting.ConsolidatedBalanceFormRecordDto;
 import kz.nicnbk.service.dto.reporting.PeriodicReportDto;
 import kz.nicnbk.service.dto.reporting.PeriodicReportType;
 import kz.nicnbk.service.dto.reporting.ReserveCalculationDto;
-import kz.nicnbk.service.impl.reporting.lookup.ReserveCalculationsExpenseTypeLookup;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -349,7 +346,7 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
                 }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "Amount:") &&
                         ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(3), "<amount>")){
                     // TODO: amount formatting
-                    row.getCell(3).setCellValue(record.getAmount());
+                    row.getCell(3).setCellValue(String.format(Locale.ENGLISH, "$%,.2f", record.getAmount()));
                 }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "Akylzhan Baimagambetov-Director") &&
                         ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(3), "<dd.MM.yyyy>")){
                     row.getCell(3).setCellValue(DateUtils.getDateFormatted(record.getDate()));
@@ -426,7 +423,7 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
                 }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "Amount:") &&
                         ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(4), "<amount>")){
                     // TODO: amount formatting
-                    row.getCell(4).setCellValue(record.getAmount());
+                    row.getCell(4).setCellValue(String.format(Locale.ENGLISH, "$%,.2f", record.getAmount()));
                 }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "Bank Code (SWIFT or ABA):") &&
                         ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(4), "<bank_code>")){
                     row.getCell(4).setCellValue(bankCode);
@@ -500,18 +497,19 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
                                 text = text.replace("INPUTDATE", DateUtils.getDateEnglishTextualDate(record.getDate()));
                                 r.setText(text, 0);
                             }else if (text != null && text.contains("INPUTVALUEDATE")) {
-                                Date date = record.getValueDate() != null ? record.getValueDate() : record.getDate();
-                                text = text.replace("INPUTVALUEDATE", DateUtils.getDateEnglishTextualDate(date));
+                                text = text.replace("INPUTVALUEDATE", DateUtils.getDateEnglishTextualDate(record.getDate()));
                                 r.setText(text, 0);
                             }else if (text != null && text.contains("INPUTENTITY")) {
 
                                 String name = record.getRecipient().getCode().startsWith("TARR") ? "Tarragon LP (Class B)" :
-                                        record.getRecipient().getCode().startsWith("SING") ? "Singularity Ltd. (Class A)" : "";
+                                        record.getRecipient().getCode().startsWith("SING") ? "Singularity Ltd. (Class A)" :
+                                        record.getRecipient().getNameEn();
 
                                 text = text.replace("INPUTENTITY", name);
                                 r.setText(text, 0);
                             }else if (text != null && text.contains("INPUTAMOUNT")) {
-                                text = text.replace("INPUTAMOUNT", BigDecimal.valueOf(record.getAmount()).toPlainString());
+
+                                text = text.replace("INPUTAMOUNT", String.format(Locale.ENGLISH, "$%,.2f", record.getAmount()));
                                 r.setText(text, 0);
                             }
                         }

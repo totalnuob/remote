@@ -125,13 +125,13 @@
                 <td>{{record.currencyRate  != null ? (record.currencyRate | number:'1.2-2') : '-----'}}</td>
                 <td>{{record.amountKZT | number:'1.2-2'}}</td>
                 <td>
-                    <button *ngIf="record.expenseType.code === 'ADD'" class="btn btn-xs btn-primary" style="margin-left: 10px;" type="button" (click)="exportOrder(record)">
+                    <button [disabled]="!showExportOrderButton(record)" class="btn btn-xs btn-primary" style="margin-left: 10px;" type="button" (click)="exportOrder(record)">
                         Order
                     </button>&nbsp;
-                    <button *ngIf="record.expenseType.code === 'ADD'" class="btn btn-xs btn-success" style="margin-left: 10px;" type="button" (click)="exportFAFToOperations(record)">
+                    <button [disabled]="record.expenseType.code != 'ADD'" class="btn btn-xs btn-success" style="margin-left: 10px;" type="button" (click)="exportFAFToOperations(record)">
                         to-OPs
                     </button>&nbsp;
-                    <button *ngIf="record.expenseType.code === 'ADD'" class="btn btn-xs btn-success" style="margin-left: 10px;" type="button" (click)="exportFAFToSPV(record)">
+                    <button [disabled]="record.expenseType.code != 'ADD'" class="btn btn-xs btn-success" style="margin-left: 10px;" type="button" (click)="exportFAFToSPV(record)">
                         to-SPV
                     </button>
                 </td>

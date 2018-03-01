@@ -283,5 +283,9 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
         return record.canDelete;
     }
 
+    public showExportOrderButton(record: ReserveCalculationFormRecord){
+        return record.expenseType.code === 'ADD' && (record.recipient.code.startsWith('TARR') || record.recipient.code.startsWith('SING'));
+    }
+
 
 }
