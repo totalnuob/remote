@@ -4,8 +4,10 @@ import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.DeviceCmyk;
 import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.ColumnDocumentRenderer;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Image;
@@ -50,6 +52,7 @@ public class PEPdfServiceImpl implements PEPdfService {
     private Float offSet = 36f;
     private Float logoMaxHeight = 24f;
     private Float logoMaxWidth = 72f;
+    private Float topColunmOffSet = 182f;
 
     //Colors
     private Color greenColor = new DeviceCmyk(0.78f, 0, 0.81f, 0.21f);
@@ -115,16 +118,27 @@ public class PEPdfServiceImpl implements PEPdfService {
             this.addFundSummary(fundSummaryTable, fundDto, ps.getWidth() - offSet * 2);
             document.add(fundSummaryTable);
 
-            //Key Fund Statistics Title
-            Table keyFundStatisticsTitle = new Table(new float[]{1});
-            this.addGreenTitle(keyFundStatisticsTitle, "Key fund statistics", ps.getWidth() - offSet * 2);
-            this.addWhiteTitle(keyFundStatisticsTitle, unNullifierToEmptyString(firmDto.getFirmName()) + " Investment Performance Data as of ?????? " + "($mln)", ps.getWidth() - offSet * 2);
-            document.add(keyFundStatisticsTitle);
+            if (fundDtoList != null && fundDtoList.size() > 0) {
+                //Key Fund Statistics Title
+                Table keyFundStatisticsTitle = new Table(new float[]{1});
+                this.addGreenTitle(keyFundStatisticsTitle, "Key fund statistics", ps.getWidth() - offSet * 2);
+                this.addWhiteTitle(keyFundStatisticsTitle, unNullifierToEmptyString(firmDto.getFirmName()) + " Investment Performance Data as of ?????? " + "($mln)", ps.getWidth() - offSet * 2);
+                document.add(keyFundStatisticsTitle);
 
-            //Key Fund Statistics Table
-            Table keyFundStatisticsTable = new Table(new float[]{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1});
-            this.addKeyFundStatistics(keyFundStatisticsTable, fundDtoList, ps.getWidth() - offSet * 2);
-            document.add(keyFundStatisticsTable);
+                //Key Fund Statistics Table
+                Table keyFundStatisticsTable = new Table(new float[]{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1});
+                this.addKeyFundStatistics(keyFundStatisticsTable, fundDtoList, ps.getWidth() - offSet * 2);
+                document.add(keyFundStatisticsTable);
+
+                topColunmOffSet += fundDtoList.size() * 16;
+            }
+
+            //Define column areas
+            Rectangle[] columns = {new Rectangle(offSet, offSet, ps.getWidth() - offSet * 2, ps.getHeight() - offSet - topColunmOffSet)};
+            document.setRenderer(new ColumnDocumentRenderer(document, columns));
+
+            //Fund Summary Table
+            document.add(fundSummaryTable);
 
             document.close();
         } catch (IOException ex) {
