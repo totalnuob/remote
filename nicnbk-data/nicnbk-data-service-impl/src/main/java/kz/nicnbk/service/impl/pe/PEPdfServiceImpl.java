@@ -130,15 +130,14 @@ public class PEPdfServiceImpl implements PEPdfService {
                 this.addKeyFundStatistics(keyFundStatisticsTable, fundDtoList, ps.getWidth() - offSet * 2);
                 document.add(keyFundStatisticsTable);
 
-                topColunmOffSet += (2 + fundDtoList.size()) * 16.488f + 33.476f;
+                topColunmOffSet += (2 + fundDtoList.size()) * 16.4888888f + 33.476f;
             }
 
             //Define column areas
             Rectangle[] columns = {new Rectangle(offSet, offSet, ps.getWidth() - offSet * 2, ps.getHeight() - offSet - topColunmOffSet)};
             document.setRenderer(new ColumnDocumentRenderer(document, columns));
 
-            //Fund Summary Table
-            document.add(fundSummaryTable);
+
 
             document.close();
         } catch (IOException ex) {
