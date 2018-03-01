@@ -158,7 +158,7 @@ public class PEPdfServiceImpl implements PEPdfService {
             document.add(irrAndTvpiTitle);
 
             //Charts
-            this.createChart();
+            this.createChart(columnOneWidth / 2);
             barChart = new Image(ImageDataFactory.create(barChartDest));
             document.add(new Paragraph().add(barChart).add(barChart));
             document.add(new Paragraph().add(barChart).add(barChart));
@@ -229,7 +229,7 @@ public class PEPdfServiceImpl implements PEPdfService {
         }
     }
 
-    private void createChart() throws IOException {
+    private void createChart(Float width) throws IOException {
         final String fiat = "FIAT";
         final String audi = "AUDI";
         final String ford = "FORD";
@@ -256,10 +256,10 @@ public class PEPdfServiceImpl implements PEPdfService {
 
         barChart.getPlot().setBackgroundPaint(java.awt.Color.WHITE);
 
-        int width = 40;    /* Width of the image */
-        int height = 30;   /* Height of the image */
+//        int width = 4000;    /* Width of the image */
+//        int height = 3000;   /* Height of the image */
         File BarChart = new File(barChartDest);
-        ChartUtilities.saveChartAsJPEG(BarChart, barChart, width, height);
+        ChartUtilities.saveChartAsJPEG(BarChart, barChart, Math.round(width), Math.round(width * 3 / 4));
     }
 
     private void addHeader(Table table, PEFundDto fundDto, Float width, Float logoWidth) {
