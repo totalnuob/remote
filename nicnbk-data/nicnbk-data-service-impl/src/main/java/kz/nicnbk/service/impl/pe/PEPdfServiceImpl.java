@@ -166,6 +166,11 @@ public class PEPdfServiceImpl implements PEPdfService {
             barChartNetMoic.setWidth(columnOneWidth / 2);
             document.add(new Paragraph().add(barChartNetIrr).add(barChartNetMoic));
 
+            //Observations Title
+            Table observationsTitle = new Table(new float[]{1});
+            this.addGreenTitle(observationsTitle, "Observations", columnOneWidth);
+            document.add(observationsTitle);
+
             document.add(new Paragraph("Ajl dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd a a a a a a a a a a a a a a"));
 
             //Second column
