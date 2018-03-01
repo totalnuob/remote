@@ -212,7 +212,7 @@ public class PEPdfServiceImpl implements PEPdfService {
 
         JFreeChart barChartTvpi = ChartFactory.createBarChart("Net MOIC", "", "", datasetTvpi, PlotOrientation.VERTICAL, true, false, false);
         barChartTvpi.getPlot().setBackgroundPaint(java.awt.Color.WHITE);
-        File BarChartTvpi = new File(barChartNetIrrDest);
+        File BarChartTvpi = new File(barChartNetMoicDest);
         ChartUtilities.saveChartAsJPEG(BarChartTvpi, barChartTvpi, Math.round(width), Math.round(width * 3 / 4));
     }
 
