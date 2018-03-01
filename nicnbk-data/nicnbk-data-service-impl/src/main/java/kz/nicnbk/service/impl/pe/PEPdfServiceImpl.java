@@ -52,7 +52,7 @@ public class PEPdfServiceImpl implements PEPdfService {
     private static final String onePagerDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/OnePager.pdf";
     private static final String gpLogoDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/SilverLakeLogo.png";
     private static final String nicLogoDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/NIClogo.png";
-    private static final String barChartDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/BarChart.jpeg";
+    private static final String barChartNetIrrDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/BarChartNetIrr.jpeg";
 
     //Colors
     private static final Color greenColor = new DeviceCmyk(0.78f, 0, 0.81f, 0.21f);
@@ -61,7 +61,7 @@ public class PEPdfServiceImpl implements PEPdfService {
     //GP's and NIC's logos
     private Image gpLogo;
     private Image nicLogo;
-    private Image barChart;
+    private Image barChartNetIrr;
 
     @Override
     public void createOnePager(Long fundId) {
@@ -158,39 +158,12 @@ public class PEPdfServiceImpl implements PEPdfService {
             document.add(irrAndTvpiTitle);
 
             //Charts
-            this.createChart(columnOneWidth / 2);
-            barChart = new Image(ImageDataFactory.create(barChartDest));
-            document.add(new Paragraph().add(barChart).add(barChart));
-            document.add(new Paragraph().add(barChart).add(barChart));
+            this.createChart(firmDto, fundDtoList, columnOneWidth);
+            barChartNetIrr = new Image(ImageDataFactory.create(barChartNetIrrDest));
+            barChartNetIrr.setWidth(columnOneWidth / 2);
+            document.add(new Paragraph().add(barChartNetIrr).add(barChartNetIrr));
 
-            document.add(new Paragraph("Ajl dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
-                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
-                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
-                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
-                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
-                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
-                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
-                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
-                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
-                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
-                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
-                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
-                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
-                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
-                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
-                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
-                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
-                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
-                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
-                    " a a a a a a a a a a a a a a a a a a a a a" +
-                    " a a a a a a a a a a a a a a a a a a a a" +
-                    " a a a a a a a a a a a a a a a a a a a a" +
-                    " a a a a a a a a a a a a a a a a a a a a" +
-                    " a a a a a a a a a a a a a a a a a a a a" +
-                    " a a a a a a a a a a a a a a a a a a a a" +
-                    " a a a a a a a a a a a a a a a a a a a a" +
-                    " a a a a a a a a a a a a a a a a a a a a" +
-                    " a a a a a a a a a a a a a a a a a a a a"));
+            document.add(new Paragraph("Ajl dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd a a a a a a a a a a a a a a"));
 
             //Second column
             //##########################################################################################################
@@ -203,25 +176,7 @@ public class PEPdfServiceImpl implements PEPdfService {
             this.addGreenTitle(fundStrategyTitle, "Fund Strategy", columnTwoWidth);
             document.add(fundStrategyTitle);
 
-            document.add(new Paragraph("Ajl dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
-                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
-                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
-                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
-                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
-                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
-                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
-                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
-                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
-                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
-                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
-                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
-                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
-                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
-                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
-                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
-                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
-                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
-                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd"));
+            document.add(new Paragraph("Ajl dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd a a a a a a a a a a a a a a"));
 
             document.close();
         } catch (IOException ex) {
@@ -229,36 +184,22 @@ public class PEPdfServiceImpl implements PEPdfService {
         }
     }
 
-    private void createChart(Float width) throws IOException {
-        final String fiat = "FIAT";
-        final String audi = "AUDI";
-        final String ford = "FORD";
-        final String speed = "Speed";
-        final String millage = "Millage";
-        final String userrating = "User Rating";
-        final String safety = "safety";
+    private void createChart(PEFirmDto firmDto, List<PEFundDto> fundDtoList, Float width) throws IOException {
+        String gpName = firmDto.getFirmName();
+        String ca = "CA";
 
-        final DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        dataset.addValue(1.0, fiat, speed);
-        dataset.addValue(3.0, fiat, userrating);
-        dataset.addValue(5.0, fiat, millage);
-        dataset.addValue(5.0, fiat, safety);
-        dataset.addValue(5.0, audi, speed);
-        dataset.addValue(6.0, audi, userrating);
-        dataset.addValue(10.0, audi, millage);
-        dataset.addValue(4.0, audi, safety);
-        dataset.addValue(4.0, ford, speed);
-        dataset.addValue(2.0, ford, userrating);
-        dataset.addValue(3.0, ford, millage);
-        dataset.addValue(6.0, ford, safety);
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
-        JFreeChart barChart = ChartFactory.createBarChart("Net IRR", "", "", dataset, PlotOrientation.VERTICAL, true, true, false);
+        for (PEFundDto fundDto : fundDtoList) {
+            dataset.addValue(fundDto.getNetIrr(), gpName, fundDto.getFundName());
+            dataset.addValue(1, ca, fundDto.getFundName());
+        }
+
+        JFreeChart barChart = ChartFactory.createBarChart("Net IRR", "", "", dataset, PlotOrientation.VERTICAL, true, false, false);
 
         barChart.getPlot().setBackgroundPaint(java.awt.Color.WHITE);
 
-//        int width = 4000;    /* Width of the image */
-//        int height = 3000;   /* Height of the image */
-        File BarChart = new File(barChartDest);
+        File BarChart = new File(barChartNetIrrDest);
         ChartUtilities.saveChartAsJPEG(BarChart, barChart, Math.round(width), Math.round(width * 3 / 4));
     }
 
