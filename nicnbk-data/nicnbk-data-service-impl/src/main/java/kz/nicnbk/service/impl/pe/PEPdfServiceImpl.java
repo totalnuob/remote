@@ -133,10 +133,6 @@ public class PEPdfServiceImpl implements PEPdfService {
                 topColunmOffSet += (2 + fundDtoList.size()) * 16.4888888f + 33.476f;
             }
 
-//            PdfWriter writer = new PdfWriter();
-//            System.out.println(pdf.getWriter().getCurrentPos());
-//            System.out.println(document.getRenderer());
-
             //Define columns' widths and heights
             Float columnOneWidth = (ps.getWidth() - offSet * 2 - 7) * 3 / 4;
             Float columnTwoWidth = (ps.getWidth() - offSet * 2 - 7) * 1 / 4;
