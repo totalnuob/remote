@@ -138,11 +138,17 @@ public class PEPdfServiceImpl implements PEPdfService {
             Float columnTwoWidth = (ps.getWidth() - offSet * 2 - 7) * 1 / 4;
             Float columnHeight = ps.getHeight() - offSet - topColunmOffSet;
 
+            //First column
+            //##########################################################################################################
             //Define column areas
             Rectangle[] columnOne = {new Rectangle(offSet, offSet, columnOneWidth, columnHeight)};
             document.setRenderer(new ColumnDocumentRenderer(document, columnOne));
 
-            //First column
+            //IRR & TVPI Multiple Title
+            Table irrAndTvpiTitle = new Table(new float[]{1});
+            this.addGreenTitle(irrAndTvpiTitle, "IRR & TVPI multiple", columnOneWidth);
+            document.add(irrAndTvpiTitle);
+
             document.add(new Paragraph("Ajl dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
                     " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
                     " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
@@ -172,11 +178,17 @@ public class PEPdfServiceImpl implements PEPdfService {
                     " a a a a a a a a a a a a a a a a a a a a" +
                     " a a a a a a a a a a a a a a a a a a a a"));
 
+            //Second column
+            //##########################################################################################################
             //Define column areas
             Rectangle[] columnTwo = {new Rectangle(offSet + columnOneWidth + 7, offSet, columnTwoWidth, columnHeight)};
             document.setRenderer(new ColumnDocumentRenderer(document, columnTwo));
 
-            //Second column
+            //Fund Strategy Title
+            Table fundStrategyTitle = new Table(new float[]{1});
+            this.addGreenTitle(fundStrategyTitle, "Fund Strategy", columnTwoWidth);
+            document.add(fundStrategyTitle);
+
             document.add(new Paragraph("Ajl dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
                     " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
                     " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
