@@ -19,6 +19,11 @@ import kz.nicnbk.service.api.pe.PEIrrService;
 import kz.nicnbk.service.api.pe.PEPdfService;
 import kz.nicnbk.service.dto.pe.PEFirmDto;
 import kz.nicnbk.service.dto.pe.PEFundDto;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +52,7 @@ public class PEPdfServiceImpl implements PEPdfService {
     private static final String onePagerDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/OnePager.pdf";
     private static final String gpLogoDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/SilverLakeLogo.png";
     private static final String nicLogoDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/NIClogo.png";
+    private static final String barChartDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/BarChart.jpeg";
 
     //Colors
     private static final Color greenColor = new DeviceCmyk(0.78f, 0, 0.81f, 0.21f);
@@ -55,6 +61,7 @@ public class PEPdfServiceImpl implements PEPdfService {
     //GP's and NIC's logos
     private Image gpLogo;
     private Image nicLogo;
+    private Image barChart;
 
     @Override
     public void createOnePager(Long fundId) {
@@ -69,6 +76,7 @@ public class PEPdfServiceImpl implements PEPdfService {
             //Logo initialization
             gpLogo = new Image(ImageDataFactory.create(gpLogoDest));
             nicLogo = new Image(ImageDataFactory.create(nicLogoDest));
+            barChart = new Image(ImageDataFactory.create(barChartDest));
 
             //Setting logo size
             if (gpLogo.getImageHeight() / gpLogo.getImageWidth() > logoMaxHeight / logoMaxWidth) {
@@ -150,6 +158,10 @@ public class PEPdfServiceImpl implements PEPdfService {
             this.addGreenTitle(irrAndTvpiTitle, "IRR & TVPI multiple", columnOneWidth);
             document.add(irrAndTvpiTitle);
 
+            //Charts
+            this.createChart();
+            document.add(new Paragraph().add(barChart));
+
             document.add(new Paragraph("Ajl dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
                     " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
                     " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
@@ -214,6 +226,39 @@ public class PEPdfServiceImpl implements PEPdfService {
         } catch (IOException ex) {
             logger.error("Error creating PE fund's One Pager: " + fundId, ex);
         }
+    }
+
+    private void createChart() throws IOException {
+        final String fiat = "FIAT";
+        final String audi = "AUDI";
+        final String ford = "FORD";
+        final String speed = "Speed";
+        final String millage = "Millage";
+        final String userrating = "User Rating";
+        final String safety = "safety";
+
+        final DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        dataset.addValue(1.0, fiat, speed);
+        dataset.addValue(3.0, fiat, userrating);
+        dataset.addValue(5.0, fiat, millage);
+        dataset.addValue(5.0, fiat, safety);
+        dataset.addValue(5.0, audi, speed);
+        dataset.addValue(6.0, audi, userrating);
+        dataset.addValue(10.0, audi, millage);
+        dataset.addValue(4.0, audi, safety);
+        dataset.addValue(4.0, ford, speed);
+        dataset.addValue(2.0, ford, userrating);
+        dataset.addValue(3.0, ford, millage);
+        dataset.addValue(6.0, ford, safety);
+
+        JFreeChart barChart = ChartFactory.createBarChart("CAR USAGE STATIStICS", "Category", "Score", dataset, PlotOrientation.VERTICAL, true, true, false);
+
+        barChart.getPlot().setBackgroundPaint(java.awt.Color.WHITE);
+
+        int width = 256;    /* Width of the image */
+        int height = 192;   /* Height of the image */
+        File BarChart = new File(barChartDest);
+        ChartUtilities.saveChartAsJPEG(BarChart, barChart, width, height);
     }
 
     private void addHeader(Table table, PEFundDto fundDto, Float width, Float logoWidth) {
