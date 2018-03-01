@@ -64,6 +64,7 @@ public class PEPdfServiceImpl implements PEPdfService {
             Float logoMaxHeight = 24f;
             Float logoMaxWidth = 72f;
             Float topColunmOffSet = 182f;
+            Float columnGap = 3f;
 
             //Logo initialization
             gpLogo = new Image(ImageDataFactory.create(gpLogoDest));
@@ -134,8 +135,8 @@ public class PEPdfServiceImpl implements PEPdfService {
             }
 
             //Define columns' widths and heights
-            Float columnOneWidth = (ps.getWidth() - offSet * 2 - 3) * 3 / 4;
-            Float columnTwoWidth = (ps.getWidth() - offSet * 2 - 3) * 1 / 4;
+            Float columnOneWidth = (ps.getWidth() - offSet * 2 - columnGap) * 3 / 4;
+            Float columnTwoWidth = (ps.getWidth() - offSet * 2 - columnGap) * 1 / 4;
             Float columnHeight = ps.getHeight() - offSet - topColunmOffSet;
 
             //First column
@@ -181,7 +182,7 @@ public class PEPdfServiceImpl implements PEPdfService {
             //Second column
             //##########################################################################################################
             //Define column areas
-            Rectangle[] columnTwo = {new Rectangle(offSet + columnOneWidth + 7, offSet, columnTwoWidth, columnHeight)};
+            Rectangle[] columnTwo = {new Rectangle(offSet + columnOneWidth + columnGap, offSet, columnTwoWidth, columnHeight)};
             document.setRenderer(new ColumnDocumentRenderer(document, columnTwo));
 
             //Fund Strategy Title
