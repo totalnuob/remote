@@ -133,11 +133,60 @@ public class PEPdfServiceImpl implements PEPdfService {
                 topColunmOffSet += (2 + fundDtoList.size()) * 16.4888888f + 33.476f;
             }
 
+            //Define columns' widths and heights
+            Float columnOneWidth = (ps.getWidth() - offSet * 2 - 7) * 2 / 3;
+            Float columnTwoWidth = (ps.getWidth() - offSet * 2 - 7) * 1 / 3;
+            Float columnHeight = ps.getHeight() - offSet - topColunmOffSet;
+
             //Define column areas
-            Rectangle[] columns = {new Rectangle(offSet, offSet, ps.getWidth() - offSet * 2, ps.getHeight() - offSet - topColunmOffSet)};
-            document.setRenderer(new ColumnDocumentRenderer(document, columns));
+            Rectangle[] columnOne = {new Rectangle(offSet, offSet, columnOneWidth, columnHeight)};
+            document.setRenderer(new ColumnDocumentRenderer(document, columnOne));
 
+            //First column
+            document.add(new Paragraph("Ajl dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
+                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
+                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
+                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
+                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
+                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
+                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
+                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
+                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
+                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
+                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
+                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
+                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
+                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
+                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
+                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
+                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
+                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
+                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd"));
 
+            //Define column areas
+            Rectangle[] columnTwo = {new Rectangle(offSet, offSet + columnOneWidth + 7, columnTwoWidth, columnHeight)};
+            document.setRenderer(new ColumnDocumentRenderer(document, columnTwo));
+
+            //Second column
+            document.add(new Paragraph("Ajl dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
+                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
+                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
+                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
+                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
+                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
+                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
+                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
+                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
+                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
+                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
+                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
+                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
+                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
+                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
+                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
+                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
+                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
+                    " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd"));
 
             document.close();
         } catch (IOException ex) {
