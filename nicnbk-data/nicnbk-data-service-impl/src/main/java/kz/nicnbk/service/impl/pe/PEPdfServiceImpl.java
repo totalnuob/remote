@@ -160,7 +160,8 @@ public class PEPdfServiceImpl implements PEPdfService {
 
             //Charts
             this.createChart();
-            document.add(new Paragraph().add(barChart));
+            document.add(new Paragraph().add(barChart).add(barChart));
+            document.add(new Paragraph().add(barChart).add(barChart));
 
             document.add(new Paragraph("Ajl dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
                     " dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd" +
@@ -251,12 +252,12 @@ public class PEPdfServiceImpl implements PEPdfService {
         dataset.addValue(3.0, ford, millage);
         dataset.addValue(6.0, ford, safety);
 
-        JFreeChart barChart = ChartFactory.createBarChart("CAR USAGE STATIStICS", "Category", "Score", dataset, PlotOrientation.VERTICAL, true, true, false);
+        JFreeChart barChart = ChartFactory.createBarChart("Net IRR", "", "", dataset, PlotOrientation.VERTICAL, true, true, false);
 
         barChart.getPlot().setBackgroundPaint(java.awt.Color.WHITE);
 
-        int width = 256;    /* Width of the image */
-        int height = 192;   /* Height of the image */
+        int width = 40;    /* Width of the image */
+        int height = 30;   /* Height of the image */
         File BarChart = new File(barChartDest);
         ChartUtilities.saveChartAsJPEG(BarChart, barChart, width, height);
     }
