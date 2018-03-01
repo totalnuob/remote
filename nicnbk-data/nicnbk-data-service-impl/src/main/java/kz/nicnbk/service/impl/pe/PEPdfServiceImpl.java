@@ -31,7 +31,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -53,6 +52,7 @@ public class PEPdfServiceImpl implements PEPdfService {
     private static final String gpLogoDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/SilverLakeLogo.png";
     private static final String nicLogoDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/NIClogo.png";
     private static final String barChartNetIrrDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/BarChartNetIrr.jpeg";
+    private static final String barChartNetMoicDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/BarChartNetMoic.jpeg";
 
     //Colors
     private static final Color greenColor = new DeviceCmyk(0.78f, 0, 0.81f, 0.21f);
@@ -62,6 +62,7 @@ public class PEPdfServiceImpl implements PEPdfService {
     private Image gpLogo;
     private Image nicLogo;
     private Image barChartNetIrr;
+    private Image barChartNetMoic;
 
     @Override
     public void createOnePager(Long fundId) {
@@ -158,10 +159,12 @@ public class PEPdfServiceImpl implements PEPdfService {
             document.add(irrAndTvpiTitle);
 
             //Charts
-            this.createChart(firmDto, fundDtoList, columnOneWidth);
+            this.createCharts(firmDto, fundDtoList, columnOneWidth);
             barChartNetIrr = new Image(ImageDataFactory.create(barChartNetIrrDest));
+            barChartNetMoic = new Image(ImageDataFactory.create(barChartNetMoicDest));
             barChartNetIrr.setWidth(columnOneWidth / 2);
-            document.add(new Paragraph().add(barChartNetIrr).add(barChartNetIrr));
+            barChartNetMoic.setWidth(columnOneWidth / 2);
+            document.add(new Paragraph().add(barChartNetIrr).add(barChartNetMoic));
 
             document.add(new Paragraph("Ajl dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd a a a a a a a a a a a a a a"));
 
@@ -184,23 +187,33 @@ public class PEPdfServiceImpl implements PEPdfService {
         }
     }
 
-    private void createChart(PEFirmDto firmDto, List<PEFundDto> fundDtoList, Float width) throws IOException {
+    private void createCharts(PEFirmDto firmDto, List<PEFundDto> fundDtoList, Float width) throws IOException {
         String gpName = firmDto.getFirmName();
         String ca = "CA";
 
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        DefaultCategoryDataset datasetIrr = new DefaultCategoryDataset();
 
         for (PEFundDto fundDto : fundDtoList) {
-            dataset.addValue(fundDto.getNetIrr(), gpName, fundDto.getFundName());
-            dataset.addValue(1, ca, fundDto.getFundName());
+            datasetIrr.addValue(fundDto.getNetIrr(), gpName, fundDto.getFundName());
+            datasetIrr.addValue(1, ca, fundDto.getFundName());
         }
 
-        JFreeChart barChart = ChartFactory.createBarChart("Net IRR", "", "", dataset, PlotOrientation.VERTICAL, true, false, false);
+        JFreeChart barChartIrr = ChartFactory.createBarChart("Net IRR", "", "", datasetIrr, PlotOrientation.VERTICAL, true, false, false);
+        barChartIrr.getPlot().setBackgroundPaint(java.awt.Color.WHITE);
+        File BarChartIrr = new File(barChartNetIrrDest);
+        ChartUtilities.saveChartAsJPEG(BarChartIrr, barChartIrr, Math.round(width), Math.round(width * 3 / 4));
 
-        barChart.getPlot().setBackgroundPaint(java.awt.Color.WHITE);
+        DefaultCategoryDataset datasetTvpi = new DefaultCategoryDataset();
 
-        File BarChart = new File(barChartNetIrrDest);
-        ChartUtilities.saveChartAsJPEG(BarChart, barChart, Math.round(width), Math.round(width * 3 / 4));
+        for (PEFundDto fundDto : fundDtoList) {
+            datasetTvpi.addValue(fundDto.getNetTvpi(), gpName, fundDto.getFundName());
+            datasetTvpi.addValue(2, ca, fundDto.getFundName());
+        }
+
+        JFreeChart barChartTvpi = ChartFactory.createBarChart("Net MOIC", "", "", datasetTvpi, PlotOrientation.VERTICAL, true, false, false);
+        barChartTvpi.getPlot().setBackgroundPaint(java.awt.Color.WHITE);
+        File BarChartTvpi = new File(barChartNetIrrDest);
+        ChartUtilities.saveChartAsJPEG(BarChartTvpi, barChartTvpi, Math.round(width), Math.round(width * 3 / 4));
     }
 
     private void addHeader(Table table, PEFundDto fundDto, Float width, Float logoWidth) {
