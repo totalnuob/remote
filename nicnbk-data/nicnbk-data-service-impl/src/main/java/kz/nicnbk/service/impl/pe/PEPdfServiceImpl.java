@@ -76,7 +76,6 @@ public class PEPdfServiceImpl implements PEPdfService {
             //Logo initialization
             gpLogo = new Image(ImageDataFactory.create(gpLogoDest));
             nicLogo = new Image(ImageDataFactory.create(nicLogoDest));
-            barChart = new Image(ImageDataFactory.create(barChartDest));
 
             //Setting logo size
             if (gpLogo.getImageHeight() / gpLogo.getImageWidth() > logoMaxHeight / logoMaxWidth) {
@@ -160,6 +159,7 @@ public class PEPdfServiceImpl implements PEPdfService {
 
             //Charts
             this.createChart();
+            barChart = new Image(ImageDataFactory.create(barChartDest));
             document.add(new Paragraph().add(barChart).add(barChart));
             document.add(new Paragraph().add(barChart).add(barChart));
 
