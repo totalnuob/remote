@@ -224,8 +224,6 @@ public class PEPdfServiceImpl implements PEPdfService {
                 document.add(performanceTable);
             }
 
-            document.add(new Paragraph("Ajl dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd a a a a a a a a a a a a a a"));
-
             //Second column
             //##########################################################################################################
             //Define column areas
