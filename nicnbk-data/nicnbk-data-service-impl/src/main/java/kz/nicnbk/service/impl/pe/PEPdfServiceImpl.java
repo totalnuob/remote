@@ -412,18 +412,25 @@ public class PEPdfServiceImpl implements PEPdfService {
         table.addCell(new Cell().add(new Paragraph("Net IRR").setBold()));
     }
 
-    private void addMeritsRisks(Table table, List<PEOnePagerDescriptionsDto> descriptionsDtoList1, List<PEOnePagerDescriptionsDto> descriptionsDtoList2, Float width) {
-        com.itextpdf.layout.element.List list1 = new com.itextpdf.layout.element.List().setSymbolIndent(30).setListSymbol("(+)");
-
-        if (descriptionsDtoList1 != null) {
-            for (PEOnePagerDescriptionsDto descriptionsDto : descriptionsDtoList1) {
-                list1.add(new ListItem(descriptionsDto.getDescriptionBold()));
+    private void addMeritsRisks(Table table, List<PEOnePagerDescriptionsDto> descriptionsDtoListMerits, List<PEOnePagerDescriptionsDto> descriptionsDtoListRisks, Float width) {
+        Cell cellMerits = new Cell().setWidth(width / 2);
+        if (descriptionsDtoListMerits != null) {
+            for (PEOnePagerDescriptionsDto descriptionsDto : descriptionsDtoListMerits) {
+                cellMerits.add(new Paragraph(descriptionsDto.getDescriptionBold()).setBold())
+                        .add(new Paragraph(descriptionsDto.getDescription()));
             }
         }
 
-        table.setWidth(width);
-        table.addCell(new Cell().add(new Paragraph("123"))).setWidth(width / 2);
-        table.addCell(new Cell().add(new Paragraph("456"))).setWidth(width / 2);
+        Cell cellRisks = new Cell().setWidth(width / 2);
+        if (descriptionsDtoListRisks != null) {
+            for (PEOnePagerDescriptionsDto descriptionsDto : descriptionsDtoListRisks) {
+                cellRisks.add(new Paragraph(descriptionsDto.getDescriptionBold()).setBold())
+                        .add(new Paragraph(descriptionsDto.getDescription()));
+            }
+        }
+
+        table.addCell(cellMerits);
+        table.addCell(cellRisks);
     }
 
     private int unNullifierToZero(Integer a) {
