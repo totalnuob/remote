@@ -832,6 +832,19 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
         }
     }
 
+    addRowDescription(){
+        //console.log(this.fund.companyPerformance);
+        this.fund.onePagerDescriptions.push({id:"", descriptionBold:"", description:"", type:""});
+    }
+
+    removeRowDescription(item){
+        for(var i = this.fund.onePagerDescriptions.length; i--;) {
+            if(this.fund.onePagerDescriptions[i] === item) {
+                this.fund.onePagerDescriptions.splice(i, 1);
+            }
+        }
+    }
+
     grossCfParse(){
         var cf = [];
         var rows = this.uploadedGrossCf.split("\n");
