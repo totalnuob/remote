@@ -157,8 +157,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                         this.fund.companyPerformanceIdd = [];
                                     }
 
-                                    if(this.fund.descriptionsForOnePager == null){
-                                        this.fund.descriptionsForOnePager = [];
+                                    if(this.fund.onePagerDescriptions == null){
+                                        this.fund.onePagerDescriptions = [];
                                     }
 
                                     this.updateIRRParamList();
