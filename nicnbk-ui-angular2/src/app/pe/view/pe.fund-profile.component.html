@@ -1076,6 +1076,10 @@
                                                 </button>
                                             </div>
                                         </table>
+
+                                        <div class="pull-right">
+                                            <button type="submit" class="btn btn-success" (click)="createOnePager()" [disabled]="fund.id == 0 || fund.id == null">CREATE</button>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row">
