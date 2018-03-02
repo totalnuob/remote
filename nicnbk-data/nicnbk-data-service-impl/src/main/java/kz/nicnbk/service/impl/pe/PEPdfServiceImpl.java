@@ -186,10 +186,29 @@ public class PEPdfServiceImpl implements PEPdfService {
             this.addDoubleWhiteTitle(meritsAndRisksTitle, "Merits", "Risks", columnOneWidth);
             document.add(meritsAndRisksTitle);
 
-            //General Partner Title
-            Table generalPartnerTitle = new Table(new float[]{1});
-            this.addWhiteTitle(generalPartnerTitle, "General Partner", columnOneWidth);
-            document.add(generalPartnerTitle);
+            if ((descriptionsGpMeritsDtoList != null && !descriptionsGpMeritsDtoList.isEmpty()) || (descriptionsGpRisksDtoList != null && !descriptionsGpRisksDtoList.isEmpty())) {
+
+                //General Partner Title
+                Table generalPartnerTitle = new Table(new float[]{1});
+                this.addWhiteTitle(generalPartnerTitle, "General Partner", columnOneWidth);
+                document.add(generalPartnerTitle);
+            }
+
+            if ((descriptionsStrategyMeritsDtoList != null && !descriptionsStrategyMeritsDtoList.isEmpty()) || (descriptionsStrategyRisksDtoList != null && !descriptionsStrategyRisksDtoList.isEmpty())) {
+
+                //Strategy and Structure Title
+                Table strategyAndStructureTitle = new Table(new float[]{1});
+                this.addWhiteTitle(strategyAndStructureTitle, "Strategy/Structure", columnOneWidth);
+                document.add(strategyAndStructureTitle);
+            }
+
+            if ((descriptionsPerformanceMeritsDtoList != null && !descriptionsPerformanceMeritsDtoList.isEmpty()) || (descriptionsPerformanceRisksDtoList != null && !descriptionsPerformanceRisksDtoList.isEmpty())) {
+
+                //Performance Title
+                Table performanceTitle = new Table(new float[]{1});
+                this.addWhiteTitle(performanceTitle, "Performance", columnOneWidth);
+                document.add(performanceTitle);
+            }
 
             document.add(new Paragraph("Ajl dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd a a a a a a a a a a a a a a"));
 
