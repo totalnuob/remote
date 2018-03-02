@@ -98,4 +98,9 @@ public class PEOnePagerDescriptionsServiceImpl implements PEOnePagerDescriptions
             return new PEOnePagerDescriptionsResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error saving PE fund's one pager descriptions", "");
         }
     }
+
+    @Override
+    public List<PEOnePagerDescriptionsDto> findByFundId(Long fundId) {
+        return null;
+    }
 }

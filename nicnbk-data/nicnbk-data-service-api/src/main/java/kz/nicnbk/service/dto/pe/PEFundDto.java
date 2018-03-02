@@ -86,6 +86,8 @@ public class PEFundDto extends HistoryBaseEntityDto<PEFund> {
     private List<PECompanyPerformanceDto> companyPerformance;
     private List<PECompanyPerformanceIddDto> companyPerformanceIdd;
 
+    private List<PEOnePagerDescriptionsDto> onePagerDescriptions;
+
     public String getFundName() {
         return fundName;
     }
@@ -516,6 +518,14 @@ public class PEFundDto extends HistoryBaseEntityDto<PEFund> {
 
     public void setCompanyPerformanceIdd(List<PECompanyPerformanceIddDto> companyPerformanceIdd) {
         this.companyPerformanceIdd = companyPerformanceIdd;
+    }
+
+    public List<PEOnePagerDescriptionsDto> getOnePagerDescriptions() {
+        return onePagerDescriptions;
+    }
+
+    public void setOnePagerDescriptions(List<PEOnePagerDescriptionsDto> onePagerDescriptions) {
+        this.onePagerDescriptions = onePagerDescriptions;
     }
 
     public List<PENetCashflowDto> getNetCashflow() {
