@@ -841,19 +841,11 @@
                                         <br>
                                         <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
                                             <tr>
-                                                <th>Company</th>
-                                                <th>Cash invested</th>
-                                                <th>Realized Proceeds</th>
-                                                <th>Unrealized Value</th>
-                                                <th>Total Value</th>
-                                                <th>Multiple</th>
-                                                <th>Auto calculation of the Total Value and Multiple</th>
-                                                <th>Gross IRR, %</th>
-                                                <th>Net IRR, %</th>
-                                                <th>Notice</th>
+                                                <th>GP Merits (bold part)</th>
+                                                <th>GP Merits</th>
                                                 <th></th>
                                             </tr>
-                                            <tr *ngFor="let performance of fund.companyPerformance">
+                                            <tr *ngFor="let description of fund.onePagerDescriptions">
                                                 <td>
                                                     <input type="text" class="form-control" name="companyName" [(ngModel)]="performance.companyName" placeholder="-" pattern="[A-Za-z0-9 ().-]{1,50}" #companyName="ngModel"/>
                                                     <div [hidden]="companyName.valid || companyName.pristine" class="alert alert-danger">
