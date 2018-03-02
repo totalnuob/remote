@@ -13,9 +13,11 @@ import com.itextpdf.layout.element.*;
 import com.itextpdf.layout.property.TextAlignment;
 import kz.nicnbk.service.api.pe.PEFundService;
 import kz.nicnbk.service.api.pe.PEIrrService;
+import kz.nicnbk.service.api.pe.PEOnePagerDescriptionsService;
 import kz.nicnbk.service.api.pe.PEPdfService;
 import kz.nicnbk.service.dto.pe.PEFirmDto;
 import kz.nicnbk.service.dto.pe.PEFundDto;
+import kz.nicnbk.service.dto.pe.PEOnePagerDescriptionsDto;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
@@ -43,6 +45,9 @@ public class PEPdfServiceImpl implements PEPdfService {
 
     @Autowired
     private PEIrrService irrService;
+
+    @Autowired
+    private PEOnePagerDescriptionsService descriptionsService;
 
     //File locations
     private static final String onePagerDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/OnePager.pdf";
@@ -98,6 +103,7 @@ public class PEPdfServiceImpl implements PEPdfService {
             PEFundDto fundDto = fundService.get(fundId);
             PEFirmDto firmDto = fundDto.getFirm();
             List<PEFundDto> fundDtoList = fundService.loadFirmFunds(firmDto.getId(), true);
+            List<PEOnePagerDescriptionsDto> descriptionsDtoList = descriptionsService.findByFundId(fundId);
 
             //Header
             Table headerTable = new Table(new float[]{1, 1, 1});
