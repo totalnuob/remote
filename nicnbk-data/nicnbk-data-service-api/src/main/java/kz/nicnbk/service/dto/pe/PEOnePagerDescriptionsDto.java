@@ -8,8 +8,17 @@ import kz.nicnbk.repo.model.pe.PEOnePagerDescriptions;
  */
 public class PEOnePagerDescriptionsDto extends BaseEntityDto<PEOnePagerDescriptions> {
 
+    private String descriptionBold;
     private String description;
     private int type;
+
+    public String getDescriptionBold() {
+        return descriptionBold;
+    }
+
+    public void setDescriptionBold(String descriptionBold) {
+        this.descriptionBold = descriptionBold;
+    }
 
     public String getDescription() {
         return description;

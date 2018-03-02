@@ -845,86 +845,18 @@
                                                 <th>GP Merits</th>
                                                 <th></th>
                                             </tr>
-                                            <tr *ngFor="let description of fund.onePagerDescriptions">
+                                            <tr *ngFor="let item of fund.onePagerDescriptions">
                                                 <td>
-                                                    <input type="text" class="form-control" name="companyName" [(ngModel)]="performance.companyName" placeholder="-" #companyName="ngModel"/>
-                                                    <div [hidden]="companyName.valid || companyName.pristine" class="alert alert-danger">
+                                                    <input type="text" class="form-control" name="descriptionBold" [(ngModel)]="item.descriptionBold" placeholder="-" #descriptionBold="ngModel"/>
+                                                    <div [hidden]="descriptionBold.valid || descriptionBold.pristine" class="alert alert-danger">
                                                         Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'
                                                     </div>
                                                 </td>
 
                                                 <td>
-                                                    <input type="text" class="form-control" name="companyName" [(ngModel)]="performance.companyName" placeholder="-" #companyName="ngModel"/>
-                                                    <div [hidden]="companyName.valid || companyName.pristine" class="alert alert-danger">
+                                                    <input type="text" class="form-control" name="description" [(ngModel)]="item.description" placeholder="-" #description="ngModel"/>
+                                                    <div [hidden]="description.valid || description.pristine" class="alert alert-danger">
                                                         Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <input type="text" class="form-control" name="invested" [(ngModel)]="performance.invested" (ngModelChange)="autoCalculationTotalAndMultiple(performance)" placeholder="-" pattern="[-]?[0-9]*\.?[0-9]+" #invested="ngModel"/>
-                                                    <div [hidden]="invested.valid || invested.pristine" class="alert alert-danger">
-                                                        Only number could be entered
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <input type="text" class="form-control" name="realized" [(ngModel)]="performance.realized" (ngModelChange)="autoCalculationTotalAndMultiple(performance)" placeholder="-" pattern="[-]?[0-9]*\.?[0-9]+" #realized="ngModel"/>
-                                                    <div [hidden]="realized.valid || realized.pristine" class="alert alert-danger">
-                                                        Only number could be entered
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <input type="text" class="form-control" name="unrealized" [(ngModel)]="performance.unrealized" (ngModelChange)="autoCalculationTotalAndMultiple(performance)" placeholder="-" pattern="[-]?[0-9]*\.?[0-9]+" #unrealized="ngModel"/>
-                                                    <div [hidden]="unrealized.valid || unrealized.pristine" class="alert alert-danger">
-                                                        Only number could be entered
-                                                    </div>
-                                                </td>
-
-                                                <td *ngIf="performance.autoCalculation == false">
-                                                    <input type="text" class="form-control" name="totalValue" [(ngModel)]="performance.totalValue" placeholder="-" pattern="[-]?[0-9]*\.?[0-9]+" [disabled]="performance.autoCalculation" #totalValue="ngModel"/>
-                                                    <div [hidden]="totalValue.valid || totalValue.pristine" class="alert alert-danger">
-                                                        Only number could be entered
-                                                    </div>
-                                                </td>
-                                                <td *ngIf="performance.autoCalculation == true" style="font-size: small; vertical-align: middle">
-                                                    {{(performance.totalValue/1000000) | number:'1.1-2'}}m
-                                                </td>
-
-                                                <td class="col-md-1" *ngIf="performance.autoCalculation == false">
-                                                    <input type="text" class="form-control" name="multiple" [(ngModel)]="performance.multiple" placeholder="-" pattern="[-]?[0-9]*\.?[0-9]+" [disabled]="performance.autoCalculation" #multiple="ngModel"/>
-                                                    <div [hidden]="multiple.valid || multiple.pristine" class="alert alert-danger">
-                                                        Only number could be entered
-                                                    </div>
-                                                </td>
-                                                <td *ngIf="performance.autoCalculation == true" style="font-size: small; vertical-align: middle">
-                                                    {{performance.multiple | number:'1.1-1'}}x
-                                                </td>
-
-                                                <td class="col-md-1">
-                                                    <input type="checkbox" [(ngModel)]="performance.autoCalculation" (ngModelChange)="autoCalculationTotalAndMultiple(performance)">
-                                                </td>
-
-                                                <td class="col-md-1">
-                                                    <input type="text" class="form-control" name="grossIrr" [(ngModel)]="performance.grossIrr" placeholder="-" pattern="[-]?[0-9]*\.?[0-9]+" #grossIrr="ngModel"/>
-                                                    <div [hidden]="grossIrr.valid || grossIrr.pristine" class="alert alert-danger">
-                                                        Only number could be entered
-                                                    </div>
-                                                </td>
-
-                                                <td class="col-md-1">
-                                                    <input type="text" class="form-control" name="netIrr" [(ngModel)]="performance.netIrr" placeholder="-" pattern="[-]?[0-9]*\.?[0-9]+" #netIrr="ngModel"/>
-                                                    <div [hidden]="netIrr.valid || netIrr.pristine" class="alert alert-danger">
-                                                        Only number could be entered
-                                                    </div>
-                                                </td>
-
-                                                <td class="col-md-2">
-                                                    <div *ngIf="!performancesComparison(performance)">
-                                                        <p style="color:red;">The row does not match any of the IDD</p>
-                                                    </div>
-                                                    <div *ngIf="performancesComparison(performance)">
-                                                        <p>The row matches (to some extent) one of the IDD</p>
                                                     </div>
                                                 </td>
 
