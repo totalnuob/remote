@@ -172,6 +172,13 @@ public class DateUtils {
         return getDate(getDateFormatted(date));
     }
 
+
+    /**
+     * Returns date in full format in Russian, e.g.
+     * 01 сентября 2017 года
+     * @param date - date
+     * @return - textual date
+     */
     public static String getDateRussianTextualDateOnFirstDayNextMonth(Date date){
         //int day = getDay(date);
         int month = getMonth(date);
@@ -189,7 +196,7 @@ public class DateUtils {
         if(dateRu != null && dateRu.startsWith("1 ")){
             dateRu = "0" + dateRu;
         }
-        return dateRu;
+        return  dateRu.replace("г.", "года");
     }
 
     public static String getDateEnglishTextualDate(Date date){
