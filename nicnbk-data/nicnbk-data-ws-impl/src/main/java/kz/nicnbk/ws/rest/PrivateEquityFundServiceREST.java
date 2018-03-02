@@ -206,17 +206,9 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
     @RequestMapping(value = "/createOnePager/{fundId}", method = RequestMethod.POST)
     public ResponseEntity<?> createOnePager(@RequestBody List<PEOnePagerDescriptionsDto> descriptionsDtoList, @PathVariable Long fundId) {
 
-        this.descriptionsService.saveList(descriptionsDtoList, fundId);
+        PEOnePagerDescriptionsResultDto resultDto = this.descriptionsService.saveList(descriptionsDtoList, fundId);
 
         this.pdfService.createOnePager(fundId);
-
-        PEIrrResultDto resultDto;
-
-        if (fundId % 2 == 0) {
-            resultDto = new PEIrrResultDto(222.0, StatusResultType.SUCCESS, "", "SUCCESS", "");
-        } else {
-            resultDto = new PEIrrResultDto(111.0, StatusResultType.FAIL, "", "FAIL", "");
-        }
 
         if (resultDto.getStatus().equals(StatusResultType.SUCCESS)) {
             return new ResponseEntity<>(resultDto, null, HttpStatus.OK);

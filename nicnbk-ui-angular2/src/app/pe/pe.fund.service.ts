@@ -107,7 +107,7 @@ export class PEFundService extends CommonService {
         return this.uploadService.postFiles(this.PE_FUND_UPLOAD_GROSS_CF_URL, [], files);
     }
 
-    createOnePager(id, entity) {
+    createOnePager(entity, id) {
         let body = JSON.stringify(entity);
 
         return this.http.post(this.PE_FUND_CREATE_ONE_PAGER_URL + id, body, this.getOptionsWithCredentials())
