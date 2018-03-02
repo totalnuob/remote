@@ -33,6 +33,9 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
     private PECompanyPerformanceIddService performanceIddService;
 
     @Autowired
+    private PEOnePagerDescriptionsService descriptionsService;
+
+    @Autowired
     private PEPdfService pdfService;
 
     @Autowired
@@ -203,7 +206,9 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
     @RequestMapping(value = "/createOnePager/{fundId}", method = RequestMethod.POST)
     public ResponseEntity<?> createOnePager(@RequestBody List<PEOnePagerDescriptionsDto> descriptionsDtoList, @PathVariable Long fundId) {
 
-        pdfService.createOnePager(fundId);
+        this.descriptionsService.saveList(descriptionsDtoList, fundId);
+
+        this.pdfService.createOnePager(fundId);
 
         PEIrrResultDto resultDto;
 
