@@ -9,10 +9,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.ColumnDocumentRenderer;
 import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.Cell;
-import com.itextpdf.layout.element.Image;
-import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.element.*;
 import com.itextpdf.layout.property.TextAlignment;
 import kz.nicnbk.service.api.pe.PEFundService;
 import kz.nicnbk.service.api.pe.PEIrrService;
@@ -171,6 +168,16 @@ public class PEPdfServiceImpl implements PEPdfService {
             this.addGreenTitle(observationsTitle, "Observations", columnOneWidth);
             document.add(observationsTitle);
 
+            //Merits and Risks Title
+            Table meritsAndRisksTitle = new Table(new float[]{1, 1});
+            this.addDoubleWhiteTitle(meritsAndRisksTitle, "Merits", "Risks", columnOneWidth);
+            document.add(meritsAndRisksTitle);
+
+            //General Partner Title
+            Table generalPartnerTitle = new Table(new float[]{1});
+            this.addWhiteTitle(generalPartnerTitle, "General Partner", columnOneWidth);
+            document.add(generalPartnerTitle);
+
             document.add(new Paragraph("Ajl dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd a a a a a a a a a a a a a a"));
 
             //Second column
@@ -250,6 +257,17 @@ public class PEPdfServiceImpl implements PEPdfService {
         table.addCell(new Cell()
                 .setWidth(width)
                 .add(new Paragraph(unNullifierToEmptyString(title)).setBold())
+                .setTextAlignment(TextAlignment.CENTER));
+    }
+
+    private void addDoubleWhiteTitle(Table table, String title1, String title2, Float width) {
+        table.addCell(new Cell()
+                .setWidth(width / 2)
+                .add(new Paragraph(unNullifierToEmptyString(title1)).setBold())
+                .setTextAlignment(TextAlignment.CENTER));
+        table.addCell(new Cell()
+                .setWidth(width / 2)
+                .add(new Paragraph(unNullifierToEmptyString(title2)).setBold())
                 .setTextAlignment(TextAlignment.CENTER));
     }
 
