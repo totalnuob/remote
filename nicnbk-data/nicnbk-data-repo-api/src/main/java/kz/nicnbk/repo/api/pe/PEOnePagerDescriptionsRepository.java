@@ -13,4 +13,7 @@ public interface PEOnePagerDescriptionsRepository extends CrudRepository<PEOnePa
 
     @Query("SELECT e from pe_one_pager_descriptions e where e.fund.id=?1")
     List<PEOnePagerDescriptions> getEntitiesByFundId(Long fundId);
+
+    @Query("SELECT e from pe_one_pager_descriptions e where e.fund.id=?1 and e.type=?2")
+    List<PEOnePagerDescriptions> getEntitiesByFundIdAndType(Long fundId, int type);
 }

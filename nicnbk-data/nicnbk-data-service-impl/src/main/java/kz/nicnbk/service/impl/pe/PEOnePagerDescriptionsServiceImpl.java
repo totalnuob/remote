@@ -108,4 +108,14 @@ public class PEOnePagerDescriptionsServiceImpl implements PEOnePagerDescriptions
         }
         return null;
     }
+
+    @Override
+    public List<PEOnePagerDescriptionsDto> findByFundIdAndType(Long fundId, int type) {
+        try {
+            return this.converter.disassembleList(this.repository.getEntitiesByFundIdAndType(fundId, type));
+        } catch (Exception ex) {
+            logger.error("Error loading PE fund's one pager descriptions: " + fundId, ex);
+        }
+        return null;
+    }
 }

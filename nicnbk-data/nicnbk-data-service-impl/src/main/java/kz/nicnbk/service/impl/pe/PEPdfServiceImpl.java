@@ -104,6 +104,13 @@ public class PEPdfServiceImpl implements PEPdfService {
             PEFirmDto firmDto = fundDto.getFirm();
             List<PEFundDto> fundDtoList = fundService.loadFirmFunds(firmDto.getId(), true);
             List<PEOnePagerDescriptionsDto> descriptionsDtoList = descriptionsService.findByFundId(fundId);
+            List<PEOnePagerDescriptionsDto> descriptionsGpMeritsDtoList = descriptionsService.findByFundIdAndType(fundId, 1);
+            List<PEOnePagerDescriptionsDto> descriptionsGpRisksDtoList = descriptionsService.findByFundIdAndType(fundId, 2);
+            List<PEOnePagerDescriptionsDto> descriptionsStrategyMeritsDtoList = descriptionsService.findByFundIdAndType(fundId, 3);
+            List<PEOnePagerDescriptionsDto> descriptionsStrategyRisksDtoList = descriptionsService.findByFundIdAndType(fundId, 4);
+            List<PEOnePagerDescriptionsDto> descriptionsPerformanceMeritsDtoList = descriptionsService.findByFundIdAndType(fundId, 5);
+            List<PEOnePagerDescriptionsDto> descriptionsPerformanceRisksDtoList = descriptionsService.findByFundIdAndType(fundId, 6);
+            List<PEOnePagerDescriptionsDto> descriptionsFundStrategyDtoList = descriptionsService.findByFundIdAndType(fundId, 7);
 
             //Header
             Table headerTable = new Table(new float[]{1, 1, 1});

@@ -15,4 +15,6 @@ public interface PEOnePagerDescriptionsService {
     PEOnePagerDescriptionsResultDto saveList(List<PEOnePagerDescriptionsDto> descriptionsDtoList, Long fundId);
 
     List<PEOnePagerDescriptionsDto> findByFundId(Long fundId);
+
+    List<PEOnePagerDescriptionsDto> findByFundIdAndType(Long fundId, int type);
 }
