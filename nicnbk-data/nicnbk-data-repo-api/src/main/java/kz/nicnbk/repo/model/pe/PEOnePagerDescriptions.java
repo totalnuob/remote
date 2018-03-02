@@ -13,9 +13,18 @@ import javax.persistence.ManyToOne;
 @Entity(name = "pe_one_pager_descriptions")
 public class PEOnePagerDescriptions extends BaseEntity {
 
+    private String descriptionBold;
     private String description;
     private int type;
     private PEFund fund;
+
+    public String getDescriptionBold() {
+        return descriptionBold;
+    }
+
+    public void setDescriptionBold(String descriptionBold) {
+        this.descriptionBold = descriptionBold;
+    }
 
     public String getDescription() {
         return description;
