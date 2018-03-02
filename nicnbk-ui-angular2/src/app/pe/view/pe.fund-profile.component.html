@@ -845,7 +845,7 @@
                                                 <th>GP Merits</th>
                                                 <th></th>
                                             </tr>
-                                            <tr *ngFor="let item of fund.onePagerDescriptions">
+                                            <tr *ngFor="let item of fund.onePagerDescriptions where item.type === 1">
                                                 <td>
                                                     <input type="text" class="form-control" name="descriptionBold" [(ngModel)]="item.descriptionBold" placeholder="-" #descriptionBold="ngModel"/>
                                                     <div [hidden]="descriptionBold.valid || descriptionBold.pristine" class="alert alert-danger">
@@ -879,7 +879,7 @@
                                                 <th>GP Risks</th>
                                                 <th></th>
                                             </tr>
-                                            <tr *ngFor="let item of fund.onePagerDescriptions">
+                                            <tr *ngFor="let item of fund.onePagerDescriptions where item.type === 2">
                                                 <td>
                                                     <input type="text" class="form-control" name="descriptionBold" [(ngModel)]="item.descriptionBold" placeholder="-" #descriptionBold="ngModel"/>
                                                     <div [hidden]="descriptionBold.valid || descriptionBold.pristine" class="alert alert-danger">
