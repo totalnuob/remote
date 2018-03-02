@@ -192,6 +192,11 @@ public class PEPdfServiceImpl implements PEPdfService {
                 Table generalPartnerTitle = new Table(new float[]{1});
                 this.addWhiteTitle(generalPartnerTitle, "General Partner", columnOneWidth);
                 document.add(generalPartnerTitle);
+
+                //General Partner Table
+                Table generalPartnerTable = new Table(new float[]{1, 1});
+                this.addMeritsRisks(generalPartnerTable, descriptionsGpMeritsDtoList, descriptionsGpRisksDtoList, columnOneWidth);
+                document.add(generalPartnerTable);
             }
 
             if ((descriptionsStrategyMeritsDtoList != null && !descriptionsStrategyMeritsDtoList.isEmpty()) || (descriptionsStrategyRisksDtoList != null && !descriptionsStrategyRisksDtoList.isEmpty())) {
@@ -405,6 +410,20 @@ public class PEPdfServiceImpl implements PEPdfService {
         table.addCell(new Cell().add(new Paragraph(irrFormat(totalGrossIrr)).setBold()));
         table.addCell(new Cell().add(new Paragraph("Net MOIC").setBold()));
         table.addCell(new Cell().add(new Paragraph("Net IRR").setBold()));
+    }
+
+    private void addMeritsRisks(Table table, List<PEOnePagerDescriptionsDto> descriptionsDtoList1, List<PEOnePagerDescriptionsDto> descriptionsDtoList2, Float width) {
+        com.itextpdf.layout.element.List list1 = new com.itextpdf.layout.element.List().setSymbolIndent(30).setListSymbol("(+)");
+
+        if (descriptionsDtoList1 != null) {
+            for (PEOnePagerDescriptionsDto descriptionsDto : descriptionsDtoList1) {
+                list1.add(new ListItem(descriptionsDto.getDescriptionBold()));
+            }
+        }
+
+        table.setWidth(width);
+        table.addCell(new Cell().add(new Paragraph("123"))).setWidth(width / 2);
+        table.addCell(new Cell().add(new Paragraph("456"))).setWidth(width / 2);
     }
 
     private int unNullifierToZero(Integer a) {
