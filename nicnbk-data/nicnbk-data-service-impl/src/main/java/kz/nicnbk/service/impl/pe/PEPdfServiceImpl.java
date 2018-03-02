@@ -187,12 +187,12 @@ public class PEPdfServiceImpl implements PEPdfService {
             document.add(new Paragraph("Ajl dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd a a a a a a a a a a a a a a"));
 
             document.close();
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             logger.error("Error creating PE fund's One Pager: " + fundId, ex);
         }
     }
 
-    private void createCharts(PEFirmDto firmDto, List<PEFundDto> fundDtoList, Float width) throws IOException {
+    private void createCharts(PEFirmDto firmDto, List<PEFundDto> fundDtoList, Float width) throws Exception {
         String gpName = firmDto.getFirmName();
         String ca = "Test benchmark";
 
