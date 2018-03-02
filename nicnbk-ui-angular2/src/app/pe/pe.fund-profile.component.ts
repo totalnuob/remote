@@ -832,9 +832,9 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
         }
     }
 
-    addRowDescription(){
+    addRowDescription(typeOfDescription){
         //console.log(this.fund.companyPerformance);
-        this.fund.onePagerDescriptions.push({id:"", descriptionBold:"", description:"", type:""});
+        this.fund.onePagerDescriptions.push({id:"", descriptionBold:"", description:"", type: typeOfDescription});
     }
 
     removeRowDescription(item){

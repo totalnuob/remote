@@ -860,8 +860,6 @@
                                                     </div>
                                                 </td>
 
-                                                item.type = 555;
-
                                                 <td>
                                                     <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRowDescription(item)">
                                                         <span class="glyphicon glyphicon-minus"></span>
@@ -873,7 +871,7 @@
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <div class="col-md-1 pull-left">
-                                                    <button type="button" class="btn btn-primary" *ngIf="canEdit()" (click)="addRowDescription()">
+                                                    <button type="button" class="btn btn-primary" *ngIf="canEdit()" (click)="addRowDescription(1)">
                                                         Add description
                                                     </button>
                                                 </div>
