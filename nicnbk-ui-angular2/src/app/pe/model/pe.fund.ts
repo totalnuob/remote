@@ -67,6 +67,8 @@ export class PEFund {
     companyPerformance = [];
     companyPerformanceIdd = [];
 
+    descriptionsForOnePager = [];
+
     predecessorInvestedPct: number;
     openingSchedule: string;
     suitable: boolean;
