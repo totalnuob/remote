@@ -413,48 +413,38 @@ public class PEPdfServiceImpl implements PEPdfService {
 
     private void addMeritsRisks(Table table, List<PEOnePagerDescriptionsDto> descriptionsDtoListMerits, List<PEOnePagerDescriptionsDto> descriptionsDtoListRisks, Float width) {
         Cell cellMerits = new Cell().setWidth(width / 2);
-//        if (descriptionsDtoListMerits != null) {
-//            for (PEOnePagerDescriptionsDto descriptionsDto : descriptionsDtoListMerits) {
-//                if (descriptionsDto != null) {
-//                    Paragraph p = new Paragraph();
-//                    if (descriptionsDto.getDescriptionBold() != null && descriptionsDto.getDescriptionBold() != "") {
-//                        p.add(new Paragraph(descriptionsDto.getDescriptionBold() + " ").setBold());
-//                    }
-//                    if (descriptionsDto.getDescription() != null && descriptionsDto.getDescription() != "") {
-//                        p.add(new Paragraph(descriptionsDto.getDescription()));
-//                    }
-//                    cellMerits.add(p);
-//                    cellMerits.add(
-//                            new Paragraph()
-//                                    .add(new Paragraph(descriptionsDto.getDescriptionBold()).setBold())
-//                                    .add(new Paragraph(descriptionsDto.getDescription()))
-//                    );
-//                }
-//            }
-//        }
-
-        cellMerits
-                .add(new Paragraph("A")
-                        .add(new Paragraph("1")
-                                .add(new Paragraph("a"))
-                                .add(new Paragraph("b")))
-                        .add(new Paragraph("2")
-                                .add(new Paragraph("c"))
-                                .add(new Paragraph("d"))))
-                .add(new Paragraph("B")
-                        .add(new Paragraph("3")
-                                .add(new Paragraph("e"))
-                                .add(new Paragraph("f")))
-                        .add(new Paragraph("4")
-                                .add(new Paragraph("g"))
-                                .add(new Paragraph("h"))))
-        ;
+        if (descriptionsDtoListMerits != null) {
+            for (PEOnePagerDescriptionsDto descriptionsDto : descriptionsDtoListMerits) {
+                if (descriptionsDto != null) {
+                    Paragraph p = new Paragraph();
+                    if (descriptionsDto.getDescriptionBold() != null && !descriptionsDto.getDescriptionBold().equals("")) {
+                        p.add(new Paragraph("(+) " + descriptionsDto.getDescriptionBold() + " ").setBold());
+                    } else {
+                        p.add(new Paragraph("(+) ").setBold());
+                    }
+                    if (descriptionsDto.getDescription() != null && !descriptionsDto.getDescription().equals("")) {
+                        p.add(descriptionsDto.getDescription());
+                    }
+                    cellMerits.add(p);
+                }
+            }
+        }
 
         Cell cellRisks = new Cell().setWidth(width / 2);
         if (descriptionsDtoListRisks != null) {
             for (PEOnePagerDescriptionsDto descriptionsDto : descriptionsDtoListRisks) {
-                cellRisks.add(new Paragraph(descriptionsDto.getDescriptionBold()).setBold())
-                        .add(new Paragraph(descriptionsDto.getDescription()));
+                if (descriptionsDto != null) {
+                    Paragraph p = new Paragraph();
+                    if (descriptionsDto.getDescriptionBold() != null && !descriptionsDto.getDescriptionBold().equals("")) {
+                        p.add(new Paragraph("(-) " + descriptionsDto.getDescriptionBold() + " ").setBold());
+                    } else {
+                        p.add(new Paragraph("(-) ").setBold());
+                    }
+                    if (descriptionsDto.getDescription() != null && !descriptionsDto.getDescription().equals("")) {
+                        p.add(descriptionsDto.getDescription());
+                    }
+                    cellRisks.add(p);
+                }
             }
         }
 
