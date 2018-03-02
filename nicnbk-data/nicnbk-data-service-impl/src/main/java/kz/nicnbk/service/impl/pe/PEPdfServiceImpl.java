@@ -102,7 +102,7 @@ public class PEPdfServiceImpl implements PEPdfService {
             PEFundDto fundDto = fundService.get(fundId);
             PEFirmDto firmDto = fundDto.getFirm();
             List<PEFundDto> fundDtoList = fundService.loadFirmFunds(firmDto.getId(), true);
-            List<PEOnePagerDescriptionsDto> descriptionsDtoList = descriptionsService.findByFundId(fundId);
+//            List<PEOnePagerDescriptionsDto> descriptionsDtoList = descriptionsService.findByFundId(fundId);
             List<PEOnePagerDescriptionsDto> descriptionsGpMeritsDtoList = descriptionsService.findByFundIdAndType(fundId, 1);
             List<PEOnePagerDescriptionsDto> descriptionsGpRisksDtoList = descriptionsService.findByFundIdAndType(fundId, 2);
             List<PEOnePagerDescriptionsDto> descriptionsStrategyMeritsDtoList = descriptionsService.findByFundIdAndType(fundId, 3);
@@ -230,10 +230,18 @@ public class PEPdfServiceImpl implements PEPdfService {
             Rectangle[] columnTwo = {new Rectangle(offSet + columnOneWidth + columnGap, offSet, columnTwoWidth, columnHeight)};
             document.setRenderer(new ColumnDocumentRenderer(document, columnTwo));
 
-            //Fund Strategy Title
-            Table fundStrategyTitle = new Table(new float[]{1});
-            this.addGreenTitle(fundStrategyTitle, "Fund Strategy", columnTwoWidth);
-            document.add(fundStrategyTitle);
+            if (descriptionsFundStrategyDtoList != null && !descriptionsFundStrategyDtoList.isEmpty()) {
+
+                //Fund Strategy Title
+                Table fundStrategyTitle = new Table(new float[]{1});
+                this.addGreenTitle(fundStrategyTitle, "Fund Strategy", columnTwoWidth);
+                document.add(fundStrategyTitle);
+
+                //Fund Strategy Table
+                Table fundStrategyTable = new Table(new float[]{1});
+                this.addFundStrategy(fundStrategyTable, descriptionsFundStrategyDtoList, columnTwoWidth);
+                document.add(fundStrategyTable);
+            }
 
             document.add(new Paragraph("Ajl dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd a a a a a a a a a a a a a a"));
 
@@ -421,6 +429,8 @@ public class PEPdfServiceImpl implements PEPdfService {
 
     private void addMeritsRisks(Table table, List<PEOnePagerDescriptionsDto> descriptionsDtoListMerits, List<PEOnePagerDescriptionsDto> descriptionsDtoListRisks, Float width) {
         Cell cellMerits = new Cell().setWidth(width / 2);
+        Cell cellRisks = new Cell().setWidth(width / 2);
+
         if (descriptionsDtoListMerits != null) {
             for (PEOnePagerDescriptionsDto descriptionsDto : descriptionsDtoListMerits) {
                 if (descriptionsDto != null) {
@@ -438,7 +448,6 @@ public class PEPdfServiceImpl implements PEPdfService {
             }
         }
 
-        Cell cellRisks = new Cell().setWidth(width / 2);
         if (descriptionsDtoListRisks != null) {
             for (PEOnePagerDescriptionsDto descriptionsDto : descriptionsDtoListRisks) {
                 if (descriptionsDto != null) {
@@ -458,6 +467,27 @@ public class PEPdfServiceImpl implements PEPdfService {
 
         table.addCell(cellMerits);
         table.addCell(cellRisks);
+    }
+
+    private void addFundStrategy(Table table, List<PEOnePagerDescriptionsDto> descriptionsDtoList, Float width) {
+        Cell cell = new Cell().setWidth(width);
+
+        if (descriptionsDtoList != null) {
+            for (PEOnePagerDescriptionsDto descriptionsDto : descriptionsDtoList) {
+                if (descriptionsDto != null) {
+                    Paragraph p = new Paragraph();
+                    if (descriptionsDto.getDescriptionBold() != null && !descriptionsDto.getDescriptionBold().equals("")) {
+                        p.add(new Paragraph(descriptionsDto.getDescriptionBold() + " ").setBold());
+                    }
+                    if (descriptionsDto.getDescription() != null && !descriptionsDto.getDescription().equals("")) {
+                        p.add(descriptionsDto.getDescription());
+                    }
+                    cell.add(p);
+                }
+            }
+        }
+
+        table.addCell(cell);
     }
 
     private int unNullifierToZero(Integer a) {
