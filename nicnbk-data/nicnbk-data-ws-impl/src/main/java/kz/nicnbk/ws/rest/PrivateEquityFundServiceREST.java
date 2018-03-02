@@ -200,8 +200,8 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
     }
 
     @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
-    @RequestMapping(value = "/createOnePager/{fundId}", method = RequestMethod.GET)
-    public ResponseEntity<?> createOnePager(@PathVariable Long fundId) {
+    @RequestMapping(value = "/createOnePager/{fundId}", method = RequestMethod.POST)
+    public ResponseEntity<?> createOnePager(@RequestBody List<PEOnePagerDescriptionsDto> descriptionsDtoList, @PathVariable Long fundId) {
 
         pdfService.createOnePager(fundId);
 
