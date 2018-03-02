@@ -204,6 +204,11 @@ public class PEPdfServiceImpl implements PEPdfService {
                 Table strategyAndStructureTitle = new Table(new float[]{1});
                 this.addWhiteTitle(strategyAndStructureTitle, "Strategy/Structure", columnOneWidth);
                 document.add(strategyAndStructureTitle);
+
+                //Strategy and Structure Table
+                Table strategyAndStructureTable = new Table(new float[]{1, 1});
+                this.addMeritsRisks(strategyAndStructureTable, descriptionsStrategyMeritsDtoList, descriptionsStrategyRisksDtoList, columnOneWidth);
+                document.add(strategyAndStructureTable);
             }
 
             if ((descriptionsPerformanceMeritsDtoList != null && !descriptionsPerformanceMeritsDtoList.isEmpty()) || (descriptionsPerformanceRisksDtoList != null && !descriptionsPerformanceRisksDtoList.isEmpty())) {
@@ -212,6 +217,11 @@ public class PEPdfServiceImpl implements PEPdfService {
                 Table performanceTitle = new Table(new float[]{1});
                 this.addWhiteTitle(performanceTitle, "Performance", columnOneWidth);
                 document.add(performanceTitle);
+
+                //Performance Table
+                Table performanceTable = new Table(new float[]{1, 1});
+                this.addMeritsRisks(performanceTable, descriptionsPerformanceMeritsDtoList, descriptionsPerformanceRisksDtoList, columnOneWidth);
+                document.add(performanceTable);
             }
 
             document.add(new Paragraph("Ajl dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd a a a a a a a a a a a a a a"));
