@@ -972,7 +972,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                 (response) => {
                     this.postAction(response.messageEn, null);
 
-                    //this.fund.onePagerDescriptions = response.descriptionsDtoList;
+                    this.fund.onePagerDescriptions = response.descriptionsDtoList;
+                    this.fund.managementTeam = response.managementTeamDtoList;
                 },
                 (error: ErrorResponse) => {
                     this.processErrorMessage(error);
