@@ -559,7 +559,6 @@ public class PEPdfServiceImpl implements PEPdfService {
         table.setWidth(width);
 
         for (PEFundManagementTeamDto managementTeamDto : managementTeamDtoList) {
-            Cell cell = new Cell();
             Paragraph p = new Paragraph();
 
             p.add(new Paragraph(unNullifierToEmptyString(managementTeamDto.getName())).setBold());
@@ -571,8 +570,7 @@ public class PEPdfServiceImpl implements PEPdfService {
                 p.add(", " + managementTeamDto.getAge() + " yrs");
             }
 
-            cell.add(p);
-            table.addCell(cell);
+            table.addCell(new Cell().add(p));
         }
     }
 
