@@ -548,8 +548,10 @@ public class PEPdfServiceImpl implements PEPdfService {
         table.setWidth(width);
 
         for (PEOnePagerDescriptionsDto descriptionsDto : descriptionsDtoList) {
-            table.addCell(new Cell().add(new Paragraph(descriptionsDto.getDescriptionBold()).setBold()));
-            table.addCell(new Cell().add(new Paragraph(descriptionsDto.getDescription())));
+            table.addCell(new Cell().add(new Paragraph(
+                            unNullifierToEmptyString(descriptionsDto.getDescriptionBold())).setBold()));
+            table.addCell(new Cell().add(new Paragraph(
+                            unNullifierToEmptyString(descriptionsDto.getDescription()))));
         }
     }
 
