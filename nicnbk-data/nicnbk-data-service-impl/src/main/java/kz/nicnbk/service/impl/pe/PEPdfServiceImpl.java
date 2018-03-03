@@ -110,6 +110,7 @@ public class PEPdfServiceImpl implements PEPdfService {
             List<PEOnePagerDescriptionsDto> descriptionsPerformanceMeritsDtoList = descriptionsService.findByFundIdAndType(fundId, 5);
             List<PEOnePagerDescriptionsDto> descriptionsPerformanceRisksDtoList = descriptionsService.findByFundIdAndType(fundId, 6);
             List<PEOnePagerDescriptionsDto> descriptionsFundStrategyDtoList = descriptionsService.findByFundIdAndType(fundId, 7);
+            List<PEOnePagerDescriptionsDto> descriptionsDescriptiveDataDtoList = descriptionsService.findByFundIdAndType(fundId, 8);
 
             //Header
             Table headerTable = new Table(new float[]{1, 1, 1});
@@ -241,6 +242,19 @@ public class PEPdfServiceImpl implements PEPdfService {
                 Table fundStrategyTable = new Table(new float[]{1});
                 this.addFundStrategy(fundStrategyTable, descriptionsFundStrategyDtoList, columnTwoWidth);
                 document.add(fundStrategyTable);
+            }
+
+            if (descriptionsDescriptiveDataDtoList != null && !descriptionsDescriptiveDataDtoList.isEmpty()) {
+
+                //Descriptive Data Title
+                Table descriptiveDataTitle = new Table(new float[]{1});
+                this.addGreenTitle(descriptiveDataTitle, "Descriptive Data", columnTwoWidth);
+                document.add(descriptiveDataTitle);
+
+                //Descriptive Data Table
+                Table descriptiveDataTable = new Table(new float[]{1});
+//                this.addFundStrategy(descriptiveDataTable, descriptionsFundStrategyDtoList, columnTwoWidth);
+                document.add(descriptiveDataTable);
             }
 
             document.add(new Paragraph("Ajl dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd a a a a a a a a a a a a a a"));

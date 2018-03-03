@@ -1076,6 +1076,40 @@
                                                 </button>
                                             </div>
                                         </table>
+                                        <br>
+                                        <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
+                                            <tr>
+                                                <th>Descriptive Data (bold part)</th>
+                                                <th>Descriptive Data</th>
+                                                <th></th>
+                                            </tr>
+                                            <tr *ngFor="let item of fund.onePagerDescriptions" [hidden]="item.type !=8">
+                                                <td>
+                                                    <input type="text" class="form-control" name="descriptionBold" [(ngModel)]="item.descriptionBold" placeholder="-" #descriptionBold="ngModel"/>
+                                                    <div [hidden]="descriptionBold.valid || descriptionBold.pristine" class="alert alert-danger">
+                                                        Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <input type="text" class="form-control" name="description" [(ngModel)]="item.description" placeholder="-" #description="ngModel"/>
+                                                    <div [hidden]="description.valid || description.pristine" class="alert alert-danger">
+                                                        Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRowDescription(item)">
+                                                        <span class="glyphicon glyphicon-minus"></span>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <div class="col-md-1 pull-left">
+                                                <button type="button" class="btn btn-primary" *ngIf="canEdit()" (click)="addRowDescription(8)">
+                                                    Add description
+                                                </button>
+                                            </div>
+                                        </table>
 
                                         <div class="pull-right">
                                             <button type="submit" class="btn btn-success" (click)="createOnePager()" [disabled]="fund.id == 0 || fund.id == null">CREATE</button>
