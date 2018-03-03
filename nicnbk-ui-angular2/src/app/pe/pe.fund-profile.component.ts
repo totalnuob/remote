@@ -967,8 +967,6 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
         this.dataForOnePager.onePagerDescriptions = this.fund.onePagerDescriptions;
         this.dataForOnePager.managementTeam = this.fund.managementTeam;
 
-        console.log(this.dataForOnePager);
-
         this.busy = this.fundService.createOnePager(this.dataForOnePager, this.fund.id)
             .subscribe(
                 (response) => {
