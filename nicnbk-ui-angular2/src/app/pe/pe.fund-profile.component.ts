@@ -168,6 +168,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                         this.fund.managementTeam = [];
                                     }
 
+                                    this.addOnePagerAsOfDate();
+
                                     this.updateIRRParamList();
 
                                     this.updatePerformanceIddTotal();
@@ -973,6 +975,21 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     console.log(error);
                 }
             )
+    }
+
+    addOnePagerAsOfDate() {
+        var found = false;
+
+        for (var i = 0; i < this.fund.onePagerDescriptions.length; i++) {
+            if (this.fund.onePagerDescriptions[i].type === 0) {
+                found = true;
+            }
+        }
+
+        if (!found) {
+            this.addRowDescription(0);
+            console.log("added 00000");
+        }
     }
 
     createOnePager() {
