@@ -12,6 +12,7 @@ import kz.nicnbk.service.dto.pe.PEFundManagementTeamResultDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.List;
 /**
  * Created by Pak on 03/03/2018.
  */
+@Service
 public class PEFundManagementTeamServiceImpl implements PEFundManagementTeamService {
 
     private static final Logger logger = LoggerFactory.getLogger(PEFundServiceImpl.class);
