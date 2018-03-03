@@ -255,7 +255,7 @@ public class PEPdfServiceImpl implements PEPdfService {
 
                 //Fund Strategy Table
                 Table fundStrategyTable = new Table(new float[]{1});
-                this.addFundStrategy(fundStrategyTable, descriptionsFundStrategyDtoList, columnTwoWidth);
+                this.addFundStrategy(fundStrategyTable, descriptionsFundStrategyDtoList, columnTwoWidth, fontSize - 1);
                 document.add(fundStrategyTable);
             }
 
@@ -534,15 +534,17 @@ public class PEPdfServiceImpl implements PEPdfService {
         table.addCell(cellRisks);
     }
 
-    private void addFundStrategy(Table table, List<PEOnePagerDescriptionsDto> descriptionsDtoList, Float width) {
+    private void addFundStrategy(Table table, List<PEOnePagerDescriptionsDto> descriptionsDtoList, Float width, Float fontSize) {
+        table.setFontSize(fontSize);
+
         Cell cell = new Cell().setWidth(width);
 
         if (descriptionsDtoList != null) {
             for (PEOnePagerDescriptionsDto descriptionsDto : descriptionsDtoList) {
                 if (descriptionsDto != null) {
-                    Paragraph p = new Paragraph().setMultipliedLeading(1);
+                    Paragraph p = new Paragraph().setMultipliedLeading(1.3f);
                     if (descriptionsDto.getDescriptionBold() != null && !descriptionsDto.getDescriptionBold().equals("")) {
-                        p.add(new Paragraph(descriptionsDto.getDescriptionBold() + " ").setBold());
+                        p.add(new Text(descriptionsDto.getDescriptionBold() + " ").setBold());
                     }
                     if (descriptionsDto.getDescription() != null && !descriptionsDto.getDescription().equals("")) {
                         p.add(descriptionsDto.getDescription());
@@ -573,7 +575,7 @@ public class PEPdfServiceImpl implements PEPdfService {
             Paragraph p = new Paragraph();
             com.itextpdf.layout.element.List list = new com.itextpdf.layout.element.List().setSymbolIndent(4).setListSymbol("   -");
 
-            p.add(new Paragraph(unNullifierToEmptyString(managementTeamDto.getName())).setBold());
+            p.add(new Text(unNullifierToEmptyString(managementTeamDto.getName())).setBold());
 
             if (managementTeamDto.getPosition() != null && !managementTeamDto.getPosition().equals("")) {
                 p.add(", " + managementTeamDto.getPosition());
