@@ -36,6 +36,9 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
     private PEOnePagerDescriptionsService descriptionsService;
 
     @Autowired
+    private PEFundManagementTeamService managementTeamService;
+
+    @Autowired
     private PEPdfService pdfService;
 
     @Autowired
@@ -204,16 +207,30 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
 
     @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/createOnePager/{fundId}", method = RequestMethod.POST)
-    public ResponseEntity<?> createOnePager(@RequestBody List<PEOnePagerDescriptionsDto> descriptionsDtoList, @PathVariable Long fundId) {
+    public ResponseEntity<?> createOnePager(@RequestBody PEFundDataForOnePagerDto dataForOnePagerDto, @PathVariable Long fundId) {
 
-        PEOnePagerDescriptionsResultDto resultDto = this.descriptionsService.saveList(descriptionsDtoList, fundId);
+        PEOnePagerDescriptionsResultDto descriptionsResultDto = this.descriptionsService.saveList(dataForOnePagerDto.getDescriptionsDtoList(), fundId);
+        PEFundManagementTeamResultDto managementTeamResultDto = this.managementTeamService.saveList(dataForOnePagerDto.getManagementTeamDtoList(), fundId);
+
+        PEFundDataForOnePagerResultDto resultDto;
+
+        if (descriptionsResultDto.getStatus().equals(StatusResultType.FAIL)) {
+            resultDto = new PEFundDataForOnePagerResultDto(null, null, StatusResultType.FAIL, "", descriptionsResultDto.getMessageEn(), "");
+            return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        if (managementTeamResultDto.getStatus().equals(StatusResultType.FAIL)) {
+            resultDto = new PEFundDataForOnePagerResultDto(null, null, StatusResultType.FAIL, "", managementTeamResultDto.getMessageEn(), "");
+            return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        resultDto = new PEFundDataForOnePagerResultDto(
+                descriptionsResultDto.getDescriptionsDtoList(),
+                managementTeamResultDto.getManagementTeamDtoList(),
+                StatusResultType.SUCCESS, "", descriptionsResultDto.getMessageEn() + " " + managementTeamResultDto.getMessageEn(), "");
 
         this.pdfService.createOnePager(fundId);
 
-        if (resultDto.getStatus().equals(StatusResultType.SUCCESS)) {
-            return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
     }
 }
