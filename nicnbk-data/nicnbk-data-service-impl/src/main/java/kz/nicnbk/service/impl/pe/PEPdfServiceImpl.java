@@ -258,6 +258,19 @@ public class PEPdfServiceImpl implements PEPdfService {
                 document.add(descriptiveDataTable);
             }
 
+            if (descriptionsTargetedClosingInformationDtoList != null && !descriptionsTargetedClosingInformationDtoList.isEmpty()) {
+
+                //Targeted Closing Information Title
+                Table targetedClosingInformationTitle = new Table(new float[]{1});
+                this.addGreenTitle(targetedClosingInformationTitle, "Targeted Closing Information", columnTwoWidth);
+                document.add(targetedClosingInformationTitle);
+
+                //Targeted Closing Information Table
+                Table targetedClosingInformationTable = new Table(new float[]{1, 1});
+                this.addTwoColumns(targetedClosingInformationTable, descriptionsTargetedClosingInformationDtoList, columnTwoWidth);
+                document.add(targetedClosingInformationTable);
+            }
+
             document.add(new Paragraph("Ajl dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd a a a a a a a a a a a a a a"));
 
             document.close();
