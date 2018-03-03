@@ -988,7 +988,6 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
 
         if (!found) {
             this.addRowDescription(0);
-            console.log("added 00000");
         }
     }
 
