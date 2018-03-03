@@ -839,10 +839,31 @@
                                             <!--</form>-->
                                         <!--</div>-->
                                         <br>
-                                        <div class="col-md-12">
-                                            <div class="col-md-3"><b>Investments Performance Data as of</b></div>
-                                            <div class="col-md-2"><input type="text" class="form-control" id="onePagerAsOfDate" name="onePagerAsOfDate" [(ngModel)]="fund.onePagerAsOfDate"/></div>
-                                        </div>
+                                        <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
+                                            <tr>
+                                                <th>Investments Performance Data as of</th>
+                                                <th></th>
+                                            </tr>
+                                            <tr *ngFor="let item of fund.onePagerDescriptions" [hidden]="item.type !=0">
+                                                <td>
+                                                    <input type="text" class="form-control" name="description" [(ngModel)]="item.description" placeholder="-" #description="ngModel"/>
+                                                    <div [hidden]="description.valid || description.pristine" class="alert alert-danger">
+                                                        Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRowDescription(item)">
+                                                        <span class="glyphicon glyphicon-minus"></span>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <div class="col-md-1 pull-left">
+                                                <button type="button" class="btn btn-primary" *ngIf="canEdit()" (click)="addRowDescription(0)">
+                                                    Add as of date
+                                                </button>
+                                            </div>
+                                        </table>
                                         <br>
                                         <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
                                             <tr>
