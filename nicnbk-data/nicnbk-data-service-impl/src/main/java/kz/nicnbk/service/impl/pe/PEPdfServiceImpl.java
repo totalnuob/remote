@@ -558,6 +558,7 @@ public class PEPdfServiceImpl implements PEPdfService {
 
         for (PEFundManagementTeamDto managementTeamDto : managementTeamDtoList) {
             Paragraph p = new Paragraph();
+            com.itextpdf.layout.element.List list = new com.itextpdf.layout.element.List().setSymbolIndent(4).setListSymbol("   -");
 
             p.add(new Paragraph(unNullifierToEmptyString(managementTeamDto.getName())).setBold());
 
@@ -568,20 +569,14 @@ public class PEPdfServiceImpl implements PEPdfService {
                 p.add(", " + managementTeamDto.getAge() + " yrs");
             }
 
-            table.addCell(new Cell().add(p));
-
-            com.itextpdf.layout.element.List list = new com.itextpdf.layout.element.List().setSymbolIndent(4).setListSymbol("   -");
-
             if (managementTeamDto.getExperience() != null && !managementTeamDto.getExperience().equals("")) {
-//                table.addCell(new Cell().add(new Paragraph("   - " + managementTeamDto.getExperience())));
                 list.add(new ListItem(managementTeamDto.getExperience()));
             }
             if (managementTeamDto.getEducation() != null && !managementTeamDto.getEducation().equals("")) {
-//                table.addCell(new Cell().add(new Paragraph("   - " + managementTeamDto.getEducation())));
                 list.add(new ListItem(managementTeamDto.getEducation()));
             }
 
-            table.addCell(new Cell().add(list));
+            table.addCell(new Cell().add(p).add(list));
         }
     }
 
