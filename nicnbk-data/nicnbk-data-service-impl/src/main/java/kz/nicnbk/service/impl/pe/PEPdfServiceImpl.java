@@ -252,7 +252,7 @@ public class PEPdfServiceImpl implements PEPdfService {
                 document.add(descriptiveDataTitle);
 
                 //Descriptive Data Table
-                Table descriptiveDataTable = new Table(new float[]{1});
+                Table descriptiveDataTable = new Table(new float[]{1, 1});
                 this.addTwoColumns(descriptiveDataTable, descriptionsDescriptiveDataDtoList, columnTwoWidth);
                 document.add(descriptiveDataTable);
             }
