@@ -9,5 +9,5 @@ import org.springframework.stereotype.Component;
  * Created by Pak on 02/03/2018.
  */
 @Component
-public class PEOnePagerDescriptionsConverter extends BaseDozerEntityConverter<PEOnePagerDescriptions, PEOnePagerDescriptionsDto> {
+public class PEOnePagerDescriptionsEntityConverter extends BaseDozerEntityConverter<PEOnePagerDescriptions, PEOnePagerDescriptionsDto> {
 }

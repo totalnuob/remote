@@ -5,7 +5,7 @@ import kz.nicnbk.repo.model.pe.PEFund;
 import kz.nicnbk.repo.model.pe.PEOnePagerDescriptions;
 import kz.nicnbk.service.api.pe.PEFundService;
 import kz.nicnbk.service.api.pe.PEOnePagerDescriptionsService;
-import kz.nicnbk.service.converter.pe.PEOnePagerDescriptionsConverter;
+import kz.nicnbk.service.converter.pe.PEOnePagerDescriptionsEntityConverter;
 import kz.nicnbk.service.dto.common.StatusResultType;
 import kz.nicnbk.service.dto.pe.PEOnePagerDescriptionsDto;
 import kz.nicnbk.service.dto.pe.PEOnePagerDescriptionsResultDto;
@@ -26,7 +26,7 @@ public class PEOnePagerDescriptionsServiceImpl implements PEOnePagerDescriptions
     private static final Logger logger = LoggerFactory.getLogger(PEFundServiceImpl.class);
 
     @Autowired
-    private PEOnePagerDescriptionsConverter converter;
+    private PEOnePagerDescriptionsEntityConverter converter;
 
     @Autowired
     private PEOnePagerDescriptionsRepository repository;

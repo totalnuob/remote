@@ -5,7 +5,7 @@ import kz.nicnbk.repo.model.pe.PEFund;
 import kz.nicnbk.repo.model.pe.PEFundManagementTeam;
 import kz.nicnbk.service.api.pe.PEFundManagementTeamService;
 import kz.nicnbk.service.api.pe.PEFundService;
-import kz.nicnbk.service.converter.pe.PEFundManagementTeamConverter;
+import kz.nicnbk.service.converter.pe.PEFundManagementTeamEntityConverter;
 import kz.nicnbk.service.dto.common.StatusResultType;
 import kz.nicnbk.service.dto.pe.PEFundManagementTeamDto;
 import kz.nicnbk.service.dto.pe.PEFundManagementTeamResultDto;
@@ -26,7 +26,7 @@ public class PEFundManagementTeamServiceImpl implements PEFundManagementTeamServ
     private static final Logger logger = LoggerFactory.getLogger(PEFundServiceImpl.class);
 
     @Autowired
-    private PEFundManagementTeamConverter converter;
+    private PEFundManagementTeamEntityConverter converter;
 
     @Autowired
     private PEFundManagementTeamRepository repository;

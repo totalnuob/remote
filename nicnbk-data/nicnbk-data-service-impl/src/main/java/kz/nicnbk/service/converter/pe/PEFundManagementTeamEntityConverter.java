@@ -9,5 +9,5 @@ import org.springframework.stereotype.Component;
  * Created by Pak on 03/03/2018.
  */
 @Component
-public class PEFundManagementTeamConverter extends BaseDozerEntityConverter<PEFundManagementTeam, PEFundManagementTeamDto> {
+public class PEFundManagementTeamEntityConverter extends BaseDozerEntityConverter<PEFundManagementTeam, PEFundManagementTeamDto> {
 }
