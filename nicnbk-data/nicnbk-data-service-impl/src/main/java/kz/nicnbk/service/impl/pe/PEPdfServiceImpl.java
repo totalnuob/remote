@@ -499,7 +499,7 @@ public class PEPdfServiceImpl implements PEPdfService {
                 if (descriptionsDto != null) {
                     Paragraph p = new Paragraph().setMultipliedLeading(1);
                     if (descriptionsDto.getDescriptionBold() != null && !descriptionsDto.getDescriptionBold().equals("")) {
-                        p.add(new Paragraph("(+) " + descriptionsDto.getDescriptionBold() + " ").setBold());
+                        p.add(new Paragraph("(+) " + descriptionsDto.getDescriptionBold() + " ").setBold().setMultipliedLeading(1));
                     } else {
                         p.add(new Paragraph("(+) ").setBold());
                     }
@@ -516,7 +516,7 @@ public class PEPdfServiceImpl implements PEPdfService {
                 if (descriptionsDto != null) {
                     Paragraph p = new Paragraph().setMultipliedLeading(1);
                     if (descriptionsDto.getDescriptionBold() != null && !descriptionsDto.getDescriptionBold().equals("")) {
-                        p.add(new Paragraph("(-) " + descriptionsDto.getDescriptionBold() + " ").setBold());
+                        p.add(new Paragraph("(-) " + descriptionsDto.getDescriptionBold() + " ").setBold().setMultipliedLeading(1));
                     } else {
                         p.add(new Paragraph("(-) ").setBold());
                     }
