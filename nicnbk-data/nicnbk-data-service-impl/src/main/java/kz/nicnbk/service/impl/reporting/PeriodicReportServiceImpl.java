@@ -1421,7 +1421,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
             ListResponseDto responseDtoKZTForm1 = generateConsolidatedBalanceKZTForm1Current(reportId);
             if(responseDtoKZTForm1.getStatus() == ResponseStatusType.FAIL){
-                return responseDtoKZTForm1;
+                //return responseDtoKZTForm1;
+                responseDto.setStatus(responseDtoKZTForm1.getStatus());
+                responseDto.setMessage(responseDtoKZTForm1.getMessage());
             }
             List<ConsolidatedBalanceFormRecordDto> currentRecords = responseDtoKZTForm1.getRecords();
 
@@ -1471,8 +1473,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
     }
 
-    private ListResponseDto generateConsolidatedBalanceKZTForm1Current(Long reportId) {
-        ListResponseDto responseDto = new ListResponseDto();
+    private ListResponseDto generateConsolidatedBalanceKZTForm1Current(Long reportId) { ListResponseDto responseDto = new ListResponseDto();
         PeriodicReport currentReport = this.periodReportRepository.findOne(reportId);
         if(currentReport == null){
             logger.error("No report found for id=" + reportId);
@@ -1880,10 +1881,13 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             records.get(correctionRecordHeader51Index).setCurrentAccountBalance(MathUtils.subtract(valueHeader51, difference));
             records.get(correctionRecordHeader52Index).setCurrentAccountBalance(MathUtils.subtract(valueHeader52, difference));
         }else if(difference > 1 || difference < -1){
-            logger.error("Record '5450.010' (код строки #49) value = " + new BigDecimal(value).toPlainString() + ", #26 - #27 - #45 - #50 - '5440.010'(код строки #49) = " + new BigDecimal(totalSumCheck).toPlainString() +
-                    ". Difference is not negligible = " + new BigDecimal(difference).toPlainString());
-            responseDto.setErrorMessageEn("Record '5450.010' (код строки #49) value = " + new BigDecimal(value).toPlainString() + ", #26 - #27 - #45 - #50 - '5440.010'(код строки #49) = " + new BigDecimal(totalSumCheck).toPlainString() +
-                    ". Difference is not negligible = " + new BigDecimal(difference).toPlainString());
+            logger.error("Record '5450.010' (код строки #49) value = " + new BigDecimal(value).toPlainString() + ", #26 - #27 - #45 - #50 - '5440.010'(код строки #49) = " +
+                    new BigDecimal(totalSumCheck).setScale(2, RoundingMode.HALF_UP).toPlainString() +
+                    ". Difference is not negligible = " + new BigDecimal(difference).setScale(2, RoundingMode.HALF_UP).toPlainString());
+
+            responseDto.setErrorMessageEn("Record '5450.010' (код строки #49) value = " + new BigDecimal(value).setScale(2, RoundingMode.HALF_UP).toPlainString() +
+                    ", #26 - #27 - #45 - #50 - '5440.010'(код строки #49) = " + new BigDecimal(totalSumCheck).setScale(2, RoundingMode.HALF_UP).toPlainString() +
+                    ". Difference is not negligible = " + new BigDecimal(difference).setScale(2, RoundingMode.HALF_UP).toPlainString());
         }
 
         responseDto.setRecords(records);
@@ -2212,7 +2216,10 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
         ListResponseDto responseDtoKZTForm1 = generateConsolidatedBalanceKZTForm1(reportId);
         if(responseDtoKZTForm1.getStatus() == ResponseStatusType.FAIL){
-            return responseDtoKZTForm1;
+            responseDto.setErrorMessageEn("Error generating KZT Form1 report. " + responseDtoKZTForm1.getMessage().getNameEn());
+            return responseDto;
+            //responseDto.setStatus(responseDtoKZTForm1.getStatus());
+           // responseDto.setMessage(responseDtoKZTForm1.getMessage());
         }
         List<ConsolidatedBalanceFormRecordDto> form1Records = responseDtoKZTForm1.getRecords();
         if(form1Records != null){
@@ -2281,7 +2288,11 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
             ListResponseDto KZTForm3ResponseDto = generateConsolidatedTotalIncomeKZTForm3(reportId);
             if(KZTForm3ResponseDto.getStatus() == ResponseStatusType.FAIL){
-                return KZTForm3ResponseDto;
+                responseDto.setErrorMessageEn("Error generating KZT Form3 report. " + KZTForm3ResponseDto.getMessage().getNameEn());
+                return responseDto;
+                //return KZTForm3ResponseDto;
+                //responseDto.setStatus(KZTForm3ResponseDto.getStatus());
+                //responseDto.setMessage(KZTForm3ResponseDto.getMessage());
             }
             List<ConsolidatedBalanceFormRecordDto> formKZT3Records = KZTForm3ResponseDto.getRecords();
             if(formKZT3Records != null){
@@ -2310,7 +2321,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             try {
                 reservesSum = this.reserveCalculationService.getReserveCalculationSumKZTForMonth(ReserveCalculationsExpenseTypeLookup.ADD.getCode(), report.getReportDate());
             }catch (IllegalStateException ex){
-                responseDto.setErrorMessageEn(ex.getMessage());
+                responseDto.setErrorMessageEn("Error generating KZT Form3 report. " + ex.getMessage());
                 return responseDto;
             }
 
@@ -2392,7 +2403,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 // TODO: exclude zero records (which fields of ConsolidatedKZTForm7RecordDto to check for zero value?)
                 for(ConsolidatedKZTForm7RecordDto prevRecord: previousPeriodRecords){
                     if(prevRecord.getAccountNumber() != null && prevRecord.getLineNumber() != null && prevRecord.getLineNumber() == 9 &&
-                            (prevRecord.getDebtEndPeriod() == null || prevRecord.getDebtEndPeriod() == 0)){
+                            (prevRecord.getDebtEndPeriod() == null || prevRecord.getDebtEndPeriod() == 0) &&
+                            (prevRecord.getFairValueAdjustmentsEndPeriod() == null || prevRecord.getFairValueAdjustmentsEndPeriod() == 0) &&
+                            (prevRecord.getTotalEndPeriod() == null || prevRecord.getTotalEndPeriod() == 0)){
                         continue;
                     }
                     prevRecord.setDebtStartPeriod(prevRecord.getDebtEndPeriod());
@@ -2451,6 +2464,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 //            ConsolidatedKZTForm7RecordDto totalRecordPE = new ConsolidatedKZTForm7RecordDto();
 //            ConsolidatedKZTForm7RecordDto totalRecordHF = new ConsolidatedKZTForm7RecordDto();
 
+            List<ConsolidatedKZTForm7RecordDto> newRecords = new ArrayList<>();
             for(ConsolidatedKZTForm7RecordDto currentRecord: currentPeriodRecords){
                 if(currentRecord.getEntityName() == null){
                     break;
@@ -2500,16 +2514,28 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 //                }
 
                 if(newRecord){
-                    int index = record.getName().equalsIgnoreCase(PeriodicReportConstants.RU_PE_FUND_INVESTMENT) ? indexPE :
-                            record.getName().equalsIgnoreCase(PeriodicReportConstants.RU_HEDGE_FUND_INVESTMENT) ? indexHF : 0;
-                    if(index > 0){
-                        if(record.getPurchaseDate() == null) {
-                            record.setPurchaseDate(DateUtils.getLastDayOfCurrentMonth(report.getReportDate()));
-                        }
-                        records.add(index, record);
-                    }
+                    newRecords.add(record);
+//                    int index = record.getName().equalsIgnoreCase(PeriodicReportConstants.RU_PE_FUND_INVESTMENT) ? indexPE :
+//                            record.getName().equalsIgnoreCase(PeriodicReportConstants.RU_HEDGE_FUND_INVESTMENT) ? indexHF : 0;
+//                    if(index > 0){
+//                        if(record.getPurchaseDate() == null) {
+//                            record.setPurchaseDate(DateUtils.getLastDayOfCurrentMonth(report.getReportDate()));
+//                        }
+//                        records.add(index, record);
+//                    }
                 }
 
+            }
+
+            for(ConsolidatedKZTForm7RecordDto record: newRecords){
+                int index = record.getName().equalsIgnoreCase(PeriodicReportConstants.RU_PE_FUND_INVESTMENT) ? indexPE :
+                        record.getName().equalsIgnoreCase(PeriodicReportConstants.RU_HEDGE_FUND_INVESTMENT) ? indexHF : 0;
+                if(index > 0){
+                    if(record.getPurchaseDate() == null) {
+                        record.setPurchaseDate(DateUtils.getLastDayOfCurrentMonth(report.getReportDate()));
+                    }
+                    records.add(index, record);
+                }
             }
 
             List<ConsolidatedKZTForm7RecordDto> nonEmptyRecords = new ArrayList();
@@ -2658,7 +2684,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                     String fundName = record.getShortName();
 
                     double value = fundTurnoverHF.get(fundName) != null ? fundTurnoverHF.get(fundName).doubleValue() : 0;
-                    value = MathUtils.add(value, (record.getGLAccountBalance() != null ? record.getGLAccountBalance().doubleValue() : 0));
+                    value = MathUtils.subtract(value, (record.getGLAccountBalance() != null ? record.getGLAccountBalance().doubleValue() : 0));
                     fundTurnoverHF.put(fundName, value);
                 }
             }
@@ -2672,7 +2698,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                     String fundName = record.getShortName() != null ? record.getShortName() : "";
 
                     double value = fundTurnoverHF.get(fundName) != null ? fundTurnoverHF.get(fundName).doubleValue() : 0;
-                    value = MathUtils.subtract(value, (record.getGLAccountBalance() != null ? record.getGLAccountBalance().doubleValue() : 0));
+                    value = MathUtils.add(value, (record.getGLAccountBalance() != null ? record.getGLAccountBalance().doubleValue() : 0));
                     fundTurnoverHF.put(fundName, value);
                 }
             }
@@ -3081,7 +3107,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
             ListResponseDto balanceUSDResponseDto = generateConsolidatedBalanceUSDForm(report.getId());
             if(balanceUSDResponseDto.getStatus() == ResponseStatusType.FAIL){
-                responseDto.setErrorMessageEn("Error generating KZT Form 1. " + balanceUSDResponseDto.getMessage().getNameEn());
+                responseDto.setErrorMessageEn("Error generating USD Balance Form. " + balanceUSDResponseDto.getMessage().getNameEn());
                 return responseDto;
             }
             List<ConsolidatedBalanceFormRecordDto> USDFormRecords = balanceUSDResponseDto.getRecords();
@@ -3291,7 +3317,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             boolean currentExists = false;
             ListResponseDto balanceUSDResponseDto = generateConsolidatedBalanceUSDForm(report.getId());
             if(balanceUSDResponseDto.getStatus() == ResponseStatusType.FAIL){
-                responseDto.setErrorMessageEn("Error generating USD Balance report. " + balanceUSDResponseDto.getMessage().getNameEn());
+                responseDto.setErrorMessageEn("Error generating USD Balance form. " + balanceUSDResponseDto.getMessage().getNameEn());
                 return responseDto;
             }
             List<ConsolidatedBalanceFormRecordDto> currentUSDFormRecords = balanceUSDResponseDto.getRecords();
@@ -3411,7 +3437,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             ConsolidatedKZTForm14RecordDto totalRecord = new ConsolidatedKZTForm14RecordDto();
             ListResponseDto balanceUSDResponseDto = generateConsolidatedBalanceUSDForm(report.getId());
             if(balanceUSDResponseDto.getStatus() == ResponseStatusType.FAIL){
-                responseDto.setErrorMessageEn("Error generating USD Balance report. " + balanceUSDResponseDto.getMessage().getNameEn());
+                responseDto.setErrorMessageEn("Error generating USD Balance form. " + balanceUSDResponseDto.getMessage().getNameEn());
                 return responseDto;
             }
             List<ConsolidatedBalanceFormRecordDto> USDFormRecords = balanceUSDResponseDto.getRecords();
@@ -3429,13 +3455,10 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                                 totalRecord.setDebtEndPeriod(MathUtils.add(debtEndPeriodValue, record.getDebtEndPeriod()));
 
                                 if(record.getDebtStartPeriod() != null && record.getDebtEndPeriod() != null) {
-                                    BigDecimal start = new BigDecimal(record.getDebtStartPeriod());
-                                    BigDecimal end = new BigDecimal(record.getDebtEndPeriod());
-                                    BigDecimal diff = end.subtract(start).setScale(2, RoundingMode.HALF_UP);
-                                    record.setDebtDifference(diff.doubleValue());
+                                    record.setDebtDifference(MathUtils.subtract(record.getDebtEndPeriod(), record.getDebtStartPeriod()));
 
                                     double debtDiffValue = totalRecord.getDebtDifference() != null ? totalRecord.getDebtDifference() : 0;
-                                    totalRecord.setDebtDifference(debtDiffValue + record.getDebtDifference());
+                                    totalRecord.setDebtDifference(MathUtils.add(debtDiffValue, record.getDebtDifference()));
                                 }
                                 exists = true;
                                 break;
@@ -3465,7 +3488,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                             totalRecord.setDebtEndPeriod(MathUtils.add(debtEndPeriodValue, newRecord.getDebtEndPeriod()));
 
                             double debtDiffValue = totalRecord.getDebtDifference() != null ? totalRecord.getDebtDifference() : 0;
-                            totalRecord.setDebtDifference(debtDiffValue + (newRecord.getDebtDifference() != null ? newRecord.getDebtDifference() : 0));
+                            totalRecord.setDebtDifference(MathUtils.add(debtDiffValue, (newRecord.getDebtDifference() != null ? newRecord.getDebtDifference() : 0)));
                         }
 
 
@@ -3572,24 +3595,26 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
         List<ConsolidatedBalanceFormRecordDto> incomeExpenseUSDRecords = generateConsolidatedIncomeExpenseUSDForm(reportId);
         for(ConsolidatedBalanceFormRecordDto recordDto: incomeExpenseUSDRecords){
-            if(recordDto.getAccountNumber() != null && recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_6150_030) &&
-                    recordDto.getOtherEntityName() != null && (recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.SINGULAR_CAPITAL_CASE) ||
-                    recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.SINGULAR_LOWER_CASE))){
-                record6150_030HF = MathUtils.add(record6150_030HF, new BigDecimal(MathUtils.multiply(recordDto.getCurrentAccountBalance(), averageRate)));
-            }else if(recordDto.getAccountNumber() != null && recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_6150_030) &&
-                    recordDto.getOtherEntityName() != null && (recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.TARRAGON_CAPITAL_CASE) ||
-                    recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.TARRAGON_LOWER_CASE))){
-                record6150_030PE = MathUtils.add(record6150_030PE, new BigDecimal(MathUtils.multiply(recordDto.getCurrentAccountBalance(), averageRate)));
-            }else if(recordDto.getAccountNumber() != null && recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_7330_030) &&
-                    recordDto.getOtherEntityName() != null && (recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.TARRAGON_CAPITAL_CASE) ||
-                    recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.TARRAGON_LOWER_CASE))){
-                record7330_030PE = MathUtils.add(record7330_030PE, new BigDecimal(MathUtils.multiply(recordDto.getCurrentAccountBalance(), averageRate)));
-            }else if(recordDto.getAccountNumber() != null && recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_7330_030) &&
-                    recordDto.getOtherEntityName() != null && (recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.SINGULAR_CAPITAL_CASE) ||
-                    recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.SINGULAR_LOWER_CASE))){
-                record7330_030HF =  MathUtils.add(record7330_030HF, new BigDecimal(MathUtils.multiply(recordDto.getCurrentAccountBalance(), averageRate)));
-            }else if(recordDto.getAccountNumber() != null && recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_7313_010)){
-                record7313_010 =  MathUtils.add(record7313_010, new BigDecimal(MathUtils.multiply(recordDto.getCurrentAccountBalance(), averageRate)));
+            if(recordDto.getCurrentAccountBalance() != null) {
+                if (recordDto.getAccountNumber() != null && recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_6150_030) &&
+                        recordDto.getOtherEntityName() != null && (recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.SINGULAR_CAPITAL_CASE) ||
+                        recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.SINGULAR_LOWER_CASE))) {
+                    record6150_030HF = MathUtils.add(record6150_030HF, new BigDecimal(MathUtils.multiply(recordDto.getCurrentAccountBalance(), averageRate)));
+                } else if (recordDto.getAccountNumber() != null && recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_6150_030) &&
+                        recordDto.getOtherEntityName() != null && (recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.TARRAGON_CAPITAL_CASE) ||
+                        recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.TARRAGON_LOWER_CASE))) {
+                    record6150_030PE = MathUtils.add(record6150_030PE, new BigDecimal(MathUtils.multiply(recordDto.getCurrentAccountBalance(), averageRate)));
+                } else if (recordDto.getAccountNumber() != null && recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_7330_030) &&
+                        recordDto.getOtherEntityName() != null && (recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.TARRAGON_CAPITAL_CASE) ||
+                        recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.TARRAGON_LOWER_CASE))) {
+                    record7330_030PE = MathUtils.add(record7330_030PE, new BigDecimal(MathUtils.multiply(recordDto.getCurrentAccountBalance(), averageRate)));
+                } else if (recordDto.getAccountNumber() != null && recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_7330_030) &&
+                        recordDto.getOtherEntityName() != null && (recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.SINGULAR_CAPITAL_CASE) ||
+                        recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.SINGULAR_LOWER_CASE))) {
+                    record7330_030HF = MathUtils.add(record7330_030HF, new BigDecimal(MathUtils.multiply(recordDto.getCurrentAccountBalance(), averageRate)));
+                } else if (recordDto.getAccountNumber() != null && recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_7313_010)) {
+                    record7313_010 = MathUtils.add(record7313_010, new BigDecimal(MathUtils.multiply(recordDto.getCurrentAccountBalance(), averageRate)));
+                }
             }
         }
 
@@ -3713,8 +3738,8 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
         int index1 = 0;
         int index2 = 0;
-        BigDecimal record1Sum = new BigDecimal("0");
-        BigDecimal record2Sum = new BigDecimal("0");
+        double record1Sum = 0;
+        double record2Sum = 0;
         List<ConsolidatedKZTForm22RecordDto> records = getConsolidatedBalanceKZTForm22LineHeaders();
         for(int i = 0; i < records.size(); i++){
             ConsolidatedKZTForm22RecordDto record = records.get(i);
@@ -3735,7 +3760,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
                 index1++;
                 index2++;
-                record1Sum = record1Sum.add(new BigDecimal(newRecord.getCurrentAccountBalance()));
+                record1Sum = MathUtils.add(record1Sum, newRecord.getCurrentAccountBalance());
             }else if(recordDto.getAccountNumber() != null && recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_7473_080)){
                 ConsolidatedKZTForm22RecordDto newRecord = new ConsolidatedKZTForm22RecordDto(recordDto.getName(), 2);
                 newRecord.setAccountNumber(PeriodicReportConstants.ACC_NUM_7473_080);
@@ -3744,16 +3769,16 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
                 index1++;
                 index2++;
-                record2Sum = MathUtils.add(record2Sum, new BigDecimal(newRecord.getCurrentAccountBalance() != null ? newRecord.getCurrentAccountBalance() : 0));
+                record2Sum = MathUtils.add(record2Sum, (newRecord.getCurrentAccountBalance() != null ? newRecord.getCurrentAccountBalance() : 0));
             }
         }
         for(ConsolidatedKZTForm22RecordDto record: records){
             if(record.getAccountNumber() == null && record.getLineNumber() != null && record.getLineNumber() == 1){
-                record.setCurrentAccountBalance(record1Sum.doubleValue());
+                record.setCurrentAccountBalance(record1Sum);
             }else if(record.getAccountNumber() == null && record.getLineNumber() != null && record.getLineNumber() == 2){
-                record.setCurrentAccountBalance(record2Sum.doubleValue());
+                record.setCurrentAccountBalance(record2Sum);
             }else if(record.getAccountNumber() == null && record.getLineNumber() != null && record.getLineNumber() == 3){
-                record.setCurrentAccountBalance(record1Sum.add(record2Sum).doubleValue());
+                record.setCurrentAccountBalance(MathUtils.add(record1Sum, record2Sum));
             }
         }
 
@@ -4606,7 +4631,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         if(KZTForm1ResponseDto.getStatus() == ResponseStatusType.FAIL){
             String errorMessage = StringUtils.isNotEmpty(KZTForm1ResponseDto.getMessage().getNameEn()) ? KZTForm1ResponseDto.getMessage().getNameEn() :
                     "Error occurred when generating KZT Form 1 report";
-            throw new IllegalStateException(errorMessage);
+            //throw new IllegalStateException(errorMessage);
+
+            logger.error("KZT FORM 1 export (getMap()): " +  errorMessage);
         }
         List<ConsolidatedBalanceFormRecordDto> records = KZTForm1ResponseDto.getRecords();
 
@@ -4642,7 +4669,8 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         if(KZTForm2ResponseDto.getStatus() == ResponseStatusType.FAIL){
             String errorMessage = StringUtils.isNotEmpty(KZTForm2ResponseDto.getMessage().getNameEn()) ? KZTForm2ResponseDto.getMessage().getNameEn() :
                     "Error occurred when generating KZT Form 2 report";
-            throw new IllegalStateException(errorMessage);
+            //throw new IllegalStateException(errorMessage);
+            logger.error("KZT FORM 2 export error (getMap()) " + errorMessage);
         }
         List<ConsolidatedBalanceFormRecordDto> records = KZTForm2ResponseDto.getRecords();
 
@@ -4677,7 +4705,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
         ListResponseDto KZTForm3ResponseDto = generateConsolidatedTotalIncomeKZTForm3(reportId);
         if(KZTForm3ResponseDto.getStatus() == ResponseStatusType.FAIL){
-            throw new IllegalStateException(KZTForm3ResponseDto.getMessage().getNameEn());
+            //throw new IllegalStateException(KZTForm3ResponseDto.getMessage().getNameEn());
+
+            logger.error("KZT FORM 3 export error (getMap()) " + KZTForm3ResponseDto.getMessage().getNameEn());
         }
 
         List<ConsolidatedBalanceFormRecordDto> records = KZTForm3ResponseDto.getRecords();
@@ -4713,7 +4743,8 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         if(KZTForm6ResponseDto.getStatus() == ResponseStatusType.FAIL){
             String errorMessage = StringUtils.isNotEmpty(KZTForm6ResponseDto.getMessage().getNameEn()) ? KZTForm6ResponseDto.getMessage().getNameEn() :
                     "Error occurred when generating KZT Form 6 report";
-            throw new IllegalStateException(errorMessage);
+            //throw new IllegalStateException(errorMessage);
+            logger.error("KZT FORM 6 export error (getMap()) " + errorMessage);
         }
         List<ConsolidatedKZTForm6RecordDto> records = KZTForm6ResponseDto.getRecords();
 
@@ -4749,7 +4780,8 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         if(KZTForm7ResponseDto.getStatus() == ResponseStatusType.FAIL){
             String errorMessage = StringUtils.isNotEmpty(KZTForm7ResponseDto.getMessage().getNameEn()) ? KZTForm7ResponseDto.getMessage().getNameEn() :
                     "Error occurred when generating KZT Form 7 report";
-            throw new IllegalStateException(errorMessage);
+            //throw new IllegalStateException(errorMessage);
+            logger.error("KZT FORM 7 export error (getMap()) " + errorMessage);
         }
         List<ConsolidatedKZTForm7RecordDto> records = KZTForm7ResponseDto.getRecords();
 
@@ -4785,7 +4817,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         if(KZTForm8ResponseDto.getStatus() == ResponseStatusType.FAIL){
             String errorMessage = StringUtils.isNotEmpty(KZTForm8ResponseDto.getMessage().getNameEn()) ? KZTForm8ResponseDto.getMessage().getNameEn() :
                     "Error occurred when generating KZT Form 7 report";
-            throw new IllegalStateException(errorMessage);
+            //throw new IllegalStateException(errorMessage);
+
+            logger.error("KZT FORM 8 export error (getMap()) " + errorMessage);
         }
         List<ConsolidatedKZTForm8RecordDto> records = KZTForm8ResponseDto.getRecords();
 
@@ -4821,7 +4855,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         if(KZTForm10ResponseDto.getStatus() == ResponseStatusType.FAIL){
             String errorMessage = StringUtils.isNotEmpty(KZTForm10ResponseDto.getMessage().getNameEn()) ? KZTForm10ResponseDto.getMessage().getNameEn() :
                     "Error occurred when generating KZT Form 10 report";
-            throw new IllegalStateException(errorMessage);
+            //throw new IllegalStateException(errorMessage);
+
+            logger.error("KZT FORM 10 export error (getMap()) " + errorMessage);
         }
         List<ConsolidatedKZTForm10RecordDto> records = KZTForm10ResponseDto.getRecords();
 
@@ -4857,7 +4893,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         if(KZTForm13ResponseDto.getStatus() == ResponseStatusType.FAIL){
             String errorMessage = StringUtils.isNotEmpty(KZTForm13ResponseDto.getMessage().getNameEn()) ? KZTForm13ResponseDto.getMessage().getNameEn() :
                     "Error occurred when generating KZT Form 13 report";
-            throw new IllegalStateException(errorMessage);
+            //throw new IllegalStateException(errorMessage);
+
+            logger.error("KZT FORM 13 export error (getMap()) " + errorMessage);
         }
         List<ConsolidatedKZTForm13RecordDto> records = KZTForm13ResponseDto.getRecords();
 
@@ -4893,7 +4931,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         if(KZTForm14ResponseDto.getStatus() == ResponseStatusType.FAIL){
             String errorMessage = StringUtils.isNotEmpty(KZTForm14ResponseDto.getMessage().getNameEn()) ? KZTForm14ResponseDto.getMessage().getNameEn() :
                     "Error occurred when generating KZT Form 14 report";
-            throw new IllegalStateException(errorMessage);
+            //throw new IllegalStateException(errorMessage);
+
+            logger.error("KZT FORM 14 export error (getMap()) " + errorMessage);
         }
         List<ConsolidatedKZTForm14RecordDto> records = KZTForm14ResponseDto.getRecords();
 
@@ -4929,7 +4969,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         if(KZTForm19ResponseDto.getStatus() == ResponseStatusType.FAIL){
             String errorMessage = StringUtils.isNotEmpty(KZTForm19ResponseDto.getMessage().getNameEn()) ? KZTForm19ResponseDto.getMessage().getNameEn() :
                     "Error occurred when generating KZT Form 19 report";
-            throw new IllegalStateException(errorMessage);
+            //throw new IllegalStateException(errorMessage);
+
+            logger.error("KZT FORM 19 export error (getMap()) " + errorMessage);
         }
         List<ConsolidatedKZTForm19RecordDto> records = KZTForm19ResponseDto.getRecords();
 
@@ -4965,7 +5007,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         if(KZTForm22ResponseDto.getStatus() == ResponseStatusType.FAIL){
             String errorMessage = StringUtils.isNotEmpty(KZTForm22ResponseDto.getMessage().getNameEn()) ? KZTForm22ResponseDto.getMessage().getNameEn() :
                     "Error occurred when generating KZT Form 22 report";
-            throw new IllegalStateException(errorMessage);
+            //throw new IllegalStateException(errorMessage);
+
+            logger.error("KZT FORM 22 export error (getMap()) " + errorMessage);
         }
         List<ConsolidatedKZTForm22RecordDto> records = KZTForm22ResponseDto.getRecords();
 
@@ -6732,19 +6776,19 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                                 newRow.createCell(0).setCellValue(records.get(i).getAccountNumber());
                                 newRow.createCell(1).setCellValue(records.get(i).getName());
 
-                                if(records.get(0).getStartPeriodAssets() != null) {
+                                if(records.get(i).getStartPeriodAssets() != null) {
                                     newRow.createCell(4).setCellValue(records.get(i).getStartPeriodAssets());
                                 }
-                                if(records.get(0).getTurnoverOther() != null) {
+                                if(records.get(i).getTurnoverOther() != null) {
                                     newRow.createCell(14).setCellValue(records.get(i).getTurnoverOther());
                                 }
-                                if(records.get(0).getEndPeriodAssets() != null) {
+                                if(records.get(i).getEndPeriodAssets() != null) {
                                     newRow.createCell(16).setCellValue(records.get(i).getEndPeriodAssets());
                                 }
-                                if(records.get(0).getStartPeriodBalance() != null) {
+                                if(records.get(i).getStartPeriodBalance() != null) {
                                     newRow.createCell(24).setCellValue(records.get(i).getStartPeriodBalance());
                                 }
-                                if(records.get(0).getEndPeriodBalance() != null) {
+                                if(records.get(i).getEndPeriodBalance() != null) {
                                     newRow.createCell(25).setCellValue(records.get(i).getEndPeriodBalance());
                                 }
 
