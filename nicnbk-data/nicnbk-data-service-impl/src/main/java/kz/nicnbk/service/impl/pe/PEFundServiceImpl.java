@@ -54,6 +54,9 @@ public class PEFundServiceImpl implements PEFundService {
     private PEOnePagerDescriptionsService onePagerDescriptionsService;
 
     @Autowired
+    private PEFundManagementTeamService managementTeamService;
+
+    @Autowired
     private PEIrrService irrService;
 
     @Override
@@ -66,6 +69,7 @@ public class PEFundServiceImpl implements PEFundService {
             dto.setCompanyPerformance(this.performanceService.findByFundId(fundId));
             dto.setCompanyPerformanceIdd(this.performanceIddService.findByFundId(fundId));
             dto.setOnePagerDescriptions(this.onePagerDescriptionsService.findByFundId(fundId));
+            dto.setManagementTeam(this.managementTeamService.findByFundId(fundId));
 //            calculatePerformanceParameters(grossCFDto, netCFDto, dto);
             return dto;
         } catch (Exception ex) {
