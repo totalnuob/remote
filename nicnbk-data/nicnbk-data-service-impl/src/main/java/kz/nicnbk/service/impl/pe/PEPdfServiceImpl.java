@@ -111,6 +111,7 @@ public class PEPdfServiceImpl implements PEPdfService {
             List<PEOnePagerDescriptionsDto> descriptionsPerformanceRisksDtoList = descriptionsService.findByFundIdAndType(fundId, 6);
             List<PEOnePagerDescriptionsDto> descriptionsFundStrategyDtoList = descriptionsService.findByFundIdAndType(fundId, 7);
             List<PEOnePagerDescriptionsDto> descriptionsDescriptiveDataDtoList = descriptionsService.findByFundIdAndType(fundId, 8);
+            List<PEOnePagerDescriptionsDto> descriptionsTargetedClosingInformationDtoList = descriptionsService.findByFundIdAndType(fundId, 9);
 
             //Header
             Table headerTable = new Table(new float[]{1, 1, 1});
