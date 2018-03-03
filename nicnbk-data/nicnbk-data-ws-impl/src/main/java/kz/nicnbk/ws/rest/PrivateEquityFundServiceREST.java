@@ -209,8 +209,8 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
     @RequestMapping(value = "/createOnePager/{fundId}", method = RequestMethod.POST)
     public ResponseEntity<?> createOnePager(@RequestBody PEFundDataForOnePagerDto dataForOnePagerDto, @PathVariable Long fundId) {
 
-        PEOnePagerDescriptionsResultDto descriptionsResultDto = this.descriptionsService.saveList(dataForOnePagerDto.getDescriptionsDtoList(), fundId);
-        PEFundManagementTeamResultDto managementTeamResultDto = this.managementTeamService.saveList(dataForOnePagerDto.getManagementTeamDtoList(), fundId);
+        PEOnePagerDescriptionsResultDto descriptionsResultDto = this.descriptionsService.saveList(dataForOnePagerDto.getOnePagerDescriptionsDto(), fundId);
+        PEFundManagementTeamResultDto managementTeamResultDto = this.managementTeamService.saveList(dataForOnePagerDto.getManagementTeam(), fundId);
 
         PEFundDataForOnePagerResultDto resultDto;
 

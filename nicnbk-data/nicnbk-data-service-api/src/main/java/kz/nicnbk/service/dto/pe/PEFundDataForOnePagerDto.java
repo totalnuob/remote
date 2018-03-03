@@ -7,22 +7,22 @@ import java.util.List;
  */
 public class PEFundDataForOnePagerDto {
 
-    private List<PEOnePagerDescriptionsDto> descriptionsDtoList;
-    private List<PEFundManagementTeamDto> managementTeamDtoList;
+    private List<PEOnePagerDescriptionsDto> onePagerDescriptionsDto;
+    private List<PEFundManagementTeamDto> managementTeam;
 
-    public List<PEOnePagerDescriptionsDto> getDescriptionsDtoList() {
-        return descriptionsDtoList;
+    public List<PEOnePagerDescriptionsDto> getOnePagerDescriptionsDto() {
+        return onePagerDescriptionsDto;
     }
 
-    public void setDescriptionsDtoList(List<PEOnePagerDescriptionsDto> descriptionsDtoList) {
-        this.descriptionsDtoList = descriptionsDtoList;
+    public void setOnePagerDescriptionsDto(List<PEOnePagerDescriptionsDto> onePagerDescriptionsDto) {
+        this.onePagerDescriptionsDto = onePagerDescriptionsDto;
     }
 
-    public List<PEFundManagementTeamDto> getManagementTeamDtoList() {
-        return managementTeamDtoList;
+    public List<PEFundManagementTeamDto> getManagementTeam() {
+        return managementTeam;
     }
 
-    public void setManagementTeamDtoList(List<PEFundManagementTeamDto> managementTeamDtoList) {
-        this.managementTeamDtoList = managementTeamDtoList;
+    public void setManagementTeam(List<PEFundManagementTeamDto> managementTeam) {
+        this.managementTeam = managementTeam;
     }
 }
