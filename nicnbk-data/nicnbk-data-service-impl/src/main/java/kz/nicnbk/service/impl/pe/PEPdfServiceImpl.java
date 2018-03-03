@@ -75,6 +75,7 @@ public class PEPdfServiceImpl implements PEPdfService {
             Float logoMaxWidth = 72f;
             Float topColunmOffSet = 182f;
             Float columnGap = 3f;
+            Float fontSize = 8f;
 
             //Logo initialization
             gpLogo = new Image(ImageDataFactory.create(gpLogoDest));
@@ -98,7 +99,7 @@ public class PEPdfServiceImpl implements PEPdfService {
 
             //Initialize document
             Document document = new Document(pdf, ps);
-            document.setFontSize(8);
+            document.setFontSize(fontSize);
 
             PEFundDto fundDto = fundService.get(fundId);
             PEFirmDto firmDto = fundDto.getFirm();
@@ -119,7 +120,7 @@ public class PEPdfServiceImpl implements PEPdfService {
 
             //Header
             Table headerTable = new Table(new float[]{1, 1, 1});
-            this.addHeader(headerTable, fundDto, ps.getWidth() - offSet * 2, logoMaxWidth);
+            this.addHeader(headerTable, fundDto, ps.getWidth() - offSet * 2, logoMaxWidth, fontSize + 2);
             document.add(headerTable);
 
             //Organization Overview Title
@@ -342,7 +343,7 @@ public class PEPdfServiceImpl implements PEPdfService {
         ChartUtilities.saveChartAsJPEG(BarChartTvpi, barChartTvpi, Math.round(width), Math.round(width * 3 / 4));
     }
 
-    private void addHeader(Table table, PEFundDto fundDto, Float width, Float logoWidth) {
+    private void addHeader(Table table, PEFundDto fundDto, Float width, Float logoWidth, Float fontSize) {
         table.addCell(new Cell()
                 .setWidth(logoWidth)
                 .add(new Paragraph().add(gpLogo))
@@ -351,7 +352,7 @@ public class PEPdfServiceImpl implements PEPdfService {
                 .setWidth(width - logoWidth * 2)
                 .add(new Paragraph(unNullifierToEmptyString(fundDto.getFundName()))
                         .setBold()
-                        .setFontSize(10))
+                        .setFontSize(fontSize))
                 .setTextAlignment(TextAlignment.CENTER));
         table.addCell(new Cell()
                 .setWidth(logoWidth)
@@ -513,7 +514,7 @@ public class PEPdfServiceImpl implements PEPdfService {
         if (descriptionsDtoListRisks != null) {
             for (PEOnePagerDescriptionsDto descriptionsDto : descriptionsDtoListRisks) {
                 if (descriptionsDto != null) {
-                    Paragraph p = new Paragraph();
+                    Paragraph p = new Paragraph().setMultipliedLeading(1);
                     if (descriptionsDto.getDescriptionBold() != null && !descriptionsDto.getDescriptionBold().equals("")) {
                         p.add(new Paragraph("(-) " + descriptionsDto.getDescriptionBold() + " ").setBold());
                     } else {
