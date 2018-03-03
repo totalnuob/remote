@@ -104,6 +104,7 @@ public class PEPdfServiceImpl implements PEPdfService {
             PEFirmDto firmDto = fundDto.getFirm();
             List<PEFundDto> fundDtoList = fundService.loadFirmFunds(firmDto.getId(), true);
 //            List<PEOnePagerDescriptionsDto> descriptionsDtoList = descriptionsService.findByFundId(fundId);
+            List<PEOnePagerDescriptionsDto> descriptionsAsOfDateDtoList = descriptionsService.findByFundIdAndType(fundId, 0);
             List<PEOnePagerDescriptionsDto> descriptionsGpMeritsDtoList = descriptionsService.findByFundIdAndType(fundId, 1);
             List<PEOnePagerDescriptionsDto> descriptionsGpRisksDtoList = descriptionsService.findByFundIdAndType(fundId, 2);
             List<PEOnePagerDescriptionsDto> descriptionsStrategyMeritsDtoList = descriptionsService.findByFundIdAndType(fundId, 3);
@@ -145,7 +146,16 @@ public class PEPdfServiceImpl implements PEPdfService {
                 //Key Fund Statistics Title
                 Table keyFundStatisticsTitle = new Table(new float[]{1});
                 this.addGreenTitle(keyFundStatisticsTitle, "Key fund statistics", ps.getWidth() - offSet * 2);
-                this.addWhiteTitle(keyFundStatisticsTitle, unNullifierToEmptyString(firmDto.getFirmName()) + " Investment Performance Data as of ?????? " + "($mln)", ps.getWidth() - offSet * 2);
+                this.addWhiteTitle(keyFundStatisticsTitle,
+                        unNullifierToEmptyString(firmDto.getFirmName()) +
+                                " Investment Performance Data as of " +
+                                (
+                                        (descriptionsAsOfDateDtoList != null && descriptionsAsOfDateDtoList.size() == 1 && !descriptionsAsOfDateDtoList.get(0).getDescription().equals(""))
+                                                ? descriptionsAsOfDateDtoList.get(0).getDescription()
+                                                : "??????"
+                                ) +
+                                " ($mln)",
+                        ps.getWidth() - offSet * 2);
                 document.add(keyFundStatisticsTitle);
 
                 //Key Fund Statistics Table
