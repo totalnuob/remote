@@ -210,7 +210,7 @@ public class PEPdfServiceImpl implements PEPdfService {
 
                 //General Partner Table
                 Table generalPartnerTable = new Table(new float[]{1, 1});
-                this.addMeritsRisks(generalPartnerTable, descriptionsGpMeritsDtoList, descriptionsGpRisksDtoList, columnOneWidth);
+                this.addMeritsRisks(generalPartnerTable, descriptionsGpMeritsDtoList, descriptionsGpRisksDtoList, columnOneWidth, fontSize - 1);
                 document.add(generalPartnerTable);
             }
 
@@ -223,7 +223,7 @@ public class PEPdfServiceImpl implements PEPdfService {
 
                 //Strategy and Structure Table
                 Table strategyAndStructureTable = new Table(new float[]{1, 1});
-                this.addMeritsRisks(strategyAndStructureTable, descriptionsStrategyMeritsDtoList, descriptionsStrategyRisksDtoList, columnOneWidth);
+                this.addMeritsRisks(strategyAndStructureTable, descriptionsStrategyMeritsDtoList, descriptionsStrategyRisksDtoList, columnOneWidth, fontSize - 1);
                 document.add(strategyAndStructureTable);
             }
 
@@ -236,7 +236,7 @@ public class PEPdfServiceImpl implements PEPdfService {
 
                 //Performance Table
                 Table performanceTable = new Table(new float[]{1, 1});
-                this.addMeritsRisks(performanceTable, descriptionsPerformanceMeritsDtoList, descriptionsPerformanceRisksDtoList, columnOneWidth);
+                this.addMeritsRisks(performanceTable, descriptionsPerformanceMeritsDtoList, descriptionsPerformanceRisksDtoList, columnOneWidth, fontSize - 1);
                 document.add(performanceTable);
             }
 
@@ -490,18 +490,20 @@ public class PEPdfServiceImpl implements PEPdfService {
         table.addCell(new Cell().add(new Paragraph("Net IRR").setBold()));
     }
 
-    private void addMeritsRisks(Table table, List<PEOnePagerDescriptionsDto> descriptionsDtoListMerits, List<PEOnePagerDescriptionsDto> descriptionsDtoListRisks, Float width) {
+    private void addMeritsRisks(Table table, List<PEOnePagerDescriptionsDto> descriptionsDtoListMerits, List<PEOnePagerDescriptionsDto> descriptionsDtoListRisks, Float width, Float fontSize) {
+        table.setFontSize(fontSize);
+
         Cell cellMerits = new Cell().setWidth(width / 2);
         Cell cellRisks = new Cell().setWidth(width / 2);
 
         if (descriptionsDtoListMerits != null) {
             for (PEOnePagerDescriptionsDto descriptionsDto : descriptionsDtoListMerits) {
                 if (descriptionsDto != null) {
-                    Paragraph p = new Paragraph().setMultipliedLeading(1);
+                    Paragraph p = new Paragraph().setMultipliedLeading(1.2f);
                     if (descriptionsDto.getDescriptionBold() != null && !descriptionsDto.getDescriptionBold().equals("")) {
-                        p.add(new Paragraph("(+) " + descriptionsDto.getDescriptionBold() + " ").setBold().setMultipliedLeading(1));
+                        p.add(new Text("(+) " + descriptionsDto.getDescriptionBold() + " ").setBold());
                     } else {
-                        p.add(new Paragraph("(+) ").setBold());
+                        p.add(new Text("(+) ").setBold());
                     }
                     if (descriptionsDto.getDescription() != null && !descriptionsDto.getDescription().equals("")) {
                         p.add(descriptionsDto.getDescription());
@@ -514,11 +516,11 @@ public class PEPdfServiceImpl implements PEPdfService {
         if (descriptionsDtoListRisks != null) {
             for (PEOnePagerDescriptionsDto descriptionsDto : descriptionsDtoListRisks) {
                 if (descriptionsDto != null) {
-                    Paragraph p = new Paragraph().setMultipliedLeading(1);
+                    Paragraph p = new Paragraph().setMultipliedLeading(1.2f);
                     if (descriptionsDto.getDescriptionBold() != null && !descriptionsDto.getDescriptionBold().equals("")) {
-                        p.add(new Paragraph("(-) " + descriptionsDto.getDescriptionBold() + " ").setBold().setMultipliedLeading(1));
+                        p.add(new Text("(-) " + descriptionsDto.getDescriptionBold() + " ").setBold());
                     } else {
-                        p.add(new Paragraph("(-) ").setBold());
+                        p.add(new Text("(-) ").setBold());
                     }
                     if (descriptionsDto.getDescription() != null && !descriptionsDto.getDescription().equals("")) {
                         p.add(descriptionsDto.getDescription());
