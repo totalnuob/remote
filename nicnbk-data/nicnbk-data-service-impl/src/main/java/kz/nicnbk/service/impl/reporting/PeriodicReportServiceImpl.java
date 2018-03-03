@@ -1032,7 +1032,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         previousRecord.getAccountNumber().equalsIgnoreCase(record.getAccountNumber()) &&
                         previousRecord.getName().equalsIgnoreCase(record.getName())){
                     Double sum = previousRecord.getCurrentAccountBalance() != null && record.getCurrentAccountBalance() != null ?
-                            previousRecord.getCurrentAccountBalance() + record.getCurrentAccountBalance() :
+                            MathUtils.add(previousRecord.getCurrentAccountBalance(), record.getCurrentAccountBalance()) :
                             previousRecord.getCurrentAccountBalance() != null ? previousRecord.getCurrentAccountBalance() : record.getCurrentAccountBalance();
                     previousRecord.setCurrentAccountBalance(sum);
                     continue;
@@ -4315,34 +4315,34 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 ConsolidatedBalanceFormRecordDto record = records.get(i);
                 if (record.getAccountNumber() == null) {
                     if (record.getLineNumber() == 1) {
-                        record.setCurrentAccountBalance(sums.get(2) + sums.get(8) + sums.get(11));
+                        record.setCurrentAccountBalance(MathUtils.add(sums.get(2), sums.get(8), sums.get(11)));
                         sums.put(1, record.getCurrentAccountBalance());
                     } else if (record.getLineNumber() == 13) {
-                        record.setCurrentAccountBalance(sums.get(2) + sums.get(3) + sums.get(4) + sums.get(5) + sums.get(6) +
-                                sums.get(7) + sums.get(8) + sums.get(9) + sums.get(10) + sums.get(11) + sums.get(12));
+                        record.setCurrentAccountBalance(MathUtils.add(sums.get(2), sums.get(3), sums.get(4), sums.get(5), sums.get(6),
+                                sums.get(7), sums.get(8), sums.get(9), sums.get(10), sums.get(11), sums.get(12)));
                         sums.put(13, record.getCurrentAccountBalance());
                     } else if (record.getLineNumber() == 14) {
-                        record.setCurrentAccountBalance(sums.get(16) + sums.get(24));
+                        record.setCurrentAccountBalance(MathUtils.add(sums.get(16), sums.get(24)));
                         sums.put(14, record.getCurrentAccountBalance());
                     } else if (record.getLineNumber() == 25) {
-                        record.setCurrentAccountBalance(sums.get(15) + sums.get(16) + sums.get(17) + sums.get(18) + sums.get(19) +
-                                sums.get(20) + sums.get(21) + sums.get(22) + sums.get(23) + sums.get(24));
+                        record.setCurrentAccountBalance(MathUtils.add(sums.get(15), sums.get(16), sums.get(17), sums.get(18), sums.get(19),
+                                sums.get(20), sums.get(21), sums.get(22), sums.get(23), sums.get(24)));
                         sums.put(25, record.getCurrentAccountBalance());
                     } else if (record.getLineNumber() == 26) {
-                        record.setCurrentAccountBalance(sums.get(13) + sums.get(25));
+                        record.setCurrentAccountBalance(MathUtils.add(sums.get(13), sums.get(25)));
                         sums.put(26, record.getCurrentAccountBalance());
                     } else if (record.getLineNumber() == 35) {
-                        record.setCurrentAccountBalance(sums.get(28) + sums.get(29) + sums.get(30) + sums.get(31) + sums.get(32) +
-                                sums.get(33) + sums.get(34));
+                        record.setCurrentAccountBalance(MathUtils.add(sums.get(28), sums.get(29), sums.get(30), sums.get(31), sums.get(32),
+                                sums.get(33), sums.get(34)));
                         sums.put(35, record.getCurrentAccountBalance());
                     } else if (record.getLineNumber() == 43) {
-                        record.setCurrentAccountBalance(sums.get(37) + sums.get(38) + sums.get(39) + sums.get(40) + sums.get(41) + sums.get(42));
+                        record.setCurrentAccountBalance(MathUtils.add(sums.get(37), sums.get(38), sums.get(39), sums.get(40), sums.get(41), sums.get(42)));
                         sums.put(43, record.getCurrentAccountBalance());
                     } else if (record.getLineNumber() == 51) {
-                        record.setCurrentAccountBalance(sums.get(45) + sums.get(46) + sums.get(47) + sums.get(48) + sums.get(49) + sums.get(50));
+                        record.setCurrentAccountBalance(MathUtils.add(sums.get(45), sums.get(46), sums.get(47), sums.get(48), sums.get(49), sums.get(50)));
                         sums.put(51, record.getCurrentAccountBalance());
                     } else if (record.getLineNumber() == 52) {
-                        record.setCurrentAccountBalance(sums.get(35) + sums.get(43) + sums.get(51));
+                        record.setCurrentAccountBalance(MathUtils.add(sums.get(35), sums.get(43), sums.get(51)));
                         sums.put(52, record.getCurrentAccountBalance());
                     }
 
