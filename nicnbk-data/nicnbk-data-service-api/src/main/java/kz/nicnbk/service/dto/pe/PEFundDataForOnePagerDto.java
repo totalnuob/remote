@@ -1,26 +1,28 @@
 package kz.nicnbk.service.dto.pe;
 
+import java.util.List;
+
 /**
  * Created by Pak on 03/03/2018.
  */
 public class PEFundDataForOnePagerDto {
 
-    private PEOnePagerDescriptionsDto descriptionsDto;
-    private PEFundManagementTeamDto managementTeamDto;
+    private List<PEOnePagerDescriptionsDto> descriptionsDtoList;
+    private List<PEFundManagementTeamDto> managementTeamDtoList;
 
-    public PEOnePagerDescriptionsDto getDescriptionsDto() {
-        return descriptionsDto;
+    public List<PEOnePagerDescriptionsDto> getDescriptionsDtoList() {
+        return descriptionsDtoList;
     }
 
-    public void setDescriptionsDto(PEOnePagerDescriptionsDto descriptionsDto) {
-        this.descriptionsDto = descriptionsDto;
+    public void setDescriptionsDtoList(List<PEOnePagerDescriptionsDto> descriptionsDtoList) {
+        this.descriptionsDtoList = descriptionsDtoList;
     }
 
-    public PEFundManagementTeamDto getManagementTeamDto() {
-        return managementTeamDto;
+    public List<PEFundManagementTeamDto> getManagementTeamDtoList() {
+        return managementTeamDtoList;
     }
 
-    public void setManagementTeamDto(PEFundManagementTeamDto managementTeamDto) {
-        this.managementTeamDto = managementTeamDto;
+    public void setManagementTeamDtoList(List<PEFundManagementTeamDto> managementTeamDtoList) {
+        this.managementTeamDtoList = managementTeamDtoList;
     }
 }
