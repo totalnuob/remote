@@ -754,8 +754,8 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
             return false;
         } else if (this.report != null && !this.report.tarragonStatementAssetsFileId) {
             return false;
-        } else if (this.report != null && !this.report.tarragonStatementCashflowsFileId) {
-            return false;
+        //} else if (this.report != null && !this.report.tarragonStatementCashflowsFileId) {
+        //    return false;
         } else if (this.report != null && !this.report.tarragonStatementChangesFileId) {
             return false;
         } else if(this.report != null && !this.report.singularityGeneralLedgerFileId){

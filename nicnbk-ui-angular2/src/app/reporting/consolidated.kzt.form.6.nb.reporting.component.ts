@@ -57,6 +57,7 @@ export class ConsolidatedKZTForm6NBReportingComponent extends CommonNBReportingC
                                         if(this.errorMessage == null){
                                             this.errorMessage = "Error loading KZT Form 6";
                                         }
+                                        this.records = response.records;
                                         this.postAction(null, this.errorMessage);
                                     }else {
                                         this.records = response.records;
