@@ -227,7 +227,7 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
         resultDto = new PEFundDataForOnePagerResultDto(
                 descriptionsResultDto.getDescriptionsDtoList(),
                 managementTeamResultDto.getManagementTeamDtoList(),
-                StatusResultType.SUCCESS, "", descriptionsResultDto.getMessageEn() + " " + managementTeamResultDto.getMessageEn(), "");
+                StatusResultType.SUCCESS, "", descriptionsResultDto.getMessageEn() + ", " + managementTeamResultDto.getMessageEn(), "");
 
         this.pdfService.createOnePager(fundId);
 

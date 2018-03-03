@@ -10,21 +10,21 @@ import java.util.List;
  */
 public class PEFundDataForOnePagerResultDto extends StatusResultDto {
 
-    private List<PEOnePagerDescriptionsDto> onePagerDescriptionsDto;
+    private List<PEOnePagerDescriptionsDto> onePagerDescriptions;
     private List<PEFundManagementTeamDto> managementTeam;
 
-    public PEFundDataForOnePagerResultDto (List<PEOnePagerDescriptionsDto> onePagerDescriptionsDto, List<PEFundManagementTeamDto> managementTeam, StatusResultType status, String messageRu, String messageEn, String messageKz) {
+    public PEFundDataForOnePagerResultDto (List<PEOnePagerDescriptionsDto> onePagerDescriptions, List<PEFundManagementTeamDto> managementTeam, StatusResultType status, String messageRu, String messageEn, String messageKz) {
         super(status, messageRu, messageEn, messageKz);
-        this.onePagerDescriptionsDto = onePagerDescriptionsDto;
+        this.onePagerDescriptions = onePagerDescriptions;
         this.managementTeam = managementTeam;
     }
 
-    public List<PEOnePagerDescriptionsDto> getOnePagerDescriptionsDto() {
-        return onePagerDescriptionsDto;
+    public List<PEOnePagerDescriptionsDto> getOnePagerDescriptions() {
+        return onePagerDescriptions;
     }
 
-    public void setOnePagerDescriptionsDto(List<PEOnePagerDescriptionsDto> onePagerDescriptionsDto) {
-        this.onePagerDescriptionsDto = onePagerDescriptionsDto;
+    public void setOnePagerDescriptions(List<PEOnePagerDescriptionsDto> onePagerDescriptions) {
+        this.onePagerDescriptions = onePagerDescriptions;
     }
 
     public List<PEFundManagementTeamDto> getManagementTeam() {
