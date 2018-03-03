@@ -570,12 +570,18 @@ public class PEPdfServiceImpl implements PEPdfService {
 
             table.addCell(new Cell().add(p));
 
+            com.itextpdf.layout.element.List list = new com.itextpdf.layout.element.List().setSymbolIndent(4).setListSymbol("   -");
+
             if (managementTeamDto.getExperience() != null && !managementTeamDto.getExperience().equals("")) {
-                table.addCell(new Cell().add(new Paragraph("   - " + managementTeamDto.getExperience())));
+//                table.addCell(new Cell().add(new Paragraph("   - " + managementTeamDto.getExperience())));
+                list.add(new ListItem(managementTeamDto.getExperience()));
             }
             if (managementTeamDto.getEducation() != null && !managementTeamDto.getEducation().equals("")) {
-                table.addCell(new Cell().add(new Paragraph("   - " + managementTeamDto.getEducation())));
+//                table.addCell(new Cell().add(new Paragraph("   - " + managementTeamDto.getEducation())));
+                list.add(new ListItem(managementTeamDto.getEducation()));
             }
+
+            table.addCell(new Cell().add(list));
         }
     }
 
