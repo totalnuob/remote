@@ -11,12 +11,10 @@ import com.itextpdf.layout.ColumnDocumentRenderer;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.*;
 import com.itextpdf.layout.property.TextAlignment;
-import kz.nicnbk.service.api.pe.PEFundService;
-import kz.nicnbk.service.api.pe.PEIrrService;
-import kz.nicnbk.service.api.pe.PEOnePagerDescriptionsService;
-import kz.nicnbk.service.api.pe.PEPdfService;
+import kz.nicnbk.service.api.pe.*;
 import kz.nicnbk.service.dto.pe.PEFirmDto;
 import kz.nicnbk.service.dto.pe.PEFundDto;
+import kz.nicnbk.service.dto.pe.PEFundManagementTeamDto;
 import kz.nicnbk.service.dto.pe.PEOnePagerDescriptionsDto;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
@@ -47,6 +45,9 @@ public class PEPdfServiceImpl implements PEPdfService {
 
     @Autowired
     private PEOnePagerDescriptionsService descriptionsService;
+
+    @Autowired
+    private PEFundManagementTeamService managementTeamService;
 
     //File locations
     private static final String onePagerDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/OnePager.pdf";
@@ -113,6 +114,7 @@ public class PEPdfServiceImpl implements PEPdfService {
             List<PEOnePagerDescriptionsDto> descriptionsDescriptiveDataDtoList = descriptionsService.findByFundIdAndType(fundId, 8);
             List<PEOnePagerDescriptionsDto> descriptionsTargetedClosingInformationDtoList = descriptionsService.findByFundIdAndType(fundId, 9);
             List<PEOnePagerDescriptionsDto> descriptionsSeniorManagementTeamDtoList = descriptionsService.findByFundIdAndType(fundId, 10);
+            List<PEFundManagementTeamDto> managementTeamDtoList = managementTeamService.findByFundId(fundId);
 
             //Header
             Table headerTable = new Table(new float[]{1, 1, 1});
@@ -272,7 +274,8 @@ public class PEPdfServiceImpl implements PEPdfService {
                 document.add(targetedClosingInformationTable);
             }
 
-            if (descriptionsSeniorManagementTeamDtoList != null && !descriptionsSeniorManagementTeamDtoList.isEmpty()) {
+            if ((descriptionsSeniorManagementTeamDtoList != null && !descriptionsSeniorManagementTeamDtoList.isEmpty()) ||
+                    (managementTeamDtoList != null && !managementTeamDtoList.isEmpty())) {
 
                 //Senior Management Team Title
                 Table seniorManagementTeamTitle = new Table(new float[]{1});
@@ -280,9 +283,18 @@ public class PEPdfServiceImpl implements PEPdfService {
                 document.add(seniorManagementTeamTitle);
 
                 //Senior Management Team Table
-                Table seniorManagementTeamTable = new Table(new float[]{1, 1});
-                this.addTwoColumns(seniorManagementTeamTable, descriptionsSeniorManagementTeamDtoList, columnTwoWidth);
-                document.add(seniorManagementTeamTable);
+                if (descriptionsSeniorManagementTeamDtoList != null && !descriptionsSeniorManagementTeamDtoList.isEmpty()) {
+                    Table seniorManagementTeamTable = new Table(new float[]{1, 1});
+                    this.addTwoColumns(seniorManagementTeamTable, descriptionsSeniorManagementTeamDtoList, columnTwoWidth);
+                    document.add(seniorManagementTeamTable);
+                }
+
+                //Senior Management Team Table
+                if (managementTeamDtoList != null && !managementTeamDtoList.isEmpty()) {
+                    Table managementTeamTable = new Table(new float[]{1});
+                    this.addManagementTeam(managementTeamTable, managementTeamDtoList, columnTwoWidth);
+                    document.add(managementTeamTable);
+                }
             }
 
             document.add(new Paragraph("Ajl dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd a a a a a a a a a a a a a a"));
@@ -538,6 +550,14 @@ public class PEPdfServiceImpl implements PEPdfService {
         for (PEOnePagerDescriptionsDto descriptionsDto : descriptionsDtoList) {
             table.addCell(new Cell().add(new Paragraph(descriptionsDto.getDescriptionBold()).setBold()));
             table.addCell(new Cell().add(new Paragraph(descriptionsDto.getDescription())));
+        }
+    }
+
+    private void addManagementTeam(Table table, List<PEFundManagementTeamDto> managementTeamDtoList, Float width) {
+        table.setWidth(width);
+
+        for (PEFundManagementTeamDto managementTeamDto : managementTeamDtoList) {
+            table.addCell(new Cell());
         }
     }
 
