@@ -573,10 +573,10 @@ public class PEPdfServiceImpl implements PEPdfService {
             table.addCell(new Cell().add(p));
 
             if (managementTeamDto.getExperience() != null && !managementTeamDto.getExperience().equals("")) {
-                table.addCell(new Cell().add(new Paragraph(" - " + managementTeamDto.getExperience())));
+                table.addCell(new Cell().add(new Paragraph("   - " + managementTeamDto.getExperience())));
             }
             if (managementTeamDto.getEducation() != null && !managementTeamDto.getEducation().equals("")) {
-                table.addCell(new Cell().add(new Paragraph(" - " + managementTeamDto.getEducation())));
+                table.addCell(new Cell().add(new Paragraph("   - " + managementTeamDto.getEducation())));
             }
         }
     }
