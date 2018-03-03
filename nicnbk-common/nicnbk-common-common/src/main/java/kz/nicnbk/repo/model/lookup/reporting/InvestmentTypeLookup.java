@@ -1,4 +1,4 @@
-package kz.nicnbk.repo.model.lookup;
+package kz.nicnbk.repo.model.lookup.reporting;
 
 /**
  * Created by magzumov on 18.07.2016.

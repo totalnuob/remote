@@ -81,6 +81,10 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                                         response  => {
                                             this.convertToViewModel(response.files);
                                             this.periodicReport = response.report;
+                                            if(response.report == null){
+                                                this.periodicReport = new PeriodicReport();
+                                                this.periodicReport.id = this.reportId;
+                                            }
                                         },
                                         (error: ErrorResponse) => {
                                             this.successMessage = null;
@@ -114,6 +118,7 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
         if(fileType === 'tarragon_schedule_investment'){
             this.busy = this.periodicReportService.postFiles(this.report.reportId, this.fileTarragonScheduleInvestment, 'NB_REP_T1').subscribe(
                 res => {
+                    console.log(this.periodicReport);
                     // clear upload file on view
                     this.fileTarragonScheduleInvestment = null;
                     // set file id

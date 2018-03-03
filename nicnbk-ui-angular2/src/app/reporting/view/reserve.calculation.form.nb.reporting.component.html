@@ -22,12 +22,15 @@
         <h3 *ngIf="reportId != null">Reserve Calculation</h3>
     </div>
 
-    <form (ngSubmit)="saveAddedRecords()" #addedRecordsForm="ngForm" class="well span">
+    <button class="btn btn-xs btn-primary pull-right" type="button" (click)="addRecord()"
+            [disabled]="addedRecords != null && addedRecords.length > 0">
+        <span role="button" class="glyphicon glyphicon-plus">Add</span>
+    </button>
+    <br/>
+    <br/>
+
+    <form *ngIf="addedRecords != null && addedRecords.length > 0" (ngSubmit)="saveAddedRecords()" #addedRecordsForm="ngForm" class="well span">
         <div class="row withpadding">
-            <button class="btn btn-xs btn-primary pull-right" type="button" (click)="addRecord()"
-                    [disabled]="addedRecords != null && addedRecords.length > 0">
-                <span role="button" class="glyphicon glyphicon-plus">Add</span>
-            </button>
 
             <div *ngIf="addedRecords!= null && addedRecords.length > 0">
                 <table class="table table-hover table-responsive table-condensed" style="font-size: small">
@@ -37,11 +40,12 @@
                         <td>Источник</td>
                         <td>Получатель</td>
                         <td>Дата</td>
+                        <td>Дата валютирования</td>
                         <td>Сумма USD</td>
                         <td>&nbsp;</td>
                     </tr>
                     </thead>
-                    <tr  *ngFor="let addedRecord of addedRecords" style="font-size: small">
+                    <tr  *ngFor="let addedRecord of addedRecords; let i=index; let last=last;" style="font-size: small">
                         <td>
                             <select required class="form-control" style="width: 100%" [ngModelOptions]="{standalone: true}" [(ngModel)]="addedRecord.expenseType.code">
                                 <option *ngFor="let item of expenseTypeLookup" [value]="item.code">{{item.nameRu}}</option>
@@ -58,22 +62,26 @@
                                 <option *ngFor="let item of entityTypeLookup" [value]="item.code">{{item.nameRu}}</option>
                             </select>
                         </td>
-                        <!--<td id='dateDTPicker' class="input-group date">-->
-                            <!--&lt;!&ndash;<input type="text" class="form-control" class="form-control"  [(ngModel)]="addedRecord.date" [ngModelOptions]="{standalone: true}"/>&ndash;&gt;-->
-                            <!--<input type="text" class="form-control" id="inceptionDateValue" name="inceptionDate" [(ngModel)]="addedRecord.date"/>-->
-                                        <!--<span class="input-group-addon">-->
-                                            <!--<span class="glyphicon glyphicon-calendar"></span>-->
-                                        <!--</span>-->
-                        <!--</td>-->
 
-                        <td class="input-group">
-                            <input type="text" class="input-group-addon form-control datepicker" name="dateVal" id="dateVal" [(ngModel)]="addedRecord.date"/>
-                                <span class="input-group-addon">
-                                    <span class="glyphicon glyphicon-calendar"></span>
-                                </span>
+                        <td>
+                            <div class='input-group date col-md-2' id='dateDivId' style="width: 100%">
+                                <input required type="text" class="form-control" id="dateInputId" name="dateInput" [(ngModel)]="addedRecord.date"/>
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                            </div>
                         </td>
                         <td>
-                            <input type="number" step="0.01" class="form-control" class="form-control"  [(ngModel)]="addedRecord.amount" [ngModelOptions]="{standalone: true}"/>
+                            <div class='input-group date col-md-2' id='dateDivId2' style="width: 100%">
+                                <input type="text" class="form-control" name="dateInput2" id="dateInputId2" [(ngModel)]="addedRecord.valueDate"/>
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                            </div>
+                        </td>
+
+                        <td>
+                            <input required type="number" step="0.01" class="form-control" [(ngModel)]="addedRecord.amount" [ngModelOptions]="{standalone: true}"/>
                         </td>
                         <td>
                             <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRecord(addedRecord)">
@@ -81,10 +89,11 @@
                             </button>
                         </td>
                     </tr>
+
                 </table>
                 <div class="row">
                     <div class="col-md-12">
-                        <button type="submit" class="btn btn-success pull-right" [disabled]="!addedRecordsForm.form.valid">Save added</button>
+                        <button type="submit" class="btn btn-success pull-right">SAVE</button>
                     </div>
                 </div>
             </div>
@@ -92,29 +101,44 @@
     </form>
     <br/>
 
-    <div class="row withpadding">
+    <div [ngBusy]="{busy: busyExport, message: 'Exporting...'}" class="row withpadding">
         <table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small" *ngIf="records != null">
             <tr bgcolor="#e7e7e7" style="font-weight: bold; font-size: small">
                 <td>Статья</td>
                 <td>Источник</td>
                 <td>Получатель</td>
                 <td>Дата</td>
+                <td>Дата валютирования (для экспорта)</td>
                 <td>Сумма USD</td>
                 <td>Курс</td>
                 <td>Сумма KZT</td>
+                <td>Экспорт</td>
                 <td>&nbsp;</td>
             </tr>
-            <tr *ngFor="let record of records">
+            <tr *ngFor="let record of records" [style.color]="record.currencyRate == null ? 'red' : 'black' ">
                 <td>{{record.expenseType != null ? record.expenseType.nameRu : ''}}</td>
                 <td>{{record.source != null ? record.source.nameRu : ''}}</td>
                 <td>{{record.recipient != null ? record.recipient.nameRu : ''}}</td>
                 <td>{{record.date}}</td>
+                <td>{{record.valueDate}}</td>
                 <td>{{record.amount | number:'1.2-2'}}</td>
-                <td>{{record.currencyRate | number:'1.2-2'}}</td>
+                <td>{{record.currencyRate  != null ? (record.currencyRate | number:'1.2-2') : '-----'}}</td>
                 <td>{{record.amountKZT | number:'1.2-2'}}</td>
                 <td>
-                    <button *ngIf="record.added" type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeSavedRecord(record)">
-                        <span class="glyphicon glyphicon-minus"></span>
+                    <button [disabled]="!showExportOrderButton(record)" class="btn btn-xs btn-primary" style="margin-left: 10px;" type="button" (click)="exportOrder(record)">
+                        Order
+                    </button>&nbsp;
+                    <button [disabled]="record.expenseType.code != 'ADD'" class="btn btn-xs btn-success" style="margin-left: 10px;" type="button" (click)="exportFAFToOperations(record)">
+                        to-OPs
+                    </button>&nbsp;
+                    <button [disabled]="record.expenseType.code != 'ADD'" class="btn btn-xs btn-success" style="margin-left: 10px;" type="button" (click)="exportFAFToSPV(record)">
+                        to-SPV
+                    </button>
+                </td>
+                <td>
+                    <button *ngIf="showDeleteRecordButton(record)" class="btn btn-xs btn-danger" style="margin-left: 10px;"
+                            (click)="removeSavedRecord(record)">
+                        <span class="glyphicon glyphicon-trash"></span>
                     </button>
                 </td>
             </tr>

@@ -21,7 +21,7 @@
     </div>
     <br/>
     <div class="row withpadding">
-        <h3 *ngIf="report != null">1. Input files {{ ' - ' + getReportDateShortFormatted(report.reportDate)}}</h3>
+        <h3 *ngIf="report != null">1. Input files {{ ' - ' + getReportDateShortFormatted(periodicReport.reportDate)}}</h3>
     </div>
     <div class="row withpadding">
         <table [ngBusy]="busy" class="table table-responsive">

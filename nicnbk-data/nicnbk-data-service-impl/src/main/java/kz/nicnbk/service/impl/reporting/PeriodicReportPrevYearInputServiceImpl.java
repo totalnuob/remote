@@ -34,6 +34,7 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.test.annotations.WrapToTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
@@ -124,6 +125,7 @@ public class PeriodicReportPrevYearInputServiceImpl implements PeriodicReportPre
         }
     }
 
+    @Transactional // if DB operation fails, no record will be saved, i.e. no partial commits
     @Override
     public EntityListSaveResponseDto savePreviousYearInputData(List<PreviousYearInputDataDto> records, Long reportId) {
         EntityListSaveResponseDto entityListSaveResponseDto = new EntityListSaveResponseDto();
@@ -136,8 +138,6 @@ public class PeriodicReportPrevYearInputServiceImpl implements PeriodicReportPre
                         entityListSaveResponseDto.setErrorMessageEn("Cannot edit report with status 'SUBMITTED': report id" + reportId);
                         return entityListSaveResponseDto;
                     }
-
-                    // TODO: rollback on error? Transactional?
 
                     //this.previousYearInputDataRepository.getEntitiesByReportId(reportId);
                     this.previousYearInputDataRepository.deleteAllByReportId(reportId);

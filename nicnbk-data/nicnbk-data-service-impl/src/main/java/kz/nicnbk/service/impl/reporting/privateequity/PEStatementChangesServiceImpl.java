@@ -65,11 +65,15 @@ public class PEStatementChangesServiceImpl implements PEStatementChangesService 
 
     @Override
     public boolean save(List<ReportingPEStatementChanges> entities) {
-        // TODO: boolean result, check for error?
-        if(entities != null){
-            this.peStatementChangesRepository.save(entities);
+        try {
+            if (entities != null) {
+                this.peStatementChangesRepository.save(entities);
+            }
+            return true;
+        }catch (Exception ex){
+            logger.error("Error saving Statement of Changes entities. ", ex);
+            return false;
         }
-        return true;
     }
 
     @Override

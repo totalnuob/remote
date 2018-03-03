@@ -108,11 +108,15 @@ public class HFGeneralLedgerBalanceServiceImpl implements HFGeneralLedgerBalance
 
     @Override
     public boolean save(List<ReportingHFGeneralLedgerBalance> entities) {
-        // TODO: boolean result, check for error?
-        if(entities != null){
-            this.generalLedgerBalanceRepository.save(entities);
+        try {
+            if (entities != null) {
+                this.generalLedgerBalanceRepository.save(entities);
+            }
+            return true;
+        }catch (Exception ex){
+            logger.error("Error saving GL Singularity entities. ", ex);
+            return false;
         }
-        return true;
     }
 
 

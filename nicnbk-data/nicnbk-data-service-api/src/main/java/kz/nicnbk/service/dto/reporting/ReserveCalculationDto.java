@@ -11,14 +11,18 @@ import java.util.Date;
  */
 public class ReserveCalculationDto implements BaseDto {
 
+    private Long id;
     private BaseDictionaryDto expenseType;
     private BaseDictionaryDto source;
     private BaseDictionaryDto recipient;
     @DateTimeFormat(pattern="dd-MM-yyyy")
     private Date date;
+    @DateTimeFormat(pattern="dd-MM-yyyy")
+    private Date valueDate;
     private Double amount;
     private Double currencyRate;
     private Double amountKZT;
+    private boolean canDelete;
 
     public BaseDictionaryDto getExpenseType() {
         return expenseType;
@@ -74,5 +78,29 @@ public class ReserveCalculationDto implements BaseDto {
 
     public void setAmountKZT(Double amountKZT) {
         this.amountKZT = amountKZT;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Date getValueDate() {
+        return valueDate;
+    }
+
+    public void setValueDate(Date valueDate) {
+        this.valueDate = valueDate;
+    }
+
+    public boolean isCanDelete() {
+        return canDelete;
+    }
+
+    public void setCanDelete(boolean canDelete) {
+        this.canDelete = canDelete;
     }
 }

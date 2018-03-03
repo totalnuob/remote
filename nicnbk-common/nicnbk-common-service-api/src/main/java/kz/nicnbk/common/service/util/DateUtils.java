@@ -172,8 +172,15 @@ public class DateUtils {
         return getDate(getDateFormatted(date));
     }
 
-    public static String getDateRussianTextualDate(Date date){
-        int day = getDay(date);
+
+    /**
+     * Returns date in full format in Russian, e.g.
+     * 01 сентября 2017 года
+     * @param date - date
+     * @return - textual date
+     */
+    public static String getDateRussianTextualDateOnFirstDayNextMonth(Date date){
+        //int day = getDay(date);
         int month = getMonth(date);
         int year = getYear(date);
 
@@ -189,6 +196,18 @@ public class DateUtils {
         if(dateRu != null && dateRu.startsWith("1 ")){
             dateRu = "0" + dateRu;
         }
-        return dateRu;
+        return  dateRu.replace("г.", "года");
+    }
+
+    public static String getDateEnglishTextualDate(Date date){
+        int day = getDay(date);
+        int month = getMonth(date);
+        int year = getYear(date);
+
+        String dateEn = DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).withLocale(new Locale("en")).format(LocalDate.of(year, (month + 1), day));
+        if(dateEn != null && dateEn.startsWith("1 ")){
+            dateEn = "0" + dateEn;
+        }
+        return dateEn;
     }
 }
