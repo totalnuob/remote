@@ -2,5 +2,5 @@ export class PEFundDataForOnePager {
 
     onePagerDescriptions = [];
     managementTeam = [];
-    onePagerAsOfDate: string;
+    onePagerAsOfDate: Date;
 }

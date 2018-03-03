@@ -78,8 +78,6 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     performanceSaveTypeMessage: string;
     grossCashFlowSaveTypeMessage: string;
 
-    onePagerAsOfDate: string;
-
     public dataForOnePager = new PEFundDataForOnePager();
 
     private moduleAccessChecker: ModuleAccessCheckerService;
@@ -980,7 +978,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     createOnePager() {
         this.dataForOnePager.onePagerDescriptions = this.fund.onePagerDescriptions;
         this.dataForOnePager.managementTeam = this.fund.managementTeam;
-        this.dataForOnePager.onePagerAsOfDate = this.onePagerAsOfDate;
+        this.dataForOnePager.onePagerAsOfDate = this.fund.onePagerAsOfDate;
 
         this.busy = this.fundService.createOnePager(this.dataForOnePager, this.fund.id)
             .subscribe(
