@@ -253,7 +253,7 @@ public class PEPdfServiceImpl implements PEPdfService {
 
                 //Descriptive Data Table
                 Table descriptiveDataTable = new Table(new float[]{1});
-//                this.addFundStrategy(descriptiveDataTable, descriptionsFundStrategyDtoList, columnTwoWidth);
+                this.addTwoColumns(descriptiveDataTable, descriptionsDescriptiveDataDtoList, columnTwoWidth);
                 document.add(descriptiveDataTable);
             }
 
@@ -502,6 +502,15 @@ public class PEPdfServiceImpl implements PEPdfService {
         }
 
         table.addCell(cell);
+    }
+
+    private void addTwoColumns(Table table, List<PEOnePagerDescriptionsDto> descriptionsDtoList, Float width) {
+        table.setWidth(width);
+
+        for (PEOnePagerDescriptionsDto descriptionsDto : descriptionsDtoList) {
+            table.addCell(new Cell().add(new Paragraph(descriptionsDto.getDescriptionBold()).setBold()));
+            table.addCell(new Cell().add(new Paragraph(descriptionsDto.getDescription())));
+        }
     }
 
     private int unNullifierToZero(Integer a) {
