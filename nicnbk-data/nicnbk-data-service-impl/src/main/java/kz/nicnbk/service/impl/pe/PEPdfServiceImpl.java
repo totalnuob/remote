@@ -112,6 +112,7 @@ public class PEPdfServiceImpl implements PEPdfService {
             List<PEOnePagerDescriptionsDto> descriptionsFundStrategyDtoList = descriptionsService.findByFundIdAndType(fundId, 7);
             List<PEOnePagerDescriptionsDto> descriptionsDescriptiveDataDtoList = descriptionsService.findByFundIdAndType(fundId, 8);
             List<PEOnePagerDescriptionsDto> descriptionsTargetedClosingInformationDtoList = descriptionsService.findByFundIdAndType(fundId, 9);
+            List<PEOnePagerDescriptionsDto> descriptionsSeniorManagementTeamDtoList = descriptionsService.findByFundIdAndType(fundId, 10);
 
             //Header
             Table headerTable = new Table(new float[]{1, 1, 1});
@@ -269,6 +270,19 @@ public class PEPdfServiceImpl implements PEPdfService {
                 Table targetedClosingInformationTable = new Table(new float[]{1, 1});
                 this.addTwoColumns(targetedClosingInformationTable, descriptionsTargetedClosingInformationDtoList, columnTwoWidth);
                 document.add(targetedClosingInformationTable);
+            }
+
+            if (descriptionsSeniorManagementTeamDtoList != null && !descriptionsSeniorManagementTeamDtoList.isEmpty()) {
+
+                //Senior Management Team Title
+                Table seniorManagementTeamTitle = new Table(new float[]{1});
+                this.addGreenTitle(seniorManagementTeamTitle, "Senior Management Team", columnTwoWidth);
+                document.add(seniorManagementTeamTitle);
+
+                //Senior Management Team Table
+                Table seniorManagementTeamTable = new Table(new float[]{1, 1});
+                this.addTwoColumns(seniorManagementTeamTable, descriptionsSeniorManagementTeamDtoList, columnTwoWidth);
+                document.add(seniorManagementTeamTable);
             }
 
             document.add(new Paragraph("Ajl dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd a a a a a a a a a a a a a a"));
