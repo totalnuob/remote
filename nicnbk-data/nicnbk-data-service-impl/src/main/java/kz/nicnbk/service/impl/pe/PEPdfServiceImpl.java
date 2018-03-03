@@ -497,7 +497,7 @@ public class PEPdfServiceImpl implements PEPdfService {
         if (descriptionsDtoListMerits != null) {
             for (PEOnePagerDescriptionsDto descriptionsDto : descriptionsDtoListMerits) {
                 if (descriptionsDto != null) {
-                    Paragraph p = new Paragraph();
+                    Paragraph p = new Paragraph().setMultipliedLeading(1);
                     if (descriptionsDto.getDescriptionBold() != null && !descriptionsDto.getDescriptionBold().equals("")) {
                         p.add(new Paragraph("(+) " + descriptionsDto.getDescriptionBold() + " ").setBold());
                     } else {
@@ -538,7 +538,7 @@ public class PEPdfServiceImpl implements PEPdfService {
         if (descriptionsDtoList != null) {
             for (PEOnePagerDescriptionsDto descriptionsDto : descriptionsDtoList) {
                 if (descriptionsDto != null) {
-                    Paragraph p = new Paragraph();
+                    Paragraph p = new Paragraph().setMultipliedLeading(1);
                     if (descriptionsDto.getDescriptionBold() != null && !descriptionsDto.getDescriptionBold().equals("")) {
                         p.add(new Paragraph(descriptionsDto.getDescriptionBold() + " ").setBold());
                     }
