@@ -1147,8 +1147,8 @@
                                         <br>
                                         <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
                                             <tr>
-                                                <th>Senior Management Team (bold part)</th>
-                                                <th>Senior Management Team</th>
+                                                <th>Senior Management Team Overall info (bold part)</th>
+                                                <th>Senior Management Team Overall info</th>
                                                 <th></th>
                                             </tr>
                                             <tr *ngFor="let item of fund.onePagerDescriptions" [hidden]="item.type !=10">
@@ -1174,7 +1174,65 @@
                                             </tr>
                                             <div class="col-md-1 pull-left">
                                                 <button type="button" class="btn btn-primary" *ngIf="canEdit()" (click)="addRowDescription(10)">
-                                                    Add Targeted Closing Information
+                                                    Add Senior Management Team Overall info
+                                                </button>
+                                            </div>
+                                        </table>
+                                        <br>
+                                        <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Position</th>
+                                                <th>Age</th>
+                                                <th>Experience</th>
+                                                <th>Education</th>
+                                                <th></th>
+                                            </tr>
+                                            <tr *ngFor="let item of fund.managementTeam">
+                                                <td>
+                                                    <input type="text" class="form-control" name="name" [(ngModel)]="item.name" placeholder="-" #name="ngModel"/>
+                                                    <div [hidden]="name.valid || name.pristine" class="alert alert-danger">
+                                                        Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <input type="text" class="form-control" name="position" [(ngModel)]="item.position" placeholder="-" #position="ngModel"/>
+                                                    <div [hidden]="position.valid || position.pristine" class="alert alert-danger">
+                                                        Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <input type="text" class="form-control" name="age" [(ngModel)]="item.age" placeholder="-" pattern="[-]?[0-9]*\.?[0-9]+" #age="ngModel"/>
+                                                    <div [hidden]="age.valid || age.pristine" class="alert alert-danger">
+                                                        Only number could be entered
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <input type="text" class="form-control" name="experience" [(ngModel)]="item.experience" placeholder="-" #experience="ngModel"/>
+                                                    <div [hidden]="experience.valid || experience.pristine" class="alert alert-danger">
+                                                        Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <input type="text" class="form-control" name="education" [(ngModel)]="item.education" placeholder="-" #education="ngModel"/>
+                                                    <div [hidden]="education.valid || education.pristine" class="alert alert-danger">
+                                                        Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRowManagementTeam(item)">
+                                                        <span class="glyphicon glyphicon-minus"></span>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <div class="col-md-1 pull-left">
+                                                <button type="button" class="btn btn-primary" *ngIf="canEdit()" (click)="addRowManagementTeam()">
+                                                    Add Senior Manager
                                                 </button>
                                             </div>
                                         </table>

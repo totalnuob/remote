@@ -851,6 +851,18 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
         }
     }
 
+    addRowManagementTeam(){
+        this.fund.managementTeam.push({id:"", name:"", position:"", age:"", experience:"", education:""});
+    }
+
+    removeRowManagementTeam(item){
+        for(var i = this.fund.managementTeam.length; i--;) {
+            if(this.fund.managementTeam[i] === item) {
+                this.fund.managementTeam.splice(i, 1);
+            }
+        }
+    }
+
     grossCfParse(){
         var cf = [];
         var rows = this.uploadedGrossCf.split("\n");
