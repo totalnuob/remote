@@ -297,8 +297,6 @@ public class PEPdfServiceImpl implements PEPdfService {
                 }
             }
 
-            document.add(new Paragraph("Ajl dsa dsa gfdg gfd gfd gfd gfd gfds gds gfds gsd a a a a a a a a a a a a a a"));
-
             document.close();
         } catch (Exception ex) {
             logger.error("Error creating PE fund's One Pager: " + fundId, ex);
