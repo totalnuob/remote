@@ -161,6 +161,10 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                         this.fund.onePagerDescriptions = [];
                                     }
 
+                                    if(this.fund.managementTeam == null){
+                                        this.fund.managementTeam = [];
+                                    }
+
                                     this.updateIRRParamList();
 
                                     this.updatePerformanceIddTotal();
