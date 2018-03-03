@@ -2,6 +2,7 @@ import {Component, ViewChild, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {CommonFormViewComponent} from "../common/common.component";
 import {PEFund} from "./model/pe.fund";
+import {PEFundDataForOnePager} from "./model/pe.fund.data.for.one.pager";
 import {PEFirmService} from "./pe.firm.service";
 import {PEFirm} from "./model/pe.firm";
 import {PEFundService} from "./pe.fund.service";
@@ -76,6 +77,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
 
     performanceSaveTypeMessage: string;
     grossCashFlowSaveTypeMessage: string;
+
+    public dataForOnePager = new PEFundDataForOnePager();
 
     private moduleAccessChecker: ModuleAccessCheckerService;
 
@@ -961,12 +964,15 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     }
 
     createOnePager() {
-        this.busy = this.fundService.createOnePager(this.fund, this.fund.id)
+        this.dataForOnePager.onePagerDescriptions = this.fund.onePagerDescriptions;
+        this.dataForOnePager.managementTeam = this.fund.managementTeam;
+
+        this.busy = this.fundService.createOnePager(this.dataForOnePager, this.fund.id)
             .subscribe(
                 (response) => {
                     this.postAction(response.messageEn, null);
 
-                    this.fund.onePagerDescriptions = response.descriptionsDtoList;
+                    //this.fund.onePagerDescriptions = response.descriptionsDtoList;
                 },
                 (error: ErrorResponse) => {
                     this.processErrorMessage(error);
