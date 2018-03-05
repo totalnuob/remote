@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -70,7 +71,7 @@ public class PEPdfServiceImpl implements PEPdfService {
     private static final Float lineSpacingMultiplierText = 1.3f;
 
     @Override
-    public void createOnePager(Long fundId) {
+    public InputStream createOnePager(Long fundId) {
         try {
             //Margins
             Float offSet = 36f;
@@ -327,6 +328,8 @@ public class PEPdfServiceImpl implements PEPdfService {
             }
 
             document.close();
+
+            return new InputStream();
         } catch (Exception ex) {
             logger.error("Error creating PE fund's One Pager: " + fundId, ex);
         }

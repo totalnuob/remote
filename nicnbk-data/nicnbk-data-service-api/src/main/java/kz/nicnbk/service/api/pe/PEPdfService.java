@@ -1,9 +1,11 @@
 package kz.nicnbk.service.api.pe;
 
+import java.io.InputStream;
+
 /**
  * Created by Pak on 24/01/2018.
  */
 public interface PEPdfService {
 
-    void createOnePager(Long fundId);
+    InputStream createOnePager(Long fundId);
 }
