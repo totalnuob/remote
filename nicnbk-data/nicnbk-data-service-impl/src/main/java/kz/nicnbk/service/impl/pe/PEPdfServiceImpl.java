@@ -66,6 +66,8 @@ public class PEPdfServiceImpl implements PEPdfService {
     private Image barChartNetIrr;
     private Image barChartNetMoic;
 
+    private static final Float lineSpacingMultiplier = 1f;
+
     @Override
     public void createOnePager(Long fundId) {
         try {
@@ -363,7 +365,7 @@ public class PEPdfServiceImpl implements PEPdfService {
     private void addGreenTitle(Table table, String title, Float width) {
         table.addCell(new Cell()
                 .setWidth(width)
-                .add(new Paragraph(unNullifierToEmptyString(title)))
+                .add(new Paragraph(unNullifierToEmptyString(title)).setMultipliedLeading(lineSpacingMultiplier))
                 .setBackgroundColor(greenColor)
                 .setFontColor(whiteColor));
     }
@@ -388,40 +390,40 @@ public class PEPdfServiceImpl implements PEPdfService {
 
     private void addOrganizationOverview(Table table, PEFirmDto firmDto, Float width) {
         table.setWidth(width);
-        table.addCell(new Cell().add(new Paragraph("GP Name").setBold()));
-        table.addCell(new Cell().add(new Paragraph(unNullifierToEmptyString(firmDto.getFirmName()))));
-        table.addCell(new Cell().add(new Paragraph("Strategy AUM ($mln)").setBold()));
-        table.addCell(new Cell().add(new Paragraph(mlnFormat(firmDto.getAum() * 1000000))));
-        table.addCell(new Cell().add(new Paragraph("Locations").setBold()));
-        table.addCell(new Cell().add(new Paragraph(unNullifierToEmptyString(firmDto.getLocations()))));
-        table.addCell(new Cell().add(new Paragraph("Firm Inception").setBold()));
-        table.addCell(new Cell().add(new Paragraph(unNullifierToEmptyString(firmDto.getFoundedYear()))));
-        table.addCell(new Cell().add(new Paragraph("Inv. + Oper. Team").setBold()));
-        table.addCell(new Cell().add(new Paragraph((firmDto.getInvTeamSize() != null ? firmDto.getInvTeamSize() : "?") + " + " + (firmDto.getOpsTeamSize() != null ? firmDto.getOpsTeamSize() : "?"))));
-        table.addCell(new Cell().add(new Paragraph("Peers").setBold()));
-        table.addCell(new Cell().add(new Paragraph(unNullifierToEmptyString(firmDto.getPeers()))));
+        table.addCell(new Cell().add(new Paragraph("GP Name").setMultipliedLeading(lineSpacingMultiplier).setBold()));
+        table.addCell(new Cell().add(new Paragraph(unNullifierToEmptyString(firmDto.getFirmName())).setMultipliedLeading(lineSpacingMultiplier)));
+        table.addCell(new Cell().add(new Paragraph("Strategy AUM ($mln)").setMultipliedLeading(lineSpacingMultiplier).setBold()));
+        table.addCell(new Cell().add(new Paragraph(mlnFormat(firmDto.getAum() * 1000000)).setMultipliedLeading(lineSpacingMultiplier)));
+        table.addCell(new Cell().add(new Paragraph("Locations").setMultipliedLeading(lineSpacingMultiplier).setBold()));
+        table.addCell(new Cell().add(new Paragraph(unNullifierToEmptyString(firmDto.getLocations())).setMultipliedLeading(lineSpacingMultiplier)));
+        table.addCell(new Cell().add(new Paragraph("Firm Inception").setMultipliedLeading(lineSpacingMultiplier).setBold()));
+        table.addCell(new Cell().add(new Paragraph(unNullifierToEmptyString(firmDto.getFoundedYear())).setMultipliedLeading(lineSpacingMultiplier)));
+        table.addCell(new Cell().add(new Paragraph("Inv. + Oper. Team").setMultipliedLeading(lineSpacingMultiplier).setBold()));
+        table.addCell(new Cell().add(new Paragraph((firmDto.getInvTeamSize() != null ? firmDto.getInvTeamSize() : "?") + " + " + (firmDto.getOpsTeamSize() != null ? firmDto.getOpsTeamSize() : "?")).setMultipliedLeading(lineSpacingMultiplier)));
+        table.addCell(new Cell().add(new Paragraph("Peers").setMultipliedLeading(lineSpacingMultiplier).setBold()));
+        table.addCell(new Cell().add(new Paragraph(unNullifierToEmptyString(firmDto.getPeers())).setMultipliedLeading(lineSpacingMultiplier)));
     }
 
     private void addFundSummary(Table table, PEFundDto fundDto, Float width) {
         table.setWidth(width);
-        table.addCell(new Cell().add(new Paragraph("Fund Size ($mln)").setBold()));
-        table.addCell(new Cell().add(new Paragraph(mlnFormat(fundDto.getFundSize()))));
-        table.addCell(new Cell().add(new Paragraph("Mgt. fee").setBold()));
-        table.addCell(new Cell().add(new Paragraph("Mgt. fee")));
-        table.addCell(new Cell().add(new Paragraph("Industry").setBold()));
-        table.addCell(new Cell().add(new Paragraph("Industry")));
-        table.addCell(new Cell().add(new Paragraph("Hard cap").setBold()));
-        table.addCell(new Cell().add(new Paragraph("Hard cap")));
-        table.addCell(new Cell().add(new Paragraph("Carry").setBold()));
-        table.addCell(new Cell().add(new Paragraph("Carry")));
-        table.addCell(new Cell().add(new Paragraph("Strategy").setBold()));
-        table.addCell(new Cell().add(new Paragraph("Strategy")));
-        table.addCell(new Cell().add(new Paragraph("GP Commitment").setBold()));
-        table.addCell(new Cell().add(new Paragraph("GP Commitment")));
-        table.addCell(new Cell().add(new Paragraph("Hurdle").setBold()));
-        table.addCell(new Cell().add(new Paragraph("Hurdle")));
-        table.addCell(new Cell().add(new Paragraph("Geography").setBold()));
-        table.addCell(new Cell().add(new Paragraph("Geography")));
+        table.addCell(new Cell().add(new Paragraph("Fund Size ($mln)").setMultipliedLeading(lineSpacingMultiplier).setBold()));
+        table.addCell(new Cell().add(new Paragraph(mlnFormat(fundDto.getFundSize())).setMultipliedLeading(lineSpacingMultiplier)));
+        table.addCell(new Cell().add(new Paragraph("Mgt. fee").setMultipliedLeading(lineSpacingMultiplier).setBold()));
+        table.addCell(new Cell().add(new Paragraph("Mgt. fee").setMultipliedLeading(lineSpacingMultiplier)));
+        table.addCell(new Cell().add(new Paragraph("Industry").setMultipliedLeading(lineSpacingMultiplier).setBold()));
+        table.addCell(new Cell().add(new Paragraph("Industry").setMultipliedLeading(lineSpacingMultiplier)));
+        table.addCell(new Cell().add(new Paragraph("Hard cap").setMultipliedLeading(lineSpacingMultiplier).setBold()));
+        table.addCell(new Cell().add(new Paragraph("Hard cap").setMultipliedLeading(lineSpacingMultiplier)));
+        table.addCell(new Cell().add(new Paragraph("Carry").setMultipliedLeading(lineSpacingMultiplier).setBold()));
+        table.addCell(new Cell().add(new Paragraph("Carry").setMultipliedLeading(lineSpacingMultiplier)));
+        table.addCell(new Cell().add(new Paragraph("Strategy").setMultipliedLeading(lineSpacingMultiplier).setBold()));
+        table.addCell(new Cell().add(new Paragraph("Strategy").setMultipliedLeading(lineSpacingMultiplier)));
+        table.addCell(new Cell().add(new Paragraph("GP Commitment").setMultipliedLeading(lineSpacingMultiplier).setBold()));
+        table.addCell(new Cell().add(new Paragraph("GP Commitment").setMultipliedLeading(lineSpacingMultiplier)));
+        table.addCell(new Cell().add(new Paragraph("Hurdle").setMultipliedLeading(lineSpacingMultiplier).setBold()));
+        table.addCell(new Cell().add(new Paragraph("Hurdle").setMultipliedLeading(lineSpacingMultiplier)));
+        table.addCell(new Cell().add(new Paragraph("Geography").setMultipliedLeading(lineSpacingMultiplier).setBold()));
+        table.addCell(new Cell().add(new Paragraph("Geography").setMultipliedLeading(lineSpacingMultiplier)));
     }
 
     private void addKeyFundStatistics(Table table, List<PEFundDto> fundDtoList, Float width) {
