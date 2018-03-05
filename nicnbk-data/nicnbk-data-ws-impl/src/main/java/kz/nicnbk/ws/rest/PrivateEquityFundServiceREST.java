@@ -239,6 +239,8 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
     @ResponseBody
     public void exportReport(@PathVariable Long fundId, HttpServletResponse response) {
 
+        System.out.println("Hello");
+
 //        // TODO: control file download by user role
 //        // TODO: Check rights
 //

@@ -33,6 +33,7 @@ import {AlbourneService} from "./hf/hf.albourne.service";
 import '../../public/js/jquery.ns-autogrow.min.js';
 import {ModuleAccessCheckerService} from "./authentication/module.access.checker.service";
 import {MacroMonitorService} from "./macromonitor/macromonitor.service";
+import {FileDownloadService} from "./common/file.download.service";
 
 @Component({
     selector: 'app-main',
@@ -52,6 +53,7 @@ import {MacroMonitorService} from "./macromonitor/macromonitor.service";
         LookupService,
         EmployeeService,
         FileUploadService,
+        FileDownloadService,
         HFManagerService,
         HedgeFundService,
         RiskManagementReportService,
