@@ -169,6 +169,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                     }
 
                                     this.addOnePagerAsOfDate();
+                                    this.addOnePagerBenchmarkName();
 
                                     this.updateIRRParamList();
 
@@ -988,6 +989,20 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
 
         if (!found) {
             this.addRowDescription(0);
+        }
+    }
+
+    addOnePagerBenchMarkName() {
+        var found = false;
+
+        for (var i = 0; i < this.fund.onePagerDescriptions.length; i++) {
+            if (this.fund.onePagerDescriptions[i].type === -1) {
+                found = true;
+            }
+        }
+
+        if (!found) {
+            this.addRowDescription(-1);
         }
     }
 
