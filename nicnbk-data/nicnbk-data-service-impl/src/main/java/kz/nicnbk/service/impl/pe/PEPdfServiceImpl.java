@@ -567,9 +567,9 @@ public class PEPdfServiceImpl implements PEPdfService {
 
         for (PEOnePagerDescriptionsDto descriptionsDto : descriptionsDtoList) {
             table.addCell(new Cell().add(new Paragraph(
-                            unNullifierToEmptyString(descriptionsDto.getDescriptionBold())).setBold()));
+                            unNullifierToEmptyString(descriptionsDto.getDescriptionBold())).setMultipliedLeading(lineSpacingMultiplier).setBold()));
             table.addCell(new Cell().add(new Paragraph(
-                            unNullifierToEmptyString(descriptionsDto.getDescription()))));
+                            unNullifierToEmptyString(descriptionsDto.getDescription())).setMultipliedLeading(lineSpacingMultiplier)));
         }
     }
 
