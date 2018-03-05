@@ -992,7 +992,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
         }
     }
 
-    addOnePagerBenchMarkName() {
+    addOnePagerBenchmarkName() {
         var found = false;
 
         for (var i = 0; i < this.fund.onePagerDescriptions.length; i++) {
