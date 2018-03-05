@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.List;
 
 /**
@@ -330,11 +331,7 @@ public class PEPdfServiceImpl implements PEPdfService {
 
             document.close();
 
-            InputStream inputStream = new FileInputStream(onePagerDest);
-
-            file.delete();
-
-            return inputStream;
+            return new FileInputStream(onePagerDest);
         } catch (Exception ex) {
             logger.error("Error creating PE fund's One Pager: " + fundId, ex);
         }
