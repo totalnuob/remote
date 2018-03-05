@@ -208,8 +208,8 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
     }
 
     @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
-    @RequestMapping(value = "/createOnePager/{fundId}", method = RequestMethod.POST)
-    public ResponseEntity<?> createOnePager(@RequestBody PEFundDataForOnePagerDto dataForOnePagerDto, @PathVariable Long fundId) {
+    @RequestMapping(value = "/saveDataForOnePager/{fundId}", method = RequestMethod.POST)
+    public ResponseEntity<?> saveDataForOnePager(@RequestBody PEFundDataForOnePagerDto dataForOnePagerDto, @PathVariable Long fundId) {
 
         PEOnePagerDescriptionsResultDto descriptionsResultDto = this.descriptionsService.saveList(dataForOnePagerDto.getOnePagerDescriptions(), fundId);
         PEFundManagementTeamResultDto managementTeamResultDto = this.managementTeamService.saveList(dataForOnePagerDto.getManagementTeam(), fundId);

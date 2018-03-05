@@ -1010,7 +1010,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
         this.dataForOnePager.onePagerDescriptions = this.fund.onePagerDescriptions;
         this.dataForOnePager.managementTeam = this.fund.managementTeam;
 
-        this.busy = this.fundService.createOnePager(this.dataForOnePager, this.fund.id)
+        this.busy = this.fundService.saveDataForOnePager(this.dataForOnePager, this.fund.id)
             .subscribe(
                 (response) => {
                     this.postAction(response.messageEn, null);
@@ -1029,7 +1029,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     }
 
     export() {
-        this.busy = this.fundService.makeFileRequest(DATA_APP_URL + `periodicReport/export/${this.reportId}/${'KZT_FORM_6'}`, this.fund.id, 'OnePager')
+        this.busy = this.fundService.makeFileRequest(this.fund.id, 'OnePager')
             .subscribe(
                 response  => {
                     //console.log("ok");

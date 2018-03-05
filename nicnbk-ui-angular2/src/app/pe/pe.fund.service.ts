@@ -20,6 +20,7 @@ export class PEFundService extends CommonService {
     private PE_FUND_SAVE_PORTFOLIO_INFO_URL = this.PE_BASE_URL + "savePortfolioInfo/";
     private PE_FUND_CALCULATE_IRR_URL = this.PE_BASE_URL + "calculateIRR/";
     private PE_FUND_SAVE_GROSS_CF_URL = this.PE_BASE_URL + "saveGrossCF/";
+    private PE_FUND_SAVE_DATA_FOR_ONE_PAGER_URL = this.PE_BASE_URL + "saveDataForOnePager/";
     private PE_FUND_CREATE_ONE_PAGER_URL = this.PE_BASE_URL + "createOnePager/";
 
     constructor(
@@ -109,21 +110,21 @@ export class PEFundService extends CommonService {
         return this.uploadService.postFiles(this.PE_FUND_UPLOAD_GROSS_CF_URL, [], files);
     }
 
-    createOnePager(entity, id) {
+    saveDataForOnePager(entity, id) {
         let body = JSON.stringify(entity);
 
-        return this.http.post(this.PE_FUND_CREATE_ONE_PAGER_URL + id, body, this.getOptionsWithCredentials())
+        return this.http.post(this.PE_FUND_SAVE_DATA_FOR_ONE_PAGER_URL + id, body, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }
 
-    makeFileRequest(url, id, fileName): Observable<Response> {
+    makeFileRequest(id, fileName): Observable<Response> {
         return Observable.fromPromise(new Promise((resolve, reject) => {
             let xhr = new XMLHttpRequest();
             xhr.withCredentials = true; // send auth token with the request
             // TODO: url const
             //let url =  DATA_APP_URL + `periodicReport/export/${this.reportId}/${'KZT_FORM_1'}`;
-            xhr.open('GET', url, true);
+            xhr.open('GET', this.PE_FUND_CREATE_ONE_PAGER_URL + id, true);
             xhr.responseType = 'blob';
 
             // Xhr callback when we get a result back
