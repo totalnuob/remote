@@ -382,11 +382,11 @@ public class PEPdfServiceImpl implements PEPdfService {
     private void addDoubleWhiteTitle(Table table, String title1, String title2, Float width) {
         table.addCell(new Cell()
                 .setWidth(width / 2)
-                .add(new Paragraph(unNullifierToEmptyString(title1)).setBold())
+                .add(new Paragraph(unNullifierToEmptyString(title1)).setMultipliedLeading(lineSpacingMultiplier).setBold())
                 .setTextAlignment(TextAlignment.CENTER));
         table.addCell(new Cell()
                 .setWidth(width / 2)
-                .add(new Paragraph(unNullifierToEmptyString(title2)).setBold())
+                .add(new Paragraph(unNullifierToEmptyString(title2)).setMultipliedLeading(lineSpacingMultiplier).setBold())
                 .setTextAlignment(TextAlignment.CENTER));
     }
 
