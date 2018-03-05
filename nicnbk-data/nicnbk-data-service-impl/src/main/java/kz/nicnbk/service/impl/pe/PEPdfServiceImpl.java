@@ -330,7 +330,11 @@ public class PEPdfServiceImpl implements PEPdfService {
 
             document.close();
 
-            return new FileInputStream(onePagerDest);
+            InputStream inputStream = new FileInputStream(onePagerDest);
+
+            file.delete();
+
+            return inputStream;
         } catch (Exception ex) {
             logger.error("Error creating PE fund's One Pager: " + fundId, ex);
         }
