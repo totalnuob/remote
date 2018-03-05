@@ -76,7 +76,7 @@ public class PEPdfServiceImpl implements PEPdfService {
             Float logoMaxHeight = 24f;
             Float logoMaxWidth = 72f;
 //            Float topColunmOffSet = 182f;
-            Float topColunmOffSet = 160f;
+            Float topColunmOffSet = 160.5f;
             Float columnGap = 3f;
             Float fontSize = 8f;
 
