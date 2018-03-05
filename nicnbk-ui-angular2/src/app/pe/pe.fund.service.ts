@@ -7,6 +7,8 @@ import {DATA_APP_URL} from "../common/common.service.constants";
 import {PEFund} from "./model/pe.fund";
 import {FileUploadService} from "../upload/file.upload.service";
 
+var fileSaver = require("file-saver");
+
 @Injectable()
 export class PEFundService extends CommonService {
     private PE_BASE_URL = DATA_APP_URL + "pe/fund/";
