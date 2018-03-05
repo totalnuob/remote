@@ -2632,50 +2632,50 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         // TODO: Tranche B
 
         // current NOAL
-        List<SingularityNOALRecordDto> currentNoalRecords = new ArrayList<>();
-        List<SingularityNOALRecordDto> currentNoalTrancheARecords = this.hfNOALService.get(report.getId(), 1).getNoalTrancheAList();
-        if(currentNoalTrancheARecords != null){
-            currentNoalRecords.addAll(currentNoalTrancheARecords);
-        }
-
-        for(SingularityNOALRecordDto noalRecordDto: currentNoalRecords){
-            Date date = DateUtils.getLastDayOfCurrentMonth(report.getReportDate());
-            if(noalRecordDto.getTransaction() != null && noalRecordDto.getTransaction().equalsIgnoreCase(PeriodicReportConstants.EN_NOAL_PORTFOLIO_REDEMPTION) &&
-                    noalRecordDto.getName() != null &&DateUtils.getDateFormatted(noalRecordDto.getDate()).equalsIgnoreCase(DateUtils.getDateFormatted(date))){
-                double value = fundTurnoverHF.get(noalRecordDto.getName()) != null ? fundTurnoverHF.get(noalRecordDto.getName()).doubleValue() : 0;
-                value = MathUtils.subtract(value, noalRecordDto.getTransactionAmount() != null ? noalRecordDto.getTransactionAmount().doubleValue() : 0);
-                fundTurnoverHF.put(noalRecordDto.getName(), value);
-            }
-        }
-
-        // previous NOAL
-        List<SingularityNOALRecordDto> previousNoalRecords = new ArrayList<>();
-        List<SingularityNOALRecordDto> previousNoalTrancheARecords = this.hfNOALService.get(previousReport.getId(), 1).getNoalTrancheAList();
-        if(previousNoalTrancheARecords != null){
-            previousNoalRecords.addAll(previousNoalTrancheARecords);
-        }
-
-        Date date = DateUtils.getLastDayOfCurrentMonth(previousReport.getReportDate());
-        for(SingularityNOALRecordDto prevNoalRecordDto: previousNoalRecords){
-            if(prevNoalRecordDto.getDate() != null && DateUtils.getDateFormatted(prevNoalRecordDto.getDate()).equalsIgnoreCase(DateUtils.getDateFormatted(date))){
-                for(SingularityNOALRecordDto currentNoalRecordDto: currentNoalRecords){
-                    if(prevNoalRecordDto.getTransaction() != null && prevNoalRecordDto.getTransaction().equalsIgnoreCase(PeriodicReportConstants.EN_NOAL_PORTFOLIO_REDEMPTION) &&
-                            currentNoalRecordDto.getTransaction() != null && currentNoalRecordDto.getTransaction().equalsIgnoreCase(PeriodicReportConstants.EN_NOAL_PORTFOLIO_REDEMPTION) &&
-                            prevNoalRecordDto.getName() != null && prevNoalRecordDto.getName().equalsIgnoreCase(currentNoalRecordDto.getName()) &&
-                            DateUtils.getDateFormatted(currentNoalRecordDto.getDate()).equalsIgnoreCase(DateUtils.getDateFormatted(date))){
-                        double prevValue = prevNoalRecordDto.getTransactionAmount() != null ? prevNoalRecordDto.getTransactionAmount().doubleValue() : 0;
-                        double currValue = currentNoalRecordDto.getTransactionAmount() != null ? currentNoalRecordDto.getTransactionAmount().doubleValue() : 0;
-                        if(prevValue != currValue){
-                            double value = fundTurnoverHF.get(currentNoalRecordDto.getName()) != null ? fundTurnoverHF.get(currentNoalRecordDto.getName()).doubleValue() : 0;
-                            value = MathUtils.subtract(MathUtils.add(value, currValue), prevValue);
-                            fundTurnoverHF.put(currentNoalRecordDto.getName(), value);
-                        }
-
-                    }
-                }
-            }
-
-        }
+//        List<SingularityNOALRecordDto> currentNoalRecords = new ArrayList<>();
+//        List<SingularityNOALRecordDto> currentNoalTrancheARecords = this.hfNOALService.get(report.getId(), 1).getNoalTrancheAList();
+//        if(currentNoalTrancheARecords != null){
+//            currentNoalRecords.addAll(currentNoalTrancheARecords);
+//        }
+//
+//        for(SingularityNOALRecordDto noalRecordDto: currentNoalRecords){
+//            Date date = DateUtils.getLastDayOfCurrentMonth(report.getReportDate());
+//            if(noalRecordDto.getTransaction() != null && noalRecordDto.getTransaction().equalsIgnoreCase(PeriodicReportConstants.EN_NOAL_PORTFOLIO_REDEMPTION) &&
+//                    noalRecordDto.getName() != null &&DateUtils.getDateFormatted(noalRecordDto.getDate()).equalsIgnoreCase(DateUtils.getDateFormatted(date))){
+//                double value = fundTurnoverHF.get(noalRecordDto.getName()) != null ? fundTurnoverHF.get(noalRecordDto.getName()).doubleValue() : 0;
+//                value = MathUtils.subtract(value, noalRecordDto.getTransactionAmount() != null ? noalRecordDto.getTransactionAmount().doubleValue() : 0);
+//                fundTurnoverHF.put(noalRecordDto.getName(), value);
+//            }
+//        }
+//
+//        // previous NOAL
+//        List<SingularityNOALRecordDto> previousNoalRecords = new ArrayList<>();
+//        List<SingularityNOALRecordDto> previousNoalTrancheARecords = this.hfNOALService.get(previousReport.getId(), 1).getNoalTrancheAList();
+//        if(previousNoalTrancheARecords != null){
+//            previousNoalRecords.addAll(previousNoalTrancheARecords);
+//        }
+//
+//        Date date = DateUtils.getLastDayOfCurrentMonth(previousReport.getReportDate());
+//        for(SingularityNOALRecordDto prevNoalRecordDto: previousNoalRecords){
+//            if(prevNoalRecordDto.getDate() != null && DateUtils.getDateFormatted(prevNoalRecordDto.getDate()).equalsIgnoreCase(DateUtils.getDateFormatted(date))){
+//                for(SingularityNOALRecordDto currentNoalRecordDto: currentNoalRecords){
+//                    if(prevNoalRecordDto.getTransaction() != null && prevNoalRecordDto.getTransaction().equalsIgnoreCase(PeriodicReportConstants.EN_NOAL_PORTFOLIO_REDEMPTION) &&
+//                            currentNoalRecordDto.getTransaction() != null && currentNoalRecordDto.getTransaction().equalsIgnoreCase(PeriodicReportConstants.EN_NOAL_PORTFOLIO_REDEMPTION) &&
+//                            prevNoalRecordDto.getName() != null && prevNoalRecordDto.getName().equalsIgnoreCase(currentNoalRecordDto.getName()) &&
+//                            DateUtils.getDateFormatted(currentNoalRecordDto.getDate()).equalsIgnoreCase(DateUtils.getDateFormatted(date))){
+//                        double prevValue = prevNoalRecordDto.getTransactionAmount() != null ? prevNoalRecordDto.getTransactionAmount().doubleValue() : 0;
+//                        double currValue = currentNoalRecordDto.getTransactionAmount() != null ? currentNoalRecordDto.getTransactionAmount().doubleValue() : 0;
+//                        if(prevValue != currValue){
+//                            double value = fundTurnoverHF.get(currentNoalRecordDto.getName()) != null ? fundTurnoverHF.get(currentNoalRecordDto.getName()).doubleValue() : 0;
+//                            value = MathUtils.subtract(MathUtils.add(value, currValue), prevValue);
+//                            fundTurnoverHF.put(currentNoalRecordDto.getName(), value);
+//                        }
+//
+//                    }
+//                }
+//            }
+//
+//        }
 
         // Singularity - General Ledger
 
