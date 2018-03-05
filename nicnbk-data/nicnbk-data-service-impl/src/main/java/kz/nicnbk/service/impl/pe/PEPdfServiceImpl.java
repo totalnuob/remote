@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.List;
 
@@ -329,10 +330,11 @@ public class PEPdfServiceImpl implements PEPdfService {
 
             document.close();
 
-            return new InputStream();
+            return new FileInputStream(onePagerDest);
         } catch (Exception ex) {
             logger.error("Error creating PE fund's One Pager: " + fundId, ex);
         }
+        return null;
     }
 
     private void createCharts(PEFirmDto firmDto, List<PEFundDto> fundDtoList, String benchmark, Float width) throws Exception {

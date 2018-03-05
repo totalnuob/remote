@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
 
@@ -231,7 +232,7 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
                 managementTeamResultDto.getManagementTeamDtoList(),
                 StatusResultType.SUCCESS, "", "SUCCESS", "");
 
-        this.pdfService.createOnePager(fundId);
+        InputStream inputStream = this.pdfService.createOnePager(fundId);
 
         return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
     }
