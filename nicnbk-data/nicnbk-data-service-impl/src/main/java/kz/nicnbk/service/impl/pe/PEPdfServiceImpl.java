@@ -577,7 +577,7 @@ public class PEPdfServiceImpl implements PEPdfService {
         table.setWidth(width);
 
         for (PEFundManagementTeamDto managementTeamDto : managementTeamDtoList) {
-            Paragraph p = new Paragraph();
+            Paragraph p = new Paragraph().setMultipliedLeading(lineSpacingMultiplier);
             com.itextpdf.layout.element.List list = new com.itextpdf.layout.element.List().setSymbolIndent(4).setListSymbol("   -");
 
             p.add(new Text(unNullifierToEmptyString(managementTeamDto.getName())).setBold());
