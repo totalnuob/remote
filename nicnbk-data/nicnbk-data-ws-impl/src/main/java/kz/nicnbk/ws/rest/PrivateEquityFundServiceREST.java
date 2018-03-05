@@ -209,8 +209,7 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
 
     @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/createOnePager/{fundId}", method = RequestMethod.POST)
-    @ResponseBody
-    public ResponseEntity<?> createOnePager(@RequestBody PEFundDataForOnePagerDto dataForOnePagerDto, @PathVariable Long fundId, HttpServletResponse response) {
+    public ResponseEntity<?> createOnePager(@RequestBody PEFundDataForOnePagerDto dataForOnePagerDto, @PathVariable Long fundId) {
 
         PEOnePagerDescriptionsResultDto descriptionsResultDto = this.descriptionsService.saveList(dataForOnePagerDto.getOnePagerDescriptions(), fundId);
         PEFundManagementTeamResultDto managementTeamResultDto = this.managementTeamService.saveList(dataForOnePagerDto.getManagementTeam(), fundId);
@@ -232,8 +231,6 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
                 managementTeamResultDto.getManagementTeamDtoList(),
                 StatusResultType.SUCCESS, "", "SUCCESS", "");
 
-        InputStream inputStream = this.pdfService.createOnePager(fundId);
-
         return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
     }
 
@@ -247,6 +244,9 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
         // TODO: Check rights
 
         InputStream inputStream = null;
+
+        inputStream = this.pdfService.createOnePager(fundId);
+
         try{
             inputStream = this.periodicReportService.getExportFileStream(reportId, type);
         }catch (IllegalStateException ex){

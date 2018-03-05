@@ -1029,7 +1029,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     }
 
     export() {
-        this.busy = this.fundService.makeFileRequest(DATA_APP_URL + `periodicReport/export/${this.reportId}/${'KZT_FORM_6'}`, 'OnePager')
+        this.busy = this.fundService.makeFileRequest(DATA_APP_URL + `periodicReport/export/${this.reportId}/${'KZT_FORM_6'}`, this.fund.id, 'OnePager')
             .subscribe(
                 response  => {
                     //console.log("ok");
