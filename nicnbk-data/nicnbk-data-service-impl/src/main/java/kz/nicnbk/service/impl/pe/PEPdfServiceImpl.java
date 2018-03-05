@@ -168,7 +168,7 @@ public class PEPdfServiceImpl implements PEPdfService {
                 document.add(keyFundStatisticsTable);
 
 //                topColunmOffSet += (2 + fundDtoList.size()) * 16.4888888f + 34f;
-                topColunmOffSet += (2 + fundDtoList.size()) * 13.3888888888888f + 27.26f;
+                topColunmOffSet += (2 + fundDtoList.size()) * 13.38f + 27.76f;
             }
 
             //Define columns' widths and heights
