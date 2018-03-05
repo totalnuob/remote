@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Set;
 
@@ -270,16 +271,16 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
             org.apache.commons.io.IOUtils.copy(inputStream, response.getOutputStream());
             response.flushBuffer();
         } catch (UnsupportedEncodingException e) {
-            logger.error("(PeriodicReport) File export request failed: unsupported encoding", e);
+            logger.error("(Private Equity) Pdf export request failed: unsupported encoding", e);
         } catch (IOException e) {
-            logger.error("(PeriodicReport) File export request failed: io exception", e);
+            logger.error("(Private Equity) Pdf export request failed: io exception", e);
         } catch (Exception e){
-            logger.error("(PeriodicReport) File export request failed", e);
+            logger.error("(Private Equity) Pdf export request failed", e);
         }
         try {
             inputStream.close();
         } catch (IOException e) {
-            logger.error("(PeriodicReport) File export: failed to close input stream");
+            logger.error("(Private Equity) Pdf export: failed to close input stream");
         }
     }
 }
