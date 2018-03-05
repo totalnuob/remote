@@ -67,6 +67,7 @@ public class PEPdfServiceImpl implements PEPdfService {
     private Image barChartNetMoic;
 
     private static final Float lineSpacingMultiplier = 1f;
+    private static final Float lineSpacingMultiplierMeritsRisks = 1.3f;
 
     @Override
     public void createOnePager(Long fundId) {
@@ -503,7 +504,7 @@ public class PEPdfServiceImpl implements PEPdfService {
         if (descriptionsDtoListMerits != null) {
             for (PEOnePagerDescriptionsDto descriptionsDto : descriptionsDtoListMerits) {
                 if (descriptionsDto != null) {
-                    Paragraph p = new Paragraph().setMultipliedLeading(1.3f);
+                    Paragraph p = new Paragraph().setMultipliedLeading(lineSpacingMultiplierMeritsRisks);
                     if (descriptionsDto.getDescriptionBold() != null && !descriptionsDto.getDescriptionBold().equals("")) {
                         p.add(new Text("(+) " + descriptionsDto.getDescriptionBold() + " ").setBold());
                     } else {
@@ -520,7 +521,7 @@ public class PEPdfServiceImpl implements PEPdfService {
         if (descriptionsDtoListRisks != null) {
             for (PEOnePagerDescriptionsDto descriptionsDto : descriptionsDtoListRisks) {
                 if (descriptionsDto != null) {
-                    Paragraph p = new Paragraph().setMultipliedLeading(1.3f);
+                    Paragraph p = new Paragraph().setMultipliedLeading(lineSpacingMultiplierMeritsRisks);
                     if (descriptionsDto.getDescriptionBold() != null && !descriptionsDto.getDescriptionBold().equals("")) {
                         p.add(new Text("(-) " + descriptionsDto.getDescriptionBold() + " ").setBold());
                     } else {
