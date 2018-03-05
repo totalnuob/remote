@@ -75,7 +75,8 @@ public class PEPdfServiceImpl implements PEPdfService {
             Float offSet = 36f;
             Float logoMaxHeight = 24f;
             Float logoMaxWidth = 72f;
-            Float topColunmOffSet = 182f;
+//            Float topColunmOffSet = 182f;
+            Float topColunmOffSet = 160f;
             Float columnGap = 3f;
             Float fontSize = 8f;
 
@@ -166,7 +167,8 @@ public class PEPdfServiceImpl implements PEPdfService {
                 this.addKeyFundStatistics(keyFundStatisticsTable, fundDtoList, ps.getWidth() - offSet * 2);
                 document.add(keyFundStatisticsTable);
 
-                topColunmOffSet += (2 + fundDtoList.size()) * 16.4888888f + 34f;
+//                topColunmOffSet += (2 + fundDtoList.size()) * 16.4888888f + 34f;
+                topColunmOffSet += (2 + fundDtoList.size()) * 13.3888888888888f + 27.26f;
             }
 
             //Define columns' widths and heights
