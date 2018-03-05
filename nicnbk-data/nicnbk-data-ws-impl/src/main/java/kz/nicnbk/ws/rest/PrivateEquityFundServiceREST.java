@@ -234,53 +234,52 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
         return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
     }
 
-    @RequestMapping(value="/export/{reportId}/{type}", method= RequestMethod.GET)
+    @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value="/createOnePager/{fundId}", method= RequestMethod.GET)
     @ResponseBody
-    public void exportReport(@PathVariable(value="reportId") Long reportId,
-                             @PathVariable(value = "type") String type,
-                             HttpServletResponse response) {
+    public void exportReport(@PathVariable Long fundId, HttpServletResponse response) {
 
-        // TODO: control file download by user role
-        // TODO: Check rights
-
-        InputStream inputStream = null;
-
-        inputStream = this.pdfService.createOnePager(fundId);
-
-        try{
-            inputStream = this.periodicReportService.getExportFileStream(reportId, type);
-        }catch (IllegalStateException ex){
-            inputStream = null;
-        }
-
-        if(inputStream == null){
-            try {
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                return;
-            } catch (IOException e) {
-                return;
-            }
-        }
-
-        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        try {
-            //fileName = URLEncoder.encode(fileName, "UTF-8");
-            //fileName = URLDecoder.decode(fileName, "ISO8859_1");
-            //response.setHeader("Content-disposition", "attachment; filename=\""+ fileName + "\"");
-            response.setHeader("Content-disposition", "attachment;");
-            org.apache.commons.io.IOUtils.copy(inputStream, response.getOutputStream());
-            response.flushBuffer();
-        } catch (UnsupportedEncodingException e) {
-            logger.error("(PeriodicReport) File export request failed: unsupported encoding", e);
-        } catch (IOException e) {
-            logger.error("(PeriodicReport) File export request failed: io exception", e);
-        } catch (Exception e){
-            logger.error("(PeriodicReport) File export request failed", e);
-        }
-        try {
-            inputStream.close();
-        } catch (IOException e) {
-            logger.error("(PeriodicReport) File export: failed to close input stream");
-        }
+//        // TODO: control file download by user role
+//        // TODO: Check rights
+//
+//        InputStream inputStream = null;
+//
+//        inputStream = this.pdfService.createOnePager(fundId);
+//
+//        try{
+//            inputStream = this.periodicReportService.getExportFileStream(reportId, type);
+//        }catch (IllegalStateException ex){
+//            inputStream = null;
+//        }
+//
+//        if(inputStream == null){
+//            try {
+//                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+//                return;
+//            } catch (IOException e) {
+//                return;
+//            }
+//        }
+//
+//        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+//        try {
+//            //fileName = URLEncoder.encode(fileName, "UTF-8");
+//            //fileName = URLDecoder.decode(fileName, "ISO8859_1");
+//            //response.setHeader("Content-disposition", "attachment; filename=\""+ fileName + "\"");
+//            response.setHeader("Content-disposition", "attachment;");
+//            org.apache.commons.io.IOUtils.copy(inputStream, response.getOutputStream());
+//            response.flushBuffer();
+//        } catch (UnsupportedEncodingException e) {
+//            logger.error("(PeriodicReport) File export request failed: unsupported encoding", e);
+//        } catch (IOException e) {
+//            logger.error("(PeriodicReport) File export request failed: io exception", e);
+//        } catch (Exception e){
+//            logger.error("(PeriodicReport) File export request failed", e);
+//        }
+//        try {
+//            inputStream.close();
+//        } catch (IOException e) {
+//            logger.error("(PeriodicReport) File export: failed to close input stream");
+//        }
     }
 }
