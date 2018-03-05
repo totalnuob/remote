@@ -1027,7 +1027,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     }
 
     export() {
-        this.busy = this.periodicReportService.makeFileRequest(DATA_APP_URL + `periodicReport/export/${this.reportId}/${'KZT_FORM_6'}`, 'ОИК-6')
+        this.busy = this.fundService.makeFileRequest(DATA_APP_URL + `periodicReport/export/${this.reportId}/${'KZT_FORM_6'}`, 'ОИК-6')
             .subscribe(
                 response  => {
                     //console.log("ok");
