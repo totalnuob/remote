@@ -1006,7 +1006,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
         }
     }
 
-    createOnePager() {
+    saveDataAndCreateOnePager() {
         this.dataForOnePager.onePagerDescriptions = this.fund.onePagerDescriptions;
         this.dataForOnePager.managementTeam = this.fund.managementTeam;
 
@@ -1018,7 +1018,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     this.fund.onePagerDescriptions = response.onePagerDescriptions;
                     this.fund.managementTeam = response.managementTeam;
 
-                    this.export();
+                    this.createAndDownloadOnePager();
                 },
                 (error: ErrorResponse) => {
                     this.processErrorMessage(error);
@@ -1028,8 +1028,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
             )
     }
 
-    export() {
-        this.busy = this.fundService.makeFileRequest(this.fund.id, 'OnePager')
+    createAndDownloadOnePager() {
+        this.busy = this.fundService.createAndDownloadOnePager(this.fund.id, 'OnePager')
             .subscribe(
                 response  => {
                     //console.log("ok");

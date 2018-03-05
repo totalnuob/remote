@@ -118,7 +118,7 @@ export class PEFundService extends CommonService {
             .catch(this.handleErrorResponse);
     }
 
-    makeFileRequest(id, fileName): Observable<Response> {
+    createAndDownloadOnePager(id, fileName): Observable<Response> {
         return Observable.fromPromise(new Promise((resolve, reject) => {
             let xhr = new XMLHttpRequest();
             xhr.withCredentials = true; // send auth token with the request
