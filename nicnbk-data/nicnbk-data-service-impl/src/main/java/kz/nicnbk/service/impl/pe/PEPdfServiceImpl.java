@@ -201,7 +201,7 @@ public class PEPdfServiceImpl implements PEPdfService {
                     !descriptionsBenchmarkDtoList.get(0).getDescription().equals("")
                     ) {
                 //Charts
-                this.createCharts(firmDto, fundDtoList, columnOneWidth);
+                this.createCharts(firmDto, fundDtoList, descriptionsBenchmarkDtoList.get(0).getDescription(), columnOneWidth);
                 barChartNetIrr = new Image(ImageDataFactory.create(barChartNetIrrDest));
                 barChartNetMoic = new Image(ImageDataFactory.create(barChartNetMoicDest));
                 barChartNetIrr.setWidth(columnOneWidth / 2);
@@ -332,15 +332,15 @@ public class PEPdfServiceImpl implements PEPdfService {
         }
     }
 
-    private void createCharts(PEFirmDto firmDto, List<PEFundDto> fundDtoList, Float width) throws Exception {
+    private void createCharts(PEFirmDto firmDto, List<PEFundDto> fundDtoList, String benchmark, Float width) throws Exception {
         String gpName = firmDto.getFirmName();
-        String ca = "Test benchmark";
+        String benchmarkName = benchmark;
 
         DefaultCategoryDataset datasetIrr = new DefaultCategoryDataset();
 
         for (PEFundDto fundDto : fundDtoList) {
             datasetIrr.addValue(fundDto.getNetIrr(), gpName, fundDto.getFundName());
-            datasetIrr.addValue(fundDto.getBenchmarkNetIrr(), ca, fundDto.getFundName());
+            datasetIrr.addValue(fundDto.getBenchmarkNetIrr(), benchmarkName, fundDto.getFundName());
         }
 
         JFreeChart barChartIrr = ChartFactory.createBarChart("Net IRR", "", "", datasetIrr, PlotOrientation.VERTICAL, true, false, false);
@@ -352,7 +352,7 @@ public class PEPdfServiceImpl implements PEPdfService {
 
         for (PEFundDto fundDto : fundDtoList) {
             datasetTvpi.addValue(fundDto.getNetTvpi(), gpName, fundDto.getFundName());
-            datasetTvpi.addValue(fundDto.getBenchmarkNetTvpi(), ca, fundDto.getFundName());
+            datasetTvpi.addValue(fundDto.getBenchmarkNetTvpi(), benchmarkName, fundDto.getFundName());
         }
 
         JFreeChart barChartTvpi = ChartFactory.createBarChart("Net MOIC", "", "", datasetTvpi, PlotOrientation.VERTICAL, true, false, false);
