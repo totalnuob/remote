@@ -264,9 +264,6 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
 
         response.setContentType("application/pdf");
         try {
-            //fileName = URLEncoder.encode(fileName, "UTF-8");
-            //fileName = URLDecoder.decode(fileName, "ISO8859_1");
-            //response.setHeader("Content-disposition", "attachment; filename=\""+ fileName + "\"");
             response.setHeader("Content-disposition", "attachment;");
             org.apache.commons.io.IOUtils.copy(inputStream, response.getOutputStream());
             response.flushBuffer();
