@@ -5,6 +5,8 @@ import kz.nicnbk.service.api.pe.*;
 import kz.nicnbk.service.dto.common.StatusResultType;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.pe.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
@@ -24,6 +27,8 @@ import java.util.Set;
 @RestController
 @RequestMapping("/pe/fund")
 public class PrivateEquityFundServiceREST extends  CommonServiceREST{
+
+    private static final Logger logger = LoggerFactory.getLogger(PrivateEquityFundServiceREST.class);
 
     @Autowired
     private PEFundService service;
@@ -239,49 +244,42 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
     @ResponseBody
     public void exportReport(@PathVariable Long fundId, HttpServletResponse response) {
 
-        System.out.println("Hello");
+        InputStream inputStream;
 
-//        // TODO: control file download by user role
-//        // TODO: Check rights
-//
-//        InputStream inputStream = null;
-//
-//        inputStream = this.pdfService.createOnePager(fundId);
-//
-//        try{
-//            inputStream = this.periodicReportService.getExportFileStream(reportId, type);
-//        }catch (IllegalStateException ex){
-//            inputStream = null;
-//        }
-//
-//        if(inputStream == null){
-//            try {
-//                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-//                return;
-//            } catch (IOException e) {
-//                return;
-//            }
-//        }
-//
-//        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-//        try {
-//            //fileName = URLEncoder.encode(fileName, "UTF-8");
-//            //fileName = URLDecoder.decode(fileName, "ISO8859_1");
-//            //response.setHeader("Content-disposition", "attachment; filename=\""+ fileName + "\"");
-//            response.setHeader("Content-disposition", "attachment;");
-//            org.apache.commons.io.IOUtils.copy(inputStream, response.getOutputStream());
-//            response.flushBuffer();
-//        } catch (UnsupportedEncodingException e) {
-//            logger.error("(PeriodicReport) File export request failed: unsupported encoding", e);
-//        } catch (IOException e) {
-//            logger.error("(PeriodicReport) File export request failed: io exception", e);
-//        } catch (Exception e){
-//            logger.error("(PeriodicReport) File export request failed", e);
-//        }
-//        try {
-//            inputStream.close();
-//        } catch (IOException e) {
-//            logger.error("(PeriodicReport) File export: failed to close input stream");
-//        }
+        try {
+            inputStream = this.pdfService.createOnePager(fundId);
+        } catch (IllegalStateException ex) {
+            inputStream = null;
+        }
+
+        if (inputStream == null) {
+            try {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                return;
+            } catch (IOException e) {
+                return;
+            }
+        }
+
+        response.setContentType("application/pdf");
+        try {
+            //fileName = URLEncoder.encode(fileName, "UTF-8");
+            //fileName = URLDecoder.decode(fileName, "ISO8859_1");
+            //response.setHeader("Content-disposition", "attachment; filename=\""+ fileName + "\"");
+            response.setHeader("Content-disposition", "attachment;");
+            org.apache.commons.io.IOUtils.copy(inputStream, response.getOutputStream());
+            response.flushBuffer();
+        } catch (UnsupportedEncodingException e) {
+            logger.error("(PeriodicReport) File export request failed: unsupported encoding", e);
+        } catch (IOException e) {
+            logger.error("(PeriodicReport) File export request failed: io exception", e);
+        } catch (Exception e){
+            logger.error("(PeriodicReport) File export request failed", e);
+        }
+        try {
+            inputStream.close();
+        } catch (IOException e) {
+            logger.error("(PeriodicReport) File export: failed to close input stream");
+        }
     }
 }

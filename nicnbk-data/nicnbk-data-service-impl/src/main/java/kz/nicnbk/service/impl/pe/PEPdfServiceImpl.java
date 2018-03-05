@@ -37,7 +37,7 @@ import java.util.List;
 @Service
 public class PEPdfServiceImpl implements PEPdfService {
 
-    private static final Logger logger = LoggerFactory.getLogger(PEFundServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(PEPdfServiceImpl.class);
 
     @Autowired
     private PEFundService fundService;

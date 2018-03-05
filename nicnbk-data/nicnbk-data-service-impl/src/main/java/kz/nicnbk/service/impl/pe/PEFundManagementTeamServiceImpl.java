@@ -23,7 +23,7 @@ import java.util.List;
 @Service
 public class PEFundManagementTeamServiceImpl implements PEFundManagementTeamService {
 
-    private static final Logger logger = LoggerFactory.getLogger(PEFundServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(PEFundManagementTeamServiceImpl.class);
 
     @Autowired
     private PEFundManagementTeamEntityConverter converter;

@@ -25,7 +25,7 @@ import java.util.List;
 @Service
 public class PECompanyPerformanceIddServiceImpl implements PECompanyPerformanceIddService {
 
-    private static final Logger logger = LoggerFactory.getLogger(PEFundServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(PECompanyPerformanceIddServiceImpl.class);
 
     @Autowired
     private PECompanyPerformanceIddRepository repository;

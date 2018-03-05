@@ -18,7 +18,7 @@ import java.util.List;
 @Service
 public class PENetCashflowServiceImpl implements PENetCashflowService {
 
-    private static final Logger logger = LoggerFactory.getLogger(PEFundServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(PENetCashflowServiceImpl.class);
 
     @Autowired
     private PENetCashflowRepository repository;

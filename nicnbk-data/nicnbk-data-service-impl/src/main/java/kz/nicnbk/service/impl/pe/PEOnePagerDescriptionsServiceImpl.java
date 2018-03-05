@@ -23,7 +23,7 @@ import java.util.List;
 @Service
 public class PEOnePagerDescriptionsServiceImpl implements PEOnePagerDescriptionsService {
 
-    private static final Logger logger = LoggerFactory.getLogger(PEFundServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(PEOnePagerDescriptionsServiceImpl.class);
 
     @Autowired
     private PEOnePagerDescriptionsEntityConverter converter;

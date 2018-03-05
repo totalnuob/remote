@@ -4,8 +4,6 @@ import kz.nicnbk.repo.api.pe.PECompanyPerformanceRepository;
 import kz.nicnbk.repo.model.pe.PEFund;
 import kz.nicnbk.repo.model.pe.PECompanyPerformance;
 import kz.nicnbk.service.api.pe.PECompanyPerformanceService;
-import kz.nicnbk.service.api.pe.PEGrossCashflowService;
-import kz.nicnbk.service.api.pe.PEIrrService;
 import kz.nicnbk.service.converter.pe.PECompanyPerformanceEntityConverter;
 import kz.nicnbk.service.dto.common.StatusResultType;
 import kz.nicnbk.service.dto.pe.*;
@@ -25,7 +23,7 @@ import java.util.List;
 @Service
 public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceService {
 
-    private static final Logger logger = LoggerFactory.getLogger(PEFundServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(PECompanyPerformanceServiceImpl.class);
 
     @Autowired
     private PECompanyPerformanceRepository repository;
