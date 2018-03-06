@@ -56,8 +56,8 @@ public class PEPdfServiceImpl implements PEPdfService {
 //    private static final String onePagerDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/OnePager.pdf";
     private static final String gpLogoDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/SilverLakeLogo.png";
     private static final String nicLogoDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/NIClogo.png";
-    private static final String barChartNetIrrDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/BarChartNetIrr.jpeg";
-    private static final String barChartNetMoicDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/BarChartNetMoic.jpeg";
+//    private static final String barChartNetIrrDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/BarChartNetIrr.jpeg";
+//    private static final String barChartNetMoicDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/BarChartNetMoic.jpeg";
 
     //Colors
     private static final Color greenColor = new DeviceCmyk(0.78f, 0, 0.81f, 0.21f);
@@ -73,7 +73,7 @@ public class PEPdfServiceImpl implements PEPdfService {
     private static final Float lineSpacingMultiplierText = 1.3f;
 
     @Override
-    public InputStream createOnePager(Long fundId, String onePagerDest) {
+    public InputStream createOnePager(Long fundId, String tmpFolder, String onePagerDest) {
         try {
             //Margins
             Float offSet = 36f;
@@ -83,6 +83,12 @@ public class PEPdfServiceImpl implements PEPdfService {
             Float topColunmOffSet = 160.5f;
             Float columnGap = 3f;
             Float fontSize = 8f;
+
+            String barChartNetIrrDest = tmpFolder + "/BarChartNetIrr" + System.currentTimeMillis() + ".jpeg";
+            String barChartNetMoicDest = tmpFolder + "/BarChartNetMoic" + System.currentTimeMillis() + ".jpeg";
+
+            System.out.println(barChartNetIrrDest);
+            System.out.println(barChartNetMoicDest);
 
             //Logo initialization
             gpLogo = new Image(ImageDataFactory.create(gpLogoDest));
@@ -204,7 +210,7 @@ public class PEPdfServiceImpl implements PEPdfService {
                     !descriptionsBenchmarkDtoList.get(0).getDescription().equals("")
                     ) {
                 //Charts
-                this.createCharts(firmDto, fundDtoList, descriptionsBenchmarkDtoList.get(0).getDescription(), columnOneWidth);
+                this.createCharts(firmDto, fundDtoList, descriptionsBenchmarkDtoList.get(0).getDescription(), barChartNetIrrDest, barChartNetMoicDest, columnOneWidth);
                 barChartNetIrr = new Image(ImageDataFactory.create(barChartNetIrrDest));
                 barChartNetMoic = new Image(ImageDataFactory.create(barChartNetMoicDest));
                 barChartNetIrr.setWidth(columnOneWidth / 2);
@@ -338,7 +344,7 @@ public class PEPdfServiceImpl implements PEPdfService {
         return null;
     }
 
-    private void createCharts(PEFirmDto firmDto, List<PEFundDto> fundDtoList, String benchmark, Float width) throws Exception {
+    private void createCharts(PEFirmDto firmDto, List<PEFundDto> fundDtoList, String benchmark, String barChartNetIrrDest, String barChartNetMoicDest, Float width) throws Exception {
         String gpName = firmDto.getFirmName();
         String benchmarkName = benchmark;
 

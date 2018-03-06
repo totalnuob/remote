@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Set;
 
@@ -249,9 +251,13 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
     @ResponseBody
     public void exportReport(@PathVariable Long fundId, HttpServletResponse response) {
 
+        String tmpFolder = rootDirectory + "/tmp";
+
         String onePagerDest = rootDirectory + "/tmp/OnePager" + System.currentTimeMillis() + ".pdf";
 
-        InputStream inputStream = this.pdfService.createOnePager(fundId, onePagerDest);
+        System.out.println(onePagerDest);
+
+        InputStream inputStream = this.pdfService.createOnePager(fundId, tmpFolder, onePagerDest);
 
         if (inputStream == null) {
             try {
@@ -276,6 +282,7 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
         }
         try {
             inputStream.close();
+            Files.deleteIfExists(new File(onePagerDest).toPath());
         } catch (IOException e) {
             logger.error("(Private Equity) Pdf export: failed to close input stream");
         }
