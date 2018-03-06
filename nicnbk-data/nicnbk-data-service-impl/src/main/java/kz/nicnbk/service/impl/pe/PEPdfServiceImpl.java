@@ -158,7 +158,7 @@ public class PEPdfServiceImpl implements PEPdfService {
 
             String asOfDateString;
             if (fundDto.getAsOfDateOnePager() != null) {
-                asOfDateString = new SimpleDateFormat("dd-mm-yyyy").format(fundDto.getAsOfDateOnePager());
+                asOfDateString = new SimpleDateFormat("dd-MM-yyyy").format(fundDto.getAsOfDateOnePager());
             } else {
                 asOfDateString = "??-??-????";
             }
