@@ -76,6 +76,8 @@ public class PEFund extends CreateUpdateBaseEntity {
     private Date firstClose;
     private Date finalClose;
 
+    private Date asOfDateOnePager;
+
     //Observations
     private String generalPartnerMerits;
     private String generalPartnerRisks;
@@ -523,6 +525,13 @@ public class PEFund extends CreateUpdateBaseEntity {
         this.finalClose = finalClose;
     }
 
+    public Date getAsOfDateOnePager() {
+        return asOfDateOnePager;
+    }
+
+    public void setAsOfDateOnePager(Date asOfDateOnePager) {
+        this.asOfDateOnePager = asOfDateOnePager;
+    }
 
     @Column(name = "general_partner_merits", columnDefinition = "TEXT")
     public String getGeneralPartnerMerits() {

@@ -3,6 +3,7 @@ package kz.nicnbk.service.dto.pe;
 import kz.nicnbk.service.dto.common.StatusResultDto;
 import kz.nicnbk.service.dto.common.StatusResultType;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -12,11 +13,13 @@ public class PEFundDataForOnePagerResultDto extends StatusResultDto {
 
     private List<PEOnePagerDescriptionsDto> onePagerDescriptions;
     private List<PEFundManagementTeamDto> managementTeam;
+    private Date asOfDateOnePager;
 
-    public PEFundDataForOnePagerResultDto (List<PEOnePagerDescriptionsDto> onePagerDescriptions, List<PEFundManagementTeamDto> managementTeam, StatusResultType status, String messageRu, String messageEn, String messageKz) {
+    public PEFundDataForOnePagerResultDto (List<PEOnePagerDescriptionsDto> onePagerDescriptions, List<PEFundManagementTeamDto> managementTeam, Date asOfDateOnePager, StatusResultType status, String messageRu, String messageEn, String messageKz) {
         super(status, messageRu, messageEn, messageKz);
         this.onePagerDescriptions = onePagerDescriptions;
         this.managementTeam = managementTeam;
+        this.asOfDateOnePager = asOfDateOnePager;
     }
 
     public List<PEOnePagerDescriptionsDto> getOnePagerDescriptions() {
@@ -33,5 +36,13 @@ public class PEFundDataForOnePagerResultDto extends StatusResultDto {
 
     public void setManagementTeam(List<PEFundManagementTeamDto> managementTeam) {
         this.managementTeam = managementTeam;
+    }
+
+    public Date getAsOfDateOnePager() {
+        return asOfDateOnePager;
+    }
+
+    public void setAsOfDateOnePager(Date asOfDateOnePager) {
+        this.asOfDateOnePager = asOfDateOnePager;
     }
 }
