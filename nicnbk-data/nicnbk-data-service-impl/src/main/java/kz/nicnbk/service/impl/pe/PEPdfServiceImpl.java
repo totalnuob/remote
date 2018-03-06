@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -84,11 +85,8 @@ public class PEPdfServiceImpl implements PEPdfService {
             Float columnGap = 3f;
             Float fontSize = 8f;
 
-            String barChartNetIrrDest = tmpFolder + "/BarChartNetIrr" + System.currentTimeMillis() + ".jpeg";
-            String barChartNetMoicDest = tmpFolder + "/BarChartNetMoic" + System.currentTimeMillis() + ".jpeg";
-
-            System.out.println(barChartNetIrrDest);
-            System.out.println(barChartNetMoicDest);
+            String barChartNetIrrDest = tmpFolder + "/BarChartNetIrr_" + new Date().getTime() + ".jpeg";
+            String barChartNetMoicDest = tmpFolder + "/BarChartNetMoic_" + new Date().getTime() + ".jpeg";
 
             //Logo initialization
             gpLogo = new Image(ImageDataFactory.create(gpLogoDest));
@@ -216,6 +214,9 @@ public class PEPdfServiceImpl implements PEPdfService {
                 barChartNetIrr.setWidth(columnOneWidth / 2);
                 barChartNetMoic.setWidth(columnOneWidth / 2);
                 document.add(new Paragraph().add(barChartNetIrr).add(barChartNetMoic));
+
+                Files.deleteIfExists(new File(barChartNetIrrDest).toPath());
+                Files.deleteIfExists(new File(barChartNetMoicDest).toPath());
             }
 
             //Observations Title

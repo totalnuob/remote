@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -251,11 +252,9 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
     @ResponseBody
     public void exportReport(@PathVariable Long fundId, HttpServletResponse response) {
 
-        String tmpFolder = rootDirectory + "/tmp";
+        String tmpFolder = rootDirectory + "/tmp_one_pager";
 
-        String onePagerDest = rootDirectory + "/tmp/OnePager" + System.currentTimeMillis() + ".pdf";
-
-        System.out.println(onePagerDest);
+        String onePagerDest = rootDirectory + "/tmp_one_pager/OnePager_" + new Date().getTime() + ".pdf";
 
         InputStream inputStream = this.pdfService.createOnePager(fundId, tmpFolder, onePagerDest);
 
