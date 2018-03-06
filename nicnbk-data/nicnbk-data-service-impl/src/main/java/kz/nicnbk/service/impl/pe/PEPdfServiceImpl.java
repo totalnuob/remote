@@ -182,6 +182,7 @@ public class PEPdfServiceImpl implements PEPdfService {
 
 //                topColunmOffSet += (2 + fundDtoList.size()) * 16.4888888f + 34f;
                 topColunmOffSet += (2 + fundDtoList.size()) * 13.38f + 27.76f;
+                topColunmOffSet -= 9.35f; //Because we do not upload logos
             }
 
             //Define columns' widths and heights
