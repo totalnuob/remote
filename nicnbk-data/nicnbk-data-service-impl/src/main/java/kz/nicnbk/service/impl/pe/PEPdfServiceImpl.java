@@ -56,8 +56,8 @@ public class PEPdfServiceImpl implements PEPdfService {
 
     //File locations
 //    private static final String onePagerDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/OnePager.pdf";
-    private static final String gpLogoDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/SilverLakeLogo.png";
-    private static final String nicLogoDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/NIClogo.png";
+//    private static final String gpLogoDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/SilverLakeLogo.png";
+//    private static final String nicLogoDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/NIClogo.png";
 //    private static final String barChartNetIrrDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/BarChartNetIrr.jpeg";
 //    private static final String barChartNetMoicDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/BarChartNetMoic.jpeg";
 
@@ -66,8 +66,8 @@ public class PEPdfServiceImpl implements PEPdfService {
     private static final Color whiteColor = new DeviceCmyk(0, 0, 0, 0);
 
     //GP's and NIC's logos
-    private Image gpLogo;
-    private Image nicLogo;
+//    private Image gpLogo;
+//    private Image nicLogo;
     private Image barChartNetIrr;
     private Image barChartNetMoic;
 
@@ -90,16 +90,16 @@ public class PEPdfServiceImpl implements PEPdfService {
             String barChartNetMoicDest = tmpFolder + "/BarChartNetMoic_" + new Date().getTime() + ".jpeg";
 
             //Logo initialization
-            gpLogo = new Image(ImageDataFactory.create(gpLogoDest));
-            nicLogo = new Image(ImageDataFactory.create(nicLogoDest));
+//            gpLogo = new Image(ImageDataFactory.create(gpLogoDest));
+//            nicLogo = new Image(ImageDataFactory.create(nicLogoDest));
 
             //Setting logo size
-            if (gpLogo.getImageHeight() / gpLogo.getImageWidth() > logoMaxHeight / logoMaxWidth) {
-                gpLogo.setHeight(logoMaxHeight);
-            } else {
-                gpLogo.setWidth(logoMaxWidth);
-            }
-            nicLogo.setHeight(logoMaxHeight);
+//            if (gpLogo.getImageHeight() / gpLogo.getImageWidth() > logoMaxHeight / logoMaxWidth) {
+//                gpLogo.setHeight(logoMaxHeight);
+//            } else {
+//                gpLogo.setWidth(logoMaxWidth);
+//            }
+//            nicLogo.setHeight(logoMaxHeight);
 
             //Folder creation
             File file = new File(onePagerDest);
@@ -387,7 +387,7 @@ public class PEPdfServiceImpl implements PEPdfService {
     private void addHeader(Table table, PEFundDto fundDto, Float width, Float logoWidth, Float fontSize) {
         table.addCell(new Cell()
                 .setWidth(logoWidth)
-                .add(new Paragraph().add(gpLogo))
+//                .add(new Paragraph().add(gpLogo))
                 .setTextAlignment(TextAlignment.LEFT));
         table.addCell(new Cell()
                 .setWidth(width - logoWidth * 2)
@@ -397,7 +397,7 @@ public class PEPdfServiceImpl implements PEPdfService {
                 .setTextAlignment(TextAlignment.CENTER));
         table.addCell(new Cell()
                 .setWidth(logoWidth)
-                .add(new Paragraph().add(nicLogo))
+//                .add(new Paragraph().add(nicLogo))
                 .setTextAlignment(TextAlignment.RIGHT));
     }
 
