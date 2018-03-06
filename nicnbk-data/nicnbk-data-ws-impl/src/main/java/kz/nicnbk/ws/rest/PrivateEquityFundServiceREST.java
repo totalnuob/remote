@@ -249,15 +249,9 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
     @ResponseBody
     public void exportReport(@PathVariable Long fundId, HttpServletResponse response) {
 
-        InputStream inputStream;
-
         String onePagerDest = rootDirectory + "/tmp/OnePager" + System.currentTimeMillis() + ".pdf";
 
-        try {
-            inputStream = this.pdfService.createOnePager(fundId, onePagerDest);
-        } catch (IllegalStateException ex) {
-            inputStream = null;
-        }
+        InputStream inputStream = this.pdfService.createOnePager(fundId, onePagerDest);
 
         if (inputStream == null) {
             try {
