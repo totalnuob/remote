@@ -839,17 +839,10 @@
                                             <!--</form>-->
                                         <!--</div>-->
                                         <br>
-                                        <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
+                                        <table class="col-md-5 table-striped table-condensed">
                                             <tr>
-                                                <th>Investments Performance Data as of</th>
-                                            </tr>
-                                            <tr *ngFor="let item of fund.onePagerDescriptions" [hidden]="item.type !=0">
-                                                <td>
-                                                    <input type="text" class="form-control" name="description" [(ngModel)]="item.description" placeholder="-" #description="ngModel"/>
-                                                    <div [hidden]="description.valid || description.pristine" class="alert alert-danger">
-                                                        Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'
-                                                    </div>
-                                                </td>
+                                                <td class="col-md-3">Investments Performance Data as of</td>
+                                                <td class="col-md-2"><input type='text' class="form-control" id="asOfDateOnePager" name="asOfDateOnePager" [(ngModel)]="fund.asOfDateOnePager"/></td>
                                             </tr>
                                         </table>
                                         <br>

@@ -69,6 +69,7 @@ export class PEFund {
 
     onePagerDescriptions = [];
     managementTeam = [];
+    asOfDateOnePager: Date;
 
     predecessorInvestedPct: number;
     openingSchedule: string;

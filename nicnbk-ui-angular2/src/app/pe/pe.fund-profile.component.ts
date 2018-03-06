@@ -168,7 +168,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                         this.fund.managementTeam = [];
                                     }
 
-                                    this.addOnePagerAsOfDate();
+                                    //this.addOnePagerAsOfDate();
                                     this.addOnePagerBenchmarkName();
 
                                     this.updateIRRParamList();
@@ -254,6 +254,11 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
         });
 
         $('#dateGrossCF').datetimepicker({
+            //defaultDate: new Date(),
+            format: 'DD-MM-YYYY'
+        });
+
+        $('#asOfDateOnePager').datetimepicker({
             //defaultDate: new Date(),
             format: 'DD-MM-YYYY'
         });
@@ -978,19 +983,19 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
             )
     }
 
-    addOnePagerAsOfDate() {
-        var found = false;
-
-        for (var i = 0; i < this.fund.onePagerDescriptions.length; i++) {
-            if (this.fund.onePagerDescriptions[i].type === 0) {
-                found = true;
-            }
-        }
-
-        if (!found) {
-            this.addRowDescription(0);
-        }
-    }
+    //addOnePagerAsOfDate() {
+    //    var found = false;
+    //
+    //    for (var i = 0; i < this.fund.onePagerDescriptions.length; i++) {
+    //        if (this.fund.onePagerDescriptions[i].type === 0) {
+    //            found = true;
+    //        }
+    //    }
+    //
+    //    if (!found) {
+    //        this.addRowDescription(0);
+    //    }
+    //}
 
     addOnePagerBenchmarkName() {
         var found = false;
@@ -1009,6 +1014,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     saveDataAndCreateOnePager() {
         this.dataForOnePager.onePagerDescriptions = this.fund.onePagerDescriptions;
         this.dataForOnePager.managementTeam = this.fund.managementTeam;
+        this.dataForOnePager.asOfDateOnePager = this.fund.asOfDateOnePager;
 
         this.busy = this.fundService.saveDataForOnePager(this.dataForOnePager, this.fund.id)
             .subscribe(
@@ -1017,6 +1023,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
 
                     this.fund.onePagerDescriptions = response.onePagerDescriptions;
                     this.fund.managementTeam = response.managementTeam;
+                    this.fund.asOfDateOnePager = response.asOfDateOnePager;
 
                     this.createAndDownloadOnePager();
                 },
