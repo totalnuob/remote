@@ -839,7 +839,7 @@
                                             <!--</form>-->
                                         <!--</div>-->
                                         <br>
-                                        <table class="col-md-5 table-striped table-condensed">
+                                        <table class="col-md-12 table-striped table-condensed">
                                             <tr>
                                                 <td class="col-md-3">Investments Performance Data as of</td>
                                                 <td class="col-md-2">
@@ -850,22 +850,25 @@
                                                         </span>
                                                     </div>
                                                 </td>
+                                                <!--<td class="col-md-1"></td>-->
+                                                <!--<td class="col-md-2">Benchmark Name</td>-->
+                                                <!--<td class="col-md-4">Investm</td>-->
                                             </tr>
                                         </table>
-                                        <br>
-                                        <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
-                                            <tr>
-                                                <th>Benchmark Name</th>
-                                            </tr>
-                                            <tr *ngFor="let item of fund.onePagerDescriptions" [hidden]="item.type !=-1">
-                                                <td>
-                                                    <input type="text" class="form-control" name="description" [(ngModel)]="item.description" placeholder="-" #description="ngModel"/>
-                                                    <div [hidden]="description.valid || description.pristine" class="alert alert-danger">
-                                                        Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </table>
+                                        <!--<br>-->
+                                        <!--<table class="table table-hover table-responsive table-condensed" style="font-size: smaller">-->
+                                            <!--<tr>-->
+                                                <!--<th>Benchmark Name</th>-->
+                                            <!--</tr>-->
+                                            <!--<tr *ngFor="let item of fund.onePagerDescriptions" [hidden]="item.type !=-1">-->
+                                                <!--<td>-->
+                                                    <!--<input type="text" class="form-control" name="description" [(ngModel)]="item.description" placeholder="-" #description="ngModel"/>-->
+                                                    <!--<div [hidden]="description.valid || description.pristine" class="alert alert-danger">-->
+                                                        <!--Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'-->
+                                                    <!--</div>-->
+                                                <!--</td>-->
+                                            <!--</tr>-->
+                                        <!--</table>-->
                                         <br>
                                         <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
                                             <tr>

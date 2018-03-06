@@ -117,7 +117,7 @@ public class PEPdfServiceImpl implements PEPdfService {
             PEFirmDto firmDto = fundDto.getFirm();
             List<PEFundDto> fundDtoList = fundService.loadFirmFunds(firmDto.getId(), true);
 //            List<PEOnePagerDescriptionsDto> descriptionsDtoList = descriptionsService.findByFundId(fundId);
-            List<PEOnePagerDescriptionsDto> descriptionsBenchmarkDtoList = descriptionsService.findByFundIdAndType(fundId, -1);
+//            List<PEOnePagerDescriptionsDto> descriptionsBenchmarkDtoList = descriptionsService.findByFundIdAndType(fundId, -1);
 //            List<PEOnePagerDescriptionsDto> descriptionsAsOfDateDtoList = descriptionsService.findByFundIdAndType(fundId, 0);
             List<PEOnePagerDescriptionsDto> descriptionsGpMeritsDtoList = descriptionsService.findByFundIdAndType(fundId, 1);
             List<PEOnePagerDescriptionsDto> descriptionsGpRisksDtoList = descriptionsService.findByFundIdAndType(fundId, 2);
@@ -200,23 +200,34 @@ public class PEPdfServiceImpl implements PEPdfService {
             this.addGreenTitle(irrAndTvpiTitle, "IRR & TVPI multiple", columnOneWidth);
             document.add(irrAndTvpiTitle);
 
-            if (descriptionsBenchmarkDtoList != null &&
-                    descriptionsBenchmarkDtoList.size() == 1 &&
-                    descriptionsBenchmarkDtoList.get(0) != null &&
-                    descriptionsBenchmarkDtoList.get(0).getDescription() != null &&
-                    !descriptionsBenchmarkDtoList.get(0).getDescription().equals("")
-                    ) {
-                //Charts
-                this.createCharts(firmDto, fundDtoList, descriptionsBenchmarkDtoList.get(0).getDescription(), barChartNetIrrDest, barChartNetMoicDest, columnOneWidth);
-                barChartNetIrr = new Image(ImageDataFactory.create(barChartNetIrrDest));
-                barChartNetMoic = new Image(ImageDataFactory.create(barChartNetMoicDest));
-                barChartNetIrr.setWidth(columnOneWidth / 2);
-                barChartNetMoic.setWidth(columnOneWidth / 2);
-                document.add(new Paragraph().add(barChartNetIrr).add(barChartNetMoic));
+//            if (descriptionsBenchmarkDtoList != null &&
+//                    descriptionsBenchmarkDtoList.size() == 1 &&
+//                    descriptionsBenchmarkDtoList.get(0) != null &&
+//                    descriptionsBenchmarkDtoList.get(0).getDescription() != null &&
+//                    !descriptionsBenchmarkDtoList.get(0).getDescription().equals("")
+//                    ) {
+//                //Charts
+//                this.createCharts(firmDto, fundDtoList, descriptionsBenchmarkDtoList.get(0).getDescription(), barChartNetIrrDest, barChartNetMoicDest, columnOneWidth);
+//                barChartNetIrr = new Image(ImageDataFactory.create(barChartNetIrrDest));
+//                barChartNetMoic = new Image(ImageDataFactory.create(barChartNetMoicDest));
+//                barChartNetIrr.setWidth(columnOneWidth / 2);
+//                barChartNetMoic.setWidth(columnOneWidth / 2);
+//                document.add(new Paragraph().add(barChartNetIrr).add(barChartNetMoic));
+//
+//                Files.deleteIfExists(new File(barChartNetIrrDest).toPath());
+//                Files.deleteIfExists(new File(barChartNetMoicDest).toPath());
+//            }
 
-                Files.deleteIfExists(new File(barChartNetIrrDest).toPath());
-                Files.deleteIfExists(new File(barChartNetMoicDest).toPath());
-            }
+            //Charts
+            this.createCharts(firmDto, fundDtoList, (fundDto.getBenchmarkName() != null && fundDto.getBenchmarkName() != "") ? fundDto.getBenchmarkName() : "????", barChartNetIrrDest, barChartNetMoicDest, columnOneWidth);
+            barChartNetIrr = new Image(ImageDataFactory.create(barChartNetIrrDest));
+            barChartNetMoic = new Image(ImageDataFactory.create(barChartNetMoicDest));
+            barChartNetIrr.setWidth(columnOneWidth / 2);
+            barChartNetMoic.setWidth(columnOneWidth / 2);
+            document.add(new Paragraph().add(barChartNetIrr).add(barChartNetMoic));
+
+            Files.deleteIfExists(new File(barChartNetIrrDest).toPath());
+            Files.deleteIfExists(new File(barChartNetMoicDest).toPath());
 
             //Observations Title
             Table observationsTitle = new Table(new float[]{1});
