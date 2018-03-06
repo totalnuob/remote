@@ -3,6 +3,7 @@ package kz.nicnbk.service.api.pe;
 import kz.nicnbk.service.api.base.BaseService;
 import kz.nicnbk.service.dto.pe.*;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -27,4 +28,6 @@ public interface PEFundService extends BaseService {
     PEGrossCashflowAndCompanyPerformanceIddAndFundTrackRecordResultDto saveGrossCFAndRecalculatePerformanceIddAndUpdateStatistics(List<PEGrossCashflowDto> grossCashflowDtoList, Long fundId, String username);
 
     List<PEFundDto> loadFirmFunds(Long firmId, boolean report);
+
+    Date updateAsOfDateOnePager(Date asOfDateOnePager, Long fundId);
 }
