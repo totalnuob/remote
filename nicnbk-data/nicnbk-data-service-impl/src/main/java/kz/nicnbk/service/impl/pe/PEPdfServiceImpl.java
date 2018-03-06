@@ -53,7 +53,7 @@ public class PEPdfServiceImpl implements PEPdfService {
     private PEFundManagementTeamService managementTeamService;
 
     //File locations
-    private static final String onePagerDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/OnePager.pdf";
+//    private static final String onePagerDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/OnePager.pdf";
     private static final String gpLogoDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/SilverLakeLogo.png";
     private static final String nicLogoDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/NIClogo.png";
     private static final String barChartNetIrrDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/img/BarChartNetIrr.jpeg";
@@ -73,7 +73,7 @@ public class PEPdfServiceImpl implements PEPdfService {
     private static final Float lineSpacingMultiplierText = 1.3f;
 
     @Override
-    public InputStream createOnePager(Long fundId) {
+    public InputStream createOnePager(Long fundId, String onePagerDest) {
         try {
             //Margins
             Float offSet = 36f;

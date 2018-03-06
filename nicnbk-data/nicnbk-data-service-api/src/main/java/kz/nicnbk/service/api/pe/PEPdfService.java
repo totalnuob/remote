@@ -7,5 +7,5 @@ import java.io.InputStream;
  */
 public interface PEPdfService {
 
-    InputStream createOnePager(Long fundId);
+    InputStream createOnePager(Long fundId, String onePagerDest);
 }
