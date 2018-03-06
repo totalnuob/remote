@@ -842,7 +842,14 @@
                                         <table class="col-md-5 table-striped table-condensed">
                                             <tr>
                                                 <td class="col-md-3">Investments Performance Data as of</td>
-                                                <td class="col-md-2"><input type='text' class="form-control" id="asOfDateOnePager" name="asOfDateOnePager" [(ngModel)]="fund.asOfDateOnePager"/></td>
+                                                <td class="col-md-2">
+                                                    <div class="input-group">
+                                                        <input type='text' class="form-control" id="asOfDateOnePager" name="asOfDateOnePager" [(ngModel)]="fund.asOfDateOnePager"/>
+                                                        <span class="input-group-addon">
+                                                            <span class="glyphicon glyphicon-calendar"></span>
+                                                        </span>
+                                                    </div>
+                                                </td>
                                             </tr>
                                         </table>
                                         <br>

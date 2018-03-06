@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -155,6 +156,13 @@ public class PEPdfServiceImpl implements PEPdfService {
             this.addFundSummary(fundSummaryTable, fundDto, ps.getWidth() - offSet * 2);
             document.add(fundSummaryTable);
 
+            String asOfDateString;
+            if (fundDto.getAsOfDateOnePager() != null) {
+                asOfDateString = new SimpleDateFormat("dd-mm-yyyy").format(fundDto.getAsOfDateOnePager());
+            } else {
+                asOfDateString = "??-??-????";
+            }
+
             if (fundDtoList != null && fundDtoList.size() > 0) {
                 //Key Fund Statistics Title
                 Table keyFundStatisticsTitle = new Table(new float[]{1});
@@ -162,7 +170,7 @@ public class PEPdfServiceImpl implements PEPdfService {
                 this.addWhiteTitle(keyFundStatisticsTitle,
                         unNullifierToEmptyString(firmDto.getFirmName()) +
                                 " Investment Performance Data as of " +
-                                (fundDto.getAsOfDateOnePager() !=null ? fundDto.getAsOfDateOnePager().toString() : "??????") +
+                                asOfDateString +
                                 " ($mln)",
                         ps.getWidth() - offSet * 2);
                 document.add(keyFundStatisticsTitle);

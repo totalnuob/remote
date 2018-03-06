@@ -1014,7 +1014,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     saveDataAndCreateOnePager() {
         this.dataForOnePager.onePagerDescriptions = this.fund.onePagerDescriptions;
         this.dataForOnePager.managementTeam = this.fund.managementTeam;
-        this.dataForOnePager.asOfDateOnePager = this.fund.asOfDateOnePager;
+        this.dataForOnePager.asOfDateOnePager = $('#asOfDateOnePager').val();
 
         console.log(this.fund.asOfDateOnePager);
 
