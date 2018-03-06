@@ -1016,7 +1016,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
         this.dataForOnePager.managementTeam = this.fund.managementTeam;
         this.dataForOnePager.asOfDateOnePager = $('#asOfDateOnePager').val();
 
-        console.log(this.fund.asOfDateOnePager);
+        //console.log(this.fund.asOfDateOnePager);
 
         this.busy = this.fundService.saveDataForOnePager(this.dataForOnePager, this.fund.id)
             .subscribe(
