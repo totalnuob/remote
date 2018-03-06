@@ -117,7 +117,7 @@ public class PEPdfServiceImpl implements PEPdfService {
             List<PEFundDto> fundDtoList = fundService.loadFirmFunds(firmDto.getId(), true);
 //            List<PEOnePagerDescriptionsDto> descriptionsDtoList = descriptionsService.findByFundId(fundId);
             List<PEOnePagerDescriptionsDto> descriptionsBenchmarkDtoList = descriptionsService.findByFundIdAndType(fundId, -1);
-            List<PEOnePagerDescriptionsDto> descriptionsAsOfDateDtoList = descriptionsService.findByFundIdAndType(fundId, 0);
+//            List<PEOnePagerDescriptionsDto> descriptionsAsOfDateDtoList = descriptionsService.findByFundIdAndType(fundId, 0);
             List<PEOnePagerDescriptionsDto> descriptionsGpMeritsDtoList = descriptionsService.findByFundIdAndType(fundId, 1);
             List<PEOnePagerDescriptionsDto> descriptionsGpRisksDtoList = descriptionsService.findByFundIdAndType(fundId, 2);
             List<PEOnePagerDescriptionsDto> descriptionsStrategyMeritsDtoList = descriptionsService.findByFundIdAndType(fundId, 3);
@@ -162,16 +162,7 @@ public class PEPdfServiceImpl implements PEPdfService {
                 this.addWhiteTitle(keyFundStatisticsTitle,
                         unNullifierToEmptyString(firmDto.getFirmName()) +
                                 " Investment Performance Data as of " +
-                                (
-                                        (descriptionsAsOfDateDtoList != null &&
-                                                descriptionsAsOfDateDtoList.size() == 1 &&
-                                                descriptionsAsOfDateDtoList.get(0) != null &&
-                                                descriptionsAsOfDateDtoList.get(0).getDescription() != null &&
-                                                !descriptionsAsOfDateDtoList.get(0).getDescription().equals("")
-                                        )
-                                                ? descriptionsAsOfDateDtoList.get(0).getDescription()
-                                                : "??????"
-                                ) +
+                                (fundDto.getAsOfDateOnePager() !=null ? fundDto.getAsOfDateOnePager().toString() : "??????") +
                                 " ($mln)",
                         ps.getWidth() - offSet * 2);
                 document.add(keyFundStatisticsTitle);
