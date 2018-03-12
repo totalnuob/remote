@@ -66,11 +66,12 @@ public class PEFund extends CreateUpdateBaseEntity {
     private double fundTerm;
     private String fundTermComment;
     private String targetInvSizeRange;
-    private double targetEvRange;
+    private String targetEvRange;
     private double targetNumberOfInv1;
     private double targetNumberOfInv2;
     private double expAnnualNumberOfInv1;
     private double expAnnualNumberOfInv2;
+    private String expHoldPeriodPerInvestment;
 
     //Targeted Closing Information
     private Date firstClose;
@@ -461,11 +462,11 @@ public class PEFund extends CreateUpdateBaseEntity {
     }
 
     @Column(name = "target_ev_range")
-    public double getTargetEvRange() {
+    public String getTargetEvRange() {
         return targetEvRange;
     }
 
-    public void setTargetEvRange(double targetEvRange) {
+    public void setTargetEvRange(String targetEvRange) {
         this.targetEvRange = targetEvRange;
     }
 
@@ -504,6 +505,14 @@ public class PEFund extends CreateUpdateBaseEntity {
 
     public void setExpAnnualNumberOfInv2(double expAnnualNumberOfInv2) {
         this.expAnnualNumberOfInv2 = expAnnualNumberOfInv2;
+    }
+
+    public String getExpHoldPeriodPerInvestment() {
+        return expHoldPeriodPerInvestment;
+    }
+
+    public void setExpHoldPeriodPerInvestment(String expHoldPeriodPerInvestment) {
+        this.expHoldPeriodPerInvestment = expHoldPeriodPerInvestment;
     }
 
     @Column(name = "first_close")

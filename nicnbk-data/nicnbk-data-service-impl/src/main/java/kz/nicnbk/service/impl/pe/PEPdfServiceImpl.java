@@ -312,18 +312,18 @@ public class PEPdfServiceImpl implements PEPdfService {
             this.addDescriptiveData(descriptiveDataTable, fundDto, columnTwoWidth);
             document.add(descriptiveDataTable);
 
-            if (descriptionsTargetedClosingInformationDtoList != null && !descriptionsTargetedClosingInformationDtoList.isEmpty()) {
-
-                //Targeted Closing Information Title
-                Table targetedClosingInformationTitle = new Table(new float[]{1});
-                this.addGreenTitle(targetedClosingInformationTitle, "Targeted Closing Information", columnTwoWidth);
-                document.add(targetedClosingInformationTitle);
-
-                //Targeted Closing Information Table
-                Table targetedClosingInformationTable = new Table(new float[]{1, 1});
-                this.addTwoColumns(targetedClosingInformationTable, descriptionsTargetedClosingInformationDtoList, columnTwoWidth);
-                document.add(targetedClosingInformationTable);
-            }
+//            if (descriptionsTargetedClosingInformationDtoList != null && !descriptionsTargetedClosingInformationDtoList.isEmpty()) {
+//
+//                //Targeted Closing Information Title
+//                Table targetedClosingInformationTitle = new Table(new float[]{1});
+//                this.addGreenTitle(targetedClosingInformationTitle, "Targeted Closing Information", columnTwoWidth);
+//                document.add(targetedClosingInformationTitle);
+//
+//                //Targeted Closing Information Table
+//                Table targetedClosingInformationTable = new Table(new float[]{1, 1});
+//                this.addTwoColumns(targetedClosingInformationTable, descriptionsTargetedClosingInformationDtoList, columnTwoWidth);
+//                document.add(targetedClosingInformationTable);
+//            }
 
             if ((descriptionsSeniorManagementTeamDtoList != null && !descriptionsSeniorManagementTeamDtoList.isEmpty()) ||
                     (managementTeamDtoList != null && !managementTeamDtoList.isEmpty())) {
@@ -632,6 +632,26 @@ public class PEPdfServiceImpl implements PEPdfService {
                 unNullifierToEmptyString("Fund Term (yrs)")).setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph(
                 unNullifierToEmptyString(fundDto.getFundTermComment())).setMultipliedLeading(lineSpacingMultiplier)));
+
+        table.addCell(new Cell().add(new Paragraph(
+                unNullifierToEmptyString("Target Inv. Size (mln)")).setMultipliedLeading(lineSpacingMultiplier).setBold()));
+        table.addCell(new Cell().add(new Paragraph(
+                unNullifierToEmptyString(fundDto.getTargetInvSizeRange())).setMultipliedLeading(lineSpacingMultiplier)));
+
+        table.addCell(new Cell().add(new Paragraph(
+                unNullifierToEmptyString("Target EV Range (mln)")).setMultipliedLeading(lineSpacingMultiplier).setBold()));
+        table.addCell(new Cell().add(new Paragraph(
+                unNullifierToEmptyString(fundDto.getTargetEvRange())).setMultipliedLeading(lineSpacingMultiplier)));
+
+        table.addCell(new Cell().add(new Paragraph(
+                unNullifierToEmptyString("Target # of Inv.")).setMultipliedLeading(lineSpacingMultiplier).setBold()));
+        table.addCell(new Cell().add(new Paragraph(
+                intFormat(fundDto.getTargetNumberOfInv1())).setMultipliedLeading(lineSpacingMultiplier)));
+
+        table.addCell(new Cell().add(new Paragraph(
+                unNullifierToEmptyString("Exp Hold Period per Inv.")).setMultipliedLeading(lineSpacingMultiplier).setBold()));
+        table.addCell(new Cell().add(new Paragraph(
+                unNullifierToEmptyString(fundDto.getExpHoldPeriodPerInvestment())).setMultipliedLeading(lineSpacingMultiplier)));
     }
 
     private void addManagementTeam(Table table, List<PEFundManagementTeamDto> managementTeamDtoList, Float width) {
@@ -702,6 +722,11 @@ public class PEPdfServiceImpl implements PEPdfService {
 
     private String feeFormat(Double amount) {
         if (amount != null) { return amount.toString()+"%"; }
+        return "";
+    }
+
+    private String intFormat(Double amount) {
+        if (amount != null) { return String.format("%.0f", amount); }
         return "";
     }
 }

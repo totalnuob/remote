@@ -538,8 +538,10 @@
                                             </table>
                                             <table class=" col-md-4 table-striped table-condensed">
                                                 <tr>
-                                                    <td class="col-md-1">Target EV range</td>
-                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="targetEvRange" [(ngModel)]="fund.targetEvRange" pattern="[+]?[0-9]*\.?[0-9]+" #targetEvRange="ngModel"/>
+                                                    <td class="col-md-1">Target EV range (mln)</td>
+                                                    <td class="col-md-3">
+                                                        <!--<input style="width: 100%" type="text" name="targetEvRange" [(ngModel)]="fund.targetEvRange" pattern="[+]?[0-9]*\.?[0-9]+" #targetEvRange="ngModel"/>-->
+                                                        <input style="width: 100%" type="text" name="targetEvRange" [(ngModel)]="fund.targetEvRange" #targetEvRange="ngModel"/>
                                                         <div [hidden]="targetEvRange.valid || targetEvRange.pristine" class="alert alert-danger">
                                                             Only positive number could be entered
                                                         </div>
@@ -548,25 +550,36 @@
                                                 <tr>
                                                     <td class="col-md-1">Target number of inv.</td>
                                                     <td class="col-md-3">
-                                                        <input style="width: 30%" type="text" name="targetNumberOfInv1" [(ngModel)]="fund.targetNumberOfInv1" pattern="[+]?[0-9]*\.?[0-9]+" #targetNumberOfInv1="ngModel"/><input style="width: 70%" type="text" name="targetNumberOfInv2" [(ngModel)]="fund.targetNumberOfInv2" pattern="[+]?[0-9]*\.?[0-9]+" #targetNumberOfInv2="ngModel"/>
+                                                        <!--<input style="width: 30%" type="text" name="targetNumberOfInv1" [(ngModel)]="fund.targetNumberOfInv1" pattern="[+]?[0-9]*\.?[0-9]+" #targetNumberOfInv1="ngModel"/><input style="width: 70%" type="text" name="targetNumberOfInv2" [(ngModel)]="fund.targetNumberOfInv2" pattern="[+]?[0-9]*\.?[0-9]+" #targetNumberOfInv2="ngModel"/>-->
+                                                        <input style="width: 100%" type="text" name="targetNumberOfInv1" [(ngModel)]="fund.targetNumberOfInv1" pattern="[+]?[0-9]*\.?[0-9]+" #targetNumberOfInv1="ngModel"/>
                                                         <div [hidden]="targetNumberOfInv1.valid || targetNumberOfInv1.pristine" class="alert alert-danger">
                                                             Only positive number could be entered
                                                         </div>
-                                                        <div [hidden]="targetNumberOfInv2.valid || targetNumberOfInv2.pristine" class="alert alert-danger">
-                                                            Only positive number could be entered
-                                                        </div>
+                                                        <!--<div [hidden]="targetNumberOfInv2.valid || targetNumberOfInv2.pristine" class="alert alert-danger">-->
+                                                            <!--Only positive number could be entered-->
+                                                        <!--</div>-->
                                                     </td>
                                                 </tr>
+                                                <!--<tr>-->
+                                                    <!--<td class="col-md-1">Expected annual number of inv.</td>-->
+                                                    <!--<td class="col-md-3">-->
+                                                        <!--<input style="width: 30%" type="text" name="expAnnualNumberOfInv1" [(ngModel)]="fund.expAnnualNumberOfInv1" pattern="[+]?[0-9]*\.?[0-9]+" #expAnnualNumberOfInv1="ngModel"/><input style="width: 70%" type="text" name="expAnnualNumberOfInv2" [(ngModel)]="fund.expAnnualNumberOfInv2" pattern="[+]?[0-9]*\.?[0-9]+" #expAnnualNumberOfInv2="ngModel"/>-->
+                                                        <!--<div [hidden]="expAnnualNumberOfInv1.valid || expAnnualNumberOfInv1.pristine" class="alert alert-danger">-->
+                                                            <!--Only positive number could be entered-->
+                                                        <!--</div>-->
+                                                        <!--<div [hidden]="expAnnualNumberOfInv2.valid || expAnnualNumberOfInv2.pristine" class="alert alert-danger">-->
+                                                            <!--Only positive number could be entered-->
+                                                        <!--</div>-->
+                                                    <!--</td>-->
+                                                <!--</tr>-->
                                                 <tr>
-                                                    <td class="col-md-1">Expected annual number of inv.</td>
+                                                    <td class="col-md-1">Exp. Hold Period per Investment</td>
                                                     <td class="col-md-3">
-                                                        <input style="width: 30%" type="text" name="expAnnualNumberOfInv1" [(ngModel)]="fund.expAnnualNumberOfInv1" pattern="[+]?[0-9]*\.?[0-9]+" #expAnnualNumberOfInv1="ngModel"/><input style="width: 70%" type="text" name="expAnnualNumberOfInv2" [(ngModel)]="fund.expAnnualNumberOfInv2" pattern="[+]?[0-9]*\.?[0-9]+" #expAnnualNumberOfInv2="ngModel"/>
-                                                        <div [hidden]="expAnnualNumberOfInv1.valid || expAnnualNumberOfInv1.pristine" class="alert alert-danger">
-                                                            Only positive number could be entered
-                                                        </div>
-                                                        <div [hidden]="expAnnualNumberOfInv2.valid || expAnnualNumberOfInv2.pristine" class="alert alert-danger">
-                                                            Only positive number could be entered
-                                                        </div>
+                                                        <!--<input style="width: 30%" type="text" name="fundTerm" [(ngModel)]="fund.fundTerm" pattern="[+]?[0-9]*\.?[0-9]+" #fundTerm="ngModel"/><input style="width: 70%" type="text" name="fundTermComment" [(ngModel)]="fund.fundTermComment" placeholder="Comment"/>-->
+                                                        <input style="width: 100%" type="text" name="expHoldPeriodPerInvestment" [(ngModel)]="fund.expHoldPeriodPerInvestment"/>
+                                                        <!--<div [hidden]="fundTerm.valid || fundTerm.pristine" class="alert alert-danger">-->
+                                                        <!--Only positive number could be entered-->
+                                                        <!--</div>-->
                                                     </td>
                                                 </tr>
                                             </table>
