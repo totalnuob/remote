@@ -269,12 +269,13 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
 
         this.fund.firstClose = $('#firstClose').val();
         this.fund.finalClose = $('#finalClose').val();
+        this.fund.asOfDateOnePager = $('#asOfDateOpenFund').val();
 
-        if(this.fund.status != 'Closed') {
-            this.fund.asOfDate = $('#asOfDateOpenFund').val();
-        } else {
-            this.fund.asOfDate = $('#asOfDate').val();
-        }
+        //if(this.fund.status != 'Closed') {
+        //    this.fund.asOfDate = $('#asOfDateOpenFund').val();
+        //} else {
+        //    this.fund.asOfDate = $('#asOfDate').val();
+        //}
 
         this.fund.strategy = this.convertToServiceModel(this.fund.strategy);
         this.fund.industry = this.convertToServiceModel(this.fund.industry);
