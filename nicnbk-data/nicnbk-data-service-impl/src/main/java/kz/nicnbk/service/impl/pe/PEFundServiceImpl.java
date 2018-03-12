@@ -4,6 +4,7 @@ import kz.nicnbk.repo.api.employee.EmployeeRepository;
 import kz.nicnbk.repo.api.pe.PEFundRepository;
 import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.pe.PEFund;
+import kz.nicnbk.repo.model.pe.PEIndustry;
 import kz.nicnbk.service.api.pe.*;
 import kz.nicnbk.service.converter.pe.PEFundEntityConverter;
 import kz.nicnbk.service.dto.common.StatusResultType;
@@ -359,6 +360,31 @@ public class PEFundServiceImpl implements PEFundService {
             logger.error("Failed to load PE firm funds: firm=" + firmId, ex);
         }
         return null;
+    }
+
+    @Override
+    public String getIndustriesAsString(Long fundId) {
+        PEFund fund = this.peFundRepository.findOne(fundId);
+        if (fund == null) {
+            return null;
+        }
+        Set<PEIndustry> industrySet = fund.getIndustry();
+        if (industrySet == null) {
+            return null;
+        }
+        if (industrySet.isEmpty()) {
+            return "";
+        }
+        String st = "";
+        for (PEIndustry industry : industrySet) {
+            if (st.equals("")) {
+                st = industry.getNameEn();
+            } else {
+                st += ", " + industry.getNameEn();
+            }
+        }
+
+        return st;
     }
 
 //    @Override

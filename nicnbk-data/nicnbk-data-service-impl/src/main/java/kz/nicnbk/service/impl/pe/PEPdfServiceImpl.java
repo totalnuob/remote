@@ -445,6 +445,7 @@ public class PEPdfServiceImpl implements PEPdfService {
     }
 
     private void addFundSummary(Table table, PEFundDto fundDto, Float width) {
+        String industry = this.fundService.getIndustriesAsString(fundDto.getId());
         table.setWidth(width);
         table.addCell(new Cell().add(new Paragraph("Target Fund Size ($mln)").setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph(mlnFormat(fundDto.getTargetSize())).setMultipliedLeading(lineSpacingMultiplier)));
