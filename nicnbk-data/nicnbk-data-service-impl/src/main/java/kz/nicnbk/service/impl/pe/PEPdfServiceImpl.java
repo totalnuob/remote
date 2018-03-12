@@ -455,13 +455,13 @@ public class PEPdfServiceImpl implements PEPdfService {
         table.addCell(new Cell().add(new Paragraph("Hard cap ($mln)").setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph(mlnFormat(fundDto.getHardCap())).setMultipliedLeading(lineSpacingMultiplier)));
         table.addCell(new Cell().add(new Paragraph("Carry").setMultipliedLeading(lineSpacingMultiplier).setBold()));
-        table.addCell(new Cell().add(new Paragraph("Carry").setMultipliedLeading(lineSpacingMultiplier)));
+        table.addCell(new Cell().add(new Paragraph(feeFormat(fundDto.getCarriedInterest())).setMultipliedLeading(lineSpacingMultiplier)));
         table.addCell(new Cell().add(new Paragraph("Strategy").setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph("Strategy").setMultipliedLeading(lineSpacingMultiplier)));
         table.addCell(new Cell().add(new Paragraph("GP Commitment").setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph(feeFormat(fundDto.getGpCommitment())).setMultipliedLeading(lineSpacingMultiplier)));
         table.addCell(new Cell().add(new Paragraph("Hurdle").setMultipliedLeading(lineSpacingMultiplier).setBold()));
-        table.addCell(new Cell().add(new Paragraph("Hurdle").setMultipliedLeading(lineSpacingMultiplier)));
+        table.addCell(new Cell().add(new Paragraph(feeFormat(fundDto.getHurdleRate())).setMultipliedLeading(lineSpacingMultiplier)));
         table.addCell(new Cell().add(new Paragraph("Geography").setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph("Geography").setMultipliedLeading(lineSpacingMultiplier)));
     }
