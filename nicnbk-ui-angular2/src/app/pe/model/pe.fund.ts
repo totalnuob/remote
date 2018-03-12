@@ -37,7 +37,7 @@ export class PEFund {
     benchmarkNetTvpi: number;
     benchmarkName: string;
 
-    investmentPeriod: number;
+    investmentPeriod: string;
     fundTerm: number;
     fundTermComment: string;
     targetInvSizeRange: number;

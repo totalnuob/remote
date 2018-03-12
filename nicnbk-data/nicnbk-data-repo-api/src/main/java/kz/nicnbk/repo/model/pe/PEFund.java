@@ -62,7 +62,7 @@ public class PEFund extends CreateUpdateBaseEntity {
     private PEFirm firm;
 
     // Descriptive data
-    private double investmentPeriod;
+    private String investmentPeriod;
     private double fundTerm;
     private String fundTermComment;
     private double targetInvSizeRange;
@@ -423,11 +423,11 @@ public class PEFund extends CreateUpdateBaseEntity {
     }
 
     @Column(name = "investment_period")
-    public double getInvestmentPeriod() {
+    public String getInvestmentPeriod() {
         return investmentPeriod;
     }
 
-    public void setInvestmentPeriod(double investmentPeriod) {
+    public void setInvestmentPeriod(String investmentPeriod) {
         this.investmentPeriod = investmentPeriod;
     }
 

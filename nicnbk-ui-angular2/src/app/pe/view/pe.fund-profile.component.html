@@ -507,8 +507,9 @@
                                             <table class=" col-md-4 table-striped table-condensed">
                                                 <tr>
                                                     <td class="col-md-1">Investment period</td>
-                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="investmentPeriod" [(ngModel)]="fund.investmentPeriod"
-                                                                                pattern="[+]?[0-9]*\.?[0-9]+" #investmentPeriod="ngModel"/>
+                                                    <td class="col-md-3">
+                                                        <!--<input style="width: 100%" type="text" name="investmentPeriod" [(ngModel)]="fund.investmentPeriod" pattern="[+]?[0-9]*\.?[0-9]+" #investmentPeriod="ngModel"/>-->
+                                                        <input style="width: 100%" type="text" name="investmentPeriod" [(ngModel)]="fund.investmentPeriod" #investmentPeriod="ngModel"/>
                                                         <div [hidden]="investmentPeriod.valid || investmentPeriod.pristine" class="alert alert-danger">
                                                             Only positive number could be entered
                                                         </div>
