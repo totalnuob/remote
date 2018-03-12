@@ -312,18 +312,18 @@ public class PEPdfServiceImpl implements PEPdfService {
             this.addDescriptiveData(descriptiveDataTable, fundDto, columnTwoWidth);
             document.add(descriptiveDataTable);
 
-//            if (descriptionsTargetedClosingInformationDtoList != null && !descriptionsTargetedClosingInformationDtoList.isEmpty()) {
-//
-//                //Targeted Closing Information Title
-//                Table targetedClosingInformationTitle = new Table(new float[]{1});
-//                this.addGreenTitle(targetedClosingInformationTitle, "Targeted Closing Information", columnTwoWidth);
-//                document.add(targetedClosingInformationTitle);
-//
-//                //Targeted Closing Information Table
-//                Table targetedClosingInformationTable = new Table(new float[]{1, 1});
-//                this.addTwoColumns(targetedClosingInformationTable, descriptionsTargetedClosingInformationDtoList, columnTwoWidth);
-//                document.add(targetedClosingInformationTable);
-//            }
+//            if (descriptionsTargetedClosingInformationDtoList != null && !descriptionsTargetedClosingInformationDtoList.isEmpty()) {}
+
+            //Targeted Closing Information Title
+            Table targetedClosingInformationTitle = new Table(new float[]{1});
+            this.addGreenTitle(targetedClosingInformationTitle, "Targeted Closing Information", columnTwoWidth);
+            document.add(targetedClosingInformationTitle);
+
+            //Targeted Closing Information Table
+            Table targetedClosingInformationTable = new Table(new float[]{1, 1});
+//            this.addTwoColumns(targetedClosingInformationTable, descriptionsTargetedClosingInformationDtoList, columnTwoWidth);
+            this.addTargetedClosingInfo(targetedClosingInformationTable, fundDto, columnTwoWidth);
+            document.add(targetedClosingInformationTable);
 
             if ((descriptionsSeniorManagementTeamDtoList != null && !descriptionsSeniorManagementTeamDtoList.isEmpty()) ||
                     (managementTeamDtoList != null && !managementTeamDtoList.isEmpty())) {
@@ -652,6 +652,33 @@ public class PEPdfServiceImpl implements PEPdfService {
                 unNullifierToEmptyString("Exp Hold Period per Inv.")).setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph(
                 unNullifierToEmptyString(fundDto.getExpHoldPeriodPerInvestment())).setMultipliedLeading(lineSpacingMultiplier)));
+    }
+
+    private void addTargetedClosingInfo(Table table, PEFundDto fundDto, Float width) {
+        table.setWidth(width);
+
+        String firstClose;
+        String finalClose;
+        if (fundDto.getFirstClose() != null) {
+            firstClose = new SimpleDateFormat("dd-MM-yyyy").format(fundDto.getFirstClose());
+        } else {
+            firstClose = "??-??-????";
+        }
+        if (fundDto.getFinalClose() != null) {
+            finalClose = new SimpleDateFormat("dd-MM-yyyy").format(fundDto.getFinalClose());
+        } else {
+            finalClose = "??-??-????";
+        }
+
+        table.addCell(new Cell().add(new Paragraph(
+                unNullifierToEmptyString("First Close")).setMultipliedLeading(lineSpacingMultiplier).setBold()));
+        table.addCell(new Cell().add(new Paragraph(
+                unNullifierToEmptyString(firstClose)).setMultipliedLeading(lineSpacingMultiplier)));
+
+        table.addCell(new Cell().add(new Paragraph(
+                unNullifierToEmptyString("Final Close")).setMultipliedLeading(lineSpacingMultiplier).setBold()));
+        table.addCell(new Cell().add(new Paragraph(
+                unNullifierToEmptyString(finalClose)).setMultipliedLeading(lineSpacingMultiplier)));
     }
 
     private void addManagementTeam(Table table, List<PEFundManagementTeamDto> managementTeamDtoList, Float width) {
