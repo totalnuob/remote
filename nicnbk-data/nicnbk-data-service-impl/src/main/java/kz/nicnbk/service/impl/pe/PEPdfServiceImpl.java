@@ -459,7 +459,7 @@ public class PEPdfServiceImpl implements PEPdfService {
         table.addCell(new Cell().add(new Paragraph("Strategy").setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph("Strategy").setMultipliedLeading(lineSpacingMultiplier)));
         table.addCell(new Cell().add(new Paragraph("GP Commitment").setMultipliedLeading(lineSpacingMultiplier).setBold()));
-        table.addCell(new Cell().add(new Paragraph("GP Commitment").setMultipliedLeading(lineSpacingMultiplier)));
+        table.addCell(new Cell().add(new Paragraph(mlnFormat(fundDto.getGpCommitment())).setMultipliedLeading(lineSpacingMultiplier)));
         table.addCell(new Cell().add(new Paragraph("Hurdle").setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph("Hurdle").setMultipliedLeading(lineSpacingMultiplier)));
         table.addCell(new Cell().add(new Paragraph("Geography").setMultipliedLeading(lineSpacingMultiplier).setBold()));
