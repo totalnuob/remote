@@ -125,7 +125,7 @@ public class PEPdfServiceImpl implements PEPdfService {
             List<PEOnePagerDescriptionsDto> descriptionsStrategyRisksDtoList = descriptionsService.findByFundIdAndType(fundId, 4);
             List<PEOnePagerDescriptionsDto> descriptionsPerformanceMeritsDtoList = descriptionsService.findByFundIdAndType(fundId, 5);
             List<PEOnePagerDescriptionsDto> descriptionsPerformanceRisksDtoList = descriptionsService.findByFundIdAndType(fundId, 6);
-            List<PEOnePagerDescriptionsDto> descriptionsFundStrategyDtoList = descriptionsService.findByFundIdAndType(fundId, 7);
+//            List<PEOnePagerDescriptionsDto> descriptionsFundStrategyDtoList = descriptionsService.findByFundIdAndType(fundId, 7);
             List<PEOnePagerDescriptionsDto> descriptionsDescriptiveDataDtoList = descriptionsService.findByFundIdAndType(fundId, 8);
             List<PEOnePagerDescriptionsDto> descriptionsTargetedClosingInformationDtoList = descriptionsService.findByFundIdAndType(fundId, 9);
             List<PEOnePagerDescriptionsDto> descriptionsSeniorManagementTeamDtoList = descriptionsService.findByFundIdAndType(fundId, 10);
@@ -285,8 +285,8 @@ public class PEPdfServiceImpl implements PEPdfService {
             Rectangle[] columnTwo = {new Rectangle(offSet + columnOneWidth + columnGap, offSet, columnTwoWidth, columnHeight)};
             document.setRenderer(new ColumnDocumentRenderer(document, columnTwo));
 
-            if (descriptionsFundStrategyDtoList != null && !descriptionsFundStrategyDtoList.isEmpty()) {
-
+//            if (descriptionsFundStrategyDtoList != null && !descriptionsFundStrategyDtoList.isEmpty()) {
+            if (fundDto.getStrategyComment() != null && !fundDto.getStrategyComment().equals("")) {
                 //Fund Strategy Title
                 Table fundStrategyTitle = new Table(new float[]{1});
                 this.addGreenTitle(fundStrategyTitle, "Fund Strategy", columnTwoWidth);
@@ -294,7 +294,8 @@ public class PEPdfServiceImpl implements PEPdfService {
 
                 //Fund Strategy Table
                 Table fundStrategyTable = new Table(new float[]{1});
-                this.addFundStrategy(fundStrategyTable, descriptionsFundStrategyDtoList, columnTwoWidth, fontSize - 1);
+//                this.addFundStrategy(fundStrategyTable, descriptionsFundStrategyDtoList, columnTwoWidth, fontSize - 1);
+                this.addFundStrategy(fundStrategyTable, fundDto.getStrategyComment(), columnTwoWidth, fontSize - 1);
                 document.add(fundStrategyTable);
             }
 
@@ -580,27 +581,32 @@ public class PEPdfServiceImpl implements PEPdfService {
         table.addCell(cellRisks);
     }
 
-    private void addFundStrategy(Table table, List<PEOnePagerDescriptionsDto> descriptionsDtoList, Float width, Float fontSize) {
+//    private void addFundStrategy(Table table, List<PEOnePagerDescriptionsDto> descriptionsDtoList, Float width, Float fontSize) {
+//        table.setFontSize(fontSize);
+//
+//        Cell cell = new Cell().setWidth(width);
+//
+//        if (descriptionsDtoList != null) {
+//            for (PEOnePagerDescriptionsDto descriptionsDto : descriptionsDtoList) {
+//                if (descriptionsDto != null) {
+//                    Paragraph p = new Paragraph().setMultipliedLeading(lineSpacingMultiplierText);
+//                    if (descriptionsDto.getDescriptionBold() != null && !descriptionsDto.getDescriptionBold().equals("")) {
+//                        p.add(new Text(descriptionsDto.getDescriptionBold() + " ").setBold());
+//                    }
+//                    if (descriptionsDto.getDescription() != null && !descriptionsDto.getDescription().equals("")) {
+//                        p.add(descriptionsDto.getDescription());
+//                    }
+//                    cell.add(p);
+//                }
+//            }
+//        }
+//
+//        table.addCell(cell);
+//    }
+
+    private void addFundStrategy(Table table, String strategy, Float width, Float fontSize) {
         table.setFontSize(fontSize);
-
-        Cell cell = new Cell().setWidth(width);
-
-        if (descriptionsDtoList != null) {
-            for (PEOnePagerDescriptionsDto descriptionsDto : descriptionsDtoList) {
-                if (descriptionsDto != null) {
-                    Paragraph p = new Paragraph().setMultipliedLeading(lineSpacingMultiplierText);
-                    if (descriptionsDto.getDescriptionBold() != null && !descriptionsDto.getDescriptionBold().equals("")) {
-                        p.add(new Text(descriptionsDto.getDescriptionBold() + " ").setBold());
-                    }
-                    if (descriptionsDto.getDescription() != null && !descriptionsDto.getDescription().equals("")) {
-                        p.add(descriptionsDto.getDescription());
-                    }
-                    cell.add(p);
-                }
-            }
-        }
-
-        table.addCell(cell);
+        table.addCell(new Cell().add(new Paragraph().add(strategy).setMultipliedLeading(lineSpacingMultiplierText)).setWidth(width));
     }
 
     private void addTwoColumns(Table table, List<PEOnePagerDescriptionsDto> descriptionsDtoList, Float width) {
