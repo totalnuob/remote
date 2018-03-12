@@ -448,6 +448,7 @@ public class PEPdfServiceImpl implements PEPdfService {
         String industry = this.fundService.getIndustriesAsString(fundDto.getId());
         String strategy = this.fundService.getStrategiesAsString(fundDto.getId());
         String geography = this.fundService.getGeographiesAsString(fundDto.getId());
+
         table.setWidth(width);
         table.addCell(new Cell().add(new Paragraph("Target Fund Size ($mln)").setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph(mlnFormat(fundDto.getTargetSize())).setMultipliedLeading(lineSpacingMultiplier)));
