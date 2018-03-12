@@ -361,18 +361,18 @@ public class PEFundServiceImpl implements PEFundService {
         return null;
     }
 
-    @Override
-    public Date updateAsOfDateOnePager(Date asOfDateOnePager, Long fundId) {
-        try {
-            PEFund fund = this.peFundRepository.findOne(fundId);
-            fund.setAsOfDateOnePager(asOfDateOnePager);
-            this.peFundRepository.save(fund);
-            return fund.getAsOfDateOnePager();
-        } catch (Exception ex) {
-            logger.error("Error updating PE fund As of Date for One Pager: " + fundId, ex);
-        }
-        return null;
-    }
+//    @Override
+//    public Date updateAsOfDateOnePager(Date asOfDateOnePager, Long fundId) {
+//        try {
+//            PEFund fund = this.peFundRepository.findOne(fundId);
+//            fund.setAsOfDateOnePager(asOfDateOnePager);
+//            this.peFundRepository.save(fund);
+//            return fund.getAsOfDateOnePager();
+//        } catch (Exception ex) {
+//            logger.error("Error updating PE fund As of Date for One Pager: " + fundId, ex);
+//        }
+//        return null;
+//    }
 
     //Commented by Pak
 //    private void calculatePerformanceParameters(List<PEGrossCashflowDto> grossCfDtoList, List<PENetCashflowDto> netCfDtoList, PEFundDto dto) {

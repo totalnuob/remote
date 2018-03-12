@@ -258,10 +258,10 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
             format: 'DD-MM-YYYY'
         });
 
-        $('#asOfDateOnePager').datetimepicker({
-            //defaultDate: new Date(),
-            format: 'DD-MM-YYYY'
-        });
+        //$('#asOfDateOnePager').datetimepicker({
+        //    //defaultDate: new Date(),
+        //    format: 'DD-MM-YYYY'
+        //});
     }
 
     save(){
@@ -1015,7 +1015,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     saveDataAndCreateOnePager() {
         this.dataForOnePager.onePagerDescriptions = this.fund.onePagerDescriptions;
         this.dataForOnePager.managementTeam = this.fund.managementTeam;
-        this.dataForOnePager.asOfDateOnePager = $('#asOfDateOnePager').val();
+        //this.dataForOnePager.asOfDateOnePager = $('#asOfDateOnePager').val();
 
         //console.log(this.fund.asOfDateOnePager);
 
@@ -1026,7 +1026,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
 
                     this.fund.onePagerDescriptions = response.onePagerDescriptions;
                     this.fund.managementTeam = response.managementTeam;
-                    this.fund.asOfDateOnePager = response.asOfDateOnePager;
+                    //this.fund.asOfDateOnePager = response.asOfDateOnePager;
 
                     this.createAndDownloadOnePager();
                 },

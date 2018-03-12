@@ -226,29 +226,29 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
 
         PEOnePagerDescriptionsResultDto descriptionsResultDto = this.descriptionsService.saveList(dataForOnePagerDto.getOnePagerDescriptions(), fundId);
         PEFundManagementTeamResultDto managementTeamResultDto = this.managementTeamService.saveList(dataForOnePagerDto.getManagementTeam(), fundId);
-        Date asOfDateOnePager = this.service.updateAsOfDateOnePager(dataForOnePagerDto.getAsOfDateOnePager(), fundId);
+//        Date asOfDateOnePager = this.service.updateAsOfDateOnePager(dataForOnePagerDto.getAsOfDateOnePager(), fundId);
 
         PEFundDataForOnePagerResultDto resultDto;
 
         if (descriptionsResultDto.getStatus().equals(StatusResultType.FAIL)) {
-            resultDto = new PEFundDataForOnePagerResultDto(null, null, null, StatusResultType.FAIL, "", descriptionsResultDto.getMessageEn(), "");
+            resultDto = new PEFundDataForOnePagerResultDto(null, null, StatusResultType.FAIL, "", descriptionsResultDto.getMessageEn(), "");
             return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         if (managementTeamResultDto.getStatus().equals(StatusResultType.FAIL)) {
-            resultDto = new PEFundDataForOnePagerResultDto(null, null, null, StatusResultType.FAIL, "", managementTeamResultDto.getMessageEn(), "");
+            resultDto = new PEFundDataForOnePagerResultDto(null, null, StatusResultType.FAIL, "", managementTeamResultDto.getMessageEn(), "");
             return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        if (asOfDateOnePager == null) {
-            resultDto = new PEFundDataForOnePagerResultDto(null, null, null, StatusResultType.FAIL, "", "Error updating PE fund As of Date for One Pager", "");
-            return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+//        if (asOfDateOnePager == null) {
+//            resultDto = new PEFundDataForOnePagerResultDto(null, null, null, StatusResultType.FAIL, "", "Error updating PE fund As of Date for One Pager", "");
+//            return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
 
         resultDto = new PEFundDataForOnePagerResultDto(
                 descriptionsResultDto.getDescriptionsDtoList(),
                 managementTeamResultDto.getManagementTeamDtoList(),
-                asOfDateOnePager,
+//                asOfDateOnePager,
                 StatusResultType.SUCCESS, "", "SUCCESS", "");
 
         return new ResponseEntity<>(resultDto, null, HttpStatus.OK);

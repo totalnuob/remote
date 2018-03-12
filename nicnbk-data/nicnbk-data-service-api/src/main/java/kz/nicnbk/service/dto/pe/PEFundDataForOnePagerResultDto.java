@@ -13,13 +13,13 @@ public class PEFundDataForOnePagerResultDto extends StatusResultDto {
 
     private List<PEOnePagerDescriptionsDto> onePagerDescriptions;
     private List<PEFundManagementTeamDto> managementTeam;
-    private Date asOfDateOnePager;
+//    private Date asOfDateOnePager;
 
-    public PEFundDataForOnePagerResultDto (List<PEOnePagerDescriptionsDto> onePagerDescriptions, List<PEFundManagementTeamDto> managementTeam, Date asOfDateOnePager, StatusResultType status, String messageRu, String messageEn, String messageKz) {
+    public PEFundDataForOnePagerResultDto (List<PEOnePagerDescriptionsDto> onePagerDescriptions, List<PEFundManagementTeamDto> managementTeam, StatusResultType status, String messageRu, String messageEn, String messageKz) {
         super(status, messageRu, messageEn, messageKz);
         this.onePagerDescriptions = onePagerDescriptions;
         this.managementTeam = managementTeam;
-        this.asOfDateOnePager = asOfDateOnePager;
+//        this.asOfDateOnePager = asOfDateOnePager;
     }
 
     public List<PEOnePagerDescriptionsDto> getOnePagerDescriptions() {
@@ -38,11 +38,11 @@ public class PEFundDataForOnePagerResultDto extends StatusResultDto {
         this.managementTeam = managementTeam;
     }
 
-    public Date getAsOfDateOnePager() {
-        return asOfDateOnePager;
-    }
-
-    public void setAsOfDateOnePager(Date asOfDateOnePager) {
-        this.asOfDateOnePager = asOfDateOnePager;
-    }
+//    public Date getAsOfDateOnePager() {
+//        return asOfDateOnePager;
+//    }
+//
+//    public void setAsOfDateOnePager(Date asOfDateOnePager) {
+//        this.asOfDateOnePager = asOfDateOnePager;
+//    }
 }

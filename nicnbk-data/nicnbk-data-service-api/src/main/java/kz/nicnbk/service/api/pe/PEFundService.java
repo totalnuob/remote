@@ -29,5 +29,5 @@ public interface PEFundService extends BaseService {
 
     List<PEFundDto> loadFirmFunds(Long firmId, boolean report);
 
-    Date updateAsOfDateOnePager(Date asOfDateOnePager, Long fundId);
+//    Date updateAsOfDateOnePager(Date asOfDateOnePager, Long fundId);
 }

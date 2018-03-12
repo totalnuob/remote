@@ -10,7 +10,7 @@ public class PEFundDataForOnePagerDto {
 
     private List<PEOnePagerDescriptionsDto> onePagerDescriptions;
     private List<PEFundManagementTeamDto> managementTeam;
-    private Date asOfDateOnePager;
+//    private Date asOfDateOnePager;
 
     public List<PEOnePagerDescriptionsDto> getOnePagerDescriptions() {
         return onePagerDescriptions;
@@ -28,11 +28,11 @@ public class PEFundDataForOnePagerDto {
         this.managementTeam = managementTeam;
     }
 
-    public Date getAsOfDateOnePager() {
-        return asOfDateOnePager;
-    }
-
-    public void setAsOfDateOnePager(Date asOfDateOnePager) {
-        this.asOfDateOnePager = asOfDateOnePager;
-    }
+//    public Date getAsOfDateOnePager() {
+//        return asOfDateOnePager;
+//    }
+//
+//    public void setAsOfDateOnePager(Date asOfDateOnePager) {
+//        this.asOfDateOnePager = asOfDateOnePager;
+//    }
 }
