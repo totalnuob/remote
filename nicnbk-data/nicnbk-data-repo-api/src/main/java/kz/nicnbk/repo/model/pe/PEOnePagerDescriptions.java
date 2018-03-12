@@ -2,10 +2,7 @@ package kz.nicnbk.repo.model.pe;
 
 import kz.nicnbk.repo.model.base.BaseEntity;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 /**
  * Created by Pak on 02/03/2018.
@@ -18,6 +15,7 @@ public class PEOnePagerDescriptions extends BaseEntity {
     private int type;
     private PEFund fund;
 
+    @Column(columnDefinition = "TEXT")
     public String getDescriptionBold() {
         return descriptionBold;
     }
@@ -26,6 +24,7 @@ public class PEOnePagerDescriptions extends BaseEntity {
         this.descriptionBold = descriptionBold;
     }
 
+    @Column(columnDefinition = "TEXT")
     public String getDescription() {
         return description;
     }
