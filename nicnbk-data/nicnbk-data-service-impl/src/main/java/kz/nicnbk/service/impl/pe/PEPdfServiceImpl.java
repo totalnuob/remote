@@ -459,7 +459,7 @@ public class PEPdfServiceImpl implements PEPdfService {
         table.addCell(new Cell().add(new Paragraph("Strategy").setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph("Strategy").setMultipliedLeading(lineSpacingMultiplier)));
         table.addCell(new Cell().add(new Paragraph("GP Commitment").setMultipliedLeading(lineSpacingMultiplier).setBold()));
-        table.addCell(new Cell().add(new Paragraph(irrFormat(fundDto.getGpCommitment())).setMultipliedLeading(lineSpacingMultiplier)));
+        table.addCell(new Cell().add(new Paragraph(feeFormat(fundDto.getGpCommitment())).setMultipliedLeading(lineSpacingMultiplier)));
         table.addCell(new Cell().add(new Paragraph("Hurdle").setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph("Hurdle").setMultipliedLeading(lineSpacingMultiplier)));
         table.addCell(new Cell().add(new Paragraph("Geography").setMultipliedLeading(lineSpacingMultiplier).setBold()));
@@ -673,6 +673,11 @@ public class PEPdfServiceImpl implements PEPdfService {
 
     private String irrFormat(Double amount) {
         if (amount != null) { return String.format("%.0f%%", amount); }
+        return "";
+    }
+
+    private String feeFormat(Double amount) {
+        if (amount != null) { return amount.toString()+"%"; }
         return "";
     }
 }
