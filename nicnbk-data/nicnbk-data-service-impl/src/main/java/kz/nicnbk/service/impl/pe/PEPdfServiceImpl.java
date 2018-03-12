@@ -449,7 +449,7 @@ public class PEPdfServiceImpl implements PEPdfService {
         table.addCell(new Cell().add(new Paragraph("Target Fund Size ($mln)").setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph(mlnFormat(fundDto.getTargetSize())).setMultipliedLeading(lineSpacingMultiplier)));
         table.addCell(new Cell().add(new Paragraph("Mgt. fee").setMultipliedLeading(lineSpacingMultiplier).setBold()));
-        table.addCell(new Cell().add(new Paragraph("Mgt. fee").setMultipliedLeading(lineSpacingMultiplier)));
+        table.addCell(new Cell().add(new Paragraph(feeFormat(fundDto.getManagementFee())).setMultipliedLeading(lineSpacingMultiplier)));
         table.addCell(new Cell().add(new Paragraph("Industry").setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph("Industry").setMultipliedLeading(lineSpacingMultiplier)));
         table.addCell(new Cell().add(new Paragraph("Hard cap ($mln)").setMultipliedLeading(lineSpacingMultiplier).setBold()));
