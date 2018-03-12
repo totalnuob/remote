@@ -42,6 +42,7 @@ public class PEFundManagementTeam extends BaseEntity {
         this.age = age;
     }
 
+    @Column(columnDefinition = "TEXT")
     public String getExperience() {
         return experience;
     }
@@ -50,6 +51,7 @@ public class PEFundManagementTeam extends BaseEntity {
         this.experience = experience;
     }
 
+    @Column(columnDefinition = "TEXT")
     public String getEducation() {
         return education;
     }
