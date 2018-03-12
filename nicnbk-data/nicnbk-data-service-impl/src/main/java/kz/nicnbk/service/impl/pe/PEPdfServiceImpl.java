@@ -126,8 +126,8 @@ public class PEPdfServiceImpl implements PEPdfService {
             List<PEOnePagerDescriptionsDto> descriptionsPerformanceMeritsDtoList = descriptionsService.findByFundIdAndType(fundId, 5);
             List<PEOnePagerDescriptionsDto> descriptionsPerformanceRisksDtoList = descriptionsService.findByFundIdAndType(fundId, 6);
 //            List<PEOnePagerDescriptionsDto> descriptionsFundStrategyDtoList = descriptionsService.findByFundIdAndType(fundId, 7);
-            List<PEOnePagerDescriptionsDto> descriptionsDescriptiveDataDtoList = descriptionsService.findByFundIdAndType(fundId, 8);
-            List<PEOnePagerDescriptionsDto> descriptionsTargetedClosingInformationDtoList = descriptionsService.findByFundIdAndType(fundId, 9);
+//            List<PEOnePagerDescriptionsDto> descriptionsDescriptiveDataDtoList = descriptionsService.findByFundIdAndType(fundId, 8);
+//            List<PEOnePagerDescriptionsDto> descriptionsTargetedClosingInformationDtoList = descriptionsService.findByFundIdAndType(fundId, 9);
             List<PEOnePagerDescriptionsDto> descriptionsSeniorManagementTeamDtoList = descriptionsService.findByFundIdAndType(fundId, 10);
             List<PEFundManagementTeamDto> managementTeamDtoList = managementTeamService.findByFundId(fundId);
 
@@ -299,18 +299,18 @@ public class PEPdfServiceImpl implements PEPdfService {
                 document.add(fundStrategyTable);
             }
 
-            if (descriptionsDescriptiveDataDtoList != null && !descriptionsDescriptiveDataDtoList.isEmpty()) {
+//            if (descriptionsDescriptiveDataDtoList != null && !descriptionsDescriptiveDataDtoList.isEmpty()) {}
 
-                //Descriptive Data Title
-                Table descriptiveDataTitle = new Table(new float[]{1});
-                this.addGreenTitle(descriptiveDataTitle, "Descriptive Data", columnTwoWidth);
-                document.add(descriptiveDataTitle);
+            //Descriptive Data Title
+            Table descriptiveDataTitle = new Table(new float[]{1});
+            this.addGreenTitle(descriptiveDataTitle, "Descriptive Data", columnTwoWidth);
+            document.add(descriptiveDataTitle);
 
-                //Descriptive Data Table
-                Table descriptiveDataTable = new Table(new float[]{1, 1});
-                this.addTwoColumns(descriptiveDataTable, descriptionsDescriptiveDataDtoList, columnTwoWidth);
-                document.add(descriptiveDataTable);
-            }
+            //Descriptive Data Table
+            Table descriptiveDataTable = new Table(new float[]{1, 1});
+//            this.addTwoColumns(descriptiveDataTable, descriptionsDescriptiveDataDtoList, columnTwoWidth);
+            this.addDescriptiveData(descriptiveDataTable, fundDto, columnTwoWidth);
+            document.add(descriptiveDataTable);
 
             if (descriptionsTargetedClosingInformationDtoList != null && !descriptionsTargetedClosingInformationDtoList.isEmpty()) {
 
@@ -618,6 +618,20 @@ public class PEPdfServiceImpl implements PEPdfService {
             table.addCell(new Cell().add(new Paragraph(
                             unNullifierToEmptyString(descriptionsDto.getDescription())).setMultipliedLeading(lineSpacingMultiplier)));
         }
+    }
+
+    private void addDescriptiveData(Table table, PEFundDto fundDto, Float width) {
+        table.setWidth(width);
+
+        table.addCell(new Cell().add(new Paragraph(
+                unNullifierToEmptyString("Investm. period (yrs)")).setMultipliedLeading(lineSpacingMultiplier).setBold()));
+        table.addCell(new Cell().add(new Paragraph(
+                unNullifierToEmptyString(fundDto.getInvestmentPeriod())).setMultipliedLeading(lineSpacingMultiplier)));
+
+        table.addCell(new Cell().add(new Paragraph(
+                unNullifierToEmptyString("Fund Term (yrs)")).setMultipliedLeading(lineSpacingMultiplier).setBold()));
+        table.addCell(new Cell().add(new Paragraph(
+                unNullifierToEmptyString(fundDto.getFundTermComment())).setMultipliedLeading(lineSpacingMultiplier)));
     }
 
     private void addManagementTeam(Table table, List<PEFundManagementTeamDto> managementTeamDtoList, Float width) {

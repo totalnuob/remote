@@ -65,7 +65,7 @@ public class PEFund extends CreateUpdateBaseEntity {
     private String investmentPeriod;
     private double fundTerm;
     private String fundTermComment;
-    private double targetInvSizeRange;
+    private String targetInvSizeRange;
     private double targetEvRange;
     private double targetNumberOfInv1;
     private double targetNumberOfInv2;
@@ -452,11 +452,11 @@ public class PEFund extends CreateUpdateBaseEntity {
     }
 
     @Column(name = "traget_inv_size_range")
-    public double getTargetInvSizeRange() {
+    public String getTargetInvSizeRange() {
         return targetInvSizeRange;
     }
 
-    public void setTargetInvSizeRange(double targetInvSizeRange) {
+    public void setTargetInvSizeRange(String targetInvSizeRange) {
         this.targetInvSizeRange = targetInvSizeRange;
     }
 

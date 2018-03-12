@@ -506,7 +506,7 @@
                                             <h4>Descriptive data</h4>
                                             <table class=" col-md-4 table-striped table-condensed">
                                                 <tr>
-                                                    <td class="col-md-1">Investment period</td>
+                                                    <td class="col-md-1">Investment period (yrs)</td>
                                                     <td class="col-md-3">
                                                         <!--<input style="width: 100%" type="text" name="investmentPeriod" [(ngModel)]="fund.investmentPeriod" pattern="[+]?[0-9]*\.?[0-9]+" #investmentPeriod="ngModel"/>-->
                                                         <input style="width: 100%" type="text" name="investmentPeriod" [(ngModel)]="fund.investmentPeriod" #investmentPeriod="ngModel"/>
@@ -516,20 +516,23 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="col-md-1">Fund term</td>
+                                                    <td class="col-md-1">Fund term (yrs)</td>
                                                     <td class="col-md-3">
-                                                        <input style="width: 30%" type="text" name="fundTerm" [(ngModel)]="fund.fundTerm" pattern="[+]?[0-9]*\.?[0-9]+" #fundTerm="ngModel"/><input style="width: 70%" type="text" name="fundTermComment" [(ngModel)]="fund.fundTermComment" placeholder="Comment"/>
-                                                        <div [hidden]="fundTerm.valid || fundTerm.pristine" class="alert alert-danger">
-                                                            Only positive number could be entered
-                                                        </div>
+                                                        <!--<input style="width: 30%" type="text" name="fundTerm" [(ngModel)]="fund.fundTerm" pattern="[+]?[0-9]*\.?[0-9]+" #fundTerm="ngModel"/><input style="width: 70%" type="text" name="fundTermComment" [(ngModel)]="fund.fundTermComment" placeholder="Comment"/>-->
+                                                        <input style="width: 100%" type="text" name="fundTermComment" [(ngModel)]="fund.fundTermComment"/>
+                                                        <!--<div [hidden]="fundTerm.valid || fundTerm.pristine" class="alert alert-danger">-->
+                                                            <!--Only positive number could be entered-->
+                                                        <!--</div>-->
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="col-md-1">Target inv. size range</td>
-                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="targetInvSizeRange" [(ngModel)]="fund.targetInvSizeRange" pattern="[+]?[0-9]*\.?[0-9]+" #targetInvSizeRange="ngModel"/>
-                                                        <div [hidden]="targetInvSizeRange.valid || targetInvSizeRange.pristine" class="alert alert-danger">
-                                                            Only positive number could be entered
-                                                        </div>
+                                                    <td class="col-md-1">Target inv. size range (mln)</td>
+                                                    <td class="col-md-3">
+                                                        <!--<input style="width: 100%" type="text" name="targetInvSizeRange" [(ngModel)]="fund.targetInvSizeRange" pattern="[+]?[0-9]*\.?[0-9]+" #targetInvSizeRange="ngModel"/>-->
+                                                        <input style="width: 100%" type="text" name="targetInvSizeRange" [(ngModel)]="fund.targetInvSizeRange" #targetInvSizeRange="ngModel"/>
+                                                        <!--<div [hidden]="targetInvSizeRange.valid || targetInvSizeRange.pristine" class="alert alert-danger">-->
+                                                            <!--Only positive number could be entered-->
+                                                        <!--</div>-->
                                                     </td>
                                                 </tr>
                                             </table>
@@ -1118,74 +1121,74 @@
                                                 <!--</button>-->
                                             <!--</div>-->
                                         <!--</table>-->
-                                        <br>
-                                        <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
-                                            <tr>
-                                                <th>Descriptive Data (bold part)</th>
-                                                <th>Descriptive Data</th>
-                                                <th></th>
-                                            </tr>
-                                            <tr *ngFor="let item of fund.onePagerDescriptions" [hidden]="item.type !=8">
-                                                <td>
-                                                    <input type="text" class="form-control" name="descriptionBold" [(ngModel)]="item.descriptionBold" placeholder="-" #descriptionBold="ngModel"/>
-                                                    <div [hidden]="descriptionBold.valid || descriptionBold.pristine" class="alert alert-danger">
-                                                        Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'
-                                                    </div>
-                                                </td>
+                                        <!--<br>-->
+                                        <!--<table class="table table-hover table-responsive table-condensed" style="font-size: smaller">-->
+                                            <!--<tr>-->
+                                                <!--<th>Descriptive Data (bold part)</th>-->
+                                                <!--<th>Descriptive Data</th>-->
+                                                <!--<th></th>-->
+                                            <!--</tr>-->
+                                            <!--<tr *ngFor="let item of fund.onePagerDescriptions" [hidden]="item.type !=8">-->
+                                                <!--<td>-->
+                                                    <!--<input type="text" class="form-control" name="descriptionBold" [(ngModel)]="item.descriptionBold" placeholder="-" #descriptionBold="ngModel"/>-->
+                                                    <!--<div [hidden]="descriptionBold.valid || descriptionBold.pristine" class="alert alert-danger">-->
+                                                        <!--Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'-->
+                                                    <!--</div>-->
+                                                <!--</td>-->
 
-                                                <td>
-                                                    <input type="text" class="form-control" name="description" [(ngModel)]="item.description" placeholder="-" #description="ngModel"/>
-                                                    <div [hidden]="description.valid || description.pristine" class="alert alert-danger">
-                                                        Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'
-                                                    </div>
-                                                </td>
+                                                <!--<td>-->
+                                                    <!--<input type="text" class="form-control" name="description" [(ngModel)]="item.description" placeholder="-" #description="ngModel"/>-->
+                                                    <!--<div [hidden]="description.valid || description.pristine" class="alert alert-danger">-->
+                                                        <!--Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'-->
+                                                    <!--</div>-->
+                                                <!--</td>-->
 
-                                                <td>
-                                                    <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRowDescription(item)">
-                                                        <span class="glyphicon glyphicon-minus"></span>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                            <div class="col-md-1 pull-left">
-                                                <button type="button" class="btn-xs btn-primary" *ngIf="canEdit()" (click)="addRowDescription(8)">
-                                                    <span class="glyphicon glyphicon-plus"></span>
-                                                </button>
-                                            </div>
-                                        </table>
-                                        <br>
-                                        <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
-                                            <tr>
-                                                <th>Targeted Closing Information (bold part)</th>
-                                                <th>Targeted Closing Information</th>
-                                                <th></th>
-                                            </tr>
-                                            <tr *ngFor="let item of fund.onePagerDescriptions" [hidden]="item.type !=9">
-                                                <td>
-                                                    <input type="text" class="form-control" name="descriptionBold" [(ngModel)]="item.descriptionBold" placeholder="-" #descriptionBold="ngModel"/>
-                                                    <div [hidden]="descriptionBold.valid || descriptionBold.pristine" class="alert alert-danger">
-                                                        Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'
-                                                    </div>
-                                                </td>
+                                                <!--<td>-->
+                                                    <!--<button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRowDescription(item)">-->
+                                                        <!--<span class="glyphicon glyphicon-minus"></span>-->
+                                                    <!--</button>-->
+                                                <!--</td>-->
+                                            <!--</tr>-->
+                                            <!--<div class="col-md-1 pull-left">-->
+                                                <!--<button type="button" class="btn-xs btn-primary" *ngIf="canEdit()" (click)="addRowDescription(8)">-->
+                                                    <!--<span class="glyphicon glyphicon-plus"></span>-->
+                                                <!--</button>-->
+                                            <!--</div>-->
+                                        <!--</table>-->
+                                        <!--<br>-->
+                                        <!--<table class="table table-hover table-responsive table-condensed" style="font-size: smaller">-->
+                                            <!--<tr>-->
+                                                <!--<th>Targeted Closing Information (bold part)</th>-->
+                                                <!--<th>Targeted Closing Information</th>-->
+                                                <!--<th></th>-->
+                                            <!--</tr>-->
+                                            <!--<tr *ngFor="let item of fund.onePagerDescriptions" [hidden]="item.type !=9">-->
+                                                <!--<td>-->
+                                                    <!--<input type="text" class="form-control" name="descriptionBold" [(ngModel)]="item.descriptionBold" placeholder="-" #descriptionBold="ngModel"/>-->
+                                                    <!--<div [hidden]="descriptionBold.valid || descriptionBold.pristine" class="alert alert-danger">-->
+                                                        <!--Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'-->
+                                                    <!--</div>-->
+                                                <!--</td>-->
 
-                                                <td>
-                                                    <input type="text" class="form-control" name="description" [(ngModel)]="item.description" placeholder="-" #description="ngModel"/>
-                                                    <div [hidden]="description.valid || description.pristine" class="alert alert-danger">
-                                                        Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'
-                                                    </div>
-                                                </td>
+                                                <!--<td>-->
+                                                    <!--<input type="text" class="form-control" name="description" [(ngModel)]="item.description" placeholder="-" #description="ngModel"/>-->
+                                                    <!--<div [hidden]="description.valid || description.pristine" class="alert alert-danger">-->
+                                                        <!--Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'-->
+                                                    <!--</div>-->
+                                                <!--</td>-->
 
-                                                <td>
-                                                    <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRowDescription(item)">
-                                                        <span class="glyphicon glyphicon-minus"></span>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                            <div class="col-md-1 pull-left">
-                                                <button type="button" class="btn-xs btn-primary" *ngIf="canEdit()" (click)="addRowDescription(9)">
-                                                    <span class="glyphicon glyphicon-plus"></span>
-                                                </button>
-                                            </div>
-                                        </table>
+                                                <!--<td>-->
+                                                    <!--<button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRowDescription(item)">-->
+                                                        <!--<span class="glyphicon glyphicon-minus"></span>-->
+                                                    <!--</button>-->
+                                                <!--</td>-->
+                                            <!--</tr>-->
+                                            <!--<div class="col-md-1 pull-left">-->
+                                                <!--<button type="button" class="btn-xs btn-primary" *ngIf="canEdit()" (click)="addRowDescription(9)">-->
+                                                    <!--<span class="glyphicon glyphicon-plus"></span>-->
+                                                <!--</button>-->
+                                            <!--</div>-->
+                                        <!--</table>-->
                                         <br>
                                         <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
                                             <tr>

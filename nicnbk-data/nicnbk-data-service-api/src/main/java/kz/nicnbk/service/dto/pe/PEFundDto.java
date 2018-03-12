@@ -59,7 +59,7 @@ public class PEFundDto extends HistoryBaseEntityDto<PEFund> {
     private String investmentPeriod;
     private double fundTerm;
     private String fundTermComment;
-    private double targetInvSizeRange;
+    private String targetInvSizeRange;
     private double targetEvRange;
     private double targetNumberOfInv1;
     private double targetNumberOfInv2;
@@ -388,11 +388,11 @@ public class PEFundDto extends HistoryBaseEntityDto<PEFund> {
         this.fundTermComment = fundTermComment;
     }
 
-    public double getTargetInvSizeRange() {
+    public String getTargetInvSizeRange() {
         return targetInvSizeRange;
     }
 
-    public void setTargetInvSizeRange(double targetInvSizeRange) {
+    public void setTargetInvSizeRange(String targetInvSizeRange) {
         this.targetInvSizeRange = targetInvSizeRange;
     }
 

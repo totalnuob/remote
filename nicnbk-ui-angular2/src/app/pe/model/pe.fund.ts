@@ -40,7 +40,7 @@ export class PEFund {
     investmentPeriod: string;
     fundTerm: number;
     fundTermComment: string;
-    targetInvSizeRange: number;
+    targetInvSizeRange: string;
     targetEvRange: number;
     targetNumberOfInv1: number;
     targetNumberOfInv2: number;
