@@ -32,4 +32,8 @@ public interface PEFundService extends BaseService {
 //    Date updateAsOfDateOnePager(Date asOfDateOnePager, Long fundId);
 
     String getIndustriesAsString(Long fundId);
+
+    String getStrategiesAsString(Long fundId);
+
+    String getGeographiesAsString(Long fundId);
 }

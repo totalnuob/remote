@@ -2,6 +2,8 @@ package kz.nicnbk.service.impl.pe;
 
 import kz.nicnbk.repo.api.employee.EmployeeRepository;
 import kz.nicnbk.repo.api.pe.PEFundRepository;
+import kz.nicnbk.repo.model.common.Geography;
+import kz.nicnbk.repo.model.common.Strategy;
 import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.pe.PEFund;
 import kz.nicnbk.repo.model.pe.PEIndustry;
@@ -372,15 +374,56 @@ public class PEFundServiceImpl implements PEFundService {
         if (industrySet == null) {
             return null;
         }
-        if (industrySet.isEmpty()) {
-            return "";
-        }
         String st = "";
         for (PEIndustry industry : industrySet) {
             if (st.equals("")) {
                 st = industry.getNameEn();
             } else {
                 st += ", " + industry.getNameEn();
+            }
+        }
+
+        return st;
+    }
+
+    @Override
+    public String getStrategiesAsString(Long fundId) {
+        PEFund fund = this.peFundRepository.findOne(fundId);
+        if (fund == null) {
+            return null;
+        }
+        Set<Strategy> strategySet = fund.getStrategy();
+        if (strategySet == null) {
+            return null;
+        }
+        String st = "";
+        for (Strategy strategy : strategySet) {
+            if (st.equals("")) {
+                st = strategy.getNameEn();
+            } else {
+                st += ", " + strategy.getNameEn();
+            }
+        }
+
+        return st;
+    }
+
+    @Override
+    public String getGeographiesAsString(Long fundId) {
+        PEFund fund = this.peFundRepository.findOne(fundId);
+        if (fund == null) {
+            return null;
+        }
+        Set<Geography> geographySet = fund.getGeography();
+        if (geographySet == null) {
+            return null;
+        }
+        String st = "";
+        for (Geography geography : geographySet) {
+            if (st.equals("")) {
+                st = geography.getNameEn();
+            } else {
+                st += ", " + geography.getNameEn();
             }
         }
 
