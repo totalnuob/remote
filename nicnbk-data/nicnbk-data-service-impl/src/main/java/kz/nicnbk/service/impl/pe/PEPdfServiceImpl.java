@@ -171,7 +171,7 @@ public class PEPdfServiceImpl implements PEPdfService {
                         unNullifierToEmptyString(firmDto.getFirmName()) +
                                 " Investment Performance Data as of " +
                                 asOfDateString +
-                                " ($mln)",
+                                " (mln)",
                         ps.getWidth() - offSet * 2);
                 document.add(keyFundStatisticsTitle);
 
@@ -433,7 +433,7 @@ public class PEPdfServiceImpl implements PEPdfService {
         table.setWidth(width);
         table.addCell(new Cell().add(new Paragraph("GP Name").setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph(unNullifierToEmptyString(firmDto.getFirmName())).setMultipliedLeading(lineSpacingMultiplier)));
-        table.addCell(new Cell().add(new Paragraph("Strategy AUM ($mln)").setMultipliedLeading(lineSpacingMultiplier).setBold()));
+        table.addCell(new Cell().add(new Paragraph("Strategy AUM (mln)").setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph(mlnFormat(firmDto.getAum() * 1000000)).setMultipliedLeading(lineSpacingMultiplier)));
         table.addCell(new Cell().add(new Paragraph("Locations").setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph(unNullifierToEmptyString(firmDto.getLocations())).setMultipliedLeading(lineSpacingMultiplier)));
@@ -451,13 +451,13 @@ public class PEPdfServiceImpl implements PEPdfService {
         String geography = this.fundService.getGeographiesAsString(fundDto.getId());
 
         table.setWidth(width);
-        table.addCell(new Cell().add(new Paragraph("Target Fund Size ($mln)").setMultipliedLeading(lineSpacingMultiplier).setBold()));
+        table.addCell(new Cell().add(new Paragraph("Target Fund Size (mln)").setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph(mlnFormat(fundDto.getTargetSize())).setMultipliedLeading(lineSpacingMultiplier)));
         table.addCell(new Cell().add(new Paragraph("Mgt. fee").setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph(feeFormat(fundDto.getManagementFee())).setMultipliedLeading(lineSpacingMultiplier)));
         table.addCell(new Cell().add(new Paragraph("Industry").setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph(unNullifierToEmptyString(industry)).setMultipliedLeading(lineSpacingMultiplier)));
-        table.addCell(new Cell().add(new Paragraph("Hard cap ($mln)").setMultipliedLeading(lineSpacingMultiplier).setBold()));
+        table.addCell(new Cell().add(new Paragraph("Hard cap (mln)").setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph(mlnFormat(fundDto.getHardCap())).setMultipliedLeading(lineSpacingMultiplier)));
         table.addCell(new Cell().add(new Paragraph("Carry").setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph(feeFormat(fundDto.getCarriedInterest())).setMultipliedLeading(lineSpacingMultiplier)));
