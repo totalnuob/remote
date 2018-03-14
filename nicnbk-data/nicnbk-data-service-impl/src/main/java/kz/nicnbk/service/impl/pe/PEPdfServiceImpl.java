@@ -507,7 +507,7 @@ public class PEPdfServiceImpl implements PEPdfService {
             table.addCell(new Cell().add(new Paragraph(unNullifierToEmptyString(fundDto.getFundName())).setMultipliedLeading(lineSpacingMultiplier)));
             table.addCell(new Cell().add(new Paragraph(Integer.toString(fundDto.getVintage())).setMultipliedLeading(lineSpacingMultiplier)));
             table.addCell(new Cell().add(new Paragraph(unNullifierToEmptyString(fundDto.getNumberOfInvestments())).setMultipliedLeading(lineSpacingMultiplier)));
-            table.addCell(new Cell().add(new Paragraph(mlnFormat(fundDto.getFundSize())).setMultipliedLeading(lineSpacingMultiplier)));
+            table.addCell(new Cell().add(new Paragraph(mlnFormat(fundDto.getFundSize() * 1000000)).setMultipliedLeading(lineSpacingMultiplier)));
             table.addCell(new Cell().add(new Paragraph(mlnFormat(fundDto.getInvestedAmount())).setMultipliedLeading(lineSpacingMultiplier)));
             table.addCell(new Cell().add(new Paragraph(mlnFormat(fundDto.getRealized())).setMultipliedLeading(lineSpacingMultiplier)));
             table.addCell(new Cell().add(new Paragraph(mlnFormat(fundDto.getUnrealized())).setMultipliedLeading(lineSpacingMultiplier)));
