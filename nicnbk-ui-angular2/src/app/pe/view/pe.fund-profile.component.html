@@ -169,7 +169,7 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="col-md-1">Target size</td>
+                                                    <td class="col-md-1">Target size (mln)</td>
                                                     <td class="col-md-3">
                                                         <input style="width: 100%" type="text" name="targetSize" [(ngModel)]="fund.targetSize" pattern="[+]?[0-9]*\.?[0-9]+" #targetSize="ngModel"/>
                                                         <!--<input style="width: 70%" type="text" name="targetHardCapComment" [(ngModel)]="fund.targetHardCapComment" placeholder="Comment"/>-->
@@ -179,7 +179,7 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="col-md-1">Hard cap</td>
+                                                    <td class="col-md-1">Hard cap (mln)</td>
                                                     <td class="col-md-3">
                                                         <input style="width: 100%" type="text" name="hardCap" [(ngModel)]="fund.hardCap" pattern="[+]?[0-9]*\.?[0-9]+" #hardCap="ngModel"/>
                                                         <div [hidden]="hardCap.valid || hardCap.pristine" class="alert alert-danger">
