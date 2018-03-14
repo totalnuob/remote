@@ -47,7 +47,8 @@ public interface PeriodicReportService extends BaseService {
 
     boolean markReportAsFinal(Long reportId);
 
-    InputStream getExportFileStream(Long reportId, String type);
+    //InputStream getExportFileStream(Long reportId, String type);
+    FilesDto getExportFileStream(Long reportId, String type);
 
     ListResponseDto generateConsolidatedBalanceKZTForm6(Long reportId);
 

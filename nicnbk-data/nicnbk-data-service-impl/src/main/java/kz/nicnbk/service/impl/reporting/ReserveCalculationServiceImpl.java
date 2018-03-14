@@ -3,7 +3,11 @@ package kz.nicnbk.service.impl.reporting;
 import kz.nicnbk.common.service.util.DateUtils;
 import kz.nicnbk.common.service.util.ExcelUtils;
 import kz.nicnbk.common.service.util.MathUtils;
+import kz.nicnbk.repo.api.common.CurrencyRatesRepository;
+import kz.nicnbk.repo.api.lookup.CurrencyRepository;
 import kz.nicnbk.repo.api.reporting.ReserveCalculationRepository;
+import kz.nicnbk.repo.model.common.*;
+import kz.nicnbk.repo.model.common.Currency;
 import kz.nicnbk.repo.model.lookup.reporting.CapitalCallExportTypeLookup;
 import kz.nicnbk.repo.model.reporting.ReserveCalculation;
 import kz.nicnbk.service.api.common.CurrencyRatesService;
@@ -32,6 +36,8 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -58,6 +64,9 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
 
     @Autowired
     ReserveCalculationConverter reserveCalculationConverter;
+
+    @Autowired
+    private CurrencyRatesRepository currencyRatesRepository;
 
     @Override
     public List<ReserveCalculationDto> getAllReserveCalculations() {
@@ -123,8 +132,8 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
      * @param date - date
      * @return - reserve calculation records
      */
-    //@Override
-    private List<ReserveCalculationDto> getReserveCalculationsForMonth(String code, Date date) {
+    @Override
+    public List<ReserveCalculationDto> getReserveCalculationsForMonth(String code, Date date) {
 
         Date mostRecentFinalReportDate = null;
         List<PeriodicReportDto> periodicReportDtos = this.periodicReportService.getAllPeriodicReports();

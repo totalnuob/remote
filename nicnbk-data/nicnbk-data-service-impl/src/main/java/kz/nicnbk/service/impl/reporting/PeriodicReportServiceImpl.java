@@ -30,7 +30,9 @@ import kz.nicnbk.service.impl.reporting.lookup.PeriodicDataTypeLookup;
 import kz.nicnbk.service.impl.reporting.lookup.ReserveCalculationsExpenseTypeLookup;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
@@ -47,6 +49,8 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Service Impl class for Periodic Reports.
@@ -1439,7 +1443,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 List<ConsolidatedBalanceFormRecordDto> previousRecords = getConsolidatedBalanceKZTForm1Saved(previousReport.getId());
                 if(previousRecords != null){
                     for(ConsolidatedBalanceFormRecordDto previousRecord: previousRecords){
-                        for(int i = 0; i < currentRecords.size(); i++){
+                        for(int i = 0; currentRecords != null && i < currentRecords.size(); i++){
                             ConsolidatedBalanceFormRecordDto currentRecord = currentRecords.get(i);
                             if(isMatchingRecords(currentRecord, previousRecord)){
                                 currentRecord.setPreviousAccountBalance(previousRecord.getCurrentAccountBalance());
@@ -3501,7 +3505,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
                 for(int i = 0; i < toAddRecords.size(); i++){
                     ConsolidatedKZTForm14RecordDto record = toAddRecords.get(i);
-                    records.add(toAddIndices.get(i), record);
+                    if(!record.isEmpty()) {
+                        records.add(toAddIndices.get(i), record);
+                    }
                 }
             }
 
@@ -3717,7 +3723,6 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             return responseDto;
         }
     }
-
     private ListResponseDto generateConsolidatedKZTForm22Current(Long reportId) {
         ListResponseDto responseDto = new ListResponseDto();
         PeriodicReport report = this.periodReportRepository.findOne(reportId);
@@ -5453,7 +5458,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
     /* EXPORT ******************************************************************************************************/
 
     @Override
-    public InputStream getExportFileStream(Long reportId, String type) {
+    public FilesDto getExportFileStream(Long reportId, String type) {
         if(reportId == null){
             logger.error("Periodic Report export: report id not specified");
             return null;
@@ -5496,7 +5501,8 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         return null;
     }
 
-    private InputStream getConsolidatedBalanceUSDReportInputStream(Long reportId) {
+    private FilesDto getConsolidatedBalanceUSDReportInputStream(Long reportId) {
+        FilesDto filesDto = new FilesDto();
         PeriodicReport report = this.periodReportRepository.findOne(reportId);
         if(report == null){
             logger.error("No report found for id=" + reportId);
@@ -5596,24 +5602,22 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             }
 
             //
-            File tmpDir = new File(this.rootDirectory + "/tmp");
+            File tmpDir = new File(this.rootDirectory + "/tmp/nbrk_reporting");
 
-            String[]entries = tmpDir.list();
-            if(entries != null) {
-                for (String s : entries) {
-                    File currentFile = new File(tmpDir.getPath(), s);
-                    currentFile.delete();
-                }
+            if(!tmpDir.exists()){
+                tmpDir.mkdir();
             }
 
             // write to new
-            String filePath = this.rootDirectory + "/tmp/CONS_BLNC_USD_" + new Date().getTime() + ".xlsx";
+            String filePath = tmpDir + "/CONS_BLNC_USD_" + MathUtils.getRandomNumber(0, 10000) + ".xlsx";
             try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
                 workbook.write(outputStream);
             }
 
             InputStream inputStream = new FileInputStream(filePath);
-            return inputStream;
+            filesDto.setInputStream(inputStream);
+            filesDto.setFileName(filePath);
+            return filesDto;
         }  catch (IOException e) {
             logger.error("IO Exception when exporting USD_FORM_1", e);
         }
@@ -5621,8 +5625,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         return null;
     }
 
-    private InputStream getConsolidatedIncomeExpenseUSDReportInputStream(Long reportId){
+    private FilesDto getConsolidatedIncomeExpenseUSDReportInputStream(Long reportId){
 
+        FilesDto filesDto = new FilesDto();
         PeriodicReport report = this.periodReportRepository.findOne(reportId);
         if(report == null){
             logger.error("No report found for id=" + reportId);
@@ -5721,24 +5726,22 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             }
 
             //
-            File tmpDir = new File(this.rootDirectory + "/tmp");
+            File tmpDir = new File(this.rootDirectory + "/tmp/nbrk_reporting");
 
-            String[]entries = tmpDir.list();
-            if(entries != null) {
-                for (String s : entries) {
-                    File currentFile = new File(tmpDir.getPath(), s);
-                    currentFile.delete();
-                }
+            if(!tmpDir.exists()){
+                tmpDir.mkdir();
             }
 
             // write to new
-            String filePath = this.rootDirectory + "/tmp/INCOME_EXP_USD_" + new Date().getTime() + ".xlsx";
+            String filePath =  tmpDir + "/INCOME_EXP_USD_" + MathUtils.getRandomNumber(0, 10000) + ".xlsx";
             try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
                 workbook.write(outputStream);
             }
 
             InputStream inputStream = new FileInputStream(filePath);
-            return inputStream;
+            filesDto.setInputStream(inputStream);
+            filesDto.setFileName(filePath);
+            return filesDto;
         } catch (IOException e) {
             logger.error("IO Exception when exporting USD_FORM_2", e);
         }
@@ -5746,7 +5749,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         return null;
     }
 
-    private InputStream getConsolidatedTotalIncomeUSDReportInputStream(Long reportId){
+    private FilesDto getConsolidatedTotalIncomeUSDReportInputStream(Long reportId){
+
+        FilesDto filesDto = new FilesDto();
         PeriodicReport report = this.periodReportRepository.findOne(reportId);
         if(report == null){
             logger.error("No report found for id=" + reportId);
@@ -5799,24 +5804,23 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             }
 
             //
-            File tmpDir = new File(this.rootDirectory + "/tmp");
+            File tmpDir = new File(this.rootDirectory + "/tmp/nbrk_reporting");
 
-            String[]entries = tmpDir.list();
-            if(entries != null) {
-                for (String s : entries) {
-                    File currentFile = new File(tmpDir.getPath(), s);
-                    currentFile.delete();
-                }
+            if(!tmpDir.exists()){
+                tmpDir.mkdir();
             }
 
+
             // write to new
-            String filePath = this.rootDirectory + "/tmp/CONS_TOTAL_INCOME_USD_" + new Date().getTime() + ".xlsx";
+            String filePath = tmpDir + "/CONS_TOTAL_INCOME_USD_" + MathUtils.getRandomNumber(0, 10000) + ".xlsx";
             try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
                 workbook.write(outputStream);
             }
 
             InputStream inputStream = new FileInputStream(filePath);
-            return inputStream;
+            filesDto.setInputStream(inputStream);
+            filesDto.setFileName(filePath);
+            return filesDto;
         } catch (IOException e) {
             logger.error("IO Exception when exporting USD_FORM_3", e);
         }
@@ -5824,7 +5828,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         return null;
     }
 
-    private InputStream getConsolidatedForm1KZTReportInputStream(Long reportId) {
+    private FilesDto getConsolidatedForm1KZTReportInputStream(Long reportId) {
+
+        FilesDto filesDto = new FilesDto();
         PeriodicReport report = this.periodReportRepository.findOne(reportId);
         if(report == null){
             logger.error("No report found for id=" + reportId);
@@ -5931,24 +5937,22 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             }
 
             //
-            File tmpDir = new File(this.rootDirectory + "/tmp");
+            File tmpDir = new File(this.rootDirectory + "/tmp/nbrk_reporting");
 
-            String[]entries = tmpDir.list();
-            if(entries != null) {
-                for (String s : entries) {
-                    File currentFile = new File(tmpDir.getPath(), s);
-                    currentFile.delete();
-                }
+            if(!tmpDir.exists()){
+                tmpDir.mkdir();
             }
 
             // write to new
-            String filePath = this.rootDirectory + "/tmp/CONS_KZT_FORM_1_" + new Date().getTime() + ".xlsx";
+            String filePath = tmpDir + "/CONS_KZT_FORM_1_" + MathUtils.getRandomNumber(0, 10000) + ".xlsx";
             try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
                 workbook.write(outputStream);
             }
 
             InputStream inputStream = new FileInputStream(filePath);
-            return inputStream;
+            filesDto.setInputStream(inputStream);
+            filesDto.setFileName(filePath);
+            return filesDto;
         } catch (IOException ex) {
             // TODO: log error
             //e.printStackTrace();
@@ -5958,7 +5962,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         return null;
     }
 
-    private InputStream getConsolidatedForm2KZTReportInputStream(Long reportId) {
+    private FilesDto getConsolidatedForm2KZTReportInputStream(Long reportId) {
+
+        FilesDto filesDto = new FilesDto();
         PeriodicReport report = this.periodReportRepository.findOne(reportId);
         if(report == null){
             logger.error("No report found for id=" + reportId);
@@ -6064,24 +6070,22 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             }
 
             //
-            File tmpDir = new File(this.rootDirectory + "/tmp");
+            File tmpDir = new File(this.rootDirectory + "/tmp/nbrk_reporting");
 
-            String[]entries = tmpDir.list();
-            if(entries != null) {
-                for (String s : entries) {
-                    File currentFile = new File(tmpDir.getPath(), s);
-                    currentFile.delete();
-                }
+            if(!tmpDir.exists()){
+                tmpDir.mkdir();
             }
 
             // write to new
-            String filePath = this.rootDirectory + "/tmp/CONS_KZT_FORM_2_" + new Date().getTime() + ".xlsx";
+            String filePath = tmpDir + "/CONS_KZT_FORM_2_" + MathUtils.getRandomNumber(0, 10000) + ".xlsx";
             try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
                 workbook.write(outputStream);
             }
 
             InputStream inputStream = new FileInputStream(filePath);
-            return inputStream;
+            filesDto.setInputStream(inputStream);
+            filesDto.setFileName(filePath);
+            return filesDto;
         }catch (IOException ex) {
             // TODO: log error
             //e.printStackTrace();
@@ -6091,7 +6095,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         return null;
     }
 
-    private InputStream getConsolidatedForm3KZTReportInputStream(Long reportId) {
+    private FilesDto getConsolidatedForm3KZTReportInputStream(Long reportId) {
+
+        FilesDto filesDto = new FilesDto();
         PeriodicReport report = this.periodReportRepository.findOne(reportId);
         if(report == null){
             logger.error("No report found for id=" + reportId);
@@ -6173,24 +6179,22 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             }
 
             //
-            File tmpDir = new File(this.rootDirectory + "/tmp");
+            File tmpDir = new File(this.rootDirectory + "/tmp/nbrk_reporting");
 
-            String[]entries = tmpDir.list();
-            if(entries != null) {
-                for (String s : entries) {
-                    File currentFile = new File(tmpDir.getPath(), s);
-                    currentFile.delete();
-                }
+            if(!tmpDir.exists()){
+                tmpDir.mkdir();
             }
 
             // write to new
-            String filePath = this.rootDirectory + "/tmp/CONS_KZT_FORM_3_" + new Date().getTime() + ".xlsx";
+            String filePath = tmpDir + "/CONS_KZT_FORM_3_" + MathUtils.getRandomNumber(0, 10000) + ".xlsx";
             try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
                 workbook.write(outputStream);
             }
 
             InputStream inputStream = new FileInputStream(filePath);
-            return inputStream;
+            filesDto.setInputStream(inputStream);
+            filesDto.setFileName(filePath);
+            return filesDto;
         }catch (IOException e) {
 
             // TODO: log error
@@ -6201,7 +6205,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         return null;
     }
 
-    private InputStream getConsolidatedForm6KZTReportInputStream(Long reportId) {
+    private FilesDto getConsolidatedForm6KZTReportInputStream(Long reportId) {
+
+        FilesDto filesDto = new FilesDto();
         PeriodicReport report = this.periodReportRepository.findOne(reportId);
         if(report == null){
             logger.error("No report found for id=" + reportId);
@@ -6290,24 +6296,22 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             }
 
             //
-            File tmpDir = new File(this.rootDirectory + "/tmp");
+            File tmpDir = new File(this.rootDirectory + "/tmp/nbrk_reporting");
 
-            String[]entries = tmpDir.list();
-            if(entries != null) {
-                for (String s : entries) {
-                    File currentFile = new File(tmpDir.getPath(), s);
-                    currentFile.delete();
-                }
+            if(!tmpDir.exists()){
+                tmpDir.mkdir();
             }
 
             // write to new
-            String filePath = this.rootDirectory + "/tmp/CONS_KZT_FORM_6_" + new Date().getTime() + ".xlsx";
+            String filePath = tmpDir + "/CONS_KZT_FORM_6_" + MathUtils.getRandomNumber(0, 10000) + ".xlsx";
             try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
                 workbook.write(outputStream);
             }
 
             InputStream inputStream = new FileInputStream(filePath);
-            return inputStream;
+            filesDto.setInputStream(inputStream);
+            filesDto.setFileName(filePath);
+            return filesDto;
         }catch (IOException e) {
 
             // TODO: log error
@@ -6318,7 +6322,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         return null;
     }
 
-    private InputStream getConsolidatedForm7KZTReportInputStream(Long reportId) {
+    private FilesDto getConsolidatedForm7KZTReportInputStream(Long reportId) {
+
+        FilesDto filesDto = new FilesDto();
         PeriodicReport report = this.periodReportRepository.findOne(reportId);
         if(report == null){
             logger.error("No report found for id=" + reportId);
@@ -6465,7 +6471,16 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                                         newRow.createCell(j);
                                     }
                                     if(row.getCell(j) != null && row.getCell(j).getCellStyle() != null) {
-                                        newRow.getCell(j).setCellStyle(row.getCell(j).getCellStyle());
+                                        CellStyle newCellStyle = workbook.createCellStyle();
+                                        newCellStyle.cloneStyleFrom(row.getCell(j).getCellStyle());
+                                        newRow.getCell(j).setCellStyle(newCellStyle);
+
+                                        XSSFFont font = workbook.createFont();
+                                        font.setFontHeightInPoints((short)8);
+                                        font.setFontName("Times New Roman");
+                                        font.setBold(false);
+                                        font.setItalic(false);
+                                        newRow.getCell(j).getCellStyle().setFont(font);
                                     }
                                 }
                                 index++;
@@ -6492,19 +6507,15 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 //            System.out.println((end-start) / 1000 + " seconds - updating workbook instance");
 
             //
-            File tmpDir = new File(this.rootDirectory + "/tmp");
+            File tmpDir = new File(this.rootDirectory + "/tmp/nbrk_reporting");
 
-            String[]entries = tmpDir.list();
-            if(entries != null) {
-                for (String s : entries) {
-                    File currentFile = new File(tmpDir.getPath(), s);
-                    currentFile.delete();
-                }
+            if(!tmpDir.exists()){
+                tmpDir.mkdir();
             }
 
 //            start = System.currentTimeMillis();
             // write to new
-            String filePath = this.rootDirectory + "/tmp/CONS_KZT_FORM_7_" + new Date().getTime() + ".xlsx";
+            String filePath = tmpDir + "/CONS_KZT_FORM_7_" + MathUtils.getRandomNumber(0, 10000) + ".xlsx";
             try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
                 workbook.write(outputStream);
             }
@@ -6513,7 +6524,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 //            System.out.println((end-start) / 1000 + " seconds - writing workbook to output file");
 
             InputStream inputStream = new FileInputStream(filePath);
-            return inputStream;
+            filesDto.setInputStream(inputStream);
+            filesDto.setFileName(filePath);
+            return filesDto;
         } catch (IOException e) {
             // TODO: log error
             //e.printStackTrace();
@@ -6523,7 +6536,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         return null;
     }
 
-    private InputStream getConsolidatedForm8KZTReportInputStream(Long reportId) {
+    private FilesDto getConsolidatedForm8KZTReportInputStream(Long reportId) {
+
+        FilesDto filesDto = new FilesDto();
         PeriodicReport report = this.periodReportRepository.findOne(reportId);
         if(report == null){
             logger.error("No report found for id=" + reportId);
@@ -6637,8 +6652,18 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                                     if(newRow.getCell(j) == null){
                                         newRow.createCell(j);
                                     }
+
                                     if(row.getCell(j) != null && row.getCell(j).getCellStyle() != null) {
-                                        newRow.getCell(j).setCellStyle(row.getCell(j).getCellStyle());
+                                        CellStyle newCellStyle = workbook.createCellStyle();
+                                        newCellStyle.cloneStyleFrom(row.getCell(j).getCellStyle());
+                                        newRow.getCell(j).setCellStyle(newCellStyle);
+
+                                        XSSFFont font = workbook.createFont();
+                                        font.setFontHeightInPoints((short)11);
+                                        font.setFontName("Times New Roman");
+                                        font.setBold(false);
+                                        font.setItalic(false);
+                                        newRow.getCell(j).getCellStyle().setFont(font);
                                     }
                                 }
                                 index++;
@@ -6665,19 +6690,15 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 //            System.out.println((end-start) / 1000 + " seconds - updating workbook instance");
 
             //
-            File tmpDir = new File(this.rootDirectory + "/tmp");
+            File tmpDir = new File(this.rootDirectory + "/tmp/nbrk_reporting");
 
-            String[]entries = tmpDir.list();
-            if(entries != null) {
-                for (String s : entries) {
-                    File currentFile = new File(tmpDir.getPath(), s);
-                    currentFile.delete();
-                }
+            if(!tmpDir.exists()){
+                tmpDir.mkdir();
             }
 
             start = System.currentTimeMillis();
             // write to new
-            String filePath = this.rootDirectory + "/tmp/CONS_KZT_FORM_7_" + new Date().getTime() + ".xlsx";
+            String filePath = tmpDir + "/CONS_KZT_FORM_7_" + MathUtils.getRandomNumber(0, 10000) + ".xlsx";
             try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
                 workbook.write(outputStream);
             }
@@ -6686,7 +6707,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 //            System.out.println((end-start) / 1000 + " seconds - writing workbook to output file");
 
             InputStream inputStream = new FileInputStream(filePath);
-            return inputStream;
+            filesDto.setInputStream(inputStream);
+            filesDto.setFileName(filePath);
+            return filesDto;
         } catch (IOException e) {
             // TODO: log error
             //e.printStackTrace();
@@ -6696,7 +6719,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         return null;
     }
 
-    private InputStream getConsolidatedForm10KZTReportInputStream(Long reportId) {
+    private FilesDto getConsolidatedForm10KZTReportInputStream(Long reportId) {
+
+        FilesDto filesDto = new FilesDto();
         PeriodicReport report = this.periodReportRepository.findOne(reportId);
         if(report == null){
             logger.error("No report found for id=" + reportId);
@@ -6828,19 +6853,15 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 //            System.out.println((end-start) / 1000 + " seconds - updating workbook instance");
 
             //
-            File tmpDir = new File(this.rootDirectory + "/tmp");
+            File tmpDir = new File(this.rootDirectory + "/tmp/nbrk_reporting");
 
-            String[]entries = tmpDir.list();
-            if(entries != null) {
-                for (String s : entries) {
-                    File currentFile = new File(tmpDir.getPath(), s);
-                    currentFile.delete();
-                }
+            if(!tmpDir.exists()){
+                tmpDir.mkdir();
             }
 
             start = System.currentTimeMillis();
             // write to new
-            String filePath = this.rootDirectory + "/tmp/CONS_KZT_FORM_10_" + new Date().getTime() + ".xlsx";
+            String filePath = tmpDir + "/CONS_KZT_FORM_10_" + MathUtils.getRandomNumber(0, 10000) + ".xlsx";
             try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
                 workbook.write(outputStream);
             }
@@ -6849,7 +6870,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 //            System.out.println((end-start) / 1000 + " seconds - writing workbook to output file");
 
             InputStream inputStream = new FileInputStream(filePath);
-            return inputStream;
+            filesDto.setInputStream(inputStream);
+            filesDto.setFileName(filePath);
+            return filesDto;
         } catch (IOException e) {
             // TODO: log error
             //e.printStackTrace();
@@ -6859,7 +6882,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         return null;
     }
 
-    private InputStream getConsolidatedForm13KZTReportInputStream(Long reportId) {
+    private FilesDto getConsolidatedForm13KZTReportInputStream(Long reportId) {
+
+        FilesDto filesDto = new FilesDto();
         PeriodicReport report = this.periodReportRepository.findOne(reportId);
         if(report == null){
             logger.error("No report found for id=" + reportId);
@@ -7038,19 +7063,15 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 //            System.out.println((end-start) / 1000 + " seconds - updating workbook instance");
 
             //
-            File tmpDir = new File(this.rootDirectory + "/tmp");
+            File tmpDir = new File(this.rootDirectory + "/tmp/nbrk_reporting");
 
-            String[]entries = tmpDir.list();
-            if(entries != null) {
-                for (String s : entries) {
-                    File currentFile = new File(tmpDir.getPath(), s);
-                    currentFile.delete();
-                }
+            if(!tmpDir.exists()){
+                tmpDir.mkdir();
             }
 
             start = System.currentTimeMillis();
             // write to new
-            String filePath = this.rootDirectory + "/tmp/CONS_KZT_FORM_13_" + new Date().getTime() + ".xlsx";
+            String filePath = tmpDir + "/CONS_KZT_FORM_13_" + MathUtils.getRandomNumber(0, 10000) + ".xlsx";
             try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
                 workbook.write(outputStream);
             }
@@ -7059,7 +7080,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 //            System.out.println((end-start) / 1000 + " seconds - writing workbook to output file");
 
             InputStream inputStream = new FileInputStream(filePath);
-            return inputStream;
+            filesDto.setInputStream(inputStream);
+            filesDto.setFileName(filePath);
+            return filesDto;
         }catch (IOException e) {
             // TODO: log error
             //e.printStackTrace();
@@ -7069,13 +7092,14 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         return null;
     }
 
-    private InputStream getConsolidatedForm14KZTReportInputStream(Long reportId) {
+    private FilesDto getConsolidatedForm14KZTReportInputStream(Long reportId) {
+
+        FilesDto filesDto = new FilesDto();
         PeriodicReport report = this.periodReportRepository.findOne(reportId);
         if(report == null){
             logger.error("No report found for id=" + reportId);
             return null;
         }
-        long start = System.currentTimeMillis();
         Map<Integer, List<ConsolidatedKZTForm14RecordDto>> recordsMap = null;
         try{
             recordsMap = getConsolidatedBalanceKZTForm14Map(reportId);
@@ -7100,8 +7124,6 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             XSSFWorkbook  workbook = new XSSFWorkbook(excelFileToRead);
 //            end = System.currentTimeMillis();
 //            System.out.println((end-start) / 1000 + " seconds -creating workbook instance from template file");
-
-            start = System.currentTimeMillis();
 
             XSSFSheet sheet = workbook.getSheetAt(0);
             Iterator<Row> rowIterator = sheet.iterator();
@@ -7201,19 +7223,14 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 //            System.out.println((end-start) / 1000 + " seconds - updating workbook instance");
 
             //
-            File tmpDir = new File(this.rootDirectory + "/tmp");
+            File tmpDir = new File(this.rootDirectory + "/tmp/nbrk_reporting");
 
-            String[]entries = tmpDir.list();
-            if(entries != null) {
-                for (String s : entries) {
-                    File currentFile = new File(tmpDir.getPath(), s);
-                    currentFile.delete();
-                }
+            if(!tmpDir.exists()){
+                tmpDir.mkdir();
             }
 
-            start = System.currentTimeMillis();
             // write to new
-            String filePath = this.rootDirectory + "/tmp/CONS_KZT_FORM_14_" + new Date().getTime() + ".xlsx";
+            String filePath = tmpDir + "/CONS_KZT_FORM_14_" + MathUtils.getRandomNumber(0, 10000) + ".xlsx";
             try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
                 workbook.write(outputStream);
             }
@@ -7222,7 +7239,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 //            System.out.println((end-start) / 1000 + " seconds - writing workbook to output file");
 
             InputStream inputStream = new FileInputStream(filePath);
-            return inputStream;
+            filesDto.setInputStream(inputStream);
+            filesDto.setFileName(filePath);
+            return filesDto;
         } catch (IOException e) {
             // TODO: log error
             //e.printStackTrace();
@@ -7232,7 +7251,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         return null;
     }
 
-    private InputStream getConsolidatedForm19KZTReportInputStream(Long reportId) {
+    private FilesDto getConsolidatedForm19KZTReportInputStream(Long reportId) {
+
+        FilesDto filesDto = new FilesDto();
         PeriodicReport report = this.periodReportRepository.findOne(reportId);
         if(report == null){
             logger.error("No report found for id=" + reportId);
@@ -7359,19 +7380,15 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 //            System.out.println((end-start) / 1000 + " seconds - updating workbook instance");
 
             //
-            File tmpDir = new File(this.rootDirectory + "/tmp");
+            File tmpDir = new File(this.rootDirectory + "/tmp/nbrk_reporting");
 
-            String[]entries = tmpDir.list();
-            if(entries != null) {
-                for (String s : entries) {
-                    File currentFile = new File(tmpDir.getPath(), s);
-                    currentFile.delete();
-                }
+            if(!tmpDir.exists()){
+                tmpDir.mkdir();
             }
 
             start = System.currentTimeMillis();
             // write to new
-            String filePath = this.rootDirectory + "/tmp/CONS_KZT_FORM_19_" + new Date().getTime() + ".xlsx";
+            String filePath = tmpDir + "/CONS_KZT_FORM_19_" + MathUtils.getRandomNumber(0, 10000) + ".xlsx";
             try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
                 workbook.write(outputStream);
             }
@@ -7380,7 +7397,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 //            System.out.println((end-start) / 1000 + " seconds - writing workbook to output file");
 
             InputStream inputStream = new FileInputStream(filePath);
-            return inputStream;
+            filesDto.setInputStream(inputStream);
+            filesDto.setFileName(filePath);
+            return filesDto;
         } catch (IOException e) {
             // TODO: log error
             //e.printStackTrace();
@@ -7390,7 +7409,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         return null;
     }
 
-    private InputStream getConsolidatedForm22KZTReportInputStream(Long reportId) {
+    private FilesDto getConsolidatedForm22KZTReportInputStream(Long reportId) {
+
+        FilesDto filesDto = new FilesDto();
         PeriodicReport report = this.periodReportRepository.findOne(reportId);
         if(report == null){
             logger.error("No report found for id=" + reportId);
@@ -7482,7 +7503,16 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                                         newRow.createCell(j);
                                     }
                                     if(row.getCell(j) != null && row.getCell(j).getCellStyle() != null) {
-                                        newRow.getCell(j).setCellStyle(row.getCell(j).getCellStyle());
+                                        CellStyle newCellStyle = workbook.createCellStyle();
+                                        newCellStyle.cloneStyleFrom(row.getCell(j).getCellStyle());
+                                        newRow.getCell(j).setCellStyle(newCellStyle);
+
+                                        XSSFFont font = workbook.createFont();
+                                        font.setFontHeightInPoints((short)11);
+                                        font.setFontName("Times New Roman");
+                                        font.setBold(false);
+                                        font.setItalic(false);
+                                        newRow.getCell(j).getCellStyle().setFont(font);
                                     }
                                 }
                                 index++;
@@ -7509,19 +7539,15 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 //            System.out.println((end-start) / 1000 + " seconds - updating workbook instance");
 
             //
-            File tmpDir = new File(this.rootDirectory + "/tmp");
+            File tmpDir = new File(this.rootDirectory + "/tmp/nbrk_reporting");
 
-            String[]entries = tmpDir.list();
-            if(entries != null) {
-                for (String s : entries) {
-                    File currentFile = new File(tmpDir.getPath(), s);
-                    currentFile.delete();
-                }
+            if(!tmpDir.exists()){
+                tmpDir.mkdir();
             }
 
             start = System.currentTimeMillis();
             // write to new
-            String filePath = this.rootDirectory + "/tmp/CONS_KZT_FORM_22_" + new Date().getTime() + ".xlsx";
+            String filePath = tmpDir + "/CONS_KZT_FORM_22_" + MathUtils.getRandomNumber(0, 10000) + ".xlsx";
             try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
                 workbook.write(outputStream);
             }
@@ -7530,7 +7556,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 //            System.out.println((end-start) / 1000 + " seconds - writing workbook to output file");
 
             InputStream inputStream = new FileInputStream(filePath);
-            return inputStream;
+            filesDto.setInputStream(inputStream);
+            filesDto.setFileName(filePath);
+            return filesDto;
         } catch (IOException e) {
             // TODO: log error
             //e.printStackTrace();

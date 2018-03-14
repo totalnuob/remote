@@ -91,4 +91,10 @@ public class ConsolidatedKZTForm14RecordDto implements BaseDto {
         this.debtStartDate = debtStartDate;
     }
 
+    public boolean isEmpty(){
+        return (this.debtStartPeriod == null || this.debtStartPeriod == 0.0) &&
+                (this.debtEndPeriod == null || this.debtEndPeriod == 0.0) &&
+                (this.debtDifference == null || this.debtDifference == 0.0);
+    }
+
 }
