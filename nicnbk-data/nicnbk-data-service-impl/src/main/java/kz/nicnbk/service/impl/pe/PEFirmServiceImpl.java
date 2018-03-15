@@ -123,7 +123,7 @@ public class PEFirmServiceImpl implements PEFirmService {
                 }
             }
             return dtoSet;
-        }catch (Exception ex){
+        } catch (Exception ex) {
             logger.error("Error saving PE firm logo: firm=" + firmId, ex);
         }
         return null;
