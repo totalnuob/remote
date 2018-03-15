@@ -70,6 +70,7 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
                             response  => {
                                 if(response){
                                     this.records = response;
+                                    console.log(this.records);
                                     this.checkRecords();
                                 }
                             },
@@ -139,6 +140,15 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
                 }
             }
         }
+    }
+
+    editRecord(record){
+        this.addedRecords = [];
+        this.addedRecords.push(record);
+    }
+
+    showEditRecordButton(record){
+        return record.canDelete;
     }
 
     removeSavedRecord(record){

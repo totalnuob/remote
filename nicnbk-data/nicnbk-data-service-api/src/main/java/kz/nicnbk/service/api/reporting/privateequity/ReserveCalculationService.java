@@ -1,6 +1,7 @@
 package kz.nicnbk.service.api.reporting.privateequity;
 
 import kz.nicnbk.service.api.base.BaseService;
+import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.reporting.ReserveCalculationDto;
 
 import java.io.InputStream;
@@ -22,7 +23,7 @@ public interface ReserveCalculationService extends BaseService {
 
     List<ReserveCalculationDto> getReserveCalculationsByExpenseType(String code);
 
-    InputStream getExportFileStream(Long recordId, String type);
+    FilesDto getExportFileStream(Long recordId, String type);
 
     boolean deleteReserveCalculationRecord(Long recordId);
 

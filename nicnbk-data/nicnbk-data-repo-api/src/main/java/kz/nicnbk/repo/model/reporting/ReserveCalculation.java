@@ -20,6 +20,7 @@ public class ReserveCalculation extends CreateUpdateBaseEntity{
     private Date date;
     private Date valueDate;
     private Double amount;
+    private Double amountToSPV;
 
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -70,6 +71,15 @@ public class ReserveCalculation extends CreateUpdateBaseEntity{
 
     public void setAmount(Double amount) {
         this.amount = amount;
+    }
+
+    @Column(name="amount_to_spv")
+    public Double getAmountToSPV() {
+        return amountToSPV;
+    }
+
+    public void setAmountToSPV(Double amountToSPV) {
+        this.amountToSPV = amountToSPV;
     }
 
     @Column(name="value_date")

@@ -20,6 +20,7 @@ public class ReserveCalculationDto implements BaseDto {
     @DateTimeFormat(pattern="dd-MM-yyyy")
     private Date valueDate;
     private Double amount;
+    private Double amountToSPV;
     private Double currencyRate;
     private Double amountKZT;
     private boolean canDelete;
@@ -62,6 +63,14 @@ public class ReserveCalculationDto implements BaseDto {
 
     public void setAmount(Double amount) {
         this.amount = amount;
+    }
+
+    public Double getAmountToSPV() {
+        return amountToSPV;
+    }
+
+    public void setAmountToSPV(Double amountToSPV) {
+        this.amountToSPV = amountToSPV;
     }
 
     public Double getCurrencyRate() {

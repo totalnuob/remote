@@ -4,16 +4,14 @@ import kz.nicnbk.common.service.util.DateUtils;
 import kz.nicnbk.common.service.util.ExcelUtils;
 import kz.nicnbk.common.service.util.MathUtils;
 import kz.nicnbk.repo.api.common.CurrencyRatesRepository;
-import kz.nicnbk.repo.api.lookup.CurrencyRepository;
 import kz.nicnbk.repo.api.reporting.ReserveCalculationRepository;
-import kz.nicnbk.repo.model.common.*;
-import kz.nicnbk.repo.model.common.Currency;
 import kz.nicnbk.repo.model.lookup.reporting.CapitalCallExportTypeLookup;
 import kz.nicnbk.repo.model.reporting.ReserveCalculation;
 import kz.nicnbk.service.api.common.CurrencyRatesService;
 import kz.nicnbk.service.api.reporting.PeriodicReportService;
 import kz.nicnbk.service.api.reporting.privateequity.ReserveCalculationService;
 import kz.nicnbk.service.converter.reporting.ReserveCalculationConverter;
+import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.lookup.CurrencyRatesDto;
 import kz.nicnbk.service.dto.reporting.PeriodicReportDto;
 import kz.nicnbk.service.dto.reporting.PeriodicReportType;
@@ -36,8 +34,6 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -262,7 +258,7 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
     }
 
     @Override
-    public InputStream getExportFileStream(Long recordId, String type) {
+    public FilesDto getExportFileStream(Long recordId, String type) {
         if (recordId == null) {
             logger.error("Capital call export: record id not specified");
             return null;
@@ -325,8 +321,9 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
         return this.reserveCalculationConverter.disassemble(this.reserveCalculationRepository.findOne(recordId));
     }
 
-    private InputStream getOperationsExportInputStream(Long recordId){
+    private FilesDto getOperationsExportInputStream(Long recordId){
 
+        FilesDto filesDto = new FilesDto();
         ReserveCalculationDto record = getReserveCalculationRecordById(recordId);
 
         Resource resource = new ClassPathResource("export_template/capital_call/CC_TA_OA_TEMPLATE.xlsx");
@@ -362,24 +359,17 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
                 }
             }
             //
-            File tmpDir = new File(this.rootDirectory + "/tmp");
-
-            String[]entries = tmpDir.list();
-            if(entries != null) {
-                for (String s : entries) {
-                    File currentFile = new File(tmpDir.getPath(), s);
-                    currentFile.delete();
-                }
-            }
+            File tmpDir = new File(this.rootDirectory + "/tmp/nbrk_reporting");
 
             // write to new
-            String filePath = this.rootDirectory + "/tmp/CC_TA_OA_" + new Date().getTime() + ".xlsx";
+            String filePath = tmpDir + "/CC_TA_OA_" + MathUtils.getRandomNumber(0, 10000) + ".xlsx";
             try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
                 workbook.write(outputStream);
             }
 
             InputStream inputStream = new FileInputStream(filePath);
-            return inputStream;
+            filesDto.setInputStream(inputStream);
+            filesDto.setFileName(filePath);
         } catch (IOException e) {
             logger.error("IO Exception when exporting Capital Call TA OA", e);
         }
@@ -387,7 +377,9 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
         return null;
     }
 
-    private InputStream getSPVExportInputStream(Long recordId){
+    private FilesDto getSPVExportInputStream(Long recordId){
+
+        FilesDto filesDto = new FilesDto();
         ReserveCalculationDto record = getReserveCalculationRecordById(recordId);
 
         Resource resource = new ClassPathResource("export_template/capital_call/CC_OA_SPV_TEMPLATE.xlsx");
@@ -432,7 +424,8 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
                 }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "Amount:") &&
                         ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(4), "<amount>")){
                     // TODO: amount formatting
-                    row.getCell(4).setCellValue(String.format(Locale.ENGLISH, "$%,.2f", record.getAmount()));
+                    Double amount = record.getAmountToSPV() != null ? record.getAmountToSPV() : record.getAmount();
+                    row.getCell(4).setCellValue(String.format(Locale.ENGLISH, "$%,.2f", amount));
                 }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "Bank Code (SWIFT or ABA):") &&
                         ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(4), "<bank_code>")){
                     row.getCell(4).setCellValue(bankCode);
@@ -454,24 +447,18 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
                 }
             }
             //
-            File tmpDir = new File(this.rootDirectory + "/tmp");
-
-            String[]entries = tmpDir.list();
-            if(entries != null) {
-                for (String s : entries) {
-                    File currentFile = new File(tmpDir.getPath(), s);
-                    currentFile.delete();
-                }
-            }
+            File tmpDir = new File(this.rootDirectory + "/tmp/nbrk_reporting");
 
             // write to new
-            String filePath = this.rootDirectory + "/tmp/CC_TA_OA_" + new Date().getTime() + ".xlsx";
+            String filePath = tmpDir + "/CC_TA_OA_" + MathUtils.getRandomNumber(0, 10000) + ".xlsx";
             try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
                 workbook.write(outputStream);
             }
 
             InputStream inputStream = new FileInputStream(filePath);
-            return inputStream;
+            filesDto.setInputStream(inputStream);
+            filesDto.setFileName(filePath);
+            return filesDto;
         } catch (IOException e) {
             logger.error("IO Exception when exporting Capital Call TA OA", e);
         }
@@ -479,8 +466,9 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
         return null;
     }
 
-    private InputStream getOrderExportInputStream(Long recordId){
+    private FilesDto getOrderExportInputStream(Long recordId){
 
+        FilesDto filesDto = new FilesDto();
         ReserveCalculationDto record = getReserveCalculationRecordById(recordId);
 
         Resource resource = new ClassPathResource("export_template/capital_call/CC_ORDER_TEMPLATE.docx");
@@ -525,24 +513,17 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
                     }
                 }
 
-                File tmpDir = new File(this.rootDirectory + "/tmp");
-
-                String[]entries = tmpDir.list();
-                if(entries != null) {
-                    for (String s : entries) {
-                        File currentFile = new File(tmpDir.getPath(), s);
-                        currentFile.delete();
-                    }
-                }
+                File tmpDir = new File(this.rootDirectory + "/tmp/nbrk_reporting");
 
                 // write to new
-                String filePath = this.rootDirectory + "/tmp/CC_ORDER_" + new Date().getTime() + ".docx";
+                String filePath = tmpDir + "/CC_ORDER_" + MathUtils.getRandomNumber(0, 10000) + ".docx";
                 try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
                     document.write(outputStream);
                 }
 
                 InputStream inputStream = new FileInputStream(filePath);
-                return inputStream;
+                filesDto.setInputStream(inputStream);
+                filesDto.setFileName(filePath);
             }
 
         } catch (IOException e) {

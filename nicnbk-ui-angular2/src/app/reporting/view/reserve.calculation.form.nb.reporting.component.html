@@ -42,6 +42,7 @@
                         <td>Дата</td>
                         <td>Дата валютирования</td>
                         <td>Сумма USD</td>
+                        <td>Сумма USD SPV</td>
                         <td>&nbsp;</td>
                     </tr>
                     </thead>
@@ -84,6 +85,9 @@
                             <input required type="number" step="0.01" class="form-control" [(ngModel)]="addedRecord.amount" [ngModelOptions]="{standalone: true}"/>
                         </td>
                         <td>
+                            <input type="number" step="0.01" class="form-control" [(ngModel)]="addedRecord.amountToSPV" [ngModelOptions]="{standalone: true}"/>
+                        </td>
+                        <td>
                             <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRecord(addedRecord)">
                                 <span class="glyphicon glyphicon-minus"></span>
                             </button>
@@ -108,8 +112,9 @@
                 <td>Источник</td>
                 <td>Получатель</td>
                 <td>Дата</td>
-                <td>Дата валютирования (для экспорта)</td>
-                <td>Сумма USD</td>
+                <td>Дата валютирования</td>
+                <td>Сумма USD (SPV)</td>
+                <!--<td>Сумма USD SPV</td>-->
                 <td>Курс</td>
                 <td>Сумма KZT</td>
                 <td>Экспорт</td>
@@ -121,24 +126,29 @@
                 <td>{{record.recipient != null ? record.recipient.nameRu : ''}}</td>
                 <td>{{record.date}}</td>
                 <td>{{record.valueDate}}</td>
-                <td>{{record.amount | number:'1.2-2'}}</td>
+                <td>{{record.amount | number:'1.2-2'}}{{record.amountToSPV != null ? (' (' + (record.amountToSPV | number:'1.2-2') + ')') : ''}}</td>
+                <!--<td>{{record.amountToSPV | number:'1.2-2'}}</td>-->
                 <td>{{record.currencyRate  != null ? (record.currencyRate | number:'1.2-2') : '-----'}}</td>
                 <td>{{record.amountKZT | number:'1.2-2'}}</td>
                 <td>
                     <button [disabled]="!showExportOrderButton(record)" class="btn btn-xs btn-primary" style="margin-left: 10px;" type="button" (click)="exportOrder(record)">
                         Order
-                    </button>&nbsp;
+                    </button>
+
                     <button [disabled]="record.expenseType.code != 'ADD'" class="btn btn-xs btn-success" style="margin-left: 10px;" type="button" (click)="exportFAFToOperations(record)">
-                        to-OPs
-                    </button>&nbsp;
+                        OPs
+                    </button>
                     <button [disabled]="record.expenseType.code != 'ADD'" class="btn btn-xs btn-success" style="margin-left: 10px;" type="button" (click)="exportFAFToSPV(record)">
-                        to-SPV
+                        SPV
                     </button>
                 </td>
                 <td>
                     <button *ngIf="showDeleteRecordButton(record)" class="btn btn-xs btn-danger" style="margin-left: 10px;"
                             (click)="removeSavedRecord(record)">
                         <span class="glyphicon glyphicon-trash"></span>
+                    </button>
+                    <button type="button" *ngIf="showEditRecordButton(record)" class="btn btn-xs btn-success" style="display: inline-block"  (click)="editRecord(record)">
+                        <span class="glyphicon glyphicon-pencil"></span>
                     </button>
                 </td>
             </tr>
