@@ -158,9 +158,9 @@ public class PEPdfServiceImpl implements PEPdfService {
 
             String asOfDateString;
             if (fundDto.getAsOfDateOnePager() != null) {
-                asOfDateString = new SimpleDateFormat("dd-MM-yyyy").format(fundDto.getAsOfDateOnePager());
+                asOfDateString = new SimpleDateFormat("dd/MM/yyyy").format(fundDto.getAsOfDateOnePager());
             } else {
-                asOfDateString = "??-??-????";
+                asOfDateString = "??/??/????";
             }
 
             if (fundDtoList != null && fundDtoList.size() > 0) {
@@ -660,14 +660,14 @@ public class PEPdfServiceImpl implements PEPdfService {
         String firstClose;
         String finalClose;
         if (fundDto.getFirstClose() != null) {
-            firstClose = new SimpleDateFormat("dd-MM-yyyy").format(fundDto.getFirstClose());
+            firstClose = new SimpleDateFormat("dd/MM/yyyy").format(fundDto.getFirstClose());
         } else {
-            firstClose = "??-??-????";
+            firstClose = "??/??/????";
         }
         if (fundDto.getFinalClose() != null) {
-            finalClose = new SimpleDateFormat("dd-MM-yyyy").format(fundDto.getFinalClose());
+            finalClose = new SimpleDateFormat("dd/MM/yyyy").format(fundDto.getFinalClose());
         } else {
-            finalClose = "??-??-????";
+            finalClose = "??/??/????";
         }
 
         table.addCell(new Cell().add(new Paragraph(
@@ -729,10 +729,10 @@ public class PEPdfServiceImpl implements PEPdfService {
 
     private String mlnFormat(Object amount) {
         if (amount != null && amount instanceof Float) {
-            return String.format("%.0f", (float) amount / 1000000);
+            return String.format("%.0f", (float) amount);
         }
         if (amount != null && amount instanceof Double) {
-            return String.format("%.0f", (double) amount / 1000000);
+            return String.format("%.0f", (double) amount);
         }
         return "";
     }
