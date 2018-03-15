@@ -575,14 +575,14 @@
                                                     <td class="col-md-1"><input style="width: 100%" type="text" name="benchmark" [(ngModel)]="fund.benchmarkName" placeholder="-"></td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="col-md-2"><b>Invested amount</b></td>
+                                                    <td class="col-md-2"><b>Invested amount (mln)</b></td>
                                                     <td class="col-md-1" *ngIf="fund.calculationType == 0"><input style="width: 100%" type="text" name="invested" [(ngModel)]="fund.investedAmount" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType != 0" #invested="ngModel"/>
                                                         <div [hidden]="invested.valid || invested.pristine" class="alert alert-danger">
                                                             Only positive number could be entered
                                                         </div>
                                                     </td>
                                                     <td class="col-md-1" *ngIf="fund.calculationType != 0">
-                                                        {{(fund.investedAmount/1000000) | number:'1.1-2'}}m
+                                                        {{(fund.investedAmount) | number:'1.1-2'}}
                                                     </td>
                                                     <td class="col-md-1"><b>Gross TVPI</b></td>
                                                     <td class="col-md-1" *ngIf="fund.calculationType == 0"><input style="width: 100%" type="text" name="grossTvpi" [(ngModel)]="fund.grossTvpi" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType != 0" #grossTvpi="ngModel"/>
@@ -608,14 +608,14 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="col-md-2"><b>Realized amount</b></td>
+                                                    <td class="col-md-2"><b>Realized amount (mln)</b></td>
                                                     <td class="col-md-1" *ngIf="fund.calculationType == 0"><input style="width: 100%" type="text" name="realized" [(ngModel)]="fund.realized" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType != 0" #realized="ngModel"/>
                                                         <div [hidden]="realized.valid || realized.pristine" class="alert alert-danger">
                                                             Only positive number could be entered
                                                         </div>
                                                     </td>
                                                     <td class="col-md-1" *ngIf="fund.calculationType != 0">
-                                                        {{(fund.realized/1000000) | number:'1.1-2'}}m
+                                                        {{(fund.realized) | number:'1.1-2'}}
                                                     </td>
                                                     <td class="col-md-1"><b>Gross IRR</b></td>
                                                     <td class="col-md-1" *ngIf="fund.calculationType != 2"><input style="width: 100%" type="text" name="grossIrr" [(ngModel)]="fund.grossIrr" placeholder="-" pattern="[+/-]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType == 2" #grossIrr="ngModel"/>
@@ -641,14 +641,14 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="col-md-2"><b>Unrealized amount</b></td>
+                                                    <td class="col-md-2"><b>Unrealized amount (mln)</b></td>
                                                     <td class="col-md-1" *ngIf="fund.calculationType == 0"><input style="width: 100%" type="text" name="unrealized" [(ngModel)]="fund.unrealized" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType != 0" #unrealized="ngModel"/>
                                                         <div [hidden]="unrealized.valid || unrealized.pristine" class="alert alert-danger">
                                                             Only positive number could be entered
                                                         </div>
                                                     </td>
                                                     <td class="col-md-1" *ngIf="fund.calculationType != 0">
-                                                        {{(fund.unrealized/1000000) | number:'1.1-2'}}m
+                                                        {{(fund.unrealized) | number:'1.1-2'}}
                                                     </td>
                                                     <td class="col-md-1"></td>
                                                     <td class="col-md-1"></td>
