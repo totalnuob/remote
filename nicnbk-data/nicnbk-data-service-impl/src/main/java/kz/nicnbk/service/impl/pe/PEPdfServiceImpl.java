@@ -186,7 +186,7 @@ public class PEPdfServiceImpl implements PEPdfService {
                 topColunmOffSet -= 9.35f; //Because we do not upload logos
 
                 for (PEFundDto fundDto1 : fundDtoList) {
-                    if (fundDto1.getDoNotDisplayInOnePager() == null || fundDto1.getDoNotDisplayInOnePager() == false) {
+                    if (fundDto1.getDoNotDisplayInOnePager() == null || !fundDto1.getDoNotDisplayInOnePager()) {
                         topColunmOffSet += 13.38f;
                     }
                 }
