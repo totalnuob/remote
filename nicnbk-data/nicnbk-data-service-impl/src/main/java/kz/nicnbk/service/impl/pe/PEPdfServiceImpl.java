@@ -82,7 +82,7 @@ public class PEPdfServiceImpl implements PEPdfService {
             Float logoMaxHeight = 24f;
             Float logoMaxWidth = 72f;
 //            Float topColunmOffSet = 182f;
-            Float topColunmOffSet = 160.5f;
+            Float topColunmOffSet = 151.15f;
             Float columnGap = 3f;
             Float fontSize = 8f;
 
@@ -137,13 +137,14 @@ public class PEPdfServiceImpl implements PEPdfService {
                 nicLogo.setHeight(logoMaxHeight);
 
                 withLogos = true;
+                topColunmOffSet += 9.35f;
             } catch (Exception ex) {
                 logger.error("Error downloading PE fund's Logos: " + fundId, ex);
             }
 
             //Header
             Table headerTable = new Table(new float[]{1, 1, 1});
-            this.addHeader(headerTable, fundDto, ps.getWidth() - offSet * 2, logoMaxWidth, fontSize + 2);
+            this.addHeader(headerTable, withLogos, fundDto, ps.getWidth() - offSet * 2, logoMaxWidth, fontSize + 2);
             document.add(headerTable);
 
             //Organization Overview Title
@@ -193,7 +194,6 @@ public class PEPdfServiceImpl implements PEPdfService {
 //                topColunmOffSet += (2 + fundDtoList.size()) * 16.4888888f + 34f;
 //                topColunmOffSet += (2 + fundDtoList.size()) * 13.38f + 27.76f;
                 topColunmOffSet += 2 * 13.38f + 27.76f;
-                topColunmOffSet -= 9.35f; //Because we do not upload logos
 
                 for (PEFundDto fundDto1 : fundDtoList) {
                     if (fundDto1.getDoNotDisplayInOnePager() == null || !fundDto1.getDoNotDisplayInOnePager()) {
@@ -403,21 +403,21 @@ public class PEPdfServiceImpl implements PEPdfService {
         ChartUtilities.saveChartAsJPEG(BarChartTvpi, barChartTvpi, Math.round(width), Math.round(width * 3 / 4));
     }
 
-    private void addHeader(Table table, PEFundDto fundDto, Float width, Float logoWidth, Float fontSize) {
-        table.addCell(new Cell()
-                .setWidth(logoWidth)
-//                .add(new Paragraph().add(gpLogo))
-                .setTextAlignment(TextAlignment.LEFT));
+    private void addHeader(Table table, Boolean withLogos, PEFundDto fundDto, Float width, Float logoWidth, Float fontSize) {
+        Cell cellLogoGp = new Cell().setWidth(logoWidth);
+        Cell cellLogoNic = new Cell().setWidth(logoWidth);
+        if (withLogos) {
+            cellLogoGp.add(new Paragraph().add(gpLogo));
+            cellLogoNic.add(new Paragraph().add(nicLogo));
+        }
+        table.addCell(cellLogoGp);
         table.addCell(new Cell()
                 .setWidth(width - logoWidth * 2)
                 .add(new Paragraph(unNullifierToEmptyString(fundDto.getFundName()))
                         .setBold()
                         .setFontSize(fontSize))
                 .setTextAlignment(TextAlignment.CENTER));
-        table.addCell(new Cell()
-                .setWidth(logoWidth)
-//                .add(new Paragraph().add(nicLogo))
-                .setTextAlignment(TextAlignment.RIGHT));
+        table.addCell(cellLogoNic);
     }
 
     private void addGreenTitle(Table table, String title, Float width) {
