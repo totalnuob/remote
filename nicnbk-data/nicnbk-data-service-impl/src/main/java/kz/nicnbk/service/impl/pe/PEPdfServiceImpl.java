@@ -434,7 +434,7 @@ public class PEPdfServiceImpl implements PEPdfService {
         table.addCell(new Cell().add(new Paragraph("GP Name").setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph(unNullifierToEmptyString(firmDto.getFirmName())).setMultipliedLeading(lineSpacingMultiplier)));
         table.addCell(new Cell().add(new Paragraph("Strategy AUM (mln)").setMultipliedLeading(lineSpacingMultiplier).setBold()));
-        table.addCell(new Cell().add(new Paragraph(mlnFormat(firmDto.getAum() * 1000000)).setMultipliedLeading(lineSpacingMultiplier)));
+        table.addCell(new Cell().add(new Paragraph(mlnFormat(firmDto.getAum())).setMultipliedLeading(lineSpacingMultiplier)));
         table.addCell(new Cell().add(new Paragraph("Locations").setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph(unNullifierToEmptyString(firmDto.getLocations())).setMultipliedLeading(lineSpacingMultiplier)));
         table.addCell(new Cell().add(new Paragraph("Firm Inception").setMultipliedLeading(lineSpacingMultiplier).setBold()));
@@ -452,13 +452,13 @@ public class PEPdfServiceImpl implements PEPdfService {
 
         table.setWidth(width);
         table.addCell(new Cell().add(new Paragraph("Target Fund Size (mln)").setMultipliedLeading(lineSpacingMultiplier).setBold()));
-        table.addCell(new Cell().add(new Paragraph(mlnFormat(fundDto.getTargetSize() * 1000000)).setMultipliedLeading(lineSpacingMultiplier)));
+        table.addCell(new Cell().add(new Paragraph(mlnFormat(fundDto.getTargetSize())).setMultipliedLeading(lineSpacingMultiplier)));
         table.addCell(new Cell().add(new Paragraph("Mgt. fee").setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph(feeFormat(fundDto.getManagementFee())).setMultipliedLeading(lineSpacingMultiplier)));
         table.addCell(new Cell().add(new Paragraph("Industry").setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph(unNullifierToEmptyString(industry)).setMultipliedLeading(lineSpacingMultiplier)));
         table.addCell(new Cell().add(new Paragraph("Hard cap (mln)").setMultipliedLeading(lineSpacingMultiplier).setBold()));
-        table.addCell(new Cell().add(new Paragraph(mlnFormat(fundDto.getHardCap() * 1000000)).setMultipliedLeading(lineSpacingMultiplier)));
+        table.addCell(new Cell().add(new Paragraph(mlnFormat(fundDto.getHardCap())).setMultipliedLeading(lineSpacingMultiplier)));
         table.addCell(new Cell().add(new Paragraph("Carry").setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph(feeFormat(fundDto.getCarriedInterest())).setMultipliedLeading(lineSpacingMultiplier)));
         table.addCell(new Cell().add(new Paragraph("Strategy").setMultipliedLeading(lineSpacingMultiplier).setBold()));
@@ -507,10 +507,10 @@ public class PEPdfServiceImpl implements PEPdfService {
             table.addCell(new Cell().add(new Paragraph(unNullifierToEmptyString(fundDto.getFundName())).setMultipliedLeading(lineSpacingMultiplier)));
             table.addCell(new Cell().add(new Paragraph(Integer.toString(fundDto.getVintage())).setMultipliedLeading(lineSpacingMultiplier)));
             table.addCell(new Cell().add(new Paragraph(unNullifierToEmptyString(fundDto.getNumberOfInvestments())).setMultipliedLeading(lineSpacingMultiplier)));
-            table.addCell(new Cell().add(new Paragraph(mlnFormat(fundDto.getFundSize() * 1000000)).setMultipliedLeading(lineSpacingMultiplier)));
-            table.addCell(new Cell().add(new Paragraph(mlnFormat(fundDto.getInvestedAmount() * 1000000)).setMultipliedLeading(lineSpacingMultiplier)));
-            table.addCell(new Cell().add(new Paragraph(mlnFormat(fundDto.getRealized() * 1000000)).setMultipliedLeading(lineSpacingMultiplier)));
-            table.addCell(new Cell().add(new Paragraph(mlnFormat(fundDto.getUnrealized() * 1000000)).setMultipliedLeading(lineSpacingMultiplier)));
+            table.addCell(new Cell().add(new Paragraph(mlnFormat(fundDto.getFundSize())).setMultipliedLeading(lineSpacingMultiplier)));
+            table.addCell(new Cell().add(new Paragraph(mlnFormat(fundDto.getInvestedAmount())).setMultipliedLeading(lineSpacingMultiplier)));
+            table.addCell(new Cell().add(new Paragraph(mlnFormat(fundDto.getRealized())).setMultipliedLeading(lineSpacingMultiplier)));
+            table.addCell(new Cell().add(new Paragraph(mlnFormat(fundDto.getUnrealized())).setMultipliedLeading(lineSpacingMultiplier)));
             table.addCell(new Cell().add(new Paragraph(moicFormat(fundDto.getGrossTvpi())).setMultipliedLeading(lineSpacingMultiplier)));
             table.addCell(new Cell().add(new Paragraph(irrFormat(fundDto.getGrossIrr())).setMultipliedLeading(lineSpacingMultiplier)));
             table.addCell(new Cell().add(new Paragraph(moicFormat(fundDto.getNetTvpi())).setMultipliedLeading(lineSpacingMultiplier)));
@@ -528,9 +528,9 @@ public class PEPdfServiceImpl implements PEPdfService {
         table.addCell(new Cell());
         table.addCell(new Cell().add(new Paragraph(Integer.toString(totalNumberOfInvestments)).setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph("Fund Size").setMultipliedLeading(lineSpacingMultiplier).setBold()));
-        table.addCell(new Cell().add(new Paragraph(mlnFormat(totalInvested * 1000000)).setMultipliedLeading(lineSpacingMultiplier).setBold()));
-        table.addCell(new Cell().add(new Paragraph(mlnFormat(totalRealized * 1000000)).setMultipliedLeading(lineSpacingMultiplier).setBold()));
-        table.addCell(new Cell().add(new Paragraph(mlnFormat(totalUnrealized * 1000000)).setMultipliedLeading(lineSpacingMultiplier).setBold()));
+        table.addCell(new Cell().add(new Paragraph(mlnFormat(totalInvested)).setMultipliedLeading(lineSpacingMultiplier).setBold()));
+        table.addCell(new Cell().add(new Paragraph(mlnFormat(totalRealized)).setMultipliedLeading(lineSpacingMultiplier).setBold()));
+        table.addCell(new Cell().add(new Paragraph(mlnFormat(totalUnrealized)).setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph(moicFormat(totalGrossMOIC)).setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph(irrFormat(totalGrossIrr)).setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph("Net MOIC").setMultipliedLeading(lineSpacingMultiplier).setBold()));
