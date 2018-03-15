@@ -181,7 +181,6 @@
                                 Logo will be here!
                                 <form #yourForm="ngForm" (ngSubmit)="onSubmitLogo()" *ngIf="canEdit()">
                                     <input type="file" #fileupload name="myFile" (change)="fileChange(fileupload.files)"/>
-                                    <button type="submit" class="btn btn-success" [disabled]="firm.id == 0 || firm.id == null">Upload a new LOGO</button>
                                 </form>
                             </div>
                         </div>
