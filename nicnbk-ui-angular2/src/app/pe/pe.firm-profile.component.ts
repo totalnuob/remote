@@ -153,18 +153,6 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
                                     //for (var i = 0; i < res.length; i++) {
                                     //    this.firm.files.push(res[i]);
                                     //}
-                                    //
-                                    //for (var i = 0; i < response.cashflowDtoList.length; i++) {
-                                    //    this.firm.grossCashflow.push({
-                                    //        id:"",
-                                    //        companyName:response.cashflowDtoList[i].companyName,
-                                    //        date:response.cashflowDtoList[i].date,
-                                    //        invested:response.cashflowDtoList[i].invested,
-                                    //        realized:response.cashflowDtoList[i].realized,
-                                    //        unrealized:response.cashflowDtoList[i].unrealized,
-                                    //        grossCF:response.cashflowDtoList[i].grossCF,
-                                    //        autoCalculation:response.cashflowDtoList[i].autoCalculation});
-                                    //}
 
                                     this.postAction("Successfully saved.", null);
                                 },
