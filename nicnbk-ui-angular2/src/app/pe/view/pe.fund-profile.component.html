@@ -188,7 +188,7 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="col-md-1">GP commitment</td>
+                                                    <td class="col-md-1">GP commitment, %</td>
                                                     <td class="col-md-3"><input style="width: 100%" type="text" name="gpCommitment" [(ngModel)]="fund.gpCommitment" pattern="[+]?[0-9]*\.?[0-9]+" #gpCommitment="ngModel"/>
                                                         <div [hidden]="gpCommitment.valid || gpCommitment.pristine" class="alert alert-danger">
                                                             Only positive number could be entered
@@ -196,7 +196,7 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="col-md-1">Management fee</td>
+                                                    <td class="col-md-1">Management fee, %</td>
                                                     <td class="col-md-3"><input style="width: 100%" type="text" name="managementFee" [(ngModel)]="fund.managementFee" pattern="[+]?[0-9]*\.?[0-9]+" #managementFee="ngModel"/>
                                                         <div [hidden]="managementFee.valid || managementFee.pristine" class="alert alert-danger">
                                                             Only positive number could be entered
@@ -210,7 +210,7 @@
                                             </table>
                                             <table class=" col-md-4 table-striped table-condensed">
                                                 <tr>
-                                                    <td class="col-md-1">Carried interest</td>
+                                                    <td class="col-md-1">Carried interest, %</td>
                                                     <td class="col-md-3"><input style="width: 100%" type="text" name="carriedInterest" [(ngModel)]="fund.carriedInterest" pattern="[+]?[0-9]*\.?[0-9]+" #carriedInterest="ngModel"/>
                                                         <div [hidden]="carriedInterest.valid || carriedInterest.pristine" class="alert alert-danger">
                                                             Only positive number could be entered
@@ -218,7 +218,7 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="col-md-1">Hurdle rate</td>
+                                                    <td class="col-md-1">Hurdle rate, %</td>
                                                     <td class="col-md-3"><input style="width: 100%" type="text" name="hurdleRate" [(ngModel)]="fund.hurdleRate" pattern="[+]?[0-9]*\.?[0-9]+" #hurdleRate="ngModel"/>
                                                         <div [hidden]="hurdleRate.valid || hurdleRate.pristine" class="alert alert-danger">
                                                             Only positive number could be entered
