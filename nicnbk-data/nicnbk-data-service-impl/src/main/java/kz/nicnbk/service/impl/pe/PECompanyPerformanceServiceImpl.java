@@ -210,13 +210,13 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
             for (PECompanyPerformanceDto performanceDto : findByFundId(fundId)) {
                 numberOfInvestments++;
                 if (performanceDto.getInvested() != null) {
-                    investedAmount += performanceDto.getInvested();
+                    investedAmount += performanceDto.getInvested() / 1000000;
                 }
                 if (performanceDto.getRealized() != null) {
-                    realized += performanceDto.getRealized();
+                    realized += performanceDto.getRealized() / 1000000;
                 }
                 if (performanceDto.getUnrealized() != null) {
-                    unrealized += performanceDto.getUnrealized();
+                    unrealized += performanceDto.getUnrealized() / 1000000;
                 }
             }
 
