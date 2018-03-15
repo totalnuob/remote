@@ -50,6 +50,8 @@ export class PEFund {
 
     firstClose: Date;
     finalClose: Date;
+    firstCloseComment: string;
+    finalCloseComment: string;
 
     generalPartnerMerits: string;
     generalPartnerRisks: string;

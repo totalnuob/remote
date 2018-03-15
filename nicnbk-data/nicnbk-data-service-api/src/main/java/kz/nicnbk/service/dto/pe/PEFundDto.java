@@ -70,6 +70,8 @@ public class PEFundDto extends HistoryBaseEntityDto<PEFund> {
     //Targeted Closing Information
     private Date firstClose;
     private Date finalClose;
+    private String firstCloseComment;
+    private String finalCloseComment;
 
     private Date asOfDateOnePager;
 
@@ -459,6 +461,22 @@ public class PEFundDto extends HistoryBaseEntityDto<PEFund> {
 
     public void setFinalClose(Date finalClose) {
         this.finalClose = finalClose;
+    }
+
+    public String getFirstCloseComment() {
+        return firstCloseComment;
+    }
+
+    public void setFirstCloseComment(String firstCloseComment) {
+        this.firstCloseComment = firstCloseComment;
+    }
+
+    public String getFinalCloseComment() {
+        return finalCloseComment;
+    }
+
+    public void setFinalCloseComment(String finalCloseComment) {
+        this.finalCloseComment = finalCloseComment;
     }
 
     public Date getAsOfDateOnePager() {

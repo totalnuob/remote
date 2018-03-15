@@ -657,28 +657,28 @@ public class PEPdfServiceImpl implements PEPdfService {
     private void addTargetedClosingInfo(Table table, PEFundDto fundDto, Float width) {
         table.setWidth(width);
 
-        String firstClose;
-        String finalClose;
-        if (fundDto.getFirstClose() != null) {
-            firstClose = new SimpleDateFormat("dd/MM/yyyy").format(fundDto.getFirstClose());
-        } else {
-            firstClose = "??/??/????";
-        }
-        if (fundDto.getFinalClose() != null) {
-            finalClose = new SimpleDateFormat("dd/MM/yyyy").format(fundDto.getFinalClose());
-        } else {
-            finalClose = "??/??/????";
-        }
+//        String firstClose;
+//        String finalClose;
+//        if (fundDto.getFirstClose() != null) {
+//            firstClose = new SimpleDateFormat("dd/MM/yyyy").format(fundDto.getFirstClose());
+//        } else {
+//            firstClose = "??/??/????";
+//        }
+//        if (fundDto.getFinalClose() != null) {
+//            finalClose = new SimpleDateFormat("dd/MM/yyyy").format(fundDto.getFinalClose());
+//        } else {
+//            finalClose = "??/??/????";
+//        }
 
         table.addCell(new Cell().add(new Paragraph(
                 unNullifierToEmptyString("First Close")).setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph(
-                unNullifierToEmptyString(firstClose)).setMultipliedLeading(lineSpacingMultiplier)));
+                unNullifierToEmptyString(fundDto.getFirstCloseComment())).setMultipliedLeading(lineSpacingMultiplier)));
 
         table.addCell(new Cell().add(new Paragraph(
                 unNullifierToEmptyString("Final Close")).setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph(
-                unNullifierToEmptyString(finalClose)).setMultipliedLeading(lineSpacingMultiplier)));
+                unNullifierToEmptyString(fundDto.getFinalCloseComment())).setMultipliedLeading(lineSpacingMultiplier)));
     }
 
     private void addManagementTeam(Table table, List<PEFundManagementTeamDto> managementTeamDtoList, Float width) {
