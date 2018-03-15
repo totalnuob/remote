@@ -181,8 +181,15 @@ public class PEPdfServiceImpl implements PEPdfService {
                 document.add(keyFundStatisticsTable);
 
 //                topColunmOffSet += (2 + fundDtoList.size()) * 16.4888888f + 34f;
-                topColunmOffSet += (2 + fundDtoList.size()) * 13.38f + 27.76f;
+//                topColunmOffSet += (2 + fundDtoList.size()) * 13.38f + 27.76f;
+                topColunmOffSet += 2 * 13.38f + 27.76f;
                 topColunmOffSet -= 9.35f; //Because we do not upload logos
+
+                for (PEFundDto fundDto1 : fundDtoList) {
+                    if (fundDto1.getDoNotDisplayInOnePager() == null || fundDto1.getDoNotDisplayInOnePager() == false) {
+                        topColunmOffSet += 13.38f;
+                    }
+                }
             }
 
             //Define columns' widths and heights
