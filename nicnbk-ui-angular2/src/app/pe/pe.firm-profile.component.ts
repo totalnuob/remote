@@ -47,6 +47,8 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
     private sub: any;
     public firmIdParam: number;
 
+    myFiles: File[];
+
     busy: Subscription;
 
     private moduleAccessChecker: ModuleAccessCheckerService;
@@ -72,6 +74,8 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
         if(!this.moduleAccessChecker.checkAccessPrivateEquity()){
             this.router.navigate(['accessDenied']);
         }
+
+        this.myFiles = [];
 
         this.loadLookups();
 
@@ -135,7 +139,44 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
                     this.firm.id = response.entityId;
                     this.firm.creationDate = response.creationDate;
 
-                    this.postAction("Successfully saved.", null);
+                    if (this.myFiles.length > 0) {
+                        this.firmService.postFiles(this.firm.id, [], this.myFiles)
+                            .subscribe(
+                                (response) => {
+                                    //// clear upload files list on view
+                                    //this.myFiles.length = 0;
+                                    //
+                                    //// update files list with new files
+                                    //if(!this.firm.files){ // no files existed
+                                    //    this.firm.files = [];
+                                    //}
+                                    //for (var i = 0; i < res.length; i++) {
+                                    //    this.firm.files.push(res[i]);
+                                    //}
+                                    //
+                                    //for (var i = 0; i < response.cashflowDtoList.length; i++) {
+                                    //    this.firm.grossCashflow.push({
+                                    //        id:"",
+                                    //        companyName:response.cashflowDtoList[i].companyName,
+                                    //        date:response.cashflowDtoList[i].date,
+                                    //        invested:response.cashflowDtoList[i].invested,
+                                    //        realized:response.cashflowDtoList[i].realized,
+                                    //        unrealized:response.cashflowDtoList[i].unrealized,
+                                    //        grossCF:response.cashflowDtoList[i].grossCF,
+                                    //        autoCalculation:response.cashflowDtoList[i].autoCalculation});
+                                    //}
+
+                                    this.postAction("Successfully saved.", null);
+                                },
+                                (error) => {
+                                    this.processErrorMessage(error);
+                                    this.postAction(null, JSON.parse(error).messageEn);
+                                    console.log(error);
+                                }
+                            )
+                    } else {
+                        this.postAction("Successfully saved.", null);
+                    }
                 },
                 (error: ErrorResponse) => {
                     this.errorMessage = "Error saving firm profile";
@@ -340,5 +381,10 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
 
     canEdit(){
         return this.moduleAccessChecker.checkAccessPrivateEquityEditor();
+    }
+
+    fileChange(files: any){
+        this.myFiles = files;
+        console.log(this.myFiles);
     }
 }
