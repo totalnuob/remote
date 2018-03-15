@@ -88,8 +88,8 @@ public class PrivateEquityFirmServiceREST extends CommonServiceREST{
     }
 
     @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
-    @RequestMapping(value = "/logo/upload", method = RequestMethod.POST)
-    public ResponseEntity<?> uploadLogo(@RequestParam(value = "file", required = false) MultipartFile[] files) {
+    @RequestMapping(value = "/logo/upload/{firmId}", method = RequestMethod.POST)
+    public ResponseEntity<?> uploadLogo(@RequestParam(value = "file", required = false) MultipartFile[] files, @PathVariable Long firmId) {
 
         Set<FilesDto> filesDtoSet = buildFilesDtoFromMultipart(files, null);
 
