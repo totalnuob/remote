@@ -92,8 +92,12 @@ public class PEPdfServiceImpl implements PEPdfService {
             String barChartNetMoicDest = tmpFolder + "/BarChartNetMoic_" + new Date().getTime() + ".jpeg";
 
             //Logo initialization
-            gpLogo = new Image(ImageDataFactory.create(gpLogoDest));
-            nicLogo = new Image(ImageDataFactory.create(nicLogoDest));
+            try {
+                gpLogo = new Image(ImageDataFactory.create(gpLogoDest));
+                nicLogo = new Image(ImageDataFactory.create(nicLogoDest));
+            } catch (Exception ex) {
+                logger.error("Error downloading PE fund's Logos: " + fundId, ex);
+            }
 
             //Setting logo size
 //            if (gpLogo.getImageHeight() / gpLogo.getImageWidth() > logoMaxHeight / logoMaxWidth) {
