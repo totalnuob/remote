@@ -53,6 +53,7 @@ public class PEFundDto extends HistoryBaseEntityDto<PEFund> {
     private Double benchmarkNetIrr;
     private Double benchmarkNetTvpi;
     private String benchmarkName;
+    private Boolean doNotDisplayInOnePager;
     private PEFirmDto firm;
 
     // Descriptive data
@@ -357,6 +358,14 @@ public class PEFundDto extends HistoryBaseEntityDto<PEFund> {
 
     public void setBenchmarkName(String benchmarkName) {
         this.benchmarkName = benchmarkName;
+    }
+
+    public Boolean getDoNotDisplayInOnePager() {
+        return doNotDisplayInOnePager;
+    }
+
+    public void setDoNotDisplayInOnePager(Boolean doNotDisplayInOnePager) {
+        this.doNotDisplayInOnePager = doNotDisplayInOnePager;
     }
 
     public PEFirmDto getFirm() {

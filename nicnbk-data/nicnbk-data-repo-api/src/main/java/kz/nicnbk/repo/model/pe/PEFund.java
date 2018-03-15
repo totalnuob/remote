@@ -59,6 +59,7 @@ public class PEFund extends CreateUpdateBaseEntity {
     private Double benchmarkNetIrr;
     private Double benchmarkNetTvpi;
     private String benchmarkName;
+    private Boolean doNotDisplayInOnePager;
     private PEFirm firm;
 
     // Descriptive data
@@ -413,6 +414,14 @@ public class PEFund extends CreateUpdateBaseEntity {
 
     public void setBenchmarkName(String benchmarkName) {
         this.benchmarkName = benchmarkName;
+    }
+
+    public Boolean getDoNotDisplayInOnePager() {
+        return doNotDisplayInOnePager;
+    }
+
+    public void setDoNotDisplayInOnePager(Boolean doNotDisplayInOnePager) {
+        this.doNotDisplayInOnePager = doNotDisplayInOnePager;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)

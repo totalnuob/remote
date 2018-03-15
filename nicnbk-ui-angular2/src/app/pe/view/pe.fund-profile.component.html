@@ -571,8 +571,10 @@
                                                     <td class="col-md-1" *ngIf="fund.calculationType != 0">
                                                         {{fund.dpi | number:'1.2-2'}}
                                                     </td>
-                                                    <td class="col-md-1"></td>
-                                                    <td class="col-md-1"></td>
+                                                    <td class="col-md-1"><b>Do not display in One Pager</b></td>
+                                                    <td class="col-md-1">
+                                                        <input type="checkbox" name="doNotDisplayInOnePager" [(ngModel)]="fund.doNotDisplayInOnePager">
+                                                    </td>
                                                     <td class="col-md-2"><b>Benchmark Name</b></td>
                                                     <td class="col-md-1"><input style="width: 100%" type="text" name="benchmark" [(ngModel)]="fund.benchmarkName" placeholder="-"></td>
                                                 </tr>
