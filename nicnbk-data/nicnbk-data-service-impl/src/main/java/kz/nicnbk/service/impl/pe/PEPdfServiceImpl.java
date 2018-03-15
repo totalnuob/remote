@@ -126,7 +126,6 @@ public class PEPdfServiceImpl implements PEPdfService {
             try {
                 //Logo initialization
                 gpLogo = new Image(ImageDataFactory.create(gpLogoDest));
-                nicLogo = new Image(ImageDataFactory.create(nicLogoDest));
 
                 //Setting logo size
                 if (gpLogo.getImageHeight() / gpLogo.getImageWidth() > logoMaxHeight / logoMaxWidth) {
@@ -134,12 +133,26 @@ public class PEPdfServiceImpl implements PEPdfService {
                 } else {
                     gpLogo.setWidth(logoMaxWidth);
                 }
+
+                withLogos = true;
+            } catch (Exception ex) {
+                logger.error("Error downloading PE fund's Logos: " + fundId, ex);
+            }
+
+            try {
+                //Logo initialization
+                nicLogo = new Image(ImageDataFactory.create(nicLogoDest));
+
+                //Setting logo size
                 nicLogo.setHeight(logoMaxHeight);
 
                 withLogos = true;
-                topColunmOffSet += 9.35f;
             } catch (Exception ex) {
                 logger.error("Error downloading PE fund's Logos: " + fundId, ex);
+            }
+
+            if (withLogos) {
+                topColunmOffSet += 9.35f;
             }
 
             //Header
