@@ -13,6 +13,8 @@ import {Subscription} from 'rxjs';
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 import {ErrorResponse} from "../common/error-response";
 import {PEIrrParam} from "./model/pe.irrParam";
+import {DATA_APP_URL} from "../common/common.service.constants";
+import {FileDownloadService} from "../common/file.download.service";
 
 declare var $:any
 
@@ -23,6 +25,8 @@ declare var $:any
     providers: [PEFirmService, PEFundService]
 })
 export class PEFundProfileComponent extends CommonFormViewComponent implements OnInit{
+    private PE_FUND_CREATE_ONE_PAGER_URL = DATA_APP_URL + "pe/fund/" + "createOnePager/";
+
     private fund = new PEFund();
 
     @ViewChild('strategySelect')
@@ -88,6 +92,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
         private firmService: PEFirmService,
         private fundService: PEFundService,
         private route: ActivatedRoute,
+        private downloadService: FileDownloadService,
         private router: Router
     ){
         super(router);
@@ -1039,7 +1044,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     }
 
     createAndDownloadOnePager() {
-        this.busy = this.fundService.createAndDownloadOnePager(this.fund.id, 'OnePager')
+        //this.busy = this.fundService.createAndDownloadOnePager(this.fund.id, 'OnePager')
+        this.busy = this.downloadService.makeFileRequest(this.PE_FUND_CREATE_ONE_PAGER_URL + this.fund.id, 'OnePager')
             .subscribe(
                 response  => {
                     //console.log("ok");

@@ -120,7 +120,7 @@ export class PEFundService extends CommonService {
             .catch(this.handleErrorResponse);
     }
 
-    createAndDownloadOnePager(id, fileName) {
-        return this.downloadService.makeFileRequest(this.PE_FUND_CREATE_ONE_PAGER_URL + id, fileName);
-    }
+    //createAndDownloadOnePager(id, fileName) {
+    //    return this.downloadService.makeFileRequest(this.PE_FUND_CREATE_ONE_PAGER_URL + id, fileName);
+    //}
 }
