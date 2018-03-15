@@ -1045,7 +1045,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
 
     createAndDownloadOnePager() {
         //this.busy = this.fundService.createAndDownloadOnePager(this.fund.id, 'OnePager')
-        this.busy = this.downloadService.makeFileRequest(this.PE_FUND_CREATE_ONE_PAGER_URL + this.fund.id, 'OnePager')
+        this.downloadService.makeFileRequest(this.PE_FUND_CREATE_ONE_PAGER_URL + this.fund.id, 'OnePager')
             .subscribe(
                 response  => {
                     //console.log("ok");
