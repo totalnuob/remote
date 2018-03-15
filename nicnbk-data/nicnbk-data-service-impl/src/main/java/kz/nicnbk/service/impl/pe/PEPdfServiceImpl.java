@@ -91,22 +91,6 @@ public class PEPdfServiceImpl implements PEPdfService {
             String barChartNetIrrDest = tmpFolder + "/BarChartNetIrr_" + new Date().getTime() + ".jpeg";
             String barChartNetMoicDest = tmpFolder + "/BarChartNetMoic_" + new Date().getTime() + ".jpeg";
 
-            //Logo initialization
-            try {
-                gpLogo = new Image(ImageDataFactory.create(gpLogoDest));
-                nicLogo = new Image(ImageDataFactory.create(nicLogoDest));
-            } catch (Exception ex) {
-                logger.error("Error downloading PE fund's Logos: " + fundId, ex);
-            }
-
-            //Setting logo size
-//            if (gpLogo.getImageHeight() / gpLogo.getImageWidth() > logoMaxHeight / logoMaxWidth) {
-//                gpLogo.setHeight(logoMaxHeight);
-//            } else {
-//                gpLogo.setWidth(logoMaxWidth);
-//            }
-//            nicLogo.setHeight(logoMaxHeight);
-
             //Folder creation
             File file = new File(onePagerDest);
             file.getParentFile().mkdirs();
@@ -136,6 +120,24 @@ public class PEPdfServiceImpl implements PEPdfService {
 //            List<PEOnePagerDescriptionsDto> descriptionsTargetedClosingInformationDtoList = descriptionsService.findByFundIdAndType(fundId, 9);
             List<PEOnePagerDescriptionsDto> descriptionsSeniorManagementTeamDtoList = descriptionsService.findByFundIdAndType(fundId, 10);
             List<PEFundManagementTeamDto> managementTeamDtoList = managementTeamService.findByFundId(fundId);
+
+            try {
+                //Logo initialization
+                gpLogo = new Image(ImageDataFactory.create(gpLogoDest));
+                nicLogo = new Image(ImageDataFactory.create(nicLogoDest));
+
+                //Setting logo size
+                if (gpLogo.getImageHeight() / gpLogo.getImageWidth() > logoMaxHeight / logoMaxWidth) {
+                    gpLogo.setHeight(logoMaxHeight);
+                } else {
+                    gpLogo.setWidth(logoMaxWidth);
+                }
+                nicLogo.setHeight(logoMaxHeight);
+
+
+            } catch (Exception ex) {
+                logger.error("Error downloading PE fund's Logos: " + fundId, ex);
+            }
 
             //Header
             Table headerTable = new Table(new float[]{1, 1, 1});
