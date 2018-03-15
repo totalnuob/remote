@@ -66,7 +66,7 @@ public class PEPdfServiceImpl implements PEPdfService {
     private static final Color whiteColor = new DeviceCmyk(0, 0, 0, 0);
 
     //GP's and NIC's logos
-//    private Image gpLogo;
+    private Image gpLogo;
     private Image nicLogo;
     private Image barChartNetIrr;
     private Image barChartNetMoic;
@@ -86,12 +86,13 @@ public class PEPdfServiceImpl implements PEPdfService {
             Float columnGap = 3f;
             Float fontSize = 8f;
 
+            String gpLogoDest = tmpFolder + "/gp.png";
             String nicLogoDest = tmpFolder + "/NIClogo.png";
             String barChartNetIrrDest = tmpFolder + "/BarChartNetIrr_" + new Date().getTime() + ".jpeg";
             String barChartNetMoicDest = tmpFolder + "/BarChartNetMoic_" + new Date().getTime() + ".jpeg";
 
             //Logo initialization
-//            gpLogo = new Image(ImageDataFactory.create(gpLogoDest));
+            gpLogo = new Image(ImageDataFactory.create(gpLogoDest));
             nicLogo = new Image(ImageDataFactory.create(nicLogoDest));
 
             //Setting logo size
