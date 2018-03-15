@@ -106,24 +106,24 @@ public class PEFirmServiceImpl implements PEFirmService {
     public Set<FilesDto> saveLogo(Long firmId, Set<FilesDto> filesDtoSet) {
         try {
             Set<FilesDto> dtoSet = new HashSet<>();
-            if (filesDtoSet != null) {
-                Iterator<FilesDto> iterator = filesDtoSet.iterator();
-                while (iterator.hasNext()) {
-                    FilesDto filesDto = iterator.next();
-                    if (filesDto.getId() == null) {
-                        Long fileId = fileService.save(filesDto, FileTypeLookup.MEMO_ATTACHMENT.getCatalog());
-                        logger.info("Saved PE firm logo file: firm=" + firmId + ", file=" + fileId);
-                        MemoFiles memoFiles = new MemoFiles(memoId, fileId);
-                        memoFilesRepository.save(memoFiles);
-                        logger.info("Saved PE firm logo info: firm=" + firmId + ", file=" + fileId);
-
-                        FilesDto newFileDto = new FilesDto();
-                        newFileDto.setId(fileId);
-                        newFileDto.setFileName(filesDto.getFileName());
-                        dtoSet.add(newFileDto);
-                    }
-                }
-            }
+//            if (filesDtoSet != null) {
+//                Iterator<FilesDto> iterator = filesDtoSet.iterator();
+//                while (iterator.hasNext()) {
+//                    FilesDto filesDto = iterator.next();
+//                    if (filesDto.getId() == null) {
+//                        Long fileId = fileService.save(filesDto, FileTypeLookup.MEMO_ATTACHMENT.getCatalog());
+//                        logger.info("Saved PE firm logo file: firm=" + firmId + ", file=" + fileId);
+//                        MemoFiles memoFiles = new MemoFiles(memoId, fileId);
+//                        memoFilesRepository.save(memoFiles);
+//                        logger.info("Saved PE firm logo info: firm=" + firmId + ", file=" + fileId);
+//
+//                        FilesDto newFileDto = new FilesDto();
+//                        newFileDto.setId(fileId);
+//                        newFileDto.setFileName(filesDto.getFileName());
+//                        dtoSet.add(newFileDto);
+//                    }
+//                }
+//            }
             return dtoSet;
         } catch (Exception ex) {
             logger.error("Error saving PE firm logo: firm=" + firmId, ex);
