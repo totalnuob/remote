@@ -140,7 +140,7 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
                     this.firm.creationDate = response.creationDate;
 
                     if (this.myFiles.length > 0) {
-                        this.firmService.postFiles(this.firm.id, [], this.myFiles)
+                        this.busy = this.firmService.postFiles(this.firm.id, [], this.myFiles)
                             .subscribe(
                                 (response) => {
                                     //// clear upload files list on view
