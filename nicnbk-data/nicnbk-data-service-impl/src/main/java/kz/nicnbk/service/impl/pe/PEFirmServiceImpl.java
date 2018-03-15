@@ -8,6 +8,7 @@ import kz.nicnbk.repo.model.pe.PEFirm;
 import kz.nicnbk.service.api.pe.PEFirmService;
 import kz.nicnbk.service.api.pe.PEFundService;
 import kz.nicnbk.service.converter.pe.PEFirmEntityConverter;
+import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.pe.PEFirmDto;
 import kz.nicnbk.service.dto.pe.PEPagedSearchResult;
 import kz.nicnbk.service.dto.pe.PESearchParams;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by zhambyl on 16-Nov-16.
@@ -94,6 +96,35 @@ public class PEFirmServiceImpl implements PEFirmService {
             return converter.disassembleList(peFirmRepository.findAllByOrderByFirmNameAsc());
         }catch (Exception ex){
             logger.error("Failed to load all PE firms", ex);
+        }
+        return null;
+    }
+
+    @Override
+    public Set<FilesDto> saveLogo(Long firmId, Set<FilesDto> filesDtoSet) {
+        try {
+            Set<FilesDto> dtoSet = new HashSet<>();
+            if (filesDtoSet != null) {
+                Iterator<FilesDto> iterator = filesDtoSet.iterator();
+                while (iterator.hasNext()) {
+                    FilesDto filesDto = iterator.next();
+                    if (filesDto.getId() == null) {
+                        Long fileId = fileService.save(filesDto, FileTypeLookup.MEMO_ATTACHMENT.getCatalog());
+                        logger.info("Saved PE firm logo file: firm=" + firmId + ", file=" + fileId);
+                        MemoFiles memoFiles = new MemoFiles(memoId, fileId);
+                        memoFilesRepository.save(memoFiles);
+                        logger.info("Saved PE firm logo info: firm=" + firmId + ", file=" + fileId);
+
+                        FilesDto newFileDto = new FilesDto();
+                        newFileDto.setId(fileId);
+                        newFileDto.setFileName(filesDto.getFileName());
+                        dtoSet.add(newFileDto);
+                    }
+                }
+            }
+            return dtoSet;
+        }catch (Exception ex){
+            logger.error("Error saving PE firm logo: firm=" + firmId, ex);
         }
         return null;
     }

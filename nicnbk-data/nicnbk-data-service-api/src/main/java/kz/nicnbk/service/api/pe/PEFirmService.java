@@ -1,11 +1,13 @@
 package kz.nicnbk.service.api.pe;
 
 import kz.nicnbk.service.api.base.BaseService;
+import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.pe.PEFirmDto;
 import kz.nicnbk.service.dto.pe.PEPagedSearchResult;
 import kz.nicnbk.service.dto.pe.PESearchParams;
 
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -25,4 +27,6 @@ public interface PEFirmService extends BaseService {
     PEPagedSearchResult findByName(PESearchParams searchParams);
 
     List<PEFirmDto> findAll();
+
+    Set<FilesDto> saveLogo(Long firmId, Set<FilesDto> filesDtoSet);
 }

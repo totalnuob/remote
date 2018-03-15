@@ -93,14 +93,15 @@ public class PrivateEquityFirmServiceREST extends CommonServiceREST{
 
         Set<FilesDto> filesDtoSet = buildFilesDtoFromMultipart(files, null);
 
-//        PEGrossCashflowResultDto resultDto = this.cashflowService.uploadGrossCF(filesDtoSet);
-//
-//        if (resultDto.getStatus().getCode().equals("SUCCESS")) {
-//            return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
-//        } else {
-//            return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-
-        return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        if (filesDtoSet != null) {
+            Set<FilesDto> savedAttachments = this.peFirmService.saveLogo(firmId, filesDtoSet);
+            if (savedAttachments == null) {
+                // error occurred
+                return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+            } else {
+                return new ResponseEntity<>(savedAttachments, null, HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity<>(null, null, HttpStatus.OK);
     }
 }
