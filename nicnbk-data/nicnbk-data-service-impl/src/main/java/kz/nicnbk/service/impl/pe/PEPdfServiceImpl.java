@@ -495,6 +495,9 @@ public class PEPdfServiceImpl implements PEPdfService {
         table.addHeaderCell(new Cell().add(new Paragraph("Net IRR").setMultipliedLeading(lineSpacingMultiplier).setBold()));
 
         for (PEFundDto fundDto : fundDtoList) {
+
+            if (fundDto.getDoNotDisplayInOnePager() != null && fundDto.getDoNotDisplayInOnePager() == true) {continue;}
+
             totalNumberOfInvestments += unNullifierToZero(fundDto.getNumberOfInvestments());
             totalInvested += unNullifierToZero(fundDto.getInvestedAmount());
             totalRealized += unNullifierToZero(fundDto.getRealized());
@@ -646,7 +649,7 @@ public class PEPdfServiceImpl implements PEPdfService {
         table.addCell(new Cell().add(new Paragraph(
                 unNullifierToEmptyString("Target # of Inv.")).setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph(
-                intFormat(fundDto.getTargetNumberOfInv1())).setMultipliedLeading(lineSpacingMultiplier)));
+                mlnFormat(fundDto.getTargetNumberOfInv1())).setMultipliedLeading(lineSpacingMultiplier)));
 
         table.addCell(new Cell().add(new Paragraph(
                 unNullifierToEmptyString("Exp Hold Period per Inv. (yrs)")).setMultipliedLeading(lineSpacingMultiplier).setBold()));
@@ -749,11 +752,6 @@ public class PEPdfServiceImpl implements PEPdfService {
 
     private String feeFormat(Double amount) {
         if (amount != null) { return amount.toString()+"%"; }
-        return "";
-    }
-
-    private String intFormat(Double amount) {
-        if (amount != null) { return String.format("%.0f", amount); }
         return "";
     }
 }
