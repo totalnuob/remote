@@ -571,7 +571,7 @@
                                                     </td>
                                                     <td class="col-md-1"></td>
                                                     <td class="col-md-1"></td>
-                                                    <td class="col-md-2"><b>Benchmark</b></td>
+                                                    <td class="col-md-2"><b>Benchmark name</b></td>
                                                     <td class="col-md-1"><input style="width: 100%" type="text" name="benchmark" [(ngModel)]="fund.benchmarkName" placeholder="-"></td>
                                                 </tr>
                                                 <tr>
@@ -617,23 +617,23 @@
                                                     <td class="col-md-1" *ngIf="fund.calculationType != 0">
                                                         {{(fund.realized) | number:'1.1-2'}}
                                                     </td>
-                                                    <td class="col-md-1"><b>Gross IRR</b></td>
+                                                    <td class="col-md-1"><b>Gross IRR, %</b></td>
                                                     <td class="col-md-1" *ngIf="fund.calculationType != 2"><input style="width: 100%" type="text" name="grossIrr" [(ngModel)]="fund.grossIrr" placeholder="-" pattern="[+/-]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType == 2" #grossIrr="ngModel"/>
                                                         <div [hidden]="grossIrr.valid || grossIrr.pristine" class="alert alert-danger">
                                                             Only number could be entered
                                                         </div>
                                                     </td>
                                                     <td class="col-md-1" *ngIf="fund.calculationType == 2">
-                                                        {{fund.grossIrr | number:'1.0-2'}}%
+                                                        {{fund.grossIrr | number:'1.0-2'}}
                                                     </td>
-                                                    <td class="col-md-1"><b>Net IRR</b></td>
+                                                    <td class="col-md-1"><b>Net IRR, %</b></td>
                                                     <td class="col-md-1"><input style="width: 100%" type="text" name="netIrr" [(ngModel)]="fund.netIrr" placeholder="-" pattern="[+/-]?[0-9]*\.?[0-9]+" #netIrr="ngModel"/>
                                                         <div [hidden]="netIrr.valid || netIrr.pristine" class="alert alert-danger">
                                                             Only number could be entered
                                                         </div>
                                                     </td>
                                                     <!--<td class="col-md-1">{{fund.netIrr}}</td>-->
-                                                    <td class="col-md-2"><b>Benchmark NET IRR</b></td>
+                                                    <td class="col-md-2"><b>Benchmark NET IRR, %</b></td>
                                                     <td class="col-md-1"><input style="width: 100%" type="text" name="benchmarkNetIrr" [(ngModel)]="fund.benchmarkNetIrr" placeholder="-" pattern="[+/-]?[0-9]*\.?[0-9]+" #benchmarkNetIrr="ngModel"/>
                                                         <div [hidden]="benchmarkNetIrr.valid || benchmarkNetIrr.pristine" class="alert alert-danger">
                                                             Only number could be entered
