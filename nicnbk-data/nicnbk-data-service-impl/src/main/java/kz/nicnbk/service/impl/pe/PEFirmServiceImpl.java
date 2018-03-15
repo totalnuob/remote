@@ -5,6 +5,7 @@ import kz.nicnbk.repo.api.employee.EmployeeRepository;
 import kz.nicnbk.repo.api.pe.PEFirmRepository;
 import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.pe.PEFirm;
+import kz.nicnbk.service.api.files.FileService;
 import kz.nicnbk.service.api.pe.PEFirmService;
 import kz.nicnbk.service.api.pe.PEFundService;
 import kz.nicnbk.service.converter.pe.PEFirmEntityConverter;
@@ -42,6 +43,9 @@ public class PEFirmServiceImpl implements PEFirmService {
 
     @Autowired
     private EmployeeRepository employeeRepository;
+
+    @Autowired
+    private FileService fileService;
 
     @Override
     public Long save(PEFirmDto firmDto, String updater) {
