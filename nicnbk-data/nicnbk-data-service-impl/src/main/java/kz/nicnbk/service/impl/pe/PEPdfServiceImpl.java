@@ -86,8 +86,6 @@ public class PEPdfServiceImpl implements PEPdfService {
             Float columnGap = 3f;
             Float fontSize = 8f;
 
-            String gpLogoDest = tmpFolder + "/gp.png";
-            String nicLogoDest = tmpFolder + "/NIClogo.png";
             String barChartNetIrrDest = tmpFolder + "/BarChartNetIrr_" + new Date().getTime() + ".jpeg";
             String barChartNetMoicDest = tmpFolder + "/BarChartNetMoic_" + new Date().getTime() + ".jpeg";
 
@@ -121,6 +119,8 @@ public class PEPdfServiceImpl implements PEPdfService {
             List<PEOnePagerDescriptionsDto> descriptionsSeniorManagementTeamDtoList = descriptionsService.findByFundIdAndType(fundId, 10);
             List<PEFundManagementTeamDto> managementTeamDtoList = managementTeamService.findByFundId(fundId);
 
+            String gpLogoDest = tmpFolder + "/" + firmDto.getFirmName() + ".png";
+            String nicLogoDest = tmpFolder + "/NIClogo.png";
             Boolean withLogos = false;
 
             try {
