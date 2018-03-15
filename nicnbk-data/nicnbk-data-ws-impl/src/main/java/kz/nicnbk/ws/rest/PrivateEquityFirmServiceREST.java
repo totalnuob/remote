@@ -2,6 +2,7 @@ package kz.nicnbk.ws.rest;
 
 import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.pe.PEFirmService;
+import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.pe.PEFirmDto;
 import kz.nicnbk.service.dto.pe.PEPagedSearchResult;
 import kz.nicnbk.service.dto.pe.PESearchParams;
@@ -11,9 +12,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by zhambyl on 16-Nov-16.
@@ -84,4 +87,20 @@ public class PrivateEquityFirmServiceREST extends CommonServiceREST{
         }
     }
 
+    @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/logo/upload", method = RequestMethod.POST)
+    public ResponseEntity<?> uploadLogo(@RequestParam(value = "file", required = false) MultipartFile[] files) {
+
+        Set<FilesDto> filesDtoSet = buildFilesDtoFromMultipart(files, null);
+
+//        PEGrossCashflowResultDto resultDto = this.cashflowService.uploadGrossCF(filesDtoSet);
+//
+//        if (resultDto.getStatus().getCode().equals("SUCCESS")) {
+//            return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
+//        } else {
+//            return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+
+        return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }
