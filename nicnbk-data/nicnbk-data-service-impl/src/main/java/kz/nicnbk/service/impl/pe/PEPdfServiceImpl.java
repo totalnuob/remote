@@ -121,6 +121,8 @@ public class PEPdfServiceImpl implements PEPdfService {
             List<PEOnePagerDescriptionsDto> descriptionsSeniorManagementTeamDtoList = descriptionsService.findByFundIdAndType(fundId, 10);
             List<PEFundManagementTeamDto> managementTeamDtoList = managementTeamService.findByFundId(fundId);
 
+            Boolean withLogos = false;
+
             try {
                 //Logo initialization
                 gpLogo = new Image(ImageDataFactory.create(gpLogoDest));
@@ -134,7 +136,7 @@ public class PEPdfServiceImpl implements PEPdfService {
                 }
                 nicLogo.setHeight(logoMaxHeight);
 
-
+                withLogos = true;
             } catch (Exception ex) {
                 logger.error("Error downloading PE fund's Logos: " + fundId, ex);
             }
