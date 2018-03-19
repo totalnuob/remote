@@ -15,6 +15,7 @@ import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.pe.PEFirmDto;
 import kz.nicnbk.service.dto.pe.PEPagedSearchResult;
 import kz.nicnbk.service.dto.pe.PESearchParams;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,8 +91,10 @@ public class PEFirmServiceImpl implements PEFirmService {
             firmDto.setFunds(this.fundService.loadFirmFunds(id, false));
 
             // load logo
-            if (firmDto.getLogo() != null) {
-                InputStream inputStream = fileService.getFileInputStream(firmDto.getLogo().getId(), FileTypeLookup.PE_FIRM_LOGO.getCode());
+            try {
+                firmDto.getLogo().setBytes(IOUtils.toByteArray(fileService.getFileInputStream(firmDto.getLogo().getId(), FileTypeLookup.PE_FIRM_LOGO.getCode())));
+            } catch (Exception ex) {
+                logger.error("Error loading PE firm logo: " + id, ex);
             }
 
             return firmDto;
