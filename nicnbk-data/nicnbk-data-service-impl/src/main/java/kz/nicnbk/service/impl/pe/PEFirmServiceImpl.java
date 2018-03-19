@@ -106,10 +106,10 @@ public class PEFirmServiceImpl implements PEFirmService {
     public Set<FilesDto> saveLogo(Long firmId, Set<FilesDto> filesDtoSet) {
         try {
             Set<FilesDto> dtoSet = new HashSet<>();
-//            if (filesDtoSet != null) {
-//                Iterator<FilesDto> iterator = filesDtoSet.iterator();
-//                while (iterator.hasNext()) {
-//                    FilesDto filesDto = iterator.next();
+            if (filesDtoSet != null) {
+                Iterator<FilesDto> iterator = filesDtoSet.iterator();
+                while (iterator.hasNext()) {
+                    FilesDto filesDto = iterator.next();
 //                    if (filesDto.getId() == null) {
 //                        Long fileId = fileService.save(filesDto, FileTypeLookup.MEMO_ATTACHMENT.getCatalog());
 //                        logger.info("Saved PE firm logo file: firm=" + firmId + ", file=" + fileId);
@@ -122,8 +122,8 @@ public class PEFirmServiceImpl implements PEFirmService {
 //                        newFileDto.setFileName(filesDto.getFileName());
 //                        dtoSet.add(newFileDto);
 //                    }
-//                }
-//            }
+                }
+            }
             return dtoSet;
         } catch (Exception ex) {
             logger.error("Error saving PE firm logo: firm=" + firmId, ex);
