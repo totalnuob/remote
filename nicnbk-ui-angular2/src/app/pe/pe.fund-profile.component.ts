@@ -79,6 +79,9 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     fileGPlogo: File[];
     fileNIClogo: File[];
 
+    url_GP: any;
+    url_NIC: any;
+
     performanceSaveTypeMessage: string;
     grossCashFlowSaveTypeMessage: string;
 
@@ -188,6 +191,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                         this.fund.netCashflow = [];
                                     }
 
+                                    this.url_GP = "data:" + this.fund.firm.logo.mimeType + ";base64," + this.fund.firm.logo.bytes;
                                 }else{
                                     // TODO: handle error
                                     this.errorMessage = "Error loading fund profile.";
