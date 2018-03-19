@@ -90,7 +90,7 @@ public class PEFirmServiceImpl implements PEFirmService {
             firmDto.setFunds(this.fundService.loadFirmFunds(id, false));
 
             // load logo
-            InputStream inputStream = fileService.getFileInputStream(firmDto.getLogo().getId(), FileTypeLookup.PE_FIRM_LOGO.getCatalog());
+            InputStream inputStream = fileService.getFileInputStream(firmDto.getLogo().getId(), FileTypeLookup.PE_FIRM_LOGO.getCode());
 
             return firmDto;
         }catch(Exception ex){

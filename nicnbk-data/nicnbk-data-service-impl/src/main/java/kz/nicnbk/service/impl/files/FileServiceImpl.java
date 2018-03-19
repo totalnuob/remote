@@ -94,7 +94,10 @@ public class FileServiceImpl implements FileService {
         if(fileType.equals(FileTypeLookup.MEMO_ATTACHMENT.getCode())){
             return FileTypeLookup.MEMO_ATTACHMENT.getCatalog();
         }
-        throw new IllegalArgumentException("Illegal file tyoe: " + fileType);
+        if(fileType.equals(FileTypeLookup.PE_FIRM_LOGO.getCode())){
+            return FileTypeLookup.PE_FIRM_LOGO.getCatalog();
+        }
+        throw new IllegalArgumentException("Illegal file type: " + fileType);
     }
 
     @Override

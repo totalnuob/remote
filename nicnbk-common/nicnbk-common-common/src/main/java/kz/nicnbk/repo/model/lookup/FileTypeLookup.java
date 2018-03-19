@@ -6,7 +6,7 @@ package kz.nicnbk.repo.model.lookup;
 public enum FileTypeLookup {
 
     MEMO_ATTACHMENT("MEMO_ATT", "memo"),
-    PE_FIRM_LOGO("PE_FIRM_LOGO", "pe_logo");
+    PE_FIRM_LOGO("PE_LOGO", "pe_logo");
 
     private String code;
     private String catalog;
