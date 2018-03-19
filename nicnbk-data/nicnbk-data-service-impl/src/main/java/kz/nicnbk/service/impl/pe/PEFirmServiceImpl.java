@@ -86,7 +86,7 @@ public class PEFirmServiceImpl implements PEFirmService {
             PEFirmDto firmDto = this.converter.disassemble(entity);
             // load funds
             firmDto.setFunds(this.fundService.loadFirmFunds(id, false));
-            // get logo
+            // load logo
             firmDto.setLogo(this.getLogo(id));
             return firmDto;
         }catch(Exception ex){
