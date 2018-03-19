@@ -24,6 +24,8 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -120,7 +122,8 @@ public class PEPdfServiceImpl implements PEPdfService {
             List<PEFundManagementTeamDto> managementTeamDtoList = managementTeamService.findByFundId(fundId);
 
             String gpLogoDest = tmpFolder + "/" + firmDto.getFirmName() + ".png";
-            String nicLogoDest = tmpFolder + "/NIClogo.png";
+//            String nicLogoDest = tmpFolder + "/NIClogo.png";
+            Resource resource = new ClassPathResource("img/NIClogo.png");
             Boolean withLogos = false;
 
             try {
@@ -141,7 +144,7 @@ public class PEPdfServiceImpl implements PEPdfService {
 
             try {
                 //Logo initialization
-                nicLogo = new Image(ImageDataFactory.create(nicLogoDest));
+                nicLogo = new Image(ImageDataFactory.create(resource.getURL()));
 
                 //Setting logo size
                 nicLogo.setHeight(logoMaxHeight);
