@@ -28,5 +28,5 @@ public interface PEFirmService extends BaseService {
 
     List<PEFirmDto> findAll();
 
-    Set<FilesDto> saveLogo(Long firmId, Set<FilesDto> filesDtoSet);
+    FilesDto saveLogo(Long firmId, Set<FilesDto> filesDtoSet);
 }

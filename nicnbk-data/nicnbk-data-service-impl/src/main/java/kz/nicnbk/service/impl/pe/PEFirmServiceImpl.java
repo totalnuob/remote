@@ -105,29 +105,23 @@ public class PEFirmServiceImpl implements PEFirmService {
     }
 
     @Override
-    public Set<FilesDto> saveLogo(Long firmId, Set<FilesDto> filesDtoSet) {
+    public FilesDto saveLogo(Long firmId, Set<FilesDto> filesDtoSet) {
         try {
-            Set<FilesDto> dtoSet = new HashSet<>();
             if (filesDtoSet != null) {
                 Iterator<FilesDto> iterator = filesDtoSet.iterator();
-                if (iterator.hasNext()) {
-                    FilesDto filesDto = iterator.next();
-                    Long logoId = fileService.save(filesDto, FileTypeLookup.PE_FIRM_LOGO.getCatalog());
-                    logger.info("Saved PE firm logo file: firm=" + firmId + ", file=" + logoId);
-                    Files logo = new Files();
-                    logo.setId(logoId);
-                    PEFirm firm = this.peFirmRepository.findOne(firmId);
-                    firm.setLogo(logo);
-                    this.peFirmRepository.save(firm);
-                    logger.info("Saved PE firm logo info: firm=" + firmId + ", file=" + logoId);
-//
-//                    FilesDto newFileDto = new FilesDto();
-//                    newFileDto.setId(logoId);
-//                    newFileDto.setFileName(filesDto.getFileName());
-//                    dtoSet.add(newFileDto);
-                }
+                FilesDto logoDto = iterator.next();
+                Long logoId = fileService.save(logoDto, FileTypeLookup.PE_FIRM_LOGO.getCatalog());
+                logoDto.setId(logoId);
+                logger.info("Saved PE firm logo file: firm=" + firmId + ", file=" + logoId);
+                Files logo = new Files();
+                logo.setId(logoId);
+                PEFirm firm = this.peFirmRepository.findOne(firmId);
+                firm.setLogo(logo);
+                this.peFirmRepository.save(firm);
+                logger.info("Saved PE firm logo info: firm=" + firmId + ", file=" + logoId);
+
+                return logoDto;
             }
-            return dtoSet;
         } catch (Exception ex) {
             logger.error("Error saving PE firm logo: firm=" + firmId, ex);
         }
