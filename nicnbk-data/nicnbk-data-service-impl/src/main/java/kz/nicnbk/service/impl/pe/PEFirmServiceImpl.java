@@ -126,6 +126,7 @@ public class PEFirmServiceImpl implements PEFirmService {
                 Files logo = new Files();
                 logo.setId(logoId);
                 PEFirm firm = this.peFirmRepository.findOne(firmId);
+                firm.getLogo().setDeleted(true);
                 firm.setLogo(logo);
                 this.peFirmRepository.save(firm);
                 logger.info("Saved PE firm logo info: firm=" + firmId + ", file=" + logoId);
