@@ -118,6 +118,8 @@ public class PEFirmServiceImpl implements PEFirmService {
     public FilesDto saveLogo(Long firmId, Set<FilesDto> filesDtoSet) {
         try {
             if (filesDtoSet != null) {
+                PEFirm firm = this.peFirmRepository.findOne(firmId);
+                firm.getLogo().setDeleted(true);
                 Iterator<FilesDto> iterator = filesDtoSet.iterator();
                 FilesDto logoDto = iterator.next();
                 Long logoId = fileService.save(logoDto, FileTypeLookup.PE_FIRM_LOGO.getCatalog());
@@ -125,8 +127,6 @@ public class PEFirmServiceImpl implements PEFirmService {
                 logger.info("Saved PE firm logo file: firm=" + firmId + ", file=" + logoId);
                 Files logo = new Files();
                 logo.setId(logoId);
-                PEFirm firm = this.peFirmRepository.findOne(firmId);
-                firm.getLogo().setDeleted(true);
                 firm.setLogo(logo);
                 this.peFirmRepository.save(firm);
                 logger.info("Saved PE firm logo info: firm=" + firmId + ", file=" + logoId);
