@@ -5,12 +5,15 @@ import kz.nicnbk.repo.api.pe.PEFundRepository;
 import kz.nicnbk.repo.model.common.Geography;
 import kz.nicnbk.repo.model.common.Strategy;
 import kz.nicnbk.repo.model.employee.Employee;
+import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.repo.model.pe.PEFund;
 import kz.nicnbk.repo.model.pe.PEIndustry;
+import kz.nicnbk.service.api.files.FileService;
 import kz.nicnbk.service.api.pe.*;
 import kz.nicnbk.service.converter.pe.PEFundEntityConverter;
 import kz.nicnbk.service.dto.common.StatusResultType;
 import kz.nicnbk.service.dto.pe.*;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +65,9 @@ public class PEFundServiceImpl implements PEFundService {
     @Autowired
     private PEIrrService irrService;
 
+    @Autowired
+    private FileService fileService;
+
     @Override
     public PEFundDto get(Long fundId) {
         try {
@@ -74,6 +80,14 @@ public class PEFundServiceImpl implements PEFundService {
             dto.setOnePagerDescriptions(this.onePagerDescriptionsService.findByFundId(fundId));
             dto.setManagementTeam(this.managementTeamService.findByFundId(fundId));
 //            calculatePerformanceParameters(grossCFDto, netCFDto, dto);
+
+            // load logo
+            try {
+                dto.getFirm().getLogo().setBytes(IOUtils.toByteArray(fileService.getFileInputStream(dto.getFirm().getLogo().getId(), FileTypeLookup.PE_FIRM_LOGO.getCode())));
+            } catch (Exception ex) {
+                logger.error("Error loading PE firm logo: " + dto.getFirm().getId(), ex);
+            }
+
             return dto;
         } catch (Exception ex) {
             logger.error("Error loading PE fund: " + fundId, ex);
