@@ -3,6 +3,7 @@ package kz.nicnbk.repo.model.pe;
 import kz.nicnbk.repo.model.base.CreateUpdateBaseEntity;
 import kz.nicnbk.repo.model.common.Geography;
 import kz.nicnbk.repo.model.common.Strategy;
+import kz.nicnbk.repo.model.files.Files;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -36,6 +37,7 @@ public class PEFirm extends CreateUpdateBaseEntity{
     private String website;
     private String contactPerson;
     private String email;
+    private Files logo;
 
     @Column(name = "firm_name")
     public String getFirmName() {
@@ -230,4 +232,13 @@ public class PEFirm extends CreateUpdateBaseEntity{
         this.email = email;
     }
 
+    @OneToOne
+    @JoinColumn(name = "logo_id")
+    public Files getLogo() {
+        return logo;
+    }
+
+    public void setLogo(Files logo) {
+        this.logo = logo;
+    }
 }

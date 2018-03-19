@@ -4,6 +4,7 @@ import kz.nicnbk.common.service.util.PaginationUtils;
 import kz.nicnbk.repo.api.employee.EmployeeRepository;
 import kz.nicnbk.repo.api.pe.PEFirmRepository;
 import kz.nicnbk.repo.model.employee.Employee;
+import kz.nicnbk.repo.model.files.Files;
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.repo.model.pe.PEFirm;
 import kz.nicnbk.service.api.files.FileService;
@@ -132,14 +133,19 @@ public class PEFirmServiceImpl implements PEFirmService {
                 Iterator<FilesDto> iterator = filesDtoSet.iterator();
                 if (iterator.hasNext()) {
                     FilesDto filesDto = iterator.next();
-                    Long fileId = fileService.save(filesDto, FileTypeLookup.PE_FIRM_LOGO.getCatalog());
-                    logger.info("Saved PE firm logo file: firm=" + firmId + ", file=" + fileId);
-//                    MemoFiles memoFiles = new MemoFiles(memoId, fileId);
+                    Long logoId = fileService.save(filesDto, FileTypeLookup.PE_FIRM_LOGO.getCatalog());
+                    logger.info("Saved PE firm logo file: firm=" + firmId + ", file=" + logoId);
+                    Files logo = new Files();
+                    logo.setId(logoId);
+                    PEFirm firm = this.peFirmRepository.findOne(firmId);
+                    firm.setLogo(logo);
+                    this.peFirmRepository.save(firm);
+//                    MemoFiles memoFiles = new MemoFiles(memoId, logoId);
 //                    memoFilesRepository.save(memoFiles);
-                    logger.info("Saved PE firm logo info: firm=" + firmId + ", file=" + fileId);
+                    logger.info("Saved PE firm logo info: firm=" + firmId + ", file=" + logoId);
 //
 //                    FilesDto newFileDto = new FilesDto();
-//                    newFileDto.setId(fileId);
+//                    newFileDto.setId(logoId);
 //                    newFileDto.setFileName(filesDto.getFileName());
 //                    dtoSet.add(newFileDto);
                 }
