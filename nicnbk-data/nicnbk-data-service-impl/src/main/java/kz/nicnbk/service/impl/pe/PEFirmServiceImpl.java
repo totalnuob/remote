@@ -4,6 +4,7 @@ import kz.nicnbk.common.service.util.PaginationUtils;
 import kz.nicnbk.repo.api.employee.EmployeeRepository;
 import kz.nicnbk.repo.api.pe.PEFirmRepository;
 import kz.nicnbk.repo.model.employee.Employee;
+import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.repo.model.pe.PEFirm;
 import kz.nicnbk.service.api.files.FileService;
 import kz.nicnbk.service.api.pe.PEFirmService;
@@ -108,20 +109,19 @@ public class PEFirmServiceImpl implements PEFirmService {
             Set<FilesDto> dtoSet = new HashSet<>();
             if (filesDtoSet != null) {
                 Iterator<FilesDto> iterator = filesDtoSet.iterator();
-                while (iterator.hasNext()) {
+                if (iterator.hasNext()) {
                     FilesDto filesDto = iterator.next();
-//                    if (filesDto.getId() == null) {
-//                        Long fileId = fileService.save(filesDto, FileTypeLookup.MEMO_ATTACHMENT.getCatalog());
-//                        logger.info("Saved PE firm logo file: firm=" + firmId + ", file=" + fileId);
-//                        MemoFiles memoFiles = new MemoFiles(memoId, fileId);
-//                        memoFilesRepository.save(memoFiles);
-//                        logger.info("Saved PE firm logo info: firm=" + firmId + ", file=" + fileId);
+                    System.out.println("123");
+                    Long fileId = fileService.save(filesDto, FileTypeLookup.PE_FIRM_LOGO.getCatalog());
+//                    logger.info("Saved PE firm logo file: firm=" + firmId + ", file=" + fileId);
+//                    MemoFiles memoFiles = new MemoFiles(memoId, fileId);
+//                    memoFilesRepository.save(memoFiles);
+//                    logger.info("Saved PE firm logo info: firm=" + firmId + ", file=" + fileId);
 //
-//                        FilesDto newFileDto = new FilesDto();
-//                        newFileDto.setId(fileId);
-//                        newFileDto.setFileName(filesDto.getFileName());
-//                        dtoSet.add(newFileDto);
-//                    }
+//                    FilesDto newFileDto = new FilesDto();
+//                    newFileDto.setId(fileId);
+//                    newFileDto.setFileName(filesDto.getFileName());
+//                    dtoSet.add(newFileDto);
                 }
             }
             return dtoSet;
