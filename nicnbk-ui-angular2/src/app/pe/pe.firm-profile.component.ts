@@ -143,6 +143,11 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
                         this.busy = this.firmService.postFiles(this.firm.id, [], this.myFiles)
                             .subscribe(
                                 (response) => {
+                                    //console.log(response);
+                                    this.firm.logo = response;
+
+                                    //Update logo
+
                                     this.postAction("Successfully saved.", null);
                                 },
                                 (error) => {
