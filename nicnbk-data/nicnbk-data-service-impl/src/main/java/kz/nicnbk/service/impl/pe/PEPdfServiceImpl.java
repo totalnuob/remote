@@ -11,11 +11,13 @@ import com.itextpdf.layout.ColumnDocumentRenderer;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.*;
 import com.itextpdf.layout.property.TextAlignment;
+import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.service.api.pe.*;
 import kz.nicnbk.service.dto.pe.PEFirmDto;
 import kz.nicnbk.service.dto.pe.PEFundDto;
 import kz.nicnbk.service.dto.pe.PEFundManagementTeamDto;
 import kz.nicnbk.service.dto.pe.PEOnePagerDescriptionsDto;
+import kz.nicnbk.service.impl.files.FilePathResolver;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
@@ -55,6 +57,9 @@ public class PEPdfServiceImpl implements PEPdfService {
 
     @Autowired
     private PEFundManagementTeamService managementTeamService;
+
+    @Autowired
+    private FilePathResolver filePathResolver;
 
     //File locations
 //    private static final String onePagerDest = "nicnbk-data/nicnbk-data-service-impl/src/main/resources/OnePager.pdf";
@@ -121,9 +126,15 @@ public class PEPdfServiceImpl implements PEPdfService {
             List<PEOnePagerDescriptionsDto> descriptionsSeniorManagementTeamDtoList = descriptionsService.findByFundIdAndType(fundId, 10);
             List<PEFundManagementTeamDto> managementTeamDtoList = managementTeamService.findByFundId(fundId);
 
-            String gpLogoDest = tmpFolder + "/" + firmDto.getFirmName() + ".png";
-//            String nicLogoDest = tmpFolder + "/NIClogo.png";
+//            String gpLogoDest = tmpFolder + "/" + firmDto.getFirmName() + ".png";
+            String gpLogoDest = "";
+            try {
+                gpLogoDest = filePathResolver.resolveAbsoluteFilePath(firmDto.getLogo().getId(), FileTypeLookup.PE_FIRM_LOGO.getCatalog());
+            } catch (Exception ex) {
+                logger.error("Error loading PE firm logo: " + firmDto.getId(), ex);
+            }
             Resource resource = new ClassPathResource("img/NIClogo.png");
+//            String nicLogoDest = tmpFolder + "/NIClogo.png";
             Boolean withLogos = false;
 
             try {
