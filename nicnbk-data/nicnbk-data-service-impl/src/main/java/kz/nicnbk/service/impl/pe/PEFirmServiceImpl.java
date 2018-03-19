@@ -23,6 +23,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.io.InputStream;
 import java.util.*;
 
 /**
@@ -89,6 +90,7 @@ public class PEFirmServiceImpl implements PEFirmService {
             firmDto.setFunds(this.fundService.loadFirmFunds(id, false));
 
             // load logo
+            InputStream inputStream = fileService.getFileInputStream(firmDto.getLogo().getId(), FileTypeLookup.PE_FIRM_LOGO.getCatalog());
 
             return firmDto;
         }catch(Exception ex){
