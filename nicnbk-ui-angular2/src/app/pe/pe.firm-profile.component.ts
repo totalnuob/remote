@@ -143,17 +143,6 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
                         this.busy = this.firmService.postFiles(this.firm.id, [], this.myFiles)
                             .subscribe(
                                 (response) => {
-                                    //// clear upload files list on view
-                                    //this.myFiles.length = 0;
-                                    //
-                                    //// update files list with new files
-                                    //if(!this.firm.files){ // no files existed
-                                    //    this.firm.files = [];
-                                    //}
-                                    //for (var i = 0; i < res.length; i++) {
-                                    //    this.firm.files.push(res[i]);
-                                    //}
-
                                     this.postAction("Successfully saved.", null);
                                 },
                                 (error) => {
