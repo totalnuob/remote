@@ -178,7 +178,8 @@
                             </table>
                             <div class=" col-md-1">&nbsp;</div>
                             <div class="col-md-3">
-                                Logo will be here!
+                                <img [src]="url" width = 100%>
+                                <br/>
                                 <form #yourForm="ngForm" (ngSubmit)="onSubmitLogo()" *ngIf="canEdit()">
                                     <input type="file" #fileupload name="myFile" (change)="fileChange(fileupload.files)"/>
                                 </form>
