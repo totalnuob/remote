@@ -86,9 +86,30 @@ public class PEFirmServiceImpl implements PEFirmService {
             PEFirmDto firmDto = this.converter.disassemble(entity);
             // load funds
             firmDto.setFunds(this.fundService.loadFirmFunds(id, false));
+            // get logo
+            firmDto.setLogo(this.getLogo(id));
             return firmDto;
         }catch(Exception ex){
             logger.error("Error loading PE firm: " + id, ex);
+        }
+        return null;
+    }
+
+    public FilesDto getLogo(Long id) {
+        try {
+//            List<MemoFiles> entities = memoFilesRepository.getFilesByMemoId(memoId);
+//            Set<FilesDto> files = new HashSet<>();
+//            if (entities != null) {
+//                for (MemoFiles memoFile : entities) {
+//                    FilesDto fileDto = new FilesDto();
+//                    fileDto.setId(memoFile.getFile().getId());
+//                    fileDto.setFileName(memoFile.getFile().getFileName());
+//                    files.add(fileDto);
+//                }
+//            }
+//            return files;
+        }catch(Exception ex){
+            logger.error("Error getting PE firm logo: firm=" + id, ex);
         }
         return null;
     }
@@ -111,12 +132,11 @@ public class PEFirmServiceImpl implements PEFirmService {
                 Iterator<FilesDto> iterator = filesDtoSet.iterator();
                 if (iterator.hasNext()) {
                     FilesDto filesDto = iterator.next();
-                    System.out.println("123");
                     Long fileId = fileService.save(filesDto, FileTypeLookup.PE_FIRM_LOGO.getCatalog());
-//                    logger.info("Saved PE firm logo file: firm=" + firmId + ", file=" + fileId);
+                    logger.info("Saved PE firm logo file: firm=" + firmId + ", file=" + fileId);
 //                    MemoFiles memoFiles = new MemoFiles(memoId, fileId);
 //                    memoFilesRepository.save(memoFiles);
-//                    logger.info("Saved PE firm logo info: firm=" + firmId + ", file=" + fileId);
+                    logger.info("Saved PE firm logo info: firm=" + firmId + ", file=" + fileId);
 //
 //                    FilesDto newFileDto = new FilesDto();
 //                    newFileDto.setId(fileId);
