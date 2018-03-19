@@ -85,7 +85,7 @@ public class PEFundServiceImpl implements PEFundService {
             try {
                 dto.getFirm().getLogo().setBytes(IOUtils.toByteArray(fileService.getFileInputStream(dto.getFirm().getLogo().getId(), FileTypeLookup.PE_FIRM_LOGO.getCode())));
             } catch (Exception ex) {
-                logger.error("Error loading PE firm logo: " + dto.getFirm().getId(), ex);
+                logger.error("Error loading PE firm logo: fund=" + fundId, ex);
             }
 
             return dto;
