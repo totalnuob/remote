@@ -87,30 +87,10 @@ public class PEFirmServiceImpl implements PEFirmService {
             PEFirmDto firmDto = this.converter.disassemble(entity);
             // load funds
             firmDto.setFunds(this.fundService.loadFirmFunds(id, false));
-            // load logo
-            firmDto.setLogo(this.getLogo(id));
+
             return firmDto;
         }catch(Exception ex){
             logger.error("Error loading PE firm: " + id, ex);
-        }
-        return null;
-    }
-
-    public FilesDto getLogo(Long id) {
-        try {
-//            List<MemoFiles> entities = memoFilesRepository.getFilesByMemoId(memoId);
-//            Set<FilesDto> files = new HashSet<>();
-//            if (entities != null) {
-//                for (MemoFiles memoFile : entities) {
-//                    FilesDto fileDto = new FilesDto();
-//                    fileDto.setId(memoFile.getFile().getId());
-//                    fileDto.setFileName(memoFile.getFile().getFileName());
-//                    files.add(fileDto);
-//                }
-//            }
-//            return files;
-        }catch(Exception ex){
-            logger.error("Error getting PE firm logo: firm=" + id, ex);
         }
         return null;
     }
@@ -140,8 +120,6 @@ public class PEFirmServiceImpl implements PEFirmService {
                     PEFirm firm = this.peFirmRepository.findOne(firmId);
                     firm.setLogo(logo);
                     this.peFirmRepository.save(firm);
-//                    MemoFiles memoFiles = new MemoFiles(memoId, logoId);
-//                    memoFilesRepository.save(memoFiles);
                     logger.info("Saved PE firm logo info: firm=" + firmId + ", file=" + logoId);
 //
 //                    FilesDto newFileDto = new FilesDto();
