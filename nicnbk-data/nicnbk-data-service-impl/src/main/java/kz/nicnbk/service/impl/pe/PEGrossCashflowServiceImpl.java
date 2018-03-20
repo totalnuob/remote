@@ -32,7 +32,7 @@ import java.util.*;
 @Service
 public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
 
-    private static final Logger logger = LoggerFactory.getLogger(PEFundServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(PEGrossCashflowServiceImpl.class);
 
     @Autowired
     private PEGrossCashflowRepository repository;

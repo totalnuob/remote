@@ -2,6 +2,7 @@ import {Component, ViewChild, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {CommonFormViewComponent} from "../common/common.component";
 import {PEFund} from "./model/pe.fund";
+import {PEFundDataForOnePager} from "./model/pe.fund.data.for.one.pager";
 import {PEFirmService} from "./pe.firm.service";
 import {PEFirm} from "./model/pe.firm";
 import {PEFundService} from "./pe.fund.service";
@@ -12,6 +13,8 @@ import {Subscription} from 'rxjs';
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 import {ErrorResponse} from "../common/error-response";
 import {PEIrrParam} from "./model/pe.irrParam";
+import {DATA_APP_URL} from "../common/common.service.constants";
+import {FileDownloadService} from "../common/file.download.service";
 
 declare var $:any
 
@@ -22,6 +25,8 @@ declare var $:any
     providers: [PEFirmService, PEFundService]
 })
 export class PEFundProfileComponent extends CommonFormViewComponent implements OnInit{
+    private PE_FUND_CREATE_ONE_PAGER_URL = DATA_APP_URL + "pe/fund/" + "createOnePager/";
+
     private fund = new PEFund();
 
     @ViewChild('strategySelect')
@@ -71,9 +76,16 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     uploadedNetCf;
 
     myFiles: File[];
+    fileGPlogo: File[];
+    fileNIClogo: File[];
+
+    url_GP: any;
+    url_NIC: any;
 
     performanceSaveTypeMessage: string;
     grossCashFlowSaveTypeMessage: string;
+
+    public dataForOnePager = new PEFundDataForOnePager();
 
     private moduleAccessChecker: ModuleAccessCheckerService;
 
@@ -83,6 +95,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
         private firmService: PEFirmService,
         private fundService: PEFundService,
         private route: ActivatedRoute,
+        private downloadService: FileDownloadService,
         private router: Router
     ){
         super(router);
@@ -97,6 +110,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
         this.loadLookups();
 
         this.myFiles = [];
+        this.fileGPlogo = [];
+        this.fileNIClogo = [];
 
         // TODO: wait/sync on lookup loading
         // TODO: sync on subscribe results
@@ -153,6 +168,17 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                         this.fund.companyPerformanceIdd = [];
                                     }
 
+                                    if(this.fund.onePagerDescriptions == null){
+                                        this.fund.onePagerDescriptions = [];
+                                    }
+
+                                    if(this.fund.managementTeam == null){
+                                        this.fund.managementTeam = [];
+                                    }
+
+                                    //this.addOnePagerAsOfDate();
+                                    //this.addOnePagerBenchmarkName();
+
                                     this.updateIRRParamList();
 
                                     this.updatePerformanceIddTotal();
@@ -165,6 +191,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                         this.fund.netCashflow = [];
                                     }
 
+                                    this.url_GP = "data:" + this.fund.firm.logo.mimeType + ";base64," + this.fund.firm.logo.bytes;
                                 }else{
                                     // TODO: handle error
                                     this.errorMessage = "Error loading fund profile.";
@@ -239,6 +266,11 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
             //defaultDate: new Date(),
             format: 'DD-MM-YYYY'
         });
+
+        //$('#asOfDateOnePager').datetimepicker({
+        //    //defaultDate: new Date(),
+        //    format: 'DD-MM-YYYY'
+        //});
     }
 
     save(){
@@ -246,12 +278,13 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
 
         this.fund.firstClose = $('#firstClose').val();
         this.fund.finalClose = $('#finalClose').val();
+        this.fund.asOfDateOnePager = $('#asOfDateOpenFund').val();
 
-        if(this.fund.status != 'Closed') {
-            this.fund.asOfDate = $('#asOfDateOpenFund').val();
-        } else {
-            this.fund.asOfDate = $('#asOfDate').val();
-        }
+        //if(this.fund.status != 'Closed') {
+        //    this.fund.asOfDate = $('#asOfDateOpenFund').val();
+        //} else {
+        //    this.fund.asOfDate = $('#asOfDate').val();
+        //}
 
         this.fund.strategy = this.convertToServiceModel(this.fund.strategy);
         this.fund.industry = this.convertToServiceModel(this.fund.industry);
@@ -824,6 +857,30 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
         }
     }
 
+    addRowDescription(typeOfDescription){
+        this.fund.onePagerDescriptions.push({id:"", descriptionBold:"", description:"", type: typeOfDescription});
+    }
+
+    removeRowDescription(item){
+        for(var i = this.fund.onePagerDescriptions.length; i--;) {
+            if(this.fund.onePagerDescriptions[i] === item) {
+                this.fund.onePagerDescriptions.splice(i, 1);
+            }
+        }
+    }
+
+    addRowManagementTeam(){
+        this.fund.managementTeam.push({id:"", name:"", position:"", age:"", experience:"", education:""});
+    }
+
+    removeRowManagementTeam(item){
+        for(var i = this.fund.managementTeam.length; i--;) {
+            if(this.fund.managementTeam[i] === item) {
+                this.fund.managementTeam.splice(i, 1);
+            }
+        }
+    }
+
     grossCfParse(){
         var cf = [];
         var rows = this.uploadedGrossCf.split("\n");
@@ -900,6 +957,17 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
         console.log(this.myFiles);
     }
 
+    fileLogoChange(files: any, partner: string){
+        if(partner === 'GP') {
+            this.fileGPlogo = files;
+            console.log(this.fileGPlogo);
+        }
+        if(partner === 'NIC') {
+            this.fileNIClogo = files;
+            console.log(this.fileNIClogo);
+        }
+    }
+
     onSubmitGrossCF() {
         this.busy = this.fundService.postFiles(this.myFiles)
             .subscribe(
@@ -923,5 +991,73 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     console.log(error);
                 }
             )
+    }
+
+    //addOnePagerAsOfDate() {
+    //    var found = false;
+    //
+    //    for (var i = 0; i < this.fund.onePagerDescriptions.length; i++) {
+    //        if (this.fund.onePagerDescriptions[i].type === 0) {
+    //            found = true;
+    //        }
+    //    }
+    //
+    //    if (!found) {
+    //        this.addRowDescription(0);
+    //    }
+    //}
+
+    //addOnePagerBenchmarkName() {
+    //    var found = false;
+    //
+    //    for (var i = 0; i < this.fund.onePagerDescriptions.length; i++) {
+    //        if (this.fund.onePagerDescriptions[i].type === -1) {
+    //            found = true;
+    //        }
+    //    }
+    //
+    //    if (!found) {
+    //        this.addRowDescription(-1);
+    //    }
+    //}
+
+    saveDataAndCreateOnePager() {
+        this.dataForOnePager.onePagerDescriptions = this.fund.onePagerDescriptions;
+        this.dataForOnePager.managementTeam = this.fund.managementTeam;
+        //this.dataForOnePager.asOfDateOnePager = $('#asOfDateOnePager').val();
+
+        //console.log(this.fund.asOfDateOnePager);
+
+        this.busy = this.fundService.saveDataForOnePager(this.dataForOnePager, this.fund.id)
+            .subscribe(
+                (response) => {
+                    this.postAction(response.messageEn, null);
+
+                    this.fund.onePagerDescriptions = response.onePagerDescriptions;
+                    this.fund.managementTeam = response.managementTeam;
+                    //this.fund.asOfDateOnePager = response.asOfDateOnePager;
+
+                    this.createAndDownloadOnePager();
+                },
+                (error: ErrorResponse) => {
+                    this.processErrorMessage(error);
+                    this.postAction(null, error.message);
+                    console.log(error);
+                }
+            )
+    }
+
+    createAndDownloadOnePager() {
+        //this.busy = this.fundService.createAndDownloadOnePager(this.fund.id, 'OnePager')
+        this.downloadService.makeFileRequest(this.PE_FUND_CREATE_ONE_PAGER_URL + this.fund.id, 'OnePager')
+            .subscribe(
+                response  => {
+                    //console.log("ok");
+                },
+                error => {
+                    //console.log("fails")
+                    this.postAction(null, "Error exporting data");
+                }
+            );
     }
 }

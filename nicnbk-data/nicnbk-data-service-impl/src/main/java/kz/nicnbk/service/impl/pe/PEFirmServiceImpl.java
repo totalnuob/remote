@@ -4,13 +4,18 @@ import kz.nicnbk.common.service.util.PaginationUtils;
 import kz.nicnbk.repo.api.employee.EmployeeRepository;
 import kz.nicnbk.repo.api.pe.PEFirmRepository;
 import kz.nicnbk.repo.model.employee.Employee;
+import kz.nicnbk.repo.model.files.Files;
+import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.repo.model.pe.PEFirm;
+import kz.nicnbk.service.api.files.FileService;
 import kz.nicnbk.service.api.pe.PEFirmService;
 import kz.nicnbk.service.api.pe.PEFundService;
 import kz.nicnbk.service.converter.pe.PEFirmEntityConverter;
+import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.pe.PEFirmDto;
 import kz.nicnbk.service.dto.pe.PEPagedSearchResult;
 import kz.nicnbk.service.dto.pe.PESearchParams;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +24,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
+import java.io.InputStream;
+import java.util.*;
 
 /**
  * Created by zhambyl on 16-Nov-16.
@@ -42,6 +47,9 @@ public class PEFirmServiceImpl implements PEFirmService {
 
     @Autowired
     private EmployeeRepository employeeRepository;
+
+    @Autowired
+    private FileService fileService;
 
     @Override
     public Long save(PEFirmDto firmDto, String updater) {
@@ -81,6 +89,14 @@ public class PEFirmServiceImpl implements PEFirmService {
             PEFirmDto firmDto = this.converter.disassemble(entity);
             // load funds
             firmDto.setFunds(this.fundService.loadFirmFunds(id, false));
+
+            // load logo
+            try {
+                firmDto.getLogo().setBytes(IOUtils.toByteArray(fileService.getFileInputStream(firmDto.getLogo().getId(), FileTypeLookup.PE_FIRM_LOGO.getCode())));
+            } catch (Exception ex) {
+                logger.error("Error loading PE firm logo: " + id, ex);
+            }
+
             return firmDto;
         }catch(Exception ex){
             logger.error("Error loading PE firm: " + id, ex);
@@ -94,6 +110,31 @@ public class PEFirmServiceImpl implements PEFirmService {
             return converter.disassembleList(peFirmRepository.findAllByOrderByFirmNameAsc());
         }catch (Exception ex){
             logger.error("Failed to load all PE firms", ex);
+        }
+        return null;
+    }
+
+    @Override
+    public FilesDto saveLogo(Long firmId, Set<FilesDto> filesDtoSet) {
+        try {
+            if (filesDtoSet != null) {
+                Iterator<FilesDto> iterator = filesDtoSet.iterator();
+                FilesDto logoDto = iterator.next();
+                Long logoId = fileService.save(logoDto, FileTypeLookup.PE_FIRM_LOGO.getCatalog());
+                logoDto.setId(logoId);
+                logger.info("Saved PE firm logo file: firm=" + firmId + ", file=" + logoId);
+                Files logo = new Files();
+                logo.setId(logoId);
+                PEFirm firm = this.peFirmRepository.findOne(firmId);
+                firm.getLogo().setDeleted(true);
+                firm.setLogo(logo);
+                this.peFirmRepository.save(firm);
+                logger.info("Saved PE firm logo info: firm=" + firmId + ", file=" + logoId);
+
+                return logoDto;
+            }
+        } catch (Exception ex) {
+            logger.error("Error saving PE firm logo: firm=" + firmId, ex);
         }
         return null;
     }

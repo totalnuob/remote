@@ -43,6 +43,9 @@
                     <li>
                         <a data-toggle="tab" href="#performanceFund">PERFORMANCE</a>
                     </li>
+                    <li>
+                        <a data-toggle="tab" href="#createOnePager">CREATE ONE PAGER</a>
+                    </li>
                 </ul>
                 <div class="tab-content">
                     <div id="overview" class="tab-pane fade in active">
@@ -131,7 +134,7 @@
                                                 </div>
                                                 <div class="col-md-4">
                                                     <div class="col-md-4"><b>As of date</b></div>
-                                                    <div class="col-md-6"><input type='text' class="form-control" id="asOfDateOpenFund" name="asOfDateOpenFund" [(ngModel)]="fund.asOfDate"/></div>
+                                                    <div class="col-md-6"><input type='text' class="form-control" id="asOfDateOpenFund" name="asOfDateOpenFund" [(ngModel)]="fund.asOfDateOnePager"/></div>
                                                 </div>
                                                 <div class="col-md-4">
                                                     <td class="col-md-4"><b>NIC status</b></td>
@@ -146,7 +149,7 @@
                                             </div>
                                             <table class=" col-md-4 table-striped table-condensed">
                                                 <tr>
-                                                    <td class="col-md-1">Fund size</td>
+                                                    <td class="col-md-1">Fund size (mln)</td>
                                                     <td class="col-md-3"><input style="width: 100%" type="text" name="fundSize" [(ngModel)]="fund.fundSize" pattern="[+]?[0-9]*\.?[0-9]+" #fundSize2="ngModel"/>
                                                         <div [hidden]="fundSize2.valid || fundSize2.pristine" class="alert alert-danger">
                                                             Only positive number could be entered
@@ -166,16 +169,26 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="col-md-1">Target size / Hard cap</td>
+                                                    <td class="col-md-1">Target size (mln)</td>
                                                     <td class="col-md-3">
-                                                        <input style="width: 30%" type="text" name="targetSize" [(ngModel)]="fund.targetSize" pattern="[+]?[0-9]*\.?[0-9]+" #targetSize="ngModel"/><input style="width: 70%" type="text" name="targetHardCapComment" [(ngModel)]="fund.targetHardCapComment" placeholder="Comment"/>
+                                                        <input style="width: 100%" type="text" name="targetSize" [(ngModel)]="fund.targetSize" pattern="[+]?[0-9]*\.?[0-9]+" #targetSize="ngModel"/>
+                                                        <!--<input style="width: 70%" type="text" name="targetHardCapComment" [(ngModel)]="fund.targetHardCapComment" placeholder="Comment"/>-->
                                                         <div [hidden]="targetSize.valid || targetSize.pristine" class="alert alert-danger">
                                                             Only positive number could be entered
                                                         </div>
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="col-md-1">GP commitment</td>
+                                                    <td class="col-md-1">Hard cap (mln)</td>
+                                                    <td class="col-md-3">
+                                                        <input style="width: 100%" type="text" name="hardCap" [(ngModel)]="fund.hardCap" pattern="[+]?[0-9]*\.?[0-9]+" #hardCap="ngModel"/>
+                                                        <div [hidden]="hardCap.valid || hardCap.pristine" class="alert alert-danger">
+                                                            Only positive number could be entered
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="col-md-1">GP commitment, %</td>
                                                     <td class="col-md-3"><input style="width: 100%" type="text" name="gpCommitment" [(ngModel)]="fund.gpCommitment" pattern="[+]?[0-9]*\.?[0-9]+" #gpCommitment="ngModel"/>
                                                         <div [hidden]="gpCommitment.valid || gpCommitment.pristine" class="alert alert-danger">
                                                             Only positive number could be entered
@@ -183,7 +196,7 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="col-md-1">Management fee</td>
+                                                    <td class="col-md-1">Management fee, %</td>
                                                     <td class="col-md-3"><input style="width: 100%" type="text" name="managementFee" [(ngModel)]="fund.managementFee" pattern="[+]?[0-9]*\.?[0-9]+" #managementFee="ngModel"/>
                                                         <div [hidden]="managementFee.valid || managementFee.pristine" class="alert alert-danger">
                                                             Only positive number could be entered
@@ -197,7 +210,7 @@
                                             </table>
                                             <table class=" col-md-4 table-striped table-condensed">
                                                 <tr>
-                                                    <td class="col-md-1">Carried interest</td>
+                                                    <td class="col-md-1">Carried interest, %</td>
                                                     <td class="col-md-3"><input style="width: 100%" type="text" name="carriedInterest" [(ngModel)]="fund.carriedInterest" pattern="[+]?[0-9]*\.?[0-9]+" #carriedInterest="ngModel"/>
                                                         <div [hidden]="carriedInterest.valid || carriedInterest.pristine" class="alert alert-danger">
                                                             Only positive number could be entered
@@ -205,7 +218,7 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="col-md-1">Hurdle rate</td>
+                                                    <td class="col-md-1">Hurdle rate, %</td>
                                                     <td class="col-md-3"><input style="width: 100%" type="text" name="hurdleRate" [(ngModel)]="fund.hurdleRate" pattern="[+]?[0-9]*\.?[0-9]+" #hurdleRate="ngModel"/>
                                                         <div [hidden]="hurdleRate.valid || hurdleRate.pristine" class="alert alert-danger">
                                                             Only positive number could be entered
@@ -267,7 +280,7 @@
 
                                         <div class="row top-buffer">
                                             <div class="col-md-1">
-                                                <label><b>Fund size</b></label>
+                                                <label><b>Fund size (mln)</b></label>
                                             </div>
                                             <div class="col-md-4">
                                                 <input type="text" class="form-control" placeholder="Enter fund size"
@@ -338,152 +351,13 @@
                                         <!--</div>-->
                                     </form>
 
-                                    <form [hidden]="openingSoon">
-                                        <hr>
-                                        <div class="row withpadding">
-                                            <h4>Key fund statistics</h4>
-                                            <div class="col-md-1">
-                                                <label><b>Type of input</b></label>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <select id="calculationType" name="calculationType" class="form-control" [(ngModel)]="fund.calculationType" (ngModelChange)="statisticsAutoCalculation()">
-                                                    <option value="0">Manual</option>
-                                                    <option value="1">Auto calculation by PERFORMANCE</option>
-                                                    <option value="2">Auto calculation by GROSS CASH FLOW</option>
-                                                </select>
-                                            </div>
-                                            <!--<h5>Auto calculation by PERFORMANCE tab</h5>-->
-                                            <!--<div class="onoffswitch">-->
-                                                <!--<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" [(ngModel)]="fund.autoCalculation" (ngModelChange)="autoCalculationStatistics()" unchecked>-->
-                                                <!--<label class="onoffswitch-label" for="myonoffswitch">-->
-                                                    <!--<span class="onoffswitch-inner"></span>-->
-                                                    <!--<span class="onoffswitch-switch"></span>-->
-                                                <!--</label>-->
-                                            <!--</div>-->
-                                        </div>
-                                        <div class="row withpadding">
-                                            <table class="table-striped table-condensed">
-                                                <tr>
-                                                    <td class="col-md-2"><b>Number of investments</b></td>
-                                                    <td class="col-md-1" *ngIf="fund.calculationType == 0"><input style="width: 100%" type="text" name="numberOfInv" [(ngModel)]="fund.numberOfInvestments" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType != 0" #numOfInv="ngModel"/>
-                                                        <div [hidden]="numOfInv.valid || numOfInv.pristine" class="alert alert-danger">
-                                                            Only positive number could be entered
-                                                        </div>
-                                                    </td>
-                                                    <td class="col-md-1" *ngIf="fund.calculationType != 0">
-                                                        {{fund.numberOfInvestments}}
-                                                    </td>
-                                                    <td class="col-md-1"><b>DPI</b></td>
-                                                    <td class="col-md-1" *ngIf="fund.calculationType == 0"><input style="width: 100%" type="text" name="dpi" [(ngModel)]="fund.dpi" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType != 0" #dpi="ngModel"/>
-                                                        <div [hidden]="dpi.valid || dpi.pristine" class="alert alert-danger">
-                                                            Only positive number could be entered
-                                                        </div>
-                                                    </td>
-                                                    <td class="col-md-1" *ngIf="fund.calculationType != 0">
-                                                        {{fund.dpi | number:'1.2-2'}}
-                                                    </td>
-                                                    <td class="col-md-1"></td>
-                                                    <td class="col-md-1"></td>
-                                                    <td class="col-md-2"><b>Benchmark</b></td>
-                                                    <td class="col-md-1"><input style="width: 100%" type="text" name="benchmark" [(ngModel)]="fund.benchmarkName" placeholder="-"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="col-md-2"><b>Invested amount</b></td>
-                                                    <td class="col-md-1" *ngIf="fund.calculationType == 0"><input style="width: 100%" type="text" name="invested" [(ngModel)]="fund.investedAmount" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType != 0" #invested="ngModel"/>
-                                                        <div [hidden]="invested.valid || invested.pristine" class="alert alert-danger">
-                                                            Only positive number could be entered
-                                                        </div>
-                                                    </td>
-                                                    <td class="col-md-1" *ngIf="fund.calculationType != 0">
-                                                        {{(fund.investedAmount/1000000) | number:'1.1-2'}}m
-                                                    </td>
-                                                    <td class="col-md-1"><b>Gross TVPI</b></td>
-                                                    <td class="col-md-1" *ngIf="fund.calculationType == 0"><input style="width: 100%" type="text" name="grossTvpi" [(ngModel)]="fund.grossTvpi" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType != 0" #grossTvpi="ngModel"/>
-                                                        <div [hidden]="grossTvpi.valid || grossTvpi.pristine" class="alert alert-danger">
-                                                            Only positive number could be entered
-                                                        </div>
-                                                    </td>
-                                                    <td class="col-md-1" *ngIf="fund.calculationType != 0">
-                                                        {{fund.grossTvpi | number:'1.2-2'}}
-                                                    </td>
-                                                    <td class="col-md-1"><b>Net TVPI</b></td>
-                                                    <td class="col-md-1"><input style="width: 100%" type="text" name="netTvpi" [(ngModel)]="fund.netTvpi" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #netTvpi="ngModel"/>
-                                                        <div [hidden]="netTvpi.valid || netTvpi.pristine" class="alert alert-danger">
-                                                            Only positive number could be entered
-                                                        </div>
-                                                    </td>
-                                                    <!--<td class="col-md-1">{{fund.netTvpi}}</td>-->
-                                                    <td class="col-md-2"><b>Benchmark NET TVPI</b></td>
-                                                    <td class="col-md-1"><input style="width: 100%" type="text" name="benchmarkNetTvpi" [(ngModel)]="fund.benchmarkNetTvpi" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #benchmarkNetTvpi="ngModel"/>
-                                                        <div [hidden]="benchmarkNetTvpi.valid || benchmarkNetTvpi.pristine" class="alert alert-danger">
-                                                            Only positive number could be entered
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="col-md-2"><b>Realized amount</b></td>
-                                                    <td class="col-md-1" *ngIf="fund.calculationType == 0"><input style="width: 100%" type="text" name="realized" [(ngModel)]="fund.realized" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType != 0" #realized="ngModel"/>
-                                                        <div [hidden]="realized.valid || realized.pristine" class="alert alert-danger">
-                                                            Only positive number could be entered
-                                                        </div>
-                                                    </td>
-                                                    <td class="col-md-1" *ngIf="fund.calculationType != 0">
-                                                        {{(fund.realized/1000000) | number:'1.1-2'}}m
-                                                    </td>
-                                                    <td class="col-md-1"><b>Gross IRR</b></td>
-                                                    <td class="col-md-1" *ngIf="fund.calculationType != 2"><input style="width: 100%" type="text" name="grossIrr" [(ngModel)]="fund.grossIrr" placeholder="-" pattern="[+/-]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType == 2" #grossIrr="ngModel"/>
-                                                        <div [hidden]="grossIrr.valid || grossIrr.pristine" class="alert alert-danger">
-                                                            Only number could be entered
-                                                        </div>
-                                                    </td>
-                                                    <td class="col-md-1" *ngIf="fund.calculationType == 2">
-                                                        {{fund.grossIrr | number:'1.0-2'}}%
-                                                    </td>
-                                                    <td class="col-md-1"><b>Net IRR</b></td>
-                                                    <td class="col-md-1"><input style="width: 100%" type="text" name="netIrr" [(ngModel)]="fund.netIrr" placeholder="-" pattern="[+/-]?[0-9]*\.?[0-9]+" #netIrr="ngModel"/>
-                                                        <div [hidden]="netIrr.valid || netIrr.pristine" class="alert alert-danger">
-                                                            Only number could be entered
-                                                        </div>
-                                                    </td>
-                                                    <!--<td class="col-md-1">{{fund.netIrr}}</td>-->
-                                                    <td class="col-md-2"><b>Benchmark NET IRR</b></td>
-                                                    <td class="col-md-1"><input style="width: 100%" type="text" name="benchmarkNetIrr" [(ngModel)]="fund.benchmarkNetIrr" placeholder="-" pattern="[+/-]?[0-9]*\.?[0-9]+" #benchmarkNetIrr="ngModel"/>
-                                                        <div [hidden]="benchmarkNetIrr.valid || benchmarkNetIrr.pristine" class="alert alert-danger">
-                                                            Only number could be entered
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="col-md-2"><b>Unrealized amount</b></td>
-                                                    <td class="col-md-1" *ngIf="fund.calculationType == 0"><input style="width: 100%" type="text" name="unrealized" [(ngModel)]="fund.unrealized" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType != 0" #unrealized="ngModel"/>
-                                                        <div [hidden]="unrealized.valid || unrealized.pristine" class="alert alert-danger">
-                                                            Only positive number could be entered
-                                                        </div>
-                                                    </td>
-                                                    <td class="col-md-1" *ngIf="fund.calculationType != 0">
-                                                        {{(fund.unrealized/1000000) | number:'1.1-2'}}m
-                                                    </td>
-                                                    <td class="col-md-1"></td>
-                                                    <td class="col-md-1"></td>
-                                                    <td class="col-md-1"></td>
-                                                    <td class="col-md-1"></td>
-                                                    <td class="col-md-2"><b>As of date</b></td>
-                                                    <td class="col-md-1">
-                                                        <div class="input-group">
-                                                            <input type='text' class="input-group-addon form-control" id="asOfDate" name="asOfDate" [(ngModel)]="fund.asOfDate" placeholder="-"/>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </div>
-                                    </form>
                                     <div [hidden]="!visible">
                                         <div class="row withpadding">
                                             <h4>Fund strategy</h4>
-                                            <table class=" col-md-4 table-striped table-condensed">
+                                            <table class=" col-md-8 table-striped table-condensed">
                                                 <tr>
                                                     <td class="col-md-1">Fund strategy comment</td>
-                                                    <td class="col-md-3"><textarea fz-elastic spellcheck="false"  class="form-control" name="strategyComment" [(ngModel)]="fund.strategyComment"></textarea></td>
+                                                    <td class="col-md-7"><textarea fz-elastic spellcheck="false"  class="form-control" name="strategyComment" [(ngModel)]="fund.strategyComment"></textarea></td>
                                                 </tr>
                                             </table>
                                         </div>
@@ -493,36 +367,42 @@
                                             <h4>Descriptive data</h4>
                                             <table class=" col-md-4 table-striped table-condensed">
                                                 <tr>
-                                                    <td class="col-md-1">Investment period</td>
-                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="investmentPeriod" [(ngModel)]="fund.investmentPeriod"
-                                                                                pattern="[+]?[0-9]*\.?[0-9]+" #investmentPeriod="ngModel"/>
+                                                    <td class="col-md-1">Investment period (yrs)</td>
+                                                    <td class="col-md-3">
+                                                        <!--<input style="width: 100%" type="text" name="investmentPeriod" [(ngModel)]="fund.investmentPeriod" pattern="[+]?[0-9]*\.?[0-9]+" #investmentPeriod="ngModel"/>-->
+                                                        <input style="width: 100%" type="text" name="investmentPeriod" [(ngModel)]="fund.investmentPeriod" #investmentPeriod="ngModel"/>
                                                         <div [hidden]="investmentPeriod.valid || investmentPeriod.pristine" class="alert alert-danger">
                                                             Only positive number could be entered
                                                         </div>
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="col-md-1">Fund term</td>
+                                                    <td class="col-md-1">Fund term (yrs)</td>
                                                     <td class="col-md-3">
-                                                        <input style="width: 30%" type="text" name="fundTerm" [(ngModel)]="fund.fundTerm" pattern="[+]?[0-9]*\.?[0-9]+" #fundTerm="ngModel"/><input style="width: 70%" type="text" name="fundTermComment" [(ngModel)]="fund.fundTermComment" placeholder="Comment"/>
-                                                        <div [hidden]="fundTerm.valid || fundTerm.pristine" class="alert alert-danger">
-                                                            Only positive number could be entered
-                                                        </div>
+                                                        <!--<input style="width: 30%" type="text" name="fundTerm" [(ngModel)]="fund.fundTerm" pattern="[+]?[0-9]*\.?[0-9]+" #fundTerm="ngModel"/><input style="width: 70%" type="text" name="fundTermComment" [(ngModel)]="fund.fundTermComment" placeholder="Comment"/>-->
+                                                        <input style="width: 100%" type="text" name="fundTermComment" [(ngModel)]="fund.fundTermComment"/>
+                                                        <!--<div [hidden]="fundTerm.valid || fundTerm.pristine" class="alert alert-danger">-->
+                                                            <!--Only positive number could be entered-->
+                                                        <!--</div>-->
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="col-md-1">Target inv. size range</td>
-                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="targetInvSizeRange" [(ngModel)]="fund.targetInvSizeRange" pattern="[+]?[0-9]*\.?[0-9]+" #targetInvSizeRange="ngModel"/>
-                                                        <div [hidden]="targetInvSizeRange.valid || targetInvSizeRange.pristine" class="alert alert-danger">
-                                                            Only positive number could be entered
-                                                        </div>
+                                                    <td class="col-md-1">Target inv. size range (mln)</td>
+                                                    <td class="col-md-3">
+                                                        <!--<input style="width: 100%" type="text" name="targetInvSizeRange" [(ngModel)]="fund.targetInvSizeRange" pattern="[+]?[0-9]*\.?[0-9]+" #targetInvSizeRange="ngModel"/>-->
+                                                        <input style="width: 100%" type="text" name="targetInvSizeRange" [(ngModel)]="fund.targetInvSizeRange" #targetInvSizeRange="ngModel"/>
+                                                        <!--<div [hidden]="targetInvSizeRange.valid || targetInvSizeRange.pristine" class="alert alert-danger">-->
+                                                            <!--Only positive number could be entered-->
+                                                        <!--</div>-->
                                                     </td>
                                                 </tr>
                                             </table>
                                             <table class=" col-md-4 table-striped table-condensed">
                                                 <tr>
-                                                    <td class="col-md-1">Target EV range</td>
-                                                    <td class="col-md-3"><input style="width: 100%" type="text" name="targetEvRange" [(ngModel)]="fund.targetEvRange" pattern="[+]?[0-9]*\.?[0-9]+" #targetEvRange="ngModel"/>
+                                                    <td class="col-md-1">Target EV range (mln)</td>
+                                                    <td class="col-md-3">
+                                                        <!--<input style="width: 100%" type="text" name="targetEvRange" [(ngModel)]="fund.targetEvRange" pattern="[+]?[0-9]*\.?[0-9]+" #targetEvRange="ngModel"/>-->
+                                                        <input style="width: 100%" type="text" name="targetEvRange" [(ngModel)]="fund.targetEvRange" #targetEvRange="ngModel"/>
                                                         <div [hidden]="targetEvRange.valid || targetEvRange.pristine" class="alert alert-danger">
                                                             Only positive number could be entered
                                                         </div>
@@ -531,25 +411,36 @@
                                                 <tr>
                                                     <td class="col-md-1">Target number of inv.</td>
                                                     <td class="col-md-3">
-                                                        <input style="width: 30%" type="text" name="targetNumberOfInv1" [(ngModel)]="fund.targetNumberOfInv1" pattern="[+]?[0-9]*\.?[0-9]+" #targetNumberOfInv1="ngModel"/><input style="width: 70%" type="text" name="targetNumberOfInv2" [(ngModel)]="fund.targetNumberOfInv2" pattern="[+]?[0-9]*\.?[0-9]+" #targetNumberOfInv2="ngModel"/>
+                                                        <!--<input style="width: 30%" type="text" name="targetNumberOfInv1" [(ngModel)]="fund.targetNumberOfInv1" pattern="[+]?[0-9]*\.?[0-9]+" #targetNumberOfInv1="ngModel"/><input style="width: 70%" type="text" name="targetNumberOfInv2" [(ngModel)]="fund.targetNumberOfInv2" pattern="[+]?[0-9]*\.?[0-9]+" #targetNumberOfInv2="ngModel"/>-->
+                                                        <input style="width: 100%" type="text" name="targetNumberOfInv1" [(ngModel)]="fund.targetNumberOfInv1" pattern="[+]?[0-9]*\.?[0-9]+" #targetNumberOfInv1="ngModel"/>
                                                         <div [hidden]="targetNumberOfInv1.valid || targetNumberOfInv1.pristine" class="alert alert-danger">
                                                             Only positive number could be entered
                                                         </div>
-                                                        <div [hidden]="targetNumberOfInv2.valid || targetNumberOfInv2.pristine" class="alert alert-danger">
-                                                            Only positive number could be entered
-                                                        </div>
+                                                        <!--<div [hidden]="targetNumberOfInv2.valid || targetNumberOfInv2.pristine" class="alert alert-danger">-->
+                                                            <!--Only positive number could be entered-->
+                                                        <!--</div>-->
                                                     </td>
                                                 </tr>
+                                                <!--<tr>-->
+                                                    <!--<td class="col-md-1">Expected annual number of inv.</td>-->
+                                                    <!--<td class="col-md-3">-->
+                                                        <!--<input style="width: 30%" type="text" name="expAnnualNumberOfInv1" [(ngModel)]="fund.expAnnualNumberOfInv1" pattern="[+]?[0-9]*\.?[0-9]+" #expAnnualNumberOfInv1="ngModel"/><input style="width: 70%" type="text" name="expAnnualNumberOfInv2" [(ngModel)]="fund.expAnnualNumberOfInv2" pattern="[+]?[0-9]*\.?[0-9]+" #expAnnualNumberOfInv2="ngModel"/>-->
+                                                        <!--<div [hidden]="expAnnualNumberOfInv1.valid || expAnnualNumberOfInv1.pristine" class="alert alert-danger">-->
+                                                            <!--Only positive number could be entered-->
+                                                        <!--</div>-->
+                                                        <!--<div [hidden]="expAnnualNumberOfInv2.valid || expAnnualNumberOfInv2.pristine" class="alert alert-danger">-->
+                                                            <!--Only positive number could be entered-->
+                                                        <!--</div>-->
+                                                    <!--</td>-->
+                                                <!--</tr>-->
                                                 <tr>
-                                                    <td class="col-md-1">Expected annual number of inv.</td>
+                                                    <td class="col-md-1">Exp. Hold Period per Investment (yrs)</td>
                                                     <td class="col-md-3">
-                                                        <input style="width: 30%" type="text" name="expAnnualNumberOfInv1" [(ngModel)]="fund.expAnnualNumberOfInv1" pattern="[+]?[0-9]*\.?[0-9]+" #expAnnualNumberOfInv1="ngModel"/><input style="width: 70%" type="text" name="expAnnualNumberOfInv2" [(ngModel)]="fund.expAnnualNumberOfInv2" pattern="[+]?[0-9]*\.?[0-9]+" #expAnnualNumberOfInv2="ngModel"/>
-                                                        <div [hidden]="expAnnualNumberOfInv1.valid || expAnnualNumberOfInv1.pristine" class="alert alert-danger">
-                                                            Only positive number could be entered
-                                                        </div>
-                                                        <div [hidden]="expAnnualNumberOfInv2.valid || expAnnualNumberOfInv2.pristine" class="alert alert-danger">
-                                                            Only positive number could be entered
-                                                        </div>
+                                                        <!--<input style="width: 30%" type="text" name="fundTerm" [(ngModel)]="fund.fundTerm" pattern="[+]?[0-9]*\.?[0-9]+" #fundTerm="ngModel"/><input style="width: 70%" type="text" name="fundTermComment" [(ngModel)]="fund.fundTermComment" placeholder="Comment"/>-->
+                                                        <input style="width: 100%" type="text" name="expHoldPeriodPerInvestment" [(ngModel)]="fund.expHoldPeriodPerInvestment"/>
+                                                        <!--<div [hidden]="fundTerm.valid || fundTerm.pristine" class="alert alert-danger">-->
+                                                        <!--Only positive number could be entered-->
+                                                        <!--</div>-->
                                                     </td>
                                                 </tr>
                                             </table>
@@ -576,63 +467,208 @@
                                             <table class="col-md-4 table-striped table-condensed">
                                                 <tr>
                                                     <td class="col-md-1">First close</td>
-                                                    <td class="col-md-3"><input type='text' class="form-control" id="firstClose" name="firstClose" [(ngModel)]="fund.firstClose"/></td>
+                                                    <!--<td class="col-md-3"><input type='text' class="form-control" id="firstClose" name="firstClose" [(ngModel)]="fund.firstClose"/></td>-->
+                                                    <td class="col-md-3"><input type='text' class="form-control" name="firstClose" [(ngModel)]="fund.firstCloseComment"/></td>
                                                 </tr>
                                             </table>
                                             <table class="col-md-4 table-striped table-condensed">
                                                 <tr>
                                                     <td class="col-md-1">Final close</td>
-                                                    <td class="col-md-3"><input type='text' class="form-control" id="finalClose" name="finalClose" [(ngModel)]="fund.finalClose"/></td>
+                                                    <!--<td class="col-md-3"><input type='text' class="form-control" id="finalClose" name="finalClose" [(ngModel)]="fund.finalClose"/></td>-->
+                                                    <td class="col-md-3"><input type='text' class="form-control" name="finalClose" [(ngModel)]="fund.finalCloseComment"/></td>
                                                 </tr>
                                             </table>
                                         </div>
-                                        <div class="row withpadding">
-                                            <h4>Observations</h4>
-                                            <h5>General Partner</h5>
-                                            <table class=" col-md-4 table-striped table-condensed">
-                                                <th>Merits</th>
-                                                <tr>
-                                                    <td class="col-md-3"><textarea fz-elastic spellcheck="false"  class="form-control" name="generalPartnerMerits" [(ngModel)]="fund.generalPartnerMerits"></textarea></td>
-                                                </tr>
-                                            </table>
-                                            <table class=" col-md-4 table-striped table-condensed">
-                                                <th>Risks</th>
-                                                <tr>
-                                                    <td class="col-md-3"><textarea  fz-elastic spellcheck="false"  class="form-control" name="generalPartnerRisks" [(ngModel)]="fund.generalPartnerRisks"></textarea></td>
-                                                </tr>
-                                            </table>
-                                        </div>
-                                        <div class="row withpadding">
-                                            <h5>Strategy/Structure</h5>
-                                            <table class=" col-md-4 table-striped table-condensed">
-                                                <th>Merits</th>
-                                                <tr>
-                                                    <td class="col-md-3"><textarea fz-elastic  spellcheck="false"  class="form-control" name="strategyStructureMerits" [(ngModel)]="fund.strategyStructureMerits"></textarea></td>
-                                                </tr>
-                                            </table>
-                                            <table class=" col-md-4 table-striped table-condensed">
-                                                <th>Risks</th>
-                                                <tr>
-                                                    <td class="col-md-3"><textarea fz-elastic  spellcheck="false"  class="form-control" name="strategyStructureRisks" [(ngModel)]="fund.strategyStructureRisks"></textarea></td>
-                                                </tr>
-                                            </table>
-                                        </div>
-                                        <div class="row withpadding">
-                                            <h5>Performance</h5>
-                                            <table class=" col-md-4 table-striped table-condensed">
-                                                <th>Merits</th>
-                                                <tr>
-                                                    <td class="col-md-3"><textarea fz-elastic  spellcheck="false"  class="form-control" name="performanceMerits" [(ngModel)]="fund.performanceMerits"></textarea></td>
-                                                </tr>
-                                            </table>
-                                            <table class=" col-md-4 table-striped table-condensed">
-                                                <th>Risks</th>
-                                                <tr>
-                                                    <td class="col-md-3"><textarea fz-elastic  spellcheck="false"  class="form-control" name="performanceRisks" [(ngModel)]="fund.performanceRisks"></textarea></td>
-                                                </tr>
-                                            </table>
-                                        </div>
+                                        <!--<div class="row withpadding">-->
+                                            <!--<h4>Observations</h4>-->
+                                            <!--<h5>General Partner</h5>-->
+                                            <!--<table class=" col-md-4 table-striped table-condensed">-->
+                                                <!--<th>Merits</th>-->
+                                                <!--<tr>-->
+                                                    <!--<td class="col-md-3"><textarea fz-elastic spellcheck="false"  class="form-control" name="generalPartnerMerits" [(ngModel)]="fund.generalPartnerMerits"></textarea></td>-->
+                                                <!--</tr>-->
+                                            <!--</table>-->
+                                            <!--<table class=" col-md-4 table-striped table-condensed">-->
+                                                <!--<th>Risks</th>-->
+                                                <!--<tr>-->
+                                                    <!--<td class="col-md-3"><textarea  fz-elastic spellcheck="false"  class="form-control" name="generalPartnerRisks" [(ngModel)]="fund.generalPartnerRisks"></textarea></td>-->
+                                                <!--</tr>-->
+                                            <!--</table>-->
+                                        <!--</div>-->
+                                        <!--<div class="row withpadding">-->
+                                            <!--<h5>Strategy/Structure</h5>-->
+                                            <!--<table class=" col-md-4 table-striped table-condensed">-->
+                                                <!--<th>Merits</th>-->
+                                                <!--<tr>-->
+                                                    <!--<td class="col-md-3"><textarea fz-elastic  spellcheck="false"  class="form-control" name="strategyStructureMerits" [(ngModel)]="fund.strategyStructureMerits"></textarea></td>-->
+                                                <!--</tr>-->
+                                            <!--</table>-->
+                                            <!--<table class=" col-md-4 table-striped table-condensed">-->
+                                                <!--<th>Risks</th>-->
+                                                <!--<tr>-->
+                                                    <!--<td class="col-md-3"><textarea fz-elastic  spellcheck="false"  class="form-control" name="strategyStructureRisks" [(ngModel)]="fund.strategyStructureRisks"></textarea></td>-->
+                                                <!--</tr>-->
+                                            <!--</table>-->
+                                        <!--</div>-->
+                                        <!--<div class="row withpadding">-->
+                                            <!--<h5>Performance</h5>-->
+                                            <!--<table class=" col-md-4 table-striped table-condensed">-->
+                                                <!--<th>Merits</th>-->
+                                                <!--<tr>-->
+                                                    <!--<td class="col-md-3"><textarea fz-elastic  spellcheck="false"  class="form-control" name="performanceMerits" [(ngModel)]="fund.performanceMerits"></textarea></td>-->
+                                                <!--</tr>-->
+                                            <!--</table>-->
+                                            <!--<table class=" col-md-4 table-striped table-condensed">-->
+                                                <!--<th>Risks</th>-->
+                                                <!--<tr>-->
+                                                    <!--<td class="col-md-3"><textarea fz-elastic  spellcheck="false"  class="form-control" name="performanceRisks" [(ngModel)]="fund.performanceRisks"></textarea></td>-->
+                                                <!--</tr>-->
+                                            <!--</table>-->
+                                        <!--</div>-->
                                     </div>
+
+                                    <form [hidden]="openingSoon">
+                                        <hr>
+                                        <div class="row withpadding">
+                                            <h4>Key fund statistics</h4>
+                                            <div class="col-md-1">
+                                                <label><b>Type of input</b></label>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <select id="calculationType" name="calculationType" class="form-control" [(ngModel)]="fund.calculationType" (ngModelChange)="statisticsAutoCalculation()">
+                                                    <option value="0">Manual</option>
+                                                    <option value="1">Auto calculation by PERFORMANCE</option>
+                                                    <option value="2">Auto calculation by GROSS CASH FLOW</option>
+                                                </select>
+                                            </div>
+                                            <!--<h5>Auto calculation by PERFORMANCE tab</h5>-->
+                                            <!--<div class="onoffswitch">-->
+                                            <!--<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" [(ngModel)]="fund.autoCalculation" (ngModelChange)="autoCalculationStatistics()" unchecked>-->
+                                            <!--<label class="onoffswitch-label" for="myonoffswitch">-->
+                                            <!--<span class="onoffswitch-inner"></span>-->
+                                            <!--<span class="onoffswitch-switch"></span>-->
+                                            <!--</label>-->
+                                            <!--</div>-->
+                                        </div>
+                                        <div class="row withpadding">
+                                            <table class="table-striped table-condensed">
+                                                <tr>
+                                                    <td class="col-md-2"><b>Number of investments</b></td>
+                                                    <td class="col-md-1" *ngIf="fund.calculationType == 0"><input style="width: 100%" type="text" name="numberOfInv" [(ngModel)]="fund.numberOfInvestments" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType != 0" #numOfInv="ngModel"/>
+                                                        <div [hidden]="numOfInv.valid || numOfInv.pristine" class="alert alert-danger">
+                                                            Only positive number could be entered
+                                                        </div>
+                                                    </td>
+                                                    <td class="col-md-1" *ngIf="fund.calculationType != 0">
+                                                        {{fund.numberOfInvestments}}
+                                                    </td>
+                                                    <td class="col-md-1"><b>DPI</b></td>
+                                                    <td class="col-md-1" *ngIf="fund.calculationType == 0"><input style="width: 100%" type="text" name="dpi" [(ngModel)]="fund.dpi" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType != 0" #dpi="ngModel"/>
+                                                        <div [hidden]="dpi.valid || dpi.pristine" class="alert alert-danger">
+                                                            Only positive number could be entered
+                                                        </div>
+                                                    </td>
+                                                    <td class="col-md-1" *ngIf="fund.calculationType != 0">
+                                                        {{fund.dpi | number:'1.2-2'}}
+                                                    </td>
+                                                    <td class="col-md-1"><b>Do not display in One Pager</b></td>
+                                                    <td class="col-md-1">
+                                                        <input type="checkbox" name="doNotDisplayInOnePager" [(ngModel)]="fund.doNotDisplayInOnePager">
+                                                    </td>
+                                                    <td class="col-md-2"><b>Benchmark Name</b></td>
+                                                    <td class="col-md-1"><input style="width: 100%" type="text" name="benchmark" [(ngModel)]="fund.benchmarkName" placeholder="-"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="col-md-2"><b>Invested amount (mln)</b></td>
+                                                    <td class="col-md-1" *ngIf="fund.calculationType == 0"><input style="width: 100%" type="text" name="invested" [(ngModel)]="fund.investedAmount" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType != 0" #invested="ngModel"/>
+                                                        <div [hidden]="invested.valid || invested.pristine" class="alert alert-danger">
+                                                            Only positive number could be entered
+                                                        </div>
+                                                    </td>
+                                                    <td class="col-md-1" *ngIf="fund.calculationType != 0">
+                                                        {{(fund.investedAmount) | number:'1.1-2'}}
+                                                    </td>
+                                                    <td class="col-md-1"><b>Gross TVPI</b></td>
+                                                    <td class="col-md-1" *ngIf="fund.calculationType == 0"><input style="width: 100%" type="text" name="grossTvpi" [(ngModel)]="fund.grossTvpi" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType != 0" #grossTvpi="ngModel"/>
+                                                        <div [hidden]="grossTvpi.valid || grossTvpi.pristine" class="alert alert-danger">
+                                                            Only positive number could be entered
+                                                        </div>
+                                                    </td>
+                                                    <td class="col-md-1" *ngIf="fund.calculationType != 0">
+                                                        {{fund.grossTvpi | number:'1.2-2'}}
+                                                    </td>
+                                                    <td class="col-md-1"><b>Net TVPI</b></td>
+                                                    <td class="col-md-1"><input style="width: 100%" type="text" name="netTvpi" [(ngModel)]="fund.netTvpi" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #netTvpi="ngModel"/>
+                                                        <div [hidden]="netTvpi.valid || netTvpi.pristine" class="alert alert-danger">
+                                                            Only positive number could be entered
+                                                        </div>
+                                                    </td>
+                                                    <!--<td class="col-md-1">{{fund.netTvpi}}</td>-->
+                                                    <td class="col-md-2"><b>Benchmark NET TVPI</b></td>
+                                                    <td class="col-md-1"><input style="width: 100%" type="text" name="benchmarkNetTvpi" [(ngModel)]="fund.benchmarkNetTvpi" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" #benchmarkNetTvpi="ngModel"/>
+                                                        <div [hidden]="benchmarkNetTvpi.valid || benchmarkNetTvpi.pristine" class="alert alert-danger">
+                                                            Only positive number could be entered
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="col-md-2"><b>Realized amount (mln)</b></td>
+                                                    <td class="col-md-1" *ngIf="fund.calculationType == 0"><input style="width: 100%" type="text" name="realized" [(ngModel)]="fund.realized" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType != 0" #realized="ngModel"/>
+                                                        <div [hidden]="realized.valid || realized.pristine" class="alert alert-danger">
+                                                            Only positive number could be entered
+                                                        </div>
+                                                    </td>
+                                                    <td class="col-md-1" *ngIf="fund.calculationType != 0">
+                                                        {{(fund.realized) | number:'1.1-2'}}
+                                                    </td>
+                                                    <td class="col-md-1"><b>Gross IRR, %</b></td>
+                                                    <td class="col-md-1" *ngIf="fund.calculationType != 2"><input style="width: 100%" type="text" name="grossIrr" [(ngModel)]="fund.grossIrr" placeholder="-" pattern="[+/-]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType == 2" #grossIrr="ngModel"/>
+                                                        <div [hidden]="grossIrr.valid || grossIrr.pristine" class="alert alert-danger">
+                                                            Only number could be entered
+                                                        </div>
+                                                    </td>
+                                                    <td class="col-md-1" *ngIf="fund.calculationType == 2">
+                                                        {{fund.grossIrr | number:'1.0-2'}}
+                                                    </td>
+                                                    <td class="col-md-1"><b>Net IRR, %</b></td>
+                                                    <td class="col-md-1"><input style="width: 100%" type="text" name="netIrr" [(ngModel)]="fund.netIrr" placeholder="-" pattern="[+/-]?[0-9]*\.?[0-9]+" #netIrr="ngModel"/>
+                                                        <div [hidden]="netIrr.valid || netIrr.pristine" class="alert alert-danger">
+                                                            Only number could be entered
+                                                        </div>
+                                                    </td>
+                                                    <!--<td class="col-md-1">{{fund.netIrr}}</td>-->
+                                                    <td class="col-md-2"><b>Benchmark NET IRR, %</b></td>
+                                                    <td class="col-md-1"><input style="width: 100%" type="text" name="benchmarkNetIrr" [(ngModel)]="fund.benchmarkNetIrr" placeholder="-" pattern="[+/-]?[0-9]*\.?[0-9]+" #benchmarkNetIrr="ngModel"/>
+                                                        <div [hidden]="benchmarkNetIrr.valid || benchmarkNetIrr.pristine" class="alert alert-danger">
+                                                            Only number could be entered
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="col-md-2"><b>Unrealized amount (mln)</b></td>
+                                                    <td class="col-md-1" *ngIf="fund.calculationType == 0"><input style="width: 100%" type="text" name="unrealized" [(ngModel)]="fund.unrealized" placeholder="-" pattern="[+]?[0-9]*\.?[0-9]+" [disabled]="fund.calculationType != 0" #unrealized="ngModel"/>
+                                                        <div [hidden]="unrealized.valid || unrealized.pristine" class="alert alert-danger">
+                                                            Only positive number could be entered
+                                                        </div>
+                                                    </td>
+                                                    <td class="col-md-1" *ngIf="fund.calculationType != 0">
+                                                        {{(fund.unrealized) | number:'1.1-2'}}
+                                                    </td>
+                                                    <td class="col-md-1"></td>
+                                                    <td class="col-md-1"></td>
+                                                    <td class="col-md-1"></td>
+                                                    <td class="col-md-1"></td>
+                                                    <td class="col-md-2"><b>As of date</b></td>
+                                                    <td class="col-md-1">
+                                                        <div class="input-group">
+                                                            <input type='text' class="input-group-addon form-control" id="asOfDate" name="asOfDate" [(ngModel)]="fund.asOfDate" placeholder="-"/>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </form>
+
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="col-md-1 pull-right">
@@ -801,6 +837,492 @@
                                                     <!--</button>-->
                                                 </div>
                                             </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <hr style="border-top: 1px solid #B5AEAE"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="createOnePager" class="tab-pane fade">
+                        <div style="position: relative;">
+                            <div [ngBusy]="busy">
+                                <br>
+                                <div class="row">
+                                    <div style="text-align: center">
+                                        <h4>
+                                            <img [src]="url_GP" style="max-width: 245px; max-height: 245px">
+                                            {{fund.fundName}}
+                                            <!--<img [src]="url_NIC" style="max-width: 245px; max-height: 245px">-->
+                                        </h4>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="pull-right">
+                                            <button type="submit" class="btn btn-success" (click)="saveDataAndCreateOnePager()" [disabled]="fund.id == 0 || fund.id == null">CREATE</button>
+                                        </div>
+                                        <!--<div class="pull-left">-->
+                                            <!--<form>-->
+                                                <!--<h4>Upload a GP's logo</h4>-->
+                                                <!--<input type="file" #fileUploadGP (change)="fileLogoChange(fileUploadGP.files, 'GP')"/>-->
+                                                <!--<h4>Upload an NIC's logo</h4>-->
+                                                <!--<input type="file" #fileUploadNIC (change)="fileLogoChange(fileUploadNIC.files, 'NIC')"/>-->
+                                            <!--</form>-->
+                                        <!--</div>-->
+                                        <!--<br>-->
+                                        <!--<table class="col-md-5 table-striped table-condensed">-->
+                                            <!--<tr>-->
+                                                <!--<td class="col-md-3">Investments Performance Data as of</td>-->
+                                                <!--<td class="col-md-2">-->
+                                                    <!--<div class="input-group">-->
+                                                        <!--<input type='text' class="form-control" id="asOfDateOnePager" name="asOfDateOnePager" [(ngModel)]="fund.asOfDateOnePager"/>-->
+                                                        <!--<span class="input-group-addon">-->
+                                                            <!--<span class="glyphicon glyphicon-calendar"></span>-->
+                                                        <!--</span>-->
+                                                    <!--</div>-->
+                                                <!--</td>-->
+                                                <!--&lt;!&ndash;<td class="col-md-1"></td>&ndash;&gt;-->
+                                                <!--&lt;!&ndash;<td class="col-md-2">Benchmark Name</td>&ndash;&gt;-->
+                                                <!--&lt;!&ndash;<td class="col-md-4">Investm</td>&ndash;&gt;-->
+                                            <!--</tr>-->
+                                        <!--</table>-->
+                                        <!--<br>-->
+                                        <!--<table class="table table-hover table-responsive table-condensed" style="font-size: smaller">-->
+                                            <!--<tr>-->
+                                                <!--<th>Benchmark Name</th>-->
+                                            <!--</tr>-->
+                                            <!--<tr *ngFor="let item of fund.onePagerDescriptions" [hidden]="item.type !=-1">-->
+                                                <!--<td>-->
+                                                    <!--<input type="text" class="form-control" name="description" [(ngModel)]="item.description" placeholder="-" #description="ngModel"/>-->
+                                                    <!--<div [hidden]="description.valid || description.pristine" class="alert alert-danger">-->
+                                                        <!--Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'-->
+                                                    <!--</div>-->
+                                                <!--</td>-->
+                                            <!--</tr>-->
+                                        <!--</table>-->
+                                        <br>
+                                        <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
+                                            <tr>
+                                                <!--<th>GP Merits (bold part)</th>-->
+                                                <th>GP Merits</th>
+                                                <th></th>
+                                            </tr>
+                                            <tr *ngFor="let item of fund.onePagerDescriptions" [hidden]="item.type !=1">
+                                                <!--<td>-->
+                                                    <!--<textarea fz-elastic spellcheck="false"  class="form-control" name="descriptionBold" [(ngModel)]="item.descriptionBold"></textarea>-->
+                                                    <!--&lt;!&ndash;<input type="text" class="form-control" name="descriptionBold" [(ngModel)]="item.descriptionBold" placeholder="-" #descriptionBold="ngModel"/>&ndash;&gt;-->
+                                                    <!--&lt;!&ndash;<div [hidden]="descriptionBold.valid || descriptionBold.pristine" class="alert alert-danger">&ndash;&gt;-->
+                                                        <!--&lt;!&ndash;Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'&ndash;&gt;-->
+                                                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                                                <!--</td>-->
+
+                                                <td>
+                                                    <textarea fz-elastic spellcheck="false"  class="form-control" name="description" [(ngModel)]="item.description"></textarea>
+                                                    <!--<input type="text" class="form-control" name="description" [(ngModel)]="item.description" placeholder="-" #description="ngModel"/>-->
+                                                    <!--<div [hidden]="description.valid || description.pristine" class="alert alert-danger">-->
+                                                        <!--Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'-->
+                                                    <!--</div>-->
+                                                </td>
+
+                                                <td>
+                                                    <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRowDescription(item)">
+                                                        <span class="glyphicon glyphicon-minus"></span>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <div class="col-md-1 pull-left">
+                                                <button type="button" class="btn-xs btn-primary" *ngIf="canEdit()" (click)="addRowDescription(1)">
+                                                    <span class="glyphicon glyphicon-plus"></span>
+                                                </button>
+                                            </div>
+                                        </table>
+                                        <br>
+                                        <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
+                                            <tr>
+                                                <!--<th>GP Risks (bold part)</th>-->
+                                                <th>GP Risks</th>
+                                                <th></th>
+                                            </tr>
+                                            <tr *ngFor="let item of fund.onePagerDescriptions" [hidden]="item.type !=2">
+                                                <!--<td>-->
+                                                    <!--<textarea fz-elastic spellcheck="false"  class="form-control" name="descriptionBold" [(ngModel)]="item.descriptionBold"></textarea>-->
+                                                    <!--&lt;!&ndash;<input type="text" class="form-control" name="descriptionBold" [(ngModel)]="item.descriptionBold" placeholder="-" #descriptionBold="ngModel"/>&ndash;&gt;-->
+                                                    <!--&lt;!&ndash;<div [hidden]="descriptionBold.valid || descriptionBold.pristine" class="alert alert-danger">&ndash;&gt;-->
+                                                        <!--&lt;!&ndash;Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'&ndash;&gt;-->
+                                                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                                                <!--</td>-->
+
+                                                <td>
+                                                    <textarea fz-elastic spellcheck="false"  class="form-control" name="description" [(ngModel)]="item.description"></textarea>
+                                                    <!--<input type="text" class="form-control" name="description" [(ngModel)]="item.description" placeholder="-" #description="ngModel"/>-->
+                                                    <!--<div [hidden]="description.valid || description.pristine" class="alert alert-danger">-->
+                                                        <!--Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'-->
+                                                    <!--</div>-->
+                                                </td>
+
+                                                <td>
+                                                    <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRowDescription(item)">
+                                                        <span class="glyphicon glyphicon-minus"></span>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <div class="col-md-1 pull-left">
+                                                <button type="button" class="btn-xs btn-primary" *ngIf="canEdit()" (click)="addRowDescription(2)">
+                                                    <span class="glyphicon glyphicon-plus"></span>
+                                                </button>
+                                            </div>
+                                        </table>
+                                        <br>
+                                        <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
+                                            <tr>
+                                                <!--<th>Strategy/Structure Merits (bold part)</th>-->
+                                                <th>Strategy/Structure Merits</th>
+                                                <th></th>
+                                            </tr>
+                                            <tr *ngFor="let item of fund.onePagerDescriptions" [hidden]="item.type !=3">
+                                                <!--<td>-->
+                                                    <!--<textarea fz-elastic spellcheck="false"  class="form-control" name="descriptionBold" [(ngModel)]="item.descriptionBold"></textarea>-->
+                                                    <!--&lt;!&ndash;<input type="text" class="form-control" name="descriptionBold" [(ngModel)]="item.descriptionBold" placeholder="-" #descriptionBold="ngModel"/>&ndash;&gt;-->
+                                                    <!--&lt;!&ndash;<div [hidden]="descriptionBold.valid || descriptionBold.pristine" class="alert alert-danger">&ndash;&gt;-->
+                                                        <!--&lt;!&ndash;Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'&ndash;&gt;-->
+                                                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                                                <!--</td>-->
+
+                                                <td>
+                                                    <textarea fz-elastic spellcheck="false"  class="form-control" name="description" [(ngModel)]="item.description"></textarea>
+                                                    <!--<input type="text" class="form-control" name="description" [(ngModel)]="item.description" placeholder="-" #description="ngModel"/>-->
+                                                    <!--<div [hidden]="description.valid || description.pristine" class="alert alert-danger">-->
+                                                        <!--Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'-->
+                                                    <!--</div>-->
+                                                </td>
+
+                                                <td>
+                                                    <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRowDescription(item)">
+                                                        <span class="glyphicon glyphicon-minus"></span>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <div class="col-md-1 pull-left">
+                                                <button type="button" class="btn-xs btn-primary" *ngIf="canEdit()" (click)="addRowDescription(3)">
+                                                    <span class="glyphicon glyphicon-plus"></span>
+                                                </button>
+                                            </div>
+                                        </table>
+                                        <br>
+                                        <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
+                                            <tr>
+                                                <!--<th>Strategy/Structure Risks (bold part)</th>-->
+                                                <th>Strategy/Structure Risks</th>
+                                                <th></th>
+                                            </tr>
+                                            <tr *ngFor="let item of fund.onePagerDescriptions" [hidden]="item.type !=4">
+                                                <!--<td>-->
+                                                    <!--<textarea fz-elastic spellcheck="false"  class="form-control" name="descriptionBold" [(ngModel)]="item.descriptionBold"></textarea>-->
+                                                    <!--&lt;!&ndash;<input type="text" class="form-control" name="descriptionBold" [(ngModel)]="item.descriptionBold" placeholder="-" #descriptionBold="ngModel"/>&ndash;&gt;-->
+                                                    <!--&lt;!&ndash;<div [hidden]="descriptionBold.valid || descriptionBold.pristine" class="alert alert-danger">&ndash;&gt;-->
+                                                        <!--&lt;!&ndash;Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'&ndash;&gt;-->
+                                                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                                                <!--</td>-->
+
+                                                <td>
+                                                    <textarea fz-elastic spellcheck="false"  class="form-control" name="description" [(ngModel)]="item.description"></textarea>
+                                                    <!--<input type="text" class="form-control" name="description" [(ngModel)]="item.description" placeholder="-" #description="ngModel"/>-->
+                                                    <!--<div [hidden]="description.valid || description.pristine" class="alert alert-danger">-->
+                                                        <!--Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'-->
+                                                    <!--</div>-->
+                                                </td>
+
+                                                <td>
+                                                    <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRowDescription(item)">
+                                                        <span class="glyphicon glyphicon-minus"></span>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <div class="col-md-1 pull-left">
+                                                <button type="button" class="btn-xs btn-primary" *ngIf="canEdit()" (click)="addRowDescription(4)">
+                                                    <span class="glyphicon glyphicon-plus"></span>
+                                                </button>
+                                            </div>
+                                        </table>
+                                        <br>
+                                        <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
+                                            <tr>
+                                                <!--<th>Performance Merits (bold part)</th>-->
+                                                <th>Performance Merits</th>
+                                                <th></th>
+                                            </tr>
+                                            <tr *ngFor="let item of fund.onePagerDescriptions" [hidden]="item.type !=5">
+                                                <!--<td>-->
+                                                    <!--<textarea fz-elastic spellcheck="false"  class="form-control" name="descriptionBold" [(ngModel)]="item.descriptionBold"></textarea>-->
+                                                    <!--&lt;!&ndash;<input type="text" class="form-control" name="descriptionBold" [(ngModel)]="item.descriptionBold" placeholder="-" #descriptionBold="ngModel"/>&ndash;&gt;-->
+                                                    <!--&lt;!&ndash;<div [hidden]="descriptionBold.valid || descriptionBold.pristine" class="alert alert-danger">&ndash;&gt;-->
+                                                        <!--&lt;!&ndash;Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'&ndash;&gt;-->
+                                                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                                                <!--</td>-->
+
+                                                <td>
+                                                    <textarea fz-elastic spellcheck="false"  class="form-control" name="description" [(ngModel)]="item.description"></textarea>
+                                                    <!--<input type="text" class="form-control" name="description" [(ngModel)]="item.description" placeholder="-" #description="ngModel"/>-->
+                                                    <!--<div [hidden]="description.valid || description.pristine" class="alert alert-danger">-->
+                                                        <!--Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'-->
+                                                    <!--</div>-->
+                                                </td>
+
+                                                <td>
+                                                    <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRowDescription(item)">
+                                                        <span class="glyphicon glyphicon-minus"></span>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <div class="col-md-1 pull-left">
+                                                <button type="button" class="btn-xs btn-primary" *ngIf="canEdit()" (click)="addRowDescription(5)">
+                                                    <span class="glyphicon glyphicon-plus"></span>
+                                                </button>
+                                            </div>
+                                        </table>
+                                        <br>
+                                        <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
+                                            <tr>
+                                                <!--<th>Performance Risks (bold part)</th>-->
+                                                <th>Performance Risks</th>
+                                                <th></th>
+                                            </tr>
+                                            <tr *ngFor="let item of fund.onePagerDescriptions" [hidden]="item.type !=6">
+                                                <!--<td>-->
+                                                    <!--<textarea fz-elastic spellcheck="false"  class="form-control" name="descriptionBold" [(ngModel)]="item.descriptionBold"></textarea>-->
+                                                    <!--&lt;!&ndash;<input type="text" class="form-control" name="descriptionBold" [(ngModel)]="item.descriptionBold" placeholder="-" #descriptionBold="ngModel"/>&ndash;&gt;-->
+                                                    <!--&lt;!&ndash;<div [hidden]="descriptionBold.valid || descriptionBold.pristine" class="alert alert-danger">&ndash;&gt;-->
+                                                        <!--&lt;!&ndash;Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'&ndash;&gt;-->
+                                                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                                                <!--</td>-->
+
+                                                <td>
+                                                    <textarea fz-elastic spellcheck="false"  class="form-control" name="description" [(ngModel)]="item.description"></textarea>
+                                                    <!--<input type="text" class="form-control" name="description" [(ngModel)]="item.description" placeholder="-" #description="ngModel"/>-->
+                                                    <!--<div [hidden]="description.valid || description.pristine" class="alert alert-danger">-->
+                                                        <!--Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'-->
+                                                    <!--</div>-->
+                                                </td>
+
+                                                <td>
+                                                    <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRowDescription(item)">
+                                                        <span class="glyphicon glyphicon-minus"></span>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <div class="col-md-1 pull-left">
+                                                <button type="button" class="btn-xs btn-primary" *ngIf="canEdit()" (click)="addRowDescription(6)">
+                                                    <span class="glyphicon glyphicon-plus"></span>
+                                                </button>
+                                            </div>
+                                        </table>
+                                        <!--<br>-->
+                                        <!--<table class="table table-hover table-responsive table-condensed" style="font-size: smaller">-->
+                                            <!--<tr>-->
+                                                <!--<th>Fund Strategy (bold part)</th>-->
+                                                <!--<th>Fund Strategy</th>-->
+                                                <!--<th></th>-->
+                                            <!--</tr>-->
+                                            <!--<tr *ngFor="let item of fund.onePagerDescriptions" [hidden]="item.type !=7">-->
+                                                <!--<td>-->
+                                                    <!--<input type="text" class="form-control" name="descriptionBold" [(ngModel)]="item.descriptionBold" placeholder="-" #descriptionBold="ngModel"/>-->
+                                                    <!--<div [hidden]="descriptionBold.valid || descriptionBold.pristine" class="alert alert-danger">-->
+                                                        <!--Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'-->
+                                                    <!--</div>-->
+                                                <!--</td>-->
+
+                                                <!--<td>-->
+                                                    <!--<input type="text" class="form-control" name="description" [(ngModel)]="item.description" placeholder="-" #description="ngModel"/>-->
+                                                    <!--<div [hidden]="description.valid || description.pristine" class="alert alert-danger">-->
+                                                        <!--Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'-->
+                                                    <!--</div>-->
+                                                <!--</td>-->
+
+                                                <!--<td>-->
+                                                    <!--<button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRowDescription(item)">-->
+                                                        <!--<span class="glyphicon glyphicon-minus"></span>-->
+                                                    <!--</button>-->
+                                                <!--</td>-->
+                                            <!--</tr>-->
+                                            <!--<div class="col-md-1 pull-left">-->
+                                                <!--<button type="button" class="btn-xs btn-primary" *ngIf="canEdit()" (click)="addRowDescription(7)">-->
+                                                    <!--<span class="glyphicon glyphicon-plus"></span>-->
+                                                <!--</button>-->
+                                            <!--</div>-->
+                                        <!--</table>-->
+                                        <!--<br>-->
+                                        <!--<table class="table table-hover table-responsive table-condensed" style="font-size: smaller">-->
+                                            <!--<tr>-->
+                                                <!--<th>Descriptive Data (bold part)</th>-->
+                                                <!--<th>Descriptive Data</th>-->
+                                                <!--<th></th>-->
+                                            <!--</tr>-->
+                                            <!--<tr *ngFor="let item of fund.onePagerDescriptions" [hidden]="item.type !=8">-->
+                                                <!--<td>-->
+                                                    <!--<input type="text" class="form-control" name="descriptionBold" [(ngModel)]="item.descriptionBold" placeholder="-" #descriptionBold="ngModel"/>-->
+                                                    <!--<div [hidden]="descriptionBold.valid || descriptionBold.pristine" class="alert alert-danger">-->
+                                                        <!--Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'-->
+                                                    <!--</div>-->
+                                                <!--</td>-->
+
+                                                <!--<td>-->
+                                                    <!--<input type="text" class="form-control" name="description" [(ngModel)]="item.description" placeholder="-" #description="ngModel"/>-->
+                                                    <!--<div [hidden]="description.valid || description.pristine" class="alert alert-danger">-->
+                                                        <!--Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'-->
+                                                    <!--</div>-->
+                                                <!--</td>-->
+
+                                                <!--<td>-->
+                                                    <!--<button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRowDescription(item)">-->
+                                                        <!--<span class="glyphicon glyphicon-minus"></span>-->
+                                                    <!--</button>-->
+                                                <!--</td>-->
+                                            <!--</tr>-->
+                                            <!--<div class="col-md-1 pull-left">-->
+                                                <!--<button type="button" class="btn-xs btn-primary" *ngIf="canEdit()" (click)="addRowDescription(8)">-->
+                                                    <!--<span class="glyphicon glyphicon-plus"></span>-->
+                                                <!--</button>-->
+                                            <!--</div>-->
+                                        <!--</table>-->
+                                        <!--<br>-->
+                                        <!--<table class="table table-hover table-responsive table-condensed" style="font-size: smaller">-->
+                                            <!--<tr>-->
+                                                <!--<th>Targeted Closing Information (bold part)</th>-->
+                                                <!--<th>Targeted Closing Information</th>-->
+                                                <!--<th></th>-->
+                                            <!--</tr>-->
+                                            <!--<tr *ngFor="let item of fund.onePagerDescriptions" [hidden]="item.type !=9">-->
+                                                <!--<td>-->
+                                                    <!--<input type="text" class="form-control" name="descriptionBold" [(ngModel)]="item.descriptionBold" placeholder="-" #descriptionBold="ngModel"/>-->
+                                                    <!--<div [hidden]="descriptionBold.valid || descriptionBold.pristine" class="alert alert-danger">-->
+                                                        <!--Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'-->
+                                                    <!--</div>-->
+                                                <!--</td>-->
+
+                                                <!--<td>-->
+                                                    <!--<input type="text" class="form-control" name="description" [(ngModel)]="item.description" placeholder="-" #description="ngModel"/>-->
+                                                    <!--<div [hidden]="description.valid || description.pristine" class="alert alert-danger">-->
+                                                        <!--Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'-->
+                                                    <!--</div>-->
+                                                <!--</td>-->
+
+                                                <!--<td>-->
+                                                    <!--<button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRowDescription(item)">-->
+                                                        <!--<span class="glyphicon glyphicon-minus"></span>-->
+                                                    <!--</button>-->
+                                                <!--</td>-->
+                                            <!--</tr>-->
+                                            <!--<div class="col-md-1 pull-left">-->
+                                                <!--<button type="button" class="btn-xs btn-primary" *ngIf="canEdit()" (click)="addRowDescription(9)">-->
+                                                    <!--<span class="glyphicon glyphicon-plus"></span>-->
+                                                <!--</button>-->
+                                            <!--</div>-->
+                                        <!--</table>-->
+                                        <br>
+                                        <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
+                                            <tr>
+                                                <th>Senior Management Team Overall info (bold part, e.g. "Average Yrs at Firm")</th>
+                                                <th>Senior Management Team Overall info (e.g. 5.5)</th>
+                                                <th></th>
+                                            </tr>
+                                            <tr *ngFor="let item of fund.onePagerDescriptions" [hidden]="item.type !=10">
+                                                <td>
+                                                    <textarea fz-elastic spellcheck="false"  class="form-control" name="descriptionBold" [(ngModel)]="item.descriptionBold"></textarea>
+                                                    <!--<input type="text" class="form-control" name="descriptionBold" [(ngModel)]="item.descriptionBold" placeholder="-" #descriptionBold="ngModel"/>-->
+                                                    <!--<div [hidden]="descriptionBold.valid || descriptionBold.pristine" class="alert alert-danger">-->
+                                                        <!--Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'-->
+                                                    <!--</div>-->
+                                                </td>
+
+                                                <td>
+                                                    <textarea fz-elastic spellcheck="false"  class="form-control" name="description" [(ngModel)]="item.description"></textarea>
+                                                    <!--<input type="text" class="form-control" name="description" [(ngModel)]="item.description" placeholder="-" #description="ngModel"/>-->
+                                                    <!--<div [hidden]="description.valid || description.pristine" class="alert alert-danger">-->
+                                                        <!--Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'-->
+                                                    <!--</div>-->
+                                                </td>
+
+                                                <td>
+                                                    <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRowDescription(item)">
+                                                        <span class="glyphicon glyphicon-minus"></span>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <div class="col-md-1 pull-left">
+                                                <button type="button" class="btn-xs btn-primary" *ngIf="canEdit()" (click)="addRowDescription(10)">
+                                                    <span class="glyphicon glyphicon-plus"></span>
+                                                </button>
+                                            </div>
+                                        </table>
+                                        <br>
+                                        <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Position</th>
+                                                <th>Age</th>
+                                                <th>Experience</th>
+                                                <th>Education</th>
+                                                <th></th>
+                                            </tr>
+                                            <tr *ngFor="let item of fund.managementTeam">
+                                                <td>
+                                                    <input type="text" class="form-control" name="name" [(ngModel)]="item.name" placeholder="-" #name="ngModel"/>
+                                                    <div [hidden]="name.valid || name.pristine" class="alert alert-danger">
+                                                        Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <input type="text" class="form-control" name="position" [(ngModel)]="item.position" placeholder="-" #position="ngModel"/>
+                                                    <div [hidden]="position.valid || position.pristine" class="alert alert-danger">
+                                                        Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <input type="text" class="form-control" name="age" [(ngModel)]="item.age" placeholder="-" pattern="[-]?[0-9]*\.?[0-9]+" #age="ngModel"/>
+                                                    <div [hidden]="age.valid || age.pristine" class="alert alert-danger">
+                                                        Only number could be entered
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <textarea fz-elastic spellcheck="false"  class="form-control" name="experience" [(ngModel)]="item.experience"></textarea>
+                                                    <!--<input type="text" class="form-control" name="experience" [(ngModel)]="item.experience" placeholder="-" #experience="ngModel"/>-->
+                                                    <!--<div [hidden]="experience.valid || experience.pristine" class="alert alert-danger">-->
+                                                        <!--Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'-->
+                                                    <!--</div>-->
+                                                </td>
+
+                                                <td>
+                                                    <textarea fz-elastic spellcheck="false"  class="form-control" name="education" [(ngModel)]="item.education"></textarea>
+                                                    <!--<input type="text" class="form-control" name="education" [(ngModel)]="item.education" placeholder="-" #education="ngModel"/>-->
+                                                    <!--<div [hidden]="education.valid || education.pristine" class="alert alert-danger">-->
+                                                        <!--Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'-->
+                                                    <!--</div>-->
+                                                </td>
+
+                                                <td>
+                                                    <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRowManagementTeam(item)">
+                                                        <span class="glyphicon glyphicon-minus"></span>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <div class="col-md-1 pull-left">
+                                                <button type="button" class="btn-xs btn-primary" *ngIf="canEdit()" (click)="addRowManagementTeam()">
+                                                    <span class="glyphicon glyphicon-plus"></span>
+                                                </button>
+                                            </div>
+                                        </table>
+
+                                        <div class="pull-right">
+                                            <button type="submit" class="btn btn-success" (click)="saveDataAndCreateOnePager()" [disabled]="fund.id == 0 || fund.id == null">CREATE</button>
                                         </div>
                                     </div>
                                 </div>

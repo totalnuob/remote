@@ -25,7 +25,7 @@ import java.util.List;
 @Service
 public class PECompanyPerformanceIddServiceImpl implements PECompanyPerformanceIddService {
 
-    private static final Logger logger = LoggerFactory.getLogger(PEFundServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(PECompanyPerformanceIddServiceImpl.class);
 
     @Autowired
     private PECompanyPerformanceIddRepository repository;
@@ -230,13 +230,13 @@ public class PECompanyPerformanceIddServiceImpl implements PECompanyPerformanceI
             for (PECompanyPerformanceIddDto performanceIddDto : findByFundId(fundId)) {
                 numberOfInvestments++;
                 if (performanceIddDto.getInvested() != null) {
-                    investedAmount += performanceIddDto.getInvested();
+                    investedAmount += performanceIddDto.getInvested() / 1000000;
                 }
                 if (performanceIddDto.getRealized() != null) {
-                    realized += performanceIddDto.getRealized();
+                    realized += performanceIddDto.getRealized() / 1000000;
                 }
                 if (performanceIddDto.getUnrealized() != null) {
-                    unrealized += performanceIddDto.getUnrealized();
+                    unrealized += performanceIddDto.getUnrealized() / 1000000;
                 }
             }
 

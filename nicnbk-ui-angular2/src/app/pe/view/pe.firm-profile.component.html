@@ -176,6 +176,16 @@
                                     </td>
                                 </tr>
                             </table>
+                            <div class=" col-md-1">&nbsp;</div>
+                            <div class="col-md-3">
+                                <!--<img [src]="url" style="max-width: 245px; max-height: 245px; width: auto; height: auto">-->
+                                <!--<img [src]="url" style="width: 100%; max-height: 245px">-->
+                                <img [src]="url" style="max-width: 245px; max-height: 245px">
+                                <br/>
+                                <form #yourForm="ngForm" (ngSubmit)="onSubmitLogo()" *ngIf="canEdit()">
+                                    <input type="file" #fileupload name="myFile" (change)="fileChange(fileupload.files)"/>
+                                </form>
+                            </div>
                         </div>
                         <div class="row">
                             <div class="col-md-1 pull-right">

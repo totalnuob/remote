@@ -2,11 +2,13 @@ package kz.nicnbk.service.impl.pe;
 
 import kz.nicnbk.service.api.pe.PEIrrService;
 import kz.nicnbk.service.dto.pe.PECashflowDto;
+import kz.nicnbk.service.dto.pe.PEFundDto;
 import kz.nicnbk.service.dto.pe.PEGrossCashflowDto;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -141,6 +143,23 @@ public class PEIrrServiceImpl implements PEIrrService {
             }
 
             return null;
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
+    @Override
+    public Double getIrrByFundList(List<PEFundDto> fundDtoList) {
+
+        try {
+            List<PEGrossCashflowDto> cashflowDtoList = new ArrayList<>();
+            for (PEFundDto fundDto : fundDtoList) {
+                if (fundDto.getGrossCashflow() != null) {
+                    cashflowDtoList.addAll(fundDto.getGrossCashflow());
+                }
+            }
+            Collections.sort(cashflowDtoList);
+            return this.getIRR(cashflowDtoList);
         } catch (Exception ex) {
             return null;
         }

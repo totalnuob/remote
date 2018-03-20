@@ -36,19 +36,23 @@ export class PEFund {
     benchmarkNetIrr: number;
     benchmarkNetTvpi: number;
     benchmarkName: string;
+    doNotDisplayInOnePager: boolean;
 
-    investmentPeriod: number;
+    investmentPeriod: string;
     fundTerm: number;
     fundTermComment: string;
-    targetInvSizeRange: number;
-    targetEvRange: number;
+    targetInvSizeRange: string;
+    targetEvRange: string;
     targetNumberOfInv1: number;
     targetNumberOfInv2: number;
     expAnnualNumberOfInv1: number;
     expAnnualNumberOfInv2: number;
+    expHoldPeriodPerInvestment: string;
 
     firstClose: Date;
     finalClose: Date;
+    firstCloseComment: string;
+    finalCloseComment: string;
 
     generalPartnerMerits: string;
     generalPartnerRisks: string;
@@ -66,6 +70,10 @@ export class PEFund {
     netCashflow = [];
     companyPerformance = [];
     companyPerformanceIdd = [];
+
+    onePagerDescriptions = [];
+    managementTeam = [];
+    asOfDateOnePager: Date;
 
     predecessorInvestedPct: number;
     openingSchedule: string;

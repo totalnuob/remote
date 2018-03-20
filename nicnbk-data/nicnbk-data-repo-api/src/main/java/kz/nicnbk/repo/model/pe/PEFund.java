@@ -59,22 +59,28 @@ public class PEFund extends CreateUpdateBaseEntity {
     private Double benchmarkNetIrr;
     private Double benchmarkNetTvpi;
     private String benchmarkName;
+    private Boolean doNotDisplayInOnePager;
     private PEFirm firm;
 
     // Descriptive data
-    private double investmentPeriod;
+    private String investmentPeriod;
     private double fundTerm;
     private String fundTermComment;
-    private double targetInvSizeRange;
-    private double targetEvRange;
+    private String targetInvSizeRange;
+    private String targetEvRange;
     private double targetNumberOfInv1;
     private double targetNumberOfInv2;
     private double expAnnualNumberOfInv1;
     private double expAnnualNumberOfInv2;
+    private String expHoldPeriodPerInvestment;
 
     //Targeted Closing Information
     private Date firstClose;
     private Date finalClose;
+    private String firstCloseComment;
+    private String finalCloseComment;
+
+    private Date asOfDateOnePager;
 
     //Observations
     private String generalPartnerMerits;
@@ -410,6 +416,14 @@ public class PEFund extends CreateUpdateBaseEntity {
         this.benchmarkName = benchmarkName;
     }
 
+    public Boolean getDoNotDisplayInOnePager() {
+        return doNotDisplayInOnePager;
+    }
+
+    public void setDoNotDisplayInOnePager(Boolean doNotDisplayInOnePager) {
+        this.doNotDisplayInOnePager = doNotDisplayInOnePager;
+    }
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "firm_id")
     public PEFirm getFirm() {
@@ -421,11 +435,11 @@ public class PEFund extends CreateUpdateBaseEntity {
     }
 
     @Column(name = "investment_period")
-    public double getInvestmentPeriod() {
+    public String getInvestmentPeriod() {
         return investmentPeriod;
     }
 
-    public void setInvestmentPeriod(double investmentPeriod) {
+    public void setInvestmentPeriod(String investmentPeriod) {
         this.investmentPeriod = investmentPeriod;
     }
 
@@ -450,20 +464,20 @@ public class PEFund extends CreateUpdateBaseEntity {
     }
 
     @Column(name = "traget_inv_size_range")
-    public double getTargetInvSizeRange() {
+    public String getTargetInvSizeRange() {
         return targetInvSizeRange;
     }
 
-    public void setTargetInvSizeRange(double targetInvSizeRange) {
+    public void setTargetInvSizeRange(String targetInvSizeRange) {
         this.targetInvSizeRange = targetInvSizeRange;
     }
 
     @Column(name = "target_ev_range")
-    public double getTargetEvRange() {
+    public String getTargetEvRange() {
         return targetEvRange;
     }
 
-    public void setTargetEvRange(double targetEvRange) {
+    public void setTargetEvRange(String targetEvRange) {
         this.targetEvRange = targetEvRange;
     }
 
@@ -504,6 +518,14 @@ public class PEFund extends CreateUpdateBaseEntity {
         this.expAnnualNumberOfInv2 = expAnnualNumberOfInv2;
     }
 
+    public String getExpHoldPeriodPerInvestment() {
+        return expHoldPeriodPerInvestment;
+    }
+
+    public void setExpHoldPeriodPerInvestment(String expHoldPeriodPerInvestment) {
+        this.expHoldPeriodPerInvestment = expHoldPeriodPerInvestment;
+    }
+
     @Column(name = "first_close")
     public Date getFirstClose() {
         return firstClose;
@@ -523,6 +545,29 @@ public class PEFund extends CreateUpdateBaseEntity {
         this.finalClose = finalClose;
     }
 
+    public String getFirstCloseComment() {
+        return firstCloseComment;
+    }
+
+    public void setFirstCloseComment(String firstCloseComment) {
+        this.firstCloseComment = firstCloseComment;
+    }
+
+    public String getFinalCloseComment() {
+        return finalCloseComment;
+    }
+
+    public void setFinalCloseComment(String finalCloseComment) {
+        this.finalCloseComment = finalCloseComment;
+    }
+
+    public Date getAsOfDateOnePager() {
+        return asOfDateOnePager;
+    }
+
+    public void setAsOfDateOnePager(Date asOfDateOnePager) {
+        this.asOfDateOnePager = asOfDateOnePager;
+    }
 
     @Column(name = "general_partner_merits", columnDefinition = "TEXT")
     public String getGeneralPartnerMerits() {

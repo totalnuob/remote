@@ -2,12 +2,18 @@ package kz.nicnbk.service.impl.pe;
 
 import kz.nicnbk.repo.api.employee.EmployeeRepository;
 import kz.nicnbk.repo.api.pe.PEFundRepository;
+import kz.nicnbk.repo.model.common.Geography;
+import kz.nicnbk.repo.model.common.Strategy;
 import kz.nicnbk.repo.model.employee.Employee;
+import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.repo.model.pe.PEFund;
+import kz.nicnbk.repo.model.pe.PEIndustry;
+import kz.nicnbk.service.api.files.FileService;
 import kz.nicnbk.service.api.pe.*;
 import kz.nicnbk.service.converter.pe.PEFundEntityConverter;
 import kz.nicnbk.service.dto.common.StatusResultType;
 import kz.nicnbk.service.dto.pe.*;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +57,16 @@ public class PEFundServiceImpl implements PEFundService {
     private PECompanyPerformanceIddService performanceIddService;
 
     @Autowired
+    private PEOnePagerDescriptionsService onePagerDescriptionsService;
+
+    @Autowired
+    private PEFundManagementTeamService managementTeamService;
+
+    @Autowired
     private PEIrrService irrService;
+
+    @Autowired
+    private FileService fileService;
 
     @Override
     public PEFundDto get(Long fundId) {
@@ -62,7 +77,17 @@ public class PEFundServiceImpl implements PEFundService {
             dto.setNetCashflow(this.netCFService.findByFundId(fundId));
             dto.setCompanyPerformance(this.performanceService.findByFundId(fundId));
             dto.setCompanyPerformanceIdd(this.performanceIddService.findByFundId(fundId));
+            dto.setOnePagerDescriptions(this.onePagerDescriptionsService.findByFundId(fundId));
+            dto.setManagementTeam(this.managementTeamService.findByFundId(fundId));
 //            calculatePerformanceParameters(grossCFDto, netCFDto, dto);
+
+            // load logo
+            try {
+                dto.getFirm().getLogo().setBytes(IOUtils.toByteArray(fileService.getFileInputStream(dto.getFirm().getLogo().getId(), FileTypeLookup.PE_FIRM_LOGO.getCode())));
+            } catch (Exception ex) {
+                logger.error("Error loading PE firm logo: fund=" + fundId, ex);
+            }
+
             return dto;
         } catch (Exception ex) {
             logger.error("Error loading PE fund: " + fundId, ex);
@@ -352,6 +377,85 @@ public class PEFundServiceImpl implements PEFundService {
         }
         return null;
     }
+
+    @Override
+    public String getIndustriesAsString(Long fundId) {
+        PEFund fund = this.peFundRepository.findOne(fundId);
+        if (fund == null) {
+            return null;
+        }
+        Set<PEIndustry> industrySet = fund.getIndustry();
+        if (industrySet == null) {
+            return null;
+        }
+        String st = "";
+        for (PEIndustry industry : industrySet) {
+            if (st.equals("")) {
+                st = industry.getNameEn();
+            } else {
+                st += ", " + industry.getNameEn();
+            }
+        }
+
+        return st;
+    }
+
+    @Override
+    public String getStrategiesAsString(Long fundId) {
+        PEFund fund = this.peFundRepository.findOne(fundId);
+        if (fund == null) {
+            return null;
+        }
+        Set<Strategy> strategySet = fund.getStrategy();
+        if (strategySet == null) {
+            return null;
+        }
+        String st = "";
+        for (Strategy strategy : strategySet) {
+            if (st.equals("")) {
+                st = strategy.getNameEn();
+            } else {
+                st += ", " + strategy.getNameEn();
+            }
+        }
+
+        return st;
+    }
+
+    @Override
+    public String getGeographiesAsString(Long fundId) {
+        PEFund fund = this.peFundRepository.findOne(fundId);
+        if (fund == null) {
+            return null;
+        }
+        Set<Geography> geographySet = fund.getGeography();
+        if (geographySet == null) {
+            return null;
+        }
+        String st = "";
+        for (Geography geography : geographySet) {
+            if (st.equals("")) {
+                st = geography.getNameEn();
+            } else {
+                st += ", " + geography.getNameEn();
+            }
+        }
+
+        return st;
+    }
+
+//    @Override
+//    public Date updateAsOfDateOnePager(Date asOfDateOnePager, Long fundId) {
+//        try {
+//            PEFund fund = this.peFundRepository.findOne(fundId);
+//            fund.setAsOfDateOnePager(asOfDateOnePager);
+//            this.peFundRepository.save(fund);
+//            return fund.getAsOfDateOnePager();
+//        } catch (Exception ex) {
+//            logger.error("Error updating PE fund As of Date for One Pager: " + fundId, ex);
+//        }
+//        return null;
+//    }
 
     //Commented by Pak
 //    private void calculatePerformanceParameters(List<PEGrossCashflowDto> grossCfDtoList, List<PENetCashflowDto> netCfDtoList, PEFundDto dto) {

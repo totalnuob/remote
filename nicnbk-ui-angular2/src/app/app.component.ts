@@ -35,7 +35,7 @@ import {ModuleAccessCheckerService} from "./authentication/module.access.checker
 import {PeriodicReportService} from "./reporting/periodic.report.service";
 import {AuthenticationService} from "./authentication/authentication.service";
 import {MacroMonitorService} from "./macromonitor/macromonitor.service";
-import {AuthenticationService} from "./authentication/authentication.service";
+import {FileDownloadService} from "./common/file.download.service";
 
 @Component({
     selector: 'app-main',
@@ -55,6 +55,7 @@ import {AuthenticationService} from "./authentication/authentication.service";
         LookupService,
         EmployeeService,
         FileUploadService,
+        FileDownloadService,
         HFManagerService,
         HedgeFundService,
         RiskManagementReportService,
