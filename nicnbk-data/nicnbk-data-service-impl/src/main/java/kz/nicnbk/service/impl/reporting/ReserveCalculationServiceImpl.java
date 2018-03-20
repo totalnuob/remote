@@ -370,6 +370,7 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
             InputStream inputStream = new FileInputStream(filePath);
             filesDto.setInputStream(inputStream);
             filesDto.setFileName(filePath);
+            return filesDto;
         } catch (IOException e) {
             logger.error("IO Exception when exporting Capital Call TA OA", e);
         }
@@ -524,6 +525,7 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
                 InputStream inputStream = new FileInputStream(filePath);
                 filesDto.setInputStream(inputStream);
                 filesDto.setFileName(filePath);
+                return filesDto;
             }
 
         } catch (IOException e) {
