@@ -8,6 +8,7 @@ export class ReserveCalculationFormRecord {
     date: string;
     valueDate: string;
     amount: number;
+    amountToSPV: number;
 
     currencyRate: number;
     amountKZT: number;

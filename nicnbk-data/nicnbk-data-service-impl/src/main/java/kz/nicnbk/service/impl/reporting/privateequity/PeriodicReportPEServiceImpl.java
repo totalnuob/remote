@@ -2,6 +2,7 @@ package kz.nicnbk.service.impl.reporting.privateequity;
 
 import kz.nicnbk.common.service.model.HierarchicalBaseDictionaryDto;
 import kz.nicnbk.common.service.util.DateUtils;
+import kz.nicnbk.common.service.util.MathUtils;
 import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.api.reporting.privateequity.PEGeneralLedgerFormDataRepository;
 import kz.nicnbk.repo.api.reporting.privateequity.TarragonNICChartOfAccountsRepository;
@@ -16,6 +17,7 @@ import kz.nicnbk.service.dto.common.ListResponseDto;
 import kz.nicnbk.service.dto.common.ResponseStatusType;
 import kz.nicnbk.service.dto.reporting.*;
 import kz.nicnbk.service.dto.reporting.privateequity.PEGeneralLedgerFormDataDto;
+import kz.nicnbk.service.impl.reporting.lookup.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +63,9 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
 
     @Autowired
     private PEStatementChangesService statementChangesService;
+
+    @Autowired
+    private ReserveCalculationService reserveCalculationService;
 
     @Transactional // if DB operation fails, no record will be saved, i.e. no partial commits
     @Override
@@ -220,6 +225,14 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
     public ListResponseDto getTarragonGeneratedForm(Long reportId){
         try {
             ListResponseDto responseDto = new ListResponseDto();
+
+            PeriodicReportDto report = this.periodicReportService.getPeriodicReport(reportId);
+            if(report == null){
+                logger.error("Error getting Tarragon Generated GL Form: report is not found for report id " + reportId);
+                responseDto.setErrorMessageEn("Error getting Tarragon Generated GL Form: report is not found for report id " + reportId);
+                return responseDto;
+            }
+
             List<GeneratedGeneralLedgerFormDto> records = new ArrayList<>();
 
             // Balance and Operations
@@ -253,6 +266,54 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
                     // skip zero-values
                 }
             }
+
+            // From capital calls
+
+            List<ReserveCalculationDto> reserveCalculationRecords =
+                    this.reserveCalculationService.getReserveCalculationsForMonth(ReserveCalculationsExpenseTypeLookup.ADD.getCode(), report.getReportDate());
+            if(reserveCalculationRecords != null){
+                for(ReserveCalculationDto reserveCalculationDto: reserveCalculationRecords){
+                    if(reserveCalculationDto.getRecipient() == null || !reserveCalculationDto.getRecipient().getCode().startsWith("TARR")){
+                        continue;
+                    }
+                    GeneratedGeneralLedgerFormDto recordDto = new GeneratedGeneralLedgerFormDto();
+                    String acronym = reserveCalculationDto.getRecipient().getCode().equalsIgnoreCase(ReserveCalculationsEntityTypeLookup.TARRAGON_A.getCode()) ? "TARRAGON A" :
+                            reserveCalculationDto.getRecipient().getCode().equalsIgnoreCase(ReserveCalculationsEntityTypeLookup.TARRAGON_B.getCode()) ? "TARRAGON B" : "TARRAGON";
+                    if(acronym.equalsIgnoreCase("TARRAGON")) {
+                        logger.error("Error generating Tarragon GL Form: capital call recipient is specified as 'Tarragon', must be either 'Tarragon A' or 'Tarragon B'");
+                        responseDto.setErrorMessageEn("Error generating Tarragon GL Form: capital call recipient is specified as 'Tarragon', must be either 'Tarragon A' or 'Tarragon B'");
+                        return responseDto;
+                    }
+                    recordDto.setAcronym(acronym);
+                    recordDto.setBalanceDate(report.getReportDate());
+                    recordDto.setGLAccountBalance(reserveCalculationDto.getAmount());
+                    recordDto.setAdded(false);
+                    recordDto.setEditable(false);
+
+                    recordDto.setFinancialStatementCategory(GeneralLedgerFinancialStatementCategoryLookup.ASSETS.getCode());
+                    recordDto.setChartAccountsLongDescription(TarragonNICChartAccountsLookup.CC_CASH_ADJ.getNameEn());
+                    recordDto.setNbAccountNumber(NICChartAccountsLookup.CURRENT_ACCOUNT_CASH.getCodeNBRK());
+                    recordDto.setNicAccountName(NICChartAccountsLookup.CURRENT_ACCOUNT_CASH.getNameRu());
+
+                    updatedRecords.add(recordDto);
+
+                    GeneratedGeneralLedgerFormDto recordDtoOpposite = new GeneratedGeneralLedgerFormDto();
+                    recordDtoOpposite.setAcronym(acronym);
+                    recordDtoOpposite.setBalanceDate(report.getReportDate());
+                    recordDtoOpposite.setGLAccountBalance(MathUtils.subtract(0.0, reserveCalculationDto.getAmount()));
+                    recordDtoOpposite.setAdded(false);
+                    recordDtoOpposite.setEditable(false);
+
+                    recordDtoOpposite.setFinancialStatementCategory(GeneralLedgerFinancialStatementCategoryLookup.EQUITY.getCode());
+                    recordDtoOpposite.setChartAccountsLongDescription(TarragonNICChartAccountsLookup.CC_CAPITAL_ADJ.getNameEn());
+                    recordDtoOpposite.setNbAccountNumber(NICChartAccountsLookup.SHAREHOLDER_EQUITY_NBRK.getCodeNBRK());
+                    recordDtoOpposite.setNicAccountName(NICChartAccountsLookup.SHAREHOLDER_EQUITY_NBRK.getNameRu());
+
+                    updatedRecords.add(recordDtoOpposite);
+                }
+
+            }
+
 
             // Added records
             Double netRealizedTrancheA = 0.0;
@@ -463,7 +524,7 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
                     record.setNbAccountNumber("2033.010");
                     record.setNicAccountName("Инвестиции в фонд частного капитала " + investment.getName());
                     Double accountBalance = investment.getFairValue() != null && investment.getTranche() != null ?
-                            (investment.getTranche() == 1 ? investment.getFairValue().doubleValue() * 0.99 : investment.getFairValue().doubleValue()) : null;
+                            (investment.getTranche() == 1 ? MathUtils.multiply(investment.getFairValue().doubleValue(), 0.99) : investment.getFairValue().doubleValue()) : null;
                     record.setGLAccountBalance(investment.getEditedFairValue() != null ? investment.getEditedFairValue() : accountBalance);
                     //record.setFundCCY();
                     //record.setSegValCCY();

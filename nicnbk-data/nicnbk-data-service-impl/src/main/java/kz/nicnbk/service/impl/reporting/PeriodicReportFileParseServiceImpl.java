@@ -1441,10 +1441,10 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
         if(!tableHeaderChecked){
             logger.error("Table header check failed for 'Singularity General Ledger Balance'. " +
                     "Expected: Acronym, Balance Date, Financial Statement Category, GL Account, Financial Statement Category Description, " +
-                    "Chart of Accounts Description, Chart of Accounts Long Description, Seg Val1, Seg Val2, Seg Val3, Seg Val4, GL Account Balance, Seg Val CCY, Fund CCY");
+                    "Chart of Accounts Description, Chart of Accounts Long Description, Short name, Seg Val1, Seg Val2, Seg Val3, Seg Val4, GL Account Balance, Seg Val CCY, Fund CCY");
             throw new ExcelFileParseException("Table header check failed for 'Singularity General Ledger Balance'. " +
                     "Expected: Acronym, Balance Date, Financial Statement Category, GL Account, Financial Statement Category Description, " +
-                    "Chart of Accounts Description, Chart of Accounts Long Description, Seg Val1, Seg Val2, Seg Val3, Seg Val4, GL Account Balance, Seg Val CCY, Fund CCY");
+                    "Chart of Accounts Description, Chart of Accounts Long Description, Short name, Seg Val1, Seg Val2, Seg Val3, Seg Val4, GL Account Balance, Seg Val CCY, Fund CCY");
         }
         return records;
     }
@@ -1545,16 +1545,16 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                     if(ExcelUtils.isNotEmptyCell(row.getCell(1)) && row.getCell(1).getCellType() == Cell.CELL_TYPE_NUMERIC){
                         Date date = row.getCell(1).getDateCellValue();
                         if(date == null){
-                            logger.error("Error parsing 'Singularity NOAL' file: date is invalid '" + ExcelUtils.getTextValueFromAnyCell(row.getCell(1)) + "'");
-                            throw new ExcelFileParseException("Error parsing 'Singularity NOAL' file: date is invalid '" + ExcelUtils.getTextValueFromAnyCell(row.getCell(1)) + "'");
+                            logger.error("Error parsing 'Singularity NOAL' file: date is invalid '" + ExcelUtils.getTextValueFromAnyCell(row.getCell(1)) + "'. Expected format 'dd.MM.yyyy'.");
+                            throw new ExcelFileParseException("Error parsing 'Singularity NOAL' file: date is invalid '" + ExcelUtils.getTextValueFromAnyCell(row.getCell(1)) + "'. Expected format'dd.MM.yyyy'.");
                         }else{
                             record.setDate(date);
                         }
                     }else if(ExcelUtils.getStringValueFromCell(row.getCell(1)) != null){
                         String dateText = row.getCell(1).getStringCellValue();
                         if(DateUtils.getDate(dateText) == null){
-                            logger.error("Error parsing 'Singularity NOAL' file: error parsing date - '" + dateText + "'");
-                            throw new ExcelFileParseException("Error parsing 'Singularity NOAL' file: error parsing date - '" + dateText + "'");
+                            logger.error("Error parsing 'Singularity NOAL' file: error parsing date - '" + dateText + "'. Expected format 'dd.MM.yyyy'.");
+                            throw new ExcelFileParseException("Error parsing 'Singularity NOAL' file: error parsing date - '" + dateText + "'. Expected format 'dd.MM.yyyy'.");
                         }else{
                             record.setDate(DateUtils.getDate(dateText));
                         }

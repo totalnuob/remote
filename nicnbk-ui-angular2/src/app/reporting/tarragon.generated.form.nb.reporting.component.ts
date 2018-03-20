@@ -41,6 +41,8 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
     private tarragonNICReportingChartOfAccounts: TarragonNICReportingChartOfAccounts[];
     private addedRecordsHolder: PEGeneralLedgerFormDataHolder;
 
+    private availableFundList: string[];
+
     totalAssetsSum = 0.0;
     totalOtherSum = 0.0;
 
@@ -95,6 +97,7 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
                                                     this.postAction(null, this.errorMessage);
                                                 } else {
                                                     this.checkRecords();
+                                                    this.updateAvailableFundList();
                                                 }
                                             }
                                         },
@@ -127,6 +130,20 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
     ngOnInit(): any {
     }
 
+    updateAvailableFundList(){
+        this.availableFundList = [];
+        if(this.records != null && this.records.length > 0){
+            for(var i = 0; i < this.records.length; i++){
+                if(this.records[i].nbAccountNumber === '2033.010'){
+                    if(this.records[i].chartAccountsLongDescription != null){
+                        this.availableFundList.push(this.records[i].chartAccountsLongDescription);
+                    }
+                }
+            }
+            this.availableFundList.sort();
+        }
+
+    }
 
     addRecord(){
         this.addedRecordsHolder.records.push(new PEGeneralLedgerFormDataRecord());
@@ -146,7 +163,12 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
                             }
                             record.financialStatementCategory = response[i].financialStatementCategory;
                             record.tarragonNICChartOfAccountsName = response[i].chartAccountsLongDescription;
+
+                            if(!this.availableFundList.includes(response[i].subscriptionRedemptionEntity)){
+                                this.availableFundList.push(response[i].subscriptionRedemptionEntity);
+                            }
                             record.entityName = response[i].subscriptionRedemptionEntity;
+
                             record.nbAccountNumber = response[i].nbAccountNumber;
                             record.nicAccountName = response[i].nicAccountName;
                             record.glaccountBalance = response[i].glaccountBalance;
@@ -179,6 +201,9 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
                 addedRecord.nicAccountName = this.tarragonNICReportingChartOfAccounts[i].nicchartOfAccounts.nameRu;
             }
         }
+        if(addedRecord.nbAccountNumber != '6150.030'){
+            addedRecord.entityName = null;
+        }
     }
 
 
@@ -193,6 +218,19 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
                 }
             }
         }
+    }
+
+    editSavedRecord(record){
+        if(record.acronym === 'TARRAGON'){
+            record.tranche = 1;
+        }else if(record.acronym === 'TARRAGON B'){
+            record.tranche = 2;
+        }
+        record.tarragonNICChartOfAccountsName = record.chartAccountsLongDescription;
+        record.id = record.addedRecordId;
+        this.addedRecordsHolder.records.push(record);
+        console.log(record);
+        this.postAction(this.successMessage, this.errorMessage);
     }
 
     removeSavedRecord(record){
@@ -220,6 +258,8 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
                                             this.postAction(this.successMessage, this.errorMessage);
                                         } else {
                                             this.checkRecords();
+                                            this.updateAvailableFundList();
+                                            this.postAction(this.successMessage, this.errorMessage);
                                         }
                                     }
                                 },
@@ -312,6 +352,7 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
                                         this.postAction(this.successMessage, this.errorMessage);
                                     } else {
                                         this.checkRecords();
+                                        this.updateAvailableFundList();
                                     }
                                 }
                             },

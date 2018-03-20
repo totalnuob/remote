@@ -3,6 +3,8 @@ package kz.nicnbk.service.dto.files;
 import kz.nicnbk.common.service.model.BaseEntityDto;
 import kz.nicnbk.repo.model.files.Files;
 
+import java.io.InputStream;
+
 /**
  * Created by magzumov on 08.07.2016.
  */
@@ -13,6 +15,7 @@ public class FilesDto extends BaseEntityDto<Files> {
     private String mimeType;
     private Long size;
     private byte[] bytes;
+    private InputStream inputStream;
 
     public String getType() {
         return type;
@@ -52,5 +55,13 @@ public class FilesDto extends BaseEntityDto<Files> {
 
     public void setBytes(byte[] bytes) {
         this.bytes = bytes;
+    }
+
+    public InputStream getInputStream() {
+        return inputStream;
+    }
+
+    public void setInputStream(InputStream inputStream) {
+        this.inputStream = inputStream;
     }
 }

@@ -11,6 +11,7 @@ export class PEGeneralLedgerFormDataRecord {
     nbAccountNumber: string;
     nicAccountName: string;
 
+
     constructor();
 
     constructor(record?: GeneratedGLFormRecord) {

@@ -18,4 +18,6 @@ INSERT INTO rep_hf_chart_accounts_type(id, code, name_en, name_ru, name_kz, pare
 INSERT INTO rep_hf_chart_accounts_type(id, code, name_en, name_ru, name_kz, parent_id) VALUES(18, 'RDM_PFNDS', 'Redemptions Receivable from Portfolio Funds', '', '', null);
 INSERT INTO rep_hf_chart_accounts_type(id, code, name_en, name_ru, name_kz, parent_id) VALUES(19, 'RET_EARN', 'Retained Earnings', '', '', null);
 INSERT INTO rep_hf_chart_accounts_type(id, code, name_en, name_ru, name_kz, parent_id) VALUES(20, 'S_ADV_PFND', 'Subscriptions Advanced to Portfolio Funds', '', '', null);
+INSERT INTO rep_hf_chart_accounts_type(id, code, name_en, name_ru, name_kz, parent_id) VALUES(21, 'SUBS_ADV', 'Subscriptions Received in Advance', '', '', null);
+
 

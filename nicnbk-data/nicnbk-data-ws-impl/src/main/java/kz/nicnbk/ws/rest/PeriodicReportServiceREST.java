@@ -23,9 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.util.Date;
 import java.util.List;
 
@@ -521,14 +519,14 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
         // TODO: control file download by user role
         // TODO: Check rights
 
-        InputStream inputStream = null;
+        FilesDto filesDto = null;
         try{
-            inputStream = this.periodicReportService.getExportFileStream(reportId, type);
+            filesDto = this.periodicReportService.getExportFileStream(reportId, type);
         }catch (IllegalStateException ex){
-            inputStream = null;
+            filesDto = null;
         }
 
-        if(inputStream == null){
+        if(filesDto == null || filesDto.getInputStream() == null){
             try {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 return;
@@ -543,7 +541,7 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
             //fileName = URLDecoder.decode(fileName, "ISO8859_1");
             //response.setHeader("Content-disposition", "attachment; filename=\""+ fileName + "\"");
             response.setHeader("Content-disposition", "attachment;");
-            org.apache.commons.io.IOUtils.copy(inputStream, response.getOutputStream());
+            org.apache.commons.io.IOUtils.copy(filesDto.getInputStream(), response.getOutputStream());
             response.flushBuffer();
         } catch (UnsupportedEncodingException e) {
             logger.error("(PeriodicReport) File export request failed: unsupported encoding", e);
@@ -553,7 +551,8 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
             logger.error("(PeriodicReport) File export request failed", e);
         }
         try {
-            inputStream.close();
+            filesDto.getInputStream().close();
+            new File(filesDto.getFileName()).delete();
         } catch (IOException e) {
             logger.error("(PeriodicReport) File export: failed to close input stream");
         }
@@ -615,14 +614,14 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
         // TODO: control file download by user role
         // TODO: Check rights
 
-        InputStream inputStream = null;
+        FilesDto filesDto = null;
         try{
-            inputStream = this.reserveCalculationService.getExportFileStream(recordId, type);
+            filesDto = this.reserveCalculationService.getExportFileStream(recordId, type);
         }catch (IllegalStateException ex){
-            inputStream = null;
+            filesDto = null;
         }
 
-        if(inputStream == null){
+        if(filesDto == null || filesDto.getInputStream() == null){
             try {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 return;
@@ -641,7 +640,7 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
             //fileName = URLDecoder.decode(fileName, "ISO8859_1");
             //response.setHeader("Content-disposition", "attachment; filename=\""+ fileName + "\"");
             response.setHeader("Content-disposition", "attachment;");
-            org.apache.commons.io.IOUtils.copy(inputStream, response.getOutputStream());
+            org.apache.commons.io.IOUtils.copy(filesDto.getInputStream(), response.getOutputStream());
             response.flushBuffer();
         } catch (UnsupportedEncodingException e) {
             logger.error("(PeriodicReport) File export request failed: unsupported encoding", e);
@@ -651,7 +650,8 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
             logger.error("(PeriodicReport) File export request failed", e);
         }
         try {
-            inputStream.close();
+            filesDto.getInputStream().close();
+            new File(filesDto.getFileName()).delete();
         } catch (IOException e) {
             logger.error("(PeriodicReport) File export: failed to close input stream");
         }

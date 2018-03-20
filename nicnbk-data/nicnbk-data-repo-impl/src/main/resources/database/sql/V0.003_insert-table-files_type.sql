@@ -17,3 +17,5 @@ INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(23, 
 INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(24, 'NB_REP_SNA', 'NBRK Reporting Singularity NOAL - Tranche A', '', '', 'reporting/nbrk');
 INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(25, 'NB_REP_SNB', 'NBRK Reporting Singularity NOAL - Tranche B', '', '', 'reporting/nbrk');
 INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(26, 'NB_REP_MCS', 'NBRK Reporting Monthly Cash Statement', '', '', 'reporting/nbrk');
+
+INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(2, 'PE_LOGO', 'PE Firm Logo', '', '', 'pe_logo');

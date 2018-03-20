@@ -103,7 +103,7 @@
                 </td>
             </tr>
             <tr>
-                <td><span style="color: red;">*&nbsp;</span>Statement of Cash Flows</td>
+                <td><span>&nbsp;</span>Statement of Cash Flows</td>
                 <td>
                     <label class="btn btn-xs btn-default" for="attachmentFileT3" *ngIf="showUploadButton('tarragon_statement_cashflows')">
                         <input type="file" id="attachmentFileT3" (change)="onFileChange($event, 'tarragon_statement_cashflows')" name="attachmentFileT3" style="display:none;"/>
@@ -474,39 +474,42 @@
                     </a>
                 </td>
             </tr>
-            <!--<tr>-->
-                <!--<td>SINGULARITY - NOAL - Tranche B</td>-->
-                <!--<td>-->
-                    <!--<label class="btn btn-xs btn-default" for="attachmentFileSNOALTrancheB" *ngIf="showUploadButton('singularity_noal_b')">-->
-                        <!--<input type="file" id="attachmentFileSNOALTrancheB" (change)="onFileChange($event, 'singularity_noal_b')" name="attachmentFileSNOALTrancheB" style="display:none;"/>-->
-                        <!--<span class="glyphicon glyphicon-circle-arrow-up"></span>-->
-                    <!--</label>-->
-                    <!--<label *ngIf="fileSingularityNOALTrancheB != null" class="label label-info">{{fileSingularityNOALTrancheB[0].name}}</label>-->
+            <tr>
+                <td>SINGULARITY - NOAL - Tranche B</td>
+                <td>
+                    <label class="btn btn-xs btn-default" for="attachmentFileSNOALTrancheB" *ngIf="showUploadButton('singularity_noal_b')">
+                        <input type="file" id="attachmentFileSNOALTrancheB" (change)="onFileChange($event, 'singularity_noal_b')" name="attachmentFileSNOALTrancheB" style="display:none;"/>
+                        <span class="glyphicon glyphicon-circle-arrow-up"></span>
+                    </label>
+                    <label *ngIf="fileSingularityNOALTrancheB != null" class="label label-info">{{fileSingularityNOALTrancheB[0].name}}</label>
 
-                    <!--<button *ngIf="showDownloadButton('singularity_noal_b')" class="btn btn-xs btn-default"-->
-                            <!--(click)="download('NB_REP_SNB', report.singularityNOALTrancheBFileId, report.singularityNOALTrancheBFileName)">-->
-                        <!--<span class="glyphicon glyphicon-download-alt"></span>-->
-                        <!--<i class="glyphicon glyphicon-refresh" *ngIf="pending"></i>-->
-                    <!--</button>-->
+                    <button *ngIf="showDownloadButton('singularity_noal_b')" class="btn btn-xs btn-default"
+                            (click)="download('NB_REP_SNB', report.singularityNOALTrancheBFileId, report.singularityNOALTrancheBFileName)">
+                        <span class="glyphicon glyphicon-download-alt"></span>
+                        <i class="glyphicon glyphicon-refresh" *ngIf="pending"></i>
+                    </button>
 
-                    <!--<button *ngIf="showProcessButton('singularity_noal_b')" class="btn btn-xs btn-success"-->
-                            <!--(click)="uploadFile('singularity_noal_b')">-->
-                        <!--<span class="glyphicon glyphicon-play-circle"></span>-->
-                    <!--</button>-->
-                    <!--<button *ngIf="showProcessButton('singularity_noal_b')" class="btn btn-xs btn-danger"-->
-                            <!--(click)="clearFile('singularity_noal_b')">-->
-                        <!--<span class="glyphicon glyphicon-trash"></span>-->
-                    <!--</button>-->
-                    <!--<button *ngIf="showViewButton('singularity_noal_b')" class="btn btn-xs btn-primary"-->
-                            <!--[routerLink]="['/reporting/NBReporting/hf/noalB/', report.id, 'INPUT']">-->
-                        <!--<span class="glyphicon glyphicon-search"></span>-->
-                    <!--</button>-->
+                    <button *ngIf="showProcessButton('singularity_noal_b')" class="btn btn-xs btn-success"
+                            (click)="uploadFile('singularity_noal_b')">
+                        <span class="glyphicon glyphicon-play-circle"></span>
+                    </button>
+                    <button *ngIf="showProcessButton('singularity_noal_b')" class="btn btn-xs btn-danger"
+                            (click)="clearFile('singularity_noal_b')">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </button>
+                    <button *ngIf="showViewButton('singularity_noal_b')" class="btn btn-xs btn-primary"
+                            [routerLink]="['/reporting/NBReporting/hf/noalB/', periodicReport.id, 'INPUT']">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                    <button *ngIf="showDeleteButton('singularity_noal_b')" class="btn btn-xs btn-danger" (click)="deleteFile('singularity_noal_b')">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </button>
 
-                    <!--<a data-toggle="modal" data-target="#infoModal" (click)="getInfo('singularity_noal_b')" style="cursor: pointer">-->
-                        <!--<span class="glyphicon glyphicon-question-sign"></span>-->
-                    <!--</a>-->
-                <!--</td>-->
-            <!--</tr>-->
+                    <a data-toggle="modal" data-target="#infoModal" (click)="getInfo('singularity_noal_b')" style="cursor: pointer">
+                        <span class="glyphicon glyphicon-question-sign"></span>
+                    </a>
+                </td>
+            </tr>
         </table>
     </div>
     <div class="row">

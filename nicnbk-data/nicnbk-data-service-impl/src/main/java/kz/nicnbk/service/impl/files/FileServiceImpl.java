@@ -106,7 +106,10 @@ public class FileServiceImpl implements FileService {
                 return lookup.getCatalog();
             }
         }
-        throw new IllegalArgumentException("Illegal file tyoe: " + fileType);
+        if(fileType.equals(FileTypeLookup.PE_FIRM_LOGO.getCode())){
+            return FileTypeLookup.PE_FIRM_LOGO.getCatalog();
+        }
+        throw new IllegalArgumentException("Illegal file type: " + fileType);
     }
 
     @Override

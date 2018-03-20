@@ -7,10 +7,14 @@ import kz.nicnbk.service.api.pe.PEFundService;
 import kz.nicnbk.service.dto.pe.PEFundDto;
 import kz.nicnbk.service.dto.pe.PESearchParams;
 import kz.nicnbk.service.api.pe.PEGrossCashflowService;
+import kz.nicnbk.service.api.pe.*;
 import kz.nicnbk.service.dto.common.StatusResultType;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.pe.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,6 +22,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -28,6 +39,11 @@ import java.util.Set;
 @RequestMapping("/pe/fund")
 public class PrivateEquityFundServiceREST extends  CommonServiceREST{
 
+    private static final Logger logger = LoggerFactory.getLogger(PrivateEquityFundServiceREST.class);
+
+    @Value("${filestorage.root.directory}")
+    private String rootDirectory;
+
     @Autowired
     private PEFundService service;
 
@@ -36,6 +52,15 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
 
     @Autowired
     private PECompanyPerformanceIddService performanceIddService;
+
+    @Autowired
+    private PEOnePagerDescriptionsService descriptionsService;
+
+    @Autowired
+    private PEFundManagementTeamService managementTeamService;
+
+    @Autowired
+    private PEPdfService pdfService;
 
     @Autowired
     private TokenService tokenService;
@@ -201,5 +226,79 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
 //            }
 //        }
 //        return new ResponseEntity<>(null, null, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/saveDataForOnePager/{fundId}", method = RequestMethod.POST)
+    public ResponseEntity<?> saveDataForOnePager(@RequestBody PEFundDataForOnePagerDto dataForOnePagerDto, @PathVariable Long fundId) {
+
+        PEOnePagerDescriptionsResultDto descriptionsResultDto = this.descriptionsService.saveList(dataForOnePagerDto.getOnePagerDescriptions(), fundId);
+        PEFundManagementTeamResultDto managementTeamResultDto = this.managementTeamService.saveList(dataForOnePagerDto.getManagementTeam(), fundId);
+//        Date asOfDateOnePager = this.service.updateAsOfDateOnePager(dataForOnePagerDto.getAsOfDateOnePager(), fundId);
+
+        PEFundDataForOnePagerResultDto resultDto;
+
+        if (descriptionsResultDto.getStatus().equals(StatusResultType.FAIL)) {
+            resultDto = new PEFundDataForOnePagerResultDto(null, null, StatusResultType.FAIL, "", descriptionsResultDto.getMessageEn(), "");
+            return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        if (managementTeamResultDto.getStatus().equals(StatusResultType.FAIL)) {
+            resultDto = new PEFundDataForOnePagerResultDto(null, null, StatusResultType.FAIL, "", managementTeamResultDto.getMessageEn(), "");
+            return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+//        if (asOfDateOnePager == null) {
+//            resultDto = new PEFundDataForOnePagerResultDto(null, null, null, StatusResultType.FAIL, "", "Error updating PE fund As of Date for One Pager", "");
+//            return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+
+        resultDto = new PEFundDataForOnePagerResultDto(
+                descriptionsResultDto.getDescriptionsDtoList(),
+                managementTeamResultDto.getManagementTeamDtoList(),
+//                asOfDateOnePager,
+                StatusResultType.SUCCESS, "", "SUCCESS", "");
+
+        return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value="/createOnePager/{fundId}", method= RequestMethod.GET)
+    @ResponseBody
+    public void exportReport(@PathVariable Long fundId, HttpServletResponse response) {
+
+        String tmpFolder = rootDirectory + "/tmp_one_pager";
+
+        String onePagerDest = rootDirectory + "/tmp_one_pager/OnePager_" + new Date().getTime() + ".pdf";
+
+        InputStream inputStream = this.pdfService.createOnePager(fundId, tmpFolder, onePagerDest);
+
+        if (inputStream == null) {
+            try {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                return;
+            } catch (IOException e) {
+                return;
+            }
+        }
+
+        response.setContentType("application/pdf");
+        try {
+            response.setHeader("Content-disposition", "attachment;");
+            org.apache.commons.io.IOUtils.copy(inputStream, response.getOutputStream());
+            response.flushBuffer();
+        } catch (UnsupportedEncodingException e) {
+            logger.error("(Private Equity) Pdf export request failed: unsupported encoding", e);
+        } catch (IOException e) {
+            logger.error("(Private Equity) Pdf export request failed: io exception", e);
+        } catch (Exception e){
+            logger.error("(Private Equity) Pdf export request failed", e);
+        }
+        try {
+            inputStream.close();
+            Files.deleteIfExists(new File(onePagerDest).toPath());
+        } catch (IOException e) {
+            logger.error("(Private Equity) Pdf export: failed to close input stream");
+        }
     }
 }

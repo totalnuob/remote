@@ -47,6 +47,10 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
     private sub: any;
     public firmIdParam: number;
 
+    myFiles: File[];
+
+    url: any;
+
     busy: Subscription;
 
     private moduleAccessChecker: ModuleAccessCheckerService;
@@ -73,6 +77,8 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
             this.router.navigate(['accessDenied']);
         }
 
+        this.myFiles = [];
+
         this.loadLookups();
 
         // TODO: wait/sync on lookup loading
@@ -94,6 +100,8 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
                                 //TODO: check response memo
                                 this.firm = data;
                                 console.log(this.firm)
+
+                                this.url = "data:" + this.firm.logo.mimeType + ";base64," + this.firm.logo.bytes;
 
                                 // preselect firm strategies
                                 this.preselectStrategy();
@@ -135,7 +143,27 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
                     this.firm.id = response.entityId;
                     this.firm.creationDate = response.creationDate;
 
-                    this.postAction("Successfully saved.", null);
+                    if (this.myFiles.length > 0) {
+                        this.busy = this.firmService.postFiles(this.firm.id, [], this.myFiles)
+                            .subscribe(
+                                (response) => {
+                                    //console.log(response);
+                                    this.firm.logo = response;
+
+                                    //Update logo
+                                    this.url = "data:" + this.firm.logo.mimeType + ";base64," + this.firm.logo.bytes;
+
+                                    this.postAction("Successfully saved.", null);
+                                },
+                                (error) => {
+                                    this.processErrorMessage(error);
+                                    this.postAction(null, JSON.parse(error).messageEn);
+                                    console.log(error);
+                                }
+                            )
+                    } else {
+                        this.postAction("Successfully saved.", null);
+                    }
                 },
                 (error: ErrorResponse) => {
                     this.errorMessage = "Error saving firm profile";
@@ -340,5 +368,10 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
 
     canEdit(){
         return this.moduleAccessChecker.checkAccessPrivateEquityEditor();
+    }
+
+    fileChange(files: any){
+        this.myFiles = files;
+        console.log(this.myFiles);
     }
 }

@@ -44,7 +44,7 @@
                 <table class="table table-hover table-responsive table-condensed" style="font-size: small">
                     <thead>
                     <tr style="font-weight: bold; font-size: small">
-                        <td width="20%">Acronym</td>
+                        <td width="15%">Acronym</td>
                         <!--<td>Balance Date</td>-->
                         <td width="5%">Financial Statement Category</td>
                         <!--<td>GL Account</td>-->
@@ -53,7 +53,7 @@
                         <td>Investor Account/Portfolio Fund</td>
                         <td width="10%">NB Account Number</td>
                         <td width="25%">NIC Account Name</td>
-                        <td width="10%">GL Account Balance</td>
+                        <td width="15%">GL Account Balance</td>
                         <!--<td>Seg Val CCY</td>-->
                         <!--<td>Fund CCY</td>-->
                         <td width="5%">&nbsp;</td>
@@ -61,14 +61,14 @@
                     </thead>
                     <tr  *ngFor="let addedRecord of addedRecordsHolder.records" style="font-size: small">
                         <td>
-                            <select required class="form-control" style="width: 100%" [ngModelOptions]="{standalone: true}" [(ngModel)]="addedRecord.tranche">
+                            <select required class="form-control" style="width: 100%; font-size: small" [ngModelOptions]="{standalone: true}" [(ngModel)]="addedRecord.tranche">
                                 <!--TODO: load from component-->
                                 <option value="1">TARRAGON</option>
                                 <option value="2">TARRAGON B</option>
                             </select>
                         </td>
                         <td>
-                            <select required class="form-control" style="width: 100%" [ngModelOptions]="{standalone: true}" [(ngModel)]="addedRecord.financialStatementCategory">
+                            <select required class="form-control" style="width: 100%; font-size: small" [ngModelOptions]="{standalone: true}" [(ngModel)]="addedRecord.financialStatementCategory">
                                 <!--TODO: load from component-->
                                 <option value="A">A</option>
                                 <option value="L">L</option>
@@ -79,18 +79,22 @@
                         </td>
 
                         <td>
-                            <select required class="form-control" style="width: 100%" [(ngModel)]="addedRecord.tarragonNICChartOfAccountsName"
+                            <select required class="form-control" style="width: 100%; font-size: small" [(ngModel)]="addedRecord.tarragonNICChartOfAccountsName"
                                     (ngModelChange)="chartOfAccountsLongDescriptionChanged(addedRecord)" [ngModelOptions]="{standalone: true}">
                                 <option *ngFor="let item of tarragonNICReportingChartOfAccounts" [value]="item.tarragonChartOfAccountsName">{{item.tarragonChartOfAccountsName}}</option>
                             </select>
                         </td>
                         <td>
-                            <input type="text" class="form-control" class="form-control"  [(ngModel)]="addedRecord.entityName" [ngModelOptions]="{standalone: true}"/>
+                            <select [disabled]="addedRecord.nbAccountNumber == null || addedRecord.nbAccountNumber != '6150.030'" class="form-control" style="width: 100%; font-size: small" [(ngModel)]="addedRecord.entityName"
+                                     [ngModelOptions]="{standalone: true}">
+                                <option *ngFor="let item of availableFundList" [value]="item">{{item}}</option>
+                            </select>
+                            <!--<input type="text" class="form-control" class="form-control small"  [(ngModel)]="addedRecord.entityName" [ngModelOptions]="{standalone: true}"/>-->
                         </td>
                         <td>{{addedRecord.nbAccountNumber}}</td>
                         <td>{{addedRecord.nicAccountName}}</td>
                         <td>
-                            <input required type="number" step="0.01" class="form-control" [ngModelOptions]="{standalone: true}" class="form-control"  [(ngModel)]="addedRecord.glaccountBalance"/>
+                            <input required type="number" step="0.01" class="form-control small" [ngModelOptions]="{standalone: true}" class="form-control"  [(ngModel)]="addedRecord.glaccountBalance"/>
                         </td>
                         <td>
                             <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRecord(addedRecord)">
@@ -169,6 +173,10 @@
                 <td>
                     <button *ngIf="record.added" type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeSavedRecord(record)">
                         <span class="glyphicon glyphicon-minus"></span>
+                    </button>
+
+                    <button *ngIf="record.added" [disabled] = "addedRecordsHolder.records != null && addedRecordsHolder.records.length > 0" type="button" class="btn-xs btn-success" style="display: inline-block"  (click)="editSavedRecord(record)">
+                        <span class="glyphicon glyphicon-pencil"></span>
                     </button>
 
                     <button *ngIf="record.editable && !record.editing" type="button" class="btn-xs" style="display: inline-block"  (click)="record.editing = true">

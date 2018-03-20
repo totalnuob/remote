@@ -6,6 +6,9 @@ import {CommonService} from "../common/common.service";
 import {DATA_APP_URL} from "../common/common.service.constants";
 import {PEFund} from "./model/pe.fund";
 import {FileUploadService} from "../upload/file.upload.service";
+import {FileDownloadService} from "../common/file.download.service";
+
+var fileSaver = require("file-saver");
 
 @Injectable()
 export class PEFundService extends CommonService {
@@ -18,10 +21,13 @@ export class PEFundService extends CommonService {
     private PE_FUND_SAVE_PORTFOLIO_INFO_URL = this.PE_BASE_URL + "savePortfolioInfo/";
     private PE_FUND_CALCULATE_IRR_URL = this.PE_BASE_URL + "calculateIRR/";
     private PE_FUND_SAVE_GROSS_CF_URL = this.PE_BASE_URL + "saveGrossCF/";
+    private PE_FUND_SAVE_DATA_FOR_ONE_PAGER_URL = this.PE_BASE_URL + "saveDataForOnePager/";
+    private PE_FUND_CREATE_ONE_PAGER_URL = this.PE_BASE_URL + "createOnePager/";
 
     constructor(
         private http: Http,
-        private uploadService: FileUploadService
+        private uploadService: FileUploadService,
+        private downloadService: FileDownloadService
     ){
         super();
     }
@@ -105,4 +111,16 @@ export class PEFundService extends CommonService {
     postFiles(files) {
         return this.uploadService.postFiles(this.PE_FUND_UPLOAD_GROSS_CF_URL, [], files);
     }
+
+    saveDataForOnePager(entity, id) {
+        let body = JSON.stringify(entity);
+
+        return this.http.post(this.PE_FUND_SAVE_DATA_FOR_ONE_PAGER_URL + id, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    //createAndDownloadOnePager(id, fileName) {
+    //    return this.downloadService.makeFileRequest(this.PE_FUND_CREATE_ONE_PAGER_URL + id, fileName);
+    //}
 }

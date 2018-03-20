@@ -28,7 +28,7 @@ public class PEGeneralLedgerFormDataConverter extends BaseDozerEntityConverter<P
             return null;
         }
         PEGeneralLedgerFormData entity = super.assemble(dto);
-        entity.setId(null); // TODO: ?
+        //entity.setId(null);
         if(dto.getFinancialStatementCategory() != null){
             FinancialStatementCategory financialStatementCategory =
                     this.lookupService.findByTypeAndCode(FinancialStatementCategory.class, dto.getFinancialStatementCategory());

@@ -4,6 +4,7 @@ import org.apache.commons.math3.stat.regression.SimpleRegression;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Random;
 
 /**
  * Created by magzumov on 05.01.2017.
@@ -89,6 +90,20 @@ public class MathUtils {
         }
         return sum;
     }
+
+    public static int getRandomNumber(int from, int to) {
+        Random r = new Random();
+        return r.nextInt(to-from) + from;
+    }
+
+    public static int getRandomNumber() {
+        return getRandomNumber(0, 1000);
+    }
+
+
+
+
+
 
     public static void main (String[] args){
         testSlope1();
