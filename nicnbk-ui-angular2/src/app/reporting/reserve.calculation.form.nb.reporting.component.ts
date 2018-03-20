@@ -261,7 +261,7 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
     public exportFAFToSPV(record){
         console.log(record.recipient.code);
         var entity = record.recipient.code.startsWith('TARR') ? "Tarragon" : record.recipient.code.startsWith('SING') ? "Singularity" : "";
-        var fileName = record.date.replace(/-/g, "_") + "-Order to $ " + record.amount + " OA-" + entity;
+        var fileName = record.date.replace(/-/g, "_") + "-Order to $ " + (record.amountToSPV != null ? record.amountToSPV : record.amount) + " OA-" + entity;
         this.busyExport = this.periodicReportService.makeFileRequest(DATA_APP_URL + `periodicReport/reserveCalculation/export/${record.id}/${'SPV'}`, fileName)
             .subscribe(
                 response  => {
