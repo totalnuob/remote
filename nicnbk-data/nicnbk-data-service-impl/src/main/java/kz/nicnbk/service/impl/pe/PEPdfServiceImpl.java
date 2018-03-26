@@ -434,7 +434,9 @@ public class PEPdfServiceImpl implements PEPdfService {
         Cell cellLogoGp = new Cell().setWidth(logoWidth);
         Cell cellLogoNic = new Cell().setWidth(logoWidth);
         if (withLogos) {
-            cellLogoGp.add(new Paragraph().add(gpLogo));
+            if (gpLogo != null) {
+                cellLogoGp.add(new Paragraph().add(gpLogo));
+            }
             cellLogoNic.add(new Paragraph().add(nicLogo));
         }
         table.addCell(cellLogoGp);
