@@ -942,7 +942,11 @@
                                                 <th>Mgt. fee</th>
                                                 <td style="font-size: small">{{fund.managementFee}}%</td>
                                                 <th>Industry</th>
-                                                <td style="font-size: small">{{fund.industry}}</td>
+                                                <td style="font-size: small">
+                                                    <div *ngFor="let item of fund.industry">
+                                                        {{item.nameEn}}
+                                                    </div>
+                                                </td>
                                             </tr>
                                             <tr>
                                                 <th>Hard cap (mln)</th>
