@@ -29,4 +29,5 @@ export class PEFirm {
     updateDate: string;
 
     logo: any;
+    logoNIC: any;
 }

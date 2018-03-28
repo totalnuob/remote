@@ -76,8 +76,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     uploadedNetCf;
 
     myFiles: File[];
-    fileGPlogo: File[];
-    fileNIClogo: File[];
+    //fileGPlogo: File[];
+    //fileNIClogo: File[];
 
     url_GP: any;
     url_NIC: any;
@@ -110,8 +110,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
         this.loadLookups();
 
         this.myFiles = [];
-        this.fileGPlogo = [];
-        this.fileNIClogo = [];
+        //this.fileGPlogo = [];
+        //this.fileNIClogo = [];
 
         // TODO: wait/sync on lookup loading
         // TODO: sync on subscribe results
@@ -959,16 +959,16 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
         console.log(this.myFiles);
     }
 
-    fileLogoChange(files: any, partner: string){
-        if(partner === 'GP') {
-            this.fileGPlogo = files;
-            console.log(this.fileGPlogo);
-        }
-        if(partner === 'NIC') {
-            this.fileNIClogo = files;
-            console.log(this.fileNIClogo);
-        }
-    }
+    //fileLogoChange(files: any, partner: string){
+    //    if(partner === 'GP') {
+    //        this.fileGPlogo = files;
+    //        console.log(this.fileGPlogo);
+    //    }
+    //    if(partner === 'NIC') {
+    //        this.fileNIClogo = files;
+    //        console.log(this.fileNIClogo);
+    //    }
+    //}
 
     onSubmitGrossCF() {
         this.busy = this.fundService.postFiles(this.myFiles)
