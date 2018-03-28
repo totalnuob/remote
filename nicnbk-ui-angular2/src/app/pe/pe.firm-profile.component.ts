@@ -101,7 +101,9 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
                                 this.firm = data;
                                 console.log(this.firm)
 
-                                this.url = "data:" + this.firm.logo.mimeType + ";base64," + this.firm.logo.bytes;
+                                if (this.firm.logo != null) {
+                                    this.url = "data:" + this.firm.logo.mimeType + ";base64," + this.firm.logo.bytes;
+                                }
 
                                 // preselect firm strategies
                                 this.preselectStrategy();
