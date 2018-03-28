@@ -218,6 +218,10 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                     if (this.fund.firm.logo != null) {
                                         this.url_GP = "data:" + this.fund.firm.logo.mimeType + ";base64," + this.fund.firm.logo.bytes;
                                     }
+
+                                    if (this.fund.firm.logoNIC != null) {
+                                        this.url_NIC = "data:" + this.fund.firm.logoNIC.mimeType + ";base64," + this.fund.firm.logoNIC.bytes;
+                                    }
                                 }else{
                                     // TODO: handle error
                                     this.errorMessage = "Error loading fund manager info.";
