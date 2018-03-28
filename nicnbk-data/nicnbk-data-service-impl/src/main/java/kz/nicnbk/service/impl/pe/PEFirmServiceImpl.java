@@ -91,10 +91,13 @@ public class PEFirmServiceImpl implements PEFirmService {
             firmDto.setFunds(this.fundService.loadFirmFunds(id, false));
 
             // load logo
-            try {
-                firmDto.getLogo().setBytes(IOUtils.toByteArray(fileService.getFileInputStream(firmDto.getLogo().getId(), FileTypeLookup.PE_FIRM_LOGO.getCode())));
-            } catch (Exception ex) {
-                logger.error("Error loading PE firm logo: " + id, ex);
+
+            if (firmDto.getLogo() != null) {
+                try {
+                    firmDto.getLogo().setBytes(IOUtils.toByteArray(fileService.getFileInputStream(firmDto.getLogo().getId(), FileTypeLookup.PE_FIRM_LOGO.getCode())));
+                } catch (Exception ex) {
+                    logger.error("Error loading PE firm logo: " + id, ex);
+                }
             }
 
             return firmDto;
