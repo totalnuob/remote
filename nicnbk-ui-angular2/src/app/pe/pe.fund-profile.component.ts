@@ -134,7 +134,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                 if(data && data.id > 0) {
                                     this.fund = data;
 
-                                    //console.log(this.fund);
+                                    console.log(this.fund);
 
                                     // preselect firm strategies
                                     this.preselectStrategy();
