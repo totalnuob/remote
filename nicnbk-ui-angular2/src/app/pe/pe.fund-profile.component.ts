@@ -190,10 +190,6 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                     if(this.fund.netCashflow == null){
                                         this.fund.netCashflow = [];
                                     }
-
-                                    if (this.fund.firm.logo != null) {
-                                        this.url_GP = "data:" + this.fund.firm.logo.mimeType + ";base64," + this.fund.firm.logo.bytes;
-                                    }
                                 }else{
                                     // TODO: handle error
                                     this.errorMessage = "Error loading fund profile.";
@@ -218,6 +214,10 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                 if(data && data.id > 0) {
                                     this.fund.firm = data;
                                     this.preselectFirmStrategyGeographyIndustry();
+
+                                    if (this.fund.firm.logo != null) {
+                                        this.url_GP = "data:" + this.fund.firm.logo.mimeType + ";base64," + this.fund.firm.logo.bytes;
+                                    }
                                 }else{
                                     // TODO: handle error
                                     this.errorMessage = "Error loading fund manager info.";
@@ -301,10 +301,6 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     this.updateSaveTypeMessage();
 
                     this.postAction("Successfully saved.", null);
-
-                    if (this.fund.firm.logo != null) {
-                        this.url_GP = "data:" + this.fund.firm.logo.mimeType + ";base64," + this.fund.firm.logo.bytes;
-                    }
                 },
                 (error: ErrorResponse) => {
                     this.errorMessage = "Error saving fund profile";
