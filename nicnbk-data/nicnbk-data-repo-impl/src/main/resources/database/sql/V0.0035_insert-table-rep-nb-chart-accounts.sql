@@ -17,6 +17,9 @@ INSERT INTO nb_chart_of_accounts(id, code, name_en, name_ru, name_kz) VALUES(16,
 INSERT INTO nb_chart_of_accounts(id, code, name_en, name_ru, name_kz) VALUES(17, '3013.010', null, 'Краткосрочные банковские займы полученные', null);
 INSERT INTO nb_chart_of_accounts(id, code, name_en, name_ru, name_kz) VALUES(18, '3383.010', null, 'Начисленные расходы в виде вознаграждения по краткосрочным банковским займам полученным', null);
 
+INSERT INTO nb_chart_of_accounts(id, code, name_en, name_ru, name_kz) VALUES(19, '4173.010', null, 'Прочая долгосрочная кредиторская задолженность', null);
+
+
 
 
 

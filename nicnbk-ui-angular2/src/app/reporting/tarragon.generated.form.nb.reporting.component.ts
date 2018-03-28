@@ -424,7 +424,7 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
             var otherSum = 0.0;
             for(var i = 0; i < this.records.length; i++){
                 if(this.records[i].nbAccountNumber == null){
-                    this.postAction(this.successMessage, "NB Account number is missing for record '" + this.records[i].chartAccountsLongDescription);
+                    this.postAction(this.successMessage, "NB Account number is missing for record '" + this.records[i].chartAccountsLongDescription + "'");
                     this.recordsValid = false;
                     return;
                 }
