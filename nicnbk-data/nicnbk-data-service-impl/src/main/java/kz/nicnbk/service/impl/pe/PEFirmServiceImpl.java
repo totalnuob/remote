@@ -91,7 +91,6 @@ public class PEFirmServiceImpl implements PEFirmService {
             firmDto.setFunds(this.fundService.loadFirmFunds(id, false));
 
             // load logo
-
             if (firmDto.getLogo() != null) {
                 try {
                     firmDto.getLogo().setBytes(IOUtils.toByteArray(fileService.getFileInputStream(firmDto.getLogo().getId(), FileTypeLookup.PE_FIRM_LOGO.getCode())));
