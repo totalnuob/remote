@@ -75,6 +75,8 @@ import {ConsolidatedKZTForm22NBReportingComponent} from "./reporting/consolidate
 import {ConsolidatedKZTForm3NBReportingComponent} from "./reporting/consolidated.kzt.form.3.nb.reporting.component";
 import {ConsolidatedKZTForm6NBReportingComponent} from "./reporting/consolidated.kzt.form.6.nb.reporting.component";
 import {MonitoringHedgeFunds2PrintComponent} from "./monitoring/monitoring-hedge-funds-2-print.component";
+import {CorpMeetingsListComponent} from "./corpmeetings/corp-meetings-list.component";
+import {CorpMeetingEditComponent} from "./corpmeetings/corp-meetings-edit.component";
 
 
 const routes: Routes  = [
@@ -468,8 +470,18 @@ const routes: Routes  = [
         component: ReserveCalculationFormNBReportingComponent,
         canActivate: [AuthGuard]
     },
+    /* Corp Meetings ******************************************/
+    {
+        path: 'corpMeetings',
+        component: CorpMeetingsListComponent,
+        canActivate: [AuthGuard]
+    },
 
-
+    {
+        path: 'corpMeetings/edit/:id',
+        component: CorpMeetingEditComponent,
+        canActivate: [AuthGuard]
+    },
 
     /* Page not found. ERROR 404 *********************/
     {

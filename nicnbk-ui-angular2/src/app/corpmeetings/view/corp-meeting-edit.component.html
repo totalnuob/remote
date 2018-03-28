@@ -1,0 +1,222 @@
+<div class="container">
+    <div class="row withpadding" style="position: relative; min-height: 80px;">
+        <div [ngBusy]="busy">
+            <div class="row top-buffer" >
+                <div class="col-md-12">
+                    <ol class="breadcrumb">
+                        <li>
+                            <!--<span *ngIf="this.breadcrumbParams != null"><a [routerLink]="['/corpMeetings', {params: this.breadcrumbParams }]">Corp Meetings1</a></span>-->
+                            <span *ngIf="this.breadcrumbParams == null"><a [routerLink]="['/corpMeetings']">Corp Meetings</a></span>
+                        </li>
+                        <li class="active">Corp Meeting</li>
+                    </ol>
+                </div>
+            </div>
+            <!--<div class="row top-buffer" >-->
+                <!--<div class="col-md-12">-->
+                    <!--<div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span></div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <div class="row top-buffer" >
+                <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+                </div>
+                <div class="alert alert-info" *ngIf="!submitted && successMessage != null"><span>{{successMessage}}</span>
+                </div>
+            </div>
+
+            <div>
+                <form (ngSubmit)="save()" #corpMeetingForm="ngForm" class="well span">
+                    <div class="row top-buffer">
+                        <div class="col-md-2">
+                            <label class="checkbox-inline">
+                                <input required type="radio" name="corpMeetingType" [ngModel]="corpMeeting.type"
+                                       (ngModelChange)="corpMeeting.type='BOD'" name="type" value="BOD">
+                                <span>BoD</span>
+                            </label>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="checkbox-inline">
+                                <input required type="radio" name="corpMeetingType" [ngModel]="corpMeeting.type"
+                                       (ngModelChange)="corpMeeting.type='EXEC'" name="type" value="EXEC">
+                                <span>Exec Meeting</span>
+                            </label>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="checkbox-inline">
+                                <input required  type="radio" name="corpMeetingType" [ngModel]="corpMeeting.type"
+                                       (ngModelChange)="corpMeeting.type='IC'" name="type" value="IC">
+                                <span>IC</span>
+                            </label>
+                        </div>
+                        <div class="col-md-3">
+                            <div class='input-group date' id='corpMeetingDateDiv' style="width: 100%">
+                                <input required type="text" class="form-control" id="corpMeetingDate" name="corpMeetingDate" [(ngModel)]="corpMeeting.date"/>
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                            </div>
+                            <!--<div [hidden]="meetingDateStart.valid || meetingDateStart.pristine" class="alert alert-danger">Start date is required</div>-->
+                        </div>
+
+
+                        <div class="col-md-3 form-group form-horizontal">
+                            <label class="control-label col-md-2" for="number">№:</label>
+                            <div class="col-md-10">
+                                <input type="text" id="number" class="form-control" maxlength="10" name="number" [(ngModel)]="corpMeeting.number"
+                                       required #number="ngModel"/>
+                            </div>
+                        </div>
+                    </div>
+                    <!--<div class="row top-buffer">-->
+                        <!--<div class="form-group form-horizontal">-->
+                            <!--<label class="control-label col-md-2" for="name">Name:</label>-->
+                            <!--<div class="col-md-10">-->
+                                <!--<input type="text" id="name" class="form-control" placeholder="Enter name..." maxlength="250" name="name" [(ngModel)]="tripMemo.name"-->
+                                <!--required #name="ngModel"/>-->
+                                <!--<div [hidden]="name.valid || name.pristine" class="alert alert-danger">Training/Conference name is required</div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <div class="row top-buffer">
+                        <div class="col-md-12">
+                            <!--<div class="row top-buffer">-->
+                                <!--<div class="form-group form-horizontal">-->
+                                    <!--<label class="control-label col-md-2" for="organization">Organization:</label>-->
+                                    <!--<div class="col-md-10">-->
+                                        <!--<textarea fz-elastic type="text" id="organization" class="form-control" maxlength="250" name="organization" [(ngModel)]="tripMemo.organization"-->
+                                                  <!--required #organization="ngModel"></textarea>-->
+                                        <!--<div [hidden]="organization.valid || organization.pristine" class="alert alert-danger">Organization name is required</div>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+
+                            <div class="row top-buffer">
+                                <div class="form-group form-horizontal">
+                                    <label class="control-label col-md-2" for="attendees">Attendees (NIC): <span style="color: red">*</span></label>
+                                    <div class="col-md-10" id="attendees" *ngIf="attendeesNICList.length > 0">
+                                        <ng-select #attendeesSelect [initData]="corpMeeting.attendeesNIC"
+                                                   [multiple]="true"
+                                                   [items]="attendeesNICList"
+                                                   (data)="refreshAttendees($event)"
+                                                   (selected)="selected($event)"
+                                                   (removed)="removed($event)"
+                                                   placeholder="No attendee selected">
+                                        </ng-select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row top-buffer" *ngIf="corpMeeting.type == 'BOD'">
+                                <div class="form-group form-horizontal">
+                                    <label class="control-label col-md-2" for="location">Attendees (Other):</label>
+                                    <div class="col-md-10">
+                                        <textarea fz-elastic type="text" id="location" class="form-control" maxlength="250" name="location" [(ngModel)]="corpMeeting.attendeesOther"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!--<div class="row top-buffer">-->
+                            <!--<label class="control-label col-md-2">Status:</label>-->
+                            <!--<div class="col-md-2">-->
+                            <!--<select id="statusSelect" class="form-control" [(ngModel)]="tripMemo.status">-->
+                            <!--<option value="NONE">-&#45;&#45;</option>-->
+                            <!--<option value="APPROVED">Approved</option>-->
+                            <!--<option value="REJECTED">Rejected</option>-->
+                            <!--<option value="CONSIDERATION">Under Consideration</option>-->
+                            <!--</select>-->
+                            <!--</div>-->
+                            <!--</div>-->
+
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row top-buffer withpadding">
+                        <div class="col-md-12" style="background-color:#5bc0de; height: 34px">
+                            <div class="col-md-6">
+                                <h5>Agenda <span style="color: red">*</span></h5>
+                            </div>
+                            <div class="col-md-5">&nbsp;</div>
+                        </div>
+                    </div>
+                    <div class="row top-buffer">
+                        <div class="col-md-12">
+                            <textarea required fz-elastic type="text" class="form-control" rows="10" name="description" [(ngModel)]="corpMeeting.agenda"></textarea>
+                        </div>
+                    </div>
+                    <br/>
+                    <div class="row top-buffer">
+                        <div class="col-md-6">
+                            <div class="jumbotron" style="padding-top: 5px; padding-bottom: 5px;">
+                                <div class="row">
+                                    <label>PROTOCOL <span style="color: red">*</span></label>
+                                </div>
+
+                                <div class="row" *ngIf="canEdit()">
+                                    <label class="btn btn-primary col-md-2" for="protocolAttachmentFile">
+                                        <input type="file" id="protocolAttachmentFile" (change)="onFileChangeProtocols($event)" name="file" multiple style="display:none;"/>Upload</label>
+                                    <div class="col-md-6">
+                                        <div class="row" *ngFor="let newFile of uploadProtocolsFiles" class="label label-info" style="display: table;">
+                                            <span>{{newFile.name}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row" *ngIf="corpMeeting?.protocols?.length > 0">
+                                    <div *ngFor="let protocol of corpMeeting.protocols">
+                                        <file-attachment-downloader fileId="{{protocol.id}}"
+                                                                    fileName="{{protocol?.fileName}}"
+                                                                    fileType="CM_PROT">
+                                        </file-attachment-downloader>
+
+                                        <a (click)="deleteAttachment(attachment.id)" *ngIf="canEdit()">
+                                            <i class="glyphicon glyphicon-trash"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="jumbotron" style="padding-top: 5px; padding-bottom: 5px;">
+                                <div class="row">
+                                    <label>MATERIALS</label>
+                                </div>
+
+                                <div class="row" *ngIf="canEdit()">
+                                    <label class="btn btn-primary col-md-2" for="attachmentFile">
+                                        <input type="file" id="attachmentFile" (change)="onFileChangeMaterials($event)" name="file" multiple style="display:none;"/>Upload</label>
+                                    <div class="col-md-6">
+                                        <div class="row" *ngFor="let newFile of uploadMaterialsFiles" class="label label-info" style="display: table;">
+                                            <span>{{newFile.name}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row" *ngIf="corpMeeting?.files?.length > 0">
+                                    <div *ngFor="let attachment of corpMeeting.files">
+                                        <file-attachment-downloader fileId="{{attachment.id}}"
+                                                                    fileName="{{attachment?.fileName}}"
+                                                                    fileType="CM_MATRL">
+                                        </file-attachment-downloader>
+
+                                        <a (click)="deleteAttachment(attachment.id)" *ngIf="canEdit()">
+                                            <i class="glyphicon glyphicon-trash"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br/>
+                    <div class="row top-buffer">
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-success pull-right" name="saveCorpMeeting" *ngIf="canEdit()">Save</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <br>
+    <br>
+    <br>
+</div>
