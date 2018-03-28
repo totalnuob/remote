@@ -938,27 +938,27 @@
                                         <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
                                             <tr>
                                                 <th>Target Fund Size (mln)</th>
-                                                <td style="font-size: small">{{fund.firm.firmName}}</td>
+                                                <td style="font-size: small">{{fund.targetSize | number:'1.0-0'}}</td>
                                                 <th>Mgt. fee</th>
-                                                <td style="font-size: small">{{fund.firm.aum | number:'1.0-0'}}</td>
+                                                <td style="font-size: small">{{fund.managementFee}}%</td>
                                                 <th>Industry</th>
-                                                <td style="font-size: small">{{fund.firm.locations}}</td>
+                                                <td style="font-size: small">{{fund.fundName}}</td>
                                             </tr>
                                             <tr>
                                                 <th>Hard cap (mln)</th>
-                                                <td style="font-size: small">{{fund.firm.foundedYear}}</td>
+                                                <td style="font-size: small">{{fund.hardCap | number:'1.0-0'}}</td>
                                                 <th>Carry</th>
-                                                <td style="font-size: small">{{fund.firm.invTeamSize}} + {{fund.firm.opsTeamSize}}</td>
+                                                <td style="font-size: small">{{fund.carriedInterest}}%</td>
                                                 <th>Strategy</th>
-                                                <td style="font-size: small">{{fund.firm.peers}}</td>
+                                                <td style="font-size: small">{{fund.fundName}}</td>
                                             </tr>
                                             <tr>
                                                 <th>GP Commitment</th>
-                                                <td style="font-size: small">{{fund.firm.foundedYear}}</td>
+                                                <td style="font-size: small">{{fund.fundName}}</td>
                                                 <th>Hurdle</th>
-                                                <td style="font-size: small">{{fund.firm.invTeamSize}} + {{fund.firm.opsTeamSize}}</td>
+                                                <td style="font-size: small">{{fund.fundName}}</td>
                                                 <th>Geography</th>
-                                                <td style="font-size: small">{{fund.firm.peers}}</td>
+                                                <td style="font-size: small">{{fund.fundName}}</td>
                                             </tr>
                                         </table>
                                         <br>
