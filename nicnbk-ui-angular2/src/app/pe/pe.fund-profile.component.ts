@@ -301,6 +301,10 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     this.updateSaveTypeMessage();
 
                     this.postAction("Successfully saved.", null);
+
+                    if (this.fund.firm.logo != null) {
+                        this.url_GP = "data:" + this.fund.firm.logo.mimeType + ";base64," + this.fund.firm.logo.bytes;
+                    }
                 },
                 (error: ErrorResponse) => {
                     this.errorMessage = "Error saving fund profile";
