@@ -24,6 +24,7 @@ public class PEFirmDto extends CreateUpdateBaseEntityDto<PEFirm> {
     private Set<BaseDictionaryDto> geographyFocus;
     private List<PEFundDto> funds;
     private FilesDto logo;
+    private FilesDto logoNIC;
 
 //    private Set<FirmAddress> address;
 //    private Set<Contacts> contacts;
@@ -135,7 +136,15 @@ public class PEFirmDto extends CreateUpdateBaseEntityDto<PEFirm> {
         this.logo = logo;
     }
 
-//        public Set<FirmAddress> getAddress() {
+    public FilesDto getLogoNIC() {
+        return logoNIC;
+    }
+
+    public void setLogoNIC(FilesDto logoNIC) {
+        this.logoNIC = logoNIC;
+    }
+
+    //        public Set<FirmAddress> getAddress() {
 //        return address;
 //    }
 //

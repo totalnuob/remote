@@ -19,6 +19,8 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -98,6 +100,13 @@ public class PEFirmServiceImpl implements PEFirmService {
                     logger.error("Error loading PE firm logo: " + id, ex);
                 }
             }
+
+            // load NIC logo
+            FilesDto logoNIC = new FilesDto();
+            logoNIC.setMimeType("image/png");
+            Resource resource = new ClassPathResource("img/NIClogo.png");
+            logoNIC.setBytes(IOUtils.toByteArray(resource.getInputStream()));
+            firmDto.setLogoNIC(logoNIC);
 
             return firmDto;
         }catch(Exception ex){
