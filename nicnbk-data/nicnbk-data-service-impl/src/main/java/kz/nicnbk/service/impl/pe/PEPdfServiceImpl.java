@@ -576,14 +576,17 @@ public class PEPdfServiceImpl implements PEPdfService {
         table.addCell(new Cell().add(new Paragraph("Total").setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell());
         table.addCell(new Cell().add(new Paragraph(Integer.toString(totalNumberOfInvestments)).setMultipliedLeading(lineSpacingMultiplier).setBold()));
-        table.addCell(new Cell().add(new Paragraph("Fund Size").setMultipliedLeading(lineSpacingMultiplier).setBold()));
+        table.addCell(new Cell());
+//        table.addCell(new Cell().add(new Paragraph("Fund Size").setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph(mlnFormat(totalInvested)).setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph(mlnFormat(totalRealized)).setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph(mlnFormat(totalUnrealized)).setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph(moicFormat(totalGrossMOIC)).setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().add(new Paragraph(irrFormat(totalGrossIrr)).setMultipliedLeading(lineSpacingMultiplier).setBold()));
-        table.addCell(new Cell().add(new Paragraph("Net MOIC").setMultipliedLeading(lineSpacingMultiplier).setBold()));
-        table.addCell(new Cell().add(new Paragraph("Net IRR").setMultipliedLeading(lineSpacingMultiplier).setBold()));
+        table.addCell(new Cell());
+        table.addCell(new Cell());
+//        table.addCell(new Cell().add(new Paragraph("Net MOIC").setMultipliedLeading(lineSpacingMultiplier).setBold()));
+//        table.addCell(new Cell().add(new Paragraph("Net IRR").setMultipliedLeading(lineSpacingMultiplier).setBold()));
     }
 
     private void addMeritsRisks(Table table, List<PEOnePagerDescriptionsDto> descriptionsDtoListMerits, List<PEOnePagerDescriptionsDto> descriptionsDtoListRisks, Float width, Float fontSize) {
