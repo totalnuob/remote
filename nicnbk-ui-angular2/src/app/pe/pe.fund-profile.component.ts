@@ -91,6 +91,13 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
 
     public firmFunds: Array<any> = [];
 
+    public totalNumberOfInvestments: number;
+    public totalInvested: number;
+    public totalRealized: number;
+    public totalUnrealized: number;
+    public totalGrossMOIC: number;
+    public totalGrossIrr: number;
+
     public dataForOnePager = new PEFundDataForOnePager();
 
     private moduleAccessChecker: ModuleAccessCheckerService;
@@ -336,6 +343,24 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
             .subscribe(
                 (response) => {
                     this.firmFunds = response;
+
+                    this.totalNumberOfInvestments = 0;
+                    this.totalInvested = 0.0;
+                    this.totalRealized = 0.0;
+                    this.totalUnrealized = 0.0;
+                    this.totalGrossMOIC = null;
+                    this.totalGrossIrr = null;
+
+                    this.firmFunds.forEach(element => {
+                        this.totalNumberOfInvestments += (element.numberOfInvestments != null) ? element.numberOfInvestments : 0;
+                        this.totalInvested += (element.investedAmount != null) ? element.investedAmount : 0;
+                        this.totalRealized += (element.realized != null) ? element.realized : 0;
+                        this.totalUnrealized += (element.unrealized != null) ? element.unrealized : 0;
+                    })
+
+                    if (this.totalInvested != 0.0) {
+                        this.totalGrossMOIC = (this.totalRealized + this.totalUnrealized) / this.totalInvested;
+                    }
                 },
                 (error: ErrorResponse) => {
                     this.errorMessage = "Error loading firm funds";

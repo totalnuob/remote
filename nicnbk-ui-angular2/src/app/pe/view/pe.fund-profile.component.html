@@ -999,15 +999,15 @@
                                             <tr>
                                                 <th>Total</th>
                                                 <th></th>
-                                                <th># of Inv.</th>
-                                                <th>Fund Size</th>
-                                                <th>Invested</th>
-                                                <th>Realized</th>
-                                                <th>Unrealized</th>
-                                                <th>Gross MOIC</th>
-                                                <th>Gross IRR</th>
-                                                <th>Net MOIC</th>
-                                                <th>Net IRR</th>
+                                                <th>{{this.totalNumberOfInvestments}}</th>
+                                                <th></th>
+                                                <th>{{this.totalInvested | number:'1.0-0'}}</th>
+                                                <th>{{this.totalRealized | number:'1.0-0'}}</th>
+                                                <th>{{this.totalUnrealized | number:'1.0-0'}}</th>
+                                                <th>{{this.totalGrossMOIC | number:'1.1-1'}}x</th>
+                                                <th>{{this.totalGrossIrr | number:'1.0-0'}}%</th>
+                                                <th></th>
+                                                <th></th>
                                             </tr>
                                         </table>
 
