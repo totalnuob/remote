@@ -329,29 +329,41 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     updateIndustryStrategyGeographyAsStrings() {
         this.industryAsString = '';
         for (var i = 0; i < this.fund.industry.length; i++) {
-            if (this.industryAsString === '') {
-                this.industryAsString = this.fund.industry[i].nameEn;
-            } else {
-                this.industryAsString += ', ' + this.fund.industry[i].nameEn;
-            }
+            this.industryList.forEach(element => {
+                if (element.id === this.fund.industry[i].code) {
+                    if (this.industryAsString === '') {
+                        this.industryAsString = element.text;
+                    } else {
+                        this.industryAsString += ', ' + element.text;
+                    }
+                }
+            })
         }
 
         this.strategyAsString = '';
         for (var i = 0; i < this.fund.strategy.length; i++) {
-            if (this.strategyAsString === '') {
-                this.strategyAsString = this.fund.strategy[i].nameEn;
-            } else {
-                this.strategyAsString += ', ' + this.fund.strategy[i].nameEn;
-            }
+            this.strategyList.forEach(element => {
+                if (element.id === this.fund.strategy[i].code) {
+                    if (this.strategyAsString === '') {
+                        this.strategyAsString = element.text;
+                    } else {
+                        this.strategyAsString += ', ' + element.text;
+                    }
+                }
+            })
         }
 
         this.geographyAsString = '';
         for (var i = 0; i < this.fund.geography.length; i++) {
-            if (this.geographyAsString === '') {
-                this.geographyAsString = this.fund.geography[i].nameEn;
-            } else {
-                this.geographyAsString += ', ' + this.fund.geography[i].nameEn;
-            }
+            this.geographyList.forEach(element => {
+                if (element.id === this.fund.geography[i].code) {
+                    if (this.geographyAsString === '') {
+                        this.geographyAsString = element.text;
+                    } else {
+                        this.geographyAsString += ', ' + element.text;
+                    }
+                }
+            })
         }
     }
 
