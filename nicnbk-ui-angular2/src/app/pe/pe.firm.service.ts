@@ -13,6 +13,7 @@ export class PEFirmService extends CommonService {
     private PE_BASE_URL = DATA_APP_URL + 'pe/firm/';
     private PE_FIRM_SAVE_URL = this.PE_BASE_URL + 'save/';
     private PE_FIRM_GET_URL = this.PE_BASE_URL + 'get/';
+    private PE_FIRM_FUNDS_GET_URL = this.PE_BASE_URL + 'getFunds/';
     private PE_FIRM_SEARCH_URL = this.PE_BASE_URL + "search/";
     private PE_FIRM_LIST_URL = this.PE_BASE_URL + "all/";
     private PE_FIRM_LOGO_URL = this.PE_BASE_URL + "logo/"
@@ -35,6 +36,12 @@ export class PEFirmService extends CommonService {
 
     get(id): Observable<PEFirm> {
         return this.http.get(this.PE_FIRM_GET_URL + id, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    loadFirmFunds(id) {
+        return this.http.get(this.PE_FIRM_FUNDS_GET_URL + id, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }

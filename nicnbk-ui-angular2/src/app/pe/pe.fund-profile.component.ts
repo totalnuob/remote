@@ -331,7 +331,20 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
 
     getFunds() {
         console.log('All funds have been downloaded');
-        this.fundService.
+        this.busy = this.firmService.loadFirmFunds(this.fund.firm.id)
+            .subscribe(
+                (response) => {
+                    console.log(response);
+                },
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading firm funds";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                        console.log(error);
+                    }
+                    this.postAction(null, null);
+                }
+            )
     }
 
     updateIndustryStrategyGeographyAsStrings() {
