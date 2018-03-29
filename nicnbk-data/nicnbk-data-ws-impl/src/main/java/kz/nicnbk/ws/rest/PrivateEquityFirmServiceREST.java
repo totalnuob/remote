@@ -69,8 +69,6 @@ public class PrivateEquityFirmServiceREST extends CommonServiceREST{
     @RequestMapping(value = "/getTotalIrrForOnePager/{id}", method = RequestMethod.GET)
     public ResponseEntity getTotalIrrForOnePager(@PathVariable long id){
 
-        Double totalIrr = null;
-
         List<PEFundDto> fundDtoList = this.peFundService.loadFirmFunds(id, false);
         List<PEFundDto> fundDtoListShort = new ArrayList<>();
         boolean areAllKeyFundStatisticsCalculatedByGrossCF = true;
@@ -87,16 +85,12 @@ public class PrivateEquityFirmServiceREST extends CommonServiceREST{
             }
 
             if (areAllKeyFundStatisticsCalculatedByGrossCF) {
-                totalIrr  = irrService.getIrrByFundList(fundDtoListShort);
+                double totalIrr  = irrService.getIrrByFundList(fundDtoListShort);
+                return new ResponseEntity<>(totalIrr, null, HttpStatus.OK);
             }
         }
 
-        if(totalIrr != null){
-            return new ResponseEntity<>(totalIrr, null, HttpStatus.OK);
-        }else{
-            // error occurred
-            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
