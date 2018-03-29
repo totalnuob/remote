@@ -352,10 +352,12 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     this.totalGrossIrr = null;
 
                     this.firmFunds.forEach(element => {
-                        this.totalNumberOfInvestments += (element.numberOfInvestments != null) ? element.numberOfInvestments : 0;
-                        this.totalInvested += (element.investedAmount != null) ? element.investedAmount : 0;
-                        this.totalRealized += (element.realized != null) ? element.realized : 0;
-                        this.totalUnrealized += (element.unrealized != null) ? element.unrealized : 0;
+                        if (element.doNotDisplayInOnePager == null || element.doNotDisplayInOnePager == false) {
+                            this.totalNumberOfInvestments += (element.numberOfInvestments != null) ? element.numberOfInvestments : 0;
+                            this.totalInvested += (element.investedAmount != null) ? element.investedAmount : 0;
+                            this.totalRealized += (element.realized != null) ? element.realized : 0;
+                            this.totalUnrealized += (element.unrealized != null) ? element.unrealized : 0;
+                        }
                     })
 
                     if (this.totalInvested != 0.0) {
