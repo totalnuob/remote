@@ -351,17 +351,26 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     this.totalGrossMOIC = null;
                     this.totalGrossIrr = null;
 
+                    var areAllKeyFundStatisticsCalculatedByGrossCF = true;
+
                     this.firmFunds.forEach(element => {
                         if (element.doNotDisplayInOnePager == null || element.doNotDisplayInOnePager == false) {
                             this.totalNumberOfInvestments += (element.numberOfInvestments != null) ? element.numberOfInvestments : 0;
                             this.totalInvested += (element.investedAmount != null) ? element.investedAmount : 0;
                             this.totalRealized += (element.realized != null) ? element.realized : 0;
                             this.totalUnrealized += (element.unrealized != null) ? element.unrealized : 0;
+                            if (element.calculationType == null || element.calculationType !=2) {
+                                areAllKeyFundStatisticsCalculatedByGrossCF = false;
+                            }
                         }
                     })
 
                     if (this.totalInvested != 0.0) {
                         this.totalGrossMOIC = (this.totalRealized + this.totalUnrealized) / this.totalInvested;
+                    }
+
+                    if (areAllKeyFundStatisticsCalculatedByGrossCF) {
+                        this.totalGrossIrr  = irrService.getIrrByFundList(fundDtoList);
                     }
                 },
                 (error: ErrorResponse) => {
