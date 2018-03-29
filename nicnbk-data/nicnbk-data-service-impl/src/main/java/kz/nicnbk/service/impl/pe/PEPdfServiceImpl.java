@@ -35,6 +35,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -540,6 +541,8 @@ public class PEPdfServiceImpl implements PEPdfService {
         table.addHeaderCell(new Cell().add(new Paragraph("Net MOIC").setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addHeaderCell(new Cell().add(new Paragraph("Net IRR").setMultipliedLeading(lineSpacingMultiplier).setBold()));
 
+        List<PEFundDto> fundDtoListShort = new ArrayList<>();
+
         for (PEFundDto fundDto : fundDtoList) {
 
             if (fundDto.getDoNotDisplayInOnePager() != null && fundDto.getDoNotDisplayInOnePager()) {continue;}
@@ -552,6 +555,8 @@ public class PEPdfServiceImpl implements PEPdfService {
             if (fundDto.getCalculationType() == null || fundDto.getCalculationType() !=2) {
                 areAllKeyFundStatisticsCalculatedByGrossCF = false;
             }
+
+            fundDtoListShort.add(fundDto);
 
             table.addCell(new Cell().add(new Paragraph(unNullifierToEmptyString(fundDto.getFundName())).setMultipliedLeading(lineSpacingMultiplier)));
             table.addCell(new Cell().add(new Paragraph(Integer.toString(fundDto.getVintage())).setMultipliedLeading(lineSpacingMultiplier)));
@@ -570,7 +575,7 @@ public class PEPdfServiceImpl implements PEPdfService {
             totalGrossMOIC = (totalRealized + totalUnrealized) / totalInvested;
         }
         if (areAllKeyFundStatisticsCalculatedByGrossCF) {
-            totalGrossIrr  = irrService.getIrrByFundList(fundDtoList);
+            totalGrossIrr  = irrService.getIrrByFundList(fundDtoListShort);
         }
 
         table.addCell(new Cell().add(new Paragraph("Total").setMultipliedLeading(lineSpacingMultiplier).setBold()));
