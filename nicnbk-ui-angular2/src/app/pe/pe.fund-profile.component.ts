@@ -229,6 +229,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                     if (this.fund.firm.logoNIC != null) {
                                         this.url_NIC = "data:" + this.fund.firm.logoNIC.mimeType + ";base64," + this.fund.firm.logoNIC.bytes;
                                     }
+
+                                    this.getFunds();
                                 }else{
                                     // TODO: handle error
                                     this.errorMessage = "Error loading fund manager info.";
@@ -243,7 +245,6 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                 this.postAction(null, null);
                             }
                         );
-                    this.getFunds();
                 }else{
                     // TODO: handle error
                     error => this.errorMessage = "Invalid parameter values";
@@ -330,7 +331,6 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     }
 
     getFunds() {
-        console.log('All funds have been downloaded');
         this.busy = this.firmService.loadFirmFunds(this.fund.firm.id)
             .subscribe(
                 (response) => {
