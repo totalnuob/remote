@@ -85,6 +85,10 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     performanceSaveTypeMessage: string;
     grossCashFlowSaveTypeMessage: string;
 
+    industryAsString: string;
+    strategyAsString: string;
+    geographyAsString: string;
+
     public dataForOnePager = new PEFundDataForOnePager();
 
     private moduleAccessChecker: ModuleAccessCheckerService;
@@ -190,6 +194,9 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                     if(this.fund.netCashflow == null){
                                         this.fund.netCashflow = [];
                                     }
+
+                                    this.updateIndustryStrategyGeographyAsStrings();
+
                                 }else{
                                     // TODO: handle error
                                     this.errorMessage = "Error loading fund profile.";
@@ -305,6 +312,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     this.updateSaveTypeMessage();
 
                     this.postAction("Successfully saved.", null);
+
+                    this.updateIndustryStrategyGeographyAsStrings();
                 },
                 (error: ErrorResponse) => {
                     this.errorMessage = "Error saving fund profile";
@@ -315,6 +324,35 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     this.postAction(null, null);
                 }
             )
+    }
+
+    updateIndustryStrategyGeographyAsStrings() {
+        this.industryAsString = '';
+        for (var i = 0; i < this.fund.industry.length; i++) {
+            if (this.industryAsString === '') {
+                this.industryAsString = this.fund.industry[i].nameEn;
+            } else {
+                this.industryAsString += ', ' + this.fund.industry[i].nameEn;
+            }
+        }
+
+        this.strategyAsString = '';
+        for (var i = 0; i < this.fund.strategy.length; i++) {
+            if (this.strategyAsString === '') {
+                this.strategyAsString = this.fund.strategy[i].nameEn;
+            } else {
+                this.strategyAsString += ', ' + this.fund.strategy[i].nameEn;
+            }
+        }
+
+        this.geographyAsString = '';
+        for (var i = 0; i < this.fund.geography.length; i++) {
+            if (this.geographyAsString === '') {
+                this.geographyAsString = this.fund.geography[i].nameEn;
+            } else {
+                this.geographyAsString += ', ' + this.fund.geography[i].nameEn;
+            }
+        }
     }
 
     updateSaveTypeMessage() {
