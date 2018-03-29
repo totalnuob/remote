@@ -330,7 +330,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     }
 
     getFunds() {
-        //this.firmService.getFunds
+        console.log('All funds have been downloaded');
     }
 
     updateIndustryStrategyGeographyAsStrings() {
