@@ -339,10 +339,10 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     }
 
     getFunds(id) {
-        this.firmService.loadFirmFunds(id)
+        this.firmService.getFundsAndTotalIrrForOnePager(id)
             .subscribe(
                 (response) => {
-                    this.firmFunds = response;
+                    this.firmFunds = response.fundDtoList;
 
                     this.totalNumberOfInvestments = 0;
                     this.totalInvested = 0.0;
@@ -351,17 +351,12 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     this.totalGrossMOIC = null;
                     this.totalGrossIrr = null;
 
-                    var areAllKeyFundStatisticsCalculatedByGrossCF = true;
-
                     this.firmFunds.forEach(element => {
                         if (element.doNotDisplayInOnePager == null || element.doNotDisplayInOnePager == false) {
                             this.totalNumberOfInvestments += (element.numberOfInvestments != null) ? element.numberOfInvestments : 0;
                             this.totalInvested += (element.investedAmount != null) ? element.investedAmount : 0;
                             this.totalRealized += (element.realized != null) ? element.realized : 0;
                             this.totalUnrealized += (element.unrealized != null) ? element.unrealized : 0;
-                            if (element.calculationType == null || element.calculationType !=2) {
-                                areAllKeyFundStatisticsCalculatedByGrossCF = false;
-                            }
                         }
                     })
 
@@ -369,22 +364,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                         this.totalGrossMOIC = (this.totalRealized + this.totalUnrealized) / this.totalInvested;
                     }
 
-                    if (areAllKeyFundStatisticsCalculatedByGrossCF) {
-                        this.firmService.getTotalIrrForOnePager(id)
-                            .subscribe(
-                                (response) => {
-                                    this.totalGrossIrr = response;
-                                },
-                                (error: ErrorResponse) => {
-                                    this.errorMessage = "Error loading firm funds total irr for one pager";
-                                    if(error && !error.isEmpty()){
-                                        this.processErrorMessage(error);
-                                        console.log(error);
-                                    }
-                                    this.postAction(null, null);
-                                }
-                            )
-                    }
+                    this.totalGrossIrr = response.totalIrr;
+
                 },
                 (error: ErrorResponse) => {
                     this.errorMessage = "Error loading firm funds";

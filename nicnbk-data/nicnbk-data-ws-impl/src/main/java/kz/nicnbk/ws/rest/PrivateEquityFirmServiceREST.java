@@ -4,11 +4,9 @@ import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.pe.PEFirmService;
 import kz.nicnbk.service.api.pe.PEFundService;
 import kz.nicnbk.service.api.pe.PEIrrService;
+import kz.nicnbk.service.dto.common.StatusResultType;
 import kz.nicnbk.service.dto.files.FilesDto;
-import kz.nicnbk.service.dto.pe.PEFirmDto;
-import kz.nicnbk.service.dto.pe.PEFundDto;
-import kz.nicnbk.service.dto.pe.PEPagedSearchResult;
-import kz.nicnbk.service.dto.pe.PESearchParams;
+import kz.nicnbk.service.dto.pe.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -53,23 +51,23 @@ public class PrivateEquityFirmServiceREST extends CommonServiceREST{
         }
     }
 
-    @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_VIEWER') OR hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
-    @RequestMapping(value = "/getFunds/{id}", method = RequestMethod.GET)
-    public ResponseEntity getFunds(@PathVariable long id){
-        List<PEFundDto> fundDtoList = this.peFundService.loadFirmFunds(id, false);
-        if(fundDtoList != null){
-            return new ResponseEntity<>(fundDtoList, null, HttpStatus.OK);
-        }else{
-            // error occurred
-            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+//    @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_VIEWER') OR hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
+//    @RequestMapping(value = "/getFunds/{id}", method = RequestMethod.GET)
+//    public ResponseEntity getFunds(@PathVariable long id){
+//        List<PEFundDto> fundDtoList = this.peFundService.loadFirmFunds(id, false);
+//        if(fundDtoList != null){
+//            return new ResponseEntity<>(fundDtoList, null, HttpStatus.OK);
+//        }else{
+//            // error occurred
+//            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
 
     @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_VIEWER') OR hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
-    @RequestMapping(value = "/getTotalIrrForOnePager/{id}", method = RequestMethod.GET)
-    public ResponseEntity getTotalIrrForOnePager(@PathVariable long id){
+    @RequestMapping(value = "/getFundsAndTotalIrrForOnePager/{id}", method = RequestMethod.GET)
+    public ResponseEntity getFundsAndTotalIrrForOnePager(@PathVariable long id){
 
-        List<PEFundDto> fundDtoList = this.peFundService.loadFirmFunds(id, false);
+        List<PEFundDto> fundDtoList = this.peFundService.loadFirmFunds(id, true);
         List<PEFundDto> fundDtoListShort = new ArrayList<>();
         boolean areAllKeyFundStatisticsCalculatedByGrossCF = true;
 
@@ -84,10 +82,16 @@ public class PrivateEquityFirmServiceREST extends CommonServiceREST{
                 fundDtoListShort.add(fundDto);
             }
 
+            PEFirmFundsAndTotalIrrResultDto resultDto;
+
             if (areAllKeyFundStatisticsCalculatedByGrossCF) {
                 double totalIrr  = irrService.getIrrByFundList(fundDtoListShort);
-                return new ResponseEntity<>(totalIrr, null, HttpStatus.OK);
+                resultDto = new PEFirmFundsAndTotalIrrResultDto(fundDtoList, totalIrr, StatusResultType.SUCCESS, "", "SUCCESS", "");
+            } else {
+                resultDto = new PEFirmFundsAndTotalIrrResultDto(fundDtoList, null, StatusResultType.SUCCESS, "", "SUCCESS", "");
             }
+
+            return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
         }
 
         return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
