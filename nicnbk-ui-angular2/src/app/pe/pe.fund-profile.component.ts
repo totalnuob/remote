@@ -463,6 +463,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     this.fund.benchmarkName = response.trackRecordDTO.benchmarkName;
 
                     //this.fund.autoCalculation = true;
+
+                    this.getFunds(this.fund.firm.id);
                 },
                 (error: ErrorResponse) => {
                     this.processErrorMessage(error);
@@ -671,6 +673,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     this.fund.benchmarkNetIrr = response.trackRecordDTO.benchmarkNetIrr;
                     this.fund.benchmarkNetTvpi = response.trackRecordDTO.benchmarkNetTvpi;
                     this.fund.benchmarkName = response.trackRecordDTO.benchmarkName;
+
+                    this.getFunds(this.fund.firm.id);
                 },
                 (error: ErrorResponse) => {
                     this.processErrorMessage(error);
