@@ -370,7 +370,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     }
 
                     if (areAllKeyFundStatisticsCalculatedByGrossCF) {
-                        this.totalGrossIrr  = irrService.getIrrByFundList(fundDtoList);
+                        //this.totalGrossIrr  = irrService.getIrrByFundList(fundDtoList);
                     }
                 },
                 (error: ErrorResponse) => {
