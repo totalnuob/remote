@@ -89,6 +89,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     strategyAsString: string;
     geographyAsString: string;
 
+    public firmFunds: Array<any> = [];
+
     public dataForOnePager = new PEFundDataForOnePager();
 
     private moduleAccessChecker: ModuleAccessCheckerService;
@@ -330,10 +332,10 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     }
 
     getFunds(id) {
-        this.busy = this.firmService.loadFirmFunds(id)
+        this.firmService.loadFirmFunds(id)
             .subscribe(
                 (response) => {
-                    console.log(response);
+                    this.firmFunds = response;
                 },
                 (error: ErrorResponse) => {
                     this.errorMessage = "Error loading firm funds";

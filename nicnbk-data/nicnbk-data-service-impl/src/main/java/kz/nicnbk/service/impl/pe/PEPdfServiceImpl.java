@@ -542,7 +542,7 @@ public class PEPdfServiceImpl implements PEPdfService {
 
         for (PEFundDto fundDto : fundDtoList) {
 
-            if (fundDto.getDoNotDisplayInOnePager() != null && fundDto.getDoNotDisplayInOnePager() == true) {continue;}
+            if (fundDto.getDoNotDisplayInOnePager() != null && fundDto.getDoNotDisplayInOnePager()) {continue;}
 
             totalNumberOfInvestments += unNullifierToZero(fundDto.getNumberOfInvestments());
             totalInvested += unNullifierToZero(fundDto.getInvestedAmount());
