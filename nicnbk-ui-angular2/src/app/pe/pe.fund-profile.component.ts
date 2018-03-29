@@ -370,7 +370,20 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     }
 
                     if (areAllKeyFundStatisticsCalculatedByGrossCF) {
-                        //this.totalGrossIrr  = irrService.getIrrByFundList(fundDtoList);
+                        this.firmService.getTotalIrrForOnePager(id)
+                            .subscribe(
+                                (response) => {
+                                    this.totalGrossIrr = response;
+                                },
+                                (error: ErrorResponse) => {
+                                    this.errorMessage = "Error loading firm funds total irr for one pager";
+                                    if(error && !error.isEmpty()){
+                                        this.processErrorMessage(error);
+                                        console.log(error);
+                                    }
+                                    this.postAction(null, null);
+                                }
+                            )
                     }
                 },
                 (error: ErrorResponse) => {

@@ -60,6 +60,18 @@ public class PrivateEquityFirmServiceREST extends CommonServiceREST{
         }
     }
 
+    @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_VIEWER') OR hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/getTotalIrrForOnePager/{id}", method = RequestMethod.GET)
+    public ResponseEntity getTotalIrrForOnePager(@PathVariable long id){
+        Double totalIrr = 1.0;
+        if(totalIrr != null){
+            return new ResponseEntity<>(totalIrr, null, HttpStatus.OK);
+        }else{
+            // error occurred
+            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public ResponseEntity<?> save(@RequestBody PEFirmDto firmDto){

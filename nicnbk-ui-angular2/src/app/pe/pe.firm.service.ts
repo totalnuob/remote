@@ -18,6 +18,7 @@ export class PEFirmService extends CommonService {
     private PE_FIRM_LIST_URL = this.PE_BASE_URL + "all/";
     private PE_FIRM_LOGO_URL = this.PE_BASE_URL + "logo/"
     private PE_FIRM_LOGO_UPLOAD_URL = this.PE_FIRM_LOGO_URL + "upload/";
+    private PE_FIRM_TOTAL_IRR_FOR_ONE_PAGER_URL = this.PE_BASE_URL + "getTotalIrrForOnePager/";
 
     constructor(
         private uploadService: FileUploadService,
@@ -42,6 +43,12 @@ export class PEFirmService extends CommonService {
 
     loadFirmFunds(id) {
         return this.http.get(this.PE_FIRM_FUNDS_GET_URL + id, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    getTotalIrrForOnePager(id) {
+        return this.http.get(this.PE_FIRM_TOTAL_IRR_FOR_ONE_PAGER_URL + id, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }
