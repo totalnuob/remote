@@ -331,6 +331,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
 
     getFunds() {
         console.log('All funds have been downloaded');
+        this.fundService.
     }
 
     updateIndustryStrategyGeographyAsStrings() {

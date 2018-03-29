@@ -33,12 +33,12 @@ export class PEFundService extends CommonService {
     }
 
     save(entity){
-    let body = JSON.stringify(entity);
+        let body = JSON.stringify(entity);
 
-    return this.http.post(this.PE_FUND_SAVE_URL, body, this.getOptionsWithCredentials())
-        .map(this.extractData)
-        .catch(this.handleErrorResponse);
-}
+        return this.http.post(this.PE_FUND_SAVE_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
 
     //savePerformance(entity, id) {
     //    let body = JSON.stringify(entity);
