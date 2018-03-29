@@ -243,6 +243,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                 this.postAction(null, null);
                             }
                         );
+                    this.getFunds();
                 }else{
                     // TODO: handle error
                     error => this.errorMessage = "Invalid parameter values";
@@ -314,6 +315,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     this.postAction("Successfully saved.", null);
 
                     this.updateIndustryStrategyGeographyAsStrings();
+
+                    this.getFunds();
                 },
                 (error: ErrorResponse) => {
                     this.errorMessage = "Error saving fund profile";
@@ -324,6 +327,10 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     this.postAction(null, null);
                 }
             )
+    }
+
+    getFunds() {
+        //this.firmService.getFunds
     }
 
     updateIndustryStrategyGeographyAsStrings() {
