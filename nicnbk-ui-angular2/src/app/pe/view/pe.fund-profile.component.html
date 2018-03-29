@@ -43,7 +43,7 @@
                     <li>
                         <a data-toggle="tab" href="#performanceFund">PERFORMANCE</a>
                     </li>
-                    <li>
+                    <li *ngIf="fund.id != 0 && fund.id != null">
                         <a data-toggle="tab" href="#createOnePager">CREATE ONE PAGER</a>
                     </li>
                 </ul>
