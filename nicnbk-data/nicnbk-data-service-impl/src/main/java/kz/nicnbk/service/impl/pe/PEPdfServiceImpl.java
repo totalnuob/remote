@@ -455,6 +455,7 @@ public class PEPdfServiceImpl implements PEPdfService {
 
     private void addGreenTitle(Table table, String title, Float width) {
         table.addCell(new Cell()
+                .setBorder(Border.NO_BORDER)
                 .setWidth(width)
                 .add(new Paragraph(unNullifierToEmptyString(title)).setMultipliedLeading(lineSpacingMultiplier))
                 .setBackgroundColor(greenColor)
@@ -470,10 +471,12 @@ public class PEPdfServiceImpl implements PEPdfService {
 
     private void addDoubleWhiteTitle(Table table, String title1, String title2, Float width) {
         table.addCell(new Cell()
+                .setBorder(Border.NO_BORDER)
                 .setWidth(width / 2)
                 .add(new Paragraph(unNullifierToEmptyString(title1)).setMultipliedLeading(lineSpacingMultiplier).setBold())
                 .setTextAlignment(TextAlignment.CENTER));
         table.addCell(new Cell()
+                .setBorder(Border.NO_BORDER)
                 .setWidth(width / 2)
                 .add(new Paragraph(unNullifierToEmptyString(title2)).setMultipliedLeading(lineSpacingMultiplier).setBold())
                 .setTextAlignment(TextAlignment.CENTER));
@@ -610,8 +613,8 @@ public class PEPdfServiceImpl implements PEPdfService {
     private void addMeritsRisks(Table table, List<PEOnePagerDescriptionsDto> descriptionsDtoListMerits, List<PEOnePagerDescriptionsDto> descriptionsDtoListRisks, Float width, Float fontSize) {
         table.setFontSize(fontSize);
 
-        Cell cellMerits = new Cell().setWidth(width / 2);
-        Cell cellRisks = new Cell().setWidth(width / 2);
+        Cell cellMerits = new Cell().setBorder(Border.NO_BORDER).setWidth(width / 2);
+        Cell cellRisks = new Cell().setBorder(Border.NO_BORDER).setWidth(width / 2);
 
         if (descriptionsDtoListMerits != null) {
             for (PEOnePagerDescriptionsDto descriptionsDto : descriptionsDtoListMerits) {
@@ -676,16 +679,16 @@ public class PEPdfServiceImpl implements PEPdfService {
 
     private void addFundStrategy(Table table, String strategy, Float width, Float fontSize) {
         table.setFontSize(fontSize);
-        table.addCell(new Cell().add(new Paragraph().add(strategy).setMultipliedLeading(lineSpacingMultiplierText)).setWidth(width));
+        table.addCell(new Cell().setBorder(Border.NO_BORDER).add(new Paragraph().add(strategy).setMultipliedLeading(lineSpacingMultiplierText)).setWidth(width));
     }
 
     private void addTwoColumns(Table table, List<PEOnePagerDescriptionsDto> descriptionsDtoList, Float width) {
         table.setWidth(width);
 
         for (PEOnePagerDescriptionsDto descriptionsDto : descriptionsDtoList) {
-            table.addCell(new Cell().add(new Paragraph(
+            table.addCell(new Cell().setBorder(Border.NO_BORDER).add(new Paragraph(
                             unNullifierToEmptyString(descriptionsDto.getDescriptionBold())).setMultipliedLeading(lineSpacingMultiplier).setBold()));
-            table.addCell(new Cell().add(new Paragraph(
+            table.addCell(new Cell().setBorder(Border.NO_BORDER).add(new Paragraph(
                             unNullifierToEmptyString(descriptionsDto.getDescription())).setMultipliedLeading(lineSpacingMultiplier)));
         }
     }
@@ -693,34 +696,34 @@ public class PEPdfServiceImpl implements PEPdfService {
     private void addDescriptiveData(Table table, PEFundDto fundDto, Float width) {
         table.setWidth(width);
 
-        table.addCell(new Cell().add(new Paragraph(
+        table.addCell(new Cell().setBorder(Border.NO_BORDER).add(new Paragraph(
                 unNullifierToEmptyString("Investm. period (yrs)")).setMultipliedLeading(lineSpacingMultiplier).setBold()));
-        table.addCell(new Cell().add(new Paragraph(
+        table.addCell(new Cell().setBorder(Border.NO_BORDER).add(new Paragraph(
                 unNullifierToEmptyString(fundDto.getInvestmentPeriod())).setMultipliedLeading(lineSpacingMultiplier)));
 
-        table.addCell(new Cell().add(new Paragraph(
+        table.addCell(new Cell().setBorder(Border.NO_BORDER).add(new Paragraph(
                 unNullifierToEmptyString("Fund Term (yrs)")).setMultipliedLeading(lineSpacingMultiplier).setBold()));
-        table.addCell(new Cell().add(new Paragraph(
+        table.addCell(new Cell().setBorder(Border.NO_BORDER).add(new Paragraph(
                 unNullifierToEmptyString(fundDto.getFundTermComment())).setMultipliedLeading(lineSpacingMultiplier)));
 
-        table.addCell(new Cell().add(new Paragraph(
+        table.addCell(new Cell().setBorder(Border.NO_BORDER).add(new Paragraph(
                 unNullifierToEmptyString("Target Inv. Size (mln)")).setMultipliedLeading(lineSpacingMultiplier).setBold()));
-        table.addCell(new Cell().add(new Paragraph(
+        table.addCell(new Cell().setBorder(Border.NO_BORDER).add(new Paragraph(
                 unNullifierToEmptyString(fundDto.getTargetInvSizeRange())).setMultipliedLeading(lineSpacingMultiplier)));
 
-        table.addCell(new Cell().add(new Paragraph(
+        table.addCell(new Cell().setBorder(Border.NO_BORDER).add(new Paragraph(
                 unNullifierToEmptyString("Target EV Range (mln)")).setMultipliedLeading(lineSpacingMultiplier).setBold()));
-        table.addCell(new Cell().add(new Paragraph(
+        table.addCell(new Cell().setBorder(Border.NO_BORDER).add(new Paragraph(
                 unNullifierToEmptyString(fundDto.getTargetEvRange())).setMultipliedLeading(lineSpacingMultiplier)));
 
-        table.addCell(new Cell().add(new Paragraph(
+        table.addCell(new Cell().setBorder(Border.NO_BORDER).add(new Paragraph(
                 unNullifierToEmptyString("Target # of Inv.")).setMultipliedLeading(lineSpacingMultiplier).setBold()));
-        table.addCell(new Cell().add(new Paragraph(
+        table.addCell(new Cell().setBorder(Border.NO_BORDER).add(new Paragraph(
                 mlnFormat(fundDto.getTargetNumberOfInv1())).setMultipliedLeading(lineSpacingMultiplier)));
 
-        table.addCell(new Cell().add(new Paragraph(
+        table.addCell(new Cell().setBorder(Border.NO_BORDER).add(new Paragraph(
                 unNullifierToEmptyString("Exp Hold Period per Inv. (yrs)")).setMultipliedLeading(lineSpacingMultiplier).setBold()));
-        table.addCell(new Cell().add(new Paragraph(
+        table.addCell(new Cell().setBorder(Border.NO_BORDER).add(new Paragraph(
                 unNullifierToEmptyString(fundDto.getExpHoldPeriodPerInvestment())).setMultipliedLeading(lineSpacingMultiplier)));
     }
 
@@ -740,14 +743,14 @@ public class PEPdfServiceImpl implements PEPdfService {
 //            finalClose = "??/??/????";
 //        }
 
-        table.addCell(new Cell().add(new Paragraph(
+        table.addCell(new Cell().setBorder(Border.NO_BORDER).add(new Paragraph(
                 unNullifierToEmptyString("First Close")).setMultipliedLeading(lineSpacingMultiplier).setBold()));
-        table.addCell(new Cell().add(new Paragraph(
+        table.addCell(new Cell().setBorder(Border.NO_BORDER).add(new Paragraph(
                 unNullifierToEmptyString(fundDto.getFirstCloseComment())).setMultipliedLeading(lineSpacingMultiplier)));
 
-        table.addCell(new Cell().add(new Paragraph(
+        table.addCell(new Cell().setBorder(Border.NO_BORDER).add(new Paragraph(
                 unNullifierToEmptyString("Final Close")).setMultipliedLeading(lineSpacingMultiplier).setBold()));
-        table.addCell(new Cell().add(new Paragraph(
+        table.addCell(new Cell().setBorder(Border.NO_BORDER).add(new Paragraph(
                 unNullifierToEmptyString(fundDto.getFinalCloseComment())).setMultipliedLeading(lineSpacingMultiplier)));
     }
 
@@ -774,7 +777,7 @@ public class PEPdfServiceImpl implements PEPdfService {
                 list.add(new ListItem(managementTeamDto.getEducation()));
             }
 
-            table.addCell(new Cell().add(p).add(list));
+            table.addCell(new Cell().setBorder(Border.NO_BORDER).add(p).add(list));
         }
     }
 
