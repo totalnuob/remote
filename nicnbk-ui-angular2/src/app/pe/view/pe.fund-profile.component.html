@@ -1431,58 +1431,132 @@
                                             </div>
                                         </table>
                                         <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
-                                            <tr>
-                                                <th>Name</th>
-                                                <th>Position</th>
-                                                <th>Age</th>
-                                                <th>Experience</th>
-                                                <th>Education</th>
-                                                <th></th>
-                                            </tr>
-                                            <tr *ngFor="let item of fund.managementTeam">
-                                                <td>
-                                                    <input style="font-size: small" type="text" class="form-control" name="name" [(ngModel)]="item.name" placeholder="-" #name="ngModel"/>
-                                                    <div [hidden]="name.valid || name.pristine" class="alert alert-danger">
-                                                        Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <input style="font-size: small" type="text" class="form-control" name="position" [(ngModel)]="item.position" placeholder="-" #position="ngModel"/>
-                                                    <div [hidden]="position.valid || position.pristine" class="alert alert-danger">
-                                                        Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <input style="font-size: small" type="text" class="form-control" name="age" [(ngModel)]="item.age" placeholder="-" pattern="[-]?[0-9]*\.?[0-9]+" #age="ngModel"/>
-                                                    <div [hidden]="age.valid || age.pristine" class="alert alert-danger">
-                                                        Only number could be entered
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <textarea style="font-size: small" fz-elastic spellcheck="false"  class="form-control" name="experience" [(ngModel)]="item.experience"></textarea>
-                                                    <!--<input type="text" class="form-control" name="experience" [(ngModel)]="item.experience" placeholder="-" #experience="ngModel"/>-->
-                                                    <!--<div [hidden]="experience.valid || experience.pristine" class="alert alert-danger">-->
-                                                    <!--Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'-->
+                                            <!--<div>-->
+                                                <!--<tr>-->
+                                                    <!--<th>Name</th>-->
+                                                <!--</tr>-->
+                                                <!--<tr>-->
+                                                    <!--<th>Position</th>-->
+                                                <!--</tr>-->
+                                                <!--<tr>-->
+                                                    <!--<th>Age</th>-->
+                                                <!--</tr>-->
+                                                <!--<tr>-->
+                                                    <!--<th>Experience</th>-->
+                                                <!--</tr>-->
+                                                <!--<tr>-->
+                                                    <!--<th>Education</th>-->
+                                                <!--</tr>-->
+                                            <!--</div>-->
+                                            <div *ngFor="let item of fund.managementTeam">
+                                                <tr>
+                                                    <td>
+                                                        <input style="font-size: small" type="text" class="form-control" name="name" [(ngModel)]="item.name" placeholder="Name" #name="ngModel"/>
+                                                        <div [hidden]="name.valid || name.pristine" class="alert alert-danger">
+                                                            Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <input style="font-size: small" type="text" class="form-control" name="position" [(ngModel)]="item.position" placeholder="Position" #position="ngModel"/>
+                                                        <div [hidden]="position.valid || position.pristine" class="alert alert-danger">
+                                                            Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <input style="font-size: small" type="text" class="form-control" name="age" [(ngModel)]="item.age" placeholder="Age" pattern="[-]?[0-9]*\.?[0-9]+" #age="ngModel"/>
+                                                        <div [hidden]="age.valid || age.pristine" class="alert alert-danger">
+                                                            Only number could be entered
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRowManagementTeam(item)">
+                                                            <span class="glyphicon glyphicon-minus"></span>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <textarea style="font-size: small" fz-elastic spellcheck="false" placeholder="Experience" class="form-control" name="experience" [(ngModel)]="item.experience"></textarea>
+                                                        <!--<input type="text" class="form-control" name="experience" [(ngModel)]="item.experience" placeholder="-" #experience="ngModel"/>-->
+                                                        <!--<div [hidden]="experience.valid || experience.pristine" class="alert alert-danger">-->
+                                                        <!--Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'-->
+                                                        <!--</div>-->
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <textarea style="font-size: small" fz-elastic spellcheck="false" placeholder="Education" class="form-control" name="education" [(ngModel)]="item.education"></textarea>
+                                                        <!--<input type="text" class="form-control" name="education" [(ngModel)]="item.education" placeholder="-" #education="ngModel"/>-->
+                                                        <!--<div [hidden]="education.valid || education.pristine" class="alert alert-danger">-->
+                                                        <!--Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'-->
+                                                        <!--</div>-->
+                                                    </td>
+                                                </tr>
+                                                <br>
+                                                <!--<tr>-->
+                                                    <!--<td>-->
+                                                        <!--<button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRowManagementTeam(item)">-->
+                                                            <!--<span class="glyphicon glyphicon-minus"></span>-->
+                                                        <!--</button>-->
+                                                    <!--</td>-->
+                                                <!--</tr>-->
+                                            </div>
+                                            <!--<tr>-->
+                                                <!--<th>Name</th>-->
+                                                <!--<th>Position</th>-->
+                                                <!--<th>Age</th>-->
+                                                <!--<th>Experience</th>-->
+                                                <!--<th>Education</th>-->
+                                                <!--<th></th>-->
+                                            <!--</tr>-->
+                                            <!--<tr *ngFor="let item of fund.managementTeam">-->
+                                                <!--<td>-->
+                                                    <!--<input style="font-size: small" type="text" class="form-control" name="name" [(ngModel)]="item.name" placeholder="-" #name="ngModel"/>-->
+                                                    <!--<div [hidden]="name.valid || name.pristine" class="alert alert-danger">-->
+                                                        <!--Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'-->
                                                     <!--</div>-->
-                                                </td>
+                                                <!--</td>-->
 
-                                                <td>
-                                                    <textarea style="font-size: small" fz-elastic spellcheck="false"  class="form-control" name="education" [(ngModel)]="item.education"></textarea>
-                                                    <!--<input type="text" class="form-control" name="education" [(ngModel)]="item.education" placeholder="-" #education="ngModel"/>-->
-                                                    <!--<div [hidden]="education.valid || education.pristine" class="alert alert-danger">-->
-                                                    <!--Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'-->
+                                                <!--<td>-->
+                                                    <!--<input style="font-size: small" type="text" class="form-control" name="position" [(ngModel)]="item.position" placeholder="-" #position="ngModel"/>-->
+                                                    <!--<div [hidden]="position.valid || position.pristine" class="alert alert-danger">-->
+                                                        <!--Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'-->
                                                     <!--</div>-->
-                                                </td>
+                                                <!--</td>-->
 
-                                                <td>
-                                                    <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRowManagementTeam(item)">
-                                                        <span class="glyphicon glyphicon-minus"></span>
-                                                    </button>
-                                                </td>
-                                            </tr>
+                                                <!--<td>-->
+                                                    <!--<input style="font-size: small" type="text" class="form-control" name="age" [(ngModel)]="item.age" placeholder="-" pattern="[-]?[0-9]*\.?[0-9]+" #age="ngModel"/>-->
+                                                    <!--<div [hidden]="age.valid || age.pristine" class="alert alert-danger">-->
+                                                        <!--Only number could be entered-->
+                                                    <!--</div>-->
+                                                <!--</td>-->
+
+                                                <!--<td>-->
+                                                    <!--<textarea style="font-size: small" fz-elastic spellcheck="false"  class="form-control" name="experience" [(ngModel)]="item.experience"></textarea>-->
+                                                    <!--&lt;!&ndash;<input type="text" class="form-control" name="experience" [(ngModel)]="item.experience" placeholder="-" #experience="ngModel"/>&ndash;&gt;-->
+                                                    <!--&lt;!&ndash;<div [hidden]="experience.valid || experience.pristine" class="alert alert-danger">&ndash;&gt;-->
+                                                    <!--&lt;!&ndash;Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'&ndash;&gt;-->
+                                                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                                                <!--</td>-->
+
+                                                <!--<td>-->
+                                                    <!--<textarea style="font-size: small" fz-elastic spellcheck="false"  class="form-control" name="education" [(ngModel)]="item.education"></textarea>-->
+                                                    <!--&lt;!&ndash;<input type="text" class="form-control" name="education" [(ngModel)]="item.education" placeholder="-" #education="ngModel"/>&ndash;&gt;-->
+                                                    <!--&lt;!&ndash;<div [hidden]="education.valid || education.pristine" class="alert alert-danger">&ndash;&gt;-->
+                                                    <!--&lt;!&ndash;Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'&ndash;&gt;-->
+                                                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                                                <!--</td>-->
+
+                                                <!--<td>-->
+                                                    <!--<button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRowManagementTeam(item)">-->
+                                                        <!--<span class="glyphicon glyphicon-minus"></span>-->
+                                                    <!--</button>-->
+                                                <!--</td>-->
+                                            <!--</tr>-->
                                             <div class="col-md-1 pull-left">
                                                 <button type="button" class="btn-xs btn-primary" *ngIf="canEdit()" (click)="addRowManagementTeam()">
                                                     <span class="glyphicon glyphicon-plus"></span>
