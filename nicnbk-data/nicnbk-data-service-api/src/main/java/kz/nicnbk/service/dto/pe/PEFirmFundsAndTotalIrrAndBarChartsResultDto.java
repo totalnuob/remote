@@ -12,11 +12,15 @@ public class PEFirmFundsAndTotalIrrAndBarChartsResultDto extends StatusResultDto
 
     private List<PEFundDto> fundDtoList;
     private Double totalIrr;
+    private byte[] barChartNetIrrBytes;
+    private byte[] barChartNetMoicBytes;
 
-    public PEFirmFundsAndTotalIrrAndBarChartsResultDto(List<PEFundDto> fundDtoList, Double totalIrr, StatusResultType status, String messageRu, String messageEn, String messageKz) {
+    public PEFirmFundsAndTotalIrrAndBarChartsResultDto(List<PEFundDto> fundDtoList, Double totalIrr, byte[] barChartNetIrrBytes, byte[] barChartNetMoicBytes, StatusResultType status, String messageRu, String messageEn, String messageKz) {
         super(status, messageRu, messageEn, messageKz);
         this.fundDtoList = fundDtoList;
         this.totalIrr = totalIrr;
+        this.barChartNetIrrBytes = barChartNetIrrBytes;
+        this.barChartNetMoicBytes = barChartNetMoicBytes;
     }
 
     public List<PEFundDto> getFundDtoList() {
@@ -33,5 +37,21 @@ public class PEFirmFundsAndTotalIrrAndBarChartsResultDto extends StatusResultDto
 
     public void setTotalIrr(Double totalIrr) {
         this.totalIrr = totalIrr;
+    }
+
+    public byte[] getBarChartNetIrrBytes() {
+        return barChartNetIrrBytes;
+    }
+
+    public void setBarChartNetIrrBytes(byte[] barChartNetIrrBytes) {
+        this.barChartNetIrrBytes = barChartNetIrrBytes;
+    }
+
+    public byte[] getBarChartNetMoicBytes() {
+        return barChartNetMoicBytes;
+    }
+
+    public void setBarChartNetMoicBytes(byte[] barChartNetMoicBytes) {
+        this.barChartNetMoicBytes = barChartNetMoicBytes;
     }
 }
