@@ -356,7 +356,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                         this.totalInvested += (element.investedAmount != null) ? element.investedAmount : 0;
                         this.totalRealized += (element.realized != null) ? element.realized : 0;
                         this.totalUnrealized += (element.unrealized != null) ? element.unrealized : 0;
-                    })
+                    });
 
                     if (this.totalInvested != 0.0) {
                         this.totalGrossMOIC = (this.totalRealized + this.totalUnrealized) / this.totalInvested;
