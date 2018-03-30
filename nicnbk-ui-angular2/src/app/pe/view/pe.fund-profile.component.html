@@ -983,7 +983,7 @@
                                                 <th>Net MOIC</th>
                                                 <th>Net IRR</th>
                                             </tr>
-                                            <tr *ngFor="let item of this.firmFunds" [hidden]="item.doNotDisplayInOnePager">
+                                            <tr *ngFor="let item of this.firmFunds">
                                                 <td>{{item.fundName}}</td>
                                                 <td>{{item.vintage}}</td>
                                                 <td>{{item.numberOfInvestments}}</td>
