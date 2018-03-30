@@ -252,7 +252,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                 this.postAction(null, null);
                             }
                         );
-                    this.getFunds(this.firmIdParam);
+                    this.getFundsAndTotalIrrForOnePager(this.firmIdParam);
                 }else{
                     // TODO: handle error
                     error => this.errorMessage = "Invalid parameter values";
@@ -325,7 +325,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
 
                     this.updateIndustryStrategyGeographyAsStrings();
 
-                    this.getFunds(this.fund.firm.id);
+                    this.getFundsAndTotalIrrForOnePager(this.fund.firm.id);
                 },
                 (error: ErrorResponse) => {
                     this.errorMessage = "Error saving fund profile";
@@ -338,7 +338,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
             )
     }
 
-    getFunds(id) {
+    getFundsAndTotalIrrForOnePager(id) {
         this.firmService.getFundsAndTotalIrrForOnePager(id)
             .subscribe(
                 (response) => {
@@ -456,7 +456,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
 
                     //this.fund.autoCalculation = true;
 
-                    this.getFunds(this.fund.firm.id);
+                    this.getFundsAndTotalIrrForOnePager(this.fund.firm.id);
                 },
                 (error: ErrorResponse) => {
                     this.processErrorMessage(error);
@@ -666,7 +666,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     this.fund.benchmarkNetTvpi = response.trackRecordDTO.benchmarkNetTvpi;
                     this.fund.benchmarkName = response.trackRecordDTO.benchmarkName;
 
-                    this.getFunds(this.fund.firm.id);
+                    this.getFundsAndTotalIrrForOnePager(this.fund.firm.id);
                 },
                 (error: ErrorResponse) => {
                     this.processErrorMessage(error);
