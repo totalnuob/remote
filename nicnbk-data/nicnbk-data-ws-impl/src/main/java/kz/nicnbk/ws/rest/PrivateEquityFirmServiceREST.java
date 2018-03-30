@@ -90,7 +90,7 @@ public class PrivateEquityFirmServiceREST extends CommonServiceREST{
             byte[] barChartNetIrrBytes = null;
             byte[] barChartNetMoicBytes = null;
             try {
-                this.pdfService.createCharts(firmDto.getFirmName(), fundDtoListShort, (fundDto.getBenchmarkName() != null && fundDto.getBenchmarkName() != "") ? fundDto.getBenchmarkName() : "????", barChartNetIrrDest, barChartNetMoicDest, columnOneWidth);
+//                this.pdfService.createCharts(firmDto.getFirmName(), fundDtoListShort, (fundDto.getBenchmarkName() != null && fundDto.getBenchmarkName() != "") ? fundDto.getBenchmarkName() : "????", barChartNetIrrDest, barChartNetMoicDest, columnOneWidth);
             } catch (Exception ex) {
                 System.out.println("Error creating Bar charts, firm: " + id);
             }
