@@ -1,6 +1,5 @@
 package kz.nicnbk.service.api.pe;
 
-import kz.nicnbk.service.dto.pe.PEFirmDto;
 import kz.nicnbk.service.dto.pe.PEFundDto;
 
 import java.io.InputStream;
