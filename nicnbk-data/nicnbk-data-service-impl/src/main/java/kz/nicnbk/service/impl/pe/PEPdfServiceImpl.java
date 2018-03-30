@@ -9,6 +9,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.ColumnDocumentRenderer;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.*;
 import com.itextpdf.layout.property.TextAlignment;
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
@@ -432,8 +433,8 @@ public class PEPdfServiceImpl implements PEPdfService {
     }
 
     private void addHeader(Table table, Boolean withLogos, PEFundDto fundDto, Float width, Float logoWidth, Float fontSize) {
-        Cell cellLogoGp = new Cell().setWidth(logoWidth);
-        Cell cellLogoNic = new Cell().setWidth(logoWidth);
+        Cell cellLogoGp = new Cell().setWidth(logoWidth).setBorder(Border.NO_BORDER);
+        Cell cellLogoNic = new Cell().setWidth(logoWidth).setBorder(Border.NO_BORDER);
         if (withLogos) {
             if (gpLogo != null) {
                 cellLogoGp.add(new Paragraph().add(gpLogo));
@@ -446,6 +447,7 @@ public class PEPdfServiceImpl implements PEPdfService {
                 .add(new Paragraph(unNullifierToEmptyString(fundDto.getFundName()))
                         .setBold()
                         .setFontSize(fontSize))
+                .setBorder(Border.NO_BORDER)
                 .setTextAlignment(TextAlignment.CENTER));
         table.addCell(cellLogoNic);
     }
