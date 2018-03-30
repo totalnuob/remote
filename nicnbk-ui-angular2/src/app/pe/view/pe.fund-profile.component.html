@@ -1016,10 +1016,20 @@
                                     <div class="col-md-8">
                                         <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
                                             <tr>
-                                                <!--<th>GP Merits (bold part)</th>-->
-                                                <th>GP Merits</th>
-                                                <th></th>
+                                                <th width="50%" bgcolor="#00cc00">Observations</th>
+                                                <th width="50%" bgcolor="#00cc00"></th>
                                             </tr>
+                                            <tr>
+                                                <th style="text-align: center">Merits</th>
+                                                <th style="text-align: center">Risks</th>
+                                            </tr>
+                                        </table>
+                                        <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
+                                            <tr>
+                                                <th style="text-align: center">General Partner</th>
+                                            </tr>
+                                        </table>
+                                        <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
                                             <tr *ngFor="let item of fund.onePagerDescriptions" [hidden]="item.type !=1">
                                                 <!--<td>-->
                                                 <!--<textarea fz-elastic spellcheck="false"  class="form-control" name="descriptionBold" [(ngModel)]="item.descriptionBold"></textarea>-->
@@ -1050,11 +1060,6 @@
                                             </div>
                                         </table>
                                         <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
-                                            <tr>
-                                                <!--<th>GP Risks (bold part)</th>-->
-                                                <th>GP Risks</th>
-                                                <th></th>
-                                            </tr>
                                             <tr *ngFor="let item of fund.onePagerDescriptions" [hidden]="item.type !=2">
                                                 <!--<td>-->
                                                 <!--<textarea fz-elastic spellcheck="false"  class="form-control" name="descriptionBold" [(ngModel)]="item.descriptionBold"></textarea>-->
@@ -1084,6 +1089,21 @@
                                                 </button>
                                             </div>
                                         </table>
+                                        <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
+                                            <tr>
+                                                <th style="text-align: center">Strategy/Structure</th>
+                                            </tr>
+                                        </table>
+                                        <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
+                                            <tr>
+                                                <th style="text-align: center">Performance</th>
+                                            </tr>
+                                        </table>
+
+
+
+
+
                                         <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
                                             <tr>
                                                 <!--<th>Strategy/Structure Merits (bold part)</th>-->
@@ -1371,21 +1391,21 @@
                                             </tr>
                                             <tr *ngFor="let item of fund.managementTeam">
                                                 <td>
-                                                    <input type="text" class="form-control" name="name" [(ngModel)]="item.name" placeholder="-" #name="ngModel"/>
+                                                    <input style="font-size: small" type="text" class="form-control" name="name" [(ngModel)]="item.name" placeholder="-" #name="ngModel"/>
                                                     <div [hidden]="name.valid || name.pristine" class="alert alert-danger">
                                                         Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'
                                                     </div>
                                                 </td>
 
                                                 <td>
-                                                    <input type="text" class="form-control" name="position" [(ngModel)]="item.position" placeholder="-" #position="ngModel"/>
+                                                    <input style="font-size: small" type="text" class="form-control" name="position" [(ngModel)]="item.position" placeholder="-" #position="ngModel"/>
                                                     <div [hidden]="position.valid || position.pristine" class="alert alert-danger">
                                                         Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'
                                                     </div>
                                                 </td>
 
                                                 <td>
-                                                    <input type="text" class="form-control" name="age" [(ngModel)]="item.age" placeholder="-" pattern="[-]?[0-9]*\.?[0-9]+" #age="ngModel"/>
+                                                    <input style="font-size: small" type="text" class="form-control" name="age" [(ngModel)]="item.age" placeholder="-" pattern="[-]?[0-9]*\.?[0-9]+" #age="ngModel"/>
                                                     <div [hidden]="age.valid || age.pristine" class="alert alert-danger">
                                                         Only number could be entered
                                                     </div>
