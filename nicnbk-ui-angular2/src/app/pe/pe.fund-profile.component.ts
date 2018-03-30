@@ -81,6 +81,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
 
     url_GP: any;
     url_NIC: any;
+    url_NET_IRR: any;
+    url_NET_MOIC: any;
 
     performanceSaveTypeMessage: string;
     grossCashFlowSaveTypeMessage: string;
@@ -252,7 +254,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                 this.postAction(null, null);
                             }
                         );
-                    this.getFundsAndTotalIrrForOnePager(this.firmIdParam);
+                    this.getFundsAndTotalIrrAndBarChartsForOnePager(this.firmIdParam);
                 }else{
                     // TODO: handle error
                     error => this.errorMessage = "Invalid parameter values";
@@ -325,7 +327,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
 
                     this.updateIndustryStrategyGeographyAsStrings();
 
-                    this.getFundsAndTotalIrrForOnePager(this.fund.firm.id);
+                    this.getFundsAndTotalIrrAndBarChartsForOnePager(this.fund.firm.id);
                 },
                 (error: ErrorResponse) => {
                     this.errorMessage = "Error saving fund profile";
@@ -338,8 +340,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
             )
     }
 
-    getFundsAndTotalIrrForOnePager(id) {
-        this.firmService.getFundsAndTotalIrrForOnePager(id)
+    getFundsAndTotalIrrAndBarChartsForOnePager(id) {
+        this.firmService.getFundsAndTotalIrrAndBarChartsForOnePager(id)
             .subscribe(
                 (response) => {
                     this.firmFunds = response.fundDtoList;
@@ -363,6 +365,14 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     }
 
                     this.totalGrossIrr = response.totalIrr;
+
+                    if (response.barChartNetIrr != null) {
+                        this.url_NET_IRR = "data:" + response.barChartNetIrr.mimeType + ";base64," + response.barChartNetIrr.bytes;
+                    }
+
+                    if (response.barChartNetMoic != null) {
+                        this.url_NET_MOIC = "data:" + response.barChartNetMoic.mimeType + ";base64," + response.barChartNetMoic.bytes;
+                    }
 
                 },
                 (error: ErrorResponse) => {
@@ -456,7 +466,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
 
                     //this.fund.autoCalculation = true;
 
-                    this.getFundsAndTotalIrrForOnePager(this.fund.firm.id);
+                    this.getFundsAndTotalIrrAndBarChartsForOnePager(this.fund.firm.id);
                 },
                 (error: ErrorResponse) => {
                     this.processErrorMessage(error);
@@ -666,7 +676,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     this.fund.benchmarkNetTvpi = response.trackRecordDTO.benchmarkNetTvpi;
                     this.fund.benchmarkName = response.trackRecordDTO.benchmarkName;
 
-                    this.getFundsAndTotalIrrForOnePager(this.fund.firm.id);
+                    this.getFundsAndTotalIrrAndBarChartsForOnePager(this.fund.firm.id);
                 },
                 (error: ErrorResponse) => {
                     this.processErrorMessage(error);
