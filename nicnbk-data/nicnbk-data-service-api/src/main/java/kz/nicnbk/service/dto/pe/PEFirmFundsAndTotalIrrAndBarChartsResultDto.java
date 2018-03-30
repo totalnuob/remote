@@ -8,12 +8,12 @@ import java.util.List;
 /**
  * Created by Pak on 30/03/2018.
  */
-public class PEFirmFundsAndTotalIrrResultDto extends StatusResultDto {
+public class PEFirmFundsAndTotalIrrAndBarChartsResultDto extends StatusResultDto {
 
     private List<PEFundDto> fundDtoList;
     private Double totalIrr;
 
-    public PEFirmFundsAndTotalIrrResultDto (List<PEFundDto> fundDtoList, Double totalIrr, StatusResultType status, String messageRu, String messageEn, String messageKz) {
+    public PEFirmFundsAndTotalIrrAndBarChartsResultDto(List<PEFundDto> fundDtoList, Double totalIrr, StatusResultType status, String messageRu, String messageEn, String messageKz) {
         super(status, messageRu, messageEn, messageKz);
         this.fundDtoList = fundDtoList;
         this.totalIrr = totalIrr;

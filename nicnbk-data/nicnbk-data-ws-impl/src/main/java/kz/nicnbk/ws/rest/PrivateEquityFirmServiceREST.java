@@ -82,14 +82,16 @@ public class PrivateEquityFirmServiceREST extends CommonServiceREST{
                 fundDtoListShort.add(fundDto);
             }
 
-            PEFirmFundsAndTotalIrrResultDto resultDto;
+            PEFirmFundsAndTotalIrrAndBarChartsResultDto resultDto;
 
             if (areAllKeyFundStatisticsCalculatedByGrossCF) {
                 double totalIrr  = irrService.getIrrByFundList(fundDtoListShort);
-                resultDto = new PEFirmFundsAndTotalIrrResultDto(fundDtoListShort, totalIrr, StatusResultType.SUCCESS, "", "SUCCESS", "");
+                resultDto = new PEFirmFundsAndTotalIrrAndBarChartsResultDto(fundDtoListShort, totalIrr, StatusResultType.SUCCESS, "", "SUCCESS", "");
             } else {
-                resultDto = new PEFirmFundsAndTotalIrrResultDto(fundDtoListShort, null, StatusResultType.SUCCESS, "", "SUCCESS", "");
+                resultDto = new PEFirmFundsAndTotalIrrAndBarChartsResultDto(fundDtoListShort, null, StatusResultType.SUCCESS, "", "SUCCESS", "");
             }
+
+            //create bar charts
 
             return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
         }
