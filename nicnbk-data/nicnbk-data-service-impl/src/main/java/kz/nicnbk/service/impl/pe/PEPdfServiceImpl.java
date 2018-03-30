@@ -92,7 +92,8 @@ public class PEPdfServiceImpl implements PEPdfService {
             Float logoMaxHeight = 24f;
             Float logoMaxWidth = 72f;
 //            Float topColunmOffSet = 182f;
-            Float topColunmOffSet = 151.15f;
+//            Float topColunmOffSet = 151.15f;
+            Float topColunmOffSet = 142.83f;
             Float columnGap = 3f;
             Float fontSize = 8f;
 
@@ -234,7 +235,8 @@ public class PEPdfServiceImpl implements PEPdfService {
 
                 for (PEFundDto fundDto1 : fundDtoListShort) {
                     if (fundDto1.getDoNotDisplayInOnePager() == null || !fundDto1.getDoNotDisplayInOnePager()) {
-                        topColunmOffSet += 13.38f;
+//                        topColunmOffSet += 13.38f;
+                        topColunmOffSet += 12.88f;
                     }
                 }
             }
