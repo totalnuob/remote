@@ -1013,7 +1013,7 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-8">
+                                    <div class="col-md-9">
                                         <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
                                             <tr>
                                                 <th width="50%" bgcolor="#00cc00">Observations</th>
@@ -1238,7 +1238,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <!--<table class="table table-hover table-responsive table-condensed" style="font-size: smaller">-->
                                         <!--<tr>-->
                                         <!--<th>Fund Strategy (bold part)</th>-->
@@ -1378,9 +1378,28 @@
                                         </table>
                                         <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
                                             <tr>
-                                                <th>Senior Management Team Overall info (bold part, e.g. "Average Yrs at Firm")</th>
-                                                <th>Senior Management Team Overall info (e.g. 5.5)</th>
-                                                <th></th>
+                                                <th bgcolor="#00cc00">Targeted Closing Information</th>
+                                                <th bgcolor="#00cc00"></th>
+                                            </tr>
+                                            <tr>
+                                                <th>First Close</th>
+                                                <td>{{this.fund.firstCloseComment}}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Final Close</th>
+                                                <td>{{this.fund.finalCloseComment}}</td>
+                                            </tr>
+                                        </table>
+                                        <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
+                                            <tr>
+                                                <th bgcolor="#00cc00">Senior Management Team</th>
+                                            </tr>
+                                        </table>
+                                        <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
+                                            <tr>
+                                                <!--<th>Senior Management Team Overall info (bold part, e.g. "Average Yrs at Firm")</th>-->
+                                                <!--<th>Senior Management Team Overall info (e.g. 5.5)</th>-->
+                                                <!--<th></th>-->
                                             </tr>
                                             <tr *ngFor="let item of fund.onePagerDescriptions" [hidden]="item.type !=10">
                                                 <td>
