@@ -204,6 +204,8 @@ public class PEPdfServiceImpl implements PEPdfService {
                 asOfDateString = "??/??/????";
             }
 
+            List<PEFundDto> fundDtoListShort = new ArrayList<>();
+
             if (fundDtoList != null && fundDtoList.size() > 0) {
                 //Key Fund Statistics Title
                 Table keyFundStatisticsTitle = new Table(new float[]{1});
@@ -216,16 +218,21 @@ public class PEPdfServiceImpl implements PEPdfService {
                         ps.getWidth() - offSet * 2);
                 document.add(keyFundStatisticsTitle);
 
+                for (PEFundDto fundDto1 : fundDtoList) {
+                    if (fundDto1.getDoNotDisplayInOnePager() != null && fundDto1.getDoNotDisplayInOnePager()) {continue;}
+                    fundDtoListShort.add(fundDto1);
+                }
+
                 //Key Fund Statistics Table
                 Table keyFundStatisticsTable = new Table(new float[]{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1});
-                this.addKeyFundStatistics(keyFundStatisticsTable, fundDtoList, ps.getWidth() - offSet * 2);
+                this.addKeyFundStatistics(keyFundStatisticsTable, fundDtoListShort, ps.getWidth() - offSet * 2);
                 document.add(keyFundStatisticsTable);
 
 //                topColunmOffSet += (2 + fundDtoList.size()) * 16.4888888f + 34f;
 //                topColunmOffSet += (2 + fundDtoList.size()) * 13.38f + 27.76f;
                 topColunmOffSet += 2 * 13.38f + 27.76f;
 
-                for (PEFundDto fundDto1 : fundDtoList) {
+                for (PEFundDto fundDto1 : fundDtoListShort) {
                     if (fundDto1.getDoNotDisplayInOnePager() == null || !fundDto1.getDoNotDisplayInOnePager()) {
                         topColunmOffSet += 13.38f;
                     }
@@ -267,7 +274,7 @@ public class PEPdfServiceImpl implements PEPdfService {
 //            }
 
             //Charts
-            this.createCharts(firmDto, fundDtoList, (fundDto.getBenchmarkName() != null && fundDto.getBenchmarkName() != "") ? fundDto.getBenchmarkName() : "????", barChartNetIrrDest, barChartNetMoicDest, columnOneWidth);
+            this.createCharts(firmDto, fundDtoListShort, (fundDto.getBenchmarkName() != null && fundDto.getBenchmarkName() != "") ? fundDto.getBenchmarkName() : "????", barChartNetIrrDest, barChartNetMoicDest, columnOneWidth);
             barChartNetIrr = new Image(ImageDataFactory.create(barChartNetIrrDest));
             barChartNetMoic = new Image(ImageDataFactory.create(barChartNetMoicDest));
             barChartNetIrr.setWidth(columnOneWidth / 2);
@@ -547,14 +554,10 @@ public class PEPdfServiceImpl implements PEPdfService {
         table.addHeaderCell(new Cell().setBackgroundColor(grayColor).setBorder(Border.NO_BORDER).add(new Paragraph("Net MOIC").setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addHeaderCell(new Cell().setBackgroundColor(grayColor).setBorder(Border.NO_BORDER).add(new Paragraph("Net IRR").setMultipliedLeading(lineSpacingMultiplier).setBold()));
 
-        List<PEFundDto> fundDtoListShort = new ArrayList<>();
-
         boolean grayBackground = false;
         Color color = whiteColor;
 
         for (PEFundDto fundDto : fundDtoList) {
-
-            if (fundDto.getDoNotDisplayInOnePager() != null && fundDto.getDoNotDisplayInOnePager()) {continue;}
 
             totalNumberOfInvestments += unNullifierToZero(fundDto.getNumberOfInvestments());
             totalInvested += unNullifierToZero(fundDto.getInvestedAmount());
@@ -564,8 +567,6 @@ public class PEPdfServiceImpl implements PEPdfService {
             if (fundDto.getCalculationType() == null || fundDto.getCalculationType() !=2) {
                 areAllKeyFundStatisticsCalculatedByGrossCF = false;
             }
-
-            fundDtoListShort.add(fundDto);
 
             table.addCell(new Cell().setBackgroundColor(color).setBorder(Border.NO_BORDER).add(new Paragraph(unNullifierToEmptyString(fundDto.getFundName())).setMultipliedLeading(lineSpacingMultiplier)));
             table.addCell(new Cell().setBackgroundColor(color).setBorder(Border.NO_BORDER).add(new Paragraph(Integer.toString(fundDto.getVintage())).setMultipliedLeading(lineSpacingMultiplier)));
@@ -591,7 +592,7 @@ public class PEPdfServiceImpl implements PEPdfService {
             totalGrossMOIC = (totalRealized + totalUnrealized) / totalInvested;
         }
         if (areAllKeyFundStatisticsCalculatedByGrossCF) {
-            totalGrossIrr  = irrService.getIrrByFundList(fundDtoListShort);
+            totalGrossIrr  = irrService.getIrrByFundList(fundDtoList);
         }
 
         table.addCell(new Cell().setBackgroundColor(color).setBorder(Border.NO_BORDER).add(new Paragraph("Total").setMultipliedLeading(lineSpacingMultiplier).setBold()));
