@@ -1403,7 +1403,7 @@
                                             </tr>
                                             <tr *ngFor="let item of fund.onePagerDescriptions" [hidden]="item.type !=10">
                                                 <td>
-                                                    <textarea style="font-size: small" fz-elastic spellcheck="false"  class="form-control" name="descriptionBold" [(ngModel)]="item.descriptionBold"></textarea>
+                                                    <textarea style="font-size: small" fz-elastic spellcheck="false" placeholder="e.g. Average Yrs at Firm" class="form-control" name="descriptionBold" [(ngModel)]="item.descriptionBold"></textarea>
                                                     <!--<input type="text" class="form-control" name="descriptionBold" [(ngModel)]="item.descriptionBold" placeholder="-" #descriptionBold="ngModel"/>-->
                                                     <!--<div [hidden]="descriptionBold.valid || descriptionBold.pristine" class="alert alert-danger">-->
                                                     <!--Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'-->
@@ -1411,7 +1411,7 @@
                                                 </td>
 
                                                 <td>
-                                                    <textarea style="font-size: small" fz-elastic spellcheck="false"  class="form-control" name="description" [(ngModel)]="item.description"></textarea>
+                                                    <textarea style="font-size: small" fz-elastic spellcheck="false" placeholder="e.g. 5.5" class="form-control" name="description" [(ngModel)]="item.description"></textarea>
                                                     <!--<input type="text" class="form-control" name="description" [(ngModel)]="item.description" placeholder="-" #description="ngModel"/>-->
                                                     <!--<div [hidden]="description.valid || description.pristine" class="alert alert-danger">-->
                                                     <!--Name must contain 1-50 characters A-Z, a-z, 0-9, space, period, hyphen, '(', ')'-->
