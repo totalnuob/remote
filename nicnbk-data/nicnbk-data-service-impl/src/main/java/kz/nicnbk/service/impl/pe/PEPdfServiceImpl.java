@@ -234,10 +234,8 @@ public class PEPdfServiceImpl implements PEPdfService {
                 topColunmOffSet += 2 * 13.38f + 27.76f;
 
                 for (PEFundDto fundDto1 : fundDtoListShort) {
-                    if (fundDto1.getDoNotDisplayInOnePager() == null || !fundDto1.getDoNotDisplayInOnePager()) {
-//                        topColunmOffSet += 13.38f;
-                        topColunmOffSet += 12.88f;
-                    }
+//                    topColunmOffSet += 13.38f;
+                    topColunmOffSet += 12.88f;
                 }
             }
 
