@@ -274,7 +274,7 @@ public class PEPdfServiceImpl implements PEPdfService {
 //            }
 
             //Charts
-            this.createCharts(firmDto, fundDtoListShort, (fundDto.getBenchmarkName() != null && fundDto.getBenchmarkName() != "") ? fundDto.getBenchmarkName() : "????", barChartNetIrrDest, barChartNetMoicDest, columnOneWidth);
+            this.createCharts(firmDto.getFirmName(), fundDtoListShort, (fundDto.getBenchmarkName() != null && fundDto.getBenchmarkName() != "") ? fundDto.getBenchmarkName() : "????", barChartNetIrrDest, barChartNetMoicDest, columnOneWidth);
             barChartNetIrr = new Image(ImageDataFactory.create(barChartNetIrrDest));
             barChartNetMoic = new Image(ImageDataFactory.create(barChartNetMoicDest));
             barChartNetIrr.setWidth(columnOneWidth / 2);
@@ -411,15 +411,13 @@ public class PEPdfServiceImpl implements PEPdfService {
         return null;
     }
 
-    private void createCharts(PEFirmDto firmDto, List<PEFundDto> fundDtoList, String benchmark, String barChartNetIrrDest, String barChartNetMoicDest, Float width) throws Exception {
-        String gpName = firmDto.getFirmName();
-        String benchmarkName = benchmark;
+    public void createCharts(String firmName, List<PEFundDto> fundDtoList, String benchmark, String barChartNetIrrDest, String barChartNetMoicDest, Float width) throws Exception {
 
         DefaultCategoryDataset datasetIrr = new DefaultCategoryDataset();
 
         for (PEFundDto fundDto : fundDtoList) {
-            datasetIrr.addValue(fundDto.getNetIrr(), gpName, fundDto.getFundName());
-            datasetIrr.addValue(fundDto.getBenchmarkNetIrr(), benchmarkName, fundDto.getFundName());
+            datasetIrr.addValue(fundDto.getNetIrr(), firmName, fundDto.getFundName());
+            datasetIrr.addValue(fundDto.getBenchmarkNetIrr(), benchmark, fundDto.getFundName());
         }
 
         JFreeChart barChartIrr = ChartFactory.createBarChart("Net IRR", "", "", datasetIrr, PlotOrientation.VERTICAL, true, false, false);
@@ -430,8 +428,8 @@ public class PEPdfServiceImpl implements PEPdfService {
         DefaultCategoryDataset datasetTvpi = new DefaultCategoryDataset();
 
         for (PEFundDto fundDto : fundDtoList) {
-            datasetTvpi.addValue(fundDto.getNetTvpi(), gpName, fundDto.getFundName());
-            datasetTvpi.addValue(fundDto.getBenchmarkNetTvpi(), benchmarkName, fundDto.getFundName());
+            datasetTvpi.addValue(fundDto.getNetTvpi(), firmName, fundDto.getFundName());
+            datasetTvpi.addValue(fundDto.getBenchmarkNetTvpi(), benchmark, fundDto.getFundName());
         }
 
         JFreeChart barChartTvpi = ChartFactory.createBarChart("Net MOIC", "", "", datasetTvpi, PlotOrientation.VERTICAL, true, false, false);

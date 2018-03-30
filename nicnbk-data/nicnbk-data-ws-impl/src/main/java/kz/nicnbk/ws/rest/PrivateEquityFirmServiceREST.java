@@ -4,6 +4,7 @@ import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.pe.PEFirmService;
 import kz.nicnbk.service.api.pe.PEFundService;
 import kz.nicnbk.service.api.pe.PEIrrService;
+import kz.nicnbk.service.api.pe.PEPdfService;
 import kz.nicnbk.service.dto.common.StatusResultType;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.pe.*;
@@ -35,6 +36,9 @@ public class PrivateEquityFirmServiceREST extends CommonServiceREST{
 
     @Autowired
     private PEIrrService irrService;
+
+    @Autowired
+    private PEPdfService pdfService;
 
     @Autowired
     private TokenService tokenService;
@@ -85,6 +89,7 @@ public class PrivateEquityFirmServiceREST extends CommonServiceREST{
             //create bar charts
             byte[] barChartNetIrrBytes = null;
             byte[] barChartNetMoicBytes = null;
+            this.pdfService.createCharts(firmDto.getFirmName(), fundDtoListShort, (fundDto.getBenchmarkName() != null && fundDto.getBenchmarkName() != "") ? fundDto.getBenchmarkName() : "????", barChartNetIrrDest, barChartNetMoicDest, columnOneWidth);
 
             PEFirmFundsAndTotalIrrAndBarChartsResultDto resultDto;
 
