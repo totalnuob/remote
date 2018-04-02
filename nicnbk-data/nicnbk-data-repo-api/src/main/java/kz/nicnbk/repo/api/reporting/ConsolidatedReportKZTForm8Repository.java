@@ -14,7 +14,7 @@ import java.util.List;
 public interface ConsolidatedReportKZTForm8Repository extends PagingAndSortingRepository<ConsolidatedReportKZTForm8, Long> {
 
     @Query("SELECT e from ConsolidatedReportKZTForm8 e where e.report.id=?1 " +
-            "ORDER BY e.id ASC")
+            "ORDER BY e.lineNumber, e.id ASC")
     List<ConsolidatedReportKZTForm8> getEntitiesByReportId(Long reportId);
 
     @Modifying

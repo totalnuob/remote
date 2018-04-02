@@ -74,7 +74,7 @@ public final class PeriodicReportConstants {
 
     public static final String BANK_LOANS_RECEIVED = "Банковские займы полученные";
     public static final String BANK_OF_MONREAL = "Bank of Monreal";
-    public static final String KZT_13_INTEREST_RATE = "4%";
+    public static final String DEFAULT_KZT_13_INTEREST_RATE = "4%";
     /* ****************************************************************************************************************/
 
 
@@ -126,6 +126,9 @@ public final class PeriodicReportConstants {
 
     public static final String ACC_NUM_3393_020 = "3393.020";
     public static final String RU_3393_020 = "Прочая краткосрочная кредиторская задолженность";
+
+    public static final String ACC_NUM_4173_010 = "4173.010";
+    public static final String RU_4173_010 = "Прочая долгосрочная кредиторская задолженность";
 
     public static final String ACC_NUM_5021_010 = "5021.010";
     public static final String ACC_NUM_5022_010 = "5022.010";

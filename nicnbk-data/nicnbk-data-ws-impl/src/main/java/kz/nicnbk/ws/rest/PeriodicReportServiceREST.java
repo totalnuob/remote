@@ -486,6 +486,16 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
         return buildNonNullResponse(responseDto);
     }
 
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/saveKZTReportForm13InterestRate/{reportId}", method = RequestMethod.POST)
+    public ResponseEntity saveKZTReportForm13InterestRate(@PathVariable Long reportId, @RequestBody String interestRate) {
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+        EntitySaveResponseDto entitySaveResponseDto = this.periodicReportService.saveInterestRate(reportId, interestRate, username);
+        return buildNonNullResponse(entitySaveResponseDto);
+    }
+
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/consolidatedBalanceKZTForm14/{reportId}", method = RequestMethod.GET)
     public ResponseEntity getConsolidatedKZTForm14(@PathVariable Long reportId) {

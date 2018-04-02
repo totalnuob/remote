@@ -90,6 +90,8 @@ import {ConsolidatedKZTForm22NBReportingComponent} from "./reporting/consolidate
 import {ConsolidatedKZTForm3NBReportingComponent} from "./reporting/consolidated.kzt.form.3.nb.reporting.component";
 import {ConsolidatedKZTForm6NBReportingComponent} from "./reporting/consolidated.kzt.form.6.nb.reporting.component";
 import {MonitoringHedgeFunds2PrintComponent} from "./monitoring/monitoring-hedge-funds-2-print.component";
+import {CorpMeetingsListComponent} from "./corpmeetings/corp-meetings-list.component";
+import {CorpMeetingEditComponent} from "./corpmeetings/corp-meetings-edit.component";
 
 @NgModule({
     imports: [
@@ -131,8 +133,9 @@ import {MonitoringHedgeFunds2PrintComponent} from "./monitoring/monitoring-hedge
         ConsolidatedTotalIncomeUSDFormNBReportingComponent, NICKMFInputViewNBReportingComponent, TarragonGeneratedFormViewNBReportingComponent,
         ConsolidatedKZTForm8NBReportingComponent, ConsolidatedKZTForm7NBReportingComponent, ConsolidatedKZTForm10NBReportingComponent, ConsolidatedKZTForm14NBReportingComponent, ConsolidatedKZTForm13NBReportingComponent,
         ConsolidatedKZTForm1NBReportingComponent, ReserveCalculationFormNBReportingComponent,ConsolidatedKZTForm2NBReportingComponent, ConsolidatedKZTForm19NBReportingComponent, ConsolidatedKZTForm22NBReportingComponent,
-        ConsolidatedKZTForm3NBReportingComponent, ConsolidatedKZTForm6NBReportingComponent
-        AccessDeniedComponent, MMEditComponent, MMViewComponent,NotFoundComponent
+        ConsolidatedKZTForm3NBReportingComponent, ConsolidatedKZTForm6NBReportingComponent,
+        AccessDeniedComponent, MMEditComponent, MMViewComponent,NotFoundComponent,
+        CorpMeetingsListComponent, CorpMeetingEditComponent
     ],
     bootstrap: [ AppComponent ]
 })

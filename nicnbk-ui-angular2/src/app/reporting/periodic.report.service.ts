@@ -96,6 +96,8 @@ export class PeriodicReportService extends CommonService{
     private PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_19_URL = this.PERIODIC_REPORT_BASE_URL + "consolidatedBalanceKZTForm19/";
     private PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_22_URL = this.PERIODIC_REPORT_BASE_URL + "consolidatedBalanceKZTForm22/";
 
+    private PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_13_INTEREST_RATE_URL = this.PERIODIC_REPORT_BASE_URL + "saveKZTReportForm13InterestRate/";
+
     private PERIODIC_REPORT_RESERVE_CALCULATION_FORM_URL = this.PERIODIC_REPORT_BASE_URL + "reserveCalculation/";
     private PERIODIC_REPORT_RESERVE_CALCULATION_DELETE_RECORD_URL = this.PERIODIC_REPORT_BASE_URL + "reserveCalculation/delete/";
     private PERIODIC_REPORT_RESERVE_CALCULATION_SAVE_URL = this.PERIODIC_REPORT_BASE_URL + "reserveCalculationSave/";
@@ -265,6 +267,12 @@ export class PeriodicReportService extends CommonService{
 
     getConsolidatedKZTForm13(reportId): Observable<ListResponse>{
         return this.http.get(this.PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_13_URL + reportId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    saveKZTReportForm13InterestRate(reportId, value): Observable<any>{
+        return this.http.post(this.PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_13_INTEREST_RATE_URL + reportId, value, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }

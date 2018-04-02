@@ -183,7 +183,7 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
                         recordDto.setFinancialStatementCategory(addedRecordDto.getFinancialStatementCategory());
                         recordDto.setChartAccountsLongDescription(addedRecordDto.getTarragonNICChartOfAccountsName());
                         recordDto.setNbAccountNumber(addedRecordDto.getNbAccountNumber());
-                        String entityName = addedRecordDto.getEntityName() != null ? " " + addedRecordDto.getEntityName() : "";
+                        String entityName = addedRecordDto.getEntityName() != null ? addedRecordDto.getEntityName() : "";
                         recordDto.setNicAccountName(addedRecordDto.getNicAccountName() + entityName);
                         recordDto.setSubscriptionRedemptionEntity(entityName);
                         recordDto.setGLAccountBalance(addedRecordDto.getGLAccountBalance());

@@ -14,6 +14,7 @@ public class PeriodicReportDto extends CreateUpdateBaseEntityDto<PeriodicReport>
     private Date reportDate;
     private String type;
     private String status;
+    private String interestRate;
 
     public PeriodicReportDto(){}
 
@@ -56,5 +57,13 @@ public class PeriodicReportDto extends CreateUpdateBaseEntityDto<PeriodicReport>
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getInterestRate() {
+        return interestRate;
+    }
+
+    public void setInterestRate(String interestRate) {
+        this.interestRate = interestRate;
     }
 }

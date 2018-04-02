@@ -21,7 +21,9 @@ public interface ReserveCalculationService extends BaseService {
 
     boolean save(List<ReserveCalculationDto> records);
 
-    List<ReserveCalculationDto> getReserveCalculationsByExpenseType(String code);
+    //List<ReserveCalculationDto> getReserveCalculationsByExpenseType(String code);
+
+    List<ReserveCalculationDto> getReserveCalculationsByExpenseTypeBeforeDate(String code, Date date);
 
     FilesDto getExportFileStream(Long recordId, String type);
 
