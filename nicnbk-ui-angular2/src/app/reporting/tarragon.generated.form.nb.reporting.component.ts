@@ -153,6 +153,7 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
         this.busy = this.periodicReportService.getGeneratedTarragonFormDataFromPreviousMonth(this.reportId)
             .subscribe(
                 response  => {
+                    console.log(response);
                     if(response && response.length > 0) {
                         for (var i = 0; i < response.length; i++) {
                             let record = new PEGeneralLedgerFormDataRecord();
@@ -164,7 +165,8 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
                             record.financialStatementCategory = response[i].financialStatementCategory;
                             record.tarragonNICChartOfAccountsName = response[i].chartAccountsLongDescription;
 
-                            if(!this.availableFundList.includes(response[i].subscriptionRedemptionEntity)){
+                            if(!this.availableFundList.includes(response[i].subscriptionRedemptionEntity) &&
+                                response[i].subscriptionRedemptionEntity != null && response[i].subscriptionRedemptionEntity.trim() != ''){
                                 this.availableFundList.push(response[i].subscriptionRedemptionEntity);
                             }
                             record.entityName = response[i].subscriptionRedemptionEntity;
@@ -226,10 +228,10 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
         }else if(record.acronym === 'TARRAGON B'){
             record.tranche = 2;
         }
-        record.tarragonNICChartOfAccountsName = record.chartAccountsLongDescription;
+        record.tarragonNICChartOfAccountsName = record.chartAccountsLongDescription.trim();
         record.id = record.addedRecordId;
+        record.entityName = record.subscriptionRedemptionEntity.trim();
         this.addedRecordsHolder.records.push(record);
-        console.log(record);
         this.postAction(this.successMessage, this.errorMessage);
     }
 

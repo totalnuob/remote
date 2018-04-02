@@ -52,6 +52,9 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
         if(noalTrancheARecordHolder != null && noalTrancheARecordHolder.getNoalTrancheAList() != null){
             for(SingularityNOALRecordDto noalRecordDto: noalTrancheARecordHolder.getNoalTrancheAList()){
                 if(noalRecordDto.getTransaction().equalsIgnoreCase("Ending Balance") || noalRecordDto.getTransaction().equalsIgnoreCase("Ending")) {
+                    if(noalRecordDto.getAccountNumber() == null){
+                        continue;
+                    }
                     if (noalRecordDto.getAccountNumber().startsWith("1500")) {
                         if(noalTrancheASubscriptionsRecords.get(noalRecordDto.getName()) != null){
                             BigDecimal a = NumberUtils.getBigDecimal(noalTrancheASubscriptionsRecords.get(noalRecordDto.getName()));
@@ -78,9 +81,12 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
 
         Map<String, Double> noalTrancheBSubscriptionsRecords = new HashMap<>();
         Map<String, Double> noalTrancheBRedemptionsRecords = new HashMap<>();
-        if(noalTrancheARecordHolder != null && noalTrancheBRecordHolder.getNoalTrancheAList() != null){
-            for(SingularityNOALRecordDto noalRecordDto: noalTrancheBRecordHolder.getNoalTrancheAList()){
+        if(noalTrancheBRecordHolder != null && noalTrancheBRecordHolder.getNoalTrancheBList() != null){
+            for(SingularityNOALRecordDto noalRecordDto: noalTrancheBRecordHolder.getNoalTrancheBList()){
                 if(noalRecordDto.getTransaction().equalsIgnoreCase("Ending Balance") || noalRecordDto.getTransaction().equalsIgnoreCase("Ending")) {
+                    if(noalRecordDto.getAccountNumber() == null){
+                        continue;
+                    }
                     if (noalRecordDto.getAccountNumber().startsWith("1500")) {
                         if(noalTrancheBSubscriptionsRecords.get(noalRecordDto.getName()) != null){
                             BigDecimal a = NumberUtils.getBigDecimal(noalTrancheBSubscriptionsRecords.get(noalRecordDto.getName()));

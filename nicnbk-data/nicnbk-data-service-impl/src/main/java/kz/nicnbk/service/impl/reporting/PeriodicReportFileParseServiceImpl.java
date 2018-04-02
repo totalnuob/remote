@@ -1537,6 +1537,8 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                         // Redemptions
                         accountNumber = "1550-XXXX-XXX-USD";
 
+                    }else{
+                        accountNumber = ExcelUtils.getStringValueFromCell(row.getCell(0));
                     }
 
                 }else if(isSingularityNOALRecordNotEmpty(row)){

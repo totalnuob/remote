@@ -10,6 +10,7 @@ import {LookupService} from "../common/lookup.service";
 import {PeriodicReport} from "./model/periodic.report";
 import {isNumeric} from "rxjs/util/isNumeric";
 import {InputFilesNBReport} from "./model/input.files.nb.report";
+import {SaveResponse} from "../common/save-response";
 
 declare var $:any
 
@@ -31,6 +32,7 @@ export class GeneratedReportsNBReportingComponent extends CommonNBReportingCompo
     private report: InputFilesNBReport;
     private periodicReport: PeriodicReport;
 
+
     tabOption;
 
     constructor(
@@ -39,6 +41,7 @@ export class GeneratedReportsNBReportingComponent extends CommonNBReportingCompo
         private periodicReportService: PeriodicReportService
     ){
         super(router, route, periodicReportService);
+        this.periodicReport = new PeriodicReport();
 
         this.sub = this.route
             .params
@@ -84,6 +87,33 @@ export class GeneratedReportsNBReportingComponent extends CommonNBReportingCompo
         this.sub = this.route.params.subscribe(params => {
             this.tabOption = params['showInputList'];
         });
+    }
+
+    public saveInterestRate(){
+        this.busy = this.periodicReportService.saveKZTReportForm13InterestRate(this.reportId, this.periodicReport.interestRate)
+            .subscribe(
+                (response: SaveResponse)  => {
+                    console.log(response);
+                    if (response && response.status != 'FAIL') {
+                        this.postAction("Successfully saved interest rate", null);
+                    } else if (response && response.status === 'FAIL') {
+                        var errorMessage = response.message != null && response.message.nameEn != null ? response.message.nameEn : "Error saving interest rate";
+                        this.postAction(null, errorMessage);
+                    } else {
+                        this.postAction(null, "Unexptected return from server.");
+                        return;
+                    }
+                },
+                (error: ErrorResponse) => {
+                    this.successMessage = null;
+                    this.errorMessage = "Error saving interest rate (report form 13)";
+                    this.report = null;
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
+            )
     }
 
     markAsFinal(){

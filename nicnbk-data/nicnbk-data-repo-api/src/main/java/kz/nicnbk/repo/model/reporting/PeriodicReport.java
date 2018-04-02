@@ -18,6 +18,8 @@ public class PeriodicReport extends CreateUpdateBaseEntity{
     private Date reportDate;
     private ReportStatus status;
 
+    private String interestRate;
+
     public PeriodicReport(){}
 
     public PeriodicReport(Long id){
@@ -53,5 +55,17 @@ public class PeriodicReport extends CreateUpdateBaseEntity{
 
     public void setStatus(ReportStatus status) {
         this.status = status;
+    }
+
+
+    @Column(name="interest_rate")
+    /* KZT Report 13 interest rate value */
+
+    public String getInterestRate() {
+        return interestRate;
+    }
+
+    public void setInterestRate(String interestRate) {
+        this.interestRate = interestRate;
     }
 }

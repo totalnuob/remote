@@ -5,6 +5,8 @@ export class PeriodicReport{
     type: string;
     status: string;
 
+    interestRate: string;
+
     constructor(id?: number){
         if(id != null) {
             this.id = id

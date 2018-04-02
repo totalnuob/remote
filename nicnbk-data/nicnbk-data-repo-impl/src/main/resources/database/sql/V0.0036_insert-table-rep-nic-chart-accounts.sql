@@ -53,6 +53,9 @@ INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_cha
 INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(53, '3383.010.a', null, 'Банковские займы – Начисленные проценты', null, 18);
 
 
+INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(56, '1623.010.c', null, 'Предоплаченные юридические услуги Singularity', null, 16);
+
+
 
 
 
