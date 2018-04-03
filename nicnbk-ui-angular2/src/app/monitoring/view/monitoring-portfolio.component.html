@@ -15,57 +15,61 @@
         <!--</div>-->
     <!--</div>-->
 
-    <div class="row">
-        <div class="col-md-2">
-            <select (ngModelChange)="redrawTables()" [(ngModel)]="tableDate" id="tableDate" class="form-control" >
-                <option *ngFor="let item of getAllDates()" [value]="item">{{item}}</option>
-            </select>
-        </div>
-        <div class="col-md-12">
-            <div class="col-md-4">
-                <h4>Performance NET Asset Value</h4>
-                <div id="portfolio_value">
-                </div>
-            </div>
-            <div class="col-md-4">
-                <h4>Portfolio Performance</h4>
-                <div id="portfolio_performance">
-                </div>
-            </div>
-            <div class="col-md-4">
-                <h4>Benchmarks Performance</h4>
-                <div id="benchmarks_performance">
-                </div>
-            </div>
-        </div>
+    <div class="row withpadding">
+        <h2>Under construction. New monitoring forms to be updated.</h2>
     </div>
-    <br/>
-    <div class="row">
-        <div class="col-md-2">
-            <select (ngModelChange)="redrawLineChart()" [(ngModel)]="performanceType" id="performanceType" class="form-control">
-                <option *ngFor="let item of getAssetTypes()" [value]="item">{{item}}</option>
-            </select>
-        </div>
-        <div class="col-md-12">
-            <div id="alternative_performance">
-            </div>
-        </div>
-    </div>
-    <br/>
-    <div class="row">
-        <div class="col-md-6">
-            <div id="target_allocation">
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div id="actual_allocation">
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div id="public_performance">
-            </div>
-        </div>
-    </div>
+
+    <!--<div class="row">-->
+        <!--<div class="col-md-2">-->
+            <!--<select (ngModelChange)="redrawTables()" [(ngModel)]="tableDate" id="tableDate" class="form-control" >-->
+                <!--<option *ngFor="let item of getAllDates()" [value]="item">{{item}}</option>-->
+            <!--</select>-->
+        <!--</div>-->
+        <!--<div class="col-md-12">-->
+            <!--<div class="col-md-4">-->
+                <!--<h4>Performance NET Asset Value</h4>-->
+                <!--<div id="portfolio_value">-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="col-md-4">-->
+                <!--<h4>Portfolio Performance</h4>-->
+                <!--<div id="portfolio_performance">-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="col-md-4">-->
+                <!--<h4>Benchmarks Performance</h4>-->
+                <!--<div id="benchmarks_performance">-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+    <!--<br/>-->
+    <!--<div class="row">-->
+        <!--<div class="col-md-2">-->
+            <!--<select (ngModelChange)="redrawLineChart()" [(ngModel)]="performanceType" id="performanceType" class="form-control">-->
+                <!--<option *ngFor="let item of getAssetTypes()" [value]="item">{{item}}</option>-->
+            <!--</select>-->
+        <!--</div>-->
+        <!--<div class="col-md-12">-->
+            <!--<div id="alternative_performance">-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+    <!--<br/>-->
+    <!--<div class="row">-->
+        <!--<div class="col-md-6">-->
+            <!--<div id="target_allocation">-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="col-md-6">-->
+            <!--<div id="actual_allocation">-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+    <!--<div class="row">-->
+        <!--<div class="col-md-12">-->
+            <!--<div id="public_performance">-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
 </div>

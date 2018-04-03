@@ -25,15 +25,15 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
     }
 
     drawGraph(){
-        var tableDate = this.getAllDates()[0];
-
-        //$("#tableDate").val($("#tableDate option:last").val());
-        this.tableDate = tableDate;
-        this.drawTables(tableDate);
-
-        this.drawReturnsLineCharts(null);
-        this.drawPieCharts();
-        this.drawPositionsTable(tableDate);
+        //var tableDate = this.getAllDates()[0];
+        //
+        ////$("#tableDate").val($("#tableDate option:last").val());
+        //this.tableDate = tableDate;
+        //this.drawTables(tableDate);
+        //
+        //this.drawReturnsLineCharts(null);
+        //this.drawPieCharts();
+        //this.drawPositionsTable(tableDate);
     }
 
     drawTables(tableDate){

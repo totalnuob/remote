@@ -39,15 +39,15 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
     }
 
     drawGraph(){
-        var tableDate = this.getAllDates()[0];
-        this.tableDate = tableDate;
-        this.performanceType = "TOTAL";
-
-        this.drawTables(tableDate);
-        this.drawAlternativePerformanceChart("TOTAL");
-        this.drawTargetAllocationChart();
-        this.drawActualAllocationChart();
-        this.drawPublicPerformanceChart();
+        //var tableDate = this.getAllDates()[0];
+        //this.tableDate = tableDate;
+        //this.performanceType = "TOTAL";
+        //
+        //this.drawTables(tableDate);
+        //this.drawAlternativePerformanceChart("TOTAL");
+        //this.drawTargetAllocationChart();
+        //this.drawActualAllocationChart();
+        //this.drawPublicPerformanceChart();
     }
 
     public redrawTables(){
