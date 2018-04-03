@@ -23,19 +23,19 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
 
     drawGraph(){
         // OVERALL ---------------------------------
-        this.drawContributionToReturn();
-        this.drawAllocationByStrategy();
-        this.drawTable();
-
-        this.drawPerformanceMonthly();
-
-        // PORTFOLIO A -----------------------------
-        this.drawPortfolioAComparisonReturns();
-        this.drawPortfolioAComparisonReturns2017();
-        this.drawAllocationChart();
-
-        // PORTFOLIO B -----------------------------
-        this.drawPortfolioBComparisonReturns();
+        //this.drawContributionToReturn();
+        //this.drawAllocationByStrategy();
+        //this.drawTable();
+        //
+        //this.drawPerformanceMonthly();
+        //
+        //// PORTFOLIO A -----------------------------
+        //this.drawPortfolioAComparisonReturns();
+        //this.drawPortfolioAComparisonReturns2017();
+        //this.drawAllocationChart();
+        //
+        //// PORTFOLIO B -----------------------------
+        //this.drawPortfolioBComparisonReturns();
     }
 
     drawContributionToReturn(){

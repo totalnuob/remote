@@ -22,19 +22,19 @@ export class MonitoringPrivateEquityFundComponent extends GoogleChartComponent {
 
     drawGraph(){
         //this.drawSummary();
-        this.drawVintageDiversification();
-
-        // PORTFOLIO DIVERSIFICATION
-        this.drawGeographicDiversification();
-        this.drawStrategyDiversification();
-        this.drawDiversificationByInvestments();
-
-        // PORTFOLIO EXPOSURE
-        this.drawGeographicExposure();
-        this.drawSectorExposure();
-
-        // PORTFOLIO DESCRIPTION
-        this.drawPortfolioDescription();
+        //this.drawVintageDiversification();
+        //
+        //// PORTFOLIO DIVERSIFICATION
+        //this.drawGeographicDiversification();
+        //this.drawStrategyDiversification();
+        //this.drawDiversificationByInvestments();
+        //
+        //// PORTFOLIO EXPOSURE
+        //this.drawGeographicExposure();
+        //this.drawSectorExposure();
+        //
+        //// PORTFOLIO DESCRIPTION
+        //this.drawPortfolioDescription();
 
     }
 

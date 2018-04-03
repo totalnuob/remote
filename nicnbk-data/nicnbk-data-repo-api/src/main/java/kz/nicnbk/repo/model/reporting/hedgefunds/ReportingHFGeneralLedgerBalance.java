@@ -27,6 +27,9 @@ public class ReportingHFGeneralLedgerBalance extends CreateUpdateBaseEntity{
     private Currency fundCCY;
     private PeriodicReport report;
 
+    private Double adjustedRedemption;
+    private String interestRate;
+
 
     public int getTranche() {
         return tranche;
@@ -125,5 +128,23 @@ public class ReportingHFGeneralLedgerBalance extends CreateUpdateBaseEntity{
 
     public void setShortName(String shortName) {
         this.shortName = shortName;
+    }
+
+    @Column(name="adjusted_redemption")
+    public Double getAdjustedRedemption() {
+        return adjustedRedemption;
+    }
+
+    public void setAdjustedRedemption(Double adjustedRedemption) {
+        this.adjustedRedemption = adjustedRedemption;
+    }
+
+    @Column(name="interest_rate")
+    public String getInterestRate() {
+        return interestRate;
+    }
+
+    public void setInterestRate(String interestRate) {
+        this.interestRate = interestRate;
     }
 }

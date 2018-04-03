@@ -54,8 +54,8 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
 
         CurrencyRates rates = this.currencyRatesRepository.getRateForDateAndCurrency(dateFormatted, currencyCode);
 
-        if(rates != null && rates.getAverageValue() != null) {
-            return rates.getAverageValue();
+        if(rates != null && rates.getAverageValueYear() != null) {
+            return rates.getAverageValueYear();
         }else{
             String errorMessage = "Average USD rate for date " + DateUtils.getDateFormatted(date) +" not found.";
             logger.error(errorMessage);
@@ -74,11 +74,12 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
         int months = DateUtils.getMonthsDifference(firstDay, dateTo);
 
         if(rates != null){
-            BigDecimal sum = new BigDecimal("0");
+            //BigDecimal sum = new BigDecimal("0");
+            Double sum = 0.0;
             int count = 0;
             for(CurrencyRates rate: rates){
                 if(rate.getDate().compareTo(dateFormatted) <= 0 && rate.getAverageValue() != null){
-                    sum  = sum.add(new BigDecimal(rate.getAverageValue().doubleValue()));
+                    sum  = MathUtils.add(sum, rate.getAverageValue().doubleValue());
                     count++;
                 }
             }
@@ -89,7 +90,7 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
                 throw new IllegalStateException(errorMessage);
             }
             if(count > 0) {
-                return MathUtils.divide(sum, new BigDecimal(count)).setScale(scale, RoundingMode.HALF_UP).doubleValue();
+                return MathUtils.divide(sum, count + 0.0).doubleValue();
             }
         }
         return null;

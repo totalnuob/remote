@@ -51,6 +51,7 @@ export class PeriodicReportService extends CommonService{
     private PERIODIC_REPORT_STATEMENT_CASHFLOWS_URL = this.PERIODIC_REPORT_BASE_URL + "get/cashflows/";
     private PERIODIC_REPORT_STATEMENT_CHANGES_URL = this.PERIODIC_REPORT_BASE_URL + "get/changes/";
     private PERIODIC_REPORT_GENERAL_LEDGER_BALANCE_URL = this.PERIODIC_REPORT_BASE_URL + "get/generalLedgerBalance/";
+    private PERIODIC_REPORT_SINGULARITY_ADJUSTMENTS_URL = this.PERIODIC_REPORT_BASE_URL + "saveSingularityAdjustments/";
 
     private PERIODIC_REPORT_SINGULARITY_NOAL_A_URL = this.PERIODIC_REPORT_BASE_URL + "get/noalA/";
     private PERIODIC_REPORT_SINGULARITY_NOAL_B_URL = this.PERIODIC_REPORT_BASE_URL + "get/noalB/";
@@ -169,6 +170,15 @@ export class PeriodicReportService extends CommonService{
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }
+
+    saveSingularityAdjustments(entity){
+        let body = JSON.stringify(entity);
+        //console.log(body);
+        return this.http.post(this.PERIODIC_REPORT_SINGULARITY_ADJUSTMENTS_URL + entity.reportId , body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
     getSingularityNOALTrancheA(reportId): Observable<PeriodicReportRecordHolder>{
         return this.http.get(this.PERIODIC_REPORT_SINGULARITY_NOAL_A_URL + reportId, this.getOptionsWithCredentials())
             .map(this.extractData)

@@ -113,6 +113,7 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
         if(generalLedgerRecordsHolder != null && !generalLedgerRecordsHolder.getGeneralLedgerBalanceList().isEmpty()){
             for(SingularityGeneralLedgerBalanceRecordDto glRecordDto: generalLedgerRecordsHolder.getGeneralLedgerBalanceList()){
                 GeneratedGeneralLedgerFormDto record = new GeneratedGeneralLedgerFormDto();
+                record.setId(glRecordDto.getId());
                 record.setAcronym(glRecordDto.getAcronym());
                 record.setBalanceDate(glRecordDto.getBalanceDate());
                 record.setFinancialStatementCategory(glRecordDto.getFinancialStatementCategory());
@@ -126,6 +127,8 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
 
                 String singularityAccountNumber = glRecordDto.getGLAccount() != null && glRecordDto.getGLAccount().split("-").length > 0
                         ? glRecordDto.getGLAccount().split("-")[0] : null;
+
+                record.setAdjustedRedemption(glRecordDto.getAdjustedRedemption());
 
                 if(StringUtils.isEmpty(singularityAccountNumber)){
                     logger.error("Invalid Singularity Account Number: expected 'XXXX-XXXX-XXX-XXX' (four parts delimited with - ), found '" + glRecordDto.getGLAccount() + "'");

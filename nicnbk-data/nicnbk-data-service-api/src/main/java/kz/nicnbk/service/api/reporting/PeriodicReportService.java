@@ -31,7 +31,7 @@ public interface PeriodicReportService extends BaseService {
 
     FilesDto getPeriodicReportFileByIdAndType(Long reportId, String type);
 
-    EntitySaveResponseDto saveInterestRate(Long reportId, String interestRate, String updater);
+    //EntitySaveResponseDto saveInterestRate(Long reportId, String interestRate, String updater);
 
     FilesDto saveInputFile(Long reportId, FilesDto file);
 

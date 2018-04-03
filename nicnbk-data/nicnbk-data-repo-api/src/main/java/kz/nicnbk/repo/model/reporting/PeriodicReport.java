@@ -57,15 +57,4 @@ public class PeriodicReport extends CreateUpdateBaseEntity{
         this.status = status;
     }
 
-
-    @Column(name="interest_rate")
-    /* KZT Report 13 interest rate value */
-
-    public String getInterestRate() {
-        return interestRate;
-    }
-
-    public void setInterestRate(String interestRate) {
-        this.interestRate = interestRate;
-    }
 }

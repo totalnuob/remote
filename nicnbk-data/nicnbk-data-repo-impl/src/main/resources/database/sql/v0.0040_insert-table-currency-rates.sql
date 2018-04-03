@@ -874,5 +874,6 @@ INSERT INTO currency_rates (date, value, currency_id, avg_value) VALUES ('2017-0
 INSERT INTO currency_rates (date, value, currency_id, avg_value) VALUES ('2017-08-31', NULL, 1, 332.69);
 INSERT INTO currency_rates (date, value, currency_id, avg_value) VALUES ('2017-09-30', NULL, 1, 339.22000000000003);
 INSERT INTO currency_rates (date, value, currency_id, avg_value) VALUES ('2017-10-31', NULL, 1, 337.10000000000002);
-INSERT INTO currency_rates (date, value, currency_id, avg_value) VALUES ('2016-12-31', 333.29000000000002, 1, 342.16000000000003);
-INSERT INTO currency_rates (date, value, currency_id, avg_value) VALUES ('2015-12-31', 339.47000000000003, 1, 273.68079999999998);
+
+INSERT INTO currency_rates (date, value, currency_id, avg_value, avg_value_year) VALUES ('2016-12-31', 333.29000000000002, 1, null, 342.16000000000003);
+INSERT INTO currency_rates (date, value, currency_id, avg_value, avg_value_year) VALUES ('2015-12-31', 339.47000000000003, 1, null, 273.68079999999998);

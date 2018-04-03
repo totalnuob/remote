@@ -54,4 +54,15 @@ public class ResponseMessageDto implements BaseDto {
     public void setNameRu(String nameRu) {
         this.nameRu = nameRu;
     }
+
+    public String getMessageText(){
+        if(nameEn != null){
+            return nameEn;
+        }else if(nameRu != null){
+            return nameRu;
+        }else if(nameKz != null){
+            return nameKz;
+        }
+        return null;
+    }
 }
