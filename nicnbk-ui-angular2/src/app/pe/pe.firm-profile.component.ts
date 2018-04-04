@@ -100,8 +100,9 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
                                 //TODO: check response memo
                                 this.firm = data;
                                 console.log(this.firm)
-
-                                this.url = "data:" + this.firm.logo.mimeType + ";base64," + this.firm.logo.bytes;
+                                if(this.firm.logo  != null) {
+                                    this.url = "data:" + this.firm.logo.mimeType + ";base64," + this.firm.logo.bytes;
+                                }
 
                                 // preselect firm strategies
                                 this.preselectStrategy();
@@ -115,6 +116,8 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
                                 // memo search params init
                                 this.memoSearchParams.memoType = "2";
                                 this.memoSearchParams.firmId = this.firm.id;
+
+                                console.log(this.memoSearchParams);
 
                             },
                             (error: ErrorResponse) => {
