@@ -160,6 +160,10 @@
             <a>updater</a>
             <b>updater</b>
         </field-exclude>
+        <field-exclude>
+            <a>creator</a>
+            <b>creator</b>
+        </field-exclude>
     </mapping>
     <mapping>
         <class-a>kz.nicnbk.service.dto.pe.PEFundDto</class-a>
@@ -167,6 +171,10 @@
         <field-exclude>
             <a>updater</a>
             <b>updater</b>
+        </field-exclude>
+        <field-exclude>
+            <a>creator</a>
+            <b>creator</b>
         </field-exclude>
     </mapping>
 
