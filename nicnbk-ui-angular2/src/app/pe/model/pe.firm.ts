@@ -28,5 +28,5 @@ export class PEFirm {
     creationDate: string;
     updateDate: string;
 
-    logo = [];
+    logo: any;
 }
