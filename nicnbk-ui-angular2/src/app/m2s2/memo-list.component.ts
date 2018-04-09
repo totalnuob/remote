@@ -227,4 +227,12 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
         return this.moduleAccessChecler.checkAccessRealEstateEditor();
     }
 
+    remove(item){
+        console.log('Deleted');
+        //for(var i = this.fund.grossCashflow.length; i--;) {
+        //    if(this.fund.grossCashflow[i] === item) {
+        //        this.fund.grossCashflow.splice(i, 1);
+        //    }
+        //}
+    }
 }
