@@ -78,8 +78,8 @@ public class PrivateEquityFirmServiceREST extends CommonServiceREST{
 //    }
 
     @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_VIEWER') OR hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
-    @RequestMapping(value = "/getFundsAndTotalIrrAndBarChartsForOnePager/{id}", method = RequestMethod.GET)
-    public ResponseEntity getFundsAndTotalIrrAndBarChartsForOnePager(@PathVariable long id){
+    @RequestMapping(value = "/getFundsAndTotalIrrAndBarChartsForOnePager/{id}/{fundId}", method = RequestMethod.GET)
+    public ResponseEntity getFundsAndTotalIrrAndBarChartsForOnePager(@PathVariable long id, @PathVariable long fundId){
 
         List<PEFundDto> fundDtoList = this.peFundService.loadFirmFunds(id, true);
         List<PEFundDto> fundDtoListShort = new ArrayList<>();

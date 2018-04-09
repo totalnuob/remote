@@ -254,7 +254,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                 this.postAction(null, null);
                             }
                         );
-                    this.getFundsAndTotalIrrAndBarChartsForOnePager(this.firmIdParam);
+                    this.getFundsAndTotalIrrAndBarChartsForOnePager(this.firmIdParam, this.fundIdParam);
                 }else{
                     // TODO: handle error
                     error => this.errorMessage = "Invalid parameter values";
@@ -327,7 +327,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
 
                     this.updateIndustryStrategyGeographyAsStrings();
 
-                    this.getFundsAndTotalIrrAndBarChartsForOnePager(this.fund.firm.id);
+                    this.getFundsAndTotalIrrAndBarChartsForOnePager(this.fund.firm.id, this.fund.id);
                 },
                 (error: ErrorResponse) => {
                     this.errorMessage = "Error saving fund profile";
@@ -340,8 +340,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
             )
     }
 
-    getFundsAndTotalIrrAndBarChartsForOnePager(id) {
-        this.firmService.getFundsAndTotalIrrAndBarChartsForOnePager(id)
+    getFundsAndTotalIrrAndBarChartsForOnePager(id, fundId) {
+        this.firmService.getFundsAndTotalIrrAndBarChartsForOnePager(id, fundId)
             .subscribe(
                 (response) => {
                     this.firmFunds = response.fundDtoList;
@@ -466,7 +466,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
 
                     //this.fund.autoCalculation = true;
 
-                    this.getFundsAndTotalIrrAndBarChartsForOnePager(this.fund.firm.id);
+                    this.getFundsAndTotalIrrAndBarChartsForOnePager(this.fund.firm.id, this.fund.id);
                 },
                 (error: ErrorResponse) => {
                     this.processErrorMessage(error);
@@ -676,7 +676,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     this.fund.benchmarkNetTvpi = response.trackRecordDTO.benchmarkNetTvpi;
                     this.fund.benchmarkName = response.trackRecordDTO.benchmarkName;
 
-                    this.getFundsAndTotalIrrAndBarChartsForOnePager(this.fund.firm.id);
+                    this.getFundsAndTotalIrrAndBarChartsForOnePager(this.fund.firm.id, this.fund.id);
                 },
                 (error: ErrorResponse) => {
                     this.processErrorMessage(error);
