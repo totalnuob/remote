@@ -102,16 +102,16 @@ public class PrivateEquityFirmServiceREST extends CommonServiceREST{
                 String barChartNetIrrDest = tmpFolder + "/BarChartNetIrr_" + new Date().getTime() + ".jpeg";
                 String barChartNetMoicDest = tmpFolder + "/BarChartNetMoic_" + new Date().getTime() + ".jpeg";
 
-                this.pdfService.createCharts(this.peFirmService.get(id).getFirmName(), fundDtoListShort, );
+                this.pdfService.createCharts(this.peFirmService.get(id).getFirmName(), fundDtoListShort, "Benchmark name", barChartNetIrrDest, barChartNetMoicDest, (float) 1000);
 
                 new File(barChartNetIrrDest).toString();
 
                 Files.deleteIfExists(new File(barChartNetIrrDest).toPath());
                 Files.deleteIfExists(new File(barChartNetMoicDest).toPath());
 
-                String ads = "fdsfdsfs";
-                barChartNetIrrBytes = ads.getBytes();
-                this.pdfService.createCharts(firmDto.getFirmName(), fundDtoListShort, (fundDto.getBenchmarkName() != null && fundDto.getBenchmarkName() != "") ? fundDto.getBenchmarkName() : "????", barChartNetIrrDest, barChartNetMoicDest, columnOneWidth);
+//                String ads = "fdsfdsfs";
+//                barChartNetIrrBytes = ads.getBytes();
+//                this.pdfService.createCharts(firmDto.getFirmName(), fundDtoListShort, (fundDto.getBenchmarkName() != null && fundDto.getBenchmarkName() != "") ? fundDto.getBenchmarkName() : "????", barChartNetIrrDest, barChartNetMoicDest, columnOneWidth);
             } catch (Exception ex) {
                 System.out.println("Error creating Bar charts, firm: " + id);
             }
