@@ -104,7 +104,16 @@ public class PrivateEquityFirmServiceREST extends CommonServiceREST{
                 String barChartNetIrrDest = tmpFolder + "/BarChartNetIrr_" + new Date().getTime() + ".jpeg";
                 String barChartNetMoicDest = tmpFolder + "/BarChartNetMoic_" + new Date().getTime() + ".jpeg";
 
-                this.pdfService.createCharts(this.peFirmService.get(id).getFirmName(), fundDtoListShort, "Benchmark name", barChartNetIrrDest, barChartNetMoicDest, (float) 500);
+                String benchmark = "???";
+                if (fundId > 0) {
+                    try {
+                        benchmark = this.peFundService.get(fundId).getBenchmarkName();
+                    } catch (Exception ex) {
+                        System.out.println("Error obtaining benchmark name, fund: " + fundId);
+                    }
+                }
+
+                this.pdfService.createCharts(this.peFirmService.get(id).getFirmName(), fundDtoListShort, benchmark, barChartNetIrrDest, barChartNetMoicDest, (float) 500);
 
                 File barChartNetIrrFile = new File(barChartNetIrrDest);
                 File barChartNetMoicFile = new File(barChartNetMoicDest);
