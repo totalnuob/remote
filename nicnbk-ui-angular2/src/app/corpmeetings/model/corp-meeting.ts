@@ -8,4 +8,6 @@ export class CorpMeeting {
     files: any[];
 
     attendeesNIC: any[];
+    attendeesOther: any[];
+    shortName: string;
 }

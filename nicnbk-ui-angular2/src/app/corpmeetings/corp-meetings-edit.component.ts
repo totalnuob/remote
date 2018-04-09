@@ -12,6 +12,8 @@ import {EmployeeService} from "../employee/employee.service";
 
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
+import {CorpMeetingService} from "./corp-meetings.service";
+import {SaveResponse} from "../common/save-response";
 
 declare var $:any
 
@@ -35,9 +37,11 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
 
     corpMeeting: CorpMeeting;
 
+    corpMeetingId: number;
+
     constructor(
         private employeeService: EmployeeService,
-        private lookupService: LookupService,
+        private corpMeetingService: CorpMeetingService,
         private router: Router,
         private route: ActivatedRoute
     ){
@@ -59,13 +63,28 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                     this.sub = this.route
                         .params
                         .subscribe(params => {
-                            this.corpMeeting.id = +params['id'];
+                            this.corpMeetingId = +params['id'];
                             //this.breadcrumbParams = params['params'];
-                            if(this.corpMeeting.id > 0) {
-                                alert(this.corpMeeting.id);
+                            if(this.corpMeetingId > 0) {
+                                this.busy = this.corpMeetingService.get(this.corpMeetingId)
+                                    .subscribe(
+                                        memo => {
+                                            // TODO: check response memo
+                                            this.corpMeeting = memo;
 
+                                            // preselect memo attendees
+                                            this.preselectAttendeesNIC();
+                                        },
+                                        (error: ErrorResponse) => {
+                                            this.errorMessage = "Error loading memo";
+                                            if(error && !error.isEmpty()){
+                                                this.processErrorMessage(error);
+                                            }
+                                            this.postAction(null, null);
+                                        }
+                                    );
 
-                                // preselect trip memo attendees
+                                // preselect attendees
                                 //TODO: this.preselectAttendees();
                             }
                         });
@@ -111,6 +130,19 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
         this.corpMeeting.attendeesNIC = value;
     }
 
+    preselectAttendeesNIC(){
+        if(this.corpMeeting.attendeesNIC) {
+            this.corpMeeting.attendeesNIC.forEach(element => {
+                for (var i = 0; i < this.attendeesNICList.length; i++) {
+                    var option = this.attendeesNICList[i];
+                    if (element.id === option.id) {
+                        this.attendeesSelect.active.push(option);
+                    }
+                }
+            });
+        }
+    }
+
     onFileChangeProtocols(event) {
         var target = event.target || event.srcElement;
         var files = target.files;
@@ -129,28 +161,35 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
         }
     }
 
-    search(page){
-
-        //this.busy = this.tripMemoService.search(this.searchParams)
-        //    .subscribe(
-        //        searchResult  => {
-        //            this.tripMemoList = searchResult.tripMemos;
-        //            this.tripMemoSearchResult = searchResult;
-        //        },
-        //        (error: ErrorResponse) => {
-        //            this.errorMessage = "Error searching memos";
-        //            console.log("Error searching memos");
-        //            if(error && !error.isEmpty()){
-        //                this.processErrorMessage(error);
-        //            }
-        //            this.postAction(null, null);
-        //        }
-        //    );
-    }
-
     save(){
-        if(this.corpMeeting.attendeesNIC == null || this.corpMeeting.attendeesNIC.length == 0){
+        if(this.corpMeeting != null && (this.corpMeeting.attendeesNIC == null || this.corpMeeting.attendeesNIC.length == 0)){
             this.postAction(null, "Please fill out NIC attendees.");
         }
+
+        this.corpMeeting.date = $('#corpMeetingDate').val();
+        this.busy = this.corpMeetingService.save(this.corpMeeting)
+            .subscribe(
+                (saveResponse: SaveResponse) => {
+                    if(saveResponse.status === 'SUCCESS' ){
+                        this.corpMeeting.id = saveResponse.entityId;
+
+                        this.postAction("Successfully saved corp meeting", null);
+                    }else{
+                        if(saveResponse.message != null){
+                            var message = saveResponse.message.nameEn != null ? saveResponse.message.nameEn :
+                                saveResponse.message.nameRu != null ? saveResponse.message.nameRu : saveResponse.message.nameKz;
+                            if(message != null && message != ''){
+                                this.postAction(null, message);
+                            }else{
+                                this.postAction(null, "Error saving corp meeting");
+                            }
+                        }
+                    }
+                },
+                (error: ErrorResponse) => {
+                    this.processErrorMessage(error);
+                }
+            );
+
     }
 }

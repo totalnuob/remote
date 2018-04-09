@@ -15,6 +15,7 @@ import kz.nicnbk.repo.api.reporting.ReserveCalculationExpenseTypeRepository;
 import kz.nicnbk.repo.api.reporting.privateequity.TarragonNICChartOfAccountsRepository;
 import kz.nicnbk.repo.model.base.BaseTypeEntity;
 import kz.nicnbk.repo.model.common.*;
+import kz.nicnbk.repo.model.corpmeetings.CorpMeetingType;
 import kz.nicnbk.repo.model.files.FilesType;
 import kz.nicnbk.repo.model.hf.*;
 import kz.nicnbk.repo.model.m2s2.MeetingArrangedBy;
@@ -140,6 +141,9 @@ public class LookupServiceImpl implements LookupService {
     @Autowired
     private ReserveCalculationEntityTypeRepository reserveCalculationEntityTypeRepository;
 
+    @Autowired
+    private CorpMeetingTypeRepository corpMeetingTypeRepository;
+
     @Override
     public <T extends BaseTypeEntity> T findByTypeAndCode(Class<T> clazz, String code) {
 
@@ -208,6 +212,8 @@ public class LookupServiceImpl implements LookupService {
                 return (T) this.reserveCalculationExpenseTypeRepository.findByCode(code);
             } else if (clazz.equals(ReserveCalculationEntityType.class)) {
                 return (T) this.reserveCalculationEntityTypeRepository.findByCode(code);
+            } else if (clazz.equals(CorpMeetingType.class)) {
+                return (T) this.corpMeetingTypeRepository.findByCode(code);
             }else{
                 logger.error("Failed to load lookups for clazz=" + clazz + ", code=" + code);
             }

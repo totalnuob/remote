@@ -50,7 +50,8 @@
                         </div>
                         <div class="col-md-3">
                             <div class='input-group date' id='corpMeetingDateDiv' style="width: 100%">
-                                <input required type="text" class="form-control" id="corpMeetingDate" name="corpMeetingDate" [(ngModel)]="corpMeeting.date"/>
+                                <input required type="text" class="form-control" id="corpMeetingDate" name="corpMeetingDate"
+                                       placeholder="Enter date..." [(ngModel)]="corpMeeting.date"/>
                                             <span class="input-group-addon">
                                                 <span class="glyphicon glyphicon-calendar"></span>
                                             </span>
@@ -63,7 +64,7 @@
                             <label class="control-label col-md-2" for="number">№:</label>
                             <div class="col-md-10">
                                 <input type="text" id="number" class="form-control" maxlength="10" name="number" [(ngModel)]="corpMeeting.number"
-                                       required #number="ngModel"/>
+                                       placeholder="Enter number..."required #number="ngModel"/>
                             </div>
                         </div>
                     </div>
@@ -100,7 +101,7 @@
                                                    (data)="refreshAttendees($event)"
                                                    (selected)="selected($event)"
                                                    (removed)="removed($event)"
-                                                   placeholder="No attendee selected">
+                                                   placeholder="Please specify NIC attendees...">
                                         </ng-select>
                                     </div>
                                 </div>
@@ -111,6 +112,15 @@
                                     <label class="control-label col-md-2" for="location">Attendees (Other):</label>
                                     <div class="col-md-10">
                                         <textarea fz-elastic type="text" id="location" class="form-control" maxlength="250" name="location" [(ngModel)]="corpMeeting.attendeesOther"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row top-buffer">
+                                <div class="form-group form-horizontal">
+                                    <label class="control-label col-md-2" for="shortName">Short Name: <span style="color: red">*</span></label>
+                                    <div class="col-md-10">
+                                        <textarea required fz-elastic type="text" id="shortName" class="form-control" maxlength="250" name="shortName" [(ngModel)]="corpMeeting.shortName"></textarea>
                                     </div>
                                 </div>
                             </div>

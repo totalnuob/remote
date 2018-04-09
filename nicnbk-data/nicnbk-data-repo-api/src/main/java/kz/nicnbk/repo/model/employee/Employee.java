@@ -25,6 +25,12 @@ public class Employee extends BaseEntity {
     private Boolean active;
     private Set<Role> roles;
 
+    public Employee(){}
+
+    public Employee(Long id){
+        setId(id);
+    }
+
     @Column(name="lastname")
     public String getLastName() {
         return lastName;

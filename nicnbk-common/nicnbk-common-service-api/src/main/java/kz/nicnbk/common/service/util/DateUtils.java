@@ -70,6 +70,15 @@ public class DateUtils {
         return simpleDateFormat.format(date);
     }
 
+    // For DB operations, date format for psql is 'yyyy-MM-dd'
+    public static String getDateFormatted_YYYY_MM_DD(Date date){
+        if(date == null){
+            return null;
+        }
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        return simpleDateFormat.format(date);
+    }
+
     public static int getCurrentYear(){
         return getYear(new Date());
     }
