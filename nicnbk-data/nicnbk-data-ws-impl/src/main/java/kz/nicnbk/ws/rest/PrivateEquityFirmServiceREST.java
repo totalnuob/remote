@@ -106,11 +106,20 @@ public class PrivateEquityFirmServiceREST extends CommonServiceREST{
 
                 this.pdfService.createCharts(this.peFirmService.get(id).getFirmName(), fundDtoListShort, "Benchmark name", barChartNetIrrDest, barChartNetMoicDest, (float) 1000);
 
-                barChartNetIrrBytes = IOUtils.toByteArray(new FileInputStream(new File(barChartNetIrrDest)));
-                barChartNetMoicBytes = IOUtils.toByteArray(new FileInputStream(new File(barChartNetMoicDest)));
+                File barChartNetIrrFile = new File(barChartNetIrrDest);
+                File barChartNetMoicFile = new File(barChartNetMoicDest);
 
-                Files.deleteIfExists(new File(barChartNetIrrDest).toPath());
-                Files.deleteIfExists(new File(barChartNetMoicDest).toPath());
+                FileInputStream barChartNetIrrFileInputStream = new FileInputStream(barChartNetIrrFile);
+                FileInputStream barChartNetMoicFileInputStream = new FileInputStream(barChartNetMoicFile);
+
+                barChartNetIrrBytes = IOUtils.toByteArray(barChartNetIrrFileInputStream);
+                barChartNetMoicBytes = IOUtils.toByteArray(barChartNetMoicFileInputStream);
+
+                barChartNetIrrFileInputStream.close();
+                barChartNetMoicFileInputStream.close();
+
+                Files.deleteIfExists(barChartNetIrrFile.toPath());
+                Files.deleteIfExists(barChartNetMoicFile.toPath());
 
 //                String ads = "fdsfdsfs";
 //                barChartNetIrrBytes = ads.getBytes();
