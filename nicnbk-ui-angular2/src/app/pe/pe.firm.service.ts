@@ -48,7 +48,7 @@ export class PEFirmService extends CommonService {
     //}
 
     getFundsAndTotalIrrAndBarChartsForOnePager(id, fundId) {
-        return this.http.post(this.PE_FIRM_FUNDS_AND_TOTAL_IRR_AND_BAR_CHARTS_FOR_ONE_PAGER_URL + id + '/' + fundId, this.getOptionsWithCredentials())
+        return this.http.get(this.PE_FIRM_FUNDS_AND_TOTAL_IRR_AND_BAR_CHARTS_FOR_ONE_PAGER_URL + id + '/' + fundId, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }
