@@ -8,6 +8,7 @@ import kz.nicnbk.service.api.pe.PEPdfService;
 import kz.nicnbk.service.dto.common.StatusResultType;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.pe.*;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Date;
@@ -104,7 +106,8 @@ public class PrivateEquityFirmServiceREST extends CommonServiceREST{
 
                 this.pdfService.createCharts(this.peFirmService.get(id).getFirmName(), fundDtoListShort, "Benchmark name", barChartNetIrrDest, barChartNetMoicDest, (float) 1000);
 
-                new File(barChartNetIrrDest).toString();
+                barChartNetIrrBytes = IOUtils.toByteArray(new FileInputStream(new File(barChartNetIrrDest)));
+                barChartNetMoicBytes = IOUtils.toByteArray(new FileInputStream(new File(barChartNetMoicDest)));
 
                 Files.deleteIfExists(new File(barChartNetIrrDest).toPath());
                 Files.deleteIfExists(new File(barChartNetMoicDest).toPath());
