@@ -550,7 +550,7 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
             .subscribe(
                 data => {
                     data.forEach(element => {
-                        this.attendeesList.push({ id: element.id, text: element.firstName + " " + element.lastName[0] + "."});
+                        this.attendeesList.push({ id: element.id, text: element.firstName + " " + element.lastName});
 
                     });
                 },
