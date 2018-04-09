@@ -366,11 +366,11 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
 
                     this.totalGrossIrr = response.totalIrr;
 
-                    if (response.barChartNetIrr != null) {
+                    if (response.barChartNetIrrBytes != null) {
                         this.url_NET_IRR = "data:" + "image/jpeg" + ";base64," + response.barChartNetIrrBytes;
                     }
 
-                    if (response.barChartNetMoic != null) {
+                    if (response.barChartNetMoicBytes != null) {
                         this.url_NET_MOIC = "data:" + "image/jpeg" + ";base64," + response.barChartNetMoicBytes;
                     }
 
