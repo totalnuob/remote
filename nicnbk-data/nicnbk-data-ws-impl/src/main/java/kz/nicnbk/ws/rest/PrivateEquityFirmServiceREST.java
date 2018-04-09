@@ -102,7 +102,9 @@ public class PrivateEquityFirmServiceREST extends CommonServiceREST{
                 String barChartNetIrrDest = tmpFolder + "/BarChartNetIrr_" + new Date().getTime() + ".jpeg";
                 String barChartNetMoicDest = tmpFolder + "/BarChartNetMoic_" + new Date().getTime() + ".jpeg";
 
-                this.pdfService.createCharts();
+                this.pdfService.createCharts(this.peFirmService.get(id).getFirmName(), fundDtoListShort, );
+
+                new File(barChartNetIrrDest).toString();
 
                 Files.deleteIfExists(new File(barChartNetIrrDest).toPath());
                 Files.deleteIfExists(new File(barChartNetMoicDest).toPath());
