@@ -8,6 +8,7 @@ import kz.nicnbk.service.dto.common.StatusResultType;
  */
 public class MemoDeleteResultDto extends StatusResultDto {
 
+    // It does not make any sense
     private String st;
 
     public MemoDeleteResultDto (String st, StatusResultType status, String messageRu, String messageEn, String messageKz) {
