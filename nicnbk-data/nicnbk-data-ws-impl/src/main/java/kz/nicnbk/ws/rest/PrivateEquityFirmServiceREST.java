@@ -91,10 +91,13 @@ public class PrivateEquityFirmServiceREST extends CommonServiceREST{
     @RequestMapping(value = "/logo/upload/{firmId}", method = RequestMethod.POST)
     public ResponseEntity<?> uploadLogo(@RequestParam(value = "file", required = false) MultipartFile[] files, @PathVariable Long firmId) {
 
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
         Set<FilesDto> filesDtoSet = buildFilesDtoFromMultipart(files, null);
 
         if (filesDtoSet != null) {
-            FilesDto savedLogo = this.peFirmService.saveLogo(firmId, filesDtoSet);
+            FilesDto savedLogo = this.peFirmService.saveLogo(firmId, filesDtoSet, username);
             if (savedLogo == null) {
                 // error occurred
                 return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);

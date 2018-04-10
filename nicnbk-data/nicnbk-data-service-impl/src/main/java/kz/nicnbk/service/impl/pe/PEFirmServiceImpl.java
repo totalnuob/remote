@@ -115,7 +115,7 @@ public class PEFirmServiceImpl implements PEFirmService {
     }
 
     @Override
-    public FilesDto saveLogo(Long firmId, Set<FilesDto> filesDtoSet) {
+    public FilesDto saveLogo(Long firmId, Set<FilesDto> filesDtoSet, String username) {
         try {
             if (filesDtoSet != null) {
                 Iterator<FilesDto> iterator = filesDtoSet.iterator();
@@ -129,7 +129,7 @@ public class PEFirmServiceImpl implements PEFirmService {
                 firm.getLogo().setDeleted(true);
                 firm.setLogo(logo);
                 this.peFirmRepository.save(firm);
-                logger.info("Saved PE firm logo info: firm=" + firmId + ", file=" + logoId);
+                logger.info("Saved PE firm logo info: firm=" + firmId + ", file=" + logoId + ", updater=" + username);
 
                 return logoDto;
             }
