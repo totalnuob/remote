@@ -45,9 +45,10 @@ public class PEFundManagementTeamServiceImpl implements PEFundManagementTeamServ
         return null;
     }
 
-    public PEFundManagementTeamResultDto saveList(List<PEFundManagementTeamDto> managementTeamDtoList, Long fundId) {
+    public PEFundManagementTeamResultDto saveList(List<PEFundManagementTeamDto> managementTeamDtoList, Long fundId, String username) {
         try {
             if (managementTeamDtoList == null || fundId == null) {
+                logger.error("Error saving PE fund's Management Team: " + fundId);
                 return new PEFundManagementTeamResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Don't send NULL!", "");
             }
 
@@ -65,11 +66,13 @@ public class PEFundManagementTeamServiceImpl implements PEFundManagementTeamServ
                     managementTeamDto.setEducation(managementTeamDto.getEducation().trim());
                 }
                 if (managementTeamDto.getName() == null || managementTeamDto.getName().equals("")) {
+                    logger.error("Error saving PE fund's Management Team: " + fundId);
                     return new PEFundManagementTeamResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Don't send null or empty name!", "");
                 }
             }
 
             if (this.peFundService.get(fundId) == null) {
+                logger.error("Error saving PE fund's Management Team: " + fundId);
                 return new PEFundManagementTeamResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");
             }
 
@@ -89,12 +92,14 @@ public class PEFundManagementTeamServiceImpl implements PEFundManagementTeamServ
             for (PEFundManagementTeamDto managementTeamDto : managementTeamDtoList) {
                 Long id = save(managementTeamDto, fundId);
                 if (id == null) {
+                    logger.error("Error saving PE fund's Management Team: " + fundId);
                     return new PEFundManagementTeamResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error saving PE fund's Management Team", "");
                 } else {
                     managementTeamDto.setId(id);
                 }
             }
 
+            logger.info("Saved PE fund's Management Team: " + fundId + ", updater: " + username);
             return new PEFundManagementTeamResultDto(managementTeamDtoList, StatusResultType.SUCCESS, "", "Successfully saved PE fund's Management Team", "");
         } catch (Exception ex) {
             logger.error("Error saving PE fund's Management Team: " + fundId, ex);
