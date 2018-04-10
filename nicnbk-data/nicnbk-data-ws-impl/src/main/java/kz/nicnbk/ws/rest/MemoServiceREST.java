@@ -197,7 +197,11 @@ public class MemoServiceREST extends CommonServiceREST {
     @RequestMapping(value = "/delete/{memoId}", method = RequestMethod.GET)
     public ResponseEntity<?> delete(@PathVariable long memoId){
 
-        MemoDeleteResultDto resultDto = this.memoService.safeDelete(memoId);
+        // set destructor
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        MemoDeleteResultDto resultDto = this.memoService.safeDelete(memoId, username);
 
         if (resultDto.getStatus().getCode().equals("SUCCESS")) {
             return new ResponseEntity<>(resultDto, null, HttpStatus.OK);

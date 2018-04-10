@@ -37,5 +37,5 @@ public interface MeetingMemoService extends BaseService {
 
     Set<FilesDto> saveAttachments(Long memoId, Set<FilesDto> attachments);
 
-    MemoDeleteResultDto safeDelete(Long memoId);
+    MemoDeleteResultDto safeDelete(Long memoId, String username);
 }

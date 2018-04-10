@@ -1,11 +1,13 @@
 package kz.nicnbk.service.impl.m2s2;
 
+import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.common.service.util.PaginationUtils;
 import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.api.m2s2.*;
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.repo.model.m2s2.MeetingMemo;
 import kz.nicnbk.repo.model.m2s2.MemoFiles;
+import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.api.files.FileService;
 import kz.nicnbk.service.api.m2s2.MeetingMemoService;
 import kz.nicnbk.service.converter.m2s2.MeetingMemoEntityConverter;
@@ -50,6 +52,9 @@ public class MeetingMemoServiceImpl implements MeetingMemoService {
 
     @Autowired
     private HFMeetingMemoRepository hfMeetingMemoRepository;
+
+    @Autowired
+    private EmployeeService employeeService;
 
     //@Override
     private Long save(MeetingMemoDto memoDto) {
@@ -276,8 +281,9 @@ public class MeetingMemoServiceImpl implements MeetingMemoService {
     }
 
     @Override
-    public MemoDeleteResultDto safeDelete(Long memoId) {
+    public MemoDeleteResultDto safeDelete(Long memoId, String username) {
         try {
+            Set<BaseDictionaryDto> roles = this.employeeService.findByUsername(username).getRoles();
             if (memoId % 2 == 0) {
                 return new MemoDeleteResultDto("Done!", StatusResultType.SUCCESS, "", "Successfully deleted memo", "");
             } else {
