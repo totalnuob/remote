@@ -1995,7 +1995,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             int scale = year == 2015 ? 4 : 2;
             Double avgCurrencyRate = null;
             try {
-                avgCurrencyRate = this.currencyRatesService.getAverageRateForFixedDateAndCurrency(DateUtils.getDate("31.12." + year), CurrencyLookup.USD.getCode());
+                avgCurrencyRate = this.currencyRatesService.getAverageYearRateForFixedDateAndCurrency(DateUtils.getDate("31.12." + year), CurrencyLookup.USD.getCode());
                 //avgCurrencyRate = this.currencyRatesService.getAverageRateForAllMonthsBeforeDateAndCurrency(DateUtils.getDate("31.12." + year), CurrencyLookup.USD.getCode(), scale);
                 if(avgCurrencyRate == null){
                     logger.error("No average currency rate found for date '" + DateUtils.getDate("31.12." + year) + "'");

@@ -49,7 +49,7 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
     }
 
     @Override
-    public Double getAverageRateForFixedDateAndCurrency(Date date, String currencyCode){
+    public Double getAverageYearRateForFixedDateAndCurrency(Date date, String currencyCode){
         Date dateFormatted = DateUtils.getDateOnly(date);
 
         CurrencyRates rates = this.currencyRatesRepository.getRateForDateAndCurrency(dateFormatted, currencyCode);
