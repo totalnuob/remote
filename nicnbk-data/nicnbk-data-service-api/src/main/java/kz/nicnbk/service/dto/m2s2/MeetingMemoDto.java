@@ -38,6 +38,8 @@ public class MeetingMemoDto extends CreateUpdateBaseEntityDto<MeetingMemo> {
 
     private String[] tags;
 
+    private boolean isDeleted;
+
     // TODO: TEMP in place of authentication
     private String author;
 
@@ -193,6 +195,14 @@ public class MeetingMemoDto extends CreateUpdateBaseEntityDto<MeetingMemo> {
 
     public void setTags(String[] tags) {
         this.tags = tags;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
     }
 
     public Date getCreationDate() {
