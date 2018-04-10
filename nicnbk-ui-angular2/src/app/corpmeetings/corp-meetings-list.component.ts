@@ -9,6 +9,7 @@ import {CorpMeetingService} from "./corp-meetings.service";
 import {MemoSearchParamsExtended} from "../m2s2/model/memo-search-params-extended";
 import {CorpMeetingSearchParams} from "./model/corp-meeting-search-params";
 import {CorpMeetingSearchResults} from "./model/corp-meeting-search-results";
+import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 
 declare var $:any
 
@@ -29,6 +30,7 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
     constructor(
         private lookupService: LookupService,
         private corpMeetingService: CorpMeetingService,
+        private moduleAccessChecker: ModuleAccessCheckerService,
         private router: Router,
         private route: ActivatedRoute
     ){
@@ -39,6 +41,10 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
             .subscribe(params => {
                 if(params['params'] != null){
                     this.searchParams = JSON.parse(params['params']);
+
+                    $('#fromDate').val(this.searchParams.dateFrom);
+                    $('#toDate').val(this.searchParams.dateTo);
+
                     this.busy = this.corpMeetingService.search(this.searchParams)
                         .subscribe(
                             (searchResult: CorpMeetingSearchResults) => {
@@ -74,7 +80,7 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
     }
 
     public canEdit(){
-        return true;
+        return this.moduleAccessChecker.checkAccessCorpMeetingsEditor();
     }
 
     search(page){
@@ -85,7 +91,7 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
         this.searchParams.dateFrom = $('#fromDate').val();
         this.searchParams.dateTo = $('#toDate').val();
 
-        console.log(this.searchParams);
+        //console.log(this.searchParams);
         this.busy = this.corpMeetingService.search(this.searchParams)
             .subscribe(
                 (searchResult: CorpMeetingSearchResults)  => {
@@ -100,5 +106,18 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
                     this.postAction(null,  this.errorMessage);
                 }
             );
+    }
+
+    navigate(meetingId){
+        this.searchParams.path = '/corpMeetings';
+        let params = JSON.stringify(this.searchParams);
+        this.router.navigate(['/corpMeetings/edit/', meetingId, { params }]);
+    }
+
+    clearSearchForm(){
+        this.searchParams.type="NONE";
+        this.searchParams.searchText = null;
+        this.searchParams.dateFrom = null;
+        this.searchParams.dateTo = null;
     }
 }

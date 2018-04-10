@@ -14,6 +14,10 @@ export class CorpMeetingService extends CommonService {
     private CORP_MEETINGS_SAVE_URL = this.CORP_MEETINGS_BASE_URL + "save/";
     private CORP_MEETINGS_SEARCH_URL = this.CORP_MEETINGS_BASE_URL + "search/";
     private CORP_MEETINGS_GET_URL = this.CORP_MEETINGS_BASE_URL + "get/";
+    private CORP_MEETINGS_DELETE_URL = this.CORP_MEETINGS_BASE_URL + "delete/";
+
+    private MEETING_ATTACHMENT_UPLOAD_URL = this.CORP_MEETINGS_BASE_URL + "materials/upload/";
+    private MEETING_ATTACHMENT_DELETE_URL = this.CORP_MEETINGS_BASE_URL + "materials/delete/";
 
     constructor( private http: Http,
                  private uploadService: FileUploadService) {
@@ -41,6 +45,22 @@ export class CorpMeetingService extends CommonService {
     get(id): Observable<CorpMeeting> {
         // TODO: check type and id
         return this.http.get(this.CORP_MEETINGS_GET_URL + id, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    postFiles(meetingId, params, files){
+        return this.uploadService.postFiles(this.MEETING_ATTACHMENT_UPLOAD_URL + meetingId, [], files, null);
+    }
+
+    public deleteAttachment(meetingId, fileId) {
+        return this.http.get(this.MEETING_ATTACHMENT_DELETE_URL + meetingId + "/" + fileId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    delete(id){
+        return this.http.post(this.CORP_MEETINGS_DELETE_URL + id, null, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }

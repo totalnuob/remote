@@ -7,7 +7,10 @@ import {ROLE_HF_EDIT} from "./roles.constants";
 import {ROLE_PE_EDIT} from "./roles.constants";
 import {ROLE_MM_EDIT} from "./roles.constants";
 import {ROLE_REPORTING_EDIT} from "./roles.constants";
+import {ROLE_CORPMEETINGS_EDIT} from "./roles.constants";
 
+
+@Injectable()
 export class ModuleAccessCheckerService extends CommonService{
 
     roles;
@@ -62,6 +65,18 @@ export class ModuleAccessCheckerService extends CommonService{
 
     public checkAccessMacroMonitor(){
         return this.checkAccess(ROLE_MM_EDIT);
+    }
+
+    public checkAccessCorpMeetingsEditor(){
+        return this.checkAccess(ROLE_CORPMEETINGS_EDIT);
+    }
+
+    public checkAccessCorpMeetingsEditor(){
+        return this.checkAccess(ROLE_CORPMEETINGS_EDIT);
+    }
+
+    public checkAccessCorpMeetings(){
+        return this.checkAccess("ROLE_CORPMEETINGS");
     }
 
 

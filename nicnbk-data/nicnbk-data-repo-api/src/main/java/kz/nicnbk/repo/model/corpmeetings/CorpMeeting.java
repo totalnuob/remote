@@ -32,6 +32,8 @@ public class CorpMeeting extends CreateUpdateBaseEntity{
     private Set<Employee> attendeesNIC;
     private String attendeesOther;
 
+    private Boolean deleted;
+
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "type_id")
@@ -102,4 +104,13 @@ public class CorpMeeting extends CreateUpdateBaseEntity{
         this.attendeesOther = attendeesOther;
     }
 
+
+    @Column(name="deleted")
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
+    }
 }

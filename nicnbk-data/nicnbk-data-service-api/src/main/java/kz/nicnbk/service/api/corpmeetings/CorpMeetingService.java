@@ -40,6 +40,8 @@ public interface CorpMeetingService extends BaseService {
      */
     CorpMeetingDto get(Long id);
 
+    boolean safeDelete(Long id, String username);
+
 
     /**
      * Return found corp meetings as search result
@@ -48,5 +50,11 @@ public interface CorpMeetingService extends BaseService {
      * @return corp meetings
      */
     CorpMeetingsPagedSearchResult search(CorpMeetingsSearchParamsDto searchParams);
+
+    Set<FilesDto> saveAttachments(Long meetingId, Set<FilesDto> attachments);
+
+    Set<FilesDto> getAttachments(Long meetingId);
+
+    boolean safeDeleteAttachment(Long meetingId, Long fileId, String username);
 
 }

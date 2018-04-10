@@ -82,6 +82,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 return "ROLE_STRATEGY_RISK_MANAGEMENT_VIEWER";
             case "MM_EDIT":
                 return "ROLE_MACROMONITOR_EDITOR";
+            case "CM_EDIT":
+                return "ROLE_CORPMEETINGS_EDITOR";
+            case "CM_VIEW":
+                return "ROLE_CORPMEETINGS_VIEWER";
             default:
                 return null;
         }

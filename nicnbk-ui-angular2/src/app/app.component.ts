@@ -134,5 +134,9 @@ export class AppComponent {
         //return false;
         return this.moduleAccessChecker.checkAccessReporting();
     }
+
+    showCorpMeeting(){
+        return this.moduleAccessChecker.checkAccessCorpMeetings();
+    }
 }
 

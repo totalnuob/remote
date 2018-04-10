@@ -14,6 +14,8 @@ import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
 import {CorpMeetingService} from "./corp-meetings.service";
 import {SaveResponse} from "../common/save-response";
+import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
+import {CorpMeetingSearchParams} from "./model/corp-meeting-search-params";
 
 declare var $:any
 
@@ -24,6 +26,7 @@ declare var $:any
     providers: [],
 })
 export class CorpMeetingEditComponent extends CommonFormViewComponent implements OnInit {
+
     busy: Subscription;
     public sub: any;
 
@@ -39,11 +42,15 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
 
     corpMeetingId: number;
 
+    private breadcrumbParams: string;
+    private searchParams = new CorpMeetingSearchParams();
+
     constructor(
         private employeeService: EmployeeService,
         private corpMeetingService: CorpMeetingService,
         private router: Router,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private moduleAccessChecker: ModuleAccessCheckerService
     ){
         super(router);
 
@@ -57,14 +64,17 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
             .subscribe(
                 (data) => {
                     data[0].forEach(element => {
-                        this.attendeesNICList.push({ id: element.id, text: element.firstName + " " + element.lastName[0] + "."});
+                        this.attendeesNICList.push({ id: element.id, text: element.firstName + " " + element.lastName});
                     });
 
                     this.sub = this.route
                         .params
                         .subscribe(params => {
                             this.corpMeetingId = +params['id'];
-                            //this.breadcrumbParams = params['params'];
+                            this.breadcrumbParams = params['params'];
+                            if(this.breadcrumbParams != null) {
+                                this.searchParams = JSON.parse(this.breadcrumbParams);
+                            }
                             if(this.corpMeetingId > 0) {
                                 this.busy = this.corpMeetingService.get(this.corpMeetingId)
                                     .subscribe(
@@ -115,7 +125,7 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
     }
 
     public canEdit(){
-        return true;
+        return this.moduleAccessChecker.checkAccessCorpMeetingsEditor();
     }
 
     public selected(value:any):void {
@@ -172,8 +182,35 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                 (saveResponse: SaveResponse) => {
                     if(saveResponse.status === 'SUCCESS' ){
                         this.corpMeeting.id = saveResponse.entityId;
+                        //this.corpMeeting.creationDate = saveResponse.creationDate;
 
-                        this.postAction("Successfully saved corp meeting", null);
+                        if(this.uploadMaterialsFiles.length > 0) {
+
+                            // TODO: refactor
+                            this.busy = this.corpMeetingService.postFiles(this.corpMeeting.id, [], this.uploadMaterialsFiles).subscribe(
+                                res => {
+                                    // clear upload files list on view
+                                    this.uploadMaterialsFiles.length = 0;
+
+                                    // update files list with new files
+                                    if(!this.corpMeeting.files){ // no files existed
+                                        this.corpMeeting.files = [];
+                                    }
+                                    for (var i = 0; i < res.length; i++) {
+                                        this.corpMeeting.files.push(res[i]);
+                                    }
+
+                                    this.postAction("Successfully saved corp meeting.", null);
+                                },
+                                error => {
+                                    // TODO: don't save memo?
+
+                                    this.postAction(null, "Error uploading attachments.");
+                                });
+                        }else{
+                            this.postAction("Successfully saved corp meeting.", null);
+                        }
+
                     }else{
                         if(saveResponse.message != null){
                             var message = saveResponse.message.nameEn != null ? saveResponse.message.nameEn :
@@ -190,6 +227,52 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                     this.processErrorMessage(error);
                 }
             );
+    }
 
+    deleteAttachment(fileId){
+        var confirmed = window.confirm("Are you sure want to delete");
+        if(confirmed) {
+            this.corpMeetingService.deleteAttachment(this.corpMeeting.id, fileId)
+                .subscribe(
+                    response => {
+                        for(var i = this.corpMeeting.files.length - 1; i >= 0; i--) {
+                            if(this.corpMeeting.files[i].id === fileId) {
+                                this.corpMeeting.files.splice(i, 1);
+                            }
+                        }
+
+                        this.postAction("Attachment deleted.", null);
+                    },
+                    (error: ErrorResponse) => {
+                        this.errorMessage = "Error deleting attachment";
+                        if(error && !error.isEmpty()){
+                            this.processErrorMessage(error);
+                        }
+                        this.postAction(null, null);
+                    }
+                );
+        }
+    }
+
+    public deleteCorpMeeting(){
+        if(confirm("Are you sure want to delete?")) {
+            this.busy = this.corpMeetingService.delete(this.corpMeetingId)
+                .subscribe(
+                    response => {
+                        if (response) {
+                            this.router.navigate(['/corpMeetings/', {}]);
+                        } else {
+                            this.postAction(null, "Failed to delete meeting");
+                        }
+                    },
+                    (error:ErrorResponse) => {
+                        this.errorMessage = "Failed to delete meeting";
+                        if (error && !error.isEmpty()) {
+                            this.processErrorMessage(error);
+                        }
+                        this.postAction(null, this.errorMessage);
+                    }
+                );
+        }
     }
 }

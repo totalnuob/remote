@@ -67,37 +67,47 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
         return buildEntitySaveResponse(saveResponseDto);
     }
 
+    @PreAuthorize("hasRole('ROLE_CORPMEETINGS_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.POST)
+    public ResponseEntity<?> delete(@PathVariable long id) {
 
-//    @RequestMapping(method = RequestMethod.POST, value = "/attachment/upload/{tripMemoId}")
-//    public ResponseEntity<?> handleFileUpload(@PathVariable("tripMemoId") long tripMemoId,
-//                                          @RequestParam(value = "file", required = false)MultipartFile[] files) {
-//
-//        Set<FilesDto> filesDtoSet = buildFilesDtoFromMultipart(files, FileTypeLookup.MEMO_ATTACHMENT.getCode());
-//        if(filesDtoSet != null){
-//            Set<FilesDto> savedAttachments = this.tripMemoService.saveAttachments(tripMemoId, filesDtoSet);
-//            if(savedAttachments == null){
-//                // error occurred
-//                return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
-//            }else{
-//                return new ResponseEntity<>(savedAttachments, null, HttpStatus.OK);
-//            }
-//        }
-//        return new ResponseEntity<>(null, null, HttpStatus.OK);
-//    }
-//
-//    @ResponseBody
-//    @RequestMapping(value="/attachment/delete/{memoId}/{fileId}", method=RequestMethod.GET)
-//    public ResponseEntity<?> deleteFile(@PathVariable(value="memoId") Long tripMemoId, @PathVariable(value="fileId") Long fileId){
-//        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
-//        String username = this.tokenService.decode(token).getUsername();
-//        boolean access = this.tripMemoService.checkOwner(token, tripMemoId);
-//        if(!access){
-//            return buildUnauthorizedResponse();
-//        }
-//        //boolean deleted = this.tripMemoService.deleteAttachment(tripMemoId, fileId, username);
-//        boolean deleted = this.tripMemoService.safeDeleteAttachment(tripMemoId, fileId, username);
-//        return buildDeleteResponseEntity(deleted);
-//    }
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        boolean deleted = this.corpMeetingService.safeDelete(id, username);
+        return buildDeleteResponseEntity(deleted);
+    }
+
+
+    @RequestMapping(method = RequestMethod.POST, value = "/materials/upload/{meetingId}")
+    public ResponseEntity<?> handleFileUpload(@PathVariable("meetingId") long meetingId,
+                                          @RequestParam(value = "file", required = false)MultipartFile[] files) {
+
+        Set<FilesDto> filesDtoSet = buildFilesDtoFromMultipart(files, FileTypeLookup.CORP_MEETING_MATERIALS.getCode());
+        if(filesDtoSet != null){
+            Set<FilesDto> savedAttachments = this.corpMeetingService.saveAttachments(meetingId, filesDtoSet);
+            if(savedAttachments == null){
+                // error occurred
+                return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+            }else{
+                return new ResponseEntity<>(savedAttachments, null, HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity<>(null, null, HttpStatus.OK);
+    }
+
+
+    @PreAuthorize("hasRole('ROLE_CORPMEETINGS_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @ResponseBody
+    @RequestMapping(value="/materials/delete/{meetingId}/{fileId}", method=RequestMethod.GET)
+    public ResponseEntity<?> deleteFile(@PathVariable(value="meetingId") Long meetingId, @PathVariable(value="fileId") Long fileId){
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        //boolean deleted = this.tripMemoService.deleteAttachment(tripMemoId, fileId, username);
+        boolean deleted = this.corpMeetingService.safeDeleteAttachment(meetingId, fileId, username);
+        return buildDeleteResponseEntity(deleted);
+    }
 //
 //
 //    @RequestMapping(value = "/attachment/list/{tripMemoId}", method = RequestMethod.GET)

@@ -2,23 +2,17 @@ package kz.nicnbk.service.impl.corpmeetings;
 
 import kz.nicnbk.common.service.util.PaginationUtils;
 import kz.nicnbk.common.service.util.StringUtils;
+import kz.nicnbk.repo.api.corpmeetings.CorpMeetingFilesRepository;
 import kz.nicnbk.repo.api.corpmeetings.CorpMeetingsRepository;
-import kz.nicnbk.repo.api.employee.EmployeeRepository;
-import kz.nicnbk.repo.api.tripmemo.TripMemoFilesRepository;
-import kz.nicnbk.repo.api.tripmemo.TripMemoRepository;
 import kz.nicnbk.repo.model.corpmeetings.CorpMeeting;
+import kz.nicnbk.repo.model.corpmeetings.CorpMeetingFiles;
 import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
-import kz.nicnbk.repo.model.tripmemo.TripMemo;
-import kz.nicnbk.repo.model.tripmemo.TripMemoFiles;
 import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.corpmeetings.CorpMeetingService;
 import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.api.files.FileService;
-import kz.nicnbk.service.api.tripmemo.TripMemoService;
 import kz.nicnbk.service.converter.corpmeetings.CorpMeetingsEntityConverter;
-import kz.nicnbk.service.converter.tripmemo.TripMemoEntityConverter;
-import kz.nicnbk.service.dto.authentication.TokenUserInfo;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
 import kz.nicnbk.service.dto.common.ResponseStatusType;
 import kz.nicnbk.service.dto.corpmeetings.CorpMeetingDto;
@@ -26,9 +20,6 @@ import kz.nicnbk.service.dto.corpmeetings.CorpMeetingsPagedSearchResult;
 import kz.nicnbk.service.dto.corpmeetings.CorpMeetingsSearchParamsDto;
 import kz.nicnbk.service.dto.employee.EmployeeDto;
 import kz.nicnbk.service.dto.files.FilesDto;
-import kz.nicnbk.service.dto.tripmemo.TripMemoDto;
-import kz.nicnbk.service.dto.tripmemo.TripMemoPagedSearchResult;
-import kz.nicnbk.service.dto.tripmemo.TripMemoSearchParamsDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +28,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -54,6 +44,9 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
 
     @Autowired
     private CorpMeetingsRepository corpMeetingsRepository;
+
+    @Autowired
+    private CorpMeetingFilesRepository corpMeetingFilesRepository;
 
     @Autowired
     private CorpMeetingsEntityConverter corpMeetingsEntityConverter;
@@ -110,12 +103,27 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
             CorpMeeting entity = corpMeetingsRepository.findOne(id);
             CorpMeetingDto dto = corpMeetingsEntityConverter.disassemble(entity);
 
-            //tripMemoDto.setFiles(getAttachments(id));
+            dto.setFiles(getAttachments(id));
             return dto;
         }catch(Exception ex){
             logger.error("Error loading corp meeting: " + id, ex);
         }
         return null;
+    }
+
+    @Override
+    public boolean safeDelete(Long id, String username) {
+        try {
+            CorpMeeting entity = corpMeetingsRepository.findOne(id);
+            entity.setDeleted(true);
+
+            this.corpMeetingsRepository.save(entity);
+            logger.info("Corp meeting deleted with id=" + id + " [user]=" + username);
+            return true;
+        }catch(Exception ex){
+            logger.error("Error deleting corp meeting: id=" + id + ", ]user]=" + username, ex);
+        }
+        return false;
     }
 
     @Override
@@ -130,7 +138,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
             } else {
                 page = searchParams.getPage() > 0 ? searchParams.getPage() - 1 : 0;
 
-                entitiesPage = corpMeetingsRepository.findWithoutDates(StringUtils.isValue(searchParams.getType()) ? searchParams.getType() : null, searchParams.getNumber(),
+                entitiesPage = corpMeetingsRepository.searchMeetings(StringUtils.isValue(searchParams.getType()) ? searchParams.getType() : null, searchParams.getNumber(),
                         searchParams.getSearchText(), searchParams.getDateFrom(), searchParams.getDateTo(),
                         new PageRequest(page, searchParams.getPageSize(), new Sort(Sort.Direction.DESC, "date", "id")));
 
@@ -157,6 +165,75 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
             logger.error("Error searching corp meetings", ex);
         }
         return null;
+    }
+
+    @Override
+    public Set<FilesDto> saveAttachments(Long meetingId, Set<FilesDto> attachments) {
+        try {
+            Set<FilesDto> dtoSet = new HashSet<>();
+            if (attachments != null) {
+                Iterator<FilesDto> iterator = attachments.iterator();
+                while (iterator.hasNext()) {
+                    FilesDto filesDto = iterator.next();
+                    if (filesDto.getId() == null) {
+                        Long fileId = fileService.save(filesDto, FileTypeLookup.CORP_MEETING_MATERIALS.getCatalog());
+                        logger.info("Saved corp meeting attachment files: meeting id=" + meetingId + ", file=" + fileId);
+
+                        CorpMeetingFiles corpMeetingFiles = new CorpMeetingFiles(meetingId, fileId);
+                        corpMeetingFilesRepository.save(corpMeetingFiles);
+                        logger.info("Saved corp meeting attachment information to DB: meeting id=" + meetingId + ", file=" + fileId);
+
+                        FilesDto newFileDto = new FilesDto();
+                        newFileDto.setId(fileId);
+                        newFileDto.setFileName(filesDto.getFileName());
+                        dtoSet.add(newFileDto);
+                    }
+                }
+            }
+            return dtoSet;
+        }catch (Exception ex){
+            logger.error("Error saving corp meeting attachments: corp meeting id=" + meetingId, ex);
+        }
+        return null;
+    }
+
+    @Override
+    public Set<FilesDto> getAttachments(Long meetingId) {
+        try {
+            List<CorpMeetingFiles> entities = corpMeetingFilesRepository.getFilesByMeetingId(meetingId);
+            Set<FilesDto> files = new HashSet<>();
+            if (entities != null) {
+                for (CorpMeetingFiles corpMeetingFiles : entities) {
+                    FilesDto fileDto = new FilesDto();
+                    fileDto.setId(corpMeetingFiles.getFile().getId());
+                    fileDto.setFileName(corpMeetingFiles.getFile().getFileName());
+                    files.add(fileDto);
+                }
+            }
+            return files;
+        }catch(Exception ex){
+            logger.error("Error getting corp meeting attachments: corp meeting id=" + meetingId, ex);
+        }
+        return null;
+    }
+
+    @Override
+    public boolean safeDeleteAttachment(Long meetingId, Long fileId, String username) {
+        try {
+            CorpMeetingFiles entity = corpMeetingFilesRepository.getFilesByFileId(fileId);
+            if (entity != null && entity.getCorpMeeting().getId().longValue() == meetingId) {
+                boolean deleted = fileService.safeDelete(fileId);
+                if(!deleted){
+                    logger.error("Failed to delete(safe) corp meeting attachment: corp meeting =" + meetingId + ", file=" + fileId + ", by " + username);
+                }else{
+                    logger.info("Deleted(safe) corp meeting  attachment: corp meeting =" + meetingId + ", file=" + fileId + ", by " + username);
+                }
+                return deleted;
+            }
+        }catch (Exception e){
+            logger.error("Failed to delete(safe) corp meeting  attachment with error: corp meeting =" + meetingId + ", file=" + fileId + ", by " + username, e);
+        }
+        return false;
     }
 
 

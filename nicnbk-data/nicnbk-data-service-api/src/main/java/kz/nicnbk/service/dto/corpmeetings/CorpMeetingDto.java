@@ -32,6 +32,8 @@ public class CorpMeetingDto extends CreateUpdateBaseEntityDto<CorpMeeting> {
     private Set<EmployeeDto> attendeesNIC;
     private String attendeesOther;
 
+    private Set<FilesDto> files;
+
 
     public String getType() {
         return type;
@@ -87,6 +89,14 @@ public class CorpMeetingDto extends CreateUpdateBaseEntityDto<CorpMeeting> {
 
     public void setAttendeesOther(String attendeesOther) {
         this.attendeesOther = attendeesOther;
+    }
+
+    public Set<FilesDto> getFiles() {
+        return files;
+    }
+
+    public void setFiles(Set<FilesDto> files) {
+        this.files = files;
     }
 }
 

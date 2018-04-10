@@ -5,7 +5,7 @@
                 <div class="col-md-12">
                     <ol class="breadcrumb">
                         <li>
-                            <!--<span *ngIf="this.breadcrumbParams != null"><a [routerLink]="['/corpMeetings', {params: this.breadcrumbParams }]">Corp Meetings1</a></span>-->
+                            <span *ngIf="this.breadcrumbParams != null"><a [routerLink]="['/corpMeetings', {params: this.breadcrumbParams }]">Corp Meetings</a></span>
                             <span *ngIf="this.breadcrumbParams == null"><a [routerLink]="['/corpMeetings']">Corp Meetings</a></span>
                         </li>
                         <li class="active">Corp Meeting</li>
@@ -155,36 +155,36 @@
                     </div>
                     <br/>
                     <div class="row top-buffer">
-                        <div class="col-md-6">
-                            <div class="jumbotron" style="padding-top: 5px; padding-bottom: 5px;">
-                                <div class="row">
-                                    <label>PROTOCOL <span style="color: red">*</span></label>
-                                </div>
+                        <!--<div class="col-md-6">-->
+                            <!--<div class="jumbotron" style="padding-top: 5px; padding-bottom: 5px;">-->
+                                <!--<div class="row">-->
+                                    <!--<label>PROTOCOL <span style="color: red">*</span></label>-->
+                                <!--</div>-->
 
-                                <div class="row" *ngIf="canEdit()">
-                                    <label class="btn btn-primary col-md-2" for="protocolAttachmentFile">
-                                        <input type="file" id="protocolAttachmentFile" (change)="onFileChangeProtocols($event)" name="file" multiple style="display:none;"/>Upload</label>
-                                    <div class="col-md-6">
-                                        <div class="row" *ngFor="let newFile of uploadProtocolsFiles" class="label label-info" style="display: table;">
-                                            <span>{{newFile.name}}</span>
-                                        </div>
-                                    </div>
-                                </div>
+                                <!--<div class="row" *ngIf="canEdit()">-->
+                                    <!--<label class="btn btn-primary col-md-2" for="protocolAttachmentFile">-->
+                                        <!--<input type="file" id="protocolAttachmentFile" (change)="onFileChangeProtocols($event)" name="file" multiple style="display:none;"/>Upload</label>-->
+                                    <!--<div class="col-md-6">-->
+                                        <!--<div class="row" *ngFor="let newFile of uploadProtocolsFiles" class="label label-info" style="display: table;">-->
+                                            <!--<span>{{newFile.name}}</span>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                <!--</div>-->
 
-                                <div class="row" *ngIf="corpMeeting?.protocols?.length > 0">
-                                    <div *ngFor="let protocol of corpMeeting.protocols">
-                                        <file-attachment-downloader fileId="{{protocol.id}}"
-                                                                    fileName="{{protocol?.fileName}}"
-                                                                    fileType="CM_PROT">
-                                        </file-attachment-downloader>
+                                <!--<div class="row" *ngIf="corpMeeting?.protocols?.length > 0">-->
+                                    <!--<div *ngFor="let protocol of corpMeeting.protocols">-->
+                                        <!--<file-attachment-downloader fileId="{{protocol.id}}"-->
+                                                                    <!--fileName="{{protocol?.fileName}}"-->
+                                                                    <!--fileType="CM_PROT">-->
+                                        <!--</file-attachment-downloader>-->
 
-                                        <a (click)="deleteAttachment(attachment.id)" *ngIf="canEdit()">
-                                            <i class="glyphicon glyphicon-trash"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                                        <!--<a (click)="deleteAttachment(attachment.id)" *ngIf="canEdit()">-->
+                                            <!--<i class="glyphicon glyphicon-trash"></i>-->
+                                        <!--</a>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</div>-->
                         <div class="col-md-6">
                             <div class="jumbotron" style="padding-top: 5px; padding-bottom: 5px;">
                                 <div class="row">
@@ -219,6 +219,7 @@
                     <br/>
                     <div class="row top-buffer">
                         <div class="col-md-12">
+                            <button type="button" class="btn btn-danger pull-left" name="deleteCorpMeeting" (click)="deleteCorpMeeting()" *ngIf="canEdit() && corpMeeting != null && corpMeeting.id != null">Delete</button>
                             <button type="submit" class="btn btn-success pull-right" name="saveCorpMeeting" *ngIf="canEdit()">Save</button>
                         </div>
                     </div>
