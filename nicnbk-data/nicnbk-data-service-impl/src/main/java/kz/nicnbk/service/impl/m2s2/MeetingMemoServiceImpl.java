@@ -290,6 +290,8 @@ public class MeetingMemoServiceImpl implements MeetingMemoService {
             }
 
             if (this.isAllowedToDelete(memo, username)) {
+                memo.setDeleted(true);
+                this.memoRepository.save(memo);
                 return new MemoDeleteResultDto("Done!", StatusResultType.SUCCESS, "", "Successfully deleted memo", "");
             } else {
                 return new MemoDeleteResultDto("Not done!", StatusResultType.FAIL, "", "Not enough rights", "");
