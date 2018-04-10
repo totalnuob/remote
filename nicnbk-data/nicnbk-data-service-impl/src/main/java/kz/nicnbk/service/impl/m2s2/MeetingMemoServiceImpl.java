@@ -9,11 +9,9 @@ import kz.nicnbk.repo.model.m2s2.MemoFiles;
 import kz.nicnbk.service.api.files.FileService;
 import kz.nicnbk.service.api.m2s2.MeetingMemoService;
 import kz.nicnbk.service.converter.m2s2.MeetingMemoEntityConverter;
+import kz.nicnbk.service.dto.common.StatusResultType;
 import kz.nicnbk.service.dto.files.FilesDto;
-import kz.nicnbk.service.dto.m2s2.MeetingMemoDto;
-import kz.nicnbk.service.dto.m2s2.MemoPagedSearchResult;
-import kz.nicnbk.service.dto.m2s2.MemoSearchParams;
-import kz.nicnbk.service.dto.m2s2.MemoSearchParamsExtended;
+import kz.nicnbk.service.dto.m2s2.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -275,5 +273,16 @@ public class MeetingMemoServiceImpl implements MeetingMemoService {
             logger.error("Error saving memo attachments: memo=" + memoId, ex);
         }
         return null;
+    }
+
+    @Override
+    public MemoDeleteResultDto safeDelete(Long memoId) {
+        System.out.println("memoId = " + memoId);
+        if (memoId % 2 == 0) {
+            return new MemoDeleteResultDto("Done!", StatusResultType.SUCCESS, "", "Successfully deleted memo", "");
+        } else {
+            return new MemoDeleteResultDto("Not done!", StatusResultType.FAIL, "", "Error deleting memo", "");
+        }
+
     }
 }

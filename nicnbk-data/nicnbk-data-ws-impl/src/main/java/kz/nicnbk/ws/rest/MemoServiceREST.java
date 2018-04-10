@@ -196,7 +196,14 @@ public class MemoServiceREST extends CommonServiceREST {
 
     @RequestMapping(value = "/delete/{memoId}", method = RequestMethod.GET)
     public ResponseEntity<?> delete(@PathVariable long memoId){
-        return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+
+        MemoDeleteResultDto resultDto = this.memoService.safeDelete(memoId);
+
+        if (resultDto.getStatus().getCode().equals("SUCCESS")) {
+            return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @RequestMapping(value = "/GN/save", method = RequestMethod.POST)

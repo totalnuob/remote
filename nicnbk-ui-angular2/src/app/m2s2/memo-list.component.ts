@@ -231,7 +231,8 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
         if (confirm('Are you sure?')) {
             this.busy = this.memoService.deleteMemo(item.id)
                 .subscribe(
-                    result  => {
+                    (response)  => {
+                        this.postAction(response.messageEn, null);
                         //for(var i = this.memoList.length; i--;) {
                         //    if(this.memoList[i] === item) {
                         //        this.memoList.splice(i, 1);
@@ -239,11 +240,9 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
                         //}
                     },
                     (error: ErrorResponse) => {
-                        this.errorMessage = "Error deleting memo";
-                        if(error && !error.isEmpty()){
-                            this.processErrorMessage(error);
-                        }
-                        this.postAction(null, null);
+                        this.processErrorMessage(error);
+                        this.postAction(null, error.message);
+                        console.log(error);
                     }
                 );
 
