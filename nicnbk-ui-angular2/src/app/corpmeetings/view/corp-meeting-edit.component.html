@@ -30,21 +30,21 @@
                         <div class="col-md-2">
                             <label class="checkbox-inline">
                                 <input required type="radio" name="corpMeetingType" [ngModel]="corpMeeting.type"
-                                       (ngModelChange)="corpMeeting.type='BOD'" name="type" value="BOD">
+                                       (ngModelChange)="typeChanged('BOD')" name="type" value="BOD">
                                 <span>BoD</span>
                             </label>
                         </div>
                         <div class="col-md-2">
                             <label class="checkbox-inline">
                                 <input required type="radio" name="corpMeetingType" [ngModel]="corpMeeting.type"
-                                       (ngModelChange)="corpMeeting.type='EXEC'" name="type" value="EXEC">
+                                       (ngModelChange)="typeChanged('EXEC')" name="type" value="EXEC">
                                 <span>Exec Meeting</span>
                             </label>
                         </div>
                         <div class="col-md-2">
                             <label class="checkbox-inline">
                                 <input required  type="radio" name="corpMeetingType" [ngModel]="corpMeeting.type"
-                                       (ngModelChange)="corpMeeting.type='IC'" name="type" value="IC">
+                                       (ngModelChange)="typeChanged('IC')" name="type" value="IC">
                                 <span>IC</span>
                             </label>
                         </div>
@@ -107,7 +107,7 @@
                                 </div>
                             </div>
 
-                            <div class="row top-buffer" *ngIf="corpMeeting.type == 'BOD'">
+                            <div class="row top-buffer">
                                 <div class="form-group form-horizontal">
                                     <label class="control-label col-md-2" for="location">Attendees (Other):</label>
                                     <div class="col-md-10">

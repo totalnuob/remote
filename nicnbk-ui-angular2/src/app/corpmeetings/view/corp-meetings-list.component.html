@@ -75,9 +75,10 @@
                                 <label for="meetingType">Type</label>
                                 <select class="form-control" id="meetingType" name="meetingType" [(ngModel)]="searchParams.type">
                                     <option value="NONE">---</option>
-                                    <option value="BOD">BoD</option>
-                                    <option value="EXEC">Executive Board</option>
-                                    <option value="IC">Investment Committee</option>
+                                    <option *ngFor = "let type of meetingTypes" [value]="type.code">{{type.nameEn}}</option>
+                                    <!--<option value="BOD">BoD</option>-->
+                                    <!--<option value="EXEC">Executive Board</option>-->
+                                    <!--<option value="IC">Investment Committee</option>-->
                                 </select>
                             </div>
                         </div>

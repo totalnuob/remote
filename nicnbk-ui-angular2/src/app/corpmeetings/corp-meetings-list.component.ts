@@ -1,6 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {Router, ActivatedRoute} from '@angular/router';
 
+import {Observable} from 'rxjs/Observable';
+import 'rxjs/add/observable/forkJoin';
+
 import {LookupService} from "../common/lookup.service";
 import {CommonFormViewComponent} from "../common/common.component";
 import {Subscription} from 'rxjs';
@@ -10,6 +13,7 @@ import {MemoSearchParamsExtended} from "../m2s2/model/memo-search-params-extende
 import {CorpMeetingSearchParams} from "./model/corp-meeting-search-params";
 import {CorpMeetingSearchResults} from "./model/corp-meeting-search-results";
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
+import {BaseDictionary} from "../common/model/base-dictionary";
 
 declare var $:any
 
@@ -27,6 +31,8 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
     corpMeetings = [];
     searchResult: CorpMeetingSearchResults;
 
+    meetingTypes = [];
+
     constructor(
         private lookupService: LookupService,
         private corpMeetingService: CorpMeetingService,
@@ -36,27 +42,40 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
     ){
         super(router);
 
-        this.sub = this.route
-            .params
-            .subscribe(params => {
-                if(params['params'] != null){
-                    this.searchParams = JSON.parse(params['params']);
+        Observable.forkJoin(
+            // Load lookups
+            this.lookupService.getCorpMeetingTypes()
+            )
+            .subscribe(
+                (data) => {
+                    data[0].forEach(element => {
+                        this.meetingTypes.push(new BaseDictionary(element.code, element.nameEn, null, null));
+                    });
 
-                    $('#fromDate').val(this.searchParams.dateFrom);
-                    $('#toDate').val(this.searchParams.dateTo);
 
-                    this.busy = this.corpMeetingService.search(this.searchParams)
-                        .subscribe(
-                            (searchResult: CorpMeetingSearchResults) => {
-                                this.corpMeetings = searchResult.corpMeetings;
-                                this.searchResult = searchResult;
-                            },
-                            error =>  this.errorMessage = "Failed to search corp meetings."
-                        );
-                } else {
-                    this.search(0);
+                    this.sub = this.route
+                        .params
+                        .subscribe(params => {
+                            if (params['params'] != null) {
+                                this.searchParams = JSON.parse(params['params']);
+
+                                $('#fromDate').val(this.searchParams.dateFrom);
+                                $('#toDate').val(this.searchParams.dateTo);
+
+                                this.busy = this.corpMeetingService.search(this.searchParams)
+                                    .subscribe(
+                                        (searchResult:CorpMeetingSearchResults) => {
+                                            this.corpMeetings = searchResult.corpMeetings;
+                                            this.searchResult = searchResult;
+                                        },
+                                        error => this.errorMessage = "Failed to search corp meetings."
+                                    );
+                            } else {
+                                this.search(0);
+                            }
+                        });
                 }
-            });
+            );
 
     }
 

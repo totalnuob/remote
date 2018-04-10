@@ -587,4 +587,21 @@ public class LookupServiceImpl implements LookupService {
         }
         return null;
     }
+
+    @Override
+    public List<BaseDictionaryDto> getAllCorpMeetingTypes() {
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            Iterator<CorpMeetingType> iterator = this.corpMeetingTypeRepository.findAll().iterator();
+            while (iterator.hasNext()) {
+                CorpMeetingType entity = iterator.next();
+                BaseDictionaryDto dto = disassemble(entity);
+                dtoList.add(dto);
+            }
+            return dtoList;
+        } catch (Exception ex) {
+            logger.error("Failed to load lookup: MeetingType", ex);
+        }
+        return null;
+    }
 }

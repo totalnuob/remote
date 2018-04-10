@@ -39,6 +39,12 @@ public class LookupServiceREST extends CommonServiceREST{
         return buildNonNullResponse(lookups);
     }
 
+    @RequestMapping(value = "/CorpMeetingType", method = RequestMethod.GET)
+    public ResponseEntity getAllCorpMeetingTypes(){
+        List<BaseDictionaryDto> lookups = this.lookupService.getAllCorpMeetingTypes();
+        return buildNonNullResponse(lookups);
+    }
+
     @RequestMapping(value = "/PEStrategy", method = RequestMethod.GET)
     public ResponseEntity getPEStrategies(){
         List<BaseDictionaryDto> lookups = this.lookupService.getPrivateEquityStrategies();

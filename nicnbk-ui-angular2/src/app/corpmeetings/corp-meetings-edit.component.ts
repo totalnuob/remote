@@ -275,4 +275,11 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                 );
         }
     }
+
+    typeChanged(type){
+        this.corpMeeting.type=type;
+        //if(type != 'BOD'){
+        //    this.corpMeeting.attendeesOther = null;
+        //}
+    }
 }
