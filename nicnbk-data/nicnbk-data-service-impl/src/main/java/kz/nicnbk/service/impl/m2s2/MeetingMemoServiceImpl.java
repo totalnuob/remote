@@ -288,6 +288,7 @@ public class MeetingMemoServiceImpl implements MeetingMemoService {
             MeetingMemo memo = this.memoRepository.findOne(memoId);
 
             if (memo == null) {
+                logger.error("Error deleting memo: memo=" + memoId);
                 return new MemoDeleteResultDto("Not done!", StatusResultType.FAIL, "", "Memo does not exist", "");
             }
 
@@ -304,6 +305,7 @@ public class MeetingMemoServiceImpl implements MeetingMemoService {
                 logger.info("Deleted memo: memo=" + memoId + ", updater=" + username);
                 return new MemoDeleteResultDto("Done!", StatusResultType.SUCCESS, "", "Successfully deleted memo", "");
             } else {
+                logger.error("Error deleting memo: memo=" + memoId);
                 return new MemoDeleteResultDto("Not done!", StatusResultType.FAIL, "", "Not enough rights", "");
             }
         } catch (Exception ex){
