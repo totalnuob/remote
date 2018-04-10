@@ -301,6 +301,7 @@ public class MeetingMemoServiceImpl implements MeetingMemoService {
                 memo.setUpdater(updatedby);
                 // save memo
                 this.memoRepository.save(memo);
+                logger.info("Deleted memo: memo=" + memoId + ", updater=" + username);
                 return new MemoDeleteResultDto("Done!", StatusResultType.SUCCESS, "", "Successfully deleted memo", "");
             } else {
                 return new MemoDeleteResultDto("Not done!", StatusResultType.FAIL, "", "Not enough rights", "");
