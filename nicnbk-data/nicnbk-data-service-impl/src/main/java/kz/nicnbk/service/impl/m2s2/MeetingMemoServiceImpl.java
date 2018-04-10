@@ -3,7 +3,9 @@ package kz.nicnbk.service.impl.m2s2;
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.common.service.util.PaginationUtils;
 import kz.nicnbk.common.service.util.StringUtils;
+import kz.nicnbk.repo.api.employee.EmployeeRepository;
 import kz.nicnbk.repo.api.m2s2.*;
+import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.repo.model.m2s2.MeetingMemo;
 import kz.nicnbk.repo.model.m2s2.MemoFiles;
@@ -22,10 +24,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by magzumov on 18.07.2016.
@@ -55,6 +54,9 @@ public class MeetingMemoServiceImpl implements MeetingMemoService {
 
     @Autowired
     private EmployeeService employeeService;
+
+    @Autowired
+    private EmployeeRepository employeeRepository;
 
     //@Override
     private Long save(MeetingMemoDto memoDto) {
@@ -290,7 +292,14 @@ public class MeetingMemoServiceImpl implements MeetingMemoService {
             }
 
             if (this.isAllowedToDelete(memo, username)) {
+                // set deleted
                 memo.setDeleted(true);
+                // set update date
+                memo.setUpdateDate(new Date());
+                // set updater
+                Employee updatedby = this.employeeRepository.findByUsername(username);
+                memo.setUpdater(updatedby);
+                // save memo
                 this.memoRepository.save(memo);
                 return new MemoDeleteResultDto("Done!", StatusResultType.SUCCESS, "", "Successfully deleted memo", "");
             } else {
