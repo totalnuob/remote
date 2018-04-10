@@ -283,7 +283,13 @@ public class MeetingMemoServiceImpl implements MeetingMemoService {
     @Override
     public MemoDeleteResultDto safeDelete(Long memoId, String username) {
         try {
-            if (this.isAllowedToDelete(memoId, username)) {
+            MeetingMemo memo = this.memoRepository.findOne(memoId);
+
+            if (memo == null) {
+                return new MemoDeleteResultDto("Not done!", StatusResultType.FAIL, "", "Memo does not exist", "");
+            }
+
+            if (this.isAllowedToDelete(memo, username)) {
                 return new MemoDeleteResultDto("Done!", StatusResultType.SUCCESS, "", "Successfully deleted memo", "");
             } else {
                 return new MemoDeleteResultDto("Not done!", StatusResultType.FAIL, "", "Not enough rights", "");
@@ -294,12 +300,21 @@ public class MeetingMemoServiceImpl implements MeetingMemoService {
         }
     }
 
-    private boolean isAllowedToDelete(Long memoId, String username) {
+    private boolean isAllowedToDelete(MeetingMemo memo, String username) {
         Set<BaseDictionaryDto> roles = this.employeeService.findByUsername(username).getRoles();
 
-        switch (this.getMemoType(memoId)) {
+        for (BaseDictionaryDto dto : roles) {
+            if (dto.getCode().equals("ADMIN")) {
+                return true;
+            }
+        }
+
+        switch (memo.getMemoType()) {
             case 1 :
                 System.out.println("General");
+                if (memo.getCreator().getUsername().equals(username)) {
+                    return true;
+                }
                 break;
             case 2 :
                 System.out.println("Private equity");
