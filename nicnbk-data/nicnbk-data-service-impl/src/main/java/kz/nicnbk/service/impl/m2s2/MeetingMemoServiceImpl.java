@@ -277,12 +277,15 @@ public class MeetingMemoServiceImpl implements MeetingMemoService {
 
     @Override
     public MemoDeleteResultDto safeDelete(Long memoId) {
-        System.out.println("memoId = " + memoId);
-        if (memoId % 2 == 0) {
-            return new MemoDeleteResultDto("Done!", StatusResultType.SUCCESS, "", "Successfully deleted memo", "");
-        } else {
+        try {
+            if (memoId % 2 == 0) {
+                return new MemoDeleteResultDto("Done!", StatusResultType.SUCCESS, "", "Successfully deleted memo", "");
+            } else {
+                return new MemoDeleteResultDto("Not done!", StatusResultType.FAIL, "", "Error deleting memo", "");
+            }
+        } catch (Exception ex){
+            logger.error("Error deleting memo: memo=" + memoId, ex);
             return new MemoDeleteResultDto("Not done!", StatusResultType.FAIL, "", "Error deleting memo", "");
         }
-
     }
 }
