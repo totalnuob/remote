@@ -303,12 +303,6 @@ public class MeetingMemoServiceImpl implements MeetingMemoService {
     private boolean isAllowedToDelete(MeetingMemo memo, String username) {
         Set<BaseDictionaryDto> roles = this.employeeService.findByUsername(username).getRoles();
 
-        for (BaseDictionaryDto dto : roles) {
-            if (dto.getCode().equals("ADMIN")) {
-                return true;
-            }
-        }
-
         switch (memo.getMemoType()) {
             case 1 :
                 System.out.println("General");
@@ -325,6 +319,12 @@ public class MeetingMemoServiceImpl implements MeetingMemoService {
             case 4 :
                 System.out.println("Real estate");
                 break;
+        }
+
+        for (BaseDictionaryDto dto : roles) {
+            if (dto.getCode().equals("ADMIN")) {
+                return true;
+            }
         }
 
         return false;
