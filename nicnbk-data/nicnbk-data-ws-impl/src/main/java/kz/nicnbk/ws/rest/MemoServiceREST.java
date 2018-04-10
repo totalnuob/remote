@@ -194,6 +194,11 @@ public class MemoServiceREST extends CommonServiceREST {
         }
     }
 
+    @RequestMapping(value = "/delete/{memoId}", method = RequestMethod.GET)
+    public ResponseEntity<?> delete(@PathVariable long memoId){
+        return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     @RequestMapping(value = "/GN/save", method = RequestMethod.POST)
     public ResponseEntity<?>  save(@RequestBody GeneralMeetingMemoDto memoDto){
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
