@@ -60,6 +60,7 @@ public class MeetingMemo extends CreateUpdateBaseEntity{
 
     private String tags;
 
+    private boolean isDeleted;
 
     // TODO: refactor?
     private Set<Strategy> strategies;
@@ -256,5 +257,13 @@ public class MeetingMemo extends CreateUpdateBaseEntity{
 
     public void setTags(String tags) {
         this.tags = tags;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
     }
 }
