@@ -11,11 +11,11 @@ import java.util.List;
  */
 public interface PECompanyPerformanceIddService {
 
-    Long save(PECompanyPerformanceIddDto performanceIddDto, Long fundId);
+    Long save(PECompanyPerformanceIddDto performanceIddDto, Long fundId, String username);
 
-    PECompanyPerformanceIddResultDto saveList(List<PECompanyPerformanceIddDto> performanceIddDtoList, Long fundId);
+    PECompanyPerformanceIddResultDto saveList(List<PECompanyPerformanceIddDto> performanceIddDtoList, Long fundId, String username);
 
-    PECompanyPerformanceIddResultDto recalculatePerformanceIdd(Long fundId);
+    PECompanyPerformanceIddResultDto recalculatePerformanceIdd(Long fundId, String username);
 
     List<PECompanyPerformanceIddDto> findByFundId(Long fundId);
 

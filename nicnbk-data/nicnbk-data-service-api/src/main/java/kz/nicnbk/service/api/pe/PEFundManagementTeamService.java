@@ -12,7 +12,7 @@ public interface PEFundManagementTeamService {
 
     Long save(PEFundManagementTeamDto managementTeamDto, Long fundId);
 
-    PEFundManagementTeamResultDto saveList(List<PEFundManagementTeamDto> managementTeamDtoList, Long fundId);
+    PEFundManagementTeamResultDto saveList(List<PEFundManagementTeamDto> managementTeamDtoList, Long fundId, String username);
 
     List<PEFundManagementTeamDto> findByFundId(Long fundId);
 }

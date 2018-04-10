@@ -333,7 +333,7 @@ public class PEFundServiceImpl implements PEFundService {
             return new PEGrossCashflowAndCompanyPerformanceIddAndFundTrackRecordResultDto(new ArrayList<>(), new PEFundTrackRecordDto(), new ArrayList<>(), StatusResultType.FAIL, "", grossCFResultDto.getMessageEn(), "");
         }
 
-        PECompanyPerformanceIddResultDto performanceIddResultDto = this.performanceIddService.recalculatePerformanceIdd(fundId);
+        PECompanyPerformanceIddResultDto performanceIddResultDto = this.performanceIddService.recalculatePerformanceIdd(fundId, updater);
 
         if (performanceIddResultDto.getStatus().equals(StatusResultType.FAIL)) {
             return new PEGrossCashflowAndCompanyPerformanceIddAndFundTrackRecordResultDto(new ArrayList<>(), new PEFundTrackRecordDto(), new ArrayList<>(), StatusResultType.FAIL, "", performanceIddResultDto.getMessageEn(), "");

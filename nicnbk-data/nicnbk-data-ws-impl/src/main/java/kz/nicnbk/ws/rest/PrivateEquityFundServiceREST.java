@@ -141,8 +141,10 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
     @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/savePortfolioInfo/{fundId}", method = RequestMethod.POST)
     public ResponseEntity<?> savePortfolioInfo(@RequestBody List<PECompanyPerformanceIddDto> performanceIddDtoList, @PathVariable Long fundId) {
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
 
-        PECompanyPerformanceIddResultDto resultDto = this.performanceIddService.saveList(performanceIddDtoList, fundId);
+        PECompanyPerformanceIddResultDto resultDto = this.performanceIddService.saveList(performanceIddDtoList, fundId, username);
 
         if (resultDto.getStatus().equals(StatusResultType.SUCCESS)) {
             return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
@@ -231,9 +233,11 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
     @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/saveDataForOnePager/{fundId}", method = RequestMethod.POST)
     public ResponseEntity<?> saveDataForOnePager(@RequestBody PEFundDataForOnePagerDto dataForOnePagerDto, @PathVariable Long fundId) {
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
 
-        PEOnePagerDescriptionsResultDto descriptionsResultDto = this.descriptionsService.saveList(dataForOnePagerDto.getOnePagerDescriptions(), fundId);
-        PEFundManagementTeamResultDto managementTeamResultDto = this.managementTeamService.saveList(dataForOnePagerDto.getManagementTeam(), fundId);
+        PEOnePagerDescriptionsResultDto descriptionsResultDto = this.descriptionsService.saveList(dataForOnePagerDto.getOnePagerDescriptions(), fundId, username);
+        PEFundManagementTeamResultDto managementTeamResultDto = this.managementTeamService.saveList(dataForOnePagerDto.getManagementTeam(), fundId, username);
 //        Date asOfDateOnePager = this.service.updateAsOfDateOnePager(dataForOnePagerDto.getAsOfDateOnePager(), fundId);
 
         PEFundDataForOnePagerResultDto resultDto;

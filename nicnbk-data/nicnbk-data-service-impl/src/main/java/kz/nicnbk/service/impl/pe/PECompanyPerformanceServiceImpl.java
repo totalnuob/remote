@@ -38,10 +38,11 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
 //    private PEIrrService irrService;
 
     @Override
-    public Long save(PECompanyPerformanceDto performanceDto, Long fundId) {
+    public Long save(PECompanyPerformanceDto performanceDto, Long fundId, String username) {
         try {
             PECompanyPerformance entity = this.converter.assemble(performanceDto);
             entity.setFund(new PEFund(fundId));
+            logger.info("Saved PE fund's company performance: " + fundId + ", updater : " + username);
             return this.repository.save(entity).getId();
         } catch (Exception ex) {
             logger.error("Error saving PE fund's company performance: " + fundId, ex);
@@ -50,9 +51,10 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
     }
 
     @Override
-    public PECompanyPerformanceResultDto saveList(List<PECompanyPerformanceDto> performanceDtoList, Long fundId) {
+    public PECompanyPerformanceResultDto saveList(List<PECompanyPerformanceDto> performanceDtoList, Long fundId, String username) {
         try {
             if (performanceDtoList == null || fundId == null) {
+                logger.error("Error saving PE fund's company performance list : " + fundId);
                 return new PECompanyPerformanceResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Don't send NULL!", "");
             }
 
@@ -61,6 +63,7 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
                     performanceDto.setCompanyName(performanceDto.getCompanyName().trim());
                 }
                 if (performanceDto.getCompanyName() == null || performanceDto.getCompanyName().equals("")) {
+                    logger.error("Error saving PE fund's company performance list : " + fundId);
                     return new PECompanyPerformanceResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Don't send null or empty company name!", "");
                 }
 //                if ((performanceDto.getInvested() != null && performanceDto.getInvested() < 0) ||
@@ -80,6 +83,7 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
                     }
                 }
                 if (i > 1) {
+                    logger.error("Error saving PE fund's company performance list : " + fundId);
                     return new PECompanyPerformanceResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Names must be unique!", "");
                 }
             }
@@ -106,14 +110,16 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
                 } else if (performanceDto.getTotalValue() == null) {
                     performanceDto.setTotalValue(0.0);
                 }
-                Long id = save(performanceDto, fundId);
+                Long id = save(performanceDto, fundId, username);
                 if (id == null) {
+                    logger.error("Error saving PE fund's company performance list : " + fundId);
                     return new PECompanyPerformanceResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error saving PE fund's company performance", "");
                 } else {
                     performanceDto.setId(id);
                 }
             }
 
+            logger.info("Saved PE fund's company performance list : " + fundId + ", updater : " + username);
             return new PECompanyPerformanceResultDto(performanceDtoList, StatusResultType.SUCCESS, "", "Successfully saved PE fund's company performance", "");
         } catch (Exception ex) {
             logger.error("Error saving PE fund's company performance: " + fundId, ex);
