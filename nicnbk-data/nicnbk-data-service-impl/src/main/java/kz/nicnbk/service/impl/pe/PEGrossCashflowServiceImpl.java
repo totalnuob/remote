@@ -62,9 +62,10 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
     }
 
     @Override
-    public PEGrossCashflowResultDto saveList(List<PEGrossCashflowDto> cashflowDtoList, Long fundId) {
+    public PEGrossCashflowResultDto saveList(List<PEGrossCashflowDto> cashflowDtoList, Long fundId, String updater) {
         try {
             if (cashflowDtoList == null || fundId == null) {
+                logger.error("Error saving PE fund's gross cash flow: " + fundId);
                 return new PEGrossCashflowResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Don't send NULL!", "");
             }
 
@@ -75,6 +76,7 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
                 if (cashflowDto.getCompanyName() == null ||
                         cashflowDto.getCompanyName().equals("") ||
                         cashflowDto.getDate() == null) {
+                    logger.error("Error saving PE fund's gross cash flow: " + fundId);
                     return new PEGrossCashflowResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Don't send null or empty company name or date!", "");
                 }
 //                if ((cashflowDto.getInvested() != null && cashflowDto.getInvested() > 0) ||
@@ -98,6 +100,7 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
 //            }
 
             if (this.peFundService.get(fundId) == null) {
+                logger.error("Error saving PE fund's gross cash flow: " + fundId);
                 return new PEGrossCashflowResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");
             }
 
@@ -125,12 +128,14 @@ public class PEGrossCashflowServiceImpl implements PEGrossCashflowService {
                 }
                 Long id = save(cashflowDto, fundId);
                 if (id == null) {
+                    logger.error("Error saving PE fund's gross cash flow: " + fundId);
                     return new PEGrossCashflowResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error saving PE fund's gross cash flow", "");
                 } else {
                     cashflowDto.setId(id);
                 }
             }
 
+            logger.info("Saved PE fund's gross cash flow: " + fundId + ", updater: " + updater);
             return new PEGrossCashflowResultDto(cashflowDtoList, StatusResultType.SUCCESS, "", "Successfully saved PE fund's gross cash flow", "");
         } catch (Exception ex) {
             logger.error("Error saving PE fund's gross cash flow: " + fundId, ex);

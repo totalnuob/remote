@@ -16,7 +16,7 @@ public interface PEGrossCashflowService {
 
     Long save(PEGrossCashflowDto cashflowDto, Long fundId);
 
-    PEGrossCashflowResultDto saveList(List<PEGrossCashflowDto> cashflowDtoList, Long fundId);
+    PEGrossCashflowResultDto saveList(List<PEGrossCashflowDto> cashflowDtoList, Long fundId, String updater);
 
     PEGrossCashflowResultDto uploadGrossCF(Set<FilesDto> filesDtoSet);
 
