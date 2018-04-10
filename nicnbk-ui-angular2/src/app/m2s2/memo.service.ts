@@ -104,4 +104,7 @@ export class MemoService extends CommonService{
             .catch(this.handleErrorResponse);
     }
 
+    public deleteMemo(memoId) {
+        return null;
+    }
 }

@@ -228,12 +228,20 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
     }
 
     remove(item){
-        console.log(item);
-        console.log('Deleted');
-        for(var i = this.memoList.length; i--;) {
-            if(this.memoList[i] === item) {
-                this.memoList.splice(i, 1);
-            }
+        if (confirm('Are you sure?')) {
+            console.log(item);
+
+            this.memoService.deleteMemo(item.id);
+
+            //for(var i = this.memoList.length; i--;) {
+            //    if(this.memoList[i] === item) {
+            //        this.memoList.splice(i, 1);
+            //    }
+            //}
+
+            console.log('Deleted');
+        } else {
+            console.log('Not deleted');
         }
     }
 }
