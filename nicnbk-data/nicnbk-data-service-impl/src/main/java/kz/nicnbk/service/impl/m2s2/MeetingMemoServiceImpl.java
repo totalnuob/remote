@@ -283,15 +283,35 @@ public class MeetingMemoServiceImpl implements MeetingMemoService {
     @Override
     public MemoDeleteResultDto safeDelete(Long memoId, String username) {
         try {
-            Set<BaseDictionaryDto> roles = this.employeeService.findByUsername(username).getRoles();
-            if (memoId % 2 == 0) {
+            if (this.isAllowedToDelete(memoId, username)) {
                 return new MemoDeleteResultDto("Done!", StatusResultType.SUCCESS, "", "Successfully deleted memo", "");
             } else {
-                return new MemoDeleteResultDto("Not done!", StatusResultType.FAIL, "", "Error deleting memo", "");
+                return new MemoDeleteResultDto("Not done!", StatusResultType.FAIL, "", "Not enough rights", "");
             }
         } catch (Exception ex){
             logger.error("Error deleting memo: memo=" + memoId, ex);
             return new MemoDeleteResultDto("Not done!", StatusResultType.FAIL, "", "Error deleting memo", "");
         }
+    }
+
+    private boolean isAllowedToDelete(Long memoId, String username) {
+        Set<BaseDictionaryDto> roles = this.employeeService.findByUsername(username).getRoles();
+
+        switch (this.getMemoType(memoId)) {
+            case 1 :
+                System.out.println("General");
+                break;
+            case 2 :
+                System.out.println("Private equity");
+                break;
+            case 3 :
+                System.out.println("Hedge funds");
+                break;
+            case 4 :
+                System.out.println("Real estate");
+                break;
+        }
+
+        return false;
     }
 }
