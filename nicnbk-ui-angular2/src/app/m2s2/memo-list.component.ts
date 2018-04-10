@@ -248,6 +248,7 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
 
             console.log('Deleted');
         } else {
+            this.postAction(null, null);
             console.log('Not deleted');
         }
     }
