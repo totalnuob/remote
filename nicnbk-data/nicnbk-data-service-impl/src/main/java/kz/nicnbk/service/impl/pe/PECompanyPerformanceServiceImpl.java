@@ -38,11 +38,10 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
 //    private PEIrrService irrService;
 
     @Override
-    public Long save(PECompanyPerformanceDto performanceDto, Long fundId, String username) {
+    public Long save(PECompanyPerformanceDto performanceDto, Long fundId) {
         try {
             PECompanyPerformance entity = this.converter.assemble(performanceDto);
             entity.setFund(new PEFund(fundId));
-            logger.info("Saved PE fund's company performance: " + fundId + ", updater : " + username);
             return this.repository.save(entity).getId();
         } catch (Exception ex) {
             logger.error("Error saving PE fund's company performance: " + fundId, ex);
@@ -110,7 +109,7 @@ public class PECompanyPerformanceServiceImpl implements PECompanyPerformanceServ
                 } else if (performanceDto.getTotalValue() == null) {
                     performanceDto.setTotalValue(0.0);
                 }
-                Long id = save(performanceDto, fundId, username);
+                Long id = save(performanceDto, fundId);
                 if (id == null) {
                     logger.error("Error saving PE fund's company performance list : " + fundId);
                     return new PECompanyPerformanceResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error saving PE fund's company performance", "");
