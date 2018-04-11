@@ -107,6 +107,9 @@ public class PECompanyPerformanceIddServiceImpl implements PECompanyPerformanceI
                 }
             }
 
+//            List<PECompanyPerformanceIdd> performanceIddList = this.converter.assembleListWithFundId(performanceIddDtoList, fundId);
+//            this.repository.save(performanceIddList);
+
             for (PECompanyPerformanceIddDto performanceIddDto : performanceIddDtoList) {
                 Long id = save(performanceIddDto, fundId);
                 if (id == null) {
