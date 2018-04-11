@@ -549,6 +549,11 @@ public class LookupServiceImpl implements LookupService {
     }
 
     @Override
+    public List<BaseDictionaryDto> getAllNewsTypes() {
+        return null;
+    }
+
+    @Override
     public List<BaseDictionaryDto> getAllMemoTypes() {
         try {
             List<BaseDictionaryDto> dtoList = new ArrayList<>();
