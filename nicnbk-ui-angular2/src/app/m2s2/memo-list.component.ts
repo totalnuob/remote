@@ -232,6 +232,7 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
             this.busy = this.memoService.deleteMemo(item.id)
                 .subscribe(
                     (response)  => {
+                        this.search(this.memoSearchResult.currentPage);
                         this.postAction(response.messageEn, null);
                         //for(var i = this.memoList.length; i--;) {
                         //    if(this.memoList[i] === item) {
