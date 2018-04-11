@@ -550,6 +550,18 @@ public class LookupServiceImpl implements LookupService {
 
     @Override
     public List<BaseDictionaryDto> getAllNewsTypes() {
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            Iterator<NewsType> iterator = this.newsTypeRepository.findAll().iterator();
+            while (iterator.hasNext()) {
+                NewsType entity = iterator.next();
+                BaseDictionaryDto dto = disassemble(entity);
+                dtoList.add(dto);
+            }
+            return dtoList;
+        } catch (Exception ex) {
+            logger.error("Failed to load lookup: NewsType", ex);
+        }
         return null;
     }
 
