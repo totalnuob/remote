@@ -24,6 +24,7 @@ export class MemoService extends CommonService{
 
     private MEMO_SEARCH_URL = this.MEMO_BASE_URL + "search/";
     private MEMO_GET_URL = this.MEMO_BASE_URL + "get/";
+    private MEMO_DELETE_URL = this.MEMO_BASE_URL + "delete/";
 
     private MEMO_ATTACHMENT_URL = this.MEMO_BASE_URL + "attachment/";
     private MEMO_ATTACHMENT_DELETE_URL = this.MEMO_ATTACHMENT_URL + "delete/";
@@ -104,4 +105,9 @@ export class MemoService extends CommonService{
             .catch(this.handleErrorResponse);
     }
 
+    public deleteMemo(memoId) {
+        return this.http.get(this.MEMO_DELETE_URL + memoId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
 }

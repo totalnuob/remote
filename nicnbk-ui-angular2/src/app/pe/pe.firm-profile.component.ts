@@ -101,7 +101,7 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
                                 this.firm = data;
                                 console.log(this.firm)
 
-                                if(this.firm.logo != null) {
+                                if (this.firm.logo != null) {
                                     this.url = "data:" + this.firm.logo.mimeType + ";base64," + this.firm.logo.bytes;
                                 }
 

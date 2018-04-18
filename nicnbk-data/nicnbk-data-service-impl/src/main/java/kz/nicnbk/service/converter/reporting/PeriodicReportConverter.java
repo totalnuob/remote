@@ -36,17 +36,14 @@ public class PeriodicReportConverter extends BaseDozerEntityConverter<PeriodicRe
 
         // status
         if(dto.getId() == null){
-
             // TODO: status 'NEW'
-
             ReportStatus newReportStatus = new ReportStatus();
             newReportStatus.setId(1);
             entity.setStatus(newReportStatus);
+        } else if(StringUtils.isNotEmpty(dto.getStatus())){
+            ReportStatus status = lookupService.findByTypeAndCode(ReportStatus.class, dto.getStatus());
+            entity.setStatus(status);
         }
-//        else if(StringUtils.isNotEmpty(dto.getStatus())){
-//            ReportStatus status = lookupService.findByTypeAndCode(ReportStatus.class, dto.getStatus());
-//            entity.setStatus(status);
-//        }
 
         return entity;
     }

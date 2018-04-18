@@ -19,6 +19,8 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -91,13 +93,20 @@ public class PEFirmServiceImpl implements PEFirmService {
             firmDto.setFunds(this.fundService.loadFirmFunds(id, false));
 
             // load logo
-            if( firmDto.getLogo() != null) {
+            if (firmDto.getLogo() != null) {
                 try {
                     firmDto.getLogo().setBytes(IOUtils.toByteArray(fileService.getFileInputStream(firmDto.getLogo().getId(), FileTypeLookup.PE_FIRM_LOGO.getCode())));
                 } catch (Exception ex) {
                     logger.error("Error loading PE firm logo: " + id, ex);
                 }
             }
+
+            // load NIC logo
+            FilesDto logoNIC = new FilesDto();
+            logoNIC.setMimeType("image/png");
+            Resource resource = new ClassPathResource("img/NIClogo.png");
+            logoNIC.setBytes(IOUtils.toByteArray(resource.getInputStream()));
+            firmDto.setLogoNIC(logoNIC);
 
             return firmDto;
         }catch(Exception ex){
@@ -117,7 +126,7 @@ public class PEFirmServiceImpl implements PEFirmService {
     }
 
     @Override
-    public FilesDto saveLogo(Long firmId, Set<FilesDto> filesDtoSet) {
+    public FilesDto saveLogo(Long firmId, Set<FilesDto> filesDtoSet, String username) {
         try {
             if (filesDtoSet != null) {
                 Iterator<FilesDto> iterator = filesDtoSet.iterator();
@@ -128,10 +137,12 @@ public class PEFirmServiceImpl implements PEFirmService {
                 Files logo = new Files();
                 logo.setId(logoId);
                 PEFirm firm = this.peFirmRepository.findOne(firmId);
-                firm.getLogo().setDeleted(true);
+                if (firm.getLogo() != null) {
+                    firm.getLogo().setDeleted(true);
+                }
                 firm.setLogo(logo);
                 this.peFirmRepository.save(firm);
-                logger.info("Saved PE firm logo info: firm=" + firmId + ", file=" + logoId);
+                logger.info("Saved PE firm logo info: firm=" + firmId + ", file=" + logoId + ", updater=" + username);
 
                 return logoDto;
             }

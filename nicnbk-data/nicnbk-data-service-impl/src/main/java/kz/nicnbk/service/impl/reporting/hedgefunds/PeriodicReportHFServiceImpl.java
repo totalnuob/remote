@@ -52,6 +52,9 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
         if(noalTrancheARecordHolder != null && noalTrancheARecordHolder.getNoalTrancheAList() != null){
             for(SingularityNOALRecordDto noalRecordDto: noalTrancheARecordHolder.getNoalTrancheAList()){
                 if(noalRecordDto.getTransaction().equalsIgnoreCase("Ending Balance") || noalRecordDto.getTransaction().equalsIgnoreCase("Ending")) {
+                    if(noalRecordDto.getAccountNumber() == null){
+                        continue;
+                    }
                     if (noalRecordDto.getAccountNumber().startsWith("1500")) {
                         if(noalTrancheASubscriptionsRecords.get(noalRecordDto.getName()) != null){
                             BigDecimal a = NumberUtils.getBigDecimal(noalTrancheASubscriptionsRecords.get(noalRecordDto.getName()));
@@ -78,9 +81,12 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
 
         Map<String, Double> noalTrancheBSubscriptionsRecords = new HashMap<>();
         Map<String, Double> noalTrancheBRedemptionsRecords = new HashMap<>();
-        if(noalTrancheARecordHolder != null && noalTrancheBRecordHolder.getNoalTrancheAList() != null){
-            for(SingularityNOALRecordDto noalRecordDto: noalTrancheBRecordHolder.getNoalTrancheAList()){
+        if(noalTrancheBRecordHolder != null && noalTrancheBRecordHolder.getNoalTrancheBList() != null){
+            for(SingularityNOALRecordDto noalRecordDto: noalTrancheBRecordHolder.getNoalTrancheBList()){
                 if(noalRecordDto.getTransaction().equalsIgnoreCase("Ending Balance") || noalRecordDto.getTransaction().equalsIgnoreCase("Ending")) {
+                    if(noalRecordDto.getAccountNumber() == null){
+                        continue;
+                    }
                     if (noalRecordDto.getAccountNumber().startsWith("1500")) {
                         if(noalTrancheBSubscriptionsRecords.get(noalRecordDto.getName()) != null){
                             BigDecimal a = NumberUtils.getBigDecimal(noalTrancheBSubscriptionsRecords.get(noalRecordDto.getName()));
@@ -107,6 +113,7 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
         if(generalLedgerRecordsHolder != null && !generalLedgerRecordsHolder.getGeneralLedgerBalanceList().isEmpty()){
             for(SingularityGeneralLedgerBalanceRecordDto glRecordDto: generalLedgerRecordsHolder.getGeneralLedgerBalanceList()){
                 GeneratedGeneralLedgerFormDto record = new GeneratedGeneralLedgerFormDto();
+                record.setId(glRecordDto.getId());
                 record.setAcronym(glRecordDto.getAcronym());
                 record.setBalanceDate(glRecordDto.getBalanceDate());
                 record.setFinancialStatementCategory(glRecordDto.getFinancialStatementCategory());
@@ -120,6 +127,8 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
 
                 String singularityAccountNumber = glRecordDto.getGLAccount() != null && glRecordDto.getGLAccount().split("-").length > 0
                         ? glRecordDto.getGLAccount().split("-")[0] : null;
+
+                record.setAdjustedRedemption(glRecordDto.getAdjustedRedemption());
 
                 if(StringUtils.isEmpty(singularityAccountNumber)){
                     logger.error("Invalid Singularity Account Number: expected 'XXXX-XXXX-XXX-XXX' (four parts delimited with - ), found '" + glRecordDto.getGLAccount() + "'");
@@ -232,6 +241,14 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
                         }
                     }
 
+                }
+            }else if(accountNumber.equalsIgnoreCase("2810")){
+                for(SingularityNICChartOfAccounts anEntity: entities){
+                    if(accountBalance >= 0 && anEntity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode().equalsIgnoreCase("1623.010")){
+                            entity = anEntity;
+                    }else if(accountBalance < 0 && anEntity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode().equalsIgnoreCase("3393.020")){
+                            entity = anEntity;
+                    }
                 }
             }
 

@@ -12,7 +12,7 @@ public interface PEOnePagerDescriptionsService {
 
     Long save(PEOnePagerDescriptionsDto descriptionsDto, Long fundId);
 
-    PEOnePagerDescriptionsResultDto saveList(List<PEOnePagerDescriptionsDto> descriptionsDtoList, Long fundId);
+    PEOnePagerDescriptionsResultDto saveList(List<PEOnePagerDescriptionsDto> descriptionsDtoList, Long fundId, String username);
 
     List<PEOnePagerDescriptionsDto> findByFundId(Long fundId);
 

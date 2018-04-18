@@ -1,19 +1,21 @@
 package kz.nicnbk.service.impl.m2s2;
 
+import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.common.service.util.PaginationUtils;
 import kz.nicnbk.common.service.util.StringUtils;
+import kz.nicnbk.repo.api.employee.EmployeeRepository;
 import kz.nicnbk.repo.api.m2s2.*;
+import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.repo.model.m2s2.MeetingMemo;
 import kz.nicnbk.repo.model.m2s2.MemoFiles;
+import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.api.files.FileService;
 import kz.nicnbk.service.api.m2s2.MeetingMemoService;
 import kz.nicnbk.service.converter.m2s2.MeetingMemoEntityConverter;
+import kz.nicnbk.service.dto.common.StatusResultType;
 import kz.nicnbk.service.dto.files.FilesDto;
-import kz.nicnbk.service.dto.m2s2.MeetingMemoDto;
-import kz.nicnbk.service.dto.m2s2.MemoPagedSearchResult;
-import kz.nicnbk.service.dto.m2s2.MemoSearchParams;
-import kz.nicnbk.service.dto.m2s2.MemoSearchParamsExtended;
+import kz.nicnbk.service.dto.m2s2.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +24,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by magzumov on 18.07.2016.
@@ -52,6 +51,12 @@ public class MeetingMemoServiceImpl implements MeetingMemoService {
 
     @Autowired
     private HFMeetingMemoRepository hfMeetingMemoRepository;
+
+    @Autowired
+    private EmployeeService employeeService;
+
+    @Autowired
+    private EmployeeRepository employeeRepository;
 
     //@Override
     private Long save(MeetingMemoDto memoDto) {
@@ -275,5 +280,82 @@ public class MeetingMemoServiceImpl implements MeetingMemoService {
             logger.error("Error saving memo attachments: memo=" + memoId, ex);
         }
         return null;
+    }
+
+    @Override
+    public MemoDeleteResultDto safeDelete(Long memoId, String username) {
+        try {
+            MeetingMemo memo = this.memoRepository.findOne(memoId);
+
+            if (memo == null) {
+                logger.error("Error deleting memo: memo=" + memoId);
+                return new MemoDeleteResultDto("Not done!", StatusResultType.FAIL, "", "Memo does not exist", "");
+            }
+
+            if (this.isAllowedToDelete(memo, username)) {
+                // set deleted
+                memo.setDeleted(true);
+                // set update date
+                memo.setUpdateDate(new Date());
+                // set updater
+                Employee updatedby = this.employeeRepository.findByUsername(username);
+                memo.setUpdater(updatedby);
+                // save memo
+                this.memoRepository.save(memo);
+                logger.info("Deleted memo: memo=" + memoId + ", updater=" + username);
+                return new MemoDeleteResultDto("Done!", StatusResultType.SUCCESS, "", "Successfully deleted memo", "");
+            } else {
+                logger.error("Error deleting memo: memo=" + memoId);
+                return new MemoDeleteResultDto("Not done!", StatusResultType.FAIL, "", "Not enough rights", "");
+            }
+        } catch (Exception ex){
+            logger.error("Error deleting memo: memo=" + memoId, ex);
+            return new MemoDeleteResultDto("Not done!", StatusResultType.FAIL, "", "Error deleting memo", "");
+        }
+    }
+
+    private boolean isAllowedToDelete(MeetingMemo memo, String username) {
+        Set<BaseDictionaryDto> roles = this.employeeService.findByUsername(username).getRoles();
+
+        for (BaseDictionaryDto dto : roles) {
+            if (dto.getCode().equals("ADMIN")) {
+                return true;
+            }
+        }
+
+        switch (memo.getMemoType()) {
+            case 1 :
+                System.out.println("General");
+                if (memo.getCreator().getUsername().equals(username)) {
+                    return true;
+                }
+                break;
+            case 2 :
+                System.out.println("Private equity");
+                for (BaseDictionaryDto dto : roles) {
+                    if (dto.getCode().equals("PE_EDIT")) {
+                        return true;
+                    }
+                }
+                break;
+            case 3 :
+                System.out.println("Hedge funds");
+                for (BaseDictionaryDto dto : roles) {
+                    if (dto.getCode().equals("HF_EDIT")) {
+                        return true;
+                    }
+                }
+                break;
+            case 4 :
+                System.out.println("Real estate");
+                for (BaseDictionaryDto dto : roles) {
+                    if (dto.getCode().equals("RE_EDIT")) {
+                        return true;
+                    }
+                }
+                break;
+        }
+
+        return false;
     }
 }

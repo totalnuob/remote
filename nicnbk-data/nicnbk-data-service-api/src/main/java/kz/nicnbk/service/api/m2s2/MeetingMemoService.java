@@ -2,6 +2,7 @@ package kz.nicnbk.service.api.m2s2;
 
 import kz.nicnbk.service.api.base.BaseService;
 import kz.nicnbk.service.dto.files.FilesDto;
+import kz.nicnbk.service.dto.m2s2.MemoDeleteResultDto;
 import kz.nicnbk.service.dto.m2s2.MemoPagedSearchResult;
 import kz.nicnbk.service.dto.m2s2.MemoSearchParams;
 import kz.nicnbk.service.dto.m2s2.MemoSearchParamsExtended;
@@ -36,5 +37,5 @@ public interface MeetingMemoService extends BaseService {
 
     Set<FilesDto> saveAttachments(Long memoId, Set<FilesDto> attachments);
 
-
+    MemoDeleteResultDto safeDelete(Long memoId, String username);
 }

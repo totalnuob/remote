@@ -8,11 +8,13 @@ import kz.nicnbk.repo.model.common.Currency;
 import kz.nicnbk.repo.model.reporting.PeriodicReport;
 import kz.nicnbk.repo.model.reporting.hedgefunds.FinancialStatementCategory;
 import kz.nicnbk.repo.model.reporting.hedgefunds.ReportingHFGeneralLedgerBalance;
+import kz.nicnbk.service.api.reporting.PeriodicReportService;
 import kz.nicnbk.service.api.reporting.hedgefunds.HFGeneralLedgerBalanceService;
 import kz.nicnbk.service.converter.reporting.PeriodicReportConverter;
 import kz.nicnbk.service.datamanager.LookupService;
-import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordHolderDto;
-import kz.nicnbk.service.dto.reporting.SingularityGeneralLedgerBalanceRecordDto;
+import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
+import kz.nicnbk.service.dto.common.ResponseStatusType;
+import kz.nicnbk.service.dto.reporting.*;
 import kz.nicnbk.service.dto.reporting.exception.ExcelFileParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +48,9 @@ public class HFGeneralLedgerBalanceServiceImpl implements HFGeneralLedgerBalance
 
     @Autowired
     private PeriodicReportConverter periodicReportConverter;
+
+    @Autowired
+    private PeriodicReportService periodicReportService;
 
     @Override
     public ReportingHFGeneralLedgerBalance assemble(SingularityGeneralLedgerBalanceRecordDto dto, Long reportId) {
@@ -176,6 +181,75 @@ public class HFGeneralLedgerBalanceServiceImpl implements HFGeneralLedgerBalance
         }
     }
 
+    @Override
+    public boolean saveAdjustments(SingularityAdjustmentsDto adjustmentsDto, String updater) {
+        if(adjustmentsDto.getReportId() == null){
+            logger.error("Error saving singularity adjustments: report id is null");
+            return false;
+        }
+        PeriodicReportDto reportDto = periodicReportService.getPeriodicReport(adjustmentsDto.getReportId());
+        if(reportDto == null){
+            logger.error("Error saving singularity adjustments: report not found for report id '" + adjustmentsDto.getReportId() + "'");
+            return false;
+        }else if(reportDto.getStatus().equalsIgnoreCase(PeriodicReportType.SUBMITTED.getCode())){
+            logger.error("Failed to save Singularity Adjustments for report with status 'SUBMITTED' : report id " + reportDto.getId());
+            return false;
+        }
+
+        if(adjustmentsDto.getAdjustedRedemptions() != null && !adjustmentsDto.getAdjustedRedemptions().isEmpty()){
+            List<ReportingHFGeneralLedgerBalance> entityList = new ArrayList<>();
+            for(SingularityFundAdjustmentDto adjustment: adjustmentsDto.getAdjustedRedemptions()){
+                if(adjustment.getRecordId() != null){
+                    ReportingHFGeneralLedgerBalance entity = this.generalLedgerBalanceRepository.findOne(adjustment.getRecordId());
+                    if(entity != null){
+                        entity.setAdjustedRedemption(adjustment.getAdjustedRedemption());
+                        entity.setInterestRate(StringUtils.isNotEmpty(adjustment.getInterestRate()) ? adjustment.getInterestRate() : null);
+                        entityList.add(entity);
+                    }else{
+                        logger.error("Error saving Singularity Adjustments for report id " + reportDto.getId() + ": record not found with id " + adjustment.getRecordId());
+                        return false;
+                    }
+                }
+            }
+
+            this.generalLedgerBalanceRepository.save(entityList);
+        }
+        logger.info("Successfully saved Singularity Adjustment for report id: " + adjustmentsDto.getReportId() + "'");
+        return true;
+
+//        EntitySaveResponseDto entitySaveResponseDto = this.periodicReportService.saveInterestRate(adjustmentsDto.getReportId(),
+//                adjustmentsDto.getInterestRate(), updater);
+
+//        if(entitySaveResponseDto.getStatus().getCode().equalsIgnoreCase(ResponseStatusType.FAIL.getCode())){
+//            // FAILED
+//            String errorMessage = entitySaveResponseDto.getMessage().getMessageText() != null ?
+//                    entitySaveResponseDto.getMessage().getMessageText() :
+//                    "Singularity adjustments: error saving interest rate for Singularity: report id '" + adjustmentsDto.getReportId() + "'";
+//            logger.error(errorMessage);
+//            return false;
+//        }else{
+//            if(adjustmentsDto.getAdjustedRedemptions() != null){
+//                for(SingularityFundAdjustmentDto adjustment: adjustmentsDto.getAdjustedRedemptions()){
+//                    ReportingHFGeneralLedgerBalance entity = this.generalLedgerBalanceRepository.findOne(adjustment.getRecordId());
+//                    entity.setAdjustedRedemption(adjustment.getAdjustedRedemption());
+//                    this.generalLedgerBalanceRepository.save(entity);
+//                }
+//            }
+//            logger.info("Successfully saved Singularity Adjustment for report id: " + adjustmentsDto.getReportId() + "'");
+//            return true;
+//        }
+    }
+
+    @Override
+    public List<SingularityGeneralLedgerBalanceRecordDto> getAdjustedRecords(Long reportId){
+
+        List<ReportingHFGeneralLedgerBalance> entities = this.generalLedgerBalanceRepository.getAdjustedEntitiesByReportId(reportId,
+                new PageRequest(0, 1000, new Sort(Sort.Direction.ASC, "id")));
+
+        List<SingularityGeneralLedgerBalanceRecordDto> records = disassembleList(entities);
+        return records;
+    }
+
 
     public List<SingularityGeneralLedgerBalanceRecordDto> disassembleList(List<ReportingHFGeneralLedgerBalance> entities){
         List<SingularityGeneralLedgerBalanceRecordDto> records = new ArrayList<>();
@@ -192,6 +266,8 @@ public class HFGeneralLedgerBalanceServiceImpl implements HFGeneralLedgerBalance
     public SingularityGeneralLedgerBalanceRecordDto disassemble(ReportingHFGeneralLedgerBalance entity){
         if(entity != null){
             SingularityGeneralLedgerBalanceRecordDto dto = new SingularityGeneralLedgerBalanceRecordDto();
+            dto.setId(entity.getId());
+
             dto.setAcronym(getAcronym(entity.getTranche()));
             dto.setBalanceDate(entity.getBalanceDate());
             if(entity.getFinancialStatementCategory() != null) {
@@ -210,6 +286,8 @@ public class HFGeneralLedgerBalanceServiceImpl implements HFGeneralLedgerBalance
             if(entity.getFundCCY() != null){
                 dto.setFundCCY(entity.getFundCCY().getCode());
             }
+            dto.setAdjustedRedemption(entity.getAdjustedRedemption());
+            dto.setInterestRate(entity.getInterestRate());
             return dto;
         }
         return null;

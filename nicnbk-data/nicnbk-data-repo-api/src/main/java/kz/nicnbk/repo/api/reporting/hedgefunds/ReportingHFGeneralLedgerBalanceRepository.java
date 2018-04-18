@@ -22,4 +22,7 @@ public interface ReportingHFGeneralLedgerBalanceRepository extends PagingAndSort
     @Query("DELETE from ReportingHFGeneralLedgerBalance e where e.report.id=?1")
     void deleteByReportId(long reportId);
 
+    @Query("SELECT e from ReportingHFGeneralLedgerBalance e where (e.adjustedRedemption IS NOT NULL OR e.interestRate IS NOT NULL) AND e.report.id=?1")
+    List<ReportingHFGeneralLedgerBalance> getAdjustedEntitiesByReportId(Long reportId, Pageable pageable);
+
 }

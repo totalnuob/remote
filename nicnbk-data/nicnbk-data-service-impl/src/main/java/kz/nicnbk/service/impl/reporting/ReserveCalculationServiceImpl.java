@@ -125,11 +125,13 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
      * E.g. if date is 31.08.2018, then returns records with date
      * from 01.08.2018 to 31.08.2018.
      *
+     * @param code - capital call type code
      * @param date - date
+     * @param useValuationDate - true/false
      * @return - reserve calculation records
      */
     @Override
-    public List<ReserveCalculationDto> getReserveCalculationsForMonth(String code, Date date) {
+    public List<ReserveCalculationDto> getReserveCalculationsForMonth(String code, Date date, boolean useValuationDate) {
 
         Date mostRecentFinalReportDate = null;
         List<PeriodicReportDto> periodicReportDtos = this.periodicReportService.getAllPeriodicReports();
@@ -150,7 +152,15 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
 
         List<ReserveCalculationDto> records = this.reserveCalculationConverter.disassembleList(entities);
 
+        List<ReserveCalculationDto> updatedRecords = new ArrayList<>();
         for (ReserveCalculationDto record : records) {
+            if(useValuationDate){
+                if(record.getValueDate() != null){
+                    if(record.getValueDate().compareTo(toDate) > 0){
+                        break;
+                    }
+                }
+            }
             // set currency rate
             Date nextDay = DateUtils.getNextDay(record.getDate());
             CurrencyRatesDto currencyRatesDto = this.currencyRatesService.getRateForDateAndCurrency(nextDay, "USD");
@@ -172,14 +182,22 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
             if (record.getAmount() != null && currencyRatesDto != null && currencyRatesDto.getValue() != null) {
                 record.setAmountKZT(MathUtils.multiply(currencyRatesDto.getValue().doubleValue(), record.getAmount()));
             }
+
+            if(useValuationDate){
+                updatedRecords.add(record);
+            }
         }
 
-        return records;
+        if(useValuationDate){
+            return updatedRecords;
+        }else {
+            return records;
+        }
     }
 
     @Override
     public Double getReserveCalculationSumKZTForMonth(String code, Date date) {
-        List<ReserveCalculationDto> records = getReserveCalculationsForMonth(code, date);
+        List<ReserveCalculationDto> records = getReserveCalculationsForMonth(code, date, false);
         Double sum = 0.0;
         if (records != null) {
             for (ReserveCalculationDto record : records) {
@@ -210,8 +228,8 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
         return true;
     }
 
-    @Override
-    public List<ReserveCalculationDto> getReserveCalculationsByExpenseType(String code) {
+    //@Override
+    private List<ReserveCalculationDto> getReserveCalculationsByExpenseType(String code) {
         Date mostRecentFinalReportDate = null;
         List<PeriodicReportDto> periodicReportDtos = this.periodicReportService.getAllPeriodicReports();
         if(periodicReportDtos != null){
@@ -229,6 +247,57 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
         if (entities != null) {
             for (ReserveCalculation entity : entities) {
                 ReserveCalculationDto dto = this.reserveCalculationConverter.disassemble(entity);
+
+                // set currency rate
+                Date nextDay = DateUtils.getNextDay(dto.getDate());
+                CurrencyRatesDto currencyRatesDto = this.currencyRatesService.getRateForDateAndCurrency(nextDay, "USD");
+                if (currencyRatesDto == null || currencyRatesDto.getValue() == null) {
+                    // TODO: error message
+                    logger.error("No currency rate for date '" + DateUtils.getDateFormatted(nextDay) + "', currency='USD'");
+                    throw new IllegalStateException("No currency rate for date '" + DateUtils.getDateFormatted(nextDay) + "', currency='USD'");
+                }
+                dto.setCurrencyRate(currencyRatesDto.getValue());
+
+                // set amount kzt
+                if (dto.getAmount() != null) {
+                    dto.setAmountKZT(new BigDecimal(currencyRatesDto.getValue().doubleValue()).multiply(new BigDecimal(dto.getAmount())).setScale(2, RoundingMode.HALF_UP).doubleValue());
+                }
+
+                if(mostRecentFinalReportDate == null || dto.getDate() == null){
+                    dto.setCanDelete(true);
+                }else { //mostRecentFinalReportDate != null && dto.getDate() != null
+                    dto.setCanDelete(dto.getDate().compareTo(mostRecentFinalReportDate) <= 0 ? false : true);
+                }
+
+                records.add(dto);
+            }
+        }
+        return records;
+    }
+
+    @Override
+    public List<ReserveCalculationDto> getReserveCalculationsByExpenseTypeBeforeDate(String code, Date date) {
+        Date mostRecentFinalReportDate = null;
+        List<PeriodicReportDto> periodicReportDtos = this.periodicReportService.getAllPeriodicReports();
+        if(periodicReportDtos != null){
+            for(PeriodicReportDto periodicReportDto: periodicReportDtos){
+                if(periodicReportDto.getStatus() != null && periodicReportDto.getStatus().equalsIgnoreCase(PeriodicReportType.SUBMITTED.getCode())) {
+                    if (mostRecentFinalReportDate == null || mostRecentFinalReportDate.compareTo(periodicReportDto.getReportDate()) < 0) {
+                        mostRecentFinalReportDate = periodicReportDto.getReportDate();
+                    }
+                }
+            }
+        }
+
+        List<ReserveCalculationDto> records = new ArrayList<>();
+        List<ReserveCalculation> entities = this.reserveCalculationRepository.getEntitiesByExpenseType(code);
+        if (entities != null) {
+            for (ReserveCalculation entity : entities) {
+                ReserveCalculationDto dto = this.reserveCalculationConverter.disassemble(entity);
+                if(dto.getDate().compareTo(date) > 0){
+                    // capital calls after report period
+                    continue;
+                }
 
                 // set currency rate
                 Date nextDay = DateUtils.getNextDay(dto.getDate());

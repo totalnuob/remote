@@ -1342,6 +1342,9 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
         while(rowIterator.hasNext()){
             Row row = rowIterator.next();
             if(tableHeaderChecked){
+                if(ExcelUtils.isEmptyCellRange(row, 0, 14)){
+                    break;
+                }
                 SingularityGeneralLedgerBalanceRecordDto record = new SingularityGeneralLedgerBalanceRecordDto();
                 /* Acronym */
                 if(ExcelUtils.getStringValueFromCell(row.getCell(0)) != null){
@@ -1537,6 +1540,8 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                         // Redemptions
                         accountNumber = "1550-XXXX-XXX-USD";
 
+                    }else{
+                        accountNumber = ExcelUtils.getStringValueFromCell(row.getCell(0));
                     }
 
                 }else if(isSingularityNOALRecordNotEmpty(row)){

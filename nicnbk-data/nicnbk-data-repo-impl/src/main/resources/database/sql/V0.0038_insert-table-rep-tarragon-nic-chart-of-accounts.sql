@@ -33,6 +33,15 @@ INSERT INTO rep_tarragon_nic_chart_of_accounts(id, tarragon_chart_of_accounts_na
 
 INSERT INTO rep_tarragon_nic_chart_of_accounts(id, tarragon_chart_of_accounts_name, nic_chart_accounts_id, addable) VALUES(26, 'Unrealized Gain (Loss), Net of Related Taxes', 24, false);
 
+INSERT INTO rep_tarragon_nic_chart_of_accounts(id, tarragon_chart_of_accounts_name, nic_chart_accounts_id, addable) VALUES(27, 'Contribution from Limited Partner received in advance', 5, false);
+INSERT INTO rep_tarragon_nic_chart_of_accounts(id, tarragon_chart_of_accounts_name, nic_chart_accounts_id, addable) VALUES(28, 'Income taxes payable', 54, false);
+INSERT INTO rep_tarragon_nic_chart_of_accounts(id, tarragon_chart_of_accounts_name, nic_chart_accounts_id, addable) VALUES(29, 'Deferred income tax liability', 55, false);
+
+INSERT INTO rep_tarragon_nic_chart_of_accounts(id, tarragon_chart_of_accounts_name, nic_chart_accounts_id, addable) VALUES(30, 'Prior to 2017 capital contributions', 5, true);
+INSERT INTO rep_tarragon_nic_chart_of_accounts(id, tarragon_chart_of_accounts_name, nic_chart_accounts_id, addable) VALUES(31, 'Prior to 2017 unrealized income', 49, true);
+INSERT INTO rep_tarragon_nic_chart_of_accounts(id, tarragon_chart_of_accounts_name, nic_chart_accounts_id, addable) VALUES(32, 'Prior to 2017 income', 7, true);
+
+
 
 
 

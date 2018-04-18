@@ -194,6 +194,22 @@ public class MemoServiceREST extends CommonServiceREST {
         }
     }
 
+    @RequestMapping(value = "/delete/{memoId}", method = RequestMethod.GET)
+    public ResponseEntity<?> delete(@PathVariable long memoId){
+
+        // set destructor
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        MemoDeleteResultDto resultDto = this.memoService.safeDelete(memoId, username);
+
+        if (resultDto.getStatus().getCode().equals("SUCCESS")) {
+            return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @RequestMapping(value = "/GN/save", method = RequestMethod.POST)
     public ResponseEntity<?>  save(@RequestBody GeneralMeetingMemoDto memoDto){
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();

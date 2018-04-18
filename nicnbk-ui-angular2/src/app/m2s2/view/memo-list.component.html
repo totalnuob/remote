@@ -75,10 +75,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <td class="col-md-3">
-                        <input type="checkbox" [(ngModel)]="searchParams.onlyMyOwn">Search only in my memos
-                    </td>
+                <div class="row" >
+                    <div class="form-check col-md-3">
+                        <input id="myMemosCheck" class="form-check-input" type="checkbox" [(ngModel)]="searchParams.onlyMyOwn">
+                        <label class="form-check-label" for="myMemosCheck">Show only mine</label>
+                    </div>
                 </div>
                 <!--<div class="row">-->
                     <!--<div class="col-md-12">-->
@@ -130,26 +131,32 @@
                     <!--<th>ACTIONS</th>-->
                     <th>UPDATED</th>
                     <th>UPDATEDBY</th>
+                    <th></th>
                 </tr>
                 </thead>
 
                 <tbody>
-                <tr *ngFor = "let memo of memoList" style="cursor: pointer" (click)="navigate(memo.memoType, memo.id)">
-                    <td width="5%">{{getMemoTypeName(memo.memoType)}}</td>
-                    <td width="10%" >{{getMeetingTypeName(memo.meetingType)}}</td>
+                <tr *ngFor = "let memo of memoList" style="cursor: pointer">
+                    <td width="5%" (click)="navigate(memo.memoType, memo.id)">{{getMemoTypeName(memo.memoType)}}</td>
+                    <td width="10%" (click)="navigate(memo.memoType, memo.id)">{{getMeetingTypeName(memo.meetingType)}}</td>
                     <!--<td width="30%"><a style="cursor: pointer" (click)="navigate(memo.memoType, memo.id)">{{memo.firmName}}</a></td>-->
                     <!--<td width="30%"><a style="cursor: pointer" (click)="navigate(memo.memoType, memo.id)">{{memo.fundName}}</a></td>-->
                     <!--<td width="10%" th:text="${memoItem.meetingDate}"></td>-->
-                    <td width="30%">{{memo.firmName}}</td>
-                    <td width="30%"><span *ngIf="memo.fundName == null || memo.fundName == ''">---</span>{{memo.fundName}}</td>
-                    <td width="10%">{{memo.meetingDate}}</td>
+                    <td width="30%" (click)="navigate(memo.memoType, memo.id)">{{memo.firmName}}</td>
+                    <td width="30%" (click)="navigate(memo.memoType, memo.id)"><span *ngIf="memo.fundName == null || memo.fundName == ''">---</span>{{memo.fundName}}</td>
+                    <td width="10%" (click)="navigate(memo.memoType, memo.id)">{{memo.meetingDate}}</td>
                     <!--<td width="10%">{{memo.author}}</td>-->
-                    <td width="5%">{{memo.owner}}</td>
-                    <td width="10%">{{memo.updateDate}}</td>
-                    <td width="5%">{{memo.updater}}</td>
+                    <td width="5%" (click)="navigate(memo.memoType, memo.id)">{{memo.owner}}</td>
+                    <td width="10%" (click)="navigate(memo.memoType, memo.id)">{{memo.updateDate}}</td>
+                    <td width="5%" (click)="navigate(memo.memoType, memo.id)">{{memo.updater}}</td>
                     <!--<td width="5%">-->
                         <!--&lt;!&ndash;<a><i class="glyphicon glyphicon-trash"></i></a>&ndash;&gt;-->
                     <!--</td>-->
+                    <td>
+                        <button *ngIf="showDeleteMemoButton(memo)" type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="remove(memo)">
+                            <span class="glyphicon glyphicon-minus"></span>
+                        </button>
+                    </td>
                 </tr>
                 </tbody>
             </table>

@@ -15,13 +15,15 @@ public interface ReserveCalculationService extends BaseService {
 
     List<ReserveCalculationDto> getAllReserveCalculations();
 
-    List<ReserveCalculationDto> getReserveCalculationsForMonth(String code, Date date);
+    List<ReserveCalculationDto> getReserveCalculationsForMonth(String code, Date date, boolean useValuationDate);
 
     Double getReserveCalculationSumKZTForMonth(String code, Date date);
 
     boolean save(List<ReserveCalculationDto> records);
 
-    List<ReserveCalculationDto> getReserveCalculationsByExpenseType(String code);
+    //List<ReserveCalculationDto> getReserveCalculationsByExpenseType(String code);
+
+    List<ReserveCalculationDto> getReserveCalculationsByExpenseTypeBeforeDate(String code, Date date);
 
     FilesDto getExportFileStream(Long recordId, String type);
 

@@ -37,7 +37,7 @@ INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_cha
 INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(37, '6150.030.b', null, 'Прочий инвестиционный доход/расход', null, 14);
 INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(38, '3393.020.h', null, 'Счета к оплате и начисленные расходы Tarragon', null, 4);
 INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(39, '3393.020.i', null, 'К оплате по инвестициям Tarragon', null, 4);
-INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(40, '3393.020.', null, 'К оплате менеджеру Tarragon', null, 4);
+INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(40, '3393.020.j', null, 'К оплате менеджеру Tarragon', null, 4);
 INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(41, '6283.080.a', null, 'Процентные и дивидендные доходы Tarragon', null, 15);
 INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(42, '6283.080.b', null, 'Прочие доходы Tarragon', null, 15);
 INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(43, '7473.080.n', null, 'Расходы по налогам с процентных и дивидендных доходов Tarragon', null, 8);
@@ -51,6 +51,14 @@ INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_cha
 INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(51, '1623.010.b', null, 'Предоплаченные расходы Tarragon', null, 16);
 INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(52, '3013.010.a', null, 'Банковские займы полученные', null, 17);
 INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(53, '3383.010.a', null, 'Банковские займы – Начисленные проценты', null, 18);
+
+INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(54, '3393.020.k', null, 'Налоги к оплате', null, 4);
+INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(55, '4173.010.a', null, 'Отложенное обязательство по налогам на прибыль', null, 19);
+
+
+INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(56, '1623.010.c', null, 'Предоплаченные юридические услуги Singularity', null, 16);
+
+INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(57, '3393.020.l', null, 'Юридические услуги к оплате', null, 4);
 
 
 

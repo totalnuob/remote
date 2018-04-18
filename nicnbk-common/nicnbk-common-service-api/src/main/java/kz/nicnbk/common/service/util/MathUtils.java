@@ -22,7 +22,12 @@ public class MathUtils {
     }
 
     public static BigDecimal divide(BigDecimal a, BigDecimal b){
-        return a.divide(b, DEFAULT_SCALE, BigDecimal.ROUND_HALF_UP);
+        return a.divide(b, DEFAULT_SCALE, RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP);
+    }
+
+    public static BigDecimal divide(Double a, Double b){
+        return divide(new BigDecimal(a).setScale(2, RoundingMode.HALF_UP),
+                new BigDecimal(b).setScale(2, RoundingMode.HALF_UP));
     }
 
     public static Double multiply(Double value1, Double value2){

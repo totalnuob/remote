@@ -36,6 +36,14 @@ INSERT INTO rep_singularity_nic_chart_of_accounts(id, singularity_account_number
 INSERT INTO rep_singularity_nic_chart_of_accounts(id, singularity_account_number, nic_chart_accounts_id) VALUES(36, '4200', 36);
 INSERT INTO rep_singularity_nic_chart_of_accounts(id, singularity_account_number, nic_chart_accounts_id) VALUES(37, '4900', 37);
 
+INSERT INTO rep_singularity_nic_chart_of_accounts(id, singularity_account_number, nic_chart_accounts_id) VALUES(38, '2500', 5);
+
+INSERT INTO rep_singularity_nic_chart_of_accounts(id, singularity_account_number, nic_chart_accounts_id) VALUES(39, '2810', 56);
+INSERT INTO rep_singularity_nic_chart_of_accounts(id, singularity_account_number, nic_chart_accounts_id) VALUES(40, '2000', 52);
+INSERT INTO rep_singularity_nic_chart_of_accounts(id, singularity_account_number, nic_chart_accounts_id) VALUES(41, '2010', 53);
+
+
+INSERT INTO rep_singularity_nic_chart_of_accounts(id, singularity_account_number, nic_chart_accounts_id) VALUES(42, '2810', 57);
 
 
 

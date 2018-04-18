@@ -2,7 +2,6 @@ package kz.nicnbk.service.dto.m2s2;
 
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.common.service.model.CreateUpdateBaseEntityDto;
-import kz.nicnbk.common.service.model.HistoryBaseEntityDto;
 import kz.nicnbk.repo.model.m2s2.MeetingMemo;
 import kz.nicnbk.service.dto.employee.EmployeeDto;
 import kz.nicnbk.service.dto.files.FilesDto;
@@ -37,6 +36,8 @@ public class MeetingMemoDto extends CreateUpdateBaseEntityDto<MeetingMemo> {
     private Set<FilesDto> files;
 
     private String[] tags;
+
+    private Boolean deleted;
 
     // TODO: TEMP in place of authentication
     private String author;
@@ -193,6 +194,14 @@ public class MeetingMemoDto extends CreateUpdateBaseEntityDto<MeetingMemo> {
 
     public void setTags(String[] tags) {
         this.tags = tags;
+    }
+
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
     }
 
     public Date getCreationDate() {

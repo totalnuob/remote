@@ -1,5 +1,6 @@
 export class GeneralLedgerRecord{
 
+    id: number;
     acronym: string;
     financialStatementCategory: string;
     GLAccount: string;
@@ -13,4 +14,7 @@ export class GeneralLedgerRecord{
 
     tranche: number;
     tarragonNICChartOfAccountsName: string;
+
+    adjustedRedemption: number;
+    interestRate: string;
 }

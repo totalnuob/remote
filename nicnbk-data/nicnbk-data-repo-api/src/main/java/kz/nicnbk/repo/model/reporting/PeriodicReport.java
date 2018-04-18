@@ -18,6 +18,8 @@ public class PeriodicReport extends CreateUpdateBaseEntity{
     private Date reportDate;
     private ReportStatus status;
 
+    private String interestRate;
+
     public PeriodicReport(){}
 
     public PeriodicReport(Long id){
@@ -54,4 +56,5 @@ public class PeriodicReport extends CreateUpdateBaseEntity{
     public void setStatus(ReportStatus status) {
         this.status = status;
     }
+
 }

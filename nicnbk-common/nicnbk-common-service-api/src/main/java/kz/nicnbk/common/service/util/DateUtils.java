@@ -210,4 +210,8 @@ public class DateUtils {
         }
         return dateEn;
     }
+
+    public static boolean isJanuary(Date date){
+        return date != null && getMonth(date) == 0;
+    }
 }

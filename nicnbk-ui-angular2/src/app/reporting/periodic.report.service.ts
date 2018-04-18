@@ -51,6 +51,7 @@ export class PeriodicReportService extends CommonService{
     private PERIODIC_REPORT_STATEMENT_CASHFLOWS_URL = this.PERIODIC_REPORT_BASE_URL + "get/cashflows/";
     private PERIODIC_REPORT_STATEMENT_CHANGES_URL = this.PERIODIC_REPORT_BASE_URL + "get/changes/";
     private PERIODIC_REPORT_GENERAL_LEDGER_BALANCE_URL = this.PERIODIC_REPORT_BASE_URL + "get/generalLedgerBalance/";
+    private PERIODIC_REPORT_SINGULARITY_ADJUSTMENTS_URL = this.PERIODIC_REPORT_BASE_URL + "saveSingularityAdjustments/";
 
     private PERIODIC_REPORT_SINGULARITY_NOAL_A_URL = this.PERIODIC_REPORT_BASE_URL + "get/noalA/";
     private PERIODIC_REPORT_SINGULARITY_NOAL_B_URL = this.PERIODIC_REPORT_BASE_URL + "get/noalB/";
@@ -95,6 +96,8 @@ export class PeriodicReportService extends CommonService{
     private PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_3_URL = this.PERIODIC_REPORT_BASE_URL + "consolidatedBalanceKZTForm3/";
     private PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_19_URL = this.PERIODIC_REPORT_BASE_URL + "consolidatedBalanceKZTForm19/";
     private PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_22_URL = this.PERIODIC_REPORT_BASE_URL + "consolidatedBalanceKZTForm22/";
+
+    private PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_13_INTEREST_RATE_URL = this.PERIODIC_REPORT_BASE_URL + "saveKZTReportForm13InterestRate/";
 
     private PERIODIC_REPORT_RESERVE_CALCULATION_FORM_URL = this.PERIODIC_REPORT_BASE_URL + "reserveCalculation/";
     private PERIODIC_REPORT_RESERVE_CALCULATION_DELETE_RECORD_URL = this.PERIODIC_REPORT_BASE_URL + "reserveCalculation/delete/";
@@ -167,6 +170,15 @@ export class PeriodicReportService extends CommonService{
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }
+
+    saveSingularityAdjustments(entity){
+        let body = JSON.stringify(entity);
+        //console.log(body);
+        return this.http.post(this.PERIODIC_REPORT_SINGULARITY_ADJUSTMENTS_URL + entity.reportId , body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
     getSingularityNOALTrancheA(reportId): Observable<PeriodicReportRecordHolder>{
         return this.http.get(this.PERIODIC_REPORT_SINGULARITY_NOAL_A_URL + reportId, this.getOptionsWithCredentials())
             .map(this.extractData)
@@ -265,6 +277,12 @@ export class PeriodicReportService extends CommonService{
 
     getConsolidatedKZTForm13(reportId): Observable<ListResponse>{
         return this.http.get(this.PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_13_URL + reportId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    saveKZTReportForm13InterestRate(reportId, value): Observable<any>{
+        return this.http.post(this.PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_13_INTEREST_RATE_URL + reportId, value, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }

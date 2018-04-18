@@ -3,6 +3,7 @@ package kz.nicnbk.service.api.reporting.hedgefunds;
 import kz.nicnbk.repo.model.reporting.hedgefunds.ReportingHFGeneralLedgerBalance;
 import kz.nicnbk.service.api.base.BaseService;
 import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordHolderDto;
+import kz.nicnbk.service.dto.reporting.SingularityAdjustmentsDto;
 import kz.nicnbk.service.dto.reporting.SingularityGeneralLedgerBalanceRecordDto;
 
 import java.util.List;
@@ -21,4 +22,8 @@ public interface HFGeneralLedgerBalanceService extends BaseService {
     ConsolidatedReportRecordHolderDto get(Long reportId);
 
     boolean deleteByReportId(Long reportId);
+
+    boolean saveAdjustments(SingularityAdjustmentsDto adjustmentsDto, String updater);
+
+    List<SingularityGeneralLedgerBalanceRecordDto> getAdjustedRecords(Long reportId);
 }

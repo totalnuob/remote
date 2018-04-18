@@ -22,7 +22,7 @@ export class PEFundService extends CommonService {
     private PE_FUND_CALCULATE_IRR_URL = this.PE_BASE_URL + "calculateIRR/";
     private PE_FUND_SAVE_GROSS_CF_URL = this.PE_BASE_URL + "saveGrossCF/";
     private PE_FUND_SAVE_DATA_FOR_ONE_PAGER_URL = this.PE_BASE_URL + "saveDataForOnePager/";
-    private PE_FUND_CREATE_ONE_PAGER_URL = this.PE_BASE_URL + "createOnePager/";
+    //private PE_FUND_CREATE_ONE_PAGER_URL = this.PE_BASE_URL + "createOnePager/";
 
     constructor(
         private http: Http,
@@ -33,12 +33,12 @@ export class PEFundService extends CommonService {
     }
 
     save(entity){
-    let body = JSON.stringify(entity);
+        let body = JSON.stringify(entity);
 
-    return this.http.post(this.PE_FUND_SAVE_URL, body, this.getOptionsWithCredentials())
-        .map(this.extractData)
-        .catch(this.handleErrorResponse);
-}
+        return this.http.post(this.PE_FUND_SAVE_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
 
     //savePerformance(entity, id) {
     //    let body = JSON.stringify(entity);

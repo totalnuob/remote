@@ -47,9 +47,10 @@ public class PEOnePagerDescriptionsServiceImpl implements PEOnePagerDescriptions
     }
 
     @Override
-    public PEOnePagerDescriptionsResultDto saveList(List<PEOnePagerDescriptionsDto> descriptionsDtoList, Long fundId){
+    public PEOnePagerDescriptionsResultDto saveList(List<PEOnePagerDescriptionsDto> descriptionsDtoList, Long fundId, String username){
         try {
             if (descriptionsDtoList == null || fundId == null) {
+                logger.error("Error saving PE fund's one pager descriptions: " + fundId);
                 return new PEOnePagerDescriptionsResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Don't send NULL!", "");
             }
 
@@ -62,11 +63,13 @@ public class PEOnePagerDescriptionsServiceImpl implements PEOnePagerDescriptions
                 }
                 if ((descriptionsDto.getDescriptionBold() == null || descriptionsDto.getDescriptionBold().equals("")) &&
                         (descriptionsDto.getDescription() == null || descriptionsDto.getDescription().equals(""))) {
+                    logger.error("Error saving PE fund's one pager descriptions: " + fundId);
                     return new PEOnePagerDescriptionsResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Don't send null or empty descriptions!", "");
                 }
             }
 
             if (this.peFundService.get(fundId) == null) {
+                logger.error("Error saving PE fund's one pager descriptions: " + fundId);
                 return new PEOnePagerDescriptionsResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Fund doesn't exist!", "");
             }
 
@@ -86,12 +89,14 @@ public class PEOnePagerDescriptionsServiceImpl implements PEOnePagerDescriptions
             for (PEOnePagerDescriptionsDto descriptionsDto : descriptionsDtoList) {
                 Long id = save(descriptionsDto, fundId);
                 if (id == null) {
+                    logger.error("Error saving PE fund's one pager descriptions: " + fundId);
                     return new PEOnePagerDescriptionsResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error saving PE fund's one pager descriptions", "");
                 } else {
                     descriptionsDto.setId(id);
                 }
             }
 
+            logger.info("Saved PE fund's one pager descriptions: " + fundId + ", updater: " + username);
             return new PEOnePagerDescriptionsResultDto(descriptionsDtoList, StatusResultType.SUCCESS, "", "Successfully saved PE fund's one pager descriptions", "");
         } catch (Exception ex) {
             logger.error("Error saving PE fund's one pager descriptions: " + fundId, ex);

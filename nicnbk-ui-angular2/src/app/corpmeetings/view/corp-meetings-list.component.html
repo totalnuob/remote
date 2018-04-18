@@ -1,0 +1,184 @@
+<div class="container">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="row top-buffer" >
+                <div class="col-md-12">
+                    <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row top-buffer" >
+                <div class="col-md-12">
+                    <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row withpadding">
+            <a [routerLink]="['/corpMeetings/edit/',0 ]" class="btn btn-primary pull-right" *ngIf="canEdit()">Add</a>
+        </div>
+
+        <!--<div class="row">-->
+            <!--<div class="col-md-12">-->
+                <!--<div class="dropdown pull-right">-->
+                   <!---->
+                    <!--<button class="btn btn-primary dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">Create-->
+                        <!--<span class="bootstrapCaret"></span></button>-->
+                    <!--<ul class="dropdown-menu" role="menu" aria-labelledby="menu1">-->
+                        <!--<li role="presentation">-->
+                            <!--<a [routerLink] ="['/corpMeetings/edit/0']" role="menuitem">BoD</a>-->
+                        <!--</li>-->
+                        <!--<li role="presentation">-->
+                            <!--<a [routerLink] ="['/corpMeetings/edit/0']" role="menuitem">Executive Board</a>-->
+                        <!--</li>-->
+                        <!--<li role="presentation">-->
+                            <!--<a [routerLink] ="['/corpMeetings/edit/0']" role="menuitem">Investment Committee</a>-->
+                        <!--</li>-->
+                        <!--&lt;!&ndash;<li role="presentation">&ndash;&gt;-->
+                        <!--&lt;!&ndash;<a role="menuitem" tabindex="-1" th:href="@{/m2s2/memoEdit/RE/0}">Real Estate</a></li>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<li role="presentation">&ndash;&gt;-->
+                        <!--&lt;!&ndash;<a role="menuitem" tabindex="-1" th:href="@{/m2s2/memoEdit/HF/0}">Hedge Fund</a></li>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<li role="presentation" class="divider"></li>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<li role="presentation"><a role="menuitem" tabindex="-1"  th:href="@{/m2s2/memoEdit/GM/0}">General</a></li>&ndash;&gt;-->
+                    <!--</ul>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+        <br/>
+        <div class="jumbotron">
+            <form (ngSubmit)="search()">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="meetingType">Type</label>
+                                <select class="form-control" id="meetingType" name="meetingType">
+                                    <option value="NONE">---</option>
+                                    <option value="BOD">BoD</option>
+                                    <option value="EXEC">Executive Board</option>
+                                    <option value="IC">Investment Committee</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="fromDateDTPickeer">From</label>
+                            <div class='input-group date col-md-3' id='fromDateDTPickeer' style="width: 100%">
+                                <input type='text' class="form-control" id="fromDate"/>
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="untilDateDTPickeer">To</label>
+                            <div class='input-group date col-md-3' id='untilDateDTPickeer' style="width: 100%">
+                                <input type='text' class="form-control" id="toDate"/>
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--<div class="row">-->
+                    <!--<div class="col-md-12">-->
+                        <!--<div class="col-md-6">-->
+                            <!--<div class="form-group">-->
+                                <!--<label for="organization">Organization</label>-->
+                                <!--<input type="text" class="form-control" id="organization" placeholder="Enter organization name..."-->
+                                       <!--[(ngModel)]="searchParams.organization" name="organization"/>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--<div class="col-md-6">-->
+                            <!--<div class="form-group">-->
+                                <!--<label for="location">Location</label>-->
+                                <!--<input type="text" class="form-control" id="location" placeholder="Enter location..."-->
+                                       <!--[(ngModel)]="searchParams.location" name="location"/>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class="row">-->
+                <!--<div class="col-md-12">-->
+                <!--<div class="col-md-6">-->
+                <!--<div class="form-group">-->
+                <!--<label for="status">Status</label>-->
+                <!--<select class="form-control" id="status" [(ngModel)]="searchParams.status" >-->
+                <!--<option value="NONE">-&#45;&#45;</option>-->
+                <!--<option value="APPROVED">APPROVED</option>-->
+                <!--<option value="TRAINING">REJECTED</option>-->
+                <!--<option value="CONSIDERATION">UNDER CONSIDERATION</option>-->
+                <!--</select>-->
+                <!--</div>-->
+                <!--</div>-->
+                <!--</div>-->
+                <!--</div>-->
+                <div class="row">
+                    <div class="col-md-12">
+                        <button type="submit"class="btn btn-success pull-right">Search</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div>
+            <label>Total found: <span>?????</span></label>
+        </div>
+        <div class="row withpadding" style="position: relative; min-height: 80px;">
+            <!--<div class="row pull-right">-->
+                <!--<ul class="pagination" *ngIf="tripMemoSearchResult?.showPageFrom > 0">-->
+                    <!--<li><a *ngIf="tripMemoSearchResult?.showPageFrom > 1" (click)="search(tripMemoSearchResult.showPageFrom - 1)">&laquo;</a></li>-->
+                    <!--<li *ngFor="let i of range(tripMemoSearchResult.showPageFrom, tripMemoSearchResult.showPageTo)" [class.active]="i == tripMemoSearchResult.currentPage">-->
+                        <!--<a (click)="search(i)">{{i}}</a>-->
+                    <!--</li>-->
+                    <!--<li><a *ngIf="tripMemoSearchResult.showPageTo < tripMemoSearchResult.totalPages" (click)="search(tripMemoSearchResult.showPageTo + 1)">&raquo;</a></li>-->
+                <!--</ul>-->
+            <!--</div>-->
+            <table [ngBusy]="busy"  class = "table table-hover">
+            <thead>
+            <tr>
+                <th>TYPE</th>
+                <th>NAME</th>
+                <th>ORGANIZATION</th>
+                <th>LOCATION</th>
+                <th>DATE FROM</th>
+                <th>DATE TO</th>
+                <th>AUTHOR</th>
+                <!--<th>STATUS</th>-->
+                <!--<th>UPDATED</th>-->
+                <!--<th>UPDATEDBY</th>-->
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr *ngFor="let meeting of corpMeetings"  style="cursor: pointer">
+                <td width="5%">TYPE</td>
+                <td width="30%"><a>NAME</a></td>
+                <td width="10%"><a>ORGANIZATION</a></td>
+                <td width="15%"><a>LOCATION</a></td>
+                <td width="10%">FROM</td>
+                <td width="10%">TO</td>
+                <td width="10%">AUTHOR</td>
+                <!--<td width="10%">{{tripMemo.status}}</td>-->
+                <!--<td width="10%">-->
+                    <!--{{tripMemo.updateDate}}-->
+                <!--</td>-->
+                <!--<td width="10%">-->
+                    <!--{{tripMemo.updater}}-->
+                    <!--&lt;!&ndash;<a><i class="glyphicon glyphicon-trash"></i></a>&ndash;&gt;-->
+                <!--</td>-->
+            </tr>
+            </tbody>
+        </table>
+            <!--<div class="row pull-right">-->
+                <!--<ul class="pagination" *ngIf="tripMemoSearchResult?.showPageFrom > 0">-->
+                    <!--<li><a *ngIf="tripMemoSearchResult?.showPageFrom > 1" (click)="search(tripMemoSearchResult.showPageFrom - 1)">&laquo;</a></li>-->
+                    <!--<li *ngFor="let i of range(tripMemoSearchResult.showPageFrom, tripMemoSearchResult.showPageTo)" [class.active]="i == tripMemoSearchResult.currentPage">-->
+                        <!--<a (click)="search(i)">{{i}}</a>-->
+                    <!--</li>-->
+                    <!--<li><a *ngIf="tripMemoSearchResult.showPageTo < tripMemoSearchResult.totalPages" (click)="search(tripMemoSearchResult.showPageTo + 1)">&raquo;</a></li>-->
+                <!--</ul>-->
+            <!--</div>-->
+        </div>
+    </div>
+</div>
