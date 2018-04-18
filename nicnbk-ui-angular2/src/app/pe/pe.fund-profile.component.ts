@@ -76,14 +76,29 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     uploadedNetCf;
 
     myFiles: File[];
-    fileGPlogo: File[];
-    fileNIClogo: File[];
+    //fileGPlogo: File[];
+    //fileNIClogo: File[];
 
     url_GP: any;
     url_NIC: any;
+    url_NET_IRR: any;
+    url_NET_MOIC: any;
 
     performanceSaveTypeMessage: string;
     grossCashFlowSaveTypeMessage: string;
+
+    industryAsString: string;
+    strategyAsString: string;
+    geographyAsString: string;
+
+    public firmFunds: Array<any> = [];
+
+    public totalNumberOfInvestments: number;
+    public totalInvested: number;
+    public totalRealized: number;
+    public totalUnrealized: number;
+    public totalGrossMOIC: number;
+    public totalGrossIrr: number;
 
     public dataForOnePager = new PEFundDataForOnePager();
 
@@ -110,8 +125,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
         this.loadLookups();
 
         this.myFiles = [];
-        this.fileGPlogo = [];
-        this.fileNIClogo = [];
+        //this.fileGPlogo = [];
+        //this.fileNIClogo = [];
 
         // TODO: wait/sync on lookup loading
         // TODO: sync on subscribe results
@@ -134,7 +149,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                 if(data && data.id > 0) {
                                     this.fund = data;
 
-                                    //console.log(this.fund);
+                                    console.log(this.fund);
 
                                     // preselect firm strategies
                                     this.preselectStrategy();
@@ -191,7 +206,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                         this.fund.netCashflow = [];
                                     }
 
-                                    this.url_GP = "data:" + this.fund.firm.logo.mimeType + ";base64," + this.fund.firm.logo.bytes;
+                                    this.updateIndustryStrategyGeographyAsStrings();
+
                                 }else{
                                     // TODO: handle error
                                     this.errorMessage = "Error loading fund profile.";
@@ -216,6 +232,14 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                 if(data && data.id > 0) {
                                     this.fund.firm = data;
                                     this.preselectFirmStrategyGeographyIndustry();
+
+                                    if (this.fund.firm.logo != null) {
+                                        this.url_GP = "data:" + this.fund.firm.logo.mimeType + ";base64," + this.fund.firm.logo.bytes;
+                                    }
+
+                                    if (this.fund.firm.logoNIC != null) {
+                                        this.url_NIC = "data:" + this.fund.firm.logoNIC.mimeType + ";base64," + this.fund.firm.logoNIC.bytes;
+                                    }
                                 }else{
                                     // TODO: handle error
                                     this.errorMessage = "Error loading fund manager info.";
@@ -230,6 +254,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                                 this.postAction(null, null);
                             }
                         );
+                    this.getFundsAndTotalIrrAndBarChartsForOnePager(this.firmIdParam, this.fundIdParam);
                 }else{
                     // TODO: handle error
                     error => this.errorMessage = "Invalid parameter values";
@@ -299,6 +324,10 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     this.updateSaveTypeMessage();
 
                     this.postAction("Successfully saved.", null);
+
+                    this.updateIndustryStrategyGeographyAsStrings();
+
+                    this.getFundsAndTotalIrrAndBarChartsForOnePager(this.fund.firm.id, this.fund.id);
                 },
                 (error: ErrorResponse) => {
                     this.errorMessage = "Error saving fund profile";
@@ -309,6 +338,93 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     this.postAction(null, null);
                 }
             )
+    }
+
+    getFundsAndTotalIrrAndBarChartsForOnePager(id, fundId) {
+        this.firmService.getFundsAndTotalIrrAndBarChartsForOnePager(id, fundId)
+            .subscribe(
+                (response) => {
+                    this.firmFunds = response.fundDtoList;
+
+                    this.totalNumberOfInvestments = 0;
+                    this.totalInvested = 0.0;
+                    this.totalRealized = 0.0;
+                    this.totalUnrealized = 0.0;
+                    this.totalGrossMOIC = null;
+                    this.totalGrossIrr = null;
+
+                    this.firmFunds.forEach(element => {
+                        this.totalNumberOfInvestments += (element.numberOfInvestments != null) ? element.numberOfInvestments : 0;
+                        this.totalInvested += (element.investedAmount != null) ? element.investedAmount : 0;
+                        this.totalRealized += (element.realized != null) ? element.realized : 0;
+                        this.totalUnrealized += (element.unrealized != null) ? element.unrealized : 0;
+                    });
+
+                    if (this.totalInvested != 0.0) {
+                        this.totalGrossMOIC = (this.totalRealized + this.totalUnrealized) / this.totalInvested;
+                    }
+
+                    this.totalGrossIrr = response.totalIrr;
+
+                    if (response.barChartNetIrrBytes != null) {
+                        this.url_NET_IRR = "data:" + "image/jpeg" + ";base64," + response.barChartNetIrrBytes;
+                    }
+
+                    if (response.barChartNetMoicBytes != null) {
+                        this.url_NET_MOIC = "data:" + "image/jpeg" + ";base64," + response.barChartNetMoicBytes;
+                    }
+
+                },
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading firm funds";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                        console.log(error);
+                    }
+                    this.postAction(null, null);
+                }
+            )
+    }
+
+    updateIndustryStrategyGeographyAsStrings() {
+        this.industryAsString = '';
+        for (var i = 0; i < this.fund.industry.length; i++) {
+            this.industryList.forEach(element => {
+                if (element.id === this.fund.industry[i].code) {
+                    if (this.industryAsString === '') {
+                        this.industryAsString = element.text;
+                    } else {
+                        this.industryAsString += ', ' + element.text;
+                    }
+                }
+            })
+        }
+
+        this.strategyAsString = '';
+        for (var i = 0; i < this.fund.strategy.length; i++) {
+            this.strategyList.forEach(element => {
+                if (element.id === this.fund.strategy[i].code) {
+                    if (this.strategyAsString === '') {
+                        this.strategyAsString = element.text;
+                    } else {
+                        this.strategyAsString += ', ' + element.text;
+                    }
+                }
+            })
+        }
+
+        this.geographyAsString = '';
+        for (var i = 0; i < this.fund.geography.length; i++) {
+            this.geographyList.forEach(element => {
+                if (element.id === this.fund.geography[i].code) {
+                    if (this.geographyAsString === '') {
+                        this.geographyAsString = element.text;
+                    } else {
+                        this.geographyAsString += ', ' + element.text;
+                    }
+                }
+            })
+        }
     }
 
     updateSaveTypeMessage() {
@@ -349,6 +465,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     this.fund.benchmarkName = response.trackRecordDTO.benchmarkName;
 
                     //this.fund.autoCalculation = true;
+
+                    this.getFundsAndTotalIrrAndBarChartsForOnePager(this.fund.firm.id, this.fund.id);
                 },
                 (error: ErrorResponse) => {
                     this.processErrorMessage(error);
@@ -557,6 +675,8 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
                     this.fund.benchmarkNetIrr = response.trackRecordDTO.benchmarkNetIrr;
                     this.fund.benchmarkNetTvpi = response.trackRecordDTO.benchmarkNetTvpi;
                     this.fund.benchmarkName = response.trackRecordDTO.benchmarkName;
+
+                    this.getFundsAndTotalIrrAndBarChartsForOnePager(this.fund.firm.id, this.fund.id);
                 },
                 (error: ErrorResponse) => {
                     this.processErrorMessage(error);
@@ -957,16 +1077,16 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
         console.log(this.myFiles);
     }
 
-    fileLogoChange(files: any, partner: string){
-        if(partner === 'GP') {
-            this.fileGPlogo = files;
-            console.log(this.fileGPlogo);
-        }
-        if(partner === 'NIC') {
-            this.fileNIClogo = files;
-            console.log(this.fileNIClogo);
-        }
-    }
+    //fileLogoChange(files: any, partner: string){
+    //    if(partner === 'GP') {
+    //        this.fileGPlogo = files;
+    //        console.log(this.fileGPlogo);
+    //    }
+    //    if(partner === 'NIC') {
+    //        this.fileNIClogo = files;
+    //        console.log(this.fileNIClogo);
+    //    }
+    //}
 
     onSubmitGrossCF() {
         this.busy = this.fundService.postFiles(this.myFiles)

@@ -13,10 +13,12 @@ export class PEFirmService extends CommonService {
     private PE_BASE_URL = DATA_APP_URL + 'pe/firm/';
     private PE_FIRM_SAVE_URL = this.PE_BASE_URL + 'save/';
     private PE_FIRM_GET_URL = this.PE_BASE_URL + 'get/';
+    //private PE_FIRM_FUNDS_GET_URL = this.PE_BASE_URL + 'getFunds/';
     private PE_FIRM_SEARCH_URL = this.PE_BASE_URL + "search/";
     private PE_FIRM_LIST_URL = this.PE_BASE_URL + "all/";
     private PE_FIRM_LOGO_URL = this.PE_BASE_URL + "logo/"
     private PE_FIRM_LOGO_UPLOAD_URL = this.PE_FIRM_LOGO_URL + "upload/";
+    private PE_FIRM_FUNDS_AND_TOTAL_IRR_AND_BAR_CHARTS_FOR_ONE_PAGER_URL = this.PE_BASE_URL + "getFundsAndTotalIrrAndBarChartsForOnePager/";
 
     constructor(
         private uploadService: FileUploadService,
@@ -35,6 +37,18 @@ export class PEFirmService extends CommonService {
 
     get(id): Observable<PEFirm> {
         return this.http.get(this.PE_FIRM_GET_URL + id, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    //loadFirmFunds(id) {
+    //    return this.http.get(this.PE_FIRM_FUNDS_GET_URL + id, this.getOptionsWithCredentials())
+    //        .map(this.extractData)
+    //        .catch(this.handleErrorResponse);
+    //}
+
+    getFundsAndTotalIrrAndBarChartsForOnePager(id, fundId) {
+        return this.http.get(this.PE_FIRM_FUNDS_AND_TOTAL_IRR_AND_BAR_CHARTS_FOR_ONE_PAGER_URL + id + '/' + fundId, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }

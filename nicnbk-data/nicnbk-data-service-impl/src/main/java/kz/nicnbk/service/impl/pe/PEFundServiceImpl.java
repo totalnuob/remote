@@ -82,11 +82,13 @@ public class PEFundServiceImpl implements PEFundService {
 //            calculatePerformanceParameters(grossCFDto, netCFDto, dto);
 
             // load logo
-            try {
-                dto.getFirm().getLogo().setBytes(IOUtils.toByteArray(fileService.getFileInputStream(dto.getFirm().getLogo().getId(), FileTypeLookup.PE_FIRM_LOGO.getCode())));
-            } catch (Exception ex) {
-                logger.error("Error loading PE firm logo: fund=" + fundId, ex);
-            }
+//            if (dto.getFirm() != null && dto.getFirm().getLogo() != null) {
+//                try {
+//                    dto.getFirm().getLogo().setBytes(IOUtils.toByteArray(fileService.getFileInputStream(dto.getFirm().getLogo().getId(), FileTypeLookup.PE_FIRM_LOGO.getCode())));
+//                } catch (Exception ex) {
+//                    logger.error("Error loading PE firm logo: fund=" + fundId, ex);
+//                }
+//            }
 
             return dto;
         } catch (Exception ex) {
