@@ -219,7 +219,7 @@ export class TripMemoEditComponent extends CommonFormViewComponent implements On
             .subscribe(
                 data => {
                     data.forEach(element => {
-                        this.attendeesList.push({id: element.id, text: element.firstName + " " + element.lastName[0] + "."});
+                        this.attendeesList.push({id: element.id, text: element.firstName + " " + element.lastName});
                     });
                 },
                 (error: ErrorResponse) => {

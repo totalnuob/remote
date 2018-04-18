@@ -16,6 +16,8 @@ import java.util.Date;
  */
 public interface MeetingMemoRepository extends PagingAndSortingRepository<MeetingMemo, Long> {
 
+    @Query("select memo from MeetingMemo memo where (memo.deleted is null or memo.deleted = FALSE) " +
+            " ORDER BY memo.meetingDate DESC")
     Page<MeetingMemo> findAllByOrderByMeetingDateDesc(Pageable pageable);
 
     @Query("select memo from MeetingMemo memo where (memo.meetingType.code=:meetingType or :meetingType is null) " +
@@ -23,6 +25,7 @@ public interface MeetingMemoRepository extends PagingAndSortingRepository<Meetin
             " and (UPPER(memo.firmName) LIKE UPPER(CONCAT('%',:firmName,'%')) or :firmName is null or :firmName = '') " +
             " and (UPPER(memo.fundName) LIKE UPPER(CONCAT('%',:fundName,'%')) or :fundName is null or :fundName = '')" +
             " and (memo.creator.username=:username or :username is null or :username = '')" +
+            " and (memo.deleted is null or memo.deleted = FALSE)" +
             " ORDER BY memo.meetingDate DESC")
     Page<MeetingMemo> findWithoutDates(@Param("meetingType") String meetingType, @Param("memoType") Integer memoType,
                                        @Param("firmName")String firmName, @Param("fundName")String fundName, @Param("username")String username, Pageable pageable);
@@ -33,6 +36,7 @@ public interface MeetingMemoRepository extends PagingAndSortingRepository<Meetin
             " and (UPPER(memo.fundName) LIKE UPPER(CONCAT('%',:fundName,'%')) or :fundName is null or :fundName = '') " +
             " and (memo.meetingDate >= :dateFrom) and (memo.meetingDate <= :dateTo)" +
             " and (memo.creator.username=:username or :username is null or :username = '')" +
+            " and (memo.deleted is null or memo.deleted = FALSE)" +
             " ORDER BY memo.meetingDate DESC")
     Page<MeetingMemo> findBothDates(@Param("meetingType") String meetingType, @Param("memoType") Integer memoType,
                                     @Param("firmName")String firmName,
@@ -45,6 +49,7 @@ public interface MeetingMemoRepository extends PagingAndSortingRepository<Meetin
             " and (UPPER(memo.fundName) LIKE UPPER(CONCAT('%',:fundName,'%')) or :fundName is null or :fundName = '') " +
             " and (memo.meetingDate >= :dateFrom)" +
             " and (memo.creator.username=:username or :username is null or :username = '')" +
+            " and (memo.deleted is null or memo.deleted = FALSE)" +
             " ORDER BY memo.meetingDate DESC")
     Page<MeetingMemo> findDateFrom(@Param("meetingType") String meetingType, @Param("memoType") Integer memoType,
                                    @Param("firmName")String firmName,
@@ -57,6 +62,7 @@ public interface MeetingMemoRepository extends PagingAndSortingRepository<Meetin
             " and (UPPER(memo.fundName) LIKE UPPER(CONCAT('%',:fundName,'%')) or :fundName is null or :fundName = '') " +
             " and (memo.meetingDate <= :dateTo)" +
             " and (memo.creator.username=:username or :username is null or :username = '')" +
+            " and (memo.deleted is null or memo.deleted = FALSE)" +
             " ORDER BY memo.meetingDate DESC")
     Page<MeetingMemo> findDateTo(@Param("meetingType") String meetingType, @Param("memoType") Integer memoType,
                                  @Param("firmName")String firmName,

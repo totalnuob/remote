@@ -52,9 +52,10 @@ public class PECompanyPerformanceIddServiceImpl implements PECompanyPerformanceI
     }
 
     @Override
-    public PECompanyPerformanceIddResultDto saveList(List<PECompanyPerformanceIddDto> performanceIddDtoList, Long fundId) {
+    public PECompanyPerformanceIddResultDto saveList(List<PECompanyPerformanceIddDto> performanceIddDtoList, Long fundId, String username) {
         try {
             if (performanceIddDtoList == null || fundId == null) {
+                logger.error("Error saving PE fund's company performance list / portfolio info : " + fundId);
                 return new PECompanyPerformanceIddResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Don't send NULL!", "");
             }
 
@@ -63,6 +64,7 @@ public class PECompanyPerformanceIddServiceImpl implements PECompanyPerformanceI
                     performanceIddDto.setCompanyName(performanceIddDto.getCompanyName().trim());
                 }
                 if (performanceIddDto.getCompanyName() == null || performanceIddDto.getCompanyName().equals("")) {
+                    logger.error("Error saving PE fund's company performance list / portfolio info : " + fundId);
                     return new PECompanyPerformanceIddResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Don't send null or empty company name!", "");
                 }
 //                if ((performanceIddDto.getInvested() != null && performanceIddDto.getInvested() < 0) ||
@@ -82,6 +84,7 @@ public class PECompanyPerformanceIddServiceImpl implements PECompanyPerformanceI
                     }
                 }
                 if (i > 1) {
+                    logger.error("Error saving PE fund's company performance list / portfolio info : " + fundId);
                     return new PECompanyPerformanceIddResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Names must be unique!", "");
                 }
             }
@@ -110,21 +113,23 @@ public class PECompanyPerformanceIddServiceImpl implements PECompanyPerformanceI
             for (PECompanyPerformanceIddDto performanceIddDto : performanceIddDtoList) {
                 Long id = save(performanceIddDto, fundId);
                 if (id == null) {
+                    logger.error("Error saving PE fund's company performance list / portfolio info : " + fundId);
                     return new PECompanyPerformanceIddResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error saving PE fund's company performance / portfolio info", "");
                 } else {
                     performanceIddDto.setId(id);
                 }
             }
 
+            logger.info("Saved PE fund's company performance list / portfolio info : " + fundId + ", updater : " + username);
             return new PECompanyPerformanceIddResultDto(performanceIddDtoList, StatusResultType.SUCCESS, "", "Successfully saved PE fund's company performance / portfolio info", "");
         } catch (Exception ex) {
-            logger.error("Error saving PE fund's company performance: " + fundId, ex);
+            logger.error("Error saving PE fund's company performance list / portfolio info : " + fundId, ex);
             return new PECompanyPerformanceIddResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error saving PE fund's company performance / portfolio info", "");
         }
     }
 
     @Override
-    public PECompanyPerformanceIddResultDto recalculatePerformanceIdd(Long fundId) {
+    public PECompanyPerformanceIddResultDto recalculatePerformanceIdd(Long fundId, String username) {
         try {
 //            deleteByFundId(fundId);
 
@@ -165,6 +170,7 @@ public class PECompanyPerformanceIddServiceImpl implements PECompanyPerformanceI
 
                 List<PEGrossCashflowDto> cashflowDtoList = this.cashflowService.findByFundIdAndCompanyName(fundId, performanceIddDto.getCompanyName());
                 if (cashflowDtoList == null) {
+                    logger.error("Error updating PE fund's company performance: " + fundId);
                     return new PECompanyPerformanceIddResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error updating PE fund's company performance", "");
                 }
                 performanceIddDto.setGrossIrr(this.irrService.getIRR(cashflowDtoList));
@@ -183,7 +189,7 @@ public class PECompanyPerformanceIddServiceImpl implements PECompanyPerformanceI
                 }
             }
 
-            return saveList(performanceIddDtoList, fundId);
+            return saveList(performanceIddDtoList, fundId, username);
         } catch (Exception ex) {
             logger.error("Error updating PE fund's company performance: " + fundId ,ex);
             return new PECompanyPerformanceIddResultDto(new ArrayList<>(), StatusResultType.FAIL, "", "Error updating PE fund's company performance", "");

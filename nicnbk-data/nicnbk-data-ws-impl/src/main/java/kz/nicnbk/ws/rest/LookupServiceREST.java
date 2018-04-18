@@ -27,6 +27,12 @@ public class LookupServiceREST extends CommonServiceREST{
     @Autowired
     private LookupService lookupService;
 
+    @RequestMapping(value = "/NewsType", method = RequestMethod.GET)
+    public ResponseEntity getAllNewsTypes(){
+        List<BaseDictionaryDto> lookups = this.lookupService.getAllNewsTypes();
+        return buildNonNullResponse(lookups);
+    }
+
     @RequestMapping(value = "/MemoType", method = RequestMethod.GET)
     public ResponseEntity getAllMemoTypes(){
         List<BaseDictionaryDto> lookups = this.lookupService.getAllMemoTypes();

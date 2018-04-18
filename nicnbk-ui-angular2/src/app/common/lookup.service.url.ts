@@ -32,5 +32,6 @@ export const RESERVE_CALCULATION_ENTITY_TYPE_URL = LOOKUP_SERVICE_URL + "Reserve
 
 export const MM_FIELDS_URL = LOOKUP_SERVICE_URL + "MMFields";
 
+export const NEWS_TYPE_URL = LOOKUP_SERVICE_URL + "NewsType/";
 export const MEMO_TYPE_URL = LOOKUP_SERVICE_URL + "MemoType/";
 export const MEETING_TYPE_URL = LOOKUP_SERVICE_URL + "MeetingType/";

@@ -394,6 +394,7 @@ public class PEPdfServiceImpl implements PEPdfService {
 
             document.close();
 
+            logger.info("Successfully created PE fund's One Pager: " + fundId);
             return new FileInputStream(onePagerDest);
         } catch (Exception ex) {
             logger.error("Error creating PE fund's One Pager: " + fundId, ex);

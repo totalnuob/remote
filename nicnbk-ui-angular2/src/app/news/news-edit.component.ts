@@ -126,7 +126,20 @@ export class NewsEditComponent extends CommonFormViewComponent implements OnInit
 
     loadLookups(){
         // news types
-        this.lookupService.getNewsTypes().then(newsTypes => this.newsTypes = newsTypes);
+        //this.lookupService.getNewsTypes().then(newsTypes => this.newsTypes = newsTypes);
+        this.lookupService.getNewsTypes()
+            .subscribe(
+                newsTypes => {
+                    this.newsTypes = newsTypes;
+                },
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error loading lookups";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
+            );
     }
 
 }

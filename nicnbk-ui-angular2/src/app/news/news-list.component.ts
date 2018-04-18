@@ -137,6 +137,7 @@ export class NewsListComponent extends CommonFormViewComponent implements OnInit
 
     getNewsById(id){
 
+        this.selectedNews = null;
         //let params = JSON.stringify(id);
         this.location.go('/news;params=' + id);
         //console.log(this.router.url);

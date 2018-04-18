@@ -227,4 +227,38 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
         return this.moduleAccessChecler.checkAccessRealEstateEditor();
     }
 
+    remove(item){
+        if (confirm('Are you sure?')) {
+            this.busy = this.memoService.deleteMemo(item.id)
+                .subscribe(
+                    (response)  => {
+                        var currentPage = 1;
+                        if ((this.memoSearchResult.totalElements === (this.memoSearchResult.currentPage - 1) * this.searchParams.pageSize + 1) &&
+                            this.memoSearchResult.currentPage > 1) {
+                            currentPage = this.memoSearchResult.currentPage - 1;
+                            console.log('Move one page back');
+                        } else {
+                            currentPage = this.memoSearchResult.currentPage;
+                        }
+                        this.search(currentPage);
+                        this.postAction(response.messageEn, null);
+                        //for(var i = this.memoList.length; i--;) {
+                        //    if(this.memoList[i] === item) {
+                        //        this.memoList.splice(i, 1);
+                        //    }
+                        //}
+                    },
+                    (error: ErrorResponse) => {
+                        this.processErrorMessage(error);
+                        this.postAction(null, error.message);
+                        console.log(error);
+                    }
+                );
+
+            console.log('Deleted');
+        } else {
+            this.postAction(null, null);
+            console.log('Not deleted');
+        }
+    }
 }

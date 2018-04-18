@@ -13,7 +13,7 @@ public interface PECompanyPerformanceService {
 
     Long save(PECompanyPerformanceDto performanceDto, Long fundId);
 
-    PECompanyPerformanceResultDto saveList(List<PECompanyPerformanceDto> performanceDtoList, Long fundId);
+    PECompanyPerformanceResultDto saveList(List<PECompanyPerformanceDto> performanceDtoList, Long fundId, String username);
 
 //    PECompanyPerformanceResultDto recalculatePerformance(Long fundId);
 

@@ -474,7 +474,7 @@ export class RealEstateMemoEditComponent extends CommonFormViewComponent impleme
             .subscribe(
                 data => {
                     data.forEach(element => {
-                        this.attendeesList.push({ id: element.id, text: element.firstName + " " + element.lastName[0] + "."});
+                        this.attendeesList.push({ id: element.id, text: element.firstName + " " + element.lastName});
 
                     });
                 },

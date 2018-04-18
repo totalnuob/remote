@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import {NEWS_TYPES} from "./mock.news.lookups";
-import {MEETING_TYPES} from "./mock.news.lookups";
-import {MEMO_TYPES} from "./mock.news.lookups";
+//import {NEWS_TYPES} from "./mock.news.lookups";
+//import {MEETING_TYPES} from "./mock.news.lookups";
+//import {MEMO_TYPES} from "./mock.news.lookups";
 import {Lookup} from "./lookup";
 
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
@@ -29,6 +29,7 @@ import {TARRAGON_NIC_REPORTING_CHART_OF_ACCOUNTS_URL} from "./lookup.service.url
 import {RESERVE_CALCULATION_EXPENSE_TYPE_URL} from "./lookup.service.url";
 import {RESERVE_CALCULATION_ENTITY_TYPE_URL} from "./lookup.service.url";
 import {MM_FIELDS_URL} from "./lookup.service.url";
+import {NEWS_TYPE_URL} from "./lookup.service.url";
 import {MEETING_TYPE_URL} from "./lookup.service.url";
 import {MEMO_TYPE_URL} from "./lookup.service.url";
 
@@ -45,7 +46,10 @@ export class LookupService extends CommonService{
     }
 
     getNewsTypes(){
-        return Promise.resolve(NEWS_TYPES);
+        //return Promise.resolve(NEWS_TYPES);
+        return this.http.get(NEWS_TYPE_URL, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
     }
 
     getMemoTypes(){
