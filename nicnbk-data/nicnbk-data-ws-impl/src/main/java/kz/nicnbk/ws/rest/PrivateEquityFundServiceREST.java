@@ -298,7 +298,7 @@ public class PrivateEquityFundServiceREST extends  CommonServiceREST{
             inputStream.close();
             Files.deleteIfExists(new File(onePagerDest).toPath());
         } catch (IOException e) {
-            logger.error("(Private Equity) Pdf export: failed to close input stream");
+            logger.error("(Private Equity) Pdf export: failed to close input stream", e);
         }
     }
 }

@@ -108,7 +108,7 @@ public class PEStatementChangesServiceImpl implements PEStatementChangesService 
             this.peStatementChangesRepository.deleteByReportId(reportId);
             return true;
         }catch (Exception ex){
-            logger.error("Error deleting schedule of investments records with report id=" + reportId);
+            logger.error("Error deleting schedule of investments records with report id=" + reportId, ex);
             return false;
         }
     }

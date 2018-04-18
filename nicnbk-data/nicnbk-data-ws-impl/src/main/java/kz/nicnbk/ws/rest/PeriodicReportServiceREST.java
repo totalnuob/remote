@@ -554,7 +554,7 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
             filesDto.getInputStream().close();
             new File(filesDto.getFileName()).delete();
         } catch (IOException e) {
-            logger.error("(PeriodicReport) File export: failed to close input stream");
+            logger.error("(PeriodicReport) File export: failed to close input stream", e);
         }
     }
     /* ****************************************************************************************************************/
@@ -653,7 +653,7 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
             filesDto.getInputStream().close();
             new File(filesDto.getFileName()).delete();
         } catch (IOException e) {
-            logger.error("(PeriodicReport) File export: failed to close input stream");
+            logger.error("(PeriodicReport) File export: failed to close input stream", e);
         }
     }
     /* ****************************************************************************************************************/
