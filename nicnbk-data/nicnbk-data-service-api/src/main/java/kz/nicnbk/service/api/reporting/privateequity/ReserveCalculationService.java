@@ -15,7 +15,7 @@ public interface ReserveCalculationService extends BaseService {
 
     List<ReserveCalculationDto> getAllReserveCalculations();
 
-    List<ReserveCalculationDto> getReserveCalculationsForMonth(String code, Date date);
+    List<ReserveCalculationDto> getReserveCalculationsForMonth(String code, Date date, boolean useValuationDate);
 
     Double getReserveCalculationSumKZTForMonth(String code, Date date);
 

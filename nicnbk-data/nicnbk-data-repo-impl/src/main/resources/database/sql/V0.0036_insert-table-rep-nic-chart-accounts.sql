@@ -56,9 +56,9 @@ INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_cha
 INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(55, '4173.010.a', null, 'Отложенное обязательство по налогам на прибыль', null, 19);
 
 
-
-
 INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(56, '1623.010.c', null, 'Предоплаченные юридические услуги Singularity', null, 16);
+
+INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(57, '3393.020.l', null, 'Юридические услуги к оплате', null, 4);
 
 
 

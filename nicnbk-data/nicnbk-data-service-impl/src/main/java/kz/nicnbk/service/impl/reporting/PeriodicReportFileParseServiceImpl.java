@@ -1342,6 +1342,9 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
         while(rowIterator.hasNext()){
             Row row = rowIterator.next();
             if(tableHeaderChecked){
+                if(ExcelUtils.isEmptyCellRange(row, 0, 14)){
+                    break;
+                }
                 SingularityGeneralLedgerBalanceRecordDto record = new SingularityGeneralLedgerBalanceRecordDto();
                 /* Acronym */
                 if(ExcelUtils.getStringValueFromCell(row.getCell(0)) != null){

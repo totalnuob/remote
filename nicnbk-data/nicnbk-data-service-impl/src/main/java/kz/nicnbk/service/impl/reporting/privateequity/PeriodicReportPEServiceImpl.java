@@ -270,7 +270,7 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
             // From capital calls
 
             List<ReserveCalculationDto> reserveCalculationRecords =
-                    this.reserveCalculationService.getReserveCalculationsForMonth(ReserveCalculationsExpenseTypeLookup.ADD.getCode(), report.getReportDate());
+                    this.reserveCalculationService.getReserveCalculationsForMonth(ReserveCalculationsExpenseTypeLookup.ADD.getCode(), report.getReportDate(), true);
             if(reserveCalculationRecords != null){
                 for(ReserveCalculationDto reserveCalculationDto: reserveCalculationRecords){
                     if(reserveCalculationDto.getRecipient() == null || !reserveCalculationDto.getRecipient().getCode().startsWith("TARR")){

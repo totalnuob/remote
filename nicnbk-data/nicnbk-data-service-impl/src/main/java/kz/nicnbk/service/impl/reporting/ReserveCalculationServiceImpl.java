@@ -125,11 +125,13 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
      * E.g. if date is 31.08.2018, then returns records with date
      * from 01.08.2018 to 31.08.2018.
      *
+     * @param code - capital call type code
      * @param date - date
+     * @param useValuationDate - true/false
      * @return - reserve calculation records
      */
     @Override
-    public List<ReserveCalculationDto> getReserveCalculationsForMonth(String code, Date date) {
+    public List<ReserveCalculationDto> getReserveCalculationsForMonth(String code, Date date, boolean useValuationDate) {
 
         Date mostRecentFinalReportDate = null;
         List<PeriodicReportDto> periodicReportDtos = this.periodicReportService.getAllPeriodicReports();
@@ -150,7 +152,15 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
 
         List<ReserveCalculationDto> records = this.reserveCalculationConverter.disassembleList(entities);
 
+        List<ReserveCalculationDto> updatedRecords = new ArrayList<>();
         for (ReserveCalculationDto record : records) {
+            if(useValuationDate){
+                if(record.getValueDate() != null){
+                    if(record.getValueDate().compareTo(toDate) > 0){
+                        break;
+                    }
+                }
+            }
             // set currency rate
             Date nextDay = DateUtils.getNextDay(record.getDate());
             CurrencyRatesDto currencyRatesDto = this.currencyRatesService.getRateForDateAndCurrency(nextDay, "USD");
@@ -172,14 +182,22 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
             if (record.getAmount() != null && currencyRatesDto != null && currencyRatesDto.getValue() != null) {
                 record.setAmountKZT(MathUtils.multiply(currencyRatesDto.getValue().doubleValue(), record.getAmount()));
             }
+
+            if(useValuationDate){
+                updatedRecords.add(record);
+            }
         }
 
-        return records;
+        if(useValuationDate){
+            return updatedRecords;
+        }else {
+            return records;
+        }
     }
 
     @Override
     public Double getReserveCalculationSumKZTForMonth(String code, Date date) {
-        List<ReserveCalculationDto> records = getReserveCalculationsForMonth(code, date);
+        List<ReserveCalculationDto> records = getReserveCalculationsForMonth(code, date, false);
         Double sum = 0.0;
         if (records != null) {
             for (ReserveCalculationDto record : records) {

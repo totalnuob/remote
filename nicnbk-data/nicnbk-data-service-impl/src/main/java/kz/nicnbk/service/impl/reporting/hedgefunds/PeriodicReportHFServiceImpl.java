@@ -242,6 +242,14 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
                     }
 
                 }
+            }else if(accountNumber.equalsIgnoreCase("2810")){
+                for(SingularityNICChartOfAccounts anEntity: entities){
+                    if(accountBalance >= 0 && anEntity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode().equalsIgnoreCase("1623.010")){
+                            entity = anEntity;
+                    }else if(accountBalance < 0 && anEntity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode().equalsIgnoreCase("3393.020")){
+                            entity = anEntity;
+                    }
+                }
             }
 
             NICReportingChartOfAccountsDto dto = new NICReportingChartOfAccountsDto();
