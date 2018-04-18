@@ -417,8 +417,12 @@ public class PEPdfServiceImpl implements PEPdfService {
         DefaultCategoryDataset datasetIrr = new DefaultCategoryDataset();
 
         for (PEFundDto fundDto : fundDtoList) {
-            datasetIrr.addValue(fundDto.getNetIrr(), firmName, fundDto.getFundName());
-            datasetIrr.addValue(fundDto.getBenchmarkNetIrr(), benchmark, fundDto.getFundName());
+            if(fundDto.getNetIrr() != null) {
+                datasetIrr.addValue(fundDto.getNetIrr(), firmName, fundDto.getFundName());
+            }
+            if(fundDto.getBenchmarkNetIrr() != null && benchmark != null) {
+                datasetIrr.addValue(fundDto.getBenchmarkNetIrr(), benchmark, fundDto.getFundName());
+            }
         }
 
         JFreeChart barChartIrr = ChartFactory.createBarChart("Net IRR", "", "", datasetIrr, PlotOrientation.VERTICAL, true, false, false);
@@ -429,8 +433,12 @@ public class PEPdfServiceImpl implements PEPdfService {
         DefaultCategoryDataset datasetTvpi = new DefaultCategoryDataset();
 
         for (PEFundDto fundDto : fundDtoList) {
-            datasetTvpi.addValue(fundDto.getNetTvpi(), firmName, fundDto.getFundName());
-            datasetTvpi.addValue(fundDto.getBenchmarkNetTvpi(), benchmark, fundDto.getFundName());
+            if(fundDto.getNetTvpi() != null) {
+                datasetTvpi.addValue(fundDto.getNetTvpi(), firmName, fundDto.getFundName());
+            }
+            if(fundDto.getBenchmarkNetTvpi() != null && benchmark != null) {
+                datasetTvpi.addValue(fundDto.getBenchmarkNetTvpi(), benchmark, fundDto.getFundName());
+            }
         }
 
         JFreeChart barChartTvpi = ChartFactory.createBarChart("Net MOIC", "", "", datasetTvpi, PlotOrientation.VERTICAL, true, false, false);

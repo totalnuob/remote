@@ -11,6 +11,10 @@ import {ActivatedRoute} from '@angular/router';
 import {Subscription} from 'rxjs';
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 import {ErrorResponse} from "../common/error-response";
+import {ROLE_ADMIN} from "../authentication/roles.constants";
+import {ROLE_PE_EDIT} from "../authentication/roles.constants";
+import {ROLE_HF_EDIT} from "../authentication/roles.constants";
+import {ROLE_RE_EDIT} from "../authentication/roles.constants";
 
 declare var $:any
 
@@ -177,8 +181,6 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
                 }
             );
 
-
-        console.log(this.meetingTypes);
     }
 
     navigate(memoType, memoId){
@@ -260,5 +262,47 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
             this.postAction(null, null);
             console.log('Not deleted');
         }
+    }
+
+
+    public showDeleteMemoButton(memo){
+        var roles = JSON.parse(localStorage.getItem("authenticatedUserRoles"));
+
+        if(this.getMemoTypeName(memo.memoType) === 'GENERAL'){
+            if(roles != null && roles.length > 0){
+                for(var i = 0; i < roles.length; i++){
+                    if(roles[i] === ROLE_ADMIN || memo.owner === localStorage.getItem("authenticatedUser")){
+                        return true;
+                    }
+                }
+            }
+        }else if(this.getMemoTypeName(memo.memoType) === 'PE'){
+            if(roles != null && roles.length > 0){
+                for(var i = 0; i < roles.length; i++){
+                    if(roles[i] === ROLE_ADMIN || roles[i].indexOf(ROLE_PE_EDIT) != -1){
+                        return true;
+                    }
+                }
+            }
+        }else if(this.getMemoTypeName(memo.memoType) === 'HF'){
+            if(roles != null && roles.length > 0){
+                for(var i = 0; i < roles.length; i++){
+                    if(roles[i] === ROLE_ADMIN || roles[i].indexOf(ROLE_HF_EDIT) != -1){
+                        return true;
+                    }
+                }
+            }
+        }else if(this.getMemoTypeName(memo.memoType) === 'RE'){
+            if(roles != null && roles.length > 0){
+                for(var i = 0; i < roles.length; i++){
+                    if(roles[i] === ROLE_ADMIN || roles[i].indexOf(ROLE_RE_EDIT) != -1){
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+
     }
 }

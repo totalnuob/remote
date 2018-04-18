@@ -9,6 +9,8 @@ import kz.nicnbk.service.dto.common.StatusResultType;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.pe.*;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -34,6 +36,8 @@ import java.util.Set;
 @RestController
 @RequestMapping("/pe/firm")
 public class PrivateEquityFirmServiceREST extends CommonServiceREST{
+
+    private static final Logger logger = LoggerFactory.getLogger(PrivateEquityFirmServiceREST.class);
 
     @Value("${filestorage.root.directory}")
     private String rootDirectory;
@@ -101,6 +105,9 @@ public class PrivateEquityFirmServiceREST extends CommonServiceREST{
             byte[] barChartNetMoicBytes = null;
             try {
                 String tmpFolder = rootDirectory + "/tmp_one_pager";
+                if(!new File(tmpFolder).exists()){
+                    new File(tmpFolder).mkdir();
+                }
                 String barChartNetIrrDest = tmpFolder + "/BarChartNetIrr_" + new Date().getTime() + ".jpeg";
                 String barChartNetMoicDest = tmpFolder + "/BarChartNetMoic_" + new Date().getTime() + ".jpeg";
 
@@ -109,7 +116,7 @@ public class PrivateEquityFirmServiceREST extends CommonServiceREST{
                     try {
                         benchmark = this.peFundService.get(fundId).getBenchmarkName();
                     } catch (Exception ex) {
-                        System.out.println("Error obtaining benchmark name, fund: " + fundId);
+                        logger.error("Error obtaining benchmark name, fund: " + fundId);
                     }
                 }
 
@@ -132,7 +139,7 @@ public class PrivateEquityFirmServiceREST extends CommonServiceREST{
 
 //                this.pdfService.createCharts(firmDto.getFirmName(), fundDtoListShort, (fundDto.getBenchmarkName() != null && fundDto.getBenchmarkName() != "") ? fundDto.getBenchmarkName() : "????", barChartNetIrrDest, barChartNetMoicDest, columnOneWidth);
             } catch (Exception ex) {
-                System.out.println("Error creating Bar charts, firm: " + id);
+                logger.error("Error creating Bar charts, firm: " + id);
             }
 
             PEFirmFundsAndTotalIrrAndBarChartsResultDto resultDto;

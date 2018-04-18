@@ -75,10 +75,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <td class="col-md-3">
-                        <input type="checkbox" [(ngModel)]="searchParams.onlyMyOwn">Search only in my memos
-                    </td>
+                <div class="row" >
+                    <div class="form-check col-md-3">
+                        <input id="myMemosCheck" class="form-check-input" type="checkbox" [(ngModel)]="searchParams.onlyMyOwn">
+                        <label class="form-check-label" for="myMemosCheck">Show only mine</label>
+                    </div>
                 </div>
                 <!--<div class="row">-->
                     <!--<div class="col-md-12">-->
@@ -152,7 +153,7 @@
                         <!--&lt;!&ndash;<a><i class="glyphicon glyphicon-trash"></i></a>&ndash;&gt;-->
                     <!--</td>-->
                     <td>
-                        <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="remove(memo)">
+                        <button *ngIf="showDeleteMemoButton(memo)" type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="remove(memo)">
                             <span class="glyphicon glyphicon-minus"></span>
                         </button>
                     </td>
