@@ -414,13 +414,15 @@ public class PEPdfServiceImpl implements PEPdfService {
 
     public void createCharts(String firmName, List<PEFundDto> fundDtoList, String benchmark, String barChartNetIrrDest, String barChartNetMoicDest, Float width) throws Exception {
 
+        benchmark = benchmark == null ? "?" : benchmark;
+
         DefaultCategoryDataset datasetIrr = new DefaultCategoryDataset();
 
         for (PEFundDto fundDto : fundDtoList) {
             if(fundDto.getNetIrr() != null) {
                 datasetIrr.addValue(fundDto.getNetIrr(), firmName, fundDto.getFundName());
             }
-            if(fundDto.getBenchmarkNetIrr() != null && benchmark != null) {
+            if(fundDto.getBenchmarkNetIrr() != null) {
                 datasetIrr.addValue(fundDto.getBenchmarkNetIrr(), benchmark, fundDto.getFundName());
             }
         }
@@ -436,7 +438,7 @@ public class PEPdfServiceImpl implements PEPdfService {
             if(fundDto.getNetTvpi() != null) {
                 datasetTvpi.addValue(fundDto.getNetTvpi(), firmName, fundDto.getFundName());
             }
-            if(fundDto.getBenchmarkNetTvpi() != null && benchmark != null) {
+            if(fundDto.getBenchmarkNetTvpi() != null) {
                 datasetTvpi.addValue(fundDto.getBenchmarkNetTvpi(), benchmark, fundDto.getFundName());
             }
         }
