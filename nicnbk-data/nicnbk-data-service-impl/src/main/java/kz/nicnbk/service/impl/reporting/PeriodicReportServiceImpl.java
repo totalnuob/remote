@@ -2218,7 +2218,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 if (previousReport != null) {
                     List<ConsolidatedBalanceFormRecordDto> previousRecords = getConsolidatedBalanceKZTForm3Saved(previousReport.getId());
                     if (previousRecords != null) {
-                        double added = 0;
+                        Double added = 0.0;
                         for (ConsolidatedBalanceFormRecordDto currentRecord : currentRecords) {
                             for (ConsolidatedBalanceFormRecordDto prevRecord : previousRecords) {
                                 if(isMatchingRecords(currentRecord, prevRecord)){
@@ -3758,8 +3758,10 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                     for(int i = index; i < previousRecords.size(); i++){
                         if(record.getName().equalsIgnoreCase(previousRecords.get(i).getName()) && record.getLineNumber() != null &&
                                 previousRecords.get(i).getLineNumber() != null && record.getLineNumber() == previousRecords.get(i).getLineNumber()){
-                            record.setPreviousAccountBalance(previousRecords.get(i).getCurrentAccountBalance());
-                            if(record.getPreviousAccountBalance() != null && record.getCurrentAccountBalance() != null) {
+                            if(!DateUtils.isJanuary(currentReport.getReportDate())) {
+                                record.setPreviousAccountBalance(previousRecords.get(i).getCurrentAccountBalance());
+                            }
+                            if(record.getCurrentAccountBalance() != null) {
                                 record.setTurnover(MathUtils.subtract(record.getCurrentAccountBalance(), record.getPreviousAccountBalance()));
                             }
                             break;
@@ -3907,8 +3909,10 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                     for(int i = index; i < previousRecords.size(); i++){
                         if(record.getName().equalsIgnoreCase(previousRecords.get(i).getName()) && record.getLineNumber() != null &&
                                 previousRecords.get(i).getLineNumber() != null && record.getLineNumber() == previousRecords.get(i).getLineNumber()){
-                            record.setPreviousAccountBalance(previousRecords.get(i).getCurrentAccountBalance());
-                            if(record.getPreviousAccountBalance() != null && record.getCurrentAccountBalance() != null) {
+                            if(!DateUtils.isJanuary(currentReport.getReportDate())) {
+                                record.setPreviousAccountBalance(previousRecords.get(i).getCurrentAccountBalance());
+                            }
+                            if(record.getCurrentAccountBalance() != null) {
                                 record.setTurnover(MathUtils.subtract(record.getCurrentAccountBalance(), record.getPreviousAccountBalance()));
                             }
                             break;
