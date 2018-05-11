@@ -35,6 +35,7 @@ import {MEMO_TYPE_URL} from "./lookup.service.url";
 import {RESERVE_CALCULATION_EXPORT_SIGNER_TYPE_URL} from "./lookup.service.url";
 import {RESERVE_CALCULATION_EXPORT_DOER_TYPE_URL} from "./lookup.service.url";
 import {RESERVE_CALCULATION_EXPORT_APPROVE_LIST_TYPE_URL} from "./lookup.service.url";
+import {CORP_MEETING_TYPE_URL} from "./lookup.service.url";
 
 
 @Injectable()
@@ -85,6 +86,13 @@ export class LookupService extends CommonService{
     getMeetingTypes(){
         //return Promise.resolve(MEETING_TYPES);
         return this.http.get(MEETING_TYPE_URL, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    getCorpMeetingTypes(){
+        //return Promise.resolve(MEETING_TYPES);
+        return this.http.get(CORP_MEETING_TYPE_URL, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }

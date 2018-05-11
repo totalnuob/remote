@@ -1,10 +1,19 @@
 import {Component, OnInit} from '@angular/core';
 import {Router, ActivatedRoute} from '@angular/router';
 
+import {Observable} from 'rxjs/Observable';
+import 'rxjs/add/observable/forkJoin';
+
 import {LookupService} from "../common/lookup.service";
 import {CommonFormViewComponent} from "../common/common.component";
 import {Subscription} from 'rxjs';
 import {ErrorResponse} from "../common/error-response";
+import {CorpMeetingService} from "./corp-meetings.service";
+import {MemoSearchParamsExtended} from "../m2s2/model/memo-search-params-extended";
+import {CorpMeetingSearchParams} from "./model/corp-meeting-search-params";
+import {CorpMeetingSearchResults} from "./model/corp-meeting-search-results";
+import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
+import {BaseDictionary} from "../common/model/base-dictionary";
 
 declare var $:any
 
@@ -18,30 +27,55 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
     busy: Subscription;
     public sub: any;
 
+    searchParams = new CorpMeetingSearchParams();
+    corpMeetings = [];
+    searchResult: CorpMeetingSearchResults;
+
+    meetingTypes = [];
+
     constructor(
         private lookupService: LookupService,
+        private corpMeetingService: CorpMeetingService,
+        private moduleAccessChecker: ModuleAccessCheckerService,
         private router: Router,
         private route: ActivatedRoute
     ){
         super(router);
 
-        //this.sub = this.route
-        //    .params
-        //    .subscribe(params => {
-        //        if(params['params'] != null){
-        //            this.searchParams = JSON.parse(params['params']);
-        //            this.busy = this.tripMemoService.search(this.searchParams)
-        //                .subscribe(
-        //                    searchResult  => {
-        //                        this.tripMemoList = searchResult.tripMemos;
-        //                        this.tripMemoSearchResult = searchResult;
-        //                    },
-        //                    error =>  this.errorMessage = "Failed to search trip memos."
-        //                );
-        //        } else {
-        //            this.search(0);
-        //        }
-        //    });
+        Observable.forkJoin(
+            // Load lookups
+            this.lookupService.getCorpMeetingTypes()
+            )
+            .subscribe(
+                (data) => {
+                    data[0].forEach(element => {
+                        this.meetingTypes.push(new BaseDictionary(element.code, element.nameEn, null, null));
+                    });
+
+
+                    this.sub = this.route
+                        .params
+                        .subscribe(params => {
+                            if (params['params'] != null) {
+                                this.searchParams = JSON.parse(params['params']);
+
+                                $('#fromDate').val(this.searchParams.dateFrom);
+                                $('#toDate').val(this.searchParams.dateTo);
+
+                                this.busy = this.corpMeetingService.search(this.searchParams)
+                                    .subscribe(
+                                        (searchResult:CorpMeetingSearchResults) => {
+                                            this.corpMeetings = searchResult.corpMeetings;
+                                            this.searchResult = searchResult;
+                                        },
+                                        error => this.errorMessage = "Failed to search corp meetings."
+                                    );
+                            } else {
+                                this.search(0);
+                            }
+                        });
+                }
+            );
 
     }
 
@@ -65,25 +99,44 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
     }
 
     public canEdit(){
-        return true;
+        return this.moduleAccessChecker.checkAccessCorpMeetingsEditor();
     }
 
     search(page){
+        this.searchParams.pageSize = 20;
 
-        //this.busy = this.tripMemoService.search(this.searchParams)
-        //    .subscribe(
-        //        searchResult  => {
-        //            this.tripMemoList = searchResult.tripMemos;
-        //            this.tripMemoSearchResult = searchResult;
-        //        },
-        //        (error: ErrorResponse) => {
-        //            this.errorMessage = "Error searching memos";
-        //            console.log("Error searching memos");
-        //            if(error && !error.isEmpty()){
-        //                this.processErrorMessage(error);
-        //            }
-        //            this.postAction(null, null);
-        //        }
-        //    );
+        this.searchParams.page = page;
+
+        this.searchParams.dateFrom = $('#fromDate').val();
+        this.searchParams.dateTo = $('#toDate').val();
+
+        //console.log(this.searchParams);
+        this.busy = this.corpMeetingService.search(this.searchParams)
+            .subscribe(
+                (searchResult: CorpMeetingSearchResults)  => {
+                    this.corpMeetings = searchResult.corpMeetings;
+                    this.searchResult = searchResult;
+                },
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error searching corp meetings";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null,  this.errorMessage);
+                }
+            );
+    }
+
+    navigate(meetingId){
+        this.searchParams.path = '/corpMeetings';
+        let params = JSON.stringify(this.searchParams);
+        this.router.navigate(['/corpMeetings/edit/', meetingId, { params }]);
+    }
+
+    clearSearchForm(){
+        this.searchParams.type="NONE";
+        this.searchParams.searchText = null;
+        this.searchParams.dateFrom = null;
+        this.searchParams.dateTo = null;
     }
 }

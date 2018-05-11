@@ -5,7 +5,7 @@
                 <div class="col-md-12">
                     <ol class="breadcrumb">
                         <li>
-                            <!--<span *ngIf="this.breadcrumbParams != null"><a [routerLink]="['/corpMeetings', {params: this.breadcrumbParams }]">Corp Meetings1</a></span>-->
+                            <span *ngIf="this.breadcrumbParams != null"><a [routerLink]="['/corpMeetings', {params: this.breadcrumbParams }]">Corp Meetings</a></span>
                             <span *ngIf="this.breadcrumbParams == null"><a [routerLink]="['/corpMeetings']">Corp Meetings</a></span>
                         </li>
                         <li class="active">Corp Meeting</li>
@@ -30,27 +30,28 @@
                         <div class="col-md-2">
                             <label class="checkbox-inline">
                                 <input required type="radio" name="corpMeetingType" [ngModel]="corpMeeting.type"
-                                       (ngModelChange)="corpMeeting.type='BOD'" name="type" value="BOD">
+                                       (ngModelChange)="typeChanged('BOD')" name="type" value="BOD">
                                 <span>BoD</span>
                             </label>
                         </div>
                         <div class="col-md-2">
                             <label class="checkbox-inline">
                                 <input required type="radio" name="corpMeetingType" [ngModel]="corpMeeting.type"
-                                       (ngModelChange)="corpMeeting.type='EXEC'" name="type" value="EXEC">
+                                       (ngModelChange)="typeChanged('EXEC')" name="type" value="EXEC">
                                 <span>Exec Meeting</span>
                             </label>
                         </div>
                         <div class="col-md-2">
                             <label class="checkbox-inline">
                                 <input required  type="radio" name="corpMeetingType" [ngModel]="corpMeeting.type"
-                                       (ngModelChange)="corpMeeting.type='IC'" name="type" value="IC">
+                                       (ngModelChange)="typeChanged('IC')" name="type" value="IC">
                                 <span>IC</span>
                             </label>
                         </div>
                         <div class="col-md-3">
                             <div class='input-group date' id='corpMeetingDateDiv' style="width: 100%">
-                                <input required type="text" class="form-control" id="corpMeetingDate" name="corpMeetingDate" [(ngModel)]="corpMeeting.date"/>
+                                <input required type="text" class="form-control" id="corpMeetingDate" name="corpMeetingDate"
+                                       placeholder="Enter date..." [(ngModel)]="corpMeeting.date"/>
                                             <span class="input-group-addon">
                                                 <span class="glyphicon glyphicon-calendar"></span>
                                             </span>
@@ -63,7 +64,7 @@
                             <label class="control-label col-md-2" for="number">№:</label>
                             <div class="col-md-10">
                                 <input type="text" id="number" class="form-control" maxlength="10" name="number" [(ngModel)]="corpMeeting.number"
-                                       required #number="ngModel"/>
+                                       placeholder="Enter number..."required #number="ngModel"/>
                             </div>
                         </div>
                     </div>
@@ -100,17 +101,26 @@
                                                    (data)="refreshAttendees($event)"
                                                    (selected)="selected($event)"
                                                    (removed)="removed($event)"
-                                                   placeholder="No attendee selected">
+                                                   placeholder="Please specify NIC attendees...">
                                         </ng-select>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="row top-buffer" *ngIf="corpMeeting.type == 'BOD'">
+                            <div class="row top-buffer">
                                 <div class="form-group form-horizontal">
                                     <label class="control-label col-md-2" for="location">Attendees (Other):</label>
                                     <div class="col-md-10">
                                         <textarea fz-elastic type="text" id="location" class="form-control" maxlength="250" name="location" [(ngModel)]="corpMeeting.attendeesOther"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row top-buffer">
+                                <div class="form-group form-horizontal">
+                                    <label class="control-label col-md-2" for="shortName">Short Name: <span style="color: red">*</span></label>
+                                    <div class="col-md-10">
+                                        <textarea required fz-elastic type="text" id="shortName" class="form-control" maxlength="250" name="shortName" [(ngModel)]="corpMeeting.shortName"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -145,36 +155,36 @@
                     </div>
                     <br/>
                     <div class="row top-buffer">
-                        <div class="col-md-6">
-                            <div class="jumbotron" style="padding-top: 5px; padding-bottom: 5px;">
-                                <div class="row">
-                                    <label>PROTOCOL <span style="color: red">*</span></label>
-                                </div>
+                        <!--<div class="col-md-6">-->
+                            <!--<div class="jumbotron" style="padding-top: 5px; padding-bottom: 5px;">-->
+                                <!--<div class="row">-->
+                                    <!--<label>PROTOCOL <span style="color: red">*</span></label>-->
+                                <!--</div>-->
 
-                                <div class="row" *ngIf="canEdit()">
-                                    <label class="btn btn-primary col-md-2" for="protocolAttachmentFile">
-                                        <input type="file" id="protocolAttachmentFile" (change)="onFileChangeProtocols($event)" name="file" multiple style="display:none;"/>Upload</label>
-                                    <div class="col-md-6">
-                                        <div class="row" *ngFor="let newFile of uploadProtocolsFiles" class="label label-info" style="display: table;">
-                                            <span>{{newFile.name}}</span>
-                                        </div>
-                                    </div>
-                                </div>
+                                <!--<div class="row" *ngIf="canEdit()">-->
+                                    <!--<label class="btn btn-primary col-md-2" for="protocolAttachmentFile">-->
+                                        <!--<input type="file" id="protocolAttachmentFile" (change)="onFileChangeProtocols($event)" name="file" multiple style="display:none;"/>Upload</label>-->
+                                    <!--<div class="col-md-6">-->
+                                        <!--<div class="row" *ngFor="let newFile of uploadProtocolsFiles" class="label label-info" style="display: table;">-->
+                                            <!--<span>{{newFile.name}}</span>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                <!--</div>-->
 
-                                <div class="row" *ngIf="corpMeeting?.protocols?.length > 0">
-                                    <div *ngFor="let protocol of corpMeeting.protocols">
-                                        <file-attachment-downloader fileId="{{protocol.id}}"
-                                                                    fileName="{{protocol?.fileName}}"
-                                                                    fileType="CM_PROT">
-                                        </file-attachment-downloader>
+                                <!--<div class="row" *ngIf="corpMeeting?.protocols?.length > 0">-->
+                                    <!--<div *ngFor="let protocol of corpMeeting.protocols">-->
+                                        <!--<file-attachment-downloader fileId="{{protocol.id}}"-->
+                                                                    <!--fileName="{{protocol?.fileName}}"-->
+                                                                    <!--fileType="CM_PROT">-->
+                                        <!--</file-attachment-downloader>-->
 
-                                        <a (click)="deleteAttachment(attachment.id)" *ngIf="canEdit()">
-                                            <i class="glyphicon glyphicon-trash"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                                        <!--<a (click)="deleteAttachment(attachment.id)" *ngIf="canEdit()">-->
+                                            <!--<i class="glyphicon glyphicon-trash"></i>-->
+                                        <!--</a>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</div>-->
                         <div class="col-md-6">
                             <div class="jumbotron" style="padding-top: 5px; padding-bottom: 5px;">
                                 <div class="row">
@@ -209,6 +219,7 @@
                     <br/>
                     <div class="row top-buffer">
                         <div class="col-md-12">
+                            <button type="button" class="btn btn-danger pull-left" name="deleteCorpMeeting" (click)="deleteCorpMeeting()" *ngIf="canEdit() && corpMeeting != null && corpMeeting.id != null">Delete</button>
                             <button type="submit" class="btn btn-success pull-right" name="saveCorpMeeting" *ngIf="canEdit()">Save</button>
                         </div>
                     </div>

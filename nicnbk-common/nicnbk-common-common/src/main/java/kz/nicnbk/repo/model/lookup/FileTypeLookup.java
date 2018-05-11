@@ -24,7 +24,9 @@ public enum FileTypeLookup {
     NB_REP_SN_TRANCHE_B("NB_REP_SNB", "reporting/nbrk"),
     NB_REP_MONTHLY_CASH_STATEMENT("NB_REP_MCS", "reporting/nbrk"),
 
-    PE_FIRM_LOGO("PE_LOGO", "pe_logo");
+    PE_FIRM_LOGO("PE_LOGO", "pe_logo"),
+
+    CORP_MEETING_MATERIALS("CM_MATRL", "corp_meetings");
 
     private String code;
     private String catalog;

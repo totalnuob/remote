@@ -36,6 +36,7 @@ import {PeriodicReportService} from "./reporting/periodic.report.service";
 import {AuthenticationService} from "./authentication/authentication.service";
 import {MacroMonitorService} from "./macromonitor/macromonitor.service";
 import {FileDownloadService} from "./common/file.download.service";
+import {CorpMeetingService} from "./corpmeetings/corp-meetings.service";
 
 @Component({
     selector: 'app-main',
@@ -61,8 +62,9 @@ import {FileDownloadService} from "./common/file.download.service";
         RiskManagementReportService,
         AlbourneService,
         ModuleAccessCheckerService,
-        MacroMonitorService
-        PeriodicReportService
+        MacroMonitorService,
+        PeriodicReportService,
+        CorpMeetingService
     ]
 })
 @NgModule({
@@ -131,6 +133,10 @@ export class AppComponent {
     showReporting(){
         //return false;
         return this.moduleAccessChecker.checkAccessReporting();
+    }
+
+    showCorpMeeting(){
+        return this.moduleAccessChecker.checkAccessCorpMeetings();
     }
 }
 

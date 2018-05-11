@@ -540,7 +540,6 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
                     this.postAction(null, "Error loading managers list for dropdown");
                 }
             )
-        console.log(this.managerList);
     }
 
     getManagerDataOnChange(id){

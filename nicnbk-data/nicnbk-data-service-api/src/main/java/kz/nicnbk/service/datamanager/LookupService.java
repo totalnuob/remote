@@ -47,4 +47,6 @@ public interface LookupService extends BaseService {
     List<BaseDictionaryDto> getAllNewsTypes();
     List<BaseDictionaryDto> getAllMemoTypes();
     List<BaseDictionaryDto> getAllMeetingTypes();
+
+    List<BaseDictionaryDto> getAllCorpMeetingTypes();
 }

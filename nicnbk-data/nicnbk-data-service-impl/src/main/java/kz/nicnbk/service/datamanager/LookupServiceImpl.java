@@ -12,6 +12,7 @@ import kz.nicnbk.repo.api.reporting.*;
 import kz.nicnbk.repo.api.reporting.privateequity.TarragonNICChartOfAccountsRepository;
 import kz.nicnbk.repo.model.base.BaseTypeEntity;
 import kz.nicnbk.repo.model.common.*;
+import kz.nicnbk.repo.model.corpmeetings.CorpMeetingType;
 import kz.nicnbk.repo.model.files.FilesType;
 import kz.nicnbk.repo.model.hf.*;
 import kz.nicnbk.repo.model.m2s2.MeetingArrangedBy;
@@ -138,6 +139,9 @@ public class LookupServiceImpl implements LookupService {
     private ReserveCalculationEntityTypeRepository reserveCalculationEntityTypeRepository;
 
     @Autowired
+    private CorpMeetingTypeRepository corpMeetingTypeRepository;
+
+    @Autowired
     private ReserveCalculationExportSignerTypeRepository reserveCalculationExportSignerTypeRepository;
 
     @Autowired
@@ -220,6 +224,8 @@ public class LookupServiceImpl implements LookupService {
                 return (T) this.reserveCalculationExportDoerTypeRepository.findByCode(code);
             } else if (clazz.equals(ReserveCalculationExportApproveListType.class)) {
                 return (T) this.reserveCalculationExportApproveListTypeRepository.findByCode(code);
+            } else if (clazz.equals(CorpMeetingType.class)) {
+                return (T) this.corpMeetingTypeRepository.findByCode(code);
             }else{
                 logger.error("Failed to load lookups for clazz=" + clazz + ", code=" + code);
             }
@@ -637,6 +643,23 @@ public class LookupServiceImpl implements LookupService {
             Iterator<MeetingType> iterator = this.meetingTypeRepository.findAll().iterator();
             while (iterator.hasNext()) {
                 MeetingType entity = iterator.next();
+                BaseDictionaryDto dto = disassemble(entity);
+                dtoList.add(dto);
+            }
+            return dtoList;
+        } catch (Exception ex) {
+            logger.error("Failed to load lookup: MeetingType", ex);
+        }
+        return null;
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getAllCorpMeetingTypes() {
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            Iterator<CorpMeetingType> iterator = this.corpMeetingTypeRepository.findAll().iterator();
+            while (iterator.hasNext()) {
+                CorpMeetingType entity = iterator.next();
                 BaseDictionaryDto dto = disassemble(entity);
                 dtoList.add(dto);
             }

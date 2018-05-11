@@ -15,7 +15,7 @@
             </div>
         </div>
 
-        <div class="row withpadding">
+        <div class="row withpadding" *ngIf="canEdit()">
             <a [routerLink]="['/corpMeetings/edit/',0 ]" class="btn btn-primary pull-right" *ngIf="canEdit()">Add</a>
         </div>
 
@@ -46,34 +46,62 @@
             <!--</div>-->
         <!--</div>-->
         <br/>
+        <!--<ul class="nav nav-tabs">-->
+            <!--<li class="active">-->
+                <!--<a data-toggle="tab" href="#feed">FEED</a>-->
+            <!--</li>-->
+            <!--<li>-->
+                <!--<a data-toggle="tab" href="#search">SEARCH</a>-->
+            <!--</li>-->
+        <!--</ul>-->
+
+
+        <!--<div [ngBusy]="busy" class="tab-content">-->
+            <!--<div id="feed" class="tab-pane fade in active">-->
+                <!--NEWS FEED-->
+            <!--</div>-->
+
+            <!--<div id="search" class="tab-pane fade">-->
+                <!--SEARCH-->
+            <!--</div>-->
+        <!--</div>-->
+
         <div class="jumbotron">
             <form (ngSubmit)="search()">
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label for="meetingType">Type</label>
-                                <select class="form-control" id="meetingType" name="meetingType">
+                                <select class="form-control" id="meetingType" name="meetingType" [(ngModel)]="searchParams.type">
                                     <option value="NONE">---</option>
-                                    <option value="BOD">BoD</option>
-                                    <option value="EXEC">Executive Board</option>
-                                    <option value="IC">Investment Committee</option>
+                                    <option *ngFor = "let type of meetingTypes" [value]="type.code">{{type.nameEn}}</option>
+                                    <!--<option value="BOD">BoD</option>-->
+                                    <!--<option value="EXEC">Executive Board</option>-->
+                                    <!--<option value="IC">Investment Committee</option>-->
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-5">
+                            <label for="searchText">Search Text</label>
+                            <div class="form-group">
+                                <input type="text" name="searchText" id="searchText" class="form-control"
+                                       placeholder="Search in short name and agenda...." [(ngModel)]="searchParams.searchText"/>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
                             <label for="fromDateDTPickeer">From</label>
-                            <div class='input-group date col-md-3' id='fromDateDTPickeer' style="width: 100%">
-                                <input type='text' class="form-control" id="fromDate"/>
+                            <div class='input-group date col-md-2' id='fromDateDTPickeer' style="width: 100%">
+                                <input type='text' class="form-control" id="fromDate" name="fromDate" style="font-size: small" [(ngModel)]="searchParams.dateFrom"/>
                                     <span class="input-group-addon">
                                         <span class="glyphicon glyphicon-calendar"></span>
                                     </span>
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <label for="untilDateDTPickeer">To</label>
-                            <div class='input-group date col-md-3' id='untilDateDTPickeer' style="width: 100%">
-                                <input type='text' class="form-control" id="toDate"/>
+                            <div class='input-group date col-md-2' id='untilDateDTPickeer' style="width: 100%">
+                                <input type='text' class="form-control" id="toDate" name="toDate"style="font-size: small" [(ngModel)]="searchParams.dateTo"/>
                                     <span class="input-group-addon">
                                         <span class="glyphicon glyphicon-calendar"></span>
                                     </span>
@@ -82,22 +110,22 @@
                     </div>
                 </div>
                 <!--<div class="row">-->
-                    <!--<div class="col-md-12">-->
-                        <!--<div class="col-md-6">-->
-                            <!--<div class="form-group">-->
-                                <!--<label for="organization">Organization</label>-->
-                                <!--<input type="text" class="form-control" id="organization" placeholder="Enter organization name..."-->
-                                       <!--[(ngModel)]="searchParams.organization" name="organization"/>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                        <!--<div class="col-md-6">-->
-                            <!--<div class="form-group">-->
-                                <!--<label for="location">Location</label>-->
-                                <!--<input type="text" class="form-control" id="location" placeholder="Enter location..."-->
-                                       <!--[(ngModel)]="searchParams.location" name="location"/>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                    <!--</div>-->
+                <!--<div class="col-md-12">-->
+                <!--<div class="col-md-6">-->
+                <!--<div class="form-group">-->
+                <!--<label for="organization">Organization</label>-->
+                <!--<input type="text" class="form-control" id="organization" placeholder="Enter organization name..."-->
+                <!--[(ngModel)]="searchParams.organization" name="organization"/>-->
+                <!--</div>-->
+                <!--</div>-->
+                <!--<div class="col-md-6">-->
+                <!--<div class="form-group">-->
+                <!--<label for="location">Location</label>-->
+                <!--<input type="text" class="form-control" id="location" placeholder="Enter location..."-->
+                <!--[(ngModel)]="searchParams.location" name="location"/>-->
+                <!--</div>-->
+                <!--</div>-->
+                <!--</div>-->
                 <!--</div>-->
                 <!--<div class="row">-->
                 <!--<div class="col-md-12">-->
@@ -116,69 +144,70 @@
                 <!--</div>-->
                 <div class="row">
                     <div class="col-md-12">
+                        <button type="button"class="btn-xs btn-default pull-left" (click)="clearSearchForm()">
+                            <!--<i class="glyphicon glyphicon-trash"></i>-->Reset
+                        </button>
                         <button type="submit"class="btn btn-success pull-right">Search</button>
                     </div>
                 </div>
             </form>
         </div>
         <div>
-            <label>Total found: <span>?????</span></label>
+            <label>Total found:  <span>{{searchResult?.totalElements > 0 ? searchResult?.totalElements : 0}}</span></label>
         </div>
         <div class="row withpadding" style="position: relative; min-height: 80px;">
-            <!--<div class="row pull-right">-->
-                <!--<ul class="pagination" *ngIf="tripMemoSearchResult?.showPageFrom > 0">-->
-                    <!--<li><a *ngIf="tripMemoSearchResult?.showPageFrom > 1" (click)="search(tripMemoSearchResult.showPageFrom - 1)">&laquo;</a></li>-->
-                    <!--<li *ngFor="let i of range(tripMemoSearchResult.showPageFrom, tripMemoSearchResult.showPageTo)" [class.active]="i == tripMemoSearchResult.currentPage">-->
-                        <!--<a (click)="search(i)">{{i}}</a>-->
-                    <!--</li>-->
-                    <!--<li><a *ngIf="tripMemoSearchResult.showPageTo < tripMemoSearchResult.totalPages" (click)="search(tripMemoSearchResult.showPageTo + 1)">&raquo;</a></li>-->
-                <!--</ul>-->
-            <!--</div>-->
+            <div class="row pull-right">
+                <ul class="pagination" *ngIf="searchResult?.showPageFrom > 0">
+                    <li><a *ngIf="searchResult?.showPageFrom > 1" (click)="search(searchResult.showPageFrom - 1)">&laquo;</a></li>
+                    <li *ngFor="let i of range(searchResult.showPageFrom, searchResult.showPageTo)" [class.active]="i == searchResult.currentPage">
+                        <a (click)="search(i)">{{i}}</a>
+                    </li>
+                    <li><a *ngIf="searchResult.showPageTo < searchResult.totalPages" (click)="search(searchResult.showPageTo + 1)">&raquo;</a></li>
+                </ul>
+            </div>
             <table [ngBusy]="busy"  class = "table table-hover">
-            <thead>
-            <tr>
-                <th>TYPE</th>
-                <th>NAME</th>
-                <th>ORGANIZATION</th>
-                <th>LOCATION</th>
-                <th>DATE FROM</th>
-                <th>DATE TO</th>
-                <th>AUTHOR</th>
-                <!--<th>STATUS</th>-->
-                <!--<th>UPDATED</th>-->
-                <!--<th>UPDATEDBY</th>-->
-            </tr>
-            </thead>
+                <thead>
+                <tr>
+                    <th width="10%">TYPE</th>
+                    <th width="10%">DATE</th>
+                    <th width="10%">NUMBER</th>
+                    <th width="70%">NAME</th>
+                    <!--<th>STATUS</th>-->
+                    <!--<th>UPDATED</th>-->
+                    <!--<th>UPDATEDBY</th>-->
+                </tr>
+                </thead>
 
-            <tbody>
-            <tr *ngFor="let meeting of corpMeetings"  style="cursor: pointer">
-                <td width="5%">TYPE</td>
-                <td width="30%"><a>NAME</a></td>
-                <td width="10%"><a>ORGANIZATION</a></td>
-                <td width="15%"><a>LOCATION</a></td>
-                <td width="10%">FROM</td>
-                <td width="10%">TO</td>
-                <td width="10%">AUTHOR</td>
-                <!--<td width="10%">{{tripMemo.status}}</td>-->
-                <!--<td width="10%">-->
+                <tbody>
+                <tr *ngFor="let meeting of corpMeetings"  style="cursor: pointer" (click)="navigate(meeting.id)">
+                    <td width="10%">{{meeting.type}}</td>
+                    <td width="10%">{{meeting.date}}</td>
+                    <td width="10%" >{{meeting.number}}</td>
+                    <!--<td width="70%"><a [routerLink]="['/corpMeetings/edit/', meeting.id]">{{meeting.shortName}}</a></td>-->
+                    <td width="70%">{{meeting.shortName}}</td>
+                    <!--<td width="10%">{{tripMemo.status}}</td>-->
+                    <!--<td width="10%">-->
                     <!--{{tripMemo.updateDate}}-->
-                <!--</td>-->
-                <!--<td width="10%">-->
+                    <!--</td>-->
+                    <!--<td width="10%">-->
                     <!--{{tripMemo.updater}}-->
                     <!--&lt;!&ndash;<a><i class="glyphicon glyphicon-trash"></i></a>&ndash;&gt;-->
-                <!--</td>-->
-            </tr>
-            </tbody>
-        </table>
-            <!--<div class="row pull-right">-->
-                <!--<ul class="pagination" *ngIf="tripMemoSearchResult?.showPageFrom > 0">-->
-                    <!--<li><a *ngIf="tripMemoSearchResult?.showPageFrom > 1" (click)="search(tripMemoSearchResult.showPageFrom - 1)">&laquo;</a></li>-->
-                    <!--<li *ngFor="let i of range(tripMemoSearchResult.showPageFrom, tripMemoSearchResult.showPageTo)" [class.active]="i == tripMemoSearchResult.currentPage">-->
-                        <!--<a (click)="search(i)">{{i}}</a>-->
-                    <!--</li>-->
-                    <!--<li><a *ngIf="tripMemoSearchResult.showPageTo < tripMemoSearchResult.totalPages" (click)="search(tripMemoSearchResult.showPageTo + 1)">&raquo;</a></li>-->
-                <!--</ul>-->
-            <!--</div>-->
+                    <!--</td>-->
+                </tr>
+                </tbody>
+            </table>
+            <div class="row pull-right">
+                <ul class="pagination" *ngIf="searchResult?.showPageFrom > 0">
+                    <li><a *ngIf="searchResult?.showPageFrom > 1" (click)="search(searchResult.showPageFrom - 1)">&laquo;</a></li>
+                    <li *ngFor="let i of range(searchResult.showPageFrom, searchResult.showPageTo)" [class.active]="i == searchResult.currentPage">
+                        <a (click)="search(i)">{{i}}</a>
+                    </li>
+                    <li><a *ngIf="searchResult.showPageTo < searchResult.totalPages" (click)="search(searchResult.showPageTo + 1)">&raquo;</a></li>
+                </ul>
+            </div>
         </div>
+
+
+
     </div>
 </div>

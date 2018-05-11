@@ -1,6 +1,6 @@
 import {UpdatedEntity} from "../../common/model/updated-entity";
 
-export class CorpMeeting {
+export class CorpMeeting{
     id: number;
     type: string;
     date: string;
@@ -8,4 +8,6 @@ export class CorpMeeting {
     files: any[];
 
     attendeesNIC: any[];
+    attendeesOther: any[];
+    shortName: string;
 }
