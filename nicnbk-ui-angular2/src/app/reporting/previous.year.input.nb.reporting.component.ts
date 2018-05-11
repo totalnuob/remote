@@ -110,6 +110,16 @@ export class PreviousYearInputNBReportingComponent extends CommonNBReportingComp
     }
 
     save(){
+
+        for(var i = 0; i < this.records.length; i++) {
+            if(this.records[i].accountBalance) {
+                this.records[i].accountBalance = Number(this.records[i].accountBalance.toString().replace(/,/g, ''));
+            }
+            if(this.records[i].accountBalanceKZT) {
+                this.records[i].accountBalanceKZT = Number(this.records[i].accountBalanceKZT.toString().replace(/,/g, ''));
+            }
+        }
+
         this.periodicReportService.savePreviousYearInput(this.records, this.reportId)
             .subscribe(
                 response  => {
@@ -157,6 +167,7 @@ export class PreviousYearInputNBReportingComponent extends CommonNBReportingComp
                     console.log(response);
                     if(response && response.length > 0) {
                         for (var i = 0; i < response.length; i++) {
+                            this.onNumberChange(response[i]);
                             this.records.push(response[i]);
                         }
                         this.postAction("Successfully loaded " + response.length + " records from previous month", null);
@@ -189,6 +200,8 @@ export class PreviousYearInputNBReportingComponent extends CommonNBReportingComp
         //var name5520_010 = 'Нераспределенная прибыль (непокрытый убыток) прошлых лет';
         if (this.records) {
             for (var i = this.records.length; i--;) {
+                this.onNumberChange(this.records[i]);
+
                 if (this.records[i].chartOfAccounts != null && this.records[i].chartOfAccounts.code.startsWith('5440.010')){
                     check5440_010 = true;
                 }else if (this.records[i].chartOfAccounts != null && this.records[i].chartOfAccounts.code.startsWith('5520.010')){
@@ -208,6 +221,22 @@ export class PreviousYearInputNBReportingComponent extends CommonNBReportingComp
 
         if(this.recordsValid){
             this.errorMessage = null;
+        }
+    }
+
+    public onNumberChange(record){
+        if(record.accountBalance != null && record.accountBalance != 'undefined' && record.accountBalance.toString().length > 0) {
+            if(record.accountBalance.toString()[record.accountBalance.toString().length - 1] != '.' || record.accountBalance.toString().split('.').length > 2){
+                record.accountBalance = record.accountBalance.toString().replace(/,/g , '');
+                record.accountBalance = parseFloat(record.accountBalance).toLocaleString('en', {maximumFractionDigits: 2});
+            }
+        }
+
+        if(record.accountBalanceKZT != null && record.accountBalanceKZT != 'undefined' && record.accountBalanceKZT.toString().length > 0) {
+            if(record.accountBalanceKZT.toString()[record.accountBalanceKZT.toString().length - 1] != '.' || record.accountBalanceKZT.toString().split('.').length > 2){
+                record.accountBalanceKZT = record.accountBalanceKZT.toString().replace(/,/g , '');
+                record.accountBalanceKZT = parseFloat(record.accountBalanceKZT).toLocaleString('en', {maximumFractionDigits: 2});
+            }
         }
     }
 

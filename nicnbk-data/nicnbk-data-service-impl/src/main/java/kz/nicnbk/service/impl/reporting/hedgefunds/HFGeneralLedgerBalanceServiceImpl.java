@@ -204,6 +204,7 @@ public class HFGeneralLedgerBalanceServiceImpl implements HFGeneralLedgerBalance
                     if(entity != null){
                         entity.setAdjustedRedemption(adjustment.getAdjustedRedemption());
                         entity.setInterestRate(StringUtils.isNotEmpty(adjustment.getInterestRate()) ? adjustment.getInterestRate() : null);
+                        entity.setComment(adjustment.getComment());
                         entityList.add(entity);
                     }else{
                         logger.error("Error saving Singularity Adjustments for report id " + reportDto.getId() + ": record not found with id " + adjustment.getRecordId());
@@ -288,6 +289,7 @@ public class HFGeneralLedgerBalanceServiceImpl implements HFGeneralLedgerBalance
             }
             dto.setAdjustedRedemption(entity.getAdjustedRedemption());
             dto.setInterestRate(entity.getInterestRate());
+            dto.setComment(entity.getComment());
             return dto;
         }
         return null;

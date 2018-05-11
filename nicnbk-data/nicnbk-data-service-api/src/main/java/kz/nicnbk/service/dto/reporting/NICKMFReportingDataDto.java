@@ -14,6 +14,9 @@ public class NICKMFReportingDataDto extends CreateUpdateBaseEntityDto<NICKMFRepo
     private String nbChartOfAccountsName;
     private Double accountBalance;
 
+    private Double calculatedAccountBalance;
+    private String calculatedAccountBalanceFormula;
+
     public String getNicChartOfAccountsCode() {
         return nicChartOfAccountsCode;
     }
@@ -52,5 +55,21 @@ public class NICKMFReportingDataDto extends CreateUpdateBaseEntityDto<NICKMFRepo
 
     public void setNbChartOfAccountsName(String nbChartOfAccountsName) {
         this.nbChartOfAccountsName = nbChartOfAccountsName;
+    }
+
+    public Double getCalculatedAccountBalance() {
+        return calculatedAccountBalance;
+    }
+
+    public void setCalculatedAccountBalance(Double calculatedAccountBalance) {
+        this.calculatedAccountBalance = calculatedAccountBalance;
+    }
+
+    public String getCalculatedAccountBalanceFormula() {
+        return calculatedAccountBalanceFormula;
+    }
+
+    public void setCalculatedAccountBalanceFormula(String calculatedAccountBalanceFormula) {
+        this.calculatedAccountBalanceFormula = calculatedAccountBalanceFormula;
     }
 }

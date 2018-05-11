@@ -1,18 +1,18 @@
 package kz.nicnbk.service.impl.reporting;
 
 import kz.nicnbk.common.service.util.DateUtils;
+import kz.nicnbk.common.service.util.MathUtils;
 import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.api.reporting.NICKMFReportingDataRepository;
 import kz.nicnbk.repo.model.reporting.NICKMFReportingData;
 import kz.nicnbk.repo.model.reporting.PeriodicReport;
 import kz.nicnbk.service.api.reporting.PeriodicReportNICKMFService;
 import kz.nicnbk.service.api.reporting.PeriodicReportService;
+import kz.nicnbk.service.api.reporting.privateequity.ReserveCalculationService;
 import kz.nicnbk.service.converter.reporting.NICKMFReportingDataConverter;
 import kz.nicnbk.service.dto.common.EntityListSaveResponseDto;
-import kz.nicnbk.service.dto.reporting.NICKMFReportingDataDto;
-import kz.nicnbk.service.dto.reporting.NICKMFReportingDataHolderDto;
-import kz.nicnbk.service.dto.reporting.PeriodicReportDto;
-import kz.nicnbk.service.dto.reporting.PeriodicReportType;
+import kz.nicnbk.service.dto.reporting.*;
+import kz.nicnbk.service.impl.reporting.lookup.ReserveCalculationsExpenseTypeLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +37,9 @@ public class PeriodicReportNICKMFServiceImpl implements PeriodicReportNICKMFServ
 
     @Autowired
     private NICKMFReportingDataConverter nickmfReportingDataConverter;
+
+    @Autowired
+    private ReserveCalculationService reserveCalculationService;
 
     @Transactional // if DB operation fails, no record will be saved, i.e. no partial commits
     @Override
@@ -112,6 +115,13 @@ public class PeriodicReportNICKMFServiceImpl implements PeriodicReportNICKMFServ
                 List<NICKMFReportingDataDto> records = new ArrayList<>();
                 for (NICKMFReportingData entity : entities) {
                     NICKMFReportingDataDto dto = this.nickmfReportingDataConverter.disassemble(entity);
+
+//                    Double calculatedValue =
+//                            getNICKMFReportingDataCalculatedValue(report, dto.getNbChartOfAccountsCode(), dto.getNicChartOfAccountsName());
+//                    dto.setCalculatedAccountBalance(calculatedValue);
+
+                    setNICKMFReportingDataCalculatedValue(dto, report);
+
                     records.add(dto);
                 }
                 holderDto.setRecords(records);
@@ -153,4 +163,68 @@ public class PeriodicReportNICKMFServiceImpl implements PeriodicReportNICKMFServ
             return null;
         }
     }
+
+
+    private void setNICKMFReportingDataCalculatedValue(NICKMFReportingDataDto dto, PeriodicReportDto reportDto) {
+        if(reportDto != null && dto != null && dto.getNbChartOfAccountsCode() != null && dto.getNicChartOfAccountsName() != null){
+            int month = DateUtils.getMonth(reportDto.getReportDate()) + 1;
+            if(dto.getNbChartOfAccountsCode().equalsIgnoreCase("2923.010") && dto.getNicChartOfAccountsName().equalsIgnoreCase("Начисленная амортизация - Организационные расходы NICK MF")){
+                int monthDiff = DateUtils.getMonthsDifference(DateUtils.getDate("31.07.2015"), reportDto.getReportDate());
+                Double value = MathUtils.multiply(MathUtils.divide(14963.0, 60.0), new Double(monthDiff));
+                dto.setCalculatedAccountBalance(MathUtils.subtract(0.0, value));
+                dto.setCalculatedAccountBalanceFormula(" - (14,963 / 60) * " + monthDiff + ", where '" + monthDiff + "' = months difference between 31.07.2017 and " + DateUtils.getDateFormatted(reportDto.getReportDate()));
+            }else if(dto.getNbChartOfAccountsCode().equalsIgnoreCase("3393.020") && dto.getNicChartOfAccountsName().equalsIgnoreCase("Комиссия за администрирование к оплате NICK MF")){
+                Double remainder = 0.0;
+                if(DateUtils.isJanuary(reportDto.getReportDate())) {
+                    NICKMFReportingDataHolderDto previousMonthData = getNICKMFReportingDataFromPreviousMonth(reportDto.getId());
+                    if(previousMonthData != null && previousMonthData.getRecords() != null){
+                        for(NICKMFReportingDataDto record: previousMonthData.getRecords()){
+                            if(record.getNbChartOfAccountsCode() != null && record.getNbChartOfAccountsCode().equalsIgnoreCase(dto.getNbChartOfAccountsCode()) &&
+                                    record.getNicChartOfAccountsName().equalsIgnoreCase(dto.getNicChartOfAccountsName()) &&
+                                    record.getAccountBalance() > 0.04){
+                                remainder = record.getAccountBalance();
+                                break;
+                            }
+                        }
+                    }
+                }
+                Double administrationFees = 0.0;
+                List<ReserveCalculationDto> administrationFeesList = this.reserveCalculationService.getReserveCalculationsByExpenseTypeAfterDate(ReserveCalculationsExpenseTypeLookup.ADMINISTRATION_FEES.getCode(), DateUtils.getFirstDayOfDateYear(reportDto.getReportDate()));
+                if(administrationFeesList != null){
+                    for(ReserveCalculationDto administrationFeeDto: administrationFeesList){
+                        administrationFees = MathUtils.add(administrationFees, administrationFeeDto.getAmount());
+                    }
+                }
+                Double value = MathUtils.multiply(MathUtils.divide(40000.0, 12.0), new Double(month));
+                dto.setCalculatedAccountBalance(MathUtils.add(MathUtils.subtract(remainder, value), administrationFees));
+                dto.setCalculatedAccountBalanceFormula(remainder + " - (40,000/12 * " + month + ") + " + administrationFees +
+                        ", i.e. {if January, then remainder from December, else 0} - (40,000/12 * current month number ) + sum of values from Capital Calls with type 'Комиссия'" );
+            }else if(dto.getNbChartOfAccountsCode().equalsIgnoreCase("7473.080") && dto.getNicChartOfAccountsName().equalsIgnoreCase("Расходы за администрирование NICK MF")){
+                dto.setCalculatedAccountBalance(MathUtils.multiply(MathUtils.divide(40000.0, 12.0), (month*1.0)));
+                dto.setCalculatedAccountBalanceFormula("40,000 / 12 * " + month + ", where '" + month + "' is current month number");
+            }else if(dto.getNbChartOfAccountsCode().equalsIgnoreCase("7473.080") && dto.getNicChartOfAccountsName().equalsIgnoreCase("Амортизация организационных расходов NICK MF")){
+
+                Double value = MathUtils.multiply(MathUtils.divide(14963.0, 60.0), (month*1.0));
+                if(value > 14963.0){
+                    value = 14963.0;
+                }
+                dto.setCalculatedAccountBalance(value);
+                dto.setCalculatedAccountBalanceFormula("14,963 / 60 * " + month + ", where '" + month + "' is current month number; value no more than 14,963");
+            }
+        }
+    }
+
+//    @Override
+//    public Double getNICKMFReportingDataCalculatedValue(NICKMFReportingDataCalculatedValueRequestDto requestDto) {
+//        if(requestDto != null){
+//            if(requestDto.getReportId() != null){
+//                PeriodicReportDto reportDto = this.periodicReportService.getPeriodicReport(requestDto.getReportId());
+//                return getNICKMFReportingDataCalculatedValue(reportDto, requestDto.getCode(), requestDto.getNameRu());
+//            }else{
+//                logger.error("NICK MF Calculated value request is invalid, report id is null");
+//                return null;
+//            }
+//        }
+//        return null;
+//    }
 }

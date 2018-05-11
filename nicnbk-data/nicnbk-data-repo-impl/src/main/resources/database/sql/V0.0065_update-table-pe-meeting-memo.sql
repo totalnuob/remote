@@ -1,0 +1,1 @@
+update pe_meeting_memo set memo_summary = team_notes || ' ' || track_record_notes || ' ' || strategy_notes || ' ' || other_notes || ' ' || nic_followups || ' ' || other_followups;

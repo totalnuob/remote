@@ -10,9 +10,13 @@ public enum ReserveCalculationsEntityTypeLookup {
     NICKMF("NICKMF"),
     TARRAGON_A("TARR_A"),
     TARRAGON_B("TARR_B"),
+    TARRAGON("TARR"),
     SINGULARITY("SING"),
     SINGULARITY_A("SING_A"),
-    SINGULARITY_B("SING_B");
+    SINGULARITY_B("SING_B"),
+    BNY_MELLON("BNY_M"),
+    TERRA_A("TERRA_A"),
+    TERRA_B("TERRA_B");
 
     private String code;
 

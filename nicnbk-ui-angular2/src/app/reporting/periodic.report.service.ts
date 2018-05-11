@@ -28,6 +28,7 @@ import {NEWS} from "../news/model/mock-news";
 import {PeriodicReport} from "./model/periodic.report";
 import {ConsolidatedKZTForm6Record} from "./model/consolidated.kzt.form.6.record";
 import {OKResponse} from "../common/ok-response";
+import {ReserveCalculationSearchResults} from "./model/reserve-calculation-search-results";
 
 var fileSaver = require("file-saver");
 
@@ -102,6 +103,7 @@ export class PeriodicReportService extends CommonService{
     private PERIODIC_REPORT_RESERVE_CALCULATION_FORM_URL = this.PERIODIC_REPORT_BASE_URL + "reserveCalculation/";
     private PERIODIC_REPORT_RESERVE_CALCULATION_DELETE_RECORD_URL = this.PERIODIC_REPORT_BASE_URL + "reserveCalculation/delete/";
     private PERIODIC_REPORT_RESERVE_CALCULATION_SAVE_URL = this.PERIODIC_REPORT_BASE_URL + "reserveCalculationSave/";
+    private PERIODIC_REPORT_RESERVE_CALCULATION_SEARCH_URL = this.PERIODIC_REPORT_BASE_URL + "searchReserveCalculations/";
 
 
     loadAll(): Observable<PeriodicReport[]> {
@@ -339,6 +341,13 @@ export class PeriodicReportService extends CommonService{
             .catch(this.handleErrorResponse);
     }
 
+    searchReserveCalculations(searchParams): Observable<ReserveCalculationSearchResults>{
+        let body = JSON.stringify(searchParams);
+        return this.http.post(this.PERIODIC_REPORT_RESERVE_CALCULATION_SEARCH_URL, body,this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
     public deleteReserveCalculationFormDataRecord(recordId) {
         return this.http.get(this.PERIODIC_REPORT_RESERVE_CALCULATION_DELETE_RECORD_URL + "/" + recordId, this.getOptionsWithCredentials())
             .map(this.extractData)
@@ -415,13 +424,24 @@ export class PeriodicReportService extends CommonService{
             .catch(this.handleErrorResponse);
     }
 
-    public makeFileRequest(url, fileName): Observable<Response> {
+    public makeFileRequest(url, fileName, method?: string, body?): Observable<Response> {
         return Observable.fromPromise(new Promise((resolve, reject) => {
                 let xhr = new XMLHttpRequest();
                 xhr.withCredentials = true; // send auth token with the request
                 // TODO: url const
                 //let url =  DATA_APP_URL + `periodicReport/export/${this.reportId}/${'KZT_FORM_1'}`;
-                xhr.open('GET', url, true);
+
+                var methodName = 'GET';
+                if(method){
+                    if(method === 'GET'){
+                        methodName = 'GET';
+                    }else if(method === 'POST'){
+                        methodName = 'POST';
+                    }
+                }
+                xhr.open(methodName, url, true);
+
+                xhr.setRequestHeader("Content-type", "application/json");
                 xhr.responseType = 'blob';
 
                 // Xhr callback when we get a result back
@@ -448,7 +468,11 @@ export class PeriodicReportService extends CommonService{
                 };
                 // Start the Ajax request
                 //xhr.open("GET", url);
-                xhr.send();
+                if(body){
+                    xhr.send(JSON.stringify(body));
+                }else {
+                    xhr.send();
+                }
             }));
             //.map(this.extractData);
             //.catch(this.handleErrorResponse);

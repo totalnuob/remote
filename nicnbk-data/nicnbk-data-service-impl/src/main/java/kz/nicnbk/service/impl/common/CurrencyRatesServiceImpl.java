@@ -90,7 +90,7 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
                 throw new IllegalStateException(errorMessage);
             }
             if(count > 0) {
-                return MathUtils.divide(sum, count + 0.0).doubleValue();
+                return MathUtils.divide(sum, count + 0.0);
             }
         }
         return null;

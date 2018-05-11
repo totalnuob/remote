@@ -42,6 +42,7 @@
                         <td>Account Balance</td>
                         <td>&nbsp;</td>
                         <td>&nbsp;</td>
+                        <td>&nbsp;</td>
                     </tr>
 
                     </thead>
@@ -58,8 +59,9 @@
                                 </select>
                             </td>
                             <td width="20%">
-                                <input required type="number" step="0.01" class="form-control" [(ngModel)]="record.accountBalance" [ngModelOptions]="{standalone: true}"/>
+                                <input required (keyup)="onNumberChange(record)" type="text" class="form-control" [(ngModel)]="record.accountBalance" [ngModelOptions]="{standalone: true}"/>
                             </td>
+
                             <td>
                                 <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRecord(record)">
                                     <span class="glyphicon glyphicon-minus"></span>
@@ -69,6 +71,11 @@
                                 <button *ngIf="showCalculateSumButton(record)" type="button" class="btn-xs btn-primary" style="display: inline-block"  (click)="calculateSum(record)">
                                     <span class="glyphicon glyphicon-refresh"></span>
                                 </button>
+                            </td>
+                            <td>
+                                <a *ngIf="showCalculateSumButton(record)" data-toggle="modal" data-target="#infoModal" (click)="getInfo(record)" style="cursor: pointer">
+                                    <span class="glyphicon glyphicon-question-sign"></span>
+                                </a>
                             </td>
                         </tr>
                         <tr *ngIf="data.records != null && data.records.length > 0">
@@ -107,5 +114,21 @@
             </div>
         </div>
         <br/><br/>
+    </div>
+
+    <div class="modal fade" id="infoModal" role="dialog">
+        <div class="modal-dialog" style="overflow-y: scroll; max-height:85%;  margin-top: 50px; margin-bottom:50px; width:65%;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title"  style="word-wrap: break-word">{{selectedInfoHeader}}</h3>
+                </div>
+                <div class="modal-body">
+                    <p style="word-wrap: break-word;" [innerHTML]="selectedInfoContent"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" (click)="closeInfoModal()">Close</button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

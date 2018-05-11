@@ -94,7 +94,7 @@
                         <td>{{addedRecord.nbAccountNumber}}</td>
                         <td>{{addedRecord.nicAccountName}}</td>
                         <td>
-                            <input required type="number" step="0.01" class="form-control small" [ngModelOptions]="{standalone: true}" class="form-control"  [(ngModel)]="addedRecord.glaccountBalance"/>
+                            <input required (keyup)="onNumberChange(addedRecord)" type="text" class="form-control small" [ngModelOptions]="{standalone: true}" class="form-control"  [(ngModel)]="addedRecord.glaccountBalance"/>
                         </td>
                         <td>
                             <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRecord(addedRecord)">
@@ -111,6 +111,26 @@
             </div>
         </div>
     </form>
+
+    <br/>
+
+    <div class="row withpadding">
+        <div class="col-md-6">
+            <div class="col-md-1 pull-left">
+                <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/NICKMFInput/', reportId]"><span class="glyphicon glyphicon-backward"></span>PREVIOUS
+                </button>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="col-md-1 pull-right">
+                <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/previousYearInput/', reportId]" [disabled]="!showNextButton()">NEXT
+                    <span class="glyphicon glyphicon-forward"></span>
+                </button>
+
+            </div>
+        </div>
+    </div>
+
     <br/>
     <div class="row withpadding">
         <table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small" *ngIf="records != null">
@@ -230,15 +250,18 @@
         <div class="col-md-12">
         </div>
     </div>
+
     <div class="row">
         <div class="col-md-6">
             <div class="col-md-1 pull-left">
-                <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/NICKMFInput/', reportId]">PREVIOUS</button>
+                <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/NICKMFInput/', reportId]"><span class="glyphicon glyphicon-backward"></span>PREVIOUS
+                </button>
             </div>
         </div>
         <div class="col-md-6">
             <div class="col-md-1 pull-right">
-                <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/previousYearInput/', reportId]" [disabled]="!showNextButton()">NEXT</button>
+                <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/previousYearInput/', reportId]" [disabled]="!showNextButton()">NEXT
+                    <span class="glyphicon glyphicon-forward"></span></button>
             </div>
         </div>
     </div>

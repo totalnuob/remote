@@ -60,10 +60,10 @@
                             </td>
                             <!--<td>{{record.accountNumber}}</td>-->
                             <td>
-                                <input required type="number" step="0.01" class="form-control" [(ngModel)]="record.accountBalance" [ngModelOptions]="{standalone: true}"/>
+                                <input required (keyup)="onNumberChange(record)" type="text" class="form-control" [(ngModel)]="record.accountBalance" [ngModelOptions]="{standalone: true}"/>
                             </td>
                             <td>
-                                <input required type="number" step="0.01" class="form-control" [(ngModel)]="record.accountBalanceKZT" [ngModelOptions]="{standalone: true}"/>
+                                <input required (keyup)="onNumberChange(record)" type="text" class="form-control" [(ngModel)]="record.accountBalanceKZT" [ngModelOptions]="{standalone: true}"/>
                             </td>
                             <td>
                                 <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRecord(record)">

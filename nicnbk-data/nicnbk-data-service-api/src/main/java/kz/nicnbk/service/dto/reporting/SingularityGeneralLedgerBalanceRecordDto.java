@@ -26,6 +26,7 @@ public class SingularityGeneralLedgerBalanceRecordDto extends GeneralLedgerBalan
     private Long id;
     private Double adjustedRedemption;
     private String interestRate;
+    private String comment;
 
     public String getAcronym() {
         return acronym;
@@ -145,5 +146,13 @@ public class SingularityGeneralLedgerBalanceRecordDto extends GeneralLedgerBalan
 
     public void setInterestRate(String interestRate) {
         this.interestRate = interestRate;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }

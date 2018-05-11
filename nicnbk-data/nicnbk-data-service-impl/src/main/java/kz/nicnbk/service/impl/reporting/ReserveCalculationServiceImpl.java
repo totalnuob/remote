@@ -3,19 +3,22 @@ package kz.nicnbk.service.impl.reporting;
 import kz.nicnbk.common.service.util.DateUtils;
 import kz.nicnbk.common.service.util.ExcelUtils;
 import kz.nicnbk.common.service.util.MathUtils;
+import kz.nicnbk.common.service.util.PaginationUtils;
 import kz.nicnbk.repo.api.common.CurrencyRatesRepository;
 import kz.nicnbk.repo.api.reporting.ReserveCalculationRepository;
 import kz.nicnbk.repo.model.lookup.reporting.CapitalCallExportTypeLookup;
 import kz.nicnbk.repo.model.reporting.ReserveCalculation;
+import kz.nicnbk.repo.model.reporting.ReserveCalculationExportApproveListType;
+import kz.nicnbk.repo.model.reporting.ReserveCalculationExportDoerType;
+import kz.nicnbk.repo.model.reporting.ReserveCalculationExportSignerType;
 import kz.nicnbk.service.api.common.CurrencyRatesService;
 import kz.nicnbk.service.api.reporting.PeriodicReportService;
 import kz.nicnbk.service.api.reporting.privateequity.ReserveCalculationService;
 import kz.nicnbk.service.converter.reporting.ReserveCalculationConverter;
+import kz.nicnbk.service.datamanager.LookupService;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.lookup.CurrencyRatesDto;
-import kz.nicnbk.service.dto.reporting.PeriodicReportDto;
-import kz.nicnbk.service.dto.reporting.PeriodicReportType;
-import kz.nicnbk.service.dto.reporting.ReserveCalculationDto;
+import kz.nicnbk.service.dto.reporting.*;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -28,6 +31,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -64,6 +69,9 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
     @Autowired
     private CurrencyRatesRepository currencyRatesRepository;
 
+    @Autowired
+    private LookupService lookupService;
+
     @Override
     public List<ReserveCalculationDto> getAllReserveCalculations() {
         List<ReserveCalculationDto> records = new ArrayList<>();
@@ -86,28 +94,7 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
                 while (entitiesIterator.hasNext()) {
                     ReserveCalculation entity = entitiesIterator.next();
                     ReserveCalculationDto dto = this.reserveCalculationConverter.disassemble(entity);
-
-                    // set currency rate
-                    Date nextDay = DateUtils.getNextDay(dto.getDate());
-                    CurrencyRatesDto currencyRatesDto = this.currencyRatesService.getRateForDateAndCurrency(nextDay, "USD");
-                    if (currencyRatesDto == null || currencyRatesDto.getValue() == null) {
-                        // TODO: error message
-                        logger.error("No currency rate for date '" + nextDay + "', currency='USD'");
-                        //return null;
-                    } else {
-                        dto.setCurrencyRate(currencyRatesDto.getValue());
-                    }
-
-                    // set amount kzt
-                    if (dto.getAmount() != null && currencyRatesDto != null && currencyRatesDto.getValue() != null) {
-                        dto.setAmountKZT(new BigDecimal(currencyRatesDto.getValue().doubleValue()).multiply(new BigDecimal(dto.getAmount())).setScale(2, RoundingMode.HALF_UP).doubleValue());
-                    }
-
-                    if(mostRecentFinalReportDate == null || dto.getDate() == null){
-                        dto.setCanDelete(true);
-                    }else { //mostRecentFinalReportDate != null && dto.getDate() != null
-                        dto.setCanDelete(dto.getDate().compareTo(mostRecentFinalReportDate) <= 0 ? false : true);
-                    }
+                    setAdditionalFields(dto);
 
                     records.add(dto);
                 }
@@ -117,6 +104,85 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
             return null;
         }
         return records;
+    }
+
+    private void setAdditionalFields(List<ReserveCalculationDto> dtoList){
+        if(dtoList != null){
+            for(ReserveCalculationDto dto: dtoList){
+                setAdditionalFields(dto);
+            }
+        }
+    }
+
+    private void setAdditionalFields(ReserveCalculationDto dto){
+        Date mostRecentFinalReportDate = null;
+        List<PeriodicReportDto> periodicReportDtos = this.periodicReportService.getAllPeriodicReports();
+        if(periodicReportDtos != null){
+            for(PeriodicReportDto periodicReportDto: periodicReportDtos){
+                if(periodicReportDto.getStatus() != null && periodicReportDto.getStatus().equalsIgnoreCase(PeriodicReportType.SUBMITTED.getCode())) {
+                    if (mostRecentFinalReportDate == null || mostRecentFinalReportDate.compareTo(periodicReportDto.getReportDate()) < 0) {
+                        mostRecentFinalReportDate = periodicReportDto.getReportDate();
+                    }
+                }
+            }
+        }
+
+        // set currency rate
+        Date nextDay = DateUtils.getNextDay(dto.getDate());
+        CurrencyRatesDto currencyRatesDto = this.currencyRatesService.getRateForDateAndCurrency(nextDay, "USD");
+        if (currencyRatesDto == null || currencyRatesDto.getValue() == null) {
+            // TODO: error message
+            logger.error("No currency rate for date '" + nextDay + "', currency='USD'");
+            //return null;
+        } else {
+            dto.setCurrencyRate(currencyRatesDto.getValue());
+        }
+
+        // set amount kzt
+        if (dto.getAmount() != null && currencyRatesDto != null && currencyRatesDto.getValue() != null) {
+            dto.setAmountKZT(new BigDecimal(currencyRatesDto.getValue().doubleValue()).multiply(new BigDecimal(dto.getAmount())).setScale(2, RoundingMode.HALF_UP).doubleValue());
+        }
+
+        if(mostRecentFinalReportDate == null || dto.getDate() == null){
+            dto.setCanDelete(true);
+        }else { //mostRecentFinalReportDate != null && dto.getDate() != null
+            dto.setCanDelete(dto.getDate().compareTo(mostRecentFinalReportDate) <= 0 ? false : true);
+        }
+    }
+
+    @Override
+    public ReserveCalculationPagedSearchResult search(ReserveCalculationSearchParams searchParams) {
+        try {
+            Page<ReserveCalculation> entityPage = null;
+            int page = 0;
+
+            int pageSize = searchParams != null && searchParams.getPageSize() > 0 ? searchParams.getPageSize() : DEFAULT_PAGE_SIZE;
+            page = searchParams != null && searchParams.getPage() > 0 ? searchParams.getPage() - 1 : 0;
+            entityPage = reserveCalculationRepository.search(new PageRequest(page, pageSize, new Sort(Sort.Direction.DESC, "date", "id")));
+
+            ReserveCalculationPagedSearchResult result = new ReserveCalculationPagedSearchResult();
+            if (entityPage != null) {
+                result.setTotalElements(entityPage.getTotalElements());
+                if (entityPage.getTotalElements() > 0) {
+                    result.setShowPageFrom(PaginationUtils.getShowPageFrom(DEFAULT_PAGES_PER_VIEW, page + 1));
+                    result.setShowPageTo(PaginationUtils.getShowPageTo(DEFAULT_PAGES_PER_VIEW,
+                            page + 1, result.getShowPageFrom(), entityPage.getTotalPages()));
+                }
+                result.setTotalPages(entityPage.getTotalPages());
+                result.setCurrentPage(page + 1);
+                if (searchParams != null) {
+                    result.setSearchParams(searchParams.getSearchParamsAsString());
+                }
+                result.setRecords(reserveCalculationConverter.disassembleList(entityPage.getContent()));
+                setAdditionalFields(result.getRecords());
+                return result;
+            }
+
+        }catch(Exception ex){
+            // TODO: log search params
+            logger.error("Error searching reserve calculations", ex);
+        }
+        return null;
     }
 
 
@@ -147,8 +213,12 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
 
         Date fromDate = DateUtils.getFirstDayOfCurrentMonth(date);
         Date toDate = DateUtils.getFirstDayOfNextMonth(date);
-        List<ReserveCalculation> entities = this.reserveCalculationRepository.getEntitiesByExpenseTypeBetweenDates(
-                code, fromDate, toDate);
+        List<ReserveCalculation> entities = null;
+        if(useValuationDate){
+            entities = this.reserveCalculationRepository.getEntitiesByExpenseTypeBetweenDatesUsingValuationDate(code, fromDate, toDate);
+        }else {
+            entities = this.reserveCalculationRepository.getEntitiesByExpenseTypeBetweenDates(code, fromDate, toDate);
+        }
 
         List<ReserveCalculationDto> records = this.reserveCalculationConverter.disassembleList(entities);
 
@@ -327,7 +397,58 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
     }
 
     @Override
-    public FilesDto getExportFileStream(Long recordId, String type) {
+    public List<ReserveCalculationDto> getReserveCalculationsByExpenseTypeAfterDate(String code, Date date) {
+        Date mostRecentFinalReportDate = null;
+        List<PeriodicReportDto> periodicReportDtos = this.periodicReportService.getAllPeriodicReports();
+        if(periodicReportDtos != null){
+            for(PeriodicReportDto periodicReportDto: periodicReportDtos){
+                if(periodicReportDto.getStatus() != null && periodicReportDto.getStatus().equalsIgnoreCase(PeriodicReportType.SUBMITTED.getCode())) {
+                    if (mostRecentFinalReportDate == null || mostRecentFinalReportDate.compareTo(periodicReportDto.getReportDate()) < 0) {
+                        mostRecentFinalReportDate = periodicReportDto.getReportDate();
+                    }
+                }
+            }
+        }
+
+        List<ReserveCalculationDto> records = new ArrayList<>();
+        List<ReserveCalculation> entities = this.reserveCalculationRepository.getEntitiesByExpenseType(code);
+        if (entities != null) {
+            for (ReserveCalculation entity : entities) {
+                ReserveCalculationDto dto = this.reserveCalculationConverter.disassemble(entity);
+                if(dto.getDate().compareTo(date) <= 0){
+                    // capital calls before report period
+                    continue;
+                }
+
+                // set currency rate
+                Date nextDay = DateUtils.getNextDay(dto.getDate());
+                CurrencyRatesDto currencyRatesDto = this.currencyRatesService.getRateForDateAndCurrency(nextDay, "USD");
+                if (currencyRatesDto == null || currencyRatesDto.getValue() == null) {
+                    // TODO: error message
+                    logger.error("No currency rate for date '" + DateUtils.getDateFormatted(nextDay) + "', currency='USD'");
+                    throw new IllegalStateException("No currency rate for date '" + DateUtils.getDateFormatted(nextDay) + "', currency='USD'");
+                }
+                dto.setCurrencyRate(currencyRatesDto.getValue());
+
+                // set amount kzt
+                if (dto.getAmount() != null) {
+                    dto.setAmountKZT(new BigDecimal(currencyRatesDto.getValue().doubleValue()).multiply(new BigDecimal(dto.getAmount())).setScale(2, RoundingMode.HALF_UP).doubleValue());
+                }
+
+                if(mostRecentFinalReportDate == null || dto.getDate() == null){
+                    dto.setCanDelete(true);
+                }else { //mostRecentFinalReportDate != null && dto.getDate() != null
+                    dto.setCanDelete(dto.getDate().compareTo(mostRecentFinalReportDate) <= 0 ? false : true);
+                }
+
+                records.add(dto);
+            }
+        }
+        return records;
+    }
+
+    @Override
+    public FilesDto getExportFileStream(Long recordId, String type, ReserveCalculationExportParamsDto exportParamsDto) {
         if (recordId == null) {
             logger.error("Capital call export: record id not specified");
             return null;
@@ -338,11 +459,11 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
         }
 
         if (type.equalsIgnoreCase(CapitalCallExportTypeLookup.TO_OPERATIONS.getCode())) {
-            return getOperationsExportInputStream(recordId);
+            return getOperationsExportInputStream(recordId, exportParamsDto);
         } else if (type.equalsIgnoreCase(CapitalCallExportTypeLookup.TO_SPV.getCode())) {
-            return getSPVExportInputStream(recordId);
+            return getSPVExportInputStream(recordId, exportParamsDto);
         } else if (type.equalsIgnoreCase(CapitalCallExportTypeLookup.ORDER.getCode())) {
-            return getOrderExportInputStream(recordId);
+            return getOrderExportInputStream(recordId, exportParamsDto);
         }
         logger.error("Capital call export: type not matched '" + type + "'");
         return null;
@@ -390,7 +511,7 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
         return this.reserveCalculationConverter.disassemble(this.reserveCalculationRepository.findOne(recordId));
     }
 
-    private FilesDto getOperationsExportInputStream(Long recordId){
+    private FilesDto getOperationsExportInputStream(Long recordId, ReserveCalculationExportParamsDto exportParamsDto){
 
         FilesDto filesDto = new FilesDto();
         ReserveCalculationDto record = getReserveCalculationRecordById(recordId);
@@ -405,6 +526,24 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
             //e.printStackTrace();
         }
 
+
+        String investmentCategory = "Additional Subscription";
+        // Check if it is the first capital call from given asset class (recipient)
+        if(record.getRecipient() != null && record.getRecipient().getCode() != null) {
+            String entityNameStart = "";
+            if(record.getRecipient().getCode().startsWith("SING")){
+                entityNameStart = "SING";
+            }else if(record.getRecipient().getCode().startsWith("TARR")){
+                entityNameStart = "TARR";
+            }else if(record.getRecipient().getCode().startsWith("TERRA")){
+                entityNameStart = "TERRA";
+            }
+            int entitiesCount = this.reserveCalculationRepository.getEntitiesCountByRecipientTypeStartsWith(entityNameStart);
+            if(entitiesCount == 1){
+                investmentCategory = "Direct Investment";
+            }
+        }
+
         try {
             XSSFWorkbook workbook = new XSSFWorkbook(excelFileToRead);
             XSSFSheet sheet = workbook.getSheetAt(0);
@@ -412,7 +551,11 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
             boolean endOfTable = false;
             while (rowIterator.hasNext() && !endOfTable) { // each row
                 Row row = rowIterator.next();
-                if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "Original Investment Approval Date:") &&
+
+                if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "Investment Category*") &&
+                        ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(3), "<investment_category>")){
+                    row.getCell(3).setCellValue(investmentCategory);
+                }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "Original Investment Approval Date:") &&
                         ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(3), "<dd.MM.yyyy>")){
                     row.getCell(3).setCellValue(DateUtils.getDateFormatted(record.getDate()));
                 }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "Value Date:") &&
@@ -420,11 +563,65 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
                     row.getCell(3).setCellValue(DateUtils.getDateEnglishTextualDate(record.getDate()));
                 }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "Amount:") &&
                         ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(3), "<amount>")){
-                    // TODO: amount formatting
                     row.getCell(3).setCellValue(String.format(Locale.ENGLISH, "$%,.2f", record.getAmount()));
-                }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "Akylzhan Baimagambetov-Director") &&
+                }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "<DIRECTORNAME>-Director") &&
                         ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(3), "<dd.MM.yyyy>")){
+                    ReserveCalculationExportSignerType signerType =
+                            this.lookupService.findByTypeAndCode(ReserveCalculationExportSignerType.class, exportParamsDto.getDirector());
+                    if(signerType != null){
+                        row.getCell(2).setCellValue(signerType.getNameEn() + "-Director");
+                    }else{
+                        row.getCell(2).setCellValue("Director");
+                    }
                     row.getCell(3).setCellValue(DateUtils.getDateFormatted(record.getDate()));
+                }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "<viza_1>")){
+                    if(exportParamsDto != null && exportParamsDto.getApproveList() != null && !exportParamsDto.getApproveList().isEmpty()){
+                        ReserveCalculationExportApproveListType approverType =
+                                this.lookupService.findByTypeAndCode(ReserveCalculationExportApproveListType.class, exportParamsDto.getApproveList().get(0));
+                        if(approverType != null) {
+                            row.getCell(2).setCellValue(approverType.getNameRu() + "________________");
+                        }else{
+                            row.getCell(2).setCellValue("________________");
+                        }
+                    }else{
+                        row.getCell(2).setCellValue("");
+                    }
+                }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "<viza_2>")){
+                    if(exportParamsDto != null && exportParamsDto.getApproveList() != null && exportParamsDto.getApproveList().size() > 1){
+                        ReserveCalculationExportApproveListType approverType =
+                                this.lookupService.findByTypeAndCode(ReserveCalculationExportApproveListType.class, exportParamsDto.getApproveList().get(1));
+                        if(approverType != null) {
+                            row.getCell(2).setCellValue(approverType.getNameRu() + "________________");
+                        }else{
+                            row.getCell(2).setCellValue("________________");
+                        }
+                    }else{
+                        row.getCell(2).setCellValue("");
+                    }
+                }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "<viza_3>")){
+                    if(exportParamsDto != null && exportParamsDto.getApproveList() != null && exportParamsDto.getApproveList().size() > 2){
+                        ReserveCalculationExportApproveListType approverType =
+                                this.lookupService.findByTypeAndCode(ReserveCalculationExportApproveListType.class, exportParamsDto.getApproveList().get(2));
+                        if(approverType != null) {
+                            row.getCell(2).setCellValue(approverType.getNameRu() + "________________");
+                        }else{
+                            row.getCell(2).setCellValue("________________");
+                        }
+                    }else{
+                        row.getCell(2).setCellValue("");
+                    }
+                }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "<doer>")){
+                    if(exportParamsDto != null && exportParamsDto.getDoer() != null){
+                        ReserveCalculationExportDoerType doerType =
+                                this.lookupService.findByTypeAndCode(ReserveCalculationExportDoerType.class, exportParamsDto.getDoer());
+                        if(doerType != null){
+                            row.getCell(2).setCellValue(doerType.getNameRu());
+                        }else{
+                            row.getCell(2).setCellValue("");
+                        }
+                    }else{
+                        row.getCell(2).setCellValue("");
+                    }
                 }
             }
             //
@@ -447,13 +644,31 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
         return null;
     }
 
-    private FilesDto getSPVExportInputStream(Long recordId){
+    private FilesDto getSPVExportInputStream(Long recordId, ReserveCalculationExportParamsDto exportParamsDto){
 
         FilesDto filesDto = new FilesDto();
         ReserveCalculationDto record = getReserveCalculationRecordById(recordId);
 
         Resource resource = new ClassPathResource("export_template/capital_call/CC_OA_SPV_TEMPLATE.xlsx");
         InputStream excelFileToRead = null;
+
+        String investmentCategory = "Additional Subscription";
+        // Check if it is the first capital call from given asset class (recipient)
+        if(record.getRecipient() != null && record.getRecipient().getCode() != null) {
+            String entityNameStart = "";
+            if(record.getRecipient().getCode().startsWith("SING")){
+                entityNameStart = "SING";
+            }else if(record.getRecipient().getCode().startsWith("TARR")){
+                entityNameStart = "TARR";
+            }else if(record.getRecipient().getCode().startsWith("TERRA")){
+                entityNameStart = "TERRA";
+            }
+            int entitiesCount = this.reserveCalculationRepository.getEntitiesCountByRecipientTypeStartsWith(entityNameStart);
+            if(entitiesCount == 1){
+                investmentCategory = "Direct Investment";
+            }
+        }
+
         try {
             excelFileToRead = resource.getInputStream();
         } catch (IOException e) {
@@ -468,20 +683,29 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
             Iterator<Row> rowIterator = sheet.iterator();
             boolean endOfTable = false;
             String beneficiary = record.getRecipient().getCode().startsWith("SING") ? "Singularity, Ltd." :
-                    record.getRecipient().getCode().startsWith("TARR") ? "Tarragon LP" : "";
+                    record.getRecipient().getCode().startsWith("TARR") ? "Tarragon LP" :
+                            record.getRecipient().getCode().startsWith("TERRA") ? "Terra L.P." : "";
             String bankCode = record.getRecipient().getCode().startsWith("TARR") ? "CTZIUS33" :
-                    record.getRecipient().getCode().startsWith("SING") ? "021 000 018" : "";
+                    record.getRecipient().getCode().startsWith("SING") ? "021 000 018" :
+                            record.getRecipient().getCode().startsWith("TERRA") ? "122-016-066" : "";
             String bankDetails = record.getRecipient().getCode().startsWith("TARR") ? "Citizens Bank, N.A., One Citizens Drive Riverside, RI 02915-3000" :
-                    record.getRecipient().getCode().startsWith("SING") ? "Bank of New York Mellon, 1 Wall Street, New York" : "";
+                    record.getRecipient().getCode().startsWith("SING") ? "Bank of New York Mellon, 1 Wall Street, New York" :
+                            record.getRecipient().getCode().startsWith("TERRA") ? "City National Bank, Los Angeles, CA" : "";
             String accountNumber = record.getRecipient().getCode().startsWith("TARR") ? "4010297920" :
                     record.getRecipient().getCode().startsWith("SING_B") ? "8901300101" :
-                            record.getRecipient().getCode().startsWith("SING_A") ? "8901274828" : "";
+                            record.getRecipient().getCode().startsWith("SING_A") ? "8901274828" :
+                                    record.getRecipient().getCode().startsWith("TERRA") ? "210-45-9367" : "";
             String reference = record.getRecipient().getCode().startsWith("TARR") ? "NICK Master Fund Ltd." :
-                    record.getRecipient().getCode().startsWith("SING") ? "Grosvenor Capital Management, L.P." : "";
+                    record.getRecipient().getCode().startsWith("SING") ? "Grosvenor Capital Management, L.P." :
+                            record.getRecipient().getCode().startsWith("TERRA") ? "NICK Master Fund Ltd." +
+                                    (investmentCategory.equalsIgnoreCase("Direct investment") ? "Capital Call#1" : "") : "";
 
             while (rowIterator.hasNext() && !endOfTable) { // each row
                 Row row = rowIterator.next();
-                if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "Original Investment Approval Date:") &&
+                if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "Investment Category*") &&
+                        ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(4), "<investment_category>")){
+                    row.getCell(4).setCellValue(investmentCategory);
+                }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "Original Investment Approval Date:") &&
                         ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(4), "<dd.MM.yyyy>")){
                     row.getCell(4).setCellValue(DateUtils.getDateFormatted(record.getDate()));
                 }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "Use of Funds (New, Add-on, Mgmt Fee, etc.):") &&
@@ -511,9 +735,62 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
                 }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "Reference:") &&
                         ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(4), "<reference>")){
                     row.getCell(4).setCellValue(reference);
-                }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "Akylzhan Baimagambetov-Director") &&
+                }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "<DIRECTORNAME>-Director") &&
                         ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(4), "<dd.MM.yyyy>")){
+                    ReserveCalculationExportSignerType signerType =
+                            this.lookupService.findByTypeAndCode(ReserveCalculationExportSignerType.class, exportParamsDto.getDirector());
+                    if(signerType != null){
+                        row.getCell(2).setCellValue(signerType.getNameEn() + "-Director");
+                    }else{
+                        row.getCell(2).setCellValue("Director");
+                    }
                     row.getCell(4).setCellValue(DateUtils.getDateFormatted(record.getDate()));
+                }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "<viza_1>")){
+                    if(exportParamsDto != null && exportParamsDto.getApproveList() != null && !exportParamsDto.getApproveList().isEmpty()){
+                        ReserveCalculationExportApproveListType approverType =
+                                this.lookupService.findByTypeAndCode(ReserveCalculationExportApproveListType.class, exportParamsDto.getApproveList().get(0));
+                        if(approverType != null) {
+                            row.getCell(2).setCellValue(approverType.getNameRu() + "________________");
+                        }else{
+                            row.getCell(2).setCellValue("________________");
+                        }
+                    }
+                }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "<viza_2>")){
+                    if(exportParamsDto != null && exportParamsDto.getApproveList() != null && exportParamsDto.getApproveList().size() > 1){
+                        ReserveCalculationExportApproveListType approverType =
+                                this.lookupService.findByTypeAndCode(ReserveCalculationExportApproveListType.class, exportParamsDto.getApproveList().get(1));
+                        if(approverType != null) {
+                            row.getCell(2).setCellValue(approverType.getNameRu() + "________________");
+                        }else{
+                            row.getCell(2).setCellValue("________________");
+                        }
+                    }else{
+                        row.getCell(2).setCellValue("");
+                    }
+                }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "<viza_3>")){
+                    if(exportParamsDto != null && exportParamsDto.getApproveList() != null && exportParamsDto.getApproveList().size() > 2){
+                        ReserveCalculationExportApproveListType approverType =
+                                this.lookupService.findByTypeAndCode(ReserveCalculationExportApproveListType.class, exportParamsDto.getApproveList().get(2));
+                        if(approverType != null) {
+                            row.getCell(2).setCellValue(approverType.getNameRu() + "________________");
+                        }else{
+                            row.getCell(2).setCellValue("________________");
+                        }
+                    }else{
+                        row.getCell(2).setCellValue("");
+                    }
+                }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "<doer>")){
+                    if(exportParamsDto != null && exportParamsDto.getDoer() != null){
+                        ReserveCalculationExportDoerType doerType =
+                                this.lookupService.findByTypeAndCode(ReserveCalculationExportDoerType.class, exportParamsDto.getDoer());
+                        if(doerType != null){
+                            row.getCell(2).setCellValue(doerType.getNameRu());
+                        }else{
+                            row.getCell(2).setCellValue("");
+                        }
+                    }else{
+                        row.getCell(2).setCellValue("");
+                    }
                 }
             }
             //
@@ -536,7 +813,7 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
         return null;
     }
 
-    private FilesDto getOrderExportInputStream(Long recordId){
+    private FilesDto getOrderExportInputStream(Long recordId, ReserveCalculationExportParamsDto exportParamsDto){
 
         FilesDto filesDto = new FilesDto();
         ReserveCalculationDto record = getReserveCalculationRecordById(recordId);
@@ -549,6 +826,23 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
             logger.error("Reporting: Export file template not found: 'CC_ORDER_TEMPLATE.docx'");
             return null;
             //e.printStackTrace();
+        }
+
+        String transactionType = "Additional Subscription";
+        // Check if it is the first capital call from given asset class (recipient)
+        if(record.getRecipient() != null && record.getRecipient().getCode() != null) {
+            String entityNameStart = "";
+            if(record.getRecipient().getCode().startsWith("SING")){
+                entityNameStart = "SING";
+            }else if(record.getRecipient().getCode().startsWith("TARR")){
+                entityNameStart = "TARR";
+            }else if(record.getRecipient().getCode().startsWith("TERRA")){
+                entityNameStart = "TERRA";
+            }
+            int entitiesCount = this.reserveCalculationRepository.getEntitiesCountByRecipientTypeStartsWith(entityNameStart);
+            if(entitiesCount == 1){
+                transactionType = "Initial Subscription";
+            }
         }
 
         try {
@@ -570,6 +864,7 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
 
                                 String name = record.getRecipient().getCode().startsWith("TARR") ? "Tarragon LP (Class B)" :
                                         record.getRecipient().getCode().startsWith("SING") ? "Singularity Ltd. (Class A)" :
+                                                record.getRecipient().getCode().startsWith("TERRA") ? "Terra LP (Class C)" :
                                         record.getRecipient().getNameEn();
 
                                 text = text.replace("INPUTENTITY", name);
@@ -578,6 +873,80 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
 
                                 text = text.replace("INPUTAMOUNT", String.format(Locale.ENGLISH, "$%,.2f", record.getAmount()));
                                 r.setText(text, 0);
+                            }else if (text != null && text.contains("TRANSACTIONTYPE")) {
+                                text = text.replace("TRANSACTIONTYPE", transactionType);
+                                r.setText(text, 0);
+                            }else if (text != null && text.contains("DIRECTORNAME")) {
+                                ReserveCalculationExportSignerType signerType =
+                                        this.lookupService.findByTypeAndCode(ReserveCalculationExportSignerType.class, exportParamsDto.getDirector());
+                                if(signerType != null) {
+                                    text = text.replace("DIRECTORNAME", signerType.getNameEn());
+                                    r.setText(text, 0);
+                                }else{
+                                    text = text.replace("DIRECTORNAME", "");
+                                    r.setText(text, 0);
+                                }
+
+                            }else if (text != null && text.contains("<viza_1>")) {
+                                if(exportParamsDto != null && exportParamsDto.getApproveList() != null && !exportParamsDto.getApproveList().isEmpty()){
+                                    ReserveCalculationExportApproveListType approverType =
+                                            this.lookupService.findByTypeAndCode(ReserveCalculationExportApproveListType.class, exportParamsDto.getApproveList().get(0));
+                                    if(approverType != null) {
+                                        text = text.replace("<viza_1>", approverType.getNameRu() + "________________");
+                                        r.setText(text, 0);
+                                    }else{
+                                        text = text.replace("<viza_1>", "________________");
+                                        r.setText(text, 0);
+                                    }
+                                }else{
+                                    text = text.replace("<viza_1>", "");
+                                    r.setText(text, 0);
+                                }
+                            }else if (text != null && text.contains("<viza_2>")) {
+                                if(exportParamsDto != null && exportParamsDto.getApproveList() != null && exportParamsDto.getApproveList().size() > 1){
+                                    ReserveCalculationExportApproveListType approverType =
+                                            this.lookupService.findByTypeAndCode(ReserveCalculationExportApproveListType.class, exportParamsDto.getApproveList().get(1));
+                                    if(approverType != null) {
+                                        text = text.replace("<viza_2>", approverType.getNameRu() + "________________");
+                                        r.setText(text, 0);
+                                    }else{
+                                        text = text.replace("<viza_2>", "________________");
+                                        r.setText(text, 0);
+                                    }
+                                }else{
+                                    text = text.replace("<viza_2>", "");
+                                    r.setText(text, 0);
+                                }
+                            }else if (text != null && text.contains("<viza_3>")) {
+                                if(exportParamsDto != null && exportParamsDto.getApproveList() != null && exportParamsDto.getApproveList().size() > 2){
+                                    ReserveCalculationExportApproveListType approverType =
+                                            this.lookupService.findByTypeAndCode(ReserveCalculationExportApproveListType.class, exportParamsDto.getApproveList().get(2));
+                                    if(approverType != null) {
+                                        text = text.replace("<viza_3>", approverType.getNameRu() + "________________");
+                                        r.setText(text, 0);
+                                    }else{
+                                        text = text.replace("<viza_3>", "________________");
+                                        r.setText(text, 0);
+                                    }
+                                }else{
+                                    text = text.replace("<viza_3>", "");
+                                    r.setText(text, 0);
+                                }
+                            }else if (text != null && text.contains("<doer>")) {
+                                if(exportParamsDto != null && exportParamsDto.getDoer() != null){
+                                    ReserveCalculationExportDoerType doerType =
+                                            this.lookupService.findByTypeAndCode(ReserveCalculationExportDoerType.class, exportParamsDto.getDoer());
+                                    if(doerType != null) {
+                                        text = text.replace("<doer>", doerType.getNameRu());
+                                        r.setText(text, 0);
+                                    }else{
+                                        text = text.replace("<doer>", "");
+                                        r.setText(text, 0);
+                                    }
+                                }else{
+                                    text = text.replace("<doer>", "");
+                                    r.setText(text, 0);
+                                }
                             }
                         }
                     }

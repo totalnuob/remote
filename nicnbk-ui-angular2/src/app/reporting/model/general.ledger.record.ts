@@ -17,4 +17,5 @@ export class GeneralLedgerRecord{
 
     adjustedRedemption: number;
     interestRate: string;
+    comment: string;
 }

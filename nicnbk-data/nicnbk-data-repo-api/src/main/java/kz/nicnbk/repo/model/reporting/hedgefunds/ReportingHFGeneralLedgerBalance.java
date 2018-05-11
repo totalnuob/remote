@@ -29,6 +29,7 @@ public class ReportingHFGeneralLedgerBalance extends CreateUpdateBaseEntity{
 
     private Double adjustedRedemption;
     private String interestRate;
+    private String comment;
 
 
     public int getTranche() {
@@ -146,5 +147,15 @@ public class ReportingHFGeneralLedgerBalance extends CreateUpdateBaseEntity{
 
     public void setInterestRate(String interestRate) {
         this.interestRate = interestRate;
+    }
+
+
+    @Column(name="comment")
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }

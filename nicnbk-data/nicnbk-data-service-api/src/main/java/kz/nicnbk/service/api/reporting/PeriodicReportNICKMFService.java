@@ -1,6 +1,7 @@
 package kz.nicnbk.service.api.reporting;
 
 import kz.nicnbk.service.dto.common.EntityListSaveResponseDto;
+import kz.nicnbk.service.dto.reporting.NICKMFReportingDataCalculatedValueRequestDto;
 import kz.nicnbk.service.dto.reporting.NICKMFReportingDataHolderDto;
 
 /**
@@ -14,6 +15,6 @@ public interface PeriodicReportNICKMFService {
 
     NICKMFReportingDataHolderDto getNICKMFReportingDataFromPreviousMonth(Long reportId);
 
-
+    //Double getNICKMFReportingDataCalculatedValue(NICKMFReportingDataCalculatedValueRequestDto requestDto);
 
 }

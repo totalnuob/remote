@@ -175,6 +175,8 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
                             record.nicAccountName = response[i].nicAccountName;
                             record.glaccountBalance = response[i].glaccountBalance;
 
+                            this.onNumberChange(record);
+
                             this.addedRecordsHolder.records.push(record);
 
                             //this.nbChartOfAccountsChanged(response.records[i], true);
@@ -295,6 +297,8 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
 
         let confirmed = false;
         for(var i = 0; i < this.addedRecordsHolder.records.length; i++) {
+            this.addedRecordsHolder.records[i].glaccountBalance = Number(this.addedRecordsHolder.records[i].glaccountBalance.toString().replace(/,/g , ''));
+
             if (this.addedRecordsHolder.records[i].financialStatementCategory === 'A') {
                 if (this.addedRecordsHolder.records[i].tarragonNICChartOfAccountsName == 'Capital call cash adjustment') {
                     if (this.addedRecordsHolder.records[i].glaccountBalance > 0) {
@@ -388,7 +392,8 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
 
     saveEditAccountBalance(record){
         let updateDto = {"reportId": this.reportId,"fundName": record.chartAccountsLongDescription, "tranche": record.acronym === 'TARRAGON' ? 1 : 2,
-            "accountBalance": record.glaccountBalance};
+            "accountBalance": record.glaccountBalance.toString().replace(/,/g , '')};
+        console.log(updateDto);
         this.busy = this.periodicReportService.updateTarragonInvestment(updateDto)
             .subscribe(
                 response  => {
@@ -451,6 +456,15 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
             }else{
                 this.errorMessage = null;
                 this.recordsValid = true;
+            }
+        }
+    }
+
+    public onNumberChange(record){
+        if(record.glaccountBalance != null && record.glaccountBalance.toString().length > 0) {
+            if(record.glaccountBalance.toString()[record.glaccountBalance.toString().length - 1] != '.' || record.glaccountBalance.toString().split('.').length > 2){
+                record.glaccountBalance = record.glaccountBalance.toString().replace(/,/g , '');
+                record.glaccountBalance = parseFloat(record.glaccountBalance).toLocaleString('en', {maximumFractionDigits: 2});
             }
         }
     }

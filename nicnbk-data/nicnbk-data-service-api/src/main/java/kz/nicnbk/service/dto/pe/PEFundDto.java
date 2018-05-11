@@ -11,7 +11,7 @@ import java.util.Set;
 /**
  * Created by zhambyl on 15-Nov-16.
  */
-public class PEFundDto extends HistoryBaseEntityDto<PEFund> {
+public class PEFundDto extends HistoryBaseEntityDto<PEFund> implements Comparable{
     //FUND SUMMARY
     private String fundName;
     private String status;
@@ -630,5 +630,34 @@ public class PEFundDto extends HistoryBaseEntityDto<PEFund> {
 
     public void setOwner(String owner) {
         this.owner = owner;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        PEFundDto other = (PEFundDto) o;
+        if(this.fundName != null && other.getFundName() != null){
+            String[] thisNameArray = this.fundName.trim().split("\\s");
+            String[] otherNameArray = other.fundName.trim().split("\\s");
+
+            if(thisNameArray.length > 3 && otherNameArray.length > 3){
+                // check 3 words
+                if(thisNameArray[0].equalsIgnoreCase(otherNameArray[0]) && thisNameArray[1].equalsIgnoreCase(otherNameArray[1]) &&
+                        thisNameArray[2].equalsIgnoreCase(otherNameArray[2])) {
+                    // check vintage
+                    if(other.vintage == 0){
+                        return 1;
+                    }else if(this.vintage == 0){
+                        return -1;
+                    }
+                    return (other.vintage - this.vintage);
+                }else{
+                    return this.fundName.compareTo(other.fundName);
+                }
+            }else{
+                return this.fundName.compareTo(other.fundName);
+            }
+        }else{
+            return 0;
+        }
     }
 }

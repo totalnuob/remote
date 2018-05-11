@@ -156,6 +156,24 @@ public class LookupServiceREST extends CommonServiceREST{
         return buildNonNullResponse(lookups);
     }
 
+    @RequestMapping(value = "/ReserveCalculationExportSignerTypes/", method = RequestMethod.GET)
+    public ResponseEntity getReserveCalculationExportSignerTypeLookup(){
+        List<BaseDictionaryDto> lookups = this.lookupService.getReserveCalculationExportSignerTypeLookup();
+        return buildNonNullResponse(lookups);
+    }
+
+    @RequestMapping(value = "/ReserveCalculationExportDoerTypes/", method = RequestMethod.GET)
+    public ResponseEntity getReserveCalculationExportDoerTypeLookup(){
+        List<BaseDictionaryDto> lookups = this.lookupService.getReserveCalculationExportDoerTypeLookup();
+        return buildNonNullResponse(lookups);
+    }
+
+    @RequestMapping(value = "/ReserveCalculationExportApproveListTypes/", method = RequestMethod.GET)
+    public ResponseEntity getReserveCalculationExportApproveListTypeLookup(){
+        List<BaseDictionaryDto> lookups = this.lookupService.getReserveCalculationExportApproveListTypeLookup();
+        return buildNonNullResponse(lookups);
+    }
+
     @RequestMapping(value = "/MMFields", method = RequestMethod.GET)
     public List<BaseDictionaryDto> getMMFields(){
         List<BaseDictionaryDto> lookups = this.lookupService.getMMFields();

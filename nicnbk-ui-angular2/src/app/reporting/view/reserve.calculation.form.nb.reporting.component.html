@@ -22,13 +22,17 @@
         <h3 *ngIf="reportId != null">Reserve Calculation</h3>
     </div>
 
+
+    <div class="row withpadding">
+        <a class="btn btn-sm btn-default pull-left" data-toggle="modal" data-target="#exportSettingsModal">Export Settings</a>
+    </div>
+    <br/>
+
     <button class="btn btn-xs btn-primary pull-right" type="button" (click)="addRecord()"
             [disabled]="addedRecords != null && addedRecords.length > 0">
         <span role="button" class="glyphicon glyphicon-plus">Add</span>
     </button>
     <br/>
-    <br/>
-
     <form *ngIf="addedRecords != null && addedRecords.length > 0" (ngSubmit)="saveAddedRecords()" #addedRecordsForm="ngForm" class="well span">
         <div class="row withpadding">
 
@@ -74,7 +78,7 @@
                         </td>
                         <td>
                             <div class='input-group date col-md-2' id='dateDivId2' style="width: 100%">
-                                <input type="text" class="form-control" name="dateInput2" id="dateInputId2" [(ngModel)]="addedRecord.valueDate"/>
+                                <input disabled="addedRecord.expenseType.code === 'ADM_FEE'" type="text" class="form-control" name="dateInput2" id="dateInputId2" [(ngModel)]="addedRecord.valueDate"/>
                                     <span class="input-group-addon">
                                         <span class="glyphicon glyphicon-calendar"></span>
                                     </span>
@@ -82,10 +86,10 @@
                         </td>
 
                         <td>
-                            <input required type="number" step="0.01" class="form-control" [(ngModel)]="addedRecord.amount" [ngModelOptions]="{standalone: true}"/>
+                            <input required type="text" class="form-control" (keyup)="onNumberChange(addedRecord)" [(ngModel)]="addedRecord.amount" [ngModelOptions]="{standalone: true}"/>
                         </td>
                         <td>
-                            <input type="number" step="0.01" class="form-control" [(ngModel)]="addedRecord.amountToSPV" [ngModelOptions]="{standalone: true}"/>
+                            <input disabled="addedRecord.expenseType.code === 'ADM_FEE'" (keyup)="onNumberChange(addedRecord)" type="text" class="form-control" [(ngModel)]="addedRecord.amountToSPV" [ngModelOptions]="{standalone: true}"/>
                         </td>
                         <td>
                             <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRecord(addedRecord)">
@@ -103,7 +107,56 @@
             </div>
         </div>
     </form>
-    <br/>
+
+    <!--<button class="btn btn-sm btn-primary" type="button" data-toggle="collapse" data-target="#exportSettings"-->
+            <!--aria-expanded="false" aria-controls="exportSettings">-->
+        <!--Export settings-->
+    <!--</button>-->
+    <!--<br/>-->
+    <!--<div class="collapse jumbotron" id="exportSettings">-->
+        <!--<div class="card card-body">-->
+            <!--<div class="row withpadding">-->
+                <!--<div class="col-md-12">-->
+                    <!--<div class="col-md-4">-->
+                        <!--<label for="directorOption">Подписант</label>-->
+                        <!--<select id="directorOption" required class="form-control" [ngModelOptions]="{standalone: true}" [(ngModel)]="exportDirectorOption">-->
+                            <!--<option *ngFor="let item of exportDirectorLookup" [value]="item.code">{{item.nameRu}}</option>-->
+                        <!--</select>-->
+                    <!--</div>-->
+                    <!--<div class="col-md-4">-->
+                        <!--<label>Визы (макс. 3)</label>-->
+                        <!--<div *ngFor="let item of exportApproveListLookup; let i = index" [attr.data-index]="i">-->
+                            <!--<input id="vizaOptions" class="form-check-input" type="checkbox" [checked]="i <= 2" name="approvelistCheckbox"-->
+                                   <!--(change)="checkApproveListOption(item, $event.target.checked)"/>-->
+                            <!--<label class="form-check-label" for="vizaOptions">{{item.nameRu}}</label>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="col-md-4">-->
+                        <!--<label for="doerOption">Исполнитель</label>-->
+                        <!--<select id="doerOption" required class="form-control" [ngModelOptions]="{standalone: true}" [(ngModel)]="exportDoerOption">-->
+                            <!--<option *ngFor="let item of exportDoerLookup" [value]="item.code">{{item.nameRu}}</option>-->
+                        <!--</select>-->
+                    <!--</div>-->
+                <!--</div>-->
+
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+
+    <div class="row withpadding" style="position: relative; min-height: 80px;">
+        <div class="row pull-right">
+            <ul class="pagination" *ngIf="searchResult?.showPageFrom > 0">
+                <li><a *ngIf="searchResult?.showPageFrom > 1" (click)="search(searchResult.showPageFrom - 1)">&laquo;</a></li>
+                <li *ngFor="let i of range(searchResult.showPageFrom, searchResult.showPageTo)" [class.active]="i == searchResult.currentPage">
+                    <a (click)="search(i)">{{i}}</a>
+                </li>
+                <li><a *ngIf="searchResult.showPageTo < searchResult.totalPages" (click)="search(searchResult.showPageTo + 1)">&raquo;</a></li>
+            </ul>
+        </div>
+    </div>
+    <div>
+        <label>Total found: <span>{{searchResult?.totalElements > 0 ?  searchResult?.totalElements : 0}}</span></label>
+    </div>
 
     <div [ngBusy]="{busy: busyExport, message: 'Exporting...'}" class="row withpadding">
         <table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small" *ngIf="records != null">
@@ -154,5 +207,54 @@
             </tr>
         </table>
     </div>
+    <div class="row withpadding" style="position: relative; min-height: 80px;">
+        <div class="row pull-right">
+            <ul class="pagination" *ngIf="searchResult?.showPageFrom > 0">
+                <li><a *ngIf="searchResult?.showPageFrom > 1" (click)="search(searchResult.showPageFrom - 1)">&laquo;</a></li>
+                <li *ngFor="let i of range(searchResult.showPageFrom, searchResult.showPageTo)" [class.active]="i == searchResult.currentPage">
+                    <a (click)="search(i)">{{i}}</a>
+                </li>
+                <li><a *ngIf="searchResult.showPageTo < searchResult.totalPages" (click)="search(searchResult.showPageTo + 1)">&raquo;</a></li>
+            </ul>
+        </div>
+    </div>
     <br/><br/>
+
+    <div class="modal fade" id="exportSettingsModal" role="dialog">
+        <div class="modal-dialog" style="overflow-y: scroll; min-height: 100px; max-height:85%;  margin-top: 100px; margin-bottom:50px; width:65%;">
+            <div class="modal-content">
+                <br/>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-4">
+                                <label for="directorOption">Подписант</label>
+                                <select id="directorOption" required class="form-control" [ngModelOptions]="{standalone: true}" [(ngModel)]="exportDirectorOption">
+                                    <option *ngFor="let item of exportDirectorLookup" [value]="item.code">{{item.nameRu}}</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label>Визы (макс. 3)</label>
+                                <div *ngFor="let item of exportApproveListLookup; let i = index" [attr.data-index]="i">
+                                    <input id="vizaOptions" class="form-check-input" type="checkbox" [checked]="i <= 2" name="approvelistCheckbox"
+                                           (change)="checkApproveListOption(item, $event.target.checked)"/>
+                                    <label class="form-check-label" for="vizaOptions">{{item.nameRu}}</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="doerOption">Исполнитель</label>
+                                <select id="doerOption" required class="form-control" [ngModelOptions]="{standalone: true}" [(ngModel)]="exportDoerOption">
+                                    <option *ngFor="let item of exportDoerLookup" [value]="item.code">{{item.nameRu}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <!--<button type="button" class="btn btn-default pull-left" data-dismiss="modal"data-dismiss="modal">Close</button>-->
+                    <button type="button" class="btn btn-primary pull-right" data-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

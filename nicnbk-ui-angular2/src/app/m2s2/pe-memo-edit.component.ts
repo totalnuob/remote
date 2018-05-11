@@ -139,14 +139,8 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
                                 // TODO: check response memo
 
                                 this.memo = memo;
-                                //console.log(memo);
 
-                                this.initRadarChart();
-
-                                //console.log(this.memo);
-                                //if(this.memo.fund == null){
-                                //    this.memo.fund = new PEFund();
-                                //}
+                                //this.initRadarChart();
 
                                 this.preselectFirmStrategyGeographyIndustry(this.memo.firm);
                                 this.preselectFundStrategyGeographyIndustry(this.memo.fund);
@@ -163,17 +157,6 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
                                 if(this.memo.fundName != null && this.memo.fundName != "") {
                                     this.visible = true;
                                 }
-
-                                //// Downloading funds data
-                                //if(this.memo.firm.id != null) {
-                                //    this.getFirmData(this.memo.firm.id);
-                                //}
-
-                                // preselect memo strategies
-                                //this.preselectStrategies();
-
-                                // preselect memo geographies
-                                //this.preselectGeographies();
 
                                 // preselect memo attendees
                                 this.preselectAttendeesNIC();
@@ -280,7 +263,7 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
 
         // init chart also moved to constructor
         // due to that scores array is still empty when ngOnInit called
-        this.initRadarChart();
+        //this.initRadarChart();
     }
 
     toggle() {
@@ -427,67 +410,67 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
         scores.push(Number(this.memo.teamScore));
         scores.push(Number(this.memo.trackRecordScore));
         scores.push(Number(this.memo.strategyScore));
-        this.setUpRadarChart($('#myChart'), scores);
+        //this.setUpRadarChart($('#myChart'), scores);
 
     }
 
-    initRadarChart(){
-        var scores = new Array();
-        scores.push(Number(this.memo.teamScore));
-        scores.push(Number(this.memo.trackRecordScore));
-        scores.push(Number(this.memo.strategyScore));
+    //initRadarChart(){
+    //    var scores = new Array();
+    //    scores.push(Number(this.memo.teamScore));
+    //    scores.push(Number(this.memo.trackRecordScore));
+    //    scores.push(Number(this.memo.strategyScore));
+    //
+    //    //initializing average score for memos. if new memo skip
+    //    if(this.memo.teamScore != null) {
+    //        var totalScore = Number(this.memo.teamScore) + Number(this.memo.trackRecordScore) + Number(this.memo.strategyScore);
+    //        var rounded = Math.round((totalScore / 3) * 10) / 10;
+    //        $("#averageScore").text(rounded);
+    //    }
+    //
+    //    this.setUpRadarChart($('#myChart'), scores );
+    //}
 
-        //initializing average score for memos. if new memo skip
-        if(this.memo.teamScore != null) {
-            var totalScore = Number(this.memo.teamScore) + Number(this.memo.trackRecordScore) + Number(this.memo.strategyScore);
-            var rounded = Math.round((totalScore / 3) * 10) / 10;
-            $("#averageScore").text(rounded);
-        }
-
-        this.setUpRadarChart($('#myChart'), scores );
-    }
-
-    setUpRadarChart(ctx, scores){
-
-        var labels = ["GP and Team", "Track Record", "Strategy"];
-
-        var data = {
-            labels: labels,
-            datasets: [
-                {
-                    label: "",
-                    backgroundColor: "rgba(255,99,132,0.2)",
-                    borderColor: "rgba(255,99,132,1)",
-                    pointBackgroundColor: "rgba(255,99,132,1)",
-                    pointBorderColor: "#fff",
-                    pointHoverBackgroundColor: "#fff",
-                    pointHoverBorderColor: "rgba(255,99,132,1)",
-                    // playing with lines
-                    borderDash: [15, 2],
-                    data: scores //[4, 3, 2]
-                }
-            ]
-        };
-        var myRadarChart = new Chart(ctx, {
-            type: 'radar',
-            data: data,
-            options: {
-                legend:{
-                    display: false
-                },
-                scale: {
-                    ticks: {
-                        //beginAtZero: true,
-                        min: 0,
-                        max: 5
-                    },
-                    gridLines: {
-                        color: "#8A9396"
-                    }
-                }
-            }
-        });
-    }
+    //setUpRadarChart(ctx, scores){
+    //
+    //    var labels = ["GP and Team", "Track Record", "Strategy"];
+    //
+    //    var data = {
+    //        labels: labels,
+    //        datasets: [
+    //            {
+    //                label: "",
+    //                backgroundColor: "rgba(255,99,132,0.2)",
+    //                borderColor: "rgba(255,99,132,1)",
+    //                pointBackgroundColor: "rgba(255,99,132,1)",
+    //                pointBorderColor: "#fff",
+    //                pointHoverBackgroundColor: "#fff",
+    //                pointHoverBorderColor: "rgba(255,99,132,1)",
+    //                // playing with lines
+    //                borderDash: [15, 2],
+    //                data: scores //[4, 3, 2]
+    //            }
+    //        ]
+    //    };
+    //    var myRadarChart = new Chart(ctx, {
+    //        type: 'radar',
+    //        data: data,
+    //        options: {
+    //            legend:{
+    //                display: false
+    //            },
+    //            scale: {
+    //                ticks: {
+    //                    //beginAtZero: true,
+    //                    min: 0,
+    //                    max: 5
+    //                },
+    //                gridLines: {
+    //                    color: "#8A9396"
+    //                }
+    //            }
+    //        }
+    //    });
+    //}
 
     loadLookups(){
         this.lookupService.getClosingSchedules().then(data => this.closingScheduleList = data);

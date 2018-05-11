@@ -8,10 +8,7 @@ import kz.nicnbk.repo.api.lookup.StrategyRepository;
 import kz.nicnbk.repo.api.macromonitor.MacroMonitorFieldRepository;
 import kz.nicnbk.repo.api.macromonitor.MacroMonitorTypeRepository;
 import kz.nicnbk.repo.api.pe.IndustryRepository;
-import kz.nicnbk.repo.api.reporting.NBChartOfAccountsRepository;
-import kz.nicnbk.repo.api.reporting.NICReportingChartOfAccountsRepository;
-import kz.nicnbk.repo.api.reporting.ReserveCalculationEntityTypeRepository;
-import kz.nicnbk.repo.api.reporting.ReserveCalculationExpenseTypeRepository;
+import kz.nicnbk.repo.api.reporting.*;
 import kz.nicnbk.repo.api.reporting.privateequity.TarragonNICChartOfAccountsRepository;
 import kz.nicnbk.repo.model.base.BaseTypeEntity;
 import kz.nicnbk.repo.model.common.*;
@@ -140,6 +137,15 @@ public class LookupServiceImpl implements LookupService {
     @Autowired
     private ReserveCalculationEntityTypeRepository reserveCalculationEntityTypeRepository;
 
+    @Autowired
+    private ReserveCalculationExportSignerTypeRepository reserveCalculationExportSignerTypeRepository;
+
+    @Autowired
+    private ReserveCalculationExportDoerTypeRepository reserveCalculationExportDoerTypeRepository;
+
+    @Autowired
+    private ReserveCalculationExportApproveListTypeRepository reserveCalculationExportApproveListTypeRepository;
+
     @Override
     public <T extends BaseTypeEntity> T findByTypeAndCode(Class<T> clazz, String code) {
 
@@ -208,6 +214,12 @@ public class LookupServiceImpl implements LookupService {
                 return (T) this.reserveCalculationExpenseTypeRepository.findByCode(code);
             } else if (clazz.equals(ReserveCalculationEntityType.class)) {
                 return (T) this.reserveCalculationEntityTypeRepository.findByCode(code);
+            } else if (clazz.equals(ReserveCalculationExportSignerType.class)) {
+                return (T) this.reserveCalculationExportSignerTypeRepository.findByCode(code);
+            } else if (clazz.equals(ReserveCalculationExportDoerType.class)) {
+                return (T) this.reserveCalculationExportDoerTypeRepository.findByCode(code);
+            } else if (clazz.equals(ReserveCalculationExportApproveListType.class)) {
+                return (T) this.reserveCalculationExportApproveListTypeRepository.findByCode(code);
             }else{
                 logger.error("Failed to load lookups for clazz=" + clazz + ", code=" + code);
             }
@@ -520,6 +532,42 @@ public class LookupServiceImpl implements LookupService {
         Iterator<ReserveCalculationEntityType>  iterator = this.reserveCalculationEntityTypeRepository.findAll().iterator();
         while (iterator.hasNext()) {
             ReserveCalculationEntityType entity = iterator.next();
+            BaseDictionaryDto type = disassemble(entity);
+            dtoList.add(type);
+        }
+        return dtoList;
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getReserveCalculationExportSignerTypeLookup() {
+        List<BaseDictionaryDto> dtoList = new ArrayList<>();
+        Iterator<ReserveCalculationExportSignerType>  iterator = this.reserveCalculationExportSignerTypeRepository.findAll().iterator();
+        while (iterator.hasNext()) {
+            ReserveCalculationExportSignerType entity = iterator.next();
+            BaseDictionaryDto type = disassemble(entity);
+            dtoList.add(type);
+        }
+        return dtoList;
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getReserveCalculationExportDoerTypeLookup() {
+        List<BaseDictionaryDto> dtoList = new ArrayList<>();
+        Iterator<ReserveCalculationExportDoerType>  iterator = this.reserveCalculationExportDoerTypeRepository.findAll().iterator();
+        while (iterator.hasNext()) {
+            ReserveCalculationExportDoerType entity = iterator.next();
+            BaseDictionaryDto type = disassemble(entity);
+            dtoList.add(type);
+        }
+        return dtoList;
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getReserveCalculationExportApproveListTypeLookup() {
+        List<BaseDictionaryDto> dtoList = new ArrayList<>();
+        Iterator<ReserveCalculationExportApproveListType>  iterator = this.reserveCalculationExportApproveListTypeRepository.findAll().iterator();
+        while (iterator.hasNext()) {
+            ReserveCalculationExportApproveListType entity = iterator.next();
             BaseDictionaryDto type = disassemble(entity);
             dtoList.add(type);
         }

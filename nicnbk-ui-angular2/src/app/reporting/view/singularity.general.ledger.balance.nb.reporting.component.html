@@ -46,6 +46,7 @@
                 <td width="5%">Fund CCY</td>
                 <td width="10%" *ngIf="showAdjustmentsRedemption(null)">Adjusted redemption</td>
                 <td width="10%" *ngIf="showAdjustmentsInterestRate(null)">Interest rate</td>
+                <td>&nbsp;</td>
             </tr>
             <tr *ngFor="let record of records.generalLedgerBalanceList">
                 <td >{{record.acronym}}</td>
@@ -59,10 +60,15 @@
                 <td>{{record.segValCCY}}</td>
                 <td>{{record.fundCCY}}</td>
                 <td *ngIf="showAdjustmentsRedemption(null)">
-                    <input *ngIf="showAdjustmentsRedemption(record)" [readonly]="report.status === 'SUBMITTED'" type="number" step="0.01" class="form-control" [(ngModel)]="record.adjustedRedemption" [ngModelOptions]="{standalone: true}"/>
+                    {{record.adjustedRedemption}}
                 </td>
                 <td *ngIf="showAdjustmentsInterestRate(null)">
-                    <input *ngIf="showAdjustmentsInterestRate(record)" [readonly]="report.status === 'SUBMITTED'" type="text" class="form-control" [(ngModel)]="record.interestRate" [ngModelOptions]="{standalone: true}"/>
+                    {{record.interestRate}}
+                </td>
+                <td>
+                    <a *ngIf="showAdjustmentsRedemption(record) || showAdjustmentsInterestRate(record)" data-toggle="modal" data-target="#infoModal" (click)="getModal(record)" style="cursor: pointer">
+                        <span class="glyphicon glyphicon-edit"></span>
+                    </a>
                 </td>
 
             </tr>
@@ -72,6 +78,51 @@
     <div class="row">
         <div class="col-md-12">
             <button *ngIf="showAdjustmentsRedemption(null) || showAdjustmentsInterestRate(null)" [disabled]="!showAdjustments || report.status === 'SUBMITTED'" class="btn btn-success pull-right" (click)="saveAdjustments()">Save</button>
+        </div>
+    </div>
+
+    <div class="modal fade" id="infoModal" role="dialog">
+        <div [ngBusy]="busySave" class="modal-dialog" style="overflow-y: scroll; max-height:85%;  margin-top: 50px; margin-bottom:50px; width:65%;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title"  style="word-wrap: break-word">Adjustments</h3>
+                </div>
+                <div class="modal-body">
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="alert alert-danger" *ngIf="modalErrorMessage != null"><span>{{modalErrorMessage}}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="alert alert-info" *ngIf="modalSuccessMessage != null"><span>{{modalSuccessMessage}}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!--<p style="word-wrap: break-word;" [innerHTML]="selectedInfoContent"></p>-->
+
+                    <div class="form-group">
+                        <label for="adjustedRedemptionEdit" *ngIf="isAdjustedRedemption">Adjusted redemption</label>
+                        <input style="width: 30%" id="adjustedRedemptionEdit" class="form-control" *ngIf="isAdjustedRedemption" type="number" [(ngModel)]="adjustedRedemptionEdit"/>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="interestRateEdit" *ngIf="isInterestRate">Interest rate</label>
+                        <input style="width: 30%" id="interestRateEdit" class="form-control" *ngIf="isInterestRate" type="text" [(ngModel)]="interestRateEdit"/>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="commentEdit">Comment</label>
+                        <input id="commentEdit" class="form-control" type="text" placeholder="Add comment..." [(ngModel)]="commentEdit"/>
+                    </div>
+                </div>
+                <br/>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal" (click)="closeInfoModal()">Close</button>
+
+                    <button type="button" class="btn btn-success pull-right" (click)="saveInfoModal()">Save</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>

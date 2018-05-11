@@ -314,255 +314,164 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="row top-buffer">
-                                    <div class="col-md-12">
-                                        <canvas id="myChart"></canvas>
-                                    </div>
-                                </div>
+                                <!--<div class="row top-buffer">-->
+                                    <!--<div class="col-md-12">-->
+                                        <!--<canvas id="myChart"></canvas>-->
+                                    <!--</div>-->
+                                <!--</div>-->
                             </div>
 
                         </div>
                     </div>
 
-                    <div class="row top-buffer">
-                        <div class="col-md-12">
-                            <div class="col-md-6">
-                                &nbsp;
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group form-horizontal">
-                                <label class="control-label col-md-2" for="averageScore">Score:<span id="averageScore"></span></label>
-                                <label class="control-label col-md-2" for="conviction">Conviction:</label>
-                                <div class="col-md-2">
-                                    <select id="conviction" class="form-control" name="conviction" [(ngModel)]="memo.conviction">
-                                        <option value="1">1</option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
-                                        <option value="4">4</option>
-                                        <option value="5">5</option>
-                                    </select>
-                                </div>
-                                    </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!--<a (click)="toggle()">Fund details {{ visible ? '&#9660;' : '&#9658;' }}</a>-->
-                    <!--<div [hidden]="!visible">-->
-                        <!--<div class="row top-buffer withpadding">-->
-                            <!--<div class="col-md-5">-->
-                                <!--<input type="text" placeholder="Fund name... " class="form-control" id="fundName"-->
-                                       <!--name="fundName" [(ngModel)]="memo.fundName" name="fundName" maxlength="250"/>-->
+                    <!--<div class="row top-buffer">-->
+                        <!--<div class="col-md-12">-->
+                            <!--<div class="col-md-6">-->
+                                <!--&nbsp;-->
                             <!--</div>-->
-                        <!--</div>-->
-                        <!--<label class="control-label col-md-1">&nbsp;</label>-->
-                        <!--<div class="row top-buffer">-->
-                            <!--<div class="col-md-12">-->
-                                <!--&lt;!&ndash;<label class="checkbox-inline col-md-2">&nbsp;</label>&ndash;&gt;-->
-                                <!--<label class="checkbox-inline col-md-2">-->
-                                    <!--<input  type="radio" id="currentlyFundRaising" [checked]="memo.currentlyFundRaising"-->
-                                            <!--(click)="setCurrentlyFundRaising()"/>-->
-                                    <!--<span>Currently fund-raising</span>-->
-                                <!--</label>-->
-                                <!--<label for="closingSchedule" class="col-md-1">Closing schedule</label>-->
+                            <!--<div class="col-md-6">-->
+                                <!--<div class="form-group form-horizontal">-->
+                                <!--<label class="control-label col-md-2" for="averageScore">Score:<span id="averageScore"></span></label>-->
+                                <!--<label class="control-label col-md-2" for="conviction">Conviction:</label>-->
                                 <!--<div class="col-md-2">-->
-                                    <!--<select id="closingSchedule" class="form-control" [disabled]="!memo.currentlyFundRaising"-->
-                                            <!--name="closingSchedule" [(ngModel)]="memo.closingSchedule">-->
-                                        <!--<option *ngFor="let item of closingScheduleList" [value]="item.code">{{item.nameEn}}</option>-->
+                                    <!--<select id="conviction" class="form-control" name="conviction" [(ngModel)]="memo.conviction">-->
+                                        <!--<option value="1">1</option>-->
+                                        <!--<option value="2">2</option>-->
+                                        <!--<option value="3">3</option>-->
+                                        <!--<option value="4">4</option>-->
+                                        <!--<option value="5">5</option>-->
                                     <!--</select>-->
                                 <!--</div>-->
-                                <!--<label for="size" class="col-md-1">Size, mn</label>-->
-                                <!--<div class="col-md-2">-->
-                                    <!--<input class="form-control" id="size" name="fundSize" [(ngModel)]="memo.fundSize"/>-->
-                                <!--</div>-->
-                                <!--<div class="col-md-2">-->
-                                    <!--<select id="sizeCurrency" class="form-control" name="fundSizeCurrency" [(ngModel)] = "memo.fundSizeCurrency">-->
-                                        <!--<option *ngFor="let item of currencyList" [value]="item.code">{{item.nameEn}}</option>-->
-                                    <!--</select>-->
-                                <!--</div>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                        <!--<div class="row top-buffer">-->
-                            <!--<div class="col-md-12">-->
-                                <!--<div class="col-md-5">&nbsp;</div>-->
-                                <!--<label for="preinvested" class="col-md-1">Predecessor fund invested %</label>-->
-                                <!--<div class="col-md-2">-->
-                                    <!--<input class="form-control" id="preInvested" name="preInvested" [(ngModel)]="memo.preInvested"/>-->
-                                <!--</div>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                        <!--<div class="row top-buffer">-->
-                            <!--<div class="col-md-12">-->
-                                <!--&lt;!&ndash;<label class="checkbox-inline col-md-2">&nbsp;</label>&ndash;&gt;-->
-                                <!--<label class="checkbox-inline col-md-2">-->
-                                    <!--<input type="radio" id="openingSoon" [checked] = "memo.openingSoon"-->
-                                           <!--(click)="setOpeningSoon()"/>-->
-                                    <!--<span>Opening soon</span>-->
-                                <!--</label>-->
-                                <!--<label for="openingSchedule" class="col-md-1">Opening schedule</label>-->
-                                <!--<div class="col-md-2">-->
-                                    <!--&lt;!&ndash;<input disabled="true" class="form-control" id="openingSchedule" th:field="${memo.openingSchedule}"/>&ndash;&gt;-->
-                                    <!--<select id="openingSchedule" class="form-control" [disabled]="!memo.openingSoon" name="openingSchedule" [(ngModel)]="memo.openingSchedule">-->
-                                        <!--<option *ngFor="let item of openingScheduleList" [value]="item.code">{{item.nameEn}}</option>-->
-                                    <!--</select>-->
-                                <!--</div>-->
-                                <!--<label class="col-md-1">Strategy</label>-->
-                                <!--<div class="col-md-2" *ngIf="strategyList?.length > 0">-->
-                                    <!--<ng-select #strategySelect [initData]="memo.strategies"-->
-                                               <!--[multiple]="true"-->
-                                               <!--[items]="strategyList"-->
-                                               <!--(data)="refreshStrategy($event)"-->
-                                               <!--(selected)="selected($event)"-->
-                                               <!--(removed)="removed($event)"-->
-                                               <!--placeholder="No strategy selected"></ng-select>-->
-
-                                <!--</div>-->
-                                <!--<label class="col-md-1">Geography</label>-->
-                                <!--<div class="col-md-2"  *ngIf="geographyList?.length > 0">-->
-                                    <!--<ng-select #geographySelect [initData]="memo.geographies"-->
-                                               <!--[multiple]="true"-->
-                                               <!--[items]="geographyList"-->
-                                               <!--(data)="refreshGeography($event)"-->
-                                               <!--(selected)="selected($event)"-->
-                                               <!--(removed)="removed($event)"-->
-                                               <!--placeholder="No geography selected"></ng-select>-->
-                                <!--</div>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                        <!--<div class="row top-buffer">-->
-                            <!--<div class="col-md-12">-->
-                                <!--<label class="col-md-2">Suitability(Y/N)</label>-->
-                                <!--<div class="col-md-1">-->
-                                    <!--<label class="checkbox-inline">-->
-                                        <!--<input type="radio" [checked]="!memo.suitable"-->
-                                               <!--(click)="setNonSuitableTemp()" name="suitabilityTemp" value=false/>-->
-                                        <!--<span>N</span>-->
-                                    <!--</label>-->
-                                <!--</div>-->
-                                <!--<div class="col-md-1">-->
-                                    <!--<label class="checkbox-inline">-->
-                                        <!--<input type="radio" name="suitabilityTemp" [checked]="memo.suitable"-->
-                                               <!--(click)="setSuitableTemp()" value=true/>-->
-                                        <!--<span>Y</span>-->
-                                    <!--</label>-->
-                                <!--</div>-->
-                                <!--<div class="col-md-1">&nbsp;</div>-->
-                                <!--<label for="nonsuitableReasonTemp" class="col-md-1">If No, why</label>-->
-                                <!--<div class="col-md-5">-->
-                                    <!--<textarea  fz-elastic spellcheck="false"  class="form-control col-md-4" id="nonsuitableReasonTemp" maxlength="1000"-->
-                                               <!--[disabled]="memo.suitable" name="memoNonsuitableReason" [(ngModel)]="memo.nonsuitableReason"></textarea>-->
                                 <!--</div>-->
                             <!--</div>-->
                         <!--</div>-->
                     <!--</div>-->
+
                     <hr style="border-top: 1px solid #B5AEAE"/>
                     <div class="row top-buffer withpadding">
                         <div class="col-md-12" style="background-color:#5bc0de; height: 34px">
-                            <div>
-                                <div class="col-md-6">
-                                    <h5>GP AND TEAM</h5>
-                                </div>
-                                <div class="col-md-5">&nbsp;</div>
-                                <div class="col-md-1">
-                                    <select id="teamScore" class="form-control" (ngModelChange)="updateScore($event)"
-                                            name="teamScore" [(ngModel)]="memo.teamScore">
-                                        <option value="1">1</option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
-                                        <option value="4">4</option>
-                                        <option value="5">5</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row top-buffer withpadding">
-                        <div class="col-md-12 nopadding">
-                            <textarea fz-elastic spellcheck="false"  class="form-control" name="teamNotes" [(ngModel)]="memo.teamNotes" ></textarea>
-                        </div>
-                    </div>
-                    <div class="row top-buffer withpadding">
-                        <div class="col-md-12" style="background-color:#5bc0de; height: 34px">
-                            <div class="col-md-6">
-                                <h5>TRACK RECORD</h5>
-                            </div>
-                            <div class="col-md-5">&nbsp;</div>
-                            <div class="col-md-1">
-                                <select id="trackRecordScore" class="form-control" (ngModelChange)="updateScore()"
-                                        name="trackRecordScore" [(ngModel)]="memo.trackRecordScore">
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option valNue="4">4</option>
-                                    <option value="5">5</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row top-buffer withpadding">
-                        <div class="col-md-12 nopadding">
-                            <textarea fz-elastic spellcheck="false"  class="form-control" name="trackRecordNotes" [(ngModel)]="memo.trackRecordNotes"></textarea>
-                        </div>
-                    </div>
-                    <div class="row top-buffer withpadding">
-                        <div class="col-md-12" style="background-color:#5bc0de; height: 34px">
-                            <div class="col-md-6">
-                                <h5>STRATEGY</h5>
-                            </div>
-                            <div class="col-md-5">&nbsp;</div>
-                            <div class="col-md-1">
-                                <select id="strategyScore" class="form-control" (ngModelChange)="updateScore()"
-                                        name="strategyScore" [(ngModel)]="memo.strategyScore">
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="5">5</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row top-buffer withpadding">
-                        <div class="col-md-12 nopadding">
-                            <textarea fz-elastic spellcheck="false"  class="form-control" name="strategyNotes" [(ngModel)]="memo.strategyNotes"></textarea>
-                        </div>
-                    </div>
-                    <div class="row top-buffer withpadding">
-                        <div class="col-md-12" style="background-color:#5bc0de; height: 34px">
                             <div class="col-md-2">
-                                <h5>OTHER INFO</h5>
+                                <h5>MEMO SUMMARY</h5>
                             </div>
                             <div class="col-md-10">&nbsp;</div>
                         </div>
                     </div>
                     <div class="row top-buffer withpadding">
                         <div class="col-md-12 nopadding">
-                            <textarea fz-elastic spellcheck="false"  class="form-control" name="otherNotes" [(ngModel)]="memo.otherNotes"></textarea>
+                            <textarea fz-elastic spellcheck="false"  class="form-control" name="memoSummary" [(ngModel)]="memo.memoSummary"></textarea>
                         </div>
                     </div>
-                    <div class="row top-buffer withpadding">
-                        <div class="col-md-12" style="background-color:#5bc0de; height: 34px">
-                            <div class="col-md-2">
-                                <h5>FOLLOW-UPS</h5>
-                            </div>
-                            <div class="col-md-10">&nbsp;</div>
-                        </div>
-                    </div>
-                    <div class="row top-buffer withpadding">
-                        <div class="col-md-6">
-                            <label>NIC</label>
-                        </div>
-                        <div class="col-md-6">
-                            <label>OTHER</label>
-                        </div>
-                    </div>
-                    <div class="row top-buffer withpadding">
-                        <div class="col-md-6 nopadding">
-                            <textarea fz-elastic  spellcheck="false"  class="form-control" name="nicFollowups" [(ngModel)]="memo.nicFollowups"></textarea>
-                        </div>
-                        <div class="col-md-6 nopadding">
-                            <textarea fz-elastic  spellcheck="false"  class="form-control" name="otherPartyFollowups" [(ngModel)]="memo.otherPartyFollowups"></textarea>
-                        </div>
-                    </div>
+
+
+
+                    <!--<div class="row top-buffer withpadding">-->
+                        <!--<div class="col-md-12" style="background-color:#5bc0de; height: 34px">-->
+                            <!--<div>-->
+                                <!--<div class="col-md-6">-->
+                                    <!--<h5>GP AND TEAM</h5>-->
+                                <!--</div>-->
+                                <!--<div class="col-md-5">&nbsp;</div>-->
+                                <!--<div class="col-md-1">-->
+                                    <!--<select id="teamScore" class="form-control" (ngModelChange)="updateScore($event)"-->
+                                            <!--name="teamScore" [(ngModel)]="memo.teamScore">-->
+                                        <!--<option value="1">1</option>-->
+                                        <!--<option value="2">2</option>-->
+                                        <!--<option value="3">3</option>-->
+                                        <!--<option value="4">4</option>-->
+                                        <!--<option value="5">5</option>-->
+                                    <!--</select>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="row top-buffer withpadding">-->
+                        <!--<div class="col-md-12 nopadding">-->
+                            <!--<textarea fz-elastic spellcheck="false"  class="form-control" name="teamNotes" [(ngModel)]="memo.teamNotes" ></textarea>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="row top-buffer withpadding">-->
+                        <!--<div class="col-md-12" style="background-color:#5bc0de; height: 34px">-->
+                            <!--<div class="col-md-6">-->
+                                <!--<h5>TRACK RECORD</h5>-->
+                            <!--</div>-->
+                            <!--<div class="col-md-5">&nbsp;</div>-->
+                            <!--<div class="col-md-1">-->
+                                <!--<select id="trackRecordScore" class="form-control" (ngModelChange)="updateScore()"-->
+                                        <!--name="trackRecordScore" [(ngModel)]="memo.trackRecordScore">-->
+                                    <!--<option value="1">1</option>-->
+                                    <!--<option value="2">2</option>-->
+                                    <!--<option value="3">3</option>-->
+                                    <!--<option valNue="4">4</option>-->
+                                    <!--<option value="5">5</option>-->
+                                <!--</select>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="row top-buffer withpadding">-->
+                        <!--<div class="col-md-12 nopadding">-->
+                            <!--<textarea fz-elastic spellcheck="false"  class="form-control" name="trackRecordNotes" [(ngModel)]="memo.trackRecordNotes"></textarea>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="row top-buffer withpadding">-->
+                        <!--<div class="col-md-12" style="background-color:#5bc0de; height: 34px">-->
+                            <!--<div class="col-md-6">-->
+                                <!--<h5>STRATEGY</h5>-->
+                            <!--</div>-->
+                            <!--<div class="col-md-5">&nbsp;</div>-->
+                            <!--<div class="col-md-1">-->
+                                <!--<select id="strategyScore" class="form-control" (ngModelChange)="updateScore()"-->
+                                        <!--name="strategyScore" [(ngModel)]="memo.strategyScore">-->
+                                    <!--<option value="1">1</option>-->
+                                    <!--<option value="2">2</option>-->
+                                    <!--<option value="3">3</option>-->
+                                    <!--<option value="4">4</option>-->
+                                    <!--<option value="5">5</option>-->
+                                <!--</select>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="row top-buffer withpadding">-->
+                        <!--<div class="col-md-12 nopadding">-->
+                            <!--<textarea fz-elastic spellcheck="false"  class="form-control" name="strategyNotes" [(ngModel)]="memo.strategyNotes"></textarea>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="row top-buffer withpadding">-->
+                        <!--<div class="col-md-12" style="background-color:#5bc0de; height: 34px">-->
+                            <!--<div class="col-md-2">-->
+                                <!--<h5>OTHER INFO</h5>-->
+                            <!--</div>-->
+                            <!--<div class="col-md-10">&nbsp;</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="row top-buffer withpadding">-->
+                        <!--<div class="col-md-12 nopadding">-->
+                            <!--<textarea fz-elastic spellcheck="false"  class="form-control" name="otherNotes" [(ngModel)]="memo.otherNotes"></textarea>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="row top-buffer withpadding">-->
+                        <!--<div class="col-md-12" style="background-color:#5bc0de; height: 34px">-->
+                            <!--<div class="col-md-2">-->
+                                <!--<h5>FOLLOW-UPS</h5>-->
+                            <!--</div>-->
+                            <!--<div class="col-md-10">&nbsp;</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="row top-buffer withpadding">-->
+                        <!--<div class="col-md-6">-->
+                            <!--<label>NIC</label>-->
+                        <!--</div>-->
+                        <!--<div class="col-md-6">-->
+                            <!--<label>OTHER</label>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="row top-buffer withpadding">-->
+                        <!--<div class="col-md-6 nopadding">-->
+                            <!--<textarea fz-elastic  spellcheck="false"  class="form-control" name="nicFollowups" [(ngModel)]="memo.nicFollowups"></textarea>-->
+                        <!--</div>-->
+                        <!--<div class="col-md-6 nopadding">-->
+                            <!--<textarea fz-elastic  spellcheck="false"  class="form-control" name="otherPartyFollowups" [(ngModel)]="memo.otherPartyFollowups"></textarea>-->
+                        <!--</div>-->
+                    <!--</div>-->
                     <br/>
                     <div class="row top-buffer">
                         <div class="col-md-6">

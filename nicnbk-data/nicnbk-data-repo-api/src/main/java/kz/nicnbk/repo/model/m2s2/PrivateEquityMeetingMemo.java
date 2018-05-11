@@ -25,6 +25,8 @@ public class PrivateEquityMeetingMemo extends FundMeetingMemo {
     private String otherPartyFollowups;
     private Short conviction;
 
+    private String memoSummary;
+
     private PEFirm firm;
     private PEFund fund;
 
@@ -140,5 +142,14 @@ public class PrivateEquityMeetingMemo extends FundMeetingMemo {
 
     public void setFund(PEFund fund) {
         this.fund = fund;
+    }
+
+    @Column(name="memo_summary", columnDefinition = "TEXT")
+    public String getMemoSummary() {
+        return memoSummary;
+    }
+
+    public void setMemoSummary(String memoSummary) {
+        this.memoSummary = memoSummary;
     }
 }

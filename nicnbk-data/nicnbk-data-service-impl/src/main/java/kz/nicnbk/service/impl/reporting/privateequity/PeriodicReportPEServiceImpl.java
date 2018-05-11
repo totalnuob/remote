@@ -286,7 +286,10 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
                     }
                     recordDto.setAcronym(acronym);
                     recordDto.setBalanceDate(report.getReportDate());
-                    recordDto.setGLAccountBalance(reserveCalculationDto.getAmount());
+
+                    Double amount = reserveCalculationDto.getAmountToSPV() != null ?
+                            reserveCalculationDto.getAmountToSPV() : reserveCalculationDto.getAmount();
+                    recordDto.setGLAccountBalance(amount);
                     recordDto.setAdded(false);
                     recordDto.setEditable(false);
 
@@ -300,7 +303,7 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
                     GeneratedGeneralLedgerFormDto recordDtoOpposite = new GeneratedGeneralLedgerFormDto();
                     recordDtoOpposite.setAcronym(acronym);
                     recordDtoOpposite.setBalanceDate(report.getReportDate());
-                    recordDtoOpposite.setGLAccountBalance(MathUtils.subtract(0.0, reserveCalculationDto.getAmount()));
+                    recordDtoOpposite.setGLAccountBalance(MathUtils.subtract(0.0, amount));
                     recordDtoOpposite.setAdded(false);
                     recordDtoOpposite.setEditable(false);
 

@@ -13,4 +13,8 @@ export class NICKMFReportingInfo{
 
     matchingNICChartOfAccounts: NICReportingChartOfAccounts[]; // handled in UI only
 
+    calculatedAccountBalance: number;
+
+    calculatedAccountBalanceFormula: string;
+
 }

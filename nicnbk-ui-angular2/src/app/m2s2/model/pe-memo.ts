@@ -6,6 +6,8 @@ export class PEMemo extends FundMemo{
 
     conviction: number;
 
+    memoSummary: string;
+
     teamNotes: string;
     teamScore: number;
     trackRecordNotes: string;

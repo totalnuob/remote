@@ -37,6 +37,9 @@ export class NICKMFInputNBReportingComponent extends CommonNBReportingComponent 
 
     private data: NICKMFReportingInfoHolder;
 
+    private selectedInfoHeader;
+    private selectedInfoContent;
+
     constructor(
         private router: Router,
         private route: ActivatedRoute,
@@ -77,6 +80,7 @@ export class NICKMFInputNBReportingComponent extends CommonNBReportingComponent 
                                                 if(this.data.records){
                                                     for(var i = 0; i < this.data.records.length; i++) {
                                                         this.nbChartOfAccountsChanged(this.data.records[i], true);
+                                                        this.onNumberChange(this.data.records[i]);
                                                     }
 
                                                 }
@@ -110,6 +114,11 @@ export class NICKMFInputNBReportingComponent extends CommonNBReportingComponent 
 
     save(){
         if(this.checkRecords()) {
+            for(var i = 0; i < this.data.records.length; i++) {
+                if(this.data.records[i].accountBalance) {
+                    this.data.records[i].accountBalance = Number(this.data.records[i].accountBalance.toString().replace(/,/g, ''));
+                }
+            }
             this.periodicReportService.saveNICKMFReportingInfo(this.data)
                 .subscribe(
                     response => {
@@ -207,27 +216,27 @@ export class NICKMFInputNBReportingComponent extends CommonNBReportingComponent 
     calculateSum(record){
         if(record.nbChartOfAccountsCode === '2923.010' && record.nicChartOfAccountsName === 'Начисленная амортизация - Организационные расходы NICK MF'){
             if(this.data.report.reportDate != null) {
-                var month = Number(this.data.report.reportDate.split('-')[1]);
-                var sum = Number(0 - 4238 - (14963 / 60 * month)).toFixed(2);
-                record.accountBalance = sum;
+                //var month = Number(this.data.report.reportDate.split('-')[1]);
+                //var sum = Number(0 - 4238 - (14963 / 60 * month)).toFixed(2);
+                record.accountBalance = record.calculatedAccountBalance;
             }
         }else if(record.nbChartOfAccountsCode === '3393.020' && record.nicChartOfAccountsName === 'Комиссия за администрирование к оплате NICK MF'){
             if(this.data.report.reportDate != null) {
-                var month = Number(this.data.report.reportDate.split('-')[1]);
-                var sum = Number(0 - (40000/12 * month) + 9999.99 + 9999.99).toFixed(2);
-                record.accountBalance = sum;
+                //var month = Number(this.data.report.reportDate.split('-')[1]);
+                //var sum = Number(0 - (40000/12 * month) + 9999.99 + 9999.99).toFixed(2);
+                record.accountBalance = record.calculatedAccountBalance;
             }
         }else if(record.nbChartOfAccountsCode === '7473.080' && record.nicChartOfAccountsName === 'Расходы за администрирование NICK MF'){
             if(this.data.report.reportDate != null) {
-                var month = Number(this.data.report.reportDate.split('-')[1]);
-                var sum = Number(40000/12 * month).toFixed(2);
-                record.accountBalance = sum;
+                //var month = Number(this.data.report.reportDate.split('-')[1]);
+                //var sum = Number(40000/12 * month).toFixed(2);
+                record.accountBalance = record.calculatedAccountBalance;
             }
         }else if(record.nbChartOfAccountsCode === '7473.080' && record.nicChartOfAccountsName === 'Амортизация организационных расходов NICK MF'){
             if(this.data.report.reportDate != null) {
-                var month = Number(this.data.report.reportDate.split('-')[1]);
-                var sum = Number(14963/60 * month).toFixed(2);
-                record.accountBalance = sum;
+                //var month = Number(this.data.report.reportDate.split('-')[1]);
+                //var sum = Number(14963/60 * month).toFixed(2);
+                record.accountBalance = record.calculatedAccountBalance;
             }
         }else{
             alert("No formula exists for this account number and name");
@@ -243,10 +252,10 @@ export class NICKMFInputNBReportingComponent extends CommonNBReportingComponent 
         if(this.data.records){
             var sum = 0.0;
             for(var i = 0; i < this.data.records.length; i++){
-                if(isNumeric(this.data.records[i].accountBalance)){
-                    sum += Number(this.data.records[i].accountBalance);
+                if(this.data.records[i].accountBalance && isNumeric(this.data.records[i].accountBalance.toString().replace(/,/g , ''))){
+                    sum += Number(this.data.records[i].accountBalance.toString().replace(/,/g , ''));
                 }else{
-                }
+            }
             }
             return sum;
         }
@@ -260,6 +269,7 @@ export class NICKMFInputNBReportingComponent extends CommonNBReportingComponent 
                     if(response && response.records && response.records.length > 0) {
                         for (var i = 0; i < response.records.length; i++) {
                             //console.log(response.records[i]);
+                            this.onNumberChange(response.records[i]);
                             this.data.records.push(response.records[i]);
                             this.nbChartOfAccountsChanged(response.records[i], true);
                         }
@@ -277,4 +287,24 @@ export class NICKMFInputNBReportingComponent extends CommonNBReportingComponent 
     public showNextButton(){
         return this.checkTotal();
     }
+
+    public onNumberChange(record){
+        if(record.accountBalance != null && record.accountBalance != 'undefined' && record.accountBalance.toString().length > 0) {
+            if(record.accountBalance.toString()[record.accountBalance.toString().length - 1] != '.' || record.accountBalance.toString().split('.').length > 2){
+                record.accountBalance = record.accountBalance.toString().replace(/,/g , '');
+                record.accountBalance = parseFloat(record.accountBalance).toLocaleString('en', {maximumFractionDigits: 2});
+            }
+        }
+    }
+
+    public getInfo(record){
+        this.selectedInfoContent = record.calculatedAccountBalanceFormula;
+        this.selectedInfoHeader = record.nbChartOfAccountsCode + " - " + record.nicChartOfAccountsName;
+    }
+
+    public closeInfoModal(){
+        this.selectedInfoContent = null;
+        this.selectedInfoHeader = null;
+    }
+
 }

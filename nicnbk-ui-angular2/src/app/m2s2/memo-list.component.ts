@@ -93,7 +93,7 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
                     );
                 } else {
                    this.search(0);
-               }
+                }
             });
     }
 

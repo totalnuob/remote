@@ -25,9 +25,9 @@ public class MathUtils {
         return a.divide(b, DEFAULT_SCALE, RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP);
     }
 
-    public static BigDecimal divide(Double a, Double b){
+    public static Double divide(Double a, Double b){
         return divide(new BigDecimal(a).setScale(2, RoundingMode.HALF_UP),
-                new BigDecimal(b).setScale(2, RoundingMode.HALF_UP));
+                new BigDecimal(b).setScale(2, RoundingMode.HALF_UP)).doubleValue();
     }
 
     public static Double multiply(Double value1, Double value2){

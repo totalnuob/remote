@@ -21,6 +21,8 @@ public class PrivateEquityMeetingMemoDto extends FundMeetingMemoDto {
     private String otherPartyFollowups;
     private Short conviction;
 
+    private String memoSummary;
+
     private PEFirmDto firm;
     private PEFundDto fund;
 
@@ -120,4 +122,11 @@ public class PrivateEquityMeetingMemoDto extends FundMeetingMemoDto {
         this.fund = fund;
     }
 
+    public String getMemoSummary() {
+        return memoSummary;
+    }
+
+    public void setMemoSummary(String memoSummary) {
+        this.memoSummary = memoSummary;
+    }
 }

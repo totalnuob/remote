@@ -6,7 +6,8 @@ package kz.nicnbk.service.impl.reporting.lookup;
 public enum ReserveCalculationsExpenseTypeLookup {
 
     ADD("ADD"),
-    RETURN("RETURN");
+    RETURN("RETURN"),
+    ADMINISTRATION_FEES("ADM_FEE");
 
     private String code;
 

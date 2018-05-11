@@ -29,6 +29,9 @@ export const PE_INDUSTRY_FOCUS_URL = LOOKUP_SERVICE_URL + "PEIndustry";
 
 export const RESERVE_CALCULATION_EXPENSE_TYPE_URL = LOOKUP_SERVICE_URL + "ReserveCalculationExpenseTypes/";
 export const RESERVE_CALCULATION_ENTITY_TYPE_URL = LOOKUP_SERVICE_URL + "ReserveCalculationEntityTypes/";
+export const RESERVE_CALCULATION_EXPORT_SIGNER_TYPE_URL = LOOKUP_SERVICE_URL + "ReserveCalculationExportSignerTypes/";
+export const RESERVE_CALCULATION_EXPORT_DOER_TYPE_URL = LOOKUP_SERVICE_URL + "ReserveCalculationExportDoerTypes/";
+export const RESERVE_CALCULATION_EXPORT_APPROVE_LIST_TYPE_URL = LOOKUP_SERVICE_URL + "ReserveCalculationExportApproveListTypes/";
 
 export const MM_FIELDS_URL = LOOKUP_SERVICE_URL + "MMFields";
 

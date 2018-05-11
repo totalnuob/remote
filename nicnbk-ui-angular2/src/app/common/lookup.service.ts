@@ -32,6 +32,9 @@ import {MM_FIELDS_URL} from "./lookup.service.url";
 import {NEWS_TYPE_URL} from "./lookup.service.url";
 import {MEETING_TYPE_URL} from "./lookup.service.url";
 import {MEMO_TYPE_URL} from "./lookup.service.url";
+import {RESERVE_CALCULATION_EXPORT_SIGNER_TYPE_URL} from "./lookup.service.url";
+import {RESERVE_CALCULATION_EXPORT_DOER_TYPE_URL} from "./lookup.service.url";
+import {RESERVE_CALCULATION_EXPORT_APPROVE_LIST_TYPE_URL} from "./lookup.service.url";
 
 
 @Injectable()
@@ -240,6 +243,24 @@ export class LookupService extends CommonService{
 
     getReserveCalculationEntityTypeLookup(): Observable<BaseDictionary[]>{
         return this.http.get(RESERVE_CALCULATION_ENTITY_TYPE_URL, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+
+    getReserveCalculationExportSignerTypeLookup(): Observable<BaseDictionary[]>{
+        return this.http.get(RESERVE_CALCULATION_EXPORT_SIGNER_TYPE_URL, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+
+    getReserveCalculationExportDoerTypeLookup(): Observable<BaseDictionary[]>{
+        return this.http.get(RESERVE_CALCULATION_EXPORT_DOER_TYPE_URL, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+
+    getReserveCalculationExportApproveListTypeLookup(): Observable<BaseDictionary[]>{
+        return this.http.get(RESERVE_CALCULATION_EXPORT_APPROVE_LIST_TYPE_URL, this.getOptionsWithCredentials())
             .map(this.extractDataList)
             .catch(this.handleErrorResponse);
     }

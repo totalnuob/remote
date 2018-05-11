@@ -223,6 +223,13 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
         return buildNonNullResponse(holderDto);
     }
 
+//    @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+//    @RequestMapping(value = "/NICKMFReportingInfoCalculatedValue/{reportId}", method = RequestMethod.POST)
+//    public ResponseEntity getNICKMFReportingDataCalculatedValue(@RequestBody NICKMFReportingDataCalculatedValueRequestDto requestDto) {
+//        Double value = this.periodicReportNICKMFService.getNICKMFReportingDataCalculatedValue(requestDto);
+//        return buildNonNullResponse(value);
+//    }
+
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/NICKMFReportingInfoPreviousMonth/{reportId}", method = RequestMethod.GET)
     public ResponseEntity getNICKMFReportingDataFromPreviousMonth(@PathVariable Long reportId) {
@@ -601,6 +608,13 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
     }
 
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/searchReserveCalculations/", method = RequestMethod.POST)
+    public ResponseEntity searchReserveCalculationRecords(@RequestBody ReserveCalculationSearchParams searchParams) {
+        ReserveCalculationPagedSearchResult responseDto  = this.reserveCalculationService.search(searchParams);
+        return buildNonNullResponse(responseDto);
+    }
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/reserveCalculationSave/", method = RequestMethod.POST)
     public ResponseEntity saveReserveCalculation( @RequestBody List<ReserveCalculationDto> records) {
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
@@ -637,18 +651,19 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
         return buildDeleteResponseEntity(deleted);
     }
 
-    @RequestMapping(value="reserveCalculation/export/{recordId}/{type}", method= RequestMethod.GET)
-    @ResponseBody
+    @RequestMapping(value="reserveCalculation/export/{recordId}/{type}", method= RequestMethod.POST)
+    //@ResponseBody
     public void exportCapitalCall(@PathVariable(value="recordId") Long recordId,
-                                      @PathVariable(value = "type") String type,
-                                      HttpServletResponse response) {
+                                  @PathVariable(value = "type") String type,
+                                  @RequestBody ReserveCalculationExportParamsDto exportParamsDto,
+                                  HttpServletResponse response) {
 
         // TODO: control file download by user role
         // TODO: Check rights
 
         FilesDto filesDto = null;
         try{
-            filesDto = this.reserveCalculationService.getExportFileStream(recordId, type);
+            filesDto = this.reserveCalculationService.getExportFileStream(recordId, type, exportParamsDto);
         }catch (IllegalStateException ex){
             filesDto = null;
         }

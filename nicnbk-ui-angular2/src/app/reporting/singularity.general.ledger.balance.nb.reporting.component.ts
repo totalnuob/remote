@@ -30,7 +30,18 @@ export class SingularityGeneralLedgerBalanceNBReportingComponent extends CommonN
     prevPageSource;
     showAdjustments: boolean;
 
-    busy: Subscription;
+    adjustedRedemptionEdit: number;
+    interestRateEdit: string;
+    commentEdit: string;
+    editedRecordId: number;
+
+    isAdjustedRedemption: boolean;
+    isInterestRate: boolean;
+
+    modalErrorMessage: string;
+    modalSuccessMessage: string;
+
+    busy, busyCreate: Subscription;
 
     constructor(
         private router: Router,
@@ -132,9 +143,17 @@ export class SingularityGeneralLedgerBalanceNBReportingComponent extends CommonN
             this.busy = this.periodicReportService.saveSingularityAdjustments(adjustments)
                 .subscribe(
                     response  => {
-                        console.log(response);
                         if(response){
                             this.postAction("Successfully saving Singularity adjustments", null);
+                            for(var i = 0; i < this.records.generalLedgerBalanceList.length; i ++){
+                                if(this.records.generalLedgerBalanceList[i].id == this.editedRecordId) {
+                                    this.records.generalLedgerBalanceList[i].adjustedRedemption = this.adjustedRedemptionEdit;
+                                    this.records.generalLedgerBalanceList[i].interestRate = this.interestRateEdit;
+                                    this.records.generalLedgerBalanceList[i].comment = this.commentEdit;
+
+                                    break;
+                                }
+                            }
                         }else{
                             this.postAction(null, "Error saving Singularity adjustments");
                         }
@@ -151,6 +170,75 @@ export class SingularityGeneralLedgerBalanceNBReportingComponent extends CommonN
         }
 
 
+    }
+
+
+    public getModal(record){
+        this.editedRecordId = record.id;
+
+        this.isAdjustedRedemption = this.showAdjustmentsRedemption(record);
+        this.isInterestRate = this.showAdjustmentsInterestRate(record);
+
+        this.adjustedRedemptionEdit = record.adjustedRedemption;
+        this.interestRateEdit = record.interestRate;
+        this.commentEdit = record.comment;
+    }
+
+    public closeInfoModal(){
+        this.editedRecordId = null;
+
+        this.isAdjustedRedemption = false;
+        this.isInterestRate = false;
+
+        this.adjustedRedemptionEdit = null;
+        this.interestRateEdit = null;
+        this.commentEdit = null;
+
+        this.modalErrorMessage = null;
+        this.modalSuccessMessage = null;
+    }
+
+    public saveInfoModal(){
+
+        var adjustments = new SingularityAdjustments();
+        if(adjustments.adjustedRedemptions == null){
+            adjustments.adjustedRedemptions = [];
+        }
+        adjustments.reportId = this.report.id;
+
+        var redemption = new SingularityAdjustedRedemption();
+        redemption.recordId = this.editedRecordId;
+        redemption.adjustedRedemption = this.adjustedRedemptionEdit;
+        redemption.interestRate = this.interestRateEdit;
+        redemption.comment = this.commentEdit;
+
+        adjustments.adjustedRedemptions.push(redemption);
+
+        this.busySave = this.periodicReportService.saveSingularityAdjustments(adjustments)
+            .subscribe(
+                response  => {
+                    if(response){
+                        this.modalSuccessMessage = "Successfully saved adjustments";
+
+                        for(var i = 0; i < this.records.generalLedgerBalanceList.length; i ++){
+                            if(this.records.generalLedgerBalanceList[i].id == this.editedRecordId) {
+                                this.records.generalLedgerBalanceList[i].adjustedRedemption = this.adjustedRedemptionEdit;
+                                this.records.generalLedgerBalanceList[i].interestRate = this.interestRateEdit;
+                                this.records.generalLedgerBalanceList[i].comment = this.commentEdit;
+
+                                break;
+                            }
+                        }
+
+                    }else{
+                        this.modalErrorMessage = "Error saving adjustments"
+                    }
+                },
+                (error: ErrorResponse) => {
+                    this.modalSuccessMessage = null;
+                    this.modalErrorMessage = "Error saving Singularity adjustments";
+                }
+            );
     }
 
 }

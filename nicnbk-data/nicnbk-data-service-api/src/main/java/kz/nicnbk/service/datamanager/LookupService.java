@@ -38,6 +38,9 @@ public interface LookupService extends BaseService {
 
     List<BaseDictionaryDto> getReserveCalculationExpenseTypeLookup();
     List<BaseDictionaryDto> getReserveCalculationEntityTypeLookup();
+    List<BaseDictionaryDto> getReserveCalculationExportSignerTypeLookup();
+    List<BaseDictionaryDto> getReserveCalculationExportDoerTypeLookup();
+    List<BaseDictionaryDto> getReserveCalculationExportApproveListTypeLookup();
 
     List<BaseDictionaryDto> getMMFields();
 

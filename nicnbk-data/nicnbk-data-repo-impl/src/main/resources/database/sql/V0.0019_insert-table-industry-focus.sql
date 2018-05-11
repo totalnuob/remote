@@ -10,3 +10,6 @@ INSERT INTO pe_industry(id, code, name_en, name_ru, name_kz) VALUES(9, 'TECH', '
 INSERT INTO pe_industry(id, code, name_en, name_ru, name_kz) VALUES(10, 'LEISURE', 'Leisure', '', '');
 INSERT INTO pe_industry(id, code, name_en, name_ru, name_kz) VALUES(11, 'MULTI', 'Multi', '', '');
 INSERT INTO pe_industry(id, code, name_en, name_ru, name_kz) VALUES(12, 'OTHER', 'Other', '', '');
+INSERT INTO pe_industry(id, code, name_en, name_ru, name_kz) VALUES(13, 'CONSUMR', 'Consumer', '', '');
+INSERT INTO pe_industry(id, code, name_en, name_ru, name_kz) VALUES(14, 'SOFTWR', 'Software', '', '');
+INSERT INTO pe_industry(id, code, name_en, name_ru, name_kz) VALUES(15, 'ENERGY', 'Energy', '', '');
