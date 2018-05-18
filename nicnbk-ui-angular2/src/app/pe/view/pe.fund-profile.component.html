@@ -119,11 +119,10 @@
                                                 <label><b>Opening Schedule</b></label>
                                             </div>
                                             <div class="col-md-3">
-                                                <!--<select id="openingSchedule" class="form-control" name="openingSchedule" [(ngModel)]="fund.openingSchedule">-->
-                                                    <!--<option *ngFor="let item of openingScheduleList" [value]="item.code">{{item.nameEn}}</option>-->
-                                                <!--</select>-->
-
-                                                <input type="text" id="openingSchedule" class="form-control" name="openingSchedule" [(ngModel)]="fund.openingSchedule"/>
+                                                <select id="openingSchedule" class="form-control" name="openingSchedule" [(ngModel)]="fund.openingSchedule">
+                                                    <option *ngFor="let item of openingScheduleList" [value]="item.code">{{item.nameEn}}</option>
+                                                </select>
+                                                <!--<input type="text" id="openingSchedule" class="form-control" name="openingSchedule" [(ngModel)]="fund.openingSchedule"/>-->
                                             </div>
                                         </div>
                                     </div>
