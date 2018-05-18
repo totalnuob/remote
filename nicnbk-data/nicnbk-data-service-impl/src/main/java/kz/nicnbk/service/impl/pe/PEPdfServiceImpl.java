@@ -729,7 +729,7 @@ public class PEPdfServiceImpl implements PEPdfService {
         table.addCell(new Cell().setBorder(Border.NO_BORDER).add(new Paragraph(
                 unNullifierToEmptyString("Target # of Inv.")).setMultipliedLeading(lineSpacingMultiplier).setBold()));
         table.addCell(new Cell().setBorder(Border.NO_BORDER).add(new Paragraph(
-                mlnFormat(fundDto.getTargetNumberOfInv1())).setMultipliedLeading(lineSpacingMultiplier)));
+                mlnFormat(fundDto.getTargetNumberOfInv1()) + "-" + mlnFormat(fundDto.getTargetNumberOfInv2())).setMultipliedLeading(lineSpacingMultiplier)));
 
         table.addCell(new Cell().setBorder(Border.NO_BORDER).add(new Paragraph(
                 unNullifierToEmptyString("Exp Hold Period per Inv. (yrs)")).setMultipliedLeading(lineSpacingMultiplier).setBold()));

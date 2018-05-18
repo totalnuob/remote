@@ -788,7 +788,7 @@ export class PEFundProfileComponent extends CommonFormViewComponent implements O
     // TODO: Move to a common component
     loadLookups(){
 
-        //this.lookupService.getOpeningScheduleList().then(data => this.openingScheduleList = data);
+        this.lookupService.getOpeningScheduleList().then(data => this.openingScheduleList = data);
 
         //load strategies
         this.lookupService.getPEStrategies()

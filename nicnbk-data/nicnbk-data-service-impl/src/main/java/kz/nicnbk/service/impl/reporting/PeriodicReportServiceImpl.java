@@ -3755,6 +3755,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             if(previousRecords != null && !previousRecords.isEmpty()){
                 int index = 0;
                 for(ConsolidatedKZTForm19RecordDto record: currentRecords){
+                    boolean previousRecordFound = false;
                     for(int i = index; i < previousRecords.size(); i++){
                         if(record.getName().equalsIgnoreCase(previousRecords.get(i).getName()) && record.getLineNumber() != null &&
                                 previousRecords.get(i).getLineNumber() != null && record.getLineNumber() == previousRecords.get(i).getLineNumber()){
@@ -3764,8 +3765,12 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                             if(record.getCurrentAccountBalance() != null) {
                                 record.setTurnover(MathUtils.subtract(record.getCurrentAccountBalance(), record.getPreviousAccountBalance()));
                             }
+                            previousRecordFound = true;
                             break;
                         }
+                    }
+                    if(!previousRecordFound){
+                        record.setTurnover(record.getCurrentAccountBalance());
                     }
                 }
             }

@@ -119,11 +119,10 @@
                                                 <label><b>Opening Schedule</b></label>
                                             </div>
                                             <div class="col-md-3">
-                                                <!--<select id="openingSchedule" class="form-control" name="openingSchedule" [(ngModel)]="fund.openingSchedule">-->
-                                                    <!--<option *ngFor="let item of openingScheduleList" [value]="item.code">{{item.nameEn}}</option>-->
-                                                <!--</select>-->
-
-                                                <input type="text" id="openingSchedule" class="form-control" name="openingSchedule" [(ngModel)]="fund.openingSchedule"/>
+                                                <select id="openingSchedule" class="form-control" name="openingSchedule" [(ngModel)]="fund.openingSchedule">
+                                                    <option *ngFor="let item of openingScheduleList" [value]="item.code">{{item.nameEn}}</option>
+                                                </select>
+                                                <!--<input type="text" id="openingSchedule" class="form-control" name="openingSchedule" [(ngModel)]="fund.openingSchedule"/>-->
                                             </div>
                                         </div>
                                     </div>
@@ -413,14 +412,16 @@
                                                 <tr>
                                                     <td class="col-md-1">Target number of inv.</td>
                                                     <td class="col-md-3">
-                                                        <!--<input style="width: 30%" type="text" name="targetNumberOfInv1" [(ngModel)]="fund.targetNumberOfInv1" pattern="[+]?[0-9]*\.?[0-9]+" #targetNumberOfInv1="ngModel"/><input style="width: 70%" type="text" name="targetNumberOfInv2" [(ngModel)]="fund.targetNumberOfInv2" pattern="[+]?[0-9]*\.?[0-9]+" #targetNumberOfInv2="ngModel"/>-->
-                                                        <input style="width: 100%" type="text" name="targetNumberOfInv1" [(ngModel)]="fund.targetNumberOfInv1" pattern="[+]?[0-9]*\.?[0-9]+" #targetNumberOfInv1="ngModel"/>
+                                                        <input style="width: 40%" type="text" name="targetNumberOfInv1" [(ngModel)]="fund.targetNumberOfInv1" pattern="[+]?[0-9]*\.?[0-9]+" #targetNumberOfInv1="ngModel"/>
+                                                        -
+                                                        <input style="width: 40%" type="text" name="targetNumberOfInv2" [(ngModel)]="fund.targetNumberOfInv2" pattern="[+]?[0-9]*\.?[0-9]+" #targetNumberOfInv2="ngModel"/>
+                                                        <!--<input style="width: 100%" type="text" name="targetNumberOfInv1" [(ngModel)]="fund.targetNumberOfInv1" pattern="[+]?[0-9]*\.?[0-9]+" #targetNumberOfInv1="ngModel"/>-->
                                                         <div [hidden]="targetNumberOfInv1.valid || targetNumberOfInv1.pristine" class="alert alert-danger">
                                                             Only positive number could be entered
                                                         </div>
-                                                        <!--<div [hidden]="targetNumberOfInv2.valid || targetNumberOfInv2.pristine" class="alert alert-danger">-->
-                                                            <!--Only positive number could be entered-->
-                                                        <!--</div>-->
+                                                        <div [hidden]="targetNumberOfInv2.valid || targetNumberOfInv2.pristine" class="alert alert-danger">
+                                                            Only positive number could be entered
+                                                        </div>
                                                     </td>
                                                 </tr>
                                                 <!--<tr>-->
@@ -1386,7 +1387,7 @@
                                             </tr>
                                             <tr>
                                                 <th>Target # of Inv.</th>
-                                                <td>{{this.fund.targetNumberOfInv1 | number:'1.0-0'}}</td>
+                                                <td>{{this.fund.targetNumberOfInv1 | number:'1.0-0'}}-{{this.fund.targetNumberOfInv2 | number:'1.0-0'}}</td>
                                             </tr>
                                             <tr>
                                                 <th>Exp Hold Period per Inv. (yrs)</th>
