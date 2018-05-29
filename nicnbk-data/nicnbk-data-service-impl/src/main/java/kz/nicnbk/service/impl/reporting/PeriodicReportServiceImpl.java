@@ -3762,7 +3762,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                             if(!DateUtils.isJanuary(currentReport.getReportDate())) {
                                 record.setPreviousAccountBalance(previousRecords.get(i).getCurrentAccountBalance());
                             }
-                            if(record.getCurrentAccountBalance() != null) {
+                            if(record.getCurrentAccountBalance() != null || record.getPreviousAccountBalance() != null) {
                                 record.setTurnover(MathUtils.subtract(record.getCurrentAccountBalance(), record.getPreviousAccountBalance()));
                             }
                             previousRecordFound = true;
@@ -3911,17 +3911,22 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             if(previousRecords != null && !previousRecords.isEmpty()){
                 int index = 0;
                 for(ConsolidatedKZTForm22RecordDto record: currentRecords){
+                    boolean previousRecordFound = false;
                     for(int i = index; i < previousRecords.size(); i++){
                         if(record.getName().equalsIgnoreCase(previousRecords.get(i).getName()) && record.getLineNumber() != null &&
                                 previousRecords.get(i).getLineNumber() != null && record.getLineNumber() == previousRecords.get(i).getLineNumber()){
                             if(!DateUtils.isJanuary(currentReport.getReportDate())) {
                                 record.setPreviousAccountBalance(previousRecords.get(i).getCurrentAccountBalance());
                             }
-                            if(record.getCurrentAccountBalance() != null) {
+                            if(record.getCurrentAccountBalance() != null || record.getPreviousAccountBalance() != null) {
                                 record.setTurnover(MathUtils.subtract(record.getCurrentAccountBalance(), record.getPreviousAccountBalance()));
                             }
+                            previousRecordFound = true;
                             break;
                         }
+                    }
+                    if(!previousRecordFound){
+                        record.setTurnover(record.getCurrentAccountBalance());
                     }
                 }
             }
