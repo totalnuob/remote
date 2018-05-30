@@ -288,17 +288,21 @@ public class PeriodicReportNICKMFServiceImpl implements PeriodicReportNICKMFServ
         }
     }
 
-//    @Override
-//    public Double getNICKMFReportingDataCalculatedValue(NICKMFReportingDataCalculatedValueRequestDto requestDto) {
-//        if(requestDto != null){
-//            if(requestDto.getReportId() != null){
-//                PeriodicReportDto reportDto = this.periodicReportService.getPeriodicReport(requestDto.getReportId());
-//                return getNICKMFReportingDataCalculatedValue(reportDto, requestDto.getCode(), requestDto.getNameRu());
-//            }else{
-//                logger.error("NICK MF Calculated value request is invalid, report id is null");
-//                return null;
-//            }
-//        }
-//        return null;
-//    }
+    @Override
+    public Double getNICKMFReportingDataCalculatedValue(NICKMFReportingDataCalculatedValueRequestDto requestDto) {
+        if(requestDto != null){
+            if(requestDto.getReportId() != null){
+                PeriodicReportDto reportDto = this.periodicReportService.getPeriodicReport(requestDto.getReportId());
+                NICKMFReportingDataDto dto = new NICKMFReportingDataDto();
+                dto.setNbChartOfAccountsCode(requestDto.getCode());
+                dto.setNicChartOfAccountsName(requestDto.getNameRu());
+                setNICKMFReportingDataCalculatedValue(dto, reportDto);
+                return dto.getCalculatedAccountBalance();
+            }else{
+                logger.error("NICK MF Calculated value request is invalid, report id is null");
+                return null;
+            }
+        }
+        return null;
+    }
 }

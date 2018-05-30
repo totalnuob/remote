@@ -16,16 +16,12 @@ INSERT INTO rep_tarragon_nic_chart_of_accounts(id, tarragon_chart_of_accounts_na
 INSERT INTO rep_tarragon_nic_chart_of_accounts(id, tarragon_chart_of_accounts_name, nic_chart_accounts_id, addable) VALUES(16, 'Other', 48, false);
 INSERT INTO rep_tarragon_nic_chart_of_accounts(id, tarragon_chart_of_accounts_name, nic_chart_accounts_id, addable) VALUES(17, 'Interest income', 41, false);
 
-
-
--- ADDABLE
 INSERT INTO rep_tarragon_nic_chart_of_accounts(id, tarragon_chart_of_accounts_name, nic_chart_accounts_id, addable) VALUES(18, 'Capital call cash adjustment', 1, true);
 INSERT INTO rep_tarragon_nic_chart_of_accounts(id, tarragon_chart_of_accounts_name, nic_chart_accounts_id, addable) VALUES(19, 'Prior to 2017 capital contributions', 5, true);
 INSERT INTO rep_tarragon_nic_chart_of_accounts(id, tarragon_chart_of_accounts_name, nic_chart_accounts_id, addable) VALUES(20, 'Prior to 2017 unrealized income', 49, true);
 INSERT INTO rep_tarragon_nic_chart_of_accounts(id, tarragon_chart_of_accounts_name, nic_chart_accounts_id, addable) VALUES(21, 'Prior to 2017 income', 7, true);
 INSERT INTO rep_tarragon_nic_chart_of_accounts(id, tarragon_chart_of_accounts_name, nic_chart_accounts_id, addable) VALUES(22, 'Capital call capital adjustment', 5, true);
 INSERT INTO rep_tarragon_nic_chart_of_accounts(id, tarragon_chart_of_accounts_name, nic_chart_accounts_id, addable) VALUES(23, 'Net Realized Gains/Losses from Portfolio Funds', 36, true);
-
 
 
 INSERT INTO rep_tarragon_nic_chart_of_accounts(id, tarragon_chart_of_accounts_name, nic_chart_accounts_id, addable) VALUES(24, 'Prepaid management fees', 50, false);
@@ -41,6 +37,8 @@ INSERT INTO rep_tarragon_nic_chart_of_accounts(id, tarragon_chart_of_accounts_na
 INSERT INTO rep_tarragon_nic_chart_of_accounts(id, tarragon_chart_of_accounts_name, nic_chart_accounts_id, addable) VALUES(31, 'Prior to 2017 unrealized income', 49, true);
 INSERT INTO rep_tarragon_nic_chart_of_accounts(id, tarragon_chart_of_accounts_name, nic_chart_accounts_id, addable) VALUES(32, 'Prior to 2017 income', 7, true);
 
+INSERT INTO rep_tarragon_nic_chart_of_accounts(id, tarragon_chart_of_accounts_name, nic_chart_accounts_id, addable) VALUES(33, 'Payable to investment', 39, false);
+INSERT INTO rep_tarragon_nic_chart_of_accounts(id, tarragon_chart_of_accounts_name, nic_chart_accounts_id, addable) VALUES(34, 'Audit and tax fees', 47, false);
 
 
 

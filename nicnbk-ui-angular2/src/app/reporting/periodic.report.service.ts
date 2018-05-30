@@ -59,6 +59,7 @@ export class PeriodicReportService extends CommonService{
     private PERIODIC_REPORT_OTHER_INFO_URL = this.PERIODIC_REPORT_BASE_URL + "get/otherInfo/";
     private PERIODIC_REPORT_NICK_MF_REPORTING_INFO_URL = this.PERIODIC_REPORT_BASE_URL + "NICKMFReportingInfo/";
     private PERIODIC_REPORT_NICK_MF_REPORTING_INFO_PREVIOUS_MONTH_URL = this.PERIODIC_REPORT_BASE_URL + "NICKMFReportingInfoPreviousMonth/";
+    private PERIODIC_REPORT_NICK_MF_CALCULATED_VALUE_URL = this.PERIODIC_REPORT_BASE_URL + "NICKMFReportingInfoCalculatedValue/";
 
     private PERIODIC_REPORT_SINGULAR_GENERATED_FORM_URL = this.PERIODIC_REPORT_BASE_URL + "singularGeneratedForm/";
     private PERIODIC_REPORT_TARRAGON_GENERATED_FORM_URL = this.PERIODIC_REPORT_BASE_URL + "tarragonGeneratedForm/";
@@ -201,6 +202,13 @@ export class PeriodicReportService extends CommonService{
 
     getNICKMFReportingInfo(reportId): Observable<NICKMFReportingInfoHolder>{
         return this.http.get(this.PERIODIC_REPORT_NICK_MF_REPORTING_INFO_URL + reportId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    getNICKMFCalculatedValue(request): Observable<any>{
+        let body = JSON.stringify(request);
+        return this.http.post(this.PERIODIC_REPORT_NICK_MF_CALCULATED_VALUE_URL , body, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }

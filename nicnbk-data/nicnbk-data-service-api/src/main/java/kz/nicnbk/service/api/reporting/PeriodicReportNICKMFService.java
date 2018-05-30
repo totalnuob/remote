@@ -15,6 +15,6 @@ public interface PeriodicReportNICKMFService {
 
     NICKMFReportingDataHolderDto getNICKMFReportingDataFromPreviousMonth(Long reportId);
 
-    //Double getNICKMFReportingDataCalculatedValue(NICKMFReportingDataCalculatedValueRequestDto requestDto);
+    Double getNICKMFReportingDataCalculatedValue(NICKMFReportingDataCalculatedValueRequestDto requestDto);
 
 }

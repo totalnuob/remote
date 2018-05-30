@@ -223,12 +223,12 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
         return buildNonNullResponse(holderDto);
     }
 
-//    @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
-//    @RequestMapping(value = "/NICKMFReportingInfoCalculatedValue/{reportId}", method = RequestMethod.POST)
-//    public ResponseEntity getNICKMFReportingDataCalculatedValue(@RequestBody NICKMFReportingDataCalculatedValueRequestDto requestDto) {
-//        Double value = this.periodicReportNICKMFService.getNICKMFReportingDataCalculatedValue(requestDto);
-//        return buildNonNullResponse(value);
-//    }
+    @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/NICKMFReportingInfoCalculatedValue/", method = RequestMethod.POST)
+    public ResponseEntity getNICKMFReportingDataCalculatedValue(@RequestBody NICKMFReportingDataCalculatedValueRequestDto requestDto) {
+        Double value = this.periodicReportNICKMFService.getNICKMFReportingDataCalculatedValue(requestDto);
+        return buildNonNullResponse(value);
+    }
 
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/NICKMFReportingInfoPreviousMonth/{reportId}", method = RequestMethod.GET)
