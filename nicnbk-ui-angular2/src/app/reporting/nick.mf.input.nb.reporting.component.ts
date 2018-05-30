@@ -208,6 +208,8 @@ export class NICKMFInputNBReportingComponent extends CommonNBReportingComponent 
             return true;
         }else if(record.nbChartOfAccountsCode === '7473.080' && record.nicChartOfAccountsName === 'Амортизация организационных расходов NICK MF'){
             return true;
+        }else if(record.nbChartOfAccountsCode === '1033.010' && record.nicChartOfAccountsName === 'Деньги на текущих счетах'){
+            return true;
         }else{
             return false;
         }
@@ -219,24 +221,35 @@ export class NICKMFInputNBReportingComponent extends CommonNBReportingComponent 
                 //var month = Number(this.data.report.reportDate.split('-')[1]);
                 //var sum = Number(0 - 4238 - (14963 / 60 * month)).toFixed(2);
                 record.accountBalance = record.calculatedAccountBalance;
+                this.onNumberChange(record);
             }
         }else if(record.nbChartOfAccountsCode === '3393.020' && record.nicChartOfAccountsName === 'Комиссия за администрирование к оплате NICK MF'){
             if(this.data.report.reportDate != null) {
                 //var month = Number(this.data.report.reportDate.split('-')[1]);
                 //var sum = Number(0 - (40000/12 * month) + 9999.99 + 9999.99).toFixed(2);
                 record.accountBalance = record.calculatedAccountBalance;
+                this.onNumberChange(record);
             }
         }else if(record.nbChartOfAccountsCode === '7473.080' && record.nicChartOfAccountsName === 'Расходы за администрирование NICK MF'){
             if(this.data.report.reportDate != null) {
                 //var month = Number(this.data.report.reportDate.split('-')[1]);
                 //var sum = Number(40000/12 * month).toFixed(2);
                 record.accountBalance = record.calculatedAccountBalance;
+                this.onNumberChange(record);
             }
         }else if(record.nbChartOfAccountsCode === '7473.080' && record.nicChartOfAccountsName === 'Амортизация организационных расходов NICK MF'){
             if(this.data.report.reportDate != null) {
                 //var month = Number(this.data.report.reportDate.split('-')[1]);
                 //var sum = Number(14963/60 * month).toFixed(2);
                 record.accountBalance = record.calculatedAccountBalance;
+                this.onNumberChange(record);
+            }
+        }else if(record.nbChartOfAccountsCode === '1033.010' && record.nicChartOfAccountsName === 'Деньги на текущих счетах'){
+            if(this.data.report.reportDate != null) {
+                //var month = Number(this.data.report.reportDate.split('-')[1]);
+                //var sum = Number(14963/60 * month).toFixed(2);
+                record.accountBalance = record.calculatedAccountBalance;
+                this.onNumberChange(record);
             }
         }else{
             alert("No formula exists for this account number and name");

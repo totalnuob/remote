@@ -78,7 +78,7 @@
                         </td>
                         <td>
                             <div class='input-group date col-md-2' id='dateDivId2' style="width: 100%">
-                                <input disabled="addedRecord.expenseType.code === 'ADM_FEE'" type="text" class="form-control" name="dateInput2" id="dateInputId2" [(ngModel)]="addedRecord.valueDate"/>
+                                <input type="text" class="form-control" name="dateInput2" id="dateInputId2" [(ngModel)]="addedRecord.valueDate"/>
                                     <span class="input-group-addon">
                                         <span class="glyphicon glyphicon-calendar"></span>
                                     </span>
@@ -89,7 +89,7 @@
                             <input required type="text" class="form-control" (keyup)="onNumberChange(addedRecord)" [(ngModel)]="addedRecord.amount" [ngModelOptions]="{standalone: true}"/>
                         </td>
                         <td>
-                            <input disabled="addedRecord.expenseType.code === 'ADM_FEE'" (keyup)="onNumberChange(addedRecord)" type="text" class="form-control" [(ngModel)]="addedRecord.amountToSPV" [ngModelOptions]="{standalone: true}"/>
+                            <input (keyup)="onNumberChange(addedRecord)" type="text" class="form-control" [(ngModel)]="addedRecord.amountToSPV" [ngModelOptions]="{standalone: true}"/>
                         </td>
                         <td>
                             <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRecord(addedRecord)">

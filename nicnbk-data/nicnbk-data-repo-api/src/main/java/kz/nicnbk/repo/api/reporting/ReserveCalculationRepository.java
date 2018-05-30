@@ -24,10 +24,10 @@ public interface ReserveCalculationRepository extends PagingAndSortingRepository
     @Query("select e from ReserveCalculation e")
     Page<ReserveCalculation> search(Pageable pageable);
 
-    @Query("SELECT e from ReserveCalculation e where e.expenseType.code=?1 AND e.date >= ?2 AND e.date < ?3")
+    @Query("SELECT e from ReserveCalculation e where (?1 is null OR e.expenseType.code=?1) AND e.date >= ?2 AND e.date < ?3")
     List<ReserveCalculation> getEntitiesByExpenseTypeBetweenDates(String code, Date from, Date to);
 
-    @Query("SELECT e from ReserveCalculation e where e.expenseType.code=?1 AND ((e.valueDate is null AND e.date >= ?2 AND e.date < ?3) " +
+    @Query("SELECT e from ReserveCalculation e where (?1 is null OR e.expenseType.code=?1) AND ((e.valueDate is null AND e.date >= ?2 AND e.date < ?3) " +
             " OR (e.valueDate is not null AND e.valueDate >= ?2 AND e.valueDate < ?3))")
     List<ReserveCalculation> getEntitiesByExpenseTypeBetweenDatesUsingValuationDate(String code, Date from, Date to);
 
