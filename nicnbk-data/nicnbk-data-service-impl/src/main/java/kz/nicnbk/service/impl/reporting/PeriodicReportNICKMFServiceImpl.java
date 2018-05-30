@@ -12,6 +12,7 @@ import kz.nicnbk.service.api.reporting.privateequity.ReserveCalculationService;
 import kz.nicnbk.service.converter.reporting.NICKMFReportingDataConverter;
 import kz.nicnbk.service.dto.common.EntityListSaveResponseDto;
 import kz.nicnbk.service.dto.reporting.*;
+import kz.nicnbk.service.impl.reporting.lookup.ReserveCalculationsEntityTypeLookup;
 import kz.nicnbk.service.impl.reporting.lookup.ReserveCalculationsExpenseTypeLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -174,6 +175,31 @@ public class PeriodicReportNICKMFServiceImpl implements PeriodicReportNICKMFServ
                 dto.setCalculatedAccountBalance(MathUtils.subtract(0.0, value));
                 dto.setCalculatedAccountBalanceFormula(" - (14,963 / 60) * " + monthDiff + ", where '" + monthDiff + "' = months difference between 31.07.2017 and " + DateUtils.getDateFormatted(reportDto.getReportDate()));
             }else if(dto.getNbChartOfAccountsCode().equalsIgnoreCase("3393.020") && dto.getNicChartOfAccountsName().equalsIgnoreCase("Комиссия за администрирование к оплате NICK MF")){
+                Double value = null;
+                NICKMFReportingDataHolderDto previousDataHolder = getNICKMFReportingDataFromPreviousMonth(reportDto.getId());
+                if(previousDataHolder != null && previousDataHolder.getRecords() != null){
+                    for(NICKMFReportingDataDto record :previousDataHolder.getRecords()){
+                        if(record.getNbChartOfAccountsCode().equalsIgnoreCase(dto.getNbChartOfAccountsCode()) &&
+                                record.getNicChartOfAccountsName().equalsIgnoreCase(dto.getNicChartOfAccountsName())){
+                            value = record.getAccountBalance();
+                            break;
+                        }
+                    }
+                }
+                List<ReserveCalculationDto> reserveCalculationDtos =
+                        this.reserveCalculationService.getReserveCalculationsForMonth(ReserveCalculationsExpenseTypeLookup.ADMINISTRATION_FEES.getCode(), reportDto.getReportDate(), true);
+                if(reserveCalculationDtos != null){
+                    for(ReserveCalculationDto record: reserveCalculationDtos){
+                        value = MathUtils.subtract(value, record.getAmount());
+                    }
+                }
+
+                value = MathUtils.subtract(value, (40000.0/12.0));
+
+                dto.setCalculatedAccountBalance(value);
+                dto.setCalculatedAccountBalanceFormula(" {previous month value} - 40,000/12 - sum of values from Capital Calls with type 'Комиссия' for current month" );
+
+                /*
                 Double remainder = 0.0;
                 if(DateUtils.isJanuary(reportDto.getReportDate())) {
                     NICKMFReportingDataHolderDto previousMonthData = getNICKMFReportingDataFromPreviousMonth(reportDto.getId());
@@ -199,6 +225,7 @@ public class PeriodicReportNICKMFServiceImpl implements PeriodicReportNICKMFServ
                 dto.setCalculatedAccountBalance(MathUtils.add(MathUtils.subtract(remainder, value), administrationFees));
                 dto.setCalculatedAccountBalanceFormula(remainder + " - (40,000/12 * " + month + ") + " + administrationFees +
                         ", i.e. {if January, then remainder from December, else 0} - (40,000/12 * current month number ) + sum of values from Capital Calls with type 'Комиссия'" );
+                */
             }else if(dto.getNbChartOfAccountsCode().equalsIgnoreCase("7473.080") && dto.getNicChartOfAccountsName().equalsIgnoreCase("Расходы за администрирование NICK MF")){
                 dto.setCalculatedAccountBalance(MathUtils.multiply(MathUtils.divide(40000.0, 12.0), (month*1.0)));
                 dto.setCalculatedAccountBalanceFormula("40,000 / 12 * " + month + ", where '" + month + "' is current month number");
@@ -210,6 +237,51 @@ public class PeriodicReportNICKMFServiceImpl implements PeriodicReportNICKMFServ
                 }
                 dto.setCalculatedAccountBalance(value);
                 dto.setCalculatedAccountBalanceFormula("14,963 / 60 * " + month + ", where '" + month + "' is current month number; value no more than 14,963");
+            }else if(dto.getNbChartOfAccountsCode().equalsIgnoreCase("1033.010") &&
+                    dto.getNicChartOfAccountsName().equalsIgnoreCase("Деньги на текущих счетах")){
+                Double value = null;
+                NICKMFReportingDataHolderDto previousDataHolder = getNICKMFReportingDataFromPreviousMonth(reportDto.getId());
+                if(previousDataHolder != null && previousDataHolder.getRecords() != null){
+                    for(NICKMFReportingDataDto record :previousDataHolder.getRecords()){
+                        if(record.getNbChartOfAccountsCode().equalsIgnoreCase(dto.getNbChartOfAccountsCode()) &&
+                                record.getNicChartOfAccountsName().equalsIgnoreCase(dto.getNicChartOfAccountsName())){
+                            value = record.getAccountBalance();
+                            break;
+                        }
+                    }
+                }
+                List<ReserveCalculationDto> reserveCalculationDtos =
+                        this.reserveCalculationService.getReserveCalculationsForMonth(null,
+                                reportDto.getReportDate(), false);
+                if(reserveCalculationDtos != null){
+                    for(ReserveCalculationDto record: reserveCalculationDtos){
+                        if(record.getExpenseType() != null && record.getExpenseType().getCode().equalsIgnoreCase(ReserveCalculationsExpenseTypeLookup.ADD.getCode())) {
+                            value = MathUtils.add(value, record.getAmount());
+                        }else if(record.getExpenseType() != null && record.getExpenseType().getCode().equalsIgnoreCase(ReserveCalculationsExpenseTypeLookup.ADMINISTRATION_FEES.getCode())){
+                            value = MathUtils.add(value, record.getAmount());
+                        }else if(record.getExpenseType() != null && !record.getExpenseType().getCode().equalsIgnoreCase(ReserveCalculationsExpenseTypeLookup.ADMINISTRATION_FEES.getCode()) &&
+                                record.getRecipient().getCode().equalsIgnoreCase(ReserveCalculationsEntityTypeLookup.NICKMF.getCode())){
+                            value = MathUtils.add(value, record.getAmount());
+                        }
+                    }
+                }
+
+                List<ReserveCalculationDto> reserveCalculationDtosByValueDate =
+                        this.reserveCalculationService.getReserveCalculationsForMonth(ReserveCalculationsExpenseTypeLookup.ADD.getCode(),
+                                reportDto.getReportDate(), true);
+                if(reserveCalculationDtosByValueDate != null){
+                    for(ReserveCalculationDto record: reserveCalculationDtosByValueDate){
+                        if(record.getValueDate() != null) {
+                            value = MathUtils.subtract(value, record.getAmountToSPV() != null ? record.getAmountToSPV() : record.getAmount());
+                        }
+                    }
+                }
+
+
+                dto.setCalculatedAccountBalance(value);
+                dto.setCalculatedAccountBalanceFormula("{previous month value} + sum of values from Capital Calls with type 'Комиссия' for current month + " +
+                        "sum of value from Capital Calls with type not 'Комиссия' and recipient being NICK MF for current month");
+
             }
         }
     }
