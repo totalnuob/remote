@@ -187,7 +187,7 @@ public class PeriodicReportNICKMFServiceImpl implements PeriodicReportNICKMFServ
                     }
                 }
                 List<ReserveCalculationDto> reserveCalculationDtos =
-                        this.reserveCalculationService.getReserveCalculationsForMonth(ReserveCalculationsExpenseTypeLookup.ADMINISTRATION_FEES.getCode(), reportDto.getReportDate(), true);
+                        this.reserveCalculationService.getReserveCalculationsForMonth(ReserveCalculationsExpenseTypeLookup.ADMINISTRATION_FEES.getCode(), reportDto.getReportDate(), false);
                 if(reserveCalculationDtos != null){
                     for(ReserveCalculationDto record: reserveCalculationDtos){
                         value = MathUtils.subtract(value, record.getAmount());
@@ -279,8 +279,10 @@ public class PeriodicReportNICKMFServiceImpl implements PeriodicReportNICKMFServ
 
 
                 dto.setCalculatedAccountBalance(value);
-                dto.setCalculatedAccountBalanceFormula("{previous month value} + sum of values from Capital Calls with type 'Комиссия' for current month + " +
-                        "sum of value from Capital Calls with type not 'Комиссия' and recipient being NICK MF for current month");
+                dto.setCalculatedAccountBalanceFormula("{previous month value} + sum of Capital Calls 'Пополнение капитала' for report month" +
+                        " + sum of Capital Calls 'Комиссия' for report month" +
+                        " - sum of Capital Calls 'Пополнение капитала' with value date in report month" +
+                        " + sum of Capital Calls NOT 'Комиссия' and Recipient being NICK MF for report month");
 
             }
         }
