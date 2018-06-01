@@ -3440,17 +3440,17 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 } else {
                     record3013_010.setEndPeriod(DateUtils.getDate("16.09." + (DateUtils.getYear(report.getReportDate()) + 1)));
                 }
+                record3013_010.setInterestPaymentCount(1);
+            }
 
-                record3013_010.setInterestRate(PeriodicReportConstants.DEFAULT_KZT_13_INTEREST_RATE);
-                List<SingularityGeneralLedgerBalanceRecordDto> singularityAdjustedRecords = this.generalLedgerBalanceService.getAdjustedRecords(reportId);
-                if(singularityAdjustedRecords != null && !singularityAdjustedRecords.isEmpty()){
-                    for(SingularityGeneralLedgerBalanceRecordDto record: singularityAdjustedRecords){
-                        if(StringUtils.isNotEmpty(record.getInterestRate())){
-                            record3013_010.setInterestRate(record.getInterestRate());
-                        }
+            record3013_010.setInterestRate(PeriodicReportConstants.DEFAULT_KZT_13_INTEREST_RATE);
+            List<SingularityGeneralLedgerBalanceRecordDto> singularityAdjustedRecords = this.generalLedgerBalanceService.getAdjustedRecords(reportId);
+            if(singularityAdjustedRecords != null && !singularityAdjustedRecords.isEmpty()){
+                for(SingularityGeneralLedgerBalanceRecordDto record: singularityAdjustedRecords){
+                    if(StringUtils.isNotEmpty(record.getInterestRate())){
+                        record3013_010.setInterestRate(record.getInterestRate());
                     }
                 }
-                record3013_010.setInterestPaymentCount(1);
             }
 
             boolean currentExists = false;
