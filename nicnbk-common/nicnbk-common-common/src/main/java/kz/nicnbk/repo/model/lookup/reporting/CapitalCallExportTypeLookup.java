@@ -7,7 +7,8 @@ public enum CapitalCallExportTypeLookup {
 
     ORDER("ORDER"),
     TO_OPERATIONS("OPs"),
-    TO_SPV("SPV");
+    TO_SPV("SPV"),
+    ADM_FEE_TO_SPV("ADM_FEE_SPV");
 
     private String code;
 

@@ -464,6 +464,8 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
             return getSPVExportInputStream(recordId, exportParamsDto);
         } else if (type.equalsIgnoreCase(CapitalCallExportTypeLookup.ORDER.getCode())) {
             return getOrderExportInputStream(recordId, exportParamsDto);
+        } else if (type.equalsIgnoreCase(CapitalCallExportTypeLookup.ADM_FEE_TO_SPV.getCode())) {
+            return getAdmFeeSPVExportInputStream(recordId, exportParamsDto);
         }
         logger.error("Capital call export: type not matched '" + type + "'");
         return null;
@@ -808,6 +810,173 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
             return filesDto;
         } catch (IOException e) {
             logger.error("IO Exception when exporting Capital Call TA OA", e);
+        }
+
+        return null;
+    }
+
+    private FilesDto getAdmFeeSPVExportInputStream(Long recordId, ReserveCalculationExportParamsDto exportParamsDto){
+
+        FilesDto filesDto = new FilesDto();
+        ReserveCalculationDto record = getReserveCalculationRecordById(recordId);
+
+        Resource resource = new ClassPathResource("export_template/capital_call/CC_ADM_FEE_OA_SPV_TEMPLATE.xlsx");
+        InputStream excelFileToRead = null;
+
+        try {
+            excelFileToRead = resource.getInputStream();
+        } catch (IOException e) {
+            logger.error("Reporting: Export file template not found: 'CC_ADM_FEE_OA_SPV_TEMPLATE.xlsx'");
+            return null;
+            //e.printStackTrace();
+        }
+
+        try {
+            XSSFWorkbook workbook = new XSSFWorkbook(excelFileToRead);
+            XSSFSheet sheet = workbook.getSheetAt(0);
+            Iterator<Row> rowIterator = sheet.iterator();
+            boolean endOfTable = false;
+            String beneficiary = record.getRecipient() != null && record.getRecipient().getCode().equalsIgnoreCase("BNY_M") ?
+                    "The Bank of New York Mellon" : record.getRecipient() != null && record.getRecipient().getCode().equalsIgnoreCase("MAPLES") ?
+                    "Maples and Calder" : "";
+            String bankCode = record.getRecipient() != null && record.getRecipient().getCode().equalsIgnoreCase("BNY_M") ?
+                    "021000018" : record.getRecipient() != null && record.getRecipient().getCode().equalsIgnoreCase("MAPLES") ?
+                    "BNTBKYKYXXX" : "";
+            String bankDetails = record.getRecipient() != null && record.getRecipient().getCode().equalsIgnoreCase("BNY_M") ?
+                    "The Bank of New York Mellon" : record.getRecipient() != null && record.getRecipient().getCode().equalsIgnoreCase("MAPLES") ?
+                    "Butterfield Bank (Cayman) Ltd., PO Box 705, 12 Albert Panton Street Grand Cayman KY1-1107" : "";
+
+            String intermediaryBankCode = record.getRecipient() != null && record.getRecipient().getCode().equalsIgnoreCase("BNY_M") ?
+                    "" : record.getRecipient() != null && record.getRecipient().getCode().equalsIgnoreCase("MAPLES") ?
+                    "IRVTUS3NXXX" : "";
+
+            String intermediaryBankDetails = record.getRecipient() != null && record.getRecipient().getCode().equalsIgnoreCase("BNY_M") ?
+                    "" : record.getRecipient() != null && record.getRecipient().getCode().equalsIgnoreCase("MAPLES") ?
+                    "BNY Mellon, One Wall Street, New York, NY 10286" : "";
+
+            String accountNumber = record.getRecipient() != null && record.getRecipient().getCode().equalsIgnoreCase("BNY_M") ?
+                    "8901245267" : record.getRecipient() != null && record.getRecipient().getCode().equalsIgnoreCase("MAPLES") ?
+                    "0110103434400" : "";
+            String reference = record.getRecipient() != null && record.getRecipient().getCode().equalsIgnoreCase("BNY_M") ?
+                    "AISE059-2017 Q4 BNY Mellon" : record.getRecipient() != null && record.getRecipient().getCode().equalsIgnoreCase("MAPLES") ?
+                    "Payment for invoices №1979132, №1974668" : "";
+
+            String useOfFunds = record.getRecipient() != null && record.getRecipient().getCode().equalsIgnoreCase("BNY_M") ?
+                    "Invoice payment for administration services from NICK Operating to the Bank of New York Mellon." :
+                    record.getRecipient() != null && record.getRecipient().getCode().equalsIgnoreCase("MAPLES") ?
+                    "Invoice payment for services from NICK Operating to Maples Corporate Services Ltd." : "";
+
+            while (rowIterator.hasNext() && !endOfTable) { // each row
+                Row row = rowIterator.next();
+                if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "Original Investment Approval Date:") &&
+                        ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(4), "<dd.MM.yyyy>")){
+                    row.getCell(4).setCellValue(DateUtils.getDateFormatted(record.getDate()));
+                }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "Use of Funds (New, Add-on, Mgmt Fee, etc.):") &&
+                        ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(4), "<use_of_funds>")) {
+                    row.getCell(4).setCellValue(useOfFunds);
+                }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "Value Date:") &&
+                        ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(4), "<date_text>")){
+                    Date date = record.getValueDate() != null ? record.getValueDate() : record.getDate();
+                    row.getCell(4).setCellValue(DateUtils.getDateEnglishTextualDate(date));
+                }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "Amount:") &&
+                        ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(4), "<amount>")){
+                    // TODO: amount formatting
+                    Double amount = record.getAmountToSPV() != null ? record.getAmountToSPV() : record.getAmount();
+                    row.getCell(4).setCellValue(String.format(Locale.ENGLISH, "$%,.2f", amount));
+                }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "Bank Code (SWIFT or ABA):") &&
+                        ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(4), "<bank_code>")){
+                    row.getCell(4).setCellValue(bankCode);
+                }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "Bank Name and Address:") &&
+                        ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(4), "<bank_details>")){
+                    row.getCell(4).setCellValue(bankDetails);
+                }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "Bank Code (SWIFT or ABA):") &&
+                        ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(4), "<interm_bank_code>")){
+                    row.getCell(4).setCellValue(intermediaryBankCode);
+                }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "Bank Name and Address:") &&
+                        ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(4), "<interm_bank_details>")){
+                    row.getCell(4).setCellValue(intermediaryBankDetails);
+                }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "Account number or CHIPS UID:") &&
+                        ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(4), "<account_number>")){
+                    row.getCell(4).setCellValue(accountNumber);
+                }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "Beneficiary's Name:") &&
+                        ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(4), "<beneficiary>")){
+                    row.getCell(4).setCellValue(beneficiary);
+                }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "Reference:") &&
+                        ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(4), "<reference>")){
+                    row.getCell(4).setCellValue(reference);
+                }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "<DIRECTORNAME>-Director") &&
+                        ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(4), "<dd.MM.yyyy>")){
+                    ReserveCalculationExportSignerType signerType =
+                            this.lookupService.findByTypeAndCode(ReserveCalculationExportSignerType.class, exportParamsDto.getDirector());
+                    if(signerType != null){
+                        row.getCell(2).setCellValue(signerType.getNameEn() + "-Director");
+                    }else{
+                        row.getCell(2).setCellValue("Director");
+                    }
+                    row.getCell(4).setCellValue(DateUtils.getDateFormatted(record.getDate()));
+                }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "<viza_1>")){
+                    if(exportParamsDto != null && exportParamsDto.getApproveList() != null && !exportParamsDto.getApproveList().isEmpty()){
+                        ReserveCalculationExportApproveListType approverType =
+                                this.lookupService.findByTypeAndCode(ReserveCalculationExportApproveListType.class, exportParamsDto.getApproveList().get(0));
+                        if(approverType != null) {
+                            row.getCell(2).setCellValue(approverType.getNameRu() + "________________");
+                        }else{
+                            row.getCell(2).setCellValue("________________");
+                        }
+                    }
+                }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "<viza_2>")){
+                    if(exportParamsDto != null && exportParamsDto.getApproveList() != null && exportParamsDto.getApproveList().size() > 1){
+                        ReserveCalculationExportApproveListType approverType =
+                                this.lookupService.findByTypeAndCode(ReserveCalculationExportApproveListType.class, exportParamsDto.getApproveList().get(1));
+                        if(approverType != null) {
+                            row.getCell(2).setCellValue(approverType.getNameRu() + "________________");
+                        }else{
+                            row.getCell(2).setCellValue("________________");
+                        }
+                    }else{
+                        row.getCell(2).setCellValue("");
+                    }
+                }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "<viza_3>")){
+                    if(exportParamsDto != null && exportParamsDto.getApproveList() != null && exportParamsDto.getApproveList().size() > 2){
+                        ReserveCalculationExportApproveListType approverType =
+                                this.lookupService.findByTypeAndCode(ReserveCalculationExportApproveListType.class, exportParamsDto.getApproveList().get(2));
+                        if(approverType != null) {
+                            row.getCell(2).setCellValue(approverType.getNameRu() + "________________");
+                        }else{
+                            row.getCell(2).setCellValue("________________");
+                        }
+                    }else{
+                        row.getCell(2).setCellValue("");
+                    }
+                }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "<doer>")){
+                    if(exportParamsDto != null && exportParamsDto.getDoer() != null){
+                        ReserveCalculationExportDoerType doerType =
+                                this.lookupService.findByTypeAndCode(ReserveCalculationExportDoerType.class, exportParamsDto.getDoer());
+                        if(doerType != null){
+                            row.getCell(2).setCellValue(doerType.getNameRu());
+                        }else{
+                            row.getCell(2).setCellValue("");
+                        }
+                    }else{
+                        row.getCell(2).setCellValue("");
+                    }
+                }
+            }
+            //
+            File tmpDir = new File(this.rootDirectory + "/tmp/nbrk_reporting");
+
+            // write to new
+            String filePath = tmpDir + "/CC_AMD_FEE_OA_SPV_" + MathUtils.getRandomNumber(0, 10000) + ".xlsx";
+            try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
+                workbook.write(outputStream);
+            }
+
+            InputStream inputStream = new FileInputStream(filePath);
+            filesDto.setInputStream(inputStream);
+            filesDto.setFileName(filePath);
+            return filesDto;
+        } catch (IOException e) {
+            logger.error("IO Exception when exporting Capital Call OA SPT (ADM_FEE)", e);
         }
 
         return null;

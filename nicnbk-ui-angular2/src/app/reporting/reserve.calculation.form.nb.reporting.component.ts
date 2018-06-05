@@ -376,7 +376,7 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
 
     public exportFAFToOperations(record){
         var fileName = record.date.replace(/-/g, "_") + "-Order $ " + record.amount + " TA-OA";
-
+        fileName = fileName.replace(".", ",");
         var exportParams = {'director': this.exportDirectorOption, 'doer': this.exportDoerOption, 'approveList': this.exportApproveList};
         this.busyExport = this.periodicReportService.makeFileRequest(DATA_APP_URL + `periodicReport/reserveCalculation/export/${record.id}/${'OPs'}`,
             fileName, 'POST', exportParams)
@@ -395,7 +395,7 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
         console.log(record.recipient.code);
         var entity = record.recipient.code.startsWith('TARR') ? "Tarragon" : record.recipient.code.startsWith('SING') ? "Singularity" : "";
         var fileName = record.date.replace(/-/g, "_") + "-Order to $ " + (record.amountToSPV != null ? record.amountToSPV : record.amount) + " OA-" + entity;
-
+        fileName = fileName.replace(".", ",");
         var exportParams = {'director': this.exportDirectorOption, 'doer': this.exportDoerOption, 'approveList': this.exportApproveList};
         this.busyExport = this.periodicReportService.makeFileRequest(DATA_APP_URL + `periodicReport/reserveCalculation/export/${record.id}/${'SPV'}`,
             fileName, 'POST', exportParams)
@@ -410,8 +410,27 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
             );
     }
 
+    exportAdmFeeFAFToSPV(record){
+        //var entity = record.recipient.code.startsWith('TARR') ? "Tarragon" : record.recipient.code.startsWith('SING') ? "Singularity" : "";
+        var fileName = record.date.replace(/-/g, "_") + "-Order to BONY $ " + (record.amountToSPV != null ? record.amountToSPV : record.amount) ;
+        fileName = fileName.replace(".", ",");
+        var exportParams = {'director': this.exportDirectorOption, 'doer': this.exportDoerOption, 'approveList': this.exportApproveList};
+        this.busyExport = this.periodicReportService.makeFileRequest(DATA_APP_URL + `periodicReport/reserveCalculation/export/${record.id}/${'ADM_FEE_SPV'}`,
+            fileName, 'POST', exportParams)
+            .subscribe(
+                response  => {
+                    //console.log("ok");
+                },
+                error => {
+                    //console.log("fails")
+                    this.postAction(null, "Error exporting data");
+                }
+            );
+    }
+
     public exportOrder(record){
         var fileName = record.date.replace(/-/g, "_") + "-Letter of Direction $ " + record.amount;
+        fileName = fileName.replace(".", ",");
         var exportParams = {'director': this.exportDirectorOption, 'doer': this.exportDoerOption, 'approveList': this.exportApproveList};
         this.busyExport = this.periodicReportService.makeFileRequest(DATA_APP_URL + `periodicReport/reserveCalculation/export/${record.id}/${'ORDER'}`,
             fileName, 'POST', exportParams)
