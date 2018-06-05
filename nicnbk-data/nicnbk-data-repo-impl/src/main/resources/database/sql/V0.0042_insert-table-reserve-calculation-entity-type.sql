@@ -10,6 +10,7 @@ INSERT INTO rep_reserve_calc_entity_type(id, code, name_en, name_ru, name_kz) VA
 INSERT INTO rep_reserve_calc_entity_type(id, code, name_en, name_ru, name_kz) VALUES(10, 'BNY_M', null, 'BNY Mellon', '');
 INSERT INTO rep_reserve_calc_entity_type(id, code, name_en, name_ru, name_kz) VALUES(11, 'TERRA_A', null, 'Terra A', '');
 INSERT INTO rep_reserve_calc_entity_type(id, code, name_en, name_ru, name_kz) VALUES(12, 'TERRA_B', null, 'Terra B', '');
+INSERT INTO rep_reserve_calc_entity_type(id, code, name_en, name_ru, name_kz) VALUES(13, 'MAPLES', null, 'Maples and Calder', '');
 
 
 
