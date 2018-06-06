@@ -24,89 +24,133 @@
 
 
     <div class="row withpadding">
-        <a class="btn btn-sm btn-default pull-left" data-toggle="modal" data-target="#exportSettingsModal">Export Settings</a>
+        <div class="col-md-12">
+            <div class="col-md-6">
+                <a class="btn btn-sm btn-default pull-left" data-toggle="modal" data-target="#exportSettingsModal">Export Settings</a>
+            </div>
+            <div class="col-md-6">
+                <a class="btn btn-xs btn-primary pull-right" data-toggle="modal" data-target="#editRecordModal" (click)="addRecord()">
+                    <span role="button" class="glyphicon glyphicon-plus">Add</span></a>
+            </div>
+        </div>
     </div>
     <br/>
 
-    <button class="btn btn-xs btn-primary pull-right" type="button" (click)="addRecord()"
-            [disabled]="addedRecords != null && addedRecords.length > 0">
-        <span role="button" class="glyphicon glyphicon-plus">Add</span>
-    </button>
+    <!--<button class="btn btn-xs btn-primary pull-right" type="button" (click)="addRecord()"-->
+            <!--[disabled]="addedRecord != null">-->
+        <!--<span role="button" class="glyphicon glyphicon-plus">Add</span>-->
+    <!--</button>-->
+
     <br/>
-    <form *ngIf="addedRecords != null && addedRecords.length > 0" (ngSubmit)="saveAddedRecords()" #addedRecordsForm="ngForm" class="well span">
-        <div class="row withpadding">
+    <!--<form *ngIf="addedRecord != null" (ngSubmit)="saveAddedRecord()" #addedRecordForm="ngForm" class="well span">-->
+        <!--<div class="row withpadding">-->
 
-            <div *ngIf="addedRecords!= null && addedRecords.length > 0">
-                <table class="table table-hover table-responsive table-condensed" style="font-size: small">
-                    <thead>
-                    <tr style="font-weight: bold; font-size: small">
-                        <td>Статья</td>
-                        <td>Источник</td>
-                        <td>Получатель</td>
-                        <td>Дата</td>
-                        <td>Дата валютирования</td>
-                        <td>Сумма USD</td>
-                        <td>Сумма USD SPV</td>
-                        <td>&nbsp;</td>
-                    </tr>
-                    </thead>
-                    <tr  *ngFor="let addedRecord of addedRecords; let i=index; let last=last;" style="font-size: small">
-                        <td>
-                            <select required class="form-control" style="width: 100%" [ngModelOptions]="{standalone: true}" [(ngModel)]="addedRecord.expenseType.code">
-                                <option *ngFor="let item of expenseTypeLookup" [value]="item.code">{{item.nameRu}}</option>
-                            </select>
+            <!--<div *ngIf="addedRecord != null">-->
+                <!--<table class="table table-hover table-responsive table-condensed" style="font-size: small">-->
+                    <!--<thead>-->
+                    <!--<tr style="font-weight: bold; font-size: small">-->
+                        <!--<td>Статья</td>-->
+                        <!--<td>Источник</td>-->
+                        <!--<td>Получатель</td>-->
+                        <!--<td>Дата</td>-->
+                        <!--<td>Дата валютирования</td>-->
+                        <!--<td>Сумма USD</td>-->
+                        <!--<td>Сумма USD SPV</td>-->
+                        <!--<td>&nbsp;</td>-->
+                    <!--</tr>-->
+                    <!--</thead>-->
+                    <!--<tr style="font-size: small">-->
+                        <!--<td>-->
+                            <!--<select required class="form-control" style="width: 100%" [ngModelOptions]="{standalone: true}" [(ngModel)]="addedRecord.expenseType.code">-->
+                                <!--<option *ngFor="let item of expenseTypeLookup" [value]="item.code">{{item.nameRu}}</option>-->
+                            <!--</select>-->
+                        <!--</td>-->
+                        <!--<td>-->
+                            <!--<select required class="form-control" style="width: 100%" [ngModelOptions]="{standalone: true}" [(ngModel)]="addedRecord.source.code">-->
+                                <!--<option *ngFor="let item of entityTypeLookup" [value]="item.code">{{item.nameRu}}</option>-->
+                            <!--</select>-->
+                        <!--</td>-->
+                        <!--<td>-->
+                            <!--<select required class="form-control" style="width: 100%" [ngModelOptions]="{standalone: true}" [(ngModel)]="addedRecord.recipient.code">-->
+                                <!--<option *ngFor="let item of entityTypeLookup" [value]="item.code">{{item.nameRu}}</option>-->
+                            <!--</select>-->
+                        <!--</td>-->
 
-                        </td>
-                        <td>
-                            <select required class="form-control" style="width: 100%" [ngModelOptions]="{standalone: true}" [(ngModel)]="addedRecord.source.code">
-                                <option *ngFor="let item of entityTypeLookup" [value]="item.code">{{item.nameRu}}</option>
-                            </select>
-                        </td>
-                        <td>
-                            <select required class="form-control" style="width: 100%" [ngModelOptions]="{standalone: true}" [(ngModel)]="addedRecord.recipient.code">
-                                <option *ngFor="let item of entityTypeLookup" [value]="item.code">{{item.nameRu}}</option>
-                            </select>
-                        </td>
+                        <!--<td>-->
+                            <!--<div class='input-group date col-md-2' id='dateDivId' style="width: 100%">-->
+                                <!--<input required type="text" class="form-control" id="dateInputId" name="dateInput" [(ngModel)]="addedRecord.date"/>-->
+                                            <!--<span class="input-group-addon">-->
+                                                <!--<span class="glyphicon glyphicon-calendar"></span>-->
+                                            <!--</span>-->
+                            <!--</div>-->
+                        <!--</td>-->
+                        <!--<td>-->
+                            <!--<div class='input-group date col-md-2' id='dateDivId2' style="width: 100%">-->
+                                <!--<input type="text" class="form-control" name="dateInput2" id="dateInputId2" [(ngModel)]="addedRecord.valueDate"/>-->
+                                    <!--<span class="input-group-addon">-->
+                                        <!--<span class="glyphicon glyphicon-calendar"></span>-->
+                                    <!--</span>-->
+                            <!--</div>-->
+                        <!--</td>-->
 
-                        <td>
-                            <div class='input-group date col-md-2' id='dateDivId' style="width: 100%">
-                                <input required type="text" class="form-control" id="dateInputId" name="dateInput" [(ngModel)]="addedRecord.date"/>
-                                            <span class="input-group-addon">
-                                                <span class="glyphicon glyphicon-calendar"></span>
-                                            </span>
-                            </div>
-                        </td>
-                        <td>
-                            <div class='input-group date col-md-2' id='dateDivId2' style="width: 100%">
-                                <input type="text" class="form-control" name="dateInput2" id="dateInputId2" [(ngModel)]="addedRecord.valueDate"/>
-                                    <span class="input-group-addon">
-                                        <span class="glyphicon glyphicon-calendar"></span>
-                                    </span>
-                            </div>
-                        </td>
+                        <!--<td>-->
+                            <!--<input required type="text" class="form-control" (keyup)="onNumberChange(addedRecord)" [(ngModel)]="addedRecord.amount" [ngModelOptions]="{standalone: true}"/>-->
+                        <!--</td>-->
+                        <!--<td>-->
+                            <!--<input (keyup)="onNumberChange(addedRecord)" type="text" class="form-control" [(ngModel)]="addedRecord.amountToSPV" [ngModelOptions]="{standalone: true}"/>-->
+                        <!--</td>-->
+                        <!--<td>-->
+                            <!--<button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRecord(addedRecord)">-->
+                                <!--<span class="glyphicon glyphicon-minus"></span>-->
+                            <!--</button>-->
+                        <!--</td>-->
+                    <!--</tr>-->
+                    <!--<tr  style="font-size: small">-->
+                        <!--<td colspan="3">-->
+                            <!--<input *ngIf="addedRecord.expenseType.code == 'ADM_FEE'" type="text" class="form-control"-->
+                                               <!--placeholder="Enter Reference..." [(ngModel)]="addedRecord.referenceInfo" [ngModelOptions]="{standalone: true}"/>-->
+                        <!--</td>-->
+                        <!--<td>&nbsp;</td>-->
+                        <!--<td>&nbsp;</td>-->
+                        <!--<td>&nbsp;</td>-->
+                        <!--<td>&nbsp;</td>-->
+                    <!--</tr>-->
+                    <!--<tr>-->
+                        <!--<td>-->
+                            <!--<label class="btn btn-primary" for="attachmentFile">-->
+                            <!--<input type="file" id="attachmentFile" (change)="onFileChange($event)" name="file" multiple style="display:none;" />-->
+                                <!--Add-->
+                            <!--</label>-->
+                        <!--</td>-->
+                        <!--<td colspan="6">-->
+                            <!--<div class="row" *ngFor="let newFile of uploadFiles" class="label label-info" style="display: table;">-->
+                                <!--<span>{{newFile.name}}</span>-->
+                            <!--</div>-->
+                        <!--</td>-->
+                    <!--</tr>-->
+                    <!--<tr style="font-size: small">-->
+                        <!--<td colspan="7">-->
+                            <!--<div *ngFor="let attachment of addedRecord?.files">-->
+                                <!--<file-attachment-downloader fileId="{{attachment.id}}"-->
+                                                            <!--fileName="{{attachment.fileName}}"-->
+                                                            <!--fileType="CC_ATTACH">-->
+                                <!--</file-attachment-downloader>-->
 
-                        <td>
-                            <input required type="text" class="form-control" (keyup)="onNumberChange(addedRecord)" [(ngModel)]="addedRecord.amount" [ngModelOptions]="{standalone: true}"/>
-                        </td>
-                        <td>
-                            <input (keyup)="onNumberChange(addedRecord)" type="text" class="form-control" [(ngModel)]="addedRecord.amountToSPV" [ngModelOptions]="{standalone: true}"/>
-                        </td>
-                        <td>
-                            <button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRecord(addedRecord)">
-                                <span class="glyphicon glyphicon-minus"></span>
-                            </button>
-                        </td>
-                    </tr>
-
-                </table>
-                <div class="row">
-                    <div class="col-md-12">
-                        <button type="submit" class="btn btn-success pull-right">SAVE</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </form>
+                                <!--<a (click)="deleteAttachment(attachment.id)" *ngIf="canEdit()">-->
+                                    <!--<i class="glyphicon glyphicon-trash"></i>-->
+                                <!--</a>-->
+                            <!--</div>-->
+                        <!--</td>-->
+                    <!--</tr>-->
+                <!--</table>-->
+                <!--<div class="row">-->
+                    <!--<div class="col-md-12">-->
+                        <!--<button type="submit" class="btn btn-success pull-right">SAVE</button>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</form>-->
 
     <!--<button class="btn btn-sm btn-primary" type="button" data-toggle="collapse" data-target="#exportSettings"-->
             <!--aria-expanded="false" aria-controls="exportSettings">-->
@@ -172,6 +216,7 @@
                 <td>Сумма KZT</td>
                 <td>Экспорт</td>
                 <td>&nbsp;</td>
+                <td>&nbsp;</td>
             </tr>
             <tr *ngFor="let record of records" [style.color]="record.currencyRate == null ? 'red' : 'black' ">
                 <td>{{record.expenseType != null ? record.expenseType.nameRu : ''}}</td>
@@ -179,7 +224,7 @@
                 <td>{{record.recipient != null ? record.recipient.nameRu : ''}}</td>
                 <td>{{record.date}}</td>
                 <td>{{record.valueDate}}</td>
-                <td>{{record.amount | number:'1.2-2'}}{{record.amountToSPV != null ? (' (' + (record.amountToSPV | number:'1.2-2') + ')') : ''}}</td>
+                <td>{{record.amount != null && record.amount > 0 ? (record.amount | number:'1.2-2') : ''}}{{record.amountToSPV != null && record.amountToSPV > 0 ? (' (' + (record.amountToSPV | number:'1.2-2') + ')') : ''}}</td>
                 <!--<td>{{record.amountToSPV | number:'1.2-2'}}</td>-->
                 <td>{{record.currencyRate  != null ? (record.currencyRate | number:'1.2-2') : '-----'}}</td>
                 <td>{{record.amountKZT | number:'1.2-2'}}</td>
@@ -203,9 +248,18 @@
                             (click)="removeSavedRecord(record)">
                         <span class="glyphicon glyphicon-trash"></span>
                     </button>
-                    <button type="button" *ngIf="showEditRecordButton(record)" class="btn btn-xs btn-success" style="display: inline-block"  (click)="editRecord(record)">
-                        <span class="glyphicon glyphicon-pencil"></span>
-                    </button>
+                </td>
+                <td>
+
+                    <a *ngIf="showEditRecordButton(record)" class="btn btn-xs btn-success pull-right" data-toggle="modal" data-target="#editRecordModal" (click)="editRecord(record)">
+                        <span role="button" class="glyphicon glyphicon-pencil"></span>
+                    </a>
+                    <a *ngIf="!showEditRecordButton(record)"class="btn btn-xs btn-primary" data-toggle="modal" data-target="#editRecordModal" (click)="this.editedRecord = record">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </a>
+                    <!--<button type="button" *ngIf="showEditRecordButton(record)" class="btn btn-xs btn-success" style="display: inline-block"  (click)="editRecord(record)">-->
+                        <!--<span class="glyphicon glyphicon-pencil"></span>-->
+                    <!--</button>-->
                 </td>
             </tr>
         </table>
@@ -257,6 +311,167 @@
                     <!--<button type="button" class="btn btn-default pull-left" data-dismiss="modal"data-dismiss="modal">Close</button>-->
                     <button type="button" class="btn btn-primary pull-right" data-dismiss="modal">OK</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="editRecordModal" role="dialog">
+        <div class="modal-dialog" style="overflow-y: scroll; min-height: 100px; max-height:85%;  margin-top: 100px; margin-bottom:50px; width:65%;">
+            <div class="modal-content">
+                <br/>
+                <form *ngIf="editedRecord != null" (ngSubmit)="saveAddedRecord()" #editRecordForm="ngForm" class="well span">
+                    <div class="modal-body" *ngIf="editedRecord != null">
+
+                        <div class="row top-buffer" *ngIf="editErrorMessage != null || editSuccessMessage != null">
+                            <div class="col-md-12">
+                                <div class="alert alert-danger" *ngIf="editErrorMessage != null"><span>{{editErrorMessage}}</span>
+                                </div>
+                                <div class="alert alert-info" *ngIf="editSuccessMessage != null"><span>{{editSuccessMessage}}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-2">Статья</div>
+                                <div class="col-md-4">
+                                    <select required [disabled]="!editedRecord.canDelete" class="form-control" [ngModelOptions]="{standalone: true}"
+                                            [(ngModel)]="editedRecord.expenseType.code">
+                                        <option *ngFor="let item of expenseTypeLookup" [value]="item.code">{{item.nameRu}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-2">Источник</div>
+                                <div class="col-md-4">
+                                    <select required [disabled]="!editedRecord.canDelete" class="form-control" [ngModelOptions]="{standalone: true}"
+                                            [(ngModel)]="editedRecord.source.code">
+                                        <option *ngFor="let item of entityTypeLookup" [value]="item.code">{{item.nameRu}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-2">Получатель</div>
+                                <div class="col-md-4">
+                                    <select required [disabled]="!editedRecord.canDelete" class="form-control" [ngModelOptions]="{standalone: true}"
+                                            [(ngModel)]="editedRecord.recipient.code">
+                                        <option *ngFor="let item of entityTypeLookup" [value]="item.code">{{item.nameRu}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-2">Дата</div>
+                                <div class="col-md-3">
+                                    <div class='input-group date' id='dateDivId' style="width: 100%">
+                                        <input [disabled]="!editedRecord.canDelete" required type="text" class="form-control" id="dateInputId" name="dateInput" [(ngModel)]="editedRecord.date"/>
+                                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-2">Дата валютирования</div>
+                                <div class="col-md-3">
+                                    <div class='input-group date' id='dateDivId2' style="width: 100%">
+                                        <input [disabled]="!editedRecord.canDelete" type="text" class="form-control" name="dateInput2" id="dateInputId2" [(ngModel)]="editedRecord.valueDate"/>
+                                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-2">Сумма USD </div>
+                                <div class="col-md-4">
+                                    <input [disabled]="!editedRecord.canDelete" required type="text" class="form-control" (keyup)="onNumberChange(editedRecord)" [(ngModel)]="editedRecord.amount" [ngModelOptions]="{standalone: true}"/>
+                                    <!--{{editedRecord.amount != null && editedRecord.amount > 0 ? (editedRecord.amount | number:'1.2-2') : ''}}{{editedRecord.amountToSPV != null && editedRecord.amountToSPV > 0 ? (' (' + (editedRecord.amountToSPV | number:'1.2-2') + ')') : ''}}-->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-2">Сумма SPV</div>
+                                <div class="col-md-4">
+                                    <input [disabled]="!editedRecord.canDelete" (keyup)="onNumberChange(editedRecord)" type="text" class="form-control" [(ngModel)]="editedRecord.amountToSPV" [ngModelOptions]="{standalone: true}"/>
+                                    <!--{{editedRecord.currencyRate  != null ? (editedRecord.currencyRate | number:'1.2-2') : '-&#45;&#45;&#45;&#45;'}}-->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-2">Курс</div>
+                                <div class="col-md-10">{{editedRecord.currencyRate  != null ? (editedRecord.currencyRate | number:'1.2-2') : ''}}</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-2">Сумма KZT</div>
+                                <div class="col-md-10">{{editedRecord.amountKZT  != null ? (editedRecord.amountKZT | number:'1.2-2') : ''}}</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-2">Референс</div>
+                                <div class="col-md-10">
+                                    <input [disabled]="!editedRecord.canDelete" *ngIf="editedRecord.expenseType.code == 'ADM_FEE'" type="text" class="form-control"
+                                           placeholder="Enter Reference..." [(ngModel)]="editedRecord.referenceInfo" [ngModelOptions]="{standalone: true}"/>
+                                </div>
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="row">
+                            <h4>Уведомления:</h4>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-2">
+                                    <label *ngIf="editedRecord.canDelete" class="btn btn-primary" for="attachmentFile">
+                                        <input type="file" id="attachmentFile" (change)="onFileChange($event)" name="file" multiple style="display:none;" />
+                                        Add
+                                    </label>
+                                </div>
+                                <div class="col-md-6" *ngFor="let newFile of uploadFiles" class="label label-info" style="display: table;">
+                                    <span>{{newFile.name}}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div *ngFor="let attachment of editedRecord?.files">
+                                <file-attachment-downloader fileId="{{attachment.id}}"
+                                                            fileName="{{attachment.fileName}}"
+                                                            fileType="CC_ATTACH">
+                                </file-attachment-downloader>
+                                <a (click)="deleteAttachment(editedRecord.id, attachment.id)" *ngIf="editedRecord?.canDelete">
+                                    <i class="glyphicon glyphicon-trash"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-6">
+                                    <button type="button" class="btn btn-primary pull-left" data-dismiss="modal" (click)="closeEditRecordModal()">CLOSE</button>
+                                </div>
+                                <div class="col-md-6">
+                                    <button *ngIf="editedRecord.canDelete" type="submit" class="btn btn-success pull-right">SAVE</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <!--<div class="modal-footer">-->
+                <!--</div>-->
             </div>
         </div>
     </div>

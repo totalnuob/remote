@@ -15,10 +15,15 @@ export class ReserveCalculationFormRecord {
 
     canDelete: boolean;
 
+    referenceInfo: string;
+
+    files: any[];
+
     constructor(){
         this.expenseType = new BaseDictionary();
         this.source = new BaseDictionary();
         this.recipient = new BaseDictionary();
+        this.files = [];
     }
 
 }

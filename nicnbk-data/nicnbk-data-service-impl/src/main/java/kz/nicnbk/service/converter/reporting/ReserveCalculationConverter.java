@@ -55,6 +55,7 @@ public class ReserveCalculationConverter extends BaseDozerEntityConverter<Reserv
                     entity.getRecipient().getNameRu(), entity.getRecipient().getNameKz());
             dto.setRecipient(type);
         }
+
         return dto;
     }
 }

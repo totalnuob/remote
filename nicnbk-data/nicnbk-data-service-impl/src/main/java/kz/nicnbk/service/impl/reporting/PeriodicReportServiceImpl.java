@@ -3937,6 +3937,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             return responseDto;
         }
     }
+
     private ListResponseDto generateConsolidatedKZTForm22Current(Long reportId) {
         ListResponseDto responseDto = new ListResponseDto();
         PeriodicReport report = this.periodReportRepository.findOne(reportId);

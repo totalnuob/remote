@@ -73,5 +73,4 @@ public interface PeriodicReportService extends BaseService {
     ListResponseDto generateConsolidatedBalanceKZTForm19(Long reportId);
 
     ListResponseDto generateConsolidatedBalanceKZTForm22(Long reportId);
-
 }

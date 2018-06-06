@@ -21,3 +21,5 @@ INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(25, 
 INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(26, 'NB_REP_MCS', 'NBRK Reporting Monthly Cash Statement', '', '', 'reporting/nbrk');
 
 INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(30, 'CM_MATRL', 'Corp Meeting Matrials', '', '', 'corp_meetings');
+
+INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(31, 'CC_ATTACH', 'Capital Call attachments', '', '', 'reporting/cc_attachments');

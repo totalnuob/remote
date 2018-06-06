@@ -104,7 +104,11 @@ export class PeriodicReportService extends CommonService{
     private PERIODIC_REPORT_RESERVE_CALCULATION_FORM_URL = this.PERIODIC_REPORT_BASE_URL + "reserveCalculation/";
     private PERIODIC_REPORT_RESERVE_CALCULATION_DELETE_RECORD_URL = this.PERIODIC_REPORT_BASE_URL + "reserveCalculation/delete/";
     private PERIODIC_REPORT_RESERVE_CALCULATION_SAVE_URL = this.PERIODIC_REPORT_BASE_URL + "reserveCalculationSave/";
+    private PERIODIC_REPORT_RESERVE_CALCULATION_RECORD_SAVE_URL = this.PERIODIC_REPORT_BASE_URL + "reserveCalculationRecordSave/";
     private PERIODIC_REPORT_RESERVE_CALCULATION_SEARCH_URL = this.PERIODIC_REPORT_BASE_URL + "searchReserveCalculations/";
+
+    private RESERVE_CALCULATION_ATTACHMENT_UPLOAD_URL = this.PERIODIC_REPORT_BASE_URL + "reserveCalculation/uploadAttachment/";
+    private RESERVE_CALCULATION_ATTACHMENT_DELETE_URL = this.PERIODIC_REPORT_BASE_URL + "reserveCalculationAttachmentDelete/";
 
 
     loadAll(): Observable<PeriodicReport[]> {
@@ -135,8 +139,17 @@ export class PeriodicReportService extends CommonService{
     }
 
     postFiles(reportId, file, fileType){
-        console.log(reportId);
         return this.uploadService.postFiles(this.PERIODIC_REPORT_UPLOAD_URL + reportId, null, file, fileType );
+    }
+
+    postReserveCalculationFiles(recordId, files){
+        return this.uploadService.postFiles(this.RESERVE_CALCULATION_ATTACHMENT_UPLOAD_URL + recordId, null, files, 'CC_ATTACH');
+    }
+
+    public safeDeleteAttachment(recordId, fileId) {
+        return this.http.get(this.RESERVE_CALCULATION_ATTACHMENT_DELETE_URL + recordId + "/" + fileId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
     }
 
     postNonParsedFiles(reportId, file, fileType){
@@ -366,6 +379,14 @@ export class PeriodicReportService extends CommonService{
         let body = JSON.stringify(records);
         //console.log(body);
         return this.http.post(this.PERIODIC_REPORT_RESERVE_CALCULATION_SAVE_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    saveReserveCalculationRecord(record){
+        let body = JSON.stringify(record);
+        //console.log(body);
+        return this.http.post(this.PERIODIC_REPORT_RESERVE_CALCULATION_RECORD_SAVE_URL, body, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }

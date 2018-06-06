@@ -36,14 +36,18 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
 
     public sub: any;
     busy: Subscription;
-
     busyExport:Subscription;
+
+    editSuccessMessage: string;
+    editErrorMessage: string;
 
     searchParams = new ReserveCalculationSearchParams();
     searchResult: ReserveCalculationSearchResults;
 
     private records: ReserveCalculationFormRecord[]
-    private addedRecords: ReserveCalculationFormRecord[];
+    //private addedRecords: ReserveCalculationFormRecord[];
+
+    private editedRecord: ReserveCalculationFormRecord;
 
     private expenseTypeLookup: BaseDictionary[];
     private entityTypeLookup: BaseDictionary[];
@@ -57,6 +61,8 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
     private exportDoerOption;
     private exportApproveList = [];
 
+    public uploadFiles: Array<any> = [];
+
     constructor(
         private router: Router,
         private route: ActivatedRoute,
@@ -66,7 +72,7 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
         super(router, route, periodicReportService);
 
         this.records = [];
-        this.addedRecords = [];
+        //this.editedRecord = new ReserveCalculationFormRecord();
 
         Observable.forkJoin(
             // Load lookups
@@ -93,42 +99,6 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
                                 this.search(0);
                             }
                         });
-
-                    //this.busy = this.periodicReportService.getReserveCalculationFormData()
-                    //    .subscribe(
-                    //        response  => {
-                    //            if(response){
-                    //                this.records = response;
-                    //                this.checkRecords();
-                    //
-                    //                if(this.exportDirectorLookup != null && this.exportDirectorLookup.length > 0){
-                    //                    this.exportDirectorOption = this.exportDirectorLookup[0].code;
-                    //                }
-                    //
-                    //                if(this.exportDoerLookup != null && this.exportDoerLookup.length > 0){
-                    //                    this.exportDoerOption = this.exportDoerLookup[0].code;
-                    //                }
-                    //
-                    //                if(this.exportApproveListLookup && this.exportApproveListLookup.length > 1) {
-                    //                    this.exportApproveList.push(this.exportApproveListLookup[0].code);
-                    //                    this.exportApproveList.push(this.exportApproveListLookup[1].code);
-                    //                }
-                    //                if(this.exportApproveListLookup && this.exportApproveListLookup.length > 2) {
-                    //                    this.exportApproveList.push(this.exportApproveListLookup[2].code);
-                    //                }
-                    //                this.checkApproveList();
-                    //            }
-                    //        },
-                    //        (error: ErrorResponse) => {
-                    //            this.successMessage = null;
-                    //            this.errorMessage = "Error loading data";
-                    //            if(error && !error.isEmpty()){
-                    //                this.processErrorMessage(error);
-                    //            }
-                    //            this.postAction(null, this.errorMessage);
-                    //        }
-                    //    );
-
                 },
                 (error: ErrorResponse) => {
                     this.errorMessage = "Error loading lookups";
@@ -199,7 +169,8 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
     }
 
     addRecord(){
-        this.addedRecords.push(new ReserveCalculationFormRecord());
+        this.editedRecord = new ReserveCalculationFormRecord();
+        this.editedRecord.canDelete = true;
 
         // FIX, since ngFor rendering takes time, no element for datetimepicker() function call
         setTimeout(function(){
@@ -218,22 +189,29 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
     }
 
 
-    removeRecord(addedRecord){
-        var confirmed = window.confirm("Are you sure want to delete record?");
-        if(confirmed) {
-            if (this.addedRecords) {
-                for (var i = this.addedRecords.length; i--;) {
-                    if (this.addedRecords[i] === addedRecord) {
-                        this.addedRecords.splice(i, 1);
-                    }
-                }
-            }
-        }
-    }
+    //removeRecord(addedRecord){
+    //    var confirmed = window.confirm("Are you sure want to delete record?");
+    //    if(confirmed) {
+    //        this.addedRecord = null;
+    //    }
+    //}
 
     editRecord(record){
-        this.addedRecords = [];
-        this.addedRecords.push(record);
+        this.editedRecord = record;
+
+        // FIX, since ngFor rendering takes time, no element for datetimepicker() function call
+        setTimeout(function(){
+            $('#dateDivId').datetimepicker({
+                //defaultDate: new Date(),
+                format: 'DD-MM-YYYY'
+            });
+
+
+            $('#dateDivId2').datetimepicker({
+                //defaultDate: new Date(),
+                format: 'DD-MM-YYYY'
+            });
+        }, 500);
     }
 
     showEditRecordButton(record){
@@ -276,7 +254,71 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
         }
     }
 
-    saveAddedRecords(){
+    //saveAddedRecords(){
+    //
+    //    if($('#dateInputId2').val() === '') {
+    //        if (!confirm("Value 'Дата валютирования' is empty. Value 'Дата' will be used for export. Ok?")) {
+    //            return;
+    //        }
+    //    }
+    //
+    //    if(this.addedRecords != null){
+    //        for(var i = 0; i < this.addedRecords.length; i++){
+    //            this.addedRecords[i].date = $('#dateInputId').val();
+    //            this.addedRecords[i].valueDate = $('#dateInputId2').val();
+    //
+    //            if(this.addedRecords[i].date == null || this.addedRecords[i].date === ''){
+    //                this.postAction(null, "Missing value 'Дата'");
+    //                return;
+    //            }
+    //
+    //            if(this.addedRecords[i].amount) {
+    //                this.addedRecords[i].amount = Number(this.addedRecords[i].amount.toString().replace(/,/g, ''));
+    //            }
+    //            if(this.addedRecords[i].amountToSPV) {
+    //                this.addedRecords[i].amountToSPV = Number(this.addedRecords[i].amountToSPV.toString().replace(/,/g, ''));
+    //            }
+    //        }
+    //    }
+    //
+    //    this.periodicReportService.saveReserveCalculationFormData(this.addedRecords)
+    //        .subscribe(
+    //            response  => {
+    //                this.errorMessage = null;
+    //                this.addedRecords = [];
+    //
+    //                this.busy = this.periodicReportService.getReserveCalculationFormData()
+    //                    .subscribe(
+    //                        response  => {
+    //                            if(response){
+    //                                this.records = response;
+    //                                this.postAction("Records successfully saved", null);
+    //                                this.checkRecords();
+    //                            }
+    //                        },
+    //                        (error: ErrorResponse) => {
+    //                            this.successMessage = null;
+    //                            this.errorMessage = "Error loading records";
+    //                            if(error && !error.isEmpty()){
+    //                                this.processErrorMessage(error);
+    //                            }
+    //                            this.postAction(null, this.errorMessage);
+    //                        }
+    //                    );
+    //            },
+    //            (error: ErrorResponse) => {
+    //                this.successMessage = null;
+    //                this.errorMessage = "Error saving new records";
+    //                if(error && !error.isEmpty()){
+    //                    this.processErrorMessage(error);
+    //                }else {
+    //                    this.postAction(null, this.errorMessage);
+    //                }
+    //            }
+    //        )
+    //}
+
+    saveAddedRecord(){
 
         if($('#dateInputId2').val() === '') {
             if (!confirm("Value 'Дата валютирования' is empty. Value 'Дата' will be used for export. Ok?")) {
@@ -284,53 +326,62 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
             }
         }
 
-        if(this.addedRecords != null){
-            for(var i = 0; i < this.addedRecords.length; i++){
-                this.addedRecords[i].date = $('#dateInputId').val();
-                this.addedRecords[i].valueDate = $('#dateInputId2').val();
+        if(this.editedRecord != null){
+            this.editedRecord.date = $('#dateInputId').val();
+            this.editedRecord.valueDate = $('#dateInputId2').val();
 
-                if(this.addedRecords[i].date == null || this.addedRecords[i].date === ''){
-                    this.postAction(null, "Missing value 'Дата'");
-                    return;
-                }
+            if(this.editedRecord.date == null || this.editedRecord.date === ''){
+                this.postAction(null, "Missing value 'Дата'");
+                return;
+            }
 
-                if(this.addedRecords[i].amount) {
-                    this.addedRecords[i].amount = Number(this.addedRecords[i].amount.toString().replace(/,/g, ''));
-                }
-                if(this.addedRecords[i].amountToSPV) {
-                    this.addedRecords[i].amountToSPV = Number(this.addedRecords[i].amountToSPV.toString().replace(/,/g, ''));
-                }
+            if(this.editedRecord.amount) {
+                this.editedRecord.amount = Number(this.editedRecord.amount.toString().replace(/,/g, ''));
+            }
+            if(this.editedRecord.amountToSPV) {
+                this.editedRecord.amountToSPV = Number(this.editedRecord.amountToSPV.toString().replace(/,/g, ''));
             }
         }
 
-        this.periodicReportService.saveReserveCalculationFormData(this.addedRecords)
+        this.periodicReportService.saveReserveCalculationRecord(this.editedRecord)
             .subscribe(
                 response  => {
-                    this.errorMessage = null;
-                    this.addedRecords = [];
 
-                    this.busy = this.periodicReportService.getReserveCalculationFormData()
-                        .subscribe(
-                            response  => {
-                                if(response){
-                                    this.records = response;
-                                    this.postAction("Records successfully saved", null);
-                                    this.checkRecords();
+                    this.editedRecord.id = response.entityId;
+                    this.editErrorMessage = null;
+                    this.editSuccessMessage = "Record successfully saved";
+
+                    if(this.uploadFiles != null && this.uploadFiles.length > 0) {
+
+                        // TODO: refactor
+                        this.periodicReportService.postReserveCalculationFiles(response.entityId, this.uploadFiles).subscribe(
+                            res => {
+                                // clear upload files list on view
+                                this.uploadFiles = [];
+                                for (var i = 0; i < res.length; i++) {
+                                    this.editedRecord.files.push(res[i]);
                                 }
+
+                                //this.editedRecord = null;
+                                //this.search(0);
                             },
                             (error: ErrorResponse) => {
-                                this.successMessage = null;
-                                this.errorMessage = "Error loading records";
+                                this.errorMessage = "Error uploading attachments";
                                 if(error && !error.isEmpty()){
                                     this.processErrorMessage(error);
                                 }
-                                this.postAction(null, this.errorMessage);
-                            }
-                        );
+                                this.postAction(null, null);
+                            });
+                    }else{
+                        this.errorMessage = null;
+                        //this.editedRecord = null;
+                        //this.search(0);
+                    }
+
                 },
                 (error: ErrorResponse) => {
-                    this.successMessage = null;
-                    this.errorMessage = "Error saving new records";
+                    this.editSuccessMessage = null;
+                    this.editErrorMessage = "Error saving new record";
                     if(error && !error.isEmpty()){
                         this.processErrorMessage(error);
                     }else {
@@ -467,6 +518,50 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
                 record.amountToSPV = record.amountToSPV.toString().replace(/,/g , '');
                 record.amountToSPV = parseFloat(record.amountToSPV).toLocaleString('en', {maximumFractionDigits: 2});
             }
+        }
+    }
+
+    onFileChange(event) {
+        var target = event.target || event.srcElement;
+        var files = target.files;
+        this.uploadFiles.length = 0;
+        this.uploadFiles = [];
+        for (let i = 0; i < files.length; i++) {
+            this.uploadFiles.push(files[i]);
+        }
+    }
+
+    closeEditRecordModal(){
+        this.editErrorMessage = null;
+        this.editSuccessMessage = null;
+        this.editedRecord = new ReserveCalculationFormRecord();
+        this.uploadFiles = [];
+        this.search(0);
+    }
+
+
+    deleteAttachment(recordId, fileId){
+        var confirmed = window.confirm("Are you sure want to delete");
+        if(confirmed) {
+            this.periodicReportService.safeDeleteAttachment(recordId, fileId)
+                .subscribe(
+                    response => {
+                        for(var i = this.editedRecord.files.length - 1; i >= 0; i--) {
+                            if(this.editedRecord.files[i].id === fileId) {
+                                this.editedRecord.files.splice(i, 1);
+                            }
+                        }
+
+                        this.editErrorMessage = null;
+                        this.editSuccessMessage = "Attachment deleted";
+                    },
+                    (error: ErrorResponse) => {
+                        this.editErrorMessage = "Error deleting attachment";
+                        if(error && !error.isEmpty()){
+                            this.processErrorMessage(error);
+                        }
+                    }
+                );
         }
     }
 

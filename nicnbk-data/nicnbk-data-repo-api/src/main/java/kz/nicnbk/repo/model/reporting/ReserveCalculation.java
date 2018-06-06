@@ -21,6 +21,7 @@ public class ReserveCalculation extends CreateUpdateBaseEntity{
     private Date valueDate;
     private Double amount;
     private Double amountToSPV;
+    private String referenceInfo;
 
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -91,5 +92,14 @@ public class ReserveCalculation extends CreateUpdateBaseEntity{
 
     public void setValueDate(Date valueDate) {
         this.valueDate = valueDate;
+    }
+
+    @Column(name="reference_info")
+    public String getReferenceInfo() {
+        return referenceInfo;
+    }
+
+    public void setReferenceInfo(String referenceInfo) {
+        this.referenceInfo = referenceInfo;
     }
 }

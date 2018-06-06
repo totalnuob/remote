@@ -12,6 +12,13 @@ public class EntitySaveResponseDto extends ResponseDto {
     private Long entityId;
     private Date creationDate;
 
+    public EntitySaveResponseDto(){}
+
+    public EntitySaveResponseDto(Long id, Date creationDate){
+        this.entityId = id;
+        this.creationDate = creationDate;
+    }
+
     public Long getEntityId() {
         return entityId;
     }

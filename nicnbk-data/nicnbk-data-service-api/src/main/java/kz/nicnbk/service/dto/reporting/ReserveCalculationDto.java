@@ -2,14 +2,18 @@ package kz.nicnbk.service.dto.reporting;
 
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.common.service.model.BaseDto;
+import kz.nicnbk.common.service.model.CreateUpdateBaseEntityDto;
+import kz.nicnbk.repo.model.reporting.ReserveCalculation;
+import kz.nicnbk.service.dto.files.FilesDto;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
+import java.util.Set;
 
 /**
  * Created by magzumov on 30.11.2017.
  */
-public class ReserveCalculationDto implements BaseDto {
+public class ReserveCalculationDto extends CreateUpdateBaseEntityDto<ReserveCalculation> {
 
     private Long id;
     private BaseDictionaryDto expenseType;
@@ -24,6 +28,8 @@ public class ReserveCalculationDto implements BaseDto {
     private Double currencyRate;
     private Double amountKZT;
     private boolean canDelete;
+    private String referenceInfo;
+    private Set<FilesDto> files;
 
     public BaseDictionaryDto getExpenseType() {
         return expenseType;
@@ -111,5 +117,21 @@ public class ReserveCalculationDto implements BaseDto {
 
     public void setCanDelete(boolean canDelete) {
         this.canDelete = canDelete;
+    }
+
+    public String getReferenceInfo() {
+        return referenceInfo;
+    }
+
+    public void setReferenceInfo(String referenceInfo) {
+        this.referenceInfo = referenceInfo;
+    }
+
+    public Set<FilesDto> getFiles() {
+        return files;
+    }
+
+    public void setFiles(Set<FilesDto> files) {
+        this.files = files;
     }
 }

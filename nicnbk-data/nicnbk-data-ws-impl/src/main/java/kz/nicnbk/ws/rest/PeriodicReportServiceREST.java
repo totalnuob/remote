@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * REST Service class for periodic reports.
@@ -614,9 +615,9 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
         return buildNonNullResponse(responseDto);
     }
 
-    @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/reserveCalculationSave/", method = RequestMethod.POST)
-    public ResponseEntity saveReserveCalculation( @RequestBody List<ReserveCalculationDto> records) {
+    public ResponseEntity saveReserveCalculationList( @RequestBody List<ReserveCalculationDto> records) {
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
@@ -632,6 +633,54 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
             return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/reserveCalculationRecordSave/", method = RequestMethod.POST)
+    public ResponseEntity saveReserveCalculation( @RequestBody ReserveCalculationDto record) {
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        EntitySaveResponseDto entitySaveResponseDto = this.reserveCalculationService.save(record, username);
+        return buildEntitySaveResponse(entitySaveResponseDto);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/reserveCalculation/uploadAttachment/{recordId}")
+    public ResponseEntity<?> reserveCalculationFileUpload(@PathVariable("recordId") Long recordId,
+                                              @RequestParam(value = "file", required = true) MultipartFile[] files,
+                                              @RequestParam(value = "fileType", required = true) String fileType) {
+
+        // TODO: control file upload by user role
+
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        Set<FilesDto> filesDto = buildFilesDtoFromMultipart(files, fileType);
+        if(filesDto != null){
+            Set<FilesDto> savedAttachments = this.reserveCalculationService.saveAttachments(recordId, filesDto);
+            if(savedAttachments == null){
+                // error occurred
+                return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+            }else{
+                return new ResponseEntity<>(savedAttachments, null, HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity<>(null, null, HttpStatus.OK);
+
+    }
+
+    @RequestMapping(value="/reserveCalculationAttachmentDelete/{recordId}/{fileId}", method=RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<?> deleteReserveCalculationRecordFile(@PathVariable(value="recordId") Long recordId, @PathVariable(value="fileId") Long fileId){
+        //check rights
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        // TODO: check if can edit
+
+        boolean deleted = this.reserveCalculationService.deleteReserveCalculationAttachment(recordId, fileId, username);
+        return buildDeleteResponseEntity(deleted);
+    }
+
 
     @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value="/reserveCalculation/delete/{recordId}", method=RequestMethod.GET)

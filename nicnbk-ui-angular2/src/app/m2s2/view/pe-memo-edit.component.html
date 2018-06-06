@@ -482,7 +482,7 @@
 
                                 <div class="row" *ngIf="canEdit()">
                                     <label class="btn btn-primary col-md-2" for="attachmentFile">
-                                        <input type="file" id="attachmentFile" (change)="onFileChange($event)" name="file" multiple style="display:none;" />Add</label>
+                                    <input type="file" id="attachmentFile" (change)="onFileChange($event)" name="file" multiple style="display:none;" />Add</label>
 
                                     <div class="col-md-4">
                                         <div class="row" *ngFor="let newFile of uploadFiles" class="label label-info" style="display: table;">

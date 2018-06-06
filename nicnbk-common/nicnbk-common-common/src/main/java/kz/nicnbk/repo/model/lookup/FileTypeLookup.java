@@ -26,7 +26,8 @@ public enum FileTypeLookup {
 
     PE_FIRM_LOGO("PE_LOGO", "pe_logo"),
 
-    CORP_MEETING_MATERIALS("CM_MATRL", "corp_meetings");
+    CORP_MEETING_MATERIALS("CM_MATRL", "corp_meetings"),
+    CC_ATTACHMENT("CC_ATTACH", "reporting/cc_attachments");
 
     private String code;
     private String catalog;

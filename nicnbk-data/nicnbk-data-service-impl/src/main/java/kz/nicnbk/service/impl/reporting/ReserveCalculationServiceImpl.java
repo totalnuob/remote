@@ -5,20 +5,25 @@ import kz.nicnbk.common.service.util.ExcelUtils;
 import kz.nicnbk.common.service.util.MathUtils;
 import kz.nicnbk.common.service.util.PaginationUtils;
 import kz.nicnbk.repo.api.common.CurrencyRatesRepository;
+import kz.nicnbk.repo.api.reporting.ReserveCalculationFilesRepository;
 import kz.nicnbk.repo.api.reporting.ReserveCalculationRepository;
+import kz.nicnbk.repo.model.employee.Employee;
+import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.repo.model.lookup.reporting.CapitalCallExportTypeLookup;
-import kz.nicnbk.repo.model.reporting.ReserveCalculation;
-import kz.nicnbk.repo.model.reporting.ReserveCalculationExportApproveListType;
-import kz.nicnbk.repo.model.reporting.ReserveCalculationExportDoerType;
-import kz.nicnbk.repo.model.reporting.ReserveCalculationExportSignerType;
+import kz.nicnbk.repo.model.reporting.*;
 import kz.nicnbk.service.api.common.CurrencyRatesService;
+import kz.nicnbk.service.api.employee.EmployeeService;
+import kz.nicnbk.service.api.files.FileService;
 import kz.nicnbk.service.api.reporting.PeriodicReportService;
 import kz.nicnbk.service.api.reporting.privateequity.ReserveCalculationService;
 import kz.nicnbk.service.converter.reporting.ReserveCalculationConverter;
 import kz.nicnbk.service.datamanager.LookupService;
+import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
+import kz.nicnbk.service.dto.employee.EmployeeDto;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.lookup.CurrencyRatesDto;
 import kz.nicnbk.service.dto.reporting.*;
+import kz.nicnbk.service.dto.reporting.PeriodicReportType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -70,7 +75,16 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
     private CurrencyRatesRepository currencyRatesRepository;
 
     @Autowired
+    private FileService fileService;
+
+    @Autowired
+    private ReserveCalculationFilesRepository reserveCalculationFilesRepository;
+
+    @Autowired
     private LookupService lookupService;
+
+    @Autowired
+    private EmployeeService employeeService;
 
     @Override
     public List<ReserveCalculationDto> getAllReserveCalculations() {
@@ -95,6 +109,11 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
                     ReserveCalculation entity = entitiesIterator.next();
                     ReserveCalculationDto dto = this.reserveCalculationConverter.disassemble(entity);
                     setAdditionalFields(dto);
+
+                    Set<FilesDto> files = getAttachments(entity.getId());
+                    if(files != null){
+                        dto.setFiles(files);
+                    }
 
                     records.add(dto);
                 }
@@ -173,7 +192,15 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
                 if (searchParams != null) {
                     result.setSearchParams(searchParams.getSearchParamsAsString());
                 }
-                result.setRecords(reserveCalculationConverter.disassembleList(entityPage.getContent()));
+                List<ReserveCalculationDto> dtoList = reserveCalculationConverter.disassembleList(entityPage.getContent());
+                for(ReserveCalculationDto dto: dtoList){
+                    Set<FilesDto> files = getAttachments(dto.getId());
+                    if(files != null){
+                        dto.setFiles(files);
+                    }
+                }
+
+                result.setRecords(dtoList);
                 setAdditionalFields(result.getRecords());
                 return result;
             }
@@ -296,6 +323,37 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
         }
 
         return true;
+    }
+
+    @Override
+    public EntitySaveResponseDto save(ReserveCalculationDto record, String updater) {
+        EntitySaveResponseDto entitySaveResponseDto = new EntitySaveResponseDto();
+        try {
+            ReserveCalculation entity = this.reserveCalculationConverter.assemble(record);
+
+            EmployeeDto updaterEntity = this.employeeService.findByUsername(updater);
+            if(entity.getId() != null){
+                entity.setUpdater(new Employee(updaterEntity.getId()));
+                entity.setUpdateDate(new Date());
+                ReserveCalculation existingEntity = reserveCalculationRepository.findOne(entity.getId());
+                entity.setCreationDate(existingEntity.getCreationDate());
+                entity.setCreator(existingEntity.getCreator());
+            }else if(updaterEntity != null && entity.getId() == null){
+                entity.setCreator(new Employee(updaterEntity.getId()));
+            }
+
+            entity = this.reserveCalculationRepository.save(entity);
+            ReserveCalculationDto savedEntity = this.reserveCalculationConverter.disassemble(entity);
+            entitySaveResponseDto.setSuccessMessageEn("Successfully saved reserve calculation record, " +
+                    "id = " + savedEntity.getId() + " [user=" + updater + "]");
+            entitySaveResponseDto.setEntityId(savedEntity.getId());
+            entitySaveResponseDto.setCreationDate(savedEntity.getCreationDate());
+        } catch (Exception ex) {
+            logger.error("Error saving reserve calculation record [user=" + updater + "]", ex);
+            entitySaveResponseDto.setErrorMessageEn("Error saving reserve calculation record [user=" + updater + "]");
+        }
+
+        return entitySaveResponseDto;
     }
 
     //@Override
@@ -501,12 +559,157 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
                 return false;
             }
 
+            // delete attachments
+            List<ReserveCalculationFiles> entries = this.reserveCalculationFilesRepository.getFilesByEntityId(recordId);
+            for(ReserveCalculationFiles entry: entries){
+                Long fileId = entry.getFile().getId();
+                this.reserveCalculationFilesRepository.delete(entry);
+                fileService.delete(fileId);
+            }
+
             this.reserveCalculationRepository.delete(entity);
             return true;
         }catch (Exception ex){
             logger.error("Error deleting Reserve Calculation Record: record id " + recordId, ex);
         }
         return false;
+    }
+
+    @Override
+    public Set<FilesDto> saveAttachments(Long recordId, Set<FilesDto> attachments) {
+        try {
+            Set<FilesDto> dtoSet = new HashSet<>();
+            if (attachments != null) {
+                Iterator<FilesDto> iterator = attachments.iterator();
+                while (iterator.hasNext()) {
+                    FilesDto filesDto = iterator.next();
+                    if (filesDto.getId() == null) {
+                        Long fileId = fileService.save(filesDto, FileTypeLookup.CC_ATTACHMENT.getCatalog());
+                        logger.info("Saved reserve calculation attachment file: record=" + recordId + ", file=" + fileId);
+                        ReserveCalculationFiles entityFiles = new ReserveCalculationFiles(recordId, fileId);
+                        this.reserveCalculationFilesRepository.save(entityFiles);
+                        logger.info("Saved reserve calculation attachment info: record=" + recordId + ", file=" + fileId);
+
+                        FilesDto newFileDto = new FilesDto();
+                        newFileDto.setId(fileId);
+                        newFileDto.setFileName(filesDto.getFileName());
+                        dtoSet.add(newFileDto);
+                    }
+                }
+            }
+            return dtoSet;
+        }catch (Exception ex){
+            logger.error("Error saving reserve calculation attachments: record=" + recordId, ex);
+        }
+        return null;
+    }
+
+    @Override
+    public boolean safeDeleteReserveCalculationAttachment(Long recordId, Long fileId, String username) {
+        Date mostRecentFinalReportDate = null;
+        List<PeriodicReportDto> periodicReportDtos = this.periodicReportService.getAllPeriodicReports();
+        if(periodicReportDtos != null){
+            for(PeriodicReportDto periodicReportDto: periodicReportDtos){
+                if(periodicReportDto.getStatus() != null && periodicReportDto.getStatus().equalsIgnoreCase(PeriodicReportType.SUBMITTED.getCode())) {
+                    if (mostRecentFinalReportDate == null || mostRecentFinalReportDate.compareTo(periodicReportDto.getReportDate()) < 0) {
+                        mostRecentFinalReportDate = periodicReportDto.getReportDate();
+                    }
+                }
+            }
+        }
+
+        try{
+            ReserveCalculationFiles entity = reserveCalculationFilesRepository.getFilesByFileId(fileId);
+
+            if(mostRecentFinalReportDate != null && entity.getEntity().getDate() != null &&
+                    entity.getEntity().getDate().compareTo(mostRecentFinalReportDate) <= 0){
+                logger.error("Cannot delete attachment for reserve calculation record with date = " +
+                        DateUtils.getDateFormatted(entity.getEntity().getDate()) + ", final report exists for period = " + DateUtils.getDateFormatted(mostRecentFinalReportDate));
+                return false;
+            }
+
+            if (entity != null && entity.getEntity().getId().longValue() == recordId) {
+                boolean deleted = fileService.safeDelete(fileId);
+                if(!deleted){
+                    logger.error("Failed to delete(safe) reserve calculation attachment: record=" + recordId + ", file=" + fileId + ", by " + username);
+                }else{
+                    logger.info("Deleted(safe)reserve calculation attachment: record=" + recordId + ", file=" + fileId + ", by " + username);
+                }
+                return true;
+            }else{
+                logger.error("Failed to delete(safe) reserve calculation attachment: record=" + recordId + ", file=" + fileId + ", by " + username +
+                        ". Reserve Calculation-File entity not found");
+            }
+        }catch (Exception ex){
+            logger.error("Failed to delete(safe) reserve calculation attachment with exception: record=" + recordId + ", file=" + fileId + ", by " + username, ex);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean deleteReserveCalculationAttachment(Long recordId, Long fileId, String username) {
+        Date mostRecentFinalReportDate = null;
+        List<PeriodicReportDto> periodicReportDtos = this.periodicReportService.getAllPeriodicReports();
+        if(periodicReportDtos != null){
+            for(PeriodicReportDto periodicReportDto: periodicReportDtos){
+                if(periodicReportDto.getStatus() != null && periodicReportDto.getStatus().equalsIgnoreCase(PeriodicReportType.SUBMITTED.getCode())) {
+                    if (mostRecentFinalReportDate == null || mostRecentFinalReportDate.compareTo(periodicReportDto.getReportDate()) < 0) {
+                        mostRecentFinalReportDate = periodicReportDto.getReportDate();
+                    }
+                }
+            }
+        }
+
+        try{
+            ReserveCalculationFiles entity = reserveCalculationFilesRepository.getFilesByFileId(fileId);
+            if(entity.getEntity().getId().compareTo(recordId) != 0){
+                logger.error("Failed to delete reserve calculation attachment file: provided record does not match, recordid =" + recordId);
+                return false;
+            }
+
+            if(mostRecentFinalReportDate != null && entity.getEntity().getDate() != null &&
+                    entity.getEntity().getDate().compareTo(mostRecentFinalReportDate) <= 0){
+                logger.error("Cannot delete attachment for reserve calculation record with date = " +
+                        DateUtils.getDateFormatted(entity.getEntity().getDate()) + ", final report exists for period = " + DateUtils.getDateFormatted(mostRecentFinalReportDate));
+                return false;
+            }
+
+            if (entity != null && entity.getEntity().getId().longValue() == recordId) {
+                reserveCalculationFilesRepository.delete(entity);
+                boolean deleted = fileService.delete(fileId);
+                if(!deleted){
+                    logger.error("Failed to delete(safe) reserve calculation attachment: record=" + recordId + ", file=" + fileId + ", by " + username);
+                }else{
+                    logger.info("Deleted(safe)reserve calculation attachment: record=" + recordId + ", file=" + fileId + ", by " + username);
+                }
+                return true;
+            }else{
+                logger.error("Failed to delete(safe) reserve calculation attachment: record=" + recordId + ", file=" + fileId + ", by " + username +
+                        ". Reserve Calculation-File entity not found");
+            }
+        }catch (Exception ex){
+            logger.error("Failed to delete(safe) reserve calculation attachment with exception: record=" + recordId + ", file=" + fileId + ", by " + username, ex);
+        }
+        return false;
+    }
+
+    public Set<FilesDto> getAttachments(Long recordId){
+        try {
+            List<ReserveCalculationFiles> entities = reserveCalculationFilesRepository.getFilesByEntityId(recordId);
+            Set<FilesDto> files = new HashSet<>();
+            if (entities != null) {
+                for (ReserveCalculationFiles entity : entities) {
+                    FilesDto fileDto = new FilesDto();
+                    fileDto.setId(entity.getFile().getId());
+                    fileDto.setFileName(entity.getFile().getFileName());
+                    files.add(fileDto);
+                }
+            }
+            return files;
+        }catch(Exception ex){
+            logger.error("Error getting reserve calculation attachments: record =" + recordId, ex);
+        }
+        return null;
     }
 
     private ReserveCalculationDto getReserveCalculationRecordById(Long recordId){
@@ -857,9 +1060,6 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
             String accountNumber = record.getRecipient() != null && record.getRecipient().getCode().equalsIgnoreCase("BNY_M") ?
                     "8901245267" : record.getRecipient() != null && record.getRecipient().getCode().equalsIgnoreCase("MAPLES") ?
                     "0110103434400" : "";
-            String reference = record.getRecipient() != null && record.getRecipient().getCode().equalsIgnoreCase("BNY_M") ?
-                    "AISE059-2017 Q4 BNY Mellon" : record.getRecipient() != null && record.getRecipient().getCode().equalsIgnoreCase("MAPLES") ?
-                    "Payment for invoices №1979132, №1974668" : "";
 
             String useOfFunds = record.getRecipient() != null && record.getRecipient().getCode().equalsIgnoreCase("BNY_M") ?
                     "Invoice payment for administration services from NICK Operating to the Bank of New York Mellon." :
@@ -903,7 +1103,7 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
                     row.getCell(4).setCellValue(beneficiary);
                 }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "Reference:") &&
                         ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(4), "<reference>")){
-                    row.getCell(4).setCellValue(reference);
+                    row.getCell(4).setCellValue(record.getReferenceInfo());
                 }else if(ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(2), "<DIRECTORNAME>-Director") &&
                         ExcelUtils.isCellStringValueEqualMatchCase(row.getCell(4), "<dd.MM.yyyy>")){
                     ReserveCalculationExportSignerType signerType =
