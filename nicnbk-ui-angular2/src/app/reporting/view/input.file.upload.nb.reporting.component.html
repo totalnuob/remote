@@ -510,6 +510,41 @@
                     <!--</a>-->
                 </td>
             </tr>
+            <tr bgcolor="#e7e7e7">
+                <td colspan="2">Terra</td>
+            </tr>
+            <tr>
+                <td><span style="color: red;">*&nbsp;</span>Terra - General Ledger</td>
+                <td>
+                    <label class="btn btn-xs btn-default" for="attachmentFileTerraGL" *ngIf="showUploadButton('terra_general_ledger')">
+                        <input type="file" id="attachmentFileTerraGL" (change)="onFileChange($event, 'terra_general_ledger')" name="attachmentFileTerraGL" style="display:none;"/>
+                        <span class="glyphicon glyphicon-circle-arrow-up"></span>
+                    </label>
+                    <label *ngIf="fileTerraGeneralLedger != null" class="label label-info">{{fileTerraGeneralLedger[0].name}}</label>
+
+                    <button *ngIf="showDownloadButton('terra_general_ledger')" class="btn btn-xs btn-default"
+                            (click)="download('NB_REP_TGL', report.terraGeneralLedgerFileId, report.terraGeneralLedgerFileName)">
+                        <span class="glyphicon glyphicon-download-alt"></span>
+                        <i class="glyphicon glyphicon-refresh" *ngIf="pending"></i>
+                    </button>
+
+                    <button *ngIf="showProcessButton('terra_general_ledger')" class="btn btn-xs btn-success"
+                            (click)="uploadFile('terra_general_ledger')">
+                        <span class="glyphicon glyphicon-play-circle"></span>
+                    </button>
+                    <button *ngIf="showProcessButton('terra_general_ledger')" class="btn btn-xs btn-danger"
+                            (click)="clearFile('terra_general_ledger')">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </button>
+                    <button *ngIf="showViewButton('terra_general_ledger')" class="btn btn-xs btn-primary"
+                            [routerLink]="['/reporting/NBReporting/re/generalLedgerBalance/', periodicReport.id, 'INPUT']">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                    <button *ngIf="showDeleteButton('terra_general_ledger')" class="btn btn-xs btn-danger" (click)="deleteFile('terra_general_ledger')">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </button>
+                </td>
+            </tr>
         </table>
     </div>
     <div class="row">

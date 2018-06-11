@@ -46,6 +46,7 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
     private fileSingularityGeneralLedger;
     private fileSingularityNOALTrancheA;
     private fileSingularityNOALTrancheB;
+    private fileTerraGeneralLedger;
 
     constructor(
         private router: Router,
@@ -357,6 +358,22 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     this.fileSingularityNOALTrancheB = null;
                     this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
+        }else if(fileType === 'terra_general_ledger'){
+            this.busy = this.periodicReportService.postFiles(this.report.reportId, this.fileTerraGeneralLedger, 'NB_REP_TGL').subscribe(
+                res => {
+                    // clear upload file on view
+                    this.fileTerraGeneralLedger = null;
+                    // set file id
+                    this.report.terraGeneralLedgerFileId= res.fileId;
+                    this.report.terraGeneralLedgerFileName = res.fileName;
+                    this.postAction(res != null && res.message != null && res.message.nameEn != null ? res.message.nameEn : "Successfully uploaded file - Terra General Ledger", null);
+                },
+                error => {
+                    var result = JSON.parse(error);
+                    var message = result != null && result.message != null && result.message.nameEn != null ? result.message.nameEn : null;
+                    this.fileTerraGeneralLedger = null;
+                    this.postAction(null, message != null && message != null ? message : "Error uploading file");
+                });
         }
     }
 
@@ -390,6 +407,8 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
         } else if(fileType === 'singularity_noal_a'){
             this.fileSingularityNOALTrancheA = null;
         } else if(fileType === 'singularity_noal_b'){
+            this.fileSingularityNOALTrancheB = null;
+        } else if(fileType === 'terra_general_ledger'){
             this.fileSingularityNOALTrancheB = null;
         }
     }
@@ -442,6 +461,9 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                 } else if(filesList[i].type == 'NB_REP_SNB'){
                     this.report.singularityNOALTrancheBFileId = filesList[i].id;
                     this.report.singularityNOALTrancheBFileName = filesList[i].fileName;
+                } else if(filesList[i].type == 'NB_REP_TGL'){
+                    this.report.terraGeneralLedgerFileId = filesList[i].id;
+                    this.report.terraGeneralLedgerFileName = filesList[i].fileName;
                 }
             }
         }
@@ -513,6 +535,8 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
             this.fileSingularityNOALTrancheA = files;
         } else if(fileType === 'singularity_noal_b'){
             this.fileSingularityNOALTrancheB = files;
+        } else if(fileType === 'terra_general_ledger'){
+            this.fileTerraGeneralLedger = files;
         }
 
 
@@ -548,6 +572,8 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
         } else if(fileType === 'singularity_noal_a' && !this.fileSingularityNOALTrancheA && this.report != null && !this.report.singularityNOALTrancheAFileId){
             return true;
         } else if(fileType === 'singularity_noal_b' && !this.fileSingularityNOALTrancheB && this.report != null && !this.report.singularityNOALTrancheBFileId){
+            return true;
+        } else if(fileType === 'terra_general_ledger' && !this.fileTerraGeneralLedger && this.report != null && !this.report.terraGeneralLedgerFileId){
             return true;
         }
 
@@ -585,6 +611,8 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
             return true;
         } else if(fileType === 'singularity_noal_b' && this.report != null && this.report.singularityNOALTrancheBFileId > 0){
             return true;
+        } else if(fileType === 'terra_general_ledger' && this.report != null && this.report.terraGeneralLedgerFileId > 0){
+            return true;
         }
 
         return false;
@@ -620,6 +648,8 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
         } else if(fileType === 'singularity_noal_a' && this.fileSingularityNOALTrancheA && this.report != null && !this.report.singularityNOALTrancheAFileId){
             return true;
         } else if(fileType === 'singularity_noal_b' && this.fileSingularityNOALTrancheB && this.report != null && !this.report.singularityNOALTrancheBFileId){
+            return true;
+        } else if(fileType === 'terra_general_ledger' && this.fileTerraGeneralLedger && this.report != null && !this.report.terraGeneralLedgerFileId){
             return true;
         }
 
@@ -750,6 +780,22 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                             this.postAction(null, this.errorMessage);
                         }
                     );
+            } else if (fileType === 'terra_general_ledger' && this.report != null && this.report.terraGeneralLedgerFileId > 0) {
+                this.periodicReportService.deleteFile(this.report.terraGeneralLedgerFileId)
+                    .subscribe(
+                        response => {
+                            this.report.terraGeneralLedgerFileId = null;
+                            this.report.terraGeneralLedgerFileName = null;
+                            this.postAction("File deleted.", null);
+                        },
+                        (error: ErrorResponse) => {
+                            this.errorMessage = "Error deleting file";
+                            if(error && !error.isEmpty()){
+                                this.processErrorMessage(error);
+                            }
+                            this.postAction(null, this.errorMessage);
+                        }
+                    );
             }
         }
     }
@@ -766,6 +812,8 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
         } else if(this.report != null && !this.report.singularityGeneralLedgerFileId){
             return false
         } else if(this.report != null && !this.report.singularityNOALTrancheAFileId){
+            return false
+        } else if(this.report != null && !this.report.terraGeneralLedgerFileId){
             return false
         }
 

@@ -1,4 +1,4 @@
-package kz.nicnbk.service.dto.reporting;
+package kz.nicnbk.service.dto.reporting.nickmf;
 
 import kz.nicnbk.common.service.model.BaseDto;
 

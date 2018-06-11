@@ -120,6 +120,8 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
             return parseSingularNOAL(filesDto, reportId, 1);
         }else if(fileType.equals(FileTypeLookup.NB_REP_SN_TRANCHE_B.getCode())){
             return parseSingularNOAL(filesDto, reportId, 2);
+        }else if(fileType.equals(FileTypeLookup.NB_REP_TERRA_GENERAL_LEDGER.getCode())){
+            return parseTerraGeneralLedger(filesDto, reportId);
         }else{
             // log
             logger.error("File type did not match[" + fileType + "] for file '" + filesDto.getFileName() + "'");
@@ -1704,6 +1706,40 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                 ExcelUtils.isNotEmptyCell(row.getCell(7)) || ExcelUtils.isNotEmptyCell(row.getCell(8)) ||
                 ExcelUtils.isNotEmptyCell(row.getCell(11)) || ExcelUtils.isNotEmptyCell(row.getCell(14)) ||
                 ExcelUtils.isNotEmptyCell(row.getCell(17)) || ExcelUtils.isNotEmptyCell(row.getCell(20));
+    }
+
+
+    private FileUploadResultDto parseTerraGeneralLedger(FilesDto filesDto, Long reportId){
+        try {
+
+            /* PARSE EXCEL (RAW) *******************************************************************************/
+            Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
+            List<SingularityGeneralLedgerBalanceRecordDto> records = parseSingularGeneralLedgerRaw(rowIterator);
+            //printRecords(records);
+
+            return new FileUploadResultDto(ResponseStatusType.FAIL, "", "Error processing 'Terra General Ledger Balance' file'", "");
+
+            /* CHECK ENTITIES AND ASSEMBLE **********************************************************************/
+//            List<ReportingHFGeneralLedgerBalance> entities = this.generalLedgerBalanceService.assembleList(records, reportId);
+//
+//            /* SAVE TO DB **************************************************************************************/
+//            boolean saved = this.generalLedgerBalanceService.save(entities);
+//
+//            if(saved){
+//                logger.info("Successfully parsed 'Singular General Ledger Balance' file");
+//                return new FileUploadResultDto(ResponseStatusType.SUCCESS, "", "Successfully processed the file - Singular General Ledger Balance", "");
+//            }else{
+//                logger.error("Error saving 'Singular General Ledger Balance' file parsed data into database");
+//                return new FileUploadResultDto(ResponseStatusType.FAIL, "", "Error saving to database", "");
+//            }
+
+        }catch (ExcelFileParseException e) {
+            logger.error("Error parsing 'Singular General Ledger Balance' file with error: " + e.getMessage());
+            return new FileUploadResultDto(ResponseStatusType.FAIL, "", e.getMessage(), "");
+        }catch (Exception e){
+            logger.error("Error parsing 'Singular General Ledger Balance' file with error: " + e.getMessage());
+            return new FileUploadResultDto(ResponseStatusType.FAIL, "", "Error processing 'Singular General Ledger Balance' file'", "");
+        }
     }
 
 
