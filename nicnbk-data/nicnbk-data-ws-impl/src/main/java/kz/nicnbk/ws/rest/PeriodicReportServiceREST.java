@@ -9,10 +9,16 @@ import kz.nicnbk.service.api.reporting.PeriodicReportService;
 import kz.nicnbk.service.api.reporting.hedgefunds.HFGeneralLedgerBalanceService;
 import kz.nicnbk.service.api.reporting.hedgefunds.PeriodicReportHFService;
 import kz.nicnbk.service.api.reporting.privateequity.*;
+import kz.nicnbk.service.api.reporting.realestate.PeriodicReportREService;
+import kz.nicnbk.service.api.reporting.realestate.REGeneralLedgerBalanceService;
 import kz.nicnbk.service.dto.common.*;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.reporting.*;
 import kz.nicnbk.service.dto.reporting.nickmf.NICKMFReportingDataCalculatedValueRequestDto;
+import kz.nicnbk.service.dto.reporting.realestate.ExcludeTerraRecordDto;
+import kz.nicnbk.service.dto.reporting.realestate.RealEstateGeneralLedgerFormDataHolderDto;
+import kz.nicnbk.service.dto.reporting.realestate.TerraCombinedDataHolderDto;
+import kz.nicnbk.service.dto.reporting.realestate.TerraGeneratedGeneralLedgerFormDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,6 +72,9 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
     private HFGeneralLedgerBalanceService hfGeneralLedgerBalanceService;
 
     @Autowired
+    private REGeneralLedgerBalanceService realEstateGeneralLedgerBalanceService;
+
+    @Autowired
     private PEStatementChangesService peStatementChangesService;
 
     @Autowired
@@ -79,6 +88,9 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private PeriodicReportREService realEstateService;
 
 
 
@@ -166,7 +178,7 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
             }
 
             // parse file
-            FileUploadResultDto result = this.periodicReportFileParseService.parseFile(fileType, filesDto, reportId);
+            FileUploadResultDto result = this.periodicReportFileParseService.parseFile(fileType, filesDto, reportId, username);
             if(result != null && result.getStatus() == ResponseStatusType.SUCCESS){
                 result.setFileName(filesDto.getFileName());
                 result.setFileId(savedFile.getId());
@@ -310,6 +322,76 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
     /* ****************************************************************************************************************/
 
 
+    /* TERRA GL Form ***********************************************************************************************/
+    @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/terraGeneratedForm/{reportId}", method = RequestMethod.GET)
+    public ResponseEntity getTerraGeneratedForm(@PathVariable Long reportId) {
+        ListResponseDto responseDto  = this.realEstateService.getTerraGeneratedForm(reportId);
+        return buildNonNullResponse(responseDto);
+    }
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/terraGeneratedFormDataFromPreviousMonth/{reportId}", method = RequestMethod.GET)
+    public ResponseEntity getTerraGLAddedRecordsPreviousMonth(@PathVariable Long reportId) {
+        List<TerraGeneratedGeneralLedgerFormDto> records = this.realEstateService.getTerraGLAddedRecordsPreviousMonth(reportId);
+        return buildNonNullResponse(records);
+    }
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value="/RealEstateGeneralLedgerFormData/delete/{recordId}", method=RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<?> deleteRealEstateGeneralLedgerFormDataRecord(@PathVariable(value="recordId") Long recordId){
+        //check rights
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+        boolean deleted = this.realEstateService.deleteRealEstateGeneralLedgerFormDataRecordById(recordId);
+        if(deleted){
+            logger.info("Successfully deleted Terra GL Form record: record id " + recordId + " [user " + username + "]");
+        }else{
+            logger.error("Failed to delete Terra GL Form record: record id " + recordId + " [user " + username + "]");
+        }
+        return buildDeleteResponseEntity(deleted);
+    }
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(method = RequestMethod.POST, value = "/RealEstateGeneralLedgerFormData/save")
+    public ResponseEntity<?> saveRealEstateGeneralLedgerFormData(@RequestBody RealEstateGeneralLedgerFormDataHolderDto dataHolderDto){
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        EntityListSaveResponseDto entityListSaveResponseDto = this.realEstateService.saveRealEstateGeneralLedgerFormData(dataHolderDto);
+
+        if(entityListSaveResponseDto.getStatus() == ResponseStatusType.FAIL){
+            logger.error("Error saving Terra GL Form data [user " + username + "]");
+        }else{
+            logger.info("Successfully saved Terra GL Form data [user " + username + "]");
+        }
+
+        return buildEntityListSaveResponse(entityListSaveResponseDto);
+    }
+
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(method = RequestMethod.POST, value = "/excludeTerraRecord")
+    public ResponseEntity<?> excludeIncludeTerraRecord(@RequestBody ExcludeTerraRecordDto excludeTerraRecordDto){
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        boolean changed = this.realEstateService.excludeIncludeTerraRecord(excludeTerraRecordDto);
+
+        if(changed){
+            logger.error("Error excluding/including Terra record: id=" + excludeTerraRecordDto.getRecordId() + ", '" + excludeTerraRecordDto.getName() + "' [user " + username + "]");
+        }else{
+            logger.info("Error excluding/including Terra record: id=" + excludeTerraRecordDto.getRecordId() + ", '" + excludeTerraRecordDto.getName() + "' [user " + username + "]");
+        }
+
+        return buildDeleteResponseEntity(changed);
+    }
+
+
+
+    /* ****************************************************************************************************************/
+
 
     /* SINGULARITY ****************************************************************************************************/
     @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
@@ -444,6 +526,20 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
     @RequestMapping(value = "/get/noalB/{id}", method = RequestMethod.GET)
     public ResponseEntity getNOALTrancheB(@PathVariable Long id) {
         ConsolidatedReportRecordHolderDto recordsHolder = this.periodicReportService.getNOAL(id, 2);
+        return buildNonNullResponse(recordsHolder);
+    }
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/get/re/generalLedgerBalance/{id}", method = RequestMethod.GET)
+    public ResponseEntity getRealEstateGeneralLedgerBalance(@PathVariable Long id) {
+        ConsolidatedReportRecordHolderDto recordsHolder = this.realEstateGeneralLedgerBalanceService.get(id);
+        return buildNonNullResponse(recordsHolder);
+    }
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/get/terraCombined/{id}", method = RequestMethod.GET)
+    public ResponseEntity getTerraCombined(@PathVariable Long id) {
+        TerraCombinedDataHolderDto recordsHolder = this.realEstateService.getTerraCombinedParsedData(id);
         return buildNonNullResponse(recordsHolder);
     }
     /* ****************************************************************************************************************/

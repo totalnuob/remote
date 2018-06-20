@@ -224,7 +224,7 @@
                 <td>{{record.recipient != null ? record.recipient.nameRu : ''}}</td>
                 <td>{{record.date}}</td>
                 <td>{{record.valueDate}}</td>
-                <td>{{record.amount != null && record.amount > 0 ? (record.amount | number:'1.2-2') : ''}}{{record.amountToSPV != null && record.amountToSPV > 0 ? (' (' + (record.amountToSPV | number:'1.2-2') + ')') : ''}}</td>
+                <td>{{record.amount != null && record.amount != 0 ? (record.amount | number:'1.2-2') : ''}}{{record.amountToSPV != null && record.amountToSPV != 0 ? (' (' + (record.amountToSPV | number:'1.2-2') + ')') : ''}}</td>
                 <!--<td>{{record.amountToSPV | number:'1.2-2'}}</td>-->
                 <td>{{record.currencyRate  != null ? (record.currencyRate | number:'1.2-2') : '-----'}}</td>
                 <td>{{record.amountKZT | number:'1.2-2'}}</td>

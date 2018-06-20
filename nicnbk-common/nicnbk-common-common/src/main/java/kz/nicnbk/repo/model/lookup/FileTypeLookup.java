@@ -24,6 +24,7 @@ public enum FileTypeLookup {
     NB_REP_SN_TRANCHE_B("NB_REP_SNB", "reporting/nbrk"),
     NB_REP_MONTHLY_CASH_STATEMENT("NB_REP_MCS", "reporting/nbrk"),
     NB_REP_TERRA_GENERAL_LEDGER("NB_REP_TGL", "reporting/nbrk"),
+    NB_REP_TERRA_COMBINED("NB_REP_CMB", "reporting/nbrk"),
 
     PE_FIRM_LOGO("PE_LOGO", "pe_logo"),
 

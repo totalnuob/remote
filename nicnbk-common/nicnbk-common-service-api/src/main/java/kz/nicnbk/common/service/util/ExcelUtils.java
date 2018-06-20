@@ -48,7 +48,8 @@ public class ExcelUtils {
                     Double value = Double.parseDouble(cell.getStringCellValue().substring(1, length - 1));
                     return (0 - value) ;
                 }
-                Double value = Double.parseDouble(cell.getStringCellValue());
+                String txtValue = cell.getStringCellValue().replace(",", "");
+                Double value = Double.parseDouble(txtValue);
                 return value;
             }catch (Exception ex){
 

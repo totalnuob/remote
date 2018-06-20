@@ -203,6 +203,9 @@ export class GeneratedReportsNBReportingComponent extends CommonNBReportingCompo
                 } else if(filesList[i].type == 'NB_REP_SNB'){
                     this.report.singularityNOALTrancheBFileId = filesList[i].id;
                     this.report.singularityNOALTrancheBFileName = filesList[i].fileName;
+                } else if(filesList[i].type == 'NB_REP_CMB'){
+                    this.report.terraCombinedFileId = filesList[i].id;
+                    this.report.terraCombinedFileName = filesList[i].fileName;
                 }
             }
         }

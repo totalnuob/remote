@@ -6,6 +6,7 @@ import kz.nicnbk.repo.model.m2s2.MemoType;
 import kz.nicnbk.service.datamanager.LookupService;
 import kz.nicnbk.service.dto.reporting.NICReportingChartOfAccountsDto;
 import kz.nicnbk.service.dto.reporting.TarragonNICReportingChartOfAccountsDto;
+import kz.nicnbk.service.dto.reporting.realestate.TerraNICReportingChartOfAccountsDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -146,6 +147,12 @@ public class LookupServiceREST extends CommonServiceREST{
     @RequestMapping(value = "/AddableTarragonNICReportingChartOfAccounts/", method = RequestMethod.GET)
     public ResponseEntity getAddableTarragonNICReportingChartOfAccounts(){
         List<TarragonNICReportingChartOfAccountsDto> lookups = this.lookupService.getAddableTarragonNICReportingChartOfAccounts();
+        return buildNonNullResponse(lookups);
+    }
+
+    @RequestMapping(value = "/AddableTerraNICReportingChartOfAccounts/", method = RequestMethod.GET)
+    public ResponseEntity getAddableTerraNICReportingChartOfAccounts(){
+        List<TerraNICReportingChartOfAccountsDto> lookups = this.lookupService.getAddableTerraNICReportingChartOfAccounts();
         return buildNonNullResponse(lookups);
     }
 

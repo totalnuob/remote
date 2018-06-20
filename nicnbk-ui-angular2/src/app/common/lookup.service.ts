@@ -36,6 +36,8 @@ import {RESERVE_CALCULATION_EXPORT_SIGNER_TYPE_URL} from "./lookup.service.url";
 import {RESERVE_CALCULATION_EXPORT_DOER_TYPE_URL} from "./lookup.service.url";
 import {RESERVE_CALCULATION_EXPORT_APPROVE_LIST_TYPE_URL} from "./lookup.service.url";
 import {CORP_MEETING_TYPE_URL} from "./lookup.service.url";
+import {TERRA_NIC_REPORTING_CHART_OF_ACCOUNTS_URL} from "./lookup.service.url";
+import {TerraNICReportingChartOfAccounts} from "../reporting/model/terra,.nic.reporting.chart.of.accounts.";
 
 
 @Injectable()
@@ -239,6 +241,12 @@ export class LookupService extends CommonService{
 
     getAddableTarragonNICReportingChartOfAccounts(): Observable<TarragonNICReportingChartOfAccounts[]>{
         return this.http.get(TARRAGON_NIC_REPORTING_CHART_OF_ACCOUNTS_URL, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+
+    getAddableTerraNICReportingChartOfAccounts(): Observable<TerraNICReportingChartOfAccounts[]>{
+        return this.http.get(TERRA_NIC_REPORTING_CHART_OF_ACCOUNTS_URL, this.getOptionsWithCredentials())
             .map(this.extractDataList)
             .catch(this.handleErrorResponse);
     }

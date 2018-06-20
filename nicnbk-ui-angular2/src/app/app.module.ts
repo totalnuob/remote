@@ -92,6 +92,9 @@ import {ConsolidatedKZTForm6NBReportingComponent} from "./reporting/consolidated
 import {MonitoringHedgeFunds2PrintComponent} from "./monitoring/monitoring-hedge-funds-2-print.component";
 import {CorpMeetingsListComponent} from "./corpmeetings/corp-meetings-list.component";
 import {CorpMeetingEditComponent} from "./corpmeetings/corp-meetings-edit.component";
+import {TerraGeneralLedgerBalanceNBReportingComponent} from "./reporting/terra.general.ledger.balance.nb.reporting.component";
+import {TerraGeneratedFormNBReportingComponent} from "./reporting/terra.generated.form.nb.reporting.component";
+import {TerraCombinedNBReportingComponent} from "./reporting/terra.combined.nb.reporting.component";
 
 @NgModule({
     imports: [
@@ -127,10 +130,10 @@ import {CorpMeetingEditComponent} from "./corpmeetings/corp-meetings-edit.compon
         PEFundProfileComponent, PEFirmProfileComponent, PEFirmSearchComponent, PEFundReportComponent,
         AccessDeniedComponent,NotFoundComponent,
         ScheduleInvestmentsNBReportingComponent, StatementBalanceOperationsNBReportingComponent, StatementCashflowsNBReportingComponent, StatementChangesNBReportingComponent,
-        SingularityGeneralLedgerBalanceNBReportingComponent, SingularityNOALTrancheANBReportingComponent, SingularityNOALTrancheBNBReportingComponent,
+        SingularityGeneralLedgerBalanceNBReportingComponent, SingularityNOALTrancheANBReportingComponent, SingularityNOALTrancheBNBReportingComponent,TerraGeneralLedgerBalanceNBReportingComponent,TerraCombinedNBReportingComponent,
         OtherInfoInputNBReportingComponent, /*GenerateReportsNBReportingComponent,*/ NICKMFInputNBReportingComponent, SingularGeneratedFormNBReportingComponent, TarragonGeneratedFormNBReportingComponent,
         GeneratedReportsNBReportingComponent, ConsolidatedBalanceUSDFormNBReportingComponent, PreviousYearInputNBReportingComponent, ConsolidatedIncomeExpenseUSDFormNBReportingComponent,
-        ConsolidatedTotalIncomeUSDFormNBReportingComponent, NICKMFInputViewNBReportingComponent, TarragonGeneratedFormViewNBReportingComponent,
+        ConsolidatedTotalIncomeUSDFormNBReportingComponent, NICKMFInputViewNBReportingComponent, TarragonGeneratedFormViewNBReportingComponent,TerraGeneratedFormNBReportingComponent,
         ConsolidatedKZTForm8NBReportingComponent, ConsolidatedKZTForm7NBReportingComponent, ConsolidatedKZTForm10NBReportingComponent, ConsolidatedKZTForm14NBReportingComponent, ConsolidatedKZTForm13NBReportingComponent,
         ConsolidatedKZTForm1NBReportingComponent, ReserveCalculationFormNBReportingComponent,ConsolidatedKZTForm2NBReportingComponent, ConsolidatedKZTForm19NBReportingComponent, ConsolidatedKZTForm22NBReportingComponent,
         ConsolidatedKZTForm3NBReportingComponent, ConsolidatedKZTForm6NBReportingComponent,

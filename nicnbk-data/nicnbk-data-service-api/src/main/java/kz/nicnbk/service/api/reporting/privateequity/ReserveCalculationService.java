@@ -51,4 +51,8 @@ public interface ReserveCalculationService extends BaseService {
     boolean safeDeleteReserveCalculationAttachment(Long recordId, Long fileId, String username);
 
     boolean deleteReserveCalculationAttachment(Long recordId, Long fileId, String username);
+
+    ReserveCalculationDto getRecordById(Long recordId);
+
+    boolean excludeIncludeRecord(Long recordId, String name);
 }

@@ -1,9 +1,10 @@
-package kz.nicnbk.service.dto.reporting.terra;
+package kz.nicnbk.service.dto.reporting.realestate;
 
 import kz.nicnbk.service.dto.reporting.GeneralLedgerBalanceRecordDto;
 
 /**
- * Created by magzumov on 07.06.2018.
+ * Created by magzumov on 25.08.2017.
  */
 public class TerraGeneralLedgerBalanceRecordDto extends GeneralLedgerBalanceRecordDto {
+
 }

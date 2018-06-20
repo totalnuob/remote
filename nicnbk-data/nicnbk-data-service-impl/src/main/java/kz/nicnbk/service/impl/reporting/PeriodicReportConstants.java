@@ -20,6 +20,9 @@ public final class PeriodicReportConstants {
     public static final String TARRAGON_CAPITAL_CASE = "TARRAGON";
     public static final String TARRAGON_LOWER_CASE = "Tarragon";
 
+    public static final String TERRA_CAPITAL_CASE = "TERRA";
+    public static final String TERRA_LOWER_CASE = "Terra";
+
 
     /* REPORT TYPE CODE ***********************************************************************************************/
     public static final String USD_FORM_1 = "CONS_BALANCE_USD";
@@ -64,17 +67,23 @@ public final class PeriodicReportConstants {
     public static final String RU_EXPENSES_FUTURE_PERIOD = "Расходы будущих периодов";
     public static final String RU_PE_FUND_INVESTMENT = "Инвестиции в фонд частного капитала";
     public static final String RU_HEDGE_FUND_INVESTMENT = "Инвестиции в хедж-фонд";
+    public static final String RU_REAL_ESTATE_FUND_INVESTMENT = "Инвестиции в фонд недвижимости";
 
     public static final String EN_NOAL_PORTFOLIO_REDEMPTION = "Portfolio Fund Redemption/Withdrawal - Corp";
     public static final String EN_NET_REALIZED_GAIN_LOSS = "Net Realized Gains/Losses";
     public static final String SINGULARITY_AGREEMENT_DESC = "Investment Management Agreement of Singularity Ltd. from 14.07.2015";
     public static final String TARRAGON_AGREEMENT_DESC = "Limited Partnership Agreement Tarragon LP from 18.12.2014";
     public static final String NICK_MF_AGREEMENT_DESC = "Administrative services agreement of NICK Master Fund from 24.07.2015";
+    public static final String TERRA_AGREEMENT_DESC = "Limited Partnership Agreement Terra LP from 06.04.2018";
 
 
     public static final String BANK_LOANS_RECEIVED = "Банковские займы полученные";
     public static final String BANK_OF_MONREAL = "Bank of Monreal";
     public static final String DEFAULT_KZT_13_INTEREST_RATE = "4%";
+    public static final String RU_KZT_6_REPORT_LINE_NUMBER_2_NAME = "Изменения в учетной политике и ошибки";
+    public static final String RU_KZT_6_REPORT_LINE_NUMBER_2_7_CODE = "KZT6_2_7";
+    public static final String RU_KZT_6_REPORT_LINE_NUMBER_2_8_CODE = "KZT6_2_8";
+    public static final String RU_KZT_3_REPORT_LINE_NUMBER_5_1_CODE = "KZT3_5_1";
     /* ****************************************************************************************************************/
 
 

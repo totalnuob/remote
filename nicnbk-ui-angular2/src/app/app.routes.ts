@@ -77,6 +77,9 @@ import {ConsolidatedKZTForm6NBReportingComponent} from "./reporting/consolidated
 import {MonitoringHedgeFunds2PrintComponent} from "./monitoring/monitoring-hedge-funds-2-print.component";
 import {CorpMeetingsListComponent} from "./corpmeetings/corp-meetings-list.component";
 import {CorpMeetingEditComponent} from "./corpmeetings/corp-meetings-edit.component";
+import {TerraGeneralLedgerBalanceNBReportingComponent} from "./reporting/terra.general.ledger.balance.nb.reporting.component";
+import {TerraGeneratedFormNBReportingComponent} from "./reporting/terra.generated.form.nb.reporting.component";
+import {TerraCombinedNBReportingComponent} from "./reporting/terra.combined.nb.reporting.component";
 
 
 const routes: Routes  = [
@@ -341,6 +344,17 @@ const routes: Routes  = [
         canActivate: [AuthGuard]
     },
     {
+        path: 'reporting/NBReporting/re/generalLedgerBalance/:id/:prevPageSource',
+        component: TerraGeneralLedgerBalanceNBReportingComponent,
+        canActivate: [AuthGuard]
+    },
+
+    {
+        path: 'reporting/NBReporting/re/terraCombined/:id/:prevPageSource',
+        component: TerraCombinedNBReportingComponent,
+        canActivate: [AuthGuard]
+    },
+    {
         path: 'reporting/NBReporting/hf/noalA/:id/:prevPageSource',
         component: SingularityNOALTrancheANBReportingComponent,
         canActivate: [AuthGuard]
@@ -373,6 +387,11 @@ const routes: Routes  = [
     {
         path: 'reporting/NBReporting/TarragonGeneratedForm/:id',
         component: TarragonGeneratedFormNBReportingComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'reporting/NBReporting/TerraGeneratedForm/:id',
+        component: TerraGeneratedFormNBReportingComponent,
         canActivate: [AuthGuard]
     },
     {

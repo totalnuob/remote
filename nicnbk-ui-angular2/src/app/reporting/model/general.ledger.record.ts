@@ -14,6 +14,7 @@ export class GeneralLedgerRecord{
 
     tranche: number;
     tarragonNICChartOfAccountsName: string;
+    terraNICChartOfAccountsName: string;
 
     adjustedRedemption: number;
     interestRate: string;

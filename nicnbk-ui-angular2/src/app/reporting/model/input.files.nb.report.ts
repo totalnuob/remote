@@ -19,7 +19,7 @@ export class InputFilesNBReport{
     singularityGeneralLedgerFileId: number;
     singularityNOALTrancheAFileId: number;
     singularityNOALTrancheBFileId: number;
-    terraGeneralLedgerFileId: number;
+    terraCombinedFileId: number;
 
 
     tarragonScheduleInvestmentFileName: string;
@@ -37,7 +37,7 @@ export class InputFilesNBReport{
     singularityGeneralLedgerFileName: string;
     singularityNOALTrancheAFileName: string;
     singularityNOALTrancheBFileName: string;
-    terraGeneralLedgerFileName: string;
+    terraCombinedFileName: string;
 
 
 }

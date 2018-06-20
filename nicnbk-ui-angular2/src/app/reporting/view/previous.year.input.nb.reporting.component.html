@@ -60,7 +60,7 @@
                             </td>
                             <!--<td>{{record.accountNumber}}</td>-->
                             <td>
-                                <input required (keyup)="onNumberChange(record)" type="text" class="form-control" [(ngModel)]="record.accountBalance" [ngModelOptions]="{standalone: true}"/>
+                                <input required="record.chartOfAccounts.code != 'KZT3_5_1'" [disabled]="record.chartOfAccounts.code === 'KZT3_5_1'" (keyup)="onNumberChange(record)" type="text" class="form-control" [(ngModel)]="record.accountBalance" [ngModelOptions]="{standalone: true}"/>
                             </td>
                             <td>
                                 <input required (keyup)="onNumberChange(record)" type="text" class="form-control" [(ngModel)]="record.accountBalanceKZT" [ngModelOptions]="{standalone: true}"/>
@@ -96,7 +96,7 @@
             </div>
             <div class="col-md-6">
                 <div class="col-md-1 pull-right">
-                    <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/GeneratedReports/', reportId, 'REPORTS']" [disabled]="!showNextButton()">NEXT</button>
+                    <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/TerraGeneratedForm/', reportId]" [disabled]="!showNextButton()">NEXT</button>
                 </div>
             </div>
 

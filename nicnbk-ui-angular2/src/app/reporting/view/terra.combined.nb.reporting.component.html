@@ -1,0 +1,119 @@
+<div class="container">
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting']">Reports Main</a></span>
+                </li>
+                <li *ngIf="reportId != null && report != null && report.status != 'SUBMITTED'">
+                    <span><a [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">Input</a></span>
+                </li>
+                <li *ngIf="reportId != null && prevPageSource == 'REPORTS'"><span><a [routerLink]="['/reporting/NBReporting/GeneratedReports/', reportId, 'INPUT']">Generate report</a></span></li>
+                <li class="active">Terra Combined</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row top-buffer" *ngIf="errorMessage != null || successMessage != null">
+        <div class="col-md-12">
+            <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+            </div>
+            <div class="alert alert-info" *ngIf="!submitted && successMessage != null"><span>{{successMessage}}</span>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <div class="row withpadding">
+        <h3 *ngIf="report != null">{{getReportDateShortFormatted(report.reportDate)}} - Terra Combined</h3>
+    </div>
+
+    <ul class="nav nav-tabs">
+        <li class="active">
+            <a data-toggle="tab" href="#balanceSheet">Balance Sheet</a>
+        </li>
+        <li>
+            <a data-toggle="tab" href="#profitLoss">Profit Loss</a>
+        </li>
+        <li>
+            <a data-toggle="tab" href="#securitiesCost">Securities Cost</a>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <div id="balanceSheet" class="tab-pane fade in active">
+            <div class="row withpadding">
+                <table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small">
+                    <tr bgcolor="#e7e7e7">
+                        <td>GL Sub-class</td>
+                        <td>Carlyle-MRE Terra GP, L.P.s</td>
+                        <td>NICK Master Fund Ltd.</td>
+                        <td>Grand Total</td>
+                    </tr>
+                    <tr *ngFor="let record of recordsHolder.balanceSheetRecords">
+                        <td [style.font-weight]="record.header ? 'bold': ''" [align]="record.totalSum ? 'right' : 'left'">{{record.name}}</td>
+                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.valueGP != null ? (record.valueGP | number:'1.0-0'): ''}}</td>
+                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.valueNICKMF != null ? (record.valueNICKMF | number:'1.0-0'): ''}}</td>
+                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.grandTotal != null ? (record.grandTotal | number:'1.0-0'): ''}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div id="profitLoss" class="tab-pane fade">
+            <div class="row withpadding">
+                <table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small">
+                    <tr bgcolor="#e7e7e7">
+                        <td>GL Sub-class</td>
+                        <td>Carlyle-MRE Terra GP, L.P.s</td>
+                        <td>NICK Master Fund Ltd.</td>
+                        <td>Grand Total</td>
+                    </tr>
+                    <tr *ngFor="let record of recordsHolder.profitLossRecords">
+                        <td [style.font-weight]="record.header ? 'bold': ''" [align]="record.totalSum ? 'right' : 'left'">{{record.name}}</td>
+                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.valueGP != null ? (record.valueGP | number:'1.0-0'): ''}}</td>
+                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.valueNICKMF != null ? (record.valueNICKMF | number:'1.0-0'): ''}}</td>
+                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.grandTotal != null ? (record.grandTotal | number:'1.0-0'): ''}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div id="securitiesCost" class="tab-pane fade">
+            <div class="row withpadding">
+                <table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small">
+                    <tr bgcolor="#e7e7e7">
+                        <td>Security</td>
+                        <td>Total position</td>
+                        <td>Cost per Share FCY</td>
+                        <td>Total Cost FCY</td>
+                        <td>Cost LCY Historical</td>
+                        <td>COST LCY at current FX rate</td>
+                        <td>Market price FCY</td>
+                        <td>Unrealized Gain FCY</td>
+                        <td>Unrealized Gain LCY</td>
+                        <td>FX Gain LCY</td>
+                        <td>Market Value FCY</td>
+                    </tr>
+                    <tr *ngFor="let record of recordsHolder.securitiesCostRecords">
+                        <td [style.font-weight]="record.header ? 'bold': ''" [align]="record.totalSum ? 'right' : 'left'">{{record.name}}</td>
+                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.totalPosition != null ? (record.totalPosition | number:'1.0-0'): ''}}</td>
+                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.costPerShareFCY != null ? (record.costPerShareFCY | number:'1.0-0'): ''}}</td>
+                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.totalCostFCY != null ? (record.totalCostFCY | number:'1.0-0'): ''}}</td>
+                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.costLCYHistorical != null ? (record.costLCYHistorical | number:'1.0-0'): ''}}</td>
+                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.costLCYCurrentFXRate != null ? (record.costLCYCurrentFXRate | number:'1.0-0'): ''}}</td>
+                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.marketPriceFCY != null ? (record.marketPriceFCY | number:'1.0-0'): ''}}</td>
+                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.unrealizedGainFCY != null ? (record.unrealizedGainFCY | number:'1.0-0'): ''}}</td>
+                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.unrealizedGainLCY != null ? (record.unrealizedGainLCY | number:'1.0-0'): ''}}</td>
+                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.FXGainLCY != null ? (record.FXGainLCY | number:'1.0-0'): ''}}</td>
+                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.marketValueFCY != null ? (record.marketValueFCY | number:'1.0-0'): ''}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+        </div>
+    </div>
+</div>

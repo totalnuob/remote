@@ -10,5 +10,4 @@ export class GeneratedGLFormRecord extends GeneralLedgerRecord{
 
     editable: boolean;
     editing: boolean
-
 }

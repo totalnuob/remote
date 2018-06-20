@@ -172,9 +172,9 @@ public class PeriodicReportNICKMFServiceImpl implements PeriodicReportNICKMFServ
             int month = DateUtils.getMonth(reportDto.getReportDate()) + 1;
             if(dto.getNbChartOfAccountsCode().equalsIgnoreCase("2923.010") && dto.getNicChartOfAccountsName().equalsIgnoreCase("Начисленная амортизация - Организационные расходы NICK MF")){
                 int monthDiff = DateUtils.getMonthsDifference(DateUtils.getDate("31.07.2015"), reportDto.getReportDate());
-                Double value = MathUtils.multiply(MathUtils.divide(14963.0, 60.0), new Double(monthDiff));
+                Double value = MathUtils.multiply(MathUtils.divide(14963.23, 60.0), new Double(monthDiff));
                 dto.setCalculatedAccountBalance(MathUtils.subtract(0.0, value));
-                dto.setCalculatedAccountBalanceFormula(" - (14,963 / 60) * " + monthDiff + ", where '" + monthDiff + "' = months difference between 31.07.2017 and " + DateUtils.getDateFormatted(reportDto.getReportDate()));
+                dto.setCalculatedAccountBalanceFormula(" - (14,963.23 / 60) * " + monthDiff + ", where '" + monthDiff + "' = months difference between 31.07.2017 and " + DateUtils.getDateFormatted(reportDto.getReportDate()));
             }else if(dto.getNbChartOfAccountsCode().equalsIgnoreCase("3393.020") && dto.getNicChartOfAccountsName().equalsIgnoreCase("Комиссия за администрирование к оплате NICK MF")){
                 Double value = null;
                 NICKMFReportingDataHolderDto previousDataHolder = getNICKMFReportingDataFromPreviousMonth(reportDto.getId());
@@ -195,7 +195,7 @@ public class PeriodicReportNICKMFServiceImpl implements PeriodicReportNICKMFServ
                     }
                 }
 
-                value = MathUtils.subtract(value, (40000.0/12.0));
+                value = MathUtils.subtract(value, (MathUtils.divide(40000.0, 12.0)));
 
                 dto.setCalculatedAccountBalance(value);
                 dto.setCalculatedAccountBalanceFormula(" {previous month value} - 40,000/12 - sum of values from Capital Calls with type 'Комиссия' for current month" );
@@ -232,12 +232,12 @@ public class PeriodicReportNICKMFServiceImpl implements PeriodicReportNICKMFServ
                 dto.setCalculatedAccountBalanceFormula("40,000 / 12 * " + month + ", where '" + month + "' is current month number");
             }else if(dto.getNbChartOfAccountsCode().equalsIgnoreCase("7473.080") && dto.getNicChartOfAccountsName().equalsIgnoreCase("Амортизация организационных расходов NICK MF")){
 
-                Double value = MathUtils.multiply(MathUtils.divide(14963.0, 60.0), (month*1.0));
-                if(value > 14963.0){
-                    value = 14963.0;
+                Double value = MathUtils.multiply(MathUtils.divide(14963.23, 60.0), (month*1.0));
+                if(value > 14963.23){
+                    value = 14963.23;
                 }
                 dto.setCalculatedAccountBalance(value);
-                dto.setCalculatedAccountBalanceFormula("14,963 / 60 * " + month + ", where '" + month + "' is current month number; value no more than 14,963");
+                dto.setCalculatedAccountBalanceFormula("14,963.23 / 60 * " + month + ", where '" + month + "' is current month number; value no more than 14,963.23");
             }else if(dto.getNbChartOfAccountsCode().equalsIgnoreCase("1033.010") &&
                     dto.getNicChartOfAccountsName().equalsIgnoreCase("Деньги на текущих счетах")){
                 Double value = null;

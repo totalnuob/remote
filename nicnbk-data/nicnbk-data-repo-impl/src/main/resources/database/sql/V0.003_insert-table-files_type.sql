@@ -24,4 +24,5 @@ INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(30, 
 
 INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(31, 'CC_ATTACH', 'Capital Call attachments', '', '', 'reporting/cc_attachments');
 
-INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(32, 'NB_REP_TGL', 'NBRK Reporting Terra General Ledger', '', '', 'reporting/nbrk');
+INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(32, 'NB_REP_CMB', 'NBRK Reporting Terra Combined', '', '', 'reporting/nbrk');
+

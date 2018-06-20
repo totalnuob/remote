@@ -17,5 +17,7 @@ export class PeriodicReportRecordHolder{
     noalTrancheAList: SingularityNOALRecord[];
     noalTrancheBList: SingularityNOALRecord[];
 
+    realEstateGeneralLedgerBalanceList: GeneralLedgerRecord[];
+
     report: PeriodicReport;
 }

@@ -19,6 +19,9 @@ INSERT INTO nb_chart_of_accounts(id, code, name_en, name_ru, name_kz) VALUES(18,
 
 INSERT INTO nb_chart_of_accounts(id, code, name_en, name_ru, name_kz) VALUES(19, '4173.010', null, 'Прочая долгосрочная кредиторская задолженность', null);
 
+INSERT INTO nb_chart_of_accounts(id, code, name_en, name_ru, name_kz) VALUES(1111, '0000.000', null, '---', null);
+
+
 
 
 
