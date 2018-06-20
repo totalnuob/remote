@@ -29,6 +29,7 @@ import {PeriodicReport} from "./model/periodic.report";
 import {ConsolidatedKZTForm6Record} from "./model/consolidated.kzt.form.6.record";
 import {OKResponse} from "../common/ok-response";
 import {ReserveCalculationSearchResults} from "./model/reserve-calculation-search-results";
+import {TerraCombinedRecordHolder} from "./model/terra.combined.record.holder";
 
 var fileSaver = require("file-saver");
 
@@ -54,8 +55,12 @@ export class PeriodicReportService extends CommonService{
     private PERIODIC_REPORT_GENERAL_LEDGER_BALANCE_URL = this.PERIODIC_REPORT_BASE_URL + "get/generalLedgerBalance/";
     private PERIODIC_REPORT_SINGULARITY_ADJUSTMENTS_URL = this.PERIODIC_REPORT_BASE_URL + "saveSingularityAdjustments/";
 
+    private PERIODIC_REPORT_RE_GENERAL_LEDGER_BALANCE_URL = this.PERIODIC_REPORT_BASE_URL + "get/re/generalLedgerBalance/";
+
+
     private PERIODIC_REPORT_SINGULARITY_NOAL_A_URL = this.PERIODIC_REPORT_BASE_URL + "get/noalA/";
     private PERIODIC_REPORT_SINGULARITY_NOAL_B_URL = this.PERIODIC_REPORT_BASE_URL + "get/noalB/";
+    private PERIODIC_REPORT_TERRA_COMBINED_URL = this.PERIODIC_REPORT_BASE_URL + "get/terraCombined/";
     private PERIODIC_REPORT_OTHER_INFO_URL = this.PERIODIC_REPORT_BASE_URL + "get/otherInfo/";
     private PERIODIC_REPORT_NICK_MF_REPORTING_INFO_URL = this.PERIODIC_REPORT_BASE_URL + "NICKMFReportingInfo/";
     private PERIODIC_REPORT_NICK_MF_REPORTING_INFO_PREVIOUS_MONTH_URL = this.PERIODIC_REPORT_BASE_URL + "NICKMFReportingInfoPreviousMonth/";
@@ -63,12 +68,18 @@ export class PeriodicReportService extends CommonService{
 
     private PERIODIC_REPORT_SINGULAR_GENERATED_FORM_URL = this.PERIODIC_REPORT_BASE_URL + "singularGeneratedForm/";
     private PERIODIC_REPORT_TARRAGON_GENERATED_FORM_URL = this.PERIODIC_REPORT_BASE_URL + "tarragonGeneratedForm/";
+    private PERIODIC_REPORT_TERRA_GENERATED_FORM_URL = this.PERIODIC_REPORT_BASE_URL + "terraGeneratedForm/";
     private PERIODIC_REPORT_TARRAGON_GENERATED_FROM_PREV_MONTH_URL = this.PERIODIC_REPORT_BASE_URL + "tarragonGeneratedFormDataFromPreviousMonth/";
+    private PERIODIC_REPORT_TERRA_GENERATED_FROM_PREV_MONTH_URL = this.PERIODIC_REPORT_BASE_URL + "terraGeneratedFormDataFromPreviousMonth/";
+    private PERIODIC_REPORT_TERRA_INCLUDE_EXCLUDE_URL= this.PERIODIC_REPORT_BASE_URL + "terraGeneratedFormDataFromPreviousMonth/";
+
 
     private PERIODIC_REPORT_OTHER_INFO_UPLOAD_URL = this.PERIODIC_REPORT_BASE_URL + "otherInfo/save/";
     private PERIODIC_REPORT_NICK_MF_REPORTING_INFO_SAVE_URL = this.PERIODIC_REPORT_BASE_URL + "NICKMFReportingInfo/save/";
     private PERIODIC_REPORT_PE_GENERAL_LEDGER_FORM_DATA_SAVE_URL = this.PERIODIC_REPORT_BASE_URL + "PEGeneralLedgerFormData/save/";
+    private PERIODIC_REPORT_REAL_ESTATE_GENERAL_LEDGER_FORM_DATA_SAVE_URL = this.PERIODIC_REPORT_BASE_URL + "RealEstateGeneralLedgerFormData/save/";
     private PERIODIC_REPORT_PE_GENERAL_LEDGER_FORM_DATA_DELETE_RECORD_URL = this.PERIODIC_REPORT_BASE_URL + "PEGeneralLedgerFormData/delete/";
+    private PERIODIC_REPORT_REAL_ESTATE_GENERAL_LEDGER_FORM_DATA_DELETE_RECORD_URL = this.PERIODIC_REPORT_BASE_URL + "RealEstateGeneralLedgerFormData/delete/";
     private PERIODIC_REPORT_UPDATE_TARRAGON_INVESTMENT_URL = this.PERIODIC_REPORT_BASE_URL + "updatedTarragonInvestment/";
 
 
@@ -187,6 +198,12 @@ export class PeriodicReportService extends CommonService{
             .catch(this.handleErrorResponse);
     }
 
+    getRealEstateGeneralLedgerBalance(reportId): Observable<PeriodicReportRecordHolder>{
+        return this.http.get(this.PERIODIC_REPORT_RE_GENERAL_LEDGER_BALANCE_URL + reportId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
     saveSingularityAdjustments(entity){
         let body = JSON.stringify(entity);
         //console.log(body);
@@ -209,6 +226,12 @@ export class PeriodicReportService extends CommonService{
 
     getOtherInfo(reportId): Observable<OtherInfoNBReporting>{
         return this.http.get(this.PERIODIC_REPORT_OTHER_INFO_URL + reportId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    getTerraCombined(reportId): Observable<TerraCombinedRecordHolder>{
+        return this.http.get(this.PERIODIC_REPORT_TERRA_COMBINED_URL + reportId, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }
@@ -238,6 +261,12 @@ export class PeriodicReportService extends CommonService{
             .catch(this.handleErrorResponse);
     }
 
+    getGeneratedTerraForm(reportId): Observable<ListResponse>{
+        return this.http.get(this.PERIODIC_REPORT_TERRA_GENERATED_FORM_URL + reportId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
     getNICKMFReportingInfoPreviousMonth(reportId): Observable<NICKMFReportingInfoHolder>{
         return this.http.get(this.PERIODIC_REPORT_NICK_MF_REPORTING_INFO_PREVIOUS_MONTH_URL + reportId, this.getOptionsWithCredentials())
             .map(this.extractData)
@@ -246,6 +275,19 @@ export class PeriodicReportService extends CommonService{
 
     getGeneratedTarragonFormDataFromPreviousMonth(reportId): Observable<GeneratedGLFormRecord[]>{
         return this.http.get(this.PERIODIC_REPORT_TARRAGON_GENERATED_FROM_PREV_MONTH_URL + reportId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    getGeneratedTerraFormDataFromPreviousMonth(reportId): Observable<GeneratedGLFormRecord[]>{
+        return this.http.get(this.PERIODIC_REPORT_TERRA_GENERATED_FROM_PREV_MONTH_URL + reportId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    includeExcludeTerraGeneralLedgerRecord(params): Observable<any>{
+        let body = JSON.stringify(params);
+        return this.http.post(this.PERIODIC_REPORT_TERRA_INCLUDE_EXCLUDE_URL , body, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }
@@ -356,6 +398,14 @@ export class PeriodicReportService extends CommonService{
             .catch(this.handleErrorResponse);
     }
 
+    saveRealEstateGeneralLedgerFormData(records){
+        //let body = JSON.stringify(dto);
+        //console.log(body);
+        return this.http.post(this.PERIODIC_REPORT_REAL_ESTATE_GENERAL_LEDGER_FORM_DATA_SAVE_URL, records, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
     getReserveCalculationFormData(): Observable<ReserveCalculationFormRecord[]>{
         return this.http.get(this.PERIODIC_REPORT_RESERVE_CALCULATION_FORM_URL, this.getOptionsWithCredentials())
             .map(this.extractData)
@@ -409,6 +459,12 @@ export class PeriodicReportService extends CommonService{
 
     public deletePEGeneralLedgerFormDataRecord(recordId) {
         return this.http.get(this.PERIODIC_REPORT_PE_GENERAL_LEDGER_FORM_DATA_DELETE_RECORD_URL + "/" + recordId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    public deleteRealEstateGeneralLedgerFormDataRecord(recordId) {
+        return this.http.get(this.PERIODIC_REPORT_REAL_ESTATE_GENERAL_LEDGER_FORM_DATA_DELETE_RECORD_URL + "/" + recordId, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }

@@ -60,6 +60,34 @@ INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_cha
 
 INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(57, '3393.020.l', null, 'Юридические услуги к оплате', null, 4);
 
+INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(58, '7473.080.t', null, 'Расходы за администрирование Terra', null, 8);
+INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(59, '3393.020.m', null, 'Начисленные расходы третьих сторон, относимые на Terra', null, 4);
+INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(60, '3393.020.n', null, 'Комиссия за администрирование к оплате Terra', null, 4);
+INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(61, '3393.020.o', null, 'Расходы по аудиту к оплате Terra', null, 4);
+INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(62, '3393.020.p', null, 'К оплате по инвестициям Terra', null, 4);
+INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(63, '7473.080.u', null, 'Расходы третьих сторон, относимые на Terra', null, 8);
+INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(64, '7473.080.v', null, 'Расходы по аудиту Terra', null, 8);
+INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(65, '7473.080.w', null, 'Организационные расходы Terra', null, 8);
+INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(66, '3393.020.q', null, 'Организационные расходы к оплате Terra', null, 4);
+INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(67, '7473.080.x', null, 'Расходы по налогам Tarragon', null, 8);
+
+-- KZT 6 (ОИК) line number 2 column 7
+INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(68, 'KZT6_2_7', null, 'Изменения в учетной политике и ошибки (Прочие резервы)', null, 1111);
+-- KZT 6 (ОИК) line number 2 column 8
+INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(69, 'KZT6_2_8', null, 'Изменения в учетной политике и ошибки (Нераспределнная прибыль)', null, 1111);
+-- KZT 3 (ОПСД) line number 5.1
+INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(70, 'KZT3_5_1', null, 'Резерв на пересчет иностранной валюты по зарубежной деятельности (Корректировка)', null, 1111);
+
+
+
+
+
+
+
+
+
+
+
 
 
 

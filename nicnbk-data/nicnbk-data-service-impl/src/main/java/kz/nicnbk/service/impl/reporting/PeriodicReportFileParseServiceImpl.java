@@ -9,12 +9,18 @@ import kz.nicnbk.repo.model.reporting.PeriodicReport;
 import kz.nicnbk.repo.model.reporting.hedgefunds.ReportingHFGeneralLedgerBalance;
 import kz.nicnbk.repo.model.reporting.hedgefunds.ReportingHFNOAL;
 import kz.nicnbk.repo.model.reporting.privateequity.*;
+import kz.nicnbk.repo.model.reporting.realestate.ReportingREBalanceSheet;
+import kz.nicnbk.repo.model.reporting.realestate.ReportingREGeneralLedgerBalance;
+import kz.nicnbk.repo.model.reporting.realestate.ReportingREProfitLoss;
+import kz.nicnbk.repo.model.reporting.realestate.ReportingRESecuritiesCost;
 import kz.nicnbk.service.api.reporting.PeriodicDataService;
 import kz.nicnbk.service.api.reporting.PeriodicReportFileParseService;
 import kz.nicnbk.service.api.reporting.PeriodicReportService;
 import kz.nicnbk.service.api.reporting.hedgefunds.HFGeneralLedgerBalanceService;
 import kz.nicnbk.service.api.reporting.hedgefunds.HFNOALService;
 import kz.nicnbk.service.api.reporting.privateequity.*;
+import kz.nicnbk.service.api.reporting.realestate.PeriodicReportREService;
+import kz.nicnbk.service.api.reporting.realestate.REGeneralLedgerBalanceService;
 import kz.nicnbk.service.dto.common.FileUploadResultDto;
 import kz.nicnbk.service.dto.common.ResponseStatusType;
 import kz.nicnbk.service.dto.files.FilesDto;
@@ -71,6 +77,9 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
     private HFGeneralLedgerBalanceService generalLedgerBalanceService;
 
     @Autowired
+    private PeriodicReportREService realEstateService;
+
+    @Autowired
     private HFNOALService hfNOALService;
 
 
@@ -89,7 +98,7 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
      * @return - file upload result
      */
     @Override
-    public FileUploadResultDto parseFile(String fileType, FilesDto filesDto, Long reportId) {
+    public FileUploadResultDto parseFile(String fileType, FilesDto filesDto, Long reportId, String username) {
         if(fileType.equals(FileTypeLookup.NB_REP_TARR_SCHED_INVEST.getCode())){
             return parseScheduleInvestments(filesDto, reportId);
         }else if(fileType.equals(FileTypeLookup.NB_REP_TARR_STMT_BALANCE_OPERATIONS.getCode())){
@@ -120,6 +129,8 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
             return parseSingularNOAL(filesDto, reportId, 1);
         }else if(fileType.equals(FileTypeLookup.NB_REP_SN_TRANCHE_B.getCode())){
             return parseSingularNOAL(filesDto, reportId, 2);
+        }else if(fileType.equals(FileTypeLookup.NB_REP_TERRA_COMBINED.getCode())){
+            return parseTerraCombined(filesDto, reportId, username);
         }else{
             // log
             logger.error("File type did not match[" + fileType + "] for file '" + filesDto.getFileName() + "'");
@@ -544,8 +555,8 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
             if(!savedBalance){
                 // TODO: rollback? or transactional?
 
-                logger.error("Error saving 'Schedule of Investments' file data to database (statement of balance)");
-                return new FileUploadResultDto(ResponseStatusType.FAIL, "", "Error saving 'Schedule of Investments' file data to database (statement of balance)", "");
+                logger.error("Error saving 'Statement of Assets, Liabilities and Partners Capital' file data to database (statement of balance)");
+                return new FileUploadResultDto(ResponseStatusType.FAIL, "", "Error saving 'Statement of Assets, Liabilities and Partners Capital' file data to database (statement of balance)", "");
             }
 
             // OPERATIONS
@@ -560,8 +571,8 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
             }else{
                 // TODO: rollback? or transactional?
 
-                logger.error("Error saving 'Schedule of Investments' file data to database (statement of operations)");
-                return new FileUploadResultDto(ResponseStatusType.FAIL, "", "Error saving 'Schedule of Investments' file data to database (statement of operations)", "");
+                logger.error("Error saving 'Statement of Assets, Liabilities and Partners Capital' file data to database (statement of operations)");
+                return new FileUploadResultDto(ResponseStatusType.FAIL, "", "Error saving 'Statement of Assets, Liabilities and Partners Capital' file data to database (statement of operations)", "");
             }
         }catch (ExcelFileParseException e) {
             logger.error("Error parsing 'Statement of Assets, Liabilities and Partners Capital' file with error: " + e.getMessage());
@@ -1707,6 +1718,533 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
     }
 
 
+    private FileUploadResultDto parseTerraCombined(FilesDto filesDto, Long reportId, String username){
+        try {
+
+            /* PARSE EXCEL (RAW) *******************************************************************************/
+            Iterator<Row> rowIterator = getRowIterator(filesDto, "Balance Sheet by Series");
+            List<ConsolidatedReportRecordDto> balanceSheetRecords = parseTerraCombinedBalanceSheetRaw(rowIterator);
+            //printRecords(records);
+
+            rowIterator = getRowIterator(filesDto, "Profit or Loss by series");
+            List<ConsolidatedReportRecordDto> profitLossRecords = parseTerraCombinedProfitLossRaw(rowIterator);
+
+            rowIterator = getRowIterator(filesDto, "Securities cost");
+            List<ConsolidatedReportRecordDto> securitiesCostRecords = parseTerraCombinedSecuritiesCostRaw(rowIterator);
+
+
+            checkHeaderClosingTotalSumFormat(balanceSheetRecords, null, "");
+            checkHeaderClosingTotalSumFormat(profitLossRecords, "NET PROFIT/LOSS FOR THE PERIOD", "");
+
+
+            /* CHECK SUMS/TOTALS ********************************************************************************/
+            checkTotalSumsGeneric(balanceSheetRecords, 3, null, 0);
+            checkTotalSumsGeneric(profitLossRecords, 3, "NET PROFIT/LOSS FOR THE PERIOD", 0);
+
+            /* ASSEMBLE *****************************************************************************************/
+            List<ReportingREBalanceSheet> balanceSheetEntities = this.realEstateService.assembleBalanceSheetList(balanceSheetRecords, reportId);
+            List<ReportingREProfitLoss> profitLossEntities = this.realEstateService.assembleProfitLossList(profitLossRecords, reportId);
+            List<ReportingRESecuritiesCost> securitiesCostEntities = this.realEstateService.assembleSecuritiesCostList(securitiesCostRecords, reportId);
+
+
+            // TODO: Transactional and CHECK !
+            boolean saved = this.realEstateService.saveBalanceSheet(balanceSheetEntities, username);
+            if(saved) {
+                saved = this.realEstateService.saveProfitLoss(profitLossEntities, username);
+            }
+            if(saved) {
+                saved = this.realEstateService.saveSecuritiesCost(securitiesCostEntities, username);
+            }
+
+            if(saved){
+                logger.info("Successfully parsed 'Terra Combined' file");
+                return new FileUploadResultDto(ResponseStatusType.SUCCESS, "", "Successfully processed the file - Terra Combined", "");
+            }else{
+                // TODO: rollback? or transactional?
+
+                logger.error("Error saving 'Terra Combined' file data to database (statement of operations)");
+                return new FileUploadResultDto(ResponseStatusType.FAIL, "", "Error saving 'Terra Combined' file data to database (statement of operations)", "");
+            }
+            /* CHECK ENTITIES AND ASSEMBLE **********************************************************************/
+//            List<ReportingREGeneralLedgerBalance> entities = this.realEstateGeneralLedgerBalanceService.assembleList(records, reportId);
+//
+//            /* SAVE TO DB **************************************************************************************/
+//            boolean saved = this.realEstateGeneralLedgerBalanceService.save(entities);
+//
+//            if(saved){
+//                logger.info("Successfully parsed 'Terra General Ledger Balance' file");
+//                return new FileUploadResultDto(ResponseStatusType.SUCCESS, "", "Successfully processed the file - Terra General Ledger Balance", "");
+//            }else{
+//                logger.error("Error saving 'Terra General Ledger Balance' file parsed data into database");
+//                return new FileUploadResultDto(ResponseStatusType.FAIL, "", "Error saving to database", "");
+//            }
+
+        }catch (ExcelFileParseException e) {
+            logger.error("Error parsing 'Terra Combined' file with error: " + e.getMessage());
+            return new FileUploadResultDto(ResponseStatusType.FAIL, "", e.getMessage(), "");
+        }catch (Exception e){
+            logger.error("Error parsing 'Terra Combined' file with error: " + e.getMessage());
+            return new FileUploadResultDto(ResponseStatusType.FAIL, "", "Error processing 'Terra Combined' file'", "");
+        }
+    }
+
+    private List<ConsolidatedReportRecordDto> parseTerraCombinedBalanceSheetRaw(Iterator<Row> rowIterator){
+        List<ConsolidatedReportRecordDto> records = new ArrayList<>();
+        int rowNum = 0;
+        String[] classifications = new String[5];
+        while (rowIterator.hasNext()) { // each row
+            Row row = rowIterator.next();
+             if (rowNum == 0) { /* ROW == 0*/
+                // check table header
+                checkTerraCombinedBalanceSheetTableHeader(row);
+            } else{ /* Rows 1,... */
+                Cell cell = row.getCell(1);
+                if(ExcelUtils.getStringValueFromCell(cell) != null){
+                    if(ExcelUtils.isEmptyCellRange(row, 2, 4)){
+                        // classifications
+                        for(int i = 0; i < classifications.length; i++){
+                            if(classifications[i] == null){
+                                classifications[i] = cell.getStringCellValue().trim();
+                                break;
+                            }
+                        }
+                    } else{
+                        // values
+                        String name = cell.getStringCellValue().trim();
+                        Double[] values = new Double[3];
+                        for(int i = 2; i <= 4; i++) {
+                            if (row.getCell(i) != null && row.getCell(i).getCellType() == Cell.CELL_TYPE_STRING &&
+                                    StringUtils.isNotEmpty(row.getCell(i).getStringCellValue()) && !row.getCell(i).getStringCellValue().trim().equalsIgnoreCase("-")) {
+                                logger.error("Expected numeric value for record '" + name + "', found  text value '" + row.getCell(i).getStringCellValue() + "'");
+                                throw new ExcelFileParseException("Expected numeric value for record '" + name + "', found text value '" + row.getCell(i).getStringCellValue() + "'");
+                            }
+                        }
+                        values[0] = ExcelUtils.getDoubleValueFromCell(row.getCell(2));
+                        values[1] = ExcelUtils.getDoubleValueFromCell(row.getCell(3));
+                        values[2] = ExcelUtils.getDoubleValueFromCell(row.getCell(4));
+
+                        ConsolidatedReportRecordDto recordDto = new ConsolidatedReportRecordDto(classifications.length, 3);
+                        recordDto.setName(name);
+                        recordDto.setValues(values);
+                        // classifications
+                        recordDto.setClassifications(Arrays.copyOf((String[]) classifications, classifications.length));
+                        // currency
+                        //recordDto.setCurrency(ExcelUtils.getCellCurrency(row.getCell(2)));
+                        //recordDto.setWithSumFormula(isSumFormulaCell(row.getCell(2)) || isSumFormulaCell(row.getCell(3)) || isSumFormulaCell(row.getCell(4)));
+
+                        // check if total classification
+                        boolean reset = false;
+                        for(int i = 0; i < classifications.length; i++){
+                            if(reset){
+                                classifications[i] = null;
+                            }else if(classifications[i] != null &&
+                                    (name.equalsIgnoreCase(classifications[i] + " TOTAL"))){
+                                classifications[i] = null;
+                                reset = true;
+                                recordDto.setTotalSum(true);
+                            }else if(name.equalsIgnoreCase("NET ASSET VALUE")){
+                                recordDto.setTotalSum(true);
+                            }
+                        }
+                        records.add(recordDto);
+                    }
+                }
+            }
+
+            rowNum++;
+        }
+
+        return records;
+    }
+
+    private List<ConsolidatedReportRecordDto> parseTerraCombinedProfitLossRaw(Iterator<Row> rowIterator){
+        List<ConsolidatedReportRecordDto> records = new ArrayList<>();
+        int rowNum = 0;
+        String[] classifications = new String[5];
+        while (rowIterator.hasNext()) { // each row
+            Row row = rowIterator.next();
+            if (rowNum == 0) { /* ROW == 0*/
+                // check table header
+                checkTerraCombinedProfitLossTableHeader(row);
+            } else{ /* Rows 1,... */
+                Cell cell = row.getCell(1);
+                if(ExcelUtils.getStringValueFromCell(cell) != null){
+                    if(ExcelUtils.isEmptyCellRange(row, 2, 4)){
+                        // classifications
+                        for(int i = 0; i < classifications.length; i++){
+                            if(classifications[i] == null){
+                                classifications[i] = cell.getStringCellValue().trim();
+                                break;
+                            }
+                        }
+                    } else{
+                        // values
+                        String name = cell.getStringCellValue().trim();
+                        Double[] values = new Double[3];
+                        for(int i = 2; i <= 4; i++) {
+                            if (row.getCell(i) != null && row.getCell(i).getCellType() == Cell.CELL_TYPE_STRING &&
+                                    StringUtils.isNotEmpty(row.getCell(i).getStringCellValue()) && !row.getCell(i).getStringCellValue().trim().equalsIgnoreCase("-")) {
+                                logger.error("Expected numeric value for record '" + name + "', found  text value '" + row.getCell(i).getStringCellValue() + "'");
+                                throw new ExcelFileParseException("Expected numeric value for record '" + name + "', found text value '" + row.getCell(i).getStringCellValue() + "'");
+                            }
+                        }
+                        values[0] = ExcelUtils.getDoubleValueFromCell(row.getCell(2));
+                        values[1] = ExcelUtils.getDoubleValueFromCell(row.getCell(3));
+                        values[2] = ExcelUtils.getDoubleValueFromCell(row.getCell(4));
+
+                        ConsolidatedReportRecordDto recordDto = new ConsolidatedReportRecordDto(classifications.length, 3);
+                        recordDto.setName(name);
+                        recordDto.setValues(values);
+                        // classifications
+                        recordDto.setClassifications(Arrays.copyOf((String[]) classifications, classifications.length));
+                        // currency
+                        //recordDto.setCurrency(ExcelUtils.getCellCurrency(row.getCell(2)));
+                        //recordDto.setWithSumFormula(isSumFormulaCell(row.getCell(2)) || isSumFormulaCell(row.getCell(3)) || isSumFormulaCell(row.getCell(4)));
+
+                        // check if total classification
+                        boolean reset = false;
+                        for(int i = 0; i < classifications.length; i++){
+                            if(reset){
+                                classifications[i] = null;
+                            }else if(classifications[i] != null &&
+                                    (name.equalsIgnoreCase("Total for " + classifications[i]))){
+                                classifications[i] = null;
+                                reset = true;
+                                recordDto.setTotalSum(true);
+                            }else if(name.equalsIgnoreCase("NET PROFIT/LOSS FOR THE PERIOD")){
+                                recordDto.setTotalSum(true);
+                            }
+                        }
+                        records.add(recordDto);
+                    }
+                }
+            }
+
+            rowNum++;
+        }
+
+        String classification = null;
+        for(int i = records.size() -1; i >= 0; i--){
+            if(records.get(i).getName().startsWith("Total for")){
+                classification = records.get(i).getName().substring(9).trim();
+                records.get(i).setTotalSum(true);
+            }
+            if(!records.get(i).getName().equalsIgnoreCase("NET PROFIT/LOSS FOR THE PERIOD")){
+                if(classification != null && !records.get(i).hasNonEmptyClassification()){
+                    records.get(i).addClassification(classification);
+                }
+            }
+        }
+
+        return records;
+    }
+
+    private List<ConsolidatedReportRecordDto> parseTerraCombinedSecuritiesCostRaw(Iterator<Row> rowIterator){
+        List<ConsolidatedReportRecordDto> records = new ArrayList<>();
+        int rowNum = 0;
+        while (rowIterator.hasNext()) { // each row
+            Row row = rowIterator.next();
+            if (rowNum < 2) { /* ROWS 0,1*/
+                // check table header
+                checkTerraCombinedSecuritiesCostFileHeader(row);
+            }else if (rowNum < 8) { /* ROWS 2-7*/
+                // check table header
+                checkTerraCombinedSecuritiesCostTableHeader(row);
+            } else{ /* Rows 8,... */
+                Cell cell = row.getCell(0);
+                Double[] values = new Double[7];
+                String name = null;
+                boolean isTotal = false;
+                if(ExcelUtils.getStringValueFromCell(cell) != null && ExcelUtils.getStringValueFromCell(cell).length() > 0){
+                    name = ExcelUtils.getStringValueFromCell(cell).trim();
+                    if(ExcelUtils.getStringValueFromCell(cell).startsWith("Total for")){
+                        isTotal = true;
+                    }
+                }else if(ExcelUtils.getStringValueFromCell(row.getCell(5)) != null && ExcelUtils.getStringValueFromCell(row.getCell(5)).length() > 0){
+                    name = ExcelUtils.getStringValueFromCell(row.getCell(5)).trim();
+                    if(name.equalsIgnoreCase("Grand Total")){
+                        isTotal = true;
+                    }
+                }
+                if(name != null) {
+                    values[0] = ExcelUtils.getDoubleValueFromCell(row.getCell(10));
+                    values[1] = ExcelUtils.getDoubleValueFromCell(row.getCell(12));
+                    values[2] = ExcelUtils.getDoubleValueFromCell(row.getCell(13));
+                    values[3] = ExcelUtils.getDoubleValueFromCell(row.getCell(17));
+                    values[4] = ExcelUtils.getDoubleValueFromCell(row.getCell(18));
+                    values[5] = ExcelUtils.getDoubleValueFromCell(row.getCell(19));
+                    values[6] = ExcelUtils.getDoubleValueFromCell(row.getCell(20));
+
+                    ConsolidatedReportRecordDto recordDto = new ConsolidatedReportRecordDto();
+                    recordDto.setName(name);
+                    recordDto.setValues(values);
+                    recordDto.setTotalSum(isTotal);
+                    records.add(recordDto);
+                }
+
+            }
+
+            rowNum++;
+        }
+        return records;
+    }
+
+    private void checkTerraCombinedSecuritiesCostFileHeader(Row row){
+        if(row.getRowNum() == 0) {
+            Cell cell = row.getCell(11);
+            if (ExcelUtils.isEmptyCell(cell) || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())
+                    || !cell.getStringCellValue().trim().equalsIgnoreCase("SECURITIES COST")) {
+                logger.error("Table header check failed for 'Terra - Securities cost' file. Expected: 'SECURITIES COST', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+                throw new ExcelFileParseException("Table header check failed for 'Terra - Securities cost' file. Expected: 'SECURITIES COST', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+            }
+            cell = row.getCell(19);
+            // TODO: check date
+            if (ExcelUtils.isEmptyCell(cell) || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())
+                    || !cell.getStringCellValue().trim().startsWith("as of")) {
+                logger.error("Table header check failed for 'Terra - Securities cost' file. Expected: 'as of' date, found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+                throw new ExcelFileParseException("Table header check failed for 'Terra - Securities cost' file. Expected: 'as of' date, found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+            }
+        }else if(row.getRowNum() == 1){
+            Cell cell = row.getCell(0);
+            if (ExcelUtils.isEmptyCell(cell) || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())
+                    || !cell.getStringCellValue().trim().equalsIgnoreCase("Terra, L.P.")) {
+                logger.error("Table header check failed for 'Terra - Securities cost' file. Expected: 'Terra, L.P.', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+                throw new ExcelFileParseException("Table header check failed for 'Terra - Securities cost' file. Expected: 'Terra, L.P.', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+            }
+        }
+    }
+
+    private void checkTerraCombinedSecuritiesCostTableHeader(Row row){
+        if(row.getRowNum() == 2) {
+            Cell cell = row.getCell(0);
+            if (ExcelUtils.isEmptyCell(cell) || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())
+                    || !cell.getStringCellValue().trim().equalsIgnoreCase("Security")) {
+                logger.error("Table header check failed for 'Terra - Securities cost' file. Expected: 'Security', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+                throw new ExcelFileParseException("Table header check failed for 'Terra - Securities cost' file. Expected: 'Security', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+            }
+            cell = row.getCell(6);
+            if (ExcelUtils.isEmptyCell(cell) || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())
+                    || !cell.getStringCellValue().trim().equalsIgnoreCase("Total Position")) {
+                logger.error("Table header check failed for 'Terra - Securities cost' file. Expected: 'Total Position', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+                throw new ExcelFileParseException("Table header check failed for 'Terra - Securities cost' file. Expected: 'Total Position', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+            }
+            cell = row.getCell(7);
+            if (ExcelUtils.isEmptyCell(cell) || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())
+                    || (!cell.getStringCellValue().trim().equalsIgnoreCase("Cost per Share\nFCY") &&
+                    !cell.getStringCellValue().trim().equalsIgnoreCase("Cost per Share FCY"))) {
+                logger.error("Table header check failed for 'Terra - Securities cost' file. Expected: 'Cost per Share FCY', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+                throw new ExcelFileParseException("Table header check failed for 'Terra - Securities cost' file. Expected: 'Cost per Share FCY', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+            }
+            cell = row.getCell(10);
+            if (ExcelUtils.isEmptyCell(cell) || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())
+                    || (!cell.getStringCellValue().trim().equalsIgnoreCase("Total Cost\nFCY") && !cell.getStringCellValue().trim().equalsIgnoreCase("Total Cost FCY"))) {
+                logger.error("Table header check failed for 'Terra - Securities cost' file. Expected: 'Total Cost FCY', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+                throw new ExcelFileParseException("Table header check failed for 'Terra - Securities cost' file. Expected: 'Total Cost FCY', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+            }
+            cell = row.getCell(12);
+            if (ExcelUtils.isEmptyCell(cell) || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())
+                    || (!cell.getStringCellValue().trim().equalsIgnoreCase("Cost LCY\nHistorical") &&
+                    !cell.getStringCellValue().trim().equalsIgnoreCase("Cost LCY Historical"))) {
+                logger.error("Table header check failed for 'Terra - Securities cost' file. Expected: 'Cost LCY Historical', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+                throw new ExcelFileParseException("Table header check failed for 'Terra - Securities cost' file. Expected: 'Cost LCY Historical', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+            }
+            cell = row.getCell(13);
+            if (ExcelUtils.isEmptyCell(cell) || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())
+                    || (!cell.getStringCellValue().trim().equalsIgnoreCase("Cost LCY\nat current\nFX rate") &&
+                    !cell.getStringCellValue().trim().equalsIgnoreCase("Cost LCY at current FX rate"))) {
+                logger.error("Table header check failed for 'Terra - Securities cost' file. Expected: 'Cost LCY at current FX rate', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+                throw new ExcelFileParseException("Table header check failed for 'Terra - Securities cost' file. Expected: 'Cost LCY at current FX rate', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+            }
+            cell = row.getCell(14);
+            if (ExcelUtils.isEmptyCell(cell) || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())
+                    || (!cell.getStringCellValue().trim().equalsIgnoreCase("Market Price\nFCY") &&
+                    !cell.getStringCellValue().trim().equalsIgnoreCase("Market Price FCY"))) {
+                logger.error("Table header check failed for 'Terra - Securities cost' file. Expected: 'Market Price FCY', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+                throw new ExcelFileParseException("Table header check failed for 'Terra - Securities cost' file. Expected: 'Market Price FCY', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+            }
+            cell = row.getCell(16);
+            if (ExcelUtils.isEmptyCell(cell) || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())
+                    || !cell.getStringCellValue().trim().equalsIgnoreCase("PL")) {
+                logger.error("Table header check failed for 'Terra - Securities cost' file. Expected: 'PL', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+                throw new ExcelFileParseException("Table header check failed for 'Terra - Securities cost' file. Expected: 'PL', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+            }
+            cell = row.getCell(17);
+            if (ExcelUtils.isEmptyCell(cell) || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())
+                    || (!cell.getStringCellValue().trim().equalsIgnoreCase("Unrealised\nGain FCY") &&
+                    !cell.getStringCellValue().trim().equalsIgnoreCase("Unrealised Gain FCY"))) {
+                logger.error("Table header check failed for 'Terra - Securities cost' file. Expected: 'Unrealised Gain FCY', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+                throw new ExcelFileParseException("Table header check failed for 'Terra - Securities cost' file. Expected: 'Unrealised Gain FCY', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+            }
+            cell = row.getCell(18);
+            if (ExcelUtils.isEmptyCell(cell) || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())
+                    || (!cell.getStringCellValue().trim().equalsIgnoreCase("Unrealised\nGain LCY") &&
+                    !cell.getStringCellValue().trim().equalsIgnoreCase("Unrealised Gain LCY"))) {
+                logger.error("Table header check failed for 'Terra - Securities cost' file. Expected: 'Unrealised Gain LCY', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+                throw new ExcelFileParseException("Table header check failed for 'Terra - Securities cost' file. Expected: 'Unrealised Gain LCY', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+            }
+            cell = row.getCell(19);
+            if (ExcelUtils.isEmptyCell(cell) || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())
+                    || (!cell.getStringCellValue().trim().equalsIgnoreCase("FX Gain\nLCY") &&
+                    !cell.getStringCellValue().trim().equalsIgnoreCase("FX Gain LCY"))) {
+                logger.error("Table header check failed for 'Terra - Securities cost' file. Expected: 'FX Gain LCY', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+                throw new ExcelFileParseException("Table header check failed for 'Terra - Securities cost' file. Expected: 'FX Gain LCY', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+            }
+            cell = row.getCell(20);
+            if (ExcelUtils.isEmptyCell(cell) || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())
+                    || (!cell.getStringCellValue().trim().equalsIgnoreCase("Market Value FCY") &&
+                    !cell.getStringCellValue().trim().equalsIgnoreCase("Market Value\nFCY"))) {
+                logger.error("Table header check failed for 'Terra - Securities cost' file. Expected: 'Market Value FCY', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+                throw new ExcelFileParseException("Table header check failed for 'Terra - Securities cost' file. Expected: 'Market Value FCY', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+            }
+        }else if(row.getRowNum() == 5) {
+            Cell cell = row.getCell(2);
+            if (ExcelUtils.isEmptyCell(cell) || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())
+                    || !cell.getStringCellValue().trim().equalsIgnoreCase("Counterpart:")) {
+                logger.error("Table header check failed for 'Terra - Securities cost' file. Expected: 'Counterpart:', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+                throw new ExcelFileParseException("Table header check failed for 'Terra - Securities cost' file. Expected: 'Counterpart:', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+            }
+            cell = row.getCell(4);
+            if (ExcelUtils.isEmptyCell(cell) || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())
+                    || !cell.getStringCellValue().trim().equalsIgnoreCase("Bk_City National Bank")) {
+                logger.error("Table header check failed for 'Terra - Securities cost' file. Expected: 'Bk_City National Bank', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+                throw new ExcelFileParseException("Table header check failed for 'Terra - Securities cost' file. Expected: 'Bk_City National Bank', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+            }
+        }else if(row.getRowNum() == 6) {
+            Cell cell = row.getCell(2);
+            if (ExcelUtils.isEmptyCell(cell) || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())
+                    || !cell.getStringCellValue().trim().equalsIgnoreCase("Position:")) {
+                logger.error("Table header check failed for 'Terra - Securities cost' file. Expected: 'Position:', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+                throw new ExcelFileParseException("Table header check failed for 'Terra - Securities cost' file. Expected: 'Position:', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+            }
+            cell = row.getCell(4);
+            if (ExcelUtils.isEmptyCell(cell) || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())
+                    || !cell.getStringCellValue().trim().equalsIgnoreCase("Long")) {
+                logger.error("Table header check failed for 'Terra - Securities cost' file. Expected: 'Long', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+                throw new ExcelFileParseException("Table header check failed for 'Terra - Securities cost' file. Expected: 'Long', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+            }
+        }else if(row.getRowNum() == 7) {
+            Cell cell = row.getCell(1);
+            if (ExcelUtils.isEmptyCell(cell) || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())
+                    || !cell.getStringCellValue().trim().equalsIgnoreCase("Security type:")) {
+                logger.error("Table header check failed for 'Terra - Securities cost' file. Expected: 'Security type:', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+                throw new ExcelFileParseException("Table header check failed for 'Terra - Securities cost' file. Expected: 'Security type:', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+            }
+            cell = row.getCell(4);
+            if (ExcelUtils.isEmptyCell(cell) || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())
+                    || !cell.getStringCellValue().trim().equalsIgnoreCase("Partnership interest - USD")) {
+                logger.error("Table header check failed for 'Terra - Securities cost' file. Expected: 'Partnership interest - USD', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+                throw new ExcelFileParseException("Table header check failed for 'Terra - Securities cost' file. Expected: 'Partnership interest - USD', found '" +
+                        ExcelUtils.getStringValueFromCell(cell) + "'");
+            }
+        }
+    }
+
+    private void checkTerraCombinedBalanceSheetTableHeader(Row row){
+        Cell cell = row.getCell(1);
+        if (ExcelUtils.isEmptyCell(cell) || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())
+                || !cell.getStringCellValue().trim().equalsIgnoreCase("GL Sub-class")) {
+            logger.error("Table header check failed for 'Terra - Balance Sheet' file. Expected: 'GL Sub-class', found '" +
+                    ExcelUtils.getStringValueFromCell(cell) + "'");
+            throw new ExcelFileParseException("Table header check failed for 'Terra - Balance Sheet' file. Expected: 'GL Sub-class', found '" +
+                    ExcelUtils.getStringValueFromCell(cell) + "'");
+        }
+
+        cell = row.getCell(2);
+        if (ExcelUtils.isEmptyCell(cell) || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())
+                || !cell.getStringCellValue().trim().equalsIgnoreCase("Carlyle-MRE Terra GP, L.P.")) {
+            logger.error("Table header check failed for 'Terra - Balance Sheet' file. Expected: 'Carlyle-MRE Terra GP, L.P.', found '" +
+                    ExcelUtils.getStringValueFromCell(cell) + "'");
+            throw new ExcelFileParseException("Table header check failed for 'Terra - Balance Sheet' file. Expected: 'GL Sub-class', found '" +
+                    ExcelUtils.getStringValueFromCell(cell) + "'");
+        }
+
+        cell = row.getCell(3);
+        if (ExcelUtils.isEmptyCell(cell) || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())
+                || !cell.getStringCellValue().trim().equalsIgnoreCase("NICK Master Fund Ltd.")) {
+            logger.error("Table header check failed for 'Terra - Balance Sheet' file. Expected: 'NICK Master Fund Ltd.', found '" +
+                    ExcelUtils.getStringValueFromCell(cell) + "'");
+            throw new ExcelFileParseException("Table header check failed for 'Terra - Balance Sheet' file. Expected: 'NICK Master Fund Ltd.', found '" +
+                    ExcelUtils.getStringValueFromCell(cell) + "'");
+        }
+        cell = row.getCell(4);
+        if (ExcelUtils.isEmptyCell(cell) || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())
+                || !cell.getStringCellValue().trim().equalsIgnoreCase("Grand Total")) {
+            logger.error("Table header check failed for 'Terra - Balance Sheet' file. Expected: 'Grand Total', found '" +
+                    ExcelUtils.getStringValueFromCell(cell) + "'");
+            throw new ExcelFileParseException("Table header check failed for 'Terra - Balance Sheet' file. Expected: 'Grand Total', found '" +
+                    ExcelUtils.getStringValueFromCell(cell) + "'");
+        }
+    }
+
+    private void checkTerraCombinedProfitLossTableHeader(Row row){
+        Cell cell = row.getCell(2);
+        if (ExcelUtils.isEmptyCell(cell) || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())
+                || !cell.getStringCellValue().trim().equalsIgnoreCase("Carlyle-MRE Terra GP, L.P.")) {
+            logger.error("Table header check failed for 'Terra - Balance Sheet' file. Expected: 'Carlyle-MRE Terra GP, L.P.', found '" +
+                    ExcelUtils.getStringValueFromCell(cell) + "'");
+            throw new ExcelFileParseException("Table header check failed for 'Terra - Balance Sheet' file. Expected: 'GL Sub-class', found '" +
+                    ExcelUtils.getStringValueFromCell(cell) + "'");
+        }
+
+        cell = row.getCell(3);
+        if (ExcelUtils.isEmptyCell(cell) || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())
+                || !cell.getStringCellValue().trim().equalsIgnoreCase("NICK Master Fund Ltd.")) {
+            logger.error("Table header check failed for 'Terra - Balance Sheet' file. Expected: 'NICK Master Fund Ltd.', found '" +
+                    ExcelUtils.getStringValueFromCell(cell) + "'");
+            throw new ExcelFileParseException("Table header check failed for 'Terra - Balance Sheet' file. Expected: 'NICK Master Fund Ltd.', found '" +
+                    ExcelUtils.getStringValueFromCell(cell) + "'");
+        }
+        cell = row.getCell(4);
+        if (ExcelUtils.isEmptyCell(cell) || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())
+                || !cell.getStringCellValue().trim().equalsIgnoreCase("Grand Total")) {
+            logger.error("Table header check failed for 'Terra - Balance Sheet' file. Expected: 'Grand Total', found '" +
+                    ExcelUtils.getStringValueFromCell(cell) + "'");
+            throw new ExcelFileParseException("Table header check failed for 'Terra - Balance Sheet' file. Expected: 'Grand Total', found '" +
+                    ExcelUtils.getStringValueFromCell(cell) + "'");
+        }
+    }
+
     private Iterator<Row> getRowIterator(FilesDto filesDto, int sheetNumber){
         InputStream inputFile = null;
         try {
@@ -1720,6 +2258,37 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
             } else if (extension.equalsIgnoreCase("xlsx")) {
                 XSSFWorkbook workbook = new XSSFWorkbook(inputFile);
                 XSSFSheet sheet = workbook.getSheetAt(sheetNumber);
+                return sheet.iterator();
+            } else {
+                // log error
+                throw new ExcelFileParseException("Invalid file extension: " + filesDto.getFileName());
+            }
+        }catch (IOException ex){
+            // TODO: log error
+        }finally {
+            try {
+                inputFile.close();
+            } catch (IOException e) {
+                //e.printStackTrace();
+                // TODO: log error
+            }
+        }
+        return null;
+    }
+
+    private Iterator<Row> getRowIterator(FilesDto filesDto, String sheetName){
+        InputStream inputFile = null;
+        try {
+            inputFile = new ByteArrayInputStream(filesDto.getBytes());
+            String extension = filesDto.getFileName().substring(filesDto.getFileName().lastIndexOf(".") + 1,
+                    filesDto.getFileName().length());
+            if (extension.equalsIgnoreCase("xls")) {
+                HSSFWorkbook workbook = new HSSFWorkbook(inputFile);
+                HSSFSheet sheet = workbook.getSheet(sheetName);
+                return sheet.iterator();
+            } else if (extension.equalsIgnoreCase("xlsx")) {
+                XSSFWorkbook workbook = new XSSFWorkbook(inputFile);
+                XSSFSheet sheet = workbook.getSheet(sheetName);
                 return sheet.iterator();
             } else {
                 // log error
@@ -1807,7 +2376,7 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                                     "', values list size mismatch: expected "  + size + " , found "  + recordDto.getValues().length);
                         }
 
-                        if(isTotal(recordDto) || isNet(recordDto)){
+                        if(isTotal(recordDto) || isNet(recordDto) || isTotalFor(recordDto)){
                             // Check total sum value
                             String key = recordDto.getName().trim().toLowerCase();
                             if(!sums.containsKey(key)){
@@ -1912,6 +2481,12 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                         recordDto.hasClassification(recordDto.getName().trim()));
     }
 
+    private boolean isTotalFor(ConsolidatedReportRecordDto recordDto){
+        return recordDto != null && recordDto.getName().startsWith("Total for") && recordDto.getName().length() > 9 &&
+                (recordDto.hasClassification(recordDto.getName().substring(9).trim()) ||
+                        recordDto.hasClassification(recordDto.getName().trim()));
+    }
+
     private boolean isNet(ConsolidatedReportRecordDto recordDto){
         return recordDto != null && recordDto.getName().startsWith("Net") && recordDto.getName().length() > 3 &&
                 (recordDto.hasClassification(recordDto.getName().substring(3).trim()) ||
@@ -2009,6 +2584,8 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                             record.getName().equalsIgnoreCase(totalRecordName)){
                         totalRecordNameCheck = true;
                         if (!stack.isEmpty() && (record.getName().startsWith("Total") && stack.peek().equalsIgnoreCase(record.getName().substring(5).trim()) ||
+                                (record.getName().startsWith("Total for") && stack.peek().equalsIgnoreCase(record.getName().substring(9).trim())) ||
+                                (record.getName().startsWith(stack.peek()) && record.getName().endsWith("TOTAL")) ||
                                 (record.getName().startsWith("Net") && stack.peek().equalsIgnoreCase(record.getName().substring(3).trim())) ||
                                 (record.getName().trim().equalsIgnoreCase(stack.peek())))) {
                             // is total
@@ -2017,6 +2594,8 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
 
                     }else if (StringUtils.isNotEmpty(record.getName()) && !stack.isEmpty() &&
                             (record.getName().startsWith("Total") && stack.peek().equalsIgnoreCase(record.getName().substring(5).trim()) ||
+                                    (record.getName().startsWith("Total for") && stack.peek().equalsIgnoreCase(record.getName().substring(9).trim())) ||
+                                    (record.getName().startsWith(stack.peek()) && record.getName().endsWith("TOTAL")) ||
                                     (record.getName().startsWith("Net") && stack.peek().equalsIgnoreCase(record.getName().substring(3).trim())) ||
                                     (record.getName().trim().equalsIgnoreCase(stack.peek())))) {
                         // is total

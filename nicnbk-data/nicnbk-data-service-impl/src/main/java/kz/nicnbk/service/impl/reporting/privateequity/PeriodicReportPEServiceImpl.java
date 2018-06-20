@@ -6,6 +6,7 @@ import kz.nicnbk.common.service.util.MathUtils;
 import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.api.reporting.privateequity.PEGeneralLedgerFormDataRepository;
 import kz.nicnbk.repo.api.reporting.privateequity.TarragonNICChartOfAccountsRepository;
+
 import kz.nicnbk.repo.model.reporting.PeriodicReport;
 import kz.nicnbk.repo.model.reporting.privateequity.PEGeneralLedgerFormData;
 import kz.nicnbk.repo.model.reporting.privateequity.TarragonNICChartOfAccounts;
@@ -46,8 +47,10 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
     @Autowired
     private PEGeneralLedgerFormDataConverter peGeneralLedgerFormDataConverter;
 
+
     @Autowired
     private PEGeneralLedgerFormDataRepository peGeneralLedgerFormDataRepository;
+
 
     @Autowired
     private TarragonNICChartOfAccountsRepository tarragonNICChartOfAccountsRepository;
@@ -66,6 +69,7 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
 
     @Autowired
     private ReserveCalculationService reserveCalculationService;
+
 
     @Transactional // if DB operation fails, no record will be saved, i.e. no partial commits
     @Override

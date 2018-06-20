@@ -39,6 +39,8 @@ INSERT INTO rep_tarragon_nic_chart_of_accounts(id, tarragon_chart_of_accounts_na
 
 INSERT INTO rep_tarragon_nic_chart_of_accounts(id, tarragon_chart_of_accounts_name, nic_chart_accounts_id, addable) VALUES(33, 'Payable to investment', 39, false);
 INSERT INTO rep_tarragon_nic_chart_of_accounts(id, tarragon_chart_of_accounts_name, nic_chart_accounts_id, addable) VALUES(34, 'Audit and tax fees', 47, false);
+INSERT INTO rep_tarragon_nic_chart_of_accounts(id, tarragon_chart_of_accounts_name, nic_chart_accounts_id, addable) VALUES(35, 'Current tax (expense) benefit', 67, false);
+
 
 
 

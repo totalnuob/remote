@@ -23,6 +23,8 @@ export const NB_CHART_OF_ACCOUNTS_URL =  LOOKUP_SERVICE_URL +"NBChartOfAccounts"
 export const NIC_REPORTING_CHART_OF_ACCOUNTS_URL =  LOOKUP_SERVICE_URL +"NICReportingChartOfAccounts/";
 
 export const TARRAGON_NIC_REPORTING_CHART_OF_ACCOUNTS_URL = LOOKUP_SERVICE_URL +"AddableTarragonNICReportingChartOfAccounts/";
+export const TERRA_NIC_REPORTING_CHART_OF_ACCOUNTS_URL = LOOKUP_SERVICE_URL +"AddableTerraNICReportingChartOfAccounts/";
+
 
 
 export const PE_INDUSTRY_FOCUS_URL = LOOKUP_SERVICE_URL + "PEIndustry";

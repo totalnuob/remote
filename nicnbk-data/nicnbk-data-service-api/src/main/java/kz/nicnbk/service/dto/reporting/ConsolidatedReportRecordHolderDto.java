@@ -36,6 +36,8 @@ public class ConsolidatedReportRecordHolderDto implements BaseDto {
     private List<SingularityNOALRecordDto> noalTrancheAList;
     private List<SingularityNOALRecordDto> noalTrancheBList;
 
+    private List<SingularityGeneralLedgerBalanceRecordDto> realEstateGeneralLedgerBalanceList;
+
     private PeriodicReportDto report;
 
     public List<ConsolidatedReportRecordDto> getTrancheA() {
@@ -134,6 +136,14 @@ public class ConsolidatedReportRecordHolderDto implements BaseDto {
         this.report = report;
     }
 
+    public List<SingularityGeneralLedgerBalanceRecordDto> getRealEstateGeneralLedgerBalanceList() {
+        return realEstateGeneralLedgerBalanceList;
+    }
+
+    public void setRealEstateGeneralLedgerBalanceList(List<SingularityGeneralLedgerBalanceRecordDto> realEstateGeneralLedgerBalanceList) {
+        this.realEstateGeneralLedgerBalanceList = realEstateGeneralLedgerBalanceList;
+    }
+
     public void merge(ConsolidatedReportRecordHolderDto other){
         if(other.trancheA != null && !other.trancheA.isEmpty()){
             this.trancheA = other.trancheA;
@@ -167,6 +177,9 @@ public class ConsolidatedReportRecordHolderDto implements BaseDto {
         }
         if(other.noalTrancheBList != null && !other.noalTrancheBList.isEmpty()){
             this.noalTrancheBList = other.noalTrancheBList;
+        }
+        if(other.realEstateGeneralLedgerBalanceList != null && !other.realEstateGeneralLedgerBalanceList.isEmpty()){
+            this.realEstateGeneralLedgerBalanceList = other.realEstateGeneralLedgerBalanceList;
         }
     }
 }

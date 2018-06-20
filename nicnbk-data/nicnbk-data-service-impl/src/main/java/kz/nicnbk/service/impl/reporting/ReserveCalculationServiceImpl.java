@@ -693,6 +693,32 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
         return false;
     }
 
+    @Override
+    public ReserveCalculationDto getRecordById(Long recordId) {
+        ReserveCalculation entity = this.reserveCalculationRepository.findOne(recordId);
+        if(entity != null){
+            return this.reserveCalculationConverter.disassemble(entity);
+        }
+        return null;
+    }
+
+    @Override
+    public boolean excludeIncludeRecord(Long recordId, String name) {
+        ReserveCalculation entity = this.reserveCalculationRepository.findOne(recordId);
+        if(entity != null){
+            if(name != null && name.equalsIgnoreCase("Capital call capital adjustment")) {
+                boolean currentValue = entity.getExcludeOppositeFromTerraCalculation() == null ? false : entity.getExcludeOppositeFromTerraCalculation().booleanValue();
+                entity.setExcludeOppositeFromTerraCalculation(!currentValue);
+            }else{
+                boolean currentValue = entity.getExcludeFromTerraCalculation() == null ? false : entity.getExcludeFromTerraCalculation().booleanValue();
+                entity.setExcludeFromTerraCalculation(!currentValue);
+            }
+            this.reserveCalculationRepository.save(entity);
+            return true;
+        }
+        return false;
+    }
+
     public Set<FilesDto> getAttachments(Long recordId){
         try {
             List<ReserveCalculationFiles> entities = reserveCalculationFilesRepository.getFilesByEntityId(recordId);

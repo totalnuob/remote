@@ -30,6 +30,8 @@ public class ReserveCalculationDto extends CreateUpdateBaseEntityDto<ReserveCalc
     private boolean canDelete;
     private String referenceInfo;
     private Set<FilesDto> files;
+    private Boolean excludeFromTerraCalculation;
+    private Boolean excludeOppositeFromTerraCalculation;
 
     public BaseDictionaryDto getExpenseType() {
         return expenseType;
@@ -133,5 +135,21 @@ public class ReserveCalculationDto extends CreateUpdateBaseEntityDto<ReserveCalc
 
     public void setFiles(Set<FilesDto> files) {
         this.files = files;
+    }
+
+    public Boolean getExcludeFromTerraCalculation() {
+        return excludeFromTerraCalculation;
+    }
+
+    public void setExcludeFromTerraCalculation(Boolean excludeFromTerraCalculation) {
+        this.excludeFromTerraCalculation = excludeFromTerraCalculation;
+    }
+
+    public Boolean getExcludeOppositeFromTerraCalculation() {
+        return excludeOppositeFromTerraCalculation;
+    }
+
+    public void setExcludeOppositeFromTerraCalculation(Boolean excludeOppositeFromTerraCalculation) {
+        this.excludeOppositeFromTerraCalculation = excludeOppositeFromTerraCalculation;
     }
 }

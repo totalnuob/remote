@@ -270,6 +270,34 @@
                         </button>
                     </td>
                 </tr>
+                <tr>
+                    <td>Singularity - NOAL Tranche B</td>
+                    <td>
+                        <button class="btn btn-xs btn-default"
+                                (click)="download('NB_REP_SNB', report.singularityNOALTrancheBFileId, report.singularityNOALTrancheBFileName)">
+                            <span class="glyphicon glyphicon-download-alt"></span>
+                            <i class="glyphicon glyphicon-refresh" *ngIf="pending"></i>
+                        </button>
+                        <button class="btn btn-xs btn-primary"
+                                [routerLink]="['/reporting/NBReporting/hf/noalB/', reportId, 'REPORTS']">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Terra Combined</td>
+                    <td>
+                        <button class="btn btn-xs btn-default"
+                                (click)="download('NB_REP_CMB', report.terraCombinedFileId, report.terraCombinedFileName)">
+                            <span class="glyphicon glyphicon-download-alt"></span>
+                            <i class="glyphicon glyphicon-refresh" *ngIf="pending"></i>
+                        </button>
+                        <button class="btn btn-xs btn-primary"
+                                [routerLink]="['/reporting/NBReporting/re/terraCombined/', reportId, 'REPORTS']">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </td>
+                </tr>
                 <!--<tr>-->
                     <!--<td>Singularity - NOAL Tranche B</td>-->
                     <!--<td>-->

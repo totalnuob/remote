@@ -107,7 +107,8 @@ export class SingularityGeneralLedgerBalanceNBReportingComponent extends CommonN
 
     public showAdjustmentsInterestRate(record) {
         return this.showAdjustments && (record == null ||
-            (record != null && record.chartAccountsLongDescription != null && record.chartAccountsLongDescription.trim() === 'Bank Loans - Accrued Interest'));
+            (record != null && record.chartAccountsLongDescription != null && record.chartAccountsLongDescription.trim() === 'Bank Loans - Accrued Interest') ||
+            (record != null && record.chartAccountsLongDescription != null && record.chartAccountsLongDescription.trim() === 'Interest Expense - Bank Loans'));
     }
 
     public saveAdjustments(){

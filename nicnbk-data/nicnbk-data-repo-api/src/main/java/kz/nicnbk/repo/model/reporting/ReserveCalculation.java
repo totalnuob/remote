@@ -22,6 +22,8 @@ public class ReserveCalculation extends CreateUpdateBaseEntity{
     private Double amount;
     private Double amountToSPV;
     private String referenceInfo;
+    private Boolean excludeFromTerraCalculation;
+    private Boolean excludeOppositeFromTerraCalculation;
 
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -101,5 +103,23 @@ public class ReserveCalculation extends CreateUpdateBaseEntity{
 
     public void setReferenceInfo(String referenceInfo) {
         this.referenceInfo = referenceInfo;
+    }
+
+    @Column(name="exclude_from_terra_calc")
+    public Boolean getExcludeFromTerraCalculation() {
+        return excludeFromTerraCalculation;
+    }
+
+    public void setExcludeFromTerraCalculation(Boolean excludeFromTerraCalculation) {
+        this.excludeFromTerraCalculation = excludeFromTerraCalculation;
+    }
+
+    @Column(name="exclude_opposite_from_terra_calc")
+    public Boolean getExcludeOppositeFromTerraCalculation() {
+        return excludeOppositeFromTerraCalculation;
+    }
+
+    public void setExcludeOppositeFromTerraCalculation(Boolean excludeOppositeFromTerraCalculation) {
+        this.excludeOppositeFromTerraCalculation = excludeOppositeFromTerraCalculation;
     }
 }

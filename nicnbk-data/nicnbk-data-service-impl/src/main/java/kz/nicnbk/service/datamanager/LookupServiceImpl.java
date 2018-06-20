@@ -10,6 +10,7 @@ import kz.nicnbk.repo.api.macromonitor.MacroMonitorTypeRepository;
 import kz.nicnbk.repo.api.pe.IndustryRepository;
 import kz.nicnbk.repo.api.reporting.*;
 import kz.nicnbk.repo.api.reporting.privateequity.TarragonNICChartOfAccountsRepository;
+import kz.nicnbk.repo.api.reporting.realestate.TerraNICChartOfAccountsRepository;
 import kz.nicnbk.repo.model.base.BaseTypeEntity;
 import kz.nicnbk.repo.model.common.*;
 import kz.nicnbk.repo.model.corpmeetings.CorpMeetingType;
@@ -26,9 +27,12 @@ import kz.nicnbk.repo.model.reporting.*;
 import kz.nicnbk.repo.model.reporting.hedgefunds.FinancialStatementCategory;
 import kz.nicnbk.repo.model.reporting.privateequity.PEInvestmentType;
 import kz.nicnbk.repo.model.reporting.privateequity.TarragonNICChartOfAccounts;
+import kz.nicnbk.repo.model.reporting.realestate.REBalanceType;
+import kz.nicnbk.repo.model.reporting.realestate.TerraNICChartOfAccounts;
 import kz.nicnbk.repo.model.tripmemo.TripType;
 import kz.nicnbk.service.dto.reporting.NICReportingChartOfAccountsDto;
 import kz.nicnbk.service.dto.reporting.TarragonNICReportingChartOfAccountsDto;
+import kz.nicnbk.service.dto.reporting.realestate.TerraNICReportingChartOfAccountsDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -133,6 +137,9 @@ public class LookupServiceImpl implements LookupService {
     private TarragonNICChartOfAccountsRepository tarragonNICChartOfAccountsRepository;
 
     @Autowired
+    private TerraNICChartOfAccountsRepository terraNICChartOfAccountsRepository;
+
+    @Autowired
     private ReserveCalculationExpenseTypeRepository reserveCalculationExpenseTypeRepository;
 
     @Autowired
@@ -149,6 +156,9 @@ public class LookupServiceImpl implements LookupService {
 
     @Autowired
     private ReserveCalculationExportApproveListTypeRepository reserveCalculationExportApproveListTypeRepository;
+
+    @Autowired
+    private REBalanceTypeRepository reBalanceTypeRepository;
 
     @Override
     public <T extends BaseTypeEntity> T findByTypeAndCode(Class<T> clazz, String code) {
@@ -226,6 +236,8 @@ public class LookupServiceImpl implements LookupService {
                 return (T) this.reserveCalculationExportApproveListTypeRepository.findByCode(code);
             } else if (clazz.equals(CorpMeetingType.class)) {
                 return (T) this.corpMeetingTypeRepository.findByCode(code);
+            } else if (clazz.equals(REBalanceType.class)) {
+                return (T) this.reBalanceTypeRepository.findByCode(code);
             }else{
                 logger.error("Failed to load lookups for clazz=" + clazz + ", code=" + code);
             }
@@ -500,6 +512,36 @@ public class LookupServiceImpl implements LookupService {
                 for(TarragonNICChartOfAccounts entity: entities){
                     TarragonNICReportingChartOfAccountsDto dto = new TarragonNICReportingChartOfAccountsDto();
                     dto.setTarragonChartOfAccountsName(entity.getTarragonChartOfAccountsName());
+                    if(entity.getNicReportingChartOfAccounts() != null) {
+                        BaseDictionaryDto nicChartAccountsBaseDto = disassemble(entity.getNicReportingChartOfAccounts());
+                        NICReportingChartOfAccountsDto nicChartAccountsDto = new NICReportingChartOfAccountsDto(nicChartAccountsBaseDto);
+                        if (entity.getNicReportingChartOfAccounts().getNbChartOfAccounts() != null) {
+                            nicChartAccountsDto.setNBChartOfAccounts(disassemble(entity.getNicReportingChartOfAccounts().getNbChartOfAccounts()));
+                        }
+                        dto.setNICChartOfAccounts(nicChartAccountsDto);
+                    }
+                    dtoList.add(dto);
+                }
+            }
+
+            return dtoList;
+        }catch (Exception ex){
+            logger.error("Failed to load lookup: NICReportingChartOfAccounts", ex);
+        }
+        return null;
+
+    }
+
+    @Override
+    public List<TerraNICReportingChartOfAccountsDto> getAddableTerraNICReportingChartOfAccounts() {
+        try {
+            List<TerraNICReportingChartOfAccountsDto> dtoList = new ArrayList<>();
+            List<TerraNICChartOfAccounts> entities = this.terraNICChartOfAccountsRepository.findByAddable(true);
+
+            if(entities != null){
+                for(TerraNICChartOfAccounts entity: entities){
+                    TerraNICReportingChartOfAccountsDto dto = new TerraNICReportingChartOfAccountsDto();
+                    dto.setTerraChartOfAccountsName(entity.getTerraChartOfAccountsName());
                     if(entity.getNicReportingChartOfAccounts() != null) {
                         BaseDictionaryDto nicChartAccountsBaseDto = disassemble(entity.getNicReportingChartOfAccounts());
                         NICReportingChartOfAccountsDto nicChartAccountsDto = new NICReportingChartOfAccountsDto(nicChartAccountsBaseDto);
