@@ -71,7 +71,7 @@ export class PeriodicReportService extends CommonService{
     private PERIODIC_REPORT_TERRA_GENERATED_FORM_URL = this.PERIODIC_REPORT_BASE_URL + "terraGeneratedForm/";
     private PERIODIC_REPORT_TARRAGON_GENERATED_FROM_PREV_MONTH_URL = this.PERIODIC_REPORT_BASE_URL + "tarragonGeneratedFormDataFromPreviousMonth/";
     private PERIODIC_REPORT_TERRA_GENERATED_FROM_PREV_MONTH_URL = this.PERIODIC_REPORT_BASE_URL + "terraGeneratedFormDataFromPreviousMonth/";
-    private PERIODIC_REPORT_TERRA_INCLUDE_EXCLUDE_URL= this.PERIODIC_REPORT_BASE_URL + "terraGeneratedFormDataFromPreviousMonth/";
+    private PERIODIC_REPORT_TERRA_INCLUDE_EXCLUDE_URL= this.PERIODIC_REPORT_BASE_URL + "excludeTerraRecord/";
 
 
     private PERIODIC_REPORT_OTHER_INFO_UPLOAD_URL = this.PERIODIC_REPORT_BASE_URL + "otherInfo/save/";
