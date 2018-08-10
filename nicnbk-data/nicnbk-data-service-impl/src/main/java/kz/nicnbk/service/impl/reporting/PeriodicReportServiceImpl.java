@@ -3735,7 +3735,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         ConsolidatedKZTForm13RecordDto record3053_060 = new ConsolidatedKZTForm13RecordDto();
                         record3053_060.setAccountNumber(record.getAccountNumber());
                         record3053_060.setName(record.getName());
-                        record3053_060.setLineNumber(record.getLineNumber());
+                        record3053_060.setLineNumber(3);
                         record3053_060.setEntityName(record.getOtherEntityName());
                         record3053_060.setStartPeriod(DateUtils.getLastDayOfPreviousMonth(report.getReportDate()));
                         record3053_060.setEndPeriod(DateUtils.getLastDayOfNextMonth(report.getReportDate()));
@@ -3754,9 +3754,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         record3053_060.setDebtEndPeriod(amount);
                         record3053_060.setInterestEndPeriod(null);
 
-                        double totalEndPeriod = record3053_060.getDebtEndPeriod() != null ? record3053_060.getDebtEndPeriod() : 0;
-                        totalEndPeriod = MathUtils.add(totalEndPeriod, record3053_060.getInterestEndPeriod() != null ? record3053_060.getInterestEndPeriod() : 0);
-                        record3053_060.setTotalEndPeriod(totalEndPeriod);
+//                        double totalEndPeriod = record3053_060.getDebtEndPeriod() != null ? record3053_060.getDebtEndPeriod() : 0;
+//                        totalEndPeriod = MathUtils.add(totalEndPeriod, record3053_060.getInterestEndPeriod() != null ? record3053_060.getInterestEndPeriod() : 0);
+                        record3053_060.setTotalEndPeriod(amount);
 
                         previousRecords.add(indexLineNumber3, record3053_060);
                         lineNumber3Sum = MathUtils.add(lineNumber3Sum, amount);
@@ -3796,6 +3796,11 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                     record.setDebtEndPeriod(record3013_010.getDebtEndPeriod());
                     record.setInterestEndPeriod(record3013_010.getInterestEndPeriod());
                     record.setTotalEndPeriod(record3013_010.getTotalEndPeriod());
+                    if(record.getLineNumber() == 1 || record.getLineNumber() == 7){
+                        record.setDebtTurnover(MathUtils.add(record.getDebtTurnover(), lineNumber3Sum));
+                        record.setDebtEndPeriod(MathUtils.add(record.getDebtEndPeriod(), lineNumber3Sum));
+                        record.setTotalEndPeriod(MathUtils.add(record.getTotalEndPeriod(), lineNumber3Sum));
+                    }
                 }else if(record.getAccountNumber() == null && record.getLineNumber() != null && record.getLineNumber() == 3){
                     record.setDebtTurnover(lineNumber3Sum);
                     record.setDebtEndPeriod(lineNumber3Sum);
@@ -7516,6 +7521,10 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                     }
 
                     if (row.getCell(2) != null && row.getCell(2).getCellType() == Cell.CELL_TYPE_NUMERIC) {
+                        if(ExcelUtils.getTextValueFromAnyCell(row.getCell(0)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(0)).equalsIgnoreCase("1.0") &&
+                                ExcelUtils.getTextValueFromAnyCell(row.getCell(1)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(1)).equalsIgnoreCase("2.0")){
+                            continue;
+                        }
                         int lineNumber = (int) row.getCell(2).getNumericCellValue();
                         List<ConsolidatedKZTForm13RecordDto> records = recordsMap.get(lineNumber);
                         int recordsNum = records != null ? records.size() : 0;
