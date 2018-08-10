@@ -27,7 +27,7 @@
     </div>
     <br/>
     <div class="row withpadding">
-        <h3 *ngIf="reportId != null">5. Terra - Generated General Ledger Form</h3>
+        <h3 *ngIf="reportId != null">4. Terra - Generated General Ledger Form</h3>
     </div>
 
     <form (ngSubmit)="saveAddedRecords()" #addedRecordsForm="ngForm" class="well span">
@@ -118,13 +118,13 @@
     <div class="row">
         <div class="col-md-6">
             <div class="col-md-1 pull-left">
-                <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/previousYearInput/', reportId]">PREVIOUS
+                <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/TarragonGeneratedForm/', reportId]">PREVIOUS
                 </button>
             </div>
         </div>
         <div class="col-md-6">
             <div class="col-md-1 pull-right">
-                <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/GeneratedReports/', reportId, 'REPORTS']" [disabled]="!showNextButton()">NEXT</button>
+                <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/previousYearInput/', reportId]" [disabled]="!showNextButton()">NEXT</button>
             </div>
         </div>
     </div>
@@ -263,13 +263,13 @@
     <div class="row">
         <div class="col-md-6">
             <div class="col-md-1 pull-left">
-                <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/previousYearInput/', reportId]">PREVIOUS
+                <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/TarragonGeneratedForm/', reportId]">PREVIOUS
                 </button>
             </div>
         </div>
         <div class="col-md-6">
             <div class="col-md-1 pull-right">
-                <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/GeneratedReports/', reportId, 'REPORTS']" [disabled]="!showNextButton()">NEXT</button>
+                <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/previousYearInput/', reportId]" [disabled]="!showNextButton()">NEXT</button>
             </div>
         </div>
     </div>

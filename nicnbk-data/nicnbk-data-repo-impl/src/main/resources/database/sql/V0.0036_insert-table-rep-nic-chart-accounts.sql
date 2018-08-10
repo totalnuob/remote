@@ -79,7 +79,8 @@ INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_cha
 INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(70, 'KZT3_5_1', null, 'Резерв на пересчет иностранной валюты по зарубежной деятельности (Корректировка)', null, 1111);
 
 
-
+INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(71, '3393.020.r', null, 'Комиссия за управление к оплате Terra', null, 4);
+INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(72, '7473.080.y', null, 'Комиссия за управление Terra', null, 8);
 
 
 

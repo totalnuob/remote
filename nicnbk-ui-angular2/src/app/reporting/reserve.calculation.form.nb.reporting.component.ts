@@ -74,7 +74,7 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
         this.records = [];
         //this.editedRecord = new ReserveCalculationFormRecord();
 
-        Observable.forkJoin(
+        this.busy = Observable.forkJoin(
             // Load lookups
             this.lookupService.getReserveCalculationExpenseTypeLookup(),
             this.lookupService.getReserveCalculationEntityTypeLookup(),

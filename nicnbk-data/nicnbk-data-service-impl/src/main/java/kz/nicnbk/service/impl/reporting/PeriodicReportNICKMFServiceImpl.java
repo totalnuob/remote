@@ -191,14 +191,15 @@ public class PeriodicReportNICKMFServiceImpl implements PeriodicReportNICKMFServ
                         this.reserveCalculationService.getReserveCalculationsForMonth(ReserveCalculationsExpenseTypeLookup.ADMINISTRATION_FEES.getCode(), reportDto.getReportDate(), false);
                 if(reserveCalculationDtos != null){
                     for(ReserveCalculationDto record: reserveCalculationDtos){
-                        value = MathUtils.subtract(value, record.getAmount());
+                        //value = MathUtils.subtract(value, record.getAmount());
+                        value = MathUtils.add(value, record.getAmount());
                     }
                 }
 
                 value = MathUtils.subtract(value, (MathUtils.divide(40000.0, 12.0)));
 
                 dto.setCalculatedAccountBalance(value);
-                dto.setCalculatedAccountBalanceFormula(" {previous month value} - 40,000/12 - sum of values from Capital Calls with type 'Комиссия' for current month" );
+                dto.setCalculatedAccountBalanceFormula(" {previous month value} - 40,000/12 + sum of values from Capital Calls with type 'Комиссия' for current month" );
 
                 /*
                 Double remainder = 0.0;
@@ -228,8 +229,11 @@ public class PeriodicReportNICKMFServiceImpl implements PeriodicReportNICKMFServ
                         ", i.e. {if January, then remainder from December, else 0} - (40,000/12 * current month number ) + sum of values from Capital Calls with type 'Комиссия'" );
                 */
             }else if(dto.getNbChartOfAccountsCode().equalsIgnoreCase("7473.080") && dto.getNicChartOfAccountsName().equalsIgnoreCase("Расходы за администрирование NICK MF")){
-                dto.setCalculatedAccountBalance(MathUtils.multiply(MathUtils.divide(40000.0, 12.0), (month*1.0)));
-                dto.setCalculatedAccountBalanceFormula("40,000 / 12 * " + month + ", where '" + month + "' is current month number");
+
+                // TODO: formula will change in 2019
+                dto.setCalculatedAccountBalance(MathUtils.add(MathUtils.multiply(MathUtils.divide(40000.0, 12.0), (4.0)),
+                        MathUtils.multiply(MathUtils.divide(60000.0, 12.0), (MathUtils.subtract(month*1.0, 4.0)))));
+                dto.setCalculatedAccountBalanceFormula("40,000 / 12 * 4 + 60,000 / 12 * (" + month + " - 4), where '" + month + "' is current month number");
             }else if(dto.getNbChartOfAccountsCode().equalsIgnoreCase("7473.080") && dto.getNicChartOfAccountsName().equalsIgnoreCase("Амортизация организационных расходов NICK MF")){
 
                 Double value = MathUtils.multiply(MathUtils.divide(14963.23, 60.0), (month*1.0));
@@ -259,7 +263,8 @@ public class PeriodicReportNICKMFServiceImpl implements PeriodicReportNICKMFServ
                         if(record.getExpenseType() != null && record.getExpenseType().getCode().equalsIgnoreCase(ReserveCalculationsExpenseTypeLookup.ADD.getCode())) {
                             value = MathUtils.add(value, record.getAmount());
                         }else if(record.getExpenseType() != null && record.getExpenseType().getCode().equalsIgnoreCase(ReserveCalculationsExpenseTypeLookup.ADMINISTRATION_FEES.getCode())){
-                            value = MathUtils.add(value, record.getAmount());
+                            //value = MathUtils.add(value, record.getAmount());
+                            value = MathUtils.subtract(value, record.getAmount());
                         }else if(record.getExpenseType() != null && !record.getExpenseType().getCode().equalsIgnoreCase(ReserveCalculationsExpenseTypeLookup.ADMINISTRATION_FEES.getCode()) &&
                                 record.getRecipient().getCode().equalsIgnoreCase(ReserveCalculationsEntityTypeLookup.NICKMF.getCode())){
                             value = MathUtils.add(value, record.getAmount());
@@ -281,7 +286,7 @@ public class PeriodicReportNICKMFServiceImpl implements PeriodicReportNICKMFServ
 
                 dto.setCalculatedAccountBalance(value);
                 dto.setCalculatedAccountBalanceFormula("{previous month value} + sum of Capital Calls 'Пополнение капитала' for report month" +
-                        " + sum of Capital Calls 'Комиссия' for report month" +
+                        " - sum of Capital Calls 'Комиссия' for report month" +
                         " - sum of Capital Calls 'Пополнение капитала' with value date in report month" +
                         " + sum of Capital Calls NOT 'Комиссия' and Recipient being NICK MF for report month");
 

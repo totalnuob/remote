@@ -37,7 +37,7 @@
         <!--<li class="active">-->
             <a data-toggle="tab" href="#reports">Reports</a>
         </li>
-        <li [ngClass]="getInputTabClass()">
+        <li [ngClass]="getInputTabClass()" *ngIf="periodicReport.status === 'SUBMITTED'">
         <!--<li>-->
             <a data-toggle="tab" href="#input_data">Input</a>
         </li>
@@ -173,7 +173,7 @@
                 </div>
             </div>
         </div>
-        <div id="input_data" [ngClass]="getInputTabDivClass()">
+        <div id="input_data" [ngClass]="getInputTabDivClass()" *ngIf="periodicReport.status === 'SUBMITTED'">
         <!--<div id="input_data" class="tab-pane fade">-->
                 <!--<button id="toggleButton" type="button" data-toggle="collapse" class="btn btn-default"  data-target="#inputData"-->
                         <!--(click)="toggleInputList()">-->
@@ -333,6 +333,22 @@
                     <td>Singularity - General Ledger (NIC Chart of Accounts)</td>
                     <td>
                         <button class="btn btn-xs btn-primary " [routerLink]="['/reporting/NBReporting/SingularGeneratedForm/', reportId]">
+                            <span class="glyphicon glyphicon-search"></span></button>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Terra Generated GL</td>
+                    <td>
+                        <button class="btn btn-xs btn-primary " [routerLink]="['/reporting/NBReporting/TerraGeneratedFormView/', reportId]">
+                            <span class="glyphicon glyphicon-search"></span></button>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Previous Year Input</td>
+                    <td>
+                        <button class="btn btn-xs btn-primary " [routerLink]="['/reporting/NBReporting/previousYearInputView/', reportId]">
                             <span class="glyphicon glyphicon-search"></span></button>
                     </td>
                 </tr>
