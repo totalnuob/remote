@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface TarragonNICChartOfAccountsRepository extends PagingAndSortingRepository<TarragonNICChartOfAccounts, Long> {
 
-    TarragonNICChartOfAccounts findByTarragonChartOfAccountsNameAndAddable(String name, Boolean addable);
+    List<TarragonNICChartOfAccounts> findByTarragonChartOfAccountsNameAndAddable(String name, Boolean addable);
 
     List<TarragonNICChartOfAccounts> findByAddable(Boolean addable);
 

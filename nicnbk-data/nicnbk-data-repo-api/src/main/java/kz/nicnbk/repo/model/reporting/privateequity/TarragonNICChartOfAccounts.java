@@ -21,6 +21,8 @@ public class TarragonNICChartOfAccounts extends BaseEntity {
     private String tarragonChartOfAccountsName;
     private NICReportingChartOfAccounts nicReportingChartOfAccounts;
     private Boolean addable;
+    private Boolean positiveOnly;
+    private Boolean negativeOnly;
 
     @Column(name="tarragon_chart_of_accounts_name", nullable = false)
     public String getTarragonChartOfAccountsName() {
@@ -47,5 +49,23 @@ public class TarragonNICChartOfAccounts extends BaseEntity {
 
     public void setAddable(Boolean addable) {
         this.addable = addable;
+    }
+
+    @Column(name="positive_only")
+    public Boolean getPositiveOnly() {
+        return positiveOnly;
+    }
+
+    public void setPositiveOnly(Boolean positiveOnly) {
+        this.positiveOnly = positiveOnly;
+    }
+
+    @Column(name="negative_only")
+    public Boolean getNegativeOnly() {
+        return negativeOnly;
+    }
+
+    public void setNegativeOnly(Boolean negativeOnly) {
+        this.negativeOnly = negativeOnly;
     }
 }

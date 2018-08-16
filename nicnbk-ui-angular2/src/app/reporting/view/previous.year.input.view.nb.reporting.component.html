@@ -1,0 +1,81 @@
+<div class="container">
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting']">Reports Main</a></span>
+                </li>
+                <li *ngIf="reportId != null && report != null && report.status != 'SUBMITTED'">
+                    <span>
+                        <a [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">
+                            Input</a></span>
+                </li>
+                <!--<li>-->
+                    <!--<span *ngIf="reportId != null">-->
+                        <!--<a [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">-->
+                        <!--Parsed input files</a></span>-->
+                <!--</li>-->
+                <!--<li class="active">NICK MF Input</li>-->
+                <li><span *ngIf="reportId != null"><a [routerLink]="['/reporting/NBReporting/GeneratedReports/', reportId, 'INPUT']">Generate report</a></span></li>
+                <li class="active">Previous Year Input</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row top-buffer" *ngIf="errorMessage != null || successMessage != null">
+        <div class="col-md-12">
+            <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+            </div>
+            <div class="alert alert-info" *ngIf="!submitted && successMessage != null"><span>{{successMessage}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="row withpadding">
+        <h3 *ngIf="reportId != null">5. Previous Year Input</h3>
+    </div>
+    <div [ngBusy]="busy" class="row withpadding" style="min-height: 500px">
+            <br/>
+            <div *ngIf="records != null">
+                <table class="table table-hover table-responsive table-condensed">
+                    <thead>
+                    <tr bgcolor="#e7e7e7">
+                        <td>Номер/Наименование группы субсчетов</td>
+                        <!--<td>Наименование группы субсчетов</td>-->
+                        <td>Баланс</td>
+                        <td>Баланс KZT</td>
+                    </tr>
+
+                    </thead>
+                        <tr  *ngFor="let record of records">
+                            <td>{{record.chartOfAccounts.nbchartOfAccounts.code + ' - ' + record.chartOfAccounts.nameRu}}</td>
+                            <!--<td>{{record.accountNumber}}</td>-->
+                            <td>{{record.accountBalance | number:'1.0-2': ''}}</td>
+                            <td>{{record.accountBalanceKZT | number:'1.0-2': ''}}
+                            </td>
+                        </tr>
+                </table>
+            </div>
+        <!--<div class="row">-->
+            <!--<div class="col-md-12">-->
+                <!--<button class="btn btn-default pull-left" [routerLink]="['/reporting/NBReporting/SingularGeneratedForm/', reportId]" [disabled]="!checkTotal()" >Singular</button>-->
+            <!--</div>-->
+            <!--<div class="col-md-12">-->
+                <!--<button class="btn btn-default pull-left" [routerLink]="['/reporting/NBReporting/TarragonGeneratedForm/', reportId]" [disabled]="!checkTotal()" >Tarragon</button>-->
+            <!--</div>-->
+        <!--</div>-->
+
+        <!--<div class="row">-->
+            <!--<div class="col-md-6">-->
+                <!--<div class="col-md-1 pull-left">-->
+                    <!--<button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/TerraGeneratedForm/', reportId]">PREVIOUS</button>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="col-md-6">-->
+                <!--<div class="col-md-1 pull-right">-->
+                    <!--<button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/GeneratedReports/', reportId, 'REPORTS']" [disabled]="!showNextButton()">NEXT</button>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+        <br/><br/>
+    </div>
+</div>

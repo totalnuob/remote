@@ -1,0 +1,278 @@
+<div class="container">
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting']">Reports Main</a></span>
+                </li>
+                <li *ngIf="reportId != null && report != null && report.status != 'SUBMITTED'">
+                    <span>
+                        <a [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">
+                            Input</a></span>
+                </li>
+                <!--<li>-->
+                    <!--<span *ngIf="reportId != null">-->
+                        <!--<a [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">-->
+                            <!--Parsed input files</a></span>-->
+                <!--</li>-->
+                <!--<li><span *ngIf="reportId != null"><a [routerLink]="['/reporting/NBReporting/NICKMFInput/', reportId]">NICK MF Input</a></span></li>-->
+                <!--<li class="active">Tarragon - Generated Form</li>-->
+                <li><span *ngIf="reportId != null"><a [routerLink]="['/reporting/NBReporting/GeneratedReports/', reportId, 'INPUT']">Generate report</a></span></li>
+                <li class="active">Terra Generated GL Form</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row top-buffer" *ngIf="errorMessage != null || successMessage != null">
+        <div class="col-md-12">
+            <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+            </div>
+            <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <div class="row withpadding">
+        <h3 *ngIf="reportId != null">4. Terra - Generated General Ledger Form</h3>
+    </div>
+
+        <div class="row withpadding">
+            <!--<button class="btn btn-xs btn-primary" type="button" (click)="addRecord()"-->
+                    <!--[disabled]="false">-->
+                <!--<span role="button" class="glyphicon glyphicon-plus">Add</span>-->
+            <!--</button>-->
+
+            <!--<button class="btn btn-xs btn-primary pull-right" type="button" (click)="copyFromPrevious()"-->
+                    <!--[disabled]="false">Copy from previous month</button>-->
+
+            <!--<div *ngIf="addedRecordsHolder.records != null && addedRecordsHolder.records.length > 0">-->
+                <!--<table class="table table-hover table-responsive table-condensed" style="font-size: small">-->
+                    <!--<thead>-->
+                    <!--<tr style="font-weight: bold; font-size: small">-->
+                        <!--<td width="15%">Acronym</td>-->
+                        <!--&lt;!&ndash;<td>Balance Date</td>&ndash;&gt;-->
+                        <!--<td width="5%">Financial Statement Category</td>-->
+                        <!--&lt;!&ndash;<td>GL Account</td>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<td>Financial Statement Category Description</td>&ndash;&gt;-->
+                        <!--<td width="25%">Chart of Accounts Long Description</td>-->
+                        <!--<td>Investor Account/Portfolio Fund</td>-->
+                        <!--<td width="10%">NB Account Number</td>-->
+                        <!--<td width="25%">NIC Account Name</td>-->
+                        <!--<td width="15%">GL Account Balance</td>-->
+                        <!--&lt;!&ndash;<td>Seg Val CCY</td>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<td>Fund CCY</td>&ndash;&gt;-->
+                        <!--<td width="5%">&nbsp;</td>-->
+                    <!--</tr>-->
+                    <!--</thead>-->
+                    <!--<tr  *ngFor="let addedRecord of addedRecordsHolder.records" style="font-size: small">-->
+                        <!--<td>-->
+                            <!--&lt;!&ndash;<select required class="form-control" style="width: 100%; font-size: small" [ngModelOptions]="{standalone: true}" [(ngModel)]="addedRecord.tranche">&ndash;&gt;-->
+                                <!--&lt;!&ndash;&lt;!&ndash;TODO: load from component&ndash;&gt;&ndash;&gt;-->
+                                <!--&lt;!&ndash;<option value="1">TARRAGON</option>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<option value="2">TARRAGON B</option>&ndash;&gt;-->
+                            <!--&lt;!&ndash;</select>&ndash;&gt;-->
+                            <!--TERRA-->
+                        <!--</td>-->
+                        <!--<td>-->
+                            <!--<select required class="form-control" style="width: 100%; font-size: small" [ngModelOptions]="{standalone: true}" [(ngModel)]="addedRecord.financialStatementCategory">-->
+                                <!--&lt;!&ndash;TODO: load from component&ndash;&gt;-->
+                                <!--<option value="A">A</option>-->
+                                <!--<option value="L">L</option>-->
+                                <!--<option value="E">E</option>-->
+                                <!--<option value="X">X</option>-->
+                                <!--<option value="I">I</option>-->
+                            <!--</select>-->
+                        <!--</td>-->
+
+                        <!--<td>-->
+                            <!--<select required class="form-control" style="width: 100%; font-size: small" [(ngModel)]="addedRecord.terraNICChartOfAccountsName"-->
+                                    <!--(ngModelChange)="chartOfAccountsLongDescriptionChanged(addedRecord)" [ngModelOptions]="{standalone: true}">-->
+                                <!--<option *ngFor="let item of terraNICReportingChartOfAccounts" [value]="item.terraChartOfAccountsName">{{item.terraChartOfAccountsName}}</option>-->
+                            <!--</select>-->
+                        <!--</td>-->
+                        <!--<td>-->
+                            <!--<select [disabled]="addedRecord.nbAccountNumber == null || addedRecord.nbAccountNumber != '6150.030'" class="form-control" style="width: 100%; font-size: small" [(ngModel)]="addedRecord.entityName"-->
+                                     <!--[ngModelOptions]="{standalone: true}">-->
+                                <!--<option *ngFor="let item of availableFundList" [value]="item">{{item}}</option>-->
+                            <!--</select>-->
+                            <!--&lt;!&ndash;<input type="text" class="form-control" class="form-control small"  [(ngModel)]="addedRecord.entityName" [ngModelOptions]="{standalone: true}"/>&ndash;&gt;-->
+                        <!--</td>-->
+                        <!--<td>{{addedRecord.nbAccountNumber}}</td>-->
+                        <!--<td>{{addedRecord.nicAccountName}}</td>-->
+                        <!--<td>-->
+                            <!--<input required (keyup)="onNumberChange(addedRecord)" type="text" class="form-control small" [ngModelOptions]="{standalone: true}" class="form-control"  [(ngModel)]="addedRecord.glaccountBalance"/>-->
+                        <!--</td>-->
+                        <!--<td>-->
+                            <!--<button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRecord(addedRecord)">-->
+                                <!--<span class="glyphicon glyphicon-minus"></span>-->
+                            <!--</button>-->
+                        <!--</td>-->
+                    <!--</tr>-->
+                <!--</table>-->
+                <!--<div class="row">-->
+                    <!--<div class="col-md-12">-->
+                        <!--<button type="submit" class="btn btn-success pull-right" [disabled]="!addedRecordsForm.form.valid">Save added</button>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        </div>
+
+    <br/>
+
+    <!--<div class="row">-->
+        <!--<div class="col-md-6">-->
+            <!--<div class="col-md-1 pull-left">-->
+                <!--<button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/TarragonGeneratedForm/', reportId]">PREVIOUS-->
+                <!--</button>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="col-md-6">-->
+            <!--<div class="col-md-1 pull-right">-->
+                <!--<button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/previousYearInput/', reportId]" [disabled]="!showNextButton()">NEXT</button>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+
+    <br/>
+    <div class="row withpadding">
+        <table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small" *ngIf="records != null">
+            <!--<tr *ngIf="records != null && records.length > 0" style="font-weight: bold">-->
+                <!--<td>&nbsp;</td>-->
+                <!--<td>&nbsp;</td>-->
+                <!--<td>&nbsp;</td>-->
+                <!--<td>&nbsp;</td>-->
+                <!--<td>&nbsp;</td>-->
+                <!--<td>&nbsp;</td>-->
+                <!--<td>&nbsp;</td>-->
+                <!--<td>&nbsp;</td>-->
+                <!--<td>&nbsp;</td>-->
+                <!--<td colspan="4" style="font-style: italic" align="right">Total Assets: {{calculateTotalAssets() | number:'1.0-2': ''}}</td>-->
+            <!--</tr>-->
+            <!--<tr *ngIf="records != null && records.length > 0" style="font-weight: bold">-->
+                <!--<td>&nbsp;</td>-->
+                <!--<td>&nbsp;</td>-->
+                <!--<td>&nbsp;</td>-->
+                <!--<td>&nbsp;</td>-->
+                <!--<td>&nbsp;</td>-->
+                <!--<td>&nbsp;</td>-->
+                <!--<td>&nbsp;</td>-->
+                <!--<td>&nbsp;</td>-->
+                <!--<td>&nbsp;</td>-->
+                <!--<td colspan="4" style="font-style: italic" align="right">Total L,E,X,I: {{calculateTotalOther() | number:'1.0-2': ''}}</td>-->
+            <!--</tr>-->
+            <tr bgcolor="#e7e7e7">
+                <td width="10%">Acronym</td>
+                <td width="5%">Balance Date</td>
+                <td width="5%">Financial Statement Category</td>
+                <td width="5%">GL Account</td>
+                <td width="5%">Financial Statement Category Description</td>
+                <td width="10%">Chart of Accounts Long Description</td>
+                <td width="10%">Investor Account/Portfolio Fund</td>
+                <td width="5%">NB Account Number</td>
+                <td width="15%">NIC Account Name</td>
+                <td width="15%">GL Account Balance</td>
+                <td width="5%">Seg Val CCY</td>
+                <td width="5%">Fund CCY</td>
+                <!--<td width="5%">&nbsp;</td>-->
+
+            </tr>
+            <tr *ngFor="let record of records" [style.background-color]="record.added ? '#dcd196' : record.nbAccountNumber == null ? '#ec4747' : 'white'"
+                [style.color]="isRecordExcluded(record) ? '#aaa7a7' : 'black'">
+                <td>{{record.acronym}}</td>
+                <td>{{record.balanceDate}}</td>
+                <td>{{record.financialStatementCategory}}</td>
+                <td>{{record.glaccount}}</td>
+                <td>{{record.financialStatementCategoryDescription}}</td>
+                <td>{{record.chartAccountsLongDescription}}</td>
+                <td>{{record.subscriptionRedemptionEntity}}</td>
+                <td>{{record.nbAccountNumber}}</td>
+                <td>{{record.nicAccountName}}</td>
+                <td>
+                    <del><span *ngIf="isRecordExcluded(record)">{{record.glaccountBalance != null ? (record.glaccountBalance | number:'1.2-2'): ''}}</span></del>
+                    <span *ngIf="!isRecordExcluded(record)">{{record.glaccountBalance != null ? (record.glaccountBalance | number:'1.2-2'): ''}}</span>
+                </td>
+                <td>{{record.segValCCY}}</td>
+                <td>{{record.fundCCY}}</td>
+                <!--<td>-->
+                    <!--<button *ngIf="record.added" type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeSavedRecord(record)">-->
+                        <!--<span class="glyphicon glyphicon-trash"></span>-->
+                    <!--</button>-->
+
+                    <!--<button *ngIf="!record.added && !isRecordExcluded(record)" type="button" class="btn-xs btn-default" style="display: inline-block"  (click)="excludeGeneratedRecord(record)">-->
+                        <!--<span class="glyphicon glyphicon-minus"></span>-->
+                    <!--</button>-->
+                    <!--<button *ngIf="!record.added && isRecordExcluded(record)" type="button" class="btn-xs btn-default" style="display: inline-block"  (click)="includeGeneratedRecord(record)">-->
+                        <!--<span class="glyphicon glyphicon-plus"></span>-->
+                    <!--</button>-->
+
+                    <!--<button *ngIf="record.added" [disabled] = "addedRecordsHolder.records != null && addedRecordsHolder.records.length > 0" type="button" class="btn-xs btn-success" style="display: inline-block"  (click)="editSavedRecord(record)">-->
+                        <!--<span class="glyphicon glyphicon-pencil"></span>-->
+                    <!--</button>-->
+
+                    <!--<button *ngIf="record.editable && !record.editing" type="button" class="btn-xs" style="display: inline-block"  (click)="record.editing = true">-->
+                        <!--<span class="glyphicon glyphicon-pencil"></span>-->
+                    <!--</button>-->
+                    <!--<button *ngIf="record.editable && record.editing" type="button" class="btn-xs" style="display: inline-block"  (click)="saveEditAccountBalance(record)">-->
+                        <!--<span class="glyphicon glyphicon-floppy-disk"></span>-->
+                    <!--</button>-->
+                <!--</td>-->
+            </tr>
+
+            <tr *ngIf="records != null && records.length > 0" style="font-weight: bold">
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td colspan="4" style="font-style: italic" align="right">Total Assets: {{totalAssetsSum | number:'1.0-2': ''}}</td>
+            </tr>
+            <tr *ngIf="records != null && records.length > 0" style="font-weight: bold">
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td colspan="4" style="font-style: italic" align="right">Total L,E,X,I: {{totalOtherSum | number:'1.0-2': ''}}</td>
+            </tr>
+            <tr *ngIf="records != null && records.length > 0" style="font-weight: bold">
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td colspan="4" style="font-style: italic" align="right">Total sum: {{(totalAssetsSum + totalOtherSum)| number:'1.0-2': ''}}</td>
+            </tr>
+        </table>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+        </div>
+    </div>
+
+    <!--<div class="row">-->
+        <!--<div class="col-md-6">-->
+            <!--<div class="col-md-1 pull-left">-->
+                <!--<button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/TarragonGeneratedForm/', reportId]">PREVIOUS-->
+                <!--</button>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="col-md-6">-->
+            <!--<div class="col-md-1 pull-right">-->
+                <!--<button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/previousYearInput/', reportId]" [disabled]="!showNextButton()">NEXT</button>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+    <br/><br/>
+</div>

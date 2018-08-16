@@ -23,6 +23,10 @@ INSERT INTO rep_terra_nic_chart_of_accounts(id, terra_chart_of_accounts_name, ni
 INSERT INTO rep_terra_nic_chart_of_accounts(id, terra_chart_of_accounts_name, nic_chart_accounts_id, addable) VALUES(18, 'Prior to 2017 unrealized income', 49, true);
 INSERT INTO rep_terra_nic_chart_of_accounts(id, terra_chart_of_accounts_name, nic_chart_accounts_id, addable) VALUES(19, 'Prior to 2017 income', 7, true);
 
+INSERT INTO rep_terra_nic_chart_of_accounts(id, terra_chart_of_accounts_name, nic_chart_accounts_id, addable) VALUES(20, 'Partnership capital – book value', 5, false);
+INSERT INTO rep_terra_nic_chart_of_accounts(id, terra_chart_of_accounts_name, nic_chart_accounts_id, addable) VALUES(21, 'Management fee payable', 71, false);
+INSERT INTO rep_terra_nic_chart_of_accounts(id, terra_chart_of_accounts_name, nic_chart_accounts_id, addable) VALUES(22, 'Management fee income', 72, false);
+
 
 
 

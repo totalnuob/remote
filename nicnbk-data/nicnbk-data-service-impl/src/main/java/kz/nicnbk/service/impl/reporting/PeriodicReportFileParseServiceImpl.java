@@ -1723,13 +1723,28 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
 
             /* PARSE EXCEL (RAW) *******************************************************************************/
             Iterator<Row> rowIterator = getRowIterator(filesDto, "Balance Sheet by Series");
+            if(rowIterator == null){
+                logger.error("Error parsing 'Terra Combined' file sheet 'Balance Sheet by Series'");
+                return new FileUploadResultDto(ResponseStatusType.FAIL, "", "Error parsing 'Terra Combined' file sheet 'Balance Sheet by Series'", "");
+            }
             List<ConsolidatedReportRecordDto> balanceSheetRecords = parseTerraCombinedBalanceSheetRaw(rowIterator);
             //printRecords(records);
 
-            rowIterator = getRowIterator(filesDto, "Profit or Loss by series");
+            rowIterator = getRowIterator(filesDto, "Profit and Loss by series YTD");
+            if(rowIterator == null){
+                rowIterator = getRowIterator(filesDto, "P&L by series - YTD");
+            }
+            if(rowIterator == null){
+                logger.error("Error parsing 'Terra Combined' file sheet 'Profit or Loss by series'");
+                return new FileUploadResultDto(ResponseStatusType.FAIL, "", "Error parsing 'Terra Combined' file sheet 'Profit or Loss by series'", "");
+            }
             List<ConsolidatedReportRecordDto> profitLossRecords = parseTerraCombinedProfitLossRaw(rowIterator);
 
             rowIterator = getRowIterator(filesDto, "Securities cost");
+            if(rowIterator == null){
+                logger.error("Error parsing 'Terra Combined' file sheet 'Securities cost'");
+                return new FileUploadResultDto(ResponseStatusType.FAIL, "", "Error parsing 'Terra Combined' file sheet 'Securities cost'", "");
+            }
             List<ConsolidatedReportRecordDto> securitiesCostRecords = parseTerraCombinedSecuritiesCostRaw(rowIterator);
 
 
@@ -1783,6 +1798,7 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
             logger.error("Error parsing 'Terra Combined' file with error: " + e.getMessage());
             return new FileUploadResultDto(ResponseStatusType.FAIL, "", e.getMessage(), "");
         }catch (Exception e){
+            //e.printStackTrace();
             logger.error("Error parsing 'Terra Combined' file with error: " + e.getMessage());
             return new FileUploadResultDto(ResponseStatusType.FAIL, "", "Error processing 'Terra Combined' file'", "");
         }
@@ -2195,7 +2211,7 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                 || !cell.getStringCellValue().trim().equalsIgnoreCase("Carlyle-MRE Terra GP, L.P.")) {
             logger.error("Table header check failed for 'Terra - Balance Sheet' file. Expected: 'Carlyle-MRE Terra GP, L.P.', found '" +
                     ExcelUtils.getStringValueFromCell(cell) + "'");
-            throw new ExcelFileParseException("Table header check failed for 'Terra - Balance Sheet' file. Expected: 'GL Sub-class', found '" +
+            throw new ExcelFileParseException("Table header check failed for 'Terra - Balance Sheet' file. Expected: 'Carlyle-MRE Terra GP, L.P.', found '" +
                     ExcelUtils.getStringValueFromCell(cell) + "'");
         }
 
@@ -2221,26 +2237,26 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
         Cell cell = row.getCell(2);
         if (ExcelUtils.isEmptyCell(cell) || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())
                 || !cell.getStringCellValue().trim().equalsIgnoreCase("Carlyle-MRE Terra GP, L.P.")) {
-            logger.error("Table header check failed for 'Terra - Balance Sheet' file. Expected: 'Carlyle-MRE Terra GP, L.P.', found '" +
+            logger.error("Table header check failed for 'Terra - Profit Loss' file. Expected: 'Carlyle-MRE Terra GP, L.P.', found '" +
                     ExcelUtils.getStringValueFromCell(cell) + "'");
-            throw new ExcelFileParseException("Table header check failed for 'Terra - Balance Sheet' file. Expected: 'GL Sub-class', found '" +
+            throw new ExcelFileParseException("Table header check failed for 'Terra - Profit Loss' file. Expected: 'Carlyle-MRE Terra GP, L.P.', found '" +
                     ExcelUtils.getStringValueFromCell(cell) + "'");
         }
 
         cell = row.getCell(3);
         if (ExcelUtils.isEmptyCell(cell) || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())
                 || !cell.getStringCellValue().trim().equalsIgnoreCase("NICK Master Fund Ltd.")) {
-            logger.error("Table header check failed for 'Terra - Balance Sheet' file. Expected: 'NICK Master Fund Ltd.', found '" +
+            logger.error("Table header check failed for 'Terra - Profit Loss' file. Expected: 'NICK Master Fund Ltd.', found '" +
                     ExcelUtils.getStringValueFromCell(cell) + "'");
-            throw new ExcelFileParseException("Table header check failed for 'Terra - Balance Sheet' file. Expected: 'NICK Master Fund Ltd.', found '" +
+            throw new ExcelFileParseException("Table header check failed for 'Terra - Profit Loss' file. Expected: 'NICK Master Fund Ltd.', found '" +
                     ExcelUtils.getStringValueFromCell(cell) + "'");
         }
         cell = row.getCell(4);
         if (ExcelUtils.isEmptyCell(cell) || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())
                 || !cell.getStringCellValue().trim().equalsIgnoreCase("Grand Total")) {
-            logger.error("Table header check failed for 'Terra - Balance Sheet' file. Expected: 'Grand Total', found '" +
+            logger.error("Table header check failed for 'Terra - Profit Loss' file. Expected: 'Grand Total', found '" +
                     ExcelUtils.getStringValueFromCell(cell) + "'");
-            throw new ExcelFileParseException("Table header check failed for 'Terra - Balance Sheet' file. Expected: 'Grand Total', found '" +
+            throw new ExcelFileParseException("Table header check failed for 'Terra - Profit Loss' file. Expected: 'Grand Total', found '" +
                     ExcelUtils.getStringValueFromCell(cell) + "'");
         }
     }
@@ -2285,6 +2301,10 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
             if (extension.equalsIgnoreCase("xls")) {
                 HSSFWorkbook workbook = new HSSFWorkbook(inputFile);
                 HSSFSheet sheet = workbook.getSheet(sheetName);
+                if(sheet == null){
+                    logger.error("No sheet found with name '" + sheetName + "'");
+                    return null;
+                }
                 return sheet.iterator();
             } else if (extension.equalsIgnoreCase("xlsx")) {
                 XSSFWorkbook workbook = new XSSFWorkbook(inputFile);

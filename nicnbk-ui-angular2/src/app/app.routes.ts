@@ -80,6 +80,8 @@ import {CorpMeetingEditComponent} from "./corpmeetings/corp-meetings-edit.compon
 import {TerraGeneralLedgerBalanceNBReportingComponent} from "./reporting/terra.general.ledger.balance.nb.reporting.component";
 import {TerraGeneratedFormNBReportingComponent} from "./reporting/terra.generated.form.nb.reporting.component";
 import {TerraCombinedNBReportingComponent} from "./reporting/terra.combined.nb.reporting.component";
+import {PreviousYearInputViewNBReportingComponent} from "./reporting/previous.year.input.view.nb.reporting.component";
+import {TerraGeneratedFormViewNBReportingComponent} from "./reporting/terra.generated.form.view.nb.reporting.component";
 
 
 const routes: Routes  = [
@@ -395,6 +397,11 @@ const routes: Routes  = [
         canActivate: [AuthGuard]
     },
     {
+        path: 'reporting/NBReporting/TerraGeneratedFormView/:id',
+        component: TerraGeneratedFormViewNBReportingComponent,
+        canActivate: [AuthGuard]
+    },
+    {
         path: 'reporting/NBReporting/GeneratedReports/:id/:showInputList',
         component: GeneratedReportsNBReportingComponent,
         canActivate: [AuthGuard]
@@ -407,6 +414,11 @@ const routes: Routes  = [
     {
         path: 'reporting/NBReporting/previousYearInput/:id',
         component: PreviousYearInputNBReportingComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'reporting/NBReporting/previousYearInputView/:id',
+        component: PreviousYearInputViewNBReportingComponent,
         canActivate: [AuthGuard]
     },
     {

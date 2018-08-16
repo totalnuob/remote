@@ -9,8 +9,14 @@ import {DATA_APP_URL} from "../common/common.service.constants";
 import {FileUploadResult} from "./model/file.uopload.result";
 import {InputFilesInfoLookupNBReport} from "./model/input.files.info.lookup.nb.report";
 import {PeriodicReport} from "./model/periodic.report";
+import {ReportingFundRenameInfo} from "./model/reporting.fund.rename.info";
+import {FundNameHolder} from "./model/fund.name.holder";
 
 var fileSaver = require("file-saver");
+
+import {Observable} from 'rxjs/Observable';
+import 'rxjs/add/observable/forkJoin';
+import {ReportingFundRenamePair} from "./model/reporting.fund.rename.pair";
 
 @Component({
     selector: 'input-file-upload-nb-reporting',
@@ -20,16 +26,28 @@ var fileSaver = require("file-saver");
 })
 export class InputFileUploadNBReportingComponent extends CommonFormViewComponent {
 
+    successMessageFundRename: string;
+    errorMessageFundRename: string;
+
     private sub: any;
     private reportId;
 
     busy: Subscription;
+    busyFundRenameDialog: Subscription;
 
     private selectedInfoHeader;
     private selectedInfoContent;
 
     private report: InputFilesNBReport;
     private periodicReport: PeriodicReport;
+
+    private fundRenameInfo: ReportingFundRenameInfo;
+
+    private fundRenamesPE: ReportingFundRenamePair[];
+    private fundRenamesHF: ReportingFundRenamePair[];
+    private fundRenamesRE: ReportingFundRenamePair[];
+
+    private
 
     private fileTarragonScheduleInvestment;
     private fileTarragonStatementAssets;
@@ -47,6 +65,9 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
     private fileSingularityNOALTrancheA;
     private fileSingularityNOALTrancheB;
     private fileTerraCombined;
+
+
+    private fundNameListHolder: FundNameHolder;
 
     constructor(
         private router: Router,
@@ -847,6 +868,134 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
         return true;
     }
 
+    public getFundRenameModal(){
+        //alert("getFundRenameModal");
+
+
+        // TODO: 1. Fork join - load fund names (PE, HF, RE)
+
+        this.busyFundRenameDialog = Observable.forkJoin(
+            // Load lookups
+            this.periodicReportService.getFundNameList(this.reportId)
+            )
+            .subscribe(
+                ([data1]) => {
+                    this.fundNameListHolder = data1;
+                    console.log(data1);
+
+                    this.busyFundRenameDialog = this.periodicReportService.getFundRenameInfo(this.reportId)
+                        .subscribe(
+                            response  => {
+                                this.fundRenameInfo = response;
+                                if(this.fundRenameInfo && this.fundRenameInfo.fundRenames){
+                                    this.fundRenamesPE = [];
+                                    this.fundRenamesHF = [];
+                                    this.fundRenamesRE = [];
+                                    for(var i = 0; i < this.fundRenameInfo.fundRenames.length; i++){
+                                        if(this.fundRenameInfo.fundRenames[i].type === "PE"){
+                                            this.fundRenamesPE.push(this.fundRenameInfo.fundRenames[i]);
+                                        }else if(this.fundRenameInfo.fundRenames[i].type === "HF"){
+                                            this.fundRenamesHF.push(this.fundRenameInfo.fundRenames[i]);
+                                        }else if(this.fundRenameInfo.fundRenames[i].type === "RE"){
+                                            this.fundRenamesRE.push(this.fundRenameInfo.fundRenames[i]);
+                                        }
+                                    }
+                                }else{
+                                    this.fundRenameInfo = new ReportingFundRenameInfo();
+                                    this.fundRenameInfo.fundRenames = [];
+                                }
+                            },
+                            (error: ErrorResponse) => {
+                                this.successMessageFundRename = null;
+                                this.errorMessageFundRename = "Error loading fund rename info: id " + this.reportId;
+                            }
+                        );
+                }
+            );
+    }
+
+    saveFundRenames(){
+        //alert("saveFundRenames");
+
+        // TODO: check for duplicate values
+
+        this.fundRenameInfo.fundRenames = [];
+        if(this.fundRenamesPE != null && this.fundRenamesPE.length > 0){
+            for(var i = 0; i < this.fundRenamesPE.length; i++){
+                this.fundRenameInfo.fundRenames.push(this.fundRenamesPE[i]);
+            }
+        }
+        if(this.fundRenamesHF != null && this.fundRenamesHF.length > 0){
+            for(var i = 0; i < this.fundRenamesHF.length; i++){
+                this.fundRenameInfo.fundRenames.push(this.fundRenamesHF[i]);
+            }
+        }
+        if(this.fundRenamesRE != null && this.fundRenamesRE.length > 0){
+            for(var i = 0; i < this.fundRenamesRE.length; i++){
+                this.fundRenameInfo.fundRenames.push(this.fundRenamesRE[i]);
+            }
+        }
+
+
+        //console.log(this.fundRenameInfo);
+        //console.log(this.fundRenamesPE);
+
+        this.fundRenameInfo.report = new PeriodicReport(this.reportId);
+        this.busyFundRenameDialog = this.periodicReportService.saveFundRenameInfo(this.fundRenameInfo)
+            .subscribe(
+                response  => {
+                    this.successMessageFundRename = "Successfully saved Fund Rename Info";
+                    this.errorMessageFundRename = null;
+                },
+                (error: ErrorResponse) => {
+                    this.successMessageFundRename = null;
+                    this.errorMessageFundRename = "Error saving fund rename info: id " + this.reportId;
+                }
+            );
+    }
+
+    fundNameSelected(list, fundName){
+    }
+
+    public addPEFundRename(){
+        if(this.fundRenamesPE == null){
+            this.fundRenamesPE = [];
+        }
+        var element = new ReportingFundRenamePair();
+        element.type = "PE";
+        this.fundRenamesPE.push(element);
+    }
+
+    public addHFFundRename(){
+        if(this.fundRenamesHF == null){
+            this.fundRenamesHF = [];
+        }
+        var element = new ReportingFundRenamePair();
+        element.type = "HF";
+        this.fundRenamesHF.push(element);
+    }
+
+
+    public addREFundRename(){
+        if(this.fundRenamesRE == null){
+            this.fundRenamesRE = [];
+        }
+        var element = new ReportingFundRenamePair();
+        element.type = "RE";
+        this.fundRenamesRE.push(element);
+    }
+
+    deleteFundRename(list, fundName){
+        //alert("deleteFundRename");
+        if(confirm("Are you sure want to delete this record?")) {
+            for (var i = 0; i < list.length; i++) {
+                if (list[i] === fundName) {
+                    list.splice(i, 1);
+                }
+            }
+        }
+    }
+
     public getInfo(fileType){
         if(fileType === 'tarragon_schedule_investment'){
             this.selectedInfoHeader = "Schedule of Investments";
@@ -883,8 +1032,12 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
     }
 
     public closeInfoModal(){
-        this.selectedInfoContent = null;
-        this.selectedInfoHeader = null;
+        this.successMessageFundRename = null;
+        this.errorMessageFundRename = null;
+
+        this.fundRenamesPE = [];
+        this.fundRenamesHF = [];
+        this.fundRenamesRE = [];
     }
 
 

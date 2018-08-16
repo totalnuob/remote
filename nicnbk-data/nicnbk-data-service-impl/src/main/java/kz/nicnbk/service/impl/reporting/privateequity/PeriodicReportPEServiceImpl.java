@@ -18,6 +18,7 @@ import kz.nicnbk.service.dto.common.ListResponseDto;
 import kz.nicnbk.service.dto.common.ResponseStatusType;
 import kz.nicnbk.service.dto.reporting.*;
 import kz.nicnbk.service.dto.reporting.privateequity.PEGeneralLedgerFormDataDto;
+import kz.nicnbk.service.impl.reporting.PeriodicReportConstants;
 import kz.nicnbk.service.impl.reporting.lookup.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -210,12 +211,33 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
         if(records != null) {
             for(GeneratedGeneralLedgerFormDto record: records){
                 if(record.getNicAccountName() == null) {
-                    TarragonNICChartOfAccounts nicChartOfAccounts =
+                    List<TarragonNICChartOfAccounts> nicChartOfAccounts =
                             this.tarragonNICChartOfAccountsRepository.findByTarragonChartOfAccountsNameAndAddable(record.getChartAccountsLongDescription(), false);
                     if (nicChartOfAccounts != null) {
-                        record.setNicAccountName(nicChartOfAccounts.getNicReportingChartOfAccounts().getNameRu());
-                        if (nicChartOfAccounts.getNicReportingChartOfAccounts().getNbChartOfAccounts() != null) {
-                            record.setNbAccountNumber(nicChartOfAccounts.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode());
+                        for(TarragonNICChartOfAccounts entity: nicChartOfAccounts){
+                            if(record.getChartAccountsLongDescription().equalsIgnoreCase("Current tax (expense) benefit")){
+                                if(record.getGLAccountBalance() != null && record.getGLAccountBalance() < 0){
+                                    if(entity.getNegativeOnly() != null && entity.getNegativeOnly().booleanValue()){
+                                        record.setNicAccountName(entity.getNicReportingChartOfAccounts().getNameRu());
+                                        if (entity.getNicReportingChartOfAccounts().getNbChartOfAccounts() != null) {
+                                            record.setNbAccountNumber(entity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode());
+                                        }
+                                    }
+                                }else if(record.getGLAccountBalance() != null && record.getGLAccountBalance() >= 0){
+                                    if(entity.getPositiveOnly() != null && entity.getPositiveOnly().booleanValue()){
+                                        record.setNicAccountName(entity.getNicReportingChartOfAccounts().getNameRu());
+                                        if (entity.getNicReportingChartOfAccounts().getNbChartOfAccounts() != null) {
+                                            record.setNbAccountNumber(entity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode());
+                                        }
+                                    }
+                                }
+
+                            }else {
+                                record.setNicAccountName(entity.getNicReportingChartOfAccounts().getNameRu());
+                                if (entity.getNicReportingChartOfAccounts().getNbChartOfAccounts() != null) {
+                                    record.setNbAccountNumber(entity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode());
+                                }
+                            }
                         }
                     }else{
                         // no match found
@@ -256,14 +278,22 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
 
             // update account balance
             List<GeneratedGeneralLedgerFormDto> updatedRecords = new ArrayList<>();
-            BigDecimal sum = new BigDecimal("0");
+            //BigDecimal sum = new BigDecimal("0");
+            //Double sum = 0.0;
             for (GeneratedGeneralLedgerFormDto record : records) {
                 if (record.getGLAccountBalance() != null && record.getGLAccountBalance().doubleValue() != 0.0) {
                     if (record.getGLAccountBalance() != null && record.getFinancialStatementCategory() != null &&
                             !record.getFinancialStatementCategory().equalsIgnoreCase("A")) {
-                        BigDecimal newValue = new BigDecimal(record.getGLAccountBalance()).multiply(new BigDecimal(-1));
-                        record.setGLAccountBalance(newValue.doubleValue());
-                        sum = sum.add(newValue);
+                        if(record.getNbAccountNumber() != null && record.getNbAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_3053_060) &&
+                                record.getNicAccountName().equalsIgnoreCase(PeriodicReportConstants.RU_3053_060)){
+                            // 3053.060 - Прочие краткосрочные финансовые обязательства
+                            // do not change sign, skip
+
+                        }else {
+                            Double newValue = MathUtils.multiply(record.getGLAccountBalance() != null ? record.getGLAccountBalance() : 0.0, -1.0);
+                            record.setGLAccountBalance(newValue);
+                            //sum = MathUtils.add(sum, newValue);
+                        }
                     }
                     updatedRecords.add(record);
                 } else {
@@ -521,7 +551,7 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
             for(ScheduleInvestmentsDto investment: investments){
                 if(investment.getTotalSum() != null && !investment.getTotalSum()) { // total sum records not added
                     String acronym = investment.getTranche() != null && investment.getTranche() == 1 ? "TARRAGON" :
-                            investment.getTranche() != null && investment.getTranche() == 2 ? "TARRAGON B" : "UNMATCHED";
+                            investment.getTranche() != null && investment.getTranche() == 2 ? "TARRAGON B" : "";
                     GeneratedGeneralLedgerFormDto record = new GeneratedGeneralLedgerFormDto();
                     record.setAcronym(acronym);
                     record.setBalanceDate(investment.getReport().getReportDate());
@@ -539,6 +569,14 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
                     if(!madeEditable && investment.getTranche() != null && investment.getTranche() == 1){
                         record.setEditable(true);
                         madeEditable = true;
+                    }
+
+                    if(record.getGLAccountBalance() != null && record.getGLAccountBalance() < 0){
+                        //record.setGLAccountBalance(MathUtils.multiply(record.getGLAccountBalance(), -1.0));
+                        record.setNbAccountNumber("3053.060");
+                        record.setFinancialStatementCategory("L");
+                        record.setNicAccountName("Прочие краткосрочные финансовые обязательства");
+                        record.setSubscriptionRedemptionEntity((StringUtils.isNotEmpty(acronym) ? acronym + " - " : "") + investment.getName());
                     }
                     records.add(record);
                 }

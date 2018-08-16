@@ -25,7 +25,7 @@
         </div>
     </div>
     <div class="row withpadding">
-        <h3 *ngIf="reportId != null">4. Previous Year Input</h3>
+        <h3 *ngIf="reportId != null">5. Previous Year Input</h3>
     </div>
     <div [ngBusy]="busy" class="row withpadding" style="min-height: 500px">
 
@@ -91,12 +91,12 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="col-md-1 pull-left">
-                    <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/TarragonGeneratedForm/', reportId]">PREVIOUS</button>
+                    <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/TerraGeneratedForm/', reportId]">PREVIOUS</button>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="col-md-1 pull-right">
-                    <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/TerraGeneratedForm/', reportId]" [disabled]="!showNextButton()">NEXT</button>
+                    <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/GeneratedReports/', reportId, 'REPORTS']" [disabled]="!showNextButton()">NEXT</button>
                 </div>
             </div>
 

@@ -334,30 +334,35 @@ export class NICKMFInputNBReportingComponent extends CommonNBReportingComponent 
 
         if(record.nbChartOfAccountsCode === '2923.010' && record.nicChartOfAccountsName === 'Начисленная амортизация - Организационные расходы NICK MF'){
             if(this.data.report.reportDate != null) {
-                this.selectedInfoContent = " - (14,963.23 / 60) * monthDiff , where 'monthDiff' = months difference between 31.07.2017 and report date)";
+                //this.selectedInfoContent = " - (14,963.23 / 60) * monthDiff , where 'monthDiff' = months difference between 31.07.2017 and report date)";
+                this.selectedInfoContent = record.calculatedAccountBalanceFormula;
                 this.selectedInfoHeader = record.nbChartOfAccountsCode + " - " + record.nicChartOfAccountsName;
             }
         }else if(record.nbChartOfAccountsCode === '3393.020' && record.nicChartOfAccountsName === 'Комиссия за администрирование к оплате NICK MF'){
             if(this.data.report.reportDate != null) {
-                this.selectedInfoContent = "{previous month value} - 40,000/12 - sum of values from Capital Calls with type 'Комиссия' for current month";
+               // this.selectedInfoContent = "{previous month value} - 60,000/12 + sum of values from Capital Calls with type 'Комиссия' for current month";
+                this.selectedInfoContent = record.calculatedAccountBalanceFormula;
                 this.selectedInfoHeader = record.nbChartOfAccountsCode + " - " + record.nicChartOfAccountsName;
             }
         }else if(record.nbChartOfAccountsCode === '7473.080' && record.nicChartOfAccountsName === 'Расходы за администрирование NICK MF'){
             if(this.data.report.reportDate != null) {
-                this.selectedInfoContent = "40,000 / 12 * month, where 'month' is current month number";
+                //this.selectedInfoContent = "40,000 / 12 * month, where 'month' is current month number";
+                this.selectedInfoContent = record.calculatedAccountBalanceFormula;
                 this.selectedInfoHeader = record.nbChartOfAccountsCode + " - " + record.nicChartOfAccountsName;
             }
         }else if(record.nbChartOfAccountsCode === '7473.080' && record.nicChartOfAccountsName === 'Амортизация организационных расходов NICK MF'){
             if(this.data.report.reportDate != null) {
-                this.selectedInfoContent = "14,963.23 / 60 * month, where 'month' is current month number; value no more than 14,963.23";
+                //this.selectedInfoContent = "14,963.23 / 60 * month, where 'month' is current month number; value no more than 14,963.23";
+                this.selectedInfoContent = record.calculatedAccountBalanceFormula;
                 this.selectedInfoHeader = record.nbChartOfAccountsCode + " - " + record.nicChartOfAccountsName;
             }
         }else if(record.nbChartOfAccountsCode === '1033.010' && record.nicChartOfAccountsName === 'Деньги на текущих счетах'){
             if(this.data.report.reportDate != null) {
-                this.selectedInfoContent = "{previous month value} + sum of Capital Calls 'Пополнение капитала' for report month" +
-                    " + sum of Capital Calls 'Комиссия' for report month" +
-                    " - sum of Capital Calls 'Пополнение капитала' with value date in report month" +
-                    " + sum of Capital Calls NOT 'Комиссия' and Recipient being NICK MF for report month";
+                //this.selectedInfoContent = "{previous month value} + sum of Capital Calls 'Пополнение капитала' for report month" +
+                //    " + sum of Capital Calls 'Комиссия' for report month" +
+                //    " - sum of Capital Calls 'Пополнение капитала' with value date in report month" +
+                //    " + sum of Capital Calls NOT 'Комиссия' and Recipient being NICK MF for report month";
+                this.selectedInfoContent = record.calculatedAccountBalanceFormula;
                 this.selectedInfoHeader = record.nbChartOfAccountsCode + " - " + record.nicChartOfAccountsName;
             }
         }

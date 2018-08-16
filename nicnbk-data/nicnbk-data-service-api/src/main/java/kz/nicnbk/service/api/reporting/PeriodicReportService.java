@@ -49,6 +49,12 @@ public interface PeriodicReportService extends BaseService {
 
     boolean markReportAsFinal(Long reportId);
 
+    ReportingFundRenameInfoDto getFundRenameInfo(Long reportId);
+
+    boolean saveFundRenameInfo(ReportingFundRenameInfoDto info);
+
+    ReportingFundNameListHolderDto getFundNameList(Long reportId);
+
     //InputStream getExportFileStream(Long reportId, String type);
     FilesDto getExportFileStream(Long reportId, String type);
 

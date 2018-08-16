@@ -30,6 +30,8 @@ import {ConsolidatedKZTForm6Record} from "./model/consolidated.kzt.form.6.record
 import {OKResponse} from "../common/ok-response";
 import {ReserveCalculationSearchResults} from "./model/reserve-calculation-search-results";
 import {TerraCombinedRecordHolder} from "./model/terra.combined.record.holder";
+import {ReportingFundRenameInfo} from "./model/reporting.fund.rename.info";
+import {FundNameHolder} from "./model/fund.name.holder";
 
 var fileSaver = require("file-saver");
 
@@ -45,6 +47,9 @@ export class PeriodicReportService extends CommonService{
     private PERIODIC_REPORT_BASE_URL = DATA_APP_URL + "periodicReport/";
     private PERIODIC_REPORT_GET_URL  = this.PERIODIC_REPORT_BASE_URL + "get/";
     private PERIODIC_REPORT_LIST_URL  = this.PERIODIC_REPORT_BASE_URL + "getAll/";
+    private PERIODIC_REPORT_GET_FUND_RENAME_INFO_URL  = this.PERIODIC_REPORT_BASE_URL + "fundRenameInfo/";
+    private PERIODIC_REPORT_GET_FUND_NAME_LIST_URL  = this.PERIODIC_REPORT_BASE_URL + "getFundNameList/";
+    private PERIODIC_REPORT_SAVE_FUND_RENAME_INFO_URL  = this.PERIODIC_REPORT_BASE_URL + "saveFundRenameInfo/";
     private PERIODIC_REPORT_SAVE_URL = this.PERIODIC_REPORT_BASE_URL + "save/";
     private PERIODIC_REPORT_FILE_LIST_URL  = this.PERIODIC_REPORT_BASE_URL + "inputFilesList/";
 
@@ -125,6 +130,25 @@ export class PeriodicReportService extends CommonService{
     loadAll(): Observable<PeriodicReport[]> {
         return this.http.get(this.PERIODIC_REPORT_LIST_URL, this.getOptionsWithCredentials())
             .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+
+    getFundRenameInfo(reportId):  Observable<ReportingFundRenameInfo>{
+        return this.http.get(this.PERIODIC_REPORT_GET_FUND_RENAME_INFO_URL + reportId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    saveFundRenameInfo(info):  Observable<any>{
+        let body = JSON.stringify(info);
+        return this.http.post(this.PERIODIC_REPORT_SAVE_FUND_RENAME_INFO_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    getFundNameList(reportId): Observable<FundNameHolder>{
+        return this.http.get(this.PERIODIC_REPORT_GET_FUND_NAME_LIST_URL + reportId, this.getOptionsWithCredentials())
+            .map(this.extractData)
             .catch(this.handleErrorResponse);
     }
 

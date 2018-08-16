@@ -211,6 +211,30 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
         PeriodicReportInputFilesHolder holder = this.periodicReportService.getPeriodicReportInputFiles(reportId);
         return buildNonNullResponse(holder);
     }
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/fundRenameInfo/{reportId}", method = RequestMethod.GET)
+    public ResponseEntity getFundRenameInfo(@PathVariable Long reportId){
+        ReportingFundRenameInfoDto fundRenameInfo = this.periodicReportService.getFundRenameInfo(reportId);
+        return buildNonNullResponse(fundRenameInfo);
+    }
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(method = RequestMethod.POST, value = "/saveFundRenameInfo")
+    public ResponseEntity<?> saveFundRenameInfo(@RequestBody ReportingFundRenameInfoDto fundRenameInfoDto){
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        boolean saved = this.periodicReportService.saveFundRenameInfo(fundRenameInfoDto);
+        return buildEntitySaveResponseEntity(saved);
+    }
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/getFundNameList/{reportId}", method = RequestMethod.GET)
+    public ResponseEntity getFundNameListHolder(@PathVariable Long reportId){
+        ReportingFundNameListHolderDto fundNameList= this.periodicReportService.getFundNameList(reportId);
+        return buildNonNullResponse(fundNameList);
+    }
     /* ****************************************************************************************************************/
 
 
