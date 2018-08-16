@@ -196,10 +196,10 @@ public class PeriodicReportNICKMFServiceImpl implements PeriodicReportNICKMFServ
                     }
                 }
 
-                value = MathUtils.subtract(value, (MathUtils.divide(40000.0, 12.0)));
+                value = MathUtils.subtract(value, (MathUtils.divide(60000.0, 12.0)));
 
                 dto.setCalculatedAccountBalance(value);
-                dto.setCalculatedAccountBalanceFormula(" {previous month value} - 40,000/12 + sum of values from Capital Calls with type 'Комиссия' for current month" );
+                dto.setCalculatedAccountBalanceFormula(" {previous month value} - 60,000/12 + sum of values from Capital Calls with type 'Комиссия' for current month" );
 
                 /*
                 Double remainder = 0.0;

@@ -211,12 +211,33 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
         if(records != null) {
             for(GeneratedGeneralLedgerFormDto record: records){
                 if(record.getNicAccountName() == null) {
-                    TarragonNICChartOfAccounts nicChartOfAccounts =
+                    List<TarragonNICChartOfAccounts> nicChartOfAccounts =
                             this.tarragonNICChartOfAccountsRepository.findByTarragonChartOfAccountsNameAndAddable(record.getChartAccountsLongDescription(), false);
                     if (nicChartOfAccounts != null) {
-                        record.setNicAccountName(nicChartOfAccounts.getNicReportingChartOfAccounts().getNameRu());
-                        if (nicChartOfAccounts.getNicReportingChartOfAccounts().getNbChartOfAccounts() != null) {
-                            record.setNbAccountNumber(nicChartOfAccounts.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode());
+                        for(TarragonNICChartOfAccounts entity: nicChartOfAccounts){
+                            if(record.getChartAccountsLongDescription().equalsIgnoreCase("Current tax (expense) benefit")){
+                                if(record.getGLAccountBalance() != null && record.getGLAccountBalance() < 0){
+                                    if(entity.getNegativeOnly() != null && entity.getNegativeOnly().booleanValue()){
+                                        record.setNicAccountName(entity.getNicReportingChartOfAccounts().getNameRu());
+                                        if (entity.getNicReportingChartOfAccounts().getNbChartOfAccounts() != null) {
+                                            record.setNbAccountNumber(entity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode());
+                                        }
+                                    }
+                                }else if(record.getGLAccountBalance() != null && record.getGLAccountBalance() >= 0){
+                                    if(entity.getPositiveOnly() != null && entity.getPositiveOnly().booleanValue()){
+                                        record.setNicAccountName(entity.getNicReportingChartOfAccounts().getNameRu());
+                                        if (entity.getNicReportingChartOfAccounts().getNbChartOfAccounts() != null) {
+                                            record.setNbAccountNumber(entity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode());
+                                        }
+                                    }
+                                }
+
+                            }else {
+                                record.setNicAccountName(entity.getNicReportingChartOfAccounts().getNameRu());
+                                if (entity.getNicReportingChartOfAccounts().getNbChartOfAccounts() != null) {
+                                    record.setNbAccountNumber(entity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode());
+                                }
+                            }
                         }
                     }else{
                         // no match found

@@ -24,7 +24,7 @@ public class ConsolidatedKZTForm13RecordDto implements BaseDto {
 
     private Double debtTurnover;
     private Double interestTurnover;
-    private Double totalTurnover;
+    //private Double totalTurnover;
 
     private Double debtEndPeriod;
     private Double interestEndPeriod;
@@ -142,13 +142,13 @@ public class ConsolidatedKZTForm13RecordDto implements BaseDto {
         this.interestTurnover = interestTurnover;
     }
 
-    public Double getTotalTurnover() {
-        return totalTurnover;
-    }
-
-    public void setTotalTurnover(Double totalTurnover) {
-        this.totalTurnover = totalTurnover;
-    }
+//    public Double getTotalTurnover() {
+//        return totalTurnover;
+//    }
+//
+//    public void setTotalTurnover(Double totalTurnover) {
+//        this.totalTurnover = totalTurnover;
+//    }
 
     public Double getDebtEndPeriod() {
         return debtEndPeriod;

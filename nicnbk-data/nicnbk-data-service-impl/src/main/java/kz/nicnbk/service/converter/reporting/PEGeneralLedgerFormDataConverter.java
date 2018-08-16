@@ -10,6 +10,8 @@ import kz.nicnbk.service.dto.reporting.privateequity.PEGeneralLedgerFormDataDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * Created by magzumov on 20.04.2017.
  */
@@ -35,9 +37,34 @@ public class PEGeneralLedgerFormDataConverter extends BaseDozerEntityConverter<P
             entity.setFinancialStatementCategory(financialStatementCategory);
         }
         if(dto.getTarragonNICChartOfAccountsName() != null){
-            TarragonNICChartOfAccounts tarragonNICChartOfAccounts =
+            List<TarragonNICChartOfAccounts> tarragonNICChartOfAccounts =
                     this.tarragonNICChartOfAccountsRepository.findByTarragonChartOfAccountsNameAndAddable(dto.getTarragonNICChartOfAccountsName(), true);
-            entity.setTarragonNICChartOfAccounts(tarragonNICChartOfAccounts);
+
+            if (tarragonNICChartOfAccounts != null && !tarragonNICChartOfAccounts.isEmpty()) {
+                entity.setTarragonNICChartOfAccounts(tarragonNICChartOfAccounts.get(0));
+
+//                for(TarragonNICChartOfAccounts chartOfAccounts: tarragonNICChartOfAccounts){
+//                    if(dto.getTarragonNICChartOfAccountsName().equalsIgnoreCase("Current tax (expense) benefit")){
+//                        if(dto.getGLAccountBalance() != null && dto.getGLAccountBalance() < 0){
+//                            if(chartOfAccounts.getNegativeOnly() != null && chartOfAccounts.getNegativeOnly().booleanValue()){
+//                                entity.setTarragonNICChartOfAccounts(chartOfAccounts);
+//                                break;
+//                            }
+//                        }else if(dto.getGLAccountBalance() != null && dto.getGLAccountBalance() >= 0){
+//                            if(chartOfAccounts.getPositiveOnly() != null && chartOfAccounts.getPositiveOnly().booleanValue()){
+//                                entity.setTarragonNICChartOfAccounts(chartOfAccounts);
+//                                break;
+//                            }
+//                        }
+//
+//                    }else {
+//                        entity.setTarragonNICChartOfAccounts(chartOfAccounts);
+//                        break;
+//                    }
+//                }
+            }
+
+            //entity.setTarragonNICChartOfAccounts(tarragonNICChartOfAccounts);
         }
 
         return entity;

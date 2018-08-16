@@ -6,6 +6,7 @@ import kz.nicnbk.repo.api.reporting.*;
 import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.lookup.CurrencyLookup;
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
+import kz.nicnbk.repo.model.lookup.reporting.InvestmentTypeLookup;
 import kz.nicnbk.repo.model.reporting.*;
 import kz.nicnbk.service.api.common.CurrencyRatesService;
 import kz.nicnbk.service.api.files.FileService;
@@ -26,6 +27,7 @@ import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.lookup.CurrencyRatesDto;
 import kz.nicnbk.service.dto.reporting.*;
 import kz.nicnbk.service.dto.reporting.PeriodicReportType;
+import kz.nicnbk.service.dto.reporting.realestate.TerraCombinedDataHolderDto;
 import kz.nicnbk.service.dto.reporting.realestate.TerraGeneratedGeneralLedgerFormDto;
 import kz.nicnbk.service.dto.reporting.realestate.TerraSecuritiesCostRecordDto;
 import kz.nicnbk.service.impl.reporting.lookup.NICChartAccountsLookup;
@@ -210,6 +212,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
     @Autowired
     private PeriodicReportHFService periodicReportHFService;
+
+    @Autowired
+    private PeriodicReportFundRenameInfoRepository fundRenameInfoRepository;
 
 
     /* PERIODIC REPORT ****************************************************************************************************************/
@@ -761,6 +766,188 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         deleteConsolidatedKZTForm22(reportId);
     }
 
+    @Override
+    public ReportingFundRenameInfoDto getFundRenameInfo(Long reportId){
+        ReportingFundRenameInfoDto fundRenameInfoDto = new ReportingFundRenameInfoDto();
+        List<PeriodicReportFundRenameInfo> entities = this.fundRenameInfoRepository.getEntitiesReportId(reportId);
+        if(entities != null && !entities.isEmpty()){
+            for(PeriodicReportFundRenameInfo entity: entities){
+                fundRenameInfoDto.addFundRenamePair(entity.getCurrentFundName(), entity.getPreviousFundName(), entity.getType());
+            }
+        }
+
+        return fundRenameInfoDto;
+    }
+
+    private Map<String, ReportingFundRenamePairDto> getFundRenameInfoMap(Long reportId){
+        ReportingFundRenameInfoDto fundRenameInfo = getFundRenameInfo(reportId);
+        Map<String, ReportingFundRenamePairDto> fundRenames = new HashedMap();
+        if(fundRenameInfo != null && !fundRenameInfo.isEmpty()){
+            for(ReportingFundRenamePairDto pair: fundRenameInfo.getFundRenames()){
+                fundRenames.put(pair.getPreviousFundName(), pair);
+            }
+        }
+        return fundRenames;
+    }
+
+    @Override
+    public boolean saveFundRenameInfo(ReportingFundRenameInfoDto info){
+        try {
+            if (info != null && info.getFundRenames() != null && info.getReport().getId() != null) {
+                // delete all
+                this.fundRenameInfoRepository.deleteByReportId(info.getReport().getId());
+                // save all
+                List<PeriodicReportFundRenameInfo> entities = new ArrayList<>();
+                for(ReportingFundRenamePairDto pair: info.getFundRenames()){
+                    entities.add(new PeriodicReportFundRenameInfo(info.getReport().getId(), pair.getCurrentFundName(), pair.getPreviousFundName(), pair.getType()));
+                }
+                this.fundRenameInfoRepository.save(entities);
+                return true;
+            }
+        }catch (Exception ex){
+         logger.error("Error saving Reporting Fund Rename Info: report id  " + (info.getReport().getId() != null ? info.getReport().getId() : null), ex);
+        }
+        return false;
+    }
+
+    @Override
+    public ReportingFundNameListHolderDto getFundNameList(Long reportId){
+        ReportingFundNameListHolderDto fundNamesHoder = new ReportingFundNameListHolderDto();
+        Set<String> currentPEFundNames = new HashSet<String>();
+        Set<String> currentHFFundNames = new HashSet<String>();
+        Set<String> currentREFundNames = new HashSet<String>();
+        Set<String> previousPEFundNames = new HashSet<String>();
+        Set<String> previousHFFundNames = new HashSet<String>();
+        Set<String> previousREFundNames = new HashSet<String>();
+
+        // CURRENT
+        // PRIVATE EQUITY
+        List<ScheduleInvestmentsDto> scheduleInvestmentsDtos = this.scheduleInvestmentService.getScheduleInvestments(reportId);
+        if(scheduleInvestmentsDtos != null && !scheduleInvestmentsDtos.isEmpty()){
+            for(ScheduleInvestmentsDto investmentsDto: scheduleInvestmentsDtos){
+                if(investmentsDto.getType() != null && investmentsDto.getType().getCode() != null &&
+                        /*investmentsDto.getType().getCode().equalsIgnoreCase(InvestmentTypeLookup.FUND_INVESTMENT.getCode()) &&*/
+                        (investmentsDto.getTotalSum() == null || !investmentsDto.getTotalSum().booleanValue())) {
+                    currentPEFundNames.add(investmentsDto.getName());
+                }
+            }
+            fundNamesHoder.setCurrentPEFundNameList(currentPEFundNames.toArray(new String[currentPEFundNames.size()]));
+        }
+
+        // HEDGE FUNDS
+        // General ledger
+        ConsolidatedReportRecordHolderDto generalLedgerHolder = this.generalLedgerBalanceService.get(reportId);
+        if(generalLedgerHolder != null && generalLedgerHolder.getGeneralLedgerBalanceList() != null && !generalLedgerHolder.getGeneralLedgerBalanceList().isEmpty()){
+            for(SingularityGeneralLedgerBalanceRecordDto glRecord: generalLedgerHolder.getGeneralLedgerBalanceList()){
+                if(glRecord.getShortName() != null){
+                    currentHFFundNames.add(glRecord.getShortName());
+                }
+            }
+        }
+        // Noal
+        ConsolidatedReportRecordHolderDto noalHolderA = this.hfNOALService.get(reportId, 1);
+        if(noalHolderA != null && noalHolderA.getNoalTrancheAList() != null){
+            for(SingularityNOALRecordDto noalRecord: noalHolderA.getNoalTrancheAList()){
+                if(StringUtils.isNotEmpty(noalRecord.getName())){
+                    currentHFFundNames.add(noalRecord.getName());
+                }
+            }
+
+        }
+        ConsolidatedReportRecordHolderDto noalHolderB = this.hfNOALService.get(reportId, 2);
+        if(noalHolderB != null && noalHolderB.getNoalTrancheBList() != null){
+            for(SingularityNOALRecordDto noalRecord: noalHolderB.getNoalTrancheBList()){
+                if(StringUtils.isNotEmpty(noalRecord.getName())){
+                    currentHFFundNames.add(noalRecord.getName());
+                }
+            }
+        }
+
+        fundNamesHoder.setCurrentHFFundNameList((String[]) currentHFFundNames.toArray(new String[currentHFFundNames.size()]));
+
+        // Real Estate
+        TerraCombinedDataHolderDto terraData = this.realEstateService.getTerraCombinedParsedData(reportId);
+        if(terraData != null && terraData.getSecuritiesCostRecords() != null && !terraData.getSecuritiesCostRecords().isEmpty()){
+            for(TerraSecuritiesCostRecordDto securitiesDto: terraData.getSecuritiesCostRecords()){
+                if((securitiesDto.getTotalSum() == null || !securitiesDto.getTotalSum().booleanValue()) && StringUtils.isNotEmpty(securitiesDto.getName())){
+                    currentREFundNames.add(securitiesDto.getName());
+                }
+            }
+        }
+
+        fundNamesHoder.setCurrentREFundNameList((String[]) currentREFundNames.toArray(new String[currentREFundNames.size()]));
+
+
+        // PREVIOUS
+        PeriodicReportDto currentReport = getPeriodicReport(reportId);
+        Date previousDate = DateUtils.getLastDayOfPreviousMonth(currentReport.getReportDate());
+        PeriodicReport previousReport = this.periodReportRepository.findByReportDate(previousDate);
+
+        // PRIVATE EQUITY
+        scheduleInvestmentsDtos = this.scheduleInvestmentService.getScheduleInvestments(previousReport.getId());
+        if(scheduleInvestmentsDtos != null && !scheduleInvestmentsDtos.isEmpty()){
+            for(ScheduleInvestmentsDto investmentsDto: scheduleInvestmentsDtos){
+                if(investmentsDto.getType() != null && investmentsDto.getType().getCode() != null &&
+                        /*investmentsDto.getType().getCode().equalsIgnoreCase(InvestmentTypeLookup.FUND_INVESTMENT.getCode()) &&*/
+                        (investmentsDto.getTotalSum() == null || !investmentsDto.getTotalSum().booleanValue())) {
+                    previousPEFundNames.add(investmentsDto.getName());
+                }
+            }
+            fundNamesHoder.setPreviousPEFundNameList(previousPEFundNames.toArray(new String[previousPEFundNames.size()]));
+        }
+
+        // HEDGE FUNDS
+        // General ledger
+        generalLedgerHolder = this.generalLedgerBalanceService.get(previousReport.getId());
+        if(generalLedgerHolder != null && generalLedgerHolder.getGeneralLedgerBalanceList() != null && !generalLedgerHolder.getGeneralLedgerBalanceList().isEmpty()){
+            for(SingularityGeneralLedgerBalanceRecordDto glRecord: generalLedgerHolder.getGeneralLedgerBalanceList()){
+                if(glRecord.getShortName() != null){
+                    previousHFFundNames.add(glRecord.getShortName());
+                }
+            }
+        }
+        // Noal
+        noalHolderA = this.hfNOALService.get(previousReport.getId(), 1);
+        if(noalHolderA != null && noalHolderA.getNoalTrancheAList() != null){
+            for(SingularityNOALRecordDto noalRecord: noalHolderA.getNoalTrancheAList()){
+                if(StringUtils.isNotEmpty(noalRecord.getName())){
+                    previousHFFundNames.add(noalRecord.getName());
+                }
+            }
+
+        }
+        noalHolderB = this.hfNOALService.get(previousReport.getId(), 2);
+        if(noalHolderB != null && noalHolderB.getNoalTrancheBList() != null){
+            for(SingularityNOALRecordDto noalRecord: noalHolderB.getNoalTrancheBList()){
+                if(StringUtils.isNotEmpty(noalRecord.getName())){
+                    previousHFFundNames.add(noalRecord.getName());
+                }
+            }
+        }
+
+        fundNamesHoder.setPreviousHFFundNameList((String[]) previousHFFundNames.toArray(new String[previousHFFundNames.size()]));
+
+        // Real Estate
+        terraData = this.realEstateService.getTerraCombinedParsedData(previousReport.getId());
+        if(terraData != null && terraData.getSecuritiesCostRecords() != null && !terraData.getSecuritiesCostRecords().isEmpty()){
+            for(TerraSecuritiesCostRecordDto securitiesDto: terraData.getSecuritiesCostRecords()){
+                if((securitiesDto.getTotalSum() == null || !securitiesDto.getTotalSum().booleanValue()) && StringUtils.isNotEmpty(securitiesDto.getName())){
+                    previousREFundNames.add(securitiesDto.getName());
+                }
+            }
+        }
+
+        fundNamesHoder.setPreviousREFundNameList((String[]) previousREFundNames.toArray(new String[previousREFundNames.size()]));
+
+        Arrays.sort(fundNamesHoder.getCurrentPEFundNameList());
+        Arrays.sort(fundNamesHoder.getCurrentHFFundNameList());
+        Arrays.sort(fundNamesHoder.getCurrentREFundNameList());
+        Arrays.sort(fundNamesHoder.getPreviousPEFundNameList());
+        Arrays.sort(fundNamesHoder.getPreviousHFFundNameList());
+        Arrays.sort(fundNamesHoder.getPreviousREFundNameList());
+        return fundNamesHoder;
+    }
+
 //    @Override
 //    public EntitySaveResponseDto saveInterestRate(Long reportId, String interestRate, String updater){
 //        EntitySaveResponseDto entitySaveResponseDto = new EntitySaveResponseDto();
@@ -822,6 +1009,22 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             if(previousReport != null && previousReport.getStatus().getCode().equalsIgnoreCase(PeriodicReportType.SUBMITTED.getCode())){
                 List<ConsolidatedBalanceFormRecordDto> previousPeriodRecords = getConsolidatedBalanceUSDFormSaved(previousReport.getId());
                 if(previousPeriodRecords != null){
+
+                    ReportingFundRenameInfoDto fundRenameInfo = getFundRenameInfo(reportId);
+                    if(previousPeriodRecords != null && !fundRenameInfo.isEmpty()){
+                        for(ConsolidatedBalanceFormRecordDto dto: previousPeriodRecords){
+                            if(dto.getLineNumber() == 16 && dto.getAccountNumber() != null && dto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_2033_010)){
+                                for(ReportingFundRenamePairDto pairDto: fundRenameInfo.getFundRenames()){
+                                    if(dto.getName().contains(pairDto.getPreviousFundName())){
+                                        // TODO: Check type
+                                        String newName = dto.getName().replace(pairDto.getPreviousFundName(), pairDto.getCurrentFundName());
+                                        dto.setName(newName);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     List<ConsolidatedBalanceFormRecordDto> toAdd = new ArrayList<>();
                     List<Integer> toAddIndex = new ArrayList<>();
                     for(ConsolidatedBalanceFormRecordDto previousRecord: previousPeriodRecords){
@@ -1181,6 +1384,22 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             if(previousReport != null && previousReport.getStatus().getCode().equalsIgnoreCase(PeriodicReportType.SUBMITTED.getCode())){
                 List<ConsolidatedBalanceFormRecordDto> previousPeriodRecords = getConsolidatedIncomeExpenseUSDFormSaved(previousReport.getId());
                 if(previousPeriodRecords != null){
+
+                    ReportingFundRenameInfoDto fundRenameInfo = getFundRenameInfo(reportId);
+                    if(previousPeriodRecords != null && !fundRenameInfo.isEmpty()){
+                        for(ConsolidatedBalanceFormRecordDto dto: previousPeriodRecords){
+                            if(dto.getLineNumber() == 8 && dto.getAccountNumber() != null && dto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_6150_030)){
+                                for(ReportingFundRenamePairDto pairDto: fundRenameInfo.getFundRenames()){
+                                    if(dto.getName().contains(pairDto.getPreviousFundName())){
+                                        // TODO: Check type
+                                        String newName = dto.getName().replace(pairDto.getPreviousFundName(), pairDto.getCurrentFundName());
+                                        dto.setName(newName);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     List<ConsolidatedBalanceFormRecordDto> toAdd = new ArrayList<>();
                     List<Integer> toAddIndex = new ArrayList<>();
                     for(ConsolidatedBalanceFormRecordDto previousRecord: previousPeriodRecords){
@@ -2631,6 +2850,22 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
             List<ConsolidatedKZTForm7RecordDto> previousPeriodRecords = previousReport != null ? getConsolidatedBalanceKZTForm7Saved(previousReport.getId()) : null;
             if(previousPeriodRecords != null && !previousPeriodRecords.isEmpty()){
+
+                ReportingFundRenameInfoDto fundRenameInfo = getFundRenameInfo(reportId);
+                if(previousPeriodRecords != null && !fundRenameInfo.isEmpty()){
+                    for(ConsolidatedKZTForm7RecordDto dto: previousPeriodRecords){
+                        if(dto.getLineNumber() == 9 && dto.getAccountNumber() != null && dto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_2033_010)){
+                            for(ReportingFundRenamePairDto pairDto: fundRenameInfo.getFundRenames()){
+                                if(dto.getEntityName().contains(pairDto.getPreviousFundName())){
+                                    // TODO: Check type
+                                    String newName = dto.getEntityName().replace(pairDto.getPreviousFundName(), pairDto.getCurrentFundName());
+                                    dto.setEntityName(newName);
+                                }
+                            }
+                        }
+                    }
+                }
+
                 int index = 0;
                 // TODO: exclude zero records (which fields of ConsolidatedKZTForm7RecordDto to check for zero value?)
                 for(ConsolidatedKZTForm7RecordDto prevRecord: previousPeriodRecords){
@@ -2844,6 +3079,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
         // TODO: same fund in both tranches !!
 
+        //ReportingFundRenameInfoDto fundRenameInfo = getFundRenameInfo(reportId);
+        Map<String, ReportingFundRenamePairDto> fundRenames = getFundRenameInfoMap(reportId);
+
         Map<String, Double> fundTurnoverPE = new HashedMap();
         Map<String, Double> fundTurnoverHF = new HashedMap();
         Map<String, Double> fundTurnoverRE = new HashedMap();
@@ -2853,10 +3091,16 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             for (ScheduleInvestmentsDto investmentsDto: previousPeriodInvestments) {
                 if(investmentsDto.getNetCost() != null && investmentsDto.getNetCost().doubleValue() != 0 &&
                         (investmentsDto.getTotalSum() == null || !investmentsDto.getTotalSum().booleanValue())) {
+
+                    // Check fund renames
+                    String newName = investmentsDto.getName();
+                    if(fundRenames != null && fundRenames.get(investmentsDto.getName()) != null && fundRenames.get(investmentsDto.getName()).isPrivateEquityFund()){
+                        newName = fundRenames.get(investmentsDto.getName()).getCurrentFundName();
+                    }
                     if (investmentsDto.getTranche() == 1) {
-                        fundTurnoverPE.put(investmentsDto.getName(), MathUtils.multiply(investmentsDto.getNetCost(), 0.99));
+                        fundTurnoverPE.put(newName, MathUtils.multiply(investmentsDto.getNetCost(), 0.99));
                     } else {
-                        fundTurnoverPE.put(investmentsDto.getName(), investmentsDto.getNetCost());
+                        fundTurnoverPE.put(newName, investmentsDto.getNetCost());
                     }
                 }
             }
@@ -2887,7 +3131,12 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             for(TerraSecuritiesCostRecordDto terraRecord: prevTerraSecuritiesCostRecords){
                 if(terraRecord.getTotalCostFCY() != null && terraRecord.getTotalCostFCY().doubleValue() != 0 &&
                         (terraRecord.getTotalSum() == null || !terraRecord.getTotalSum().booleanValue())) {
-                    fundTurnoverRE.put(terraRecord.getName(), MathUtils.multiply(terraRecord.getTotalCostFCY(), 0.99));
+
+                    String newName = terraRecord.getName();
+                    if(fundRenames != null && fundRenames.get(terraRecord.getName()) != null && fundRenames.get(terraRecord.getName()).isRealEstateFund()){
+                        newName = fundRenames.get(terraRecord.getName()).getCurrentFundName();
+                    }
+                    fundTurnoverRE.put(newName, MathUtils.multiply(terraRecord.getTotalCostFCY(), 0.99));
 
                 }
             }
@@ -2929,10 +3178,16 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             }
         }
 
+
         // previous NOAL
         List<SingularityNOALRecordDto> previousNoalRecords = new ArrayList<>();
         List<SingularityNOALRecordDto> previousNoalTrancheARecords = this.hfNOALService.get(previousReport.getId(), 1).getNoalTrancheAList();
         if(previousNoalTrancheARecords != null){
+            for(SingularityNOALRecordDto noalRecord: previousNoalTrancheARecords){
+                if(noalRecord.getName() != null && fundRenames != null && fundRenames.get(noalRecord.getName()) != null && fundRenames.get(noalRecord.getName()).isHedgeFund()){
+                    noalRecord.setName(fundRenames.get(noalRecord.getName()).getCurrentFundName());
+                }
+            }
             previousNoalRecords.addAll(previousNoalTrancheARecords);
         }
 
@@ -2981,6 +3236,11 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         List<SingularityNOALRecordDto> previousNoalRecordsTrancheB = new ArrayList<>();
         List<SingularityNOALRecordDto> previousNoalTrancheBRecords = this.hfNOALService.get(previousReport.getId(), 2).getNoalTrancheAList();
         if(previousNoalTrancheBRecords != null){
+            for(SingularityNOALRecordDto noalRecord: previousNoalTrancheBRecords){
+                if(noalRecord.getName() != null && fundRenames != null && fundRenames.get(noalRecord.getName()) != null && fundRenames.get(noalRecord.getName()).isHedgeFund()){
+                    noalRecord.setName(fundRenames.get(noalRecord.getName()).getCurrentFundName());
+                }
+            }
             previousNoalRecordsTrancheB.addAll(previousNoalTrancheBRecords);
         }
 
@@ -3035,6 +3295,13 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                     if (record.getFinancialStatementCategoryDescription() != null && record.getFinancialStatementCategoryDescription().equalsIgnoreCase(PeriodicReportConstants.EN_NET_REALIZED_GAIN_LOSS)) {
 //                    String fundName = record.getChartAccountsLongDescription().substring("Net Realized Gains/Losses from Portfolio Funds".length()).trim();
                         String fundName = record.getShortName() != null ? record.getShortName() : "";
+
+                        // fund rename
+                        if(fundRenames != null && !fundRenames.isEmpty()){
+                            if(fundRenames.get(fundName) != null && fundRenames.get(fundName).isHedgeFund()){
+                                fundName = fundRenames.get(fundName).getCurrentFundName();
+                            }
+                        }
 
                         double value = fundTurnoverHF.get(fundName) != null ? fundTurnoverHF.get(fundName).doubleValue() : 0;
                         value = MathUtils.add(value, (record.getGLAccountBalance() != null ? record.getGLAccountBalance().doubleValue() : 0));
@@ -3274,6 +3541,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             PeriodicReport previousReport = this.periodReportRepository.findByReportDate(previousDate);
             List<ConsolidatedKZTForm8RecordDto> previousRecords = getConsolidatedBalanceKZTForm8Saved(previousReport.getId());
 
+            Map<String, ReportingFundRenamePairDto> fundRenames = getFundRenameInfoMap(reportId);
+
+
             int index = 0;
             List<ConsolidatedKZTForm8RecordDto> records = new ArrayList<>();
             Map<String, Integer> recordsMap = new HashMap<>();
@@ -3289,6 +3559,14 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         record.setStartPeriodBalance(record.getEndPeriodBalance());
                         record.setEndPeriodBalance(null);
 
+                        // Fund rename
+                        if(fundRenames != null && fundRenames.keySet() != null && !fundRenames.keySet().isEmpty()){
+                            for(String key: fundRenames.keySet()){
+                                if(record.getName() != null && record.getName().contains(key)){
+                                    record.setName(record.getName().replace(fundRenames.get(key).getPreviousFundName(), fundRenames.get(key).getCurrentFundName()));
+                                }
+                            }
+                        }
                         records.add(record);
                         recordsMap.put(record.getName(), addedIndex);
                         addedIndex++;
@@ -3314,6 +3592,11 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             List<SingularityNOALRecordDto> previousNoalTrancheARecords = prevNoalAHolder != null ? prevNoalAHolder.getNoalTrancheAList() : null;
             ConsolidatedReportRecordHolderDto prevNoalBHolder =  previousReport != null ? this.hfNOALService.get(previousReport.getId(), 2) : null;
             List<SingularityNOALRecordDto> previousNoalTrancheBRecords = prevNoalBHolder != null ? prevNoalBHolder.getNoalTrancheBList() : null;
+
+
+            // Fund renames
+            //ReportingFundRenameInfoDto fundRenameInfoDto = getFundRenameInfo(reportId)
+
             if(currentNoalTrancheARecords != null){
                 noalRecords.addAll(currentNoalTrancheARecords);
             }
@@ -3321,9 +3604,19 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 noalRecords.addAll(currentNoalTrancheBRecords);
             }
             if(previousNoalTrancheARecords != null){
+                for(SingularityNOALRecordDto noalRecordDto: previousNoalTrancheARecords){
+                    if(noalRecordDto.getName() != null && fundRenames.get(noalRecordDto.getName()) != null && fundRenames.get(noalRecordDto.getName()).isHedgeFund()){
+                        noalRecordDto.setName(fundRenames.get(noalRecordDto.getName()).getCurrentFundName());
+                    }
+                }
                 noalRecords.addAll(previousNoalTrancheARecords);
             }
             if(previousNoalTrancheBRecords != null){
+                for(SingularityNOALRecordDto noalRecordDto: previousNoalTrancheBRecords){
+                    if(noalRecordDto.getName() != null && fundRenames.get(noalRecordDto.getName()) != null && fundRenames.get(noalRecordDto.getName()).isHedgeFund()){
+                        noalRecordDto.setName(fundRenames.get(noalRecordDto.getName()).getCurrentFundName());
+                    }
+                }
                 noalRecords.addAll(previousNoalTrancheBRecords);
             }
 
@@ -3647,38 +3940,54 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             int index = 0;
             int indexLineNumber3 = 0;
             ConsolidatedKZTForm13RecordDto record3013_010 = null;
-            boolean previousExists = false;
+            boolean previousLineNumber2Exists = false;
             if(previousRecords == null){
                 previousRecords = getConsolidatedBalanceKZTForm13LineHeaders();
             }else{
+                // Reset previous period records
+                ReportingFundRenameInfoDto fundRenameInfo = getFundRenameInfo(reportId);
                 for(int i = 0; i < previousRecords.size(); i++){
                     ConsolidatedKZTForm13RecordDto record = previousRecords.get(i);
+                    record.setDebtStartPeriod(record.getDebtEndPeriod());
+                    record.setInterestStartPeriod(record.getInterestEndPeriod());
+                    record.setTotalStartPeriod(record.getTotalEndPeriod());
+
+                    record.setDebtEndPeriod(null);
+                    record.setInterestEndPeriod(null);
+                    record.setTotalEndPeriod(null);
+
+                    record.setDebtTurnover(null);
+                    record.setInterestTurnover(null);
+                    //record.setTotalTurnover(null);
+
                     if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_3013_010) &&
                             record.getName().equalsIgnoreCase(PeriodicReportConstants.BANK_LOANS_RECEIVED)){
                         record3013_010 = record;
-
-                        record3013_010.setDebtStartPeriod(record.getDebtEndPeriod());
-                        record3013_010.setInterestStartPeriod(record.getInterestEndPeriod());
-                        record3013_010.setTotalStartPeriod(record.getTotalEndPeriod());
-
-                        record3013_010.setDebtEndPeriod(null);
-                        record3013_010.setInterestEndPeriod(null);
-                        record3013_010.setTotalEndPeriod(null);
-
-                        record3013_010.setDebtTurnover(null);
-                        record3013_010.setInterestTurnover(null);
-                        record3013_010.setTotalTurnover(null);
-
-                        previousExists = true;
+                        previousLineNumber2Exists = true;
+                    }else if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_3053_060) &&
+                            record.getName().equalsIgnoreCase(PeriodicReportConstants.RU_3053_060)){
                     }
-                    if(record.getLineNumber() == 3){
+                    if(record.getLineNumber() == 3 && index == 0){
                         index = i;
                         indexLineNumber3 = i + 1;
-                        break;
+                        //break;
+                    }
+
+                    // Fund rename
+                    if(fundRenameInfo != null && !fundRenameInfo.isEmpty() && record.getLineNumber() == 3 && record.getAccountNumber() != null &&
+                            record.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_3053_060)){
+                        for(ReportingFundRenamePairDto pairDto: fundRenameInfo.getFundRenames()){
+                            if(record.getEntityName().contains(pairDto.getPreviousFundName())){
+                                // TODO: Check type
+                                String newName = record.getEntityName().replace(pairDto.getPreviousFundName(), pairDto.getCurrentFundName());
+                                record.setEntityName(newName);
+                            }
+                        }
                     }
                 }
             }
 
+            // Record 3013.010
             if(record3013_010 == null) {
                 record3013_010 = new ConsolidatedKZTForm13RecordDto();
                 record3013_010.setAccountNumber(PeriodicReportConstants.ACC_NUM_3013_010);
@@ -3698,22 +4007,26 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 record3013_010.setInterestPaymentCount(1);
             }
 
-            record3013_010.setInterestRate(PeriodicReportConstants.DEFAULT_KZT_13_INTEREST_RATE);
+            // Interest rate
+            record3013_010.setInterestRate(PeriodicReportConstants.DEFAULT_KZT_13_INTEREST_RATE); // default
             List<SingularityGeneralLedgerBalanceRecordDto> singularityAdjustedRecords = this.generalLedgerBalanceService.getAdjustedRecords(reportId);
             if(singularityAdjustedRecords != null && !singularityAdjustedRecords.isEmpty()){
                 for(SingularityGeneralLedgerBalanceRecordDto record: singularityAdjustedRecords){
                     if(StringUtils.isNotEmpty(record.getInterestRate())){
+                        // Input interest rate
                         record3013_010.setInterestRate(record.getInterestRate());
                     }
                 }
             }
 
-            boolean currentExists = false;
+            boolean currentLineNumber2Exists = false;
             ListResponseDto balanceUSDResponseDto = generateConsolidatedBalanceUSDForm(report.getId());
             if(balanceUSDResponseDto.getStatus() == ResponseStatusType.FAIL){
                 responseDto.setErrorMessageEn("Error generating USD Balance form. " + balanceUSDResponseDto.getMessage().getNameEn());
                 return responseDto;
             }
+
+            // Current period records from USD report
             List<ConsolidatedBalanceFormRecordDto> currentUSDFormRecords = balanceUSDResponseDto.getRecords();
             Double lineNumber3Sum = 0.0;
             if(currentUSDFormRecords != null){
@@ -3722,14 +4035,12 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 //                        double debtEndPeriod = record3013_010.getDebtEndPeriod() != null ? record3013_010.getDebtEndPeriod() : 0;
                         double currentValue = record3013_010.getDebtEndPeriod() != null ? record3013_010.getDebtEndPeriod() : 0;
                         record3013_010.setDebtEndPeriod(MathUtils.add(currentValue, /*debtEndPeriod,*/ MathUtils.multiply(record.getCurrentAccountBalance(), endCurrencyRatesDto.getValue())));
-
-                        currentExists = true;
+                        currentLineNumber2Exists = true;
                     }else if(record.getAccountNumber() != null && (record.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_3383_010))){
 //                        double interestEndPeriod = record3013_010.getInterestEndPeriod() != null ? record3013_010.getInterestEndPeriod() : 0;
                         double currentValue = record3013_010.getInterestEndPeriod() != null ? record3013_010.getInterestEndPeriod() : 0;
                         record3013_010.setInterestEndPeriod(MathUtils.add(currentValue, /*interestEndPeriod,*/ MathUtils.multiply(record.getCurrentAccountBalance(), endCurrencyRatesDto.getValue())));
-
-                        currentExists = true;
+                        currentLineNumber2Exists = true;
                     }else if(record.getAccountNumber() != null && (record.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_3053_060))){
                         Double amount = MathUtils.multiply(record.getCurrentAccountBalance(), endCurrencyRatesDto.getValue());
                         ConsolidatedKZTForm13RecordDto record3053_060 = new ConsolidatedKZTForm13RecordDto();
@@ -3741,31 +4052,40 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         record3053_060.setEndPeriod(DateUtils.getLastDayOfNextMonth(report.getReportDate()));
                         //record3053_060.setInterestRate(PeriodicReportConstants.DEFAULT_KZT_13_INTEREST_RATE);
                         //record3053_060.setInterestPaymentCount(1);
-
-
                         record3053_060.setDebtStartPeriod(null);
                         record3053_060.setInterestStartPeriod(null);
                         record3053_060.setTotalStartPeriod(null);
-
-                        record3053_060.setDebtTurnover(amount);
                         record3053_060.setInterestTurnover(null);
-                        record3053_060.setTotalTurnover(null);
-
+                        //record3053_060.setTotalTurnover(null);
                         record3053_060.setDebtEndPeriod(amount);
+                        record3053_060.setDebtTurnover(MathUtils.subtract(record3053_060.getDebtEndPeriod(), record3053_060.getDebtStartPeriod()));
                         record3053_060.setInterestEndPeriod(null);
-
 //                        double totalEndPeriod = record3053_060.getDebtEndPeriod() != null ? record3053_060.getDebtEndPeriod() : 0;
 //                        totalEndPeriod = MathUtils.add(totalEndPeriod, record3053_060.getInterestEndPeriod() != null ? record3053_060.getInterestEndPeriod() : 0);
                         record3053_060.setTotalEndPeriod(amount);
 
-                        previousRecords.add(indexLineNumber3, record3053_060);
+                        //Check if already exists, update if so, add new if not
+                        boolean foundRecord3053_060 = false;
+                        for(int i = 0; i < previousRecords.size(); i++) {
+                            ConsolidatedKZTForm13RecordDto prevRecord = previousRecords.get(i);
+                            if(prevRecord.getEntityName() != null && prevRecord.getEntityName().equalsIgnoreCase(record3053_060.getEntityName())){
+                                prevRecord.setDebtEndPeriod(amount);
+                                prevRecord.setTotalEndPeriod(amount);
+                                prevRecord.setDebtTurnover(MathUtils.subtract(prevRecord.getDebtEndPeriod(), prevRecord.getDebtStartPeriod()));
+                                foundRecord3053_060 = true;
+                            }
+                        }
+                        if(!foundRecord3053_060){
+                            previousRecords.add(indexLineNumber3, record3053_060);
+                        }
+
                         lineNumber3Sum = MathUtils.add(lineNumber3Sum, amount);
                     }
 
                 }
             }
 
-            if(currentExists) {
+            if(currentLineNumber2Exists) {
                 double totalEndPeriod = record3013_010.getDebtEndPeriod() != null ? record3013_010.getDebtEndPeriod() : 0;
                 totalEndPeriod = MathUtils.add(totalEndPeriod, record3013_010.getInterestEndPeriod() != null ? record3013_010.getInterestEndPeriod() : 0);
                 record3013_010.setTotalEndPeriod(totalEndPeriod);
@@ -3779,15 +4099,20 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 record3013_010.setDebtTurnover(debtTurnover);
             }
 
-            if(!previousExists && currentExists){
+            if(!previousLineNumber2Exists && currentLineNumber2Exists){
                 previousRecords.add(index, record3013_010);
             }
 
-
+            // Set total values
+            ConsolidatedKZTForm13RecordDto totalRecord = new ConsolidatedKZTForm13RecordDto();
+            for(ConsolidatedKZTForm13RecordDto record: previousRecords){
+                if(StringUtils.isNotEmpty(record.getAccountNumber())){
+                    addValuesKZTForm13(totalRecord, record);
+                }
+            }
 
             for(ConsolidatedKZTForm13RecordDto record: previousRecords){
-                if(record.getAccountNumber() == null && record.getLineNumber() != null &&
-                        (record.getLineNumber() == 1 || record.getLineNumber() == 2 || record.getLineNumber() == 7)){
+                if(record.getAccountNumber() == null && record.getLineNumber() != null && record.getLineNumber() == 2){
                     record.setDebtStartPeriod(record3013_010.getDebtStartPeriod());
                     record.setInterestStartPeriod(record3013_010.getInterestStartPeriod());
                     record.setTotalStartPeriod(record3013_010.getTotalStartPeriod());
@@ -3796,23 +4121,55 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                     record.setDebtEndPeriod(record3013_010.getDebtEndPeriod());
                     record.setInterestEndPeriod(record3013_010.getInterestEndPeriod());
                     record.setTotalEndPeriod(record3013_010.getTotalEndPeriod());
-                    if(record.getLineNumber() == 1 || record.getLineNumber() == 7){
-                        record.setDebtTurnover(MathUtils.add(record.getDebtTurnover(), lineNumber3Sum));
-                        record.setDebtEndPeriod(MathUtils.add(record.getDebtEndPeriod(), lineNumber3Sum));
-                        record.setTotalEndPeriod(MathUtils.add(record.getTotalEndPeriod(), lineNumber3Sum));
-                    }
                 }else if(record.getAccountNumber() == null && record.getLineNumber() != null && record.getLineNumber() == 3){
-                    record.setDebtTurnover(lineNumber3Sum);
                     record.setDebtEndPeriod(lineNumber3Sum);
+                    record.setDebtTurnover(MathUtils.subtract(record.getDebtEndPeriod(), record.getDebtStartPeriod()));
                     double totalEndPeriod = record.getDebtEndPeriod() != null ? record.getDebtEndPeriod() : 0;
                     totalEndPeriod = MathUtils.add(totalEndPeriod, record.getInterestEndPeriod() != null ? record.getInterestEndPeriod() : 0);
                     record.setTotalEndPeriod(totalEndPeriod);
+                }else if(record.getAccountNumber() == null && record.getLineNumber() != null && (record.getLineNumber() == 1 || record.getLineNumber() == 7)){
+                    //addValuesKZTForm13(record, totalRecord);
+                    record.setDebtStartPeriod(totalRecord.getDebtStartPeriod());
+                    record.setInterestStartPeriod(totalRecord.getInterestStartPeriod());
+                    record.setTotalStartPeriod(totalRecord.getTotalStartPeriod());
+                    record.setDebtTurnover(totalRecord.getDebtTurnover());
+                    record.setInterestTurnover(totalRecord.getInterestTurnover());
+                    record.setDebtEndPeriod(totalRecord.getDebtEndPeriod());
+                    record.setInterestEndPeriod(totalRecord.getInterestEndPeriod());
+                    record.setTotalEndPeriod(totalRecord.getTotalEndPeriod());
                 }
             }
 
             responseDto.setRecords(previousRecords);
             return responseDto;
         }
+    }
+
+    private void addValuesKZTForm13(ConsolidatedKZTForm13RecordDto totalRecord, ConsolidatedKZTForm13RecordDto record){
+        double debtStart = record.getDebtStartPeriod() != null ? record.getDebtStartPeriod() : 0.0;
+        totalRecord.setDebtStartPeriod(MathUtils.add(totalRecord.getDebtStartPeriod(), debtStart));
+
+        double interestStart = record.getInterestStartPeriod() != null ? record.getInterestStartPeriod() : 0.0;
+        totalRecord.setInterestStartPeriod(MathUtils.add(totalRecord.getInterestStartPeriod(), interestStart));
+
+        double totalStart = record.getTotalStartPeriod() != null ? record.getTotalStartPeriod() : 0.0;
+        totalRecord.setTotalStartPeriod(MathUtils.add(totalRecord.getTotalStartPeriod(), totalStart));
+
+        double debtTurnover = record.getDebtTurnover() != null ? record.getDebtTurnover() : 0.0;
+        totalRecord.setDebtTurnover(MathUtils.add(totalRecord.getDebtTurnover(), debtTurnover));
+
+        double interestTurnover = record.getInterestTurnover() != null ? record.getInterestTurnover() : 0.0;
+        totalRecord.setInterestTurnover(MathUtils.add(totalRecord.getInterestTurnover(), interestTurnover));
+
+        double debtEnd = record.getDebtEndPeriod() != null ? record.getDebtEndPeriod() : 0.0;
+        totalRecord.setDebtEndPeriod(MathUtils.add(totalRecord.getDebtEndPeriod(), debtEnd));
+
+        double interestEnd = record.getInterestEndPeriod() != null ? record.getInterestEndPeriod() : 0.0;
+        totalRecord.setInterestEndPeriod(MathUtils.add(totalRecord.getInterestEndPeriod(), interestEnd));
+
+        double totalEnd = record.getTotalEndPeriod() != null ? record.getTotalEndPeriod() : 0.0;
+        totalRecord.setTotalEndPeriod(MathUtils.add(totalRecord.getTotalEndPeriod(), totalEnd));
+
     }
 
     private String getAgreementDescription(String name){

@@ -581,20 +581,134 @@
     </div>
     <div class="row">
         <div class="col-md-12">
+            <div class="col-md-1 pull-left">
+                <a class="btn btn-default" data-toggle="modal" data-target="#fundRenameModal" (click)="getFundRenameModal(record)" style="cursor: pointer">
+                    <!--<span class="glyphicon glyphicon-edit"></span>-->Fund Rename
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
             <div class="col-md-1 pull-right">
                 <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/NICKMFInput/', reportId]" *ngIf="showNextButton()">NEXT</button>
             </div>
         </div>
     </div>
 
-    <div class="modal fade" id="infoModal" role="dialog">
+    <div class="modal fade" id="fundRenameModal" role="dialog">
         <div class="modal-dialog" style="overflow-y: scroll; max-height:85%;  margin-top: 50px; margin-bottom:50px; width:65%;">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title"  style="word-wrap: break-word">{{selectedInfoHeader}}</h3>
+                    <h3 class="modal-title"  style="word-wrap: break-word">Select current Fund Names and matching previous Fund Names</h3>
                 </div>
                 <div class="modal-body">
-                    <p style="word-wrap: break-word;" [innerHTML]="selectedInfoContent"></p>
+
+                    <div class="row top-buffer" >
+                        <div class="col-md-12">
+                            <div class="alert alert-danger" *ngIf="errorMessageFundRename != null"><span style="white-space: pre-wrap">{{errorMessageFundRename}}</span>
+                            </div>
+                            <div class="alert alert-info" *ngIf="successMessageFundRename != null"><span>{{successMessageFundRename}}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--<p style="word-wrap: break-word;" [innerHTML]="selectedInfoContent"></p>-->
+                    <table [ngBusy]="busyFundRenameDialog" class="table table-hover table-responsive table-condensed">
+                        <tr>
+                            <td colspan="2" style="font-weight: bold">PRIVATE EQUITY</td>
+                            <td>
+                                <button class="btn btn-xs btn-primary" (click)="addPEFundRename()"> <span class="glyphicon glyphicon-plus"></span></button>
+                            </td>
+                        </tr>
+                        <tr *ngIf="fundRenamesPE != null && fundRenamesPE.length > 0">
+                            <td >Current Fund Name</td>
+                            <td>Previous Fund Name</td>
+                            <td>&nbsp;</td>
+                        </tr>
+                        <tr *ngFor="let pe of fundRenamesPE">
+                            <td width="50%">
+                                <select required class="form-control" style="width: 100%" [(ngModel)]="pe.currentFundName"
+                                        [ngModelOptions]="{standalone: true}" (ngModelChange)="fundNameSelected(fundNameListHolder.currentPEFundNameList, pe.currentFundName)">
+                                    <option *ngFor="let item of fundNameListHolder.currentPEFundNameList" [value]="item">{{item}}</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select required class="form-control" style="width: 100%" [(ngModel)]="pe.previousFundName"
+                                        [ngModelOptions]="{standalone: true}" (ngModelChange)="fundNameSelected(fundNameListHolder.previousPEFundNameList, pe.previousFundName)">
+                                    <option *ngFor="let item of fundNameListHolder.previousPEFundNameList" [value]="item">{{item}}</option>
+                                </select>
+                            </td>
+                            <td>
+                                <button class="btn btn-xs btn-danger" (click)="deleteFundRename(fundRenamesPE, pe)">
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="font-weight: bold">HEDGE FUNDS</td>
+                            <td>
+                                <button class="btn btn-xs btn-primary" (click)="addHFFundRename()"> <span class="glyphicon glyphicon-plus"></span></button>
+                            </td>
+                        </tr>
+                        <tr *ngIf="fundRenamesHF != null && fundRenamesHF.length > 0">
+                            <td >Current Fund Name</td>
+                            <td>Previous Fund Name</td>
+                            <td>&nbsp;</td>
+                        </tr>
+                        <tr *ngFor="let hf of fundRenamesHF">
+                            <td>
+                                <select required class="form-control" style="width: 100%" [(ngModel)]="hf.currentFundName"
+                                        [ngModelOptions]="{standalone: true}" (ngModelChange)="fundNameSelected(fundNameListHolder.currentHFFundNameList, hf.currentFundName)">
+                                    <option *ngFor="let item of fundNameListHolder.currentHFFundNameList" [value]="item">{{item}}</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select required class="form-control" style="width: 100%" [(ngModel)]="hf.previousFundName"
+                                        [ngModelOptions]="{standalone: true}" (ngModelChange)="fundNameSelected(fundNameListHolder.previousHFFundNameList, hf.previousFundName)">
+                                    <option *ngFor="let item of fundNameListHolder.previousHFFundNameList" [value]="item">{{item}}</option>
+                                </select>
+                            </td>
+                            <td>
+                                <button class="btn btn-xs btn-danger" (click)="deleteFundRename(fundRenamesHF, hf)">
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="font-weight: bold">REAL ESTATE</td>
+                            <td>
+                                <button class="btn btn-xs btn-primary" (click)="addREFundRename()"> <span class="glyphicon glyphicon-plus"></span></button>
+                            </td>
+                        </tr>
+                        <tr *ngIf="fundRenamesRE != null && fundRenamesRE.length > 0">
+                            <td >Current Fund Name</td>
+                            <td>Previous Fund Name</td>
+                            <td>&nbsp;</td>
+                        </tr>
+                        <tr *ngFor="let re of fundRenamesRE">
+                            <td>
+                                <select required class="form-control" style="width: 100%" [(ngModel)]="re.currentFundName"
+                                        [ngModelOptions]="{standalone: true}" (ngModelChange)="fundNameSelected(fundNameListHolder.currentREFundNameList, re.currentFundName)">
+                                    <option *ngFor="let item of fundNameListHolder.currentREFundNameList" [value]="item">{{item}}</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select required class="form-control" style="width: 100%" [(ngModel)]="re.previousFundName"
+                                        [ngModelOptions]="{standalone: true}" (ngModelChange)="fundNameSelected(fundNameListHolder.previousREFundNameList, re.previousFundName)">
+                                    <option *ngFor="let item of fundNameListHolder.previousREFundNameList" [value]="item">{{item}}</option>
+                                </select>
+                            </td>
+                            <td>
+                                <button class="btn btn-xs btn-danger" (click)="deleteFundRename(fundRenamesRE, re)">
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                </button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" (click)="saveFundRenames()">Save</button>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal" (click)="closeInfoModal()">Close</button>

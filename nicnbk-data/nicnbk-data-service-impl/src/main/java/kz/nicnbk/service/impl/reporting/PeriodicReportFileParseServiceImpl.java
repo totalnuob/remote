@@ -2239,24 +2239,24 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                 || !cell.getStringCellValue().trim().equalsIgnoreCase("Carlyle-MRE Terra GP, L.P.")) {
             logger.error("Table header check failed for 'Terra - Profit Loss' file. Expected: 'Carlyle-MRE Terra GP, L.P.', found '" +
                     ExcelUtils.getStringValueFromCell(cell) + "'");
-            throw new ExcelFileParseException("Table header check failed for 'Terra - Table header check failed for 'Terra - Balance Sheet' file. Expected: 'Carlyle-MRE Terra GP, L.P' file. Expected: 'Carlyle-MRE Terra GP, L.P.', found '" +
+            throw new ExcelFileParseException("Table header check failed for 'Terra - Profit Loss' file. Expected: 'Carlyle-MRE Terra GP, L.P.', found '" +
                     ExcelUtils.getStringValueFromCell(cell) + "'");
         }
 
         cell = row.getCell(3);
         if (ExcelUtils.isEmptyCell(cell) || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())
                 || !cell.getStringCellValue().trim().equalsIgnoreCase("NICK Master Fund Ltd.")) {
-            logger.error("Table header check failed for 'Terra - Table header check failed for 'Terra - Balance Sheet' file. Expected: 'Carlyle-MRE Terra GP, L.P' file. Expected: 'NICK Master Fund Ltd.', found '" +
+            logger.error("Table header check failed for 'Terra - Profit Loss' file. Expected: 'NICK Master Fund Ltd.', found '" +
                     ExcelUtils.getStringValueFromCell(cell) + "'");
-            throw new ExcelFileParseException("Table header check failed for 'Terra - Table header check failed for 'Terra - Balance Sheet' file. Expected: 'Carlyle-MRE Terra GP, L.P' file. Expected: 'NICK Master Fund Ltd.', found '" +
+            throw new ExcelFileParseException("Table header check failed for 'Terra - Profit Loss' file. Expected: 'NICK Master Fund Ltd.', found '" +
                     ExcelUtils.getStringValueFromCell(cell) + "'");
         }
         cell = row.getCell(4);
         if (ExcelUtils.isEmptyCell(cell) || cell.getCellType() != Cell.CELL_TYPE_STRING || StringUtils.isEmpty(cell.getStringCellValue())
                 || !cell.getStringCellValue().trim().equalsIgnoreCase("Grand Total")) {
-            logger.error("Table header check failed for 'Terra - Table header check failed for 'Terra - Balance Sheet' file. Expected: 'Carlyle-MRE Terra GP, L.P' file. Expected: 'Grand Total', found '" +
+            logger.error("Table header check failed for 'Terra - Profit Loss' file. Expected: 'Grand Total', found '" +
                     ExcelUtils.getStringValueFromCell(cell) + "'");
-            throw new ExcelFileParseException("Table header check failed for 'Terra - Table header check failed for 'Terra - Balance Sheet' file. Expected: 'Carlyle-MRE Terra GP, L.P' file. Expected: 'Grand Total', found '" +
+            throw new ExcelFileParseException("Table header check failed for 'Terra - Profit Loss' file. Expected: 'Grand Total', found '" +
                     ExcelUtils.getStringValueFromCell(cell) + "'");
         }
     }

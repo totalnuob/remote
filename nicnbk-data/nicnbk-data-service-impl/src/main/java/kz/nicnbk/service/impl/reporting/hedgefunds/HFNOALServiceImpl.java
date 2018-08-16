@@ -5,10 +5,13 @@ import kz.nicnbk.repo.api.reporting.hedgefunds.ReportingHFNOALRepository;
 import kz.nicnbk.repo.model.common.Currency;
 import kz.nicnbk.repo.model.reporting.PeriodicReport;
 import kz.nicnbk.repo.model.reporting.hedgefunds.ReportingHFNOAL;
+import kz.nicnbk.service.api.reporting.PeriodicReportService;
 import kz.nicnbk.service.api.reporting.hedgefunds.HFNOALService;
 import kz.nicnbk.service.converter.reporting.PeriodicReportConverter;
 import kz.nicnbk.service.datamanager.LookupService;
 import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordHolderDto;
+import kz.nicnbk.service.dto.reporting.ReportingFundRenameInfoDto;
+import kz.nicnbk.service.dto.reporting.ReportingFundRenamePairDto;
 import kz.nicnbk.service.dto.reporting.SingularityNOALRecordDto;
 import kz.nicnbk.service.dto.reporting.exception.ExcelFileParseException;
 import org.slf4j.Logger;
@@ -38,6 +41,9 @@ public class HFNOALServiceImpl implements HFNOALService {
 
     @Autowired
     private PeriodicReportConverter periodicReportConverter;
+
+    @Autowired
+    private PeriodicReportService periodicReportService;
 
     @Override
     public ReportingHFNOAL assemble(SingularityNOALRecordDto dto, Long reportId) {

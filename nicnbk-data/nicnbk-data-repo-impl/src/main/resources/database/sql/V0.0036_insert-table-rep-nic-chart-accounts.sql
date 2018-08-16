@@ -34,7 +34,7 @@ INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_cha
 INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(34, '7473.080.l', null, 'Амортизация организационных расходов Singularity', null, 8);
 INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(35, '7473.080.m', null, 'Расходы третьих сторон, относимые на Singularity', null, 8);
 INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(36, '6150.030.a', null, 'Реализованные доходы/расходы по инвестициям в фонд', null, 14);
-INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(37, '6150.030.b', null, 'Прочий инвестиционный доход/расход', null, 14);
+INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(37, '6150.030.b', null, 'Прочий инвестиционный доход (убыток)', null, 14);
 INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(38, '3393.020.h', null, 'Счета к оплате и начисленные расходы Tarragon', null, 4);
 INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(39, '3393.020.i', null, 'К оплате по инвестициям Tarragon', null, 4);
 INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(40, '3393.020.j', null, 'К оплате менеджеру Tarragon', null, 4);
@@ -81,6 +81,15 @@ INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_cha
 
 INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(71, '3393.020.r', null, 'Комиссия за управление к оплате Terra', null, 4);
 INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(72, '7473.080.y', null, 'Комиссия за управление Terra', null, 8);
+
+INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(73, '1623.010.d', null, 'К получению от Менеджера Tarragon', null, 16);
+INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(74, '1623.010.e', null, 'Подоходный налог к получению Tarragon', null, 16);
+
+INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(75, '6283.080.c', null, 'Экономия по текущему налогу Tarragon', null, 15);
+
+
+
+
 
 
 
