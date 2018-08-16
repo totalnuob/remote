@@ -234,6 +234,13 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
         record.id = record.addedRecordId;
         record.entityName = record.subscriptionRedemptionEntity.trim();
         this.addedRecordsHolder.records.push(record);
+
+        for (var i = this.records.length; i--;) {
+            if (this.records[i] === record) {
+                this.records.splice(i, 1);
+            }
+        }
+
         this.postAction(this.successMessage, this.errorMessage);
     }
 
