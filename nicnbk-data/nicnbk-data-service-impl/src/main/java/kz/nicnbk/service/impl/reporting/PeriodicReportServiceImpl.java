@@ -1800,6 +1800,11 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                     for(ConsolidatedBalanceFormRecordDto previousRecord: previousRecords){
                         for(int i = 0; currentRecords != null && i < currentRecords.size(); i++){
                             ConsolidatedBalanceFormRecordDto currentRecord = currentRecords.get(i);
+                            if(previousRecord.getAccountNumber() == null && previousRecord.getLineNumber() != null &&
+                                    (previousRecord.getLineNumber() == 1 || previousRecord.getLineNumber() == 14)){
+                                previousRecord.setCurrentAccountBalance(null);
+                                previousRecord.setPreviousAccountBalance(null);
+                            }
                             if(isMatchingRecords(currentRecord, previousRecord)){
                                 currentRecord.setPreviousAccountBalance(previousRecord.getCurrentAccountBalance());
                                 break;
@@ -2182,12 +2187,12 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         Double lineNumber36Value = null;
         for(int i = 0; i < records.size(); i++){
             ConsolidatedBalanceFormRecordDto record = records.get(i);
-            if(record.getLineNumber() != null && (record.getLineNumber() == 1 || record.getLineNumber() == 13)
+            if(record.getLineNumber() != null && (/*record.getLineNumber() == 1 ||*/ record.getLineNumber() == 13)
                     && record.getAccountNumber() == null){
                 Double value = MathUtils.add(MathUtils.add(sums.get(2), sums.get(8)), sums.get(11)).doubleValue();
                 record.setCurrentAccountBalance(value);
                 sums.put(record.getLineNumber(), new BigDecimal(record.getCurrentAccountBalance()));
-            }else if(record.getLineNumber() != null && (record.getLineNumber() == 14 || record.getLineNumber() == 25)
+            }else if(record.getLineNumber() != null && (/*record.getLineNumber() == 14 ||*/ record.getLineNumber() == 25)
                     && record.getAccountNumber() == null){
                 Double value = MathUtils.add(sums.get(16), sums.get(24)).doubleValue();
                 record.setCurrentAccountBalance(value);
