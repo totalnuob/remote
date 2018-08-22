@@ -45,7 +45,9 @@ INSERT INTO rep_singularity_nic_chart_of_accounts(id, singularity_account_number
 
 INSERT INTO rep_singularity_nic_chart_of_accounts(id, singularity_account_number, nic_chart_accounts_id) VALUES(42, '2810', 57);
 
-INSERT INTO rep_singularity_nic_chart_of_accounts(id, singularity_account_number, nic_chart_accounts_id) VALUES(43, '4610', 37);
+--INSERT INTO rep_singularity_nic_chart_of_accounts(id, singularity_account_number, nic_chart_accounts_id) VALUES(43, '4610', 37);
+INSERT INTO rep_singularity_nic_chart_of_accounts(id, singularity_account_number, nic_chart_accounts_id) VALUES(43, '4610', 76);
+
 
 
 
