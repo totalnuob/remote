@@ -1,10 +1,12 @@
 import {UpdatedEntity} from "./updated-entity";
 export class BaseDictionary extends UpdatedEntity {
-
+    id: number;
     code: string;
     nameEn: string;
     nameRu: string;
     nameKz: string;
+
+    parent: BaseDictionary;
 
     constructor(code?: string, nameEn?: string, nameRu?: string, nameKz?: string){
 

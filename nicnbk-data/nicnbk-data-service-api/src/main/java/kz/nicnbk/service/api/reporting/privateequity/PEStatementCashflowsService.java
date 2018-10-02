@@ -20,5 +20,7 @@ public interface PEStatementCashflowsService extends BaseService {
 
     ConsolidatedReportRecordHolderDto get(Long reportId);
 
+    boolean existEntityWithType(String code);
+
     boolean deleteByReportId(Long reportId);
 }

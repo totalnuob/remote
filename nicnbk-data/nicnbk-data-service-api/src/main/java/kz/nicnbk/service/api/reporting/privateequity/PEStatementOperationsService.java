@@ -21,6 +21,8 @@ public interface PEStatementOperationsService extends BaseService {
 
     ConsolidatedReportRecordHolderDto get(Long reportId);
 
+    boolean existEntityWithType(String code);
+
     List<StatementBalanceOperationsDto> getStatementOperationsRecords(Long reportId);
 
     boolean deleteByReportId(Long reportId);

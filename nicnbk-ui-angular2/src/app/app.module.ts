@@ -97,6 +97,11 @@ import {TerraGeneratedFormNBReportingComponent} from "./reporting/terra.generate
 import {TerraCombinedNBReportingComponent} from "./reporting/terra.combined.nb.reporting.component";
 import {PreviousYearInputViewNBReportingComponent} from "./reporting/previous.year.input.view.nb.reporting.component";
 import {TerraGeneratedFormViewNBReportingComponent} from "./reporting/terra.generated.form.view.nb.reporting.component";
+import {LookupValuesNBReportingComponent} from "./reporting/lookup.values.nb.reporting.component";
+import {CurrencyRatesLookupValuesNBReportingComponent} from "./reporting/currency.rates.lookup.values.nb.reporting.component";
+import {TypedLookupValuesNBReportingComponent} from "./reporting/typed.lookup.values.nb.reporting.component";
+import {PeriodicDataNBReportingComponent} from "./reporting/periodic.data.nb.reporting.component";
+import {MatchingLookupValuesNBReportingComponent} from "./reporting/matching.lookup.values.nb.reporting.component";
 
 @NgModule({
     imports: [
@@ -131,6 +136,7 @@ import {TerraGeneratedFormViewNBReportingComponent} from "./reporting/terra.gene
         HFFundProfileComponent, HFManagerProfileComponent, HFManagerSearchComponent,
         PEFundProfileComponent, PEFirmProfileComponent, PEFirmSearchComponent, PEFundReportComponent,
         AccessDeniedComponent,NotFoundComponent,
+        LookupValuesNBReportingComponent, CurrencyRatesLookupValuesNBReportingComponent, TypedLookupValuesNBReportingComponent,PeriodicDataNBReportingComponent,MatchingLookupValuesNBReportingComponent,
         ScheduleInvestmentsNBReportingComponent, StatementBalanceOperationsNBReportingComponent, StatementCashflowsNBReportingComponent, StatementChangesNBReportingComponent,
         SingularityGeneralLedgerBalanceNBReportingComponent, SingularityNOALTrancheANBReportingComponent, SingularityNOALTrancheBNBReportingComponent,TerraGeneralLedgerBalanceNBReportingComponent,TerraCombinedNBReportingComponent,
         OtherInfoInputNBReportingComponent, /*GenerateReportsNBReportingComponent,*/ NICKMFInputNBReportingComponent, SingularGeneratedFormNBReportingComponent, TarragonGeneratedFormNBReportingComponent,

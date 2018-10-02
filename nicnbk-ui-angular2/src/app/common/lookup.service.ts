@@ -38,6 +38,28 @@ import {RESERVE_CALCULATION_EXPORT_APPROVE_LIST_TYPE_URL} from "./lookup.service
 import {CORP_MEETING_TYPE_URL} from "./lookup.service.url";
 import {TERRA_NIC_REPORTING_CHART_OF_ACCOUNTS_URL} from "./lookup.service.url";
 import {TerraNICReportingChartOfAccounts} from "../reporting/model/terra,.nic.reporting.chart.of.accounts.";
+import {GET_CURRENCY_RATES_URL} from "./lookup.service.url";
+import {SEARCH_CURRENCY_RATES_URL} from "./lookup.service.url";
+import {SAVE_CURRENCY_RATES_URL} from "./lookup.service.url";
+import {DELETE_CURRENCY_RATES_URL} from "./lookup.service.url";
+import {NB_REP_TARRAGON_BALANCE_TYPE_URL} from "./lookup.service.url";
+import {NB_REP_TARRAGON_OPERATIONS_TYPE_URL} from "./lookup.service.url";
+import {NB_REP_TARRAGON_CASHFLOWS_TYPE_URL} from "./lookup.service.url";
+import {SAVE_LOOKUP_VALUE_URL} from "./lookup.service.url";
+import {NB_REP_SINGULARITY_CHART_ACCOUNTS_TYPE_URL} from "./lookup.service.url";
+import {NB_CHART_ACCOUNTS__URL} from "./lookup.service.url";
+import {NB_REP_TERRA_CHART_ACCOUNTS_TYPE_URL} from "./lookup.service.url";
+import {NB_REP_TERRA_BALANCE_TYPE_URL} from "./lookup.service.url";
+import {NB_REP_TERRA_PROFIT_LOSS_TYPE_URL} from "./lookup.service.url";
+import {PERIODIC_DATA_TYPES_URL} from "./lookup.service.url";
+import {NIC_SINGULARITY_CHART_ACCOUNTS_URL} from "./lookup.service.url";
+import {NIC_TARRAGON_CHART_ACCOUNTS_URL} from "./lookup.service.url";
+import {NIC_TERRA_CHART_ACCOUNTS_URL} from "./lookup.service.url";
+import {SAVE_MATCHING_NIC_CHART_ACCOUNTS_URL} from "./lookup.service.url";
+import {SAVE_NIC_CHART_ACCOUNTS_URL} from "./lookup.service.url";
+import {SEARCH_NIC_REPORTING_CHART_OF_ACCOUNTS_URL} from "./lookup.service.url";
+import {DELETE_LOOKUP_VALUE_BY_TYPE_URL} from "./lookup.service.url";
+import {DELETE_MATCHING_LOOKUP_VALUE_BY_TYPE_URL} from "./lookup.service.url";
 
 
 @Injectable()
@@ -226,6 +248,9 @@ export class LookupService extends CommonService{
             .catch(this.handleErrorResponse);
     }
 
+
+    //TODO: switch to searching
+
     getNICReportingChartOfAccounts(code): Observable<NICReportingChartOfAccounts[]>{
         if(code){
             return this.http.get(NIC_REPORTING_CHART_OF_ACCOUNTS_URL + code, this.getOptionsWithCredentials())
@@ -237,6 +262,14 @@ export class LookupService extends CommonService{
                 .catch(this.handleErrorResponse);
         }
 
+    }
+
+    searchNICReportingChartOfAccounts(searchParams){
+        let body = JSON.stringify(searchParams);
+        //console.log(body);
+        return this.http.post(SEARCH_NIC_REPORTING_CHART_OF_ACCOUNTS_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
     }
 
     getAddableTarragonNICReportingChartOfAccounts(): Observable<TarragonNICReportingChartOfAccounts[]>{
@@ -383,4 +416,129 @@ export class LookupService extends CommonService{
             .map(this.extractDataList)
             .catch(this.handleErrorResponse);
     }
+
+    getCurrencyRates(searchParams){
+        console.log(searchParams);
+        let body = JSON.stringify(searchParams);
+
+        console.log(body);
+        return this.http.post(SEARCH_CURRENCY_RATES_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    saveCurrencyRates(item){
+        let body = JSON.stringify(item);
+        return this.http.post(SAVE_CURRENCY_RATES_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    deleteCurrencyRates(id){
+        return this.http.delete(DELETE_CURRENCY_RATES_URL + id, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+
+    getNBReportingTarragonBalanceType(): Observable<BaseDictionary[]>{
+        return this.http.get(NB_REP_TARRAGON_BALANCE_TYPE_URL, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+
+    getNBReportingTarragonOperationsType(): Observable<BaseDictionary[]>{
+        return this.http.get(NB_REP_TARRAGON_OPERATIONS_TYPE_URL, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+    getNBReportingTarragonCashflowsType(): Observable<BaseDictionary[]>{
+        return this.http.get(NB_REP_TARRAGON_CASHFLOWS_TYPE_URL, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+    getNBReportingSingularityChartAccountsType(): Observable<BaseDictionary[]>{
+        return this.http.get(NB_REP_SINGULARITY_CHART_ACCOUNTS_TYPE_URL, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+    getNBReportingTerraChartAccountsType(): Observable<BaseDictionary[]>{
+        return this.http.get(NB_REP_TERRA_CHART_ACCOUNTS_TYPE_URL, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+    getNBReportingTerraBalanceType(): Observable<BaseDictionary[]>{
+        return this.http.get(NB_REP_TERRA_BALANCE_TYPE_URL, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+    getNBReportingTerraProfitLossType(): Observable<BaseDictionary[]>{
+        return this.http.get(NB_REP_TERRA_PROFIT_LOSS_TYPE_URL, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+    getNBChartAccounts(): Observable<BaseDictionary[]>{
+        return this.http.get(NB_CHART_ACCOUNTS__URL, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+
+    saveLookupValue(lookupType, item){
+        let body = JSON.stringify(item);
+        return this.http.post(SAVE_LOOKUP_VALUE_URL + lookupType, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    getPeriodicDataType(): Observable<BaseDictionary[]>{
+        return this.http.get(PERIODIC_DATA_TYPES_URL, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+
+    getNBReportingNICSingularityChartAccounts(){
+        return this.http.get(NIC_SINGULARITY_CHART_ACCOUNTS_URL, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+
+    getNBReportingNICTarragonChartAccounts(){
+        return this.http.get(NIC_TARRAGON_CHART_ACCOUNTS_URL, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+
+    getNBReportingNICTerraChartAccounts(){
+        return this.http.get(NIC_TERRA_CHART_ACCOUNTS_URL, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+
+    saveMatchingNICChartAccounts(lookupType, item){
+        let body = JSON.stringify(item);
+        return this.http.post(SAVE_MATCHING_NIC_CHART_ACCOUNTS_URL + lookupType, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+    saveNICChartAccounts(item){
+        let body = JSON.stringify(item);
+        return this.http.post(SAVE_NIC_CHART_ACCOUNTS_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    deleteTypedLookupValue(type, id){
+        return this.http.delete(DELETE_LOOKUP_VALUE_BY_TYPE_URL + type + "/" + id, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    deleteMathcingLookupValue(type, id){
+        return this.http.delete(DELETE_MATCHING_LOOKUP_VALUE_BY_TYPE_URL + type + "/" + id, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+
+
 }

@@ -228,28 +228,59 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
         List<SingularityNICChartOfAccounts> entities = this.singularityNICChartOfAccountsRepository.findBySingularityAccountNumber(accountNumber);
         if(entities != null && !entities.isEmpty()){
             SingularityNICChartOfAccounts entity = entities.get(0);
-            if(accountNumber.equalsIgnoreCase("4200") || accountNumber.equalsIgnoreCase("4900")){
-                for(SingularityNICChartOfAccounts anEntity: entities){
-                    if(accountBalance > 0){ // 7330.030
-                        if(anEntity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode().equalsIgnoreCase("7330.030")){
-                            entity = anEntity;
-                        }
-                    }else{ // 6150.030
-                        if(anEntity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode().equalsIgnoreCase("6150.030")){
-                            entity = anEntity;
-                        }
-                    }
-
-                }
-            }else if(accountNumber.equalsIgnoreCase("2810")){
-                for(SingularityNICChartOfAccounts anEntity: entities){
-                    if(accountBalance >= 0 && anEntity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode().equalsIgnoreCase("1623.010")){
-                            entity = anEntity;
-                    }else if(accountBalance < 0 && anEntity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode().equalsIgnoreCase("3393.020")){
-                            entity = anEntity;
-                    }
-                }
+            if(entity.getPositiveOnly() != null && entity.getPositiveOnly().booleanValue() && accountBalance < 0){
+                return null;
+            }else if(entity.getNegativeOnly() != null && entity.getNegativeOnly().booleanValue() && accountBalance >= 0){
+                return null;
             }
+            if(entities.size() == 2){
+                boolean found = false;
+                for(SingularityNICChartOfAccounts anEntity: entities) {
+                    if (accountBalance != null && accountBalance.doubleValue() < 0) {
+                        if (anEntity.getNegativeOnly() != null && anEntity.getNegativeOnly().booleanValue()) {
+                            entity = anEntity;
+                            found = true;
+                            break;
+                        }
+                    } else if (accountBalance != null && accountBalance.doubleValue() >= 0) {
+                        if (anEntity.getPositiveOnly() != null && anEntity.getPositiveOnly().booleanValue()) {
+                            entity =anEntity;
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                if(!found){
+                    logger.error("Error setting Singularity NIC Chart of accounts for '" + accountNumber + "' " +
+                            " : positiveOnly/negativeOnly flags not set properly");
+                }
+            }else if(entities.size() > 2){
+                logger.error("Error setting Singularity NIC Chart of accounts for '" + accountNumber + "' " +
+                        " : more than 2 mappings found.");
+            }
+
+//            if(accountNumber.equalsIgnoreCase("4200") || accountNumber.equalsIgnoreCase("4900")){
+//                for(SingularityNICChartOfAccounts anEntity: entities){
+//                    if(accountBalance > 0){ // 7330.030
+//                        if(anEntity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode().equalsIgnoreCase("7330.030")){
+//                            entity = anEntity;
+//                        }
+//                    }else{ // 6150.030
+//                        if(anEntity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode().equalsIgnoreCase("6150.030")){
+//                            entity = anEntity;
+//                        }
+//                    }
+//
+//                }
+//            }else if(accountNumber.equalsIgnoreCase("2810")){
+//                for(SingularityNICChartOfAccounts anEntity: entities){
+//                    if(accountBalance >= 0 && anEntity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode().equalsIgnoreCase("1623.010")){
+//                            entity = anEntity;
+//                    }else if(accountBalance < 0 && anEntity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode().equalsIgnoreCase("3393.020")){
+//                            entity = anEntity;
+//                    }
+//                }
+//            }
 
             NICReportingChartOfAccountsDto dto = new NICReportingChartOfAccountsDto();
             dto.setCode(entity.getNicReportingChartOfAccounts().getCode());

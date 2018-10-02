@@ -57,4 +57,9 @@ public interface PeriodicReportREService {
 
     TerraCombinedDataHolderDto getTerraCombinedParsedData(Long reportId);
 
+    boolean existBalanceEntityWithType(String code);
+
+    boolean existProfitLossEntityWithType(String code);
+
+
 }

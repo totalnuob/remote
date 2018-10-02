@@ -1,6 +1,8 @@
 package kz.nicnbk.service.datamanager;
 
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
+import kz.nicnbk.common.service.util.PaginationUtils;
+import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.api.lookup.*;
 import kz.nicnbk.repo.api.lookup.CurrencyRepository;
 import kz.nicnbk.repo.api.lookup.GeographyRepository;
@@ -9,9 +11,11 @@ import kz.nicnbk.repo.api.macromonitor.MacroMonitorFieldRepository;
 import kz.nicnbk.repo.api.macromonitor.MacroMonitorTypeRepository;
 import kz.nicnbk.repo.api.pe.IndustryRepository;
 import kz.nicnbk.repo.api.reporting.*;
+import kz.nicnbk.repo.api.reporting.hedgefunds.SingularityNICChartOfAccountsRepository;
 import kz.nicnbk.repo.api.reporting.privateequity.TarragonNICChartOfAccountsRepository;
 import kz.nicnbk.repo.api.reporting.realestate.TerraNICChartOfAccountsRepository;
 import kz.nicnbk.repo.model.base.BaseTypeEntity;
+import kz.nicnbk.repo.model.base.BaseTypeEntityImpl;
 import kz.nicnbk.repo.model.common.*;
 import kz.nicnbk.repo.model.corpmeetings.CorpMeetingType;
 import kz.nicnbk.repo.model.files.FilesType;
@@ -24,18 +28,31 @@ import kz.nicnbk.repo.model.macromonitor.MacroMonitorType;
 import kz.nicnbk.repo.model.news.NewsType;
 import kz.nicnbk.repo.model.pe.PEIndustry;
 import kz.nicnbk.repo.model.reporting.*;
+import kz.nicnbk.repo.model.reporting.PeriodicReportType;
 import kz.nicnbk.repo.model.reporting.hedgefunds.FinancialStatementCategory;
-import kz.nicnbk.repo.model.reporting.privateequity.PEInvestmentType;
-import kz.nicnbk.repo.model.reporting.privateequity.TarragonNICChartOfAccounts;
+import kz.nicnbk.repo.model.reporting.hedgefunds.HFChartOfAccountsType;
+import kz.nicnbk.repo.model.reporting.hedgefunds.SingularityNICChartOfAccounts;
+import kz.nicnbk.repo.model.reporting.privateequity.*;
 import kz.nicnbk.repo.model.reporting.realestate.REBalanceType;
+import kz.nicnbk.repo.model.reporting.realestate.REProfitLossType;
 import kz.nicnbk.repo.model.reporting.realestate.TerraNICChartOfAccounts;
 import kz.nicnbk.repo.model.tripmemo.TripType;
-import kz.nicnbk.service.dto.reporting.NICReportingChartOfAccountsDto;
-import kz.nicnbk.service.dto.reporting.TarragonNICReportingChartOfAccountsDto;
+import kz.nicnbk.service.api.reporting.PeriodicReportService;
+import kz.nicnbk.service.api.reporting.hedgefunds.HFGeneralLedgerBalanceService;
+import kz.nicnbk.service.api.reporting.privateequity.PEStatementBalanceService;
+import kz.nicnbk.service.api.reporting.privateequity.PEStatementCashflowsService;
+import kz.nicnbk.service.api.reporting.privateequity.PEStatementOperationsService;
+import kz.nicnbk.service.api.reporting.privateequity.PeriodicReportPEService;
+import kz.nicnbk.service.api.reporting.realestate.PeriodicReportREService;
+import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
+import kz.nicnbk.service.dto.common.ListResponseDto;
+import kz.nicnbk.service.dto.reporting.*;
 import kz.nicnbk.service.dto.reporting.realestate.TerraNICReportingChartOfAccountsDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -50,6 +67,11 @@ import java.util.List;
 public class LookupServiceImpl implements LookupService {
 
     private static final Logger logger = LoggerFactory.getLogger(LookupServiceImpl.class);
+
+    int DEFAULT_PAGES_PER_VIEW = 5;
+
+    /* Number of elements per page */
+    int DEFAULT_PAGE_SIZE = 20;
 
 
     @Autowired
@@ -159,6 +181,55 @@ public class LookupServiceImpl implements LookupService {
 
     @Autowired
     private REBalanceTypeRepository reBalanceTypeRepository;
+
+    @Autowired
+    private PEBalanceTypeRepository peBalanceTypeRepository;
+
+    @Autowired
+    private PEOperationsTypeRepository peOperationsTypeRepository;
+
+    @Autowired
+    private PECashflowsTypeRepository peCashflowsTypeRepository;
+
+    @Autowired
+    private HFChartOfAccountsTypeRepository hfChartOfAccountsTypeRepository;
+
+    @Autowired
+    private REChartOfAccountsTypeRepository reChartOfAccountsTypeRepository;
+
+    @Autowired
+    private REProfitLossTypeRepository reProfitLossTypeRepository;
+
+    @Autowired
+    private PeriodicDataTypeRepository periodicDataTypeRepository;
+
+    @Autowired
+    private SingularityNICChartOfAccountsRepository singularityNICChartOfAccountsRepository;
+
+    @Autowired
+    private PEStatementBalanceService peStatementBalanceService;
+
+    @Autowired
+    private PEStatementOperationsService peStatementOperationsService;
+
+    @Autowired
+    private PEStatementCashflowsService peStatementCashflowsService;
+
+    @Autowired
+    private HFGeneralLedgerBalanceService hfGeneralLedgerBalanceService;
+
+    @Autowired
+    private PeriodicReportREService reService;
+
+    @Autowired
+    private PeriodicReportService periodicReportService;
+
+    @Autowired
+    private PeriodicReportPEService periodicReportPEService;
+
+    @Autowired
+    private PeriodicReportREService periodicReportREService;
+
 
     @Override
     public <T extends BaseTypeEntity> T findByTypeAndCode(Class<T> clazz, String code) {
@@ -466,6 +537,7 @@ public class LookupServiceImpl implements LookupService {
             while (iterator.hasNext()) {
                 NBChartOfAccounts entity = iterator.next();
                 BaseDictionaryDto dto = disassemble(entity);
+                dto.setEditable(checkEditableTypedLookup(NB_CHART_ACCOUNTS, dto));
                 dtoList.add(dto);
             }
             return dtoList;
@@ -492,6 +564,7 @@ public class LookupServiceImpl implements LookupService {
                 if(entity.getNbChartOfAccounts() != null) {
                     dto.setNBChartOfAccounts(disassemble(entity.getNbChartOfAccounts()));
                 }
+                dto.setEditable(true);
                 dtoList.add(dto);
             }
             return dtoList;
@@ -500,6 +573,48 @@ public class LookupServiceImpl implements LookupService {
         }
         return null;
 
+    }
+
+    @Override
+    public NICChartOfAccountsPagedSearchResultDto searchNICReportingChartOfAccounts(NICChartOfAccountsSearchParamsDto searchParams) {
+        if(searchParams == null){
+            searchParams = new NICChartOfAccountsSearchParamsDto();
+            searchParams.setPage(0);
+            searchParams.setPageSize(DEFAULT_PAGE_SIZE);
+        }else if(searchParams.getPageSize() == 0){
+            searchParams.setPageSize(DEFAULT_PAGE_SIZE);
+        }
+
+        NICChartOfAccountsPagedSearchResultDto result = new NICChartOfAccountsPagedSearchResultDto();
+        int page = searchParams != null && searchParams.getPage() > 0 ? searchParams.getPage() - 1 : 0;
+        Page<NICReportingChartOfAccounts> entityPage = this.nicReportingChartOfAccountsRepository.searchByNBCode(searchParams.getNbCode(),
+                new PageRequest(page, searchParams.getPageSize(),
+                        new Sort(Sort.Direction.ASC, "code", "id")));
+        if(entityPage != null && entityPage.getContent() != null){
+
+            result.setTotalElements(entityPage.getTotalElements());
+            if (entityPage.getTotalElements() > 0) {
+                result.setShowPageFrom(PaginationUtils.getShowPageFrom(DEFAULT_PAGES_PER_VIEW, page + 1));
+                result.setShowPageTo(PaginationUtils.getShowPageTo(DEFAULT_PAGES_PER_VIEW,
+                        page + 1, result.getShowPageFrom(), entityPage.getTotalPages()));
+            }
+            result.setTotalPages(entityPage.getTotalPages());
+            result.setCurrentPage(page + 1);
+            if (searchParams != null) {
+                result.setSearchParams(searchParams.getSearchParamsAsString());
+            }
+
+            if(entityPage != null && entityPage.getContent() != null) {
+                for(NICReportingChartOfAccounts entity: entityPage.getContent()){
+                    NICReportingChartOfAccountsDto dto = new NICReportingChartOfAccountsDto(disassemble(entity));
+                    dto.setNBChartOfAccounts(disassemble(entity.getNbChartOfAccounts()));
+                    dto.setEditable(true);
+                    result.add(dto);
+                }
+            }
+        }
+
+        return result;
     }
 
     @Override
@@ -637,11 +752,19 @@ public class LookupServiceImpl implements LookupService {
     // TODO: refactor as common lookup converter
     private BaseDictionaryDto disassemble(BaseTypeEntity entity){
         BaseDictionaryDto dto = new BaseDictionaryDto();
+        dto.setId(entity.getId());
         dto.setCode(entity.getCode());
         dto.setNameEn(entity.getNameEn());
         dto.setNameRu(entity.getNameRu());
         dto.setNameKz(entity.getNameKz());
         return dto;
+    }
+
+    private void setValues(BaseDictionaryDto source, BaseTypeEntityImpl dest){
+        dest.setCode(source.getCode());
+        dest.setNameEn(source.getNameEn());
+        dest.setNameRu(source.getNameRu() == null ? "" : source.getNameRu());
+        dest.setNameKz(source.getNameKz());
     }
 
     @Override
@@ -707,8 +830,1397 @@ public class LookupServiceImpl implements LookupService {
             }
             return dtoList;
         } catch (Exception ex) {
-            logger.error("Failed to load lookup: MeetingType", ex);
+            logger.error("Failed to load lookup: CorpMeetingType", ex);
         }
         return null;
     }
+
+    @Override
+    public List<BaseDictionaryDto> getNBReportingTarragonBalanceTypeLookup() {
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            Iterator<PEBalanceType> iterator = this.peBalanceTypeRepository.findAll().iterator();
+            while (iterator.hasNext()) {
+                PEBalanceType entity = iterator.next();
+                BaseDictionaryDto dto = disassemble(entity);
+                if(entity.getParent() != null){
+                    dto.setParent(disassemble(entity.getParent()));
+                }
+
+                dto.setEditable(checkEditableTypedLookup(PE_BALANCE_TYPE, dto));
+
+                dtoList.add(dto);
+            }
+            return dtoList;
+        } catch (Exception ex) {
+            logger.error("Failed to load lookup: PEBalanceType", ex);
+        }
+        return null;
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getNBReportingTarragonOperationsTypeLookup() {
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            Iterator<PEOperationsType> iterator = this.peOperationsTypeRepository.findAll().iterator();
+            while (iterator.hasNext()) {
+                PEOperationsType entity = iterator.next();
+                BaseDictionaryDto dto = disassemble(entity);
+                if(entity.getParent() != null){
+                    dto.setParent(disassemble(entity.getParent()));
+                }
+                dto.setEditable(checkEditableTypedLookup(PE_OPS_TYPE, dto));
+                dtoList.add(dto);
+            }
+            return dtoList;
+        } catch (Exception ex) {
+            logger.error("Failed to load lookup: PEOperationsType", ex);
+        }
+        return null;
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getNBReportingTarragonCashflowsTypeLookup() {
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            Iterator<PECashflowsType> iterator = this.peCashflowsTypeRepository.findAll().iterator();
+            while (iterator.hasNext()) {
+                PECashflowsType entity = iterator.next();
+                BaseDictionaryDto dto = disassemble(entity);
+                if(entity.getParent() != null){
+                    dto.setParent(disassemble(entity.getParent()));
+                }
+                dto.setEditable(checkEditableTypedLookup(PE_CASHFLOW_TYPE, dto));
+                dtoList.add(dto);
+            }
+            return dtoList;
+        } catch (Exception ex) {
+            logger.error("Failed to load lookup: PECashflowsType", ex);
+        }
+        return null;
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getNBReportingSingularityChartAccountsTypeLookup() {
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            Iterator<HFChartOfAccountsType> iterator = this.hfChartOfAccountsTypeRepository.findAll().iterator();
+            while (iterator.hasNext()) {
+                HFChartOfAccountsType entity = iterator.next();
+                BaseDictionaryDto dto = disassemble(entity);
+                if(entity.getParent() != null){
+                    dto.setParent(disassemble(entity.getParent()));
+                }
+                dto.setEditable(checkEditableTypedLookup(HF_CHART_ACCOUNTS_TYPE, dto));
+                dtoList.add(dto);
+            }
+            return dtoList;
+        } catch (Exception ex) {
+            logger.error("Failed to load lookup: HFChartOfAccountsType", ex);
+        }
+        return null;
+    }
+
+//    @Override
+//    public List<BaseDictionaryDto> getNBReportingTerraChartAccountsTypeLookup() {
+//        // UNUSED
+//        try {
+//            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+//            Iterator<REChartOfAccountsType> iterator = this.reChartOfAccountsTypeRepository.findAll().iterator();
+//            while (iterator.hasNext()) {
+//                REChartOfAccountsType entity = iterator.next();
+//                BaseDictionaryDto dto = disassemble(entity);
+//                if(entity.getParent() != null){
+//                    dto.setParent(disassemble(entity.getParent()));
+//                }
+//                dtoList.add(dto);
+//            }
+//            return dtoList;
+//        } catch (Exception ex) {
+//            logger.error("Failed to load lookup: REChartOfAccountsType", ex);
+//        }
+//        return null;
+//    }
+
+    @Override
+    public List<BaseDictionaryDto> getNBReportingTerraBalanceTypeLookup() {
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            Iterator<REBalanceType> iterator = this.reBalanceTypeRepository.findAll().iterator();
+            while (iterator.hasNext()) {
+                REBalanceType entity = iterator.next();
+                BaseDictionaryDto dto = disassemble(entity);
+                if(entity.getParent() != null){
+                    dto.setParent(disassemble(entity.getParent()));
+                }
+                dto.setEditable(checkEditableTypedLookup(RE_BALANCE_TYPE, dto));
+                dtoList.add(dto);
+            }
+            return dtoList;
+        } catch (Exception ex) {
+            logger.error("Failed to load lookup: REBalanceType", ex);
+        }
+        return null;
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getNBReportingTerraProfitLossTypeLookup() {
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            Iterator<REProfitLossType> iterator = this.reProfitLossTypeRepository.findAll().iterator();
+            while (iterator.hasNext()) {
+                REProfitLossType entity = iterator.next();
+                BaseDictionaryDto dto = disassemble(entity);
+                if(entity.getParent() != null){
+                    dto.setParent(disassemble(entity.getParent()));
+                }
+                dto.setEditable(checkEditableTypedLookup(RE_PROFIT_LOSS_TYPE, dto));
+                dtoList.add(dto);
+            }
+            return dtoList;
+        } catch (Exception ex) {
+            logger.error("Failed to load lookup: REProfitLossType", ex);
+        }
+        return null;
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getPeriodicDataTypesLookup() {
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            Iterator<PeriodicDataType> iterator = this.periodicDataTypeRepository.findAll().iterator();
+            while (iterator.hasNext()) {
+                PeriodicDataType entity = iterator.next();
+                BaseDictionaryDto dto = disassemble(entity);
+                dtoList.add(dto);
+            }
+            return dtoList;
+        } catch (Exception ex) {
+            logger.error("Failed to load lookup: PeriodicDataType", ex);
+        }
+        return null;
+    }
+
+
+    private boolean checkEditableTypedLookup(String type, BaseDictionaryDto lookup){
+        if (type.equalsIgnoreCase(PE_BALANCE_TYPE)) {
+            boolean exists = this.peStatementBalanceService.existEntityWithType(lookup.getCode());
+            if(exists){
+                return false;
+            }
+            List<PEBalanceType> entitiesByParent = this.peBalanceTypeRepository.findByParentCode(lookup.getCode());
+            if(entitiesByParent != null && !entitiesByParent.isEmpty()){
+                return false;
+            }
+            return true;
+        }else if (type.equalsIgnoreCase(PE_OPS_TYPE)) {
+            boolean exists = this.peStatementOperationsService.existEntityWithType(lookup.getCode());
+            if(exists){
+                return false;
+            }
+            List<PEOperationsType> entitiesByParent = this.peOperationsTypeRepository.findByParentCode(lookup.getCode());
+            if(entitiesByParent != null && !entitiesByParent.isEmpty()){
+                return false;
+            }
+            return true;
+        }else if (type.equalsIgnoreCase(PE_CASHFLOW_TYPE)) {
+            boolean exists = this.peStatementCashflowsService.existEntityWithType(lookup.getCode());
+            if(exists){
+                return false;
+            }
+            List<PECashflowsType> entitiesByParent = this.peCashflowsTypeRepository.findByParentCode(lookup.getCode());
+            if(entitiesByParent != null && !entitiesByParent.isEmpty()){
+                return false;
+            }
+            return true;
+        }else if (type.equalsIgnoreCase(HF_CHART_ACCOUNTS_TYPE)) {
+            boolean exists = this.hfGeneralLedgerBalanceService.existEntityWithChartAccountsType(lookup.getCode());
+            if(exists){
+                return false;
+            }
+            List<HFChartOfAccountsType> entitiesByParent = this.hfChartOfAccountsTypeRepository.findByParentCode(lookup.getCode());
+            if(entitiesByParent != null && !entitiesByParent.isEmpty()){
+                return false;
+            }
+            return true;
+        }else if (type.equalsIgnoreCase(RE_BALANCE_TYPE)) {
+            boolean exists = this.reService.existBalanceEntityWithType(lookup.getCode());
+            if(exists){
+                return false;
+            }
+            List<REBalanceType> entitiesByParent = this.reBalanceTypeRepository.findByParentCode(lookup.getCode());
+            if(entitiesByParent != null && !entitiesByParent.isEmpty()){
+                return false;
+            }
+            return true;
+        }else if (type.equalsIgnoreCase(RE_PROFIT_LOSS_TYPE)) {
+            boolean exists = this.reService.existProfitLossEntityWithType(lookup.getCode());
+            if(exists){
+                return false;
+            }
+            List<REProfitLossType> entitiesByParent = this.reProfitLossTypeRepository.findByParentCode(lookup.getCode());
+            if(entitiesByParent != null && !entitiesByParent.isEmpty()){
+                return false;
+            }
+            return true;
+        }else if (type.equalsIgnoreCase(NB_CHART_ACCOUNTS)) {
+            Iterator<NICReportingChartOfAccounts> iterator = this.nicReportingChartOfAccountsRepository.findByNBChartOfAccountsCode(lookup.getCode()).iterator();
+            if(iterator != null && iterator.hasNext()){
+                if(lookup.getId() != null) {
+                    NBChartOfAccounts existingEntity = this.nbChartOfAccountsRepository.findOne(lookup.getId());
+                    if (existingEntity != null && !existingEntity.getCode().equals(lookup.getCode())) {
+                        // Cannot change code of used lookup value
+                        return false;
+                    }
+                }
+                return false;
+            }
+            return true;
+        }else{
+            String errorMessage = "Error checking lookup value for type '" + type + "'. Could not find matching lookup by type.";
+            logger.error(errorMessage);
+            return false;
+        }
+    }
+
+    private EntitySaveResponseDto saveLookupPEBalanceType(BaseDictionaryDto lookup, String username){
+        EntitySaveResponseDto saveResponseDto = new EntitySaveResponseDto();
+
+        if(StringUtils.isEmpty(lookup.getCode())){
+            String errorMessage = "Error saving lookup value: code is required";
+            logger.error(errorMessage);
+            saveResponseDto.setErrorMessageEn(errorMessage);
+            return saveResponseDto;
+        }else if(StringUtils.isEmpty(lookup.getNameEn())){
+            String errorMessage = "Error saving lookup value: name en is required";
+            logger.error(errorMessage);
+            saveResponseDto.setErrorMessageEn(errorMessage);
+            return saveResponseDto;
+        }
+        PEBalanceType entity = new PEBalanceType();
+        setValues(lookup, entity);
+        if(lookup.getId() != null){
+            //Check editable
+            if(!checkEditableTypedLookup(PE_BALANCE_TYPE, lookup)){
+                String errorMessage = "Error saving PE Balance type: lookup value is not editable";
+                logger.error(errorMessage);
+                saveResponseDto.setErrorMessageEn(errorMessage);
+                return saveResponseDto;
+            }
+            entity.setId(lookup.getId());
+
+
+        }else{
+            PEBalanceType existingEntity = this.peBalanceTypeRepository.findByCode(lookup.getCode());
+            if(existingEntity != null){
+                String errorMessage = "Error saving lookup value: duplicate code '" + lookup.getCode() + "'";
+                logger.error(errorMessage);
+                saveResponseDto.setErrorMessageEn(errorMessage);
+                return saveResponseDto;
+            }
+        }
+
+        if(lookup.getParent() != null && lookup.getParent().getCode() != null) {
+            PEBalanceType parent = this.peBalanceTypeRepository.findByCode(lookup.getParent().getCode());
+            if(parent != null){
+                entity.setParent(parent);
+            }
+        }
+        Integer id = this.peBalanceTypeRepository.save(entity).getId();
+        saveResponseDto.setEntityId(new Long(id));
+        saveResponseDto.setSuccessMessageEn("Successfully saved lookup value");
+        logger.info("Successfully saved PE Balance type lookup value: id=" + lookup.getId() + ", code=" + lookup.getCode()
+                + ", name en=" + lookup.getNameEn() + " [user=" + username + "]");
+        return saveResponseDto;
+    }
+
+    private EntitySaveResponseDto saveLookupPEOperationsType(BaseDictionaryDto lookup, String username){
+        EntitySaveResponseDto saveResponseDto = new EntitySaveResponseDto();
+        if(StringUtils.isEmpty(lookup.getCode())){
+            String errorMessage = "Error saving lookup value: code is required";
+            logger.error(errorMessage);
+            saveResponseDto.setErrorMessageEn(errorMessage);
+            return saveResponseDto;
+        }else if(StringUtils.isEmpty(lookup.getNameEn())){
+            String errorMessage = "Error saving lookup value: name en is required";
+            logger.error(errorMessage);
+            saveResponseDto.setErrorMessageEn(errorMessage);
+            return saveResponseDto;
+        }
+        PEOperationsType entity = new PEOperationsType();
+        if(lookup.getId() != null){
+            //Check editable
+            if(!checkEditableTypedLookup(PE_OPS_TYPE, lookup)){
+                String errorMessage = "Error saving PE Operations type: lookup value is not editable";
+                logger.error(errorMessage);
+                saveResponseDto.setErrorMessageEn(errorMessage);
+                return saveResponseDto;
+            }
+            entity.setId(lookup.getId());
+
+        }else{
+            PEOperationsType existingEntity = this.peOperationsTypeRepository.findByCode(lookup.getCode());
+            if(existingEntity != null){
+                String errorMessage = "Error saving lookup value: duplicate code '" + lookup.getCode() + "'";
+                logger.error(errorMessage);
+                saveResponseDto.setErrorMessageEn(errorMessage);
+                return saveResponseDto;
+            }
+        }
+
+        setValues(lookup, entity);
+        if(lookup.getParent() != null && lookup.getParent().getCode() != null) {
+            PEOperationsType parent = this.peOperationsTypeRepository.findByCode(lookup.getParent().getCode());
+            if(parent != null){
+                entity.setParent(parent);
+            }
+        }
+        Integer id = this.peOperationsTypeRepository.save(entity).getId();
+        saveResponseDto.setEntityId(new Long(id));
+        saveResponseDto.setSuccessMessageEn("Successfully saved lookup value");
+        logger.info("Successfully saved PE Operations type lookup value: id=" + lookup.getId() + ", code=" + lookup.getCode()
+                + ", name en=" + lookup.getNameEn() + "[user=" + username + "]");
+        return saveResponseDto;
+    }
+
+    private EntitySaveResponseDto saveLookupPECashflowsType(BaseDictionaryDto lookup, String username){
+        EntitySaveResponseDto saveResponseDto = new EntitySaveResponseDto();
+        if(StringUtils.isEmpty(lookup.getCode())){
+            String errorMessage = "Error saving lookup value: code is required";
+            logger.error(errorMessage);
+            saveResponseDto.setErrorMessageEn(errorMessage);
+            return saveResponseDto;
+        }else if(StringUtils.isEmpty(lookup.getNameEn())){
+            String errorMessage = "Error saving lookup value: name en is required";
+            logger.error(errorMessage);
+            saveResponseDto.setErrorMessageEn(errorMessage);
+            return saveResponseDto;
+        }
+        PECashflowsType entity = new PECashflowsType();
+        if(lookup.getId() != null){
+            //Check editable
+            if(!checkEditableTypedLookup(PE_CASHFLOW_TYPE, lookup)){
+                String errorMessage = "Error saving PE Cashflows type: lookup value is not editable";
+                logger.error(errorMessage);
+                saveResponseDto.setErrorMessageEn(errorMessage);
+                return saveResponseDto;
+            }
+            entity.setId(lookup.getId());
+
+        }else{
+            PECashflowsType existingEntity = this.peCashflowsTypeRepository.findByCode(lookup.getCode());
+            if(existingEntity != null){
+                String errorMessage = "Error saving lookup value: duplicate code '" + lookup.getCode() + "'";
+                logger.error(errorMessage);
+                saveResponseDto.setErrorMessageEn(errorMessage);
+                return saveResponseDto;
+            }
+        }
+
+        setValues(lookup, entity);
+        if(lookup.getParent() != null && lookup.getParent().getCode() != null) {
+            PECashflowsType parent = this.peCashflowsTypeRepository.findByCode(lookup.getParent().getCode());
+            if(parent != null){
+                entity.setParent(parent);
+            }
+        }
+        Integer id = this.peCashflowsTypeRepository.save(entity).getId();
+        saveResponseDto.setEntityId(new Long(id));
+        saveResponseDto.setSuccessMessageEn("Successfully saved lookup value");
+        logger.info("Successfully saved PE Cashflows type lookup value: id=" + lookup.getId() + ", code=" + lookup.getCode()
+                + ", name en=" + lookup.getNameEn() + "[user=" + username + "]");
+        return saveResponseDto;
+    }
+
+    private EntitySaveResponseDto saveLookupHFChartAccountsType(BaseDictionaryDto lookup, String username){
+        EntitySaveResponseDto saveResponseDto = new EntitySaveResponseDto();
+        if(StringUtils.isEmpty(lookup.getCode())){
+            String errorMessage = "Error saving lookup value: code is required";
+            logger.error(errorMessage);
+            saveResponseDto.setErrorMessageEn(errorMessage);
+            return saveResponseDto;
+        }else if(StringUtils.isEmpty(lookup.getNameEn())){
+            String errorMessage = "Error saving lookup value: name en is required";
+            logger.error(errorMessage);
+            saveResponseDto.setErrorMessageEn(errorMessage);
+            return saveResponseDto;
+        }
+        HFChartOfAccountsType entity = new HFChartOfAccountsType();
+        if(lookup.getId() != null){
+            //Check editable
+            if(!checkEditableTypedLookup(HF_CHART_ACCOUNTS_TYPE, lookup)){
+                String errorMessage = "Error saving HF Chart of accounts type: lookup value is not editable";
+                logger.error(errorMessage);
+                saveResponseDto.setErrorMessageEn(errorMessage);
+                return saveResponseDto;
+            }
+            entity.setId(lookup.getId());
+        }else{
+            HFChartOfAccountsType existingEntity = this.hfChartOfAccountsTypeRepository.findByCode(lookup.getCode());
+            if(existingEntity != null){
+                String errorMessage = "Error saving lookup value: duplicate code '" + lookup.getCode() + "'";
+                logger.error(errorMessage);
+                saveResponseDto.setErrorMessageEn(errorMessage);
+                return saveResponseDto;
+            }
+        }
+        setValues(lookup, entity);
+        if(lookup.getParent() != null && lookup.getParent().getCode() != null) {
+            HFChartOfAccountsType parent = this.hfChartOfAccountsTypeRepository.findByCode(lookup.getParent().getCode());
+            if(parent != null){
+                entity.setParent(parent);
+            }
+        }
+        Integer id = this.hfChartOfAccountsTypeRepository.save(entity).getId();
+        saveResponseDto.setEntityId(new Long(id));
+        saveResponseDto.setSuccessMessageEn("Successfully saved lookup value");
+        logger.info("Successfully saved HF Chart of accounts type lookup value: id=" + lookup.getId() + ", code=" +
+                lookup.getCode() + ", name en=" + lookup.getNameEn() + "[user=" + username + "]");
+        return saveResponseDto;
+    }
+
+    private EntitySaveResponseDto saveLookupREBalanceType(BaseDictionaryDto lookup, String username){
+        EntitySaveResponseDto saveResponseDto = new EntitySaveResponseDto();
+        if(StringUtils.isEmpty(lookup.getCode())){
+            String errorMessage = "Error saving lookup value: code is required";
+            logger.error(errorMessage);
+            saveResponseDto.setErrorMessageEn(errorMessage);
+            return saveResponseDto;
+        }else if(StringUtils.isEmpty(lookup.getNameEn())){
+            String errorMessage = "Error saving lookup value: name en is required";
+            logger.error(errorMessage);
+            saveResponseDto.setErrorMessageEn(errorMessage);
+            return saveResponseDto;
+        }
+        REBalanceType entity = new REBalanceType();
+        if(lookup.getId() != null){
+            //Check editable
+            if(!checkEditableTypedLookup(RE_BALANCE_TYPE, lookup)){
+                String errorMessage = "Error saving RE Balance type: lookup value is not editable";
+                logger.error(errorMessage);
+                saveResponseDto.setErrorMessageEn(errorMessage);
+                return saveResponseDto;
+            }
+            entity.setId(lookup.getId());
+
+        }else{
+            REBalanceType existingEntity = this.reBalanceTypeRepository.findByCode(lookup.getCode());
+            if(existingEntity != null){
+                String errorMessage = "Error saving lookup value: duplicate code '" + lookup.getCode() + "'";
+                logger.error(errorMessage);
+                saveResponseDto.setErrorMessageEn(errorMessage);
+                return saveResponseDto;
+            }
+        }
+
+        setValues(lookup, entity);
+        if(lookup.getParent() != null && lookup.getParent().getCode() != null) {
+            REBalanceType parent = this.reBalanceTypeRepository.findByCode(lookup.getParent().getCode());
+            if(parent != null){
+                entity.setParent(parent);
+            }
+        }
+        Integer id = this.reBalanceTypeRepository.save(entity).getId();
+        saveResponseDto.setEntityId(new Long(id));
+        saveResponseDto.setSuccessMessageEn("Successfully saved lookup value");
+        logger.info("Successfully saved RE Balance type lookup value: id=" + lookup.getId() + ", code=" +
+                lookup.getCode() + ", name en=" + lookup.getNameEn() + "[user=" + username + "]");
+        return saveResponseDto;
+    }
+
+    private EntitySaveResponseDto saveLookupREProfitLossType(BaseDictionaryDto lookup, String username){
+        EntitySaveResponseDto saveResponseDto = new EntitySaveResponseDto();
+        if(StringUtils.isEmpty(lookup.getCode())){
+            String errorMessage = "Error saving lookup value: code is required";
+            logger.error(errorMessage);
+            saveResponseDto.setErrorMessageEn(errorMessage);
+            return saveResponseDto;
+        }else if(StringUtils.isEmpty(lookup.getNameEn())){
+            String errorMessage = "Error saving lookup value: name en is required";
+            logger.error(errorMessage);
+            saveResponseDto.setErrorMessageEn(errorMessage);
+            return saveResponseDto;
+        }
+        REProfitLossType entity = new REProfitLossType();
+        if(lookup.getId() != null){
+            //Check editable
+            if(!checkEditableTypedLookup(RE_PROFIT_LOSS_TYPE, lookup)){
+                String errorMessage = "Error saving RE Profit loss type: lookup value is not editable";
+                logger.error(errorMessage);
+                saveResponseDto.setErrorMessageEn(errorMessage);
+                return saveResponseDto;
+            }
+            entity.setId(lookup.getId());
+
+        }else{
+            REProfitLossType existingEntity = this.reProfitLossTypeRepository.findByCode(lookup.getCode());
+            if(existingEntity != null){
+                String errorMessage = "Error saving lookup value: duplicate code '" + lookup.getCode() + "'";
+                logger.error(errorMessage);
+                saveResponseDto.setErrorMessageEn(errorMessage);
+                return saveResponseDto;
+            }
+        }
+
+        setValues(lookup, entity);
+        if(lookup.getParent() != null && lookup.getParent().getCode() != null) {
+            REProfitLossType parent = this.reProfitLossTypeRepository.findByCode(lookup.getParent().getCode());
+            if(parent != null){
+                entity.setParent(parent);
+            }
+        }
+        Integer id = this.reProfitLossTypeRepository.save(entity).getId();
+        saveResponseDto.setEntityId(new Long(id));
+        saveResponseDto.setSuccessMessageEn("Successfully saved lookup value");
+        logger.info("Successfully saved RE Profit loss type lookup value: id=" + lookup.getId() + ", code=" +
+                lookup.getCode() + ", name en=" + lookup.getNameEn() + "[user=" + username + "]");
+        return saveResponseDto;
+    }
+
+    private EntitySaveResponseDto saveLookupNBChartAccounts(BaseDictionaryDto lookup, String username){
+        EntitySaveResponseDto saveResponseDto = new EntitySaveResponseDto();
+        if(StringUtils.isEmpty(lookup.getCode())){
+            String errorMessage = "Error saving lookup value: code is required";
+            logger.error(errorMessage);
+            saveResponseDto.setErrorMessageEn(errorMessage);
+            return saveResponseDto;
+        }else if(StringUtils.isEmpty(lookup.getNameRu())){
+            String errorMessage = "Error saving lookup value: name ru is required";
+            logger.error(errorMessage);
+            saveResponseDto.setErrorMessageEn(errorMessage);
+            return saveResponseDto;
+        }
+        NBChartOfAccounts entity = new NBChartOfAccounts();
+        if(lookup.getId() != null){
+            //Check editable
+            if(!checkEditableTypedLookup(NB_CHART_ACCOUNTS, lookup)){
+                String errorMessage = "Error saving NB Chart of accounts: lookup value is not editable";
+                logger.error(errorMessage);
+                saveResponseDto.setErrorMessageEn(errorMessage);
+                return saveResponseDto;
+            }
+            entity.setId(lookup.getId());
+        }else{
+            NBChartOfAccounts existingEntity = this.nbChartOfAccountsRepository.findByCode(lookup.getCode());
+            if(existingEntity != null){
+                String errorMessage = "Error saving lookup value: duplicate code '" + lookup.getCode() + "'";
+                logger.error(errorMessage);
+                saveResponseDto.setErrorMessageEn(errorMessage);
+                return saveResponseDto;
+            }
+        }
+
+        setValues(lookup, entity);
+        Integer id = this.nbChartOfAccountsRepository.save(entity).getId();
+        saveResponseDto.setEntityId(new Long(id));
+        saveResponseDto.setSuccessMessageEn("Successfully saved lookup value");
+        logger.info("Successfully saved NB Chart accounts lookup value: id=" + lookup.getId() + ", code=" +
+                lookup.getCode() + ", name ru=" + lookup.getNameRu() + " [user=" + username + "]");
+        return saveResponseDto;
+    }
+
+    @Override
+    public EntitySaveResponseDto saveTypedLookupValue(String type, BaseDictionaryDto lookup, String username) {
+        EntitySaveResponseDto saveResponseDto = new EntitySaveResponseDto();
+        if(StringUtils.isEmpty(type)){
+            String errorMessage = "Error saving lookup value: lookup type is missing";
+            logger.error(errorMessage);
+            saveResponseDto.setErrorMessageEn(errorMessage);
+            return saveResponseDto;
+        }
+        if(lookup == null){
+            String errorMessage = "Error saving lookup value: lookup value is missing";
+            logger.error(errorMessage);
+            saveResponseDto.setErrorMessageEn(errorMessage);
+            return saveResponseDto;
+        }
+        if(StringUtils.isEmpty(lookup.getCode())){
+            String errorMessage = "Error saving lookup value: code is required";
+            logger.error(errorMessage);
+            saveResponseDto.setErrorMessageEn(errorMessage);
+            return saveResponseDto;
+        }
+        if(lookup.getParent() != null){
+            if(lookup.getCode().equalsIgnoreCase(lookup.getParent().getCode())){
+                String errorMessage = "Error saving lookup value: cannot be self parent";
+                logger.error(errorMessage);
+                saveResponseDto.setErrorMessageEn(errorMessage);
+                return saveResponseDto;
+            }
+        }
+
+        try {
+            if (type.equalsIgnoreCase(PE_BALANCE_TYPE)) {
+                return saveLookupPEBalanceType(lookup, username);
+            }else if (type.equalsIgnoreCase(PE_OPS_TYPE)) {
+                return saveLookupPEOperationsType(lookup, username);
+            }else if (type.equalsIgnoreCase(PE_CASHFLOW_TYPE)) {
+                return saveLookupPECashflowsType(lookup, username);
+            }else if (type.equalsIgnoreCase(HF_CHART_ACCOUNTS_TYPE)) {
+                return saveLookupHFChartAccountsType(lookup, username);
+            //}else if (type.equalsIgnoreCase("RE_CHART_ACCOUNTS_TYPE")) {
+            }else if (type.equalsIgnoreCase(RE_BALANCE_TYPE)) {
+                return saveLookupREBalanceType(lookup, username);
+            }else if (type.equalsIgnoreCase(RE_PROFIT_LOSS_TYPE)) {
+                return saveLookupREProfitLossType(lookup, username);
+            }else if (type.equalsIgnoreCase(NB_CHART_ACCOUNTS)) {
+                return saveLookupNBChartAccounts(lookup, username);
+            }else{
+                String errorMessage = "Error saving lookup value for type '" + type + "'. Could not find matching lookup by type.";
+                logger.error(errorMessage);
+                saveResponseDto.setErrorMessageEn(errorMessage);
+            }
+
+        }catch (Exception ex){
+            String errorMessage = "Error saving lookup value for type '" + type + "'";
+            logger.error(errorMessage, ex);
+            saveResponseDto.setErrorMessageEn(errorMessage);
+        }
+
+        return saveResponseDto;
+    }
+
+    @Override
+    public boolean deleteTypedLookupValueByTypeAndId(String type, Integer id, String username) {
+        try {
+            boolean deleted = false;
+            if (type.equalsIgnoreCase(PE_BALANCE_TYPE)) {
+                deleted = deleteLookupPEBalanceType(id);
+            }else if (type.equalsIgnoreCase(PE_OPS_TYPE)) {
+                deleted = deleteLookupPEOperationsType(id);
+            }else if (type.equalsIgnoreCase(PE_CASHFLOW_TYPE)) {
+                deleted = deleteLookupPECashflowsType(id);
+            }else if (type.equalsIgnoreCase(HF_CHART_ACCOUNTS_TYPE)) {
+                deleted = deleteLookupHFChartAccountsType(id);
+                //}else if (type.equalsIgnoreCase("RE_CHART_ACCOUNTS_TYPE")) {
+            }else if (type.equalsIgnoreCase(RE_BALANCE_TYPE)) {
+                deleted = deleteLookupREBalanceType(id);
+            }else if (type.equalsIgnoreCase(RE_PROFIT_LOSS_TYPE)) {
+                deleted = deleteLookupREProfitLossType(id);
+            }else if (type.equalsIgnoreCase(NB_CHART_ACCOUNTS)) {
+                deleted = deleteLookupNBChartAccounts(id);
+            }else{
+                String errorMessage = "Error deleting lookup value for type '" + type + "'. Could not find matching lookup by type.";
+                logger.error(errorMessage);
+                return false;
+            }
+            if(deleted){
+                logger.info("Successfully deleted typed lookup value: type=" + type + ", id=" + id + " [user=" + username + "]");
+            }
+            return deleted;
+
+        }catch (Exception ex){
+            logger.error("Error deleting currency rate record: id " + id, ex);
+            return false;
+        }
+    }
+
+    private boolean deleteLookupPEBalanceType(Integer id){
+        try{
+            PEBalanceType entity = this.peBalanceTypeRepository.findOne(id);
+            if(entity != null){
+                if(checkEditableTypedLookup(PE_BALANCE_TYPE, disassemble(entity))){
+                    this.peBalanceTypeRepository.delete(id);
+                    logger.info("Successfully deleted PE Balance type lookup value: id=" + id + ", name en=" + entity.getNameEn());
+                    return true;
+                }else{
+                    logger.error("Error deleting PE Balance type lookup value with id " + id + ": entity is not editable");
+                    return false;
+                }
+            }else{
+                logger.error("Error deleting PE Balance type lookup value with id " + id + ": entity not found");
+            }
+        }catch (Exception ex){
+            logger.error("Error deleting PE Balance type lookup value with id " + id, ex);
+        }
+        return false;
+    }
+
+    private boolean deleteLookupPEOperationsType(Integer id){
+        try{
+            PEOperationsType entity = this.peOperationsTypeRepository.findOne(id);
+            if(entity != null){
+                if(checkEditableTypedLookup(PE_OPS_TYPE, disassemble(entity))){
+                    this.peOperationsTypeRepository.delete(id);
+                    logger.info("Successfully deleted PE Operations type lookup value: id=" + id + ", name en=" + entity.getNameEn());
+                    return true;
+                }else{
+                    logger.error("Error deleting PE Operations type lookup value with id " + id + ": entity is not editable");
+                    return false;
+                }
+            }else{
+                logger.error("Error deleting PE Operations type lookup value with id " + id + ": entity not found");
+            }
+        }catch (Exception ex){
+            logger.error("Error deleting PE Operations type lookup value with id " + id, ex);
+        }
+        return false;
+    }
+
+    private boolean deleteLookupPECashflowsType(Integer id){
+        try{
+            PECashflowsType entity = this.peCashflowsTypeRepository.findOne(id);
+            if(entity != null){
+                if(checkEditableTypedLookup(PE_CASHFLOW_TYPE, disassemble(entity))){
+                    this.peCashflowsTypeRepository.delete(id);
+                    logger.info("Successfully deleted PE Cashflows type lookup value: id=" + id + ", name en=" + entity.getNameEn());
+                    return true;
+                }else{
+                    logger.error("Error deleting PE Cashflows type lookup value with id " + id + ": entity is not editable");
+                    return false;
+                }
+            }else{
+                logger.error("Error deleting PE Cashflows type lookup value with id " + id + ": entity not found");
+            }
+        }catch (Exception ex){
+            logger.error("Error deleting PE Cashflows type lookup value with id " + id, ex);
+        }
+        return false;
+    }
+
+    private boolean deleteLookupHFChartAccountsType(Integer id){
+        try{
+            HFChartOfAccountsType entity = this.hfChartOfAccountsTypeRepository.findOne(id);
+            if(entity != null){
+                if(checkEditableTypedLookup(HF_CHART_ACCOUNTS_TYPE, disassemble(entity))){
+                    this.hfChartOfAccountsTypeRepository.delete(id);
+                    logger.info("Successfully deleted HF Chart of accounts type lookup value: id=" + id + ", name en=" + entity.getNameEn());
+                    return true;
+                }else{
+                    logger.error("Error deleting  HF Chart of accounts type lookup value with id " + id + ": entity is not editable");
+                    return false;
+                }
+            }else{
+                logger.error("Error deleting HF Chart of accounts type lookup value with id " + id + ": entity not found");
+            }
+        }catch (Exception ex){
+            logger.error("Error deleting HF Chart of accounts type lookup value with id " + id, ex);
+        }
+        return false;
+    }
+
+    private boolean deleteLookupREBalanceType(Integer id){
+        try{
+            REBalanceType entity = this.reBalanceTypeRepository.findOne(id);
+            if(entity != null){
+                if(checkEditableTypedLookup(RE_BALANCE_TYPE, disassemble(entity))){
+                    this.reBalanceTypeRepository.delete(id);
+                    logger.info("Successfully deleted RE Balance type lookup value: id=" + id + ", name en=" + entity.getNameEn());
+                    return true;
+                }else{
+                    logger.error("Error deleting  RE Balance type lookup value with id " + id + ": entity is not editable");
+                    return false;
+                }
+            }else{
+                logger.error("Error deleting RE Balance type lookup value with id " + id + ": entity not found");
+            }
+        }catch (Exception ex){
+            logger.error("Error deleting RE Balance type lookup value with id " + id, ex);
+        }
+        return false;
+    }
+
+    private boolean deleteLookupREProfitLossType(Integer id){
+        try{
+            REProfitLossType entity = this.reProfitLossTypeRepository.findOne(id);
+            if(entity != null){
+                if(checkEditableTypedLookup(RE_PROFIT_LOSS_TYPE, disassemble(entity))){
+                    this.reProfitLossTypeRepository.delete(id);
+                    logger.info("Successfully deleted RE Profit loss type lookup value: id=" + id + ", name en=" + entity.getNameEn());
+                    return true;
+                }else{
+                    logger.error("Error deleting  RE Profit loss type lookup value with id " + id + ": entity is not editable");
+                    return false;
+                }
+            }else{
+                logger.error("Error deleting RE Profit loss type lookup value with id " + id + ": entity not found");
+            }
+        }catch (Exception ex){
+            logger.error("Error deleting RE Profit loss type lookup value with id " + id, ex);
+        }
+        return false;
+    }
+
+    private boolean deleteLookupNBChartAccounts(Integer id){
+        try{
+            NBChartOfAccounts entity = this.nbChartOfAccountsRepository.findOne(id);
+            if(entity != null){
+                if(checkEditableTypedLookup(NB_CHART_ACCOUNTS, disassemble(entity))){
+                    this.nbChartOfAccountsRepository.delete(id);
+                    logger.info("Successfully deleted NB Chart of accounts type lookup value: id=" + id + ", name ru=" + entity.getNameRu());
+                    return true;
+                }else{
+                    logger.error("Error deleting  NB Chart of accounts value with id " + id + ": entity is not editable");
+                    return false;
+                }
+            }else{
+                logger.error("Error deleting NB Chart of accounts lookup value with id " + id + ": entity not found");
+            }
+        }catch (Exception ex){
+            logger.error("Error deleting NB Chart of accounts lookup value with id " + id, ex);
+        }
+        return false;
+    }
+
+    @Override
+    public List<CommonNICReportingChartOfAccountsDto> getSingularityNICReportingChartOfAccounts() {
+        List<CommonNICReportingChartOfAccountsDto> dtoList = new ArrayList<>();
+        Iterator<SingularityNICChartOfAccounts> iterator = singularityNICChartOfAccountsRepository.findAll(new Sort(Sort.Direction.ASC, "singularityAccountNumber")).iterator();
+        if(iterator != null){
+            while(iterator.hasNext()){
+                SingularityNICChartOfAccounts entity = iterator.next();
+                CommonNICReportingChartOfAccountsDto dto = new CommonNICReportingChartOfAccountsDto();
+                dto.setId(entity.getId());
+                dto.setAccountNumber(entity.getSingularityAccountNumber());
+                dto.setNICChartOfAccounts(new NICReportingChartOfAccountsDto(entity.getNicReportingChartOfAccounts()));
+                //dto.setAddable();
+                //dto.setNegativeOnly();
+                //dto.setPositiveOnly();
+                //dto.setEditable(checkEditableMatchingSingularityAccountNumber(entity.getSingularityAccountNumber()));
+                dto.setEditable(true);
+                dto.setDeletable(checkDeletableMatchingSingularityAccountNumber(dto.getAccountNumber()));
+                dtoList.add(dto);
+            }
+        }
+        return dtoList;
+    }
+
+
+    @Override
+    public List<CommonNICReportingChartOfAccountsDto> getTarragonNICReportingChartOfAccounts() {
+        List<CommonNICReportingChartOfAccountsDto> dtoList = new ArrayList<>();
+        Iterator<TarragonNICChartOfAccounts> iterator = tarragonNICChartOfAccountsRepository.findAll(new Sort(Sort.Direction.ASC, "tarragonChartOfAccountsName")).iterator();
+        if(iterator != null){
+            while(iterator.hasNext()){
+                TarragonNICChartOfAccounts entity = iterator.next();
+                CommonNICReportingChartOfAccountsDto dto = new CommonNICReportingChartOfAccountsDto();
+                dto.setId(entity.getId());
+                dto.setNameEn(entity.getTarragonChartOfAccountsName());
+                dto.setNICChartOfAccounts(new NICReportingChartOfAccountsDto(entity.getNicReportingChartOfAccounts()));
+                dto.setAddable(entity.getAddable());
+                dto.setNegativeOnly(entity.getNegativeOnly());
+                dto.setPositiveOnly(entity.getPositiveOnly());
+                //dto.setEditable(checkEditableMatchingTarragonChartAccountsLongDescription(entity.getTarragonChartOfAccountsName()));
+                dto.setEditable(true);
+                dto.setDeletable(checkDeletableMatchingTarragonChartAccountsLongDescription(dto.getNameEn()));
+                dtoList.add(dto);
+            }
+        }
+        return dtoList;
+    }
+
+    @Override
+    public List<CommonNICReportingChartOfAccountsDto> getTerraNICReportingChartOfAccounts() {
+        List<CommonNICReportingChartOfAccountsDto> dtoList = new ArrayList<>();
+        Iterator<TerraNICChartOfAccounts> iterator = this.terraNICChartOfAccountsRepository.findAll(new Sort(Sort.Direction.ASC, "terraChartOfAccountsName")).iterator();
+        if(iterator != null){
+            while(iterator.hasNext()){
+                TerraNICChartOfAccounts entity = iterator.next();
+                CommonNICReportingChartOfAccountsDto dto = new CommonNICReportingChartOfAccountsDto();
+                dto.setId(entity.getId());
+                dto.setNameEn(entity.getTerraChartOfAccountsName());
+                dto.setNICChartOfAccounts(new NICReportingChartOfAccountsDto(entity.getNicReportingChartOfAccounts()));
+                dto.setAddable(entity.getAddable());
+                //dto.setNegativeOnly(entity.getNegativeOnly());
+                //dto.setPositiveOnly(entity.getPositiveOnly());
+                dto.setEditable(true);
+                dto.setDeletable(checkDeletableMatchingTerraChartAccountsLongDescription(dto.getNameEn()));
+                dtoList.add(dto);
+            }
+        }
+        return dtoList;
+    }
+
+    private EntitySaveResponseDto saveMatchingSingularityNICChartAccounts(CommonNICReportingChartOfAccountsDto dto, String username){
+        EntitySaveResponseDto saveResponseDto = new EntitySaveResponseDto();
+
+        SingularityNICChartOfAccounts entity = new SingularityNICChartOfAccounts();
+        entity.setId(dto.getId());
+        entity.setSingularityAccountNumber(dto.getAccountNumber());
+
+        if(dto.getNICChartOfAccounts() != null && dto.getNICChartOfAccounts().getCode() != null) {
+            NICReportingChartOfAccounts nicReportingChartOfAccounts =
+                    this.nicReportingChartOfAccountsRepository.findByCode(dto.getNICChartOfAccounts().getCode());
+            if(nicReportingChartOfAccounts != null){
+                entity.setNicReportingChartOfAccounts(nicReportingChartOfAccounts);
+            }else{
+                String errorMessage = "Error saving value for NIC_SINGULARITY_CHART_ACCOUNTS: NIC Chart of " +
+                        "accounts not found for code=" + dto.getNICChartOfAccounts().getCode();
+                logger.error(errorMessage);
+                saveResponseDto.setErrorMessageEn(errorMessage);
+                return saveResponseDto;
+            }
+        }else{
+            //logger.error("Error saving value for NIC_SINGULARITY_CHART_ACCOUNTS: missing required field 'nicReportingChartOfAccounts'");
+            String errorMessage = "Error saving value for NIC_SINGULARITY_CHART_ACCOUNTS: missing required field 'nicReportingChartOfAccounts'";
+            logger.error(errorMessage);
+            saveResponseDto.setErrorMessageEn(errorMessage);
+            return saveResponseDto;
+        }
+
+        // Positive/Negative only
+        List<SingularityNICChartOfAccounts> existingRecords =
+                this.singularityNICChartOfAccountsRepository.findBySingularityAccountNumber(dto.getAccountNumber());
+        if(existingRecords != null && !existingRecords.isEmpty()){
+            if(existingRecords.size() > 1){
+                // cannot add
+                String errorMessage = "Error saving value for NIC_SINGULARITY_CHART_ACCOUNTS: already exist more " +
+                        "than 1 record matching account number (" + dto.getAccountNumber() + ")";
+                logger.error(errorMessage);
+                saveResponseDto.setErrorMessageEn(errorMessage);
+                return saveResponseDto;
+            }else{ //== 1
+                SingularityNICChartOfAccounts record = existingRecords.get(0);
+                if(record.getPositiveOnly() != null && record.getPositiveOnly().booleanValue()){
+                    if(dto.getNegativeOnly() == null || !dto.getNegativeOnly().booleanValue()){
+                        String errorMessage = "Error saving value for NIC_SINGULARITY_CHART_ACCOUNTS: exists " +
+                                "record matching account number (" + dto.getAccountNumber() + ") with 'Positive only' flag," +
+                                " 'Negative only' flag must be set for this record";
+                        logger.error(errorMessage);
+                        saveResponseDto.setErrorMessageEn(errorMessage);
+                        return saveResponseDto;
+                    }
+                }else if(record.getNegativeOnly() != null && record.getNegativeOnly().booleanValue()){
+                    if(dto.getPositiveOnly() == null || !dto.getPositiveOnly().booleanValue()){
+                        String errorMessage = "Error saving value for NIC_SINGULARITY_CHART_ACCOUNTS: exists " +
+                                "record matching account number (" + dto.getAccountNumber() + ") with 'Positive only' flag," +
+                                " 'Negative only' flag must be set for this record";
+                        logger.error(errorMessage);
+                        saveResponseDto.setErrorMessageEn(errorMessage);
+                        return saveResponseDto;
+                    }
+                }else{
+                    String errorMessage = "Error saving value for NIC_SINGULARITY_CHART_ACCOUNTS: exists " +
+                            "record matching account number (" + dto.getAccountNumber() + ") with 'Positive only' or 'Negative only' " +
+                            "flags not set. When more than 1 record matches, flags must be set.";
+                    logger.error(errorMessage);
+                    saveResponseDto.setErrorMessageEn(errorMessage);
+                    return saveResponseDto;
+                }
+            }
+        }
+        entity.setPositiveOnly(dto.getPositiveOnly());
+        entity.setNegativeOnly(dto.getNegativeOnly());
+
+        this.singularityNICChartOfAccountsRepository.save(entity);
+        saveResponseDto.setSuccessMessageEn("Successfully saved lookup value for NIC_SINGULARITY_CHART_ACCOUNTS");
+        logger.info("Successfully saved lookup value for NIC_SINGULARITY_CHART_ACCOUNTS: id="  + dto.getId() +
+                ", account number=" + dto.getAccountNumber() + " [user=" + username + "]");
+
+        return saveResponseDto;
+
+    }
+
+    private EntitySaveResponseDto saveMatchingTarragonNICChartAccounts(CommonNICReportingChartOfAccountsDto dto, String username){
+        EntitySaveResponseDto saveResponseDto = new EntitySaveResponseDto();
+        TarragonNICChartOfAccounts entity = new TarragonNICChartOfAccounts();
+        entity.setId(dto.getId());
+        entity.setTarragonChartOfAccountsName(dto.getNameEn());
+        entity.setAddable(dto.getAddable());
+        entity.setPositiveOnly(dto.getPositiveOnly());
+        entity.setNegativeOnly(dto.getNegativeOnly());
+        if(dto.getNICChartOfAccounts() != null && dto.getNICChartOfAccounts().getCode() != null) {
+            NICReportingChartOfAccounts nicReportingChartOfAccounts =
+                    this.nicReportingChartOfAccountsRepository.findByCode(dto.getNICChartOfAccounts().getCode());
+            if(nicReportingChartOfAccounts != null){
+                entity.setNicReportingChartOfAccounts(nicReportingChartOfAccounts);
+            }else{
+                String errorMessage = "Error saving value for NIC_TARRAGON_CHART_ACCOUNTS: NIC Chart of " +
+                        "accounts not found for code=" + dto.getNICChartOfAccounts().getCode();
+                logger.error(errorMessage);
+                saveResponseDto.setErrorMessageEn(errorMessage);
+                return saveResponseDto;
+            }
+        }else{
+            //logger.error("Error saving value for NIC_TARRAGON_CHART_ACCOUNTS: missing required field 'nicReportingChartOfAccounts'");
+            String errorMessage = "Error saving value for NIC_TARRAGON_CHART_ACCOUNTS: missing required field 'nicReportingChartOfAccounts'";
+            logger.error(errorMessage);
+            saveResponseDto.setErrorMessageEn(errorMessage);
+            return saveResponseDto;
+        }
+
+        // Positive/Negative only
+        List<TarragonNICChartOfAccounts> existingRecords =
+                this.tarragonNICChartOfAccountsRepository.findByTarragonChartOfAccountsName(dto.getNameEn());
+        if(existingRecords != null && !existingRecords.isEmpty()){
+            if(existingRecords.size() > 1){
+                // cannot add
+                String errorMessage = "Error saving value for NIC_TARRAGON_CHART_ACCOUNTS: already exist more " +
+                        "than 1 record matching name en (" + dto.getNameEn() + ")";
+                logger.error(errorMessage);
+                saveResponseDto.setErrorMessageEn(errorMessage);
+                return saveResponseDto;
+            }else{ //== 1
+                TarragonNICChartOfAccounts record = existingRecords.get(0);
+                if(record.getPositiveOnly() != null && record.getPositiveOnly().booleanValue()){
+                    if(dto.getNegativeOnly() == null || !dto.getNegativeOnly().booleanValue()){
+                        String errorMessage = "Error saving value for NIC_TARRAGON_CHART_ACCOUNTS: exists " +
+                                "record matching name en(" + dto.getNameEn() + ") with 'Positive only' flag," +
+                                " 'Negative only' flag must be set for this record";
+                        logger.error(errorMessage);
+                        saveResponseDto.setErrorMessageEn(errorMessage);
+                        return saveResponseDto;
+                    }
+                }else if(record.getNegativeOnly() != null && record.getNegativeOnly().booleanValue()){
+                    if(dto.getPositiveOnly() == null || !dto.getPositiveOnly().booleanValue()){
+                        String errorMessage = "Error saving value for NIC_TARRAGON_CHART_ACCOUNTS: exists " +
+                                "record matching name en (" + dto.getNameEn() + ") with 'Positive only' flag," +
+                                " 'Negative only' flag must be set for this record";
+                        logger.error(errorMessage);
+                        saveResponseDto.setErrorMessageEn(errorMessage);
+                        return saveResponseDto;
+                    }
+                }else{
+                    String errorMessage = "Error saving value for NIC_TARRAGON_CHART_ACCOUNTS: exists " +
+                            "record matching name en(" + dto.getNameEn() + ") with 'Positive only' or 'Negative only' " +
+                            "flags not set. When more than 1 record matches, flags must be set.";
+                    logger.error(errorMessage);
+                    saveResponseDto.setErrorMessageEn(errorMessage);
+                    return saveResponseDto;
+                }
+            }
+        }
+        entity.setPositiveOnly(dto.getPositiveOnly());
+        entity.setNegativeOnly(dto.getNegativeOnly());
+
+
+        this.tarragonNICChartOfAccountsRepository.save(entity);
+        saveResponseDto.setSuccessMessageEn("Successfully saved lookup value for NIC_TARRAGON_CHART_ACCOUNTS");
+        logger.info("Successfully saved lookup value fro NIC_TARRAGON_CHART_ACCOUNTS: id="  + dto.getId() +
+                ", name en=" + dto.getNameEn() + " [user=" + username + "]");
+        return saveResponseDto;
+    }
+
+    private EntitySaveResponseDto saveMatchingTerraNICChartAccounts(CommonNICReportingChartOfAccountsDto dto, String username){
+        EntitySaveResponseDto saveResponseDto = new EntitySaveResponseDto();
+        TerraNICChartOfAccounts entity = new TerraNICChartOfAccounts();
+        entity.setId(dto.getId());
+        entity.setTerraChartOfAccountsName(dto.getNameEn());
+        entity.setAddable(dto.getAddable());
+        entity.setPositiveOnly(dto.getPositiveOnly());
+        entity.setNegativeOnly(dto.getNegativeOnly());
+        if(dto.getNICChartOfAccounts() != null && dto.getNICChartOfAccounts().getCode() != null) {
+            NICReportingChartOfAccounts nicReportingChartOfAccounts =
+                    this.nicReportingChartOfAccountsRepository.findByCode(dto.getNICChartOfAccounts().getCode());
+            if(nicReportingChartOfAccounts != null){
+                entity.setNicReportingChartOfAccounts(nicReportingChartOfAccounts);
+            }else{
+                String errorMessage = "Error saving value for NIC_TERRA_CHART_ACCOUNTS: NIC Chart of " +
+                        "accounts not found for code=" + dto.getNICChartOfAccounts().getCode();
+                logger.error(errorMessage);
+                saveResponseDto.setErrorMessageEn(errorMessage);
+                return saveResponseDto;
+            }
+        }else{
+            //logger.error("Error saving value for NIC_TERRA_CHART_ACCOUNTS: missing required field 'nicReportingChartOfAccounts'");
+            String errorMessage = "Error saving value for NIC_TERRA_CHART_ACCOUNTS: missing required field 'nicReportingChartOfAccounts'";
+            logger.error(errorMessage);
+            saveResponseDto.setErrorMessageEn(errorMessage);
+            return saveResponseDto;
+        }
+
+        // Positive/Negative only
+        List<TerraNICChartOfAccounts> existingRecords =
+                this.terraNICChartOfAccountsRepository.findByTerraChartOfAccountsName(dto.getNameEn());
+        if(existingRecords != null && !existingRecords.isEmpty()){
+            if(existingRecords.size() > 1){
+                // cannot add
+                String errorMessage = "Error saving value for NIC_TERRA_CHART_ACCOUNTS: already exist more " +
+                        "than 1 record matching name en (" + dto.getNameEn() + ")";
+                logger.error(errorMessage);
+                saveResponseDto.setErrorMessageEn(errorMessage);
+                return saveResponseDto;
+            }else{ //== 1
+                TerraNICChartOfAccounts record = existingRecords.get(0);
+                if(record.getPositiveOnly() != null && record.getPositiveOnly().booleanValue()){
+                    if(dto.getNegativeOnly() == null || !dto.getNegativeOnly().booleanValue()){
+                        String errorMessage = "Error saving value for NIC_TERRA_CHART_ACCOUNTS: exists " +
+                                "record matching name en(" + dto.getNameEn() + ") with 'Positive only' flag," +
+                                " 'Negative only' flag must be set for this record";
+                        logger.error(errorMessage);
+                        saveResponseDto.setErrorMessageEn(errorMessage);
+                        return saveResponseDto;
+                    }
+                }else if(record.getNegativeOnly() != null && record.getNegativeOnly().booleanValue()){
+                    if(dto.getPositiveOnly() == null || !dto.getPositiveOnly().booleanValue()){
+                        String errorMessage = "Error saving value for NIC_TERRA_CHART_ACCOUNTS: exists " +
+                                "record matching name en (" + dto.getNameEn() + ") with 'Positive only' flag," +
+                                " 'Negative only' flag must be set for this record";
+                        logger.error(errorMessage);
+                        saveResponseDto.setErrorMessageEn(errorMessage);
+                        return saveResponseDto;
+                    }
+                }else{
+                    String errorMessage = "Error saving value for NIC_TERRA_CHART_ACCOUNTS: exists " +
+                            "record matching name en(" + dto.getNameEn() + ") with 'Positive only' or 'Negative only' " +
+                            "flags not set. When more than 1 record matches, flags must be set.";
+                    logger.error(errorMessage);
+                    saveResponseDto.setErrorMessageEn(errorMessage);
+                    return saveResponseDto;
+                }
+            }
+        }
+        entity.setPositiveOnly(dto.getPositiveOnly());
+        entity.setNegativeOnly(dto.getNegativeOnly());
+
+        this.terraNICChartOfAccountsRepository.save(entity);
+        saveResponseDto.setSuccessMessageEn("Successfully saved lookup value for NIC_TERRA_CHART_ACCOUNTS");
+        logger.info("Successfully saved lookup value fro NIC_TERRA_CHART_ACCOUNTS: id="  + dto.getId() +
+                ", name en=" + dto.getNameEn() + " [user=" + username + "]");
+        return saveResponseDto;
+    }
+
+    @Override
+    public EntitySaveResponseDto saveMatchingNICChartAccounts(String type, CommonNICReportingChartOfAccountsDto dto, String username) {
+        EntitySaveResponseDto saveResponseDto = new EntitySaveResponseDto();
+        if(StringUtils.isEmpty(type)){
+            String errorMessage = "Error saving lookup value: lookup type is missing";
+            logger.error(errorMessage);
+            saveResponseDto.setErrorMessageEn(errorMessage);
+            return saveResponseDto;
+        }
+        if(dto == null){
+            String errorMessage = "Error saving lookup value: lookup value is missing";
+            logger.error(errorMessage);
+            saveResponseDto.setErrorMessageEn(errorMessage);
+            return saveResponseDto;
+        }
+
+        try {
+            if (type.equalsIgnoreCase("NIC_SINGULARITY_CHART_ACCOUNTS")) {
+                return saveMatchingSingularityNICChartAccounts(dto, username);
+            }else if (type.equalsIgnoreCase("NIC_TARRAGON_CHART_ACCOUNTS")) {
+                return saveMatchingTarragonNICChartAccounts(dto, username);
+            }else if (type.equalsIgnoreCase("NIC_TERRA_CHART_ACCOUNTS")) {
+                return saveMatchingTerraNICChartAccounts(dto, username);
+            }else{
+                String errorMessage = "Error saving lookup value for type '" + type + "'. Could not find matching lookup by type.";
+                logger.error(errorMessage);
+                saveResponseDto.setErrorMessageEn(errorMessage);
+            }
+
+        }catch (Exception ex){
+            String errorMessage = "Error saving lookup value for type '" + type + "'";
+            logger.error(errorMessage, ex);
+            saveResponseDto.setErrorMessageEn(errorMessage);
+        }
+
+        return saveResponseDto;
+    }
+
+    @Override
+    public EntitySaveResponseDto saveNICChartOfAccounts(NICReportingChartOfAccountsDto dto, String username) {
+        EntitySaveResponseDto saveResponseDto = new EntitySaveResponseDto();
+        if(dto == null) {
+            String errorMessage = "Error saving NIC Chart of Accounts: no value passed";
+            logger.error(errorMessage);
+            saveResponseDto.setErrorMessageEn(errorMessage);
+            return saveResponseDto;
+        }else if(StringUtils.isEmpty(dto.getNameRu())){
+            String errorMessage = "Error saving NIC Chart of Accounts:: missing nameRu";
+            logger.error(errorMessage);
+            saveResponseDto.setErrorMessageEn(errorMessage);
+            return saveResponseDto;
+        }else if(dto.getNBChartOfAccounts() == null || StringUtils.isEmpty(dto.getNBChartOfAccounts().getCode())){
+            String errorMessage = "Error saving NIC Chart of Accounts:: missing NB Chart of accounts";
+            logger.error(errorMessage);
+            saveResponseDto.setErrorMessageEn(errorMessage);
+            return saveResponseDto;
+        }
+
+        try {
+            NBChartOfAccounts nbChartOfAccounts = this.nbChartOfAccountsRepository.findByCode(dto.getNBChartOfAccounts().getCode());
+            if (nbChartOfAccounts == null) {
+                String errorMessage = "Error saving NIC Chart of Accounts:: NB Chart of accounts not found  by code '" + dto.getNBChartOfAccounts().getCode() + "'";
+                logger.error(errorMessage);
+                saveResponseDto.setErrorMessageEn(errorMessage);
+                return saveResponseDto;
+            }
+
+            NICReportingChartOfAccounts entity = new NICReportingChartOfAccounts();
+
+            String code = null;
+            if(dto.getId() != null){
+                NICReportingChartOfAccounts existingEntity = this.nicReportingChartOfAccountsRepository.findOne(dto.getId());
+                entity.setId(existingEntity.getId());
+                code = existingEntity.getCode();
+            }else{
+                // Generate entity code
+                List<NICReportingChartOfAccounts> nicReportingChartOfAccountsByCode = this.nicReportingChartOfAccountsRepository.findByNBChartOfAccountsCode(nbChartOfAccounts.getCode());
+                if(nicReportingChartOfAccountsByCode != null && !nicReportingChartOfAccountsByCode.isEmpty()){
+                    String maxCode = null;
+                    for(NICReportingChartOfAccounts existingEntity: nicReportingChartOfAccountsByCode){
+                        if(maxCode == null || maxCode.compareTo(existingEntity.getCode()) < 0){
+                            maxCode = existingEntity.getCode();
+                        }
+                    }
+                    // get last part
+                    String[] maxCodeSplit = maxCode.split("\\.");
+                    if(maxCodeSplit != null && maxCodeSplit.length == 3){
+                        String current = maxCodeSplit[2];
+                        current = current.substring(current.length() - 1);
+                        if(current.equals("z")){
+                            code =  maxCode.replace(current, "A");
+                        }else if(current.equals("Z")){
+                            code = maxCodeSplit[2] + "a";
+                        }else {
+                            int charValue = current.charAt(0);
+                            String next = String.valueOf((char) (charValue + 1));
+                            //System.out.println(next);
+                            code = maxCode.replace(current, next);
+                        }
+                    }else{
+                        String errorMessage = "Error saving NIC Chart of Accounts: unexpected existing code format '" + maxCode +
+                                "', expected e.g. 1033.010.a";
+                        logger.error(errorMessage);
+                        saveResponseDto.setErrorMessageEn(errorMessage);
+                        return saveResponseDto;
+                    }
+                }else{ // first entry
+                    code = nbChartOfAccounts.getCode() + ".a";
+                }
+            }
+            entity.setCode(code);
+            entity.setNameRu(dto.getNameRu());
+            entity.setNbChartOfAccounts(nbChartOfAccounts);
+
+            this.nicReportingChartOfAccountsRepository.save(entity);
+            saveResponseDto.setSuccessMessageEn("Successfully saved NIC Chart of accounts");
+            logger.info("Successfully saved lookup value fro NIC_CHART_ACCOUNTS: id="  + dto.getId() +
+                    "name ru=" + dto.getNameRu() + " [user=" + username + "]");
+        }catch (Exception ex){
+            String errorMessage = "Error saving NIC Chart of Accounts";
+            logger.error(errorMessage, ex);
+            saveResponseDto.setErrorMessageEn(errorMessage);
+        }
+
+        return saveResponseDto;
+    }
+
+    @Override
+    public boolean deleteMatchingLookupByTypeAndId(String type, Long id, String username){
+        try {
+//            if (type.equalsIgnoreCase("NIC_SINGULARITY_CHART_ACCOUNTS")) {
+//                // TODO: delete NIC Chart accounts
+//                return false;
+//            }else
+            if (type.equalsIgnoreCase("NIC_SINGULARITY_CHART_ACCOUNTS")) {
+                SingularityNICChartOfAccounts entity = this.singularityNICChartOfAccountsRepository.findOne(id);
+                if(entity == null){
+                    logger.error("Failed to delete NIC_SINGULARITY_CHART_ACCOUNTS record with id " + id + ": record not found");
+                    return false;
+                }
+                if(checkDeletableMatchingSingularityAccountNumber(entity.getSingularityAccountNumber())){
+                    this.singularityNICChartOfAccountsRepository.delete(id);
+                    logger.info("Successfully deleted NIC_SINGULARITY_CHART_ACCOUNTS lookup value: id=" + id + ", type=" + type +
+                    ", account number=" + entity.getSingularityAccountNumber() + " [user=" + username + "]");
+                    return true;
+                }else{
+                    logger.error("Failed to delete NIC_SINGULARITY_CHART_ACCOUNTS record with id " + id + ": record is not deletable");
+                    return false;
+                }
+
+            }else if (type.equalsIgnoreCase("NIC_TARRAGON_CHART_ACCOUNTS")) {
+                TarragonNICChartOfAccounts entity = this.tarragonNICChartOfAccountsRepository.findOne(id);
+                if(entity == null){
+                    logger.error("Failed to delete NIC_TARRAGON_CHART_ACCOUNTS record with id " + id + ": record not found");
+                    return false;
+                }
+                if(checkDeletableMatchingTarragonChartAccountsLongDescription(entity.getTarragonChartOfAccountsName())){
+                    this.tarragonNICChartOfAccountsRepository.delete(id);
+                    logger.info("Successfully deleted NIC_TARRAGON_CHART_ACCOUNTS lookup value: id=" + id + ", type=" + type +
+                            ", name=" + entity.getTarragonChartOfAccountsName() + " [user=" + username + "]");
+                    return true;
+                }else{
+                    logger.error("Failed to delete NIC_TARRAGON_CHART_ACCOUNTS record with id " + id + ": record is not deletable");
+                    return false;
+                }
+
+            }else if (type.equalsIgnoreCase("NIC_TERRA_CHART_ACCOUNTS")) {
+                TerraNICChartOfAccounts entity = this.terraNICChartOfAccountsRepository.findOne(id);
+                if(entity == null){
+                    logger.error("Failed to delete NIC_TERRA_CHART_ACCOUNTS record with id " + id + ": record not found");
+                    return false;
+                }
+                if(checkDeletableMatchingTerraChartAccountsLongDescription(entity.getTerraChartOfAccountsName())){
+                    this.terraNICChartOfAccountsRepository.delete(id);
+                    logger.info("Successfully deleted NIC_TERRA_CHART_ACCOUNTS lookup value: id=" + id + ", type=" + type +
+                            ", name=" + entity.getTerraChartOfAccountsName() + " [user=" + username + "]");
+                    return true;
+                }else{
+                    logger.error("Failed to delete NIC_TERRA_CHART_ACCOUNTS record with id " + id + ": record is not deletable");
+                    return false;
+                }
+            }else{
+                logger.error("Error deleting Matching Chart of accounts lookup value with id " + id + ": type is not known - '" + type + "'");
+            }
+        }catch (Exception ex){
+            logger.error("Error deleting Matching Chart of accounts lookup value with id " + id + ", type '" + type + "'", ex);
+        }
+        return false;
+    }
+
+    private boolean checkDeletableMatchingSingularityAccountNumber(String accountNumber){
+        if(accountNumber == null){
+            return false;
+        }
+        // Get reports
+        List<PeriodicReportDto> periodicReportDots = this.periodicReportService.getAllPeriodicReports();
+        for(PeriodicReportDto report: periodicReportDots){
+            //if(report.getStatus() != null && !report.getStatus().equalsIgnoreCase(kz.nicnbk.service.dto.reporting.PeriodicReportType.SUBMITTED.getCode())){
+                ConsolidatedReportRecordHolderDto holder = this.hfGeneralLedgerBalanceService.get(report.getId());
+                if(holder != null && holder.getGeneralLedgerBalanceList() != null){
+                    for(SingularityGeneralLedgerBalanceRecordDto record: holder.getGeneralLedgerBalanceList()){
+                        if(record.getGLAccount() != null && record.getGLAccount().startsWith(accountNumber)){
+                            return false;
+                        }
+                    }
+                }
+            //}
+        }
+        return true;
+    }
+
+    private boolean checkDeletableMatchingTarragonChartAccountsLongDescription(String chartAccountsLongDescription){
+        if(chartAccountsLongDescription == null){
+            return false;
+        }
+        // Get reports
+        List<PeriodicReportDto> periodicReportDots = this.periodicReportService.getAllPeriodicReports();
+        for(PeriodicReportDto report: periodicReportDots){
+            //if(report.getStatus() != null && !report.getStatus().equalsIgnoreCase(kz.nicnbk.service.dto.reporting.PeriodicReportType.SUBMITTED.getCode())){
+                ListResponseDto listResponseDto = this.periodicReportPEService.getTarragonGeneratedForm(report.getId());
+                if(listResponseDto != null && listResponseDto.getRecords() != null){
+                    for(GeneratedGeneralLedgerFormDto record: (List<GeneratedGeneralLedgerFormDto>) listResponseDto.getRecords()){
+                        if(record.getChartAccountsLongDescription() != null && record.getChartAccountsLongDescription().equalsIgnoreCase(chartAccountsLongDescription)){
+                            return false;
+                        }
+                    }
+                }
+            //}
+        }
+        return true;
+    }
+
+    private boolean checkDeletableMatchingTerraChartAccountsLongDescription(String chartAccountsLongDescription){
+        if(chartAccountsLongDescription == null){
+            return false;
+        }
+        // Get reports
+        List<PeriodicReportDto> periodicReportDots = this.periodicReportService.getAllPeriodicReports();
+        for(PeriodicReportDto report: periodicReportDots){
+            //if(report.getStatus() != null && !report.getStatus().equalsIgnoreCase(kz.nicnbk.service.dto.reporting.PeriodicReportType.SUBMITTED.getCode())){
+                ListResponseDto listResponseDto = this.periodicReportREService.getTerraGeneratedForm(report.getId());
+                if(listResponseDto != null && listResponseDto.getRecords() != null){
+                    for(GeneratedGeneralLedgerFormDto record: (List<GeneratedGeneralLedgerFormDto>) listResponseDto.getRecords()){
+                        if(record.getChartAccountsLongDescription() != null && record.getChartAccountsLongDescription().equalsIgnoreCase(chartAccountsLongDescription)){
+                            return false;
+                        }
+                    }
+                }
+            //}
+        }
+        return true;
+    }
+
 }

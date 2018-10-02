@@ -46,6 +46,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,6 +70,8 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
     /* Root folder on the server */
     @Value("${filestorage.root.directory}")
     private String rootDirectory;
+
+    public static final int PERIODIC_DATA_DEFAULT_PAGE_SIZE = 20;
 
     @Autowired
     private PeriodReportRepository periodReportRepository;
@@ -939,12 +943,24 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
         fundNamesHoder.setPreviousREFundNameList((String[]) previousREFundNames.toArray(new String[previousREFundNames.size()]));
 
-        Arrays.sort(fundNamesHoder.getCurrentPEFundNameList());
-        Arrays.sort(fundNamesHoder.getCurrentHFFundNameList());
-        Arrays.sort(fundNamesHoder.getCurrentREFundNameList());
-        Arrays.sort(fundNamesHoder.getPreviousPEFundNameList());
-        Arrays.sort(fundNamesHoder.getPreviousHFFundNameList());
-        Arrays.sort(fundNamesHoder.getPreviousREFundNameList());
+        if(fundNamesHoder != null && fundNamesHoder.getCurrentPEFundNameList() != null) {
+            Arrays.sort(fundNamesHoder.getCurrentPEFundNameList());
+        }
+        if(fundNamesHoder != null && fundNamesHoder.getCurrentHFFundNameList() != null) {
+            Arrays.sort(fundNamesHoder.getCurrentHFFundNameList());
+        }
+        if(fundNamesHoder != null && fundNamesHoder.getCurrentREFundNameList() != null) {
+            Arrays.sort(fundNamesHoder.getCurrentREFundNameList());
+        }
+        if(fundNamesHoder != null && fundNamesHoder.getPreviousPEFundNameList() != null) {
+            Arrays.sort(fundNamesHoder.getPreviousPEFundNameList());
+        }
+        if(fundNamesHoder != null && fundNamesHoder.getPreviousHFFundNameList() != null) {
+            Arrays.sort(fundNamesHoder.getPreviousHFFundNameList());
+        }
+        if(fundNamesHoder != null && fundNamesHoder.getPreviousREFundNameList() != null) {
+            Arrays.sort(fundNamesHoder.getPreviousREFundNameList());
+        }
         return fundNamesHoder;
     }
 

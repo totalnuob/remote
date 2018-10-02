@@ -25,4 +25,7 @@ public interface ReportingHFGeneralLedgerBalanceRepository extends PagingAndSort
     @Query("SELECT e from ReportingHFGeneralLedgerBalance e where (e.adjustedRedemption IS NOT NULL OR e.interestRate IS NOT NULL) AND e.report.id=?1")
     List<ReportingHFGeneralLedgerBalance> getAdjustedEntitiesByReportId(Long reportId, Pageable pageable);
 
+    @Query("SELECT count(e) from ReportingHFGeneralLedgerBalance e where e.chartAccountsType.code=?1")
+    int getEntitiesCountByChartAccountsType(String code);
+
 }

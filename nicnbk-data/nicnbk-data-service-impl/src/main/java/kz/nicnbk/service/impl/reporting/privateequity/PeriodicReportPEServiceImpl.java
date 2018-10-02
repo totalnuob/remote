@@ -213,32 +213,76 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
                 if(record.getNicAccountName() == null) {
                     List<TarragonNICChartOfAccounts> nicChartOfAccounts =
                             this.tarragonNICChartOfAccountsRepository.findByTarragonChartOfAccountsNameAndAddable(record.getChartAccountsLongDescription(), false);
-                    if (nicChartOfAccounts != null) {
-                        for(TarragonNICChartOfAccounts entity: nicChartOfAccounts){
-                            if(record.getChartAccountsLongDescription().equalsIgnoreCase("Current tax (expense) benefit")){
-                                if(record.getGLAccountBalance() != null && record.getGLAccountBalance() < 0){
-                                    if(entity.getNegativeOnly() != null && entity.getNegativeOnly().booleanValue()){
+                    if (nicChartOfAccounts != null && !nicChartOfAccounts.isEmpty()) {
+                        if(nicChartOfAccounts.size() == 1){
+                            TarragonNICChartOfAccounts entity = nicChartOfAccounts.get(0);
+                            if(entity.getPositiveOnly() != null && entity.getPositiveOnly().booleanValue() &&
+                                    record.getGLAccountBalance() != null && record.getGLAccountBalance() < 0){
+                                continue;
+                            }else if(entity.getNegativeOnly() != null && entity.getNegativeOnly().booleanValue() &&
+                                    record.getGLAccountBalance() != null && record.getGLAccountBalance() >= 0){
+                                continue;
+                            }
+                            record.setNicAccountName(entity.getNicReportingChartOfAccounts().getNameRu());
+                            if (entity.getNicReportingChartOfAccounts().getNbChartOfAccounts() != null) {
+                                record.setNbAccountNumber(entity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode());
+                            }
+                        }else if(nicChartOfAccounts.size() == 2){
+                            boolean found = false;
+                            for(TarragonNICChartOfAccounts entity: nicChartOfAccounts) {
+                                if (record.getGLAccountBalance() != null && record.getGLAccountBalance() < 0) {
+                                    if (entity.getNegativeOnly() != null && entity.getNegativeOnly().booleanValue()) {
+                                        record.setNicAccountName(entity.getNicReportingChartOfAccounts().getNameRu());
+                                        if (entity.getNicReportingChartOfAccounts().getNbChartOfAccounts() != null) {
+                                            record.setNbAccountNumber(entity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode());
+                                        }
+                                        found = true;
+                                        break;
+                                    }
+                                } else if (record.getGLAccountBalance() != null && record.getGLAccountBalance() >= 0) {
+                                    if (entity.getPositiveOnly() != null && entity.getPositiveOnly().booleanValue()) {
                                         record.setNicAccountName(entity.getNicReportingChartOfAccounts().getNameRu());
                                         if (entity.getNicReportingChartOfAccounts().getNbChartOfAccounts() != null) {
                                             record.setNbAccountNumber(entity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode());
                                         }
                                     }
-                                }else if(record.getGLAccountBalance() != null && record.getGLAccountBalance() >= 0){
-                                    if(entity.getPositiveOnly() != null && entity.getPositiveOnly().booleanValue()){
-                                        record.setNicAccountName(entity.getNicReportingChartOfAccounts().getNameRu());
-                                        if (entity.getNicReportingChartOfAccounts().getNbChartOfAccounts() != null) {
-                                            record.setNbAccountNumber(entity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode());
-                                        }
-                                    }
-                                }
-
-                            }else {
-                                record.setNicAccountName(entity.getNicReportingChartOfAccounts().getNameRu());
-                                if (entity.getNicReportingChartOfAccounts().getNbChartOfAccounts() != null) {
-                                    record.setNbAccountNumber(entity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode());
+                                    found = true;
+                                    break;
                                 }
                             }
+                            if(!found){
+                                logger.error("Error setting Tarragon NIC Chart of accounts for '" + record.getChartAccountsLongDescription() + "' " +
+                                        " : positiveOnly/negativeOnly flags not set properly");
+                            }
+                        }else{
+                            logger.error("Error setting Tarragon NIC Chart of accounts for '" + record.getChartAccountsLongDescription() + "' " +
+                                    " : more than 2 mappings found.");
                         }
+//                        for(TarragonNICChartOfAccounts entity: nicChartOfAccounts){
+//                            if(record.getChartAccountsLongDescription().equalsIgnoreCase("Current tax (expense) benefit")){
+//                                if(record.getGLAccountBalance() != null && record.getGLAccountBalance() < 0){
+//                                    if(entity.getNegativeOnly() != null && entity.getNegativeOnly().booleanValue()){
+//                                        record.setNicAccountName(entity.getNicReportingChartOfAccounts().getNameRu());
+//                                        if (entity.getNicReportingChartOfAccounts().getNbChartOfAccounts() != null) {
+//                                            record.setNbAccountNumber(entity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode());
+//                                        }
+//                                    }
+//                                }else if(record.getGLAccountBalance() != null && record.getGLAccountBalance() >= 0){
+//                                    if(entity.getPositiveOnly() != null && entity.getPositiveOnly().booleanValue()){
+//                                        record.setNicAccountName(entity.getNicReportingChartOfAccounts().getNameRu());
+//                                        if (entity.getNicReportingChartOfAccounts().getNbChartOfAccounts() != null) {
+//                                            record.setNbAccountNumber(entity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode());
+//                                        }
+//                                    }
+//                                }
+//
+//                            }else {
+//                                record.setNicAccountName(entity.getNicReportingChartOfAccounts().getNameRu());
+//                                if (entity.getNicReportingChartOfAccounts().getNbChartOfAccounts() != null) {
+//                                    record.setNbAccountNumber(entity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode());
+//                                }
+//                            }
+//                        }
                     }else{
                         // no match found
                     }
@@ -404,12 +448,14 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
                                     ", sum of net realized gains/losses = " + netRealizedTrancheA;
                             logger.error(errorMessage);
                             responseDto.setErrorMessageEn(errorMessage);
+                            break;
                         } else if (record.getTranche() == 2 && ((netRealizedTrancheB + value) < -2 ||
                                 (netRealizedTrancheB + value) > 2)) {
                             String errorMessage = "{Tranche B] Statement of operations 'Net realized gain on investments' = " + value +
                                     ", sum of net realized gains/losses = " + netRealizedTrancheB;
                             logger.error(errorMessage);
                             responseDto.setErrorMessageEn(errorMessage);
+                            break;
                         }
                     }
                 }

@@ -109,6 +109,10 @@
             <a>updater</a>
             <b>updater</b>
         </field-exclude>
+        <field-exclude>
+            <a>creator</a>
+            <b>creator</b>
+        </field-exclude>
     </mapping>
 
     <mapping>
@@ -149,6 +153,10 @@
         <field-exclude>
             <a>updater</a>
             <b>updater</b>
+        </field-exclude>
+        <field-exclude>
+            <a>creator</a>
+            <b>creator</b>
         </field-exclude>
     </mapping>
 
@@ -276,6 +284,15 @@
         <field-exclude>
             <a>updater</a>
             <b>updater</b>
+        </field-exclude>
+    </mapping>
+
+    <mapping>
+        <class-a>kz.nicnbk.service.dto.lookup.CurrencyRatesDto</class-a>
+        <class-b>kz.nicnbk.repo.model.common.CurrencyRates</class-b>
+        <field-exclude>
+            <a>currency</a>
+            <b>currency</b>
         </field-exclude>
     </mapping>
 </mappings>

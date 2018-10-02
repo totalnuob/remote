@@ -10,7 +10,9 @@ import java.util.List;
  */
 public interface TerraNICChartOfAccountsRepository extends PagingAndSortingRepository<TerraNICChartOfAccounts, Long> {
 
-    TerraNICChartOfAccounts findByTerraChartOfAccountsNameAndAddable(String name, Boolean addable);
+    List<TerraNICChartOfAccounts> findByTerraChartOfAccountsNameAndAddable(String name, Boolean addable);
+
+    List<TerraNICChartOfAccounts> findByTerraChartOfAccountsName(String name);
 
     List<TerraNICChartOfAccounts> findByAddable(Boolean addable);
 

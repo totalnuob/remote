@@ -18,11 +18,10 @@ public class CurrencyRates extends BaseEntity {
     private Date date;
     private Double value;
     private Double averageValue;
-
     private Double averageValueYear;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "currency_id")
+    @JoinColumn(name = "currency_id", nullable = false)
     public Currency getCurrency() {
         return currency;
     }
@@ -33,6 +32,7 @@ public class CurrencyRates extends BaseEntity {
 
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern="dd-MM-yyyy")
+    @Column(nullable = false)
     public Date getDate() {
         return date;
     }
@@ -41,6 +41,7 @@ public class CurrencyRates extends BaseEntity {
         this.date = date;
     }
 
+    @Column(nullable = false)
     public Double getValue() {
         return value;
     }

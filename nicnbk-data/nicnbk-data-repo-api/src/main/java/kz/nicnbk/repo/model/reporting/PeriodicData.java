@@ -16,6 +16,7 @@ public class PeriodicData extends BaseEntity {
     private Date date;
     private Double value;
     private PeriodicDataType type;
+    private Boolean revaluated;
 
     @Column(name = "date")
     @Temporal(value = TemporalType.TIMESTAMP)
@@ -44,5 +45,14 @@ public class PeriodicData extends BaseEntity {
 
     public void setType(PeriodicDataType type) {
         this.type = type;
+    }
+
+    @Column(name="revaluated")
+    public Boolean getRevaluated() {
+        return revaluated;
+    }
+
+    public void setRevaluated(Boolean revaluated) {
+        this.revaluated = revaluated;
     }
 }

@@ -244,6 +244,12 @@ public class PEStatementOperationsServiceImpl implements PEStatementOperationsSe
         return StringUtils.isNotEmpty(name) && (name.equalsIgnoreCase("Net increase (decrease) in partners' capital resulting from operations"));
     }
 
+    @Override
+    public boolean existEntityWithType(String code) {
+        int count = this.peStatementOperationsRepository.getEntitiesCountByType(code);
+        return count > 0;
+    }
+
     // TODO: refactor
 //    private List<ConsolidatedReportRecordDto> disassembleList(List<ReportingPEStatementOperations> entities){
 //        List<ConsolidatedReportRecordDto> records = new ArrayList<>();

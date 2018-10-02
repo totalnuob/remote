@@ -1,7 +1,10 @@
 package kz.nicnbk.service.api.common;
 
 import kz.nicnbk.service.api.base.BaseService;
+import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
 import kz.nicnbk.service.dto.lookup.CurrencyRatesDto;
+import kz.nicnbk.service.dto.lookup.CurrencyRatesPagedSearchResult;
+import kz.nicnbk.service.dto.lookup.CurrencyRatesSearchParams;
 
 import java.util.Date;
 
@@ -16,5 +19,9 @@ public interface CurrencyRatesService extends BaseService {
 
     Double getAverageYearRateForFixedDateAndCurrency(Date date, String currencyCode);
 
-    boolean save(CurrencyRatesDto dto);
+    CurrencyRatesPagedSearchResult search(CurrencyRatesSearchParams searchParams);
+
+    EntitySaveResponseDto save(CurrencyRatesDto dto, String username);
+
+    boolean delete(Long id, String username);
 }

@@ -1,6 +1,7 @@
 package kz.nicnbk.service.dto.reporting;
 
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
+import kz.nicnbk.repo.model.reporting.NICReportingChartOfAccounts;
 
 /**
  * Created by magzumov on 28.09.2017.
@@ -11,11 +12,24 @@ public class NICReportingChartOfAccountsDto extends BaseDictionaryDto implements
 
     public NICReportingChartOfAccountsDto(){}
 
-    public NICReportingChartOfAccountsDto(BaseDictionaryDto parent){
-        super.setCode(parent.getCode());
-        super.setNameEn(parent.getNameEn());
-        super.setNameRu(parent.getNameRu());
-        super.setNameKz(parent.getNameKz());
+    public NICReportingChartOfAccountsDto(BaseDictionaryDto dto){
+        super.setId(dto.getId());
+        super.setCode(dto.getCode());
+        super.setNameEn(dto.getNameEn());
+        super.setNameRu(dto.getNameRu());
+        super.setNameKz(dto.getNameKz());
+    }
+
+    public NICReportingChartOfAccountsDto(NICReportingChartOfAccounts entity){
+        super.setCode(entity.getCode());
+        super.setNameEn(entity.getNameEn());
+        super.setNameRu(entity.getNameRu());
+        super.setNameKz(entity.getNameKz());
+        if(entity.getNbChartOfAccounts() != null){
+            BaseDictionaryDto nbChartAccounts = new BaseDictionaryDto(entity.getNbChartOfAccounts().getCode(),
+                    entity.getNbChartOfAccounts().getNameEn(), entity.getNbChartOfAccounts().getNameRu(), entity.getNbChartOfAccounts().getNameKz());
+            setNBChartOfAccounts(nbChartAccounts);
+        }
     }
 
     public BaseDictionaryDto getNBChartOfAccounts() {

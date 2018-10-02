@@ -160,6 +160,15 @@ public class PEStatementBalanceServiceImpl implements PEStatementBalanceService 
     }
 
     @Override
+    public boolean existEntityWithType(String code) {
+        if(StringUtils.isEmpty(code)){
+            return false;
+        }
+        int count = this.peStatementBalanceRepository.getEntitiesCountByType(code);
+        return count > 0;
+    }
+
+    @Override
     public List<StatementBalanceOperationsDto> getStatementBalanceRecords(Long reportId) {
         List<ReportingPEStatementBalance> entitiesTrancheA = this.peStatementBalanceRepository.getEntitiesByReportIdAndTranche(reportId, 1,
                 new PageRequest(0, 1000, new Sort(Sort.Direction.ASC, "id")));

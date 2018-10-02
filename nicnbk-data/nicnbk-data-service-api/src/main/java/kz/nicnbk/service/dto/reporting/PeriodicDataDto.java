@@ -1,5 +1,6 @@
 package kz.nicnbk.service.dto.reporting;
 
+import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.common.service.model.BaseEntityDto;
 
 import java.util.Date;
@@ -10,21 +11,28 @@ import java.util.Date;
 public class PeriodicDataDto extends BaseEntityDto {
     private Date date;
     private Double value;
-    private String type;
+    private BaseDictionaryDto type;
+    private Boolean revaluated;
+    private boolean editable;
 
     public PeriodicDataDto(){}
 
     public PeriodicDataDto(Date date, String type, Double value){
         this.date = date;
-        this.type = type;
+        if(this.type == null){
+            this.type = new BaseDictionaryDto();
+        }
+        this.type.setCode(type);
         this.value = value;
     }
 
     public PeriodicDataDto(Long id, Date date, String type, Double value){
         super.setId(id);
-
         this.date = date;
-        this.type = type;
+        if(this.type == null){
+            this.type = new BaseDictionaryDto();
+        }
+        this.type.setCode(type);
         this.value = value;
     }
 
@@ -44,11 +52,27 @@ public class PeriodicDataDto extends BaseEntityDto {
         this.value = value;
     }
 
-    public String getType() {
+    public BaseDictionaryDto getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(BaseDictionaryDto type) {
         this.type = type;
+    }
+
+    public boolean isEditable() {
+        return editable;
+    }
+
+    public void setEditable(boolean editable) {
+        this.editable = editable;
+    }
+
+    public Boolean getRevaluated() {
+        return revaluated;
+    }
+
+    public void setRevaluated(Boolean revaluated) {
+        this.revaluated = revaluated;
     }
 }

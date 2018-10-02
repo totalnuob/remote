@@ -1,0 +1,184 @@
+<div class="container">
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting/lookupValues']">Lookups Main</a></span>
+                </li>
+                <!--<li *ngIf="report != null" class="active">{{getReportDateShortFormatted(report.reportDate)}}</li>-->
+                <li class="active">Typed Lookups</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row withpadding" style="min-height: 500px">
+
+        <div class="row top-buffer" *ngIf="errorMessage != null || successMessage != null">
+            <div class="col-md-12">
+                <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+                </div>
+                <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-2">
+                    Select lookup
+                </div>
+                <div class="col-md-3">
+                    <select class="form-control" [(ngModel)]="selectedLookupName" (change)="selectLookup($event.target.value)">
+                        <!--<option value="NONE">-&#45;&#45;</option>-->
+                        <option value="PE_BALANCE_TYPE">PE(Tarragon) Balance type</option>
+                        <option value="PE_OPS_TYPE">PE(Tarragon) Operations type</option>
+                        <option value="PE_CASHFLOW_TYPE">PE(Tarragon) Cash Flow type</option>
+                        <option value="HF_CHART_ACCOUNTS_TYPE">HF(Singularity) Chart of Accounts type</option>
+                        <!--<option value="RE_CHART_ACCOUNTS_TYPE">RE(Terra) Chart of Accounts type</option>-->
+                        <option value="RE_BALANCE_TYPE">RE(Terra) Balance type</option>
+                        <option value="RE_PROFIT_LOSS_TYPE">RE(Terra) Profit Loss type</option>
+                        <option value="NB_CHART_ACCOUNTS">NB Chart of Accounts</option>
+                    </select>
+                </div>
+                <!--<div class="col-md-1">-->
+                    <!--<button class="btn btn-xs btn-primary" (click)="selectLookup()" [disabled]="selectedLookupName == null || selectedLookupName === 'NONE'">-->
+                        <!--<span class="glyphicon glyphicon-arrow-right"></span>-->
+                    <!--</button>-->
+                <!--</div>-->
+            </div>
+        </div>
+
+        <br/>
+        <div class="row" *ngIf="selectedLookupValues != null">
+            <div class="col-md-12">
+                <div class="col-md-1 pull-right">
+                    <a class="btn btn-primary" data-toggle="modal" data-target="#editModal" (click)="edit()" style="cursor: pointer">
+                    <!--<span class="glyphicon glyphicon-edit"></span>-->Add
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <br/>
+        <br/>
+        <div class="row" *ngIf="selectedLookupValues != null">
+            <table [ngBusy]="busy" class="table table-hover">
+                <thead>
+                <tr>
+                    <th>CODE</th>
+                    <th>NAME EN</th>
+                    <th>NAME RU</th>
+                    <th>NAME KZ</th>
+                    <th>PARENT</th>
+                    <th>&nbsp;</th>
+                    <th>&nbsp;</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let item of selectedLookupValues">
+                    <td>{{item.code}}</td>
+                    <td>{{item.nameEn}}</td>
+                    <td>{{item.nameRu}}</td>
+                    <td>{{item.nameKz}}</td>
+                    <td>{{item.parent != null ? (item.parent.nameEn != null ? item.parent.nameEn : item.parent.nameRu) : ''}}</td>
+                    <td>
+                        <button *ngIf = "item.editable" type="button" class="btn-xs btn-success" style="display: inline-block"
+                                data-toggle="modal" data-target="#editModal" (click)="edit(item)">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </button>
+                    </td>
+                    <td>
+                        <button *ngIf = "item.editable" type="button" class="btn-xs btn-danger" style="display: inline-block"
+                                (click)="delete(item)">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="modal fade" id="editModal" role="dialog" *ngIf="selectedEditLookup != null">
+            <div class="modal-dialog" style="overflow-y: scroll; max-height:85%;  margin-top: 50px; margin-bottom:50px; width:65%;">
+                <div class="modal-content" style="min-height: 400px">
+                    <div class="modal-header">
+                        <h3 class="modal-title"  style="word-wrap: break-word">Enter new lookup value</h3>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="row top-buffer" >
+                            <div class="col-md-12">
+                                <div class="alert alert-danger" *ngIf="errorMessageSaveLookup != null"><span style="white-space: pre-wrap">{{errorMessageSaveLookup}}</span>
+                                </div>
+                                <div class="alert alert-info" *ngIf="successMessageSaveLookup != null"><span>{{successMessageSaveLookup}}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-2">
+                                    <label>Code</label>
+                                </div>
+                                <div class="col-md-10">
+                                    <input type="text" class="form-control" maxlength="10" placeholder="Enter code..." [(ngModel)]="selectedEditLookup.code"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-2">
+                                    <label>Name EN</label>
+                                </div>
+                                <div class="col-md-10">
+                                    <input type="text" class="form-control" maxlength="250" placeholder="Enter name en..." [(ngModel)]="selectedEditLookup.nameEn"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-2">
+                                    <label>Name RU</label>
+                                </div>
+                                <div class="col-md-10">
+                                    <input type="text" class="form-control" maxlength="250" placeholder="Enter name ru..." [(ngModel)]="selectedEditLookup.nameRu"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-2">
+                                    <label>Name KZ</label>
+                                </div>
+                                <div class="col-md-10">
+                                    <input type="text" class="form-control" maxlength="250" placeholder="Enter name kz..." [(ngModel)]="selectedEditLookup.nameKz"/>
+                                </div>
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="row" *ngIf="lookupWithParent() && this.selectedEditLookup.parent != null">
+                            <div class="col-md-12">
+                                <div class="col-md-2">
+                                    <label>Parent type</label>
+                                </div>
+                                <div class="col-md-10">
+                                    <select class="form-control" [(ngModel)]="selectedEditLookup.parent.code">
+                                        <option [value]="NONE">---</option>
+                                        <option *ngFor="let item of selectedLookupValues" [value]="item.code">{{item.nameEn}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" (click)="save()">Save</button>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

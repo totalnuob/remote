@@ -119,6 +119,16 @@ public class DateUtils {
         return cal.getTime();
     }
 
+    public static Date getLastDayOfCurrentYear(Date date){
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.MONTH, Calendar.DECEMBER);
+        cal.set(Calendar.YEAR, getYear(date));
+        cal.set(Calendar.DAY_OF_MONTH, 1);// This is necessary to get proper results
+        cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
+        //System.out.println(cal.getTime());
+        return cal.getTime();
+    }
+
     public static Date getLastDayOfNextMonth(Date date){
         // TODO: december-january
         Calendar cal = Calendar.getInstance();

@@ -4,11 +4,13 @@ package kz.nicnbk.common.service.model;
  * Created by magzumov on 08.07.2016.
  */
 public class BaseDictionaryDto implements BaseDto{
-    //private Integer id;
+    private Integer id;
     private String code;
     private String nameEn;
     private String nameRu;
     private String nameKz;
+    private BaseDictionaryDto parent;
+    private Boolean editable;
 
     public BaseDictionaryDto(){}
 
@@ -19,13 +21,13 @@ public class BaseDictionaryDto implements BaseDto{
         this.nameKz = nameKz;
     }
 
-//    public Integer getId() {
-//        return id;
-//    }
-//
-//    public void setId(Integer id) {
-//        this.id = id;
-//    }
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getCode() {
         return code;
@@ -57,5 +59,21 @@ public class BaseDictionaryDto implements BaseDto{
 
     public void setNameKz(String nameKz) {
         this.nameKz = nameKz;
+    }
+
+    public BaseDictionaryDto getParent() {
+        return parent;
+    }
+
+    public void setParent(BaseDictionaryDto parent) {
+        this.parent = parent;
+    }
+
+    public Boolean getEditable() {
+        return editable;
+    }
+
+    public void setEditable(Boolean editable) {
+        this.editable = editable;
     }
 }

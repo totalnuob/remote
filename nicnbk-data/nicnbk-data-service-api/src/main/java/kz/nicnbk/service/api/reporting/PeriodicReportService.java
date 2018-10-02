@@ -1,14 +1,11 @@
 package kz.nicnbk.service.api.reporting;
 
-import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.service.api.base.BaseService;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
-import kz.nicnbk.service.dto.common.FileUploadResultDto;
 import kz.nicnbk.service.dto.common.ListResponseDto;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.reporting.*;
 
-import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 

@@ -12,6 +12,8 @@ public interface TarragonNICChartOfAccountsRepository extends PagingAndSortingRe
 
     List<TarragonNICChartOfAccounts> findByTarragonChartOfAccountsNameAndAddable(String name, Boolean addable);
 
+    List<TarragonNICChartOfAccounts> findByTarragonChartOfAccountsName(String name);
+
     List<TarragonNICChartOfAccounts> findByAddable(Boolean addable);
 
 

@@ -41,7 +41,21 @@ public class PEGeneralLedgerFormDataConverter extends BaseDozerEntityConverter<P
                     this.tarragonNICChartOfAccountsRepository.findByTarragonChartOfAccountsNameAndAddable(dto.getTarragonNICChartOfAccountsName(), true);
 
             if (tarragonNICChartOfAccounts != null && !tarragonNICChartOfAccounts.isEmpty()) {
-                entity.setTarragonNICChartOfAccounts(tarragonNICChartOfAccounts.get(0));
+                for(TarragonNICChartOfAccounts anEntity: tarragonNICChartOfAccounts){
+                    if(anEntity.getPositiveOnly() != null && anEntity.getPositiveOnly().booleanValue() &&
+                            entity.getGLAccountBalance() != null && entity.getGLAccountBalance() >= 0){
+                        entity.setTarragonNICChartOfAccounts(anEntity);
+                        break;
+                    }else if(anEntity.getNegativeOnly() != null && anEntity.getNegativeOnly().booleanValue() &&
+                            entity.getGLAccountBalance() != null && entity.getGLAccountBalance() < 0){
+                        entity.setTarragonNICChartOfAccounts(anEntity);
+                        break;
+                    }else if(tarragonNICChartOfAccounts.size() == 1){
+                        entity.setTarragonNICChartOfAccounts(anEntity);
+                    }
+                }
+
+                //entity.setTarragonNICChartOfAccounts(tarragonNICChartOfAccounts.get(0));
 
 //                for(TarragonNICChartOfAccounts chartOfAccounts: tarragonNICChartOfAccounts){
 //                    if(dto.getTarragonNICChartOfAccountsName().equalsIgnoreCase("Current tax (expense) benefit")){

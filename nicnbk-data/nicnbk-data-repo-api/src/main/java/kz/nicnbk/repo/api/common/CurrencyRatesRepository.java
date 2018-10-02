@@ -1,6 +1,8 @@
 package kz.nicnbk.repo.api.common;
 
 import kz.nicnbk.repo.model.common.CurrencyRates;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.Temporal;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -28,4 +30,11 @@ public interface CurrencyRatesRepository extends PagingAndSortingRepository<Curr
     List<CurrencyRates> getAverageRatesAfterDateAndCurrency(@Param("dateFrom") @Temporal(TemporalType.DATE) Date dateFrom,
                                                      @Param("dateTo") @Temporal(TemporalType.DATE) Date dateTo,
                                                      @Param("currencyCode") String currencyCode);
+
+
+    // Date parameters are required
+    @Query("select e from CurrencyRates e where " +
+            " (e.date >= ?1 AND e.date <= ?2)" +
+            " ORDER BY e.date DESC")
+    Page<CurrencyRates> search(@Temporal(TemporalType.DATE) Date dateFrom,@Temporal(TemporalType.DATE) Date dateTo,Pageable pageable);
 }

@@ -1,18 +1,20 @@
 package kz.nicnbk.ws.rest;
 
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
-import kz.nicnbk.repo.model.m2s2.MeetingType;
-import kz.nicnbk.repo.model.m2s2.MemoType;
+import kz.nicnbk.service.api.authentication.TokenService;
+import kz.nicnbk.service.api.common.CurrencyRatesService;
 import kz.nicnbk.service.datamanager.LookupService;
-import kz.nicnbk.service.dto.reporting.NICReportingChartOfAccountsDto;
-import kz.nicnbk.service.dto.reporting.TarragonNICReportingChartOfAccountsDto;
+import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
+import kz.nicnbk.service.dto.lookup.CurrencyRatesDto;
+import kz.nicnbk.service.dto.lookup.CurrencyRatesPagedSearchResult;
+import kz.nicnbk.service.dto.lookup.CurrencyRatesSearchParams;
+import kz.nicnbk.service.dto.reporting.*;
 import kz.nicnbk.service.dto.reporting.realestate.TerraNICReportingChartOfAccountsDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,6 +29,12 @@ public class LookupServiceREST extends CommonServiceREST{
 
     @Autowired
     private LookupService lookupService;
+
+    @Autowired
+    private TokenService tokenService;
+
+    @Autowired
+    private CurrencyRatesService currencyRatesService;
 
     @RequestMapping(value = "/NewsType", method = RequestMethod.GET)
     public ResponseEntity getAllNewsTypes(){
@@ -130,11 +138,19 @@ public class LookupServiceREST extends CommonServiceREST{
         return buildNonNullResponse(lookups);
     }
 
+    // TODO: replace with searchNICReportingChartOfAccountsByCode(...)
+
     @RequestMapping(value = "/NICReportingChartOfAccounts/{code}", method = RequestMethod.GET)
     public ResponseEntity getNICReportingChartOfAccountsByCode(@PathVariable String code){
         List<NICReportingChartOfAccountsDto> lookups = this.lookupService.getNICReportingChartOfAccounts(code);
         Collections.sort(lookups);
         return buildNonNullResponse(lookups);
+    }
+
+    @RequestMapping(value = "/searchNICReportingChartOfAccounts", method = RequestMethod.POST)
+    public ResponseEntity searchNICReportingChartOfAccountsByCode(@RequestBody NICChartOfAccountsSearchParamsDto searchParams){
+        NICChartOfAccountsPagedSearchResultDto searchResult = this.lookupService.searchNICReportingChartOfAccounts(searchParams);
+        return buildNonNullResponse(searchResult);
     }
 
     @RequestMapping(value = "/NICReportingChartOfAccounts/", method = RequestMethod.GET)
@@ -193,4 +209,152 @@ public class LookupServiceREST extends CommonServiceREST{
         return lookups;
     }
 
+
+    @RequestMapping(value = "/currencyRates", method = RequestMethod.POST)
+    public CurrencyRatesPagedSearchResult getCurrencyRates(@RequestBody CurrencyRatesSearchParams searchParams){
+        CurrencyRatesPagedSearchResult lookups = this.currencyRatesService.search(searchParams);
+        return lookups;
+    }
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/currencyRates/save", method = RequestMethod.POST)
+    public ResponseEntity saveCurrencyRates(@RequestBody CurrencyRatesDto currencyRatesDto){
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        EntitySaveResponseDto saveResponse = this.currencyRatesService.save(currencyRatesDto, username);
+        return buildEntitySaveResponse(saveResponse);
+    }
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/currencyRates/delete/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity deleteCurrencyRates(@PathVariable Long id){
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        boolean deleted = this.currencyRatesService.delete(id, username);
+        return buildDeleteResponseEntity(deleted);
+    }
+
+    @RequestMapping(value = "/repTarragonBalanceType/", method = RequestMethod.GET)
+    public ResponseEntity getNBReportingTarragonBalanceTypeLookup(){
+        List<BaseDictionaryDto> lookups = this.lookupService.getNBReportingTarragonBalanceTypeLookup();
+        return buildNonNullResponse(lookups);
+    }
+
+    @RequestMapping(value = "/repTarragonOperationsType/", method = RequestMethod.GET)
+    public ResponseEntity getNBReportingTarragonOperationsTypeLookup(){
+        List<BaseDictionaryDto> lookups = this.lookupService.getNBReportingTarragonOperationsTypeLookup();
+        return buildNonNullResponse(lookups);
+    }
+
+    @RequestMapping(value = "/repTarragonCashflowsType/", method = RequestMethod.GET)
+    public ResponseEntity getNBReportingTarragonCashflowsTypeLookup(){
+        List<BaseDictionaryDto> lookups = this.lookupService.getNBReportingTarragonCashflowsTypeLookup();
+        return buildNonNullResponse(lookups);
+    }
+
+    @RequestMapping(value = "/repSingularityChartAccountsType/", method = RequestMethod.GET)
+    public ResponseEntity getNBReportingSingularityChartAccountsTypeLookup(){
+        List<BaseDictionaryDto> lookups = this.lookupService.getNBReportingSingularityChartAccountsTypeLookup();
+        return buildNonNullResponse(lookups);
+    }
+
+//    @RequestMapping(value = "/repTerraChartAccountsType/", method = RequestMethod.GET)
+//    public ResponseEntity getNBReportingTerraChartAccountsTypeLookup(){
+//        List<BaseDictionaryDto> lookups = this.lookupService.getNBReportingTerraChartAccountsTypeLookup();
+//        return buildNonNullResponse(lookups);
+//    }
+
+    @RequestMapping(value = "/repTerraBalanceType/", method = RequestMethod.GET)
+    public ResponseEntity getNBReportingTerraBalanceTypeLookup(){
+        List<BaseDictionaryDto> lookups = this.lookupService.getNBReportingTerraBalanceTypeLookup();
+        return buildNonNullResponse(lookups);
+    }
+
+    @RequestMapping(value = "/repTerraProfitLossType/", method = RequestMethod.GET)
+    public ResponseEntity getNBReportingTerraProfitLossTypeLookup(){
+        List<BaseDictionaryDto> lookups = this.lookupService.getNBReportingTerraProfitLossTypeLookup();
+        return buildNonNullResponse(lookups);
+    }
+
+//    @RequestMapping(value = "/nbChartAccounts", method = RequestMethod.GET)
+//    public ResponseEntity getNBChartAccountsLookup(){
+//        List<BaseDictionaryDto> lookups = this.lookupService.getNBChartAccountsLookup();
+//        return buildNonNullResponse(lookups);
+//    }
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/saveLookupValue/{type}", method = RequestMethod.POST)
+    public ResponseEntity saveLookupValue(@PathVariable String type, @RequestBody BaseDictionaryDto lookupValue){
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        EntitySaveResponseDto saveResponseDto = this.lookupService.saveTypedLookupValue(type, lookupValue, username);
+        return buildEntitySaveResponse(saveResponseDto);
+    }
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/lookupValue/delete/{type}/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity deleteLookupValue(@PathVariable String type, @PathVariable Integer id){
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        boolean deleted = this.lookupService.deleteTypedLookupValueByTypeAndId(type, id, username);
+        return buildDeleteResponseEntity(deleted);
+    }
+
+    @RequestMapping(value = "/periodicDataTypes", method = RequestMethod.GET)
+    public ResponseEntity getPeriodicDataTypesLookup(){
+        List<BaseDictionaryDto> lookups = this.lookupService.getPeriodicDataTypesLookup();
+        return buildNonNullResponse(lookups);
+    }
+
+    @RequestMapping(value = "/SingularityNICReportingChartOfAccounts/", method = RequestMethod.GET)
+    public ResponseEntity getSingularityNICReportingChartOfAccounts(){
+        List<CommonNICReportingChartOfAccountsDto> lookups = this.lookupService.getSingularityNICReportingChartOfAccounts();
+        return buildNonNullResponse(lookups);
+    }
+
+    @RequestMapping(value = "/TarragonNICReportingChartOfAccounts/", method = RequestMethod.GET)
+    public ResponseEntity getTarragonNICReportingChartOfAccounts(){
+        List<CommonNICReportingChartOfAccountsDto> lookups = this.lookupService.getTarragonNICReportingChartOfAccounts();
+        return buildNonNullResponse(lookups);
+    }
+
+    @RequestMapping(value = "/TerraNICReportingChartOfAccounts/", method = RequestMethod.GET)
+    public ResponseEntity getTerraNICReportingChartOfAccounts(){
+        List<CommonNICReportingChartOfAccountsDto> lookups = this.lookupService.getTerraNICReportingChartOfAccounts();
+        return buildNonNullResponse(lookups);
+    }
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/saveMatchingNICChartAccounts/{type}", method = RequestMethod.POST)
+    public ResponseEntity saveMatchingNICChartAccounts(@PathVariable String type, @RequestBody CommonNICReportingChartOfAccountsDto dto){
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        EntitySaveResponseDto saveResponseDto = this.lookupService.saveMatchingNICChartAccounts(type, dto, username);
+        return buildEntitySaveResponse(saveResponseDto);
+    }
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/saveNICChartAccounts/", method = RequestMethod.POST)
+    public ResponseEntity saveNICChartAccounts(@RequestBody NICReportingChartOfAccountsDto dto){
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        EntitySaveResponseDto saveResponseDto = this.lookupService.saveNICChartOfAccounts(dto, username);
+        return buildEntitySaveResponse(saveResponseDto);
+    }
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/matchingLookupValue/delete/{type}/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity deleteMatchingLookupValue(@PathVariable String type, @PathVariable Long id){
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        boolean deleted = this.lookupService.deleteMatchingLookupByTypeAndId(type, id, username);
+        return buildDeleteResponseEntity(deleted);
+    }
 }

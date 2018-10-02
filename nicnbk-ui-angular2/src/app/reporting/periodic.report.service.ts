@@ -32,6 +32,7 @@ import {ReserveCalculationSearchResults} from "./model/reserve-calculation-searc
 import {TerraCombinedRecordHolder} from "./model/terra.combined.record.holder";
 import {ReportingFundRenameInfo} from "./model/reporting.fund.rename.info";
 import {FundNameHolder} from "./model/fund.name.holder";
+import {PeriodicDataSearchResults} from "./model/periodic-data-search-results";
 
 var fileSaver = require("file-saver");
 
@@ -103,6 +104,11 @@ export class PeriodicReportService extends CommonService{
 
     private PERIODIC_REPORT_MARK_REPORT_FINAL_URL = this.PERIODIC_REPORT_BASE_URL + "markReportFinal/";
 
+    private SEARCH_PERIODIC_DATA_URL = this.PERIODIC_REPORT_BASE_URL + "searchPeriodicData/";
+    private SAVE_PERIODIC_DATA_URL = this.PERIODIC_REPORT_BASE_URL + "savePeriodicData/";
+    private DELETE_PERIODIC_DATA_URL = this.PERIODIC_REPORT_BASE_URL + "deletePeriodicData/";
+
+
     private PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_6_URL = this.PERIODIC_REPORT_BASE_URL + "consolidatedBalanceKZTForm6/";
     private PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_8_URL = this.PERIODIC_REPORT_BASE_URL + "consolidatedBalanceKZTForm8/";
     private PERIODIC_REPORT_CONSOLIDATED_KZT_FORM_10_URL = this.PERIODIC_REPORT_BASE_URL + "consolidatedBalanceKZTForm10/";
@@ -125,6 +131,12 @@ export class PeriodicReportService extends CommonService{
 
     private RESERVE_CALCULATION_ATTACHMENT_UPLOAD_URL = this.PERIODIC_REPORT_BASE_URL + "reserveCalculation/uploadAttachment/";
     private RESERVE_CALCULATION_ATTACHMENT_DELETE_URL = this.PERIODIC_REPORT_BASE_URL + "reserveCalculationAttachmentDelete/";
+
+    private PERIODIC_REPORT_NIC_CHART_ACCOUNTS_URL = this.PERIODIC_REPORT_BASE_URL + "matchingLookupValues/NICChartAccounts";
+    private PERIODIC_REPORT_NIC_SINGULARITY_CHART_ACCOUNTS_URL = this.PERIODIC_REPORT_BASE_URL + "matchingLookupValues/NICSingularityChartAccounts";
+    private PERIODIC_REPORT_NIC_TARRAGON_CHART_ACCOUNTS_URL = this.PERIODIC_REPORT_BASE_URL + "matchingLookupValues/NICTarragonChartAccounts";
+    private PERIODIC_REPORT_NIC_TERRA_CHART_ACCOUNTS_URL = this.PERIODIC_REPORT_BASE_URL + "matchingLookupValues/NICTerraChartAccounts";
+
 
 
     loadAll(): Observable<PeriodicReport[]> {
@@ -586,4 +598,49 @@ export class PeriodicReportService extends CommonService{
             //.map(this.extractData);
             //.catch(this.handleErrorResponse);
     }
+
+    searchPeriodicData(searchParams): Observable<PeriodicDataSearchResults>{
+        var body = JSON.stringify(searchParams);
+        return this.http.post(this.SEARCH_PERIODIC_DATA_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    savePeriodicData(data): Observable<>{
+        var body = JSON.stringify(data);
+        return this.http.post(this.SAVE_PERIODIC_DATA_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    deletePeriodicDataRecord(id){
+        return this.http.delete(this.DELETE_PERIODIC_DATA_URL + id, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    getNBReportingNICChartAccounts(): Observable<>{
+        return this.http.get(this.PERIODIC_REPORT_NIC_CHART_ACCOUNTS_URL , this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+
+    getNBReportingNICSingularityChartAccounts(type): Observable<>{
+        return this.http.get(this.PERIODIC_REPORT_NIC_SINGULARITY_CHART_ACCOUNTS_URL + type, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+
+    getNBReportingNICTarragonChartAccounts(type): Observable<>{
+        return this.http.get(this.PERIODIC_REPORT_NIC_TARRAGON_CHART_ACCOUNTS_URL + type, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+
+    getNBReportingNICTerraChartAccounts(type): Observable<>{
+        return this.http.get(this.PERIODIC_REPORT_NIC_TERRA_CHART_ACCOUNTS_URL + type, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+
 }

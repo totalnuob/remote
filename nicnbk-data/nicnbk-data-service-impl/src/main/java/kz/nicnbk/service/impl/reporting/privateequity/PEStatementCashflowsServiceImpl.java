@@ -276,4 +276,10 @@ public class PEStatementCashflowsServiceImpl implements PEStatementCashflowsServ
     private PECashflowsType getCashflowTypeByName(String nameEn){
         return this.peCashflowsTypeRepository.findByNameEnIgnoreCase(nameEn);
     }
+
+    @Override
+    public boolean existEntityWithType(String code) {
+        int count = this.peStatementCashflowsRepository.getEntitiesCountByType(code);
+        return count > 0;
+    }
 }

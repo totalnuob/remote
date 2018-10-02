@@ -295,4 +295,9 @@ public class HFGeneralLedgerBalanceServiceImpl implements HFGeneralLedgerBalance
         return null;
     }
 
+    @Override
+    public boolean existEntityWithChartAccountsType(String code) {
+        int count = this.generalLedgerBalanceRepository.getEntitiesCountByChartAccountsType(code);
+        return count > 0;
+    }
 }

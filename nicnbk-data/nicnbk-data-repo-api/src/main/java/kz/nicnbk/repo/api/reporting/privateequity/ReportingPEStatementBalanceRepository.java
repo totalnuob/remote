@@ -22,4 +22,7 @@ public interface ReportingPEStatementBalanceRepository extends PagingAndSortingR
     @Query("DELETE from ReportingPEStatementBalance e where e.report.id=?1")
     void deleteByReportId(long reportId);
 
+    @Query("SELECT count(e) from ReportingPEStatementBalance e where e.type.code=?1")
+    int getEntitiesCountByType(String code);
+
 }

@@ -481,13 +481,51 @@ public class PeriodicReportREServiceImpl implements PeriodicReportREService {
         if(records != null) {
             for(GeneratedGeneralLedgerFormDto record: records){
                 if(record.getNicAccountName() == null) {
-                    TerraNICChartOfAccounts nicChartOfAccounts =
+                    List<TerraNICChartOfAccounts> nicChartOfAccounts =
                             this.terraNICChartOfAccountsRepository.findByTerraChartOfAccountsNameAndAddable(record.getChartAccountsLongDescription(), false);
-                    if (nicChartOfAccounts != null) {
-                        record.setNicAccountName(nicChartOfAccounts.getNicReportingChartOfAccounts().getNameRu());
-                        if (nicChartOfAccounts.getNicReportingChartOfAccounts().getNbChartOfAccounts() != null) {
-                            record.setNbAccountNumber(nicChartOfAccounts.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode());
+                    if (nicChartOfAccounts != null && !nicChartOfAccounts.isEmpty()) {
+                        if(nicChartOfAccounts.size() == 1){
+                            TerraNICChartOfAccounts entity = nicChartOfAccounts.get(0);
+                            record.setNicAccountName(entity.getNicReportingChartOfAccounts().getNameRu());
+                            if (entity.getNicReportingChartOfAccounts().getNbChartOfAccounts() != null) {
+                                record.setNbAccountNumber(entity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode());
+                            }
+                        }else if(nicChartOfAccounts.size() == 2){
+                            boolean found = false;
+                            for(TerraNICChartOfAccounts entity: nicChartOfAccounts) {
+                                if (record.getGLAccountBalance() != null && record.getGLAccountBalance() < 0) {
+                                    if (entity.getNegativeOnly() != null && entity.getNegativeOnly().booleanValue()) {
+                                        record.setNicAccountName(entity.getNicReportingChartOfAccounts().getNameRu());
+                                        if (entity.getNicReportingChartOfAccounts().getNbChartOfAccounts() != null) {
+                                            record.setNbAccountNumber(entity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode());
+                                        }
+                                        found = true;
+                                        break;
+                                    }
+                                } else if (record.getGLAccountBalance() != null && record.getGLAccountBalance() >= 0) {
+                                    if (entity.getPositiveOnly() != null && entity.getPositiveOnly().booleanValue()) {
+                                        record.setNicAccountName(entity.getNicReportingChartOfAccounts().getNameRu());
+                                        if (entity.getNicReportingChartOfAccounts().getNbChartOfAccounts() != null) {
+                                            record.setNbAccountNumber(entity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode());
+                                        }
+                                    }
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if(!found){
+                                logger.error("Error setting Terra NIC Chart of accounts for '" + record.getChartAccountsLongDescription() + "' " +
+                                        " : positiveOnly/negativeOnly flags not set properly");
+                            }
+                        }else{
+                            logger.error("Error setting Terra NIC Chart of accounts for '" + record.getChartAccountsLongDescription() + "' " +
+                                    " : more than 2 mappings found.");
                         }
+
+//                        record.setNicAccountName(nicChartOfAccounts.getNicReportingChartOfAccounts().getNameRu());
+//                        if (nicChartOfAccounts.getNicReportingChartOfAccounts().getNbChartOfAccounts() != null) {
+//                            record.setNbAccountNumber(nicChartOfAccounts.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode());
+//                        }
                     }else{
                         // no match found
                         if(record.getChartAccountsLongDescription().equalsIgnoreCase("Investment in Portfolio Fund")){
@@ -793,6 +831,18 @@ public class PeriodicReportREServiceImpl implements PeriodicReportREService {
         holderDto.setSecuritiesCostRecords(securitiesCostRecords);
         holderDto.setReport(this.periodicReportService.getPeriodicReport(reportId));
         return holderDto;
+    }
+
+    @Override
+    public boolean existBalanceEntityWithType(String code) {
+        int count = this.balanceSheetRepository.getEntitiesCountByType(code);
+        return count > 0;
+    }
+
+    @Override
+    public boolean existProfitLossEntityWithType(String code) {
+        int count = this.profitLossRepository.getEntitiesCountByType(code);
+        return count > 0;
     }
 
 

@@ -1,0 +1,268 @@
+<div class="container">
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting/lookupValues']">Lookups Main</a></span>
+                </li>
+                <!--<li *ngIf="report != null" class="active">{{getReportDateShortFormatted(report.reportDate)}}</li>-->
+                <li class="active">Matching Lookups</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row withpadding" style="min-height: 500px">
+        <div class="row top-buffer" *ngIf="errorMessage != null || successMessage != null">
+            <div class="col-md-12">
+                <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+                </div>
+                <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-2">
+                    Select lookup
+                </div>
+                <div class="col-md-3">
+                    <select class="form-control" [(ngModel)]="selectedLookupName" (change)="selectLookup($event.target.value)">
+                        <!--<option value="NONE">-&#45;&#45;</option>-->
+                        <!--<option value="NB_CHART_ACCOUNTS">NB Chart of Accounts</option>-->
+                        <option value="NIC_CHART_ACCOUNTS">NIC Chart of Accounts</option>
+                        <option value="NIC_SINGULARITY_CHART_ACCOUNTS">NIC Singularity Chart of Accounts</option>
+                        <option value="NIC_TARRAGON_CHART_ACCOUNTS">NIC Tarragon Chart of Accounts</option>
+                        <option value="NIC_TERRA_CHART_ACCOUNTS">NIC Terra Chart of Accounts</option>
+                    </select>
+                </div>
+                <!--<div class="col-md-1">-->
+                    <!--<button class="btn btn-xs btn-primary" (click)="selectLookup()" [disabled]="selectedLookupName == null || selectedLookupName === 'NONE'">-->
+                        <!--<span class="glyphicon glyphicon-arrow-right"></span>-->
+                    <!--</button>-->
+                <!--</div>-->
+            </div>
+        </div>
+
+        <br/>
+        <div class="row" *ngIf="selectedLookupValues != null">
+            <div class="col-md-12">
+                <div class="col-md-1 pull-right">
+                    <a class="btn btn-primary" data-toggle="modal" data-target="#editModal" (click)="edit()" style="cursor: pointer">
+                    <!--<span class="glyphicon glyphicon-edit"></span>-->Add
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <br/>
+        <br/>
+
+        <div class="row" *ngIf="selectedLookupName != null && selectedLookupName === 'NIC_CHART_ACCOUNTS'">
+            <div class="jumbotron">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-6">
+                            <label for="nbCodeSearchParam">NB Code</label>
+                            <select class="form-control" [(ngModel)]="nicChartAccountsSearchParams.nbCode" id="nbCodeSearchParam">
+                                <option *ngFor="let item of nbChartAccountsLookupValues" [value]="item.code">{{item.code + '-' + item.nameRu}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <br/>
+                <div class="row">
+                    <button type="button"class="btn-xs btn-default pull-left" (click)="clearSearchForm()">
+                        <!--<i class="glyphicon glyphicon-trash"></i>-->Reset
+                    </button>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <button type="button" class="btn btn-success pull-right" (click)="selectLookup(selectedLookupName)">Search</button>
+                    </div>
+                </div>
+            </div>
+            <br/>
+
+
+            <div>
+                <label>Total found: <span>{{nicChartAccountsSearchResult?.totalElements > 0 ?  nicChartAccountsSearchResult?.totalElements : 0}}</span></label>
+            </div>
+            <div class="row pull-right">
+                <ul class="pagination" *ngIf="nicChartAccountsSearchResult?.showPageFrom > 0">
+                    <li><a *ngIf="nicChartAccountsSearchResult?.showPageFrom > 1" (click)="selectLookup(selectedLookupName, nicChartAccountsSearchResult.showPageFrom - 1)">&laquo;</a></li>
+                    <li *ngFor="let i of range(nicChartAccountsSearchResult.showPageFrom, nicChartAccountsSearchResult.showPageTo)" [class.active]="i == nicChartAccountsSearchResult.currentPage">
+                        <a (click)="selectLookup(selectedLookupName,i)">{{i}}</a>
+                    </li>
+                    <li><a *ngIf="nicChartAccountsSearchResult.showPageTo < nicChartAccountsSearchResult.totalPages" (click)="selectLookup(selectedLookupName, nicChartAccountsSearchResult.showPageTo + 1)">&raquo;</a></li>
+                </ul>
+            </div>
+
+            <table [ngBusy]="busy" class="table table-hover">
+                <thead>
+                <tr>
+                    <th>CODE</th>
+                    <th>NAME RU</th>
+                    <!--<th>NAME EN</th>-->
+                    <!--<th>NAME KZ</th>-->
+                    <th *ngIf="selectedLookupName === 'NIC_CHART_ACCOUNTS'">NB CODE</th>
+                    <th *ngIf="selectedLookupName === 'NIC_CHART_ACCOUNTS'">NB NAME</th>
+                    <th>&nbsp;</th>
+                    <th>&nbsp;</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let item of selectedLookupValues">
+                    <td>{{item.code}}</td>
+                    <td>{{item.nameRu}}</td>
+                    <!--<td>{{item.nameEn}}</td>-->
+                    <!--<td>{{item.nameKz}}</td>-->
+                    <td *ngIf="item.nbchartOfAccounts != null">{{item.nbchartOfAccounts.code}}</td>
+                    <td *ngIf="item.nbchartOfAccounts != null">{{item.nbchartOfAccounts.nameRu}}</td>
+                    <td>
+                        <button *ngIf = "item.editable" type="button" class="btn-xs btn-success" style="display: inline-block"
+                                data-toggle="modal" data-target="#editModal" (click)="edit(item)">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </button>
+                    </td>
+                    <td>
+                        <button *ngIf = "selectedLookupName != 'NIC_CHART_ACCOUNTS' && item.editable" type="button" class="btn-xs btn-danger" style="display: inline-block"
+                                (click)="delete(item)">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="row" *ngIf="selectedLookupName != null && selectedLookupName != 'NIC_CHART_ACCOUNTS'">
+            <table [ngBusy]="busy" class="table table-hover">
+                <thead>
+                <tr>
+                    <th rowspan="2">ACCOUNT NUMBER</th>
+                    <th rowspan="2">NAME EN</th>
+                    <th colspan="2">NIC CHART OF ACCOUNTS</th>
+                    <th rowspan="2">ADDABLE</th>
+                    <th rowspan="2">NEGATIVE ONLY</th>
+                    <th rowspan="2">POSITIVE ONLY</th>
+                    <th rowspan="2">&nbsp;</th>
+                    <th rowspan="2">&nbsp;</th>
+                </tr>
+                <tr>
+                    <th>NAME RU</th>
+                    <th>CODE</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let item of selectedLookupValues">
+                    <td>{{item.accountNumber}}</td>
+                    <td>{{item.nameEn}}</td>
+                    <td>{{item.nicchartOfAccounts.nameRu}}</td>
+                    <td>{{item.nicchartOfAccounts.code}}</td>
+                    <td>{{item.addable}}</td>
+                    <td>{{item.negativeOnly}}</td>
+                    <td>{{item.positiveOnly}}</td>
+                    <td>
+                        <button *ngIf = "item.editable" type="button" class="btn-xs btn-success" style="display: inline-block"
+                                data-toggle="modal" data-target="#editModal" (click)="edit(item)">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </button>
+                    </td>
+                    <td>
+                        <button *ngIf = "item.deletable" type="button" class="btn-xs btn-danger" style="display: inline-block"
+                                (click)="delete(item)">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="modal fade" id="editModal" role="dialog" *ngIf="selectedEditLookup != null">
+            <div class="modal-dialog" style="overflow-y: scroll; max-height:85%;  margin-top: 50px; margin-bottom:50px; width:65%;">
+                <div class="modal-content" style="min-height: 400px">
+                    <div class="modal-header">
+                        <h3 class="modal-title"  style="word-wrap: break-word">Enter new lookup value for '{{selectedLookupName}}'</h3>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row top-buffer" >
+                            <div class="col-md-12">
+                                <div class="alert alert-danger" *ngIf="errorMessageSaveLookup != null"><span style="white-space: pre-wrap">{{errorMessageSaveLookup}}</span>
+                                </div>
+                                <div class="alert alert-info" *ngIf="successMessageSaveLookup != null"><span>{{successMessageSaveLookup}}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row" *ngIf="this.selectedLookupName != 'NIC_CHART_ACCOUNTS'">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-2">
+                                        <input type="text" class="form-control" [disabled]="selectedLookupName != 'NIC_SINGULARITY_CHART_ACCOUNTS'"  placeholder="Account number..." [(ngModel)]="selectedEditLookup.accountNumber"/>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="text" class="form-control" [disabled]="selectedLookupName != 'NIC_TARRAGON_CHART_ACCOUNTS' && selectedLookupName != 'NIC_TERRA_CHART_ACCOUNTS'" maxlength="250" placeholder="Name en..." [(ngModel)]="selectedEditLookup.nameEn"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <br/>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-8">
+                                        <select class="form-control" required [(ngModel)]="selectedEditLookup.nicchartOfAccounts.code">
+                                            <option *ngFor="let item of nicChartAccountsLookupValues" [value]="item.code">{{item.code + '-' + item.nameRu}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <br/>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-1">
+                                        <label lass="form-check-label" for="addableCheckbox">Addable</label>
+                                        <input type="checkbox" id="addableCheckbox" class="form-check-input" [(ngModel)]="selectedEditLookup.addable"/>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <label lass="form-check-label" for="negativeOnlyCheckbox">Neg.Only</label>
+                                        <input type="checkbox" id="negativeOnlyCheckbox" class="form-check-input" [(ngModel)]="selectedEditLookup.negativeOnly"/>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <label lass="form-check-label" for="positiveOnlyCheckbox">Pos.Only</label>
+                                        <input type="checkbox" id="positiveOnlyCheckbox" class="form-check-input" [(ngModel)]="selectedEditLookup.positiveOnly"/>
+                                    </div>
+                                </div>
+                            </div>
+                                <!--<div class="col-md-2">-->
+                                    <!--<input type="text" class="form-control" required maxlength="10" placeholder="Enter name en..." [(ngModel)]="selectedEditLookup.nameEn"/>-->
+                                <!--</div>-->
+                                <!--<div class="col-md-2">-->
+                                    <!--<input type="text" class="form-control" required maxlength="10" placeholder="Enter name en..." [(ngModel)]="selectedEditLookup.nameEn"/>-->
+                                <!--</div>-->
+                        </div>
+                        <div class="row" *ngIf="this.selectedLookupName === 'NIC_CHART_ACCOUNTS'">
+                            <div class="col-md-12">
+                                <div class="col-md-6">
+                                    <input type="text" required class="form-control" maxlength="250" placeholder="Name ru..." [(ngModel)]="selectedEditLookup.nameRu"/>
+                                </div>
+                                <div class="col-md-6">
+                                    <select class="form-control" required [(ngModel)]="selectedEditLookup.nbchartOfAccounts.code">
+                                        <option *ngFor="let item of nbChartAccountsLookupValues" [value]="item.code">{{item.code + '-' + item.nameRu}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" (click)="save()">Save</button>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" (click)="closeEditModal()" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

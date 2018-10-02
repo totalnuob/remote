@@ -91,6 +91,8 @@ export class TripMemoListComponent extends CommonFormViewComponent implements On
                 searchResult  => {
                     this.tripMemoList = searchResult.tripMemos;
                     this.tripMemoSearchResult = searchResult;
+
+                    console.log(searchResult.tripMemos);
                 },
                 (error: ErrorResponse) => {
                     this.errorMessage = "Error searching memos";

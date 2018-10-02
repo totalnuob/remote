@@ -21,6 +21,8 @@ export const SIDE_POCKET_URL = LOOKUP_SERVICE_URL + "SidePocket";
 
 export const NB_CHART_OF_ACCOUNTS_URL =  LOOKUP_SERVICE_URL +"NBChartOfAccounts";
 export const NIC_REPORTING_CHART_OF_ACCOUNTS_URL =  LOOKUP_SERVICE_URL +"NICReportingChartOfAccounts/";
+export const SEARCH_NIC_REPORTING_CHART_OF_ACCOUNTS_URL =  LOOKUP_SERVICE_URL + "searchNICReportingChartOfAccounts/";
+
 
 export const TARRAGON_NIC_REPORTING_CHART_OF_ACCOUNTS_URL = LOOKUP_SERVICE_URL +"AddableTarragonNICReportingChartOfAccounts/";
 export const TERRA_NIC_REPORTING_CHART_OF_ACCOUNTS_URL = LOOKUP_SERVICE_URL +"AddableTerraNICReportingChartOfAccounts/";
@@ -41,4 +43,41 @@ export const NEWS_TYPE_URL = LOOKUP_SERVICE_URL + "NewsType/";
 export const MEMO_TYPE_URL = LOOKUP_SERVICE_URL + "MemoType/";
 export const MEETING_TYPE_URL = LOOKUP_SERVICE_URL + "MeetingType/";
 export const CORP_MEETING_TYPE_URL = LOOKUP_SERVICE_URL + "CorpMeetingType/";
+
+export const SEARCH_CURRENCY_RATES_URL = LOOKUP_SERVICE_URL + "currencyRates/";
+export const SAVE_CURRENCY_RATES_URL = LOOKUP_SERVICE_URL + "currencyRates/save/";
+export const DELETE_CURRENCY_RATES_URL = LOOKUP_SERVICE_URL + "currencyRates/delete/";
+
+export const SAVE_LOOKUP_VALUE_URL = LOOKUP_SERVICE_URL + "saveLookupValue/";
+
+export const NB_REP_TARRAGON_BALANCE_TYPE_URL = LOOKUP_SERVICE_URL + "repTarragonBalanceType/";
+export const NB_REP_TARRAGON_OPERATIONS_TYPE_URL = LOOKUP_SERVICE_URL + "repTarragonOperationsType/";
+export const NB_REP_TARRAGON_CASHFLOWS_TYPE_URL = LOOKUP_SERVICE_URL + "repTarragonCashflowsType/";
+export const NB_REP_SINGULARITY_CHART_ACCOUNTS_TYPE_URL = LOOKUP_SERVICE_URL + "repSingularityChartAccountsType/";
+export const NB_REP_TERRA_CHART_ACCOUNTS_TYPE_URL = LOOKUP_SERVICE_URL + "repTerraChartAccountsType/";
+export const NB_REP_TERRA_BALANCE_TYPE_URL = LOOKUP_SERVICE_URL + "repTerraBalanceType/";
+export const NB_REP_TERRA_PROFIT_LOSS_TYPE_URL = LOOKUP_SERVICE_URL + "repTerraProfitLossType/";
+export const NB_CHART_ACCOUNTS__URL = LOOKUP_SERVICE_URL + "NBChartOfAccounts/";
+
+export const PERIODIC_DATA_TYPES_URL = LOOKUP_SERVICE_URL + "periodicDataTypes/";
+
+export const NIC_SINGULARITY_CHART_ACCOUNTS_URL = LOOKUP_SERVICE_URL + "SingularityNICReportingChartOfAccounts/";
+export const NIC_TARRAGON_CHART_ACCOUNTS_URL = LOOKUP_SERVICE_URL + "TarragonNICReportingChartOfAccounts/";
+export const NIC_TERRA_CHART_ACCOUNTS_URL = LOOKUP_SERVICE_URL + "TerraNICReportingChartOfAccounts/";
+
+export const SAVE_LOOKUP_VALUE_URL = LOOKUP_SERVICE_URL + "saveLookupValue/";
+export const SAVE_MATCHING_NIC_CHART_ACCOUNTS_URL = LOOKUP_SERVICE_URL + "saveMatchingNICChartAccounts/";
+export const SAVE_NIC_CHART_ACCOUNTS_URL = LOOKUP_SERVICE_URL + "saveNICChartAccounts/";
+
+export const DELETE_LOOKUP_VALUE_BY_TYPE_URL = LOOKUP_SERVICE_URL + "lookupValue/delete/";
+export const DELETE_MATCHING_LOOKUP_VALUE_BY_TYPE_URL = LOOKUP_SERVICE_URL + "matchingLookupValue/delete/";
+
+
+
+
+
+
+
+
+
 

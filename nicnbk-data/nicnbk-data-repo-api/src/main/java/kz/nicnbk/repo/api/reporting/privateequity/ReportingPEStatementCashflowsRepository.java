@@ -22,4 +22,7 @@ public interface ReportingPEStatementCashflowsRepository extends PagingAndSortin
     @Query("DELETE from ReportingPEStatementCashflows e where e.report.id=?1")
     void deleteByReportId(long reportId);
 
+    @Query("SELECT count(e) from ReportingPEStatementCashflows e where e.type.code=?1")
+    int getEntitiesCountByType(String code);
+
 }

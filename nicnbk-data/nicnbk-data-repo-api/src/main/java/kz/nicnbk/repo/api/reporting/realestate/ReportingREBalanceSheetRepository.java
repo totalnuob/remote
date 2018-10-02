@@ -23,5 +23,8 @@ public interface ReportingREBalanceSheetRepository extends PagingAndSortingRepos
     @Query("DELETE from ReportingREBalanceSheet e where e.report.id=?1")
     void deleteByReportId(long reportId);
 
+    @Query("SELECT count(e) from ReportingREBalanceSheet e where e.type.code=?1")
+    int getEntitiesCountByType(String code);
+
 
 }

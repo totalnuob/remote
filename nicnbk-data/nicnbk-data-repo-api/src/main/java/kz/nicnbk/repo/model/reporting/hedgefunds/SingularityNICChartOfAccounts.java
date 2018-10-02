@@ -18,6 +18,11 @@ public class SingularityNICChartOfAccounts extends BaseEntity {
     private String singularityAccountNumber;
     private NICReportingChartOfAccounts nicReportingChartOfAccounts;
 
+    //private Boolean addable;
+    private Boolean positiveOnly;
+    private Boolean negativeOnly;
+
+
     @Column(name="singularity_account_number", nullable = false)
     public String getSingularityAccountNumber() {
         return singularityAccountNumber;
@@ -35,5 +40,23 @@ public class SingularityNICChartOfAccounts extends BaseEntity {
 
     public void setNicReportingChartOfAccounts(NICReportingChartOfAccounts nicReportingChartOfAccounts) {
         this.nicReportingChartOfAccounts = nicReportingChartOfAccounts;
+    }
+
+    @Column(name="positive_only")
+    public Boolean getPositiveOnly() {
+        return positiveOnly;
+    }
+
+    public void setPositiveOnly(Boolean positiveOnly) {
+        this.positiveOnly = positiveOnly;
+    }
+
+    @Column(name="negative_only")
+    public Boolean getNegativeOnly() {
+        return negativeOnly;
+    }
+
+    public void setNegativeOnly(Boolean negativeOnly) {
+        this.negativeOnly = negativeOnly;
     }
 }

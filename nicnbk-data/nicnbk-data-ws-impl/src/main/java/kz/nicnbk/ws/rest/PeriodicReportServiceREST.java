@@ -2,10 +2,7 @@ package kz.nicnbk.ws.rest;
 
 import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.files.FileService;
-import kz.nicnbk.service.api.reporting.PeriodicReportFileParseService;
-import kz.nicnbk.service.api.reporting.PeriodicReportNICKMFService;
-import kz.nicnbk.service.api.reporting.PeriodicReportPrevYearInputService;
-import kz.nicnbk.service.api.reporting.PeriodicReportService;
+import kz.nicnbk.service.api.reporting.*;
 import kz.nicnbk.service.api.reporting.hedgefunds.HFGeneralLedgerBalanceService;
 import kz.nicnbk.service.api.reporting.hedgefunds.PeriodicReportHFService;
 import kz.nicnbk.service.api.reporting.privateequity.*;
@@ -92,6 +89,9 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
     @Autowired
     private PeriodicReportREService realEstateService;
 
+    @Autowired
+    private PeriodicDataService periodicDataService;
+
 
 
     /* PERIODIC REPORT ************************************************************************************************/
@@ -152,6 +152,40 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
             return buildOKWithErrorResponse(null);
         }
     }
+
+    /**
+     * Returns periodic data mathcing specified search params.
+     * @param searchParams - search parameters
+     * @return - periodic data
+     */
+    @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/searchPeriodicData", method = RequestMethod.POST)
+    public ResponseEntity searchPeriodicData(@RequestBody PeriodicDataSearchParamsDto searchParams) {
+        PeriodicDataPagedSearchResultDto searchResults = this.periodicDataService.searchPeriodicData(searchParams);
+        return buildNonNullResponse(searchResults);
+    }
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/savePeriodicData", method = RequestMethod.POST)
+    public ResponseEntity<?> savePeriodicData(@RequestBody PeriodicDataDto dto) {
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        EntitySaveResponseDto saveResponseDto = this.periodicDataService.save(dto, username);
+        return buildEntitySaveResponse(saveResponseDto);
+    }
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/deletePeriodicData/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity deletePeriodicDataRecord(@PathVariable Long id){
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        boolean deleted = this.periodicDataService.delete(id, username);
+        return buildDeleteResponseEntity(deleted);
+    }
+
+
     /* ****************************************************************************************************************/
 
 
@@ -553,12 +587,12 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
         return buildNonNullResponse(recordsHolder);
     }
 
-    @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
-    @RequestMapping(value = "/get/re/generalLedgerBalance/{id}", method = RequestMethod.GET)
-    public ResponseEntity getRealEstateGeneralLedgerBalance(@PathVariable Long id) {
-        ConsolidatedReportRecordHolderDto recordsHolder = this.realEstateGeneralLedgerBalanceService.get(id);
-        return buildNonNullResponse(recordsHolder);
-    }
+//    @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+//    @RequestMapping(value = "/get/re/generalLedgerBalance/{id}", method = RequestMethod.GET)
+//    public ResponseEntity getRealEstateGeneralLedgerBalance(@PathVariable Long id) {
+//        ConsolidatedReportRecordHolderDto recordsHolder = this.realEstateGeneralLedgerBalanceService.get(id);
+//        return buildNonNullResponse(recordsHolder);
+//    }
 
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/get/terraCombined/{id}", method = RequestMethod.GET)

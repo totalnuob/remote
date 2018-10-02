@@ -26,4 +26,6 @@ public interface HFGeneralLedgerBalanceService extends BaseService {
     boolean saveAdjustments(SingularityAdjustmentsDto adjustmentsDto, String updater);
 
     List<SingularityGeneralLedgerBalanceRecordDto> getAdjustedRecords(Long reportId);
+
+    boolean existEntityWithChartAccountsType(String code);
 }
