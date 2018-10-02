@@ -10,6 +10,8 @@ import {TripMemoSearchParams} from "./model/trip-memo-search-params";
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 import {ErrorResponse} from "../common/error-response";
 import {Router} from '@angular/router';
+import {Observable} from 'rxjs/Observable';
+import 'rxjs/add/observable/forkJoin';
 
 declare var $:any
 declare var Chart: any;
@@ -50,36 +52,46 @@ export class TripMemoEditComponent extends CommonFormViewComponent implements On
         super(router);
 
         //loadLookups
-        this.sub = this.loadLookups();
+        Observable.forkJoin(
+            // Load lookups
+            this.employeeService.findAll()
+            )
+            .subscribe(
+                ([data]) => {
 
-        this.sub = this.route
-            .params
-            .subscribe(params => {
-                this.tripMemoIdParam = +params['id'];
-                this.breadcrumbParams = params['params'];
-                if(this.tripMemoIdParam > 0) {
-                    this.busy = this.tripMemoService.get(this.tripMemoIdParam)
-                        .subscribe(
-                            tripMemo => {
-                                // TODO: check response memo
-                                this.tripMemo = tripMemo;
+                    data.forEach(element => {
+                        this.attendeesList.push({id: element.id, text: element.firstName + " " + element.lastName});
+                    });
 
-                                // preselect trip memo attendees
-                                this.preselectAttendees();
+                    this.sub = this.route
+                        .params
+                        .subscribe(params => {
+                            this.tripMemoIdParam = +params['id'];
+                            this.breadcrumbParams = params['params'];
+                            if(this.tripMemoIdParam > 0) {
+                                this.busy = this.tripMemoService.get(this.tripMemoIdParam)
+                                    .subscribe(
+                                        tripMemo => {
+                                            // TODO: check response memo
+                                            this.tripMemo = tripMemo;
 
-                            },
-                            (error: ErrorResponse) => {
-                                this.errorMessage = "Error loading memo";
-                                if(error && !error.isEmpty()){
-                                    this.processErrorMessage(error);
-                                }
-                                this.postAction(null, null);
+                                            // preselect trip memo attendees
+                                            this.preselectAttendees();
+
+                                        },
+                                        (error: ErrorResponse) => {
+                                            this.errorMessage = "Error loading memo";
+                                            if(error && !error.isEmpty()){
+                                                this.processErrorMessage(error);
+                                            }
+                                            this.postAction(null, null);
+                                        }
+                                    );
+                            }else{
+                                this.tripMemo.tripType = 'TRAINING';
                             }
-                        );
-                }else{
-                    this.tripMemo.tripType = 'TRAINING';
-                }
-            });
+                        });
+                });
     }
 
     private preselectAttendees() {
@@ -213,24 +225,24 @@ export class TripMemoEditComponent extends CommonFormViewComponent implements On
         }
     }
 
-    loadLookups() {
-        // TODO: refactor as findAll ??? or load cash
-        this.employeeService.findAll()
-            .subscribe(
-                data => {
-                    data.forEach(element => {
-                        this.attendeesList.push({id: element.id, text: element.firstName + " " + element.lastName});
-                    });
-                },
-                (error: ErrorResponse) => {
-                    this.errorMessage = "Error loading employees";
-                    if(error && !error.isEmpty()){
-                        this.processErrorMessage(error);
-                    }
-                    this.postAction(null, null);
-                }
-            );
-    }
+    //loadLookups() {
+    //    // TODO: refactor as findAll ??? or load cash
+    //    this.employeeService.findAll()
+    //        .subscribe(
+    //            data => {
+    //                data.forEach(element => {
+    //                    this.attendeesList.push({id: element.id, text: element.firstName + " " + element.lastName});
+    //                });
+    //            },
+    //            (error: ErrorResponse) => {
+    //                this.errorMessage = "Error loading employees";
+    //                if(error && !error.isEmpty()){
+    //                    this.processErrorMessage(error);
+    //                }
+    //                this.postAction(null, null);
+    //            }
+    //        );
+    //}
 
     public canEdit() {
         // only owner can edit
