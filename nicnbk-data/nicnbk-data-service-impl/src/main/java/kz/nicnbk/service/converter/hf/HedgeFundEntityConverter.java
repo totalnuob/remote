@@ -57,7 +57,7 @@ public class HedgeFundEntityConverter extends BaseDozerEntityConverter<HedgeFund
 
         // redemption frequency
         if(StringUtils.isNotEmpty(dto.getRedemptionFrequency())) {
-            RedemptionFrequency frequency = lookupService.findByTypeAndCode(RedemptionFrequency.class, dto.getSubscriptionFrequency());
+            RedemptionFrequency frequency = lookupService.findByTypeAndCode(RedemptionFrequency.class, dto.getRedemptionFrequency());
             entity.setRedemptionFrequency(frequency);
         }
 
