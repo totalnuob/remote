@@ -197,6 +197,10 @@
             <a>updater</a>
             <b>updater</b>
         </field-exclude>
+        <field-exclude>
+            <a>creator</a>
+            <b>creator</b>
+        </field-exclude>
     </mapping>
     <mapping>
         <class-a>kz.nicnbk.service.dto.reporting.PeriodicReportDto</class-a>
