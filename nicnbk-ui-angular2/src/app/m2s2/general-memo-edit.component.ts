@@ -9,6 +9,9 @@ import {Subscription} from 'rxjs';
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 import {ErrorResponse} from "../common/error-response";
 
+import {Observable} from 'rxjs/Observable';
+import 'rxjs/add/observable/forkJoin';
+
 declare var $:any
 declare var Chart: any;
 
@@ -67,47 +70,52 @@ export class GeneralMemoEditComponent extends CommonFormViewComponent implements
         super(router);
 
         // loadLookups
-        this.sub = this.loadLookups();
+        //this.sub = this.loadLookups();
+        Observable.forkJoin(
+            // Load lookups
+            this.employeeService.findAll()
+            )
+            .subscribe(
+                ([data]) => {
 
+                    data.forEach(element => {
+                        this.attendeesList.push({id: element.id, text: element.firstName + " " + element.lastName});
+                    });
+                    this.sub = this.route
+                        .params
+                        .subscribe(params => {
+                            this.memoIdParam = +params['id'];
+                            this.breadcrumbParams = params['params'];
+                            if(this.memoIdParam > 0) {
+                                this.busy = this.memoService.get(1, this.memoIdParam)
+                                    .subscribe(
+                                        memo => {
+                                            // TODO: check response memo
+                                            this.memo = memo;
 
-        // TODO: wait/sync on lookup loading
-        // TODO: sync on subscribe results
-        //this.waitSleep(700);
+                                            if(this.memo.tags == null) {
+                                                this.memo.tags = [];
+                                            }
 
-        this.sub = this.route
-            .params
-            .subscribe(params => {
-                this.memoIdParam = +params['id'];
-                this.breadcrumbParams = params['params'];
-                if(this.memoIdParam > 0) {
-                    this.busy = this.memoService.get(1, this.memoIdParam)
-                        .subscribe(
-                            memo => {
-                                // TODO: check response memo
-                                this.memo = memo;
+                                            // preselect memo attendees
+                                            this.preselectAttendeesNIC();
+                                        },
+                                        (error: ErrorResponse) => {
+                                            this.errorMessage = "Error loading memo";
+                                            if(error && !error.isEmpty()){
+                                                this.processErrorMessage(error);
+                                            }
+                                            this.postAction(null, null);
+                                        }
+                                    );
+                            }else{
+                                // TODO: default value for meeting type?
+                                this.memo.meetingType = "MEETING";
 
-                                if(this.memo.tags == null) {
-                                    this.memo.tags = [];
-                                }
-
-                                // preselect memo attendees
-                                this.preselectAttendeesNIC();
-                            },
-                            (error: ErrorResponse) => {
-                                this.errorMessage = "Error loading memo";
-                                if(error && !error.isEmpty()){
-                                    this.processErrorMessage(error);
-                                }
-                                this.postAction(null, null);
+                                this.memo.tags = [];
                             }
-                        );
-                }else{
-                    // TODO: default value for meeting type?
-                    this.memo.meetingType = "MEETING";
-
-                    this.memo.tags = [];
-                }
-            });
+                        });
+                });
     }
 
     preselectAttendeesNIC(){
@@ -248,24 +256,24 @@ export class GeneralMemoEditComponent extends CommonFormViewComponent implements
         }
     }
 
-    loadLookups(){
-        // load employees
-        this.employeeService.findAll()
-            .subscribe(
-                data => {
-                    data.forEach(element => {
-                        this.attendeesList.push({ id: element.id, text: element.firstName + " " + element.lastName});
-                    });
-                },
-                (error: ErrorResponse) => {
-                    this.errorMessage = "Error loading employees";
-                    if(error && !error.isEmpty()){
-                        this.processErrorMessage(error);
-                    }
-                    this.postAction(null, null);
-                }
-            );
-    }
+    //loadLookups(){
+    //    // load employees
+    //    this.employeeService.findAll()
+    //        .subscribe(
+    //            data => {
+    //                data.forEach(element => {
+    //                    this.attendeesList.push({ id: element.id, text: element.firstName + " " + element.lastName});
+    //                });
+    //            },
+    //            (error: ErrorResponse) => {
+    //                this.errorMessage = "Error loading employees";
+    //                if(error && !error.isEmpty()){
+    //                    this.processErrorMessage(error);
+    //                }
+    //                this.postAction(null, null);
+    //            }
+    //        );
+    //}
 
     public canEdit() {
         // only owner can edit

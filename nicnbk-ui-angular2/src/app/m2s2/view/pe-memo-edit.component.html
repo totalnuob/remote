@@ -23,7 +23,7 @@
                 </div>
             </div>
 
-            <div [hidden]="submitted">
+            <div [hidden]="submitted" *ngIf="memo != null && memo.firm != null">
                 <form (ngSubmit)="save()" #memoForm="ngForm" class="well span">
                     <div class="jumbotron">
                         <div class="row">

@@ -19,6 +19,9 @@ import {PESearchParams} from "../pe/model/pe.search-params";
 import {PEFund} from "../pe/model/pe.fund";
 import {MemoSearchParams} from "./model/memo-search-params";
 
+import {Observable} from 'rxjs/Observable';
+import 'rxjs/add/observable/forkJoin';
+
 declare var $:any;
 declare var Chart: any;
 
@@ -49,11 +52,11 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
     @ViewChild('attendeesSelect')
     private attendeesSelect;
 
-    @ViewChild('strategySelect')
-    private strategySelect;
-
-    @ViewChild('geographySelect')
-    private geographySelect;
+    //@ViewChild('strategySelect')
+    //private strategySelect;
+    //
+    //@ViewChild('geographySelect')
+    //private geographySelect;
 
     public strategyList: Array<any> = [];
     public geographyList: Array<any> = [];
@@ -115,91 +118,127 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
         this.moduleAccessChecler = new ModuleAccessCheckerService;
 
         // loadLookups
-        this.sub = this.loadLookups();
+        //this.sub = this.loadLookups();
 
         // load all firms for dropdown
-        this.sub = this.loadFirms();
+        //this.sub = this.loadFirms();
 
-        // parse params and load data
-        this.sub = this.route
-            .params
-            .subscribe(params => {
-                this.memoIdParam = +params['id'];
-                this.breadcrumbParams = params['params'];
-                //console.log(this.breadcrumbParams);
-                if(this.breadcrumbParams != null) {
-                    this.searchParams = JSON.parse(this.breadcrumbParams);
-                }
-                this.memo.firm = new PEFirm();
-                this.memo.fund = new PEFund();
-                if(this.memoIdParam > 0) {
-                    this.busy = this.memoService.get(2, this.memoIdParam)
-                        .subscribe(
-                            memo => {
-                                // TODO: check response memo
+        Observable.forkJoin(
+            // Load lookups
+            this.employeeService.findAll(),
+            //this.lookupService.getPEStrategies(),
+            //this.lookupService.getGeographies(),
+            //this.lookupService.getCurrencyList(),
+            this.peFirmService.getFirms()
+            )
+            .subscribe(
+                ([data1, /*data2, data3, data4,*/ data5]) => {
 
-                                this.memo = memo;
+                    data1.forEach(element => {
+                        this.attendeesList.push({id: element.id, text: element.firstName + " " + element.lastName});
+                    });
 
-                                //this.initRadarChart();
+                    //data2.forEach(element => {
+                    //    this.strategyList.push({ id: element.code, text: element.nameEn});
+                    //});
+                    //
+                    //data3.forEach(element => {
+                    //    this.geographyList.push({ id: element.code, text: element.nameEn});
+                    //});
+                    //
+                    //data4.forEach(element => {
+                    //    this.currencyList.push(element);
+                    //});
+                    data5.forEach(element => {
+                        this.firmList.push({id: element.id, name: element.firmName});
+                    });
 
-                                this.preselectFirmStrategyGeographyIndustry(this.memo.firm);
-                                this.preselectFundStrategyGeographyIndustry(this.memo.fund);
-
-                                if(this.memo.firm == null){
-                                    this.memo.firm = new PEFirm();
-                                }
-
-                                if(this.memo.tags == null) {
-                                    this.memo.tags = [];
-                                }
-
-                                // untoggle funds details if fundname is not empty
-                                if(this.memo.fundName != null && this.memo.fundName != "") {
-                                    this.visible = true;
-                                }
-
-                                // preselect memo attendees
-                                this.preselectAttendeesNIC();
-
-                                if(this.memo.fund != null){
-                                    this.showFundDetails = true;
-                                }
-
-                            },
-                            (error: ErrorResponse) => {
-                                this.errorMessage = "Error loading memo";
-                                if(error && !error.isEmpty()){
-                                    this.processErrorMessage(error);
-                                }
-                                this.postAction(null, null);
-                                console.log("Error loading memo");
+                    // parse params and load data
+                    this.sub = this.route
+                        .params
+                        .subscribe(params => {
+                            this.memoIdParam = +params['id'];
+                            this.breadcrumbParams = params['params'];
+                            //console.log(this.breadcrumbParams);
+                            if(this.breadcrumbParams != null) {
+                                this.searchParams = JSON.parse(this.breadcrumbParams);
                             }
-                        );
-                }else{
-                    // TODO: default value for radio buttons?
-                    this.memo.meetingType = "MEETING";
-                    this.memo.fund.suitable = true;
-                    this.memo.suitable = true;
-                    this.memo.currentlyFundRaising = true;
-                    this.memo.openingSoon = false;
-                    this.memo.tags = [];
-                }
-            }
-            );
+                            this.memo.firm = new PEFirm();
+                            this.memo.fund = new PEFund();
+                            if(this.memoIdParam > 0) {
+                                this.busy = this.memoService.get(2, this.memoIdParam)
+                                    .subscribe(
+                                        memo => {
+                                            // TODO: check response memo
+
+                                            this.memo = memo;
+                                            console.log(this.memo);
+                                            //this.initRadarChart();
+
+                                            this.preselectFirmStrategyGeographyIndustry(this.memo.firm);
+                                            this.preselectFundStrategyGeographyIndustry(this.memo.fund);
+
+                                            if(this.memo.firm == null){
+                                                this.memo.firm = new PEFirm();
+                                            }
+
+                                            if(this.memo.tags == null) {
+                                                this.memo.tags = [];
+                                            }
+
+                                            // untoggle funds details if fundname is not empty
+                                            if(this.memo.fundName != null && this.memo.fundName != "") {
+                                                this.visible = true;
+                                            }
+
+                                            // preselect memo attendees
+                                            this.preselectAttendeesNIC();
+
+                                            if(this.memo.fund != null){
+                                                this.showFundDetails = true;
+                                            }
+
+                                        },
+                                        (error: ErrorResponse) => {
+                                            this.errorMessage = "Error loading memo";
+                                            if(error && !error.isEmpty()){
+                                                this.processErrorMessage(error);
+                                            }
+                                            this.postAction(null, null);
+                                            console.log("Error loading memo");
+                                        }
+                                    );
+                            }else{
+                                // TODO: default value for radio buttons?
+                                this.memo.meetingType = "MEETING";
+                                this.memo.fund.suitable = true;
+                                this.memo.suitable = true;
+                                this.memo.currentlyFundRaising = true;
+                                this.memo.openingSoon = false;
+                                this.memo.tags = [];
+                            }
+                        });
+
+                },
+            (error) => {
+                this.errorMessage = "Error loading firms list for dropdown.";
+                this.successMessage = null;
+            });
+
     }
 
-    preselectStrategies(){
-        if(this.memo.strategies) {
-            this.memo.strategies.forEach(element => {
-                for (var i = 0; i < this.strategyList.length; i++) {
-                    var option = this.strategyList[i];
-                    if (element.code === option.id) {
-                        this.strategySelect.active.push(option);
-                    }
-                }
-            });
-        }
-    }
+    //preselectStrategies(){
+    //    if(this.memo.strategies) {
+    //        this.memo.strategies.forEach(element => {
+    //            for (var i = 0; i < this.strategyList.length; i++) {
+    //                var option = this.strategyList[i];
+    //                if (element.code === option.id) {
+    //                    this.strategySelect.active.push(option);
+    //                }
+    //            }
+    //        });
+    //    }
+    //}
 
     preselectAttendeesNIC(){
         if(this.memo.attendeesNIC) {
@@ -214,18 +253,18 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
         }
     }
 
-    preselectGeographies(){
-        if(this.memo.geographies) {
-            this.memo.geographies.forEach(element => {
-                for (var i = 0; i < this.geographyList.length; i++) {
-                    var option = this.geographyList[i];
-                    if (element.code === option.id) {
-                        this.geographySelect.active.push(option);
-                    }
-                }
-            });
-        }
-    }
+    //preselectGeographies(){
+    //    if(this.memo.geographies) {
+    //        this.memo.geographies.forEach(element => {
+    //            for (var i = 0; i < this.geographyList.length; i++) {
+    //                var option = this.geographyList[i];
+    //                if (element.code === option.id) {
+    //                    this.geographySelect.active.push(option);
+    //                }
+    //            }
+    //        });
+    //    }
+    //}
 
     public selected(value:any):void {
         //console.log('Selected value is: ', value);
@@ -239,12 +278,12 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
         this.memo.attendeesNIC = value;
     }
 
-    public refreshGeography(value:any):void {
-        this.memo.geographies = value;
-    }
-    public refreshStrategy(value:any):void {
-        this.memo.strategies = value;
-    }
+    //public refreshGeography(value:any):void {
+    //    this.memo.geographies = value;
+    //}
+    //public refreshStrategy(value:any):void {
+    //    this.memo.strategies = value;
+    //}
 
     ngOnInit() {
 
@@ -472,102 +511,102 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
     //    });
     //}
 
-    loadLookups(){
-        this.lookupService.getClosingSchedules().then(data => this.closingScheduleList = data);
-        this.lookupService.getOpeningScheduleList().then(data => this.openingScheduleList = data);
-
-        // load strategies
-        this.lookupService.getPEStrategies()
-            .subscribe(
-                data => {
-                    data.forEach(element => {
-                        this.strategyList.push({ id: element.code, text: element.nameEn});
-                    });
-                },
-                (error: ErrorResponse) => {
-                    this.errorMessage = "Error loading lookups";
-                    if(error && !error.isEmpty()){
-                        this.processErrorMessage(error);
-                    }
-                    this.postAction(null, null);
-                }
-
-            );
-
-        // load geographies
-        this.lookupService.getGeographies()
-            .subscribe(
-            data => {
-                data.forEach(element => {
-                    this.geographyList.push({ id: element.code, text: element.nameEn});
-                });
-            },
-            (error: ErrorResponse) => {
-                this.errorMessage = "Error loading lookups";
-                if(error && !error.isEmpty()){
-                    this.processErrorMessage(error);
-                }
-                this.postAction(null, null);
-            }
-        );
-
-        // load currencies
-        this.lookupService.getCurrencyList()
-            .subscribe(
-                data => {
-                    data.forEach(element => {
-                        this.currencyList.push(element);
-                    });
-                },
-                (error: ErrorResponse) => {
-                    this.errorMessage = "Error loading lookups";
-                    if(error && !error.isEmpty()){
-                        this.processErrorMessage(error);
-                    }
-                    this.postAction(null, null);
-                }
-        );
-
-        // load employees
-        this.employeeService.findAll()
-            .subscribe(
-                data => {
-                    data.forEach(element => {
-                        this.attendeesList.push({ id: element.id, text: element.firstName + " " + element.lastName});
-
-                    });
-                },
-                (error: ErrorResponse) => {
-                    this.errorMessage = "Error loading lookups";
-                    if(error && !error.isEmpty()){
-                        this.processErrorMessage(error);
-                    }
-                    this.postAction(null, null);
-                }
-        );
-    }
-
-    loadFirms(){
-        this.peFirmService.getFirms()
-            .subscribe(
-                data => {
-                    data.forEach(element => {
-                        this.firmList.push({id: element.id, name: element.firmName});
-                    });
-                },
-                //error => {
-                //    this.postAction(null, "Error loading firms list for dropdown.");
-                //}
-                (error: ErrorResponse) => {
-                this.errorMessage = "Error loading firms list for dropdown.";
-                if(error && !error.isEmpty()){
-                    this.processErrorMessage(error);
-                }
-                this.postAction(null, null);
-        }
-            )
-        //console.log(this.firmList);
-    }
+    //loadLookups(){
+    //    this.lookupService.getClosingSchedules().then(data => this.closingScheduleList = data);
+    //    this.lookupService.getOpeningScheduleList().then(data => this.openingScheduleList = data);
+    //
+    //    // load strategies
+    //    this.lookupService.getPEStrategies()
+    //        .subscribe(
+    //            data => {
+    //                data.forEach(element => {
+    //                    this.strategyList.push({ id: element.code, text: element.nameEn});
+    //                });
+    //            },
+    //            (error: ErrorResponse) => {
+    //                this.errorMessage = "Error loading lookups";
+    //                if(error && !error.isEmpty()){
+    //                    this.processErrorMessage(error);
+    //                }
+    //                this.postAction(null, null);
+    //            }
+    //
+    //        );
+    //
+    //    // load geographies
+    //    this.lookupService.getGeographies()
+    //        .subscribe(
+    //        data => {
+    //            data.forEach(element => {
+    //                this.geographyList.push({ id: element.code, text: element.nameEn});
+    //            });
+    //        },
+    //        (error: ErrorResponse) => {
+    //            this.errorMessage = "Error loading lookups";
+    //            if(error && !error.isEmpty()){
+    //                this.processErrorMessage(error);
+    //            }
+    //            this.postAction(null, null);
+    //        }
+    //    );
+    //
+    //    // load currencies
+    //    this.lookupService.getCurrencyList()
+    //        .subscribe(
+    //            data => {
+    //                data.forEach(element => {
+    //                    this.currencyList.push(element);
+    //                });
+    //            },
+    //            (error: ErrorResponse) => {
+    //                this.errorMessage = "Error loading lookups";
+    //                if(error && !error.isEmpty()){
+    //                    this.processErrorMessage(error);
+    //                }
+    //                this.postAction(null, null);
+    //            }
+    //    );
+    //
+    //    // load employees
+    //    this.employeeService.findAll()
+    //        .subscribe(
+    //            data => {
+    //                data.forEach(element => {
+    //                    this.attendeesList.push({ id: element.id, text: element.firstName + " " + element.lastName});
+    //
+    //                });
+    //            },
+    //            (error: ErrorResponse) => {
+    //                this.errorMessage = "Error loading lookups";
+    //                if(error && !error.isEmpty()){
+    //                    this.processErrorMessage(error);
+    //                }
+    //                this.postAction(null, null);
+    //            }
+    //    );
+    //}
+    //
+    //loadFirms(){
+    //    this.peFirmService.getFirms()
+    //        .subscribe(
+    //            data => {
+    //                data.forEach(element => {
+    //                    this.firmList.push({id: element.id, name: element.firmName});
+    //                });
+    //            },
+    //            //error => {
+    //            //    this.postAction(null, "Error loading firms list for dropdown.");
+    //            //}
+    //            (error: ErrorResponse) => {
+    //            this.errorMessage = "Error loading firms list for dropdown.";
+    //            if(error && !error.isEmpty()){
+    //                this.processErrorMessage(error);
+    //            }
+    //            this.postAction(null, null);
+    //    }
+    //        )
+    //    //console.log(this.firmList);
+    //}
 
     getFirmDataOnChange(id){
         //this.getFundData(null);
@@ -686,8 +725,6 @@ export class PrivateEquityMemoEditComponent extends CommonFormViewComponent impl
                 this.firmGeographyList.push(element.nameEn.toString());
             });
         }
-
-        console.log(this.firmStrategyList);
 
     }
 
