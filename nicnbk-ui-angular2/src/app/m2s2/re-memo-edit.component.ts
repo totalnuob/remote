@@ -10,6 +10,10 @@ import {Subscription} from 'rxjs';
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 import {ErrorResponse} from "../common/error-response";
 
+import {Observable} from 'rxjs/Observable';
+import 'rxjs/add/observable/forkJoin';
+
+
 declare var $:any
 declare var Chart: any;
 
@@ -88,59 +92,88 @@ export class RealEstateMemoEditComponent extends CommonFormViewComponent impleme
 
         this.moduleAccessChecler = new ModuleAccessCheckerService;
         // loadLookups
-        this.sub = this.loadLookups();
+        //this.sub = this.loadLookups();
 
-        // TODO: wait/sync on lookup loading
-        // TODO: sync on subscribe results
-        //this.waitSleep(700);
+        this.lookupService.getClosingSchedules().then(data => this.closingScheduleList = data);
+        this.lookupService.getOpeningScheduleList().then(data => this.openingScheduleList = data);
 
-        // parse params and load data
-        this.sub = this.route
-            .params
-            .subscribe(params => {
-                this.memoIdParam = +params['id'];
-                this.breadcrumbParams = params['params'];
-                if(this.memoIdParam > 0) {
-                    this.busy = this.memoService.get(4, this.memoIdParam)
-                        .subscribe(
-                            memo => {
-                                // TODO: check response memo
-                                this.memo = memo;
-                                this.initRadarChart();
+        Observable.forkJoin(
+            // Load lookups
+            this.employeeService.findAll(),
+            this.lookupService.getREStrategies(),
+            this.lookupService.getGeographies(),
+            this.lookupService.getCurrencyList()
+            )
+            .subscribe(
+                ([data1, data2, data3, data4]) => {
 
-                                if(this.memo.tags == null) {
-                                    this.memo.tags = [];
-                                }
+                    data1.forEach(element => {
+                        this.attendeesList.push({id: element.id, text: element.firstName + " " + element.lastName});
+                    });
 
-                                // untoggle funds details if fundname is not empty
-                                if(this.memo.fundName != null && this.memo.fundName != "") {
-                                    this.visible = true;
-                                }
+                    data2.forEach(element => {
+                        this.strategyList.push({ id: element.code, text: element.nameEn});
+                    });
 
-                                // preselect memo strategies
-                                this.preselectStrategies();
+                    data3.forEach(element => {
+                        this.geographyList.push({ id: element.code, text: element.nameEn});
+                    });
 
-                                // preselect memo geographies
-                                this.preselectGeographies();
+                    data4.forEach(element => {
+                        this.currencyList.push(element);
+                    });
+                    // parse params and load data
+                    this.sub = this.route
+                        .params
+                        .subscribe(params => {
+                            this.memoIdParam = +params['id'];
+                            this.breadcrumbParams = params['params'];
+                            if(this.memoIdParam > 0) {
+                                this.busy = this.memoService.get(4, this.memoIdParam)
+                                    .subscribe(
+                                        memo => {
+                                            // TODO: check response memo
+                                            this.memo = memo;
+                                            this.initRadarChart();
 
-                                // preselect memo attendees
-                                this.preselectAttendeesNIC();
-                            },
-                            (error: ErrorResponse) => {
-                                this.errorMessage = "Error loading memo";
-                                if(error && !error.isEmpty()){
-                                    this.processErrorMessage(error);
-                                }
-                                this.postAction(null, null);
+                                            if(this.memo.tags == null) {
+                                                this.memo.tags = [];
+                                            }
+
+                                            // untoggle funds details if fundname is not empty
+                                            if(this.memo.fundName != null && this.memo.fundName != "") {
+                                                this.visible = true;
+                                            }
+
+                                            // preselect memo strategies
+                                            this.preselectStrategies();
+
+                                            // preselect memo geographies
+                                            this.preselectGeographies();
+
+                                            // preselect memo attendees
+                                            this.preselectAttendeesNIC();
+                                        },
+                                        (error: ErrorResponse) => {
+                                            this.errorMessage = "Error loading memo";
+                                            if(error && !error.isEmpty()){
+                                                this.processErrorMessage(error);
+                                            }
+                                            this.postAction(null, null);
+                                        }
+                                    );
+                            }else{
+                                // TODO: default value for meeting type?
+                                this.memo.meetingType = "MEETING";
+                                this.memo.suitable = true;
+                                this.memo.tags = [];
                             }
-                        );
-                }else{
-                    // TODO: default value for meeting type?
-                    this.memo.meetingType = "MEETING";
-                    this.memo.suitable = true;
-                    this.memo.tags = [];
-                }
-            });
+                        });
+                },
+                (error) => {
+                    this.errorMessage = "Error loading firms list for dropdown.";
+                    this.successMessage = null;
+                });
     }
 
     preselectStrategies(){
@@ -416,77 +449,77 @@ export class RealEstateMemoEditComponent extends CommonFormViewComponent impleme
         });
     }
 
-    loadLookups(){
-        this.lookupService.getClosingSchedules().then(data => this.closingScheduleList = data);
-        this.lookupService.getOpeningScheduleList().then(data => this.openingScheduleList = data);
-
-        // load strategies
-        this.lookupService.getREStrategies()
-            .subscribe(
-                data => {
-                    data.forEach(element => {
-                        this.strategyList.push({ id: element.code, text: element.nameEn});
-                    });
-                },
-                (error: ErrorResponse) => {
-                    this.errorMessage = "Error loading lookups";
-                    if(error && !error.isEmpty()){
-                        this.processErrorMessage(error);
-                    }
-                    this.postAction(null, null);
-                }
-            );
-        // load geographies
-        this.lookupService.getGeographies()
-            .subscribe(
-                data => {
-                    data.forEach(element => {
-                        this.geographyList.push({ id: element.code, text: element.nameEn});
-                    });
-                },
-                (error: ErrorResponse) => {
-                    this.errorMessage = "Error loading lookups";
-                    if(error && !error.isEmpty()){
-                        this.processErrorMessage(error);
-                    }
-                    this.postAction(null, null);
-                }
-        );
-        // load currencies
-        this.lookupService.getCurrencyList()
-            .subscribe(
-                data => {
-                    data.forEach(element => {
-                        this.currencyList.push(element);
-                    });
-                },
-                (error: ErrorResponse) => {
-                    this.errorMessage = "Error loading lookups";
-                    if(error && !error.isEmpty()){
-                        this.processErrorMessage(error);
-                    }
-                    this.postAction(null, null);
-                }
-        );
-
-        // load employees
-        this.employeeService.findAll()
-            .subscribe(
-                data => {
-                    data.forEach(element => {
-                        this.attendeesList.push({ id: element.id, text: element.firstName + " " + element.lastName});
-
-                    });
-                },
-                (error: ErrorResponse) => {
-                    this.errorMessage = "Error loading lookups";
-                    if(error && !error.isEmpty()){
-                        this.processErrorMessage(error);
-                    }
-                    this.postAction(null, null);
-                }
-            );
-    }
+    //loadLookups(){
+    //    this.lookupService.getClosingSchedules().then(data => this.closingScheduleList = data);
+    //    this.lookupService.getOpeningScheduleList().then(data => this.openingScheduleList = data);
+    //
+    //    // load strategies
+    //    this.lookupService.getREStrategies()
+    //        .subscribe(
+    //            data => {
+    //                data.forEach(element => {
+    //                    this.strategyList.push({ id: element.code, text: element.nameEn});
+    //                });
+    //            },
+    //            (error: ErrorResponse) => {
+    //                this.errorMessage = "Error loading lookups";
+    //                if(error && !error.isEmpty()){
+    //                    this.processErrorMessage(error);
+    //                }
+    //                this.postAction(null, null);
+    //            }
+    //        );
+    //    // load geographies
+    //    this.lookupService.getGeographies()
+    //        .subscribe(
+    //            data => {
+    //                data.forEach(element => {
+    //                    this.geographyList.push({ id: element.code, text: element.nameEn});
+    //                });
+    //            },
+    //            (error: ErrorResponse) => {
+    //                this.errorMessage = "Error loading lookups";
+    //                if(error && !error.isEmpty()){
+    //                    this.processErrorMessage(error);
+    //                }
+    //                this.postAction(null, null);
+    //            }
+    //    );
+    //    // load currencies
+    //    this.lookupService.getCurrencyList()
+    //        .subscribe(
+    //            data => {
+    //                data.forEach(element => {
+    //                    this.currencyList.push(element);
+    //                });
+    //            },
+    //            (error: ErrorResponse) => {
+    //                this.errorMessage = "Error loading lookups";
+    //                if(error && !error.isEmpty()){
+    //                    this.processErrorMessage(error);
+    //                }
+    //                this.postAction(null, null);
+    //            }
+    //    );
+    //
+    //    // load employees
+    //    this.employeeService.findAll()
+    //        .subscribe(
+    //            data => {
+    //                data.forEach(element => {
+    //                    this.attendeesList.push({ id: element.id, text: element.firstName + " " + element.lastName});
+    //
+    //                });
+    //            },
+    //            (error: ErrorResponse) => {
+    //                this.errorMessage = "Error loading lookups";
+    //                if(error && !error.isEmpty()){
+    //                    this.processErrorMessage(error);
+    //                }
+    //                this.postAction(null, null);
+    //            }
+    //        );
+    //}
 
     toggleFund(){
         this.visible = !this.visible;

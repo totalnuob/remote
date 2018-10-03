@@ -17,6 +17,9 @@ import {HedgeFund} from "../hf/model/hf.fund";
 import {HedgeFundService} from "../hf/hf.fund.service";
 import {MemoSearchParams} from "./model/memo-search-params";
 
+import {Observable} from 'rxjs/Observable';
+import 'rxjs/add/observable/forkJoin';
+
 declare var $:any
 //declare var Chart: any;
 
@@ -101,99 +104,114 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
         this.moduleAccessChecler = new ModuleAccessCheckerService;
 
         // loadLookups
-        this.sub = this.loadLookups();
+        //this.sub = this.loadLookups();
 
         // load all managers for dropdown
-        this.sub = this.loadManagers();
+        //this.sub = this.loadManagers();
 
+        Observable.forkJoin(
+            // Load lookups
+            this.employeeService.findAll(),
+            this.hfManagerService.getManagers()
+            )
+            .subscribe(
+                ([data1, data2]) => {
 
-        // TODO: wait/sync on lookup loading
-        // TODO: sync on subscribe results
-        //this.waitSleep(100);
-
-
-        // parse params and load data
-        this.sub = this.route
-            .params
-            .subscribe(params => {
-                this.memoIdParam = +params['id'];
-                this.breadcrumbParams = params['params'];
-                if(this.breadcrumbParams != null) {
-                    this.searchParams = JSON.parse(this.breadcrumbParams);
-                }
-                this.memo.manager = new HFManager();
-                this.memo.fund = new HedgeFund();
-                if(this.memoIdParam > 0) {
-                    this.busy = this.memoService.get(3, this.memoIdParam)
-                        .subscribe(
-                            memo => {
-                                // TODO: check response memo
-
-                                this.memo = memo;
-                                //this.initRadarChart();
-
-                                if(this.memo.tags == null) {
-                                    this.memo.tags = [];
-                                }
-
-                                if(this.memo.manager == null) {
-                                    this.memo.manager = new HFManager();
-                                }
-
-                                // untoggle funds details if fundname is not empty
-                                if(this.memo.fundName != null && this.memo.fundName != "") {
-                                    this.visible = true;
-                                }
-
-                                // preselect memo strategies
-                                //this.preselectStrategies();
-
-                                // preselect memo geographies
-                                //this.preselectGeographies();
-
-                                // preselect memo attendees
-                                this.preselectAttendeesNIC();
-
-                                //if(this.memo.manager != null && this.memo.fund == null){
-                                //    this.toggleFund
-                                //}
-
-                                if(this.memo.fund != null){
-                                    this.showFundDetails = true;
-                                }
-
-                            },
-                            (error: ErrorResponse) => {
-                                this.errorMessage = "Error loading memo";
-                                if(error && !error.isEmpty()){
-                                    this.processErrorMessage(error);
-                                }
-                                this.postAction(null, null);
-                                console.log("Error loading memo");
+                    data1.forEach(element => {
+                        this.attendeesList.push({id: element.id, text: element.firstName + " " + element.lastName});
+                    });
+                    data2.forEach(element => {
+                        this.managerList.push({id: element.id, name: element.name});
+                    });
+                    // parse params and load data
+                    this.sub = this.route
+                        .params
+                        .subscribe(params => {
+                            this.memoIdParam = +params['id'];
+                            this.breadcrumbParams = params['params'];
+                            if(this.breadcrumbParams != null) {
+                                this.searchParams = JSON.parse(this.breadcrumbParams);
                             }
-                        );
-                }else{
-                    // TODO: default value for meeting type?
-                    this.memo.meetingType = "MEETING";
-                    this.memo.suitable = false;
+                            this.memo.manager = new HFManager();
+                            this.memo.fund = new HedgeFund();
+                            if(this.memoIdParam > 0) {
+                                this.busy = this.memoService.get(3, this.memoIdParam)
+                                    .subscribe(
+                                        memo => {
+                                            // TODO: check response memo
 
-                    this.memo.tags = [];
-                }
-            });
+                                            this.memo = memo;
+                                            //this.initRadarChart();
+
+                                            if(this.memo.tags == null) {
+                                                this.memo.tags = [];
+                                            }
+
+                                            if(this.memo.manager == null) {
+                                                this.memo.manager = new HFManager();
+                                            }
+
+                                            // untoggle funds details if fundname is not empty
+                                            if(this.memo.fundName != null && this.memo.fundName != "") {
+                                                this.visible = true;
+                                            }
+
+                                            // preselect memo strategies
+                                            //this.preselectStrategies();
+
+                                            // preselect memo geographies
+                                            //this.preselectGeographies();
+
+                                            // preselect memo attendees
+                                            this.preselectAttendeesNIC();
+
+                                            //if(this.memo.manager != null && this.memo.fund == null){
+                                            //    this.toggleFund
+                                            //}
+
+                                            if(this.memo.fund != null){
+                                                this.showFundDetails = true;
+                                            }
+
+                                        },
+                                        (error: ErrorResponse) => {
+                                            this.errorMessage = "Error loading memo";
+                                            if(error && !error.isEmpty()){
+                                                this.processErrorMessage(error);
+                                            }
+                                            this.postAction(null, null);
+                                            console.log("Error loading memo");
+                                        }
+                                    );
+                            }else{
+                                // TODO: default value for meeting type?
+                                this.memo.meetingType = "MEETING";
+                                this.memo.suitable = false;
+
+                                this.memo.tags = [];
+                            }
+                        });
+
+                },
+                (error) => {
+                    this.errorMessage = "Error loading firms list for dropdown.";
+                    this.successMessage = null;
+                });
+
     }
 
-    preselectStrategies(){
-        if(this.memo.strategies) {
-            this.memo.strategies.forEach(element => {
-                for (var i = 0; i < this.strategyList.length; i++) {
-                    var option = this.strategyList[i];
-                    if (element.code === option.id) {
-                        this.strategySelect.active.push(option);
-                    }
-                }
-            });
-        }
-    }
+    //preselectStrategies(){
+    //    if(this.memo.strategies) {
+    //        this.memo.strategies.forEach(element => {
+    //            for (var i = 0; i < this.strategyList.length; i++) {
+    //                var option = this.strategyList[i];
+    //                if (element.code === option.id) {
+    //                    this.strategySelect.active.push(option);
+    //                }
+    //            }
+    //        });
+    //    }
+    //}
 
     preselectAttendeesNIC(){
         if(this.memo.attendeesNIC) {
@@ -208,18 +226,18 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
         }
     }
 
-    preselectGeographies(){
-        if(this.memo.geographies) {
-            this.memo.geographies.forEach(element => {
-                for (var i = 0; i < this.geographyList.length; i++) {
-                    var option = this.geographyList[i];
-                    if (element.code === option.id) {
-                        this.geographySelect.active.push(option);
-                    }
-                }
-            });
-        }
-    }
+    //preselectGeographies(){
+    //    if(this.memo.geographies) {
+    //        this.memo.geographies.forEach(element => {
+    //            for (var i = 0; i < this.geographyList.length; i++) {
+    //                var option = this.geographyList[i];
+    //                if (element.code === option.id) {
+    //                    this.geographySelect.active.push(option);
+    //                }
+    //            }
+    //        });
+    //    }
+    //}
 
     public selected(value:any):void {
         //console.log('Selected value is: ', value);
@@ -441,106 +459,106 @@ export class HedgeFundsMemoEditComponent extends CommonFormViewComponent impleme
         //});
     }
 
-    loadLookups(){
-        this.lookupService.getClosingSchedules().then(data => this.closingScheduleList = data);
-        this.lookupService.getOpeningScheduleList().then(data => this.openingScheduleList = data);
-
-        // load strategies
-        this.lookupService.getHFStrategies()
-            .subscribe(
-                data => {
-                    data.forEach(element => {
-                        this.strategyList.push({ id: element.code, text: element.nameEn});
-                    });
-                },
-                (error: ErrorResponse) => {
-                    this.errorMessage = "Error loading lookups";
-                    if(error && !error.isEmpty()){
-                        this.processErrorMessage(error);
-                    }
-                    this.postAction(null, null);
-                }
-            );
-        // load geographies
-        this.lookupService.getGeographies()
-            .subscribe(
-            data => {
-                data.forEach(element => {
-                    this.geographyList.push({ id: element.code, text: element.nameEn});
-                });
-            },
-            (error: ErrorResponse) => {
-                this.errorMessage = "Error loading lookups";
-                if(error && !error.isEmpty()){
-                    this.processErrorMessage(error);
-                }
-                this.postAction(null, null);
-            }
-        );
-        // load currencies
-        this.lookupService.getCurrencyList()
-            .subscribe(
-                data => {
-                    data.forEach(element => {
-                        this.currencyList.push(element);
-                    });
-                },
-                (error: ErrorResponse) => {
-                    this.errorMessage = "Error loading lookups";
-                    if(error && !error.isEmpty()){
-                        this.processErrorMessage(error);
-                    }
-                    this.postAction(null, null);
-                }
-        );
-
-        // load statuses
-        this.lookupService.getHedgeFundStatuses()
-            .subscribe(
-                data => {
-                    this.fundStatusLookup = data;
-                },
-                (error: ErrorResponse) => {
-                    this.errorMessage = "Error loading lookups";
-                    if(error && !error.isEmpty()){
-                        this.processErrorMessage(error);
-                    }
-                    this.postAction(null, null);
-                }
-            );
-
-        // load employees
-        this.employeeService.findAll()
-            .subscribe(
-                data => {
-                    data.forEach(element => {
-                        this.attendeesList.push({ id: element.id, text: element.firstName + " " + element.lastName});
-
-                    });
-                },
-                (error: ErrorResponse) => {
-                    this.errorMessage = "Error loading employees";
-                    if(error && !error.isEmpty()){
-                        this.processErrorMessage(error);
-                    }
-                    this.postAction(null, null);
-                }
-            );
-    }
-
-    loadManagers(){
-        this.hfManagerService.getManagers()
-            .subscribe(
-                data => {
-                    data.forEach(element => {
-                        this.managerList.push({id: element.id, name: element.name});
-                    })
-                },
-                error => {
-                    this.postAction(null, "Error loading managers list for dropdown");
-                }
-            )
-    }
+    //loadLookups(){
+    //    this.lookupService.getClosingSchedules().then(data => this.closingScheduleList = data);
+    //    this.lookupService.getOpeningScheduleList().then(data => this.openingScheduleList = data);
+    //
+    //    // load strategies
+    //    this.lookupService.getHFStrategies()
+    //        .subscribe(
+    //            data => {
+    //                data.forEach(element => {
+    //                    this.strategyList.push({ id: element.code, text: element.nameEn});
+    //                });
+    //            },
+    //            (error: ErrorResponse) => {
+    //                this.errorMessage = "Error loading lookups";
+    //                if(error && !error.isEmpty()){
+    //                    this.processErrorMessage(error);
+    //                }
+    //                this.postAction(null, null);
+    //            }
+    //        );
+    //    // load geographies
+    //    this.lookupService.getGeographies()
+    //        .subscribe(
+    //        data => {
+    //            data.forEach(element => {
+    //                this.geographyList.push({ id: element.code, text: element.nameEn});
+    //            });
+    //        },
+    //        (error: ErrorResponse) => {
+    //            this.errorMessage = "Error loading lookups";
+    //            if(error && !error.isEmpty()){
+    //                this.processErrorMessage(error);
+    //            }
+    //            this.postAction(null, null);
+    //        }
+    //    );
+    //    // load currencies
+    //    this.lookupService.getCurrencyList()
+    //        .subscribe(
+    //            data => {
+    //                data.forEach(element => {
+    //                    this.currencyList.push(element);
+    //                });
+    //            },
+    //            (error: ErrorResponse) => {
+    //                this.errorMessage = "Error loading lookups";
+    //                if(error && !error.isEmpty()){
+    //                    this.processErrorMessage(error);
+    //                }
+    //                this.postAction(null, null);
+    //            }
+    //    );
+    //
+    //    // load statuses
+    //    this.lookupService.getHedgeFundStatuses()
+    //        .subscribe(
+    //            data => {
+    //                this.fundStatusLookup = data;
+    //            },
+    //            (error: ErrorResponse) => {
+    //                this.errorMessage = "Error loading lookups";
+    //                if(error && !error.isEmpty()){
+    //                    this.processErrorMessage(error);
+    //                }
+    //                this.postAction(null, null);
+    //            }
+    //        );
+    //
+    //    // load employees
+    //    this.employeeService.findAll()
+    //        .subscribe(
+    //            data => {
+    //                data.forEach(element => {
+    //                    this.attendeesList.push({ id: element.id, text: element.firstName + " " + element.lastName});
+    //
+    //                });
+    //            },
+    //            (error: ErrorResponse) => {
+    //                this.errorMessage = "Error loading employees";
+    //                if(error && !error.isEmpty()){
+    //                    this.processErrorMessage(error);
+    //                }
+    //                this.postAction(null, null);
+    //            }
+    //        );
+    //}
+    //
+    //loadManagers(){
+    //    this.hfManagerService.getManagers()
+    //        .subscribe(
+    //            data => {
+    //                data.forEach(element => {
+    //                    this.managerList.push({id: element.id, name: element.name});
+    //                })
+    //            },
+    //            error => {
+    //                this.postAction(null, "Error loading managers list for dropdown");
+    //            }
+    //        )
+    //}
 
     getManagerDataOnChange(id){
         this.getManagerData(id);
