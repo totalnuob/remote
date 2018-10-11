@@ -10,4 +10,7 @@ export class CorpMeeting{
     attendeesNIC: any[];
     attendeesOther: any[];
     shortName: string;
+
+    status: string;
+    longDescription: string;
 }

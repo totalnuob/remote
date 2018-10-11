@@ -27,30 +27,30 @@
             <div>
                 <form (ngSubmit)="save()" #corpMeetingForm="ngForm" class="well span">
                     <div class="row top-buffer">
-                        <div class="col-md-2">
-                            <label class="checkbox-inline">
-                                <input required type="radio" name="corpMeetingType" [ngModel]="corpMeeting.type"
-                                       (ngModelChange)="typeChanged('BOD')" name="type" value="BOD">
-                                <span>BoD</span>
-                            </label>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="checkbox-inline">
-                                <input required type="radio" name="corpMeetingType" [ngModel]="corpMeeting.type"
-                                       (ngModelChange)="typeChanged('EXEC')" name="type" value="EXEC">
-                                <span>Exec Meeting</span>
-                            </label>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="checkbox-inline">
-                                <input required  type="radio" name="corpMeetingType" [ngModel]="corpMeeting.type"
-                                       (ngModelChange)="typeChanged('IC')" name="type" value="IC">
-                                <span>IC</span>
-                            </label>
-                        </div>
+                        <!--<div class="col-md-2">-->
+                            <!--<label class="checkbox-inline">-->
+                                <!--<input required type="radio" name="corpMeetingType" [ngModel]="corpMeeting.type"-->
+                                       <!--(ngModelChange)="typeChanged('BOD')" name="type" value="BOD">-->
+                                <!--<span>BoD</span>-->
+                            <!--</label>-->
+                        <!--</div>-->
+                        <!--<div class="col-md-2">-->
+                            <!--<label class="checkbox-inline">-->
+                                <!--<input required type="radio" name="corpMeetingType" [ngModel]="corpMeeting.type"-->
+                                       <!--(ngModelChange)="typeChanged('EXEC')" name="type" value="EXEC">-->
+                                <!--<span>Exec Meeting</span>-->
+                            <!--</label>-->
+                        <!--</div>-->
+                        <!--<div class="col-md-2">-->
+                            <!--<label class="checkbox-inline">-->
+                                <!--<input required  type="radio" name="corpMeetingType" [ngModel]="corpMeeting.type"-->
+                                       <!--(ngModelChange)="typeChanged('IC')" name="type" value="IC">-->
+                                <!--<span>IC</span>-->
+                            <!--</label>-->
+                        <!--</div>-->
                         <div class="col-md-3">
                             <div class='input-group date' id='corpMeetingDateDiv' style="width: 100%">
-                                <input required type="text" class="form-control" id="corpMeetingDate" name="corpMeetingDate"
+                                <input type="text" class="form-control" id="corpMeetingDate" name="corpMeetingDate"
                                        placeholder="Enter date..." [(ngModel)]="corpMeeting.date"/>
                                             <span class="input-group-addon">
                                                 <span class="glyphicon glyphicon-calendar"></span>
@@ -64,7 +64,17 @@
                             <label class="control-label col-md-2" for="number">№:</label>
                             <div class="col-md-10">
                                 <input type="text" id="number" class="form-control" maxlength="10" name="number" [(ngModel)]="corpMeeting.number"
-                                       placeholder="Enter number..."required #number="ngModel"/>
+                                       placeholder="Enter number..." #number="ngModel"/>
+                            </div>
+                        </div>
+                        <div class="col-md-3 form-group form-horizontal">
+                            <label class="control-label col-md-2" for="status">Status </label>
+                            <div class="col-md-10">
+                                <select class="form-control" id="status" name="status" [(ngModel)]="searchParams.status">
+                                    <!--<option *ngFor = "let status of statusList" [value]="status.code">{{status.nameEn}}</option>-->
+                                    <option value="OPEN">OPEN</option>
+                                    <option value="CLOSED">CLOSED</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -91,34 +101,34 @@
                                 <!--</div>-->
                             <!--</div>-->
 
-                            <div class="row top-buffer">
-                                <div class="form-group form-horizontal">
-                                    <label class="control-label col-md-2" for="attendees">Attendees (NIC): <span style="color: red">*</span></label>
-                                    <div class="col-md-10" id="attendees" *ngIf="attendeesNICList.length > 0">
-                                        <ng-select #attendeesSelect [initData]="corpMeeting.attendeesNIC"
-                                                   [multiple]="true"
-                                                   [items]="attendeesNICList"
-                                                   (data)="refreshAttendees($event)"
-                                                   (selected)="selected($event)"
-                                                   (removed)="removed($event)"
-                                                   placeholder="Please specify NIC attendees...">
-                                        </ng-select>
-                                    </div>
-                                </div>
-                            </div>
+                            <!--<div class="row top-buffer">-->
+                                <!--<div class="form-group form-horizontal">-->
+                                    <!--<label class="control-label col-md-2" for="attendees">Attendees (NIC): <span style="color: red">*</span></label>-->
+                                    <!--<div class="col-md-10" id="attendees" *ngIf="attendeesNICList.length > 0">-->
+                                        <!--<ng-select #attendeesSelect [initData]="corpMeeting.attendeesNIC"-->
+                                                   <!--[multiple]="true"-->
+                                                   <!--[items]="attendeesNICList"-->
+                                                   <!--(data)="refreshAttendees($event)"-->
+                                                   <!--(selected)="selected($event)"-->
+                                                   <!--(removed)="removed($event)"-->
+                                                   <!--placeholder="Please specify NIC attendees...">-->
+                                        <!--</ng-select>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+
+                            <!--<div class="row top-buffer">-->
+                                <!--<div class="form-group form-horizontal">-->
+                                    <!--<label class="control-label col-md-2" for="location">Attendees (Other):</label>-->
+                                    <!--<div class="col-md-10">-->
+                                        <!--<textarea fz-elastic type="text" id="location" class="form-control" maxlength="250" name="location" [(ngModel)]="corpMeeting.attendeesOther"></textarea>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
 
                             <div class="row top-buffer">
                                 <div class="form-group form-horizontal">
-                                    <label class="control-label col-md-2" for="location">Attendees (Other):</label>
-                                    <div class="col-md-10">
-                                        <textarea fz-elastic type="text" id="location" class="form-control" maxlength="250" name="location" [(ngModel)]="corpMeeting.attendeesOther"></textarea>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row top-buffer">
-                                <div class="form-group form-horizontal">
-                                    <label class="control-label col-md-2" for="shortName">Short Name: <span style="color: red">*</span></label>
+                                    <label class="control-label col-md-2" for="shortName">Short Name:<span style="color: red">*</span></label>
                                     <div class="col-md-10">
                                         <textarea required fz-elastic type="text" id="shortName" class="form-control" maxlength="250" name="shortName" [(ngModel)]="corpMeeting.shortName"></textarea>
                                     </div>
@@ -141,16 +151,40 @@
                     </div>
                     <br>
                     <div class="row top-buffer withpadding">
-                        <div class="col-md-12" style="background-color:#5bc0de; height: 34px">
-                            <div class="col-md-6">
-                                <h5>Agenda <span style="color: red">*</span></h5>
+                        <!--<div class="panel-group" id="accordion">-->
+                            <!--<a data-toggle="collapse" data-parent="#accordion" href="#collapseDescription" (click)="toggleDescription()">-->
+                                <!--{{ visible ? 'Hide description &#9660;' : 'Show description &#9658;' }}</a>-->
+
+                            <!--<div id="collapseDescription" [ngClass]="{'collapse in': corpMeeting.longDescription != null, 'collapse': corpMeeting.longDescription == null}">-->
+                                <!--<div class="row top-buffer withpadding">-->
+                                    <!--<div class="col-md-12" style="background-color:#5bc0de; height: 34px">-->
+                                        <!--<div class="col-md-6">-->
+                                            <!--<h5>Agenda <span style="color: red">*</span></h5>-->
+                                        <!--</div>-->
+                                        <!--<div class="col-md-5">&nbsp;</div>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                                <!--<div class="row top-buffer">-->
+                                    <!--<div class="col-md-12">-->
+                                        <!--<textarea fz-elastic type="text" class="form-control" rows="10" name="description" [(ngModel)]="corpMeeting.agenda"></textarea>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+
+                            <!--</div>-->
+                        <!--</div>-->
+
+                        <div class="row top-buffer">
+                            <div class="col-md-12" style="background-color:#5bc0de; height: 34px">
+                                <div class="col-md-6">
+                                    <h5>Agenda</h5>
+                                </div>
+                                <div class="col-md-5">&nbsp;</div>
                             </div>
-                            <div class="col-md-5">&nbsp;</div>
-                        </div>
-                    </div>
-                    <div class="row top-buffer">
-                        <div class="col-md-12">
-                            <textarea required fz-elastic type="text" class="form-control" rows="10" name="description" [(ngModel)]="corpMeeting.agenda"></textarea>
+                            <div class="row top-buffer">
+                                <div class="col-md-12">
+                                    <textarea fz-elastic type="text" class="form-control" rows="10" name="description" [(ngModel)]="corpMeeting.agenda"></textarea>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <br/>
@@ -209,6 +243,36 @@
                                         </file-attachment-downloader>
 
                                         <a (click)="deleteAttachment(attachment.id)" *ngIf="canEdit()">
+                                            <i class="glyphicon glyphicon-trash"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="jumbotron" style="padding-top: 5px; padding-bottom: 5px;">
+                                <div class="row">
+                                    <label>PROTOCOL</label>
+                                </div>
+
+                                <div class="row" *ngIf="canEdit()">
+                                    <label class="btn btn-primary col-md-2" for="attachmentFileProtocols">
+                                        <input type="file" id="attachmentFileProtocols" (change)="onFileChangeProtocols($event)" name="fileProtocol"  style="display:none;"/>Upload</label>
+                                    <div class="col-md-6">
+                                        <div class="row" *ngFor="let newFile of uploadProtocolsFiles" class="label label-info" style="display: table;">
+                                            <span>{{newFile.name}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row" *ngIf="corpMeeting?.protocols?.length > 0">
+                                    <div *ngFor="let attachment of corpMeeting.protocols">
+                                        <file-attachment-downloader fileId="{{attachment.id}}"
+                                                                    fileName="{{attachment?.fileName}}"
+                                                                    fileType="CM_PRTCL">
+                                        </file-attachment-downloader>
+
+                                        <a (click)="deleteProtocolAttachment(attachment.id)" *ngIf="canEdit()">
                                             <i class="glyphicon glyphicon-trash"></i>
                                         </a>
                                     </div>

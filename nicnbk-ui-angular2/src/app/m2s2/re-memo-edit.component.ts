@@ -258,10 +258,6 @@ export class RealEstateMemoEditComponent extends CommonFormViewComponent impleme
 
     }
 
-    toggle() {
-        this.visible = !this.visible;
-        this.memo.suitable = true;
-    }
 
     save(){
         // TODO: ngModel date

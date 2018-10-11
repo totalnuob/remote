@@ -45,6 +45,8 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
     private breadcrumbParams: string;
     private searchParams = new CorpMeetingSearchParams();
 
+    //private visible = false;
+
     constructor(
         private employeeService: EmployeeService,
         private corpMeetingService: CorpMeetingService,
@@ -276,10 +278,14 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
         }
     }
 
-    typeChanged(type){
-        this.corpMeeting.type=type;
-        //if(type != 'BOD'){
-        //    this.corpMeeting.attendeesOther = null;
-        //}
+    //typeChanged(type){
+    //    this.corpMeeting.type=type;
+    //    //if(type != 'BOD'){
+    //    //    this.corpMeeting.attendeesOther = null;
+    //    //}
+    //}
+
+    toggleDescription(){
+        this.visible = !this.visible;
     }
 }

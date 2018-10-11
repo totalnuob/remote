@@ -7,4 +7,6 @@ export class CorpMeetingSearchParams extends PageableSearchParams{
     searchText: string;
 
     path: string;
+
+
 }
