@@ -14,6 +14,12 @@ import {CorpMeetingSearchParams} from "./model/corp-meeting-search-params";
 import {CorpMeetingSearchResults} from "./model/corp-meeting-search-results";
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 import {BaseDictionary} from "../common/model/base-dictionary";
+import {ICMeetingSearchResults} from "./model/ic-meeting-search-results";
+import {ICMeeting} from "./model/ic-meeting";
+import {SaveResponse} from "../common/save-response";
+import {ICMeetingSearchParams} from "./model/ic-meeting-search-params";
+import {ICMeetingTopicSearchParams} from "./model/ic-meeting-topic-search-params";
+import {ICMeetingTopicSearchResults} from "./model/ic-meeting-topic-search-results";
 
 declare var $:any
 
@@ -24,17 +30,23 @@ declare var $:any
     providers: [],
 })
 export class CorpMeetingsListComponent extends CommonFormViewComponent implements OnInit {
+    modalSuccessMessage: string;
+    modalErrorMessage: string;
+
     busy: Subscription;
     public sub: any;
 
-    searchParams = new CorpMeetingSearchParams();
-    corpMeetings = [];
-    searchResult: CorpMeetingSearchResults;
+    icTopicSearchParams = new ICMeetingTopicSearchParams();
+    icTopics = [];
+    icTopicSearchResult: ICMeetingTopicSearchResults;
 
-    meetingTypes = [];
+    icMeetings = [];
+    icMeetingsSearchParams = new ICMeetingSearchParams();
+    icMeetingsSearchResult: ICMeetingSearchResults
+
+    icMeeting = new ICMeeting();
 
     constructor(
-        private lookupService: LookupService,
         private corpMeetingService: CorpMeetingService,
         private moduleAccessChecker: ModuleAccessCheckerService,
         private router: Router,
@@ -42,40 +54,27 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
     ){
         super(router);
 
-        Observable.forkJoin(
-            // Load lookups
-            this.lookupService.getCorpMeetingTypes()
-            )
-            .subscribe(
-                (data) => {
-                    data[0].forEach(element => {
-                        this.meetingTypes.push(new BaseDictionary(element.code, element.nameEn, null, null));
-                    });
+        this.sub = this.route
+            .params
+            .subscribe(params => {
+                if (params['params'] != null) {
+                    this.icTopicSearchParams = JSON.parse(params['params']);
 
+                    $('#fromDate').val(this.icTopicSearchParams.dateFrom);
+                    $('#toDate').val(this.icTopicSearchParams.dateTo);
 
-                    this.sub = this.route
-                        .params
-                        .subscribe(params => {
-                            if (params['params'] != null) {
-                                this.searchParams = JSON.parse(params['params']);
-
-                                $('#fromDate').val(this.searchParams.dateFrom);
-                                $('#toDate').val(this.searchParams.dateTo);
-
-                                this.busy = this.corpMeetingService.search(this.searchParams)
-                                    .subscribe(
-                                        (searchResult:CorpMeetingSearchResults) => {
-                                            this.corpMeetings = searchResult.corpMeetings;
-                                            this.searchResult = searchResult;
-                                        },
-                                        error => this.errorMessage = "Failed to search corp meetings."
-                                    );
-                            } else {
-                                this.search(0);
-                            }
-                        });
+                    this.busy = this.corpMeetingService.searchICMeetingTopics(this.icTopicSearchParams)
+                        .subscribe(
+                            (searchResult:ICMeetingTopicSearchResults) => {
+                                this.icTopics = searchResult.icMeetingTopics;
+                                this.icTopicSearchResult = searchResult;
+                            },
+                            error => this.errorMessage = "Failed to search IC meeting topics"
+                        );
+                } else {
+                    this.searchICMeetingTopics(0);
                 }
-            );
+            });
 
     }
 
@@ -91,34 +90,33 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
             format: 'DD-MM-YYYY'
         });
 
-        // load lookups
-        //this.loadLookups();
-
-        // find all
-        //fthis.search(0);
+        $('#ICDate').datetimepicker({
+            //defaultDate: new Date(),
+            format: 'DD-MM-YYYY'
+        });
     }
 
     public canEdit(){
         return this.moduleAccessChecker.checkAccessCorpMeetingsEditor();
     }
 
-    search(page){
-        this.searchParams.pageSize = 20;
+    searchICMeetingTopics(page){
+        this.icTopicSearchParams.pageSize = 20;
 
-        this.searchParams.page = page;
+        this.icTopicSearchParams.page = page;
 
-        this.searchParams.dateFrom = $('#fromDate').val();
-        this.searchParams.dateTo = $('#toDate').val();
+        this.icTopicSearchParams.dateFrom = $('#fromDate').val();
+        this.icTopicSearchParams.dateTo = $('#toDate').val();
 
         //console.log(this.searchParams);
-        this.busy = this.corpMeetingService.search(this.searchParams)
+        this.busy = this.corpMeetingService.searchICMeetingTopics(this.icTopicSearchParams)
             .subscribe(
-                (searchResult: CorpMeetingSearchResults)  => {
-                    this.corpMeetings = searchResult.corpMeetings;
-                    this.searchResult = searchResult;
+                (searchResult: ICMeetingTopicSearchResults)  => {
+                    this.icTopics = searchResult.icMeetingTopics;
+                    this.icTopicSearchResult = searchResult;
                 },
                 (error: ErrorResponse) => {
-                    this.errorMessage = "Error searching corp meetings";
+                    this.errorMessage = "Error searching IC meeting topic";
                     if(error && !error.isEmpty()){
                         this.processErrorMessage(error);
                     }
@@ -128,15 +126,71 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
     }
 
     navigate(meetingId){
-        this.searchParams.path = '/corpMeetings';
-        let params = JSON.stringify(this.searchParams);
+        this.icTopicSearchParams.path = '/corpMeetings';
+        let params = JSON.stringify(this.icTopicSearchParams);
         this.router.navigate(['/corpMeetings/edit/', meetingId, { params }]);
     }
 
     clearSearchForm(){
-        this.searchParams.type="NONE";
-        this.searchParams.searchText = null;
-        this.searchParams.dateFrom = null;
-        this.searchParams.dateTo = null;
+        this.icTopicSearchParams.dateFrom = null;
+        this.icTopicSearchParams.dateTo = null;
+        this.icTopicSearchParams.searchText = null;
+    }
+
+
+    searchIC(page){
+        this.icMeetingsSearchParams.pageSize = 20;
+
+        this.icMeetingsSearchParams.page = 0;
+        if(page) {
+            this.icMeetingsSearchParams.page = page;
+        }
+
+        this.busy = this.corpMeetingService.searchICMeetings(this.icMeetingsSearchParams)
+            .subscribe(
+                (searchResult:ICMeetingSearchResults) => {
+                    this.icMeetings = searchResult.icMeetings;
+                    this.icMeetingsSearchResult = searchResult;
+                },
+                error => this.errorMessage = "Failed to search IC meetings."
+            );
+    }
+
+    closeICSaveModal(){
+        this.icMeeting = new ICMeeting();
+        this.modalErrorMessage = null;
+        this.modalSuccessMessage = null;
+        this.searchIC(this.icMeetingsSearchParams.page);
+    }
+
+    saveICMeeting(){
+        this.icMeeting.date = $('#ICDate').val();
+        console.log(this.icMeeting.date);
+        if(this.icMeeting.date == null || this.icMeeting.date.trim() === ''){
+            this.modalErrorMessage = "Date required"
+            this.modalSuccessMessage = null;
+            return;
+        }
+        if(this.icMeeting.number == null || this.icMeeting.number.trim() === ''){
+            this.modalErrorMessage = "Number required"
+            this.modalSuccessMessage = null;
+            return;
+        }
+        this.busy = this.corpMeetingService.saveICMeeting(this.icMeeting)
+            .subscribe(
+                (resposne: SaveResponse)  => {
+                    this.icMeeting.id = resposne.entityId;
+                    this.modalSuccessMessage = "Successfully saved IC meeting."
+                    this.modalErrorMessage = null;
+                },
+                (error: ErrorResponse) => {
+                    this.modalErrorMessage = error.message;
+                    this.modalSuccessMessage = null;
+                }
+            );
+    }
+
+    editICMeeting(icMeeting){
+        this.icMeeting = icMeeting;
     }
 }

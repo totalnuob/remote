@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.Set;
 
 /**
- * Created by zhambyl on 04-Aug-16.
+ * Created by magzumov
  */
 public class CorpMeetingDto extends CreateUpdateBaseEntityDto<CorpMeeting> {
 

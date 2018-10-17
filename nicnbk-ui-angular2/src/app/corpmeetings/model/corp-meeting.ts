@@ -1,4 +1,3 @@
-import {UpdatedEntity} from "../../common/model/updated-entity";
 
 export class CorpMeeting{
     id: number;

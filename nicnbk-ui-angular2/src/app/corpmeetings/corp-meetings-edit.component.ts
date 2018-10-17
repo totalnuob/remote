@@ -16,6 +16,9 @@ import {CorpMeetingService} from "./corp-meetings.service";
 import {SaveResponse} from "../common/save-response";
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 import {CorpMeetingSearchParams} from "./model/corp-meeting-search-params";
+import {ICMeetingTopic} from "./model/ic-meeting-topic";
+import {ICMeetingTopicSearchParams} from "./model/ic-meeting-topic-search-params";
+import {ICMeeting} from "./model/ic-meeting";
 
 declare var $:any
 
@@ -30,22 +33,21 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
     busy: Subscription;
     public sub: any;
 
-    @ViewChild('attendeesSelect')
-    private attendeesSelect: SelectComponent;
-    attendeesNICList: any[];
+    icList: ICMeeting[];
 
     public uploadMaterialsFiles: Array<any> = [];
+    //public uploadProtocolsFiles: Array<any> = [];
 
-    public uploadProtocolsFiles: Array<any> = [];
-
-    corpMeeting: CorpMeeting;
-
-    corpMeetingId: number;
+    icMeetingTopic: ICMeetingTopic;
 
     private breadcrumbParams: string;
-    private searchParams = new CorpMeetingSearchParams();
+    private searchParams = new ICMeetingTopicSearchParams();
 
     //private visible = false;
+    modalErrorMessage;
+    modalSuccessMessage;
+    showNewICModal = false;
+    newICMeeting = new ICMeeting();
 
     constructor(
         private employeeService: EmployeeService,
@@ -56,113 +58,71 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
     ){
         super(router);
 
-        this.corpMeeting = new CorpMeeting();
-        this.attendeesNICList = [];
+        this.icMeetingTopic = new ICMeetingTopic();
 
         Observable.forkJoin(
             // Load lookups
-            this.employeeService.findAll()
+            this.corpMeetingService.getAllICMeetings()
             )
             .subscribe(
-                (data) => {
-                    data[0].forEach(element => {
-                        this.attendeesNICList.push({ id: element.id, text: element.firstName + " " + element.lastName});
-                    });
+                ([data]) => {
 
+                    this.icList = [];
+                    data.forEach(element => {
+                        this.icList.push(element);
+                    });
                     this.sub = this.route
                         .params
                         .subscribe(params => {
-                            this.corpMeetingId = +params['id'];
+                            this.icMeetingTopic.id = +params['id'];
                             this.breadcrumbParams = params['params'];
                             if(this.breadcrumbParams != null) {
                                 this.searchParams = JSON.parse(this.breadcrumbParams);
                             }
-                            if(this.corpMeetingId > 0) {
-                                this.busy = this.corpMeetingService.get(this.corpMeetingId)
+                            if(this.icMeetingTopic.id > 0) {
+                                this.busy = this.corpMeetingService.getICMeetingTopic(this.icMeetingTopic.id)
                                     .subscribe(
-                                        memo => {
-                                            // TODO: check response memo
-                                            this.corpMeeting = memo;
-
-                                            // preselect memo attendees
-                                            this.preselectAttendeesNIC();
+                                        (topic: ICMeetingTopic )=> {
+                                            this.icMeetingTopic = topic;
+                                            if(!this.icMeetingTopic.icMeeting){
+                                                this.icMeetingTopic.icMeeting = new ICMeeting();
+                                            }
                                         },
                                         (error: ErrorResponse) => {
-                                            this.errorMessage = "Error loading memo";
+                                            this.errorMessage = "Error loading IC Meeting topic";
                                             if(error && !error.isEmpty()){
                                                 this.processErrorMessage(error);
                                             }
                                             this.postAction(null, null);
                                         }
                                     );
-
-                                // preselect attendees
-                                //TODO: this.preselectAttendees();
+                            }else{
+                                this.icMeetingTopic.id = null;
                             }
                         });
-                },
-                (error: ErrorResponse) => {
-                    this.errorMessage = "Error loading lookups";
-                    if(error && !error.isEmpty()){
-                        this.processErrorMessage(error);
-                    }
-                    this.postAction(null, this.errorMessage);
-                }
-            );
+                });
     }
 
     ngOnInit():any {
-        // TODO: exclude jQuery
-        // datetimepicker
-        $('#corpMeetingDateDiv').datetimepicker({
+        $('#ICDate').datetimepicker({
             //defaultDate: new Date(),
             format: 'DD-MM-YYYY'
         });
-
-        // load lookups
-        //this.loadLookups();
-
-        // find all
-        //fthis.search(0);
     }
 
     public canEdit(){
         return this.moduleAccessChecker.checkAccessCorpMeetingsEditor();
     }
 
-    public selected(value:any):void {
-        //console.log('Selected value is: ', value);
-    }
-
-    public removed(value:any):void {
-        //console.log('Removed value is: ', value);
-    }
-
-    public refreshAttendees(value:any):void {
-        this.corpMeeting.attendeesNIC = value;
-    }
-
-    preselectAttendeesNIC(){
-        if(this.corpMeeting.attendeesNIC) {
-            this.corpMeeting.attendeesNIC.forEach(element => {
-                for (var i = 0; i < this.attendeesNICList.length; i++) {
-                    var option = this.attendeesNICList[i];
-                    if (element.id === option.id) {
-                        this.attendeesSelect.active.push(option);
-                    }
-                }
-            });
-        }
-    }
-
-    onFileChangeProtocols(event) {
-        var target = event.target || event.srcElement;
-        var files = target.files;
-        this.uploadProtocolsFiles.length = 0;
-        for (let i = 0; i < files.length; i++) {
-            this.uploadProtocolsFiles.push(files[i]);
-        }
-    }
+    //
+    //onFileChangeProtocols(event) {
+    //    var target = event.target || event.srcElement;
+    //    var files = target.files;
+    //    this.uploadProtocolsFiles.length = 0;
+    //    for (let i = 0; i < files.length; i++) {
+    //        this.uploadProtocolsFiles.push(files[i]);
+    //    }
+    //}
 
     onFileChangeMaterials(event) {
         var target = event.target || event.srcElement;
@@ -174,43 +134,37 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
     }
 
     save(){
-        if(this.corpMeeting != null && (this.corpMeeting.attendeesNIC == null || this.corpMeeting.attendeesNIC.length == 0)){
-            this.postAction(null, "Please fill out NIC attendees.");
-        }
 
-        this.corpMeeting.date = $('#corpMeetingDate').val();
-        this.busy = this.corpMeetingService.save(this.corpMeeting)
+        if(this.icMeetingTopic.icMeeting != null && (this.icMeetingTopic.icMeeting.id == 0 || this.icMeetingTopic.icMeeting.id == -1)){
+            this.icMeetingTopic.icMeeting = new ICMeeting();
+        }
+        this.busy = this.corpMeetingService.saveICMeetingTopic(this.icMeetingTopic)
             .subscribe(
                 (saveResponse: SaveResponse) => {
                     if(saveResponse.status === 'SUCCESS' ){
-                        this.corpMeeting.id = saveResponse.entityId;
-                        //this.corpMeeting.creationDate = saveResponse.creationDate;
-
+                        this.icMeetingTopic.id = saveResponse.entityId;
                         if(this.uploadMaterialsFiles.length > 0) {
-
-                            // TODO: refactor
-                            this.busy = this.corpMeetingService.postFiles(this.corpMeeting.id, [], this.uploadMaterialsFiles).subscribe(
+                            this.busy = this.corpMeetingService.postFiles(this.icMeetingTopic.id, [], this.uploadMaterialsFiles).subscribe(
                                 res => {
                                     // clear upload files list on view
                                     this.uploadMaterialsFiles.length = 0;
 
                                     // update files list with new files
-                                    if(!this.corpMeeting.files){ // no files existed
-                                        this.corpMeeting.files = [];
+                                    if(!this.icMeetingTopic.materials){ // no files existed
+                                        this.icMeetingTopic.materials = [];
                                     }
                                     for (var i = 0; i < res.length; i++) {
-                                        this.corpMeeting.files.push(res[i]);
+                                        this.icMeetingTopic.materials.push(res[i]);
                                     }
 
-                                    this.postAction("Successfully saved corp meeting.", null);
+                                    this.postAction("Successfully saved IC meeting topic (with attachments)", null);
                                 },
                                 error => {
                                     // TODO: don't save memo?
-
-                                    this.postAction(null, "Error uploading attachments.");
+                                    this.postAction(null, "Error uploading attachments (materials).");
                                 });
                         }else{
-                            this.postAction("Successfully saved corp meeting.", null);
+                            this.postAction("Successfully saved IC meeting topic.", null);
                         }
 
                     }else{
@@ -220,7 +174,7 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                             if(message != null && message != ''){
                                 this.postAction(null, message);
                             }else{
-                                this.postAction(null, "Error saving corp meeting");
+                                this.postAction(null, "Error saving IC Meeting topic");
                             }
                         }
                     }
@@ -234,12 +188,12 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
     deleteAttachment(fileId){
         var confirmed = window.confirm("Are you sure want to delete");
         if(confirmed) {
-            this.corpMeetingService.deleteAttachment(this.corpMeeting.id, fileId)
+            this.corpMeetingService.deleteICMeetingTopicAttachment(this.icMeetingTopic.id, fileId)
                 .subscribe(
                     response => {
-                        for(var i = this.corpMeeting.files.length - 1; i >= 0; i--) {
-                            if(this.corpMeeting.files[i].id === fileId) {
-                                this.corpMeeting.files.splice(i, 1);
+                        for(var i = this.icMeetingTopic.materials.length - 1; i >= 0; i--) {
+                            if(this.icMeetingTopic.materials[i].id === fileId) {
+                                this.icMeetingTopic.materials.splice(i, 1);
                             }
                         }
 
@@ -256,19 +210,21 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
         }
     }
 
-    public deleteCorpMeeting(){
+    public deleteICMeetingTopic(){
         if(confirm("Are you sure want to delete?")) {
-            this.busy = this.corpMeetingService.delete(this.corpMeetingId)
+            this.busy = this.corpMeetingService.deleteICMeetingTopic(this.icMeetingTopic.id)
                 .subscribe(
                     response => {
                         if (response) {
                             this.router.navigate(['/corpMeetings/', {}]);
+                            this.successMessage = "Successfully deleted IC Topic."
+                            this.errorMessage = null;
                         } else {
-                            this.postAction(null, "Failed to delete meeting");
+                            this.postAction(null, "Failed to delete IC Meeting topic");
                         }
                     },
                     (error:ErrorResponse) => {
-                        this.errorMessage = "Failed to delete meeting";
+                        this.errorMessage = "Failed to delete IC Meeting topic";
                         if (error && !error.isEmpty()) {
                             this.processErrorMessage(error);
                         }
@@ -278,14 +234,60 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
         }
     }
 
-    //typeChanged(type){
-    //    this.corpMeeting.type=type;
-    //    //if(type != 'BOD'){
-    //    //    this.corpMeeting.attendeesOther = null;
-    //    //}
-    //}
+    icListChanged(value){
+        if(Number(value) == -1){
+            this.showNewICModal = true;
+            this.newICMeeting = new ICMeeting();
+        }else if(Number(value) == 0) {
+            this.showNewICModal = false;
+            this.icMeetingTopic.icMeeting = new ICMeeting();
+        }else{
+            this.showNewICModal = false;
+        }
+    }
 
-    toggleDescription(){
-        this.visible = !this.visible;
+    doShowNewICModal(){
+    }
+
+
+    saveICMeeting(){
+        this.newICMeeting.date = $('#ICDate').val();
+        if(this.newICMeeting.date == null){
+            this.modalErrorMessage = "Date required";
+            this.modalSuccessMessage = null;
+            return;
+        }
+        if(this.newICMeeting.number == null || this.newICMeeting.number.trim() === ''){
+            this.modalErrorMessage = "Number required";
+            this.modalSuccessMessage = null;
+            return;
+        }
+
+        this.busy = this.corpMeetingService.saveICMeeting(this.newICMeeting)
+            .subscribe(
+                (resposne: SaveResponse)  => {
+                    this.newICMeeting.id = resposne.entityId;
+                    this.modalSuccessMessage = "Successfully saved IC meeting."
+                    this.modalErrorMessage = null;
+
+                    this.icList.push(this.newICMeeting);
+                    this.icMeetingTopic.icMeeting = this.newICMeeting;
+
+                    this.showNewICModal = false;
+                },
+                (error: ErrorResponse) => {
+                    this.modalErrorMessage = error.message;
+                    this.modalSuccessMessage = null;
+                }
+            );
+    }
+
+    closeICSaveModal(){
+        if(this.newICMeeting.id != null && this.newICMeeting.id > 0) {
+            this.icMeetingTopic.icMeeting = this.newICMeeting;
+        }
+
+        this.modalErrorMessage = null;
+        this.modalSuccessMessage = null;
     }
 }

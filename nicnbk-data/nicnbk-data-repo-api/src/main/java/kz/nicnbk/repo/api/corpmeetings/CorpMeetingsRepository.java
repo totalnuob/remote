@@ -18,6 +18,7 @@ import java.util.List;
 /**
  * Created by magzumov.
  */
+@Deprecated
 public interface CorpMeetingsRepository extends PagingAndSortingRepository<CorpMeeting, Long> {
 
     /**

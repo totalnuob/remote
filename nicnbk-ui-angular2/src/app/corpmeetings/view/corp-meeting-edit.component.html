@@ -5,10 +5,10 @@
                 <div class="col-md-12">
                     <ol class="breadcrumb">
                         <li>
-                            <span *ngIf="this.breadcrumbParams != null"><a [routerLink]="['/corpMeetings', {params: this.breadcrumbParams }]">Corp Meetings</a></span>
-                            <span *ngIf="this.breadcrumbParams == null"><a [routerLink]="['/corpMeetings']">Corp Meetings</a></span>
+                            <span *ngIf="this.breadcrumbParams != null"><a [routerLink]="['/corpMeetings', {params: this.breadcrumbParams }]">IC Topics</a></span>
+                            <span *ngIf="this.breadcrumbParams == null"><a [routerLink]="['/corpMeetings']">IC Topics</a></span>
                         </li>
-                        <li class="active">Corp Meeting</li>
+                        <li class="active">IC Topic</li>
                     </ol>
                 </div>
             </div>
@@ -27,198 +27,62 @@
             <div>
                 <form (ngSubmit)="save()" #corpMeetingForm="ngForm" class="well span">
                     <div class="row top-buffer">
-                        <!--<div class="col-md-2">-->
-                            <!--<label class="checkbox-inline">-->
-                                <!--<input required type="radio" name="corpMeetingType" [ngModel]="corpMeeting.type"-->
-                                       <!--(ngModelChange)="typeChanged('BOD')" name="type" value="BOD">-->
-                                <!--<span>BoD</span>-->
-                            <!--</label>-->
-                        <!--</div>-->
-                        <!--<div class="col-md-2">-->
-                            <!--<label class="checkbox-inline">-->
-                                <!--<input required type="radio" name="corpMeetingType" [ngModel]="corpMeeting.type"-->
-                                       <!--(ngModelChange)="typeChanged('EXEC')" name="type" value="EXEC">-->
-                                <!--<span>Exec Meeting</span>-->
-                            <!--</label>-->
-                        <!--</div>-->
-                        <!--<div class="col-md-2">-->
-                            <!--<label class="checkbox-inline">-->
-                                <!--<input required  type="radio" name="corpMeetingType" [ngModel]="corpMeeting.type"-->
-                                       <!--(ngModelChange)="typeChanged('IC')" name="type" value="IC">-->
-                                <!--<span>IC</span>-->
-                            <!--</label>-->
-                        <!--</div>-->
-                        <div class="col-md-3">
-                            <div class='input-group date' id='corpMeetingDateDiv' style="width: 100%">
-                                <input type="text" class="form-control" id="corpMeetingDate" name="corpMeetingDate"
-                                       placeholder="Enter date..." [(ngModel)]="corpMeeting.date"/>
-                                            <span class="input-group-addon">
-                                                <span class="glyphicon glyphicon-calendar"></span>
-                                            </span>
-                            </div>
-                            <!--<div [hidden]="meetingDateStart.valid || meetingDateStart.pristine" class="alert alert-danger">Start date is required</div>-->
-                        </div>
-
-
                         <div class="col-md-3 form-group form-horizontal">
-                            <label class="control-label col-md-2" for="number">№:</label>
+                            <label class="control-label col-md-2" for="icList">IC </label>
                             <div class="col-md-10">
-                                <input type="text" id="number" class="form-control" maxlength="10" name="number" [(ngModel)]="corpMeeting.number"
-                                       placeholder="Enter number..." #number="ngModel"/>
-                            </div>
-                        </div>
-                        <div class="col-md-3 form-group form-horizontal">
-                            <label class="control-label col-md-2" for="status">Status </label>
-                            <div class="col-md-10">
-                                <select class="form-control" id="status" name="status" [(ngModel)]="searchParams.status">
-                                    <!--<option *ngFor = "let status of statusList" [value]="status.code">{{status.nameEn}}</option>-->
-                                    <option value="OPEN">OPEN</option>
-                                    <option value="CLOSED">CLOSED</option>
+                                <select class="form-control" id="icList" name="icList" [(ngModel)]="icMeetingTopic.icMeeting.id" (change)="icListChanged($event.target.value)">
+                                    <option [value]="0">---NONE--</option>
+                                    <option [value]="-1">--CREATE NEW IC--</option>
+                                    <option *ngFor = "let ic of icList" [value]="ic?.id">№{{ic?.number}} ( {{ic?.date}} )</option>
                                 </select>
                             </div>
                         </div>
-                    </div>
-                    <!--<div class="row top-buffer">-->
-                        <!--<div class="form-group form-horizontal">-->
-                            <!--<label class="control-label col-md-2" for="name">Name:</label>-->
+
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-primary" *ngIf="showNewICModal" data-toggle="modal" data-target="#newICModal" (click)="doShowNewICModal()">NEW IC</button>
+                        </div>
+                        <!--<div class="col-md-3 form-group form-horizontal">-->
+                            <!--<label class="control-label col-md-2" for="status">Status </label>-->
                             <!--<div class="col-md-10">-->
-                                <!--<input type="text" id="name" class="form-control" placeholder="Enter name..." maxlength="250" name="name" [(ngModel)]="tripMemo.name"-->
-                                <!--required #name="ngModel"/>-->
-                                <!--<div [hidden]="name.valid || name.pristine" class="alert alert-danger">Training/Conference name is required</div>-->
+                                <!--<select class="form-control" id="status" name="status" [(ngModel)]="icMeetingTopic.status">-->
+                                    <!--&lt;!&ndash;<option *ngFor = "let status of statusList" [value]="status.code">{{status.nameEn}}</option>&ndash;&gt;-->
+                                    <!--<option value="OPEN">OPEN</option>-->
+                                    <!--<option value="CLOSED">CLOSED</option>-->
+                                <!--</select>-->
                             <!--</div>-->
                         <!--</div>-->
-                    <!--</div>-->
+                    </div>
                     <div class="row top-buffer">
                         <div class="col-md-12">
-                            <!--<div class="row top-buffer">-->
-                                <!--<div class="form-group form-horizontal">-->
-                                    <!--<label class="control-label col-md-2" for="organization">Organization:</label>-->
-                                    <!--<div class="col-md-10">-->
-                                        <!--<textarea fz-elastic type="text" id="organization" class="form-control" maxlength="250" name="organization" [(ngModel)]="tripMemo.organization"-->
-                                                  <!--required #organization="ngModel"></textarea>-->
-                                        <!--<div [hidden]="organization.valid || organization.pristine" class="alert alert-danger">Organization name is required</div>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                            <!--</div>-->
-
-                            <!--<div class="row top-buffer">-->
-                                <!--<div class="form-group form-horizontal">-->
-                                    <!--<label class="control-label col-md-2" for="attendees">Attendees (NIC): <span style="color: red">*</span></label>-->
-                                    <!--<div class="col-md-10" id="attendees" *ngIf="attendeesNICList.length > 0">-->
-                                        <!--<ng-select #attendeesSelect [initData]="corpMeeting.attendeesNIC"-->
-                                                   <!--[multiple]="true"-->
-                                                   <!--[items]="attendeesNICList"-->
-                                                   <!--(data)="refreshAttendees($event)"-->
-                                                   <!--(selected)="selected($event)"-->
-                                                   <!--(removed)="removed($event)"-->
-                                                   <!--placeholder="Please specify NIC attendees...">-->
-                                        <!--</ng-select>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                            <!--</div>-->
-
-                            <!--<div class="row top-buffer">-->
-                                <!--<div class="form-group form-horizontal">-->
-                                    <!--<label class="control-label col-md-2" for="location">Attendees (Other):</label>-->
-                                    <!--<div class="col-md-10">-->
-                                        <!--<textarea fz-elastic type="text" id="location" class="form-control" maxlength="250" name="location" [(ngModel)]="corpMeeting.attendeesOther"></textarea>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                            <!--</div>-->
-
                             <div class="row top-buffer">
                                 <div class="form-group form-horizontal">
                                     <label class="control-label col-md-2" for="shortName">Short Name:<span style="color: red">*</span></label>
                                     <div class="col-md-10">
-                                        <textarea required fz-elastic type="text" id="shortName" class="form-control" maxlength="250" name="shortName" [(ngModel)]="corpMeeting.shortName"></textarea>
+                                        <textarea required fz-elastic type="text" id="shortName" class="form-control"
+                                                  maxlength="250" name="shortName" [(ngModel)]="icMeetingTopic.shortName"></textarea>
                                     </div>
                                 </div>
                             </div>
-
-                            <!--<div class="row top-buffer">-->
-                            <!--<label class="control-label col-md-2">Status:</label>-->
-                            <!--<div class="col-md-2">-->
-                            <!--<select id="statusSelect" class="form-control" [(ngModel)]="tripMemo.status">-->
-                            <!--<option value="NONE">-&#45;&#45;</option>-->
-                            <!--<option value="APPROVED">Approved</option>-->
-                            <!--<option value="REJECTED">Rejected</option>-->
-                            <!--<option value="CONSIDERATION">Under Consideration</option>-->
-                            <!--</select>-->
-                            <!--</div>-->
-                            <!--</div>-->
-
                         </div>
                     </div>
                     <br>
                     <div class="row top-buffer withpadding">
-                        <!--<div class="panel-group" id="accordion">-->
-                            <!--<a data-toggle="collapse" data-parent="#accordion" href="#collapseDescription" (click)="toggleDescription()">-->
-                                <!--{{ visible ? 'Hide description &#9660;' : 'Show description &#9658;' }}</a>-->
-
-                            <!--<div id="collapseDescription" [ngClass]="{'collapse in': corpMeeting.longDescription != null, 'collapse': corpMeeting.longDescription == null}">-->
-                                <!--<div class="row top-buffer withpadding">-->
-                                    <!--<div class="col-md-12" style="background-color:#5bc0de; height: 34px">-->
-                                        <!--<div class="col-md-6">-->
-                                            <!--<h5>Agenda <span style="color: red">*</span></h5>-->
-                                        <!--</div>-->
-                                        <!--<div class="col-md-5">&nbsp;</div>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                                <!--<div class="row top-buffer">-->
-                                    <!--<div class="col-md-12">-->
-                                        <!--<textarea fz-elastic type="text" class="form-control" rows="10" name="description" [(ngModel)]="corpMeeting.agenda"></textarea>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-
-                            <!--</div>-->
-                        <!--</div>-->
-
                         <div class="row top-buffer">
                             <div class="col-md-12" style="background-color:#5bc0de; height: 34px">
                                 <div class="col-md-6">
-                                    <h5>Agenda</h5>
+                                    <h5>Long Description</h5>
                                 </div>
                                 <div class="col-md-5">&nbsp;</div>
                             </div>
                             <div class="row top-buffer">
                                 <div class="col-md-12">
-                                    <textarea fz-elastic type="text" class="form-control" rows="10" name="description" [(ngModel)]="corpMeeting.agenda"></textarea>
+                                    <textarea fz-elastic type="text" class="form-control" rows="10" name="description" [(ngModel)]="icMeetingTopic.longDescription"></textarea>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <br/>
                     <div class="row top-buffer">
-                        <!--<div class="col-md-6">-->
-                            <!--<div class="jumbotron" style="padding-top: 5px; padding-bottom: 5px;">-->
-                                <!--<div class="row">-->
-                                    <!--<label>PROTOCOL <span style="color: red">*</span></label>-->
-                                <!--</div>-->
-
-                                <!--<div class="row" *ngIf="canEdit()">-->
-                                    <!--<label class="btn btn-primary col-md-2" for="protocolAttachmentFile">-->
-                                        <!--<input type="file" id="protocolAttachmentFile" (change)="onFileChangeProtocols($event)" name="file" multiple style="display:none;"/>Upload</label>-->
-                                    <!--<div class="col-md-6">-->
-                                        <!--<div class="row" *ngFor="let newFile of uploadProtocolsFiles" class="label label-info" style="display: table;">-->
-                                            <!--<span>{{newFile.name}}</span>-->
-                                        <!--</div>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-
-                                <!--<div class="row" *ngIf="corpMeeting?.protocols?.length > 0">-->
-                                    <!--<div *ngFor="let protocol of corpMeeting.protocols">-->
-                                        <!--<file-attachment-downloader fileId="{{protocol.id}}"-->
-                                                                    <!--fileName="{{protocol?.fileName}}"-->
-                                                                    <!--fileType="CM_PROT">-->
-                                        <!--</file-attachment-downloader>-->
-
-                                        <!--<a (click)="deleteAttachment(attachment.id)" *ngIf="canEdit()">-->
-                                            <!--<i class="glyphicon glyphicon-trash"></i>-->
-                                        <!--</a>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                            <!--</div>-->
-                        <!--</div>-->
                         <div class="col-md-6">
                             <div class="jumbotron" style="padding-top: 5px; padding-bottom: 5px;">
                                 <div class="row">
@@ -235,11 +99,11 @@
                                     </div>
                                 </div>
 
-                                <div class="row" *ngIf="corpMeeting?.files?.length > 0">
-                                    <div *ngFor="let attachment of corpMeeting.files">
+                                <div class="row" *ngIf="icMeetingTopic?.materials?.length > 0">
+                                    <div *ngFor="let attachment of icMeetingTopic.materials">
                                         <file-attachment-downloader fileId="{{attachment.id}}"
                                                                     fileName="{{attachment?.fileName}}"
-                                                                    fileType="CM_MATRL">
+                                                                    fileType="IC_MATRL">
                                         </file-attachment-downloader>
 
                                         <a (click)="deleteAttachment(attachment.id)" *ngIf="canEdit()">
@@ -249,45 +113,89 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="jumbotron" style="padding-top: 5px; padding-bottom: 5px;">
-                                <div class="row">
-                                    <label>PROTOCOL</label>
-                                </div>
+                        <!--<div class="col-md-6">-->
+                            <!--<div class="jumbotron" style="padding-top: 5px; padding-bottom: 5px;">-->
+                                <!--<div class="row">-->
+                                    <!--<label>PROTOCOL</label>-->
+                                <!--</div>-->
 
-                                <div class="row" *ngIf="canEdit()">
-                                    <label class="btn btn-primary col-md-2" for="attachmentFileProtocols">
-                                        <input type="file" id="attachmentFileProtocols" (change)="onFileChangeProtocols($event)" name="fileProtocol"  style="display:none;"/>Upload</label>
-                                    <div class="col-md-6">
-                                        <div class="row" *ngFor="let newFile of uploadProtocolsFiles" class="label label-info" style="display: table;">
-                                            <span>{{newFile.name}}</span>
-                                        </div>
-                                    </div>
-                                </div>
+                                <!--<div class="row" *ngIf="canEdit()">-->
+                                    <!--<label class="btn btn-primary col-md-2" for="attachmentFileProtocols">-->
+                                        <!--<input type="file" id="attachmentFileProtocols" (change)="onFileChangeProtocols($event)" name="fileProtocol"  style="display:none;"/>Upload</label>-->
+                                    <!--<div class="col-md-6">-->
+                                        <!--<div class="row" *ngFor="let newFile of uploadProtocolsFiles" class="label label-info" style="display: table;">-->
+                                            <!--<span>{{newFile.name}}</span>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                <!--</div>-->
 
-                                <div class="row" *ngIf="corpMeeting?.protocols?.length > 0">
-                                    <div *ngFor="let attachment of corpMeeting.protocols">
-                                        <file-attachment-downloader fileId="{{attachment.id}}"
-                                                                    fileName="{{attachment?.fileName}}"
-                                                                    fileType="CM_PRTCL">
-                                        </file-attachment-downloader>
+                                <!--<div class="row" *ngIf="icMeetingTopic?.protocols?.length > 0">-->
+                                    <!--<div *ngFor="let attachment of icMeetingTopic.protocols">-->
+                                        <!--<file-attachment-downloader fileId="{{attachment.id}}"-->
+                                                                    <!--fileName="{{attachment?.fileName}}"-->
+                                                                    <!--fileType="CM_PRTCL">-->
+                                        <!--</file-attachment-downloader>-->
 
-                                        <a (click)="deleteProtocolAttachment(attachment.id)" *ngIf="canEdit()">
-                                            <i class="glyphicon glyphicon-trash"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                                        <!--<a (click)="deleteProtocolAttachment(attachment.id)" *ngIf="canEdit()">-->
+                                            <!--<i class="glyphicon glyphicon-trash"></i>-->
+                                        <!--</a>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</div>-->
                     </div>
                     <br/>
                     <div class="row top-buffer">
                         <div class="col-md-12">
-                            <button type="button" class="btn btn-danger pull-left" name="deleteCorpMeeting" (click)="deleteCorpMeeting()" *ngIf="canEdit() && corpMeeting != null && corpMeeting.id != null">Delete</button>
+                            <button type="button" class="btn btn-danger pull-left" name="deleteCorpMeeting" (click)="deleteICMeetingTopic()" *ngIf="canEdit() && icMeetingTopic != null && icMeetingTopic.id != null">Delete</button>
                             <button type="submit" class="btn btn-success pull-right" name="saveCorpMeeting" *ngIf="canEdit()">Save</button>
                         </div>
                     </div>
                 </form>
+            </div>
+
+            <div class="modal fade" id="newICModal" role="dialog" >
+                <div [ngBusy]="busyCreate" class="modal-dialog" style="min-height: 100px; max-height:85%;  margin-top: 100px; margin-bottom:50px; width:65%;">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="alert alert-danger" *ngIf="modalErrorMessage != null"><span>{{modalErrorMessage}}</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="alert alert-info" *ngIf="modalSuccessMessage != null"><span>{{modalSuccessMessage}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-1">
+                                    <label for="ICDateDTPickeer">IC Date</label>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class='input-group date col-md-2' id='ICDateDTPickeer' style="width: 100%">
+                                        <input type='text' required class="form-control" id="ICDate" name="ICDate" style="font-size: small" [(ngModel)]="newICMeeting.date"/>
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-1">
+                                    <label for="ICNumber">IC №</label>
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="text" required name="ICNumber" id="ICNumber" class="form-control"
+                                           placeholder="IC number...." [(ngModel)]="newICMeeting.number"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default pull-left" (click)="closeICSaveModal()" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary pull-right" (click)="saveICMeeting()" [disabled]="false">Save</button>
+                            <button type="button" class="btn btn-primary pull-right" (click)="closeICSaveModal()" *ngIf="report != null">OK</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
