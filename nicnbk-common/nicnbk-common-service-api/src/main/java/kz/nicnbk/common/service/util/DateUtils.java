@@ -119,6 +119,13 @@ public class DateUtils {
         return cal.getTime();
     }
 
+    public static boolean isSameDate(Date date1, Date date2){
+        if(date1 == null || date2 == null){
+            return false;
+        }
+        return getDateFormatted(date1).equalsIgnoreCase(getDateFormatted(date2));
+    }
+
     public static Date getLastDayOfCurrentYear(Date date){
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.MONTH, Calendar.DECEMBER);

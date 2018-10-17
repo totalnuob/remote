@@ -1697,7 +1697,7 @@ public class LookupServiceImpl implements LookupService {
                 dto.setId(entity.getId());
                 dto.setNameEn(entity.getTarragonChartOfAccountsName());
                 dto.setNICChartOfAccounts(new NICReportingChartOfAccountsDto(entity.getNicReportingChartOfAccounts()));
-                dto.setAddable(entity.getAddable());
+                dto.setAddable(entity.isAddable());
                 dto.setNegativeOnly(entity.getNegativeOnly());
                 dto.setPositiveOnly(entity.getPositiveOnly());
                 //dto.setEditable(checkEditableMatchingTarragonChartAccountsLongDescription(entity.getTarragonChartOfAccountsName()));
@@ -1720,7 +1720,7 @@ public class LookupServiceImpl implements LookupService {
                 dto.setId(entity.getId());
                 dto.setNameEn(entity.getTerraChartOfAccountsName());
                 dto.setNICChartOfAccounts(new NICReportingChartOfAccountsDto(entity.getNicReportingChartOfAccounts()));
-                dto.setAddable(entity.getAddable());
+                dto.setAddable(entity.isAddable());
                 //dto.setNegativeOnly(entity.getNegativeOnly());
                 //dto.setPositiveOnly(entity.getPositiveOnly());
                 dto.setEditable(true);

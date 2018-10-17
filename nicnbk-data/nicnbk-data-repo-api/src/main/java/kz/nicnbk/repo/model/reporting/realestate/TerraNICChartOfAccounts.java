@@ -19,7 +19,7 @@ public class TerraNICChartOfAccounts extends BaseEntity {
 
     private String terraChartOfAccountsName;
     private NICReportingChartOfAccounts nicReportingChartOfAccounts;
-    private Boolean addable;
+    private boolean addable;
     private Boolean positiveOnly;
     private Boolean negativeOnly;
 
@@ -43,11 +43,11 @@ public class TerraNICChartOfAccounts extends BaseEntity {
         this.nicReportingChartOfAccounts = nicReportingChartOfAccounts;
     }
 
-    public Boolean getAddable() {
+    public boolean isAddable() {
         return addable;
     }
 
-    public void setAddable(Boolean addable) {
+    public void setAddable(boolean addable) {
         this.addable = addable;
     }
 

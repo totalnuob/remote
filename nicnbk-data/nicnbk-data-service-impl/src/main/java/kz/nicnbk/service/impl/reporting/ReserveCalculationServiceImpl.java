@@ -920,7 +920,8 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
                     record.getRecipient().getCode().startsWith("SING") ? "021 000 018" :
                             record.getRecipient().getCode().startsWith("TERRA") ? "122-016-066" : "";
             String bankDetails = record.getRecipient().getCode().startsWith("TARR") ? "Citizens Bank, N.A., One Citizens Drive Riverside, RI 02915-3000" :
-                    record.getRecipient().getCode().startsWith("SING") ? "Bank of New York Mellon, 1 Wall Street, New York" :
+                    //record.getRecipient().getCode().startsWith("SING") ? "Bank of New York Mellon, 1 Wall Street, New York" :
+                    record.getRecipient().getCode().startsWith("SING") ? "Bank of New York Mellon, 240 Greenwich Street, New York" :
                             record.getRecipient().getCode().startsWith("TERRA") ? "City National Bank, Los Angeles, CA" : "";
             String accountNumber = record.getRecipient().getCode().startsWith("TARR") ? "4010297920" :
                     record.getRecipient().getCode().startsWith("SING_B") ? "8901300101" :

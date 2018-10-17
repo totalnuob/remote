@@ -226,7 +226,8 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
                         saveResponse.setErrorMessageEn(errorMessage);
                         return saveResponse;
                     }else{
-                        if(dto.getDate() == null || DateUtils.getLastDayOfCurrentMonth(dto.getDate()).compareTo(dto.getDate()) != 0){
+                        if(dto.getDate() == null ||
+                                !DateUtils.isSameDate(DateUtils.getLastDayOfCurrentMonth(dto.getDate()), dto.getDate())){
                             String errorMessage = "Currency rate (average) save failed: date must be last day of month";
                             logger.error(errorMessage);
                             saveResponse.setErrorMessageEn(errorMessage);
@@ -241,7 +242,8 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
                         saveResponse.setErrorMessageEn(errorMessage);
                         return saveResponse;
                     }else{
-                        if(dto.getDate() == null || DateUtils.getLastDayOfCurrentYear(dto.getDate()).compareTo(dto.getDate()) != 0){
+                        if(dto.getDate() == null ||
+                                !DateUtils.isSameDate(DateUtils.getLastDayOfCurrentYear(dto.getDate()), dto.getDate())){
                             String errorMessage = "Currency rate (average year) save failed: date must be December 31";
                             logger.error(errorMessage);
                             saveResponse.setErrorMessageEn(errorMessage);
