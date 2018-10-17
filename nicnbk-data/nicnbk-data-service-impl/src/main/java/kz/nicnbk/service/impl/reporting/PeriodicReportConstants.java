@@ -96,7 +96,7 @@ public final class PeriodicReportConstants {
     public static final String ACC_NUM_5440_010 = "5440.010";
     // TODO: when a when b?
     public static final String RU_5440_010_a = "Резерв по переоценке финансовых инвестиций, имеющихся в наличии для продажи";
-    public static final String RU_5440_010_b = "Резерв на переоценку финансовых инвестиций, имеющихся в наличии для продажи";
+    public static final String RU_5440_010_b = "Резерв на переоценку  финансовых инвестиций, имеющихся в наличии для продажи";
     public static final String RU_5440_010__LAST_YEAR = "Резерв по переоценке финансовых инвестиций, имеющихся в наличии для продажи (прошлый год)";
 
 

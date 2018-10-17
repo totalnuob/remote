@@ -4161,7 +4161,15 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 }
             }
 
-            responseDto.setRecords(previousRecords);
+            List<ConsolidatedKZTForm13RecordDto> noEmptyRecords = new ArrayList<>();
+            for(ConsolidatedKZTForm13RecordDto record: previousRecords){
+                if(StringUtils.isEmpty(record.getAccountNumber()) || !record.isEmptyAmounts()){
+                    noEmptyRecords.add(record);
+                }
+            }
+
+            responseDto.setRecords(noEmptyRecords);
+            //responseDto.setRecords(previousRecords);
             return responseDto;
         }
     }
