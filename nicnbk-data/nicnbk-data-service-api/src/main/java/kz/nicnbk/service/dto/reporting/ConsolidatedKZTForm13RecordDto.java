@@ -173,4 +173,10 @@ public class ConsolidatedKZTForm13RecordDto implements BaseDto {
     public void setTotalEndPeriod(Double totalEndPeriod) {
         this.totalEndPeriod = totalEndPeriod;
     }
+
+    public boolean isEmptyAmounts(){
+        return this.debtStartPeriod == null && this.interestStartPeriod == null && this.totalStartPeriod == null &&
+                this.debtTurnover == null && this.interestTurnover == null &&
+                this.debtEndPeriod == null && this.interestEndPeriod == null && this.totalEndPeriod == null;
+    }
 }

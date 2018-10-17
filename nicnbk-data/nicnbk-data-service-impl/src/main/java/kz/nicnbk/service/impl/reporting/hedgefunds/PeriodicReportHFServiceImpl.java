@@ -228,12 +228,13 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
         List<SingularityNICChartOfAccounts> entities = this.singularityNICChartOfAccountsRepository.findBySingularityAccountNumber(accountNumber);
         if(entities != null && !entities.isEmpty()){
             SingularityNICChartOfAccounts entity = entities.get(0);
-            if(entity.getPositiveOnly() != null && entity.getPositiveOnly().booleanValue() && accountBalance < 0){
-                return null;
-            }else if(entity.getNegativeOnly() != null && entity.getNegativeOnly().booleanValue() && accountBalance >= 0){
-                return null;
-            }
-            if(entities.size() == 2){
+            if(entities.size() == 1) {
+                if (entity.getPositiveOnly() != null && entity.getPositiveOnly().booleanValue() && accountBalance < 0) {
+                    return null;
+                } else if (entity.getNegativeOnly() != null && entity.getNegativeOnly().booleanValue() && accountBalance >= 0) {
+                    return null;
+                }
+            }else if(entities.size() == 2){
                 boolean found = false;
                 for(SingularityNICChartOfAccounts anEntity: entities) {
                     if (accountBalance != null && accountBalance.doubleValue() < 0) {
