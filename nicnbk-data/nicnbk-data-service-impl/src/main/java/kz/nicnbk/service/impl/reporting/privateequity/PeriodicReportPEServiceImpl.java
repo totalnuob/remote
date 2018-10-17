@@ -520,6 +520,8 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
                     record.setFinancialStatementCategory("I");
                 }else if(isExpenses(balanceRecord)){
                     record.setFinancialStatementCategory("X");
+                }else if(balanceRecord.getName().equalsIgnoreCase("Net realized gain on investments")) {
+                    record.setFinancialStatementCategory("I");
                 }else{
                     continue;
                 }

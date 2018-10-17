@@ -1724,8 +1724,9 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
             /* PARSE EXCEL (RAW) *******************************************************************************/
             Iterator<Row> rowIterator = getRowIterator(filesDto, "Balance Sheet by Series");
             if(rowIterator == null){
-                logger.error("Error parsing 'Terra Combined' file sheet 'Balance Sheet by Series'");
-                return new FileUploadResultDto(ResponseStatusType.FAIL, "", "Error parsing 'Terra Combined' file sheet 'Balance Sheet by Series'", "");
+                String errorMessage = "Error parsing 'Terra Combined' file sheet 'Balance Sheet by Series': check sheet name";
+                logger.error(errorMessage);
+                return new FileUploadResultDto(ResponseStatusType.FAIL, "", errorMessage, "");
             }
             List<ConsolidatedReportRecordDto> balanceSheetRecords = parseTerraCombinedBalanceSheetRaw(rowIterator);
             //printRecords(records);
@@ -1735,15 +1736,17 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                 rowIterator = getRowIterator(filesDto, "P&L by series - YTD");
             }
             if(rowIterator == null){
-                logger.error("Error parsing 'Terra Combined' file sheet 'Profit or Loss by series'");
-                return new FileUploadResultDto(ResponseStatusType.FAIL, "", "Error parsing 'Terra Combined' file sheet 'Profit or Loss by series'", "");
+                String errorMessage = "Error parsing 'Terra Combined' file sheet 'Profit or Loss by series': check sheet name";
+                logger.error(errorMessage);
+                return new FileUploadResultDto(ResponseStatusType.FAIL, "", errorMessage, "");
             }
             List<ConsolidatedReportRecordDto> profitLossRecords = parseTerraCombinedProfitLossRaw(rowIterator);
 
             rowIterator = getRowIterator(filesDto, "Securities cost");
             if(rowIterator == null){
-                logger.error("Error parsing 'Terra Combined' file sheet 'Securities cost'");
-                return new FileUploadResultDto(ResponseStatusType.FAIL, "", "Error parsing 'Terra Combined' file sheet 'Securities cost'", "");
+                String errorMessage = "Error parsing 'Terra Combined' file sheet 'Securities cost': check sheet name";
+                logger.error(errorMessage);
+                return new FileUploadResultDto(ResponseStatusType.FAIL, "", errorMessage, "");
             }
             List<ConsolidatedReportRecordDto> securitiesCostRecords = parseTerraCombinedSecuritiesCostRaw(rowIterator);
 
