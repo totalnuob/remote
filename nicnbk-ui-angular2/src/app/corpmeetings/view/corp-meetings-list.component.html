@@ -140,7 +140,7 @@
 
             <div id="ic_list" class="tab-pane fade">
                 <div class="row withpadding">
-                    <a class="btn btn-primary pull-right" data-toggle="modal" data-target="#newICModal">NEW</a>
+                    <a class="btn btn-primary pull-right" data-toggle="modal" data-target="#newICModal" (click)="editICMeeting(null)">NEW</a>
                 </div>
 
                 <div class="jumbotron">
@@ -342,11 +342,11 @@
                             <div class="modal-body">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <div class="alert alert-danger" *ngIf="modalErrorMessage != null"><span>{{modalErrorMessage}}</span>
+                                        <div class="alert alert-danger" *ngIf="modalProtocolErrorMessage != null"><span>{{modalProtocolErrorMessage}}</span>
                                         </div>
                                     </div>
                                     <div class="col-md-12">
-                                        <div class="alert alert-info" *ngIf="modalSuccessMessage != null"><span>{{modalSuccessMessage}}</span>
+                                        <div class="alert alert-info" *ngIf="modalProtocolSuccessMessage != null"><span>{{modalProtocolSuccessMessage}}</span>
                                         </div>
                                     </div>
                                 </div>
