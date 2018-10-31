@@ -23,9 +23,9 @@
                 </div>
             </div>
 
-            <div [hidden]="submitted" *ngIf="memo != null && memo.firm != null">
+            <div [hidden]="submitted">
                 <form (ngSubmit)="save()" #memoForm="ngForm" class="well span">
-                    <div class="jumbotron">
+                    <div class="jumbotron" *ngIf="memo.firm != null">
                         <div class="row">
                             <div class="form-group form-horizontal">
                                 <label class="control-label col-md-1" for="firmSelect" ><b>Firm:</b></label>

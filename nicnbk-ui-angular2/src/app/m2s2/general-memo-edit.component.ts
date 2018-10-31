@@ -16,7 +16,7 @@ declare var $:any
 declare var Chart: any;
 
 @Component({
-    selector: 'pe-memo-edit',
+    selector: 'general-memo-edit',
     templateUrl: './view/general-memo-edit.component.html',
     styleUrls: [],
     providers: [],

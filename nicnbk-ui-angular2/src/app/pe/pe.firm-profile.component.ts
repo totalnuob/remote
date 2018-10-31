@@ -180,11 +180,11 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
     ngOnInit():any {
         // TODO: exclude jQuery
         // datetimepicker
-        $('#fromDate').datetimepicker({
+        $('#fromDateDTPickeer').datetimepicker({
             //defaultDate: new Date(),
             format: 'DD-MM-YYYY'
         });
-        $('#toDate').datetimepicker({
+        $('#untilDateDTPickeer').datetimepicker({
             //defaultDate: new Date(),
             format: 'DD-MM-YYYY'
         });

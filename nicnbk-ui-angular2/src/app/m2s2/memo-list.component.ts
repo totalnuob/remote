@@ -100,11 +100,11 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
     ngOnInit():any {
         // TODO: exclude jQuery
         // datetimepicker
-        $('#fromDate').datetimepicker({
+        $('#fromDateDTPickeer').datetimepicker({
             //defaultDate: new Date(),
             format: 'DD-MM-YYYY'
         });
-        $('#toDate').datetimepicker({
+        $('#untilDateDTPickeer').datetimepicker({
             //defaultDate: new Date(),
             format: 'DD-MM-YYYY'
         });

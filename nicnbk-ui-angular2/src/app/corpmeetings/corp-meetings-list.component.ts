@@ -162,7 +162,7 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
             format: 'DD-MM-YYYY'
         });
 
-        $('#ICDate').datetimepicker({
+        $('#ICDateDTPickeer').datetimepicker({
             //defaultDate: new Date(),
             format: 'DD-MM-YYYY'
         });

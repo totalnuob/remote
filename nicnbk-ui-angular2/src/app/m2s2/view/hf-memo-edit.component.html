@@ -21,7 +21,7 @@
                     </div>
                 </div>
             </div>
-            <div [hidden]="submitted" *ngIf="memo != null && memo.manager != null">
+            <div [hidden]="submitted">
                 <form (ngSubmit)="save()" #memoForm="ngForm" class="well span">
                     <div class="jumbotron">
                         <div class="row">
@@ -30,7 +30,7 @@
                                 <!--<label class="control-label">-->
                                     <!--<a [routerLink]="['/hf/managerProfile/', memo.manager.id]" target="_blank"><span><i class="glyphicon glyphicon-circle-arrow-right"></i></span></a>-->
                                 <!--</label>-->
-                                <div class="col-md-5">
+                                <div class="col-md-5"  *ngIf="memo.manager != null">
                                     <select class="form-control" id="managerId" required
                                             [(ngModel)]="memo.manager.id" name="managerId" (change)="getManagerDataOnChange($event.target.value)"
                                             #managerId="ngModel" [disabled]="!canEdit()">
