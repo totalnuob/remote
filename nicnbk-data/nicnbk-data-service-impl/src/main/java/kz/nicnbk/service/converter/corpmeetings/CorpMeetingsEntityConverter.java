@@ -18,6 +18,7 @@ import java.util.List;
 /**
  * Created by zhambyl on 04-Aug-16.
  */
+@Deprecated
 @Component
 public class CorpMeetingsEntityConverter extends BaseDozerEntityConverter<CorpMeeting, CorpMeetingDto> {
 

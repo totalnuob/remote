@@ -357,4 +357,10 @@ public class LookupServiceREST extends CommonServiceREST{
         boolean deleted = this.lookupService.deleteMatchingLookupByTypeAndId(type, id, username);
         return buildDeleteResponseEntity(deleted);
     }
+
+    @RequestMapping(value = "/ICMeetingTopicTypes", method = RequestMethod.GET)
+    public ResponseEntity getAllICMeetingTopicTypes(){
+        List<BaseDictionaryDto> lookups = this.lookupService.getICMeetingTopicTypes();
+        return buildNonNullResponse(lookups);
+    }
 }

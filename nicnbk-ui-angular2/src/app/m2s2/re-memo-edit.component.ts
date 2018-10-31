@@ -59,7 +59,7 @@ export class RealEstateMemoEditComponent extends CommonFormViewComponent impleme
 
     private breadcrumbParams: string;
 
-    options = {
+    tagOptions = {
         placeholder: "+ tag",
         secondaryPlaceholder: "Enter a new tag",
         separatorKeys: [188, 191], // exclude coma from tag content
@@ -258,10 +258,6 @@ export class RealEstateMemoEditComponent extends CommonFormViewComponent impleme
 
     }
 
-    toggle() {
-        this.visible = !this.visible;
-        this.memo.suitable = true;
-    }
 
     save(){
         // TODO: ngModel date

@@ -88,6 +88,7 @@ import {CurrencyRatesLookupValuesNBReportingComponent} from "./reporting/currenc
 import {TypedLookupValuesNBReportingComponent} from "./reporting/typed.lookup.values.nb.reporting.component";
 import {PeriodicDataNBReportingComponent} from "./reporting/periodic.data.nb.reporting.component";
 import {MatchingLookupValuesNBReportingComponent} from "./reporting/matching.lookup.values.nb.reporting.component";
+import {ICMeetingTopicEditComponent} from "./corpmeetings/ic-meeting-topic-edit.component";
 
 
 const routes: Routes  = [

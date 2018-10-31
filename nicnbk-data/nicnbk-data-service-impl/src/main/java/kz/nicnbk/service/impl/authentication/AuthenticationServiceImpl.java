@@ -1,10 +1,12 @@
 package kz.nicnbk.service.impl.authentication;
 
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
+import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.service.api.authentication.AuthenticationService;
 import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.dto.authentication.AuthenticatedUserDto;
 import kz.nicnbk.service.dto.employee.EmployeeDto;
+import org.apache.poi.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +40,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 if (employeeDto.getRoles() != null) {
                     Set<String> roles = new HashSet<>();
                     for (BaseDictionaryDto role : employeeDto.getRoles()) {
-                        roles.add(convertToOutputRoleName(role.getCode()));
+                        String roleOutput = convertToOutputRoleName(role.getCode());
+                        if(StringUtils.isNotEmpty(roleOutput)) {
+                            roles.add(roleOutput);
+                        }
                     }
                     authenticatedUserDto.setRoles(roles);
                 }
@@ -82,10 +87,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 return "ROLE_STRATEGY_RISK_MANAGEMENT_VIEWER";
             case "MM_EDIT":
                 return "ROLE_MACROMONITOR_EDITOR";
-            case "CM_EDIT":
-                return "ROLE_CORPMEETINGS_EDITOR";
-            case "CM_VIEW":
-                return "ROLE_CORPMEETINGS_VIEWER";
+            case "IC_MEMBR":
+                return "ROLE_IC_MEMBER";
+//            case "CM_EDIT":
+//                return "ROLE_CORPMEETINGS_EDITOR";
+//            case "CM_VIEW":
+//                return "ROLE_CORPMEETINGS_VIEWER";
             default:
                 return null;
         }

@@ -6,7 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { COMPILER_PROVIDERS } from "@angular/compiler";
 
 import {SelectModule} from 'ng2-select';
-//import { TagInputModule } from 'ng2-tag-input';
+import { TagInputModule } from 'ng2-tag-input';
 import {ElasticModule} from 'angular2-elastic';
 
 import {RouterModule} from '@angular/router';
@@ -102,13 +102,14 @@ import {CurrencyRatesLookupValuesNBReportingComponent} from "./reporting/currenc
 import {TypedLookupValuesNBReportingComponent} from "./reporting/typed.lookup.values.nb.reporting.component";
 import {PeriodicDataNBReportingComponent} from "./reporting/periodic.data.nb.reporting.component";
 import {MatchingLookupValuesNBReportingComponent} from "./reporting/matching.lookup.values.nb.reporting.component";
+//import {CorpMeetingEditComponent} from "./corpmeetings/ic-meeting-topic-edit.component";
 
 @NgModule({
     imports: [
         BrowserModule,
         FormsModule, HttpModule,
         SelectModule,
-        //TagInputModule,
+        TagInputModule,
         appRouterProviders,
         BusyModule,
         ElasticModule

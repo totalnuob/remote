@@ -9,6 +9,7 @@ import java.util.List;
 /**
  * Created by zhambyl on 04-Aug-16.
  */
+@Deprecated
 public interface CorpMeetingFilesRepository extends PagingAndSortingRepository<CorpMeetingFiles, Long> {
 
     /**

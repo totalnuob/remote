@@ -1,4 +1,3 @@
-import {UpdatedEntity} from "../../common/model/updated-entity";
 
 export class CorpMeeting{
     id: number;
@@ -10,4 +9,7 @@ export class CorpMeeting{
     attendeesNIC: any[];
     attendeesOther: any[];
     shortName: string;
+
+    status: string;
+    longDescription: string;
 }

@@ -6,6 +6,9 @@ import {DATA_APP_URL} from "../common/common.service.constants";
 import {CommonService} from "../common/common.service";
 import {FileUploadService} from "../upload/file.upload.service";
 import {CorpMeeting} from "./model/corp-meeting";
+import {ICMeetingTopic} from "./model/ic-meeting-topic";
+import {ICMeeting} from "./model/ic-meeting";
+import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 
 @Injectable()
 export class CorpMeetingService extends CommonService {
@@ -19,9 +22,46 @@ export class CorpMeetingService extends CommonService {
     private MEETING_ATTACHMENT_UPLOAD_URL = this.CORP_MEETINGS_BASE_URL + "materials/upload/";
     private MEETING_ATTACHMENT_DELETE_URL = this.CORP_MEETINGS_BASE_URL + "materials/delete/";
 
+    private IC_MEETINGS_GET_ALL_URL = this.CORP_MEETINGS_BASE_URL + "ICMeeting/getAll/";
+
+    private IC_MEETINGS_SEARCH_URL = this.CORP_MEETINGS_BASE_URL + "ICMeeting/search/";
+    private IC_MEETING_TOPICS_SEARCH_URL = this.CORP_MEETINGS_BASE_URL + "ICMeetingTopic/search/";
+
+    private IC_MEETING_SAVE_URL = this.CORP_MEETINGS_BASE_URL + "ICMeeting/save/";
+    private IC_MEETING_PROTOCOL_ATTACHMENT_UPLOAD_URL = this.CORP_MEETINGS_BASE_URL + "ICMeeting/protocol/upload/";
+    private IC_MEETING_PROTOCOL_ATTACHMENT_DELETE_URL = this.CORP_MEETINGS_BASE_URL + "ICMeeting/protocol/delete/";
+
+    private IC_MEETING_TOPIC_GET_URL = this.CORP_MEETINGS_BASE_URL + "ICMeetingTopic/get/";
+    private IC_MEETING_TOPIC_SAVE_URL = this.CORP_MEETINGS_BASE_URL + "ICMeetingTopic/save/";
+    private IC_MEETING_TOPIC_DELETE_URL = this.CORP_MEETINGS_BASE_URL + "ICMeetingTopic/delete/";
+    private IC_MEETINGS_DELETE_URL = this.CORP_MEETINGS_BASE_URL + "ICMeeting/delete/";
+
+
+
+
     constructor( private http: Http,
+                 private moduleAccessChecker: ModuleAccessCheckerService,
                  private uploadService: FileUploadService) {
         super();
+    }
+
+    public checkICMeetingTopicEditAccess(type){
+        if(this.moduleAccessChecker.checkAccessAdmin()){
+           return true;
+        }
+        if(type != null && type === "HF"){
+            return this.moduleAccessChecker.checkAccessHedgeFundsEditor();
+        }else if(type != null && type === "PE"){
+            return this.moduleAccessChecker.checkAccessPrivateEquityEditor();
+        }else if(type != null && type === "RE"){
+            return this.moduleAccessChecker.checkAccessRealEstateEditor();
+        }else if(type != null && type === "SRM"){
+            return this.moduleAccessChecker.checkAccessStrategyRisksEditor();
+        }else if(type != null && type === "REP"){
+            return this.moduleAccessChecker.checkAccessReportingEditor();
+        }else{
+            return false;
+        }
     }
 
     search(searchParam) {
@@ -33,6 +73,31 @@ export class CorpMeetingService extends CommonService {
             .catch(this.handleErrorResponse);
     }
 
+    searchICMeetings(searchParam) {
+        let body = JSON.stringify(searchParam);
+
+        //console.log(body);
+        return this.http.post(this.IC_MEETINGS_SEARCH_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+
+    getAllICMeetings(): Observable<ICMeeting[]> {
+        return this.http.get(this.IC_MEETINGS_GET_ALL_URL, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+
+    searchICMeetingTopics(searchParam) {
+        let body = JSON.stringify(searchParam);
+
+        //console.log(body);
+        return this.http.post(this.IC_MEETING_TOPICS_SEARCH_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+
+
     save(entity){
         let body = JSON.stringify(entity);
 
@@ -42,9 +107,37 @@ export class CorpMeetingService extends CommonService {
             .catch(this.handleErrorResponse);
     }
 
+    saveICMeetingTopic(entity){
+        let body = JSON.stringify(entity);
+        return this.http.post(this.IC_MEETING_TOPIC_SAVE_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    saveICMeeting(entity){
+        let body = JSON.stringify(entity);
+
+        return this.http.post(this.IC_MEETING_SAVE_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    deleteICMeeting(id){
+        return this.http.post(this.IC_MEETINGS_DELETE_URL + id, null, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+
     get(id): Observable<CorpMeeting> {
         // TODO: check type and id
         return this.http.get(this.CORP_MEETINGS_GET_URL + id, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    getICMeetingTopic(id): Observable<ICMeetingTopic> {
+        return this.http.get(this.IC_MEETING_TOPIC_GET_URL + id, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }
@@ -53,7 +146,24 @@ export class CorpMeetingService extends CommonService {
         return this.uploadService.postFiles(this.MEETING_ATTACHMENT_UPLOAD_URL + meetingId, [], files, null);
     }
 
-    public deleteAttachment(meetingId, fileId) {
+    postICMeetingProtocolFiles(meetingId, params, file){
+        return this.uploadService.postFiles(this.IC_MEETING_PROTOCOL_ATTACHMENT_UPLOAD_URL + meetingId, [], file, null);
+    }
+
+    deleteICMeetingProtocolAttachment(meetingId, fileId) {
+        return this.http.delete(this.IC_MEETING_PROTOCOL_ATTACHMENT_DELETE_URL + meetingId + "/" + fileId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+
+    deleteAttachment(meetingId, fileId) {
+        return this.http.get(this.MEETING_ATTACHMENT_DELETE_URL + meetingId + "/" + fileId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    deleteICMeetingTopicAttachment(meetingId, fileId) {
         return this.http.get(this.MEETING_ATTACHMENT_DELETE_URL + meetingId + "/" + fileId, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
@@ -61,6 +171,12 @@ export class CorpMeetingService extends CommonService {
 
     delete(id){
         return this.http.post(this.CORP_MEETINGS_DELETE_URL + id, null, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    deleteICMeetingTopic(id){
+        return this.http.post(this.IC_MEETING_TOPIC_DELETE_URL + id, null, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }

@@ -14,6 +14,8 @@ import java.util.Set;
  * Created by zhambyl on 04-Aug-16.
  */
 
+
+@Deprecated
 @Entity
 @Table(name = "corp_meeting")
 public class CorpMeeting extends CreateUpdateBaseEntity{

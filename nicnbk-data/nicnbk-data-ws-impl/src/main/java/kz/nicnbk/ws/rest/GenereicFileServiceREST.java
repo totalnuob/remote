@@ -1,13 +1,21 @@
 package kz.nicnbk.ws.rest;
 
+import kz.nicnbk.common.service.model.BaseDictionaryDto;
+import kz.nicnbk.repo.model.lookup.FileTypeLookup;
+import kz.nicnbk.service.api.authentication.TokenService;
+import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.api.files.FileService;
+import kz.nicnbk.service.dto.authentication.UserRoles;
+import kz.nicnbk.service.dto.employee.EmployeeDto;
 import kz.nicnbk.service.dto.files.FilesDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -26,6 +34,12 @@ public class GenereicFileServiceREST {
     @Autowired
     private FileService fileService;
 
+    @Autowired
+    private TokenService tokenService;
+
+    @Autowired
+    private EmployeeService employeeService;
+
     @RequestMapping(value="/download/{fileType}/{id}", method= RequestMethod.GET)
     @ResponseBody
     public void downloadFile(@PathVariable(value="id") Long fileId,
@@ -34,6 +48,19 @@ public class GenereicFileServiceREST {
 
         // TODO: control file download by user role
         // TODO: Check rights
+
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        if(!checkFileDownloadPermission(fileId, username)){
+            response.setStatus(401);
+            try {
+                response.sendError(401, "Permission denied");
+                return;
+            } catch (IOException e) {
+                // TODO: handle error
+            }
+        }
 
         InputStream inputStream = fileService.getFileInputStream(fileId, fileType);
         if(inputStream == null){
@@ -64,5 +91,26 @@ public class GenereicFileServiceREST {
         } catch (IOException e) {
             logger.error("File download: failed to close input stream");
         }
+    }
+
+    private boolean checkFileDownloadPermission(Long fileId, String username){
+        FilesDto filesDto = this.fileService.getFileInfo(fileId);
+        if(filesDto != null && filesDto.getType() != null){
+            if(filesDto.getType().equalsIgnoreCase(FileTypeLookup.IC_PROTOCOL.getCode())){
+                // IC PROTOCOL
+                EmployeeDto employeeDto = this.employeeService.findByUsername(username);
+                if(employeeDto.getRoles() != null && !employeeDto.getRoles().isEmpty()){
+                    // Check rights
+                    for(BaseDictionaryDto role: employeeDto.getRoles()){
+                        if(role.getCode().equalsIgnoreCase(UserRoles.IC_MEMBER.getCode())){
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
 }

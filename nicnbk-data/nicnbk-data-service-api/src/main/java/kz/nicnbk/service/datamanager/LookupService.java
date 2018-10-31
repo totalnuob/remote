@@ -80,5 +80,7 @@ public interface LookupService extends BaseService {
     EntitySaveResponseDto saveNICChartOfAccounts(NICReportingChartOfAccountsDto dto, String username);
 
     boolean deleteMatchingLookupByTypeAndId(String type, Long id, String username);
+
+    List<BaseDictionaryDto> getICMeetingTopicTypes();
 }
 

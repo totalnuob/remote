@@ -11,8 +11,8 @@ INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(51, 'SRM_EDIT', 'St
 INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(52, 'SRM_VIEW', 'Strategy and Risk Management - Viewer', '', '');
 INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(53, 'MM_EDIT', 'MacroMonitor - Editor', '', '');
 
-INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(54, 'CM_EDIT', 'Corp Meetings - Editor', '', '');
-INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(55, 'CM_VIEW', 'Corp Meetings - Viewer', '', '');
-
+--INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(54, 'CM_EDIT', 'Corp Meetings - Editor', '', '');
+--INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(55, 'CM_VIEW', 'Corp Meetings - Viewer', '', '');
+INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(56, 'IC_MEMBR', 'IC Member', '', '');
 
 INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(101, 'NEWS_EDIT', 'News - Editor', '', '');

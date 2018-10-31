@@ -9,10 +9,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-/**
- * Created by zhambyl on 04-Aug-16.
- */
-
+@Deprecated
 @Entity(name = "corp_mmeting_files")
 public class CorpMeetingFiles extends BaseEntity {
 
