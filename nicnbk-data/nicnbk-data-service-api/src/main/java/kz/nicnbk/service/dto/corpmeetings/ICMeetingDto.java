@@ -10,6 +10,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -22,10 +23,10 @@ public class ICMeetingDto extends CreateUpdateBaseEntityDto<ICMeeting> implement
     @DateTimeFormat(pattern="dd-MM-yyyy")
     private Date date;
     private Boolean closed;
+    private int numberOfTopics;
 
-    private Boolean editable;
-
-    private Set<FilesDto> materials;
+    private Long protocolFileId;
+    private String protocolFileName;
 
     public String getNumber() {
         return number;
@@ -43,14 +44,6 @@ public class ICMeetingDto extends CreateUpdateBaseEntityDto<ICMeeting> implement
         this.date = date;
     }
 
-    public Boolean getEditable() {
-        return editable;
-    }
-
-    public void setEditable(Boolean editable) {
-        this.editable = editable;
-    }
-
     public Boolean getClosed() {
         return closed;
     }
@@ -59,12 +52,28 @@ public class ICMeetingDto extends CreateUpdateBaseEntityDto<ICMeeting> implement
         this.closed = closed;
     }
 
-    public Set<FilesDto> getMaterials() {
-        return materials;
+    public Long getProtocolFileId() {
+        return protocolFileId;
     }
 
-    public void setMaterials(Set<FilesDto> materials) {
-        this.materials = materials;
+    public void setProtocolFileId(Long protocolFileId) {
+        this.protocolFileId = protocolFileId;
+    }
+
+    public String getProtocolFileName() {
+        return protocolFileName;
+    }
+
+    public void setProtocolFileName(String protocolFileName) {
+        this.protocolFileName = protocolFileName;
+    }
+
+    public int getNumberOfTopics() {
+        return numberOfTopics;
+    }
+
+    public void setNumberOfTopics(int numberOfTopics) {
+        this.numberOfTopics = numberOfTopics;
     }
 
     @Override

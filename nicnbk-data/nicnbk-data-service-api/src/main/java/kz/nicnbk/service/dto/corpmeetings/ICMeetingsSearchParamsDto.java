@@ -28,7 +28,11 @@ public class ICMeetingsSearchParamsDto implements BaseDto {
 
 
     public String getNumber() {
-        return number;
+        return this.number;
+    }
+
+    public String getNumberNonEmpty() {
+        return StringUtils.isNotEmpty(this.number) ? this.number : null;
     }
 
     public void setNumber(String number) {
@@ -52,11 +56,11 @@ public class ICMeetingsSearchParamsDto implements BaseDto {
     }
 
     public Date getDateFrom() {
-        return dateFrom != null ? dateFrom : DateUtils.getDate("01.01.1970");
+        return dateFrom;
     }
 
-    public String getDateFromAsText(){
-        return DateUtils.getDateFormatted_YYYY_MM_DD(dateFrom);
+    public Date getDateFromNonEmpty() {
+        return dateFrom != null ? dateFrom : DateUtils.getDate("01.01.1970");
     }
 
     public void setDateFrom(Date dateFrom) {
@@ -64,7 +68,11 @@ public class ICMeetingsSearchParamsDto implements BaseDto {
     }
 
     public Date getDateTo() {
-        return dateTo != null ? dateTo : new Date();
+        return dateTo;
+    }
+
+    public Date getDateToNonEmpty() {
+        return dateTo != null ? dateTo : DateUtils.getDate("12.31.2030");
     }
 
     public void setDateTo(Date dateTo) {

@@ -8,6 +8,8 @@ import {ROLE_PE_EDIT} from "./roles.constants";
 import {ROLE_MM_EDIT} from "./roles.constants";
 import {ROLE_REPORTING_EDIT} from "./roles.constants";
 import {ROLE_CORPMEETINGS_EDIT} from "./roles.constants";
+import {ROLE_STRATEGY_RISKS_EDIT} from "./roles.constants";
+import {ROLE_IC_MEMBER} from "./roles.constants";
 
 
 @Injectable()
@@ -67,16 +69,22 @@ export class ModuleAccessCheckerService extends CommonService{
         return this.checkAccess(ROLE_MM_EDIT);
     }
 
-    public checkAccessCorpMeetingsEditor(){
-        return this.checkAccess(ROLE_CORPMEETINGS_EDIT);
-    }
+    //public checkAccessCorpMeetingsEditor(){
+    //    return this.checkAccess(ROLE_CORPMEETINGS_EDIT);
+    //}
 
-    public checkAccessCorpMeetingsEditor(){
-        return this.checkAccess(ROLE_CORPMEETINGS_EDIT);
-    }
 
     public checkAccessCorpMeetings(){
-        return this.checkAccess("ROLE_CORPMEETINGS");
+        return this.checkAccessICMember() || this.checkAccessHedgeFundsEditor() || this.checkAccessPrivateEquityEditor() ||
+            this.checkAccessRealEstateEditor() || this.checkAccessStrategyRisksEditor() || this.checkAccessReportingEditor();
+    }
+
+    public checkAccessICMember(){
+        return this.checkAccess(ROLE_IC_MEMBER)
+    }
+
+    public checkAccessStrategyRisksEditor(){
+        return this.checkAccess(ROLE_STRATEGY_RISKS_EDIT);
     }
 
 
@@ -86,7 +94,6 @@ export class ModuleAccessCheckerService extends CommonService{
     private checkAccess(role){
         //
         //TODO: this func gets called multiple times !!! try console.log("checkAccessPrivateEquity");
-        //console.log(this.roles);
         if(this.roles != null && this.roles.length > 0){
             for(var i = 0; i < this.roles.length; i++){
                 if((this.roles[i].indexOf(role) != -1) || this.roles[i] === ROLE_ADMIN){

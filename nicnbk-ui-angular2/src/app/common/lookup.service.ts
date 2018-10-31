@@ -60,6 +60,7 @@ import {SAVE_NIC_CHART_ACCOUNTS_URL} from "./lookup.service.url";
 import {SEARCH_NIC_REPORTING_CHART_OF_ACCOUNTS_URL} from "./lookup.service.url";
 import {DELETE_LOOKUP_VALUE_BY_TYPE_URL} from "./lookup.service.url";
 import {DELETE_MATCHING_LOOKUP_VALUE_BY_TYPE_URL} from "./lookup.service.url";
+import {IC_MEETING_TOPIC_TYPES_URL} from "./lookup.service.url";
 
 
 @Injectable()
@@ -538,6 +539,13 @@ export class LookupService extends CommonService{
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }
+
+    getICMeetingTopicTypes(){
+        return this.http.get(IC_MEETING_TOPIC_TYPES_URL, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+
 
 
 

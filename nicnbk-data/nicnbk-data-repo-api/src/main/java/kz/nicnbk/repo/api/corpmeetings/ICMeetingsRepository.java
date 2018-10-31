@@ -17,12 +17,23 @@ import java.util.List;
  */
 public interface ICMeetingsRepository extends PagingAndSortingRepository<ICMeeting, Long> {
 
+    @Query("select e from ICMeeting e where e.deleted is null or e.deleted=false" +
+            " ORDER BY e.number DESC")
+    Page<ICMeeting> searchAll(Pageable pageable);
+
     @Query("select e from ICMeeting e where " +
             " (e.number=?1 or ?1 is null)" +
-            " and (e.date >= ?2 AND e.date <= ?3)" +
+            " and (e.date >= ?2 AND e.date <= ?3) " +
+            " and (e.deleted is null or e.deleted=false)" +
             " ORDER BY e.number DESC")
-    Page<ICMeeting> search(String number,@Temporal(TemporalType.DATE) Date dateFrom,@Temporal(TemporalType.DATE) Date dateTo,
+    Page<ICMeeting> search(String number, @Temporal(TemporalType.DATE) Date dateFrom,@Temporal(TemporalType.DATE) Date dateTo,
                                      Pageable pageable);
 
-    List<ICMeeting> findByNumber(String number);
+    @Query("select e from ICMeeting e where e.number=?1 AND (e.deleted is null OR e.deleted=false)" +
+            " ORDER BY e.number DESC")
+    List<ICMeeting> findByNumberAndNotDeleted(String number);
+
+    @Query("select e from ICMeeting e where (e.closed is null OR e.closed=false) AND (e.deleted is null OR e.deleted=false)")
+    List<ICMeeting> findNotClosed();
+
 }

@@ -19,6 +19,9 @@ import {CorpMeetingSearchParams} from "./model/corp-meeting-search-params";
 import {ICMeetingTopic} from "./model/ic-meeting-topic";
 import {ICMeetingTopicSearchParams} from "./model/ic-meeting-topic-search-params";
 import {ICMeeting} from "./model/ic-meeting";
+import {BaseDictionary} from "../common/model/base-dictionary";
+
+//import { TagInputModule } from 'ng2-tag-input';
 
 declare var $:any
 
@@ -49,8 +52,18 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
     showNewICModal = false;
     newICMeeting = new ICMeeting();
 
+    tagOptions = {
+        placeholder: "+ tag",
+        secondaryPlaceholder: "Enter a new tag",
+        separatorKeys: [188, 191], // exclude coma from tag content
+        maxItems: 20
+    }
+
+    icMeetingTopicTypes: BaseDictionary[];
+
     constructor(
         private employeeService: EmployeeService,
+        private lookupService: LookupService,
         private corpMeetingService: CorpMeetingService,
         private router: Router,
         private route: ActivatedRoute,
@@ -62,15 +75,53 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
 
         Observable.forkJoin(
             // Load lookups
-            this.corpMeetingService.getAllICMeetings()
+            this.corpMeetingService.getAllICMeetings(),
+            this.lookupService.getICMeetingTopicTypes()
             )
             .subscribe(
-                ([data]) => {
+                ([data1, data2]) => {
 
                     this.icList = [];
-                    data.forEach(element => {
+                    data1.forEach(element => {
                         this.icList.push(element);
                     });
+
+                    this.icMeetingTopicTypes = [];
+
+                    // Check rights
+                    for(var i = 0; i < data2.length; i++){
+                        var element = data2[i];
+                        if(this.moduleAccessChecker.checkAccessAdmin() || this.moduleAccessChecker.checkAccessICMember()){
+                            this.icMeetingTopicTypes.push(element);
+                        }else if(element.code === "PE"){
+                            if(this.moduleAccessChecker.checkAccessPrivateEquityEditor()){
+                                this.icMeetingTopicTypes.push(element);
+                            }
+                        }else if(element.code === "HF"){
+                            if(this.moduleAccessChecker.checkAccessHedgeFundsEditor()){
+                                this.icMeetingTopicTypes.push(element);
+                            }
+                        }else if(element.code === "RE"){
+                            if(this.moduleAccessChecker.checkAccessRealEstateEditor()){
+                                this.icMeetingTopicTypes.push(element);
+                            }
+                        }else if(element.code === "SRM"){
+                            if(this.moduleAccessChecker.checkAccessStrategyRisksEditor()){
+                                this.icMeetingTopicTypes.push(element);
+                            }
+                        }else if(element.code === "REP"){
+                            if(this.moduleAccessChecker.checkAccessReportingEditor()){
+                                this.icMeetingTopicTypes.push(element);
+                            }
+                        }else{
+
+                        }
+                    }
+
+                    //data2.forEach(element => {
+                    //    this.icMeetingTopicTypes.push(element);
+                    //});
+
                     this.sub = this.route
                         .params
                         .subscribe(params => {
@@ -87,17 +138,50 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                                             if(!this.icMeetingTopic.icMeeting){
                                                 this.icMeetingTopic.icMeeting = new ICMeeting();
                                             }
+
+                                            // Check allowed types
+                                            if(this.canEdit()) {
+                                                // When IC Member and access to edit some types
+                                                var allowedTypes = [];
+                                                for (var i = 0; i < this.icMeetingTopicTypes.length; i++) {
+                                                    if (this.corpMeetingService.checkICMeetingTopicEditAccess(this.icMeetingTopicTypes[i].code)) {
+                                                        allowedTypes.push(this.icMeetingTopicTypes[i]);
+                                                    }
+                                                }
+                                                this.icMeetingTopicTypes = allowedTypes;
+                                            }
+
+                                            if(this.icMeetingTopicTypes != null && this.icMeetingTopicTypes.length == 1){
+                                                this.icMeetingTopic.type = this.icMeetingTopicTypes[0].code;
+                                            }
+
+                                            this.postAction(null, null);
                                         },
                                         (error: ErrorResponse) => {
                                             this.errorMessage = "Error loading IC Meeting topic";
                                             if(error && !error.isEmpty()){
                                                 this.processErrorMessage(error);
                                             }
-                                            this.postAction(null, null);
+                                            this.postAction(null, this.errorMessage);
                                         }
                                     );
                             }else{
-                                this.icMeetingTopic.id = null;
+                                // Check allowed types
+                                if(this.canEdit()) {
+                                    // When IC Member and access to edit some types
+                                    var allowedTypes = [];
+                                    for (var i = 0; i < this.icMeetingTopicTypes.length; i++) {
+                                        if (this.corpMeetingService.checkICMeetingTopicEditAccess(this.icMeetingTopicTypes[i].code)) {
+                                            allowedTypes.push(this.icMeetingTopicTypes[i]);
+                                        }
+                                    }
+                                    this.icMeetingTopicTypes = allowedTypes;
+                                }
+
+                                this.icMeetingTopic.id = null;// Set type
+                                if(this.icMeetingTopicTypes != null && this.icMeetingTopicTypes.length == 1){
+                                    this.icMeetingTopic.type = this.icMeetingTopicTypes[0].code;
+                                }
                             }
                         });
                 });
@@ -111,18 +195,16 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
     }
 
     public canEdit(){
-        return this.moduleAccessChecker.checkAccessCorpMeetingsEditor();
-    }
+        if(this.icMeetingTopic.type == null || this.icMeetingTopic.id == null){
+            return true;
+        }
+        if(this.icMeetingTopic.icMeeting != null && this.icMeetingTopic.icMeeting.closed){
+            return false;
+        }
+        return this.corpMeetingService.checkICMeetingTopicEditAccess(this.icMeetingTopic.type);
 
-    //
-    //onFileChangeProtocols(event) {
-    //    var target = event.target || event.srcElement;
-    //    var files = target.files;
-    //    this.uploadProtocolsFiles.length = 0;
-    //    for (let i = 0; i < files.length; i++) {
-    //        this.uploadProtocolsFiles.push(files[i]);
-    //    }
-    //}
+        //return this.moduleAccessChecker.checkAccessCorpMeetingsEditor();
+    }
 
     onFileChangeMaterials(event) {
         var target = event.target || event.srcElement;
@@ -137,6 +219,16 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
 
         if(this.icMeetingTopic.icMeeting != null && (this.icMeetingTopic.icMeeting.id == 0 || this.icMeetingTopic.icMeeting.id == -1)){
             this.icMeetingTopic.icMeeting = new ICMeeting();
+        }
+        if(this.icMeetingTopic.icMeeting != null && this.icMeetingTopic.icMeeting.id > 0){
+            for(var i = 0; i < this.icList.length; i++) {
+                if(this.icList[i].id == this.icMeetingTopic.icMeeting.id && this.icList[i].closed){
+                    if (this.icMeetingTopic.decision == null || this.icMeetingTopic.decision.trim() === '') {
+                        this.postAction(null, "Selected IC meeting has status CLOSED, field 'DECISION MADE' is required.");
+                        return;
+                    }
+                }
+            }
         }
         this.busy = this.corpMeetingService.saveICMeetingTopic(this.icMeetingTopic)
             .subscribe(
@@ -185,6 +277,15 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
             );
     }
 
+    deleteUnsavedAttachment(newFile){
+        for(var i = this.uploadMaterialsFiles.length - 1; i >= 0; i--) {
+            if(this.uploadMaterialsFiles[i] == newFile) {
+                this.uploadMaterialsFiles.splice(i, 1);
+            }
+        }
+
+    }
+
     deleteAttachment(fileId){
         var confirmed = window.confirm("Are you sure want to delete");
         if(confirmed) {
@@ -216,9 +317,7 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                 .subscribe(
                     response => {
                         if (response) {
-                            this.router.navigate(['/corpMeetings/', {}]);
-                            this.successMessage = "Successfully deleted IC Topic."
-                            this.errorMessage = null;
+                            this.router.navigate(['/corpMeetings/', {"successMessage": "Successfully deleted IC Topic."}]);
                         } else {
                             this.postAction(null, "Failed to delete IC Meeting topic");
                         }
@@ -234,7 +333,8 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
         }
     }
 
-    icListChanged(value){
+    icListChanged(){
+        var value = this.icMeetingTopic.icMeeting.id;
         if(Number(value) == -1){
             this.showNewICModal = true;
             this.newICMeeting = new ICMeeting();
@@ -242,8 +342,25 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
             this.showNewICModal = false;
             this.icMeetingTopic.icMeeting = new ICMeeting();
         }else{
+            for(var i = 0; this.icList != null && i < this.icList.length; i++){
+                if(this.icList[i].id == Number(value)) {
+                    if (this.icList[i] != null && this.icList[i].closed) {
+                        if (confirm("'№ " + this.icList[i].number + " (" + this.icList[i].date + ")" +
+                                "'" + " IC is CLOSED, selecting it will make this topic non-editable after save operation. Confirm?")) {
+                            //select none
+                        }else {
+                            this.icMeetingTopic.icMeeting = new ICMeeting();
+                            this.icMeetingTopic.icMeeting.id = 0;
+                            break;
+                        }
+                    }
+
+                    break;
+                }
+            }
             this.showNewICModal = false;
         }
+
     }
 
     doShowNewICModal(){
@@ -289,5 +406,20 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
 
         this.modalErrorMessage = null;
         this.modalSuccessMessage = null;
+    }
+
+    public onItemRemoved(item) {
+        for(var i = this.icMeetingTopic.tags.length - 1; i >= 0; i--) {
+            if(this.icMeetingTopic.tags[i] === item) {
+                this.icMeetingTopic.tags.splice(i, 1);
+            }
+        }
+    }
+
+    public onItemAdded(item) {
+        if(this.icMeetingTopic.tags == null) {
+            this.icMeetingTopic.tags = [];
+        }
+        this.icMeetingTopic.tags.push(item);
     }
 }

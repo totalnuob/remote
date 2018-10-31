@@ -4,6 +4,8 @@ export class ICMeetingSearchParams extends PageableSearchParams{
     dateFrom: string;
     dateTo: string;
 
+    number: string;
+
     path: string;
 
 

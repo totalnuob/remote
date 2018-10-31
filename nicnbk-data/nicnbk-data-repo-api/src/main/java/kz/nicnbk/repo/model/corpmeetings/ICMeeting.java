@@ -3,10 +3,12 @@ package kz.nicnbk.repo.model.corpmeetings;
 import kz.nicnbk.repo.model.base.CreateUpdateBaseEntity;
 import kz.nicnbk.repo.model.base.DataConstraints;
 import kz.nicnbk.repo.model.employee.Employee;
+import kz.nicnbk.repo.model.tag.Tag;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -60,4 +62,5 @@ public class ICMeeting extends CreateUpdateBaseEntity{
     public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
     }
+
 }

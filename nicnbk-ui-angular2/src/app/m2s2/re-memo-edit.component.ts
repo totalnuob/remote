@@ -59,7 +59,7 @@ export class RealEstateMemoEditComponent extends CommonFormViewComponent impleme
 
     private breadcrumbParams: string;
 
-    options = {
+    tagOptions = {
         placeholder: "+ tag",
         secondaryPlaceholder: "Enter a new tag",
         separatorKeys: [188, 191], // exclude coma from tag content

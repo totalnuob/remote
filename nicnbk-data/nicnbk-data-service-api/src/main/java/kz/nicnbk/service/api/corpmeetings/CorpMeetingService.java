@@ -4,9 +4,6 @@ import kz.nicnbk.service.api.base.BaseService;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
 import kz.nicnbk.service.dto.corpmeetings.*;
 import kz.nicnbk.service.dto.files.FilesDto;
-import kz.nicnbk.service.dto.tripmemo.TripMemoDto;
-import kz.nicnbk.service.dto.tripmemo.TripMemoPagedSearchResult;
-import kz.nicnbk.service.dto.tripmemo.TripMemoSearchParamsDto;
 
 import java.util.List;
 import java.util.Set;
@@ -22,65 +19,55 @@ public interface CorpMeetingService extends BaseService {
     /* Number of elements per page */
     int DEFAULT_PAGE_SIZE = 20;
 
-    /**
-     * Save corp meeting and return id
-     *
-     * @param corpMeetingDto
-     * @param updater - user updating memo
-     * @return - id
-     */
-    EntitySaveResponseDto save(CorpMeetingDto corpMeetingDto, String updater);
 
-    Set<FilesDto> saveICMeetingAttachments(Long meetingId, Set<FilesDto> attachments);
+//    @Deprecated
+//    EntitySaveResponseDto save(CorpMeetingDto corpMeetingDto, String updater);
+//    @Deprecated
+//    CorpMeetingDto get(Long id);
+//    @Deprecated
+//    boolean safeDelete(Long id, String username);
+//    @Deprecated
+//    CorpMeetingsPagedSearchResult search(CorpMeetingsSearchParamsDto searchParams);
+//    @Deprecated
+//    Set<FilesDto> saveAttachments(Long meetingId, Set<FilesDto> attachments);
+//    @Deprecated
+//    Set<FilesDto> getAttachments(Long meetingId);
+//    @Deprecated
+//    boolean safeDeleteICMeetingAttachment(Long meetingId, Long fileId, String username);
 
+
+    /* IC MEETING TOPIC ***********************************************************************************************/
     EntitySaveResponseDto saveICMeetingTopic(ICMeetingTopicDto dto, String updater);
-
-    /**
-     * Save IC meeting and return result
-     *
-     * @param icMeetingDto
-     * @param updater - user updating memo
-     * @return - save result
-     */
-    EntitySaveResponseDto saveICMeeting(ICMeetingDto icMeetingDto, String updater);
-
-    /**
-     * get CorpMeeting dto by id
-     *
-     * @param id
-     * @return CorpMeeting dto
-     */
-    CorpMeetingDto get(Long id);
 
     ICMeetingTopicDto getICMeetingTopic(Long id);
 
-    ICMeetingDto getICMeeting(Long id);
+    ICMeetingTopicsPagedSearchResult searchICMeetingTopics(ICMeetingTopicsSearchParamsDto searchParams, String username);
 
-    boolean safeDelete(Long id, String username);
+    Set<FilesDto> saveICMeetingTopicAttachments(Long topicId, Set<FilesDto> attachments, String username);
 
-    boolean deleteICMeeting(Long id, String username);
+    Set<FilesDto> getICMeetingTopicAttachments(Long id);
 
     boolean safeDeleteICMeetingTopic(Long id, String username);
 
-    /**
-     * Return found corp meetings as search result
-     *
-     * @param searchParams
-     * @return corp meetings
-     */
-    CorpMeetingsPagedSearchResult search(CorpMeetingsSearchParamsDto searchParams);
+    boolean safeDeleteICMeetingTopicAttachment(Long topicId, Long fileId, String username);
 
-    ICMeetingTopicsPagedSearchResult searchICMeetingTopics(ICMeetingTopicsSearchParamsDto searchParams);
+    boolean checkUserRolesForICMeetingTopicByTypeAndUsername(String type, String username, boolean editing);
+
+    /* IC MEETING *****************************************************************************************************/
+
+    EntitySaveResponseDto saveICMeeting(ICMeetingDto icMeetingDto, String updater);
+
+    Set<FilesDto> saveICMeetingProtocol(Long meetingId, Set<FilesDto> attachments, String username);
+
+    ICMeetingDto getICMeeting(Long id);
+
+    boolean safeDeleteICMeeting(Long id, String username);
 
     ICMeetingsPagedSearchResult searchICMeetings(ICMeetingsSearchParamsDto searchParams);
 
     List<ICMeetingDto> getAllICMeetings();
 
-    Set<FilesDto> saveAttachments(Long meetingId, Set<FilesDto> attachments);
-
-    Set<FilesDto> getAttachments(Long meetingId);
-
-    boolean safeDeleteICMeetingAttachment(Long meetingId, Long fileId, String username);
+    boolean safeDeleteICMeetingProtocolAttachment(Long meetingId, Long fileId, String username);
 
     Set<FilesDto> getICMeetingAttachments(Long id);
 

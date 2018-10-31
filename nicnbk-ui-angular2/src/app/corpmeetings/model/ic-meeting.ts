@@ -3,5 +3,10 @@ export class ICMeeting{
     date: string;
     number: string;
 
-    editable: boolean;
+    numberOfTopics: number;
+
+    protocolFileId: number;
+    protocolFileName: string;
+
+    closed: boolean;
 }

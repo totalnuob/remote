@@ -27,5 +27,4 @@ INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(31, 
 INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(32, 'NB_REP_CMB', 'NBRK Reporting Terra Combined', '', '', 'reporting/nbrk');
 
 INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(33, 'IC_MATRL', 'IC Meeting Materials File', '', '', 'ic_meeting');
-
-
+INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(34, 'IC_PRTCL', 'IC Meeting Protocol File', '', '', 'ic_meeting');

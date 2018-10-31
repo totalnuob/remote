@@ -274,22 +274,22 @@
             <!--<b>currency</b>-->
         <!--</field-exclude>-->
     </mapping>
-    <mapping>
-        <class-a>kz.nicnbk.service.dto.corpmeetings.CorpMeetingDto</class-a>
-        <class-b>kz.nicnbk.repo.model.corpmeetings.CorpMeeting</class-b>
-        <field-exclude>
-            <a>type</a>
-            <b>type</b>
-        </field-exclude>
-        <field-exclude>
-            <a>creator</a>
-            <b>creator</b>
-        </field-exclude>
-        <field-exclude>
-            <a>updater</a>
-            <b>updater</b>
-        </field-exclude>
-    </mapping>
+    <!--<mapping>-->
+        <!--<class-a>kz.nicnbk.service.dto.corpmeetings.CorpMeetingDto</class-a>-->
+        <!--<class-b>kz.nicnbk.repo.model.corpmeetings.CorpMeeting</class-b>-->
+        <!--<field-exclude>-->
+            <!--<a>type</a>-->
+            <!--<b>type</b>-->
+        <!--</field-exclude>-->
+        <!--<field-exclude>-->
+            <!--<a>creator</a>-->
+            <!--<b>creator</b>-->
+        <!--</field-exclude>-->
+        <!--<field-exclude>-->
+            <!--<a>updater</a>-->
+            <!--<b>updater</b>-->
+        <!--</field-exclude>-->
+    <!--</mapping>-->
 
     <mapping>
         <class-a>kz.nicnbk.service.dto.corpmeetings.ICMeetingDto</class-a>
@@ -307,6 +307,10 @@
     <mapping>
         <class-a>kz.nicnbk.service.dto.corpmeetings.ICMeetingTopicDto</class-a>
         <class-b>kz.nicnbk.repo.model.corpmeetings.ICMeetingTopic</class-b>
+        <field-exclude>
+            <a>type</a>
+            <b>type</b>
+        </field-exclude>
         <field-exclude>
             <a>creator</a>
             <b>creator</b>

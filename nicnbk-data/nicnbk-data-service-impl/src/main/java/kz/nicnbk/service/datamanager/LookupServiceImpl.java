@@ -18,6 +18,8 @@ import kz.nicnbk.repo.model.base.BaseTypeEntity;
 import kz.nicnbk.repo.model.base.BaseTypeEntityImpl;
 import kz.nicnbk.repo.model.common.*;
 import kz.nicnbk.repo.model.corpmeetings.CorpMeetingType;
+import kz.nicnbk.repo.model.corpmeetings.ICMeetingTopic;
+import kz.nicnbk.repo.model.corpmeetings.ICMeetingTopicType;
 import kz.nicnbk.repo.model.files.FilesType;
 import kz.nicnbk.repo.model.hf.*;
 import kz.nicnbk.repo.model.m2s2.MeetingArrangedBy;
@@ -230,6 +232,9 @@ public class LookupServiceImpl implements LookupService {
     @Autowired
     private PeriodicReportREService periodicReportREService;
 
+    @Autowired
+    private ICMeetingTypeRepository icMeetingTypeRepository;
+
 
     @Override
     public <T extends BaseTypeEntity> T findByTypeAndCode(Class<T> clazz, String code) {
@@ -309,6 +314,8 @@ public class LookupServiceImpl implements LookupService {
                 return (T) this.corpMeetingTypeRepository.findByCode(code);
             } else if (clazz.equals(REBalanceType.class)) {
                 return (T) this.reBalanceTypeRepository.findByCode(code);
+            } else if (clazz.equals(ICMeetingTopicType.class)) {
+                return (T) this.icMeetingTypeRepository.findByCode(code);
             }else{
                 logger.error("Failed to load lookups for clazz=" + clazz + ", code=" + code);
             }
@@ -2158,6 +2165,23 @@ public class LookupServiceImpl implements LookupService {
             logger.error("Error deleting Matching Chart of accounts lookup value with id " + id + ", type '" + type + "'", ex);
         }
         return false;
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getICMeetingTopicTypes() {
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            Iterator<ICMeetingTopicType> iterator = this.icMeetingTypeRepository.findAll().iterator();
+            while (iterator.hasNext()) {
+                ICMeetingTopicType entity = iterator.next();
+                BaseDictionaryDto dto = disassemble(entity);
+                dtoList.add(dto);
+            }
+            return dtoList;
+        } catch (Exception ex) {
+            logger.error("Failed to load lookup: ICMeetingTopicType", ex);
+        }
+        return null;
     }
 
     private boolean checkDeletableMatchingSingularityAccountNumber(String accountNumber){

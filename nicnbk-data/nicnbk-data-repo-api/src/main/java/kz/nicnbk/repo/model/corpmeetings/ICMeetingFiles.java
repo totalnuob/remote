@@ -11,7 +11,6 @@ import javax.persistence.ManyToOne;
 /**
  * Created by zhambyl on 04-Aug-16.
  */
-
 @Entity(name = "ic_meeting_files")
 public class ICMeetingFiles extends BaseEntity {
 

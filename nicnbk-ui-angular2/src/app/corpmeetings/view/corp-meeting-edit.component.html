@@ -5,7 +5,7 @@
                 <div class="col-md-12">
                     <ol class="breadcrumb">
                         <li>
-                            <span *ngIf="this.breadcrumbParams != null"><a [routerLink]="['/corpMeetings', {params: this.breadcrumbParams }]">IC Topics</a></span>
+                            <span *ngIf="this.breadcrumbParams != null"><a [routerLink]="['/corpMeetings', {params: this.breadcrumbParams}]">IC Topics</a></span>
                             <span *ngIf="this.breadcrumbParams == null"><a [routerLink]="['/corpMeetings']">IC Topics</a></span>
                         </li>
                         <li class="active">IC Topic</li>
@@ -26,131 +26,160 @@
 
             <div>
                 <form (ngSubmit)="save()" #corpMeetingForm="ngForm" class="well span">
-                    <div class="row top-buffer">
-                        <div class="col-md-3 form-group form-horizontal">
-                            <label class="control-label col-md-2" for="icList">IC </label>
-                            <div class="col-md-10">
-                                <select class="form-control" id="icList" name="icList" [(ngModel)]="icMeetingTopic.icMeeting.id" (change)="icListChanged($event.target.value)">
-                                    <option [value]="0">---NONE--</option>
-                                    <option [value]="-1">--CREATE NEW IC--</option>
-                                    <option *ngFor = "let ic of icList" [value]="ic?.id">№{{ic?.number}} ( {{ic?.date}} )</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="col-md-2">
-                            <button type="button" class="btn btn-primary" *ngIf="showNewICModal" data-toggle="modal" data-target="#newICModal" (click)="doShowNewICModal()">NEW IC</button>
-                        </div>
-                        <!--<div class="col-md-3 form-group form-horizontal">-->
-                            <!--<label class="control-label col-md-2" for="status">Status </label>-->
-                            <!--<div class="col-md-10">-->
-                                <!--<select class="form-control" id="status" name="status" [(ngModel)]="icMeetingTopic.status">-->
-                                    <!--&lt;!&ndash;<option *ngFor = "let status of statusList" [value]="status.code">{{status.nameEn}}</option>&ndash;&gt;-->
-                                    <!--<option value="OPEN">OPEN</option>-->
-                                    <!--<option value="CLOSED">CLOSED</option>-->
-                                <!--</select>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                    </div>
-                    <div class="row top-buffer">
-                        <div class="col-md-12">
-                            <div class="row top-buffer">
-                                <div class="form-group form-horizontal">
-                                    <label class="control-label col-md-2" for="shortName">Short Name:<span style="color: red">*</span></label>
-                                    <div class="col-md-10">
-                                        <textarea required fz-elastic type="text" id="shortName" class="form-control"
-                                                  maxlength="250" name="shortName" [(ngModel)]="icMeetingTopic.shortName"></textarea>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <br>
-                    <div class="row top-buffer withpadding">
+                    <fieldset [disabled]="!canEdit()">
                         <div class="row top-buffer">
-                            <div class="col-md-12" style="background-color:#5bc0de; height: 34px">
-                                <div class="col-md-6">
-                                    <h5>Long Description</h5>
+                            <div class="col-md-3 form-group form-horizontal">
+                                <label class="control-label col-md-2" for="icList">IC </label>
+                                <div class="col-md-10">
+                                    <select class="form-control" id="icList" name="icList" [(ngModel)]="icMeetingTopic.icMeeting.id" (ngModelChange)="icListChanged()">
+                                        <option [value]="0">---</option>
+                                        <option [value]="-1">-- CREATE NEW IC --</option>
+                                        <option *ngFor = "let ic of icList" [value]="ic?.id">№{{ic?.number}} ( {{ic?.date}} )</option>
+                                    </select>
                                 </div>
-                                <div class="col-md-5">&nbsp;</div>
                             </div>
-                            <div class="row top-buffer">
-                                <div class="col-md-12">
-                                    <textarea fz-elastic type="text" class="form-control" rows="10" name="description" [(ngModel)]="icMeetingTopic.longDescription"></textarea>
+
+                            <div class="col-md-2">
+                                <button type="button" class="btn btn-primary" *ngIf="showNewICModal" data-toggle="modal" data-target="#newICModal" (click)="doShowNewICModal()">NEW IC</button>
+                            </div>
+                            <div class="col-md-3 form-group form-horizontal">
+                                <label class="control-label col-md-2" for="type">Type </label>
+                                <div class="col-md-10">
+                                    <select required class="form-control" id="type" name="type" [(ngModel)]="icMeetingTopic.type">
+                                        <option *ngFor = "let type of icMeetingTopicTypes" [value]="type.code">{{type.nameEn}}</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <br/>
-                    <div class="row top-buffer">
-                        <div class="col-md-6">
-                            <div class="jumbotron" style="padding-top: 5px; padding-bottom: 5px;">
-                                <div class="row">
-                                    <label>MATERIALS</label>
-                                </div>
-
-                                <div class="row" *ngIf="canEdit()">
-                                    <label class="btn btn-primary col-md-2" for="attachmentFile">
-                                        <input type="file" id="attachmentFile" (change)="onFileChangeMaterials($event)" name="file" multiple style="display:none;"/>Upload</label>
-                                    <div class="col-md-6">
-                                        <div class="row" *ngFor="let newFile of uploadMaterialsFiles" class="label label-info" style="display: table;">
-                                            <span>{{newFile.name}}</span>
+                        <div class="row top-buffer">
+                            <div class="col-md-12">
+                                <div class="row top-buffer">
+                                    <div class="form-group form-horizontal">
+                                        <label class="control-label col-md-2" for="shortName">Short Name:<span style="color: red">*</span></label>
+                                        <div class="col-md-10">
+                                            <textarea required fz-elastic type="text" id="shortName" class="form-control"
+                                                      maxlength="250" name="shortName" [(ngModel)]="icMeetingTopic.shortName"></textarea>
                                         </div>
                                     </div>
                                 </div>
-
-                                <div class="row" *ngIf="icMeetingTopic?.materials?.length > 0">
-                                    <div *ngFor="let attachment of icMeetingTopic.materials">
-                                        <file-attachment-downloader fileId="{{attachment.id}}"
-                                                                    fileName="{{attachment?.fileName}}"
-                                                                    fileType="IC_MATRL">
-                                        </file-attachment-downloader>
-
-                                        <a (click)="deleteAttachment(attachment.id)" *ngIf="canEdit()">
-                                            <i class="glyphicon glyphicon-trash"></i>
-                                        </a>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row top-buffer withpadding">
+                            <div class="row top-buffer">
+                                <div class="col-md-12" style="background-color:#5bc0de; height: 34px">
+                                    <div class="col-md-6">
+                                        <h5>Long Description</h5>
+                                    </div>
+                                    <div class="col-md-5">&nbsp;</div>
+                                </div>
+                                <div class="row top-buffer">
+                                    <div class="col-md-12">
+                                        <textarea fz-elastic type="text" class="form-control" rows="10" name="description" [(ngModel)]="icMeetingTopic.longDescription"></textarea>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <!--<div class="col-md-6">-->
-                            <!--<div class="jumbotron" style="padding-top: 5px; padding-bottom: 5px;">-->
-                                <!--<div class="row">-->
-                                    <!--<label>PROTOCOL</label>-->
-                                <!--</div>-->
+                        <div class="row top-buffer withpadding">
+                            <div class="row top-buffer">
+                                <div class="col-md-12" style="background-color:#5bc0de; height: 24px">
+                                    <div class="col-md-6">
+                                        <h5>Decision made</h5>
+                                    </div>
+                                    <div class="col-md-5">&nbsp;</div>
+                                </div>
+                                <div class="row top-buffer">
+                                    <div class="col-md-12">
+                                        <textarea fz-elastic type="text" class="form-control" rows="5" name="decision" [(ngModel)]="icMeetingTopic.decision"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="row top-buffer">
+                            <div class="col-md-6">
+                                <div class="jumbotron" style="padding-top: 5px; padding-bottom: 5px;">
+                                    <div class="row">
+                                        <label>MATERIALS</label>
+                                    </div>
 
-                                <!--<div class="row" *ngIf="canEdit()">-->
-                                    <!--<label class="btn btn-primary col-md-2" for="attachmentFileProtocols">-->
-                                        <!--<input type="file" id="attachmentFileProtocols" (change)="onFileChangeProtocols($event)" name="fileProtocol"  style="display:none;"/>Upload</label>-->
-                                    <!--<div class="col-md-6">-->
-                                        <!--<div class="row" *ngFor="let newFile of uploadProtocolsFiles" class="label label-info" style="display: table;">-->
-                                            <!--<span>{{newFile.name}}</span>-->
+                                    <div class="row" *ngIf="canEdit()">
+                                        <label class="btn btn-primary col-md-2" for="attachmentFile">
+                                            <input type="file" id="attachmentFile" (change)="onFileChangeMaterials($event)" name="file" multiple style="display:none;"/>Upload</label>
+                                        <div class="col-md-6">
+                                            <div class="row" *ngFor="let newFile of uploadMaterialsFiles" class="label label-info" style="display: table;">
+                                                <span>{{newFile.name}}</span> &nbsp;
+                                                <a (click)="deleteUnsavedAttachment(newFile)" *ngIf="canEdit()">
+                                                    <i class="glyphicon glyphicon-trash"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row" *ngIf="icMeetingTopic?.materials?.length > 0">
+                                        <div *ngFor="let attachment of icMeetingTopic.materials">
+                                            <file-attachment-downloader fileId="{{attachment.id}}"
+                                                                        fileName="{{attachment?.fileName}}"
+                                                                        fileType="IC_MATRL">
+                                            </file-attachment-downloader>
+
+                                            <a (click)="deleteAttachment(attachment.id)" *ngIf="canEdit()">
+                                                <i class="glyphicon glyphicon-trash"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <tag-input name="tags"
+                                           [ngModel]="icMeetingTopic.tags" ngDefaultControl
+                                           (onRemove)="onItemRemoved($event)"
+                                           (onAdd)="onItemAdded($event)"
+                                           [placeholder]="tagOptions.placeholder"
+                                           [secondaryPlaceholder]="tagOptions.secondaryPlaceholder"
+                                           [maxItems]="tagOptions.maxItems"
+                                           [separatorKeys]="tagOptions.separatorKeys">
+                                </tag-input>
+                            </div>
+                            <!--<div class="col-md-6">-->
+                                <!--<div class="jumbotron" style="padding-top: 5px; padding-bottom: 5px;">-->
+                                    <!--<div class="row">-->
+                                        <!--<label>PROTOCOL</label>-->
+                                    <!--</div>-->
+
+                                    <!--<div class="row" *ngIf="canEdit()">-->
+                                        <!--<label class="btn btn-primary col-md-2" for="attachmentFileProtocols">-->
+                                            <!--<input type="file" id="attachmentFileProtocols" (change)="onFileChangeProtocols($event)" name="fileProtocol"  style="display:none;"/>Upload</label>-->
+                                        <!--<div class="col-md-6">-->
+                                            <!--<div class="row" *ngFor="let newFile of uploadProtocolsFiles" class="label label-info" style="display: table;">-->
+                                                <!--<span>{{newFile.name}}</span>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+
+                                    <!--<div class="row" *ngIf="icMeetingTopic?.protocols?.length > 0">-->
+                                        <!--<div *ngFor="let attachment of icMeetingTopic.protocols">-->
+                                            <!--<file-attachment-downloader fileId="{{attachment.id}}"-->
+                                                                        <!--fileName="{{attachment?.fileName}}"-->
+                                                                        <!--fileType="CM_PRTCL">-->
+                                            <!--</file-attachment-downloader>-->
+
+                                            <!--<a (click)="deleteProtocolAttachment(attachment.id)" *ngIf="canEdit()">-->
+                                                <!--<i class="glyphicon glyphicon-trash"></i>-->
+                                            <!--</a>-->
                                         <!--</div>-->
                                     <!--</div>-->
                                 <!--</div>-->
-
-                                <!--<div class="row" *ngIf="icMeetingTopic?.protocols?.length > 0">-->
-                                    <!--<div *ngFor="let attachment of icMeetingTopic.protocols">-->
-                                        <!--<file-attachment-downloader fileId="{{attachment.id}}"-->
-                                                                    <!--fileName="{{attachment?.fileName}}"-->
-                                                                    <!--fileType="CM_PRTCL">-->
-                                        <!--</file-attachment-downloader>-->
-
-                                        <!--<a (click)="deleteProtocolAttachment(attachment.id)" *ngIf="canEdit()">-->
-                                            <!--<i class="glyphicon glyphicon-trash"></i>-->
-                                        <!--</a>-->
-                                    <!--</div>-->
-                                <!--</div>-->
                             <!--</div>-->
-                        <!--</div>-->
-                    </div>
-                    <br/>
-                    <div class="row top-buffer">
-                        <div class="col-md-12">
-                            <button type="button" class="btn btn-danger pull-left" name="deleteCorpMeeting" (click)="deleteICMeetingTopic()" *ngIf="canEdit() && icMeetingTopic != null && icMeetingTopic.id != null">Delete</button>
-                            <button type="submit" class="btn btn-success pull-right" name="saveCorpMeeting" *ngIf="canEdit()">Save</button>
                         </div>
-                    </div>
+                        <br/>
+                        <div class="row top-buffer">
+                            <div class="col-md-12">
+                                <button type="button" class="btn btn-danger pull-left" name="deleteCorpMeeting" (click)="deleteICMeetingTopic()" *ngIf="canEdit() && icMeetingTopic != null && icMeetingTopic.id != null">Delete</button>
+                                <button type="submit" class="btn btn-success pull-right" name="saveCorpMeeting" *ngIf="canEdit()">Save</button>
+                            </div>
+                        </div>
+                    </fieldset>
                 </form>
             </div>
 
@@ -172,7 +201,7 @@
                                 <div class="col-md-1">
                                     <label for="ICDateDTPickeer">IC Date</label>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-3">
                                     <div class='input-group date col-md-2' id='ICDateDTPickeer' style="width: 100%">
                                         <input type='text' required class="form-control" id="ICDate" name="ICDate" style="font-size: small" [(ngModel)]="newICMeeting.date"/>
                                             <span class="input-group-addon">
@@ -191,7 +220,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default pull-left" (click)="closeICSaveModal()" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary pull-right" (click)="saveICMeeting()" [disabled]="false">Save</button>
+                            <button type="button" class="btn btn-primary pull-right" (click)="saveICMeeting()">Save</button>
                             <button type="button" class="btn btn-primary pull-right" (click)="closeICSaveModal()" *ngIf="report != null">OK</button>
                         </div>
                     </div>

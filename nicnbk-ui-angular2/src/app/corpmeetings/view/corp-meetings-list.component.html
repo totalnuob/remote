@@ -16,7 +16,7 @@
         </div>
 
         <ul class="nav nav-tabs">
-            <li class="active">
+            <li class="active" (click)="searchICMeetingTopics(0)">
                 <a data-toggle="tab" href="#ic_questions">IC TOPICS</a>
             </li>
             <li (click)="searchIC(0)">
@@ -26,8 +26,8 @@
         <br/>
         <div class="tab-content">
             <div id="ic_questions" class="tab-pane fade in active">
-                <div class="row withpadding" *ngIf="canEdit()">
-                    <a [routerLink]="['/corpMeetings/edit/',0 ]" class="btn btn-primary pull-right" *ngIf="canEdit()">Add</a>
+                <div class="row withpadding">
+                    <a *ngIf="canCreateNewTopic()" [routerLink]="['/corpMeetings/edit/',0 ]" class="btn btn-primary pull-right">NEW</a>
                 </div>
                 <br/>
 
@@ -39,7 +39,7 @@
                                     <label for="searchText">Search Text</label>
                                     <div class="form-group">
                                         <input type="text" name="searchText" id="searchText" class="form-control"
-                                               placeholder="Search in short name and long description...." [(ngModel)]="icTopicSearchParams.searchText"/>
+                                               placeholder="Search in description or tags...." [(ngModel)]="icTopicSearchParams.searchText"/>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
@@ -60,11 +60,31 @@
                                     </span>
                                     </div>
                                 </div>
+                                <div class="col-md-3">
+                                    <label for="icSearchNumber">IC №</label>
+                                    <div class="form-group">
+                                        <input type="text" name="icSearchNumber" id="icSearchNumber" class="form-control"
+                                               placeholder="IC № ..." [(ngModel)]="icTopicSearchParams.icNumber"/>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <button type="button"class="btn-xs btn-default pull-left" (click)="clearSearchForm()">
+                                <div class="col-md-4">
+                                    <select class="form-control" id="type" name="type" [(ngModel)]="icTopicSearchParams.type">
+                                        <option *ngIf="icMeetingTopicTypes?.length > 1" value="NONE">---</option>
+                                        <option *ngFor = "let type of icMeetingTopicTypes" [value]="type.code">{{type.nameEn}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            &nbsp;
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button type="button" class="btn-xs btn-default pull-left" (click)="clearSearchForm()">
                                     <!--<i class="glyphicon glyphicon-trash"></i>-->Reset
                                 </button>
                                 <button type="submit"class="btn btn-success pull-right">Search</button>
@@ -90,6 +110,7 @@
                         <tr>
                             <th width="10%">IC NUMBER</th>
                             <th width="10%">IC DATE</th>
+                            <th width="10%">TYPE</th>
                             <th width="70%">SHORT NAME</th>
 
                         </tr>
@@ -99,6 +120,7 @@
                         <tr *ngFor="let topic of icTopics"  style="cursor: pointer" (click)="navigate(topic.id)">
                             <td width="10%" >{{topic?.icMeeting?.number}}</td>
                             <td width="10%">{{topic?.icMeeting?.date}}</td>
+                            <td width="10%">{{topic?.type}}</td>
                             <td width="70%">{{topic.shortName}}</td>
 
                         </tr>
@@ -120,6 +142,52 @@
                 <div class="row withpadding">
                     <a class="btn btn-primary pull-right" data-toggle="modal" data-target="#newICModal">NEW</a>
                 </div>
+
+                <div class="jumbotron">
+                    <form (ngSubmit)="searchICMeetingTopics(0)">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-2">
+                                    <label for="fromDateDTPickeerIC">IC Date From</label>
+                                    <div class='input-group date col-md-2' id='fromDateDTPickeerIC' style="width: 100%">
+                                        <input type='text' class="form-control" id="fromDateIC" name="fromDate" style="font-size: small" [(ngModel)]="icMeetingsSearchParams.dateFrom"/>
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="untilDateDTPickeerIC">IC Date To</label>
+                                    <div class='input-group date col-md-2' id='untilDateDTPickeerIC' style="width: 100%">
+                                        <input type='text' class="form-control" id="toDateIC" name="toDate"style="font-size: small" [(ngModel)]="icMeetingsSearchParams.dateTo"/>
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="icSearchNumberIC">IC №</label>
+                                    <div class="form-group">
+                                        <input type="text" name="icSearchNumberIC" id="icSearchNumberIC" class="form-control"
+                                               placeholder="IC № ..." [(ngModel)]="icMeetingsSearchParams.number"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button type="button"class="btn-xs btn-default pull-left" (click)="clearSearchFormIC()">
+                                    <!--<i class="glyphicon glyphicon-trash"></i>-->Reset
+                                </button>
+                                <button type="button" class="btn btn-success pull-right" (click)="searchIC()">Search</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div>
+                    <label>Total found:  <span>{{icMeetingsSearchResult?.totalElements > 0 ? icMeetingsSearchResult?.totalElements : 0}}</span></label>
+                </div>
+
                 <div class="row">
                     <div class="row pull-right">
                         <ul class="pagination" *ngIf="icMeetingsSearchResult?.showPageFrom > 0">
@@ -135,16 +203,36 @@
                         <tr>
                             <th>IC NUMBER</th>
                             <th>IC DATE</th>
-                            <th>&nbsp;</th>
+                            <th>STATUS</th>
+                            <th>NUM.OF TOPICS</th>
+                            <th>ACTIONS</th>
+                            <th>PROTOCOL</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr *ngFor = "let icMeeting of icMeetings" style="cursor: pointer" >
                             <td>{{icMeeting.number}}</td>
                             <td>{{icMeeting.date}}</td>
+                            <td>{{icMeeting.closed ? 'CLOSED' : 'OPEN'}}</td>
+                            <td>{{icMeeting.numberOfTopics}}</td>
                             <td>
-                                <button class="btn btn-xs btn-success" (click)="editICMeeting(icMeeting)" *ngIf="icMeeting.editable" data-toggle="modal" data-target="#newICModal"><span class="glyphicon glyphicon-pencil"></span></button>
-                                <button class="btn btn-xs btn-danger" *ngIf="icMeeting.editable"><span class="glyphicon glyphicon-trash"></span></button>
+                                <button class="btn btn-xs btn-success" (click)="editICMeeting(icMeeting)" *ngIf="!icMeeting.closed" data-toggle="modal" data-target="#newICModal"><span class="glyphicon glyphicon-pencil"></span></button>
+                                <button class="btn btn-xs btn-danger" (click)="deleteICMeeting(icMeeting)" *ngIf="!icMeeting.closed && icMeeting.numberOfTopics == 0"><span class="glyphicon glyphicon-trash"></span></button>
+                            </td>
+                            <td>
+                                <button *ngIf="canAddProtocol(icMeeting)" class="btn btn-primary" (click)="showAddProtocolModal(icMeeting)" data-toggle="modal" data-target="#addProtocolModal">Add protocol</button>
+
+                                <div *ngIf="canViewProtocol(icMeeting)">
+
+                                    <file-attachment-downloader fileId="{{icMeeting?.protocolFileId}}"
+                                                                fileName="{{icMeeting?.protocolFileName}}"
+                                                                displayFileName="{{icMeeting?.protocolFileId > 0 ? 'PROTOCOL' : ''}}"
+                                                                fileType="IC_PRTCL">
+                                    </file-attachment-downloader>
+
+                                    <button  class="btn btn-xs btn-danger" (click)="deleteICMeetingProtocol(icMeeting)" *ngIf="icMeeting.protocolFileId > 0"><span class="glyphicon glyphicon-trash"></span></button>
+
+                                </div>
                             </td>
                         </tr>
                         </tbody>
@@ -178,7 +266,7 @@
                                     <div class="col-md-1">
                                         <label for="ICDateDTPickeer">IC Date</label>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-3">
                                         <div class='input-group date col-md-2' id='ICDateDTPickeer' style="width: 100%">
                                             <input type='text' required class="form-control" id="ICDate" name="ICDate" style="font-size: small" [(ngModel)]="icMeeting.date"/>
                                             <span class="input-group-addon">
@@ -194,11 +282,101 @@
                                                    placeholder="IC number...." [(ngModel)]="icMeeting.number"/>
                                     </div>
                                 </div>
+                                <br/>
+                                <!--<div class="row">-->
+                                    <!--<div class="col-md-12">-->
+                                        <!--<div class="col-md-6">-->
+                                            <!--<div class="col-md-2">-->
+                                                <!--<label>Status</label>-->
+                                            <!--</div>-->
+                                            <!--<div class="col-md-4">-->
+                                                <!--<select class="form-control" [(ngModel)]="icMeeting.closed">-->
+                                                    <!--<option [ngValue]="false">OPEN</option>-->
+                                                    <!--<option [ngValue]="true">CLOSED</option>-->
+                                                <!--</select>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                        <!--<div class="col-md-6">-->
+                                            <!--<div class="jumbotron" style="padding-top: 5px; padding-bottom: 5px;">-->
+                                                <!--<div class="row">-->
+                                                    <!--<label>PROTOCOL</label>-->
+                                                <!--</div>-->
+
+                                                <!--<div class="row" *ngIf="icMeeting.closed">-->
+                                                    <!--<label class="btn btn-primary col-md-3" for="attachmentFile">-->
+                                                        <!--<input type="file" id="attachmentFile" (change)="onFileChangeProtocol($event)" name="file" style="display:none;"/>Upload</label>-->
+                                                    <!--<div class="col-md-6" class="label label-info" style="display: table;" *ngIf="uploadProtocolFile != null">-->
+                                                        <!--<span>{{uploadProtocolFile?.name}}</span>&nbsp;-->
+                                                        <!--<a (click)="deleteUnsavedAttachment()">-->
+                                                            <!--<i class="glyphicon glyphicon-trash"></i>-->
+                                                        <!--</a>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+
+                                                <!--<div class="row" *ngIf="icMeeting?.protocolFileId > 0">-->
+                                                    <!--<file-attachment-downloader fileId="{{icMeeting?.protocolFileId}}"-->
+                                                                                <!--fileName="{{icMeeting?.protocolFileName}}"-->
+                                                                                <!--fileType="IC_PRTCL">-->
+                                                    <!--</file-attachment-downloader>-->
+
+                                                    <!--<a (click)="deleteProtocolAttachment(icMeeting?.protocolFileId)" *ngIf="!icMeeting.closed">-->
+                                                        <!--<i class="glyphicon glyphicon-trash"></i>-->
+                                                    <!--</a>-->
+                                                <!--</div>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                <!--</div>-->
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default pull-left" (click)="closeICSaveModal()" data-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary pull-right" (click)="saveICMeeting()" [disabled]="false">Save</button>
-                                <button type="button" class="btn btn-primary pull-right" (click)="closeICSaveModal()" *ngIf="report != null">OK</button>
+                                <button type="button" class="btn btn-primary pull-right" (click)="saveICMeeting()">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="addProtocolModal" role="dialog" >
+                    <div [ngBusy]="busyCreate" class="modal-dialog" style="min-height: 100px; max-height:85%;  margin-top: 100px; margin-bottom:50px; width:65%;">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="alert alert-danger" *ngIf="modalErrorMessage != null"><span>{{modalErrorMessage}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="alert alert-info" *ngIf="modalSuccessMessage != null"><span>{{modalSuccessMessage}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="alert alert-warning"><span>Uploading IC protocol will make it CLOSED for editing</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="withpadding">
+                                        <h4>IC № {{icMeeting.number}}</h4>
+                                    </div>
+
+                                    <br/>
+                                    <div class="withpadding" *ngIf="!icMeeting.closed">
+                                        <label class="btn btn-primary col-md-2" for="attachmentFile">
+                                            <input type="file" id="attachmentFile" (change)="onFileChangeProtocol($event)" name="file" style="display:none;"/>Upload
+                                        </label>
+                                        <div class="row" *ngFor="let newFile of uploadProtocolFile" class="label label-info" style="display: table;">
+                                            <span>{{newFile.name}}</span> &nbsp;
+                                            <a (click)="deleteUnsavedAttachment()">
+                                                <i class="glyphicon glyphicon-trash"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default pull-left" (click)="closeProtocolModal()" data-dismiss="modal">Close</button>
+                                <button type="button" *ngIf="uploadProtocolFile != null" class="btn btn-primary pull-right" [disabled]="uploadProtocolFile == null" (click)="saveProtocolAttachment()">Save</button>
                             </div>
                         </div>
                     </div>

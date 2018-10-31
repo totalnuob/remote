@@ -21,6 +21,8 @@ public class ICMeetingTopicsSearchParamsDto implements BaseDto {
     private Date dateTo;
 
     private String searchText;
+    private String icNumber;
+    private String type;
 
     /* Pagination */
     private int page;
@@ -44,6 +46,10 @@ public class ICMeetingTopicsSearchParamsDto implements BaseDto {
     }
 
     public Date getDateFrom() {
+        return dateFrom;
+    }
+
+    public Date getDateFromNonEmpty() {
         return dateFrom != null ? dateFrom : DateUtils.getDate("01.01.1970");
     }
 
@@ -56,7 +62,11 @@ public class ICMeetingTopicsSearchParamsDto implements BaseDto {
     }
 
     public Date getDateTo() {
-        return dateTo != null ? dateTo : new Date();
+        return dateTo;
+    }
+
+    public Date getDateToNonEmpty() {
+        return dateTo != null ? dateTo : DateUtils.getDate("31.12.2030");
     }
 
     public void setDateTo(Date dateTo) {
@@ -67,8 +77,32 @@ public class ICMeetingTopicsSearchParamsDto implements BaseDto {
         return searchText;
     }
 
+    public String getSearchTextLowerCase() {
+        return searchText != null ? searchText.toLowerCase().trim() : "";
+    }
+
+    public String getICNumberLowerCase() {
+        return icNumber != null ? icNumber.toLowerCase().trim() : "";
+    }
+
     public void setSearchText(String searchText) {
         this.searchText = searchText;
+    }
+
+    public String getIcNumber() {
+        return icNumber;
+    }
+
+    public void setIcNumber(String icNumber) {
+        this.icNumber = icNumber;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     /**
@@ -76,7 +110,8 @@ public class ICMeetingTopicsSearchParamsDto implements BaseDto {
      * @return - true/false
      */
     public boolean isEmpty(){
-        return  StringUtils.isEmpty(this.searchText) && this.dateFrom == null && this.dateTo == null;
+        return  StringUtils.isEmpty(this.searchText) && StringUtils.isEmpty(this.icNumber) && StringUtils.isEmpty(this.type)
+                && this.dateFrom == null && this.dateTo == null;
     }
 
     /**
@@ -89,6 +124,8 @@ public class ICMeetingTopicsSearchParamsDto implements BaseDto {
         params.append(this.page > 0 ? "page=" + this.page + "&"  : "");
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
         params.append(searchText != null ? "searchText=" + searchText + "&"  : "");
+        params.append(icNumber != null ? "icNumber=" + icNumber + "&"  : "");
+        params.append(type != null ? "type=" + type + "&"  : "");
         params.append(dateFrom != null ? "dateFrom=" + simpleDateFormat.format(dateFrom) + "&"  : "");
         params.append(dateTo != null ? "dateTo=" + simpleDateFormat.format(dateTo) + "&"  : "");
         return params.toString();

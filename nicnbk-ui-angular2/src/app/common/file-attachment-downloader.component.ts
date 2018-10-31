@@ -19,6 +19,9 @@ export class FileAttachmentDownloaderComponent  extends CommonService{
     @Input()
     fileType: string;
 
+    @Input()
+    displayFileName: string;
+
     public pending:boolean = false;
 
     constructor() {

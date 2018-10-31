@@ -14,11 +14,11 @@ public interface ICMeetingFilesRepository extends PagingAndSortingRepository<ICM
     /**
      * return files entities by tripMemoId
      *
-     * @param tripMemoId
+     * @param meetingId
      * @return
      */
     @Query("select m from ic_meeting_files m where m.icMeeting.id=?1 and (m.file.deleted is null or m.file.deleted=false)")
-    List<ICMeetingFiles> getFilesByMeetingId(Long tripMemoId);
+    List<ICMeetingFiles> getFilesByMeetingId(Long meetingId);
 
     /**
      * Return entities by fileId
