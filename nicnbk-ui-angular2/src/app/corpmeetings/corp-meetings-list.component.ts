@@ -36,6 +36,9 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
     modalSuccessMessage: string;
     modalErrorMessage: string;
 
+    modalProtocolSuccessMessage: string;
+    modalProtocolErrorMessage: string;
+
     busy: Subscription;
     busyCreate: Subscription;
     public sub: any;
@@ -282,7 +285,13 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
     }
 
     editICMeeting(icMeeting){
-        this.icMeeting = icMeeting;
+        this.modalErrorMessage = null;
+        this.modalSuccessMessage = null;
+        if(icMeeting == null){
+            this.icMeeting = new ICMeeting();
+        }else {
+            this.icMeeting = icMeeting;
+        }
     }
 
     deleteICMeeting(icMeeting){
@@ -331,11 +340,11 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
                     this.icMeeting.closed = true;
                     this.icMeeting.protocolFileId = res[0].id;
                     this.icMeeting.protocolFileName = res[0].fileName;
-                    this.modalSuccessMessage = "Successfully saved IC meeting Protocol";
-                    this.modalErrorMessage = null;
+                    this.modalProtocolSuccessMessage = "Successfully saved IC meeting Protocol";
+                    this.modalProtocolErrorMessage = null;
                 }else{
-                    this.modalErrorMessage = "Error saving IC meeting Protocol: received no return from server";
-                    this.modalSuccessMessage  = null;
+                    this.modalProtocolErrorMessage = "Error saving IC meeting Protocol: received no return from server";
+                    this.modalProtocolSuccessMessage  = null;
                 }
 
             },
@@ -368,6 +377,8 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
         }
     }
     closeProtocolModal(){
+        this.modalProtocolErrorMessage = null;
+        this.modalProtocolSuccessMessage = null;
     }
 
     canViewProtocol(icMeeting){

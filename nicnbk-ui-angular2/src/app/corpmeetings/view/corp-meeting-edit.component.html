@@ -136,6 +136,8 @@
                                            (onRemove)="onItemRemoved($event)"
                                            (onAdd)="onItemAdded($event)"
                                            [placeholder]="tagOptions.placeholder"
+                                           [editable]="canEdit()"
+                                           [readonly]="canEdit()"
                                            [secondaryPlaceholder]="tagOptions.secondaryPlaceholder"
                                            [maxItems]="tagOptions.maxItems"
                                            [separatorKeys]="tagOptions.separatorKeys">
