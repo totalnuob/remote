@@ -158,6 +158,7 @@ public final class PeriodicReportConstants {
 
     public static final String ACC_NUM_3053_060 = "3053.060";
     public static final String RU_3053_060 = "Прочие краткосрочные финансовые обязательства";
+    public static final String RU_3053_060_FORM_13 = "Прочие финансовые обязательства";
     /* ****************************************************************************************************************/
 
 

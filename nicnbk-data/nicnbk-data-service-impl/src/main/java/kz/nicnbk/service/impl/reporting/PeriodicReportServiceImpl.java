@@ -3683,31 +3683,43 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                             debtDifference = newRecord.getDebtDifference();
                             endPeriodBalance = newRecord.getEndPeriodBalance();
 
-                            newRecord.setAgreementDescription(PeriodicReportConstants.SINGULARITY_AGREEMENT_DESC);
+                            if(recordUSD.getOtherEntityName() != null &&
+                                    recordUSD.getOtherEntityName().toUpperCase().startsWith(PeriodicReportConstants.SINGULAR_CAPITAL_CASE)) {
+                                newRecord.setAgreementDescription(PeriodicReportConstants.SINGULARITY_AGREEMENT_DESC);
+                            }else if(recordUSD.getOtherEntityName() != null &&
+                                    recordUSD.getOtherEntityName().toUpperCase().startsWith(PeriodicReportConstants.TARRAGON_CAPITAL_CASE)) {
+                                newRecord.setAgreementDescription(PeriodicReportConstants.TARRAGON_AGREEMENT_DESC);
+                            }
 
-                            // Debt start date from NOAL
                             Date date = null;
-                            for (SingularityNOALRecordDto noalRecord : noalRecords) {
-                                if (newRecord.getAccountNumber() != null && newRecord.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_1283_020)) {
-                                    if (newRecord.getName().startsWith(PeriodicReportConstants.RU_INVESTMENTS_TO_RETURN)) {
-                                        String name = newRecord.getName().substring(21).trim();
-                                        if (StringUtils.isNotEmpty(name) && noalRecord.getName() != null && name.equalsIgnoreCase(noalRecord.getName())) {
-                                            if (date == null || (noalRecord.getDate() != null && noalRecord.getDate().compareTo(date) < 0)) {
-                                                date = noalRecord.getDate();
+                            if(recordUSD.getOtherEntityName() != null &&
+                                    recordUSD.getOtherEntityName().toUpperCase().startsWith(PeriodicReportConstants.SINGULAR_CAPITAL_CASE)) {
+                                // Debt start date from NOAL
+                                for (SingularityNOALRecordDto noalRecord : noalRecords) {
+                                    if (newRecord.getAccountNumber() != null && newRecord.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_1283_020)) {
+                                        if (newRecord.getName().startsWith(PeriodicReportConstants.RU_INVESTMENTS_TO_RETURN)) {
+                                            String name = newRecord.getName().substring(21).trim();
+                                            if (StringUtils.isNotEmpty(name) && noalRecord.getName() != null && name.equalsIgnoreCase(noalRecord.getName())) {
+                                                if (date == null || (noalRecord.getDate() != null && noalRecord.getDate().compareTo(date) < 0)) {
+                                                    date = noalRecord.getDate();
+                                                }
                                             }
-                                        }
-                                    } else if (newRecord.getName().startsWith(PeriodicReportConstants.RU_PRE_SUBSCRIPTION)) {
-                                        String name = newRecord.getName().substring(24).trim();
-                                        if (StringUtils.isNotEmpty(name) && noalRecord.getName() != null && name.equalsIgnoreCase(noalRecord.getName())) {
-                                            if (date == null || (noalRecord.getDate() != null && noalRecord.getDate().compareTo(date) < 0)) {
-                                                date = noalRecord.getDate();
+                                        } else if (newRecord.getName().startsWith(PeriodicReportConstants.RU_PRE_SUBSCRIPTION)) {
+                                            String name = newRecord.getName().substring(24).trim();
+                                            if (StringUtils.isNotEmpty(name) && noalRecord.getName() != null && name.equalsIgnoreCase(noalRecord.getName())) {
+                                                if (date == null || (noalRecord.getDate() != null && noalRecord.getDate().compareTo(date) < 0)) {
+                                                    date = noalRecord.getDate();
+                                                }
                                             }
                                         }
                                     }
                                 }
                             }
-                            newRecord.setDebtStartDate(date);
 
+                            if(date == null){
+                                date = DateUtils.getLastDayOfCurrentMonth(report.getReportDate());
+                            }
+                            newRecord.setDebtStartDate(date);
 
                             records.add(index, newRecord);
                             index ++;
@@ -4066,7 +4078,11 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         Double amount = MathUtils.multiply(record.getCurrentAccountBalance(), endCurrencyRatesDto.getValue());
                         ConsolidatedKZTForm13RecordDto record3053_060 = new ConsolidatedKZTForm13RecordDto();
                         record3053_060.setAccountNumber(record.getAccountNumber());
-                        record3053_060.setName(record.getName());
+                        if(record.getName() != null && record.getName().equalsIgnoreCase(PeriodicReportConstants.RU_3053_060)){
+                            record3053_060.setName(PeriodicReportConstants.RU_3053_060_FORM_13);
+                        }else {
+                            record3053_060.setName(record.getName());
+                        }
                         record3053_060.setLineNumber(3);
                         record3053_060.setEntityName(record.getOtherEntityName());
                         record3053_060.setStartPeriod(DateUtils.getLastDayOfPreviousMonth(report.getReportDate()));
@@ -7979,7 +7995,13 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                                     newRow.createCell(5).setCellValue(DateUtils.getDateFormatted(records.get(i).getEndPeriod()));
                                 }
                                 if(records.get(i).getInterestRate() != null) {
-                                    newRow.createCell(6).setCellValue(records.get(i).getInterestRate());
+                                    Cell cell = newRow.createCell(6);
+                                    if(records.get(i).getInterestRateAsDouble() != null){
+                                        cell.setCellValue(records.get(i).getInterestRateAsDouble()); // set value as number
+                                        CellStyle style = workbook.createCellStyle();
+                                        style.setDataFormat(workbook.createDataFormat().getFormat("0.00%"));
+                                        cell.setCellStyle(style);
+                                    }
                                 }
                                 if(records.get(i).getInterestPaymentCount() != null) {
                                     newRow.createCell(7).setCellValue(records.get(i).getInterestPaymentCount());

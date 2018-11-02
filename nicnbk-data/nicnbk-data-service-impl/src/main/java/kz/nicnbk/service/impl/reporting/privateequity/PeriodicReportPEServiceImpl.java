@@ -438,28 +438,30 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
 
 
             // Check Net Realized Gains Losses
-            if (operationsRecords != null) {
-                for (StatementBalanceOperationsDto record : operationsRecords) {
-                    if (record.getName().equalsIgnoreCase("Net realized gain on investments")) {
-                        double value = record.getNICKMFShareConsolidated() != null ? record.getNICKMFShareConsolidated().doubleValue() : 0.0;
-                        if (record.getTranche() == 1 && ((netRealizedTrancheA + value) < -2 ||
-                                (netRealizedTrancheA + value) > 2)) {
-                            String errorMessage = "{Tranche A] Statement of operations 'Net realized gain on investments' = " + value +
-                                    ", sum of net realized gains/losses = " + netRealizedTrancheA;
-                            logger.error(errorMessage);
-                            responseDto.setErrorMessageEn(errorMessage);
-                            break;
-                        } else if (record.getTranche() == 2 && ((netRealizedTrancheB + value) < -2 ||
-                                (netRealizedTrancheB + value) > 2)) {
-                            String errorMessage = "{Tranche B] Statement of operations 'Net realized gain on investments' = " + value +
-                                    ", sum of net realized gains/losses = " + netRealizedTrancheB;
-                            logger.error(errorMessage);
-                            responseDto.setErrorMessageEn(errorMessage);
-                            break;
-                        }
-                    }
-                }
-            }
+
+            // UPDATE: "Net realized gain on investments" record added from Statement of Operations, no need to add Net realized records
+//            if (operationsRecords != null) {
+//                for (StatementBalanceOperationsDto record : operationsRecords) {
+//                    if (record.getName().equalsIgnoreCase("Net realized gain on investments")) {
+//                        double value = record.getNICKMFShareConsolidated() != null ? record.getNICKMFShareConsolidated().doubleValue() : 0.0;
+//                        if (record.getTranche() == 1 && ((netRealizedTrancheA + value) < -2 ||
+//                                (netRealizedTrancheA + value) > 2)) {
+//                            String errorMessage = "{Tranche A] Statement of operations 'Net realized gain on investments' = " + value +
+//                                    ", sum of net realized gains/losses = " + netRealizedTrancheA;
+//                            logger.error(errorMessage);
+//                            responseDto.setErrorMessageEn(errorMessage);
+//                            break;
+//                        } else if (record.getTranche() == 2 && ((netRealizedTrancheB + value) < -2 ||
+//                                (netRealizedTrancheB + value) > 2)) {
+//                            String errorMessage = "{Tranche B] Statement of operations 'Net realized gain on investments' = " + value +
+//                                    ", sum of net realized gains/losses = " + netRealizedTrancheB;
+//                            logger.error(errorMessage);
+//                            responseDto.setErrorMessageEn(errorMessage);
+//                            break;
+//                        }
+//                    }
+//                }
+//            }
 
             responseDto.setRecords(updatedRecords);
             responseDto.setStatus(ResponseStatusType.SUCCESS);

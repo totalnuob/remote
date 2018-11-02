@@ -90,6 +90,20 @@ public class ConsolidatedKZTForm13RecordDto implements BaseDto {
         return interestRate;
     }
 
+    public Double getInterestRateAsDouble(){
+        if(this.interestRate != null){
+            try{
+                String textValue = this.interestRate.replace("%", "");
+                textValue = textValue.replace(",", ".");
+                Double value = Double.parseDouble(textValue);
+                value = value / 100;
+                return value;
+            }catch (Exception e){
+            }
+        }
+        return null;
+    }
+
     public void setInterestRate(String interestRate) {
         this.interestRate = interestRate;
     }
