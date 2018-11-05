@@ -471,7 +471,9 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
         if(record.glaccountBalance != null && record.glaccountBalance.toString().length > 0) {
             if(record.glaccountBalance.toString()[record.glaccountBalance.toString().length - 1] != '.' || record.glaccountBalance.toString().split('.').length > 2){
                 record.glaccountBalance = record.glaccountBalance.toString().replace(/,/g , '');
-                record.glaccountBalance = parseFloat(record.glaccountBalance).toLocaleString('en', {maximumFractionDigits: 2});
+                if(record.glaccountBalance != '-') {
+                    record.glaccountBalance = parseFloat(record.glaccountBalance).toLocaleString('en', {maximumFractionDigits: 2});
+                }
             }
         }
     }

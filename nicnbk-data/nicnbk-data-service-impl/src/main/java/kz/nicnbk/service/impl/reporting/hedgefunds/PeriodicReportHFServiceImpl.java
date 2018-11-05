@@ -163,10 +163,10 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
                             records.add(newRecordDto);
                         }
                     }else{
-                        logger.error("Invalid Acronym value: expected '" + PeriodicReportConstants.SINGULAR_CAPITAL_CASE +
-                                "' or '" + PeriodicReportConstants.SINGULAR_B_CAPITAL_CASE + "'");
-                        responseDto.setErrorMessageEn("Invalid Acronym value: expected '" + PeriodicReportConstants.SINGULAR_CAPITAL_CASE +
-                                "' or '" + PeriodicReportConstants.SINGULAR_B_CAPITAL_CASE + "'");
+                        String errorMessage = "Invalid Acronym value: expected '" + PeriodicReportConstants.SINGULAR_CAPITAL_CASE +
+                                "' or '" + PeriodicReportConstants.SINGULAR_B_CAPITAL_CASE + "'";
+                        logger.error(errorMessage);
+                        responseDto.setErrorMessageEn(errorMessage);
                     }
                 }else if(record.getGLAccount().startsWith(PeriodicReportConstants.GROSVENOR_ACCOUNT_NUMBER_1550)){ // REDEMPTIONS - Tranche A
                     if(record.getAcronym().equalsIgnoreCase(PeriodicReportConstants.SINGULAR_CAPITAL_CASE)){
@@ -187,10 +187,10 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
                             records.add(newRecordDto);
                         }
                     }else{
-                        logger.error("Invalid Acronym value: expected '" + PeriodicReportConstants.SINGULAR_CAPITAL_CASE +
-                                "' or '" + PeriodicReportConstants.SINGULAR_B_CAPITAL_CASE + "'");
-                        responseDto.setErrorMessageEn("Invalid Acronym value: expected '" + PeriodicReportConstants.SINGULAR_CAPITAL_CASE +
-                                "' or '" + PeriodicReportConstants.SINGULAR_B_CAPITAL_CASE + "'");
+                        String errorMessage = "Invalid Acronym value: expected '" + PeriodicReportConstants.SINGULAR_CAPITAL_CASE +
+                                "' or '" + PeriodicReportConstants.SINGULAR_B_CAPITAL_CASE + "'";
+                        logger.error(errorMessage);
+                        responseDto.setErrorMessageEn(errorMessage);
                     }
                 }else {
                     setAccountNameAdditionalDescription(record);

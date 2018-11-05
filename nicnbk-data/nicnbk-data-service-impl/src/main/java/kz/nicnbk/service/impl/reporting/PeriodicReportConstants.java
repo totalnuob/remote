@@ -10,7 +10,6 @@ public final class PeriodicReportConstants {
     // TODO: RU_ prefix for russian
     // TODO: EN_
 
-
     public static final String SINGULAR_CAPITAL_CASE = "SINGULAR";
     public static final String SINGULAR_LOWER_CASE = "Singular";
     public static final String SINGULARITY_LOWER_CASE = "Singularity";
@@ -19,6 +18,7 @@ public final class PeriodicReportConstants {
 
     public static final String TARRAGON_CAPITAL_CASE = "TARRAGON";
     public static final String TARRAGON_LOWER_CASE = "Tarragon";
+    public static final String TARRAGON_B_CAPITAL_CASE = "TARRAGON B";
 
     public static final String TERRA_CAPITAL_CASE = "TERRA";
     public static final String TERRA_LOWER_CASE = "Terra";

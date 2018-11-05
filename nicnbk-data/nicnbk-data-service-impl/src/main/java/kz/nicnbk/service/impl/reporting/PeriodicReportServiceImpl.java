@@ -1090,6 +1090,23 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 logger.error("ConsolidatedBalanceUSDForm: No previous month report or report status is not 'SUBMITTED', report id " + reportId);
             }
 
+            // Rename other entity names for NB PORTAL
+            for(ConsolidatedBalanceFormRecordDto record: currentPeriodRecords){
+                if(record.getOtherEntityName() != null){
+                    if(record.getOtherEntityName().toUpperCase().startsWith(PeriodicReportConstants.SINGULAR_B_CAPITAL_CASE)){
+                        record.setOtherEntityName(record.getOtherEntityName().replace(PeriodicReportConstants.SINGULAR_B_CAPITAL_CASE, PeriodicReportConstants.SINGULARITY_LOWER_CASE));
+                    }else if(record.getOtherEntityName().toUpperCase().startsWith(PeriodicReportConstants.SINGULAR_CAPITAL_CASE)){
+                        record.setOtherEntityName(record.getOtherEntityName().replace(PeriodicReportConstants.SINGULAR_CAPITAL_CASE, PeriodicReportConstants.SINGULARITY_LOWER_CASE));
+                    }else if(record.getOtherEntityName().toUpperCase().startsWith(PeriodicReportConstants.TARRAGON_B_CAPITAL_CASE)){
+                        record.setOtherEntityName(record.getOtherEntityName().replace(PeriodicReportConstants.TARRAGON_B_CAPITAL_CASE, PeriodicReportConstants.TARRAGON_LOWER_CASE));
+                    }else if(record.getOtherEntityName().toUpperCase().startsWith(PeriodicReportConstants.TARRAGON_CAPITAL_CASE)){
+                        record.setOtherEntityName(record.getOtherEntityName().replace(PeriodicReportConstants.TARRAGON_CAPITAL_CASE, PeriodicReportConstants.TARRAGON_LOWER_CASE));
+                    }else if(record.getOtherEntityName().toUpperCase().startsWith(PeriodicReportConstants.TERRA_CAPITAL_CASE)){
+                        record.setOtherEntityName(record.getOtherEntityName().replace(PeriodicReportConstants.TERRA_CAPITAL_CASE, PeriodicReportConstants.TERRA_LOWER_CASE));
+                    }
+                }
+            }
+
             responseDto.setRecords(currentPeriodRecords);
             return responseDto;
         }
@@ -1470,6 +1487,23 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 }
             }else{
                 logger.error("ConsolidatedIncomeExpenseUSDForm: No previous month report or report status is not 'SUBMITTED', report id " + reportId);
+            }
+
+            // Rename other entity names for NB PORTAL
+            for(ConsolidatedBalanceFormRecordDto record: currentPeriodRecords){
+                if(record.getOtherEntityName() != null){
+                    if(record.getOtherEntityName().toUpperCase().startsWith(PeriodicReportConstants.SINGULAR_B_CAPITAL_CASE)){
+                        record.setOtherEntityName(record.getOtherEntityName().replace(PeriodicReportConstants.SINGULAR_B_CAPITAL_CASE, PeriodicReportConstants.SINGULARITY_LOWER_CASE));
+                    }else if(record.getOtherEntityName().toUpperCase().startsWith(PeriodicReportConstants.SINGULAR_CAPITAL_CASE)){
+                        record.setOtherEntityName(record.getOtherEntityName().replace(PeriodicReportConstants.SINGULAR_CAPITAL_CASE, PeriodicReportConstants.SINGULARITY_LOWER_CASE));
+                    }else if(record.getOtherEntityName().toUpperCase().startsWith(PeriodicReportConstants.TARRAGON_B_CAPITAL_CASE)){
+                        record.setOtherEntityName(record.getOtherEntityName().replace(PeriodicReportConstants.TARRAGON_B_CAPITAL_CASE, PeriodicReportConstants.TARRAGON_LOWER_CASE));
+                    }else if(record.getOtherEntityName().toUpperCase().startsWith(PeriodicReportConstants.TARRAGON_CAPITAL_CASE)){
+                        record.setOtherEntityName(record.getOtherEntityName().replace(PeriodicReportConstants.TARRAGON_CAPITAL_CASE, PeriodicReportConstants.TARRAGON_LOWER_CASE));
+                    }else if(record.getOtherEntityName().toUpperCase().startsWith(PeriodicReportConstants.TERRA_CAPITAL_CASE)){
+                        record.setOtherEntityName(record.getOtherEntityName().replace(PeriodicReportConstants.TERRA_CAPITAL_CASE, PeriodicReportConstants.TERRA_LOWER_CASE));
+                    }
+                }
             }
 
             return currentPeriodRecords;
@@ -3341,8 +3375,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         if(USDFormRecords != null){
             for(ConsolidatedBalanceFormRecordDto recordUSD: USDFormRecords){
                 if(recordUSD.getAccountNumber() != null && recordUSD.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_1283_020)
-                        && recordUSD.getOtherEntityName() != null && (recordUSD.getOtherEntityName().startsWith(PeriodicReportConstants.SINGULAR_CAPITAL_CASE) ||
-                        recordUSD.getOtherEntityName().startsWith(PeriodicReportConstants.SINGULAR_LOWER_CASE))){
+                        && recordUSD.getOtherEntityName() != null && recordUSD.getOtherEntityName().toUpperCase().startsWith(PeriodicReportConstants.SINGULAR_CAPITAL_CASE)){
                     if (recordUSD.getName().startsWith(PeriodicReportConstants.RU_PRE_SUBSCRIPTION)) {
                         String fundName = recordUSD.getName().substring(PeriodicReportConstants.RU_PRE_SUBSCRIPTION.length()).trim();
 
@@ -3353,14 +3386,11 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                     }
                 }else if(recordUSD.getAccountNumber() != null && recordUSD.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_2033_010)){
                     String name = null;
-                    if(recordUSD.getOtherEntityName() != null && (recordUSD.getOtherEntityName().startsWith(PeriodicReportConstants.TARRAGON_CAPITAL_CASE) ||
-                            recordUSD.getOtherEntityName().startsWith(PeriodicReportConstants.TARRAGON_LOWER_CASE))){
+                    if(recordUSD.getOtherEntityName() != null && recordUSD.getOtherEntityName().toUpperCase().startsWith(PeriodicReportConstants.TARRAGON_CAPITAL_CASE)){
                         name = PeriodicReportConstants.RU_PE_FUND_INVESTMENT;
-                    }else if(recordUSD.getOtherEntityName() != null && (recordUSD.getOtherEntityName().startsWith(PeriodicReportConstants.SINGULAR_CAPITAL_CASE) ||
-                            recordUSD.getOtherEntityName().startsWith(PeriodicReportConstants.SINGULAR_LOWER_CASE))){
+                    }else if(recordUSD.getOtherEntityName() != null && recordUSD.getOtherEntityName().toUpperCase().startsWith(PeriodicReportConstants.SINGULAR_CAPITAL_CASE)){
                         name = PeriodicReportConstants.RU_HEDGE_FUND_INVESTMENT;
-                    }else if(recordUSD.getOtherEntityName() != null && (recordUSD.getOtherEntityName().startsWith(PeriodicReportConstants.TERRA_CAPITAL_CASE) ||
-                            recordUSD.getOtherEntityName().startsWith(PeriodicReportConstants.TERRA_LOWER_CASE))){
+                    }else if(recordUSD.getOtherEntityName() != null && recordUSD.getOtherEntityName().toUpperCase().startsWith(PeriodicReportConstants.TERRA_CAPITAL_CASE)){
                         name = PeriodicReportConstants.RU_REAL_ESTATE_FUND_INVESTMENT;
                     }else{
 
@@ -3394,8 +3424,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
                     newRecord.setTotalEndPeriod(MathUtils.multiply(recordUSD.getCurrentAccountBalance(), endCurrencyRatesDto.getValue()));
 
-                    if(recordUSD.getOtherEntityName().startsWith(PeriodicReportConstants.TARRAGON_CAPITAL_CASE) ||
-                            recordUSD.getOtherEntityName().startsWith(PeriodicReportConstants.TARRAGON_LOWER_CASE)) {
+                    if(recordUSD.getOtherEntityName().toUpperCase().startsWith(PeriodicReportConstants.TARRAGON_CAPITAL_CASE)) {
                         if(fundTurnoverPE.get(fundName) == null) {
                             // case when schedule investment record current period is zero
                             newRecord.setDebtTurnover(null);
@@ -3404,8 +3433,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                             newRecord.setDebtTurnover(MathUtils.multiply(fundTurnoverPE.get(fundName), endCurrencyRatesDto.getValue()));
                             fundTurnoverPE.put(fundName, null);
                         }
-                    }else if(recordUSD.getOtherEntityName().startsWith(PeriodicReportConstants.TERRA_CAPITAL_CASE) ||
-                            recordUSD.getOtherEntityName().startsWith(PeriodicReportConstants.TERRA_LOWER_CASE)) {
+                    }else if(recordUSD.getOtherEntityName().toUpperCase().startsWith(PeriodicReportConstants.TERRA_CAPITAL_CASE)) {
                         if(fundTurnoverRE.get(fundName) == null) {
                             // case when schedule investment record current period is zero
                             newRecord.setDebtTurnover(null);
@@ -3414,8 +3442,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                             newRecord.setDebtTurnover(MathUtils.multiply(fundTurnoverRE.get(fundName), endCurrencyRatesDto.getValue()));
                             fundTurnoverRE.put(fundName, null);
                         }
-                    }else if(recordUSD.getOtherEntityName().startsWith(PeriodicReportConstants.SINGULAR_CAPITAL_CASE) ||
-                            recordUSD.getOtherEntityName().startsWith(PeriodicReportConstants.SINGULAR_LOWER_CASE)){
+                    }else if(recordUSD.getOtherEntityName().toUpperCase().startsWith(PeriodicReportConstants.SINGULAR_CAPITAL_CASE)){
                         newRecord.setDebtTurnover(MathUtils.multiply(fundTurnoverHF.get(fundName), endCurrencyRatesDto.getValue()));
                         fundTurnoverHF.put(fundName, null);
                     }
@@ -3467,7 +3494,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                     newRecord.setAccountNumber(PeriodicReportConstants.ACC_NUM_2033_010);
                     newRecord.setLineNumber(9);
                     newRecord.setEntityName(fundName);
-                    newRecord.setOtherName(PeriodicReportConstants.TERRA_CAPITAL_CASE);
+                    newRecord.setOtherName(PeriodicReportConstants.TERRA_LOWER_CASE);
                     //newRecord.setPurchaseDate();
 
                     newRecord.setTotalEndPeriod(0.0);
@@ -4521,28 +4548,22 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         for(ConsolidatedBalanceFormRecordDto recordDto: incomeExpenseUSDRecords){
             if(recordDto.getCurrentAccountBalance() != null) {
                 if (recordDto.getAccountNumber() != null && recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_6150_030) &&
-                        recordDto.getOtherEntityName() != null && (recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.SINGULAR_CAPITAL_CASE) ||
-                        recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.SINGULAR_LOWER_CASE))) {
+                        recordDto.getOtherEntityName() != null && recordDto.getOtherEntityName().toUpperCase().startsWith(PeriodicReportConstants.SINGULAR_CAPITAL_CASE)) {
                     record6150_030HF = MathUtils.add(record6150_030HF, new BigDecimal(MathUtils.multiply(recordDto.getCurrentAccountBalance(), averageRate)));
                 } else if (recordDto.getAccountNumber() != null && recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_6150_030) &&
-                        recordDto.getOtherEntityName() != null && (recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.TARRAGON_CAPITAL_CASE) ||
-                        recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.TARRAGON_LOWER_CASE))) {
+                        recordDto.getOtherEntityName() != null && recordDto.getOtherEntityName().toUpperCase().startsWith(PeriodicReportConstants.TARRAGON_CAPITAL_CASE)) {
                     record6150_030PE = MathUtils.add(record6150_030PE, new BigDecimal(MathUtils.multiply(recordDto.getCurrentAccountBalance(), averageRate)));
                 } else if (recordDto.getAccountNumber() != null && recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_6150_030) &&
-                        recordDto.getOtherEntityName() != null && (recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.TERRA_CAPITAL_CASE) ||
-                        recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.TERRA_LOWER_CASE))) {
+                        recordDto.getOtherEntityName() != null && recordDto.getOtherEntityName().toUpperCase().startsWith(PeriodicReportConstants.TERRA_CAPITAL_CASE)) {
                     record6150_030RE = MathUtils.add(record6150_030RE, new BigDecimal(MathUtils.multiply(recordDto.getCurrentAccountBalance(), averageRate)));
                 }else if (recordDto.getAccountNumber() != null && recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_7330_030) &&
-                        recordDto.getOtherEntityName() != null && (recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.TARRAGON_CAPITAL_CASE) ||
-                        recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.TARRAGON_LOWER_CASE))) {
+                        recordDto.getOtherEntityName() != null && recordDto.getOtherEntityName().toUpperCase().startsWith(PeriodicReportConstants.TARRAGON_CAPITAL_CASE)) {
                     record7330_030PE = MathUtils.add(record7330_030PE, new BigDecimal(MathUtils.multiply(recordDto.getCurrentAccountBalance(), averageRate)));
                 }else if (recordDto.getAccountNumber() != null && recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_7330_030) &&
-                        recordDto.getOtherEntityName() != null && (recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.TERRA_CAPITAL_CASE) ||
-                        recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.TERRA_LOWER_CASE))) {
+                        recordDto.getOtherEntityName() != null && recordDto.getOtherEntityName().toUpperCase().startsWith(PeriodicReportConstants.TERRA_CAPITAL_CASE)) {
                     record7330_030RE = MathUtils.add(record7330_030RE, new BigDecimal(MathUtils.multiply(recordDto.getCurrentAccountBalance(), averageRate)));
                 } else if (recordDto.getAccountNumber() != null && recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_7330_030) &&
-                        recordDto.getOtherEntityName() != null && (recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.SINGULAR_CAPITAL_CASE) ||
-                        recordDto.getOtherEntityName().startsWith(PeriodicReportConstants.SINGULAR_LOWER_CASE))) {
+                        recordDto.getOtherEntityName() != null && recordDto.getOtherEntityName().toUpperCase().startsWith(PeriodicReportConstants.SINGULAR_CAPITAL_CASE)) {
                     record7330_030HF = MathUtils.add(record7330_030HF, new BigDecimal(MathUtils.multiply(recordDto.getCurrentAccountBalance(), averageRate)));
                 } else if (recordDto.getAccountNumber() != null && recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_7313_010)) {
                     record7313_010 = MathUtils.add(record7313_010, new BigDecimal(MathUtils.multiply(recordDto.getCurrentAccountBalance(), averageRate)));
@@ -5170,7 +5191,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
         ConsolidatedKZTForm19RecordDto record6150_030PE = new ConsolidatedKZTForm19RecordDto(PeriodicReportConstants.RU_PE_FUND_INVESTMENT, 34);
         record6150_030PE.setAccountNumber(PeriodicReportConstants.ACC_NUM_6150_030);
-        record6150_030PE.setOtherEntityName(PeriodicReportConstants.TARRAGON_CAPITAL_CASE);
+        record6150_030PE.setOtherEntityName(PeriodicReportConstants.TARRAGON_LOWER_CASE);
         records.add(record6150_030PE);
 
         records.add(new ConsolidatedKZTForm19RecordDto("Расходы от изменения справедливой стоимости краткосрочных финансовых инвестиций, имеющихся в наличии для продажи", 35));
@@ -5183,7 +5204,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
         ConsolidatedKZTForm19RecordDto record7330_030PE = new ConsolidatedKZTForm19RecordDto(PeriodicReportConstants.RU_PE_FUND_INVESTMENT, 36);
         record7330_030PE.setAccountNumber(PeriodicReportConstants.ACC_NUM_7330_030);
-        record7330_030PE.setOtherEntityName(PeriodicReportConstants.TARRAGON_CAPITAL_CASE);
+        record7330_030PE.setOtherEntityName(PeriodicReportConstants.TARRAGON_LOWER_CASE);
         records.add(record7330_030PE);
 
         records.add(new ConsolidatedKZTForm19RecordDto("Расходы в виде вознаграждения по приобретенным ценным бумагам (сумма строк 38-41) ", 37));
