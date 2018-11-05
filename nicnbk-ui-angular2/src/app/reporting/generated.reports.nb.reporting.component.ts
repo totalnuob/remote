@@ -262,4 +262,17 @@ export class GeneratedReportsNBReportingComponent extends CommonNBReportingCompo
             );
     }
 
+    exportAll(){
+        this.busy = this.periodicReportService.makeFileRequest(DATA_APP_URL + `periodicReport/exportAll/${this.reportId}/`, 'reports_kzt')
+            .subscribe(
+                response  => {
+                    //console.log("ok");
+                },
+                error => {
+                    //console.log("fails")
+                    this.postAction(null, "Error exporting data");
+                }
+            );
+    }
+
 }

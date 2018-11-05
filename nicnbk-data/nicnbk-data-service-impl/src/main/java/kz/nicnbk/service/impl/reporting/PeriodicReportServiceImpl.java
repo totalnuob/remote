@@ -34,6 +34,7 @@ import kz.nicnbk.service.impl.reporting.lookup.NICChartAccountsLookup;
 import kz.nicnbk.service.impl.reporting.lookup.PeriodicDataTypeLookup;
 import kz.nicnbk.service.impl.reporting.lookup.ReserveCalculationsExpenseTypeLookup;
 import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.io.IOUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
@@ -56,6 +57,8 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * Service Impl class for Periodic Reports.
@@ -6470,6 +6473,93 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         }
 
         return null;
+    }
+
+    @Override
+    public FilesDto getExportAllKZTReportsFileStream(Long reportId){
+        FilesDto filesDto = new FilesDto();
+        String fileName = null;
+        try {
+
+            fileName = this.rootDirectory + "/tmp/" + HashUtils.hashMD5String(new Date().getTime() + "") + ".zip";
+            ZipOutputStream out = new ZipOutputStream(new FileOutputStream(fileName));
+
+            ZipEntry e = null;
+            byte[] data = null;
+
+            // Form 1
+            FilesDto form1 = getConsolidatedForm1KZTReportInputStream(reportId);
+            setExportZipContent("ОФП-1.xlsx", out, form1);
+
+            // Form 2
+            FilesDto form2 = getConsolidatedForm2KZTReportInputStream(reportId);
+            setExportZipContent("ОПиУ-2.xlsx", out, form2);
+
+            // Form 3
+            FilesDto form3 = getConsolidatedForm3KZTReportInputStream(reportId);
+            setExportZipContent("ОПСД-3.xlsx", out, form3);
+
+            // Form 6
+            FilesDto form6 = getConsolidatedForm6KZTReportInputStream(reportId);
+            setExportZipContent("ОИК-6.xlsx", out, form6);
+
+            // Form 7
+            FilesDto form7 = getConsolidatedForm7KZTReportInputStream(reportId);
+            setExportZipContent("РФИ-7.xlsx", out, form7);
+
+            // Form 8
+            FilesDto form8 = getConsolidatedForm8KZTReportInputStream(reportId);
+            setExportZipContent("РТПДЗ-8.xlsx", out, form8);
+
+            // Form 10
+            FilesDto form10 = getConsolidatedForm10KZTReportInputStream(reportId);
+            setExportZipContent("РПА-10.xlsx", out, form10);
+
+            // Form 13
+            FilesDto form13 = getConsolidatedForm13KZTReportInputStream(reportId);
+            setExportZipContent("РФО-13.xlsx", out, form13);
+
+            // Form 14
+            FilesDto form14 = getConsolidatedForm14KZTReportInputStream(reportId);
+            setExportZipContent("РТПКЗ-14.xlsx", out, form14);
+
+            // Form 19
+            FilesDto form19 = getConsolidatedForm19KZTReportInputStream(reportId);
+            setExportZipContent("РДХФИ-19.xlsx", out, form19);
+
+            // Form 22
+            FilesDto form22 = getConsolidatedForm22KZTReportInputStream(reportId);
+            setExportZipContent("РПДХ-22.xlsx", out, form22);
+
+            out.close();
+
+            filesDto.setInputStream(new FileInputStream(fileName));
+            filesDto.setFileName(fileName);
+
+            return filesDto;
+        } catch (UnsupportedEncodingException e) {
+            logger.error("(PeriodicReport) File export (all kzt reports) request failed: unsupported encoding", e);
+        } catch (IOException e) {
+            logger.error("(PeriodicReport) File export (all kzt reports) request failed: io exception", e);
+        } catch (Exception e){
+            logger.error("(PeriodicReport) File export (all kzt reports) request failed", e);
+        }
+
+        return null;
+    }
+
+    private void setExportZipContent(String fileName,ZipOutputStream out, FilesDto filesDto){
+        try {
+            ZipEntry e = new ZipEntry(fileName);
+            out.putNextEntry(e);
+            byte[] data = IOUtils.toByteArray(filesDto.getInputStream());
+            out.write(data, 0, data.length);
+            out.closeEntry();
+            filesDto.getInputStream().close();
+            new File(filesDto.getFileName()).delete();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
     }
 
     private FilesDto getConsolidatedBalanceUSDReportInputStream(Long reportId) {
