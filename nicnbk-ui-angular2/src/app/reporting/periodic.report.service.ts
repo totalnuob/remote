@@ -78,6 +78,8 @@ export class PeriodicReportService extends CommonService{
     private PERIODIC_REPORT_TARRAGON_GENERATED_FROM_PREV_MONTH_URL = this.PERIODIC_REPORT_BASE_URL + "tarragonGeneratedFormDataFromPreviousMonth/";
     private PERIODIC_REPORT_TERRA_GENERATED_FROM_PREV_MONTH_URL = this.PERIODIC_REPORT_BASE_URL + "terraGeneratedFormDataFromPreviousMonth/";
     private PERIODIC_REPORT_TERRA_INCLUDE_EXCLUDE_URL= this.PERIODIC_REPORT_BASE_URL + "excludeTerraRecord/";
+    private PERIODIC_REPORT_TARRAGON_INCLUDE_EXCLUDE_URL= this.PERIODIC_REPORT_BASE_URL + "excludeTarragonRecord/";
+    PERIODIC_REPORT_SINGULARITY_GL_INCLUDE_EXCLUDE_URL = this.PERIODIC_REPORT_BASE_URL + "excludeSingularityRecord/";
 
 
     private PERIODIC_REPORT_OTHER_INFO_UPLOAD_URL = this.PERIODIC_REPORT_BASE_URL + "otherInfo/save/";
@@ -324,6 +326,20 @@ export class PeriodicReportService extends CommonService{
     includeExcludeTerraGeneralLedgerRecord(params): Observable<any>{
         let body = JSON.stringify(params);
         return this.http.post(this.PERIODIC_REPORT_TERRA_INCLUDE_EXCLUDE_URL , body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    includeExcludeTarragonGeneralLedgerRecord(params): Observable<any>{
+        let body = JSON.stringify(params);
+        return this.http.post(this.PERIODIC_REPORT_TARRAGON_INCLUDE_EXCLUDE_URL , body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    includeExcludeSingularityGeneralLedgerRecord(params): Observable<any>{
+        let body = JSON.stringify(params);
+        return this.http.post(this.PERIODIC_REPORT_SINGULARITY_GL_INCLUDE_EXCLUDE_URL , body, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }

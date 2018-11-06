@@ -33,6 +33,9 @@ public class ReserveCalculationDto extends CreateUpdateBaseEntityDto<ReserveCalc
     private Boolean excludeFromTerraCalculation;
     private Boolean excludeOppositeFromTerraCalculation;
 
+    private Boolean excludeFromTarragonCalculation;
+    private Boolean excludeOppositeFromTarragonCalculation;
+
     public BaseDictionaryDto getExpenseType() {
         return expenseType;
     }
@@ -151,5 +154,21 @@ public class ReserveCalculationDto extends CreateUpdateBaseEntityDto<ReserveCalc
 
     public void setExcludeOppositeFromTerraCalculation(Boolean excludeOppositeFromTerraCalculation) {
         this.excludeOppositeFromTerraCalculation = excludeOppositeFromTerraCalculation;
+    }
+
+    public Boolean getExcludeFromTarragonCalculation() {
+        return excludeFromTarragonCalculation;
+    }
+
+    public void setExcludeFromTarragonCalculation(Boolean excludeFromTarragonCalculation) {
+        this.excludeFromTarragonCalculation = excludeFromTarragonCalculation;
+    }
+
+    public Boolean getExcludeOppositeFromTarragonCalculation() {
+        return excludeOppositeFromTarragonCalculation;
+    }
+
+    public void setExcludeOppositeFromTarragonCalculation(Boolean excludeOppositeFromTarragonCalculation) {
+        this.excludeOppositeFromTarragonCalculation = excludeOppositeFromTarragonCalculation;
     }
 }

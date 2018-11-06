@@ -358,6 +358,20 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
         }
     }
 
+    @Override
+    public boolean excludeIncludeTarragonRecord(Long recordId) {
+        try {
+            ReportingPEScheduleInvestment entity = peScheduleInvestmentRepository.findOne(recordId);
+            boolean value = entity.getExcludeFromTarragonCalculation() != null ? entity.getExcludeFromTarragonCalculation().booleanValue() : false;
+            entity.setExcludeFromTarragonCalculation(!value);
+            peScheduleInvestmentRepository.save(entity);
+            return true;
+        }catch (Exception ex){
+            logger.error("Error saving ReportingPEScheduleInvestment with id=" + recordId, ex);
+            return false;
+        }
+    }
+
     private ScheduleInvestmentsDto disassembleDto(ReportingPEScheduleInvestment entity){
         if(entity != null){
             ScheduleInvestmentsDto dto = new ScheduleInvestmentsDto();

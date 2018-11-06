@@ -1,5 +1,6 @@
 package kz.nicnbk.service.api.reporting.privateequity;
 
+import kz.nicnbk.repo.model.lookup.reporting.ExcludeRecordTypeLookup;
 import kz.nicnbk.service.api.base.BaseService;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
 import kz.nicnbk.service.dto.files.FilesDto;
@@ -54,5 +55,5 @@ public interface ReserveCalculationService extends BaseService {
 
     ReserveCalculationDto getRecordById(Long recordId);
 
-    boolean excludeIncludeRecord(Long recordId, String name);
+    boolean excludeIncludeRecord(Long recordId, String name, ExcludeRecordTypeLookup type);
 }

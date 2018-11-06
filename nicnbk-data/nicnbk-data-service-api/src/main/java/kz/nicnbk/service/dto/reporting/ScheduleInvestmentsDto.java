@@ -24,6 +24,8 @@ public class ScheduleInvestmentsDto implements BaseDto{
     private String description;
     private Boolean isTotalSum;
 
+    private Boolean excludeFromTarragonCalculation;
+
     public Long getId() {
         return id;
     }
@@ -126,5 +128,13 @@ public class ScheduleInvestmentsDto implements BaseDto{
 
     public void setEditedFairValue(Double editedFairValue) {
         this.editedFairValue = editedFairValue;
+    }
+
+    public Boolean getExcludeFromTarragonCalculation() {
+        return excludeFromTarragonCalculation;
+    }
+
+    public void setExcludeFromTarragonCalculation(Boolean excludeFromTarragonCalculation) {
+        this.excludeFromTarragonCalculation = excludeFromTarragonCalculation;
     }
 }

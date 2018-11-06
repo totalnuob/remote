@@ -10,6 +10,7 @@ import kz.nicnbk.service.api.reporting.hedgefunds.HFNOALService;
 import kz.nicnbk.service.api.reporting.hedgefunds.PeriodicReportHFService;
 import kz.nicnbk.service.dto.common.ListResponseDto;
 import kz.nicnbk.service.dto.reporting.*;
+import kz.nicnbk.service.dto.reporting.hedgefunds.ExcludeSingularityRecordDto;
 import kz.nicnbk.service.impl.reporting.PeriodicReportConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +43,7 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
     @Override
     public ListResponseDto getSingularGeneratedForm(Long reportId) {
         ListResponseDto responseDto = new ListResponseDto();
-        ConsolidatedReportRecordHolderDto generalLedgerRecordsHolder = this.generalLedgerBalanceService.get(reportId);
+        ConsolidatedReportRecordHolderDto generalLedgerRecordsHolder = this.generalLedgerBalanceService.getWithoutExcludedRecords(reportId);
         ConsolidatedReportRecordHolderDto noalTrancheARecordHolder = this.hfNOALService.get(reportId, 1);
         ConsolidatedReportRecordHolderDto noalTrancheBRecordHolder = this.hfNOALService.get(reportId, 2);
 
@@ -200,6 +201,12 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
         }
         responseDto.setRecords(records);
         return responseDto;
+    }
+
+    @Override
+    public boolean excludeIncludeSingularityRecord(ExcludeSingularityRecordDto excludeRecordDto, String username) {
+        boolean result = this.generalLedgerBalanceService.excludeIncludeSingularityRecord(excludeRecordDto.getRecordId(), username);
+        return result;
     }
 
     private void setAccountNameAdditionalDescription(GeneratedGeneralLedgerFormDto record){

@@ -843,7 +843,16 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
         // HEDGE FUNDS
         // General ledger
-        ConsolidatedReportRecordHolderDto generalLedgerHolder = this.generalLedgerBalanceService.get(reportId);
+//        ListResponseDto responseDto = this.periodicReportHFService.getSingularGeneratedForm(reportId);
+//        if(responseDto.getRecords() != null){
+//            for(GeneratedGeneralLedgerFormDto glRecord: (List<GeneratedGeneralLedgerFormDto>)responseDto.getRecords()){
+//                if(glRecord.getShortName() != null){
+//                    currentHFFundNames.add(glRecord.getShortName());
+//                }
+//            }
+//        }
+
+        ConsolidatedReportRecordHolderDto generalLedgerHolder = this.generalLedgerBalanceService.getWithExcludedRecords(reportId);
         if(generalLedgerHolder != null && generalLedgerHolder.getGeneralLedgerBalanceList() != null && !generalLedgerHolder.getGeneralLedgerBalanceList().isEmpty()){
             for(SingularityGeneralLedgerBalanceRecordDto glRecord: generalLedgerHolder.getGeneralLedgerBalanceList()){
                 if(glRecord.getShortName() != null){
@@ -905,7 +914,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
         // HEDGE FUNDS
         // General ledger
-        generalLedgerHolder = this.generalLedgerBalanceService.get(previousReport.getId());
+        generalLedgerHolder = this.generalLedgerBalanceService.getWithExcludedRecords(previousReport.getId());
         if(generalLedgerHolder != null && generalLedgerHolder.getGeneralLedgerBalanceList() != null && !generalLedgerHolder.getGeneralLedgerBalanceList().isEmpty()){
             for(SingularityGeneralLedgerBalanceRecordDto glRecord: generalLedgerHolder.getGeneralLedgerBalanceList()){
                 if(glRecord.getShortName() != null){
@@ -1215,7 +1224,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         }
 
         // Add Tarragon records
-        List<GeneratedGeneralLedgerFormDto> tarragonRecords = this.periodicReportPEService.getTarragonGeneratedForm(reportId).getRecords();
+        List<GeneratedGeneralLedgerFormDto> tarragonRecords = this.periodicReportPEService.getTarragonGeneratedFormWithoutExcluded(reportId).getRecords();
         if(tarragonRecords != null){
             for(GeneratedGeneralLedgerFormDto tarragonRecord: tarragonRecords){
                 if(tarragonRecord.getNbAccountNumber() != null && tarragonRecord.getNbAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_5440_010) &&
@@ -1583,7 +1592,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         }
 
         // Add Tarragon records
-        List<GeneratedGeneralLedgerFormDto> tarragonRecords = this.periodicReportPEService.getTarragonGeneratedForm(reportId).getRecords();
+        List<GeneratedGeneralLedgerFormDto> tarragonRecords = this.periodicReportPEService.getTarragonGeneratedFormWithoutExcluded(reportId).getRecords();
         if(singularRecords != null){
             for(GeneratedGeneralLedgerFormDto tarragonRecord: tarragonRecords){
                 ConsolidatedBalanceFormRecordDto recordDto = new ConsolidatedBalanceFormRecordDto();
@@ -3326,7 +3335,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
         // Singularity - General Ledger
 
-        ConsolidatedReportRecordHolderDto currentDataHolder = this.generalLedgerBalanceService.get(reportId);
+        ConsolidatedReportRecordHolderDto currentDataHolder = this.generalLedgerBalanceService.getWithoutExcludedRecords(reportId);
         if(currentDataHolder != null && currentDataHolder.getGeneralLedgerBalanceList() != null){
             for(SingularityGeneralLedgerBalanceRecordDto record: currentDataHolder.getGeneralLedgerBalanceList()){
                 if(record.getFinancialStatementCategoryDescription() != null && record.getFinancialStatementCategoryDescription().equalsIgnoreCase(PeriodicReportConstants.EN_NET_REALIZED_GAIN_LOSS)){
@@ -3347,7 +3356,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         }
 
         if(!DateUtils.isJanuary(report.getReportDate())){
-            ConsolidatedReportRecordHolderDto previousDataHolder = this.generalLedgerBalanceService.get(previousReport.getId());
+            ConsolidatedReportRecordHolderDto previousDataHolder = this.generalLedgerBalanceService.getWithoutExcludedRecords(previousReport.getId());
             if (previousDataHolder != null && previousDataHolder.getGeneralLedgerBalanceList() != null) {
                 for (SingularityGeneralLedgerBalanceRecordDto record : previousDataHolder.getGeneralLedgerBalanceList()) {
                     if (record.getFinancialStatementCategoryDescription() != null && record.getFinancialStatementCategoryDescription().equalsIgnoreCase(PeriodicReportConstants.EN_NET_REALIZED_GAIN_LOSS)) {

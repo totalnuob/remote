@@ -2192,7 +2192,7 @@ public class LookupServiceImpl implements LookupService {
         List<PeriodicReportDto> periodicReportDots = this.periodicReportService.getAllPeriodicReports();
         for(PeriodicReportDto report: periodicReportDots){
             //if(report.getStatus() != null && !report.getStatus().equalsIgnoreCase(kz.nicnbk.service.dto.reporting.PeriodicReportType.SUBMITTED.getCode())){
-                ConsolidatedReportRecordHolderDto holder = this.hfGeneralLedgerBalanceService.get(report.getId());
+                ConsolidatedReportRecordHolderDto holder = this.hfGeneralLedgerBalanceService.getWithExcludedRecords(report.getId());
                 if(holder != null && holder.getGeneralLedgerBalanceList() != null){
                     for(SingularityGeneralLedgerBalanceRecordDto record: holder.getGeneralLedgerBalanceList()){
                         if(record.getGLAccount() != null && record.getGLAccount().startsWith(accountNumber)){
@@ -2213,7 +2213,7 @@ public class LookupServiceImpl implements LookupService {
         List<PeriodicReportDto> periodicReportDots = this.periodicReportService.getAllPeriodicReports();
         for(PeriodicReportDto report: periodicReportDots){
             //if(report.getStatus() != null && !report.getStatus().equalsIgnoreCase(kz.nicnbk.service.dto.reporting.PeriodicReportType.SUBMITTED.getCode())){
-                ListResponseDto listResponseDto = this.periodicReportPEService.getTarragonGeneratedForm(report.getId());
+                ListResponseDto listResponseDto = this.periodicReportPEService.getTarragonGeneratedFormWithExcluded(report.getId());
                 if(listResponseDto != null && listResponseDto.getRecords() != null){
                     for(GeneratedGeneralLedgerFormDto record: (List<GeneratedGeneralLedgerFormDto>) listResponseDto.getRecords()){
                         if(record.getChartAccountsLongDescription() != null && record.getChartAccountsLongDescription().equalsIgnoreCase(chartAccountsLongDescription)){
