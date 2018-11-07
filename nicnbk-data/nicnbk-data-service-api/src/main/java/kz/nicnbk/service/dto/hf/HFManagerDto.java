@@ -1,7 +1,6 @@
 package kz.nicnbk.service.dto.hf;
 
 import kz.nicnbk.common.service.model.CreateUpdateBaseEntityDto;
-import kz.nicnbk.common.service.model.HistoryBaseEntityDto;
 import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.model.hf.HFManager;
 
@@ -31,6 +30,9 @@ public class HFManagerDto extends CreateUpdateBaseEntityDto<HFManager> {
     private String fax;
     private String website;
     private String email;
+
+    //research
+    private boolean investedInB;
 
     //m2s2 fields
     private String managementAndTeamNotes;
@@ -251,5 +253,13 @@ public class HFManagerDto extends CreateUpdateBaseEntityDto<HFManager> {
 
     public void setOwner(String owner) {
         this.owner = owner;
+    }
+
+    public boolean isInvestedInB() {
+        return investedInB;
+    }
+
+    public void setInvestedInB(boolean investedInB) {
+        this.investedInB = investedInB;
     }
 }

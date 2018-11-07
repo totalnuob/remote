@@ -100,6 +100,22 @@ public class HFManagerServiceImpl implements HFManagerService {
     }
 
     @Override
+    public HedgeFundManagerPagedSearchResult findInvestedFunds() {
+        try {
+            Page<HFManager> entityPage = this.repository.findInvestedFunds(new PageRequest(0, 10, new Sort(Sort.Direction.DESC, "id")));
+
+            HedgeFundManagerPagedSearchResult result = new HedgeFundManagerPagedSearchResult();
+            if (entityPage != null) {
+                result.setManagers(this.converter.disassembleList(entityPage.getContent()));
+            }
+            return result;
+        }catch (Exception ex){
+            logger.error("Failed to search HF managers", ex);
+        }
+        return null;
+    }
+
+    @Override
     public HedgeFundManagerPagedSearchResult findByName(HedgeFundSearchParams searchParams) {
         try {
             int page = searchParams != null && searchParams.getPage() > 0 ? searchParams.getPage() - 1 : 0;

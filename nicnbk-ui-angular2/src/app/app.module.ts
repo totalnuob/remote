@@ -38,6 +38,8 @@ import {RiskManagementAxiomaReportingComponent} from "./riskmanagement/riskmanag
 import {HFDashboardComponent} from "./hf/hf.dashboard.component";
 import {HFFundSearchComponent} from "./hf/hf.fund-search.component";
 import {HFFundSelectionComponent} from "./hf/hf.fund-selection.component";
+import {HFResearchComponent} from "./hf/hf.research.component";
+import {HFResearchFormComponent} from "./hf/hf.research-form.component";
 import {HFPortfolioComponent} from "./hf/hf.portfolio.component";
 import {HFReportComponent} from "./hf/hf.report.component";
 import {HFFundProfileComponent} from "./hf/hf.fund-profile.component";
@@ -133,8 +135,8 @@ import {MatchingLookupValuesNBReportingComponent} from "./reporting/matching.loo
         MonitoringHedgeFunds2Component, MonitoringHedgeFunds2PrintComponent,
         MainNBReportingComponent, InputFileUploadNBReportingComponent,
 
-        HFDashboardComponent, HFFundSearchComponent, HFFundSelectionComponent, HFPortfolioComponent, HFReportComponent,
-        HFFundProfileComponent, HFManagerProfileComponent, HFManagerSearchComponent,
+        HFDashboardComponent, HFFundSearchComponent, HFFundSelectionComponent, HFPortfolioComponent, HFResearchComponent, HFReportComponent,
+        HFFundProfileComponent, HFManagerProfileComponent, HFManagerSearchComponent, HFResearchFormComponent,
         PEFundProfileComponent, PEFirmProfileComponent, PEFirmSearchComponent, PEFundReportComponent,
         AccessDeniedComponent,NotFoundComponent,
         LookupValuesNBReportingComponent, CurrencyRatesLookupValuesNBReportingComponent, TypedLookupValuesNBReportingComponent,PeriodicDataNBReportingComponent,MatchingLookupValuesNBReportingComponent,

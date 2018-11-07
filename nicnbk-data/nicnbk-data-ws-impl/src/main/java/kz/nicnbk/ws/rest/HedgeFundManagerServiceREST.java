@@ -2,6 +2,7 @@ package kz.nicnbk.ws.rest;
 
 import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.hf.HFManagerService;
+import kz.nicnbk.service.api.hf.HFResearchService;
 import kz.nicnbk.service.dto.hf.HFManagerDto;
 import kz.nicnbk.service.dto.hf.HedgeFundManagerPagedSearchResult;
 import kz.nicnbk.service.dto.hf.HedgeFundSearchParams;
@@ -24,6 +25,9 @@ public class HedgeFundManagerServiceREST extends CommonServiceREST{
 
     @Autowired
     private HFManagerService service;
+
+    @Autowired
+    private HFResearchService hfResearchService;
 
     @Autowired
     private TokenService tokenService;
@@ -58,6 +62,13 @@ public class HedgeFundManagerServiceREST extends CommonServiceREST{
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public ResponseEntity search(@RequestBody HedgeFundSearchParams searchParams){
         HedgeFundManagerPagedSearchResult searchResult = this.service.findByName(searchParams);
+        return buildNonNullResponse(searchResult);
+    }
+
+    @PreAuthorize("hasRole('ROLE_HEDGE_FUND_VIEWER') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/invested", method = RequestMethod.GET)
+    public ResponseEntity findInvestedFunds(){
+        HedgeFundManagerPagedSearchResult searchResult = this.service.findInvestedFunds();
         return buildNonNullResponse(searchResult);
     }
 

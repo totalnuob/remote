@@ -10,6 +10,8 @@ export class HFManager extends LegalEntity{
     aumDigit; string;
     aumCurrency: string;
 
+    investedInB: boolean;C
+
     fundManagers: string;
     headquarters: string;
     contactPerson: string;

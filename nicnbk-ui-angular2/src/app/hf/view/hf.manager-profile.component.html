@@ -42,6 +42,11 @@
                                        [(ngModel)]="manager.name" required #name="ngModel"/>
                                 <div [hidden]="name.valid || name.pristine" class="alert alert-danger">Name is required</div>
                             </div>
+                            <div class="col-md-3">
+                                <label class="checkbox">
+                                    <input type="checkbox" name="investedInB" [(ngModel)]="manager.investedInB"> Invested in Tranche B
+                                </label>
+                            </div>
                         </div>
                         <br/>
                         <div class="row withpadding">

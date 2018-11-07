@@ -1,0 +1,114 @@
+<div class="container">
+    <div class="row withpadding" style="position: relative; min-height: 80px;">
+        <div [ngBusy]="busy">
+            <div class="row top-buffer" >
+                <div class="col-md-12">
+                    <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+                    </div>
+                    <div class="alert alert-info" *ngIf="!submitted && successMessage != null"><span>{{successMessage}}</span>
+                    </div>
+                </div>
+            </div>
+            <div [hidden]="submitted">
+                <form (ngSubmit)="save()" #memoForm="ngForm" class="well span">
+                    <div class="row top-buffer">
+                        <div class="col-md-12">
+                            <div class="row top-buffer">
+                                <label class="control-label col-md-2">Dates of investment:</label>
+                                <div class="col-md-4">
+                                    <input id="investmentDates" class="form-control" placeholder="Enter dates of investments..." maxlength="250"
+                                           [(ngModel)]="researchForm.investmentsDates"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row top-buffer" >
+                        <div class="col-md-12">
+                            <div class="row top-buffer" >
+                                <label class="control-label col-md-2">Total Allocation:</label>
+                                <div class="col-md-4">
+                                    <input type="text" placeholder="Enter allocation size... " class="form-control" id="allocationSize"
+                                           [(ngModel)]="researchForm.allocationSize" name="allocationSize" maxlength="250"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row top-buffer" >
+                        <div class="col-md-12">
+                            <div class="row top-buffer" >
+                                <label class="control-label col-md-2">Contacts:</label>
+                                <div class="col-md-4">
+                                    <input type="text" placeholder="Enter contacts name... " class="form-control" id="contacts"
+                                           [(ngModel)]="researchForm.contacts" name="contacts" maxlength="250"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row top-buffer" >
+                        <div class="col-md-12">
+                            <div class="row top-buffer" >
+                                <label class="control-label col-md-2">NIC coverage:</label>
+                                <div class="col-md-4">
+                                    <input type="text" placeholder="NIC coverage person... " class="form-control" id="nicCoverage"
+                                           [(ngModel)]="researchForm.nicCoverage" name="nicCoverage" maxlength="250"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row top-buffer" >
+                        <div class="col-md-12">
+                            <div class="row top-buffer" >
+                                <label class="control-label col-md-2">Website for clients:</label>
+                                <div class="col-md-4">
+                                    <input type="text" placeholder="Client portal... " class="form-control" id="website"
+                                           [(ngModel)]="researchForm.website" name="website" maxlength="250"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row top-buffer" >
+                        <div class="col-md-12">
+                            <div class="row top-buffer" >
+                                <label class="control-label col-md-2">Types of communication:</label>
+                                <div class="col-md-4">
+                                    <input type="text" placeholder="Quarterly calls... " class="form-control" id="typesOfCommunication"
+                                           [(ngModel)]="researchForm.typesOfCommunication" name="typesOfCommunication" maxlength="250"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row top-buffer" >
+                        <div class="col-md-12">
+                            <div class="row top-buffer" >
+                                <label class="control-label col-md-2">Important notes:</label>
+                                <div class="col-md-4">
+                                    <input type="text" placeholder="Large positions in... " class="form-control" id="importantNotes"
+                                           [(ngModel)]="researchForm.importantNotes" name="importantNotes" maxlength="250"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row top-buffer" >
+                        <div class="col-md-12">
+                            <div class="row top-buffer" >
+                                <label class="control-label col-md-2">Key people:</label>
+                                <div class="col-md-4">
+                                    <input type="text" placeholder="Key people... " class="form-control" id="keyPeople"
+                                           [(ngModel)]="researchForm.keyPeople" name="keyPeople" maxlength="250"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br/>
+
+                    <div class="row top-buffer">
+                        <div class="col-md-12">
+                            <!--<button type="submit" class="btn btn-success pull-right" name="saveMemo" [disabled]="!memoForm.form.valid" *ngIf="canEdit()">Save</button>-->
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>

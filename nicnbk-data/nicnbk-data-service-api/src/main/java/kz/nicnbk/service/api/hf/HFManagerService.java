@@ -25,4 +25,7 @@ public interface HFManagerService extends BaseService {
     HedgeFundManagerPagedSearchResult findByName(HedgeFundSearchParams searchParams);
 
     List<HFManagerDto> findAll();
+
+    HedgeFundManagerPagedSearchResult findInvestedFunds();
+
 }

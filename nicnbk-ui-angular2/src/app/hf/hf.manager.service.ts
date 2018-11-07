@@ -15,6 +15,7 @@ export class HFManagerService extends CommonService{
     private HF_MANAGER_GET_URL = this.HF_BASE_URL + "get/";
     private HF_MANAGER_SEARCH_URL = this.HF_BASE_URL + "search/";
     private HF_MANAGER_LIST_URL = this.HF_BASE_URL + "all/";
+    private HF_MANAGER_INVESTED = this.HF_BASE_URL + "invested/";
 
     constructor (
         private http: Http)
@@ -49,6 +50,12 @@ export class HFManagerService extends CommonService{
 
     getManagers(){
         return this.http.get(this.HF_MANAGER_LIST_URL, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleError);
+    }
+
+    findInvestedFunds(){
+        return this.http.get(this.HF_MANAGER_INVESTED, this.getOptionsWithCredentials())
             .map(this.extractDataList)
             .catch(this.handleError);
     }

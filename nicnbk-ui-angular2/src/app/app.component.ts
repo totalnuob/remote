@@ -27,6 +27,7 @@ import '../../public/js/viz_v1.js';
 import {TextareaAutosize} from "./common/textarea-autosize.directive";
 import {HFManagerService} from "./hf/hf.manager.service";
 import {HedgeFundService} from "./hf/hf.fund.service";
+import {HFResearchService} from "./hf/hf.research.service"
 import {RiskManagementReportService} from "./riskmanagement/riskmanagement.report.service";
 import {AlbourneService} from "./hf/hf.albourne.service";
 
@@ -37,6 +38,8 @@ import {AuthenticationService} from "./authentication/authentication.service";
 import {MacroMonitorService} from "./macromonitor/macromonitor.service";
 import {FileDownloadService} from "./common/file.download.service";
 import {CorpMeetingService} from "./corpmeetings/corp-meetings.service";
+
+
 
 @Component({
     selector: 'app-main',
@@ -64,7 +67,8 @@ import {CorpMeetingService} from "./corpmeetings/corp-meetings.service";
         ModuleAccessCheckerService,
         MacroMonitorService,
         PeriodicReportService,
-        CorpMeetingService
+        CorpMeetingService,
+        HFResearchService
     ]
 })
 @NgModule({

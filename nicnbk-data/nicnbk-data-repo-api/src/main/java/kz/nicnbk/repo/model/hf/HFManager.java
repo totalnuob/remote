@@ -36,6 +36,9 @@ public class HFManager extends CreateUpdateBaseEntity {
     private String website;
     private String email;
 
+    //research
+    private Boolean investedInB;
+
     // m2s2 fields
     private String managementAndTeamNotes;
     private Short managementAndTeamScore;
@@ -244,6 +247,14 @@ public class HFManager extends CreateUpdateBaseEntity {
         this.conviction = conviction;
     }
 
+    @Column(name="investedInTrancheB")
+    public java.lang.Boolean getInvestedInB() {
+        return investedInB;
+    }
+
+    public void setInvestedInB(Boolean investedInB) {
+        this.investedInB = investedInB;
+    }
 
     //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "strategy_id")

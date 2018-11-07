@@ -28,6 +28,9 @@ import {HFDashboardComponent} from "./hf/hf.dashboard.component";
 import {HFFundSearchComponent} from "./hf/hf.fund-search.component";
 import {HFFundSelectionComponent} from "./hf/hf.fund-selection.component";
 import {HFPortfolioComponent} from "./hf/hf.portfolio.component";
+import {HFResearchComponent} from "./hf/hf.research.component";
+import {HFResearchFormComponent} from "./hf/hf.research-form.component";
+
 import {HFReportComponent} from "./hf/hf.report.component";
 import {HFFundProfileComponent} from "./hf/hf.fund-profile.component";
 import {HFManagerProfileComponent} from "./hf/hf.manager-profile.component.ts";
@@ -89,6 +92,7 @@ import {TypedLookupValuesNBReportingComponent} from "./reporting/typed.lookup.va
 import {PeriodicDataNBReportingComponent} from "./reporting/periodic.data.nb.reporting.component";
 import {MatchingLookupValuesNBReportingComponent} from "./reporting/matching.lookup.values.nb.reporting.component";
 import {ICMeetingTopicEditComponent} from "./corpmeetings/ic-meeting-topic-edit.component";
+import {HFResearchFormComponent} from "./hf/hf.research-form.component";
 
 
 const routes: Routes  = [
@@ -251,6 +255,16 @@ const routes: Routes  = [
     {
         path: 'hf/portfolio',
         component: HFPortfolioComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'hf/research',
+        component: HFResearchComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'hf/research/edit/:id',
+        component: HFResearchFormComponent,
         canActivate: [AuthGuard]
     },
     {
