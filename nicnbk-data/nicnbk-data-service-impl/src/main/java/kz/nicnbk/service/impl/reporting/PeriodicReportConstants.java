@@ -164,7 +164,7 @@ public final class PeriodicReportConstants {
 
 
     /* RECORD NAMES ********************************************************************************************/
-    public static final String USD_FORM_1_LAST_RECORD = "Всего обязательства и капитал (сумма строк 35, 43, 51)";
+    public static final String USD_FORM_1_LAST_RECORD = "Всего обязательства и капитал (сумма строк 37, 45, 53)";
     public static final String USD_FORM_2_LAST_RECORD = "Чистая прибыль (убыток) (сумма строк 18, 19)";
     public static final String USD_FORM_3_LAST_RECORD = "Итого совокупного дохода (сумма строк 1, 5)";
     public static final String KZT_FORM_3_LAST_RECORD = "Итого совокупного дохода (сумма строк 1, 6)";

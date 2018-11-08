@@ -1854,45 +1854,45 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             Date previousDate = DateUtils.getLastDayOfPreviousMonth(currentReport.getReportDate());
             PeriodicReport previousReport = this.periodReportRepository.findByReportDate(previousDate);
 
-            List<ConsolidatedBalanceFormRecordDto> toAddRecords = new ArrayList<>();
-            List<Integer> toAddIndices = new ArrayList<>();
-            if (previousReport != null) {
-                List<ConsolidatedBalanceFormRecordDto> previousRecords = getConsolidatedBalanceKZTForm1Saved(previousReport.getId());
-                if(previousRecords != null){
-                    for(ConsolidatedBalanceFormRecordDto previousRecord: previousRecords){
-                        for(int i = 0; currentRecords != null && i < currentRecords.size(); i++){
-                            ConsolidatedBalanceFormRecordDto currentRecord = currentRecords.get(i);
-                            if(previousRecord.getAccountNumber() == null && previousRecord.getLineNumber() != null &&
-                                    (previousRecord.getLineNumber() == 1 || previousRecord.getLineNumber() == 14)){
-                                previousRecord.setCurrentAccountBalance(null);
-                                previousRecord.setPreviousAccountBalance(null);
-                            }
-                            if(isMatchingRecords(currentRecord, previousRecord)){
-                                currentRecord.setPreviousAccountBalance(previousRecord.getCurrentAccountBalance());
-                                break;
-                            }
-
-                            //next line number, means record was not found, possibly  need to add
-                            if(previousRecord.getLineNumber() + 1 == (currentRecord.getLineNumber())){
-                                toAddIndices.add(i);
-                                toAddRecords.add(previousRecord);
-                                break;
-                            }
-                        }
-                    }
-
-                    int added = 0;
-                    for(int i = 0; i < toAddRecords.size(); i++) {
-                        ConsolidatedBalanceFormRecordDto recordToAdd = toAddRecords.get(i);
-                        if(recordToAdd.getCurrentAccountBalance() != null && recordToAdd.getCurrentAccountBalance() != 0) {
-                            recordToAdd.setPreviousAccountBalance(recordToAdd.getCurrentAccountBalance());
-                            recordToAdd.setCurrentAccountBalance(null);
-                            currentRecords.add(toAddIndices.get(i) + added, recordToAdd);
-                            added++;
-                        }
-                    }
-                }
-            }
+//            List<ConsolidatedBalanceFormRecordDto> toAddRecords = new ArrayList<>();
+//            List<Integer> toAddIndices = new ArrayList<>();
+//            if (previousReport != null) {
+//                List<ConsolidatedBalanceFormRecordDto> previousRecords = getConsolidatedBalanceKZTForm1Saved(previousReport.getId());
+//                if(previousRecords != null){
+//                    for(ConsolidatedBalanceFormRecordDto previousRecord: previousRecords){
+//                        for(int i = 0; currentRecords != null && i < currentRecords.size(); i++){
+//                            ConsolidatedBalanceFormRecordDto currentRecord = currentRecords.get(i);
+//                            if(previousRecord.getAccountNumber() == null && previousRecord.getLineNumber() != null &&
+//                                    (previousRecord.getLineNumber() == 1 || previousRecord.getLineNumber() == 14)){
+//                                previousRecord.setCurrentAccountBalance(null);
+//                                previousRecord.setPreviousAccountBalance(null);
+//                            }
+//                            if(isMatchingRecords(currentRecord, previousRecord)){
+//                                currentRecord.setPreviousAccountBalance(previousRecord.getCurrentAccountBalance());
+//                                break;
+//                            }
+//
+//                            //next line number, means record was not found, possibly  need to add
+//                            if(previousRecord.getLineNumber() + 1 == (currentRecord.getLineNumber())){
+//                                toAddIndices.add(i);
+//                                toAddRecords.add(previousRecord);
+//                                break;
+//                            }
+//                        }
+//                    }
+//
+//                    int added = 0;
+//                    for(int i = 0; i < toAddRecords.size(); i++) {
+//                        ConsolidatedBalanceFormRecordDto recordToAdd = toAddRecords.get(i);
+//                        if(recordToAdd.getCurrentAccountBalance() != null && recordToAdd.getCurrentAccountBalance() != 0) {
+//                            recordToAdd.setPreviousAccountBalance(recordToAdd.getCurrentAccountBalance());
+//                            recordToAdd.setCurrentAccountBalance(null);
+//                            currentRecords.add(toAddIndices.get(i) + added, recordToAdd);
+//                            added++;
+//                        }
+//                    }
+//                }
+//            }
 
             responseDto.setRecords(currentRecords);
             return responseDto;
@@ -2249,40 +2249,46 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         Double lineNumber36Value = null;
         for(int i = 0; i < records.size(); i++){
             ConsolidatedBalanceFormRecordDto record = records.get(i);
-            if(record.getLineNumber() != null && (/*record.getLineNumber() == 1 ||*/ record.getLineNumber() == 13)
+            if(record.getLineNumber() != null && (/*record.getLineNumber() == 1 ||*/ record.getLineNumber() == 14)
                     && record.getAccountNumber() == null){
-                Double value = MathUtils.add(MathUtils.add(sums.get(2), sums.get(8)), sums.get(11)).doubleValue();
+                //Double value = MathUtils.add(MathUtils.add(sums.get(2), sums.get(9)), sums.get(12)).doubleValue();
+                Double value = getSumFromMap(sums, 2, 13);
                 record.setCurrentAccountBalance(value);
                 sums.put(record.getLineNumber(), new BigDecimal(record.getCurrentAccountBalance()));
-            }else if(record.getLineNumber() != null && (/*record.getLineNumber() == 14 ||*/ record.getLineNumber() == 25)
+            }else if(record.getLineNumber() != null && (/*record.getLineNumber() == 14 ||*/ record.getLineNumber() == 27)
                     && record.getAccountNumber() == null){
-                Double value = MathUtils.add(sums.get(16), sums.get(24)).doubleValue();
+                //Double value = MathUtils.add(sums.get(16), sums.get(24)).doubleValue();
+                Double value = getSumFromMap(sums, 16, 26);
                 record.setCurrentAccountBalance(value);
                 sums.put(record.getLineNumber(), new BigDecimal(record.getCurrentAccountBalance()));
-            }else if(record.getLineNumber() != null && record.getLineNumber() == 26 && record.getAccountNumber() == null){
-                Double value = MathUtils.add(sums.get(13), sums.get(25)).doubleValue();
+            }else if(record.getLineNumber() != null && record.getLineNumber() == 28 &&
+                    record.getAccountNumber() == null){
+                Double value = MathUtils.add(sums.get(14), sums.get(27)).doubleValue();
                 record.setCurrentAccountBalance(value);
                 sums.put(record.getLineNumber(), new BigDecimal(record.getCurrentAccountBalance()));
             }else if(record.getLineNumber() != null && (/*record.getLineNumber() == 27 ||*/ record.getLineNumber() == 35) && record.getAccountNumber() == null){
-                Double value = MathUtils.add(sums.get(28), sums.get(29), sums.get(30)).doubleValue();
+                //Double value = MathUtils.add(sums.get(28), sums.get(29), sums.get(30)).doubleValue();
+                Double value = getSumFromMap(sums, 30, 36);
                 record.setCurrentAccountBalance(value);
                 sums.put(record.getLineNumber(), new BigDecimal(record.getCurrentAccountBalance()));
-            }else if(record.getLineNumber() != null && record.getLineNumber() == 36 && record.getAccountNumber() == null){
+            }else if(record.getLineNumber() != null && record.getLineNumber() == 38 && record.getAccountNumber() == null){
                 lineNumber36Index = i;
-            }else if(record.getLineNumber() != null && record.getLineNumber() == 39){
+            }else if(record.getLineNumber() != null && record.getLineNumber() == 41){
                 record.setCurrentAccountBalance(lineNumber39USDReportSum);
                 sums.put(record.getLineNumber(), new BigDecimal(record.getCurrentAccountBalance()));
-            }else if(record.getLineNumber() != null && (record.getLineNumber() == 43)&& record.getAccountNumber() == null){
-                Double value = MathUtils.add(sums.get(37), sums.get(38), sums.get(39), sums.get(40), sums.get(41), sums.get(42)).doubleValue();
+            }else if(record.getLineNumber() != null && (record.getLineNumber() == 45) && record.getAccountNumber() == null){
+                //Double value = MathUtils.add(sums.get(37), sums.get(38), sums.get(39), sums.get(40), sums.get(41), sums.get(42)).doubleValue();
+                Double value = getSumFromMap(sums, 39, 44);
                 record.setCurrentAccountBalance(value);
                 sums.put(record.getLineNumber(), new BigDecimal(record.getCurrentAccountBalance()));
                 lineNumber36Value = record.getCurrentAccountBalance();
-            }else if(record.getLineNumber() != null && record.getLineNumber() == 51 && record.getAccountNumber() == null){
-                Double value = MathUtils.add(MathUtils.add(sums.get(45), sums.get(49)), sums.get(50)).doubleValue();
+            }else if(record.getLineNumber() != null && record.getLineNumber() == 53 && record.getAccountNumber() == null){
+                //Double value = MathUtils.add(MathUtils.add(sums.get(45), sums.get(49)), sums.get(50)).doubleValue();
+                Double value = getSumFromMap(sums, 47, 52);
                 record.setCurrentAccountBalance(value);
                 sums.put(record.getLineNumber(), new BigDecimal(record.getCurrentAccountBalance()));
-            }else if(record.getLineNumber() != null && record.getLineNumber() == 52 && record.getAccountNumber() == null){
-                Double value = MathUtils.add(MathUtils.add(sums.get(35), sums.get(43)), sums.get(51)).doubleValue();
+            }else if(record.getLineNumber() != null && record.getLineNumber() == 54 && record.getAccountNumber() == null){
+                Double value = MathUtils.add(MathUtils.add(sums.get(37), sums.get(45)), sums.get(53)).doubleValue();
                 record.setCurrentAccountBalance(value);
                 sums.put(record.getLineNumber(), new BigDecimal(record.getCurrentAccountBalance()));
             }else if(record.getLineNumber() != null && sums.get(record.getLineNumber()) != null && record.getCurrentAccountBalance() == null &&
@@ -2299,49 +2305,48 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         int correctionRecordHeader51Index = 0;
         int correctionRecordHeader52Index = 0;
         double value = 0;
-        double valueHeader49 = 0;
         double valueHeader51 = 0;
-        double valueHeader52 = 0;
+        double valueHeader53 = 0;
+        double valueHeader54 = 0;
         for(int i = 0; i < records.size(); i++){
             ConsolidatedBalanceFormRecordDto record = records.get(i);
-            if(record.getAccountNumber() == null && record.getLineNumber() != null && record.getLineNumber() == 26){
+            if(record.getAccountNumber() == null && record.getLineNumber() != null && record.getLineNumber() == 28){
                 totalSumCheck = MathUtils.add(totalSumCheck, record.getCurrentAccountBalance());
             }else if(record.getAccountNumber() == null && record.getLineNumber() != null &&
-                    (record.getLineNumber() == 35 || record.getLineNumber() == 43 || record.getLineNumber() == 45 || record.getLineNumber() == 50)){
+                    (record.getLineNumber() == 37 || record.getLineNumber() == 45 || record.getLineNumber() == 47 || record.getLineNumber() == 52)){
                 totalSumCheck = MathUtils.subtract(totalSumCheck, record.getCurrentAccountBalance());
-            }else if(record.getLineNumber() != null && record.getLineNumber() == 49 && record.getAccountNumber()!= null &&
+            }else if(record.getLineNumber() != null && record.getLineNumber() == 51 && record.getAccountNumber()!= null &&
                     record.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_5440_010)){
                 totalSumCheck = MathUtils.subtract(totalSumCheck, record.getCurrentAccountBalance());
-            }else if(record.getLineNumber() != null && record.getLineNumber() == 49 && record.getAccountNumber()!= null &&
+            }else if(record.getLineNumber() != null && record.getLineNumber() == 51 && record.getAccountNumber()!= null &&
                     record.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_5450_010)){
                 correctionRecordIndex = i;
                 value = record.getCurrentAccountBalance();
-            }else if(record.getLineNumber() != null && record.getLineNumber() == 49 && record.getAccountNumber() == null){
-                correctionRecordHeader49Index = i;
-                valueHeader49 = record.getCurrentAccountBalance();
             }else if(record.getLineNumber() != null && record.getLineNumber() == 51 && record.getAccountNumber() == null){
-                correctionRecordHeader51Index = i;
+                correctionRecordHeader49Index = i;
                 valueHeader51 = record.getCurrentAccountBalance();
-            }else if(record.getLineNumber() != null && record.getLineNumber() == 52 && record.getAccountNumber() == null){
+            }else if(record.getLineNumber() != null && record.getLineNumber() == 53 && record.getAccountNumber() == null){
+                correctionRecordHeader51Index = i;
+                valueHeader53 = record.getCurrentAccountBalance();
+            }else if(record.getLineNumber() != null && record.getLineNumber() == 54 && record.getAccountNumber() == null){
                 correctionRecordHeader52Index = i;
-                valueHeader52 = record.getCurrentAccountBalance();
+                valueHeader54 = record.getCurrentAccountBalance();
             }
         }
 
         double difference = MathUtils.subtract(value, totalSumCheck);
         if(difference > -1 && difference < 1 && correctionRecordIndex > 0){
             records.get(correctionRecordIndex).setCurrentAccountBalance(totalSumCheck);
-            records.get(correctionRecordHeader49Index).setCurrentAccountBalance(MathUtils.subtract(valueHeader49, difference));
-            records.get(correctionRecordHeader51Index).setCurrentAccountBalance(MathUtils.subtract(valueHeader51, difference));
-            records.get(correctionRecordHeader52Index).setCurrentAccountBalance(MathUtils.subtract(valueHeader52, difference));
+            records.get(correctionRecordHeader49Index).setCurrentAccountBalance(MathUtils.subtract(valueHeader51, difference));
+            records.get(correctionRecordHeader51Index).setCurrentAccountBalance(MathUtils.subtract(valueHeader53, difference));
+            records.get(correctionRecordHeader52Index).setCurrentAccountBalance(MathUtils.subtract(valueHeader54, difference));
         }else if(difference > 1 || difference < -1){
-            logger.error("Record '5450.010' (код строки #49) value = " + String.format(Locale.ENGLISH, "%,.2f", value) + ", #26 - #35 - #43 - #45 - #50 - '5440.010'(код строки #49) = " +
+            String errorMessage = "Record '5450.010' (код строки #51) value = " + String.format(Locale.ENGLISH, "%,.2f", value) + ", #28 - #37 - #45 - #47 - #52 - '5440.010'(код строки #51) = " +
                     String.format(Locale.ENGLISH, "%,.2f", totalSumCheck) +
-                    ". Difference can not be ignored = " + String.format(Locale.ENGLISH, "%,.2f", difference) + ". Please make necessary ");
+                    ". Difference can not be ignored = " + String.format(Locale.ENGLISH, "%,.2f", difference);
+            logger.error(errorMessage);
 
-            responseDto.setErrorMessageEn("Record '5450.010' (код строки #49) value = " + String.format(Locale.ENGLISH, "%,.2f", value) + ", #26 - #35 - #43 - #45 - #50 - '5440.010'(код строки #49) = " +
-                    String.format(Locale.ENGLISH, "%,.2f", totalSumCheck) +
-                    ". Difference can not be ignored = " + String.format(Locale.ENGLISH, "%,.2f", difference));
+            responseDto.setErrorMessageEn(errorMessage);
         }
 
         responseDto.setRecords(records);
@@ -2911,6 +2916,10 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         }else{
             Date previousDate = DateUtils.getLastDayOfPreviousMonth(report.getReportDate());
             PeriodicReport previousReport = this.periodReportRepository.findByReportDate(previousDate);
+
+
+            // TODOO:
+            previousReport = null;
 
             List<ConsolidatedKZTForm7RecordDto> records = new ArrayList<>();
             Map<String, Integer> existingFundRecordsMap = new HashedMap();
@@ -4765,6 +4774,16 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
     }
 
     // Helpers
+    private Double getSumFromMap(Map<Integer, BigDecimal> sums, int from , int to){
+        Double value = null;
+        if(sums != null){
+            for(int i = from; i <= to; i++){
+                value = sums.get(i) != null ? MathUtils.add(value, sums.get(i).doubleValue()) : value;
+            }
+        }
+        return value;
+    }
+
     private List<ConsolidatedBalanceFormRecordDto> getConsolidatedBalanceUSDFormLineHeaders(){
         // TODO: get from DB ?
         List<ConsolidatedBalanceFormRecordDto> headers = new ArrayList<>();
@@ -5000,18 +5019,20 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
     private List<ConsolidatedKZTForm7RecordDto> getConsolidatedBalanceKZTForm7LineHeaders(){
         List<ConsolidatedKZTForm7RecordDto> records = new ArrayList<>();
-        records.add(new ConsolidatedKZTForm7RecordDto("Краткосрочные финансовые инвестиции (сумма строк 2-6)", 1));
+        records.add(new ConsolidatedKZTForm7RecordDto("Краткосрочные финансовые инвестиции (сумма строк 2-7)", 1));
         records.add(new ConsolidatedKZTForm7RecordDto("Вклады размещенные, всего, в том числе", 2));
-        records.add(new ConsolidatedKZTForm7RecordDto("Финансовые инвестиции, оцениваемые по справедливой стоимости, изменения которой отражаются в составе прибыли или убытка, всего, в том числе", 3));
-        records.add(new ConsolidatedKZTForm7RecordDto("Финансовые инвестиции, имеющиеся в наличии для продажи, всего в том числе", 4));
-        records.add(new ConsolidatedKZTForm7RecordDto("Финансовые инвестиции, удерживаемые до погашения, всего, в том числе", 5));
-        records.add(new ConsolidatedKZTForm7RecordDto("Прочие краткосрочные финансовые инвестиции, всего, в том числ", 6));
-        records.add(new ConsolidatedKZTForm7RecordDto("Долгосрочные финансовые инвестиции (сумма строк 8-11)", 7));
-        records.add(new ConsolidatedKZTForm7RecordDto("Вклады размещенные, всего, в том числе", 8));
-        records.add(new ConsolidatedKZTForm7RecordDto("Финансовые инвестиции, имеющиеся в наличии для продажи, всего в том числе", 9));
-        records.add(new ConsolidatedKZTForm7RecordDto("Финансовые инвестиции, удерживаемые до погашения, всего, в том числе", 10));
-        records.add(new ConsolidatedKZTForm7RecordDto("Прочие долгосрочные финансовые инвестиции, всего, в том числе", 11));
-        records.add(new ConsolidatedKZTForm7RecordDto("ВСЕГО (сумма строк 1,7)", 12));
+        records.add(new ConsolidatedKZTForm7RecordDto("Финансовые инвестиции, оцениваемые по справедливой стоимости через прибыль или убыток, всего, в том числе", 3));
+        records.add(new ConsolidatedKZTForm7RecordDto("Финансовые инвестиции, оцениваемые по справедливой стоимости через прочий совокупный доход, всего, в том числе", 4));
+        records.add(new ConsolidatedKZTForm7RecordDto("Финансовые инвестиции, оцениваемые по амортизированной стоимости, всего, в том числе", 5));
+        records.add(new ConsolidatedKZTForm7RecordDto("Заемные операции, всего, в том числе", 6));
+        records.add(new ConsolidatedKZTForm7RecordDto("Прочие краткосрочные финансовые инвестиции, всего, в том числе", 7));
+        records.add(new ConsolidatedKZTForm7RecordDto("Долгосрочные финансовые инвестиции (сумма строк 9-13)", 8));
+        records.add(new ConsolidatedKZTForm7RecordDto("Вклады размещенные, всего, в том числе", 9));
+        records.add(new ConsolidatedKZTForm7RecordDto("Финансовые инвестиции, оцениваемые по справедливой стоимости через прочий совокупный доход, всего, в том числе", 10));
+        records.add(new ConsolidatedKZTForm7RecordDto("Финансовые инвестиции, оцениваемые по амортизированной стоимости, всего, в том числе", 11));
+        records.add(new ConsolidatedKZTForm7RecordDto("Заемные операции, всего, в том числе", 12));
+        records.add(new ConsolidatedKZTForm7RecordDto("Прочие долгосрочные финансовые инвестиции, всего, в том числе", 13));
+        records.add(new ConsolidatedKZTForm7RecordDto("ВСЕГО (сумма строк 1,8)", 14));
         return records;
     }
 
@@ -5025,137 +5046,139 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         record2.setAccountNumber(PeriodicReportConstants.ACC_NUM_1033_010);
         headers.add(record2);
 
-        headers.add(new ConsolidatedBalanceFormRecordDto("Вклады размещенные (за вычетом резервов на обесценение) (1150.020-1150.100, 1160.070, 1160.080, 1270.090-1270.110, 1290.070, 1290.090)", 3));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Финансовые инвестиции, оцениваемые по справедливой стоимости, изменения которой отражаются в составе прибыли или убытка (1120, 1270.020, 1270.050)", 4));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Финансовые инвестиции, имеющиеся в наличии для продажи (за вычетом резервов на обесценение) (1140, 1160.050, 1160.060, 1270.040, 1270.070, 1290.050)", 5));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Финансовые инвестиции, удерживаемые до погашения (за вычетом резервов на обесценение) (1130, 1160.030, 1160.040, 1270.030, 1270.060, 1290.030)", 6));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие краткосрочные финансовые инвестиции (1110, 1150.010, 1150.110-1150.140, 1160.010, 1160.020, 1160.090, 1270.010, 1270.080, 1270.120, 1270.130, 1280.010, 1290.010, 1290.110, 1290.130)", 7));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Краткосрочная торговая и прочая дебиторская задолженность (1210-1260, 1280.020, 1290.130, 1610)", 8));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Вклады размещенные (за вычетом резервов на обесценение) (1170, 1180.020, 1180.030, 1290.070)", 3));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Финансовые инвестиции, оцениваемые по справедливой стоимости через прибыль или убыток (1120, 1180.040, 1180.070)", 4));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Финансовые инвестиции, оцениваемые по справедливой стоимости через прочий совокупный доход (1140, 1180.050, 1180.080)", 5));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Финансовые инвестиции, оцениваемые по амортизированной стоимости (за вычетом резервов на обесценение) (1130, 1180.060, 1180.090, 1290.030)", 6));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Заемные операции (за вычетом резервов на обесценение) (1110, 1180.100, 1290.010)", 7));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие краткосрочные финансовые инвестиции (1150.010, 1150.140, 1150.150, 1180.110, 1180.120, 1290.130)", 8));
 
-        ConsolidatedBalanceFormRecordDto record8 = new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.RU_1283_020, 8);
+        headers.add(new ConsolidatedBalanceFormRecordDto("Краткосрочная торговая и прочая дебиторская задолженность (1210, 1250, 1260, 1280.020, 1280.040, 1180.010, 1290.130, 1290.140)", 9));
+        ConsolidatedBalanceFormRecordDto record8 = new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.RU_1283_020, 9);
         record8.setAccountNumber(PeriodicReportConstants.ACC_NUM_1283_020);
         headers.add(record8);
 
-        headers.add(new ConsolidatedBalanceFormRecordDto("Текущие налоговые активы (1410-1430)", 9));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Запасы (1310-1360)", 10));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие краткосрочные активы (1620, 1630)", 11));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Текущие налоговые активы (1410-1430)", 10));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Запасы (1310-1360)", 11));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие краткосрочные активы (1610-1630, 1290.130)", 12));
 
-        ConsolidatedBalanceFormRecordDto record11 = new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.RU_EXPENSES_FUTURE_PERIOD, 11);
+        ConsolidatedBalanceFormRecordDto record11 = new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.RU_EXPENSES_FUTURE_PERIOD, 12);
         record11.setAccountNumber(PeriodicReportConstants.ACC_NUM_1623_010);
         headers.add(record11);
 
-        headers.add(new ConsolidatedBalanceFormRecordDto("Активы (или выбывающие группы), предназначенные для продажи (1510-1520)", 12));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Итого краткосрочных активов (сумма строк 2-12)", 13));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Долгосрочные активы", 14));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Вклады размещенные (за вычетом резервов на обесценение) (2040.010-2040.060, 2050.070, 2050.080, 2170.060, 2170.070, 1290.080, 1290.100)", 15));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Финансовые инвестиции, имеющиеся в наличии для продажи (за вычетом резервов на обесценение) (2030, 2050.050, 2050.060, 2170.030, 2170,050, 1290.060)", 16));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Активы (или выбывающие группы), предназначенные для продажи (1510-1520)", 13));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Итого краткосрочных активов (сумма строк 2-13)", 14));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Долгосрочные активы", 15));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Вклады размещенные (за вычетом резервов на обесценение) (2060, 2070.010, 1290.080)", 16));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Финансовые инвестиции, оцениваемые по справедливой стоимости через прочий совокупный доход (2030, 2070.020, 2070.040)", 17));
 
-        ConsolidatedBalanceFormRecordDto record16_1 = new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.RU_2033_010, 16);
+        ConsolidatedBalanceFormRecordDto record16_1 = new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.RU_2033_010, 17);
         record16_1.setAccountNumber(PeriodicReportConstants.ACC_NUM_2033_010);
         headers.add(record16_1);
 
-        ConsolidatedBalanceFormRecordDto record16_2 = new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.RU_2033_040, 16);
+        ConsolidatedBalanceFormRecordDto record16_2 = new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.RU_2033_040, 17);
         record16_2.setAccountNumber(PeriodicReportConstants.ACC_NUM_2033_040);
         headers.add(record16_2);
 
-        ConsolidatedBalanceFormRecordDto record16_3 = new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.RU_2033_050, 16);
+        ConsolidatedBalanceFormRecordDto record16_3 = new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.RU_2033_050, 17);
         record16_3.setAccountNumber("2033.050");
         headers.add(record16_3);
 
-        headers.add(new ConsolidatedBalanceFormRecordDto("Финансовые инвестиции, удерживаемые до погашения (за вычетом резервов на обесценение) (2020, 2050.030, 2050.040, 2170.020, 2170.040, 1290.040)", 17));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие долгосрочные финансовые инвестиции (2010, 2040.070-2040.100, 2050.010, 2050.020, 2170.010, 2170.080, 1290.020, 1290.120, 1290.130)", 18));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Долгосрочная торговая и прочая дебиторская задолженность (2110-2160, 2180, 2910)", 19));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Инвестиции, учитываемые методом долевого участия (2210)", 20));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Основные средства (2410-2430)", 21));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Нематериальные активы (2730-2750)", 22));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Отложенные налоговые активы (2810)", 23));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие долгосрочные активы (2310-2330, 2510-2520, 2610-2630, 2920-2940)", 24));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Финансовые инвестиции, оцениваемые по амортизированной стоимости (за вычетом резервов на обесценение) (2020, 2070.030, 2070.050, 1290.040)", 18));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Заемные операции (за вычетом резервов на обесценение) (2010, 2070.060, 1290.020)", 19));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие долгосрочные финансовые инвестиции (2040.100, 2070.070, 1290.130)", 20));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Долгосрочная торговая и прочая дебиторская задолженность (2110, 2150, 2160, 2180, 1290.150)", 21));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Инвестиции в дочерние организации, ассоциированные организации и совместные организации (2210)", 22));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Основные средства (2410-2430)", 23));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Нематериальные активы (2730-2750)", 24));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Отложенные налоговые активы (2810)", 25));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие долгосрочные активы (2310-2330, 2910-2950, 1290.130)", 26));
 
-        ConsolidatedBalanceFormRecordDto record24 = new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.RU_EXPENSES_FUTURE_PERIOD, 24);
+        ConsolidatedBalanceFormRecordDto record24 = new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.RU_EXPENSES_FUTURE_PERIOD, 26);
         record24.setAccountNumber(PeriodicReportConstants.ACC_NUM_2923_010);
         headers.add(record24);
 
-        headers.add(new ConsolidatedBalanceFormRecordDto("Итого долгосрочных активов (сумма строк 15-24)", 25));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Всего активы (сумма строк 13, 25)", 26));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Краткосрочные обязательства", 27));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Займы полученные (3010, 3020, 3380.010, 3380.020)", 28));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Итого долгосрочных активов (сумма строк 16-26)", 27));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Всего активы (сумма строк 14, 27)", 28));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Краткосрочные обязательства", 29));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Займы полученные (3010, 3020, 3060.010, 3060.020)", 30));
 
-        ConsolidatedBalanceFormRecordDto record28_1 = new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.RU_3013_010, 28);
+        ConsolidatedBalanceFormRecordDto record28_1 = new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.RU_3013_010, 30);
         record28_1.setAccountNumber(PeriodicReportConstants.ACC_NUM_3013_010);
         headers.add(record28_1);
 
-        ConsolidatedBalanceFormRecordDto record28_2 = new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.RU_3383_010, 28);
+        ConsolidatedBalanceFormRecordDto record28_2 = new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.RU_3383_010, 30);
         record28_2.setAccountNumber(PeriodicReportConstants.ACC_NUM_3383_010);
         headers.add(record28_2);
 
-        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие краткосрочные финансовые обязательства (3040, 3050, 3380.030-3380.050, 3390.010)", 29));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие краткосрочные финансовые обязательства (3050, 3060.030-3060.050)", 31));
 
-        ConsolidatedBalanceFormRecordDto record29 = new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.RU_3053_060, 29);
+        ConsolidatedBalanceFormRecordDto record29 = new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.RU_3053_060, 31);
         record29.setAccountNumber(PeriodicReportConstants.ACC_NUM_3053_060);
         headers.add(record29);
 
-        headers.add(new ConsolidatedBalanceFormRecordDto("Краткосрочная торговая и прочая кредиторская задолженность (3310-3340, 3360, 3390.020, 3510)", 30));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Краткосрочная торговая и прочая кредиторская задолженность (3310, 3360, 3390.020, 3390.030)", 32));
 
-        ConsolidatedBalanceFormRecordDto record30 = new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.RU_3393_020, 30);
+        ConsolidatedBalanceFormRecordDto record30 = new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.RU_3393_020, 32);
         record30.setAccountNumber(PeriodicReportConstants.ACC_NUM_3393_020);
         headers.add(record30);
 
 
-        headers.add(new ConsolidatedBalanceFormRecordDto("Краткосрочные резервы (3410-3440)", 31));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Текущие налоговые обязательства (3110-3190, 3210-3240)", 32));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие краткосрочные обязательства (3030, 3350, 3370, 3520, 3540)", 33));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Обязательства выбывающих групп, предназначенных для продажи (3530)", 34));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Итого краткосрочных обязательств (сумма строк 28-34)", 35));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Долгосрочные  обязательства", 36));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Займы полученные (4010, 4020, 4160.010, 4160.020)", 37));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие долгосрочные финансовые обязательства (4030, 4160.030-4160.040)", 38));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Долгосрочная торговая и прочая кредиторская задолженность (4110-4150, 4170, 4410)", 39));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Краткосрочные резервы (3410-3440)", 33));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Текущие налоговые обязательства (3110-3190, 3210-3250))", 34));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие краткосрочные обязательства (3030, 3350, 3510, 3520, 3540)", 35));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Обязательства выбывающих групп, предназначенных для продажи (3530)", 36));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Итого краткосрочных обязательств (сумма строк 30-36)", 37));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Долгосрочные  обязательства", 38));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Займы полученные (4010, 4020, 4040.010, 4040.020)", 39));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие долгосрочные финансовые обязательства (4030, 4040.030-4040.040)", 40));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Долгосрочная торговая и прочая кредиторская задолженность (4110-4150, 4170, 4410)", 41));
 
-        ConsolidatedBalanceFormRecordDto record39 = new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.RU_4173_010, 39);
+        ConsolidatedBalanceFormRecordDto record39 = new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.RU_4173_010, 41);
         record39.setAccountNumber(PeriodicReportConstants.ACC_NUM_4173_010);
         headers.add(record39);
 
-        headers.add(new ConsolidatedBalanceFormRecordDto("Долгосрочные резервы (4210-4240)", 40));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Отложенные налоговые обязательства (4310)", 41));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие долгосрочные обязательства (4420, 4430)", 42));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Итого долгосрочных обязательств (сумма строк 37-42)", 43));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Капитал", 44));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Уставный капитал (5010-5030)", 45));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Долгосрочные резервы (4210-4240)", 42));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Отложенные налоговые обязательства (4310)", 43));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие долгосрочные обязательства (4410-4430,4180)", 44));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Итого долгосрочных обязательств (сумма строк 39-44)", 45));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Капитал", 46));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Уставный капитал (5010-5030)", 47));
 
-        ConsolidatedBalanceFormRecordDto record45_1 = new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.COMMON_SHARES, 45);
+        ConsolidatedBalanceFormRecordDto record45_1 = new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.COMMON_SHARES, 47);
         record45_1.setAccountNumber(PeriodicReportConstants.ACC_NUM_5021_010);
         headers.add(record45_1);
 
-        ConsolidatedBalanceFormRecordDto record45_2 = new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.COMMON_SHARES, 45);
+        ConsolidatedBalanceFormRecordDto record45_2 = new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.COMMON_SHARES, 47);
         record45_2.setAccountNumber(PeriodicReportConstants.ACC_NUM_5022_010);
         headers.add(record45_2);
 
-        headers.add(new ConsolidatedBalanceFormRecordDto("Эмиссионный доход (5310)", 46));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Выкупленные собственные долевые инструменты (5210)", 47));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Резервный капитал (5410, 5460)", 48));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие резервы (5420-5450)", 49));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Дополнительно оплаченный капитал (5310, 5320)", 48));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Выкупленные собственные долевые инструменты (5210)", 49));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Резервный капитал (5410, 5460)", 50));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие резервы (5420, 5440, 5450, 5470)", 51));
 
-        ConsolidatedBalanceFormRecordDto record49_1 = new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.RU_5440_010_b, 49);
+        ConsolidatedBalanceFormRecordDto record49_1 = new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.RU_5440_010_b, 51);
         record49_1.setAccountNumber(PeriodicReportConstants.ACC_NUM_5440_010);
         headers.add(record49_1);
 
-        ConsolidatedBalanceFormRecordDto record49_2 = new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.RU_5450_010, 49);
+        ConsolidatedBalanceFormRecordDto record49_2 = new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.RU_5450_010, 51);
         record49_2.setAccountNumber(PeriodicReportConstants.ACC_NUM_5450_010);
         headers.add(record49_2);
 
-        headers.add(new ConsolidatedBalanceFormRecordDto("Нераспределенная прибыль (непокрытый убыток) (5510, 5520)", 50));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Нераспределенная прибыль (непокрытый убыток) (5510, 5520)", 52));
 
 
-        ConsolidatedBalanceFormRecordDto record50_1 = new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.RU_5510_010, 50);
+        ConsolidatedBalanceFormRecordDto record50_1 = new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.RU_5510_010, 52);
         record50_1.setAccountNumber(PeriodicReportConstants.ACC_NUM_5510_010);
         headers.add(record50_1);
 
-        ConsolidatedBalanceFormRecordDto record50_2 = new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.RU_5520_010, 50);
+        ConsolidatedBalanceFormRecordDto record50_2 = new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.RU_5520_010, 52);
         record50_2.setAccountNumber(PeriodicReportConstants.ACC_NUM_5520_010);
         headers.add(record50_2);
 
-        headers.add(new ConsolidatedBalanceFormRecordDto("Итого капитал (сумма строк 45-50)", 51));
-        headers.add(new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.USD_FORM_1_LAST_RECORD, 52));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Итого капитал (сумма строк 47-52)", 53));
+        headers.add(new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.USD_FORM_1_LAST_RECORD, 54));
         return headers;
     }
 
