@@ -126,9 +126,10 @@
                         <!--<li><a [routerLink]="['/hf/fundSelection']">Fund Selection </a></li>-->
                         <!--<li><a [routerLink]="['/hf/portfolio']">Portfolio </a></li>-->
                         <!--<li><a [routerLink]="['/hf/report']">Report </a></li>-->
-                        <li role="separator" class="divider"></li>
                         <!--<li><a [routerLink]="['/hf/fundProfile/0']">New Fund </a></li>-->
                         <li *ngIf="showHedgeFundsEditor()"><a [routerLink]="['/hf/managerProfile/0']">New Manager </a></li>
+                        <li role="separator" class="divider"></li>
+                        <li *ngIf="showHedgeFundsEditor()"><a [routerLink]="['/hf/screening/']">Screening </a></li>
 
                     </ul>
                 </li>

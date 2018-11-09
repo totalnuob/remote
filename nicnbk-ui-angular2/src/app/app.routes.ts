@@ -89,6 +89,7 @@ import {TypedLookupValuesNBReportingComponent} from "./reporting/typed.lookup.va
 import {PeriodicDataNBReportingComponent} from "./reporting/periodic.data.nb.reporting.component";
 import {MatchingLookupValuesNBReportingComponent} from "./reporting/matching.lookup.values.nb.reporting.component";
 import {ICMeetingTopicEditComponent} from "./corpmeetings/ic-meeting-topic-edit.component";
+import {HFScreeningComponent} from "./hf/hf.screening.component";
 
 
 const routes: Routes  = [
@@ -273,6 +274,11 @@ const routes: Routes  = [
     {
         path: 'hf/managerProfile/:id',
         component: HFManagerProfileComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'hf/screening',
+        component: HFScreeningComponent,
         canActivate: [AuthGuard]
     },
     /* Private Equity ************************************/

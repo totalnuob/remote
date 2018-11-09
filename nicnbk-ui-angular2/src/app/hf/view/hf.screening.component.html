@@ -1,0 +1,115 @@
+<div class="container">
+
+    <div class="row">
+        <div class="row top-buffer" >
+            <div class="col-md-12">
+                <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
+                </div>
+            </div>
+        </div>
+        <div class="row top-buffer" >
+            <div class="col-md-12">
+                <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <br/>
+
+    <div class="jumbotron">
+        <br/>
+        <form (ngSubmit)="search()">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-9">
+                        <div class="form-group">
+                            <label for="fundName">SCREENING SEARCH</label>
+                            <input type="text" class="form-control" id="fundName" [(ngModel)]="searchParams.name" name="fundName"
+                            placeholder="Searching..."
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--<div class="row">-->
+                <!--<div class="col-md-12">-->
+                    <!--<div class="col-md-3">-->
+                        <!--<div class="form-group">-->
+                            <!--<label for="strategy">Strategy</label>-->
+                            <!--<select class="form-control" id="strategy">-->
+                                <!--<option value="0">-&#45;&#45;</option>-->
+                                <!--<option *ngFor = "let item of strategyList" [value]="item.code">{{item.nameEn}}</option>-->
+                            <!--</select>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="col-md-3">-->
+                        <!--<div class="form-group">-->
+                            <!--<label for="status">Status</label>-->
+                            <!--<select class="form-control" id="status">-->
+                                <!--<option value="0">-&#45;&#45;</option>-->
+                                <!--<option *ngFor = "let item of statusList" [value]="item.code">{{item.nameEn}}</option>-->
+                            <!--</select>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <div class="row">
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-success pull-right">Search</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div>
+        <label>Total found: <span>{{searchResult?.totalElements > 0 ?  searchResult?.totalElements : 0}}</span></label>
+    </div>
+    <div class="row withpadding" style="position: relative; min-height: 80px;">
+        <div class="row pull-right">
+            <ul class="pagination" *ngIf="searchResult?.showPageFrom > 0">
+                <li><a *ngIf="searchResult?.showPageFrom > 1" (click)="search(searchResult.showPageFrom - 1)">&laquo;</a></li>
+                <li *ngFor="let i of range(searchResult.showPageFrom, searchResult.showPageTo)" [class.active]="i == searchResult.currentPage">
+                    <a (click)="search(i)">{{i}}</a>
+                </li>
+                <li><a *ngIf="searchResult.showPageTo < searchResult.totalPages" (click)="search(searchResult.showPageTo + 1)">&raquo;</a></li>
+            </ul>
+        </div>
+        <table [ngBusy]="busy" class="table table-hover">
+            <thead>
+            <tr>
+                <!--<th>&nbsp;</th>-->
+                <th>DATE</th>
+                <th>CREATED BY</th>
+                <th>UPDATED</th>
+                <th>UPDATED BY</th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+            <tr *ngFor = "let record of records">
+                <!--<td width="5%"></td>-->
+                <td width="30%"><a></a>{{record.date}}</td>
+                <td width="10%">{{fund.owner}}</td>
+                <td width="10%">{{fund.updateDate}}</td>
+                <td width="10%">{{fund.updater}}</td>
+                <!--<td width="5%">-->
+                    <!--<a><i class="glyphicon glyphicon-file"></i></a>-->
+                <!--</td>-->
+            </tr>
+            </tbody>
+        </table>
+
+        <!--</div>-->
+        <div class="row pull-right">
+            <ul class="pagination" *ngIf="searchResult?.showPageFrom > 0">
+                <li><a *ngIf="searchResult?.showPageFrom > 1" (click)="search(searchResult.showPageFrom - 1)">&laquo;</a></li>
+                <li *ngFor="let i of range(searchResult.showPageFrom, searchResult.showPageTo)" [class.active]="i == searchResult.currentPage">
+                    <a (click)="search(i)">{{i}}</a>
+                </li>
+                <li><a *ngIf="searchResult.showPageTo < searchResult.totalPages" (click)="search(searchResult.showPageTo + 1)">&raquo;</a></li>
+            </ul>
+        </div>
+    </div>
+</div>

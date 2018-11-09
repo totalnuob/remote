@@ -102,6 +102,7 @@ import {CurrencyRatesLookupValuesNBReportingComponent} from "./reporting/currenc
 import {TypedLookupValuesNBReportingComponent} from "./reporting/typed.lookup.values.nb.reporting.component";
 import {PeriodicDataNBReportingComponent} from "./reporting/periodic.data.nb.reporting.component";
 import {MatchingLookupValuesNBReportingComponent} from "./reporting/matching.lookup.values.nb.reporting.component";
+import {HFScreeningComponent} from "./hf/hf.screening.component";
 //import {CorpMeetingEditComponent} from "./corpmeetings/ic-meeting-topic-edit.component";
 
 @NgModule({
@@ -134,7 +135,7 @@ import {MatchingLookupValuesNBReportingComponent} from "./reporting/matching.loo
         MainNBReportingComponent, InputFileUploadNBReportingComponent,
 
         HFDashboardComponent, HFFundSearchComponent, HFFundSelectionComponent, HFPortfolioComponent, HFReportComponent,
-        HFFundProfileComponent, HFManagerProfileComponent, HFManagerSearchComponent,
+        HFFundProfileComponent, HFManagerProfileComponent, HFManagerSearchComponent, HFScreeningComponent,
         PEFundProfileComponent, PEFirmProfileComponent, PEFirmSearchComponent, PEFundReportComponent,
         AccessDeniedComponent,NotFoundComponent,
         LookupValuesNBReportingComponent, CurrencyRatesLookupValuesNBReportingComponent, TypedLookupValuesNBReportingComponent,PeriodicDataNBReportingComponent,MatchingLookupValuesNBReportingComponent,
