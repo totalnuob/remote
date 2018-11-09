@@ -30,7 +30,7 @@ public class ConsolidatedKZTForm7RecordDto implements BaseDto {
 
     private boolean becameZero;
 
-    private String currency = "USD";
+    private String currency;
 
 
     public ConsolidatedKZTForm7RecordDto(){}
