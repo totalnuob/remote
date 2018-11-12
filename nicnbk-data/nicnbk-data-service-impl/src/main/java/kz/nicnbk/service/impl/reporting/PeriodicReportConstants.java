@@ -138,6 +138,9 @@ public final class PeriodicReportConstants {
     public static final String ACC_NUM_3383_010 = "3383.010";
     public static final String RU_3383_010 = "Начисленные расходы в виде вознаграждения по краткосрочным банковским займам полученным";
 
+    public static final String ACC_NUM_3063_010 = "3063.010";
+    public static final String RU_3063_010 = "Начисленные расходы в виде вознаграждения по краткосрочным банковским займам полученным";
+
     public static final String ACC_NUM_3393_020 = "3393.020";
     public static final String RU_3393_020 = "Прочая краткосрочная кредиторская задолженность";
 

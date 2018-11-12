@@ -2152,9 +2152,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         String record3013_010AccountNumber = PeriodicReportConstants.ACC_NUM_3013_010;
         double record3013_010 = 0;
 
-        String record3383_010Name = PeriodicReportConstants.RU_3383_010;
-        String record3383_010AccountNumber = PeriodicReportConstants.ACC_NUM_3383_010;
-        double record3383_010 = 0;
+        String record3063_010Name = PeriodicReportConstants.RU_3063_010;
+        String record3063_010AccountNumber = PeriodicReportConstants.ACC_NUM_3063_010;
+        double record3063_010 = 0;
 
         ListResponseDto KZTForm13ResponseDto = generateConsolidatedBalanceKZTForm13(reportId);
         if(KZTForm13ResponseDto.getStatus() == ResponseStatusType.FAIL){
@@ -2168,7 +2168,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                     record3013_010 = MathUtils.add(record3013_010, record.getDebtEndPeriod());
                 }
                 if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(record3013_010AccountNumber) && record.getInterestEndPeriod() != null){
-                    record3383_010 = MathUtils.add(record3383_010, record.getInterestEndPeriod());
+                    record3063_010 = MathUtils.add(record3063_010, record.getInterestEndPeriod());
                 }
             }
         }
@@ -2301,9 +2301,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             }else if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(record3013_010AccountNumber) &&
                     record.getName().equalsIgnoreCase(record3013_010Name)){
                 record.setCurrentAccountBalance(record3013_010);
-            }else if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(record3383_010AccountNumber) &&
-                    record.getName().equalsIgnoreCase(record3383_010Name)){
-                record.setCurrentAccountBalance(record3383_010);
+            }else if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(record3063_010AccountNumber) &&
+                    record.getName().equalsIgnoreCase(record3063_010Name)){
+                record.setCurrentAccountBalance(record3063_010);
             }else if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(record3393_020AccountNumber) &&
                     record.getName().equalsIgnoreCase(record3393_020Name)){
                 record.setCurrentAccountBalance(record3393_020);
@@ -3272,6 +3272,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         record.isEmpty()){
                     // do not add
                 }else{
+                    if(StringUtils.isNotEmpty(record.getAccountNumber()) && record.getLineNumber() == 10) {
+                        record.setCurrency("USD");
+                    }
                     nonEmptyRecords.add(record);
                 }
             }
@@ -5262,8 +5265,8 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         record28_1.setAccountNumber(PeriodicReportConstants.ACC_NUM_3013_010);
         headers.add(record28_1);
 
-        ConsolidatedBalanceFormRecordDto record28_2 = new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.RU_3383_010, 30);
-        record28_2.setAccountNumber(PeriodicReportConstants.ACC_NUM_3383_010);
+        ConsolidatedBalanceFormRecordDto record28_2 = new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.RU_3063_010, 30);
+        record28_2.setAccountNumber(PeriodicReportConstants.ACC_NUM_3063_010);
         headers.add(record28_2);
 
         headers.add(new ConsolidatedBalanceFormRecordDto("Прочие краткосрочные финансовые обязательства (3050, 3060.030-3060.050)", 31));
