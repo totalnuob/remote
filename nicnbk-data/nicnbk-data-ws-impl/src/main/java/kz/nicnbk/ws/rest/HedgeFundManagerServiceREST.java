@@ -131,7 +131,6 @@ public class HedgeFundManagerServiceREST extends CommonServiceREST{
         }
     }
 
-    @PreAuthorize("hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/research/page/delete/{pageId}", method = RequestMethod.GET)
     public ResponseEntity<?> delete(@PathVariable long pageId){
 
@@ -148,7 +147,6 @@ public class HedgeFundManagerServiceREST extends CommonServiceREST{
         }
     }
 
-    @PreAuthorize("hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(method = RequestMethod.POST, value = "/research/page/attachment/upload/{researchPageId}")
     public ResponseEntity<?> handleFileUpload(@PathVariable("researchPageId") long researchPageId,
                                               @RequestParam(value = "file", required = false) MultipartFile[] files) {

@@ -40,7 +40,6 @@ export class HFResearchFormComponent extends CommonFormViewComponent {
     ){
         super(router);
 
-        this.researchForm.manager = new HFManager();
         this.moduleAccessChecker = new ModuleAccessCheckerService;
 
 
@@ -51,26 +50,29 @@ export class HFResearchFormComponent extends CommonFormViewComponent {
         this.sub = this.route
             .params
             .subscribe(params => {
-                    this.managerIdParam = +params['id'];
-                    console.log(params);
-                    if(this.managerIdParam > 0){
-                        this.busy = this.service.getResearch(this.managerIdParam)
-                            .subscribe(
-                                data => {
+                this.managerIdParam = +params['id'];
+                console.log(params);
+                if(this.managerIdParam > 0) {
+                    this.busy = this.service.getResearch(this.managerIdParam)
+                        .subscribe(
+                            data => {
+                                if (data != null && data.id != 0) {
                                     this.researchForm = data;
                                     this.onNumberChange(this.researchForm);
-                                },
-                                (error: ErrorResponse) => {
-                                    this.errorMessage = "Error loading manager research form";
-                                    if(error && !error.isEmpty()){
-                                        this.processErrorMessage(error);
-                                    }
-                                    this.postAction(null, null);
+                                } else {
+                                    this.researchForm.manager = new HFManager();
                                 }
-                            );
-                    } else {
-
-                    }
+                                console.log(this.researchForm);
+                            },
+                            (error:ErrorResponse) => {
+                                this.errorMessage = "Error loading manager research form";
+                                if (error && !error.isEmpty()) {
+                                    this.processErrorMessage(error);
+                                }
+                                this.postAction(null, null);
+                            }
+                        );
+                }
             });
 
     }
@@ -80,14 +82,16 @@ export class HFResearchFormComponent extends CommonFormViewComponent {
         if(this.researchForm.allocationSize) {
             this.researchForm.allocationSize = Number(this.researchForm.allocationSize.toString().replace(/,/g, ''));
         }
+        this.researchForm.manager.id = this.managerIdParam;
 
-        console.log(this.researchForm.allocationSize);
+        console.log(this.researchForm);
 
         this.service.researchSave(this.researchForm)
             .subscribe(
                 response => {
                     this.researchForm.id = response.entityId;
                     this.researchForm.creationDate = response.creationDate;
+                    this.postAction("Successfully saved.", null);
                 },
                 (error: ErrorResponse) => {
                     this.errorMessage = "Error saving memo";

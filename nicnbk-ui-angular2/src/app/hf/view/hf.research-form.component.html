@@ -15,14 +15,14 @@
                 <div class="col-md-12">
                     <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
                     </div>
-                    <div class="alert alert-info" *ngIf="!submitted && successMessage != null"><span>{{successMessage}}</span>
+                    <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
                     </div>
                 </div>
             </div>
             <div>
                 <form (ngSubmit)="save()" #research="ngForm" class="well span">
                     <div class="row text-uppercase withpadding" style="font-size: 20px">
-                        <b>{{researchForm.manager.name}}</b>
+                        <b>{{researchForm?.manager?.name}}</b>
                     </div>
                     <br>
                     <div class="row top-buffer">

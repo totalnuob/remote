@@ -33,7 +33,6 @@ export class HFResearchPageComponent extends CommonFormViewComponent implements 
     public researchPageIdParam: number;
 
     researchPage = new HFResearchPage;
-    submitted = false;
 
     public uploadFiles: Array<any> = [];
 
@@ -84,7 +83,6 @@ export class HFResearchPageComponent extends CommonFormViewComponent implements 
         this.researchPage.manager = new HFManager();
         this.researchPage.manager.id = this.managerIdParam;
         this.researchPage.date = $('#researchDate').val();
-        console.log(this.researchPage);
 
         this.service.saveResearchPage(this.researchPage)
             .subscribe(
@@ -107,19 +105,15 @@ export class HFResearchPageComponent extends CommonFormViewComponent implements 
                                     for (var i = 0; i < res.length; i++) {
                                         this.researchPage.files.push(res[i]);
                                     }
-
                                     this.postAction("Successfully saved.", null);
-                                    this.submitted = true;
                                 },
                                 error => {
                                     // TODO: don't save research page?
 
                                     this.postAction(null, "Error uploading attachments.");
-                                    this.submitted = false;
                             });
                     } else {
                         this.postAction("Successfully saved.", null);
-                        this.submitted = true;
                     }
                 },
                 (error: ErrorResponse) => {
@@ -145,7 +139,6 @@ export class HFResearchPageComponent extends CommonFormViewComponent implements 
                         }
 
                         this.postAction("Attachment deleted.", null);
-                        this.submitted = false;
                     },
                     (error: ErrorResponse) => {
                         this.errorMessage = "Error deleting attachment";
@@ -153,7 +146,6 @@ export class HFResearchPageComponent extends CommonFormViewComponent implements 
                             this.processErrorMessage(error);
                         }
                         this.postAction(null, null);
-                        this.submitted = false;
                     }
                 );
         }

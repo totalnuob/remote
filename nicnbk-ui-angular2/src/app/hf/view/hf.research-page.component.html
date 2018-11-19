@@ -11,6 +11,14 @@
                 </ol>
             </div>
         </div>
+        <div class="row top-buffer" >
+            <div class="col-md-12">
+                <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+                </div>
+                <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
+                </div>
+            </div>
+        </div>
         <div class="row withpadding" style="position: relative; min-height: 80px;">
 
             <div>

@@ -51,7 +51,6 @@ export class HFResearchComponent extends CommonFormViewComponent {
             .subscribe(
                 searchResult => {
                     this.foundEntities = searchResult;
-                    console.log(this.foundEntities);
                 },
                 (error: ErrorResponse) => {
                     this.errorMessage = "Error searching managers";
