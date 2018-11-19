@@ -2266,7 +2266,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         }
         List<ConsolidatedBalanceFormRecordDto> form2Records = KZTForm2ResponseDto.getRecords();
         for(int i = form2Records.size() - 1; i >= 0; i--){
-            if(form2Records.get(i).getAccountNumber() == null && form2Records.get(i).getLineNumber() != null && form2Records.get(i).getLineNumber() == 20 &&
+            if(form2Records.get(i).getAccountNumber() == null && form2Records.get(i).getLineNumber() != null && form2Records.get(i).getLineNumber() == 21 &&
                     form2Records.get(i).getCurrentAccountBalance() != null){
                 record5510_010 = form2Records.get(i).getCurrentAccountBalance();
                 break;
@@ -2683,16 +2683,24 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         List<ConsolidatedBalanceFormRecordDto> newPreviousRecords = new ArrayList<>();
                         int added = 0;
                         for (ConsolidatedBalanceFormRecordDto previousRecord : previousRecords) {
-                            if (previousRecord.getLineNumber() == 6) {
+                            if (previousRecord.getLineNumber() == 6  && previousRecord.getAccountNumber() == null) {
                                 ConsolidatedBalanceFormRecordDto dto = new ConsolidatedBalanceFormRecordDto();
                                 dto.setLineNumber(6);
                                 newPreviousRecords.add(dto);
                                 added++;
-                            }else if(previousRecord.getLineNumber() == 16){
+                            }else if(previousRecord.getLineNumber() == 8 && previousRecord.getAccountNumber() == null){
+                                previousRecord.setName("Доходы (расходы) от изменения стоимости ценных бумаг, оцениваемых по справедливой стоимости через прочий совокупный доход (6150.020, 6150.030, 7330.020, 7330.030)");
+                            }else if(previousRecord.getLineNumber() == 10 && previousRecord.getAccountNumber() == null){
+                                previousRecord.setName("Прочие доходы (6210-6240, 6260, 6110.080, 6110.320, 6110.330, 6110.340, 6110.350, 6120, 6130, 6140, 6150.060, 6160.030, 6170, 6280.060-6280.080, 6280.100, 6110.280-6110.310, 6400)");
+                            }else if(previousRecord.getLineNumber() == 12 && previousRecord.getAccountNumber() == null){
+                                previousRecord.setName("Расходы в виде вознаграждения по заемным операциям и аренде (7310.010-7310.040, 7310.080, 7310.090, 7310.190-7310.220, 7320.010)");
+                            }else if(previousRecord.getLineNumber() == 15 && previousRecord.getAccountNumber() == null){
+                                previousRecord.setName("Прочие расходы (7310.050-7310.070, 7310.150-7310.160, 7310.230, 7310.240, 7310.250, 7330.060, 7340.030, 7410, 7420, 7440, 7470.060-7470.090, 7350, 7600)");
+                            }else if(previousRecord.getLineNumber() == 16  && previousRecord.getAccountNumber() == null){
                                 previousRecord.setName("Прибыль (убыток) до налогообложения (сумма строк 3-16)");
-                            }else if(previousRecord.getLineNumber() == 18){
+                            }else if(previousRecord.getLineNumber() == 18  && previousRecord.getAccountNumber() == null){
                                 previousRecord.setName("Прибыль (убыток) после налогообложения от продолжающейся деятельности (сумма строк 17, 18)");
-                            }else if(previousRecord.getLineNumber() == 20){
+                            }else if(previousRecord.getLineNumber() == 20  && previousRecord.getAccountNumber() == null){
                                 previousRecord.setName("Чистая прибыль (убыток) (сумма строк 19, 20)");
                             }
 
@@ -2865,7 +2873,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
         List<ConsolidatedBalanceFormRecordDto> records = getConsolidatedTotalIncomeKZTForm3LineHeaders();
 
-        double record1 = 0;
+        Double record1 = 0.0;
 
         ListResponseDto KZTForm2ResponseDto = generateConsolidatedIncomeExpenseKZTForm2(reportId);
         if(KZTForm2ResponseDto.getStatus() == ResponseStatusType.FAIL){
@@ -2876,14 +2884,14 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         if(form2Records != null){
             for(int i = form2Records.size() - 1; i >= 0; i--){
                 ConsolidatedBalanceFormRecordDto record = form2Records.get(i);
-                if(record.getAccountNumber() == null && record.getLineNumber() != null && record.getLineNumber() == 20){
+                if(record.getAccountNumber() == null && record.getLineNumber() != null && record.getLineNumber() == 21){
                     record1 = record.getCurrentAccountBalance();
                 }
             }
         }
 
-        double record4 = 0;
-        double record6 = 0;
+        Double record4 = 0.0;
+        Double record6 = 0.0;
 
         ListResponseDto responseDtoKZTForm1 = generateConsolidatedBalanceKZTForm1(reportId);
         if(responseDtoKZTForm1.getStatus() == ResponseStatusType.FAIL){
@@ -5114,13 +5122,13 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         headers.add(new ConsolidatedBalanceFormRecordDto("Выручка (6010-6030)", 1));
         headers.add(new ConsolidatedBalanceFormRecordDto("Себестоимость реализованной продукции и услуг (7010)", 2));
         headers.add(new ConsolidatedBalanceFormRecordDto("Валовая прибыль (убыток) (сумма строк 1, 2)", 3));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Доходы в виде вознаграждения по размещенным вкладам (6110.090-6110.130, 6110.210-6110.250)", 4));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Доходы в виде вознаграждения по размещенным вкладам (6110.090-6110.110, 6110.220, 6110.230)", 4));
         headers.add(new ConsolidatedBalanceFormRecordDto("Доходы в виде вознаграждения по приобретенным ценным бумагам (6110.030-6110.070, 6110.170-6110.200)", 5));
         headers.add(new ConsolidatedBalanceFormRecordDto("Доходы в виде вознаграждения по размещенным вкладам (6110.090-6110.110, 6110.220, 6110.230)", 6));
 
         headers.add(new ConsolidatedBalanceFormRecordDto("Доходы (расходы) от купли-продажи ценных бумаг (6280.010-6280.030, 7470.010-7470.030)", 7));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Доходы (расходы) от изменения стоимости ценных бумаг, оцениваемых по справедливой стоимости, изменения которой отражаются в составе прибыли или убытка (6150.010, 7330.010)", 8));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Доходы (расходы) от изменения стоимости ценных бумаг, имеющихся в наличии для продажи (6150.020, 6150.030, 7330.020, 7330.030)", 9));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Доходы (расходы) от изменения стоимости ценных бумаг, оцениваемых по справедливой стоимости через прибыль или убыток (6150.010, 7330.010)", 8));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Доходы (расходы) от изменения стоимости ценных бумаг, оцениваемых по справедливой стоимости через прочий совокупный доход (6150.020, 6150.030, 7330.020, 7330.030)", 9));
 
         ConsolidatedBalanceFormRecordDto record6150_030 = new ConsolidatedBalanceFormRecordDto("Доходы от изменения справедливой стоимости долгосрочных финансовых активов, оцениваемых по справедливой стоимости через прочий совокупный доход", 9);
         record6150_030.setAccountNumber(PeriodicReportConstants.ACC_NUM_6150_030);
@@ -5131,14 +5139,14 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         headers.add(record7330_030);
 
         headers.add(new ConsolidatedBalanceFormRecordDto("Доходы (расходы) от переоценки иностранной валюты (6250, 7430)", 10));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие доходы (6210-6240, 6260, 6270, 6110.010, 6110.020, 6110.080, 6110.140, 6110.260, 6110.270, 6110.320, 6110.330, 6120, 6130, 6140, 6150.040, 6150.050,6160, 6280.040-6280.080, 6290, 6110.150, 6110.160, 6110.280-6110.310, 6400)", 11));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие доходы (6210-6240, 6260, 6110.080, 6110.320, 6110.330, 6110.340, 6110.350, 6120, 6130, 6140, 6150.060, 6160.030, 6170, 6280.060-6280.080, 6280.100, 6110.280-6110.310, 6400)", 11));
 
         ConsolidatedBalanceFormRecordDto record6283_080 = new ConsolidatedBalanceFormRecordDto("Прочие доходы", 11);
         record6283_080.setAccountNumber(PeriodicReportConstants.ACC_NUM_6283_080);
         headers.add(record6283_080);
 
         headers.add(new ConsolidatedBalanceFormRecordDto("Расходы в виде вознаграждения по приобретенным ценным бумагам (7310.100-7310.130)", 12));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Расходы в виде вознаграждения по полученным займам и финансовой аренде (7310.010-7310.040, 7310.080, 7310.090, 7310.190-7310.220, 7320.010)", 13));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Расходы в виде вознаграждения по заемным операциям и аренде (7310.010-7310.040, 7310.080, 7310.090, 7310.190-7310.220, 7320.010)", 13));
 
         ConsolidatedBalanceFormRecordDto record7313_010 = new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.RU_7313_010, 13);
         record7313_010.setAccountNumber(PeriodicReportConstants.ACC_NUM_7313_010);
@@ -5146,15 +5154,15 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
         headers.add(new ConsolidatedBalanceFormRecordDto("Расходы по реализации (7110)", 14));
         headers.add(new ConsolidatedBalanceFormRecordDto("Административные расходы (7210)", 15));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие расходы (7310.050-7310.070, 7310.140-7310.180, 7310.230, 7310.240, 7330.040, 7330.050, 7340.010-7340.030, 7410, 7420, 7440-7460, 7470.040-7470.080, 7480, 7600)", 16));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие расходы (7310.050-7310.070, 7310.150-7310.160, 7310.230, 7310.240, 7310.250, 7330.060, 7340.030, 7410, 7420, 7440, 7470.060-7470.090, 7350, 7600)", 16));
 
         ConsolidatedBalanceFormRecordDto record7473_080 = new ConsolidatedBalanceFormRecordDto("Прочие расходы", 16);
         record7473_080.setAccountNumber(PeriodicReportConstants.ACC_NUM_7473_080);
         headers.add(record7473_080);
 
-        headers.add(new ConsolidatedBalanceFormRecordDto("Прибыль (убыток) до налогообложения (сумма строк 3-15)", 17));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прибыль (убыток) до налогообложения (сумма строк 3-16)", 17));
         headers.add(new ConsolidatedBalanceFormRecordDto("Расходы по подоходному налогу (7710)", 18));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Прибыль (убыток) после налогообложения от продолжающейся деятельности (сумма строк 16, 17)", 19));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прибыль (убыток) после налогообложения от продолжающейся деятельности (сумма строк 17, 18)", 19));
         headers.add(new ConsolidatedBalanceFormRecordDto("Прибыль (убыток) от прекращенной деятельности (6310, 7510)", 20));
         headers.add(new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.USD_FORM_2_LAST_RECORD, 21));
         return headers;
