@@ -1,6 +1,7 @@
 package kz.nicnbk.service.impl.reporting;
 
 import com.sun.org.apache.xalan.internal.xsltc.compiler.util.StringStack;
+import kz.nicnbk.common.service.exception.ExcelFileParseException;
 import kz.nicnbk.common.service.util.*;
 import kz.nicnbk.repo.api.lookup.StrategyRepository;
 import kz.nicnbk.repo.model.common.Strategy;
@@ -25,7 +26,6 @@ import kz.nicnbk.service.dto.common.FileUploadResultDto;
 import kz.nicnbk.service.dto.common.ResponseStatusType;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.reporting.*;
-import kz.nicnbk.service.dto.reporting.exception.ExcelFileParseException;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -147,7 +147,7 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
      * @return - file parse result
      * @throws ExcelFileParseException
      */
-    private FileUploadResultDto parseScheduleInvestments(FilesDto filesDto, Long reportId) throws ExcelFileParseException{
+    private FileUploadResultDto parseScheduleInvestments(FilesDto filesDto, Long reportId) throws ExcelFileParseException {
 
         List<ConsolidatedReportRecordDto> sheet1Records = new ArrayList<>();
         List<ConsolidatedReportRecordDto> sheet2Records = new ArrayList<>();

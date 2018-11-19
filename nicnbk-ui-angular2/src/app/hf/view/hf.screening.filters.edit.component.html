@@ -1,0 +1,160 @@
+<div class="container">
+
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li>
+                    <a [routerLink]="['/hf/screening']">HF Screenings</a>
+                </li>
+                <li>
+                    <a [routerLink]="['/hf/screening/edit/', screeningId]">Screening</a>
+                </li>
+                <li>
+                    <a [routerLink]="['/hf/screening/filteredResults/', screeningId]">Filtered Results</a>
+                </li>
+                <li class="active">Filtered Results Edit</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="row top-buffer" >
+            <div class="col-md-12">
+                <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
+                </div>
+            </div>
+        </div>
+        <div class="row top-buffer" >
+            <div class="col-md-12">
+                <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row withpadding" style="position: relative; min-height: 80px;">
+        <div class="col-md-12">
+            <div [ngBusy]="busyGet" class="col-md-6">
+                <table class="table table-hover">
+                    <tr>
+                        <td>Fund AUM</td>
+                        <td><input class="form-control"  required type="text" [(ngModel)]="filteredResult.fundAUM" /></td>
+                    </tr>
+                    <tr>
+                        <td>Manager AUM</td>
+                        <td><input class="form-control"  required type="text" [(ngModel)]="filteredResult.managerAUM"/></td>
+                    </tr>
+                    <tr>
+                        <td>Start</td>
+                        <td><div class='input-group date col-md-2' id='startDateTPickeer' style="width: 100%">
+                            <input type='text' class="form-control" required id="startDate" [(ngModel)]="filteredResult.startDate"/>
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                        </div></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <table class="table table-hover">
+                    <tr>
+                        <td>Track Record</td>
+                        <td><input class="form-control" required type="text" [(ngModel)]="filteredResult.trackRecord"/></td>
+                    </tr>
+                    <tr>
+                        <td>Lookback Returns</td>
+                        <td><input class="form-control" required type="text" [(ngModel)]="filteredResult.lookbackReturns"/></td>
+                    </tr>
+                    <tr>
+                        <td>Lookback AUM</td>
+                        <td><input class="form-control" required type="text" [(ngModel)]="filteredResult.lookbackAUM"/></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <button type="button" class="btn btn-primary pull-right" (click)="applyFilters()">APPLY</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <div [ngBusy]="busyStats"  *ngIf="filteredResult?.filteredResultStatistics != null">
+        <ul class="nav nav-tabs">
+            <li class="active">
+                <a data-toggle="tab" href="#qualified">QUALIFIED</a>
+            </li>
+            <li>
+                <a data-toggle="tab" href="#unqualified">UNQUALIFIED</a>
+            </li>
+            <li>
+                <a data-toggle="tab" href="#undecided">UNDECIDED</a>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <div id="qualified" class="tab-pane fade in active">
+                <div class="row withpadding">
+                    <div *ngIf="filteredResult?.filteredResultStatistics?.qualified?.length > 0">
+                        <table class="table table-hover">
+                            <tr>
+                                <td [attr.colspan]="filteredResult.filteredResultStatistics.qualified[0].length" style="font-weight: bold" align="right">AUM LOOKBACK</td>
+                            </tr>
+                            <tr *ngFor="let row of filteredResult?.filteredResultStatistics?.qualified; let i=index" [style.background-color]="i==0 ? '#D5E1EC' : white"
+                                align="right" [style.font-weight]="i==0 ? 'bold' : ''">
+                                <td *ngFor="let td of row; let j=index" [style.background-color]="j==0 ? '#D5E1EC' : white" align="right" [style.font-weight]="j==0 ? 'bold' : ''">
+                                    <a *ngIf="i != 0 && j != 0 && td != 0" (click)="showFunds(i-1, j-1)">{{td}}</a>
+                                    <span *ngIf="i == 0 || j == 0 || td == 0">{{td}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td [attr.colspan]="filteredResult.filteredResultStatistics.qualified.length" style="font-weight: bold" align="left">RETURN LOOKBACK</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div *ngIf="filteredFundList != null" [ngBusy]="busyStats">
+                        <br/>
+                        <span>TOTAL: {{filteredFundList.length}}</span>
+                        <br/>
+                        <br/>
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <!--<th>&nbsp;</th>-->
+                                <th>FUND ID</th>
+                                <th>FUND NAME</th>
+                                <th>INVESTMENT MANAGER</th>
+                                <th>MAIN STRATEGY</th>
+                                <th>FUND AUM</th>
+                                <th>MANAGER AUM</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+
+                            <tr *ngFor = "let fund of filteredFundList">
+                                <td>{{fund.fundId}}</td>
+                                <td>{{fund.fundName}}</td>
+                                <td>{{fund.investmentManager}}</td>
+                                <td>{{fund.mainStrategy}}</td>
+                                <td>{{getAmountShort(fund.fundAUM)}}</td>
+                                <td>{{getAmountShort(fund.managerAUM)}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+            <div id="unqualified" class="tab-pane fade">
+                UNQUALIFIED
+            </div>
+            <div id="undecided" class="tab-pane fade">
+                UNDECIDED
+            </div>
+        </div>
+    </div>
+
+</div>

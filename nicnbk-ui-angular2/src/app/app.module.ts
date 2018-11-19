@@ -102,7 +102,11 @@ import {CurrencyRatesLookupValuesNBReportingComponent} from "./reporting/currenc
 import {TypedLookupValuesNBReportingComponent} from "./reporting/typed.lookup.values.nb.reporting.component";
 import {PeriodicDataNBReportingComponent} from "./reporting/periodic.data.nb.reporting.component";
 import {MatchingLookupValuesNBReportingComponent} from "./reporting/matching.lookup.values.nb.reporting.component";
-import {HFScreeningComponent} from "./hf/hf.screening.component";
+import {HFScreeningEditComponent} from "./hf/hf-screening-edit.component";
+import {HFScreeningListComponent} from "./hf/hf.screening.list.component";
+import {HedgeFundScreeningService} from "./hf/hf.fund.screening.service";
+import {HFScreeningFilteredResultsComponent} from "./hf/hf.screening.filters.component";
+import {HFScreeningFilteredResultsEditComponent} from "./hf/hf.screening.filters.edit.component";
 //import {CorpMeetingEditComponent} from "./corpmeetings/ic-meeting-topic-edit.component";
 
 @NgModule({
@@ -135,7 +139,7 @@ import {HFScreeningComponent} from "./hf/hf.screening.component";
         MainNBReportingComponent, InputFileUploadNBReportingComponent,
 
         HFDashboardComponent, HFFundSearchComponent, HFFundSelectionComponent, HFPortfolioComponent, HFReportComponent,
-        HFFundProfileComponent, HFManagerProfileComponent, HFManagerSearchComponent, HFScreeningComponent,
+        HFFundProfileComponent, HFManagerProfileComponent, HFManagerSearchComponent, HFScreeningListComponent, HFScreeningEditComponent, HFScreeningFilteredResultsComponent,HFScreeningFilteredResultsEditComponent,
         PEFundProfileComponent, PEFirmProfileComponent, PEFirmSearchComponent, PEFundReportComponent,
         AccessDeniedComponent,NotFoundComponent,
         LookupValuesNBReportingComponent, CurrencyRatesLookupValuesNBReportingComponent, TypedLookupValuesNBReportingComponent,PeriodicDataNBReportingComponent,MatchingLookupValuesNBReportingComponent,

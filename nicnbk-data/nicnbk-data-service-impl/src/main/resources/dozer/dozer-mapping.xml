@@ -160,6 +160,31 @@
         </field-exclude>
     </mapping>
 
+    <mapping>
+        <class-a>kz.nicnbk.service.dto.hf.HedgeFundScreeningDto</class-a>
+        <class-b>kz.nicnbk.repo.model.hf.HedgeFundScreening</class-b>
+        <field-exclude>
+            <a>updater</a>
+            <b>updater</b>
+        </field-exclude>
+        <field-exclude>
+            <a>creator</a>
+            <b>creator</b>
+        </field-exclude>
+    </mapping>
+    <mapping>
+        <class-a>kz.nicnbk.service.dto.hf.HedgeFundScreeningFilteredResultDto</class-a>
+        <class-b>kz.nicnbk.repo.model.hf.HedgeFundScreeningFilteredResult</class-b>
+        <field-exclude>
+            <a>updater</a>
+            <b>updater</b>
+        </field-exclude>
+        <field-exclude>
+            <a>creator</a>
+            <b>creator</b>
+        </field-exclude>
+    </mapping>
+
     <!-- PRIVATE EQUITY-->
     <mapping>
         <class-a>kz.nicnbk.service.dto.pe.PEFirmDto</class-a>

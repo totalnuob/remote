@@ -1,29 +1,32 @@
 import { Component } from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {HedgeFundService} from "./hf.fund.service";
-import {HedgeFund} from "./model/hf.fund";
 import {CommonFormViewComponent} from "../common/common.component";
-import {HedgeFundSearchParams} from "./model/hf.search-params";
-import {HedgeFundSearchResults} from "./model/fund-search-results";
 import {Subscription} from 'rxjs';
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 import {ErrorResponse} from "../common/error-response";
+import {HedgeFundScreeningSearchParams} from "./model/hf.screening-search-params";
+import {HedgeFundScreeningSearchResults} from "./model/hf-screening-search-results";
+import {HedgeFundScreening} from "./model/hf.screening";
+import {HedgeFundScreeningService} from "./hf.fund.screening.service";
+
+declare var $:any
 
 @Component({
     selector: 'hf-fund-search',
-    templateUrl: 'view/hf.screening.component.html',
+    templateUrl: 'view/hf.screening.list.component.html',
     styleUrls: [
         //'../../../public/css/...',
         '../../../node_modules/angular2-busy/build/style/busy.css'
     ],
     providers: []
 })
-export class HFScreeningComponent extends CommonFormViewComponent{
+export class HFScreeningListComponent extends CommonFormViewComponent{
 
 
-    records: any[];
-    searchParams;
-    searchResult;
+    screenings: HedgeFundScreening[];
+    searchParams = new HedgeFundScreeningSearchParams();
+    searchResult = new HedgeFundScreeningSearchResults();
 
     private moduleAccessChecker: ModuleAccessCheckerService;
 
@@ -31,7 +34,7 @@ export class HFScreeningComponent extends CommonFormViewComponent{
     busy: Subscription;
 
     constructor(
-        private fundService: HedgeFundService,
+        private screeningService: HedgeFundScreeningService,
         private router: Router,
         private route: ActivatedRoute
     ){
@@ -48,11 +51,12 @@ export class HFScreeningComponent extends CommonFormViewComponent{
             .subscribe(params => {
                 if (params['params'] != null) {
                     this.searchParams = JSON.parse(params['params']);
-                    this.busy = this.fundService.search(this.searchParams)
+                    //console.log(this.searchParams);
+                    this.busy = this.screeningService.search(this.searchParams)
                         .subscribe(
                             searchResult  => {
                                 //console.log(searchResult);
-                                this.records = searchResult.records;
+                                this.screenings = searchResult.screenings;
                                 this.searchResult = searchResult;
                             },
                             error =>  {
@@ -60,20 +64,39 @@ export class HFScreeningComponent extends CommonFormViewComponent{
                             }
                         );
                 } else {
-                    this.searchParams.name = '';
+                    this.searchParams = new HedgeFundScreeningSearchParams();
                     this.search(0);
                 }
             });
     }
+
+    ngOnInit():any {
+        $('#fromDateDTPickeer').datetimepicker({
+            //defaultDate: new Date(),
+            format: 'DD-MM-YYYY'
+        });
+        $('#untilDateDTPickeer').datetimepicker({
+            //defaultDate: new Date(),
+            format: 'DD-MM-YYYY'
+        });
+
+    }
+
+
+
     search(page){
+
         this.searchParams.pageSize = 10;
         this.searchParams.page = page;
 
-        this.busy = this.fundService.search(this.searchParams)
+        this.searchParams.dateFrom = $('#dateFrom').val();
+        this.searchParams.dateTo = $('#dateTo').val();
+
+        this.busy = this.screeningService.search(this.searchParams)
             .subscribe(
                 searchResult  => {
                     //console.log(searchResult);
-                    this.records = searchResult.records;
+                    this.screenings = searchResult.screenings;
                     this.searchResult = searchResult;
                 },
                 (error: ErrorResponse) => {
@@ -84,6 +107,18 @@ export class HFScreeningComponent extends CommonFormViewComponent{
                     this.postAction(null, null);
                 }
             );
+    }
+
+    clearSearchForm(){
+       this.searchParams = new HedgeFundScreeningSearchParams();
+
+    }
+
+    navigate(screeningId){
+        this.searchParams.path = '/hf/screening';
+        let params = JSON.stringify(this.searchParams);
+        //console.log(this.searchParams);
+        this.router.navigate(['/hf/screening/edit/', screeningId, { params }]);
     }
 
 }

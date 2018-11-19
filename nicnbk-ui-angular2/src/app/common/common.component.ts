@@ -95,6 +95,58 @@ export class CommonFormViewComponent {
         }else {
             //this.errorMessage = "Error occurred when processing request";
         }
-        //console.log(errorResponse);
+    }
+
+    public getReportDateShortFormatted(reportDate){
+        if(reportDate){
+            var monthNum = reportDate.split("-")[1];
+            var yearNum = reportDate.split("-")[2];
+            if(monthNum === '01'){
+                return 'JAN ' + yearNum;
+            }else if(monthNum === '02'){
+                return 'FEB ' + yearNum;
+            }else if(monthNum === '03'){
+                return 'MAR ' + yearNum;
+            }else if(monthNum === '04'){
+                return 'APR ' + yearNum;
+            }else if(monthNum === '05'){
+                return 'MAY ' + yearNum;
+            }else if(monthNum === '06'){
+                return 'JUN ' + yearNum;
+            }else if(monthNum === '07'){
+                return 'JUL ' + yearNum;
+            }else if(monthNum === '08'){
+                return 'AUG ' + yearNum;
+            }else if(monthNum === '09'){
+                return 'SEP ' + yearNum;
+            }else if(monthNum === '10'){
+                return 'OCT ' + yearNum;
+            }else if(monthNum === '11'){
+                return 'NOV ' + yearNum;
+            }else if(monthNum === '12'){
+                return 'DEC ' + yearNum;
+            }
+        }
+        return "";
+    }
+
+    getAmountShort(value){
+        if(value) {
+            value = Number(value).toFixed(0);
+            if(("" + value).length > 6 && ("" + value).length <= 9 ){
+                var shortValue = parseFloat(value / Math.pow(1000, 2)).toFixed(1);
+                return ((shortValue + "")[(shortValue + "").length-1] === '0' ? (shortValue + "").substring(0, (shortValue + "").length-2) : shortValue) + " M";
+            }else if(("" + value).length > 9 && ("" + value).length <= 12 ){
+                var shortValue = parseFloat(value / Math.pow(1000, 3)).toFixed(1);
+                return ((shortValue + "")[(shortValue + "").length-1] === '0' ? (shortValue + "").substring(0, (shortValue + "").length-2) : shortValue) + " B";
+            }else if(("" + value).length > 12){
+                var shortValue = parseFloat(value / Math.pow(1000, 4)).toFixed(1);
+                return ((shortValue + "")[(shortValue + "").length-1] === '0' ? (shortValue + "").substring(0, (shortValue + "").length-2) : shortValue) + " T";
+            }else{
+                return value;
+            }
+        }else{
+            return "";
+        }
     }
 }

@@ -18,9 +18,12 @@ export class CommonService{
 
     public handleErrorResponse (error: any) {
         var errorResponse = new ErrorResponse;
-        if(error.json().messageEn) {
-            errorResponse.message = error.json().messageEn;
-        }
+        try{
+            if(error.json() && error.json().messageEn) {
+                errorResponse.message = error.json().messageEn;
+            }
+        }catch (e){}
+
         if(error.message){
             errorResponse.message = error.message;
         }

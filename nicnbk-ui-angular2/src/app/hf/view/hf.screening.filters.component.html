@@ -1,0 +1,88 @@
+<div class="container">
+
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li>
+                    <span *ngIf="this.breadcrumbParams != null"><a [routerLink]="['/hf/screening', {params: this.breadcrumbParams }]">HF Screenings</a></span>
+                    <span *ngIf="this.breadcrumbParams == null"><a [routerLink]="['/hf/screening']">HF Screenings</a></span>
+                </li>
+                <li><a [routerLink]="['/hf/screening/edit/', screeningId]">Screening</a></li>
+                <li class="active">Filtered Results</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="row top-buffer" >
+            <div class="col-md-12">
+                <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
+                </div>
+            </div>
+        </div>
+        <div class="row top-buffer" >
+            <div class="col-md-12">
+                <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row withpadding">
+        <a [routerLink]="['/hf/screening/filteredResults/edit/', screeningId, 0 ]" class="btn btn-primary pull-right">NEW</a>
+    </div>
+    <br/>
+
+
+    <div class="row withpadding" style="position: relative; min-height: 80px;">
+        <!--<div class="row pull-right">-->
+            <!--<ul class="pagination" *ngIf="searchResult?.showPageFrom > 0">-->
+                <!--<li><a *ngIf="searchResult?.showPageFrom > 1" (click)="search(searchResult.showPageFrom - 1)">&laquo;</a></li>-->
+                <!--<li *ngFor="let i of range(searchResult.showPageFrom, searchResult.showPageTo)" [class.active]="i == searchResult.currentPage">-->
+                    <!--<a (click)="search(i)">{{i}}</a>-->
+                <!--</li>-->
+                <!--<li><a *ngIf="searchResult.showPageTo < searchResult.totalPages" (click)="search(searchResult.showPageTo + 1)">&raquo;</a></li>-->
+            <!--</ul>-->
+        <!--</div>-->
+        <table [ngBusy]="busy" class="table table-hover">
+            <thead>
+            <tr>
+                <!--<th>&nbsp;</th>-->
+                <th>FUND AUM</th>
+                <th>MANAGER AUM</th>
+                <th>TRACK RECORD</th>
+                <th>LOOKBACK RETURN</th>
+                <th>LOOKBACK AUM</th>
+                <th>START DATE</th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+            <tr *ngFor = "let record of records" style="cursor: pointer">
+                <!--<td width="5%"></td>-->
+                <td (click)="navigate(record.id)">{{record.fundAUM}}</td>
+                <td width="30%"(click)="navigate(record.id)">{{record.managerAUM}}</td>
+                <td width="30%" (click)="navigate(record.id)">{{record.trackRecord}}</td>
+                <td width="10%" (click)="navigate(record.id)">{{record.lookbackReturns}}</td>
+                <td width="10%" (click)="navigate(record.id)">{{record.lookbackAUM}}</td>
+                <td width="10%" (click)="navigate(record.id)">{{record.startDate}}</td>
+                <!--<td width="5%">-->
+                    <!--<a><i class="glyphicon glyphicon-file"></i></a>-->
+                <!--</td>-->
+            </tr>
+            </tbody>
+        </table>
+
+        <!--</div>-->
+        <!--<div class="row pull-right">-->
+            <!--<ul class="pagination" *ngIf="searchResult?.showPageFrom > 0">-->
+                <!--<li><a *ngIf="searchResult?.showPageFrom > 1" (click)="search(searchResult.showPageFrom - 1)">&laquo;</a></li>-->
+                <!--<li *ngFor="let i of range(searchResult.showPageFrom, searchResult.showPageTo)" [class.active]="i == searchResult.currentPage">-->
+                    <!--<a (click)="search(i)">{{i}}</a>-->
+                <!--</li>-->
+                <!--<li><a *ngIf="searchResult.showPageTo < searchResult.totalPages" (click)="search(searchResult.showPageTo + 1)">&raquo;</a></li>-->
+            <!--</ul>-->
+        <!--</div>-->
+    </div>
+</div>

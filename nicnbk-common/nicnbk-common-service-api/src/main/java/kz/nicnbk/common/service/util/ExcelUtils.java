@@ -1,7 +1,17 @@
 package kz.nicnbk.common.service.util;
 
+import kz.nicnbk.common.service.exception.ExcelFileParseException;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Iterator;
 
 /**
  * Created by magzumov on 15.05.2017.
@@ -122,6 +132,40 @@ public class ExcelUtils {
         }else{
             return null;
         }
+    }
+
+    public static Iterator<Row> getRowIterator(byte[] bytes, String fileName, int sheetNumber){
+        InputStream inputFile = null;
+        if(bytes == null || fileName == null){
+            return null;
+        }
+        try {
+            inputFile = new ByteArrayInputStream(bytes);
+            String extension = fileName.substring(fileName.lastIndexOf(".") + 1,
+                    fileName.length());
+            if (extension.equalsIgnoreCase("xls")) {
+                HSSFWorkbook workbook = new HSSFWorkbook(inputFile);
+                HSSFSheet sheet = workbook.getSheetAt(sheetNumber);
+                return sheet.iterator();
+            } else if (extension.equalsIgnoreCase("xlsx")) {
+                XSSFWorkbook workbook = new XSSFWorkbook(inputFile);
+                XSSFSheet sheet = workbook.getSheetAt(sheetNumber);
+                return sheet.iterator();
+            } else {
+                // log error
+                throw new ExcelFileParseException("Invalid file extension: " + fileName);
+            }
+        }catch (IOException ex){
+            // TODO: log error
+        }finally {
+            try {
+                inputFile.close();
+            } catch (IOException e) {
+                //e.printStackTrace();
+                // TODO: log error
+            }
+        }
+        return null;
     }
 
 }

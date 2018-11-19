@@ -212,6 +212,7 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
         this.uploadMaterialsFiles.length = 0;
         for (let i = 0; i < files.length; i++) {
             this.uploadMaterialsFiles.push(files[i]);
+            console.log(files[i]);
         }
     }
 
