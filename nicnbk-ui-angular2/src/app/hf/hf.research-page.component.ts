@@ -170,6 +170,7 @@ export class HFResearchPageComponent extends CommonFormViewComponent implements 
                 .subscribe(
                     (response) => {
                         console.log("Deleted");
+                        this.postAction("Page deleted.", null);
                     },
                     (error: ErrorResponse) => {
                         this.processErrorMessage(error);

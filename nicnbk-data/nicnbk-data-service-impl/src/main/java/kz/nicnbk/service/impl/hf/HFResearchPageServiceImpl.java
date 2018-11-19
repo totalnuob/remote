@@ -131,7 +131,8 @@ public class HFResearchPageServiceImpl implements HFResearchPageService {
         try{
             HFResearchPageFiles entity = hfResearchPageFilesReposiotry.getFilesByFileId(fileId);
             if (entity != null && entity.getResearchPage().getId().longValue() == researchPageId) {
-                boolean deleted = fileService.safeDelete(fileId);
+                hfResearchPageFilesReposiotry.delete(entity.getId());
+                boolean deleted = fileService.delete(fileId);
                 if(!deleted){
                     logger.error("Failed to delete(safe) HF Research page attachment: Research page=" + researchPageId + ", file=" + fileId + ", by " + username);
                 }else{
