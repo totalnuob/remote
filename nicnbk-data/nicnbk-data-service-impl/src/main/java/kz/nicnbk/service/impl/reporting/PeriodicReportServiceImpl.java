@@ -1959,8 +1959,6 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         previousRecords = newPreviousPeriodRecords;
                     }
 
-
-
                     for(ConsolidatedBalanceFormRecordDto previousRecord: previousRecords){
                         for(int i = 0; currentRecords != null && i < currentRecords.size(); i++){
                             ConsolidatedBalanceFormRecordDto currentRecord = currentRecords.get(i);
@@ -2742,6 +2740,53 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 if (previousReport != null) {
                     List<ConsolidatedBalanceFormRecordDto> previousRecords = getConsolidatedBalanceKZTForm3Saved(previousReport.getId());
                     if (previousRecords != null) {
+
+                        // UPDATE FORM
+                        int maxLineNumber = 0;
+                        for(ConsolidatedBalanceFormRecordDto dto: previousRecords){
+                            if(dto.getLineNumber() != null && dto.getLineNumber() > maxLineNumber){
+                                maxLineNumber = dto.getLineNumber();
+                            }
+                        }
+                        if(maxLineNumber != 13) {
+                            List<ConsolidatedBalanceFormRecordDto> newPreviousPeriodRecords = getConsolidatedTotalIncomeKZTForm3LineHeaders();
+                            double record1 = 0;
+                            double record4 = 0;
+                            double record6 = 0;
+                            for (ConsolidatedBalanceFormRecordDto newRecord : newPreviousPeriodRecords) {
+                                for (ConsolidatedBalanceFormRecordDto prevRecord : previousRecords) {
+                                    if(newRecord.getLineNumber() == 1 && prevRecord.getLineNumber() == 1){
+                                        newRecord.setCurrentAccountBalance(prevRecord.getCurrentAccountBalance());
+                                        record1 = newRecord.getCurrentAccountBalance();
+                                        break;
+                                    }else if(newRecord.getLineNumber() == 4 && prevRecord.getLineNumber() == 3 && prevRecord.getSubLineNumber() == null){
+                                        newRecord.setCurrentAccountBalance(prevRecord.getCurrentAccountBalance());
+                                        record4 = newRecord.getCurrentAccountBalance();
+                                        break;
+                                    }else if(newRecord.getLineNumber() == 6 && prevRecord.getLineNumber() == 5 && prevRecord.getSubLineNumber() == null){
+                                        newRecord.setCurrentAccountBalance(prevRecord.getCurrentAccountBalance());
+                                        record6 = newRecord.getCurrentAccountBalance();
+                                        break;
+                                    }else if(newRecord.getLineNumber() == 7){
+                                        newRecord.setCurrentAccountBalance(prevRecord.getCurrentAccountBalance());
+                                        newRecord.setCurrentAccountBalance(MathUtils.add(record4, record6));
+                                        break;
+                                    }else if(newRecord.getLineNumber() == 12){
+                                        newRecord.setCurrentAccountBalance(prevRecord.getCurrentAccountBalance());
+                                        newRecord.setCurrentAccountBalance(MathUtils.add(record4, record6));
+                                        break;
+                                    }else if(newRecord.getLineNumber() == 13){
+                                        newRecord.setCurrentAccountBalance(prevRecord.getCurrentAccountBalance());
+                                        newRecord.setCurrentAccountBalance(MathUtils.add(record1, record4, record6));
+                                        break;
+                                    }
+                                }
+                            }
+
+                            previousRecords = newPreviousPeriodRecords;
+                        }
+
+
                         Double added = 0.0;
                         for (ConsolidatedBalanceFormRecordDto currentRecord : currentRecords) {
                             for (ConsolidatedBalanceFormRecordDto prevRecord : previousRecords) {
@@ -2775,6 +2820,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         }
     }
 
+
     private ListResponseDto getConsolidatedTotalIncomeKZTForm3Current(Long reportId) {
 
         ListResponseDto responseDto = new ListResponseDto();
@@ -2803,8 +2849,8 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             }
         }
 
-        double record3_1 = 0;
-        double record5_1 = 0;
+        double record4 = 0;
+        double record6 = 0;
 
         ListResponseDto responseDtoKZTForm1 = generateConsolidatedBalanceKZTForm1(reportId);
         if(responseDtoKZTForm1.getStatus() == ResponseStatusType.FAIL){
@@ -2817,20 +2863,20 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         if(form1Records != null){
             for(int i = form1Records.size() - 1; i >= 0; i--){
                 ConsolidatedBalanceFormRecordDto record = form1Records.get(i);
-                if(record.getLineNumber() != null && record.getLineNumber() == 49 &&
+                if(record.getLineNumber() != null && record.getLineNumber() == 51 &&
                         record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_5440_010)){
                     List<PreviousYearInputDataDto> previousYearInputData = this.prevYearInputService.getPreviousYearInputData(reportId);
                     if(previousYearInputData != null){
                         for(PreviousYearInputDataDto previousYearInputDataDto: previousYearInputData){
                             if(previousYearInputDataDto.getAccountBalanceKZT() != null && previousYearInputDataDto.getChartOfAccounts() != null &&
                                     previousYearInputDataDto.getChartOfAccounts().getNBChartOfAccounts().getCode().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_5440_010)) {
-                                record3_1 = MathUtils.subtract(record.getCurrentAccountBalance(), previousYearInputDataDto.getAccountBalanceKZT());
+                                record4 = MathUtils.subtract(record.getCurrentAccountBalance(), previousYearInputDataDto.getAccountBalanceKZT());
                             }
                         }
                     }
-                }else if(record.getLineNumber() != null && record.getLineNumber() == 49 &&
+                }else if(record.getLineNumber() != null && record.getLineNumber() == 51 &&
                         record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_5450_010)){
-                    record5_1 = MathUtils.subtract(record.getCurrentAccountBalance(), record.getPreviousAccountBalance());
+                    record6 = MathUtils.subtract(record.getCurrentAccountBalance(), record.getPreviousAccountBalance());
                 }
             }
         }
@@ -2841,7 +2887,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             for(PreviousYearInputDataDto previousYearInputDataDto: previousYearInputList){
                 if(previousYearInputDataDto.getChartOfAccounts().getCode().equalsIgnoreCase(PeriodicReportConstants.RU_KZT_3_REPORT_LINE_NUMBER_5_1_CODE) &&
                         previousYearInputDataDto.getAccountBalanceKZT() != null && previousYearInputDataDto.getAccountBalanceKZT().doubleValue() != 0.0){
-                    record5_1 = MathUtils.add(record5_1, previousYearInputDataDto.getAccountBalanceKZT());
+                    record6 = MathUtils.add(record6, previousYearInputDataDto.getAccountBalanceKZT());
                 }
             }
         }
@@ -2849,14 +2895,16 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         for(ConsolidatedBalanceFormRecordDto record: records){
             if(record.getLineNumber() != null && record.getLineNumber() == 1){
                 record.setCurrentAccountBalance(record1);
-            }else if(record.getLineNumber() != null && record.getLineNumber() == 3 && (record.getSubLineNumber() == null || record.getSubLineNumber() == 1)){
-                record.setCurrentAccountBalance(record3_1);
-            }else if(record.getLineNumber() != null && record.getLineNumber() == 5 && (record.getSubLineNumber() == null || record.getSubLineNumber() == 1)){
-                record.setCurrentAccountBalance(record5_1);
+            }else if(record.getLineNumber() != null && record.getLineNumber() == 4){
+                record.setCurrentAccountBalance(record4);
             }else if(record.getLineNumber() != null && record.getLineNumber() == 6){
-                record.setCurrentAccountBalance(MathUtils.add(record3_1, record5_1));
+                record.setCurrentAccountBalance(record6);
             }else if(record.getLineNumber() != null && record.getLineNumber() == 7){
-                record.setCurrentAccountBalance(MathUtils.add(record1, MathUtils.add(record3_1, record5_1)));
+                record.setCurrentAccountBalance(MathUtils.add(record4, record6));
+            }else if(record.getLineNumber() != null && record.getLineNumber() == 12){
+                record.setCurrentAccountBalance(MathUtils.add(record4, record6));
+            }else if(record.getLineNumber() != null && record.getLineNumber() == 13){
+                record.setCurrentAccountBalance(MathUtils.add(record1, MathUtils.add(record4, record6)));
             }
         }
 
@@ -5440,20 +5488,34 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
     private List<ConsolidatedBalanceFormRecordDto> getConsolidatedTotalIncomeKZTForm3LineHeaders(){
         List<ConsolidatedBalanceFormRecordDto> headers = new ArrayList<>();
         headers.add(new ConsolidatedBalanceFormRecordDto("Чистая прибыль (убыток)", 1));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Прочий совокупный доход", 2));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Резерв по переоценке финансовых активов, имеющихся в наличии для продажи всего (сумма строк 3.1-3.3)", 3));
-        headers.add(new ConsolidatedBalanceFormRecordDto("- чистое изменение справедливой стоимости", 3, 1));
-        headers.add(new ConsolidatedBalanceFormRecordDto("- чистое изменение справедливой стоимости, перенесенное в состав прибыли или убытка", 3, 2));
-        headers.add(new ConsolidatedBalanceFormRecordDto("- обесценение, перенесенное в состав прибыли или убытка ", 3, 3));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Переоценка основных средств всего (сумма строк 4.1-4.3)", 4));
-        headers.add(new ConsolidatedBalanceFormRecordDto("- изменение стоимости от переоценки", 4, 1));
-        headers.add(new ConsolidatedBalanceFormRecordDto("- перенос переоценки основных средств при амортизации", 4, 2));
-        headers.add(new ConsolidatedBalanceFormRecordDto("- перенос переоценки основных средств при выбытии", 4, 3));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие операции (сумма строк 5.1-5.2)", 5));
-        headers.add(new ConsolidatedBalanceFormRecordDto("- резерв на пересчет иностранной валюты по зарубежной деятельности", 5, 1));
-        headers.add(new ConsolidatedBalanceFormRecordDto("- прочие", 5, 2));
-        headers.add(new ConsolidatedBalanceFormRecordDto("Прочий совокупный доход (сумма строк 3, 4, 5)", 6));
-        headers.add(new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.KZT_FORM_3_LAST_RECORD, 7));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прочий совокупный доход за вычетом подоходного налога", 2));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Статьи, которые реклассифицированы или могут быть впоследствии реклассифицированы в состав прибыли или убытка:", 3));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Чистое изменение справедливой стоимости финансовых активов, учитываемых по справедливой стоимости через прочий совокупный доход)", 4));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Чистое изменение справедливой стоимости финансовых активов, учитываемых по справедливой стоимости через прочий совокупный доход, перенесенное в состав прибыли или убытка)", 5));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Пересчет иностранной валюты по зарубежной деятельности", 6));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Всего статей, которые реклассифицированы или могут быть впоследствии реклассифицированы в состав прибыли или убытка (сумма строк 4-6)", 7));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Статьи, которые не могут быть впоследствии реклассифицированы в состав прибыли или убытка:", 8));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Переоценка основных средств", 9));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прибыли и убытки от инвестиций в долевые финансовые инструменты, учитываемые по справедливой стоимости через прочий совокупный доход", 10));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Всего статей, которые не могут быть впоследствии реклассифицированы в состав прибыли или убытка (сумма строк 9, 10)", 11));
+        headers.add(new ConsolidatedBalanceFormRecordDto("Прочий совокупный доход за вычетом подоходного налога (сумма строк 7, 11)", 12));
+        headers.add(new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.KZT_FORM_3_LAST_RECORD, 13));
+
+//        headers.add(new ConsolidatedBalanceFormRecordDto("Чистая прибыль (убыток)", 1));
+//        headers.add(new ConsolidatedBalanceFormRecordDto("Прочий совокупный доход", 2));
+//        headers.add(new ConsolidatedBalanceFormRecordDto("Резерв по переоценке финансовых активов, имеющихся в наличии для продажи всего (сумма строк 3.1-3.3)", 3));
+//        headers.add(new ConsolidatedBalanceFormRecordDto("- чистое изменение справедливой стоимости", 3, 1));
+//        headers.add(new ConsolidatedBalanceFormRecordDto("- чистое изменение справедливой стоимости, перенесенное в состав прибыли или убытка", 3, 2));
+//        headers.add(new ConsolidatedBalanceFormRecordDto("- обесценение, перенесенное в состав прибыли или убытка ", 3, 3));
+//        headers.add(new ConsolidatedBalanceFormRecordDto("Переоценка основных средств всего (сумма строк 4.1-4.3)", 4));
+//        headers.add(new ConsolidatedBalanceFormRecordDto("- изменение стоимости от переоценки", 4, 1));
+//        headers.add(new ConsolidatedBalanceFormRecordDto("- перенос переоценки основных средств при амортизации", 4, 2));
+//        headers.add(new ConsolidatedBalanceFormRecordDto("- перенос переоценки основных средств при выбытии", 4, 3));
+//        headers.add(new ConsolidatedBalanceFormRecordDto("Прочие операции (сумма строк 5.1-5.2)", 5));
+//        headers.add(new ConsolidatedBalanceFormRecordDto("- резерв на пересчет иностранной валюты по зарубежной деятельности", 5, 1));
+//        headers.add(new ConsolidatedBalanceFormRecordDto("- прочие", 5, 2));
+//        headers.add(new ConsolidatedBalanceFormRecordDto("Прочий совокупный доход (сумма строк 3, 4, 5)", 6));
+//        headers.add(new ConsolidatedBalanceFormRecordDto(PeriodicReportConstants.KZT_FORM_3_LAST_RECORD, 7));
 
         return headers;
     }
