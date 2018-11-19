@@ -104,6 +104,9 @@ import {CurrencyRatesLookupValuesNBReportingComponent} from "./reporting/currenc
 import {TypedLookupValuesNBReportingComponent} from "./reporting/typed.lookup.values.nb.reporting.component";
 import {PeriodicDataNBReportingComponent} from "./reporting/periodic.data.nb.reporting.component";
 import {MatchingLookupValuesNBReportingComponent} from "./reporting/matching.lookup.values.nb.reporting.component";
+import {HFResearchPageComponent} from "./hf/hf.research-page.component";
+import {MonitoringHFListComponent} from "./monitoring/monitoring-hedge-funds-list.component";
+import {MonitoringHFResearchComponent} from "./monitoring/monitoring-hedge-funds-research.component";
 //import {CorpMeetingEditComponent} from "./corpmeetings/ic-meeting-topic-edit.component";
 
 @NgModule({
@@ -132,10 +135,10 @@ import {MatchingLookupValuesNBReportingComponent} from "./reporting/matching.loo
         GeneralMemoEditComponent, PrivateEquityMemoEditComponent, HedgeFundsMemoEditComponent, RealEstateMemoEditComponent,
         TripMemoListComponent, TripMemoEditComponent, RiskManagementAxiomaReportingComponent, MonitoringHedgeFundsComponent, MonitoringLiquidPortfolioComponent,
         MonitoringMacroMonitorComponent, MonitoringPortfolioComponent, MonitoringPrivateEquityComponent, MonitoringPrivateEquityFundComponent,
-        MonitoringHedgeFunds2Component, MonitoringHedgeFunds2PrintComponent,
+        MonitoringHedgeFunds2Component, MonitoringHedgeFunds2PrintComponent, MonitoringHFListComponent, MonitoringHFResearchComponent,
         MainNBReportingComponent, InputFileUploadNBReportingComponent,
 
-        HFDashboardComponent, HFFundSearchComponent, HFFundSelectionComponent, HFPortfolioComponent, HFResearchComponent, HFReportComponent,
+        HFDashboardComponent, HFFundSearchComponent, HFFundSelectionComponent, HFPortfolioComponent, HFResearchComponent, HFReportComponent, HFResearchPageComponent,
         HFFundProfileComponent, HFManagerProfileComponent, HFManagerSearchComponent, HFResearchFormComponent,
         PEFundProfileComponent, PEFirmProfileComponent, PEFirmSearchComponent, PEFundReportComponent,
         AccessDeniedComponent,NotFoundComponent,

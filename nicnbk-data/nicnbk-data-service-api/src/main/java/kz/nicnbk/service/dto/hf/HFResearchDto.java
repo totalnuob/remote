@@ -5,6 +5,7 @@ import kz.nicnbk.repo.model.hf.HFManager;
 import kz.nicnbk.repo.model.hf.HFResearch;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -12,7 +13,7 @@ import java.util.Set;
  */
 public class HFResearchDto extends CreateUpdateBaseEntityDto<HFResearch> {
 
-    private HFManager manager;
+    private HFManagerDto managerDto;
     private String investmentsDates;
     private Double allocationSize;
     private String contacts;
@@ -22,12 +23,24 @@ public class HFResearchDto extends CreateUpdateBaseEntityDto<HFResearch> {
     private String importantNotes;
     private String keyPeople;
 
-    public HFManager getManager() {
-        return manager;
+    private List<HFResearchPageDto> researchPages;
+
+    public List<HFResearchPageDto> getResearchPages() {
+        return researchPages;
     }
 
-    public void setManager(HFManager manager) {
-        this.manager = manager;
+    public void setResearchPages(List<HFResearchPageDto> researchPages) {
+        this.researchPages = researchPages;
+    }
+
+    private String owner;
+
+    public HFManagerDto getManager() {
+        return managerDto;
+    }
+
+    public void setManager(HFManagerDto manager) {
+        this.managerDto = manager;
     }
 
     public String getInvestmentsDates() {
@@ -92,5 +105,14 @@ public class HFResearchDto extends CreateUpdateBaseEntityDto<HFResearch> {
 
     public void setKeyPeople(String keyPeople) {
         this.keyPeople = keyPeople;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
+
+    public String getOwner() {
+
+        return owner;
     }
 }

@@ -27,7 +27,6 @@ import '../../public/js/viz_v1.js';
 import {TextareaAutosize} from "./common/textarea-autosize.directive";
 import {HFManagerService} from "./hf/hf.manager.service";
 import {HedgeFundService} from "./hf/hf.fund.service";
-import {HFResearchService} from "./hf/hf.research.service"
 import {RiskManagementReportService} from "./riskmanagement/riskmanagement.report.service";
 import {AlbourneService} from "./hf/hf.albourne.service";
 
@@ -67,8 +66,7 @@ import {CorpMeetingService} from "./corpmeetings/corp-meetings.service";
         ModuleAccessCheckerService,
         MacroMonitorService,
         PeriodicReportService,
-        CorpMeetingService,
-        HFResearchService
+        CorpMeetingService
     ]
 })
 @NgModule({

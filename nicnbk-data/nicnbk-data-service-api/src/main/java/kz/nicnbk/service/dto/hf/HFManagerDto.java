@@ -3,6 +3,7 @@ package kz.nicnbk.service.dto.hf;
 import kz.nicnbk.common.service.model.CreateUpdateBaseEntityDto;
 import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.model.hf.HFManager;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 import java.util.List;
@@ -33,6 +34,11 @@ public class HFManagerDto extends CreateUpdateBaseEntityDto<HFManager> {
 
     //research
     private boolean investedInB;
+    private Double investmentAmount;
+    private String investmentDate;
+
+    @DateTimeFormat(pattern="dd-MM-yyyy")
+    private Date researchUpdated;
 
     //m2s2 fields
     private String managementAndTeamNotes;
@@ -261,5 +267,29 @@ public class HFManagerDto extends CreateUpdateBaseEntityDto<HFManager> {
 
     public void setInvestedInB(boolean investedInB) {
         this.investedInB = investedInB;
+    }
+
+    public Double getInvestmentAmount() {
+        return investmentAmount;
+    }
+
+    public void setInvestmentAmount(Double investmentAmount) {
+        this.investmentAmount = investmentAmount;
+    }
+
+    public String getInvestmentDate() {
+        return investmentDate;
+    }
+
+    public void setInvestmentDate(String investmentDate) {
+        this.investmentDate = investmentDate;
+    }
+
+    public Date getResearchUpdated() {
+        return researchUpdated;
+    }
+
+    public void setResearchUpdated(Date researchUpdated) {
+        this.researchUpdated = researchUpdated;
     }
 }

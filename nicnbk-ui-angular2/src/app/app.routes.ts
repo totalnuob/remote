@@ -92,7 +92,9 @@ import {TypedLookupValuesNBReportingComponent} from "./reporting/typed.lookup.va
 import {PeriodicDataNBReportingComponent} from "./reporting/periodic.data.nb.reporting.component";
 import {MatchingLookupValuesNBReportingComponent} from "./reporting/matching.lookup.values.nb.reporting.component";
 import {ICMeetingTopicEditComponent} from "./corpmeetings/ic-meeting-topic-edit.component";
-import {HFResearchFormComponent} from "./hf/hf.research-form.component";
+import {HFResearchPageComponent} from "./hf/hf.research-page.component";
+import {MonitoringHFListComponent} from "./monitoring/monitoring-hedge-funds-list.component";
+import {MonitoringHFResearchComponent} from "./monitoring/monitoring-hedge-funds-research.component";
 
 
 const routes: Routes  = [
@@ -231,6 +233,16 @@ const routes: Routes  = [
         component: MonitoringHedgeFunds2PrintComponent,
         canActivate: [AuthGuard]
     },
+    {
+        path: 'monitoring/hflist',
+        component: MonitoringHFListComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'monitoring/hfresearch/:id',
+        component: MonitoringHFResearchComponent,
+        canActivate: [AuthGuard]
+    },
     /* Hedge Funds ************************************/
     {
         path: 'hf/dashboard',
@@ -265,6 +277,11 @@ const routes: Routes  = [
     {
         path: 'hf/research/edit/:id',
         component: HFResearchFormComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'hf/research/edit/page/:managerId/:pageId',
+        component: HFResearchPageComponent,
         canActivate: [AuthGuard]
     },
     {

@@ -1,4 +1,14 @@
 <div class="container">
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li>
+                    <span *ngIf="this.breadcrumbParams == null"><a [routerLink]="['/hf/research']">HF Portfolio</a></span>
+                </li>
+                <li class="active">Researches list</li>
+            </ol>
+        </div>
+    </div>
     <div class="row withpadding" style="position: relative; min-height: 80px;">
         <div [ngBusy]="busy">
             <div class="row top-buffer" >
@@ -9,15 +19,19 @@
                     </div>
                 </div>
             </div>
-            <div [hidden]="submitted">
-                <form (ngSubmit)="save()" #memoForm="ngForm" class="well span">
+            <div>
+                <form (ngSubmit)="save()" #research="ngForm" class="well span">
+                    <div class="row text-uppercase withpadding" style="font-size: 20px">
+                        <b>{{researchForm.manager.name}}</b>
+                    </div>
+                    <br>
                     <div class="row top-buffer">
                         <div class="col-md-12">
                             <div class="row top-buffer">
                                 <label class="control-label col-md-2">Dates of investment:</label>
-                                <div class="col-md-4">
+                                <div class="col-md-8">
                                     <input id="investmentDates" class="form-control" placeholder="Enter dates of investments..." maxlength="250"
-                                           [(ngModel)]="researchForm.investmentsDates"/>
+                                           [(ngModel)]="researchForm.investmentsDates" name="investmentsDates"/>
                                 </div>
                             </div>
                         </div>
@@ -26,8 +40,9 @@
                         <div class="col-md-12">
                             <div class="row top-buffer" >
                                 <label class="control-label col-md-2">Total Allocation:</label>
-                                <div class="col-md-4">
+                                <div class="col-md-8">
                                     <input type="text" placeholder="Enter allocation size... " class="form-control" id="allocationSize"
+                                           (keyup)="onNumberChange(researchForm)"
                                            [(ngModel)]="researchForm.allocationSize" name="allocationSize" maxlength="250"/>
                                 </div>
                             </div>
@@ -37,7 +52,7 @@
                         <div class="col-md-12">
                             <div class="row top-buffer" >
                                 <label class="control-label col-md-2">Contacts:</label>
-                                <div class="col-md-4">
+                                <div class="col-md-8">
                                     <input type="text" placeholder="Enter contacts name... " class="form-control" id="contacts"
                                            [(ngModel)]="researchForm.contacts" name="contacts" maxlength="250"/>
                                 </div>
@@ -48,7 +63,7 @@
                         <div class="col-md-12">
                             <div class="row top-buffer" >
                                 <label class="control-label col-md-2">NIC coverage:</label>
-                                <div class="col-md-4">
+                                <div class="col-md-8">
                                     <input type="text" placeholder="NIC coverage person... " class="form-control" id="nicCoverage"
                                            [(ngModel)]="researchForm.nicCoverage" name="nicCoverage" maxlength="250"/>
                                 </div>
@@ -59,7 +74,7 @@
                         <div class="col-md-12">
                             <div class="row top-buffer" >
                                 <label class="control-label col-md-2">Website for clients:</label>
-                                <div class="col-md-4">
+                                <div class="col-md-8">
                                     <input type="text" placeholder="Client portal... " class="form-control" id="website"
                                            [(ngModel)]="researchForm.website" name="website" maxlength="250"/>
                                 </div>
@@ -70,7 +85,7 @@
                         <div class="col-md-12">
                             <div class="row top-buffer" >
                                 <label class="control-label col-md-2">Types of communication:</label>
-                                <div class="col-md-4">
+                                <div class="col-md-8">
                                     <input type="text" placeholder="Quarterly calls... " class="form-control" id="typesOfCommunication"
                                            [(ngModel)]="researchForm.typesOfCommunication" name="typesOfCommunication" maxlength="250"/>
                                 </div>
@@ -79,11 +94,11 @@
                     </div>
                     <div class="row top-buffer" >
                         <div class="col-md-12">
-                            <div class="row top-buffer" >
-                                <label class="control-label col-md-2">Important notes:</label>
-                                <div class="col-md-4">
-                                    <input type="text" placeholder="Large positions in... " class="form-control" id="importantNotes"
-                                           [(ngModel)]="researchForm.importantNotes" name="importantNotes" maxlength="250"/>
+                            <div class="row top-buffer">
+                                <label class="control-label col-md-2">Key people:</label>
+                                <div class="col-md-8">
+                                    <input type="text" placeholder="Key people... " class="form-control" id="keyPeople"
+                                           [(ngModel)]="researchForm.keyPeople" name="keyPeople" maxlength="250"/>
                                 </div>
                             </div>
                         </div>
@@ -91,24 +106,56 @@
                     <div class="row top-buffer" >
                         <div class="col-md-12">
                             <div class="row top-buffer" >
-                                <label class="control-label col-md-2">Key people:</label>
-                                <div class="col-md-4">
-                                    <input type="text" placeholder="Key people... " class="form-control" id="keyPeople"
-                                           [(ngModel)]="researchForm.keyPeople" name="keyPeople" maxlength="250"/>
+                                <label class="control-label col-md-2">Important notes:</label>
+                                <div class="col-md-8">
+                                    <textarea fz-elastic spellcheck="false" name="importantNotes" class="form-control"
+                                              id="importantNotes" maxlength="250" #arranged="ngModel"
+                                              [(ngModel)]="researchForm.importantNotes"></textarea>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <br/>
-
                     <div class="row top-buffer">
                         <div class="col-md-12">
-                            <!--<button type="submit" class="btn btn-success pull-right" name="saveMemo" [disabled]="!memoForm.form.valid" *ngIf="canEdit()">Save</button>-->
+                            <button type="submit" class="btn btn-success pull-right" name="saveMemo">Save</button>
                         </div>
                     </div>
                 </form>
             </div>
-
+            <div class="row withpadding pull-right">
+                <button class="btn btn-primary" type="button" id="menu1" (click)="navigate(this.managerIdParam, 0)">New</button>
+            </div>
+            <div>
+                <table class="table table-striped" *ngIf="researchForm?.researchPages?.length > 0">
+                    <thead>
+                    <th>&nbsp;</th>
+                    <th>DATE</th>
+                    <th>TOPIC</th>
+                    <th>FILES</th>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let research of researchForm?.researchPages" style="cursor: pointer">
+                        <td width="2%" (click)="navigate(research.manager.id, research.id)"></td>
+                        <td width="10%" (click)="navigate(research.manager.id, research.id)"><a>{{research.date}}</a></td>
+                        <td width="44%" (click)="navigate(research.manager.id, research.id)">{{research.topic}}</td>
+                        <td width="44%">
+                            <div class="row" *ngIf="research?.files?.length > 0">
+                                <div *ngFor="let attachment of research.files">
+                                    <div class="col-md-3">
+                                        <file-attachment-downloader fileId="{{attachment.id}}"
+                                                                    fileName="{{attachment.fileName}}"
+                                                                    fileType="MEMO_ATT"
+                                                                    showIcon="true">
+                                        </file-attachment-downloader>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

@@ -1,0 +1,84 @@
+<div class="container">
+    <div [ngBusy]="busy">
+        <div class="row top-buffer" >
+            <div class="col-md-12">
+                <ol class="breadcrumb">
+                    <li>
+                        <span><a [routerLink]="['/hf/research']">HF Portfolio</a></span>
+                    </li>
+                    <li><a [routerLink]="['/hf/research/edit', managerIdParam]">Researches list</a></li>
+                    <li class="active">Research page</li>
+                </ol>
+            </div>
+        </div>
+        <div class="row withpadding" style="position: relative; min-height: 80px;">
+
+            <div>
+                <form (ngSubmit)="saveResearchPage()" #research2="ngForm" class="well span">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <label class="control-label col-md-2">Date:</label>
+
+                            <div>
+                                <div class='input-group date col-md-2' id='meetingDate' style="width: 100%">
+                                    <input type="text" autocomplete="off" class="form-control" id="researchDate" name="researchDates" [(ngModel)]="researchPage.date"/>
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="control-label col-md-2">Topic:</label>
+                            <div>
+                                <input id="researchTopic" class="form-control" placeholder="Enter comments..." maxlength="250"
+                                       [(ngModel)]="researchPage.topic" name="researchTopic"/>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="jumbotron" style="padding-top: 5px; padding-bottom: 5px;">
+                                <div class="row">
+                                    <label>ATTACHMENTS</label>
+                                </div>
+                                <div class="row" *ngIf="canEdit()">
+                                    <label class="btn btn-primary col-md-4" for="attachmentFile">
+                                        <input type="file" id="attachmentFile" (change)="onFileChange($event)" name="file" multiple style="display:none;"/>Add</label>
+                                    <div>&nbsp;</div>
+                                    <div class="col-md-4">
+                                        <div class="row" *ngFor="let newFile of uploadFiles" class="label label-info" style="display: table;">
+                                            <span>{{newFile.name}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>&nbsp;</div>
+                                <div class="row" *ngIf="researchPage?.files?.length > 0">
+                                    <div *ngFor="let attachment of researchPage.files">
+                                        <div class="col-md-3">
+                                            <file-attachment-downloader fileId="{{attachment.id}}"
+                                                                        fileName="{{attachment.fileName}}"
+                                                                        fileType="MEMO_ATT"
+                                                                        showIcon="true">
+                                            </file-attachment-downloader>
+
+                                            <a (click)="deleteAttachment(attachment.id)" *ngIf="canEdit()">
+                                                <i class="glyphicon glyphicon-trash"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row withpadding top-buffer">
+                            <div class="col-md-2">
+                                <button type="button" class="btn btn-danger pull-left" style="display: inline-block" (click)="remove(researchPage)">Delete</button>
+                            </div>
+                            <div class="col-md-10">
+                                <button type="submit" class="btn btn-success pull-right" name="saveMemo">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

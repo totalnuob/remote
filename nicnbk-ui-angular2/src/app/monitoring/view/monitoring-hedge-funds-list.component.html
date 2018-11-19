@@ -1,12 +1,12 @@
 <div class="container">
     <div class="row">
-        <div class="row top-buffer" >
+        <div class="row top-buffer withpadding" >
             <div class="col-md-12">
                 <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
                 </div>
             </div>
         </div>
-        <div class="row top-buffer" >
+        <div class="row top-buffer withpadding" >
             <div class="col-md-12">
                 <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
                 </div>
@@ -31,7 +31,7 @@
 
             <tbody>
 
-            <tr *ngFor = "let manager of foundEntities" style="cursor: pointer" (click)="navigate('/hf/research/edit/', manager.id)">
+            <tr *ngFor = "let manager of foundEntities" style="cursor: pointer" (click)="navigate('/monitoring/hfresearch/', manager.id)">
                 <td width="2%"></td>
                 <td width="20%"><a>{{manager.name}}</a></td>
                 <td width="10%">{{onNumberChange(manager.investmentAmount)}}</td>

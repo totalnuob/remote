@@ -48,9 +48,12 @@ public class HFResearch extends CreateUpdateBaseEntity{
         return allocationSize;
     }
 
-    public void setAllocationSize(Double allocation) {
+    public void setAllocationSize(Double allocationSize) {
         this.allocationSize = allocationSize;
     }
+
+
+
 
     @Column(name = "contacts")
     public String getContacts() {

@@ -17,6 +17,6 @@ public interface HFManagerRepository extends PagingAndSortingRepository<HFManage
     Page<HFManager> findByName(@Param("name") String name, Pageable pageable);
 
     @Query("select manager from HFManager manager where manager.investedInB=true")
-    Page<HFManager> findInvestedFunds(Pageable pageable);
+    List<HFManager> findInvestedFunds();
 
 }

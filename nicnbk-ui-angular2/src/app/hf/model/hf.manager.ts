@@ -3,14 +3,17 @@ import {LegalEntity} from "../../common/model/legal-entity";
 import {HedgeFund} from "./hf.fund";
 
 export class HFManager extends LegalEntity{
-
     inception: number;
     inceptionDate: string;
     aum: string;
     aumDigit; string;
     aumCurrency: string;
 
-    investedInB: boolean;C
+    investedInB: boolean;
+    investmentAmount: number;
+    investmentDate: string;
+    researchUpdated: Date;
+
 
     fundManagers: string;
     headquarters: string;

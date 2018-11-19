@@ -1,0 +1,79 @@
+<div class="container">
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li>
+                    <span *ngIf="this.breadcrumbParams == null"><a [routerLink]="['/monitoring/hflist']">HF Portfolio</a></span>
+                </li>
+                <li class="active">Updates</li>
+            </ol>
+        </div>
+    </div>
+    <div class="row withpadding" style="position: relative; min-height: 80px;">
+        <div [ngBusy]="busy">
+            <div class="row top-buffer" *ngIf="successMessage != null || errorMessage != null" >
+                <div class="col-md-12">
+                    <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+                    </div>
+                    <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="jumbotron">
+                <div class="row pull-left text-uppercase" style="font-size: 20px">
+                    <b>{{researchForm.manager.name}}</b>
+                </div>
+                <br>
+                <br>
+                <dl class="row" style="font-size: 15px">
+                    <dt class="col-sm-3">Dates of investment</dt>
+                    <dd class="col-sm-9">{{researchForm.investmentsDates}}</dd>
+                    <dt class="col-sm-3">Total Allocation</dt>
+                    <dd class="col-sm-9">{{onNumberChange(researchForm.allocationSize)}}</dd>
+                    <dt class="col-sm-3">Contacts</dt>
+                    <dd class="col-sm-9">{{researchForm.contacts}}</dd>
+                    <dt class="col-sm-3">NIC coverage</dt>
+                    <dd class="col-sm-9">{{researchForm.nicCoverage}}</dd>
+                    <dt class="col-sm-3">Website for clients</dt>
+                    <dd class="col-sm-9"><a href="{{researchForm.website}}" target="_blank">{{researchForm.website}}</a></dd>
+                    <dt class="col-sm-3">Types of communication</dt>
+                    <dd class="col-sm-9">{{researchForm.typesOfCommunication}}
+                    <dt class="col-sm-3">Key people</dt>
+                    <dd class="col-sm-9">{{researchForm.keyPeople}}</dd>
+                    <dt class="col-sm-3">Important notes</dt>
+                    <dd class="col-sm-9">{{researchForm.importantNotes}}</dd>
+                </dl>
+            </div>
+            <div>
+                <table class="table table-striped" *ngIf="researchForm?.researchPages?.length > 0">
+                    <thead>
+                    <th>&nbsp;</th>
+                    <th>DATE</th>
+                    <th>TOPIC</th>
+                    <th>FILES</th>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let research of researchForm?.researchPages" style="cursor: pointer">
+                        <td width="2%"></td>
+                        <td width="10%">{{research.date}}</td>
+                        <td width="44%">{{research.topic}}</td>
+                        <td width="44%">
+                            <div class="row" *ngIf="research?.files?.length > 0">
+                                <div *ngFor="let attachment of research.files">
+                                    <div class="col-md-3">
+                                        <file-attachment-downloader fileId="{{attachment.id}}"
+                                                                    fileName="{{attachment.fileName}}"
+                                                                    fileType="MEMO_ATT"
+                                                                    showIcon="true">
+                                        </file-attachment-downloader>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

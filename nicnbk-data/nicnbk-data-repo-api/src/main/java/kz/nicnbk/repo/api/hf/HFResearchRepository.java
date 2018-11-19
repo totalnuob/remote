@@ -12,7 +12,9 @@ import org.springframework.data.repository.query.Param;
  */
 public interface HFResearchRepository extends PagingAndSortingRepository<HFResearch, Long> {
 
-//    @Query("select research from HFResearch research where research.manager.id=:managerId ")
-//    HFResearch findByManager(@Param("managerId") Long managerId);
+
+    @Query("select research from HFResearch research where research.manager.id=:managerId ")
+    HFResearch findByManagerId(@Param("managerId") Long managerId);
+
 
 }

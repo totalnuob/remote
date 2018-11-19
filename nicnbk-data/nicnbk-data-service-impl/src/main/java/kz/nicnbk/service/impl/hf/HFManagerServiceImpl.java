@@ -3,14 +3,18 @@ package kz.nicnbk.service.impl.hf;
 import kz.nicnbk.common.service.util.PaginationUtils;
 import kz.nicnbk.repo.api.employee.EmployeeRepository;
 import kz.nicnbk.repo.api.hf.HFManagerRepository;
+import kz.nicnbk.repo.api.hf.HFResearchPageFilesReposiotry;
+import kz.nicnbk.repo.api.hf.HFResearchPageRepository;
+import kz.nicnbk.repo.api.hf.HFResearchRepository;
 import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.hf.HFManager;
+import kz.nicnbk.repo.model.hf.HFResearch;
+import kz.nicnbk.repo.model.hf.HFResearchPage;
 import kz.nicnbk.service.api.hf.HFManagerService;
+import kz.nicnbk.service.api.hf.HFResearchService;
 import kz.nicnbk.service.api.hf.HedgeFundService;
 import kz.nicnbk.service.converter.hf.HFManagerEntityConverter;
-import kz.nicnbk.service.dto.hf.HFManagerDto;
-import kz.nicnbk.service.dto.hf.HedgeFundManagerPagedSearchResult;
-import kz.nicnbk.service.dto.hf.HedgeFundSearchParams;
+import kz.nicnbk.service.dto.hf.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +45,12 @@ public class HFManagerServiceImpl implements HFManagerService {
 
     @Autowired
     private EmployeeRepository employeeRepository;
+
+    @Autowired
+    private HFResearchPageRepository hfResearchPageRepository;
+
+    @Autowired
+    private HFResearchRepository hfResearchRepository;
 
     @Override
     public Long save(HFManagerDto firmDto, String updater) {
@@ -100,16 +110,28 @@ public class HFManagerServiceImpl implements HFManagerService {
     }
 
     @Override
-    public HedgeFundManagerPagedSearchResult findInvestedFunds() {
+    public List<HFManagerDto> findInvestedFunds() {
         try {
-            Page<HFManager> entityPage = this.repository.findInvestedFunds(new PageRequest(0, 10, new Sort(Sort.Direction.DESC, "id")));
+            List<HFManager> entityList = this.repository.findInvestedFunds();
 
-            HedgeFundManagerPagedSearchResult result = new HedgeFundManagerPagedSearchResult();
-            if (entityPage != null) {
-                result.setManagers(this.converter.disassembleList(entityPage.getContent()));
+            if(entityList != null) {
+                List<HFManagerDto> result = this.converter.disassembleList(entityList);
+
+                for(HFManagerDto managerDto:result){
+
+                    HFResearch hfResearch = hfResearchRepository.findByManagerId(managerDto.getId());
+                    if(hfResearch != null) {
+                        managerDto.setInvestmentAmount(hfResearch.getAllocationSize());
+                        managerDto.setInvestmentDate(hfResearch.getInvestmentsDates());
+                    }
+                    Date date = hfResearchPageRepository.findLatestResearch(managerDto.getId());
+                    if(date != null) {
+                        managerDto.setResearchUpdated(date);
+                    }
+                }
+                return result;
             }
-            return result;
-        }catch (Exception ex){
+        }catch(Exception ex){
             logger.error("Failed to search HF managers", ex);
         }
         return null;

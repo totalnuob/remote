@@ -93,6 +93,8 @@ export class GeneralMemoEditComponent extends CommonFormViewComponent implements
                                             // TODO: check response memo
                                             this.memo = memo;
 
+                                            console.log(this.memo);
+
                                             if(this.memo.tags == null) {
                                                 this.memo.tags = [];
                                             }

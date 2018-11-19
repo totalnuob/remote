@@ -1,4 +1,11 @@
-<a (click)="download()">{{displayFileName != null ? displayFileName : fileName}}
+<a (click)="download()">
+    <span *ngIf="showIcon" class="glyphicon glyphicon-file" style="font-size:25px"></span>
+    <div *ngIf="showIcon" class="row" style="font-size:10px">
+        {{displayFileName != null ? displayFileName : fileName}}
+    </div>
+    <div *ngIf="!showIcon" class="row">
+        {{displayFileName != null ? displayFileName : fileName}}
+    </div>
     <!--<i class="glyphicon glyphicon-download-alt" *ngIf="!pending"></i>-->
     <i class="glyphicon glyphicon-refresh" *ngIf="pending"></i>
 </a>
