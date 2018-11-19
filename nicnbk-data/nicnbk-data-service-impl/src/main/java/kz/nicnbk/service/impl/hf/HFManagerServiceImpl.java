@@ -3,15 +3,12 @@ package kz.nicnbk.service.impl.hf;
 import kz.nicnbk.common.service.util.PaginationUtils;
 import kz.nicnbk.repo.api.employee.EmployeeRepository;
 import kz.nicnbk.repo.api.hf.HFManagerRepository;
-import kz.nicnbk.repo.api.hf.HFResearchPageFilesReposiotry;
 import kz.nicnbk.repo.api.hf.HFResearchPageRepository;
 import kz.nicnbk.repo.api.hf.HFResearchRepository;
 import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.hf.HFManager;
 import kz.nicnbk.repo.model.hf.HFResearch;
-import kz.nicnbk.repo.model.hf.HFResearchPage;
 import kz.nicnbk.service.api.hf.HFManagerService;
-import kz.nicnbk.service.api.hf.HFResearchService;
 import kz.nicnbk.service.api.hf.HedgeFundService;
 import kz.nicnbk.service.converter.hf.HFManagerEntityConverter;
 import kz.nicnbk.service.dto.hf.*;
@@ -110,9 +107,9 @@ public class HFManagerServiceImpl implements HFManagerService {
     }
 
     @Override
-    public List<HFManagerDto> findInvestedFunds() {
+    public List<HFManagerDto> findInvestedInBFunds() {
         try {
-            List<HFManager> entityList = this.repository.findInvestedFunds();
+            List<HFManager> entityList = this.repository.findInvestedInBFunds();
 
             if(entityList != null) {
                 List<HFManagerDto> result = this.converter.disassembleList(entityList);

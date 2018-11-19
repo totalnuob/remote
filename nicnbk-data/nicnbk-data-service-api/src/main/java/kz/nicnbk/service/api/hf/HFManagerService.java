@@ -26,6 +26,6 @@ public interface HFManagerService extends BaseService {
 
     List<HFManagerDto> findAll();
 
-    List<HFManagerDto> findInvestedFunds();
+    List<HFManagerDto> findInvestedInBFunds();
 
 }

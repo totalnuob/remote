@@ -1,6 +1,5 @@
 package kz.nicnbk.ws.rest;
 
-import kz.nicnbk.repo.model.hf.HFResearch;
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.hf.HFManagerService;
@@ -74,8 +73,8 @@ public class HedgeFundManagerServiceREST extends CommonServiceREST{
     }
 
     @RequestMapping(value = "/invested", method = RequestMethod.GET)
-    public ResponseEntity findInvestedFunds(){
-        List<HFManagerDto> searchResult = this.service.findInvestedFunds();
+    public ResponseEntity findInvestedInBFunds(){
+        List<HFManagerDto> searchResult = this.service.findInvestedInBFunds();
         return buildNonNullResponse(searchResult);
     }
 
