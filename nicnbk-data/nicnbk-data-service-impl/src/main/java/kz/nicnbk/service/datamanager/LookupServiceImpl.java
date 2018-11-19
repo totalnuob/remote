@@ -1080,7 +1080,7 @@ public class LookupServiceImpl implements LookupService {
                         return false;
                     }
                 }
-                return false;
+                //return false;
             }
             return true;
         }else{
