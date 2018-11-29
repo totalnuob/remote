@@ -4117,7 +4117,47 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             Date previousDate = DateUtils.getLastDayOfPreviousMonth(report.getReportDate());
             PeriodicReport previousReport = this.periodReportRepository.findByReportDate(previousDate);
             List<ConsolidatedKZTForm10RecordDto> prevRecords = getConsolidatedBalanceKZTForm10Saved(previousReport.getId());
+
+
+            int maxLineNumber = 0;
+            for(ConsolidatedKZTForm10RecordDto dto: prevRecords){
+                if(dto.getLineNumber() != null && dto.getLineNumber() > maxLineNumber){
+                    maxLineNumber = dto.getLineNumber();
+                }
+            }
+
+            int added = 0;
+            int removed = 0;
             for(ConsolidatedKZTForm10RecordDto prevRecord: prevRecords){
+
+                // UPDATE FORM (IFRS-9)
+                if(prevRecord.getAccountNumber() == null) {
+                    if (prevRecord.getLineNumber() == 1) {
+                        prevRecord.setName("Прочие краткосрочные активы (сумма строк 2-4)");
+                    }else if (prevRecord.getLineNumber() == 2) {
+                        ConsolidatedKZTForm10RecordDto newRecord = new ConsolidatedKZTForm10RecordDto();
+                        newRecord.setLineNumber(2);
+                        newRecord.setName("Краткосрочные авансы выданные");
+                        records.add(newRecord);
+                        added++;
+                    }else if(prevRecord.getLineNumber() == 4){
+                        prevRecord.setName("Прочие долгосрочные активы (сумма строк 6-10)");
+                    }else if(prevRecord.getLineNumber() == 6 || prevRecord.getLineNumber() == 7){
+                        removed++;
+                        continue;
+                    }else if (prevRecord.getLineNumber() == 8) {
+                        ConsolidatedKZTForm10RecordDto newRecord = new ConsolidatedKZTForm10RecordDto();
+                        newRecord.setLineNumber(7);
+                        newRecord.setName("Долгосрочные авансы выданные");
+                        records.add(newRecord);
+                        added++;
+                    }else if(prevRecord.getLineNumber() == 11){
+                        prevRecord.setName("Всего  (сумма строк 1, 5)");
+                    }
+                }
+
+                prevRecord.setLineNumber(prevRecord.getLineNumber() + added - removed);
+
                 if(prevRecord.getAccountNumber() == null || (prevRecord.getEndPeriodAssets() != null && prevRecord.getEndPeriodAssets() != 0)) {
                     prevRecord.setStartPeriodAssets(prevRecord.getEndPeriodAssets());
                     prevRecord.setStartPeriodBalance(prevRecord.getEndPeriodBalance());
@@ -4130,13 +4170,13 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 }
             }
 
-            int indexLineToAdd2 = 0;
+            int indexLineToAdd3 = 0;
             int indexLineToAdd8 = 0;
             Map<String,Integer> addedRecordNames = new HashMap<>();
             for(int i = 0; i < records.size(); i++){
                 ConsolidatedKZTForm10RecordDto record = records.get(i);
-                if(record.getLineNumber() == 3){
-                    indexLineToAdd2 = i;
+                if(record.getLineNumber() == 4){
+                    indexLineToAdd3 = i;
                 }else if(record.getLineNumber() == 9){
                     indexLineToAdd8 = i;
                 }
@@ -4160,7 +4200,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             List<ConsolidatedBalanceFormRecordDto> USDFormRecords = balanceUSDResponseDto.getRecords();
             Double total1623EndPeriod = 0.0;
             Double total2923EndPeriod = 0.0;
-            if(USDFormRecords != null && (indexLineToAdd2 > 0 || indexLineToAdd8 > 0)){
+            if(USDFormRecords != null && (indexLineToAdd3 > 0 || indexLineToAdd8 > 0)){
                 for(ConsolidatedBalanceFormRecordDto recordUSD: USDFormRecords){
                     if(recordUSD.getAccountNumber() != null && (recordUSD.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_1623_010) ||
                             recordUSD.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_2923_010))){
@@ -4183,7 +4223,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                                 ConsolidatedKZTForm10RecordDto newRecord = new ConsolidatedKZTForm10RecordDto();
                                 newRecord.setAccountNumber(recordUSD.getAccountNumber());
                                 newRecord.setName(recordUSD.getName());
-                                newRecord.setLineNumber(2);
+                                newRecord.setLineNumber(3);
 
                                 newRecord.setEndPeriodAssets(MathUtils.multiply(recordUSD.getCurrentAccountBalance() != null ? recordUSD.getCurrentAccountBalance() : 0.0, endCurrencyRatesDto.getValue()));
 
@@ -4191,9 +4231,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                                 double startPeriodAssets = newRecord.getStartPeriodAssets() != null ? newRecord.getStartPeriodAssets() : 0.0;
                                 newRecord.setTurnoverOther(MathUtils.subtract(endPeriodAssets, startPeriodAssets));
 
-                                records.add(indexLineToAdd2, newRecord);
+                                records.add(indexLineToAdd3, newRecord);
 
-                                indexLineToAdd2++;
+                                indexLineToAdd3++;
                                 indexLineToAdd8++;
                             }
 
@@ -4240,7 +4280,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
                                 records.add(indexLineToAdd8, newRecord);
 
-                                indexLineToAdd2++;
+                                indexLineToAdd3++;
                                 indexLineToAdd8++;
                             }
                             total2923EndPeriod = MathUtils.add(total2923EndPeriod, MathUtils.multiply(recordUSD.getCurrentAccountBalance() != null ? recordUSD.getCurrentAccountBalance() : 0, endCurrencyRatesDto.getValue()));
@@ -4251,16 +4291,10 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
             // Set total sums
             for(ConsolidatedKZTForm10RecordDto record: records){
-                if(record.getAccountNumber() == null && (record.getLineNumber() == 1)){
+                if(record.getAccountNumber() == null && (record.getLineNumber() == 1 || record.getLineNumber() == 3)){
                     //record.setStartPeriodAssets(total1623StartPeriod);
                     record.setEndPeriodAssets(total1623EndPeriod);
-                }else if(record.getAccountNumber() == null && (record.getLineNumber() == 2)){
-                    //record.setStartPeriodAssets(total1623StartPeriod);
-                    record.setEndPeriodAssets(total1623EndPeriod);
-                }else if(record.getAccountNumber() == null && (record.getLineNumber() == 8)){
-                    //record.setStartPeriodAssets(total2923StartPeriod.doubleValue());
-                    record.setEndPeriodAssets(total2923EndPeriod);
-                }else if(record.getAccountNumber() == null && (record.getLineNumber() == 4)){
+                }else if(record.getAccountNumber() == null && (record.getLineNumber() == 5 || record.getLineNumber() == 8)){
                     //record.setStartPeriodAssets(total2923StartPeriod.doubleValue());
                     record.setEndPeriodAssets(total2923EndPeriod);
                 }else if(record.getAccountNumber() == null && (record.getLineNumber() == 11)){
@@ -8218,7 +8252,8 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         endOfTable = true;
                     }
 
-                    if (row.getCell(2) != null && row.getCell(2).getCellType() == Cell.CELL_TYPE_NUMERIC) {
+                    if (row.getCell(0) != null && row.getCell(0).getCellType() != Cell.CELL_TYPE_NUMERIC &&
+                            row.getCell(2) != null && row.getCell(2).getCellType() == Cell.CELL_TYPE_NUMERIC) {
                         int lineNumber = (int) row.getCell(2).getNumericCellValue();
                         List<ConsolidatedKZTForm10RecordDto> records = recordsMap.get(lineNumber);
                         int recordsNum = records != null ? records.size() : 0;

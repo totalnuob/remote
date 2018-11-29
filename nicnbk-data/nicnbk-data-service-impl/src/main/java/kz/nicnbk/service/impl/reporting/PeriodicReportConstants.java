@@ -180,7 +180,7 @@ public final class PeriodicReportConstants {
     public static final String KZT_FORM_6_LAST_RECORD = "Остаток на конец текущего отчетного периода (сумма строк 3, 6, 14)";
     public static final String KZT_FORM_7_LAST_RECORD = "ВСЕГО (сумма строк 1, 8)";
     public static final String KZT_FORM_8_LAST_RECORD = "ВСЕГО (сумма строк 1, 7)";
-    public static final String KZT_FORM_10_LAST_RECORD = "ВСЕГО  (сумма строк 1, 4)";
+    public static final String KZT_FORM_10_LAST_RECORD = "Всего  (сумма строк 1, 5)";
     public static final String KZT_FORM_13_LAST_RECORD = "ВСЕГО (сумма строк 1, 4)";
     public static final String KZT_FORM_14_LAST_RECORD = "ВСЕГО (сумма строк 1, 9)";
     public static final String KZT_FORM_19_LAST_RECORD = "ВСЕГО (сумма строк 1, 12, 22, 29, 32, 37 и 42)";
