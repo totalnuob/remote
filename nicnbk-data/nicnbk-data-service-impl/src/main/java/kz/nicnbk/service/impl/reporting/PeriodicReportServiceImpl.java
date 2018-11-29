@@ -4874,6 +4874,59 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             }
 
             if(previousRecords != null && !previousRecords.isEmpty()){
+
+
+                // UPDATE FORM
+                int maxLineNumber = 0;
+                for(ConsolidatedBalanceFormRecordDto dto: previousRecords){
+                    if(dto.getLineNumber() != null && dto.getLineNumber() > maxLineNumber){
+                        maxLineNumber = dto.getLineNumber();
+                    }
+                }
+
+                // 2. Update form
+                if(maxLineNumber != 55) {
+
+                    // previous records map
+                    Map<Integer, List<ConsolidatedKZTForm19RecordDto>> previousRecordsMap = new HashedMap();
+                    int lineNumber = 0;
+                    for(ConsolidatedKZTForm19RecordDto record: previousRecords){
+                        if(record.getLineNumber() != null){
+                            lineNumber = record.getLineNumber();
+                        }
+                        if(lineNumber > 0){
+                            if(previousRecordsMap.get(lineNumber) == null){
+                                List<ConsolidatedKZTForm19RecordDto> recordsList = new ArrayList<>();
+                                recordsList.add(record);
+                                previousRecordsMap.put(lineNumber, recordsList);
+                            }else{
+                                previousRecordsMap.get(lineNumber).add(record);
+                            }
+                        }
+                    }
+
+                    List<ConsolidatedKZTForm19RecordDto> newPreviousPeriodRecords = getConsolidatedBalanceKZTForm19LineHeaders();
+                    for(ConsolidatedKZTForm19RecordDto record: newPreviousPeriodRecords){
+                        int oldLineNumber = record.getLineNumber() - 1;
+                        if(previousRecordsMap.get(oldLineNumber) != null && previousRecordsMap.get(oldLineNumber).size() > 0){
+                            for(ConsolidatedKZTForm19RecordDto dto: previousRecordsMap.get(oldLineNumber)) {
+                                if(dto.getAccountNumber() == null && record.getAccountNumber() == null ||
+                                        (dto.getAccountNumber() != null && record.getAccountNumber() != null &&
+                                                dto.getAccountNumber().equalsIgnoreCase(record.getAccountNumber()) &&
+                                        dto.getName().equalsIgnoreCase(record.getName()))) {
+                                    record.setCurrentAccountBalance(dto.getCurrentAccountBalance());
+                                    record.setTurnover(dto.getTurnover());
+                                    record.setPreviousAccountBalance(dto.getPreviousAccountBalance());
+                                }
+                            }
+
+                        }
+                    }
+
+                    previousRecords = newPreviousPeriodRecords;
+                }
+
+
                 int index = 0;
                 for(ConsolidatedKZTForm19RecordDto record: currentRecords){
                     boolean previousRecordFound = false;
@@ -4986,17 +5039,17 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             }else if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_7313_010) &&
                     record.getName().equalsIgnoreCase(PeriodicReportConstants.BANK_LOANS_RECEIVED)){
                 record.setCurrentAccountBalance(record7313_010.doubleValue());
-            }else if(record.getAccountNumber() == null && record.getLineNumber() != null && record.getLineNumber() == 32){
+            }else if(record.getAccountNumber() == null && record.getLineNumber() != null && record.getLineNumber() == 33){
                 record.setCurrentAccountBalance(MathUtils.add(record6150_030HF, record6150_030PE, record6150_030RE, record7330_030HF, record7330_030PE, record7330_030RE).doubleValue());
-            }else if(record.getAccountNumber() == null && record.getLineNumber() != null && record.getLineNumber() == 34){
+            }else if(record.getAccountNumber() == null && record.getLineNumber() != null && record.getLineNumber() == 35){
                 record.setCurrentAccountBalance(MathUtils.add(record6150_030HF, record6150_030PE, record6150_030RE).doubleValue());
-            }else if(record.getAccountNumber() == null && record.getLineNumber() != null && record.getLineNumber() == 36){
+            }else if(record.getAccountNumber() == null && record.getLineNumber() != null && record.getLineNumber() == 37){
                 record.setCurrentAccountBalance(MathUtils.add(record7330_030HF, record7330_030PE, record7330_030RE).doubleValue());
-            }else if(record.getAccountNumber() == null && record.getLineNumber() != null && record.getLineNumber() == 42){
-                record.setCurrentAccountBalance(record7313_010.doubleValue());
             }else if(record.getAccountNumber() == null && record.getLineNumber() != null && record.getLineNumber() == 43){
                 record.setCurrentAccountBalance(record7313_010.doubleValue());
-            }else if(record.getAccountNumber() == null && record.getLineNumber() != null && record.getLineNumber() == 54){
+            }else if(record.getAccountNumber() == null && record.getLineNumber() != null && record.getLineNumber() == 44){
+                record.setCurrentAccountBalance(record7313_010.doubleValue());
+            }else if(record.getAccountNumber() == null && record.getLineNumber() != null && record.getLineNumber() == 55){
                 record.setCurrentAccountBalance(sum);
             }
         }
@@ -5555,88 +5608,90 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
     private List<ConsolidatedKZTForm19RecordDto> getConsolidatedBalanceKZTForm19LineHeaders(){
         List<ConsolidatedKZTForm19RecordDto> records = new ArrayList<>();
-        records.add(new ConsolidatedKZTForm19RecordDto("Доходы в виде вознаграждения по размещенным вкладам (сумма строк 2-11)", 1));
+        records.add(new ConsolidatedKZTForm19RecordDto("Доходы в виде вознаграждения по размещенным вкладам (сумма строк 2-7)", 1));
         records.add(new ConsolidatedKZTForm19RecordDto("Доходы по вознаграждениям по вкладам до востребования", 2));
         records.add(new ConsolidatedKZTForm19RecordDto("Доходы по вознаграждениям по краткосрочным срочным вкладам", 3));
         records.add(new ConsolidatedKZTForm19RecordDto("Доходы по вознаграждениям по долгосрочным срочным вкладам", 4));
         records.add(new ConsolidatedKZTForm19RecordDto("Доходы по вознаграждениям по краткосрочным прочим вкладам", 5));
-        records.add(new ConsolidatedKZTForm19RecordDto("Доходы по вознаграждениям по долгосрочным прочим вкладам", 6));
-        records.add(new ConsolidatedKZTForm19RecordDto("Доходы по амортизации дисконта по вкладам до востребования", 7));
-        records.add(new ConsolidatedKZTForm19RecordDto("Доходы по амортизации дисконта по краткосрочным срочным вкладам", 8));
-        records.add(new ConsolidatedKZTForm19RecordDto("Доходы по амортизации дисконта по долгосрочным срочным вкладам", 9));
-        records.add(new ConsolidatedKZTForm19RecordDto("Доходы по амортизации дисконта по прочим краткосрочным вкладам", 10));
-        records.add(new ConsolidatedKZTForm19RecordDto("Доходы по амортизации дисконта по прочим долгосрочным вкладам", 11));
-        records.add(new ConsolidatedKZTForm19RecordDto("Доходы в виде вознаграждения по приобретенным ценным бумагам (сумма строк 13-21)", 12));
-        records.add(new ConsolidatedKZTForm19RecordDto("Доходы по вознаграждениям по краткосрочным финансовым инвестициям, оцениваемым по справедливой стоимости, изменения которой отражаются в составе прибыли или убытка", 13));
-        records.add(new ConsolidatedKZTForm19RecordDto("Доходы по вознаграждениям по краткосрочным финансовым инвестициям, удерживаемым до погашения", 14));
-        records.add(new ConsolidatedKZTForm19RecordDto("Доходы по вознаграждениям по долгосрочным финансовым инвестициям, удерживаемым до погашения", 15));
-        records.add(new ConsolidatedKZTForm19RecordDto("Доходы по вознаграждениям по краткосрочным финансовым инвестициям, имеющимся в наличии для продажи", 16));
-        records.add(new ConsolidatedKZTForm19RecordDto("Доходы по вознаграждениям по долгосрочным финансовым инвестициям, имеющимся в наличии для продажи", 17));
-        records.add(new ConsolidatedKZTForm19RecordDto("Доходы по амортизации дисконта по краткосрочным финансовым инвестициям, удерживаемым до погашения", 18));
-        records.add(new ConsolidatedKZTForm19RecordDto("Доходы по амортизации дисконта по долгосрочным финансовым инвестициям, удерживаемым до погашения", 19));
-        records.add(new ConsolidatedKZTForm19RecordDto("Доходы по амортизации дисконта по краткосрочным финансовым инвестициям, имеющимся в наличии для продажи", 20));
-        records.add(new ConsolidatedKZTForm19RecordDto("Доходы по амортизации дисконта по долгосрочным финансовым инвестициям, имеющимся в наличии для продажи", 21));
-        records.add(new ConsolidatedKZTForm19RecordDto("Доходы (расходы) от купли-продажи ценных бумаг (сумма строк 23-28)", 22));
-        records.add(new ConsolidatedKZTForm19RecordDto("Доходы от покупки-продажи финансовых инвестиций, оцениваемых по справедливой стоимости, изменения которой отражаются в составе прибыли или убытка", 23));
-        records.add(new ConsolidatedKZTForm19RecordDto("Доходы от покупки-продажи краткосрочных финансовых инвестиций, имеющихся в наличии для продажи", 24));
-        records.add(new ConsolidatedKZTForm19RecordDto("Доходы от покупки-продажи долгосрочных финансовых инвестиций, имеющихся в наличии для продажи", 25));
-        records.add(new ConsolidatedKZTForm19RecordDto("Расходы от покупки-продажи финансовых инвестиций, оцениваемых по справедливой стоимости, изменения которой отражаются в составе прибыли или убытка", 26));
-        records.add(new ConsolidatedKZTForm19RecordDto("Расходы от покупки-продажи краткосрочных финансовых инвестиций, имеющихся в наличии для продажи", 27));
-        records.add(new ConsolidatedKZTForm19RecordDto("Расходы от покупки-продажи долгосрочных финансовых инвестиций, имеющихся в наличии для продажи", 28));
-        records.add(new ConsolidatedKZTForm19RecordDto("Доходы (расходы) от изменения стоимости ценных бумаг, оцениваемых по справедливой стоимости, изменения которой отражаются в составе прибыли или убытка (сумма строк 30, 31)", 29));
-        records.add(new ConsolidatedKZTForm19RecordDto("Доходы от изменения справедливой стоимости финансовых инвестиций, оцениваемых по справедливой стоимости, изменения которой отражаются в составе прибыли или убытка", 30));
-        records.add(new ConsolidatedKZTForm19RecordDto("Расходы от изменения справедливой стоимости финансовых инвестиций, оцениваемых по справедливой стоимости, изменения которой отражаются в составе прибыли или убытка", 31));
-        records.add(new ConsolidatedKZTForm19RecordDto("Доходы (расходы) от изменения стоимости ценных бумаг, имеющихся в наличии для продажи (сумма строк 33-36)", 32));
-        records.add(new ConsolidatedKZTForm19RecordDto("Доходы от изменения справедливой стоимости краткосрочных финансовых инвестиций, имеющихся в наличии для продажи", 33));
-        records.add(new ConsolidatedKZTForm19RecordDto(PeriodicReportConstants.INCOME_FAIR_VALUE_CHANGES, 34));
+        records.add(new ConsolidatedKZTForm19RecordDto("Доходы по амортизации дисконта по краткосрочным срочным вкладам", 6));
+        records.add(new ConsolidatedKZTForm19RecordDto("Доходы по амортизации дисконта по долгосрочным срочным вкладам", 7));
+        records.add(new ConsolidatedKZTForm19RecordDto("Доходы в виде вознаграждения по приобретенным ценным бумагам (сумма строк 9-17)", 8));
+        records.add(new ConsolidatedKZTForm19RecordDto("Доходы по вознаграждениям по краткосрочным финансовым инвестициям, оцениваемым по справедливой стоимости через прибыль или убыток", 9));
+        records.add(new ConsolidatedKZTForm19RecordDto("Доходы по вознаграждениям по краткосрочным финансовым инвестициям, оцениваемым по амортизированной стоимости", 10));
+        records.add(new ConsolidatedKZTForm19RecordDto("Доходы по вознаграждениям по долгосрочным финансовым инвестициям, оцениваемым по амортизированной стоимости", 11));
+        records.add(new ConsolidatedKZTForm19RecordDto("Доходы по вознаграждениям по краткосрочным финансовым инвестициям, оцениваемым по справедливой стоимости через прочий совокупный доход", 12));
+        records.add(new ConsolidatedKZTForm19RecordDto("Доходы по вознаграждениям по долгосрочным финансовым инвестициям, оцениваемым по справедливой стоимости через прочий совокупный доход", 13));
+        records.add(new ConsolidatedKZTForm19RecordDto("Доходы по амортизации дисконта по краткосрочным финансовым инвестициям, оцениваемым по амортизированной стоимости", 14));
+        records.add(new ConsolidatedKZTForm19RecordDto("Доходы по амортизации дисконта по долгосрочным финансовым инвестициям, оцениваемым по амортизированной стоимости", 15));
+        records.add(new ConsolidatedKZTForm19RecordDto("Доходы по амортизации дисконта по краткосрочным финансовым инвестициям, оцениваемым по справедливой стоимости через прочий совокупный доход", 16));
+        records.add(new ConsolidatedKZTForm19RecordDto("Доходы по амортизации дисконта по долгосрочным финансовым инвестициям, оцениваемым по справедливой стоимости через прочий совокупный доход", 17));
+        records.add(new ConsolidatedKZTForm19RecordDto("Доходы в виде вознаграждения по заемным операциям (сумма строк 19-22)", 18));
+        records.add(new ConsolidatedKZTForm19RecordDto("Доходы по вознаграждению по краткосрочным заемным операциям", 19));
+        records.add(new ConsolidatedKZTForm19RecordDto("Доходы по вознаграждению по долгосрочным заемным операциям", 20));
+        records.add(new ConsolidatedKZTForm19RecordDto("Доходы по амортизации дисконта по краткосрочным заемным операциям", 21));
+        records.add(new ConsolidatedKZTForm19RecordDto("Доходы по амортизации дисконта по долгосрочным заемным операциям", 22));
+        records.add(new ConsolidatedKZTForm19RecordDto("Доходы (расходы) от купли-продажи ценных бумаг (сумма строк 24-29)", 23));
+        records.add(new ConsolidatedKZTForm19RecordDto("Доходы от покупки-продажи финансовых инвестиций, оцениваемых по справедливой стоимости через прибыль или убыток", 24));
+        records.add(new ConsolidatedKZTForm19RecordDto("Доходы от покупки-продажи краткосрочных финансовых инвестиций, оцениваемых по справедливой стоимости через прочий совокупный доход", 25));
+        records.add(new ConsolidatedKZTForm19RecordDto("Доходы от покупки-продажи долгосрочных финансовых инвестиций, оцениваемых по справедливой стоимости через прочий совокупный доход", 26));
 
-        ConsolidatedKZTForm19RecordDto record6150_030HF = new ConsolidatedKZTForm19RecordDto(PeriodicReportConstants.RU_HEDGE_FUND_INVESTMENT, 34);
+        records.add(new ConsolidatedKZTForm19RecordDto("Расходы от покупки-продажи финансовых инвестиций, оцениваемых по справедливой стоимости через прибыль или убыток", 27));
+        records.add(new ConsolidatedKZTForm19RecordDto("Расходы от покупки-продажи краткосрочных финансовых инвестиций, оцениваемых по справедливой стоимости через прочий совокупный доход", 28));
+        records.add(new ConsolidatedKZTForm19RecordDto("Расходы от покупки-продажи долгосрочных финансовых инвестиций, оцениваемых по справедливой стоимости через прочий совокупный доход", 29));
+        records.add(new ConsolidatedKZTForm19RecordDto("Доходы (расходы) от изменения стоимости ценных бумаг, оцениваемых по справедливой стоимости через прибыль или убыток (сумма строк 31,32)", 30));
+        records.add(new ConsolidatedKZTForm19RecordDto("Доходы от изменения справедливой стоимости финансовых инвестиций, оцениваемых по справедливой стоимости через прибыль или убыток", 31));
+        records.add(new ConsolidatedKZTForm19RecordDto("Расходы от изменения справедливой стоимости финансовых инвестиций, оцениваемых по справедливой стоимости через прибыль или убыток", 32));
+        records.add(new ConsolidatedKZTForm19RecordDto("Доходы (расходы) от изменения стоимости ценных бумаг, оцениваемых по справедливой стоимости через прочий совокупный доход (сумма строк 34-37)", 33));
+        records.add(new ConsolidatedKZTForm19RecordDto("Доходы от изменения справедливой стоимости краткосрочных финансовых инвестиций, оцениваемых по справедливой стоимости через прочий совокупный доход", 34));
+
+        records.add(new ConsolidatedKZTForm19RecordDto("Доходы от изменения справедливой стоимости долгосрочных финансовых инвестиций, оцениваемых по справедливой стоимости через прочий совокупный доход", 35));
+        ConsolidatedKZTForm19RecordDto record6150_030HF = new ConsolidatedKZTForm19RecordDto(PeriodicReportConstants.RU_HEDGE_FUND_INVESTMENT, 35);
         record6150_030HF.setAccountNumber(PeriodicReportConstants.ACC_NUM_6150_030);
         record6150_030HF.setOtherEntityName(PeriodicReportConstants.SINGULARITY_LOWER_CASE);
         records.add(record6150_030HF);
 
-        ConsolidatedKZTForm19RecordDto record6150_030PE = new ConsolidatedKZTForm19RecordDto(PeriodicReportConstants.RU_PE_FUND_INVESTMENT, 34);
+        ConsolidatedKZTForm19RecordDto record6150_030PE = new ConsolidatedKZTForm19RecordDto(PeriodicReportConstants.RU_PE_FUND_INVESTMENT, 35);
         record6150_030PE.setAccountNumber(PeriodicReportConstants.ACC_NUM_6150_030);
         record6150_030PE.setOtherEntityName(PeriodicReportConstants.TARRAGON_LOWER_CASE);
         records.add(record6150_030PE);
 
-        records.add(new ConsolidatedKZTForm19RecordDto("Расходы от изменения справедливой стоимости краткосрочных финансовых инвестиций, имеющихся в наличии для продажи", 35));
-        records.add(new ConsolidatedKZTForm19RecordDto(PeriodicReportConstants.EXPENSE_FAIR_VALUE_CHANGES, 36));
+        records.add(new ConsolidatedKZTForm19RecordDto("Расходы от изменения справедливой стоимости краткосрочных финансовых инвестиций, оцениваемых по справедливой стоимости через прочий совокупный доход", 36));
 
-        ConsolidatedKZTForm19RecordDto record7330_030HF = new ConsolidatedKZTForm19RecordDto(PeriodicReportConstants.RU_HEDGE_FUND_INVESTMENT, 36);
+        records.add(new ConsolidatedKZTForm19RecordDto("Расходы от изменения справедливой стоимости долгосрочных финансовых инвестиций, оцениваемых по справедливой стоимости через прочий совокупный доход", 37));
+        ConsolidatedKZTForm19RecordDto record7330_030HF = new ConsolidatedKZTForm19RecordDto(PeriodicReportConstants.RU_HEDGE_FUND_INVESTMENT, 37);
         record7330_030HF.setAccountNumber(PeriodicReportConstants.ACC_NUM_7330_030);
         record7330_030HF.setOtherEntityName(PeriodicReportConstants.SINGULARITY_LOWER_CASE);
         records.add(record7330_030HF);
 
-        ConsolidatedKZTForm19RecordDto record7330_030PE = new ConsolidatedKZTForm19RecordDto(PeriodicReportConstants.RU_PE_FUND_INVESTMENT, 36);
+        ConsolidatedKZTForm19RecordDto record7330_030PE = new ConsolidatedKZTForm19RecordDto(PeriodicReportConstants.RU_PE_FUND_INVESTMENT, 37);
         record7330_030PE.setAccountNumber(PeriodicReportConstants.ACC_NUM_7330_030);
         record7330_030PE.setOtherEntityName(PeriodicReportConstants.TARRAGON_LOWER_CASE);
         records.add(record7330_030PE);
 
-        records.add(new ConsolidatedKZTForm19RecordDto("Расходы в виде вознаграждения по приобретенным ценным бумагам (сумма строк 38-41) ", 37));
-        records.add(new ConsolidatedKZTForm19RecordDto("Расходы по амортизации премии по приобретенным краткосрочным финансовым инвестициям, удерживаемым до погашения", 38));
-        records.add(new ConsolidatedKZTForm19RecordDto("Расходы по амортизации премии по приобретенным долгосрочным финансовым инвестициям, удерживаемым до погашения", 39));
-        records.add(new ConsolidatedKZTForm19RecordDto("Расходы по амортизации премии по приобретенным краткосрочным финансовым инвестициям, имеющимся в наличии для продажи", 40));
-        records.add(new ConsolidatedKZTForm19RecordDto("Расходы по амортизации премии по приобретенным долгосрочным финансовым инвестициям, имеющимся в наличии для продажи", 41));
-        records.add(new ConsolidatedKZTForm19RecordDto("Расходы в виде вознаграждения по полученным займам и финансовой аренде (сумма строк 43-53)", 42));
-        records.add(new ConsolidatedKZTForm19RecordDto(PeriodicReportConstants.RU_7313_010, 43));
+        records.add(new ConsolidatedKZTForm19RecordDto("Расходы в виде вознаграждения по приобретенным ценным бумагам (сумма строк 39-42) ", 38));
+        records.add(new ConsolidatedKZTForm19RecordDto("Расходы по амортизации премии по приобретенным краткосрочным финансовым инвестициям, оцениваемым по амортизированной стоимости", 39));
+        records.add(new ConsolidatedKZTForm19RecordDto("Расходы по амортизации премии по приобретенным долгосрочным финансовым инвестициям, оцениваемым по амортизированной стоимости", 40));
+        records.add(new ConsolidatedKZTForm19RecordDto("Расходы по амортизации премии по приобретенным краткосрочным финансовым инвестициям, оцениваемым по справедливой стоимости через прочий совокупный доход", 41));
+        records.add(new ConsolidatedKZTForm19RecordDto("Расходы по амортизации премии по приобретенным долгосрочным финансовым инвестициям, оцениваемым по справедливой стоимости через прочий совокупный доход", 42));
+        records.add(new ConsolidatedKZTForm19RecordDto("Расходы в виде вознаграждения по заемным операциям и аренде (сумма строк 44-54)", 43));
 
-        ConsolidatedKZTForm19RecordDto record7313_010 = new ConsolidatedKZTForm19RecordDto(PeriodicReportConstants.BANK_LOANS_RECEIVED, 43);
+        records.add(new ConsolidatedKZTForm19RecordDto("Расходы по вознаграждениям по краткосрочным банковским займам", 44));
+        ConsolidatedKZTForm19RecordDto record7313_010 = new ConsolidatedKZTForm19RecordDto(PeriodicReportConstants.BANK_LOANS_RECEIVED, 44);
         record7313_010.setAccountNumber(PeriodicReportConstants.ACC_NUM_7313_010);
         record7313_010.setOtherEntityName("Bank of Monreal");
         records.add(record7313_010);
 
-        records.add(new ConsolidatedKZTForm19RecordDto("Расходы по вознаграждениям по долгосрочным банковским займам", 44));
-        records.add(new ConsolidatedKZTForm19RecordDto("Расходы по вознаграждениям по краткосрочным займам, полученным от организаций, осуществляющих банковские операции, без лицензии уполномоченного органа", 45));
-        records.add(new ConsolidatedKZTForm19RecordDto("Расходы по вознаграждениям по долгосрочным займам, полученным от организаций, осуществляющих банковские операции, без лицензии уполномоченного органа", 46));
-        records.add(new ConsolidatedKZTForm19RecordDto("Расходы по амортизации премии по краткосрочным предоставленным займам", 47));
-        records.add(new ConsolidatedKZTForm19RecordDto("Расходы по амортизации премии по долгосрочным предоставленным займам", 48));
-        records.add(new ConsolidatedKZTForm19RecordDto("Расходы по амортизации дисконта по краткосрочным банковским займам полученным", 49));
-        records.add(new ConsolidatedKZTForm19RecordDto("Расходы по амортизации дисконта по долгосрочным банковским займам полученным", 50));
-        records.add(new ConsolidatedKZTForm19RecordDto("Расходы по амортизации дисконта по краткосрочным займам, полученным от организаций, осуществляющих банковские операции, без лицензии уполномоченного органа", 51));
-        records.add(new ConsolidatedKZTForm19RecordDto("Расходы по амортизации дисконта по долгосрочным займам, полученным от организаций, осуществляющих банковские операции, без лицензии уполномоченного органа", 52));
-        records.add(new ConsolidatedKZTForm19RecordDto("Расходы на выплату процентов по финансовой аренде", 53));
-        records.add(new ConsolidatedKZTForm19RecordDto("ВСЕГО (сумма строк 1, 12, 22, 29, 32, 37 и 42)", 54));
+        records.add(new ConsolidatedKZTForm19RecordDto("Расходы по вознаграждениям по долгосрочным банковским займам", 45));
+        records.add(new ConsolidatedKZTForm19RecordDto("Расходы по вознаграждениям по краткосрочным займам, полученным от юридических лиц за исключением банков второго уровня", 46));
+        records.add(new ConsolidatedKZTForm19RecordDto("Расходы по вознаграждениям по долгосрочным займам, полученным от юридических лиц за исключением банков второго уровня", 47));
+        records.add(new ConsolidatedKZTForm19RecordDto("Расходы по амортизации премии по краткосрочным заемным операциям", 48));
+        records.add(new ConsolidatedKZTForm19RecordDto("Расходы по амортизации премии по долгосрочным заемным операциям", 49));
+        records.add(new ConsolidatedKZTForm19RecordDto("Расходы по амортизации дисконта по краткосрочным банковским займам полученным", 50));
+        records.add(new ConsolidatedKZTForm19RecordDto("Расходы по амортизации дисконта по долгосрочным банковским займам полученным", 51));
+        records.add(new ConsolidatedKZTForm19RecordDto("Расходы по амортизации дисконта по краткосрочным займам, полученным от юридических лиц за исключением банков второго уровня", 52));
+        records.add(new ConsolidatedKZTForm19RecordDto("Расходы по амортизации дисконта по долгосрочным займам, полученным от юридических лиц за исключением банков второго уровня", 53));
+        records.add(new ConsolidatedKZTForm19RecordDto("Расходы на выплату процентов по аренде", 54));
+        records.add(new ConsolidatedKZTForm19RecordDto("Всего (сумма строк 1, 8, 18, 23, 30, 33, 38 и 43)", 55));
 
         return records;
     }
