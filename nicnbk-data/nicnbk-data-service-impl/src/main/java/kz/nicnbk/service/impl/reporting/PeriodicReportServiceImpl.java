@@ -4641,8 +4641,43 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             List<ConsolidatedKZTForm14RecordDto> records = null;
             Date previousDate = DateUtils.getLastDayOfPreviousMonth(report.getReportDate());
             PeriodicReport previousReport = this.periodReportRepository.findByReportDate(previousDate);
-            if(previousReport != null){
+            if(previousReport != null) {
                 records = getConsolidatedBalanceKZTForm14Saved(previousReport.getId());
+
+                int maxLineNumber = 0;
+                for (ConsolidatedKZTForm14RecordDto dto : records) {
+                    if (dto.getLineNumber() != null && dto.getLineNumber() > maxLineNumber) {
+                        maxLineNumber = dto.getLineNumber();
+                    }
+                }
+
+                // 2. Update form
+                if (maxLineNumber != 11) {
+                    List<ConsolidatedKZTForm14RecordDto> newPreviousPeriodRecords = new ArrayList<>();
+                    int removed = 0;
+                    for (ConsolidatedKZTForm14RecordDto dto : records) {
+                        if (dto.getAccountNumber() == null) {
+                            if (dto.getLineNumber() == 1) {
+                                dto.setName("Краткосрочная торговая и прочая кредиторская задолженность (сумма строк 2-5)");
+                            }else if(dto.getLineNumber() >= 3 && dto.getLineNumber() <= 5){
+                                removed++;
+                                continue;
+                            }else if (dto.getLineNumber() == 9) {
+                                dto.setName("Долгосрочная торговая и прочая кредиторская задолженность (сумма строк 7-10)");
+                            }else if(dto.getLineNumber() >= 11 && dto.getLineNumber() <= 13){
+                                removed++;
+                                continue;
+                            }else if (dto.getLineNumber() == 17) {
+                                dto.setName("Всего (сумма строк 1, 6)");
+                            }
+                        }
+
+                        dto.setLineNumber(dto.getLineNumber() - removed);
+                        newPreviousPeriodRecords.add(dto);
+                    }
+
+                    records = newPreviousPeriodRecords;
+                }
             }
 
             if(records == null){
@@ -4650,7 +4685,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             }
 
             int index = 0;
-            int indexLineNumber16 = 0;
+            int indexLineNumber10 = 0;
             for(int i = 0; i < records.size(); i++){
                 ConsolidatedKZTForm14RecordDto record = records.get(i);
                 record.setDebtStartPeriod(record.getDebtEndPeriod());
@@ -4660,25 +4695,25 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
                 if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_3393_020) &&
                         record.getLineNumber() != null &&
-                        (record.getLineNumber() == 8 || record.getLineNumber() == 16)) {
+                        (record.getLineNumber() == 5 || record.getLineNumber() == 10)) {
                     record.setAgreementDescription(getAgreementDescription(record.getName()));
                     if(record.getDebtStartDate() == null) {
                         record.setDebtStartDate(DateUtils.getLastDayOfCurrentMonth(report.getReportDate()));
                     }
                 }
 
-                if(record.getLineNumber() == 9){
+                if(record.getLineNumber() == 6){
                     index = i;
-                }else if(record.getLineNumber() == 17){
-                    indexLineNumber16 = i;
+                }else if(record.getLineNumber() == 11){
+                    indexLineNumber10 = i;
                 }
             }
 
             List<ConsolidatedKZTForm14RecordDto> toAddRecords = new ArrayList<>();
             List<Integer> toAddIndices = new ArrayList<>();
             ConsolidatedKZTForm14RecordDto totalRecord = new ConsolidatedKZTForm14RecordDto();
-            ConsolidatedKZTForm14RecordDto totalRecordLineNumber8 = new ConsolidatedKZTForm14RecordDto();
-            ConsolidatedKZTForm14RecordDto totalRecordLineNumber16 = new ConsolidatedKZTForm14RecordDto();
+            ConsolidatedKZTForm14RecordDto totalRecordLineNumber5 = new ConsolidatedKZTForm14RecordDto();
+            ConsolidatedKZTForm14RecordDto totalRecordLineNumber10 = new ConsolidatedKZTForm14RecordDto();
             ListResponseDto balanceUSDResponseDto = generateConsolidatedBalanceUSDForm(report.getId());
             if(balanceUSDResponseDto.getStatus() == ResponseStatusType.FAIL){
                 responseDto.setErrorMessageEn("Error generating USD Balance form. " + balanceUSDResponseDto.getMessage().getNameEn());
@@ -4698,11 +4733,11 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
 
                                 if(recordUSD.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_4173_010)){
-                                    double debtEndPeriodValue = totalRecordLineNumber16.getDebtEndPeriod() != null ? totalRecordLineNumber16.getDebtEndPeriod() : 0;
-                                    totalRecordLineNumber16.setDebtEndPeriod(MathUtils.add(debtEndPeriodValue, record.getDebtEndPeriod()));
+                                    double debtEndPeriodValue = totalRecordLineNumber10.getDebtEndPeriod() != null ? totalRecordLineNumber10.getDebtEndPeriod() : 0;
+                                    totalRecordLineNumber10.setDebtEndPeriod(MathUtils.add(debtEndPeriodValue, record.getDebtEndPeriod()));
                                 }else if( recordUSD.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_3393_020)){
-                                    double debtEndPeriodValue = totalRecordLineNumber8.getDebtEndPeriod() != null ? totalRecordLineNumber8.getDebtEndPeriod() : 0;
-                                    totalRecordLineNumber8.setDebtEndPeriod(MathUtils.add(debtEndPeriodValue, record.getDebtEndPeriod()));
+                                    double debtEndPeriodValue = totalRecordLineNumber5.getDebtEndPeriod() != null ? totalRecordLineNumber5.getDebtEndPeriod() : 0;
+                                    totalRecordLineNumber5.setDebtEndPeriod(MathUtils.add(debtEndPeriodValue, record.getDebtEndPeriod()));
                                 }
 
                                 double debtEndPeriodValue = totalRecord.getDebtEndPeriod() != null ? totalRecord.getDebtEndPeriod() : 0;
@@ -4712,11 +4747,11 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                                     record.setDebtDifference(MathUtils.subtract(record.getDebtEndPeriod(), record.getDebtStartPeriod()));
 
                                     if( recordUSD.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_4173_010)){
-                                        double debtDiffValue = totalRecordLineNumber16.getDebtDifference() != null ? totalRecordLineNumber16.getDebtDifference() : 0;
-                                        totalRecordLineNumber16.setDebtDifference(MathUtils.add(debtDiffValue, record.getDebtDifference()));
+                                        double debtDiffValue = totalRecordLineNumber10.getDebtDifference() != null ? totalRecordLineNumber10.getDebtDifference() : 0;
+                                        totalRecordLineNumber10.setDebtDifference(MathUtils.add(debtDiffValue, record.getDebtDifference()));
                                     }else if( recordUSD.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_3393_020)){
-                                        double debtDiffValue = totalRecordLineNumber8.getDebtDifference() != null ? totalRecordLineNumber8.getDebtDifference() : 0;
-                                        totalRecordLineNumber8.setDebtDifference(MathUtils.add(debtDiffValue, record.getDebtDifference()));
+                                        double debtDiffValue = totalRecordLineNumber5.getDebtDifference() != null ? totalRecordLineNumber5.getDebtDifference() : 0;
+                                        totalRecordLineNumber5.setDebtDifference(MathUtils.add(debtDiffValue, record.getDebtDifference()));
                                     }
 
                                     double debtDiffValue = totalRecord.getDebtDifference() != null ? totalRecord.getDebtDifference() : 0;
@@ -4730,9 +4765,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         if(!exists){
                             ConsolidatedKZTForm14RecordDto newRecord = new ConsolidatedKZTForm14RecordDto();
                             if(recordUSD.getAccountNumber() != null && recordUSD.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_3393_020)) {
-                                newRecord.setLineNumber(8);
+                                newRecord.setLineNumber(5);
                             }else if(recordUSD.getAccountNumber() != null && recordUSD.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_4173_010)) {
-                                newRecord.setLineNumber(16);
+                                newRecord.setLineNumber(10);
                             }
                             newRecord.setName(recordUSD.getName());
                             newRecord.setAccountNumber(recordUSD.getAccountNumber());
@@ -4745,25 +4780,25 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
                             //records.add(index, newRecord);
                             toAddRecords.add(newRecord);
-                            if(newRecord.getLineNumber() == 8) {
+                            if(newRecord.getLineNumber() == 5) {
                                 toAddIndices.add(index);
                                 index ++;
-                                indexLineNumber16 ++;
+                                indexLineNumber10 ++;
 
-                                double debtEndPeriodValue = totalRecordLineNumber8.getDebtEndPeriod() != null ? totalRecordLineNumber8.getDebtEndPeriod() : 0;
-                                totalRecordLineNumber8.setDebtEndPeriod(MathUtils.add(debtEndPeriodValue, newRecord.getDebtEndPeriod()));
+                                double debtEndPeriodValue = totalRecordLineNumber5.getDebtEndPeriod() != null ? totalRecordLineNumber5.getDebtEndPeriod() : 0;
+                                totalRecordLineNumber5.setDebtEndPeriod(MathUtils.add(debtEndPeriodValue, newRecord.getDebtEndPeriod()));
 
-                                double debtDiffValue = totalRecordLineNumber8.getDebtDifference() != null ? totalRecordLineNumber8.getDebtDifference() : 0;
-                                totalRecordLineNumber8.setDebtDifference(MathUtils.add(debtDiffValue, (newRecord.getDebtDifference() != null ? newRecord.getDebtDifference() : 0)));
-                            }else if(newRecord.getLineNumber() == 16) {
-                                toAddIndices.add(indexLineNumber16);
-                                indexLineNumber16 ++;
+                                double debtDiffValue = totalRecordLineNumber5.getDebtDifference() != null ? totalRecordLineNumber5.getDebtDifference() : 0;
+                                totalRecordLineNumber5.setDebtDifference(MathUtils.add(debtDiffValue, (newRecord.getDebtDifference() != null ? newRecord.getDebtDifference() : 0)));
+                            }else if(newRecord.getLineNumber() == 10) {
+                                toAddIndices.add(indexLineNumber10);
+                                indexLineNumber10 ++;
 
-                                double debtEndPeriodValue = totalRecordLineNumber16.getDebtEndPeriod() != null ? totalRecordLineNumber16.getDebtEndPeriod() : 0;
-                                totalRecordLineNumber16.setDebtEndPeriod(MathUtils.add(debtEndPeriodValue, newRecord.getDebtEndPeriod()));
+                                double debtEndPeriodValue = totalRecordLineNumber10.getDebtEndPeriod() != null ? totalRecordLineNumber10.getDebtEndPeriod() : 0;
+                                totalRecordLineNumber10.setDebtEndPeriod(MathUtils.add(debtEndPeriodValue, newRecord.getDebtEndPeriod()));
 
-                                double debtDiffValue = totalRecordLineNumber16.getDebtDifference() != null ? totalRecordLineNumber16.getDebtDifference() : 0;
-                                totalRecordLineNumber16.setDebtDifference(MathUtils.add(debtDiffValue, (newRecord.getDebtDifference() != null ? newRecord.getDebtDifference() : 0)));
+                                double debtDiffValue = totalRecordLineNumber10.getDebtDifference() != null ? totalRecordLineNumber10.getDebtDifference() : 0;
+                                totalRecordLineNumber10.setDebtDifference(MathUtils.add(debtDiffValue, (newRecord.getDebtDifference() != null ? newRecord.getDebtDifference() : 0)));
                             }
 
                             // total values
@@ -4790,15 +4825,15 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             // Set total sums
             List<ConsolidatedKZTForm14RecordDto> recordWithoutEmpty = new ArrayList<>();
             for(ConsolidatedKZTForm14RecordDto record: records){
-                if(record.getAccountNumber() == null && record.getLineNumber() == 17){
+                if(record.getAccountNumber() == null && record.getLineNumber() == 11){
                     record.setDebtEndPeriod(totalRecord.getDebtEndPeriod());
                     record.setDebtDifference(totalRecord.getDebtDifference());
-                }else if(record.getAccountNumber() == null && (record.getLineNumber() == 1 || record.getLineNumber() == 8)){
-                    record.setDebtEndPeriod(totalRecordLineNumber8.getDebtEndPeriod());
-                    record.setDebtDifference(totalRecordLineNumber8.getDebtDifference());
-                }else if(record.getAccountNumber() == null && (record.getLineNumber() == 9 || record.getLineNumber() == 16)){
-                    record.setDebtEndPeriod(totalRecordLineNumber16.getDebtEndPeriod());
-                    record.setDebtDifference(totalRecordLineNumber16.getDebtDifference());
+                }else if(record.getAccountNumber() == null && (record.getLineNumber() == 1 || record.getLineNumber() == 5)){
+                    record.setDebtEndPeriod(totalRecordLineNumber5.getDebtEndPeriod());
+                    record.setDebtDifference(totalRecordLineNumber5.getDebtDifference());
+                }else if(record.getAccountNumber() == null && (record.getLineNumber() == 6 || record.getLineNumber() == 10)){
+                    record.setDebtEndPeriod(totalRecordLineNumber10.getDebtEndPeriod());
+                    record.setDebtDifference(totalRecordLineNumber10.getDebtDifference());
                 }
                 if(!record.isEmpty() || (record.getAccountNumber() == null && record.getLineNumber() != null)){
                     recordWithoutEmpty.add(record);
@@ -5319,23 +5354,23 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
     private List<ConsolidatedKZTForm14RecordDto> getConsolidatedBalanceKZTForm14LineHeaders(){
         List<ConsolidatedKZTForm14RecordDto> records = new ArrayList<>();
-        records.add(new ConsolidatedKZTForm14RecordDto("Краткосрочная торговая и прочая дебиторская задолженность (сумма строк 2-8)", 1));
+        records.add(new ConsolidatedKZTForm14RecordDto("Краткосрочная торговая и прочая кредиторская задолженность (сумма строк 2-5)", 1));
         records.add(new ConsolidatedKZTForm14RecordDto("Краткосрочная кредиторская задолженность поставщикам и подрядчикам", 2));
-        records.add(new ConsolidatedKZTForm14RecordDto("Краткосрочная кредиторская задолженность дочерним организациям", 3));
-        records.add(new ConsolidatedKZTForm14RecordDto("Краткосрочная кредиторская задолженность ассоциированным и совместным организациям", 4));
-        records.add(new ConsolidatedKZTForm14RecordDto("Краткосрочная кредиторская задолженность филиалам и представительствам", 5));
-        records.add(new ConsolidatedKZTForm14RecordDto("Краткосрочная задолженность по аренде", 6));
-        records.add(new ConsolidatedKZTForm14RecordDto("Краткосрочные авансы полученные", 7));
-        records.add(new ConsolidatedKZTForm14RecordDto(PeriodicReportConstants.RU_3393_020, 8));
-        records.add(new ConsolidatedKZTForm14RecordDto("Долгосрочная торговая и прочая кредиторская задолженность (сумма строк 10-16)", 9));
-        records.add(new ConsolidatedKZTForm14RecordDto("Долгосрочная кредиторская задолженность поставщикам и подрядчикам", 10));
-        records.add(new ConsolidatedKZTForm14RecordDto("Долгосрочная кредиторская задолженность дочерним организациям", 11));
-        records.add(new ConsolidatedKZTForm14RecordDto("Долгосрочная кредиторская задолженность ассоциированным и совместным организациям", 12));
-        records.add(new ConsolidatedKZTForm14RecordDto("Долгосрочная кредиторская задолженность филиалам и представительствам", 13));
-        records.add(new ConsolidatedKZTForm14RecordDto("Долгосрочная задолженность по аренде", 14));
-        records.add(new ConsolidatedKZTForm14RecordDto("Долгосрочные авансы полученные", 15));
-        records.add(new ConsolidatedKZTForm14RecordDto("Прочая долгосрочная кредиторская задолженность", 16));
-        records.add(new ConsolidatedKZTForm14RecordDto("ВСЕГО (сумма строк 1, 9)", 17));
+//        records.add(new ConsolidatedKZTForm14RecordDto("Краткосрочная кредиторская задолженность дочерним организациям", 3));
+//        records.add(new ConsolidatedKZTForm14RecordDto("Краткосрочная кредиторская задолженность ассоциированным и совместным организациям", 4));
+//        records.add(new ConsolidatedKZTForm14RecordDto("Краткосрочная кредиторская задолженность филиалам и представительствам", 5));
+        records.add(new ConsolidatedKZTForm14RecordDto("Краткосрочная задолженность по аренде", 3));
+        records.add(new ConsolidatedKZTForm14RecordDto("Краткосрочные авансы полученные", 4));
+        records.add(new ConsolidatedKZTForm14RecordDto("Прочая краткосрочная кредиторская задолженность", 5));
+        records.add(new ConsolidatedKZTForm14RecordDto("Долгосрочная торговая и прочая кредиторская задолженность (сумма строк 7-10)", 6));
+        records.add(new ConsolidatedKZTForm14RecordDto("Долгосрочная кредиторская задолженность поставщикам и подрядчикам", 7));
+//        records.add(new ConsolidatedKZTForm14RecordDto("Долгосрочная кредиторская задолженность дочерним организациям", 11));
+//        records.add(new ConsolidatedKZTForm14RecordDto("Долгосрочная кредиторская задолженность ассоциированным и совместным организациям", 12));
+//        records.add(new ConsolidatedKZTForm14RecordDto("Долгосрочная кредиторская задолженность филиалам и представительствам", 13));
+        records.add(new ConsolidatedKZTForm14RecordDto("Долгосрочная задолженность по аренде", 8));
+        records.add(new ConsolidatedKZTForm14RecordDto("Долгосрочные авансы полученные", 9));
+        records.add(new ConsolidatedKZTForm14RecordDto("Прочая долгосрочная кредиторская задолженность", 10));
+        records.add(new ConsolidatedKZTForm14RecordDto("Всего (сумма строк 1, 6)", 11));
 
         return records;
     }
