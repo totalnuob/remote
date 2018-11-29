@@ -2,16 +2,14 @@ package kz.nicnbk.service.dto.hf;
 
 import kz.nicnbk.common.service.model.BaseEntityDto;
 import kz.nicnbk.common.service.util.StringUtils;
-import kz.nicnbk.repo.model.base.BaseEntity;
 
-import java.io.Serializable;
 import java.util.Date;
 
 
 /**
  * Created by timur on 19.10.2016.
  */
-public class HedgeFundScreeningParsedDataDto extends BaseEntityDto implements Comparable, Serializable {
+public class HedgeFundScreeningParsedUcitsDataDto extends BaseEntityDto implements Comparable {
 
     private HedgeFundScreeningDto screening;
 
@@ -30,13 +28,8 @@ public class HedgeFundScreeningParsedDataDto extends BaseEntityDto implements Co
     private Double recentFundAUM;
     private Date recentFundAUMDate;
 
-    private Double recentStrategyAUM;
-    private Date recentStrategyAUMDate;
-
     private Date recentTrackRecordDate;
     private Boolean recentTrackRecordDateWithinLookback;
-
-    private Boolean differentManagerCurrencies;
 
     public HedgeFundScreeningDto getScreening() {
         return screening;
@@ -150,30 +143,6 @@ public class HedgeFundScreeningParsedDataDto extends BaseEntityDto implements Co
         this.fundAUMByCurrency = fundAUMByCurrency;
     }
 
-    public Double getRecentStrategyAUM() {
-        return recentStrategyAUM;
-    }
-
-    public void setRecentStrategyAUM(Double recentStrategyAUM) {
-        this.recentStrategyAUM = recentStrategyAUM;
-    }
-
-    public Date getRecentStrategyAUMDate() {
-        return recentStrategyAUMDate;
-    }
-
-    public void setRecentStrategyAUMDate(Date recentStrategyAUMDate) {
-        this.recentStrategyAUMDate = recentStrategyAUMDate;
-    }
-
-    public Boolean getDifferentManagerCurrencies() {
-        return differentManagerCurrencies;
-    }
-
-    public void setDifferentManagerCurrencies(Boolean differentManagerCurrencies) {
-        this.differentManagerCurrencies = differentManagerCurrencies;
-    }
-
     public boolean isEmpty(){
         return this.fundId == null && StringUtils.isEmpty(this.fundName) &&
                 StringUtils.isEmpty(this.investmentManager) && StringUtils.isEmpty(this.mainStrategy) &&
@@ -182,7 +151,7 @@ public class HedgeFundScreeningParsedDataDto extends BaseEntityDto implements Co
 
     @Override
     public int compareTo(Object o) {
-        return this.fundId.compareTo(((HedgeFundScreeningParsedDataDto) o).fundId);
+        return this.fundId.compareTo(((HedgeFundScreeningParsedUcitsDataDto) o).fundId);
     }
 }
 

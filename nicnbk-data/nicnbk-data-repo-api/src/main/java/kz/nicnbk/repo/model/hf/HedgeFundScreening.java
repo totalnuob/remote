@@ -22,6 +22,7 @@ public class HedgeFundScreening extends CreateUpdateBaseEntity {
     private String description;
     private Date date;
     private Files dataFile;
+    private Files ucitsFile;
 
     public HedgeFundScreening(){}
 
@@ -65,5 +66,15 @@ public class HedgeFundScreening extends CreateUpdateBaseEntity {
 
     public void setDataFile(Files dataFile) {
         this.dataFile = dataFile;
+    }
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="ucits_file_id")
+    public Files getUcitsFile() {
+        return ucitsFile;
+    }
+
+    public void setUcitsFile(Files ucitsFile) {
+        this.ucitsFile = ucitsFile;
     }
 }

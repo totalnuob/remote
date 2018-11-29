@@ -132,7 +132,8 @@ export class CommonFormViewComponent {
 
     getAmountShort(value){
         if(value) {
-            value = Number(value).toFixed(0);
+            value = Number(value.toString().replace(/,/g, '')).toFixed(0);
+            //value = Number(value).toFixed(0);
             if(("" + value).length > 6 && ("" + value).length <= 9 ){
                 var shortValue = parseFloat(value / Math.pow(1000, 2)).toFixed(1);
                 return ((shortValue + "")[(shortValue + "").length-1] === '0' ? (shortValue + "").substring(0, (shortValue + "").length-2) : shortValue) + " M";

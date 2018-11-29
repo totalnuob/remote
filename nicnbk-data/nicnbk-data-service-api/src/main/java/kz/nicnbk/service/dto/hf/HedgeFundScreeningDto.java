@@ -19,7 +19,12 @@ public class HedgeFundScreeningDto extends CreateUpdateBaseEntityDto<HedgeFundSc
     private Long fileId;
     private String fileName;
 
+    private Long ucitsFileId;
+    private String ucitsFileName;
+
     private List<HedgeFundScreeningParsedDataDto> parsedData;
+
+    private List<HedgeFundScreeningParsedDataDto> parsedUcitsData;
 
     public HedgeFundScreeningDto(){}
 
@@ -73,6 +78,30 @@ public class HedgeFundScreeningDto extends CreateUpdateBaseEntityDto<HedgeFundSc
 
     public void setParsedData(List<HedgeFundScreeningParsedDataDto> parsedData) {
         this.parsedData = parsedData;
+    }
+
+    public Long getUcitsFileId() {
+        return ucitsFileId;
+    }
+
+    public void setUcitsFileId(Long ucitsFileId) {
+        this.ucitsFileId = ucitsFileId;
+    }
+
+    public String getUcitsFileName() {
+        return ucitsFileName;
+    }
+
+    public void setUcitsFileName(String ucitsFileName) {
+        this.ucitsFileName = ucitsFileName;
+    }
+
+    public List<HedgeFundScreeningParsedDataDto> getParsedUcitsData() {
+        return parsedUcitsData;
+    }
+
+    public void setParsedUcitsData(List<HedgeFundScreeningParsedDataDto> parsedUcitsData) {
+        this.parsedUcitsData = parsedUcitsData;
     }
 }
 

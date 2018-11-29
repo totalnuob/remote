@@ -261,4 +261,24 @@ public class DateUtils {
         c.add(Calendar.MONTH, months);
         return c.getTime();
     }
+
+    public static Date moveDateByDays(Date referenceDate, int days){
+        Calendar c = Calendar.getInstance();
+        c.setTime(referenceDate);
+        c.add(Calendar.DAY_OF_MONTH, days);
+        return c.getTime();
+    }
+
+    public static int getMonthsChanged(Date fromDate, Date toDate){
+        if(fromDate == null || toDate == null){
+            throw new IllegalArgumentException("Date argument is null");
+        }
+//        if(getYear(fromDate) == getYear(toDate) && getMonth(fromDate) == getMonth(toDate)){
+//            return 0;
+//        }
+        Date start = getFirstDayOfCurrentMonth(fromDate);
+        Date end = getFirstDayOfCurrentMonth(toDate);
+        return getMonthsDifference(start, end) + 1;
+
+    }
 }

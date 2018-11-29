@@ -19,6 +19,8 @@ public class CurrencyRatesDto implements BaseDto {
     private Double value;
     private Double averageValue;
     private Double averageValueYear;
+    private Double valueUSD;
+
     private boolean editable;
 
     public CurrencyRatesDto(){}
@@ -93,5 +95,13 @@ public class CurrencyRatesDto implements BaseDto {
 
     public void setEditable(boolean editable) {
         this.editable = editable;
+    }
+
+    public Double getValueUSD() {
+        return valueUSD;
+    }
+
+    public void setValueUSD(Double valueUSD) {
+        this.valueUSD = valueUSD;
     }
 }

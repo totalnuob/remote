@@ -9,5 +9,10 @@ export class HedgeFundScreening {
     fileId: number;
     fileName: string;
 
+    ucitsFileId: number;
+    ucitsFileName: string;
+
     parsedData: HedgeFundScreeningParsedData[];
+
+    parsedUcitsData: HedgeFundScreeningParsedData[];
 }

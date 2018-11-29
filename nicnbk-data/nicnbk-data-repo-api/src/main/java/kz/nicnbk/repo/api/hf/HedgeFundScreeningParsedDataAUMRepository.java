@@ -22,13 +22,19 @@ public interface HedgeFundScreeningParsedDataAUMRepository extends PagingAndSort
 
     @Query("SELECT e FROM HedgeFundScreeningParsedDataAUM e WHERE e.screening.id=?1 AND " +
             " e.date >= ?2 AND e.date <= ?3 ")
-    List<HedgeFundScreeningParsedDataAUM> findByScreeningIdAndDateRange(Long screeningId, Date dateFrom, Date dateTo, Sort sorting);
+    List<HedgeFundScreeningParsedDataAUM> findByScreeningIdAndDateRange(Long screeningId, Date dateFrom, Date dateTo, Sort sort);
 
     @Query("SELECT max(e.date) FROM HedgeFundScreeningParsedDataAUM e WHERE e.screening.id=?1")
     Date getMaxDate(Long screeningId);
 
-    @Query("SELECT e FROM HedgeFundScreeningParsedDataAUM e WHERE e.screening.id=?1 AND e.date >= ?2 AND e.date <= ?3 " +
-            " AND e.value is not null AND e.date=(SELECT MAX(e2.date) from HedgeFundScreeningParsedDataAUM e2 WHERE e2.value is not null AND " +
-            "e2.screening.id=?1 AND e2.date >= ?2 AND e2.date <= ?3 AND e.fundId=e2.fundId)")
-    List<HedgeFundScreeningParsedDataAUM> getLastAUMByFundId(Long screeningId, Date dateFrom, Date dateTo);
+    @Query("SELECT DISTINCT e FROM HedgeFundScreeningParsedDataAUM e WHERE e.screening.id=?1 " +
+            " AND e.value is not null AND e.fundId=?4 AND e.date=(SELECT MAX(e2.date) from HedgeFundScreeningParsedDataAUM e2 " +
+            "WHERE e2.value is not null AND " +
+            "e2.screening.id=?1 AND e2.date >= ?2 AND e2.date <= ?3 AND e2.fundId=?4)")
+    HedgeFundScreeningParsedDataAUM getLastAUMByFundId(Long screeningId, Date dateFrom, Date dateTo, Long fundId);
+
+    @Query("SELECT e FROM HedgeFundScreeningParsedDataAUM e WHERE e.screening.id=?1 AND " +
+            " e.date >= ?2 AND e.date <= ?3 AND e.fundId=?4")
+    List<HedgeFundScreeningParsedDataAUM> findByScreeningIdAndDateRangeAndFundId(Long screeningId, Date dateFrom, Date dateTo, Long fundId);
+
 }

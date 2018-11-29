@@ -62,7 +62,31 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
             dto.setDate(entity.getDate());
             dto.setValue(entity.getValue());
             dto.setAverageValue(entity.getAverageValue());
+            dto.setValueUSD(entity.getValueUSD());
             return dto;
+        }
+        return null;
+    }
+
+    @Override
+    public CurrencyRatesDto getLstRateForMonthDateAndCurrencyBackwards(Date date, String currencyCode){
+        Date dateFormatted = DateUtils.getDateOnly(date);
+        boolean sameMonth = true;
+        while(sameMonth) {
+            CurrencyRates entity = this.currencyRatesRepository.getRateForDateAndCurrency(dateFormatted, currencyCode);
+            if (entity != null) {
+                CurrencyRatesDto dto = new CurrencyRatesDto();
+                dto.setDate(entity.getDate());
+                dto.setValue(entity.getValue());
+                dto.setAverageValue(entity.getAverageValue());
+                dto.setValueUSD(entity.getValueUSD());
+                return dto;
+            }else{
+
+                Date newDateFormatted = DateUtils.getDateOnly(DateUtils.moveDateByDays(dateFormatted, -1));
+                sameMonth = DateUtils.getMonth(dateFormatted) == DateUtils.getMonth(newDateFormatted);
+                dateFormatted = newDateFormatted;
+            }
         }
         return null;
     }
@@ -308,6 +332,15 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
             logger.error("Error deleting currency rate record: id " + id, ex);
             return false;
         }
+    }
+
+    @Override
+    public Double getUSDValueRateForDateAndCurrency(Date date, String currencyCode) {
+        CurrencyRatesDto currencyRatesDto = getRateForDateAndCurrency(date, currencyCode);
+        if(currencyRatesDto != null && currencyRatesDto.getValueUSD() != null){
+            return currencyRatesDto.getValueUSD();
+        }
+        return null;
     }
 
 }

@@ -37,11 +37,15 @@ export class HFScreeningEditComponent extends CommonFormViewComponent implements
     parsedDataAUM: HedgeFundScreeningParsedDataDateValue[];
 
     public uploadFile: any;
+    public ucitsUploadFile: any;
     private breadcrumbParams: string;
     private searchParams = new HedgeFundScreeningSearchParams();
 
     headerDatesReturns: Date[];
     headerDatesAUM: Date[];
+
+    headerDatesUcitsAUM: Date[];
+    parsedDataUcitsAUM: HedgeFundScreeningParsedDataDateValue[];
 
     private moduleAccessChecker: ModuleAccessCheckerService;
 
@@ -99,44 +103,9 @@ export class HFScreeningEditComponent extends CommonFormViewComponent implements
             .subscribe(
                 response => {
                     this.screening.id = response.entityId;
+                    this.screeningId = this.screening.id;
 
-                    if (this.uploadFile) {
-                        this.busy = this.screeningService.postFiles(this.screening.id, [], [this.uploadFile])
-                            .subscribe(
-                                res => {
-                                    // clear upload files list on view
-                                    this.uploadFile = null;
-
-                                    // update files list with new files
-                                    this.screening.fileId = res.fileId;
-                                    this.screening.fileName = res.fileName;
-
-                                    this.busy = this.screeningService.get(this.screeningId)
-                                        .subscribe(
-                                            entity => {
-                                                this.screening = entity;
-                                                this.postAction("Successfully saved screening.", null);
-                                            },
-                                            (error: ErrorResponse) => {
-                                                this.errorMessage = "Error re-loading screening after file upload";
-                                                if(error && !error.isEmpty()){
-                                                    this.processErrorMessage(error);
-                                                }
-                                                this.postAction(this.successMessage, this.errorMessage);
-                                            }
-                                        );
-
-                                },
-                                error => {
-                                    var result = JSON.parse(error);
-                                    var message = result != null && result.message != null && result.message.nameEn != null ? result.message.nameEn : null;
-                                    this.uploadFile = null;
-                                    this.postAction(null, message != null && message != null ? message : "Error uploading file");
-                                });
-                    } else {
-                        this.postAction("Successfully saved screening.", null);
-                    }
-
+                    this.postAction("Successfully saved screening.", null);
                 },
                 (error: ErrorResponse) => {
                     this.errorMessage = "Error saving screening";
@@ -148,6 +117,76 @@ export class HFScreeningEditComponent extends CommonFormViewComponent implements
             );
     }
 
+    uploadDataFile(){
+        this.busy = this.screeningService.postFiles(this.screening.id, [], [this.uploadFile])
+            .subscribe(
+                res => {
+                    // clear upload files list on view
+                    this.uploadFile = null;
+
+                    // update files list with new files
+                    this.screening.fileId = res.fileId;
+                    this.screening.fileName = res.fileName;
+
+                    this.busy = this.screeningService.get(this.screening.id)
+                        .subscribe(
+                            entity => {
+                                this.screening = entity;
+                                this.postAction("Successfully uploaded data file.", null);
+                            },
+                            (error: ErrorResponse) => {
+                                this.errorMessage = "Error re-loading screening after file upload";
+                                if(error && !error.isEmpty()){
+                                    this.processErrorMessage(error);
+                                }
+                                this.postAction(this.successMessage, this.errorMessage);
+                            }
+                        );
+
+                },
+                error => {
+                    var result = JSON.parse(error);
+                    var message = result != null && result.message != null && result.message.nameEn != null ? result.message.nameEn : null;
+                    this.uploadFile = null;
+                    this.postAction(null, message != null && message != null ? message : "Error uploading file");
+                });
+    }
+
+    uploadUcitsFile(){
+        this.busy = this.screeningService.postUcitsFile(this.screening.id, [], [this.ucitsUploadFile])
+            .subscribe(
+                res => {
+                    // clear upload files list on view
+                    this.ucitsUploadFile = null;
+
+                    // update files list with new files
+                    this.screening.ucitsFileId = res.fileId;
+                    this.screening.ucitsFileName = res.fileName;
+
+                    this.busy = this.screeningService.get(this.screening.id)
+                        .subscribe(
+                            entity => {
+                                this.screening = entity;
+                                this.postAction("Successfully uploaded ucits file.", null);
+                            },
+                            (error: ErrorResponse) => {
+                                this.errorMessage = "Error re-loading screening after file upload (ucits)";
+                                if(error && !error.isEmpty()){
+                                    this.processErrorMessage(error);
+                                }
+                                this.postAction(this.successMessage, this.errorMessage);
+                            }
+                        );
+
+                },
+                error => {
+                    var result = JSON.parse(error);
+                    var message = result != null && result.message != null && result.message.nameEn != null ? result.message.nameEn : null;
+                    this.ucitsUploadFile = null;
+                    this.postAction(null, message != null && message != null ? message : "Error uploading file");
+                });
+    }
+
     deleteAttachment(fileId) {
         var confirmed = window.confirm("Are you sure want to delete");
         if(confirmed) {
@@ -157,10 +196,12 @@ export class HFScreeningEditComponent extends CommonFormViewComponent implements
                         this.screening.fileId = null;
                         this.screening.fileName = null;
                         this.screening.parsedData = null;
-                        this.postAction("Attachment deleted.", null);
+                        this.parsedDataAUM = null;
+                        this.parsedDataReturns = null;
+                        this.postAction("Data file deleted.", null);
                     },
                     (error:ErrorResponse) => {
-                        this.errorMessage = "Failed to delete file";
+                        this.errorMessage = "Failed to delete data file";
                         if (error && !error.isEmpty()) {
                             this.processErrorMessage(error);
                         }
@@ -170,14 +211,39 @@ export class HFScreeningEditComponent extends CommonFormViewComponent implements
         }
     }
 
-    onFileChange(event) {
-        var target = event.target || event.srcElement;
-        var files = target.files;
-        this.uploadFile = files[0];
-        //this.uploadFiles.length = 0;
-        //for (let i = 0; i < files.length; i++) {
-        //    this.uploadFiles.push(files[i]);
-        //}
+    deleteUcitsAttachment(fileId){
+        var confirmed = window.confirm("Are you sure want to delete");
+        if(confirmed) {
+            this.busy = this.screeningService.removeUcitsFile(this.screeningId, fileId)
+                .subscribe(
+                    entity => {
+                        this.screening.ucitsFileId = null;
+                        this.screening.ucitsFileName = null;
+                        this.screening.parsedUcitsData = null;
+                        this.parsedDataUcitsAUM = null;
+                        this.postAction("Ucits file deleted.", null);
+                    },
+                    (error:ErrorResponse) => {
+                        this.errorMessage = "Failed to delete ucits file";
+                        if (error && !error.isEmpty()) {
+                            this.processErrorMessage(error);
+                        }
+                        this.postAction(null, this.errorMessage);
+                    }
+                );
+        }
+    }
+
+    onFileChange(event, type) {
+        if(type == 1) {
+            var target = event.target || event.srcElement;
+            var files = target.files;
+            this.uploadFile = files[0];
+        }else if(type == 2) {
+            var target = event.target || event.srcElement;
+            var files = target.files;
+            this.ucitsUploadFile = files[0];
+        }
     }
 
 
@@ -187,6 +253,9 @@ export class HFScreeningEditComponent extends CommonFormViewComponent implements
     }
 
     searchReturns(months){
+        if(this.screening.fileId == null){
+            return;
+        }
         var date = null;
         if(months){
             // get max date
@@ -218,6 +287,9 @@ export class HFScreeningEditComponent extends CommonFormViewComponent implements
     }
 
     searchAUMs(months){
+        if(this.screening.fileId == null){
+            return;
+        }
         var date = null;
         if(months){
             // get max date
@@ -248,6 +320,40 @@ export class HFScreeningEditComponent extends CommonFormViewComponent implements
             );
     }
 
+    searchUcitsAUMs(months){
+        if(this.screening.ucitsFileId == null){
+            return;
+        }
+        var date = null;
+        if(months){
+            // get max date
+            if(this.headerDatesUcitsAUM != null && this.headerDatesUcitsAUM.length > 0) {
+                var index = months > 0 ? this.headerDatesUcitsAUM.length - 1 : 0;
+                date = this.headerDatesUcitsAUM[index];
+            }
+        }
+        this.busy = this.screeningService.searchUcitsAUMs(this.screeningId, months, date)
+            .subscribe(
+                searchResult  => {
+                    //console.log(searchResult);
+                    if(searchResult != null && searchResult.length > 0){
+                        for(var i = 0; i < searchResult.length; i++) {
+                            if(searchResult[i].dates != null) {
+                                this.headerDatesUcitsAUM = searchResult[i].dates;
+                                break;
+                            }
+                        }
+                        this.parsedDataUcitsAUM = searchResult;
+                    }
+
+                },
+                error =>  {
+                    this.postAction(null, "Failed to search screening Ucits AUM list");
+
+                }
+            );
+    }
+
     getTotalParsedDataRecords(){
         return this.screening.parsedData != null ? this.screening.parsedData.length : 0;
     }
@@ -258,6 +364,18 @@ export class HFScreeningEditComponent extends CommonFormViewComponent implements
 
     getTotalParsedAUMDataRecords(){
         return this.parsedDataAUM != null ? this.parsedDataAUM.length : 0;
+    }
+
+    deleteUnsavedDataFile(type){
+        if(type == 1){
+            this.uploadFile = null;
+            console.log($('#attachmentFile').val());
+            $('#attachmentFile').val("");
+        }else if(type == 2){
+            this.ucitsUploadFile = null;
+            console.log($('#attachmentUcitsFile').val());
+            $('#attachmentUcitsFile').val("");
+        }
     }
 
 }

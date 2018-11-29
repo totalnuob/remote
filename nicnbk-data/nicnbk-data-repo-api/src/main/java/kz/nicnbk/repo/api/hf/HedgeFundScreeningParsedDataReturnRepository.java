@@ -23,15 +23,17 @@ public interface HedgeFundScreeningParsedDataReturnRepository extends PagingAndS
 
     @Query("SELECT e FROM HedgeFundScreeningParsedDataReturn e WHERE e.screening.id=?1 AND " +
             " e.date >= ?2 AND e.date <= ?3 ")
-    List<HedgeFundScreeningParsedDataReturn> findByScreeningIdAndDateRange(Long screeningId, Date dateFrom, Date dateTo, Sort sorting);
+    List<HedgeFundScreeningParsedDataReturn> findByScreeningIdAndDateRange(Long screeningId, Date dateFrom, Date dateTo);
 
     @Query("SELECT max(e.date) FROM HedgeFundScreeningParsedDataReturn e WHERE e.screening.id=?1")
     Date getMaxDate(Long screeningId);
 
-    @Query("SELECT new kz.nicnbk.repo.model.hf.HedgeFundScreeningFundCounts(e.fundId, COUNT(e)) " +
-            " FROM HedgeFundScreeningParsedDataReturn e WHERE e.screening.id=?1 AND " +
-            " e.date >= ?2 AND e.date <= ?3 GROUP BY e.fundId")
-    List<HedgeFundScreeningFundCounts> getFundIdCounts(Long screeningId, Date dateFrom, Date dateTo);
+//    @Query("SELECT new kz.nicnbk.repo.model.hf.HedgeFundScreeningFundCounts(e.fundId, COUNT(e)) " +
+//            " FROM HedgeFundScreeningParsedDataReturn e WHERE e.screening.id=?1 AND " +
+//            " e.date >= ?2 AND e.date <= ?3 GROUP BY e.fundId")
+//    List<HedgeFundScreeningFundCounts> getFundIdCounts(Long screeningId, Date dateFrom, Date dateTo);
+
+    List<HedgeFundScreeningParsedDataReturn> findByScreeningIdAndFundId(Long screeningId, Long fundId, Sort sorting);
 
 
 }

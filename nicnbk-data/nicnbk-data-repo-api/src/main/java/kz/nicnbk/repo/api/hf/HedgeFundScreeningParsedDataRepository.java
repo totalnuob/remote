@@ -15,10 +15,12 @@ public interface HedgeFundScreeningParsedDataRepository extends PagingAndSorting
 
     List<HedgeFundScreeningParsedData> findByScreeningId(Long screeningId, Sort sorting);
 
+    Long countByScreeningId(Long screeningId);
+
     @Modifying
     @Transactional
     @Query("DELETE from HedgeFundScreeningParsedData e WHERE e.screening.id=?1")
     void deleteByScreeningId(Long screeningId);
 
-    HedgeFundScreeningParsedData findByFundId(Long fundId);
+    HedgeFundScreeningParsedData findByFundIdAndScreeningId(Long fundId, Long screeningId);
 }

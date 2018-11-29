@@ -26,11 +26,17 @@ public interface HedgeFundScreeningService extends BaseService {
 
     List<HedgeFundScreeningParsedDataDateValueCombinedDto> searchParsedAUMS(HedgeFundScreeningParsedDataDateValueSearchParamsDto searchParamsDto);
 
+    List<HedgeFundScreeningParsedDataDateValueCombinedDto> searchParsedUcitsAUMS(HedgeFundScreeningParsedDataDateValueSearchParamsDto searchParamsDto);
+
     HedgeFundScreeningPagedSearchResult search(HedgeFundScreeningSearchParams searchParams);
 
     FileUploadResultDto saveAttachmentDataFile(Long screeningId, FilesDto filesDto, String username);
 
+    FileUploadResultDto saveAttachmentUcitsFile(Long screeningId, FilesDto filesDto, String username);
+
     boolean removeFileAndData(Long fileId, Long screeningId, String username);
+
+    boolean removeUcitsFileAndData(Long fileId, Long screeningId, String username);
 
     List<HedgeFundScreeningFilteredResultDto> getFilteredResultsByScreeningId(Long screeningId);
 
@@ -41,4 +47,10 @@ public interface HedgeFundScreeningService extends BaseService {
     HedgeFundScreeningFilteredResultStatisticsDto getFilteredResultStatistics(HedgeFundScreeningFilteredResultDto params);
 
     List<HedgeFundScreeningParsedDataDto> getFilteredResultQualifiedFundList( HedgeFundScreeningFilteredResultDto params);
+
+    List<HedgeFundScreeningParsedDataDto> getFilteredResultUnqualifiedFundList( HedgeFundScreeningFilteredResultDto params);
+
+    List<HedgeFundScreeningParsedDataDto> getFilteredResultUndecidedFundList( HedgeFundScreeningFilteredResultDto params);
+
+    boolean updateManagerAUM(List<HedgeFundScreeningParsedDataDto> fundList, String username);
 }

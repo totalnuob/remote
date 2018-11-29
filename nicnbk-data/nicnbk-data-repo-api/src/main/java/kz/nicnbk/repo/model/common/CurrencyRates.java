@@ -19,6 +19,7 @@ public class CurrencyRates extends BaseEntity {
     private Double value;
     private Double averageValue;
     private Double averageValueYear;
+    private Double valueUSD;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "currency_id", nullable = false)
@@ -66,5 +67,14 @@ public class CurrencyRates extends BaseEntity {
 
     public void setAverageValueYear(Double averageValueYear) {
         this.averageValueYear = averageValueYear;
+    }
+
+    @Column(name="value_usd")
+    public Double getValueUSD() {
+        return valueUSD;
+    }
+
+    public void setValueUSD(Double valueUSD) {
+        this.valueUSD = valueUSD;
     }
 }

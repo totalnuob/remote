@@ -53,7 +53,7 @@ export class HFScreeningFilteredResultsComponent extends CommonFormViewComponent
                     this.busy = this.screeningService.findAllFilteredResults(this.screeningId)
                         .subscribe(
                             result  => {
-                                console.log(result);
+                                //console.log(result);
                                 this.records = result;
                             },
                             error =>  {

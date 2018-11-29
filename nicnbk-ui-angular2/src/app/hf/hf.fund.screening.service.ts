@@ -19,10 +19,14 @@ export class HedgeFundScreeningService extends CommonService{
     private HF_SCREENING_GET_URL = this.HF_BASE_URL + "get/";
     private HF_SCREENING_SEARCH_URL = this.HF_BASE_URL + "search/";
     private HF_SCREENING_DATA_FILE_UPLOAD_URL = this.HF_BASE_URL + "file/upload/";
+    private HF_SCREENING_UCITS_FILE_UPLOAD_URL = this.HF_BASE_URL + "file/ucits/upload/";
+
     private HF_SCREENING_DATA_FILE_DELETE_URL = this.HF_BASE_URL + "file/delete/";
+    private HF_SCREENING_UCITS_FILE_DELETE_URL = this.HF_BASE_URL + "file/ucits/delete/";
 
     private HF_SCREENING_RETURN_SEARCH_URL = this.HF_BASE_URL + "return/search/";
     private HF_SCREENING_AUM_SEARCH_URL = this.HF_BASE_URL + "aum/search/";
+    private HF_SCREENING_UCITS_AUM_SEARCH_URL = this.HF_BASE_URL + "aum/ucits/search/";
 
     private HF_SCREENING_FILTERED_RESULTS_GET_URL = this.HF_BASE_URL + "filteredResults/get/";
     private HF_SCREENING_FILTERED_RESULTS_SAVE_URL = this.HF_BASE_URL + "filteredResults/save/";
@@ -30,7 +34,13 @@ export class HedgeFundScreeningService extends CommonService{
 
     private HF_SCREENING_FILTERED_RESULTS_STATISTICS_GET_URL = this.HF_BASE_URL + "filteredResults/statistics/get/";
 
-    private HF_SCREENING_FILTERED_RESULTS_QUALIFIED_FUNDS_LIST_GET_URL = this.HF_BASE_URL + "filteredResults/fundList/get/";
+    private HF_SCREENING_FILTERED_RESULTS_QUALIFIED_FUNDS_LIST_GET_URL = this.HF_BASE_URL + "filteredResults/qualifiedFundList/get/";
+    private HF_SCREENING_FILTERED_RESULTS_UNQUALIFIED_FUNDS_LIST_GET_URL = this.HF_BASE_URL + "filteredResults/unqualifiedFundList/get/";
+    private HF_SCREENING_FILTERED_RESULTS_UNDECIDED_FUNDS_LIST_GET_URL = this.HF_BASE_URL + "filteredResults/undecidedFundList/get/";
+
+    private HF_SCREENING_FILTERED_UPDATE_MANAGER_AUM_URL = this.HF_BASE_URL + "filteredResults/updateManagerAUM/";
+
+
 
 
 
@@ -71,11 +81,24 @@ export class HedgeFundScreeningService extends CommonService{
         return this.uploadService.postFiles(this.HF_SCREENING_DATA_FILE_UPLOAD_URL + screeningId, [], files, null);
     }
 
+    postUcitsFile(screeningId, params, files){
+        return this.uploadService.postFiles(this.HF_SCREENING_UCITS_FILE_UPLOAD_URL + screeningId, [], files, null);
+    }
+
+
     removeFile(screeningId, fileId) {
         return this.http.delete(this.HF_SCREENING_DATA_FILE_DELETE_URL + screeningId + "/" + fileId, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }
+
+    removeUcitsFile(screeningId, fileId) {
+        return this.http.delete(this.HF_SCREENING_UCITS_FILE_DELETE_URL + screeningId + "/" + fileId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+
 
     searchReturns(screeningId, numberOfMonths, date){
         let body = {"screeningId": screeningId, "numberOfMonths": numberOfMonths, "date": date};
@@ -91,6 +114,15 @@ export class HedgeFundScreeningService extends CommonService{
 
         //console.log(body);
         return this.http.post(this.HF_SCREENING_AUM_SEARCH_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    searchUcitsAUMs(screeningId, numberOfMonths, date){
+        let body = {"screeningId": screeningId, "numberOfMonths": numberOfMonths, "date": date};
+
+        //console.log(body);
+        return this.http.post(this.HF_SCREENING_UCITS_AUM_SEARCH_URL, body, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }
@@ -119,6 +151,23 @@ export class HedgeFundScreeningService extends CommonService{
             .catch(this.handleErrorResponse);
     }
 
+    getFilteredResultUnqualifiedFundList(params): Observable<any[]> {
+
+        let body = JSON.stringify(params);
+
+        return this.http.post(this.HF_SCREENING_FILTERED_RESULTS_UNQUALIFIED_FUNDS_LIST_GET_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+    getFilteredResultUndecidedFundList(params): Observable<any[]> {
+
+        let body = JSON.stringify(params);
+
+        return this.http.post(this.HF_SCREENING_FILTERED_RESULTS_UNDECIDED_FUNDS_LIST_GET_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
     saveFilteredResult(entity){
 
         let body = JSON.stringify(entity);
@@ -132,6 +181,15 @@ export class HedgeFundScreeningService extends CommonService{
         // TODO: check id
         return this.http.get(this.HF_SCREENING_FILTERED_RESULTS_FINDALL_URL + id, this.getOptionsWithCredentials())
             .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+
+    updateManagerAUM(list){
+
+        let body = JSON.stringify(list);
+
+        return this.http.post(this.HF_SCREENING_FILTERED_UPDATE_MANAGER_AUM_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
             .catch(this.handleErrorResponse);
     }
 

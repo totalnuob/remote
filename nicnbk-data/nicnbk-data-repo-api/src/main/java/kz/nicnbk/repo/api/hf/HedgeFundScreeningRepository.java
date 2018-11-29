@@ -20,5 +20,4 @@ public interface HedgeFundScreeningRepository extends PagingAndSortingRepository
     Page<HedgeFundScreening> search(@Param("dateFrom") @Temporal(TemporalType.DATE) Date dateFrom,
                                 @Param("dateTo") @Temporal(TemporalType.DATE) Date dateTo,
                                 @Param("searchText") String searchText, Pageable pageable);
-
 }

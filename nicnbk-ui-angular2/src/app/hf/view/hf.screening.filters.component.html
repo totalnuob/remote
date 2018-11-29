@@ -61,8 +61,8 @@
 
             <tr *ngFor = "let record of records" style="cursor: pointer">
                 <!--<td width="5%"></td>-->
-                <td (click)="navigate(record.id)">{{record.fundAUM}}</td>
-                <td width="30%"(click)="navigate(record.id)">{{record.managerAUM}}</td>
+                <td (click)="navigate(record.id)">{{getAmountShort(record.fundAUM)}}</td>
+                <td width="30%"(click)="navigate(record.id)">{{getAmountShort(record.managerAUM)}}</td>
                 <td width="30%" (click)="navigate(record.id)">{{record.trackRecord}}</td>
                 <td width="10%" (click)="navigate(record.id)">{{record.lookbackReturns}}</td>
                 <td width="10%" (click)="navigate(record.id)">{{record.lookbackAUM}}</td>

@@ -5,8 +5,8 @@ export class HedgeFundScreeningFilteredResult {
     screeningId: number;
 
     id: number;
-    fundAUM: number;
-    managerAUM: number;
+    fundAUM;
+    managerAUM;
     trackRecord: number;
     lookbackReturns: number;
     lookbackAUM: number;

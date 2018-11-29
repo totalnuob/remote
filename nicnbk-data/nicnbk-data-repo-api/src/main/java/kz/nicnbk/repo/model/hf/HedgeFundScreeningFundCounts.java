@@ -7,11 +7,11 @@ package kz.nicnbk.repo.model.hf;
 public class HedgeFundScreeningFundCounts {
 
     private Long fundId;
-    private Long count;
+    private Integer count;
 
     public HedgeFundScreeningFundCounts(){}
 
-    public HedgeFundScreeningFundCounts(Long fundId, Long count){
+    public HedgeFundScreeningFundCounts(Long fundId, Integer count){
         this.fundId = fundId;
         this.count = count;
     }
@@ -24,11 +24,11 @@ public class HedgeFundScreeningFundCounts {
         this.fundId = fundId;
     }
 
-    public Long getCount() {
+    public Integer getCount() {
         return count;
     }
 
-    public void setCount(Long count) {
+    public void setCount(Integer count) {
         this.count = count;
     }
 }

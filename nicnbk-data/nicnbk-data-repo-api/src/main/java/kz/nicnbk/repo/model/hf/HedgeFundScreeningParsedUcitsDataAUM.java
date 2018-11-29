@@ -10,8 +10,8 @@ import java.util.Date;
  */
 
 @Entity
-@Table(name = "hf_screening_parsed_data_aum")
-public class HedgeFundScreeningParsedDataAUM extends BaseEntity {
+@Table(name = "hf_screening_parsed_ucits_data_aum")
+public class HedgeFundScreeningParsedUcitsDataAUM extends BaseEntity {
 
     private HedgeFundScreening screening;
 

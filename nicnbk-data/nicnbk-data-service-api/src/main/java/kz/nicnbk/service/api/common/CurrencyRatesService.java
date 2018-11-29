@@ -15,6 +15,8 @@ public interface CurrencyRatesService extends BaseService {
 
     CurrencyRatesDto getRateForDateAndCurrency(Date date, String currencyCode);
 
+    CurrencyRatesDto getLstRateForMonthDateAndCurrencyBackwards(Date date, String currencyCode);
+
     Double getAverageRateForAllMonthsBeforeDateAndCurrency(Date date, String currencyCode, int scale);
 
     Double getAverageYearRateForFixedDateAndCurrency(Date date, String currencyCode);
@@ -24,4 +26,6 @@ public interface CurrencyRatesService extends BaseService {
     EntitySaveResponseDto save(CurrencyRatesDto dto, String username);
 
     boolean delete(Long id, String username);
+
+    Double getUSDValueRateForDateAndCurrency(Date date, String currencyCode);
 }
