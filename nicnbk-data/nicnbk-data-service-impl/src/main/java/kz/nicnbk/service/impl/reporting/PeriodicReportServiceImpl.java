@@ -2086,7 +2086,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         List<ConsolidatedKZTForm8RecordDto> form8Records = KZTForm8ResponseDto.getRecords();
         if(form8Records != null){
             for(ConsolidatedKZTForm8RecordDto record: form8Records){
-                if(record.getAccountNumber() == null && record.getLineNumber() == 9 && record.getDebtEndPeriod() != null){
+                if(record.getAccountNumber() == null && record.getLineNumber() == 6 && record.getDebtEndPeriod() != null){
                     record1283_020 = record.getDebtEndPeriod();
                 }
             }
@@ -3864,6 +3864,45 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             List<ConsolidatedKZTForm8RecordDto> records = new ArrayList<>();
             Map<String, Integer> recordsMap = new HashMap<>();
             if(previousRecords != null){
+
+                int maxLineNumber = 0;
+                for(ConsolidatedKZTForm8RecordDto dto: previousRecords){
+                    if(dto.getLineNumber() != null && dto.getLineNumber() > maxLineNumber){
+                        maxLineNumber = dto.getLineNumber();
+                    }
+                }
+
+                // 2. Update form
+                if(maxLineNumber != 13){
+                    List<ConsolidatedKZTForm8RecordDto> newPreviousPeriodRecords = new ArrayList<>();
+                    int removed = 0;
+                    for(ConsolidatedKZTForm8RecordDto dto: previousRecords){
+                        if(dto.getAccountNumber() == null) {
+                            if (dto.getLineNumber() >= 3 && dto.getLineNumber() <= 5) {
+                                removed ++;
+                                continue;
+                            }else if (dto.getLineNumber() >= 12 && dto.getLineNumber() <= 14) {
+                                removed ++;
+                                continue;
+                            }else if(dto.getLineNumber() == 1){
+                                dto.setName("Краткосрочная торговая и прочая дебиторская задолженность (сумма строк 2-6)");
+                            }else if(dto.getLineNumber() == 1){
+                                dto.setName("Краткосрочная торговая и прочая дебиторская задолженность (сумма строк 2-6)");
+                            }else if(dto.getLineNumber() == 10){
+                                dto.setName("Долгосрочная торговая и прочая дебиторская задолженность (сумма строк 11-18)");
+                            }else if(dto.getLineNumber() == 19){
+                                dto.setName("Всего (сумма строк 1, 7)");
+                            }
+                        }
+
+                        dto.setLineNumber(dto.getLineNumber() - removed);
+                        newPreviousPeriodRecords.add(dto);
+
+                    }
+
+                    previousRecords = newPreviousPeriodRecords;
+                }
+
                 int addedIndex = 0;
                 for(int i = 0; i < previousRecords.size(); i++){
                     ConsolidatedKZTForm8RecordDto record = previousRecords.get(i);
@@ -3891,9 +3930,11 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             }else{
                 records = getConsolidatedBalanceKZTForm8LineHeaders();
             }
+
+            final int record1283_020LineNumber = 6;
             for(int i = 0; i < records.size(); i++){
                 ConsolidatedKZTForm8RecordDto record = records.get(i);
-                if(record.getLineNumber() == 10){
+                if(record.getLineNumber() == record1283_020LineNumber + 1){
                     index = i;
                     break;
                 }
@@ -3965,7 +4006,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         }else {
                             // new record
                             ConsolidatedKZTForm8RecordDto newRecord = new ConsolidatedKZTForm8RecordDto();
-                            newRecord.setLineNumber(9);
+                            newRecord.setLineNumber(record1283_020LineNumber);
                             newRecord.setName(recordUSD.getName());
                             newRecord.setAccountNumber(recordUSD.getAccountNumber());
 
@@ -3984,6 +4025,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                             }else if(recordUSD.getOtherEntityName() != null &&
                                     recordUSD.getOtherEntityName().toUpperCase().startsWith(PeriodicReportConstants.TARRAGON_CAPITAL_CASE)) {
                                 newRecord.setAgreementDescription(PeriodicReportConstants.TARRAGON_AGREEMENT_DESC);
+                            }else if(recordUSD.getOtherEntityName() != null &&
+                                    recordUSD.getOtherEntityName().toUpperCase().startsWith(PeriodicReportConstants.TERRA_CAPITAL_CASE)) {
+                                newRecord.setAgreementDescription(PeriodicReportConstants.TERRA_AGREEMENT_DESC);
                             }
 
                             Date date = null;
@@ -3993,14 +4037,14 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                                 for (SingularityNOALRecordDto noalRecord : noalRecords) {
                                     if (newRecord.getAccountNumber() != null && newRecord.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_1283_020)) {
                                         if (newRecord.getName().startsWith(PeriodicReportConstants.RU_INVESTMENTS_TO_RETURN)) {
-                                            String name = newRecord.getName().substring(21).trim();
+                                            String name = newRecord.getName().substring(PeriodicReportConstants.RU_INVESTMENTS_TO_RETURN.length()).trim();
                                             if (StringUtils.isNotEmpty(name) && noalRecord.getName() != null && name.equalsIgnoreCase(noalRecord.getName())) {
                                                 if (date == null || (noalRecord.getDate() != null && noalRecord.getDate().compareTo(date) < 0)) {
                                                     date = noalRecord.getDate();
                                                 }
                                             }
                                         } else if (newRecord.getName().startsWith(PeriodicReportConstants.RU_PRE_SUBSCRIPTION)) {
-                                            String name = newRecord.getName().substring(24).trim();
+                                            String name = newRecord.getName().substring(PeriodicReportConstants.RU_PRE_SUBSCRIPTION.length()).trim();
                                             if (StringUtils.isNotEmpty(name) && noalRecord.getName() != null && name.equalsIgnoreCase(noalRecord.getName())) {
                                                 if (date == null || (noalRecord.getDate() != null && noalRecord.getDate().compareTo(date) < 0)) {
                                                     date = noalRecord.getDate();
@@ -4030,7 +4074,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
             // Set total sums
             for(ConsolidatedKZTForm8RecordDto record: records){
-                if(record.getAccountNumber() == null && (record.getLineNumber() == 1 || record.getLineNumber() == 9 || record.getLineNumber() == 19)){
+                if(record.getAccountNumber() == null && (record.getLineNumber() == 1 || record.getLineNumber() == 6 || record.getLineNumber() == 13)){
 //                    record.setDebtStartPeriod(totalRecord.getDebtStartPeriod());
                     record.setDebtEndPeriod(totalRecord.getDebtEndPeriod());
                     record.setDebtDifference(totalRecord.getDebtDifference());
@@ -5188,44 +5232,44 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         return records;
     }
 
-    private List<ConsolidatedKZTForm10RecordDto> getConsolidatedBalanceKZTForm10LineHeaders(){
-        List<ConsolidatedKZTForm10RecordDto> records = new ArrayList<>();
-        records.add(new ConsolidatedKZTForm10RecordDto("Прочие краткосрочные активы (сумма строк 2-3)", 1));
-        records.add(new ConsolidatedKZTForm10RecordDto(PeriodicReportConstants.RU_EXPENSES_FUTURE_PERIOD, 2));
-        records.add(new ConsolidatedKZTForm10RecordDto("Прочие краткосрочные активы", 3));
-        records.add(new ConsolidatedKZTForm10RecordDto("Прочие долгосрочные активы (сумма строк 5-10 )", 4));
-        records.add(new ConsolidatedKZTForm10RecordDto("Инвестиции в недвижимость", 5));
-        records.add(new ConsolidatedKZTForm10RecordDto("Биологические активы", 6));
-        records.add(new ConsolidatedKZTForm10RecordDto("Разведочные и оценочные активы", 7));
-        records.add(new ConsolidatedKZTForm10RecordDto(PeriodicReportConstants.RU_EXPENSES_FUTURE_PERIOD, 8));
-        records.add(new ConsolidatedKZTForm10RecordDto("Незавершенное строительство", 9));
-        records.add(new ConsolidatedKZTForm10RecordDto("Прочие долгосрочные активы", 10));
-        records.add(new ConsolidatedKZTForm10RecordDto("ВСЕГО  (сумма строк 1, 4)", 11));
-
-        return records;
-    }
+//    private List<ConsolidatedKZTForm10RecordDto> getConsolidatedBalanceKZTForm10LineHeaders(){
+//        List<ConsolidatedKZTForm10RecordDto> records = new ArrayList<>();
+//        records.add(new ConsolidatedKZTForm10RecordDto("Прочие краткосрочные активы (сумма строк 2-3)", 1));
+//        records.add(new ConsolidatedKZTForm10RecordDto(PeriodicReportConstants.RU_EXPENSES_FUTURE_PERIOD, 2));
+//        records.add(new ConsolidatedKZTForm10RecordDto("Прочие краткосрочные активы", 3));
+//        records.add(new ConsolidatedKZTForm10RecordDto("Прочие долгосрочные активы (сумма строк 5-10 )", 4));
+//        records.add(new ConsolidatedKZTForm10RecordDto("Инвестиции в недвижимость", 5));
+//        records.add(new ConsolidatedKZTForm10RecordDto("Биологические активы", 6));
+//        records.add(new ConsolidatedKZTForm10RecordDto("Разведочные и оценочные активы", 7));
+//        records.add(new ConsolidatedKZTForm10RecordDto(PeriodicReportConstants.RU_EXPENSES_FUTURE_PERIOD, 8));
+//        records.add(new ConsolidatedKZTForm10RecordDto("Незавершенное строительство", 9));
+//        records.add(new ConsolidatedKZTForm10RecordDto("Прочие долгосрочные активы", 10));
+//        records.add(new ConsolidatedKZTForm10RecordDto("ВСЕГО  (сумма строк 1, 4)", 11));
+//
+//        return records;
+//    }
 
     private List<ConsolidatedKZTForm8RecordDto> getConsolidatedBalanceKZTForm8LineHeaders(){
         List<ConsolidatedKZTForm8RecordDto> records = new ArrayList<>();
         records.add(new ConsolidatedKZTForm8RecordDto("Краткосрочная торговая и прочая дебиторская задолженность (сумма строк 2-9)", 1));
         records.add(new ConsolidatedKZTForm8RecordDto("Краткосрочная дебиторская задолженность покупателей и заказчиков", 2));
-        records.add(new ConsolidatedKZTForm8RecordDto("Краткосрочная дебиторская задолженность дочерних организаций", 3));
-        records.add(new ConsolidatedKZTForm8RecordDto("Краткосрочная дебиторская задолженность ассоциированных и совместных организаций", 4));
-        records.add(new ConsolidatedKZTForm8RecordDto("Краткосрочная дебиторская задолженность филиалов и представительств", 5));
-        records.add(new ConsolidatedKZTForm8RecordDto("Краткосрочная дебиторская задолженность работников", 6));
-        records.add(new ConsolidatedKZTForm8RecordDto("Краткосрочная дебиторская задолженность по аренде", 7));
-        records.add(new ConsolidatedKZTForm8RecordDto("Краткосрочные авансы выданные", 8));
-        records.add(new ConsolidatedKZTForm8RecordDto(PeriodicReportConstants.RU_1283_020, 9));
-        records.add(new ConsolidatedKZTForm8RecordDto("Долгосрочная торговая и прочая дебиторская задолженность (сумма строк 11-18)", 10));
-        records.add(new ConsolidatedKZTForm8RecordDto("Долгосрочная задолженность покупателей и заказчиков", 11));
+//        records.add(new ConsolidatedKZTForm8RecordDto("Краткосрочная дебиторская задолженность дочерних организаций", 3));
+//        records.add(new ConsolidatedKZTForm8RecordDto("Краткосрочная дебиторская задолженность ассоциированных и совместных организаций", 4));
+//        records.add(new ConsolidatedKZTForm8RecordDto("Краткосрочная дебиторская задолженность филиалов и представительств", 5));
+        records.add(new ConsolidatedKZTForm8RecordDto("Краткосрочная дебиторская задолженность работников", 3));
+        records.add(new ConsolidatedKZTForm8RecordDto("Краткосрочная дебиторская задолженность по аренде", 4));
+        records.add(new ConsolidatedKZTForm8RecordDto("Краткосрочные авансы выданные", 5));
+        records.add(new ConsolidatedKZTForm8RecordDto("Прочая краткосрочная дебиторская задолженность", 6));
+        records.add(new ConsolidatedKZTForm8RecordDto("Долгосрочная торговая и прочая дебиторская задолженность (сумма строк 8-12)", 7));
+        records.add(new ConsolidatedKZTForm8RecordDto("Долгосрочная задолженность покупателей и заказчиков", 8));
         records.add(new ConsolidatedKZTForm8RecordDto("Долгосрочная дебиторская задолженность дочерних организаций", 12));
         records.add(new ConsolidatedKZTForm8RecordDto("Долгосрочная дебиторская задолженность ассоциированных и совместных организаций", 13));
         records.add(new ConsolidatedKZTForm8RecordDto("Долгосрочная дебиторская задолженность филиалов и представительств", 14));
-        records.add(new ConsolidatedKZTForm8RecordDto("Долгосрочная дебиторская задолженность работников", 15));
-        records.add(new ConsolidatedKZTForm8RecordDto("Долгосрочная дебиторская задолженность по аренде", 16));
-        records.add(new ConsolidatedKZTForm8RecordDto("Долгосрочные авансы выданные", 17));
-        records.add(new ConsolidatedKZTForm8RecordDto("Прочая долгосрочная дебиторская задолженность", 18));
-        records.add(new ConsolidatedKZTForm8RecordDto("ВСЕГО (сумма строк 1, 10)", 19));
+        records.add(new ConsolidatedKZTForm8RecordDto("Долгосрочная дебиторская задолженность работников", 9));
+        records.add(new ConsolidatedKZTForm8RecordDto("Долгосрочная дебиторская задолженность по аренде", 10));
+        records.add(new ConsolidatedKZTForm8RecordDto("Долгосрочные авансы выданные", 11));
+        records.add(new ConsolidatedKZTForm8RecordDto("Прочая долгосрочная дебиторская задолженность", 12));
+        records.add(new ConsolidatedKZTForm8RecordDto("Всего (сумма строк 1, 7)", 13));
 
         return records;
     }
@@ -6093,7 +6137,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         ListResponseDto KZTForm8ResponseDto = generateConsolidatedBalanceKZTForm8(reportId);
         if(KZTForm8ResponseDto.getStatus() == ResponseStatusType.FAIL){
             String errorMessage = StringUtils.isNotEmpty(KZTForm8ResponseDto.getMessage().getNameEn()) ? KZTForm8ResponseDto.getMessage().getNameEn() :
-                    "Error occurred when generating KZT Form 7 report";
+                    "Error occurred when generating KZT Form 8 report";
             //throw new IllegalStateException(errorMessage);
 
             logger.error("KZT FORM 8 export error (getMap()) " + errorMessage);
@@ -8102,7 +8146,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
             start = System.currentTimeMillis();
             // write to new
-            String filePath = tmpDir + "/CONS_KZT_FORM_7_" + MathUtils.getRandomNumber(0, 10000) + ".xlsx";
+            String filePath = tmpDir + "/CONS_KZT_FORM_8_" + MathUtils.getRandomNumber(0, 10000) + ".xlsx";
             try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
                 workbook.write(outputStream);
             }
