@@ -4354,6 +4354,10 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 ReportingFundRenameInfoDto fundRenameInfo = getFundRenameInfo(reportId);
                 for(int i = 0; i < previousRecords.size(); i++){
                     ConsolidatedKZTForm13RecordDto record = previousRecords.get(i);
+
+                    if(record.getAccountNumber() == null && record.getLineNumber() == 2){
+                        record.setName("Займы полученные "); // new report form, need space
+                    }
                     record.setDebtStartPeriod(record.getDebtEndPeriod());
                     record.setInterestStartPeriod(record.getInterestEndPeriod());
                     record.setTotalStartPeriod(record.getTotalEndPeriod());
@@ -4413,6 +4417,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 record3013_010.setInterestPaymentCount(1);
             }
 
+            // Currency
+            record3013_010.setCurrency("USD");
+
             // Interest rate
             record3013_010.setInterestRate(PeriodicReportConstants.DEFAULT_KZT_13_INTEREST_RATE); // default
             List<SingularityGeneralLedgerBalanceRecordDto> singularityAdjustedRecords = this.generalLedgerBalanceService.getAdjustedRecords(reportId);
@@ -4462,6 +4469,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         record3053_060.setEndPeriod(DateUtils.getLastDayOfNextMonth(report.getReportDate()));
                         //record3053_060.setInterestRate(PeriodicReportConstants.DEFAULT_KZT_13_INTEREST_RATE);
                         //record3053_060.setInterestPaymentCount(1);
+                        record3053_060.setCurrency("USD");
                         record3053_060.setDebtStartPeriod(null);
                         record3053_060.setInterestStartPeriod(null);
                         record3053_060.setTotalStartPeriod(null);
@@ -4482,6 +4490,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                                 prevRecord.setDebtEndPeriod(amount);
                                 prevRecord.setTotalEndPeriod(amount);
                                 prevRecord.setDebtTurnover(MathUtils.subtract(prevRecord.getDebtEndPeriod(), prevRecord.getDebtStartPeriod()));
+                                prevRecord.setCurrency("USD");
                                 foundRecord3053_060 = true;
                             }
                         }
@@ -5334,7 +5343,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
     private List<ConsolidatedKZTForm13RecordDto> getConsolidatedBalanceKZTForm13LineHeaders(){
         List<ConsolidatedKZTForm13RecordDto> records = new ArrayList<>();
         records.add(new ConsolidatedKZTForm13RecordDto("Краткосрочные финансовые обязательства (сумма строк 2, 3)", 1));
-        records.add(new ConsolidatedKZTForm13RecordDto("Займы полученные", 2));
+        records.add(new ConsolidatedKZTForm13RecordDto("Займы полученные ", 2));
         records.add(new ConsolidatedKZTForm13RecordDto("Прочие краткосрочные финансовые обязательства", 3));
         records.add(new ConsolidatedKZTForm13RecordDto("Долгосрочные финансовые обязательства (сумма строк 5, 6)", 4));
         records.add(new ConsolidatedKZTForm13RecordDto("Займы полученные", 5));
@@ -8442,29 +8451,32 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                             if(records.get(0).getInterestPaymentCount() != null) {
                                 row.getCell(7).setCellValue(records.get(0).getInterestPaymentCount());
                             }
+                            if(records.get(0).getCurrency() != null) {
+                                row.getCell(8).setCellValue(records.get(0).getCurrency());
+                            }
                             if(records.get(0).getDebtStartPeriod() != null) {
-                                row.getCell(9).setCellValue(records.get(0).getDebtStartPeriod());
+                                row.getCell(10).setCellValue(records.get(0).getDebtStartPeriod());
                             }
                             if(records.get(0).getInterestStartPeriod() != null) {
-                                row.getCell(12).setCellValue(records.get(0).getInterestStartPeriod());
+                                row.getCell(13).setCellValue(records.get(0).getInterestStartPeriod());
                             }
                             if(records.get(0).getTotalStartPeriod() != null) {
-                                row.getCell(15).setCellValue(records.get(0).getTotalStartPeriod());
+                                row.getCell(16).setCellValue(records.get(0).getTotalStartPeriod());
                             }
                             if(records.get(0).getDebtTurnover() != null) {
-                                row.getCell(17).setCellValue(records.get(0).getDebtTurnover());
+                                row.getCell(18).setCellValue(records.get(0).getDebtTurnover());
                             }
                             if(records.get(0).getInterestTurnover() != null) {
-                                row.getCell(20).setCellValue(records.get(0).getInterestTurnover());
+                                row.getCell(21).setCellValue(records.get(0).getInterestTurnover());
                             }
                             if(records.get(0).getDebtEndPeriod() != null) {
-                                row.getCell(24).setCellValue(records.get(0).getDebtEndPeriod());
+                                row.getCell(25).setCellValue(records.get(0).getDebtEndPeriod());
                             }
                             if(records.get(0).getInterestEndPeriod() != null) {
-                                row.getCell(27).setCellValue(records.get(0).getInterestEndPeriod());
+                                row.getCell(28).setCellValue(records.get(0).getInterestEndPeriod());
                             }
                             if(records.get(0).getTotalEndPeriod() != null) {
-                                row.getCell(30).setCellValue(records.get(0).getTotalEndPeriod());
+                                row.getCell(31).setCellValue(records.get(0).getTotalEndPeriod());
                             }
 
                         }
@@ -8498,33 +8510,36 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                                 if(records.get(i).getInterestPaymentCount() != null) {
                                     newRow.createCell(7).setCellValue(records.get(i).getInterestPaymentCount());
                                 }
+                                if(records.get(i).getCurrency() != null) {
+                                    newRow.createCell(8).setCellValue(records.get(i).getCurrency());
+                                }
                                 if(records.get(i).getDebtStartPeriod() != null) {
-                                    newRow.createCell(9).setCellValue(records.get(i).getDebtStartPeriod());
+                                    newRow.createCell(10).setCellValue(records.get(i).getDebtStartPeriod());
                                 }
                                 if(records.get(i).getInterestStartPeriod() != null) {
-                                    newRow.createCell(12).setCellValue(records.get(i).getInterestStartPeriod());
+                                    newRow.createCell(13).setCellValue(records.get(i).getInterestStartPeriod());
                                 }
                                 if(records.get(i).getTotalStartPeriod() != null) {
-                                    newRow.createCell(15).setCellValue(records.get(i).getTotalStartPeriod());
+                                    newRow.createCell(16).setCellValue(records.get(i).getTotalStartPeriod());
                                 }
                                 if(records.get(i).getDebtTurnover() != null) {
-                                    newRow.createCell(17).setCellValue(records.get(i).getDebtTurnover());
+                                    newRow.createCell(18).setCellValue(records.get(i).getDebtTurnover());
                                 }
                                 if(records.get(i).getInterestTurnover() != null) {
-                                    newRow.createCell(20).setCellValue(records.get(i).getInterestTurnover());
+                                    newRow.createCell(21).setCellValue(records.get(i).getInterestTurnover());
                                 }
                                 if(records.get(i).getDebtEndPeriod() != null) {
-                                    newRow.createCell(24).setCellValue(records.get(i).getDebtEndPeriod());
+                                    newRow.createCell(25).setCellValue(records.get(i).getDebtEndPeriod());
                                 }
                                 if(records.get(i).getInterestEndPeriod() != null) {
-                                    newRow.createCell(27).setCellValue(records.get(i).getInterestEndPeriod());
+                                    newRow.createCell(28).setCellValue(records.get(i).getInterestEndPeriod());
                                 }
                                 if(records.get(i).getTotalEndPeriod() != null) {
-                                    newRow.createCell(30).setCellValue(records.get(i).getTotalEndPeriod());
+                                    newRow.createCell(31).setCellValue(records.get(i).getTotalEndPeriod());
                                 }
 
                                 // set styles
-                                for(int j = 0; j < 31; j++){
+                                for(int j = 0; j < 32; j++){
                                     if(newRow.getCell(j) == null){
                                         newRow.createCell(j);
                                     }

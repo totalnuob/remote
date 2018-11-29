@@ -17,6 +17,7 @@ public class ConsolidatedKZTForm13RecordDto implements BaseDto {
     private Date endPeriod;
     private String interestRate;
     private Integer interestPaymentCount;
+    private String currency;
 
     private Double debtStartPeriod;
     private Double interestStartPeriod;
@@ -186,6 +187,14 @@ public class ConsolidatedKZTForm13RecordDto implements BaseDto {
 
     public void setTotalEndPeriod(Double totalEndPeriod) {
         this.totalEndPeriod = totalEndPeriod;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 
     public boolean isEmptyAmounts(){
