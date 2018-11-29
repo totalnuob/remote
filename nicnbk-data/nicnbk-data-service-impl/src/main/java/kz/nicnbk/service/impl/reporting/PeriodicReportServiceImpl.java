@@ -5095,6 +5095,14 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             }
 
             if(previousRecords != null && !previousRecords.isEmpty()){
+
+                // UPDATE FORM
+                for(int i = previousRecords.size() -1; i >= 0; i--){
+                    if(previousRecords.get(i).getAccountNumber() == null && previousRecords.get(i).getLineNumber() == 3){
+                        previousRecords.get(i).setName("Всего (сумма строк 1, 2)");
+                        break;
+                    }
+                }
                 int index = 0;
                 for(ConsolidatedKZTForm22RecordDto record: currentRecords){
                     boolean previousRecordFound = false;
@@ -5700,7 +5708,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         List<ConsolidatedKZTForm22RecordDto> headers = new ArrayList<>();
         headers.add(new ConsolidatedKZTForm22RecordDto("Прочие доходы", 1));
         headers.add(new ConsolidatedKZTForm22RecordDto("Прочие расходы", 2));
-        headers.add(new ConsolidatedKZTForm22RecordDto("ВСЕГО (сумма строк 1, 2)", 3));
+        headers.add(new ConsolidatedKZTForm22RecordDto("Всего (сумма строк 1, 2)", 3));
 
         return headers;
     }
