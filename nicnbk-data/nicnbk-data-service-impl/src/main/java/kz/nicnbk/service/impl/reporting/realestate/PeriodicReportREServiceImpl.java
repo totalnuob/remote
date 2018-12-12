@@ -12,6 +12,7 @@ import kz.nicnbk.repo.api.reporting.NICReportingChartOfAccountsRepository;
 import kz.nicnbk.repo.api.reporting.hedgefunds.SingularityNICChartOfAccountsRepository;
 import kz.nicnbk.repo.api.reporting.realestate.*;
 import kz.nicnbk.repo.model.employee.Employee;
+import kz.nicnbk.repo.model.lookup.reporting.ExcludeRecordTypeLookup;
 import kz.nicnbk.repo.model.lookup.reporting.TerraExcludeRecordTypeLookup;
 import kz.nicnbk.repo.model.reporting.NICReportingChartOfAccounts;
 import kz.nicnbk.repo.model.reporting.PeriodicReport;
@@ -791,31 +792,40 @@ public class PeriodicReportREServiceImpl implements PeriodicReportREService {
     }
 
     @Override
-    public boolean excludeIncludeTerraRecord(ExcludeTerraRecordDto excludeTerraRecordDto) {
+    public boolean excludeIncludeTerraRecord(ExcludeTerraRecordDto excludeTerraRecordDto, String username) {
         try {
             if (excludeTerraRecordDto.getType() == null) {
                 return false;
             }
+            boolean result = false;
             if (excludeTerraRecordDto.getType().equalsIgnoreCase(TerraExcludeRecordTypeLookup.CAPITAL_CALL.getCode())) {
-                return this.reserveCalculationService.excludeIncludeRecord(excludeTerraRecordDto.getRecordId(), excludeTerraRecordDto.getName());
+                result = this.reserveCalculationService.excludeIncludeRecord(excludeTerraRecordDto.getRecordId(), excludeTerraRecordDto.getName(), ExcludeRecordTypeLookup.TERRA);
             } else if (excludeTerraRecordDto.getType().equalsIgnoreCase(TerraExcludeRecordTypeLookup.BALANCE_SHEET.getCode())) {
                 ReportingREBalanceSheet entity = this.balanceSheetRepository.findOne(excludeTerraRecordDto.getRecordId());
                 boolean currentValue = entity.getExcludeFromTerraCalculation() == null ? false : entity.getExcludeFromTerraCalculation().booleanValue();
                 entity.setExcludeFromTerraCalculation(!currentValue);
                 this.balanceSheetRepository.save(entity);
-                return true;
+                result = true;
             } else if (excludeTerraRecordDto.getType().equalsIgnoreCase(TerraExcludeRecordTypeLookup.SECURITIES_COST.getCode())) {
                 ReportingRESecuritiesCost entity = this.securitiesCostRepository.findOne(excludeTerraRecordDto.getRecordId());
                 boolean currentValue = entity.getExcludeFromTerraCalculation() == null ? false : entity.getExcludeFromTerraCalculation().booleanValue();
                 entity.setExcludeFromTerraCalculation(!currentValue);
                 this.securitiesCostRepository.save(entity);
-                return true;
+                result = true;
             }
+            if(result){
+                logger.info("Successfully excluded/included Terra record: id=" + excludeTerraRecordDto.getRecordId() +
+                        ", type=" + excludeTerraRecordDto.getType() + ", name='" + excludeTerraRecordDto.getName() + "' [user " + username + "]");
+            }else{
+                logger.error("Error excluding/including Terra record: id=" + excludeTerraRecordDto.getRecordId() +
+                        ", type=" + excludeTerraRecordDto.getType() + ", name='"  + excludeTerraRecordDto.getName() + "' [user " + username + "]");
+            }
+            return result;
         }catch (Exception ex){
-            logger.error("Error when including/excluding Terra record: id=" + excludeTerraRecordDto.getRecordId(), ex);
+            logger.error("Error when including/excluding Terra record: id=" + excludeTerraRecordDto.getRecordId()
+                    + ", type=" + excludeTerraRecordDto.getType(), ex);
             return false;
         }
-        return false;
     }
 
     @Override

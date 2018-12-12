@@ -3,7 +3,7 @@ package kz.nicnbk.service.dto.reporting;
 /**
  * Created by magzumov on 03.10.2017.
  */
-public class GeneratedGeneralLedgerFormDto extends SingularityGeneralLedgerBalanceRecordDto implements Comparable {
+public class GeneratedGeneralLedgerFormDto extends GeneralLedgerBalanceRecordDto implements Comparable {
 
 
     // TODO: rename

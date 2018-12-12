@@ -17,6 +17,7 @@ public class ConsolidatedKZTForm13RecordDto implements BaseDto {
     private Date endPeriod;
     private String interestRate;
     private Integer interestPaymentCount;
+    private String currency;
 
     private Double debtStartPeriod;
     private Double interestStartPeriod;
@@ -88,6 +89,20 @@ public class ConsolidatedKZTForm13RecordDto implements BaseDto {
 
     public String getInterestRate() {
         return interestRate;
+    }
+
+    public Double getInterestRateAsDouble(){
+        if(this.interestRate != null){
+            try{
+                String textValue = this.interestRate.replace("%", "");
+                textValue = textValue.replace(",", ".");
+                Double value = Double.parseDouble(textValue);
+                value = value / 100;
+                return value;
+            }catch (Exception e){
+            }
+        }
+        return null;
     }
 
     public void setInterestRate(String interestRate) {
@@ -172,6 +187,14 @@ public class ConsolidatedKZTForm13RecordDto implements BaseDto {
 
     public void setTotalEndPeriod(Double totalEndPeriod) {
         this.totalEndPeriod = totalEndPeriod;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 
     public boolean isEmptyAmounts(){

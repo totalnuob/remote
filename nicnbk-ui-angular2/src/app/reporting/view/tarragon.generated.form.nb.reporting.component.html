@@ -173,7 +173,8 @@
                 <td width="5%">&nbsp;</td>
 
             </tr>
-            <tr *ngFor="let record of records" [style.background-color]="record.added ? '#dcd196' : record.nbAccountNumber == null ? '#ec4747' : 'white'">
+            <tr *ngFor="let record of records" [style.background-color]="record.added ? '#dcd196' : record.nbAccountNumber == null ? '#ec4747' : 'white'"
+                [style.color]="isRecordExcluded(record) ? '#aaa7a7' : 'black'">
                 <td>{{record.acronym}}</td>
                 <td>{{record.balanceDate}}</td>
                 <td>{{record.financialStatementCategory}}</td>
@@ -183,7 +184,11 @@
                 <td>{{record.subscriptionRedemptionEntity}}</td>
                 <td>{{record.nbAccountNumber}}</td>
                 <td>{{record.nicAccountName}}</td>
-                <td *ngIf="!record.editing">{{record.glaccountBalance != null ? (record.glaccountBalance | number:'1.2-2'): ''}}</td>
+                <td *ngIf="!record.editing">
+                    <del><span *ngIf="isRecordExcluded(record)">{{record.glaccountBalance != null ? (record.glaccountBalance | number:'1.2-2'): ''}}</span></del>
+                    <span *ngIf="!isRecordExcluded(record)">{{record.glaccountBalance != null ? (record.glaccountBalance | number:'1.2-2'): ''}}</span>
+                    <!--{{record.glaccountBalance != null ? (record.glaccountBalance | number:'1.2-2'): ''}}-->
+                </td>
                 <td *ngIf="record.editing">
                     <input type="number" class="form-control" [(ngModel)]="record.glaccountBalance"/>
                 </td>
@@ -203,6 +208,13 @@
                     </button>
                     <button *ngIf="record.editable && record.editing" type="button" class="btn-xs" style="display: inline-block"  (click)="saveEditAccountBalance(record)">
                         <span class="glyphicon glyphicon-floppy-disk"></span>
+                    </button>
+
+                    <button *ngIf="!record.added && !isRecordExcluded(record)" type="button" class="btn-xs btn-default" style="display: inline-block"  (click)="excludeGeneratedRecord(record)">
+                        <span class="glyphicon glyphicon-minus"></span>
+                    </button>
+                    <button *ngIf="!record.added && isRecordExcluded(record)" type="button" class="btn-xs btn-default" style="display: inline-block"  (click)="includeGeneratedRecord(record)">
+                        <span class="glyphicon glyphicon-plus"></span>
                     </button>
                 </td>
             </tr>

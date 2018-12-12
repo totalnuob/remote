@@ -26,143 +26,17 @@
     </div>
     <ul class="nav nav-tabs">
         <li class="active">
-            <!--<li>-->
-            <a data-toggle="tab" href="#short">Short</a>
-        </li>
-        <li >
             <!--<li >-->
             <a data-toggle="tab" href="#full">Full</a>
+        </li>
+        <li>
+            <!--<li>-->
+            <a data-toggle="tab" href="#short">Short</a>
         </li>
     </ul>
 
     <div class="tab-content">
-        <div id="short" class="tab-pane fade in active">
-            <div [ngBusy]="{busy: busyExport, message: 'Exporting...'}" class="row withpadding" style="overflow-y: scroll;">
-                <table [ngBusy]="[busy]" class="table table-hover table-condensed" style="font-size: small">
-                    <tr bgcolor="#e7e7e7">
-                        <td rowspan="2">Номер группы субсчетов</td>
-                        <td rowspan="2">Вид финансовых инвестиций</td>
-                        <td rowspan="2">Код строки</td>
-                        <td rowspan="2">Наименование контрагента/эмитента</td>
-                        <td rowspan="2">Национальный идентификационный номер, международный идентификационный номер</td>
-                        <td rowspan="2">Дата приобретения</td>
-                        <!--<td rowspan="2">Дата погашения</td>-->
-                        <!--<td rowspan="2">Ставка вознаграждения (годовых)</td>-->
-                        <!--<td rowspan="2">Количество выплат вознаграждения в году</td>-->
-                        <td colspan="3">Остаток на начало отчетного периода</td>
-                        <td colspan="3">Обороты</td>
-                        <td colspan="3">Остаток на конец отчетного периода</td>
-                    </tr>
-                    <tr bgcolor="#e7e7e7">
-                        <!--<td>Количество</td>-->
-                        <td>Сумма основного долга/номинальная стоимость</td>
-                        <!--<td>Дисконт</td>-->
-                        <!--<td>Премия</td>-->
-                        <!--<td>Вознаграждение</td>-->
-                        <!--<td>Вознаграждение предыдущего держателя</td>-->
-                        <td>Корректировка справедливой стоимост</td>
-                        <!--<td>Резервы на покрытие убытков</td>-->
-                        <td>Итого балансовая стоимость (гр. 11+гр.12+гр.13+гр.14+гр.15+гр.16+гр.17)</td>
-                        <!--<td>Количество</td>-->
-                        <td>Сумма основного долга/номинальная стоимость</td>
-                        <!--<td>Дисконт</td>-->
-                        <!--<td>Премия</td>-->
-                        <!--<td>Вознаграждение</td>-->
-                        <!--<td>Вознаграждение предыдущего держателя</td>-->
-                        <td>положительная</td>
-                        <td>отрицательная</td>
-                        <!--<td>Резервы на покрытие убытков</td>-->
-                        <!--<td>Количество (гр.10+гр.19)</td>-->
-                        <td>Сумма основного долга/номинальная стоимость (гр.11+гр.20)</td>
-                        <!--<td>Дисконт (гр.12+гр.21)</td>-->
-                        <!--<td>Премия (гр.13+гр.22)</td>-->
-                        <!--<td>Вознаграждение (гр.14+гр.23)</td>-->
-                        <!--<td>Вознаграждение предыдущего держателя (гр.15+гр.24)</td>-->
-                        <td>Корректировка справедливой стоимости (гр.16+гр.25+гр.26)</td>
-                        <!--<td>Резервы на покрытие убытков (гр.17+гр.27)</td>-->
-                        <td>Итого балансовая стоимость (гр.29+гр.30+гр.31+гр.32+гр.33+гр.34+гр.35)</td>
-                    </tr>
-                    <tr>
-                        <td>1</td>
-                        <td>2</td>
-                        <td>3</td>
-                        <td>4</td>
-                        <td>5</td>
-                        <td>6</td>
-                        <!--<td>7</td>-->
-                        <!--<td>8</td>-->
-                        <!--<td>9</td>-->
-                        <!--<td>10</td>-->
-                        <td>11</td>
-                        <!--<td>12</td>-->
-                        <!--<td>13</td>-->
-                        <!--<td>14</td>-->
-                        <!--<td>15</td>-->
-                        <td>16</td>
-                        <!--<td>17</td>-->
-                        <td>18</td>
-                        <!--<td>19</td>-->
-                        <td>20</td>
-                        <!--<td>21</td>-->
-                        <!--<td>22</td>-->
-                        <!--<td>23</td>-->
-                        <!--<td>24</td>-->
-                        <td>25</td>
-                        <td>26</td>
-                        <!--<td>27</td>-->
-                        <!--<td>28</td>-->
-                        <td>29</td>
-                        <!--<td>30</td>-->
-                        <!--<td>31</td>-->
-                        <!--<td>32</td>-->
-                        <!--<td>33</td>-->
-                        <td>34</td>
-                        <!--<td>35</td>-->
-                        <td>36</td>
-                    </tr>
-                    <tr *ngFor="let record of records">
-                        <td>{{record.accountNumber}}</td>
-                        <td>{{record.name}}</td>
-                        <td>{{record.accountNumber == null ? record.lineNumber : ''}}</td>
-                        <td>{{record.entityName}}</td>
-                        <td>{{record.otherName}}</td>
-                        <td>{{record.purchaseDate}}</td>
-                        <!--<td>&nbsp;</td>-->
-                        <!--<td>&nbsp;</td>-->
-                        <!--<td>&nbsp;</td>-->
-                        <!--<td>&nbsp;</td>-->
-                        <td>{{record.debtStartPeriod != null && record.debtStartPeriod != 0 ? (record.debtStartPeriod | number:'1.2-2') : ''}}</td>
-                        <!--<td>&nbsp;</td>-->
-                        <!--<td>&nbsp;</td>-->
-                        <!--<td>&nbsp;</td>-->
-                        <!--<td>&nbsp;</td>-->
-                        <td>{{record.fairValueAdjustmentsStartPeriod != null && record.fairValueAdjustmentsStartPeriod != 0 ? (record.fairValueAdjustmentsStartPeriod | number:'1.2-2') : ''}}</td>
-                        <!--<td>&nbsp;</td>-->
-                        <td>{{record.totalStartPeriod != null && record.totalStartPeriod != 0 ? (record.totalStartPeriod | number:'1.2-2') : ''}}</td>
-                        <!--<td>&nbsp;</td>-->
-                        <td>{{record.debtTurnover != null && record.debtTurnover != 0 ? (record.debtTurnover | number:'1.2-2') : ''}}</td>
-                        <!--<td>&nbsp;</td>-->
-                        <!--<td>&nbsp;</td>-->
-                        <!--<td>&nbsp;</td>-->
-                        <!--<td>&nbsp;</td>-->
-                        <td>{{record.fairValueAdjustmentsTurnoverPositive != null ? (record.fairValueAdjustmentsTurnoverPositive | number:'1.2-2') : ''}}</td>
-                        <td>{{record.fairValueAdjustmentsTurnoverNegative != null ? (record.fairValueAdjustmentsTurnoverNegative | number:'1.2-2') : ''}}</td>
-                        <!--<td>&nbsp;</td>-->
-                        <!--<td>&nbsp;</td>-->
-                        <td>{{record.debtEndPeriod != null && record.debtEndPeriod != 0 ? (record.debtEndPeriod | number:'1.2-2') : ''}}</td>
-                        <!--<td>&nbsp;</td>-->
-                        <!--<td>&nbsp;</td>-->
-                        <!--<td>&nbsp;</td>-->
-                        <!--<td>&nbsp;</td>-->
-                        <td>{{record.fairValueAdjustmentsEndPeriod != null && record.fairValueAdjustmentsEndPeriod != 0 ? (record.fairValueAdjustmentsEndPeriod | number:'1.2-2') : ''}}</td>
-                        <!--<td>&nbsp;</td>-->
-                        <td>{{record.totalEndPeriod != null && record.totalEndPeriod != 0 ? (record.totalEndPeriod | number:'1.2-2') : ''}}</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-
-        <div id="full" class="tab-pane fade">
+        <div id="full" class="tab-pane fade in active">
             <div class="row withpadding">
                 <br/>
                 <button class="btn-xs btn-primary pull-right" (click)="export()"><span class="glyphicon glyphicon-list-alt"></span>&nbsp;Export</button>
@@ -180,6 +54,7 @@
                         <td rowspan="2">Дата погашения</td>
                         <td rowspan="2">Ставка вознаграждения (годовых)</td>
                         <td rowspan="2">Количество выплат вознаграждения в году</td>
+                        <td rowspan="2">Валюта</td>
                         <td colspan="9">Остаток на начало отчетного периода</td>
                         <td colspan="9">Обороты</td>
                         <td colspan="9">Остаток на конец отчетного периода</td>
@@ -250,6 +125,7 @@
                         <td>34</td>
                         <td>35</td>
                         <td>36</td>
+                        <td>37</td>
                     </tr>
                     <tr *ngFor="let record of records">
                         <td>{{record.accountNumber}}</td>
@@ -261,6 +137,7 @@
                         <td>&nbsp;</td>
                         <td>&nbsp;</td>
                         <td>&nbsp;</td>
+                        <td>{{record.currency}}</td>
                         <td>&nbsp;</td>
                         <td>{{record.debtStartPeriod != null && record.debtStartPeriod != 0 ? (record.debtStartPeriod | number:'1.2-2') : ''}}</td>
                         <td>&nbsp;</td>
@@ -287,6 +164,132 @@
                         <td>&nbsp;</td>
                         <td>{{record.fairValueAdjustmentsEndPeriod != null && record.fairValueAdjustmentsEndPeriod != 0 ? (record.fairValueAdjustmentsEndPeriod | number:'1.2-2') : ''}}</td>
                         <td>&nbsp;</td>
+                        <td>{{record.totalEndPeriod != null && record.totalEndPeriod != 0 ? (record.totalEndPeriod | number:'1.2-2') : ''}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div id="short" class="tab-pane fade">
+            <div [ngBusy]="{busy: busyExport, message: 'Exporting...'}" class="row withpadding" style="overflow-y: scroll;">
+                <table [ngBusy]="[busy]" class="table table-hover table-condensed" style="font-size: small">
+                    <tr bgcolor="#e7e7e7">
+                        <td rowspan="2">Номер группы субсчетов</td>
+                        <td rowspan="2">Вид финансовых инвестиций</td>
+                        <td rowspan="2">Код строки</td>
+                        <td rowspan="2">Наименование контрагента/эмитента</td>
+                        <td rowspan="2">Национальный идентификационный номер, международный идентификационный номер</td>
+                        <td rowspan="2">Дата приобретения</td>
+                        <td rowspan="2">Валюта</td>
+                        <!--<td rowspan="2">Ставка вознаграждения (годовых)</td>-->
+                        <!--<td rowspan="2">Количество выплат вознаграждения в году</td>-->
+                        <td colspan="3">Остаток на начало отчетного периода</td>
+                        <td colspan="3">Обороты</td>
+                        <td colspan="3">Остаток на конец отчетного периода</td>
+                    </tr>
+                    <tr bgcolor="#e7e7e7">
+                        <!--<td>Количество</td>-->
+                        <td>Сумма основного долга/номинальная стоимость</td>
+                        <!--<td>Дисконт</td>-->
+                        <!--<td>Премия</td>-->
+                        <!--<td>Вознаграждение</td>-->
+                        <!--<td>Вознаграждение предыдущего держателя</td>-->
+                        <td>Корректировка справедливой стоимост</td>
+                        <!--<td>Резервы на покрытие убытков</td>-->
+                        <td>Итого балансовая стоимость (гр. 11+гр.12+гр.13+гр.14+гр.15+гр.16+гр.17)</td>
+                        <!--<td>Количество</td>-->
+                        <td>Сумма основного долга/номинальная стоимость</td>
+                        <!--<td>Дисконт</td>-->
+                        <!--<td>Премия</td>-->
+                        <!--<td>Вознаграждение</td>-->
+                        <!--<td>Вознаграждение предыдущего держателя</td>-->
+                        <td>положительная</td>
+                        <td>отрицательная</td>
+                        <!--<td>Резервы на покрытие убытков</td>-->
+                        <!--<td>Количество (гр.10+гр.19)</td>-->
+                        <td>Сумма основного долга/номинальная стоимость (гр.11+гр.20)</td>
+                        <!--<td>Дисконт (гр.12+гр.21)</td>-->
+                        <!--<td>Премия (гр.13+гр.22)</td>-->
+                        <!--<td>Вознаграждение (гр.14+гр.23)</td>-->
+                        <!--<td>Вознаграждение предыдущего держателя (гр.15+гр.24)</td>-->
+                        <td>Корректировка справедливой стоимости (гр.16+гр.25+гр.26)</td>
+                        <!--<td>Резервы на покрытие убытков (гр.17+гр.27)</td>-->
+                        <td>Итого балансовая стоимость (гр.29+гр.30+гр.31+гр.32+гр.33+гр.34+гр.35)</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>3</td>
+                        <td>4</td>
+                        <td>5</td>
+                        <td>6</td>
+                        <!--<td>7</td>-->
+                        <!--<td>8</td>-->
+                        <!--<td>9</td>-->
+                        <!--<td>10</td>-->
+                        <td>10</td>
+                        <td>12</td>
+                        <!--<td>12</td>-->
+                        <!--<td>13</td>-->
+                        <!--<td>14</td>-->
+                        <!--<td>15</td>-->
+                        <td>17</td>
+                        <!--<td>17</td>-->
+                        <td>19</td>
+                        <!--<td>19</td>-->
+                        <td>21</td>
+                        <!--<td>21</td>-->
+                        <!--<td>22</td>-->
+                        <!--<td>23</td>-->
+                        <!--<td>24</td>-->
+                        <td>26</td>
+                        <td>27</td>
+                        <!--<td>27</td>-->
+                        <!--<td>28</td>-->
+                        <td>30</td>
+                        <!--<td>30</td>-->
+                        <!--<td>31</td>-->
+                        <!--<td>32</td>-->
+                        <!--<td>33</td>-->
+                        <td>35</td>
+                        <!--<td>35</td>-->
+                        <td>37</td>
+                    </tr>
+                    <tr *ngFor="let record of records">
+                        <td>{{record.accountNumber}}</td>
+                        <td>{{record.name}}</td>
+                        <td>{{record.accountNumber == null ? record.lineNumber : ''}}</td>
+                        <td>{{record.entityName}}</td>
+                        <td>{{record.otherName}}</td>
+                        <td>{{record.purchaseDate}}</td>
+                        <td>{{record.currency}}</td>
+                        <!--<td>&nbsp;</td>-->
+                        <!--<td>&nbsp;</td>-->
+                        <!--<td>&nbsp;</td>-->
+                        <td>{{record.debtStartPeriod != null && record.debtStartPeriod != 0 ? (record.debtStartPeriod | number:'1.2-2') : ''}}</td>
+                        <!--<td>&nbsp;</td>-->
+                        <!--<td>&nbsp;</td>-->
+                        <!--<td>&nbsp;</td>-->
+                        <!--<td>&nbsp;</td>-->
+                        <td>{{record.fairValueAdjustmentsStartPeriod != null && record.fairValueAdjustmentsStartPeriod != 0 ? (record.fairValueAdjustmentsStartPeriod | number:'1.2-2') : ''}}</td>
+                        <!--<td>&nbsp;</td>-->
+                        <td>{{record.totalStartPeriod != null && record.totalStartPeriod != 0 ? (record.totalStartPeriod | number:'1.2-2') : ''}}</td>
+                        <!--<td>&nbsp;</td>-->
+                        <td>{{record.debtTurnover != null && record.debtTurnover != 0 ? (record.debtTurnover | number:'1.2-2') : ''}}</td>
+                        <!--<td>&nbsp;</td>-->
+                        <!--<td>&nbsp;</td>-->
+                        <!--<td>&nbsp;</td>-->
+                        <!--<td>&nbsp;</td>-->
+                        <td>{{record.fairValueAdjustmentsTurnoverPositive != null ? (record.fairValueAdjustmentsTurnoverPositive | number:'1.2-2') : ''}}</td>
+                        <td>{{record.fairValueAdjustmentsTurnoverNegative != null ? (record.fairValueAdjustmentsTurnoverNegative | number:'1.2-2') : ''}}</td>
+                        <!--<td>&nbsp;</td>-->
+                        <!--<td>&nbsp;</td>-->
+                        <td>{{record.debtEndPeriod != null && record.debtEndPeriod != 0 ? (record.debtEndPeriod | number:'1.2-2') : ''}}</td>
+                        <!--<td>&nbsp;</td>-->
+                        <!--<td>&nbsp;</td>-->
+                        <!--<td>&nbsp;</td>-->
+                        <!--<td>&nbsp;</td>-->
+                        <td>{{record.fairValueAdjustmentsEndPeriod != null && record.fairValueAdjustmentsEndPeriod != 0 ? (record.fairValueAdjustmentsEndPeriod | number:'1.2-2') : ''}}</td>
+                        <!--<td>&nbsp;</td>-->
                         <td>{{record.totalEndPeriod != null && record.totalEndPeriod != 0 ? (record.totalEndPeriod | number:'1.2-2') : ''}}</td>
                     </tr>
                 </table>

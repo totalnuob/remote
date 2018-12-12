@@ -31,6 +31,8 @@ public class ReportingHFGeneralLedgerBalance extends CreateUpdateBaseEntity{
     private String interestRate;
     private String comment;
 
+    private Boolean excludeFromSingularityCalculation;
+
 
     public int getTranche() {
         return tranche;
@@ -157,5 +159,14 @@ public class ReportingHFGeneralLedgerBalance extends CreateUpdateBaseEntity{
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    @Column(name="exclude_from_singularity_calc")
+    public Boolean getExcludeFromSingularityCalculation() {
+        return excludeFromSingularityCalculation;
+    }
+
+    public void setExcludeFromSingularityCalculation(Boolean excludeFromSingularityCalculation) {
+        this.excludeFromSingularityCalculation = excludeFromSingularityCalculation;
     }
 }

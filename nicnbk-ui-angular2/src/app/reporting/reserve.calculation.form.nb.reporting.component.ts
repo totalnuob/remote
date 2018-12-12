@@ -510,13 +510,18 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
         if(record.amount != null && record.amount != 'undefined' && record.amount.toString().length > 0) {
             if(record.amount.toString()[record.amount.toString().length - 1] != '.' || record.amount.toString().split('.').length > 2){
                 record.amount = record.amount.toString().replace(/,/g , '');
-                record.amount = parseFloat(record.amount).toLocaleString('en', {maximumFractionDigits: 2});
+                if(record.amount != '-'){
+                    record.amount = parseFloat(record.amount).toLocaleString('en', {maximumFractionDigits: 2});
+                }
             }
         }
         if(record.amountToSPV != null && record.amountToSPV != 'undefined' && record.amountToSPV.toString().length > 0) {
             if(record.amountToSPV.toString()[record.amountToSPV.toString().length - 1] != '.' || record.amountToSPV.toString().split('.').length > 2){
                 record.amountToSPV = record.amountToSPV.toString().replace(/,/g , '');
-                record.amountToSPV = parseFloat(record.amountToSPV).toLocaleString('en', {maximumFractionDigits: 2});
+                if(record.amountToSPV != '-'){
+                    record.amountToSPV = parseFloat(record.amountToSPV).toLocaleString('en', {maximumFractionDigits: 2});
+                }
+
             }
         }
     }

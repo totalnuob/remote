@@ -15,11 +15,17 @@ public interface HFGeneralLedgerBalanceService extends BaseService {
 
     ReportingHFGeneralLedgerBalance assemble(SingularityGeneralLedgerBalanceRecordDto dto, Long reportId);
 
+    SingularityGeneralLedgerBalanceRecordDto getRecordById(Long recordId);
+
     List<ReportingHFGeneralLedgerBalance> assembleList(List<SingularityGeneralLedgerBalanceRecordDto> dtoList, Long reportId);
 
     boolean save(List<ReportingHFGeneralLedgerBalance> entities);
 
-    ConsolidatedReportRecordHolderDto get(Long reportId);
+    boolean excludeIncludeSingularityRecord(Long recordId, String username);
+
+    ConsolidatedReportRecordHolderDto getWithExcludedRecords(Long reportId);
+
+    ConsolidatedReportRecordHolderDto getWithoutExcludedRecords(Long reportId);
 
     boolean deleteByReportId(Long reportId);
 

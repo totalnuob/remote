@@ -33,5 +33,7 @@ public interface PEScheduleInvestmentService extends BaseService {
 
     boolean deleteByReportId(Long reportId);
 
+    boolean excludeIncludeTarragonRecord(Long recordId);
+
 
 }

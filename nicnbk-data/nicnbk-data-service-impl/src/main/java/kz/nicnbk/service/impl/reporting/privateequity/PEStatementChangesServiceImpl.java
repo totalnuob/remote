@@ -113,6 +113,20 @@ public class PEStatementChangesServiceImpl implements PEStatementChangesService 
         }
     }
 
+    @Override
+    public boolean excludeIncludeTarragonRecord(Long recordId) {
+        try {
+            ReportingPEStatementChanges entity = peStatementChangesRepository.findOne(recordId);
+            boolean value = entity.getExcludeFromTarragonCalculation() != null ? entity.getExcludeFromTarragonCalculation().booleanValue() : false;
+            entity.setExcludeFromTarragonCalculation(!value);
+            peStatementChangesRepository.save(entity);
+            return true;
+        }catch (Exception ex){
+            logger.error("Error saving ReportingPEStatementChanges with id=" + recordId, ex);
+            return false;
+        }
+    }
+
     private List<StatementChangesDto> disassembleStatementChangesList(List<ReportingPEStatementChanges> entities){
         List<StatementChangesDto> dtoList = new ArrayList<>();
         if(entities != null){

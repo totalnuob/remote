@@ -8,6 +8,7 @@ import kz.nicnbk.common.service.model.BaseDto;
 
 public class StatementChangesDto implements BaseDto{
 
+    private Long id;
     private String name;
     private Double trancheA;
     private Double trancheB;
@@ -15,6 +16,8 @@ public class StatementChangesDto implements BaseDto{
     private PeriodicReportDto report;
 
     private Boolean isTotalSum;
+
+    private Boolean excludeFromTarragonCalculation;
 
     public String getName() {
         return name;
@@ -62,5 +65,21 @@ public class StatementChangesDto implements BaseDto{
 
     public void setTotalSum(Boolean totalSum) {
         isTotalSum = totalSum;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Boolean getExcludeFromTarragonCalculation() {
+        return excludeFromTarragonCalculation;
+    }
+
+    public void setExcludeFromTarragonCalculation(Boolean excludeFromTarragonCalculation) {
+        this.excludeFromTarragonCalculation = excludeFromTarragonCalculation;
     }
 }

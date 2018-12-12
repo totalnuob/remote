@@ -10,6 +10,7 @@ import kz.nicnbk.service.api.reporting.hedgefunds.HFNOALService;
 import kz.nicnbk.service.api.reporting.hedgefunds.PeriodicReportHFService;
 import kz.nicnbk.service.dto.common.ListResponseDto;
 import kz.nicnbk.service.dto.reporting.*;
+import kz.nicnbk.service.dto.reporting.hedgefunds.ExcludeSingularityRecordDto;
 import kz.nicnbk.service.impl.reporting.PeriodicReportConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +43,7 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
     @Override
     public ListResponseDto getSingularGeneratedForm(Long reportId) {
         ListResponseDto responseDto = new ListResponseDto();
-        ConsolidatedReportRecordHolderDto generalLedgerRecordsHolder = this.generalLedgerBalanceService.get(reportId);
+        ConsolidatedReportRecordHolderDto generalLedgerRecordsHolder = this.generalLedgerBalanceService.getWithoutExcludedRecords(reportId);
         ConsolidatedReportRecordHolderDto noalTrancheARecordHolder = this.hfNOALService.get(reportId, 1);
         ConsolidatedReportRecordHolderDto noalTrancheBRecordHolder = this.hfNOALService.get(reportId, 2);
 
@@ -163,10 +164,10 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
                             records.add(newRecordDto);
                         }
                     }else{
-                        logger.error("Invalid Acronym value: expected '" + PeriodicReportConstants.SINGULAR_CAPITAL_CASE +
-                                "' or '" + PeriodicReportConstants.SINGULAR_B_CAPITAL_CASE + "'");
-                        responseDto.setErrorMessageEn("Invalid Acronym value: expected '" + PeriodicReportConstants.SINGULAR_CAPITAL_CASE +
-                                "' or '" + PeriodicReportConstants.SINGULAR_B_CAPITAL_CASE + "'");
+                        String errorMessage = "Invalid Acronym value: expected '" + PeriodicReportConstants.SINGULAR_CAPITAL_CASE +
+                                "' or '" + PeriodicReportConstants.SINGULAR_B_CAPITAL_CASE + "'";
+                        logger.error(errorMessage);
+                        responseDto.setErrorMessageEn(errorMessage);
                     }
                 }else if(record.getGLAccount().startsWith(PeriodicReportConstants.GROSVENOR_ACCOUNT_NUMBER_1550)){ // REDEMPTIONS - Tranche A
                     if(record.getAcronym().equalsIgnoreCase(PeriodicReportConstants.SINGULAR_CAPITAL_CASE)){
@@ -187,10 +188,10 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
                             records.add(newRecordDto);
                         }
                     }else{
-                        logger.error("Invalid Acronym value: expected '" + PeriodicReportConstants.SINGULAR_CAPITAL_CASE +
-                                "' or '" + PeriodicReportConstants.SINGULAR_B_CAPITAL_CASE + "'");
-                        responseDto.setErrorMessageEn("Invalid Acronym value: expected '" + PeriodicReportConstants.SINGULAR_CAPITAL_CASE +
-                                "' or '" + PeriodicReportConstants.SINGULAR_B_CAPITAL_CASE + "'");
+                        String errorMessage = "Invalid Acronym value: expected '" + PeriodicReportConstants.SINGULAR_CAPITAL_CASE +
+                                "' or '" + PeriodicReportConstants.SINGULAR_B_CAPITAL_CASE + "'";
+                        logger.error(errorMessage);
+                        responseDto.setErrorMessageEn(errorMessage);
                     }
                 }else {
                     setAccountNameAdditionalDescription(record);
@@ -200,6 +201,12 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
         }
         responseDto.setRecords(records);
         return responseDto;
+    }
+
+    @Override
+    public boolean excludeIncludeSingularityRecord(ExcludeSingularityRecordDto excludeRecordDto, String username) {
+        boolean result = this.generalLedgerBalanceService.excludeIncludeSingularityRecord(excludeRecordDto.getRecordId(), username);
+        return result;
     }
 
     private void setAccountNameAdditionalDescription(GeneratedGeneralLedgerFormDto record){

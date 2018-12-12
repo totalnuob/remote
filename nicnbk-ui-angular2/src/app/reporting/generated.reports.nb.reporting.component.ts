@@ -249,4 +249,30 @@ export class GeneratedReportsNBReportingComponent extends CommonNBReportingCompo
         xhr.send();
     }
 
+    export(formType, formName) {
+        this.busy = this.periodicReportService.makeFileRequest(DATA_APP_URL + `periodicReport/export/${this.reportId}/${formType}`, formName)
+            .subscribe(
+                response  => {
+                    //console.log("ok");
+                },
+                error => {
+                    //console.log("fails")
+                    this.postAction(null, "Error exporting data");
+                }
+            );
+    }
+
+    exportAll(){
+        this.busy = this.periodicReportService.makeFileRequest(DATA_APP_URL + `periodicReport/exportAll/${this.reportId}/`, 'reports_kzt')
+            .subscribe(
+                response  => {
+                    //console.log("ok");
+                },
+                error => {
+                    //console.log("fails")
+                    this.postAction(null, "Error exporting data");
+                }
+            );
+    }
+
 }

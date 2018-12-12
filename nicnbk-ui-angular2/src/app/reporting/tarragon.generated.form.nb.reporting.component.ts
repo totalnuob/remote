@@ -442,10 +442,12 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
                     this.recordsValid = false;
                     return;
                 }
-                if(isNumeric(this.records[i].glaccountBalance) && this.records[i].financialStatementCategory === 'A'){
-                    assetsSum += Number(this.records[i].glaccountBalance);
-                }else{
-                    otherSum += Number(this.records[i].glaccountBalance);
+                if(!this.isRecordExcluded(this.records[i])) {
+                    if (isNumeric(this.records[i].glaccountBalance) && this.records[i].financialStatementCategory === 'A') {
+                        assetsSum += Number(this.records[i].glaccountBalance);
+                    } else {
+                        otherSum += Number(this.records[i].glaccountBalance);
+                    }
                 }
                 if(this.records[i].nbAccountNumber  == null && this.records[i].chartAccountsLongDescription != null){
                     this.postAction(null, "Record '" + this.records[i].chartAccountsLongDescription +"' is missing 'NB Account Number' field value (see below).");
@@ -471,8 +473,58 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
         if(record.glaccountBalance != null && record.glaccountBalance.toString().length > 0) {
             if(record.glaccountBalance.toString()[record.glaccountBalance.toString().length - 1] != '.' || record.glaccountBalance.toString().split('.').length > 2){
                 record.glaccountBalance = record.glaccountBalance.toString().replace(/,/g , '');
-                record.glaccountBalance = parseFloat(record.glaccountBalance).toLocaleString('en', {maximumFractionDigits: 2});
+                if(record.glaccountBalance != '-') {
+                    record.glaccountBalance = parseFloat(record.glaccountBalance).toLocaleString('en', {maximumFractionDigits: 2});
+                }
             }
         }
+    }
+
+    excludeGeneratedRecord(record){
+        if(confirm("Are you sure want to exclude record?")){
+            console.log(record);
+            var params = {"recordId": record.id, "name": record.chartAccountsLongDescription, "type": record.type}
+            this.busy = this.periodicReportService.includeExcludeTarragonGeneralLedgerRecord(params)
+                .subscribe(
+                    response => {
+                        if (response) {
+                            var value = record.excludeFromTarragonCalculation != null ? record.excludeFromTarragonCalculation : false;
+                            record.excludeFromTarragonCalculation = !value;
+                            this.checkRecords();
+                        }else{
+                            this.postAction(null, "Failed to exclude record");
+                        }
+                    },
+                    (error: ErrorResponse) => {
+                        this.postAction(null, "Failed to exclude record");
+                    }
+                );
+        }
+    }
+
+    includeGeneratedRecord(record){
+        if(confirm("Are you sure want to include record?")){
+            console.log(record);
+            var params = {"recordId": record.id, "name": record.chartAccountsLongDescription, "type": record.type}
+            this.busy = this.periodicReportService.includeExcludeTarragonGeneralLedgerRecord(params)
+                .subscribe(
+                    response => {
+                        if (response) {
+                            var value = record.excludeFromTarragonCalculation != null ? record.excludeFromTarragonCalculation : false;
+                            record.excludeFromTarragonCalculation = !value;
+                            this.checkRecords();
+                        }else{
+                            this.postAction(null, "Failed to include record");
+                        }
+                    },
+                    (error: ErrorResponse) => {
+                        this.postAction(null, "Failed to include record");
+                    }
+                );
+        }
+    }
+
+    isRecordExcluded(record){
+        return record.excludeFromTarragonCalculation;
     }
 }

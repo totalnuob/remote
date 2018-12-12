@@ -11,6 +11,7 @@ public class BaseDictionaryDto implements BaseDto{
     private String nameKz;
     private BaseDictionaryDto parent;
     private Boolean editable;
+    private Boolean deletable;
 
     public BaseDictionaryDto(){}
 
@@ -75,5 +76,13 @@ public class BaseDictionaryDto implements BaseDto{
 
     public void setEditable(Boolean editable) {
         this.editable = editable;
+    }
+
+    public Boolean getDeletable() {
+        return deletable;
+    }
+
+    public void setDeletable(Boolean deletable) {
+        this.deletable = deletable;
     }
 }

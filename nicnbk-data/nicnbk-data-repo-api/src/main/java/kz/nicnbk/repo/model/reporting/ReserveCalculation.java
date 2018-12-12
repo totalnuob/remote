@@ -25,6 +25,9 @@ public class ReserveCalculation extends CreateUpdateBaseEntity{
     private Boolean excludeFromTerraCalculation;
     private Boolean excludeOppositeFromTerraCalculation;
 
+    private Boolean excludeFromTarragonCalculation;
+    private Boolean excludeOppositeFromTarragonCalculation;
+
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "expense_type_id", nullable = false)
@@ -121,5 +124,23 @@ public class ReserveCalculation extends CreateUpdateBaseEntity{
 
     public void setExcludeOppositeFromTerraCalculation(Boolean excludeOppositeFromTerraCalculation) {
         this.excludeOppositeFromTerraCalculation = excludeOppositeFromTerraCalculation;
+    }
+
+    @Column(name="exclude_from_tarragon_calc")
+    public Boolean getExcludeFromTarragonCalculation() {
+        return excludeFromTarragonCalculation;
+    }
+
+    public void setExcludeFromTarragonCalculation(Boolean excludeFromTarragonCalculation) {
+        this.excludeFromTarragonCalculation = excludeFromTarragonCalculation;
+    }
+
+    @Column(name="exclude_opposite_from_tarragon_calc")
+    public Boolean getExcludeOppositeFromTarragonCalculation() {
+        return excludeOppositeFromTarragonCalculation;
+    }
+
+    public void setExcludeOppositeFromTarragonCalculation(Boolean excludeOppositeFromTarragonCalculation) {
+        this.excludeOppositeFromTarragonCalculation = excludeOppositeFromTarragonCalculation;
     }
 }

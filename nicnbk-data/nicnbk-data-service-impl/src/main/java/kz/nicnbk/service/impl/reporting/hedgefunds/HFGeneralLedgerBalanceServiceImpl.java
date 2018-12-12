@@ -100,6 +100,18 @@ public class HFGeneralLedgerBalanceServiceImpl implements HFGeneralLedgerBalance
     }
 
     @Override
+    public SingularityGeneralLedgerBalanceRecordDto getRecordById(Long recordId) {
+        if(recordId != null) {
+            ReportingHFGeneralLedgerBalance entity = this.generalLedgerBalanceRepository.findOne(recordId);
+            if (entity != null) {
+                return disassemble(entity);
+            }
+        }
+
+        return null;
+    }
+
+    @Override
     public List<ReportingHFGeneralLedgerBalance> assembleList(List<SingularityGeneralLedgerBalanceRecordDto> dtoList, Long reportId) {
         List<ReportingHFGeneralLedgerBalance> entities = new ArrayList<>();
         if(dtoList != null){
@@ -122,6 +134,24 @@ public class HFGeneralLedgerBalanceServiceImpl implements HFGeneralLedgerBalance
             logger.error("Error saving GL Singularity entities. ", ex);
             return false;
         }
+    }
+
+    @Override
+    public boolean excludeIncludeSingularityRecord(Long recordId, String username) {
+        try {
+            ReportingHFGeneralLedgerBalance entity = this.generalLedgerBalanceRepository.findOne(recordId);
+            if (entity != null) {
+                boolean value = entity.getExcludeFromSingularityCalculation() != null ? entity.getExcludeFromSingularityCalculation().booleanValue() : false;
+                entity.setExcludeFromSingularityCalculation(!value);
+                this.generalLedgerBalanceRepository.save(entity);
+                logger.info("Successfully included/excluded Singularity GL record with id: " + recordId + " [user]=" + username);
+                return true;
+            }
+            logger.error("Error to include/exclude Singularity GL record with id: " + recordId + " - record not found [user]=" + username);
+        }catch (Exception ex){
+            logger.error("Error to include/exclude Singularity GL record with id: " + recordId + " [user]=" + username, ex);
+        }
+        return false;
     }
 
 
@@ -154,7 +184,7 @@ public class HFGeneralLedgerBalanceServiceImpl implements HFGeneralLedgerBalance
     }
 
     @Override
-    public ConsolidatedReportRecordHolderDto get(Long reportId) {
+    public ConsolidatedReportRecordHolderDto getWithExcludedRecords(Long reportId) {
         List<ReportingHFGeneralLedgerBalance> entities = this.generalLedgerBalanceRepository.getEntitiesByReportId(reportId,
                 new PageRequest(0, 1000, new Sort(Sort.Direction.ASC, "id")));
 
@@ -168,6 +198,23 @@ public class HFGeneralLedgerBalanceServiceImpl implements HFGeneralLedgerBalance
         }
 
         return result;
+    }
+
+    @Override
+    public ConsolidatedReportRecordHolderDto getWithoutExcludedRecords(Long reportId) {
+        ConsolidatedReportRecordHolderDto holderDto = getWithExcludedRecords(reportId);
+        List<SingularityGeneralLedgerBalanceRecordDto> records = new ArrayList<>();
+        if(holderDto != null && holderDto.getGeneralLedgerBalanceList() != null){
+            for(SingularityGeneralLedgerBalanceRecordDto record: holderDto.getGeneralLedgerBalanceList()){
+                if(record.getExcludeFromSingularityCalculation() == null || !record.getExcludeFromSingularityCalculation().booleanValue()){
+                    records.add(record);
+                }
+            }
+        }
+
+        ConsolidatedReportRecordHolderDto resultDto = new ConsolidatedReportRecordHolderDto();
+        resultDto.setGeneralLedgerBalanceList(records);
+        return resultDto;
     }
 
     @Override
@@ -290,6 +337,7 @@ public class HFGeneralLedgerBalanceServiceImpl implements HFGeneralLedgerBalance
             dto.setAdjustedRedemption(entity.getAdjustedRedemption());
             dto.setInterestRate(entity.getInterestRate());
             dto.setComment(entity.getComment());
+            dto.setExcludeFromSingularityCalculation(entity.getExcludeFromSingularityCalculation());
             return dto;
         }
         return null;

@@ -160,6 +160,20 @@ public class PEStatementBalanceServiceImpl implements PEStatementBalanceService 
     }
 
     @Override
+    public boolean excludeIncludeTarragonRecord(Long recordId) {
+        try {
+            ReportingPEStatementBalance entity = peStatementBalanceRepository.findOne(recordId);
+            boolean value = entity.getExcludeFromTarragonCalculation() != null ? entity.getExcludeFromTarragonCalculation().booleanValue() : false;
+            entity.setExcludeFromTarragonCalculation(!value);
+            peStatementBalanceRepository.save(entity);
+            return true;
+        }catch (Exception ex){
+            logger.error("Error saving ReportingPEStatementBalance with id=" + recordId, ex);
+            return false;
+        }
+    }
+
+    @Override
     public boolean existEntityWithType(String code) {
         if(StringUtils.isEmpty(code)){
             return false;

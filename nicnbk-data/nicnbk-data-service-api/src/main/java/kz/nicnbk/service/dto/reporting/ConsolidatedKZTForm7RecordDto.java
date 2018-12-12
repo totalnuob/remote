@@ -30,6 +30,8 @@ public class ConsolidatedKZTForm7RecordDto implements BaseDto {
 
     private boolean becameZero;
 
+    private String currency;
+
 
     public ConsolidatedKZTForm7RecordDto(){}
 
@@ -178,6 +180,11 @@ public class ConsolidatedKZTForm7RecordDto implements BaseDto {
                 (this.totalEndPeriod == null || this.totalEndPeriod == 0);
     }
 
+    public String getCurrency() {
+        return currency;
+    }
 
-
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
 }

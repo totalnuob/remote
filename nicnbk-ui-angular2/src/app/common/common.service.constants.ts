@@ -1,6 +1,6 @@
 
 /* LOCAL DEV */
-//export const DATA_APP_URL = "http://localhost:8089/";
+//export const DATA_APP_URL = "http://10.10.163.151:8089/";
 
 
 /* SERVER TEST */

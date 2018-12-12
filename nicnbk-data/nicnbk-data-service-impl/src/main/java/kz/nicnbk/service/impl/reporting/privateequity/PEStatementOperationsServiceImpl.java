@@ -250,6 +250,20 @@ public class PEStatementOperationsServiceImpl implements PEStatementOperationsSe
         return count > 0;
     }
 
+    @Override
+    public boolean excludeIncludeTarragonRecord(Long recordId) {
+        try {
+            ReportingPEStatementOperations entity = peStatementOperationsRepository.findOne(recordId);
+            boolean value = entity.getExcludeFromTarragonCalculation() != null ? entity.getExcludeFromTarragonCalculation().booleanValue() : false;
+            entity.setExcludeFromTarragonCalculation(!value);
+            peStatementOperationsRepository.save(entity);
+            return true;
+        }catch (Exception ex){
+            logger.error("Error saving ReportingPEStatementOperations with id=" + recordId, ex);
+            return false;
+        }
+    }
+
     // TODO: refactor
 //    private List<ConsolidatedReportRecordDto> disassembleList(List<ReportingPEStatementOperations> entities){
 //        List<ConsolidatedReportRecordDto> records = new ArrayList<>();

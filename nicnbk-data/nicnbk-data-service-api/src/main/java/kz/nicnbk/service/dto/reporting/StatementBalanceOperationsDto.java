@@ -7,6 +7,7 @@ import kz.nicnbk.common.service.model.HierarchicalBaseDictionaryDto;
  * Created by magzumov on 09.10.2017.
  */
 public class StatementBalanceOperationsDto implements BaseDto {
+    private Long id;
     private String name;
     private Double tarragonMFTotal;
     private Double tarragonMFShareGP;
@@ -21,6 +22,7 @@ public class StatementBalanceOperationsDto implements BaseDto {
     private HierarchicalBaseDictionaryDto type;
     private Integer tranche;
     private Boolean isTotalSum;
+    private Boolean excludeFromTarragonCalculation;
 
     public String getName() {
         return name;
@@ -116,5 +118,21 @@ public class StatementBalanceOperationsDto implements BaseDto {
 
     public void setTotalSum(Boolean totalSum) {
         isTotalSum = totalSum;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Boolean getExcludeFromTarragonCalculation() {
+        return excludeFromTarragonCalculation;
+    }
+
+    public void setExcludeFromTarragonCalculation(Boolean excludeFromTarragonCalculation) {
+        this.excludeFromTarragonCalculation = excludeFromTarragonCalculation;
     }
 }

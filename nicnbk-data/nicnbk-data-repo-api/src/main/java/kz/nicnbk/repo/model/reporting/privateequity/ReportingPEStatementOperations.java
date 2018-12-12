@@ -29,6 +29,8 @@ public class ReportingPEStatementOperations extends CreateUpdateBaseEntity{
     private Integer tranche;
     private Boolean totalSum;
 
+    private Boolean excludeFromTarragonCalculation;
+
     @Column(name = "name", length = DataConstraints.C_TYPE_ENTITY_NAME, nullable = false)
     public String getName() {
         return name;
@@ -137,5 +139,14 @@ public class ReportingPEStatementOperations extends CreateUpdateBaseEntity{
 
     public void setTotalSum(Boolean totalSum) {
         this.totalSum = totalSum;
+    }
+
+    @Column(name="exclude_from_tarragon_calc")
+    public Boolean getExcludeFromTarragonCalculation() {
+        return excludeFromTarragonCalculation;
+    }
+
+    public void setExcludeFromTarragonCalculation(Boolean excludeFromTarragonCalculation) {
+        this.excludeFromTarragonCalculation = excludeFromTarragonCalculation;
     }
 }

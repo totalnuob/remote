@@ -24,4 +24,6 @@ public interface PEStatementChangesService extends BaseService {
     List<StatementChangesDto> getStatementChanges(Long reportId);
 
     boolean deleteByReportId(Long reportId);
+
+    boolean excludeIncludeTarragonRecord(Long recordId);
 }

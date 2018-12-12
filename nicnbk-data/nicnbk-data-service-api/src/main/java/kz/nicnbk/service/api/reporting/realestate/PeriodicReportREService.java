@@ -53,7 +53,7 @@ public interface PeriodicReportREService {
 
     List<TerraGeneratedGeneralLedgerFormDto> getTerraGLAddedRecordsPreviousMonth(Long reportId);
 
-    boolean excludeIncludeTerraRecord(ExcludeTerraRecordDto excludeTerraRecordDto);
+    boolean excludeIncludeTerraRecord(ExcludeTerraRecordDto excludeTerraRecordDto, String username);
 
     TerraCombinedDataHolderDto getTerraCombinedParsedData(Long reportId);
 
