@@ -20,7 +20,7 @@ public class TarragonNICChartOfAccounts extends BaseEntity {
 
     private String tarragonChartOfAccountsName;
     private NICReportingChartOfAccounts nicReportingChartOfAccounts;
-    private Boolean addable;
+    private boolean addable;
     private Boolean positiveOnly;
     private Boolean negativeOnly;
 
@@ -43,11 +43,11 @@ public class TarragonNICChartOfAccounts extends BaseEntity {
         this.nicReportingChartOfAccounts = nicReportingChartOfAccounts;
     }
 
-    public Boolean isAddable() {
+    public boolean isAddable() {
         return addable;
     }
 
-    public void setAddable(Boolean addable) {
+    public void setAddable(boolean addable) {
         this.addable = addable;
     }
 

@@ -592,11 +592,15 @@ public class PeriodicReportREServiceImpl implements PeriodicReportREService {
                     // skip total sums
                     continue;
                 }
-                if(balanceRecord.getType() != null && balanceRecord.getType().getCode().equalsIgnoreCase("ASSETS")){
+                TerraGeneratedGeneralLedgerFormDto record = new TerraGeneratedGeneralLedgerFormDto();
+
+                // TODO: decide what to do with 'Bank accounts'? Skipp ASSETS?
+                if(balanceRecord.getName().equalsIgnoreCase("Bank accounts")){
+                    record.setFinancialStatementCategory("A");
+                }else if(balanceRecord.getType() != null && balanceRecord.getType().getCode().equalsIgnoreCase("ASSETS")){
                     // skip Assets
                     continue;
                 }
-                TerraGeneratedGeneralLedgerFormDto record = new TerraGeneratedGeneralLedgerFormDto();
                 record.setId(balanceRecord.getId());
                 if(isLiabilities(balanceRecord)){
                     record.setFinancialStatementCategory("L");
@@ -604,8 +608,7 @@ public class PeriodicReportREServiceImpl implements PeriodicReportREService {
                     record.setFinancialStatementCategory("I");
                 }else if(isExpenses(balanceRecord)){
                     record.setFinancialStatementCategory("X");
-                }else{
-
+                }else {
                 }
 
                 record.setAcronym("TERRA");
