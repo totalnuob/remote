@@ -2192,6 +2192,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         String record5520_010Name = PeriodicReportConstants.RU_5520_010;
         String record5520_010AccountNumber = PeriodicReportConstants.ACC_NUM_5520_010;
         double record5520_010 = 0;
+        double record5450_010Corrections = 0;
         List<PreviousYearInputDataDto> previousYearInputData = this.prevYearInputService.getPreviousYearInputData(reportId);
         if(previousYearInputData != null){
             for(PreviousYearInputDataDto inputData: previousYearInputData){
@@ -2201,6 +2202,10 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 }else if(inputData.getChartOfAccounts() != null && inputData.getChartOfAccounts().getCode().startsWith(record5520_010AccountNumber) &&
                         inputData.getChartOfAccounts().getNameRu().equalsIgnoreCase(record5520_010Name)){
                     record5520_010 = MathUtils.add(record5520_010, inputData.getAccountBalanceKZT() != null ? inputData.getAccountBalanceKZT().doubleValue() : 0);
+                }else if(inputData.getChartOfAccounts() != null && inputData.getChartOfAccounts().getCode().startsWith(PeriodicReportConstants.ACC_NUM_5450_010_CODE_ADJUSTMENT) &&
+                        inputData.getChartOfAccounts().getNameRu().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_5450_010_CODE_ADJUSTMENT_RU)){
+                    // 5450.010 adjustment
+                    record5450_010Corrections = MathUtils.add(record5450_010Corrections, inputData.getAccountBalanceKZT());
                 }
             }
         }
@@ -2244,7 +2249,8 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
         double record5450_010 = 0;
         try{
-            record5450_010 = getCurrencyReserveCalculationKZTForm1(currentReport.getId(), currentReport.getReportDate());
+            record5450_010 = MathUtils.add(record5450_010Corrections, getCurrencyReserveCalculationKZTForm1(currentReport.getId(), currentReport.getReportDate()));
+
         }catch (IllegalStateException ex){
             responseDto.setErrorMessageEn(ex.getMessage());
             return responseDto;

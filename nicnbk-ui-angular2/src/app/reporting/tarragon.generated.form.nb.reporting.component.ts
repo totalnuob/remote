@@ -44,6 +44,12 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
     private availableFundList: string[];
 
     totalAssetsSum = 0.0;
+
+    liabilitiesSum = 0.0;
+    equitySum = 0.0;
+    expenseSum = 0.0;
+    incomeSum = 0.0;
+
     totalOtherSum = 0.0;
 
     recordsValid = true;
@@ -435,7 +441,7 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
     checkRecords(){
         if(this.records != null){
             var assetsSum = 0.0;
-            var otherSum = 0.0;
+            //var otherSum = 0.0;
             for(var i = 0; i < this.records.length; i++){
                 if(this.records[i].nbAccountNumber == null){
                     this.postAction(this.successMessage, "NB Account number is missing for record '" + this.records[i].chartAccountsLongDescription + "'");
@@ -445,9 +451,18 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
                 if(!this.isRecordExcluded(this.records[i])) {
                     if (isNumeric(this.records[i].glaccountBalance) && this.records[i].financialStatementCategory === 'A') {
                         assetsSum += Number(this.records[i].glaccountBalance);
-                    } else {
-                        otherSum += Number(this.records[i].glaccountBalance);
+                    } else if (isNumeric(this.records[i].glaccountBalance) && this.records[i].financialStatementCategory === 'L') {
+                        this.liabilitiesSum += Number(this.records[i].glaccountBalance);
+                    }else if (isNumeric(this.records[i].glaccountBalance) && this.records[i].financialStatementCategory === 'E') {
+                        this.equitySum += Number(this.records[i].glaccountBalance);
+                    }else if (isNumeric(this.records[i].glaccountBalance) && this.records[i].financialStatementCategory === 'X') {
+                        this.expenseSum += Number(this.records[i].glaccountBalance);
+                    }else if (isNumeric(this.records[i].glaccountBalance) && this.records[i].financialStatementCategory === 'I') {
+                        this.incomeSum += Number(this.records[i].glaccountBalance);
                     }
+                    //else {
+                    //    otherSum += Number(this.records[i].glaccountBalance);
+                    //}
                 }
                 if(this.records[i].nbAccountNumber  == null && this.records[i].chartAccountsLongDescription != null){
                     this.postAction(null, "Record '" + this.records[i].chartAccountsLongDescription +"' is missing 'NB Account Number' field value (see below).");
@@ -456,11 +471,11 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
             }
 
             this.totalAssetsSum = assetsSum;
-            this.totalOtherSum = otherSum;
+            this.totalOtherSum = this.liabilitiesSum + this.equitySum + this.expenseSum + this.incomeSum;
 
-            var diff = assetsSum + otherSum;
+            var diff = assetsSum + this.liabilitiesSum + this.equitySum + this.expenseSum + this.incomeSum;
             if(diff > 2 || diff < -2){
-                this.postAction(this.successMessage, "Total Assets = " + assetsSum.toFixed(2) + ". total L, E, X, I = " + otherSum.toFixed(2) + ". Sum = " + diff.toFixed(2));
+                this.postAction(this.successMessage, "Total Assets = " + assetsSum.toFixed(2) + ". total L, E, X, I = " + (this.liabilitiesSum + this.equitySum + this.expenseSum + this.incomeSum).toFixed(2) + ". Sum = " + diff.toFixed(2));
                 this.recordsValid = false;
             }else{
                 this.errorMessage = null;

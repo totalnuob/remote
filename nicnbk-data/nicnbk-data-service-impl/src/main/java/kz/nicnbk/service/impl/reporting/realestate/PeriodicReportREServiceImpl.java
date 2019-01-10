@@ -558,6 +558,15 @@ public class PeriodicReportREServiceImpl implements PeriodicReportREService {
         return false;
     }
 
+    private boolean isEquity(TerraBalanceSheetRecordDto dto){
+        if(dto != null){
+            if(dto.getName().equalsIgnoreCase("Partnership capital - book value")){
+                return true;
+            }
+        }
+        return false;
+    }
+
     private boolean isLiabilities(TerraBalanceSheetRecordDto dto){
         if(dto != null){
             HierarchicalBaseDictionaryDto type = dto.getType();
@@ -608,7 +617,8 @@ public class PeriodicReportREServiceImpl implements PeriodicReportREService {
                     record.setFinancialStatementCategory("I");
                 }else if(isExpenses(balanceRecord)){
                     record.setFinancialStatementCategory("X");
-                }else {
+                }else if(isEquity(balanceRecord)){
+                    record.setFinancialStatementCategory("E");
                 }
 
                 record.setAcronym("TERRA");

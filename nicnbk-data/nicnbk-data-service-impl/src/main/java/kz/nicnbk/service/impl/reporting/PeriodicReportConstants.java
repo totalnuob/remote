@@ -153,6 +153,8 @@ public final class PeriodicReportConstants {
 
     public static final String ACC_NUM_5450_010 = "5450.010";
     public static final String RU_5450_010 = "Резерв на пересчет иностранной валюты по зарубежной деятельности";
+    public static final String ACC_NUM_5450_010_CODE_ADJUSTMENT = "KZT1_51_adj";
+    public static final String ACC_NUM_5450_010_CODE_ADJUSTMENT_RU = "Резерв на пересчет иностранной валюты по зарубежной деятельности (Корректировка ОФП-1)";
 
     public static final String ACC_NUM_6150_020 = "6150.020";
     public static final String ACC_NUM_6283_080 = "6283.080";

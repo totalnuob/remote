@@ -244,4 +244,8 @@ export class PreviousYearInputNBReportingComponent extends CommonNBReportingComp
         }
     }
 
+    isRequiredUSDAmount(record){
+        record.chartOfAccounts.code != 'KZT3_5_1' && record.chartOfAccounts.code != 'KZT1_51_adj';
+    }
+
 }

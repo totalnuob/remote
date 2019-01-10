@@ -25,7 +25,7 @@
         </div>
     </div>
     <div class="row withpadding">
-        <h3 *ngIf="reportId != null">5. Previous Year Input</h3>
+        <h3 *ngIf="reportId != null">5. Previous Year Input And Currency Corrections</h3>
     </div>
     <div [ngBusy]="busy" class="row withpadding" style="min-height: 500px">
 
@@ -60,7 +60,7 @@
                             </td>
                             <!--<td>{{record.accountNumber}}</td>-->
                             <td>
-                                <input required="record.chartOfAccounts.code != 'KZT3_5_1'" [disabled]="record.chartOfAccounts.code === 'KZT3_5_1'" (keyup)="onNumberChange(record)" type="text" class="form-control" [(ngModel)]="record.accountBalance" [ngModelOptions]="{standalone: true}"/>
+                                <input required="isRequiredUSDAmount(record)" [disabled]="!isRequiredUSDAmount(record)" (keyup)="onNumberChange(record)" type="text" class="form-control" [(ngModel)]="record.accountBalance" [ngModelOptions]="{standalone: true}"/>
                             </td>
                             <td>
                                 <input required (keyup)="onNumberChange(record)" type="text" class="form-control" [(ngModel)]="record.accountBalanceKZT" [ngModelOptions]="{standalone: true}"/>
