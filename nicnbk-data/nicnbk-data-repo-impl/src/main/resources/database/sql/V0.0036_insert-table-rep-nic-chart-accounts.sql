@@ -92,6 +92,7 @@ INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_cha
 
 INSERT INTO rep_nic_chart_of_accounts(id, code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES(76, '6283.080.d', null, 'Процентный доход - Чековые/Сберегательные счета Singularity', null, 15);
 
+INSERT INTO rep_nic_chart_of_accounts(code, name_en, name_ru, name_kz,nb_chart_accounts_id) VALUES('KZT1_51_adj', null, 'Резерв на пересчет иностранной валюты по зарубежной деятельности (Корректировка ОФП-1)', null, 1111);
 
 
 

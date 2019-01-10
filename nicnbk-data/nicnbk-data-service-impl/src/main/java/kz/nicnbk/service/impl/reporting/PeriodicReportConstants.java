@@ -10,7 +10,6 @@ public final class PeriodicReportConstants {
     // TODO: RU_ prefix for russian
     // TODO: EN_
 
-
     public static final String SINGULAR_CAPITAL_CASE = "SINGULAR";
     public static final String SINGULAR_LOWER_CASE = "Singular";
     public static final String SINGULARITY_LOWER_CASE = "Singularity";
@@ -19,6 +18,7 @@ public final class PeriodicReportConstants {
 
     public static final String TARRAGON_CAPITAL_CASE = "TARRAGON";
     public static final String TARRAGON_LOWER_CASE = "Tarragon";
+    public static final String TARRAGON_B_CAPITAL_CASE = "TARRAGON B";
 
     public static final String TERRA_CAPITAL_CASE = "TERRA";
     public static final String TERRA_LOWER_CASE = "Terra";
@@ -96,7 +96,9 @@ public final class PeriodicReportConstants {
     public static final String ACC_NUM_5440_010 = "5440.010";
     // TODO: when a when b?
     public static final String RU_5440_010_a = "Резерв по переоценке финансовых инвестиций, имеющихся в наличии для продажи";
-    public static final String RU_5440_010_b = "Резерв на переоценку  финансовых инвестиций, имеющихся в наличии для продажи";
+
+    //public static final String RU_5440_010_b = "Резерв на переоценку  финансовых инвестиций, имеющихся в наличии для продажи";
+    public static final String RU_5440_010_b = "Резерв на переоценку финансовых активов, оцениваемых по справедливой стоимости через прочий совокупный доход";
     public static final String RU_5440_010__LAST_YEAR = "Резерв по переоценке финансовых инвестиций, имеющихся в наличии для продажи (прошлый год)";
 
 
@@ -119,19 +121,25 @@ public final class PeriodicReportConstants {
     public static final String ACC_NUM_2923_010 = "2923.010";
 
     public static final String ACC_NUM_2033_010 = "2033.010";
-    public static final String RU_2033_010 = "Долгосрочные ценные бумаги, имеющиеся в наличии для продажи";
+    public static final String RU_2033_010_old = "Долгосрочные ценные бумаги, имеющиеся в наличии для продажи";
+    public static final String RU_2033_010 = "Долгосрочные ценные бумаги, оцениваемые по справедливой стоимости через прочий совокупный доход";
 
     public static final String ACC_NUM_2033_040 = "2033.040";
-    public static final String RU_2033_040 = "Положительная корректировка справедливой стоимости долгосрочных ценных бумаг, имеющихся в наличии для продажи";
+    public static final String RU_2033_040_old = "Положительная корректировка справедливой стоимости долгосрочных ценных бумаг, имеющихся в наличии для продажи";
+    public static final String RU_2033_040 = "Положительная корректировка справедливой стоимости долгосрочных ценных бумаг, оцениваемых по справедливой стоимости через прочий совокупный доход";
 
     public static final String ACC_NUM_2033_050 = "2033.050";
-    public static final String RU_2033_050 = "Отрицательная корректировка справедливой стоимости долгосрочных ценных бумаг, имеющихся в наличии для продажи";
+    public static final String RU_2033_050_old = "Отрицательная корректировка справедливой стоимости долгосрочных ценных бумаг, имеющихся в наличии для продажи";
+    public static final String RU_2033_050 = "Отрицательная корректировка справедливой стоимости долгосрочных ценных бумаг, оцениваемых по справедливой стоимости через прочий совокупный доход";
 
     public static final String ACC_NUM_3013_010 = "3013.010";
     public static final String RU_3013_010 = "Краткосрочные банковские займы полученные";
 
     public static final String ACC_NUM_3383_010 = "3383.010";
     public static final String RU_3383_010 = "Начисленные расходы в виде вознаграждения по краткосрочным банковским займам полученным";
+
+    public static final String ACC_NUM_3063_010 = "3063.010";
+    public static final String RU_3063_010 = "Начисленные расходы в виде вознаграждения по краткосрочным банковским займам полученным";
 
     public static final String ACC_NUM_3393_020 = "3393.020";
     public static final String RU_3393_020 = "Прочая краткосрочная кредиторская задолженность";
@@ -145,12 +153,14 @@ public final class PeriodicReportConstants {
 
     public static final String ACC_NUM_5450_010 = "5450.010";
     public static final String RU_5450_010 = "Резерв на пересчет иностранной валюты по зарубежной деятельности";
+    public static final String ACC_NUM_5450_010_CODE_ADJUSTMENT = "KZT1_51_adj";
+    public static final String ACC_NUM_5450_010_CODE_ADJUSTMENT_RU = "Резерв на пересчет иностранной валюты по зарубежной деятельности (Корректировка ОФП-1)";
 
     public static final String ACC_NUM_6150_020 = "6150.020";
     public static final String ACC_NUM_6283_080 = "6283.080";
 
     public static final String ACC_NUM_7313_010 = "7313.010";
-    public static final String RU_7313_010 = "Расходы по вознаграждениям по краткосрочным банковским займам";
+    public static final String RU_7313_010 = "Расходы по вознаграждению по краткосрочным банковским займам";
 
     public static final String ACC_NUM_7330_020 = "7330.020";
 
@@ -158,21 +168,23 @@ public final class PeriodicReportConstants {
 
     public static final String ACC_NUM_3053_060 = "3053.060";
     public static final String RU_3053_060 = "Прочие краткосрочные финансовые обязательства";
+    public static final String RU_3053_060_FORM_13 = "Прочие финансовые обязательства";
     /* ****************************************************************************************************************/
 
 
 
     /* RECORD NAMES ********************************************************************************************/
-    public static final String USD_FORM_1_LAST_RECORD = "Всего обязательства и капитал (сумма строк 35, 43, 51)";
-    public static final String USD_FORM_2_LAST_RECORD = "Чистая прибыль (убыток) (сумма строк 18, 19)";
+    public static final String USD_FORM_1_LAST_RECORD = "Всего обязательства и капитал (сумма строк 37, 45, 53)";
+    public static final String USD_FORM_2_LAST_RECORD = "Чистая прибыль (убыток) (сумма строк 19, 20)";
     public static final String USD_FORM_3_LAST_RECORD = "Итого совокупного дохода (сумма строк 1, 5)";
-    public static final String KZT_FORM_3_LAST_RECORD = "Итого совокупного дохода (сумма строк 1, 6)";
+//    public static final String KZT_FORM_3_LAST_RECORD = "Итого совокупного дохода (сумма строк 1, 6)";
+    public static final String KZT_FORM_3_LAST_RECORD = "Всего совокупного дохода (сумма строк 1, 12)";
     public static final String KZT_FORM_6_LAST_RECORD = "Остаток на конец текущего отчетного периода (сумма строк 3, 6, 14)";
-    public static final String KZT_FORM_7_LAST_RECORD = "ВСЕГО (сумма строк 1,7)";
-    public static final String KZT_FORM_8_LAST_RECORD = "ВСЕГО (сумма строк 1, 10)";
-    public static final String KZT_FORM_10_LAST_RECORD = "ВСЕГО  (сумма строк 1, 4)";
-    public static final String KZT_FORM_13_LAST_RECORD = "ВСЕГО (сумма строк 1, 4)";
-    public static final String KZT_FORM_14_LAST_RECORD = "ВСЕГО (сумма строк 1, 9)";
+    public static final String KZT_FORM_7_LAST_RECORD = "ВСЕГО (сумма строк 1, 8)";
+    public static final String KZT_FORM_8_LAST_RECORD = "ВСЕГО (сумма строк 1, 7)";
+    public static final String KZT_FORM_10_LAST_RECORD = "Всего  (сумма строк 1, 5)";
+    public static final String KZT_FORM_13_LAST_RECORD = "Всего (сумма строк 1, 4)";
+    public static final String KZT_FORM_14_LAST_RECORD = "Всего (сумма строк 1, 6)";
     public static final String KZT_FORM_19_LAST_RECORD = "ВСЕГО (сумма строк 1, 12, 22, 29, 32, 37 и 42)";
     public static final String KZT_FORM_22_LAST_RECORD = "ВСЕГО (сумма строк 1, 2)";
     /* ****************************************************************************************************************/

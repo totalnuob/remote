@@ -52,6 +52,8 @@
                     <td>
                         <button class="btn btn-xs btn-primary"
                                 [routerLink]="['/reporting/NBReporting/consolidatedBalanceUSDForm/', reportId]">REPORT</button>
+
+                        <button class="btn btn-xs btn-success" (click)="export('CONS_BALANCE_USD', 'Конс_баланс_USD')">EXPORT</button>
                     </td>
                 </tr>
                 <tr>
@@ -59,6 +61,8 @@
                     <td>
                         <button class="btn btn-xs btn-primary"
                                 [routerLink]="['/reporting/NBReporting/consolidatedIncomeExpenseUSDForm/', reportId]">REPORT</button>
+
+                        <button class="btn btn-xs btn-success" (click)="export('INCOME_EXP_USD', 'опиу_USD')">EXPORT</button>
                     </td>
 
                 </tr>
@@ -67,16 +71,23 @@
                     <td>
                         <button class="btn btn-xs btn-primary"
                                 [routerLink]="['/reporting/NBReporting/consolidatedTotalIncomeUSDForm/', reportId]">REPORT</button>
+
+                        <button class="btn btn-xs btn-success" (click)="export('TOTAL_INCOME_USD', 'опсд_USD')">EXPORT</button>
                     </td>
                 </tr>
                 <tr bgcolor="#e7e7e7">
-                    <td colspan="2">&nbsp;</td>
+                    <td colspan="1">&nbsp;</td>
+                    <td colspan="1">
+                        <button class="btn btn-xs btn-success" (click)="exportAll()">EXPORT ALL</button>
+                    </td>
                 </tr>
                 <tr>
                     <td>1 - ОФП</td>
                     <td>
                         <button class="btn btn-xs btn-primary"
                                 [routerLink]="['/reporting/NBReporting/consolidatedKZTForm1/', reportId]">REPORT</button>
+
+                        <button class="btn btn-xs btn-success" (click)="export('KZT_FORM_1', 'ОФП-1')">EXPORT</button>
                     </td>
                 </tr>
                 <tr>
@@ -84,6 +95,8 @@
                     <td>
                         <button class="btn btn-xs btn-primary"
                                 [routerLink]="['/reporting/NBReporting/consolidatedKZTForm2/', reportId]">REPORT</button>
+
+                        <button class="btn btn-xs btn-success" (click)="export('KZT_FORM_2', 'ОПИУ-2')">EXPORT</button>
                     </td>
                 </tr>
                 <tr>
@@ -91,6 +104,8 @@
                     <td>
                         <button class="btn btn-xs btn-primary"
                                 [routerLink]="['/reporting/NBReporting/consolidatedKZTForm3/', reportId]">REPORT</button>
+
+                        <button class="btn btn-xs btn-success" (click)="export('KZT_FORM_3', 'ОПСД-3')">EXPORT</button>
                     </td>
                 </tr>
                 <tr>
@@ -98,6 +113,8 @@
                     <td>
                         <button class="btn btn-xs btn-primary"
                                 [routerLink]="['/reporting/NBReporting/consolidatedKZTForm6/', reportId]">REPORT</button>
+
+                        <button class="btn btn-xs btn-success" (click)="export('KZT_FORM_6', 'ОИК-6')">EXPORT</button>
                     </td>
                 </tr>
                 <tr>
@@ -105,6 +122,8 @@
                     <td>
                         <button class="btn btn-xs btn-primary"
                                 [routerLink]="['/reporting/NBReporting/consolidatedKZTForm7/', reportId]">REPORT</button>
+
+                        <button class="btn btn-xs btn-success" (click)="export('KZT_FORM_7', 'РФИ-7')">EXPORT</button>
                     </td>
                 </tr>
                 <tr>
@@ -112,6 +131,8 @@
                     <td>
                         <button class="btn btn-xs btn-primary"
                                 [routerLink]="['/reporting/NBReporting/consolidatedKZTForm8/', reportId]">REPORT</button>
+
+                        <button class="btn btn-xs btn-success" (click)="export('KZT_FORM_8', 'РТПДЗ-8')">EXPORT</button>
                     </td>
                 </tr>
                 <tr>
@@ -119,6 +140,8 @@
                     <td>
                         <button class="btn btn-xs btn-primary"
                                 [routerLink]="['/reporting/NBReporting/consolidatedKZTForm10/', reportId]">REPORT</button>
+
+                        <button class="btn btn-xs btn-success" (click)="export('KZT_FORM_10', 'РПА-10')">EXPORT</button>
                     </td>
                 </tr>
                 <tr>
@@ -126,6 +149,8 @@
                     <td>
                         <button class="btn btn-xs btn-primary"
                                 [routerLink]="['/reporting/NBReporting/consolidatedKZTForm13/', reportId]">REPORT</button>
+
+                        <button class="btn btn-xs btn-success" (click)="export('KZT_FORM_13', 'РФО-13')">EXPORT</button>
 
 
                         <!--<div class="col-md-2">-->
@@ -146,6 +171,8 @@
                     <td>
                         <button class="btn btn-xs btn-primary"
                                 [routerLink]="['/reporting/NBReporting/consolidatedKZTForm14/', reportId]">REPORT</button>
+
+                        <button class="btn btn-xs btn-success" (click)="export('KZT_FORM_14', 'РТПКЗ-14')">EXPORT</button>
                     </td>
                 </tr>
                 <tr>
@@ -153,6 +180,8 @@
                     <td>
                         <button class="btn btn-xs btn-primary"
                                 [routerLink]="['/reporting/NBReporting/consolidatedKZTForm19/', reportId]">REPORT</button>
+
+                        <button class="btn btn-xs btn-success" (click)="export('KZT_FORM_19', 'РДХФИ-19')">EXPORT</button>
                     </td>
                 </tr>
                 <tr>
@@ -160,6 +189,8 @@
                     <td>
                         <button class="btn btn-xs btn-primary"
                                 [routerLink]="['/reporting/NBReporting/consolidatedKZTForm22/', reportId]">REPORT</button>
+
+                        <button class="btn btn-xs btn-success" (click)="export('KZT_FORM_22', 'РПДХ-22')">EXPORT</button>
                     </td>
                 </tr>
 

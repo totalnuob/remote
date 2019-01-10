@@ -23,6 +23,8 @@ public interface PEStatementOperationsService extends BaseService {
 
     boolean existEntityWithType(String code);
 
+    boolean excludeIncludeTarragonRecord(Long recordId);
+
     List<StatementBalanceOperationsDto> getStatementOperationsRecords(Long reportId);
 
     boolean deleteByReportId(Long reportId);

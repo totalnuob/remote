@@ -34,6 +34,8 @@ public class ReportingPEScheduleInvestment extends CreateUpdateBaseEntity{
     private String description;
     private Boolean isTotalSum;
 
+    private Boolean excludeFromTarragonCalculation;
+
     @Column(name = "name", length = DataConstraints.C_TYPE_ENTITY_NAME, nullable = false)
     public String getName() {
         return name;
@@ -144,5 +146,14 @@ public class ReportingPEScheduleInvestment extends CreateUpdateBaseEntity{
 
     public void setEditedFairValue(Double editedFairValue) {
         this.editedFairValue = editedFairValue;
+    }
+
+    @Column(name="exclude_from_tarragon_calc")
+    public Boolean getExcludeFromTarragonCalculation() {
+        return excludeFromTarragonCalculation;
+    }
+
+    public void setExcludeFromTarragonCalculation(Boolean excludeFromTarragonCalculation) {
+        this.excludeFromTarragonCalculation = excludeFromTarragonCalculation;
     }
 }

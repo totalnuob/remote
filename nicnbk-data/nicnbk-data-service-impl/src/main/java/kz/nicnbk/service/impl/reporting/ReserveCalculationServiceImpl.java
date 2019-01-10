@@ -10,6 +10,7 @@ import kz.nicnbk.repo.api.reporting.ReserveCalculationRepository;
 import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.repo.model.lookup.reporting.CapitalCallExportTypeLookup;
+import kz.nicnbk.repo.model.lookup.reporting.ExcludeRecordTypeLookup;
 import kz.nicnbk.repo.model.reporting.*;
 import kz.nicnbk.service.api.common.CurrencyRatesService;
 import kz.nicnbk.service.api.employee.EmployeeService;
@@ -703,15 +704,35 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
     }
 
     @Override
-    public boolean excludeIncludeRecord(Long recordId, String name) {
+    public boolean excludeIncludeRecord(Long recordId, String name, ExcludeRecordTypeLookup type) {
         ReserveCalculation entity = this.reserveCalculationRepository.findOne(recordId);
-        if(entity != null){
+        if(entity != null && type != null){
             if(name != null && name.equalsIgnoreCase("Capital call capital adjustment")) {
-                boolean currentValue = entity.getExcludeOppositeFromTerraCalculation() == null ? false : entity.getExcludeOppositeFromTerraCalculation().booleanValue();
-                entity.setExcludeOppositeFromTerraCalculation(!currentValue);
+                if(type == ExcludeRecordTypeLookup.TERRA) {
+                    boolean currentValue = entity.getExcludeOppositeFromTerraCalculation() == null ? false :
+                            entity.getExcludeOppositeFromTerraCalculation().booleanValue();
+                    entity.setExcludeOppositeFromTerraCalculation(!currentValue);
+                }else if(type == ExcludeRecordTypeLookup.TARRAGON){
+                    boolean currentValue = entity.getExcludeOppositeFromTarragonCalculation() == null ? false :
+                            entity.getExcludeOppositeFromTarragonCalculation().booleanValue();
+                    entity.setExcludeOppositeFromTarragonCalculation(!currentValue);
+                }else{
+                    logger.error("Error to exclude/include Capital Call record with id=" + recordId + ": type is undefined '" + type.getCode() + "'");
+                    return false;
+                }
             }else{
-                boolean currentValue = entity.getExcludeFromTerraCalculation() == null ? false : entity.getExcludeFromTerraCalculation().booleanValue();
-                entity.setExcludeFromTerraCalculation(!currentValue);
+                if(type == ExcludeRecordTypeLookup.TERRA) {
+                    boolean currentValue = entity.getExcludeFromTerraCalculation() == null ? false :
+                            entity.getExcludeFromTerraCalculation().booleanValue();
+                    entity.setExcludeFromTerraCalculation(!currentValue);
+                }else if(type == ExcludeRecordTypeLookup.TARRAGON) {
+                    boolean currentValue = entity.getExcludeFromTarragonCalculation() == null ? false :
+                            entity.getExcludeFromTarragonCalculation().booleanValue();
+                    entity.setExcludeFromTarragonCalculation(!currentValue);
+                }else{
+                    logger.error("Error to exclude/include Capital Call record with id=" + recordId + ": type is undefined '" + type.getCode() + "'");
+                    return false;
+                }
             }
             this.reserveCalculationRepository.save(entity);
             return true;

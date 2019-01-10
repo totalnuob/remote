@@ -1,5 +1,6 @@
 package kz.nicnbk.ws.rest;
 
+import kz.nicnbk.common.service.util.HashUtils;
 import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.files.FileService;
 import kz.nicnbk.service.api.reporting.*;
@@ -11,11 +12,15 @@ import kz.nicnbk.service.api.reporting.realestate.REGeneralLedgerBalanceService;
 import kz.nicnbk.service.dto.common.*;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.reporting.*;
+import kz.nicnbk.service.dto.reporting.hedgefunds.ExcludeSingularityRecordDto;
 import kz.nicnbk.service.dto.reporting.nickmf.NICKMFReportingDataCalculatedValueRequestDto;
+import kz.nicnbk.service.dto.reporting.privateequity.ExcludeTarragonRecordDto;
+import kz.nicnbk.service.dto.reporting.privateequity.TarragonGeneratedGeneralLedgerFormDto;
 import kz.nicnbk.service.dto.reporting.realestate.ExcludeTerraRecordDto;
 import kz.nicnbk.service.dto.reporting.realestate.RealEstateGeneralLedgerFormDataHolderDto;
 import kz.nicnbk.service.dto.reporting.realestate.TerraCombinedDataHolderDto;
 import kz.nicnbk.service.dto.reporting.realestate.TerraGeneratedGeneralLedgerFormDto;
+import kz.nicnbk.service.impl.files.FilePathResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -316,14 +321,14 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/tarragonGeneratedForm/{reportId}", method = RequestMethod.GET)
     public ResponseEntity getTarragonGeneratedForm(@PathVariable Long reportId) {
-        ListResponseDto responseDto  = this.periodicReportPEService.getTarragonGeneratedForm(reportId);
+        ListResponseDto responseDto  = this.periodicReportPEService.getTarragonGeneratedFormWithExcluded(reportId);
         return buildNonNullResponse(responseDto);
     }
 
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/tarragonGeneratedFormDataFromPreviousMonth/{reportId}", method = RequestMethod.GET)
     public ResponseEntity getTarragonGLAddedRecordsPreviousMonth(@PathVariable Long reportId) {
-        List<GeneratedGeneralLedgerFormDto> records = this.periodicReportPEService.getTarragonGLAddedRecordsPreviousMonth(reportId);
+        List<TarragonGeneratedGeneralLedgerFormDto> records = this.periodicReportPEService.getTarragonGLAddedRecordsPreviousMonth(reportId);
         return buildNonNullResponse(records);
     }
 
@@ -375,6 +380,16 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
             logger.error("Failed to delete Tarragon GL Form record: record id " + recordId + " [user " + username + "]");
         }
         return buildDeleteResponseEntity(deleted);
+    }
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(method = RequestMethod.POST, value = "/excludeTarragonRecord")
+    public ResponseEntity<?> excludeIncludeTarragonRecord(@RequestBody ExcludeTarragonRecordDto excludeTarragonRecordDto){
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        boolean changed = this.periodicReportPEService.excludeIncludeTarragonRecord(excludeTarragonRecordDto, username);
+        return buildDeleteResponseEntity(changed);
     }
 
     /* ****************************************************************************************************************/
@@ -435,18 +450,9 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
-        boolean changed = this.realEstateService.excludeIncludeTerraRecord(excludeTerraRecordDto);
-
-        if(changed){
-            logger.error("Error excluding/including Terra record: id=" + excludeTerraRecordDto.getRecordId() + ", '" + excludeTerraRecordDto.getName() + "' [user " + username + "]");
-        }else{
-            logger.info("Error excluding/including Terra record: id=" + excludeTerraRecordDto.getRecordId() + ", '" + excludeTerraRecordDto.getName() + "' [user " + username + "]");
-        }
-
+        boolean changed = this.realEstateService.excludeIncludeTerraRecord(excludeTerraRecordDto, username);
         return buildDeleteResponseEntity(changed);
     }
-
-
 
     /* ****************************************************************************************************************/
 
@@ -466,6 +472,23 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
             logger.info("Successfully saved Singularity adjustments: report id " + reportId + " [user " + username + "]");
         }
         return buildNonNullResponse(saved);
+    }
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/singularGeneratedForm/{reportId}", method = RequestMethod.GET)
+    public ResponseEntity getSingularGeneratedForm(@PathVariable Long reportId) {
+        ListResponseDto responseDto = this.periodicReportHFService.getSingularGeneratedForm(reportId);
+        return buildNonNullResponse(responseDto);
+    }
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(method = RequestMethod.POST, value = "/excludeSingularityRecord")
+    public ResponseEntity<?> excludeIncludeSingularityRecord(@RequestBody ExcludeSingularityRecordDto excludeRecordDto){
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        boolean changed = this.periodicReportHFService.excludeIncludeSingularityRecord(excludeRecordDto, username);
+        return buildDeleteResponseEntity(changed);
     }
 
 //    @Deprecated
@@ -561,16 +584,9 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
 
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/get/generalLedgerBalance/{id}", method = RequestMethod.GET)
-    public ResponseEntity getGeneralLedgerBalance(@PathVariable Long id) {
-        ConsolidatedReportRecordHolderDto recordsHolder = this.hfGeneralLedgerBalanceService.get(id);
+    public ResponseEntity getSingularityGeneralLedgerBalance(@PathVariable Long id) {
+        ConsolidatedReportRecordHolderDto recordsHolder = this.hfGeneralLedgerBalanceService.getWithExcludedRecords(id);
         return buildNonNullResponse(recordsHolder);
-    }
-
-    @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
-    @RequestMapping(value = "/singularGeneratedForm/{reportId}", method = RequestMethod.GET)
-    public ResponseEntity getSingularGeneratedForm(@PathVariable Long reportId) {
-        ListResponseDto responseDto = this.periodicReportHFService.getSingularGeneratedForm(reportId);
-        return buildNonNullResponse(responseDto);
     }
 
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
@@ -731,6 +747,52 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
         }
 
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        try {
+            //fileName = URLEncoder.encode(fileName, "UTF-8");
+            //fileName = URLDecoder.decode(fileName, "ISO8859_1");
+            //response.setHeader("Content-disposition", "attachment; filename=\""+ fileName + "\"");
+            response.setHeader("Content-disposition", "attachment;");
+            org.apache.commons.io.IOUtils.copy(filesDto.getInputStream(), response.getOutputStream());
+            response.flushBuffer();
+        } catch (UnsupportedEncodingException e) {
+            logger.error("(PeriodicReport) File export request failed: unsupported encoding", e);
+        } catch (IOException e) {
+            logger.error("(PeriodicReport) File export request failed: io exception", e);
+        } catch (Exception e){
+            logger.error("(PeriodicReport) File export request failed", e);
+        }
+        try {
+            filesDto.getInputStream().close();
+            new File(filesDto.getFileName()).delete();
+        } catch (IOException e) {
+            logger.error("(PeriodicReport) File export: failed to close input stream", e);
+        }
+    }
+
+    @RequestMapping(value="/exportAll/{reportId}", method= RequestMethod.GET)
+    @ResponseBody
+    public void exportAllReports(@PathVariable(value="reportId") Long reportId, HttpServletResponse response) {
+
+        // TODO: control file download by user role
+        // TODO: Check rights
+
+        FilesDto filesDto = null;
+        try{
+            filesDto = this.periodicReportService.getExportAllKZTReportsFileStream(reportId);
+        }catch (IllegalStateException ex){
+            filesDto = null;
+        }
+
+        if(filesDto == null || filesDto.getInputStream() == null){
+            try {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                return;
+            } catch (IOException e) {
+                return;
+            }
+        }
+
+        response.setContentType("application/zip");
         try {
             //fileName = URLEncoder.encode(fileName, "UTF-8");
             //fileName = URLDecoder.decode(fileName, "ISO8859_1");

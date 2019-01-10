@@ -47,8 +47,9 @@
                 <td width="10%" *ngIf="showAdjustmentsRedemption(null)">Adjusted redemption</td>
                 <td width="10%" *ngIf="showAdjustmentsInterestRate(null)">Interest rate</td>
                 <td>&nbsp;</td>
+                <td>&nbsp;</td>
             </tr>
-            <tr *ngFor="let record of records.generalLedgerBalanceList">
+            <tr *ngFor="let record of records.generalLedgerBalanceList" [style.color]="isRecordExcluded(record) ? '#aaa7a7' : 'black'">
                 <td >{{record.acronym}}</td>
                 <td>{{record.balanceDate}}</td>
                 <td>{{record.financialStatementCategory}}</td>
@@ -56,7 +57,11 @@
                 <td>{{record.financialStatementCategoryDescription}}</td>
                 <td>{{record.chartAccountsLongDescription}}</td>
                 <td>{{record.shortName}}</td>
-                <td>{{record.glaccountBalance != null ? (record.glaccountBalance | number:'1.2-2'): ''}}</td>
+                <td>
+                    <del><span *ngIf="isRecordExcluded(record)">{{record.glaccountBalance != null ? (record.glaccountBalance | number:'1.2-2'): ''}}</span></del>
+                    <span *ngIf="!isRecordExcluded(record)">{{record.glaccountBalance != null ? (record.glaccountBalance | number:'1.2-2'): ''}}</span>
+                    <!--{{record.glaccountBalance != null ? (record.glaccountBalance | number:'1.2-2'): ''}}-->
+                </td>
                 <td>{{record.segValCCY}}</td>
                 <td>{{record.fundCCY}}</td>
                 <td *ngIf="showAdjustmentsRedemption(null)">
@@ -64,6 +69,14 @@
                 </td>
                 <td *ngIf="showAdjustmentsInterestRate(null)">
                     {{record.interestRate}}
+                </td>
+                <td>
+                    <button *ngIf="!record.added && !isRecordExcluded(record)" type="button" class="btn-xs btn-default" style="display: inline-block"  (click)="excludeGeneratedRecord(record)">
+                        <span class="glyphicon glyphicon-minus"></span>
+                    </button>
+                    <button *ngIf="!record.added && isRecordExcluded(record)" type="button" class="btn-xs btn-default" style="display: inline-block"  (click)="includeGeneratedRecord(record)">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </button>
                 </td>
                 <td>
                     <a *ngIf="showAdjustmentsRedemption(record) || showAdjustmentsInterestRate(record)" data-toggle="modal" data-target="#infoModal" (click)="getModal(record)" style="cursor: pointer">

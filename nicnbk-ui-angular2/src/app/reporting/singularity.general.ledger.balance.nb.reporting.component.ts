@@ -215,7 +215,7 @@ export class SingularityGeneralLedgerBalanceNBReportingComponent extends CommonN
 
         adjustments.adjustedRedemptions.push(redemption);
 
-        this.busySave = this.periodicReportService.saveSingularityAdjustments(adjustments)
+        this.busyCreate = this.periodicReportService.saveSingularityAdjustments(adjustments)
             .subscribe(
                 response  => {
                     if(response){
@@ -240,6 +240,54 @@ export class SingularityGeneralLedgerBalanceNBReportingComponent extends CommonN
                     this.modalErrorMessage = "Error saving Singularity adjustments";
                 }
             );
+    }
+
+    excludeGeneratedRecord(record){
+        if(confirm("Are you sure want to exclude record?")){
+            console.log(record);
+            var params = {"recordId": record.id, "name": record.chartAccountsLongDescription, "type": record.type}
+            this.busy = this.periodicReportService.includeExcludeSingularityGeneralLedgerRecord(params)
+                .subscribe(
+                    response => {
+                        if (response) {
+                            var value = record.excludeFromSingularityCalculation != null ? record.excludeFromSingularityCalculation : false;
+                            record.excludeFromSingularityCalculation = !value;
+                            //this.checkRecords();
+                        }else{
+                            this.postAction(null, "Failed to exclude record");
+                        }
+                    },
+                    (error: ErrorResponse) => {
+                        this.postAction(null, "Failed to exclude record");
+                    }
+                );
+        }
+    }
+
+    includeGeneratedRecord(record){
+        if(confirm("Are you sure want to include record?")){
+            console.log(record);
+            var params = {"recordId": record.id, "name": record.chartAccountsLongDescription, "type": record.type}
+            this.busy = this.periodicReportService.includeExcludeSingularityGeneralLedgerRecord(params)
+                .subscribe(
+                    response => {
+                        if (response) {
+                            var value = record.excludeFromSingularityCalculation != null ? record.excludeFromSingularityCalculation : false;
+                            record.excludeFromSingularityCalculation = !value;
+                            //this.checkRecords();
+                        }else{
+                            this.postAction(null, "Failed to include record");
+                        }
+                    },
+                    (error: ErrorResponse) => {
+                        this.postAction(null, "Failed to include record");
+                    }
+                );
+        }
+    }
+
+    isRecordExcluded(record){
+        return record.excludeFromSingularityCalculation;
     }
 
 }

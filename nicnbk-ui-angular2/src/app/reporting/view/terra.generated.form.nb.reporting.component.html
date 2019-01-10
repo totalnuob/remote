@@ -218,39 +218,31 @@
             </tr>
 
             <tr *ngIf="records != null && records.length > 0" style="font-weight: bold">
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
+                <td colspan="9">&nbsp;</td>
                 <td colspan="4" style="font-style: italic" align="right">Total Assets: {{totalAssetsSum | number:'1.0-2': ''}}</td>
             </tr>
             <tr *ngIf="records != null && records.length > 0" style="font-weight: bold">
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
+                <td colspan="9">&nbsp;</td>
                 <td colspan="4" style="font-style: italic" align="right">Total L,E,X,I: {{totalOtherSum | number:'1.0-2': ''}}</td>
             </tr>
+            <tr *ngIf="records != null && records.length > 0 && ((totalAssetsSum + totalOtherSum) > 2 || (totalAssetsSum + totalOtherSum) < -2)" style="font-weight: bold"> {{totalAssetsSum + totalOtherSum}}
+                <td colspan="9">&nbsp;</td>
+                <td colspan="4" style="font-style: italic" align="right">L= {{liabilitiesSum | number:'1.0-2': ''}}</td>
+            </tr>
+            <tr *ngIf="records != null && records.length > 0 && ((totalAssetsSum + totalOtherSum) > 2 || (totalAssetsSum + totalOtherSum) < -2)" style="font-weight: bold">
+                <td colspan="9">&nbsp;</td>
+                <td colspan="4" style="font-style: italic" align="right">E= {{equitySum | number:'1.0-2': ''}}</td>
+            </tr>
+            <tr *ngIf="records != null && records.length > 0 && ((totalAssetsSum + totalOtherSum) > 2 || (totalAssetsSum + totalOtherSum) < -2)" style="font-weight: bold">
+                <td colspan="9">&nbsp;</td>
+                <td colspan="4" style="font-style: italic" align="right">X= {{expenseSum | number:'1.0-2': ''}}</td>
+            </tr>
+            <tr *ngIf="records != null && records.length > 0 && ((totalAssetsSum + totalOtherSum) > 2 || (totalAssetsSum + totalOtherSum) < -2)" style="font-weight: bold">
+                <td colspan="9">&nbsp;</td>
+                <td colspan="4" style="font-style: italic" align="right">I= {{incomeSum | number:'1.0-2': ''}}</td>
+            </tr>
             <tr *ngIf="records != null && records.length > 0" style="font-weight: bold">
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
+                <td colspan="9">&nbsp;</td>
                 <td colspan="4" style="font-style: italic" align="right">Total sum: {{(totalAssetsSum + totalOtherSum)| number:'1.0-2': ''}}</td>
             </tr>
         </table>

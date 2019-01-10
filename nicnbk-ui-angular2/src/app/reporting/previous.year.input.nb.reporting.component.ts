@@ -228,16 +228,24 @@ export class PreviousYearInputNBReportingComponent extends CommonNBReportingComp
         if(record.accountBalance != null && record.accountBalance != 'undefined' && record.accountBalance.toString().length > 0) {
             if(record.accountBalance.toString()[record.accountBalance.toString().length - 1] != '.' || record.accountBalance.toString().split('.').length > 2){
                 record.accountBalance = record.accountBalance.toString().replace(/,/g , '');
-                record.accountBalance = parseFloat(record.accountBalance).toLocaleString('en', {maximumFractionDigits: 2});
+                if(record.accountBalance != '-') {
+                    record.accountBalance = parseFloat(record.accountBalance).toLocaleString('en', {maximumFractionDigits: 2});
+                }
             }
         }
 
         if(record.accountBalanceKZT != null && record.accountBalanceKZT != 'undefined' && record.accountBalanceKZT.toString().length > 0) {
             if(record.accountBalanceKZT.toString()[record.accountBalanceKZT.toString().length - 1] != '.' || record.accountBalanceKZT.toString().split('.').length > 2){
                 record.accountBalanceKZT = record.accountBalanceKZT.toString().replace(/,/g , '');
-                record.accountBalanceKZT = parseFloat(record.accountBalanceKZT).toLocaleString('en', {maximumFractionDigits: 2});
+                if(record.accountBalanceKZT != '-') {
+                    record.accountBalanceKZT = parseFloat(record.accountBalanceKZT).toLocaleString('en', {maximumFractionDigits: 2});
+                }
             }
         }
+    }
+
+    isRequiredUSDAmount(record){
+        record.chartOfAccounts.code != 'KZT3_5_1' && record.chartOfAccounts.code != 'KZT1_51_adj';
     }
 
 }

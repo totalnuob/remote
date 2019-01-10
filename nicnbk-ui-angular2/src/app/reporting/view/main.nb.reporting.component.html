@@ -27,7 +27,7 @@
                         <td>{{report.creator}}</td>
                         <td>
                             <button *ngIf="report.status != null && report.status != 'SUBMITTED'" class="btn btn-xs btn-success" [routerLink]="['/reporting/NBReporting/inputFileUpload/', report.id]" ><span class="glyphicon glyphicon-pencil"></span></button>
-                            <button *ngIf="report.status != null && report.status == 'SUBMITTED'" class="btn btn-xs btn-primary" [routerLink]="['/reporting/NBReporting/GeneratedReports/', report.id, 'REPORTS']">
+                            <button class="btn btn-xs btn-primary" [routerLink]="['/reporting/NBReporting/GeneratedReports/', report.id, 'REPORTS']">
                                 <span class="glyphicon glyphicon-list-alt"></span></button>
                         </td>
                     </tr>
