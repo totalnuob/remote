@@ -9,6 +9,7 @@ import {TripMemo} from "./model/trip-memo";
 import {TripMemoSearchResults} from "./model/trip-memo-search-results";
 import {Subscription} from 'rxjs';
 import {ErrorResponse} from "../common/error-response";
+import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 
 declare var $:any
 
@@ -27,6 +28,8 @@ export class TripMemoListComponent extends CommonFormViewComponent implements On
     tripMemoList: TripMemo[];
     tripTypes = [];
 
+    private moduleAccessChecker: ModuleAccessCheckerService;
+
     constructor(
         private lookupService: LookupService,
         private tripMemoService: TripMemoService,
@@ -34,6 +37,8 @@ export class TripMemoListComponent extends CommonFormViewComponent implements On
         private route: ActivatedRoute
     ){
         super(router);
+
+        this.moduleAccessChecker = new ModuleAccessCheckerService;
 
         //loadLookups
         this.sub = this.loadLookups();
@@ -122,5 +127,9 @@ export class TripMemoListComponent extends CommonFormViewComponent implements On
                 return this.tripTypes[i].nameEn;
             }
         }
+    }
+
+    showMemo(){
+        return !this.moduleAccessChecker.checkAccessMemoRestricted();
     }
 }

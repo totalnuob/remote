@@ -23,6 +23,7 @@ import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
 import {ReserveCalculationSearchParams} from "./model/reserve-calculation-search-params";
 import {ReserveCalculationSearchResults} from "./model/reserve-calculation-search-results";
+import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 
 declare var $:any
 
@@ -63,6 +64,8 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
 
     public uploadFiles: Array<any> = [];
 
+    private moduleAccessChecker: ModuleAccessCheckerService;
+
     constructor(
         private router: Router,
         private route: ActivatedRoute,
@@ -70,6 +73,8 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
         private lookupService: LookupService
     ){
         super(router, route, periodicReportService);
+
+        this.moduleAccessChecker = new ModuleAccessCheckerService;
 
         this.records = [];
         //this.editedRecord = new ReserveCalculationFormRecord();
@@ -546,6 +551,9 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
 
 
     deleteAttachment(recordId, fileId){
+        if(!this.moduleAccessChecker.checkAccessReportingEditor()){
+            return;
+        }
         var confirmed = window.confirm("Are you sure want to delete");
         if(confirmed) {
             this.periodicReportService.safeDeleteAttachment(recordId, fileId)

@@ -367,4 +367,8 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
         return this.moduleAccessChecker.checkAccessHedgeFundsEditor();
     }
 
+    showMemos(){
+        return !this.moduleAccessChecker.checkAccessMemoRestricted();
+    }
+
 }

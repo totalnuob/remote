@@ -97,7 +97,7 @@
                     <!--</ul>-->
                 <!--</li>-->
                 <li [routerLinkActive]="['active']"><a [routerLink]="['/macromonitor']" data-toggle="tooltip" title="Macro Monitor">Macro Monitor</a></li>
-                <li [routerLinkActive]="['active']"><a [routerLink]="['/m2s2']" data-toggle="tooltip" title="Meeting Memo Scoring System">M2S2</a></li>
+                <li [routerLinkActive]="['active']" *ngIf="showM2S2()"><a [routerLink]="['/m2s2']" data-toggle="tooltip" title="Meeting Memo Scoring System">M2S2</a></li>
                 <li [routerLinkActive]="['active']"  class="dropdown" *ngIf="showPrivateEquity()">
                     <!--<a th:href="@{/pe}">Private Equity</a>-->
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
@@ -134,7 +134,7 @@
 
                     </ul>
                 </li>
-                <li [routerLinkActive]="['active']"><a [routerLink]="['/bt']" data-toggle="tooltip" title="Trip Memo">Trainings</a></li>
+                <li [routerLinkActive]="['active']" *ngIf="showTrainings()"><a [routerLink]="['/bt']" data-toggle="tooltip" title="Trip Memo">Trainings</a></li>
                 <li [routerLinkActive]="['active']"  class="dropdown" *ngIf="showReporting()">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                         Reporting <span class="bootstrapCaret"></span>

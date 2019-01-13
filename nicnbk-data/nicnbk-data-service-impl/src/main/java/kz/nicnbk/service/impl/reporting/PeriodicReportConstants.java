@@ -76,6 +76,9 @@ public final class PeriodicReportConstants {
     public static final String NICK_MF_AGREEMENT_DESC = "Administrative services agreement of NICK Master Fund from 24.07.2015";
     public static final String TERRA_AGREEMENT_DESC = "Limited Partnership Agreement Terra LP from 06.04.2018";
 
+    public static final String INVESTMENT_IN_PORTFOLIO_FUNDS = "Investments in Portfolio Funds";
+    public static final String NET_CHANGE_UNREALIZED_GAINS_LOSSES = "Net Change in Unrealized Gains/Losses";
+
 
     public static final String BANK_LOANS_RECEIVED = "Банковские займы полученные";
     public static final String BANK_OF_MONREAL = "Bank of Monreal";

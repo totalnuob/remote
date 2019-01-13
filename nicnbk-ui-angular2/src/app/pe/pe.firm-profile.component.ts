@@ -376,4 +376,8 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
         this.myFiles = files;
         console.log(this.myFiles);
     }
+
+    showMemos(){
+        return !this.moduleAccessChecker.checkAccessMemoRestricted();
+    }
 }

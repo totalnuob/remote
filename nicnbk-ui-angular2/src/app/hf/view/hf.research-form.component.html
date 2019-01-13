@@ -116,14 +116,14 @@
                         </div>
                     </div>
                     <br/>
-                    <div class="row top-buffer">
+                    <div class="row top-buffer" *ngIf="canEdit()">
                         <div class="col-md-12">
                             <button type="submit" class="btn btn-success pull-right" name="saveMemo">Save</button>
                         </div>
                     </div>
                 </form>
             </div>
-            <div class="row withpadding pull-right">
+            <div class="row withpadding pull-right" *ngIf="canEdit()">
                 <button class="btn btn-primary" type="button" id="menu1" (click)="navigate(this.managerIdParam, 0)">New</button>
             </div>
             <div>

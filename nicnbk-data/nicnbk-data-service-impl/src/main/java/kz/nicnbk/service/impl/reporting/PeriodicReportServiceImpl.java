@@ -3139,7 +3139,10 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 if(maxLineNumber != 14){
                     List<ConsolidatedKZTForm7RecordDto> newPreviousPeriodRecords = new ArrayList<>();
                     for(ConsolidatedKZTForm7RecordDto dto: previousPeriodRecords){
-                        if(dto.getLineNumber() != null && dto.getLineNumber() <= 5){
+                        if(dto.getLineNumber() != null && dto.getLineNumber() == 1 && dto.getAccountNumber() == null){
+                            dto.setName("Краткосрочные финансовые инвестиции (сумма строк 2-7)");
+                            newPreviousPeriodRecords.add(dto);
+                        }else if(dto.getLineNumber() != null && dto.getLineNumber() <= 5){
                             newPreviousPeriodRecords.add(dto);
                         }else if(dto.getLineNumber() != null && dto.getLineNumber() == 6){
                             ConsolidatedKZTForm7RecordDto newDto = new ConsolidatedKZTForm7RecordDto();
@@ -3170,6 +3173,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                             newPreviousPeriodRecords.add(dto);
                         }else if(dto.getLineNumber() == 12){
                             dto.setLineNumber(14);
+                            dto.setName("Всего (сумма строк 1, 8)");
                             newPreviousPeriodRecords.add(dto);
                         }
                     }
@@ -3290,6 +3294,33 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 if(record.getDebtTurnover() != null && record.getDebtStartPeriod() != null && record.getDebtTurnover().doubleValue() < 0 &&
                         Math.abs(record.getDebtTurnover().doubleValue()) > Math.abs(record.getDebtStartPeriod().doubleValue())){
                     record.setDebtTurnover(record.getDebtStartPeriod() != null ? MathUtils.subtract(0.0, record.getDebtStartPeriod()) : null);
+                }
+
+                if(newRecord){
+                    if(record.getDebtTurnover() == null || record.getDebtTurnover().doubleValue() == 0){
+                        ConsolidatedReportRecordHolderDto currentDataHolder = this.generalLedgerBalanceService.getWithoutExcludedRecords(reportId);
+                        if(currentDataHolder != null && currentDataHolder.getGeneralLedgerBalanceList() != null){
+                            double debtTurnover = 0;
+                            for(SingularityGeneralLedgerBalanceRecordDto recordGL: currentDataHolder.getGeneralLedgerBalanceList()){
+                                if(!record.getEntityName().equalsIgnoreCase(recordGL.getShortName())){
+                                    continue;
+                                }
+                                if(recordGL.getGLAccount().startsWith("1200") && recordGL.getFinancialStatementCategoryDescription() != null &&
+                                        recordGL.getFinancialStatementCategoryDescription().equalsIgnoreCase(PeriodicReportConstants.INVESTMENT_IN_PORTFOLIO_FUNDS)){
+                                    debtTurnover = MathUtils.add(debtTurnover, recordGL.getGLAccountBalance());
+                                }
+                                if(recordGL.getGLAccount().startsWith("4225") && recordGL.getFinancialStatementCategoryDescription() != null &&
+                                        recordGL.getFinancialStatementCategoryDescription().equalsIgnoreCase(PeriodicReportConstants.NET_CHANGE_UNREALIZED_GAINS_LOSSES)){
+
+                                    debtTurnover = MathUtils.add(debtTurnover, recordGL.getGLAccountBalance());
+                                }
+                            }
+                            Date rateDate = DateUtils.getFirstDayOfNextMonth(report.getReportDate());
+                            // Find exchange rate
+                            CurrencyRatesDto endCurrencyRatesDto = this.currencyRatesService.getRateForDateAndCurrency(rateDate, CurrencyLookup.USD.getCode());
+                            record.setDebtTurnover(MathUtils.multiply(debtTurnover, endCurrencyRatesDto.getValue()));
+                        }
+                    }
                 }
 
                 // debtEndPeriod

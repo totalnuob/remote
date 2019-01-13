@@ -305,4 +305,8 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
         return false;
 
     }
+
+    showMemo(){
+        return !this.moduleAccessChecler.checkAccessMemoRestricted();
+    }
 }

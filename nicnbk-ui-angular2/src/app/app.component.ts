@@ -108,6 +108,14 @@ export class AppComponent {
         return localStorage.getItem("authenticatedUser") != null;
     }
 
+    showTrainings(){
+        return !this.moduleAccessChecker.checkAccessMemoRestricted();
+    }
+
+    showM2S2(){
+        return !this.moduleAccessChecker.checkAccessMemoRestricted();
+    }
+
     getUsername(){
         return localStorage.getItem("authenticatedUser") != null ? "," + localStorage.getItem("authenticatedUser") : "";
     }

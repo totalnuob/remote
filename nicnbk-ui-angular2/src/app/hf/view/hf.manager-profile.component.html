@@ -28,7 +28,7 @@
                 <li class="active">
                     <a data-toggle="tab" href="#overview">OVERVIEW</a>
                 </li>
-                <li (click)="search()">
+                <li (click)="search()" *ngIf="showMemos()">
                     <a data-toggle="tab" href="#meetings_calls">MEETINGS/CALLS</a>
                 </li>
             </ul>
@@ -281,7 +281,7 @@
                     <br>
                     <br>
                 </div>
-                <div id="meetings_calls" class="tab-pane fade">
+                <div id="meetings_calls" class="tab-pane fade" *ngIf="showMemos()">
                     <div class="jumbotron">
                         <div class="row">
                             <div class="col-md-12">

@@ -28,13 +28,12 @@
                 <li class="active">
                     <a data-toggle="tab" href="#overview">OVERVIEW</a>
                 </li>
-                <li (click)="search()">
-                    <a data-toggle="tab" href="#meetings_calls">MEETINGS/CALLS</a>
+                <li (click)="search()" *ngIf="showMemos()">
+                    <a data-toggle="tab" href="#meetings_calls" >MEETINGS/CALLS</a>
                 </li>
             </ul>
             <br/>
             <div class="tab-content">
-
                 <div id="overview" class="tab-pane fade in active">
                     <form (ngSubmit)="save()" #firmForm="ngForm" class="well span">
                         <div class="row">
@@ -229,7 +228,7 @@
                         </table>
                     </div>
                 </div>
-                <div id="meetings_calls" class="tab-pane fade">
+                <div id="meetings_calls" class="tab-pane fade" *ngIf="showMemos()">
                     <div style="position: relative;" class="withpadding">
                         <div [ngBusy]="busy">
                             <div class="col-md-12">

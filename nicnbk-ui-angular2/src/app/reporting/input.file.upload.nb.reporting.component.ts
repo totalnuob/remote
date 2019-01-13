@@ -17,6 +17,7 @@ var fileSaver = require("file-saver");
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
 import {ReportingFundRenamePair} from "./model/reporting.fund.rename.pair";
+import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 
 @Component({
     selector: 'input-file-upload-nb-reporting',
@@ -47,7 +48,7 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
     private fundRenamesHF: ReportingFundRenamePair[];
     private fundRenamesRE: ReportingFundRenamePair[];
 
-    private
+    private moduleAccessChecker: ModuleAccessCheckerService;
 
     private fileTarragonScheduleInvestment;
     private fileTarragonStatementAssets;
@@ -75,6 +76,8 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
         private periodicReportService: PeriodicReportService
     ){
         super(router);
+
+        this.moduleAccessChecker = new ModuleAccessCheckerService;
 
         this.periodicReport = new PeriodicReport();
 
@@ -683,12 +686,16 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
     }
 
     showDeleteButton(fileType){
-        return this.periodicReport != null && this.periodicReport.status != 'SUBMITTED' && this.showViewButton(fileType);
+        return this.periodicReport != null && this.periodicReport.status != 'SUBMITTED' && this.showViewButton(fileType) &&
+            this.moduleAccessChecker.checkAccessReportingEditor();
 
         // TODO: check report status
     }
 
     deleteFile(fileType){
+        if(!this.moduleAccessChecker.checkAccessReportingEditor()){
+            return;
+        }
         if(confirm("Are you sure want to delete this file?")) {
             if (fileType === 'tarragon_schedule_investment' && this.report != null && this.report.tarragonScheduleInvestmentFileId > 0) {
                 this.periodicReportService.deleteFile(this.report.tarragonScheduleInvestmentFileId)

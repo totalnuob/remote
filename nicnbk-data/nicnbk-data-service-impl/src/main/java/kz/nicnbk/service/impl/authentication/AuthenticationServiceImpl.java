@@ -89,6 +89,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 return "ROLE_MACROMONITOR_EDITOR";
             case "IC_MEMBR":
                 return "ROLE_IC_MEMBER";
+            case "MEMO_RESTR":
+                return "ROLE_MEMO_RESTRICTED";
 //            case "CM_EDIT":
 //                return "ROLE_CORPMEETINGS_EDITOR";
 //            case "CM_VIEW":

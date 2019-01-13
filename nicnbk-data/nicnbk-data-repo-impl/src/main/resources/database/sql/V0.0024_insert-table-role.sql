@@ -16,3 +16,6 @@ INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(53, 'MM_EDIT', 'Mac
 INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(56, 'IC_MEMBR', 'IC Member', '', '');
 
 INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(101, 'NEWS_EDIT', 'News - Editor', '', '');
+
+INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(201, 'MEMO_RESTR', 'Memos Restricted', '', '');
+

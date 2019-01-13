@@ -25,6 +25,10 @@ export class ModuleAccessCheckerService extends CommonService{
         this.roles = JSON.parse(rolesText);
     }
 
+    public checkAccessMemoRestricted(){
+        return this.checkAccess("ROLE_MEMO_RESTRICTED");
+    }
+
     public checkAccessPrivateEquity(){
         return this.checkAccess("ROLE_PRIVATE_EQUITY");
     }
