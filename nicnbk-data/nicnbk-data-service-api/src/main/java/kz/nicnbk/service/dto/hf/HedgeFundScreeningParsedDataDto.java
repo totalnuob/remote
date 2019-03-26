@@ -19,8 +19,8 @@ public class HedgeFundScreeningParsedDataDto extends BaseEntityDto implements Co
     private String fundName;
     private String investmentManager;
     private String mainStrategy;
-
     private Double fundAUM;
+
     private Double managerAUM;
     private Double strategyAUM;
 
@@ -35,7 +35,6 @@ public class HedgeFundScreeningParsedDataDto extends BaseEntityDto implements Co
 
     private Date recentTrackRecordDate;
     private Boolean recentTrackRecordDateWithinLookback;
-
     private Boolean differentManagerCurrencies;
 
     public HedgeFundScreeningDto getScreening() {

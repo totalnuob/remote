@@ -136,6 +136,13 @@ public class DateUtils {
         return getDateFormatted(date1).equalsIgnoreCase(getDateFormatted(date2));
     }
 
+    public static boolean isSameMonth(Date date1, Date date2){
+        if(date1 == null || date2 == null){
+            return false;
+        }
+        return getMonth(date1) == getMonth(date2);
+    }
+
     public static Date getLastDayOfCurrentYear(Date date){
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.MONTH, Calendar.DECEMBER);

@@ -78,12 +78,12 @@ public class HedgeFundScreeningParsedUcitsDataAUM extends BaseEntity {
         this.value = value;
     }
 
-    @Transient
-    public Double getValueByCurrency() {
-        return valueByCurrency;
-    }
-
-    public void setValueByCurrency(Double valueByCurrency) {
-        this.valueByCurrency = valueByCurrency;
-    }
+//    @Transient
+//    public Double getValueByCurrency() {
+//        return valueByCurrency;
+//    }
+//
+//    public void setValueByCurrency(Double valueByCurrency) {
+//        this.valueByCurrency = valueByCurrency;
+//    }
 }

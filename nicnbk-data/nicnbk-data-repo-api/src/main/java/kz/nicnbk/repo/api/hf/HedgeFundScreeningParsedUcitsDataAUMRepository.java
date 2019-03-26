@@ -22,7 +22,7 @@ public interface HedgeFundScreeningParsedUcitsDataAUMRepository extends PagingAn
 
     @Query("SELECT e FROM HedgeFundScreeningParsedUcitsDataAUM e WHERE e.screening.id=?1 AND " +
             " e.date >= ?2 AND e.date <= ?3 ")
-    List<HedgeFundScreeningParsedUcitsDataAUM> findByScreeningIdAndDateRange(Long screeningId, Date dateFrom, Date dateTo);
+    List<HedgeFundScreeningParsedUcitsDataAUM> findByScreeningIdAndDateRange(Long screeningId, Date dateFrom, Date dateTo, Sort sort);
 
     @Query("SELECT max(e.date) FROM HedgeFundScreeningParsedUcitsDataAUM e WHERE e.screening.id=?1")
     Date getMaxDate(Long screeningId);
