@@ -20,6 +20,7 @@ public class HedgeFundScreeningParsedDataDto extends BaseEntityDto implements Co
     private String investmentManager;
     private String mainStrategy;
     private Double fundAUM;
+    private Date fundAUMDate;
 
     private Double managerAUM;
     private Double strategyAUM;
@@ -27,6 +28,7 @@ public class HedgeFundScreeningParsedDataDto extends BaseEntityDto implements Co
     private String currency;
     private Double fundAUMByCurrency;
 
+    /**/
     private Double recentFundAUM;
     private Date recentFundAUMDate;
 
@@ -35,7 +37,11 @@ public class HedgeFundScreeningParsedDataDto extends BaseEntityDto implements Co
 
     private Date recentTrackRecordDate;
     private Boolean recentTrackRecordDateWithinLookback;
-    private Boolean differentManagerCurrencies;
+    private Boolean strategyAUMWithMissingCurrency;
+
+    private Double editedFundAUM;
+    private Date editedFundAUMDate;
+    private String editedFundAUMComment;
 
     public HedgeFundScreeningDto getScreening() {
         return screening;
@@ -91,6 +97,14 @@ public class HedgeFundScreeningParsedDataDto extends BaseEntityDto implements Co
 
     public void setFundAUM(Double fundAUM) {
         this.fundAUM = fundAUM;
+    }
+
+    public Date getFundAUMDate() {
+        return fundAUMDate;
+    }
+
+    public void setFundAUMDate(Date fundAUMDate) {
+        this.fundAUMDate = fundAUMDate;
     }
 
     public Double getRecentFundAUM() {
@@ -165,18 +179,42 @@ public class HedgeFundScreeningParsedDataDto extends BaseEntityDto implements Co
         this.recentStrategyAUMDate = recentStrategyAUMDate;
     }
 
-    public Boolean getDifferentManagerCurrencies() {
-        return differentManagerCurrencies;
+    public Boolean getStrategyAUMWithMissingCurrency() {
+        return strategyAUMWithMissingCurrency;
     }
 
-    public void setDifferentManagerCurrencies(Boolean differentManagerCurrencies) {
-        this.differentManagerCurrencies = differentManagerCurrencies;
+    public void setStrategyAUMWithMissingCurrency(Boolean strategyAUMWithMissingCurrency) {
+        this.strategyAUMWithMissingCurrency = strategyAUMWithMissingCurrency;
     }
 
     public boolean isEmpty(){
         return this.fundId == null && StringUtils.isEmpty(this.fundName) &&
                 StringUtils.isEmpty(this.investmentManager) && StringUtils.isEmpty(this.mainStrategy) &&
                 this.fundAUM == null && this.managerAUM == null;
+    }
+
+    public Double getEditedFundAUM() {
+        return editedFundAUM;
+    }
+
+    public void setEditedFundAUM(Double editedFundAUM) {
+        this.editedFundAUM = editedFundAUM;
+    }
+
+    public String getEditedFundAUMComment() {
+        return editedFundAUMComment;
+    }
+
+    public void setEditedFundAUMComment(String editedFundAUMComment) {
+        this.editedFundAUMComment = editedFundAUMComment;
+    }
+
+    public Date getEditedFundAUMDate() {
+        return editedFundAUMDate;
+    }
+
+    public void setEditedFundAUMDate(Date editedFundAUMDate) {
+        this.editedFundAUMDate = editedFundAUMDate;
     }
 
     @Override

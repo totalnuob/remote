@@ -107,6 +107,8 @@ import {HFScreeningListComponent} from "./hf/hf.screening.list.component";
 import {HedgeFundScreeningService} from "./hf/hf.fund.screening.service";
 import {HFScreeningFilteredResultsComponent} from "./hf/hf.screening.filters.component";
 import {HFScreeningFilteredResultsEditComponent} from "./hf/hf.screening.filters.edit.component";
+import {LookupValuesComponent} from "./lookup/lookup.values.component";
+import {CurrencyRatesLookupValuesComponent} from "./lookup/currency.rates.lookup.values.component";
 //import {CorpMeetingEditComponent} from "./corpmeetings/ic-meeting-topic-edit.component";
 
 @NgModule({
@@ -152,7 +154,8 @@ import {HFScreeningFilteredResultsEditComponent} from "./hf/hf.screening.filters
         ConsolidatedKZTForm1NBReportingComponent, ReserveCalculationFormNBReportingComponent,ConsolidatedKZTForm2NBReportingComponent, ConsolidatedKZTForm19NBReportingComponent, ConsolidatedKZTForm22NBReportingComponent,
         ConsolidatedKZTForm3NBReportingComponent, ConsolidatedKZTForm6NBReportingComponent,
         AccessDeniedComponent, MMEditComponent, MMViewComponent,NotFoundComponent,
-        CorpMeetingsListComponent, CorpMeetingEditComponent
+        CorpMeetingsListComponent, CorpMeetingEditComponent,
+        LookupValuesComponent, CurrencyRatesLookupValuesComponent
     ],
     bootstrap: [ AppComponent ]
 })

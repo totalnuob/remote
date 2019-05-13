@@ -168,4 +168,38 @@ public class ExcelUtils {
         return null;
     }
 
+    public static Iterator<Row> getRowIterator(byte[] bytes, String fileName, String sheetName){
+        InputStream inputFile = null;
+        try {
+            inputFile = new ByteArrayInputStream(bytes);
+            String extension = fileName.substring(fileName.lastIndexOf(".") + 1,
+                    fileName.length());
+            if (extension.equalsIgnoreCase("xls")) {
+                HSSFWorkbook workbook = new HSSFWorkbook(inputFile);
+                HSSFSheet sheet = workbook.getSheet(sheetName);
+                if(sheet == null){
+                    throw new ExcelFileParseException("No sheet found with name '" + sheetName + "'");
+                }
+                return sheet.iterator();
+            } else if (extension.equalsIgnoreCase("xlsx")) {
+                XSSFWorkbook workbook = new XSSFWorkbook(inputFile);
+                XSSFSheet sheet = workbook.getSheet(sheetName);
+                return sheet.iterator();
+            } else {
+                // log error
+                throw new ExcelFileParseException("Invalid file extension: " + fileName);
+            }
+        }catch (IOException ex){
+            // TODO: log error
+        }finally {
+            try {
+                inputFile.close();
+            } catch (IOException e) {
+                //e.printStackTrace();
+                // TODO: log error
+            }
+        }
+        return null;
+    }
+
 }

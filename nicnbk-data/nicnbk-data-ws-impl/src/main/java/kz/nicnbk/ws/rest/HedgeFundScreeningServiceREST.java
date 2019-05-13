@@ -244,4 +244,14 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
         boolean saved = this.screeningService.updateManagerAUM(fundList, username);
         return buildNonNullResponse(saved);
     }
+
+    @PreAuthorize("hasRole('ROLE_HEDGE_FUND_VIEWER') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/filteredResults/updateFund/", method = RequestMethod.POST)
+    public ResponseEntity updateFund(@RequestBody HedgeFundScreeningParsedDataDto fund){
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        boolean saved = this.screeningService.updateFundInfo(fund, username);
+        return buildNonNullResponse(saved);
+    }
 }

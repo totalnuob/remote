@@ -25,6 +25,9 @@ public class HedgeFundScreeningParsedData extends BaseEntity {
 
     private Double managerAUM;
 
+    private Double editedFundAUM;
+    private String editedFundAUMComment;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="screening_id")
     public HedgeFundScreening getScreening() {
@@ -78,5 +81,23 @@ public class HedgeFundScreeningParsedData extends BaseEntity {
 
     public void setManagerAUM(Double managerAUM) {
         this.managerAUM = managerAUM;
+    }
+
+    @Column(name="edited_fund_aum")
+    public Double getEditedFundAUM() {
+        return editedFundAUM;
+    }
+
+    public void setEditedFundAUM(Double editedFundAUM) {
+        this.editedFundAUM = editedFundAUM;
+    }
+
+    @Column(name="edited_fund_aum_comment", columnDefinition = "TEXT")
+    public String getEditedFundAUMComment() {
+        return editedFundAUMComment;
+    }
+
+    public void setEditedFundAUMComment(String editedFundAUMComment) {
+        this.editedFundAUMComment = editedFundAUMComment;
     }
 }

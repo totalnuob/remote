@@ -65,7 +65,7 @@ public class DateUtils {
     public static Date getDateMonthTextEngYear(String date){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM yyyy", Locale.ENGLISH);
         try {
-            return simpleDateFormat.parse(date);
+            return getLastDayOfCurrentMonth(simpleDateFormat.parse(date));
         } catch (ParseException e) {
             //e.printStackTrace();
         }

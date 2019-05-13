@@ -1,6 +1,8 @@
 package kz.nicnbk.service.dto.hf;
 
 import kz.nicnbk.common.service.model.CreateUpdateBaseEntityDto;
+import kz.nicnbk.common.service.util.DateUtils;
+import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.model.hf.HedgeFundScreening;
 import kz.nicnbk.repo.model.hf.HedgeFundScreeningFilteredResult;
 
@@ -20,6 +22,7 @@ public class HedgeFundScreeningFilteredResultDto extends CreateUpdateBaseEntityD
     private Integer lookbackReturns;
     private Integer lookbackAUM;
     private Date startDate;
+    private String startDateMonth;
 
     private HedgeFundScreeningFilteredResultStatisticsDto filteredResultStatistics;
 
@@ -33,6 +36,7 @@ public class HedgeFundScreeningFilteredResultDto extends CreateUpdateBaseEntityD
         this.lookbackReturns =  other.lookbackReturns;
         this.lookbackAUM = other.lookbackAUM;
         this.startDate = other.startDate;
+        this.startDateMonth = other.startDateMonth;
     }
 
     public HedgeFundScreeningFilteredResultDto(Long id){
@@ -101,6 +105,26 @@ public class HedgeFundScreeningFilteredResultDto extends CreateUpdateBaseEntityD
 
     public void setFilteredResultStatistics(HedgeFundScreeningFilteredResultStatisticsDto filteredResultStatistics) {
         this.filteredResultStatistics = filteredResultStatistics;
+    }
+
+    public String getStartDateMonth() {
+        return startDateMonth;
+    }
+
+    public void setStartDateMonth(String startDateMonth) {
+        this.startDateMonth = startDateMonth;
+    }
+
+    public Date getStartDateFromTextOrCurrent(){
+        Date startDate = new Date();
+        if(StringUtils.isNotEmpty(this.startDateMonth)){
+            Date monthDate = DateUtils.getDate("01." + this.startDateMonth);
+            if(monthDate != null) {
+                Date lastDayDate = DateUtils.getLastDayOfCurrentMonth(monthDate);
+                startDate = lastDayDate;
+            }
+        }
+        return startDate;
     }
 }
 

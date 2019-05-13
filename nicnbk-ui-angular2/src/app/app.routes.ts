@@ -92,6 +92,8 @@ import {HFScreeningEditComponent} from "./hf/hf-screening-edit.component";
 import {HFScreeningListComponent} from "./hf/hf.screening.list.component";
 import {HFScreeningFilteredResultsComponent} from "./hf/hf.screening.filters.component";
 import {HFScreeningFilteredResultsEditComponent} from "./hf/hf.screening.filters.edit.component";
+import {LookupValuesComponent} from "./lookup/lookup.values.component";
+import {CurrencyRatesLookupValuesComponent} from "./lookup/currency.rates.lookup.values.component";
 
 
 const routes: Routes  = [
@@ -568,6 +570,19 @@ const routes: Routes  = [
         component: CorpMeetingEditComponent,
         canActivate: [AuthGuard]
     },
+
+    /* Lookup values ******************************************/
+    {
+        path: 'lookups',
+        component: LookupValuesComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'lookups/currency',
+        component: CurrencyRatesLookupValuesComponent,
+        canActivate: [AuthGuard]
+    },
+
 
     /* Page not found. ERROR 404 *********************/
     {

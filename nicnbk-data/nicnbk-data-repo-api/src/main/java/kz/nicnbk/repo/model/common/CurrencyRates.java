@@ -16,7 +16,7 @@ public class CurrencyRates extends BaseEntity {
 
     private Currency currency;
     private Date date;
-    private Double value;
+    private Double value; // KZT value
     private Double averageValue;
     private Double averageValueYear;
     private Double valueUSD;

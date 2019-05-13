@@ -419,7 +419,6 @@ export class LookupService extends CommonService{
     }
 
     getCurrencyRates(searchParams){
-        console.log(searchParams);
         let body = JSON.stringify(searchParams);
 
         console.log(body);

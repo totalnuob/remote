@@ -10,7 +10,7 @@ export class HedgeFundScreeningFilteredResult {
     trackRecord: number;
     lookbackReturns: number;
     lookbackAUM: number;
-    startDate: string;
+    startDateMonth: string;
 
     filteredResultStatistics: HedgeFundScreeningFilteredResultStatistics;
 

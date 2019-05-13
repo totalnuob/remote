@@ -118,7 +118,7 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
 
         CurrencyRatesPagedSearchResult result = new CurrencyRatesPagedSearchResult();
         int page = searchParams != null && searchParams.getPage() > 0 ? searchParams.getPage() - 1 : 0;
-        Page<CurrencyRates> entityPage = this.currencyRatesRepository.search(searchParams.getFromDate(), searchParams.getToDate(),
+        Page<CurrencyRates> entityPage = this.currencyRatesRepository.search(searchParams.getCurrencyCode(), searchParams.getFromDate(), searchParams.getToDate(),
                 new PageRequest(page, searchParams.getPageSize(),
                 new Sort(Sort.Direction.DESC, "date", "id")));
         if(entityPage != null && entityPage.getContent() != null){
@@ -237,7 +237,7 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
                     }
                 }
 
-                if(dto.getValue() <= 0){
+                if((dto.getValue() != null && dto.getValue() <= 0) || (dto.getValueUSD() != null && dto.getValueUSD() <= 0)){
                     String errorMessage = "Currency rate save failed: value must be positive";
                     logger.error(errorMessage);
                     saveResponse.setErrorMessageEn(errorMessage);
@@ -317,6 +317,9 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
                     logger.error(errorMessage);
                     return false;
                 }
+
+                // TODO: check with screening and scoring
+                //
 
                 this.currencyRatesRepository.delete(id);
                 logger.info("Successfully deleted currency rate: id=" +id + ", date=" +

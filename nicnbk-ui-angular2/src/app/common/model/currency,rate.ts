@@ -16,6 +16,7 @@ export class CurrencyRate{
     currency: BaseDictionary;
     date: Date;
     value: number;
+    valueUSD: number;
     averageValue: number;
     averageValueYear: number;
     editable: boolean;

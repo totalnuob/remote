@@ -21,7 +21,7 @@ public class HedgeFundScreeningParsedDataAUM extends BaseEntity {
     private Date date;
     private Double value;
 
-    private Double valueByCurrency;
+    //private Double valueByCurrency;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="screening_id")
@@ -78,12 +78,12 @@ public class HedgeFundScreeningParsedDataAUM extends BaseEntity {
         this.value = value;
     }
 
-    @Transient
-    public Double getValueByCurrency() {
-        return valueByCurrency;
-    }
-
-    public void setValueByCurrency(Double valueByCurrency) {
-        this.valueByCurrency = valueByCurrency;
-    }
+//    @Transient
+//    public Double getValueByCurrency() {
+//        return valueByCurrency;
+//    }
+//
+//    public void setValueByCurrency(Double valueByCurrency) {
+//        this.valueByCurrency = valueByCurrency;
+//    }
 }

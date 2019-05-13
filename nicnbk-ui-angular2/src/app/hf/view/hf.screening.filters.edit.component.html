@@ -49,12 +49,14 @@
                         </tr>
                         <tr>
                             <td>Start</td>
-                            <td><div class='input-group date col-md-2' id='startDateTPickeer' style="width: 100%">
-                                <input type='text' class="form-control" id="startDate" name="startDate" [(ngModel)]="filteredResult.startDate"/>
+                            <td>
+                                <div class='input-group date col-md-2' id='startDateTPickeer' style="width: 100%">
+                                    <input type='text' class="form-control" id="startDate" name="startDate" [(ngModel)]="filteredResult.startDateMonth"/>
                                                 <span class="input-group-addon">
                                                     <span class="glyphicon glyphicon-calendar"></span>
                                                 </span>
-                            </div></td>
+                                 </div>
+                            </td>
                         </tr>
                     </table>
                 </div>
@@ -171,10 +173,11 @@
         </div>
     </div>
 
-    <div class="modal fade" id="fundListModal" role="dialog">
+    <div [ngBusy]="busyStats" class="modal fade" id="fundListModal" role="dialog" tabindex="-1">
         <div class="modal-dialog" style="overflow-y: scroll; min-height: 100px; max-height:85%;  margin-top: 100px; margin-bottom:50px; width:75%;">
             <div class="modal-content" id="modalMessagesDiv">
                 <div [ngBusy]="busyModal"  class="modal-body">
+
                     <div class="row">
                         <div class="col-md-12">
                             <div class="alert alert-danger" *ngIf="modalErrorMessage != null"><span>{{modalErrorMessage}}</span>
@@ -195,7 +198,7 @@
                             <span style="font-weight: bold">TOTAL: {{filteredFundList.length}}</span>
                             <br/>
                             <br/>
-                            <table class="table table-hover">
+                            <table class="table table-hover small">
                                 <thead>
                                 <tr>
                                     <!--<th>&nbsp;</th>-->
@@ -209,6 +212,7 @@
                                     <th>STRATEGY AUM, $</th>
                                     <th>MANAGER AUM, $</th>
                                     <th *ngIf="isUnqualifiedFundList">TRACK RECORD</th>
+                                    <th>&nbsp;</th>
                                     <!--<th *ngIf="showParameterMatching">FUND AUM</th>-->
                                     <!--<th *ngIf="showParameterMatching">MANAGER AUM</th>-->
                                     <!--<th *ngIf="showParameterMatching">TRACK RECORD</th>-->
@@ -225,7 +229,18 @@
                                     <td>{{fund.mainStrategy}}</td>
                                     <td align="center">
                                         <span *ngIf="fund.fundAUM != null">
-                                            $ {{getAmountShort(fund.fundAUM)}}
+                                            <span [style.text-decoration]="fund.editedFundAUM != null ? 'line-through' : ''" data-toggle="tooltip" data-placement="top" title="{{fund.fundAUM}}" [style.color]="checkFundAUM(fund.fundAUM) ? 'black' : 'red'">
+                                                $ {{getAmountShort(fund.fundAUM)}}
+                                            </span>
+                                            <span class="glyphicon glyphicon-calendar"
+                                                  *ngIf="fund?.fundAUMDate != null"
+                                                  data-toggle="tooltip" data-placement="top" title="{{fund.fundAUMDate}}">
+                                            </span>
+                                            &nbsp;
+                                            <span *ngIf="fund.editedFundAUM != null" data-placement="top" title="{{fund.fundAUM}}" [style.color]="checkFundAUM(fund.editedFundAUM) ? 'black' : 'red'">
+                                                $ {{getAmountShort(fund.editedFundAUM)}}
+                                            </span>
+
                                         </span>
                                         <span *ngIf="fund.fundAUM == null && fund.recentFundAUM != null" style="color: red">
                                             $ {{getAmountShort(fund.recentFundAUM)}} {{(fund.recentFundAUMDate != null ? "(" + getReportDateShortFormatted(fund.recentFundAUMDate) + ")" : '')}}
@@ -236,31 +251,63 @@
                                         <span *ngIf="fund.currency != null && fund.currency != 'USD'" [style.color]="fundAUMByCurrency != null ? 'black' : 'red'">
                                             {{fund.currency + ' ' + getAmountShort(fund.fundAUMByCurrency)}}
                                         </span>
+                                        <span class="glyphicon glyphicon-calendar"
+                                              *ngIf="fund?.fundAUMDate != null && fund.fundAUM == null"
+                                              data-toggle="tooltip" data-placement="top" title="{{fund.fundAUMDate}}">
+                                        </span>
+
+                                        <a *ngIf="fund.currency != null && fund.currency != 'USD' && fund.fundAUM == null && fund.fundAUMByCurrency != null"
+                                           target="_blank" [routerLink]="['/lookups/currency/', {params: getNewCurrencyRateParams(fund)}]">
+                                            <span class="glyphicon glyphicon-plus-sign"></span>
+                                        </a>
                                     </td>
                                     <td align="center">
-                                        <div *ngIf="fund?.differentManagerCurrencies == null || !fund?.differentManagerCurrencies">
-                                            <span *ngIf="fund?.strategyAUM != null">
+                                        <!--<div *ngIf="fund?.differentManagerCurrencies == null || !fund?.differentManagerCurrencies">-->
+                                            <span *ngIf="fund?.strategyAUM != null" [style.color]="checkStrategyAUM(fund.strategyAUM) ? 'black' : 'red'">
                                                 {{getAmountShort(fund.strategyAUM)}}
                                             </span>
 
                                             <span *ngIf="fund.strategyAUM == null && fund.recentStrategyAUM != null" style="color: red">
-                                                {{getAmountShort(fund.recentStrategyAUM)}} {{(fund.recentStrategyAUMDate != null ? "(" + getReportDateShortFormatted(fund.recentStrategyAUMDate) + ")" : '')}}
+                                                {{getAmountShort(fund.recentStrategyAUM)}} {{(fund.recentStrategyAUMDate != null ? "( from " + getReportDateShortFormatted(fund.recentStrategyAUMDate) + ")" : '')}}
+                                            </span>
+
+                                            <span class="glyphicon glyphicon-exclamation-sign"
+                                                  *ngIf="fund.strategyAUMWithMissingCurrency"
+                                                  data-toggle="tooltip" data-placement="top" title="Currency rates missing for some of the Manager funds">
+                                            </span>
+
+                                            <!--<a data-toggle="modal" data-target="#infoModal" style="cursor: pointer">-->
+                                                <!--<span class="glyphicon glyphicon-exclamation-sign"></span>-->
+                                            <!--</a>-->
+                                        <!--</div>-->
+                                        <!--<div *ngIf="fund?.differentManagerCurrencies">-->
+                                            <!--<span style="color: red">Different currency funds for manager</span>-->
+                                        <!--</div>-->
+                                    </td>
+                                    <td *ngIf="!fund.editing" [style.color]="checkManagerAUM(fund) ? 'black' : 'red'">
+                                        {{fund.managerAUM != null ? getAmountShort(fund.managerAUM) : '--'}} &nbsp;
+                                        <!--<span (click)="editFundManagerAUM(fund)" style="color: black">-->
+                                            <!--<span class="glyphicon glyphicon-pencil"></span>-->
+                                        <!--</span>-->
+                                    </td>
+                                    <td *ngIf="fund.editing">
+                                        <div class="input-group">
+                                            <input class="form-control small"  type="text" name="managerAUM" [(ngModel)]="fund.managerAUM" (keyup)="onNumberFund(fund)"/>
+                                            <span class="input-group-btn">
+                                                <button class="btn-xs btn-success inline-block" (click)="saveManagerAUM(fund)"><span class="small glyphicon glyphicon-ok"></span></button>
+                                                <button class="btn-xs btn-default inline-block" (click)="cancelManagerAUMUpdate(fund)"><span class="small glyphicon glyphicon-ban-circle"></span></button>
                                             </span>
                                         </div>
-                                        <div *ngIf="fund?.differentManagerCurrencies">
-                                            <span style="color: red">Different currency funds for manager</span>
-                                        </div>
-                                    </td>
-                                    <td *ngIf="!showManagerAUMInput" [style.color]="checkManagerAUM(fund) ? 'black' : 'red'">
-                                        {{fund.managerAUM != null ? getAmountShort(fund.managerAUM) : '--'}} &nbsp;
-                                        <span (click)="editFundManagerAUM(fund)" style="color: black">
-                                            <span class="glyphicon glyphicon-pencil"></span>
-                                        </span>
-                                    </td>
-                                    <td *ngIf="showManagerAUMInput">
-                                        <input class="form-control"  type="text" name="managerAUM" [(ngModel)]="fund.managerAUM" (keyup)="onNumberFund(fund)"/>
                                     </td>
                                     <td *ngIf="isUnqualifiedFundList" [style.color]="fund.recentTrackRecordDateWithinLookback ? 'black' : 'red'">{{getReportDateShortFormatted(fund.recentTrackRecordDate) }}</td>
+
+                                <td>
+                                    <!--<a class="btn btn-xs btn-default" data-toggle="modal" (click)="editFund(fund)" data-target="#insideModal">edit</a>-->
+
+                                    <span (click)="editFund(fund)" style="color: black" data-toggle="modal" data-target="#insideModal">
+                                            <span class="glyphicon glyphicon-pencil"></span>
+                                    </span>
+                                </td>
 <!--                                    <td *ngIf="showParameterMatching" style="background-color: #2e6da4">+</td>
                                     <td *ngIf="showParameterMatching" style="background-color: #2e6da4">+</td>
                                     <td *ngIf="showParameterMatching" style="background-color: #2e6da4">-</td>-->
@@ -270,13 +317,100 @@
                         </div>
                     </div>
                 </div>
+
+                <!--<div class="modal fade" id="infoModal" role="dialog">-->
+                    <!--<div class="modal-dialog" style="overflow-y: scroll; max-height:85%;  margin-top: 50px; margin-bottom:50px; width:65%;">-->
+                        <!--<div class="modal-content">-->
+                            <!--<div class="modal-header">-->
+                                <!--<h3 class="modal-title"  style="word-wrap: break-word">Currency rates missing for some of the Investor funds</h3>-->
+                            <!--</div>-->
+                            <!--<div class="modal-body">-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default pull-left" (click)="closeModal()" data-dismiss="modal">Close</button>
-                    <button *ngIf="showManagerAUMInput" type="button" class="btn btn-success pull-right" (click)="saveUndecidedList()">SAVE</button>
-                    <button type="button" class="btn btn-primary pull-right" (click)="closeModal()" data-dismiss="modal">OK</button>
+                    <!--<button *ngIf="showManagerAUMInput" type="button" class="btn btn-success pull-right" (click)="saveUndecidedList()">SAVE</button>-->
+                    <!--<button type="button" class="btn btn-primary pull-right" (click)="closeModal()" data-dismiss="modal">OK</button>-->
                 </div>
             </div>
         </div>
     </div>
+
+    <div [ngBusy]="busyStats" class="modal fade" id="insideModal" role="dialog" tabindex="-1">
+        <div class="modal-dialog" style="min-height: 100px; margin-top: 20%; width:75%;">
+            <div class="modal-content" *ngIf="selectedFund != null">
+                <div [ngBusy]="busyModal"  class="modal-body">
+                    <div class="row">
+                        <div class="row top-buffer" >
+                            <div class="col-md-12">
+                                <div class="alert alert-info" *ngIf="selectedFundSuccessMessage != null"><span>{{selectedFundSuccessMessage}}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top-buffer" >
+                            <div class="col-md-12">
+                                <div class="alert alert-danger" *ngIf="selectedFundErrorMessage != null"><span>{{selectedFundErrorMessage}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4>{{selectedFund.fundName}}</h4>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-3">
+                                <label>Fund AUM,$: </label>
+                                <span [style.text-decoration]="selectedFund.editedFundAUM != null && selectedFund.editedFundAUM != '' ? 'line-through' : ''"
+                                      [style.font-weight]="selectedFund.editedFundAUM != null && selectedFund.editedFundAUM != '' ? '' : 'bold'">
+                                    {{getAmountShort(selectedFund.fundAUM)}} <span class="glyphicon glyphicon-calendar"></span>{{selectedFund.fundAUMDate}}</span>
+                                <input class="form-control" type="text" name="fundAUM" [(ngModel)]="selectedFund.editedFundAUM" placeholder="Upd Fund AUM, $..."
+                                       (keyup)="onNumberChangeSelectedFundAUM()"/>
+                            </div>
+                            <div class="col-md-3">
+                                <label>AUM Date</label>
+                                <div class='input-group date col-md-2' id='editedFundAUMDateTPicker' style="width: 100%">
+                                    <input type='text' class="form-control" id="editedFundAUMDate" name="editedFundAUMDate" [(ngModel)]="selectedFund.editedFundAUMDate"/>
+                                                <span class="input-group-addon">
+                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                </span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Comment</label>
+                                <input class="form-control" type="text" name="fundAUM" [(ngModel)]="selectedFund.editedFundAUMComment" placeholder="Comment..."/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-3">
+                                    <label>Manager AUM, $</label>
+                                    <input class="form-control" type="text" name="fundAUM" [(ngModel)]="selectedFund.managerAUM"
+                                           (keyup)="onNumberChangeSelectedFundManagerAUM()" placeholder="Manager AUM, $..."/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">&nbsp;</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-9">
+                                    <button class="btn btn-default pull-left" data-dismiss="modal">CLOSE</button>
+                                </div>
+                                <div class="col-md-3">
+                                    <button class="btn btn-success pull-right" (click)="saveFund()">SAVE</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 </div>

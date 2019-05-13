@@ -1,5 +1,7 @@
 package kz.nicnbk.service.converter.hf;
 
+import kz.nicnbk.common.service.util.DateUtils;
+import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.api.hf.HedgeFundScreeningFilteredResultRepository;
 import kz.nicnbk.repo.api.hf.HedgeFundScreeningRepository;
 import kz.nicnbk.repo.model.employee.Employee;
@@ -35,6 +37,14 @@ public class HedgeFundScreeningFilteredResultEntityConverter extends BaseDozerEn
 
         entity.setScreening(new HedgeFundScreening(dto.getScreeningId()));
 
+        if(StringUtils.isNotEmpty(dto.getStartDateMonth())){
+            Date monthDate = DateUtils.getDate("01." + dto.getStartDateMonth());
+            if(monthDate != null) {
+                Date lastDayDate = DateUtils.getLastDayOfCurrentMonth(monthDate);
+                entity.setStartDate(lastDayDate);
+            }
+        }
+
         if(entity.getId() == null){
             // set creator
             if(dto.getCreator() != null) {
@@ -69,6 +79,11 @@ public class HedgeFundScreeningFilteredResultEntityConverter extends BaseDozerEn
         HedgeFundScreeningFilteredResultDto dto = super.disassemble(entity);
 
         dto.setScreeningId(entity.getScreening().getId());
+
+        if(entity.getStartDate() != null){
+            int month = DateUtils.getMonth(entity.getStartDate());
+            dto.setStartDateMonth(((month + 1) < 10 ? "0" + (month + 1) : month + 1) + "." + DateUtils.getYear(entity.getStartDate()));
+        }
         // creator
         if(entity.getCreator() != null){
             dto.setCreator(entity.getCreator().getUsername());

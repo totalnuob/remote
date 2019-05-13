@@ -39,6 +39,8 @@ export class HedgeFundScreeningService extends CommonService{
     private HF_SCREENING_FILTERED_RESULTS_UNDECIDED_FUNDS_LIST_GET_URL = this.HF_BASE_URL + "filteredResults/undecidedFundList/get/";
 
     private HF_SCREENING_FILTERED_UPDATE_MANAGER_AUM_URL = this.HF_BASE_URL + "filteredResults/updateManagerAUM/";
+    private HF_SCREENING_FILTERED_UPDATE_FUND_URL = this.HF_BASE_URL + "filteredResults/updateFund/";
+
 
 
 
@@ -189,6 +191,15 @@ export class HedgeFundScreeningService extends CommonService{
         let body = JSON.stringify(list);
 
         return this.http.post(this.HF_SCREENING_FILTERED_UPDATE_MANAGER_AUM_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    updateFund(fund){
+
+        let body = JSON.stringify(fund);
+
+        return this.http.post(this.HF_SCREENING_FILTERED_UPDATE_FUND_URL, body, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }

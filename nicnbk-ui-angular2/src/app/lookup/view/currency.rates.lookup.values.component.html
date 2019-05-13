@@ -1,0 +1,204 @@
+<div class="container">
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li>
+                    <span><a [routerLink]="['/lookups']">Lookups</a></span>
+                </li>
+                <!--<li *ngIf="report != null" class="active">{{getReportDateShortFormatted(report.reportDate)}}</li>-->
+                <li class="active">Currency Rates</li>
+            </ol>
+        </div>
+    </div>
+    <div class="row withpadding" style="min-height: 100%">
+
+        <div class="row top-buffer" *ngIf="errorMessage != null || successMessage != null">
+            <div class="col-md-12">
+                <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+                </div>
+                <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-1 pull-right">
+                    <a class="btn btn-primary" id="openCurrencyModalButton" data-toggle="modal" data-target="#addNewModal" (click)="edit()" style="cursor: pointer">
+                        <!--<span class="glyphicon glyphicon-edit"></span>-->Add
+                    </a>
+                </div>
+            </div>
+        </div>
+        <br/>
+
+        <div class="jumbotron">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-3">
+                        <label for="currencySearchParam">Currency</label>
+                        <select class="form-control" style="width: 100%" [(ngModel)]="searchParams.currencyCode" id="currencySearchParam"
+                                [ngModelOptions]="{standalone: true}">
+                            <option *ngFor="let currency of currencyList" [value]="currency.code">{{currency.code}}</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="fromDateDTPickeer">From</label>
+                        <div class='input-group date col-md-3' id='fromDateDTPickeer' style="width: 100%">
+                            <input type='text' class="form-control" id="fromDate" [(ngModel)]="searchParams.fromDate"/>
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="untilDateDTPickeer">To</label>
+                        <div class='input-group date col-md-3' id='untilDateDTPickeer' style="width: 100%">
+                            <input type='text' class="form-control" id="toDate" [(ngModel)]="searchParams.toDate"/>
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br/>
+            <div class="row">
+                <button type="button"class="btn-xs btn-default pull-left" (click)="clearSearchForm()">
+                    <!--<i class="glyphicon glyphicon-trash"></i>-->Reset
+                </button>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <button type="button" class="btn btn-success pull-right" (click)="search()">Search</button>
+                </div>
+            </div>
+        </div>
+        <div>
+            <label>Total found: <span>{{searchResults?.totalElements > 0 ?  searchResults?.totalElements : 0}}</span></label>
+        </div>
+
+        <div class="row">
+            <div class="row pull-right">
+                <ul class="pagination" *ngIf="searchResults?.showPageFrom > 0">
+                    <li><a *ngIf="searchResults?.showPageFrom > 1" (click)="search(searchResults.showPageFrom - 1)">&laquo;</a></li>
+                    <li *ngFor="let i of range(searchResults.showPageFrom, searchResults.showPageTo)" [class.active]="i == searchResults.currentPage">
+                        <a (click)="search(i)">{{i}}</a>
+                    </li>
+                    <li><a *ngIf="searchResults.showPageTo < searchResults.totalPages" (click)="search(searchResults.showPageTo + 1)">&raquo;</a></li>
+                </ul>
+            </div>
+
+            <table [ngBusy]="busy" class="table table-hover">
+                <thead>
+                <tr>
+                    <th>DATE</th>
+                    <th>CURRENCY</th>
+                    <th>KZT</th>
+                    <th>USD</th>
+                    <!--<th>AVG VALUE</th>-->
+                    <!--<th>AVG VALUE YR</th>-->
+                    <th>&nbsp;</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of searchResults?.currencyRates">
+                        <td>{{item.date}}</td>
+                        <td>{{item?.currency?.code}}</td>
+                        <td>{{item.value}}</td>
+                        <td>{{item.valueUSD}}</td>
+                        <!--<td>{{item.averageValue}}</td>-->
+                        <!--<td>{{item.averageValueYear}}</td>-->
+                        <td>
+                            <button *ngIf = "item.editable" type="button" class="btn-xs btn-success" style="display: inline-block"
+                                    data-toggle="modal" data-target="#addNewModal" (click)="edit(item)">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                            </button>
+
+                            <button *ngIf = "item.editable" type="button" class="btn btn-xs btn-danger" style="display: inline-block"
+                                    disabled (click)="delete(item)">
+                                <span class="glyphicon glyphicon-trash"></span>
+                            </button>
+
+                            <!--<a class="btn btn-primary" data-toggle="modal" data-target="#addNewModal" (click)="edit(item)" style="cursor: pointer">-->
+                                <!--<span class="glyphicon glyphicon-edit"></span>-->
+                            <!--</a>-->
+
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="row pull-right">
+                <ul class="pagination" *ngIf="searchResults?.showPageFrom > 0">
+                    <li><a *ngIf="searchResults?.showPageFrom > 1" (click)="search(searchResults.showPageFrom - 1)">&laquo;</a></li>
+                    <li *ngFor="let i of range(searchResults.showPageFrom, searchResults.showPageTo)" [class.active]="i == searchResults.currentPage">
+                        <a (click)="search(i)">{{i}}</a>
+                    </li>
+                    <li><a *ngIf="searchResults.showPageTo < searchResults.totalPages" (click)="search(searchResults.showPageTo + 1)">&raquo;</a></li>
+                </ul>
+            </div>
+        </div>
+
+
+        <div class="modal fade" id="addNewModal" role="dialog">
+            <div class="modal-dialog" style="overflow-y: scroll; max-height:85%;  margin-top: 50px; margin-bottom:50px; width:65%;">
+                <div class="modal-content" style="min-height: 400px">
+                    <div class="modal-header">
+                        <h3 class="modal-title"  style="word-wrap: break-word">Enter new currency rate record</h3>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="row top-buffer" >
+                            <div class="col-md-12">
+                                <div class="alert alert-danger" *ngIf="errorMessageSaveCurrencyRate != null"><span style="white-space: pre-wrap">{{errorMessageSaveCurrencyRate}}</span>
+                                </div>
+                                <div class="alert alert-info" *ngIf="successMessageSaveCurrencyRate != null"><span>{{successMessageSaveCurrencyRate}}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-2">
+                                    <div class='input-group date col-md-3' id='valueDateDTPickeer' style="width: 100%">
+                                        <input type='text' class="form-control" id="valueDate" [(ngModel)]="selectedCurrencyRate.date"/>
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <select class="form-control" style="width: 100%" [(ngModel)]="selectedCurrencyRate.currency.code"
+                                            [ngModelOptions]="{standalone: true}" (ngModelChange)="currencyChanged()">
+                                        <option *ngFor="let currency of currencyList" [value]="currency.code">{{currency.code}}</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="number" class="form-control" placeholder="Enter KZT..." [(ngModel)]="selectedCurrencyRate.value"/>
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="number" [disabled]="selectedCurrencyRate.currency.code == 'USD'" class="form-control" placeholder="Enter USD..." [(ngModel)]="selectedCurrencyRate.valueUSD"/>
+                                </div>
+                                <!--<div class="col-md-2">-->
+                                    <!--<input type="number" class="form-control" [disabled]="!checkAverageValue()" placeholder="KZT MON AVG..." [(ngModel)]="selectedCurrencyRate.averageValue"/>-->
+                                <!--</div>-->
+                                <!--<div class="col-md-2">-->
+                                    <!--<input type="number" class="form-control" [disabled]="!checkAverageYearValue()" placeholder="KZT YR AVG..." [(ngModel)]="selectedCurrencyRate.averageValueYear"/>-->
+                                <!--</div>-->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" (click)="save()">Save</button>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

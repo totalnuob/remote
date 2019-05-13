@@ -53,4 +53,6 @@ public interface HedgeFundScreeningService extends BaseService {
     List<HedgeFundScreeningParsedDataDto> getFilteredResultUndecidedFundList( HedgeFundScreeningFilteredResultDto params);
 
     boolean updateManagerAUM(List<HedgeFundScreeningParsedDataDto> fundList, String username);
+
+    boolean updateFundInfo(HedgeFundScreeningParsedDataDto fund, String username);
 }

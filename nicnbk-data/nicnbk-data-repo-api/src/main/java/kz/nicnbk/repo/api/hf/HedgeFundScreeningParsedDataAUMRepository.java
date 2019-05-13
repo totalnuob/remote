@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 
 public interface HedgeFundScreeningParsedDataAUMRepository extends PagingAndSortingRepository<HedgeFundScreeningParsedDataAUM, Long> {
@@ -36,5 +37,12 @@ public interface HedgeFundScreeningParsedDataAUMRepository extends PagingAndSort
     @Query("SELECT e FROM HedgeFundScreeningParsedDataAUM e WHERE e.screening.id=?1 AND " +
             " e.date >= ?2 AND e.date <= ?3 AND e.fundId=?4")
     List<HedgeFundScreeningParsedDataAUM> findByScreeningIdAndDateRangeAndFundId(Long screeningId, Date dateFrom, Date dateTo, Long fundId);
+
+
+    @Query("SELECT DISTINCT e FROM HedgeFundScreeningParsedDataAUM e WHERE e.screening.id=?1 " +
+            " AND e.value is not null AND e.fundId in ?4 AND e.date=(SELECT MAX(e2.date) from HedgeFundScreeningParsedDataAUM e2 " +
+            "WHERE e2.value is not null AND " +
+            "e2.screening.id=?1 AND e2.date >= ?2 AND e2.date <= ?3 AND e2.fundId in (?4))")
+    List<HedgeFundScreeningParsedDataAUM> getLastAUMByFundIdList(Long screeningId, Date dateFrom, Date dateTo, Set<Long> fundIds);
 
 }

@@ -22,7 +22,7 @@ public interface HedgeFundScreeningParsedDataReturnRepository extends PagingAndS
     void deleteByScreeningId(Long screeningId);
 
     @Query("SELECT e FROM HedgeFundScreeningParsedDataReturn e WHERE e.screening.id=?1 AND " +
-            " e.date >= ?2 AND e.date <= ?3 ")
+            " e.date >= ?2 AND e.date <= ?3 ORDER BY e.fundId")
     List<HedgeFundScreeningParsedDataReturn> findByScreeningIdAndDateRange(Long screeningId, Date dateFrom, Date dateTo);
 
     @Query("SELECT max(e.date) FROM HedgeFundScreeningParsedDataReturn e WHERE e.screening.id=?1")

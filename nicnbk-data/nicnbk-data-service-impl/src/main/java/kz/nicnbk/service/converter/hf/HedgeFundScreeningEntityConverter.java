@@ -1,5 +1,7 @@
 package kz.nicnbk.service.converter.hf;
 
+import kz.nicnbk.common.service.util.DateUtils;
+import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.api.hf.HedgeFundScreeningRepository;
 import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.hf.*;
@@ -7,6 +9,7 @@ import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.converter.dozer.BaseDozerEntityConverter;
 import kz.nicnbk.service.dto.employee.EmployeeDto;
 import kz.nicnbk.service.dto.hf.HedgeFundScreeningDto;
+import org.apache.poi.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -63,6 +66,7 @@ public class HedgeFundScreeningEntityConverter extends BaseDozerEntityConverter<
     @Override
     public HedgeFundScreeningDto disassemble(HedgeFundScreening entity){
         HedgeFundScreeningDto dto = super.disassemble(entity);
+
         // creator
         if(entity.getCreator() != null){
             dto.setCreator(entity.getCreator().getUsername());

@@ -15,6 +15,7 @@ public class HedgeFundScreeningDto extends CreateUpdateBaseEntityDto<HedgeFundSc
     private String name;
     private String description;
     private Date date;
+    private String startDate;
 
     private Long fileId;
     private String fileName;
@@ -102,6 +103,14 @@ public class HedgeFundScreeningDto extends CreateUpdateBaseEntityDto<HedgeFundSc
 
     public void setParsedUcitsData(List<HedgeFundScreeningParsedDataDto> parsedUcitsData) {
         this.parsedUcitsData = parsedUcitsData;
+    }
+
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
     }
 }
 
