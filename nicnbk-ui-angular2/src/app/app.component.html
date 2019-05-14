@@ -3,6 +3,16 @@
 <head>
     <!--/*  Each token will be replaced by their respective titles in the resulting page. */-->
     <title>Home</title>
+    <style>
+        body {
+            background-image: url("../../public/img/mountains.png");
+            background-repeat: no-repeat;
+            background-position: bottom;
+            /*background-height: 200px;*/
+            background-size: 100%;
+            background-color: white;
+        }
+    </style>
 </head>
 <body>
 <div class="header">
@@ -163,8 +173,9 @@
     <!--</div>-->
 <!--</div>-->
 
-
+<div style="min-height: 800px">
 <router-outlet></router-outlet>
+</div>
 
 <div class="copyrightText">&copy; 2018 National Investment Corporation NBK </div>
 <div class="copyrightText">UNIC v.1.9.0 </div>
