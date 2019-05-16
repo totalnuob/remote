@@ -29,6 +29,8 @@ declare var $: any
     changeDetection: ChangeDetectionStrategy.Default // TODO: change to OnPush ??
 })
 export class NewsListComponent extends CommonFormViewComponent implements OnInit{
+    activeTab = "NEWS_GENERAL";
+
     busy: Subscription;
     newsList:  News[];
     selectedNews = new News;

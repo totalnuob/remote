@@ -33,6 +33,7 @@ declare var $:any
     providers: [],
 })
 export class CorpMeetingsListComponent extends CommonFormViewComponent implements OnInit {
+    activeTab = "IC_TOPICS";
     modalSuccessMessage: string;
     modalErrorMessage: string;
 
@@ -172,6 +173,8 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
     }
 
     searchICMeetingTopics(page){
+        this.activeTab = "IC_TOPICS";
+
         this.successMessage = null;
         this.errorMessage = null;
 
@@ -218,9 +221,12 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
 
         $('#fromDateIC').val(null);
         $('#toDateIC').val(null);
+
     }
 
     searchIC(page){
+        this.activeTab = "IC_LIST";
+
         this.successMessage = null;
         this.errorMessage = null;
 

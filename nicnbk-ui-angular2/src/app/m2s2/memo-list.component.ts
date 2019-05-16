@@ -75,22 +75,22 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
         this.sub = this.route
             .params
             .subscribe(params => {
-               if(params['params'] != null){
-                this.searchParams = JSON.parse(params['params']);
+                if(params['params'] != null){
+                    this.searchParams = JSON.parse(params['params']);
 
-                //console.log(this.searchParams.fromDate);
-                $('#fromDate').val(this.searchParams.fromDate);
-                $('#toDate').val(this.searchParams.toDate);
+                    //console.log(this.searchParams.fromDate);
+                    $('#fromDate').val(this.searchParams.fromDate);
+                    $('#toDate').val(this.searchParams.toDate);
 
 
-                this.busy = this.memoService.search(this.searchParams)
-                    .subscribe(
-                        searchResult  => {
-                            this.memoList = searchResult.memos;
-                            this.memoSearchResult = searchResult;
-                        },
-                        error =>  this.errorMessage = "Failed to search memos."
-                    );
+                    this.busy = this.memoService.search(this.searchParams)
+                        .subscribe(
+                            searchResult  => {
+                                this.memoList = searchResult.memos;
+                                this.memoSearchResult = searchResult;
+                            },
+                            error =>  this.errorMessage = "Failed to search memos."
+                        );
                 } else {
                    this.search(0);
                 }
@@ -307,6 +307,7 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
     }
 
     showMemo(){
-        return !this.moduleAccessChecler.checkAccessMemoRestricted();
+        return true;
+        //return !this.moduleAccessChecler.checkAccessMemoRestricted();
     }
 }

@@ -19,7 +19,7 @@ declare var google:any;
     providers: []
 })
 export class  MMViewComponent extends GoogleChartComponent {
-
+    activeTab = "GLOBAL";
     public sub: any;
     busy: Subscription;
     fieldsLookup = [];
@@ -55,18 +55,22 @@ export class  MMViewComponent extends GoogleChartComponent {
             this.indexName = 'MSCI World';
             this.tableName = 'table';
             this.lineChartName = 'line_chart';
+            this.activeTab = 'GLOBAL';
         } else if(typeId == 2) {
             this.indexName = 'S&P 500';
             this.tableName = 'table_us';
             this.lineChartName = 'line_chart_us';
+            this.activeTab = 'US';
         } else if(typeId == 3) {
             this.indexName = 'Shanghai SE composite';
             this.tableName = 'table_china';
             this.lineChartName = 'line_chart_china';
+            this.activeTab = 'CHINA';
         } else if(typeId == 4) {
             this.indexName = 'STXE 600 Index';
             this.tableName = 'table_eu';
             this.lineChartName = 'line_chart_eu';
+            this.activeTab = 'EU';
         } else {
 
         }

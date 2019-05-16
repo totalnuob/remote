@@ -3,157 +3,453 @@
 <head>
     <!--/*  Each token will be replaced by their respective titles in the resulting page. */-->
     <title>Home</title>
+        <!--<style>-->
+            <!--ul {-->
+                <!--list-style-type: none;-->
+                <!--margin: 0;-->
+                <!--padding: 0;-->
+                <!--overflow: hidden;-->
+                <!--border: 1px solid #e7e7e7;-->
+                <!--background-color: #f3f3f3;-->
+            <!--}-->
+
+            <!--li {-->
+                <!--float: left;-->
+            <!--}-->
+
+            <!--li a {-->
+                <!--display: block;-->
+                <!--color: #ECDFCF;-->
+                <!--text-align: center;-->
+                <!--padding: 14px 16px;-->
+                <!--text-decoration: none;-->
+            <!--}-->
+
+            <!--li a:hover:not(.active) {-->
+                <!--background-color: #ddd;-->
+            <!--}-->
+
+            <!--li a.active {-->
+                <!--color: black;-->
+                <!--background-color: #DEAA62;-->
+            <!--}-->
+        <!--</style>-->
 </head>
 <body>
-<div class="header">
-    <div class="container">
-        <ul>
-            <li style="float:right"><a (click)="logout()">
-                <h5><span class="glyphicon glyphicon-off"></span></h5></a></li>
-            <li style="float:right"><a [routerLink]="['/profile']">
-                <h5><span class="glyphicon glyphicon-user"></span></h5></a></li>
-            <li style="float:right"><a href="#">
-                <h5><span class="glyphicon glyphicon-cog"></span></h5></a></li>
-            <li style="float:right"><h5><span class="glyphicon">Hello{{getUsername()}}</span></h5></li>
+<!--<div class="header">-->
+    <!--<div class="container">-->
+        <!--<ul>-->
+            <!--<li style="float:right"><a (click)="logout()">-->
+                <!--<h5><span class="glyphicon glyphicon-off"></span></h5></a></li>-->
+            <!--<li style="float:right"><a [routerLink]="['/profile']">-->
+                <!--<h5><span class="glyphicon glyphicon-user"></span></h5></a></li>-->
+            <!--<li style="float:right"><a href="#">-->
+                <!--<h5><span class="glyphicon glyphicon-cog"></span></h5></a></li>-->
+            <!--<li style="float:right"><h5><span class="glyphicon">Hello{{getUsername()}}</span></h5></li>-->
 
 
-            <li style="float:left; background-color:#1D7D35;">
-                <!--<a href="#about">-->
-                <!--<h4><span class="label label-primary">NIC System</span></h4>-->
-                <img src="../../public/img/nic.png" height="50" width="35"/>
-                <!--</a>-->
-            </li>
-            <li style="padding-top: 1%; padding-bottom: 1%; padding-left: 1%;">
-                <span style="color: #7B7A7A; font-family: Arial; font-weight: bold; font-size: medium;">NATIONAL INVESTMENT CORPORATION</span>
-                <!--<a href="#about">-->
-                <!--<h4><span class="label label-primary">NIC System</span></h4>-->
-                <!--<img th:src="@{/img/nic-name-logo.png}" height="40" width="600"/>-->
-                <!--</a>-->
-            </li>
-        </ul>
-        <div class="row" style="padding-left: 15px; padding-right: 15px;">
-            <div class="col-md-12" style="background-color:#DEBA5B;height: 5px;">
-            </div>
-        </div>
-    </div>
-    <br/>
-    <div class="container" *ngIf="showMenu()">
-        <!--<div class="row">-->
-            <!--<div class="col-md-3 pull-right">-->
-                <!--<div>Hello, {{getUsername()}}</div>-->
+            <!--<li style="float:left; background-color:#1D7D35;">-->
+                <!--&lt;!&ndash;<a href="#about">&ndash;&gt;-->
+                <!--&lt;!&ndash;<h4><span class="label label-primary">NIC System</span></h4>&ndash;&gt;-->
+                <!--<img src="../../public/img/nic.png" height="50" width="35"/>-->
+                <!--&lt;!&ndash;</a>&ndash;&gt;-->
+            <!--</li>-->
+            <!--<li style="padding-top: 1%; padding-bottom: 1%; padding-left: 1%;">-->
+                <!--<span style="color: #7B7A7A; font-family: Arial; font-weight: bold; font-size: medium;">NATIONAL INVESTMENT CORPORATION</span>-->
+                <!--&lt;!&ndash;<a href="#about">&ndash;&gt;-->
+                <!--&lt;!&ndash;<h4><span class="label label-primary">NIC System</span></h4>&ndash;&gt;-->
+                <!--&lt;!&ndash;<img th:src="@{/img/nic-name-logo.png}" height="40" width="600"/>&ndash;&gt;-->
+                <!--&lt;!&ndash;</a>&ndash;&gt;-->
+            <!--</li>-->
+        <!--</ul>-->
+        <!--<div class="row" style="padding-left: 15px; padding-right: 15px;">-->
+            <!--<div class="col-md-12" style="background-color:#DEBA5B;height: 5px;">-->
             <!--</div>-->
         <!--</div>-->
-        <div class="row">
-            <div class="col-md-3 pull-right">
-                <div id="custom-search-input">
-                    <div class="input-group col-md-12">
-                        <input type="text" class="form-control" placeholder="search..." />
-                        <span class="input-group-btn">
-                            <button class="btn btn-info" type="button">
-                                <i class="glyphicon glyphicon-search"></i>
-                            </button>
-                        </span>
+    <!--</div>-->
+    <!--<br/>-->
+    <!--<div class="container" *ngIf="showMenu()">-->
+        <!--&lt;!&ndash;<div class="row">&ndash;&gt;-->
+            <!--&lt;!&ndash;<div class="col-md-3 pull-right">&ndash;&gt;-->
+                <!--&lt;!&ndash;<div>Hello, {{getUsername()}}</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+        <!--<div class="row">-->
+            <!--<div class="col-md-3 pull-right">-->
+                <!--<div id="custom-search-input">-->
+                    <!--<div class="input-group col-md-12">-->
+                        <!--<input type="text" class="form-control" placeholder="search..." />-->
+                        <!--<span class="input-group-btn">-->
+                            <!--<button class="btn btn-info" type="button">-->
+                                <!--<i class="glyphicon glyphicon-search"></i>-->
+                            <!--</button>-->
+                        <!--</span>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<hr/>-->
+    <!--</div>-->
+<!--</div>-->
+
+<!--<div class="container">-->
+    <!--<div id="app" data-server-rendered="true">-->
+        <!--<div class="layout">-->
+            <!--<div class="layout__wrapper">-->
+                <!--<div>-->
+                    <!--<div class="m-menu">-->
+                        <!--<ul class="m-menu__list">-->
+                            <!--<li><a href="/ru/about/mandate" class="m-menu__link">О нас</a></li>-->
+                            <!--<li><a href="/ru/investments/investment-beliefs" class="m-menu__link">Инвестиции</a></li>-->
+                            <!--<li><a href="/ru/press-center/news" class="m-menu__link">Пресс-центр</a></li>-->
+                            <!--<li><a href="/ru/career" class="m-menu__link">Карьера</a></li>-->
+                            <!--<li><a href="/ru/contacts" class="m-menu__link">Контакты</a></li>-->
+                        <!--</ul>-->
+                        <!--<ul class="lang m-menu__lang"><li><a href="/" class="lang__link">en</a></li>-->
+                            <!--<li><a href="/ru/" class="lang__link -active">ru</a></li>-->
+                            <!--<li><a href="/kk/" class="lang__link">kk</a></li>-->
+                        <!--</ul>-->
+                    <!--</div>-->
+                    <!--<header class="header -transparent js-home">-->
+                        <!--<header class="container">-->
+                            <!--<div class="header__row">-->
+                                <!--<button type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="burger">-->
+                                    <!--<span class="burger__item"></span> <span class="burger__item"></span>-->
+                                    <!--<span class="burger__item"></span>-->
+                                <!--</button>-->
+                                <!--<a href="/ru/" title="NICNBK" class="logo header__logo router-link-exact-active -active">NICNBK</a>-->
+                                <!--<nav class="navigation">-->
+                                    <!--<ul class="navigation__menu">-->
+                                        <!--<li class="navigation__item dropdown">-->
+                                            <!--<a href="/ru/about/mandate" class="navigation__link">О нас</a>-->
+                                            <!--<ul aria-labelledby="navLink-1" class="dropdown-menu">-->
+                                            <!--<li><a href="/ru/about/mandate" class="navigation__sublink">Мандат НИК</a></li>-->
+                                            <!--<li><a href="/ru/about/history" class="navigation__sublink">История</a></li>-->
+                                            <!--<li><a href="/ru/about/governance" class="navigation__sublink">Управление</a></li>-->
+                                            <!--<li><a href="/ru/about/international-relationships" class="navigation__sublink">Членство в международных организациях</a></li>-->
+                                            <!--</ul>-->
+                                        <!--</li>-->
+                                        <!--<li class="navigation__item dropdown">-->
+                                            <!--<a href="/ru/investments/investment-beliefs" class="navigation__link">Инвестиции</a>-->
+                                            <!--<ul aria-labelledby="navLink-1" class="dropdown-menu">-->
+                                                <!--<li><a href="/ru/investments/investment-beliefs" class="navigation__sublink">Инвестиционные убеждения</a></li>-->
+                                                <!--<li><a href="/ru/investments/investment-approach" class="navigation__sublink">Инвестиционный подход</a></li>-->
+                                                <!--<li><a href="/ru/investments/alternative-investments" class="navigation__sublink">Альтернативные инвестиции</a></li>-->
+                                                <!--<li><a href="/ru/investments/risk-management" class="navigation__sublink">Управление рисками</a></li>-->
+                                            <!--</ul>-->
+                                        <!--</li>-->
+                                        <!--<li class="navigation__item dropdown">-->
+                                            <!--<a href="/ru/press-center/news" class="navigation__link">Пресс-центр</a>-->
+                                            <!--<ul aria-labelledby="navLink-1" class="dropdown-menu">-->
+                                                <!--<li><a href="/ru/press-center/news" class="navigation__sublink">Новости</a></li>-->
+                                                <!--<li><a href="/ru/press-center/social" class="navigation__sublink">Публикации</a></li>-->
+                                                <!--<li><a href="/ru/press-center/financial-reports" class="navigation__sublink">Финансовые отчеты</a></li>-->
+                                            <!--</ul>-->
+                                        <!--</li>-->
+                                        <!--<li class="navigation__item dropdown"><a href="/ru/career" class="navigation__link">Карьера</a> </li>-->
+                                        <!--<li class="navigation__item dropdown"><a href="/ru/contacts" class="navigation__link">Контакты </a> &lt;!&ndash;&ndash;&gt;</li>-->
+                                    <!--</ul>-->
+                                <!--</nav>-->
+                            <!--</div>-->
+                        <!--</header>-->
+                    <!--</header>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->
+<div id="app">
+    <div class="layout" style="">
+        <div class="layout__wrapper">
+            <header class="menu_header">
+                <div class="menu_container">
+                    <div class="menu_header__row">
+                        <a href="#news" title="NICNBK" class="menu_logo menu_header__logo -active" (click)="activeMenu = 'NEWS'">NICNBK</a>
+                        <nav class="menu_navigation">
+                        <ul class="navigation__menu" style="background-color: white">
+                            <li class="navigation__item dropdown">
+                                <a class="navigation__link" style="font-family: IBM Plex Sans"
+                                   [style.border-bottom-color]="activeMenu === 'MONITORING' ? '#D9A158' : 'white'">Monitoring</a>
+                                <ul  class="dropdown-menu">
+                                    <li><a [routerLink]="['/monitoring/portfolio']" class="navigation__sublink"
+                                           (click)="activeMenu = 'MONITORING'">NIC Portfolio</a></li>
+                                    <li><a [routerLink]="['/monitoring/liq']" class="navigation__sublink"
+                                           (click)="activeMenu = 'MONITORING'">Liquid Portfolio</a></li>
+                                    <li><a [routerLink]="['/monitoring/peFund']" class="navigation__sublink"
+                                           (click)="activeMenu = 'MONITORING'">Tarragon</a></li>
+                                    <li><a [routerLink]="['/monitoring/hf2']" class="navigation__sublink"
+                                           (click)="activeMenu = 'MONITORING'">Singularity</a></li>
+                                    <li><a [routerLink]="['/monitoring/hflist']" class="navigation__sublink"
+                                           (click)="activeMenu = 'MONITORING'">HF Portfolio Updates</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="navigation__item dropdown"><a [routerLink]="['/macromonitor']" class="navigation__link"
+                                                                     [style.border-bottom-color]="activeMenu === 'MACROMONITOR' ? '#D9A158' : 'white'" (click)="activeMenu = 'MACROMONITOR'">Macro Monitor</a></li>
+                            <li *ngIf="showM2S2()" class="navigation__item dropdown"><a [routerLink]="['/m2s2']"  class="navigation__link"
+                                                                                        [style.border-bottom-color]="activeMenu === 'M2S2' ? '#D9A158' : 'white'" (click)="activeMenu = 'M2S2'">M2S2</a></li>
+                            <li *ngIf="showTrainings()" class="navigation__item dropdown"><a [routerLink]="['/bt']" class="navigation__link"
+                                                                                             [style.border-bottom-color]="activeMenu === 'TRAININGS' ? '#D9A158' : 'white'" (click)="activeMenu = 'TRAININGS'">Trainings</a></li>
+                            <li class="navigation__item dropdown">
+                                <a class="navigation__link" [style.border-bottom-color]="activeMenu === 'PRIVATE_EQUITY' ? '#D9A158' : 'white'">Private Equity</a>
+                                <ul  class="dropdown-menu">
+                                    <li><a [routerLink]="['/pe/firmSearch']" class="navigation__sublink" (click)="activeMenu = 'PRIVATE_EQUITY'">Firm Search</a></li>
+                                    <li><a [routerLink]="['/pe/firmProfile']" class="navigation__sublink" (click)="activeMenu = 'PRIVATE_EQUITY'">New Firm</a></li>
+                                </ul>
+                            </li>
+                            <li class="navigation__item dropdown">
+                                <a class="navigation__link" [style.border-bottom-color]="activeMenu === 'HEDGE_FUNDS' ? '#D9A158' : 'white'">Hedge Funds</a>
+                                <ul  class="dropdown-menu">
+                                    <li><a [routerLink]="['/hf/fundSearch']" class="navigation__sublink" (click)="activeMenu = 'HEDGE_FUNDS'">Fund Search</a></li>
+                                    <li><a [routerLink]="['/hf/managerSearch']" class="navigation__sublink" (click)="activeMenu = 'HEDGE_FUNDS'">Manager Search</a></li>
+                                    <li><a [routerLink]="['/hf/research']" class="navigation__sublink" (click)="activeMenu = 'HEDGE_FUNDS'">Research</a></li>
+                                    <li *ngIf="showHedgeFundsEditor()"><a [routerLink]="['/hf/managerProfile/0']" class="navigation__sublink" (click)="activeMenu = 'HEDGE_FUNDS'">New Manager</a></li>
+                                </ul>
+                            </li>
+                            <li class="navigation__item dropdown">
+                                <a class="navigation__link" [style.border-bottom-color]="activeMenu === 'REPORTING' ? '#D9A158' : 'white'">Reporting</a>
+                                <ul  class="dropdown-menu">
+                                    <li><a [routerLink]="['/reporting/NBReporting']" class="navigation__sublink" (click)="activeMenu = 'REPORTING'">NB Reports</a></li>
+                                    <li><a [routerLink]="['/reporting/NBReporting/reserveCalculation']" class="navigation__sublink" (click)="activeMenu = 'REPORTING'">Capital Calls</a></li>
+                                    <li><a [routerLink]="['/reporting/NBReporting/lookupValues']" class="navigation__sublink" (click)="activeMenu = 'REPORTING'">Lookup Values</a></li>
+                                </ul>
+                            </li>
+                            <li class="navigation__item dropdown">
+                                <a [routerLink]="['/corpMeetings']" class="navigation__link"
+                                   [style.border-bottom-color]="activeMenu === 'CAPITAL_CALL' ? '#D9A158' : 'white'" (click)="activeMenu = 'CAPITAL_CALL'">Corp Meetings</a></li>
+                        </ul>
+                        </nav>
                     </div>
                 </div>
-            </div>
+            </header>
         </div>
-        <hr/>
     </div>
 </div>
-<div class="container" *ngIf="showMenu()">
-    <nav class="navbar navbar-default">
-        <div class="container-fluid">
-            <ul class="nav navbar-nav">
-                <li [routerLinkActive]="['active']">
-                    <a data-toggle="tooltip" [routerLink]="['/news']" >
-                        <span class="glyphicon glyphicon-home"></span>
-                    </a>
-                </li>
-                <li [routerLinkActive]="['active']"  class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                        Monitoring <span class="bootstrapCaret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a [routerLink]="['/monitoring/portfolio']" data-toggle="tooltip" title="Monitoring NIC Portfolio">NIC Portfolio</a></li>
-                        <li><a [routerLink]="['/monitoring/liq']" data-toggle="tooltip" title="Monitoring Liquid Portfolio">Liquid Portfolio</a></li>
-                        <li role="separator" class="divider"></li>
-                        <!--<li><a [routerLink]="['/monitoring/pe']" data-toggle="tooltip" title="Monitoring Private Equity Portfolio">Private Equity Portfolio</a></li>-->
-                        <li><a [routerLink]="['/monitoring/peFund']" data-toggle="tooltip" title="Monitoring Tarragon">Tarragon</a></li>
-                        <li role="separator" class="divider"></li>
-                        <!--<li><a [routerLink]="['/monitoring/hf']" data-toggle="tooltip" title="Monitoring Hedge Funds Portfolio">Hedge Funds Portfolio</a></li>-->
-                        <li><a [routerLink]="['/monitoring/hf2']" data-toggle="tooltip" title="Monitoring Tarragon">Singularity</a></li>
-                        <li><a [routerLink]="['/monitoring/hflist']" data-toggle="tooltip" title="Hedge Funds portfolio updates">HF Portfolio Updates</a></li>
-                    </ul>
-                </li>
-                <!--<li [routerLinkActive]="['active']" >-->
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+
+<!--<div *ngIf="showMenu()">-->
+    <!--<nav class="navbar navbar-default">-->
+        <!--<div class="container-fluid">-->
+            <!--<ul class="nav navbar-nav" style="margin-left: auto; margin-right: 55px;align-items: center;">-->
+                <!--<li style="background-color:#D9A158;">-->
+                <!--&lt;!&ndash;<li style="background-color:#9D6C26;">&ndash;&gt;-->
+                    <!--<img src="../../public/img/logo_white.svg" height="88" width="65"/>-->
+                <!--</li>-->
+                <!--&lt;!&ndash;<li [routerLinkActive]="['active']">&ndash;&gt;-->
+                    <!--&lt;!&ndash;<a data-toggle="tooltip" [routerLink]="['/news']" >&ndash;&gt;-->
+                        <!--&lt;!&ndash;<span class="glyphicon glyphicon-home"></span>&ndash;&gt;-->
+                    <!--&lt;!&ndash;</a>&ndash;&gt;-->
+                <!--&lt;!&ndash;</li>&ndash;&gt;-->
+                <!--<li [routerLinkActive]="['active']"  class="dropdown" style="float: right">-->
                     <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">-->
-                        <!--Risk Management <span class="bootstrapCaret"></span>-->
+                    <!--Monitoring-->
+                        <!--&lt;!&ndash;<span class="bootstrapCaret"></span>&ndash;&gt;-->
                     <!--</a>-->
-                    <!--&lt;!&ndash;<a th:href="@{/risks}">Risk Management</a></li>&ndash;&gt;-->
                     <!--<ul class="dropdown-menu">-->
-                        <!--&lt;!&ndash;<li><a [routerLink]="['/monitoring/mm']" data-toggle="tooltip" title="Macro Monitor">Macro Monitor</a></li>&ndash;&gt;-->
-                        <!--<li><a [routerLink]="['/monitoring/axioma']" data-toggle="tooltip" title="Axioma Reporting">Axioma Reporting</a></li>-->
-                        <!--&lt;!&ndash;<li><a href="#">Risk</a></li>&ndash;&gt;-->
+                    <!--<li><a [routerLink]="['/monitoring/portfolio']" data-toggle="tooltip" title="Monitoring NIC Portfolio">NIC Portfolio</a></li>-->
+                    <!--<li><a [routerLink]="['/monitoring/liq']" data-toggle="tooltip" title="Monitoring Liquid Portfolio">Liquid Portfolio</a></li>-->
+                    <!--<li role="separator" class="divider"></li>-->
+                    <!--&lt;!&ndash;<li><a [routerLink]="['/monitoring/pe']" data-toggle="tooltip" title="Monitoring Private Equity Portfolio">Private Equity Portfolio</a></li>&ndash;&gt;-->
+                    <!--<li><a [routerLink]="['/monitoring/peFund']" data-toggle="tooltip" title="Monitoring Tarragon">Tarragon</a></li>-->
+                    <!--<li role="separator" class="divider"></li>-->
+                    <!--&lt;!&ndash;<li><a [routerLink]="['/monitoring/hf']" data-toggle="tooltip" title="Monitoring Hedge Funds Portfolio">Hedge Funds Portfolio</a></li>&ndash;&gt;-->
+                    <!--<li><a [routerLink]="['/monitoring/hf2']" data-toggle="tooltip" title="Monitoring Tarragon">Singularity</a></li>-->
+                    <!--<li><a [routerLink]="['/monitoring/hflist']" data-toggle="tooltip" title="Hedge Funds portfolio updates">HF Portfolio Updates</a></li>-->
+                    <!--</ul>-->
+                    <!--</li>-->
+                    <!--&lt;!&ndash;<li [routerLinkActive]="['active']" >&ndash;&gt;-->
+                    <!--&lt;!&ndash;<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">&ndash;&gt;-->
+                    <!--&lt;!&ndash;Risk Management <span class="bootstrapCaret"></span>&ndash;&gt;-->
+                    <!--&lt;!&ndash;</a>&ndash;&gt;-->
+                    <!--&lt;!&ndash;&lt;!&ndash;<a th:href="@{/risks}">Risk Management</a></li>&ndash;&gt;&ndash;&gt;-->
+                    <!--&lt;!&ndash;<ul class="dropdown-menu">&ndash;&gt;-->
+                    <!--&lt;!&ndash;&lt;!&ndash;<li><a [routerLink]="['/monitoring/mm']" data-toggle="tooltip" title="Macro Monitor">Macro Monitor</a></li>&ndash;&gt;&ndash;&gt;-->
+                    <!--&lt;!&ndash;<li><a [routerLink]="['/monitoring/axioma']" data-toggle="tooltip" title="Axioma Reporting">Axioma Reporting</a></li>&ndash;&gt;-->
+                    <!--&lt;!&ndash;&lt;!&ndash;<li><a href="#">Risk</a></li>&ndash;&gt;&ndash;&gt;-->
+                    <!--&lt;!&ndash;</ul>&ndash;&gt;-->
+                    <!--&lt;!&ndash;</li>&ndash;&gt;-->
+                <!--<li style="float: right" [routerLinkActive]="['active']"><a [routerLink]="['/macromonitor']" data-toggle="tooltip" title="Macro Monitor">Macro Monitor</a></li>-->
+                <!--<li style="float: right" [routerLinkActive]="['active']" *ngIf="showM2S2()"><a [routerLink]="['/m2s2']" data-toggle="tooltip" title="Meeting Memo Scoring System">M2S2</a></li>-->
+                <!--<li style="float: right" [routerLinkActive]="['active']"  class="dropdown" *ngIf="showPrivateEquity()">-->
+                    <!--&lt;!&ndash;<a th:href="@{/pe}">Private Equity</a>&ndash;&gt;-->
+                    <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">-->
+                    <!--Private Equity-->
+                        <!--&lt;!&ndash;<span class="bootstrapCaret"></span>&ndash;&gt;-->
+                    <!--</a>-->
+                    <!--<ul class="dropdown-menu">-->
+                    <!--&lt;!&ndash;<li><a href="#">Dashboard</a></li>&ndash;&gt;-->
+                    <!--<li><a [routerLink]="['/pe/firmSearch']">Firm Search</a></li>-->
+                    <!--<li role="separator" class="divider"></li>-->
+                    <!--&lt;!&ndash;<li><a [routerLink]="['/pe/fundProfile']">New Fund</a></li>&ndash;&gt;-->
+                    <!--<li *ngIf="showPrivateEquityEditor()"><a [routerLink]="['/pe/firmProfile']">New Firm</a></li>-->
+                    <!--&lt;!&ndash;<li><a href="#">Forward Calendar</a></li>&ndash;&gt;-->
+                    <!--</ul>-->
+                    <!--</li>-->
+                    <!--&lt;!&ndash;<li [routerLinkActive]="['active']" *ngIf="showRealEstate()"><a href="#">Real Estate</a></li>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<li [routerLinkActive]="['active']" ><a href="#">Hedge Funds</a></li>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<li [routerLinkActive]="['active']" class="dropdown" *ngIf="showHedgeFunds()">&ndash;&gt;-->
+                <!--<li style="float: right" [routerLinkActive]="['active']"  class="dropdown" *ngIf="showHedgeFunds()">-->
+                <!--&lt;!&ndash;<a th:href="@{/pe}">Private Equity</a>&ndash;&gt;-->
+                <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">-->
+                <!--Hedge Funds-->
+                    <!--&lt;!&ndash;<span class="bootstrapCaret"></span>&ndash;&gt;-->
+                <!--</a>-->
+                    <!--<ul class="dropdown-menu">-->
+                    <!--&lt;!&ndash;<li><a [routerLink]="['/hf/dashboard']" >Dashboard</a></li>&ndash;&gt;-->
+                    <!--<li><a [routerLink]="['/hf/fundSearch']">Fund Search</a></li>-->
+                    <!--<li><a [routerLink]="['/hf/managerSearch']">Manager Search</a></li>-->
+                    <!--<li><a [routerLink]="['/hf/research']">Research</a></li>-->
+                    <!--&lt;!&ndash;<li><a [routerLink]="['/hf/fundSelection']">Fund Selection </a></li>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<li><a [routerLink]="['/hf/portfolio']">Portfolio </a></li>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<li><a [routerLink]="['/hf/report']">Report </a></li>&ndash;&gt;-->
+                    <!--<li role="separator" class="divider"></li>-->
+                    <!--&lt;!&ndash;<li><a [routerLink]="['/hf/fundProfile/0']">New Fund </a></li>&ndash;&gt;-->
+                    <!--<li *ngIf="showHedgeFundsEditor()"><a [routerLink]="['/hf/managerProfile/0']">New Manager </a></li>-->
+
+                    <!--</ul>-->
+                    <!--</li>-->
+                <!--<li style="float: right" [routerLinkActive]="['active']" *ngIf="showTrainings()"><a [routerLink]="['/bt']" data-toggle="tooltip" title="Trip Memo">Trainings</a></li>-->
+                <!--<li style="float: right" [routerLinkActive]="['active']"  class="dropdown" *ngIf="showReporting()">-->
+                <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">-->
+                <!--Reporting-->
+                    <!--&lt;!&ndash;<span class="bootstrapCaret"></span>&ndash;&gt;-->
+                <!--</a>-->
+                    <!--<ul class="dropdown-menu">-->
+                    <!--<li><a [routerLink]="['/reporting/NBReporting']">NB Reports</a></li>-->
+                    <!--&lt;!&ndash;<li role="separator" class="divider"></li>&ndash;&gt;-->
+                    <!--<li><a [routerLink]="['/reporting/NBReporting/reserveCalculation']">Capital Calls</a></li>-->
+                    <!--<li><a [routerLink]="['/reporting/NBReporting/lookupValues']">Lookup Values</a></li>-->
+
                     <!--</ul>-->
                 <!--</li>-->
-                <li [routerLinkActive]="['active']"><a [routerLink]="['/macromonitor']" data-toggle="tooltip" title="Macro Monitor">Macro Monitor</a></li>
-                <li [routerLinkActive]="['active']" *ngIf="showM2S2()"><a [routerLink]="['/m2s2']" data-toggle="tooltip" title="Meeting Memo Scoring System">M2S2</a></li>
-                <li [routerLinkActive]="['active']"  class="dropdown" *ngIf="showPrivateEquity()">
-                    <!--<a th:href="@{/pe}">Private Equity</a>-->
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                        Private Equity <span class="bootstrapCaret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <!--<li><a href="#">Dashboard</a></li>-->
-                        <li><a [routerLink]="['/pe/firmSearch']">Firm Search</a></li>
-                        <li role="separator" class="divider"></li>
-                        <!--<li><a [routerLink]="['/pe/fundProfile']">New Fund</a></li>-->
-                        <li *ngIf="showPrivateEquityEditor()"><a [routerLink]="['/pe/firmProfile']">New Firm</a></li>
-                        <!--<li><a href="#">Forward Calendar</a></li>-->
-                    </ul>
-                </li>
-                <!--<li [routerLinkActive]="['active']" *ngIf="showRealEstate()"><a href="#">Real Estate</a></li>-->
-                <!--<li [routerLinkActive]="['active']" ><a href="#">Hedge Funds</a></li>-->
-                <!--<li [routerLinkActive]="['active']" class="dropdown" *ngIf="showHedgeFunds()">-->
-                <li [routerLinkActive]="['active']"  class="dropdown" *ngIf="showHedgeFunds()">
-                    <!--<a th:href="@{/pe}">Private Equity</a>-->
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                        Hedge Funds <span class="bootstrapCaret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <!--<li><a [routerLink]="['/hf/dashboard']" >Dashboard</a></li>-->
-                        <li><a [routerLink]="['/hf/fundSearch']">Fund Search</a></li>
-                        <li><a [routerLink]="['/hf/managerSearch']">Manager Search</a></li>
-                        <li><a [routerLink]="['/hf/research']">Research</a></li>
-                        <!--<li><a [routerLink]="['/hf/fundSelection']">Fund Selection </a></li>-->
-                        <!--<li><a [routerLink]="['/hf/portfolio']">Portfolio </a></li>-->
-                        <!--<li><a [routerLink]="['/hf/report']">Report </a></li>-->
-                        <li role="separator" class="divider"></li>
-                        <!--<li><a [routerLink]="['/hf/fundProfile/0']">New Fund </a></li>-->
-                        <li *ngIf="showHedgeFundsEditor()"><a [routerLink]="['/hf/managerProfile/0']">New Manager </a></li>
+                <!--<li style="float: right" [routerLinkActive]="['active']" *ngIf="showCorpMeeting()">-->
+                <!--<a [routerLink]="['/corpMeetings']" data-toggle="tooltip" title="Corp Meetings">Corp Meetings</a>-->
+                <!--</li>-->
+                    <!--</ul>-->
+<!--</div>-->
+<!--</nav>-->
+<!--</div>-->
 
-                    </ul>
-                </li>
-                <li [routerLinkActive]="['active']" *ngIf="showTrainings()"><a [routerLink]="['/bt']" data-toggle="tooltip" title="Trip Memo">Trainings</a></li>
-                <li [routerLinkActive]="['active']"  class="dropdown" *ngIf="showReporting()">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                        Reporting <span class="bootstrapCaret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a [routerLink]="['/reporting/NBReporting']">NB Reports</a></li>
+
+<!--<ul>-->
+    <!--<li style="background-color:#D9A158;">-->
+        <!--<img src="../../public/img/logo_white.svg" height="50" width="35"/>-->
+    <!--</li>-->
+    <!--<li style="float:right"><a class="active" href="#news"><span class="glyphicon glyphicon-home"></span></a></li>-->
+    <!--<li style="float:right"><a href="#news">Monitoring</a>-->
+        <!--<ul>-->
+            <!--<li>sub1</li>-->
+            <!--<li>sub2</li>-->
+            <!--<li>sub3</li>-->
+        <!--</ul>-->
+    <!--</li>-->
+    <!--<li style="float:right"><a href="#news">Macro Monitor</a></li>-->
+    <!--<li style="float:right"><a href="#news">Provate Equity</a></li>-->
+    <!--<li style="float:right"><a href="#news">Hedge Funds</a></li>-->
+    <!--<li style="float:right"><a href="#news">Reporting</a></li>-->
+    <!--<li style="float:right"><a href="#news">Corp Meetings</a></li>-->
+<!--</ul>-->
+
+
+<!--<div class="container" *ngIf="showMenu()">-->
+    <!--<nav class="navbar navbar-default">-->
+        <!--<div class="container-fluid">-->
+            <!--<ul class="nav navbar-nav">-->
+                <!--<li [routerLinkActive]="['active']">-->
+                    <!--<a data-toggle="tooltip" [routerLink]="['/news']" >-->
+                        <!--<span class="glyphicon glyphicon-home"></span>-->
+                    <!--</a>-->
+                <!--</li>-->
+                <!--<li [routerLinkActive]="['active']"  class="dropdown">-->
+                    <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">-->
+                        <!--Monitoring <span class="bootstrapCaret"></span>-->
+                    <!--</a>-->
+                    <!--<ul class="dropdown-menu">-->
+                        <!--<li><a [routerLink]="['/monitoring/portfolio']" data-toggle="tooltip" title="Monitoring NIC Portfolio">NIC Portfolio</a></li>-->
+                        <!--<li><a [routerLink]="['/monitoring/liq']" data-toggle="tooltip" title="Monitoring Liquid Portfolio">Liquid Portfolio</a></li>-->
                         <!--<li role="separator" class="divider"></li>-->
-                        <li><a [routerLink]="['/reporting/NBReporting/reserveCalculation']">Capital Calls</a></li>
-                        <li><a [routerLink]="['/reporting/NBReporting/lookupValues']">Lookup Values</a></li>
+                        <!--&lt;!&ndash;<li><a [routerLink]="['/monitoring/pe']" data-toggle="tooltip" title="Monitoring Private Equity Portfolio">Private Equity Portfolio</a></li>&ndash;&gt;-->
+                        <!--<li><a [routerLink]="['/monitoring/peFund']" data-toggle="tooltip" title="Monitoring Tarragon">Tarragon</a></li>-->
+                        <!--<li role="separator" class="divider"></li>-->
+                        <!--&lt;!&ndash;<li><a [routerLink]="['/monitoring/hf']" data-toggle="tooltip" title="Monitoring Hedge Funds Portfolio">Hedge Funds Portfolio</a></li>&ndash;&gt;-->
+                        <!--<li><a [routerLink]="['/monitoring/hf2']" data-toggle="tooltip" title="Monitoring Tarragon">Singularity</a></li>-->
+                        <!--<li><a [routerLink]="['/monitoring/hflist']" data-toggle="tooltip" title="Hedge Funds portfolio updates">HF Portfolio Updates</a></li>-->
+                    <!--</ul>-->
+                <!--</li>-->
+                <!--&lt;!&ndash;<li [routerLinkActive]="['active']" >&ndash;&gt;-->
+                    <!--&lt;!&ndash;<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">&ndash;&gt;-->
+                        <!--&lt;!&ndash;Risk Management <span class="bootstrapCaret"></span>&ndash;&gt;-->
+                    <!--&lt;!&ndash;</a>&ndash;&gt;-->
+                    <!--&lt;!&ndash;&lt;!&ndash;<a th:href="@{/risks}">Risk Management</a></li>&ndash;&gt;&ndash;&gt;-->
+                    <!--&lt;!&ndash;<ul class="dropdown-menu">&ndash;&gt;-->
+                        <!--&lt;!&ndash;&lt;!&ndash;<li><a [routerLink]="['/monitoring/mm']" data-toggle="tooltip" title="Macro Monitor">Macro Monitor</a></li>&ndash;&gt;&ndash;&gt;-->
+                        <!--&lt;!&ndash;<li><a [routerLink]="['/monitoring/axioma']" data-toggle="tooltip" title="Axioma Reporting">Axioma Reporting</a></li>&ndash;&gt;-->
+                        <!--&lt;!&ndash;&lt;!&ndash;<li><a href="#">Risk</a></li>&ndash;&gt;&ndash;&gt;-->
+                    <!--&lt;!&ndash;</ul>&ndash;&gt;-->
+                <!--&lt;!&ndash;</li>&ndash;&gt;-->
+                <!--<li [routerLinkActive]="['active']"><a [routerLink]="['/macromonitor']" data-toggle="tooltip" title="Macro Monitor">Macro Monitor</a></li>-->
+                <!--<li [routerLinkActive]="['active']" *ngIf="showM2S2()"><a [routerLink]="['/m2s2']" data-toggle="tooltip" title="Meeting Memo Scoring System">M2S2</a></li>-->
+                <!--<li [routerLinkActive]="['active']"  class="dropdown" *ngIf="showPrivateEquity()">-->
+                    <!--&lt;!&ndash;<a th:href="@{/pe}">Private Equity</a>&ndash;&gt;-->
+                    <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">-->
+                        <!--Private Equity <span class="bootstrapCaret"></span>-->
+                    <!--</a>-->
+                    <!--<ul class="dropdown-menu">-->
+                        <!--&lt;!&ndash;<li><a href="#">Dashboard</a></li>&ndash;&gt;-->
+                        <!--<li><a [routerLink]="['/pe/firmSearch']">Firm Search</a></li>-->
+                        <!--<li role="separator" class="divider"></li>-->
+                        <!--&lt;!&ndash;<li><a [routerLink]="['/pe/fundProfile']">New Fund</a></li>&ndash;&gt;-->
+                        <!--<li *ngIf="showPrivateEquityEditor()"><a [routerLink]="['/pe/firmProfile']">New Firm</a></li>-->
+                        <!--&lt;!&ndash;<li><a href="#">Forward Calendar</a></li>&ndash;&gt;-->
+                    <!--</ul>-->
+                <!--</li>-->
+                <!--&lt;!&ndash;<li [routerLinkActive]="['active']" *ngIf="showRealEstate()"><a href="#">Real Estate</a></li>&ndash;&gt;-->
+                <!--&lt;!&ndash;<li [routerLinkActive]="['active']" ><a href="#">Hedge Funds</a></li>&ndash;&gt;-->
+                <!--&lt;!&ndash;<li [routerLinkActive]="['active']" class="dropdown" *ngIf="showHedgeFunds()">&ndash;&gt;-->
+                <!--<li [routerLinkActive]="['active']"  class="dropdown" *ngIf="showHedgeFunds()">-->
+                    <!--&lt;!&ndash;<a th:href="@{/pe}">Private Equity</a>&ndash;&gt;-->
+                    <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">-->
+                        <!--Hedge Funds <span class="bootstrapCaret"></span>-->
+                    <!--</a>-->
+                    <!--<ul class="dropdown-menu">-->
+                        <!--&lt;!&ndash;<li><a [routerLink]="['/hf/dashboard']" >Dashboard</a></li>&ndash;&gt;-->
+                        <!--<li><a [routerLink]="['/hf/fundSearch']">Fund Search</a></li>-->
+                        <!--<li><a [routerLink]="['/hf/managerSearch']">Manager Search</a></li>-->
+                        <!--<li><a [routerLink]="['/hf/research']">Research</a></li>-->
+                        <!--&lt;!&ndash;<li><a [routerLink]="['/hf/fundSelection']">Fund Selection </a></li>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<li><a [routerLink]="['/hf/portfolio']">Portfolio </a></li>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<li><a [routerLink]="['/hf/report']">Report </a></li>&ndash;&gt;-->
+                        <!--<li role="separator" class="divider"></li>-->
+                        <!--&lt;!&ndash;<li><a [routerLink]="['/hf/fundProfile/0']">New Fund </a></li>&ndash;&gt;-->
+                        <!--<li *ngIf="showHedgeFundsEditor()"><a [routerLink]="['/hf/managerProfile/0']">New Manager </a></li>-->
 
-                    </ul>
-                </li>
-                <li [routerLinkActive]="['active']" *ngIf="showCorpMeeting()">
-                    <a [routerLink]="['/corpMeetings']" data-toggle="tooltip" title="Corp Meetings">Corp Meetings</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-</div>
+                    <!--</ul>-->
+                <!--</li>-->
+                <!--<li [routerLinkActive]="['active']" *ngIf="showTrainings()"><a [routerLink]="['/bt']" data-toggle="tooltip" title="Trip Memo">Trainings</a></li>-->
+                <!--<li [routerLinkActive]="['active']"  class="dropdown" *ngIf="showReporting()">-->
+                    <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">-->
+                        <!--Reporting <span class="bootstrapCaret"></span>-->
+                    <!--</a>-->
+                    <!--<ul class="dropdown-menu">-->
+                        <!--<li><a [routerLink]="['/reporting/NBReporting']">NB Reports</a></li>-->
+                        <!--&lt;!&ndash;<li role="separator" class="divider"></li>&ndash;&gt;-->
+                        <!--<li><a [routerLink]="['/reporting/NBReporting/reserveCalculation']">Capital Calls</a></li>-->
+                        <!--<li><a [routerLink]="['/reporting/NBReporting/lookupValues']">Lookup Values</a></li>-->
+
+                    <!--</ul>-->
+                <!--</li>-->
+                <!--<li [routerLinkActive]="['active']" *ngIf="showCorpMeeting()">-->
+                    <!--<a [routerLink]="['/corpMeetings']" data-toggle="tooltip" title="Corp Meetings">Corp Meetings</a>-->
+                <!--</li>-->
+            <!--</ul>-->
+        <!--</div>-->
+    <!--</nav>-->
+<!--</div>-->
 
 <!--<div class="container">-->
     <!--<div class="row top-buffer" >-->
@@ -166,7 +462,7 @@
 
 <router-outlet></router-outlet>
 
-<div class="copyrightText">&copy; 2018 National Investment Corporation NBK </div>
+<div class="copyrightText">&copy; 2019 National Investment Corporation NBK </div>
 <div class="copyrightText">UNIC v.1.9.0 </div>
 <br/>
 </body>
