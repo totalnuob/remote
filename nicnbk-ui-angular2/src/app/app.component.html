@@ -38,10 +38,11 @@
         body {
             background-image: url("../../public/img/mountains.png");
             background-repeat: no-repeat;
-            background-position: bottom;
+            background-position: top;
             /*background-height: 200px;*/
             background-size: 100%;
             background-color: white;
+            background-attachment: fixed;
         }
     </style>
 </head>
@@ -172,7 +173,7 @@
     <div class="layout" style="">
         <div class="layout__wrapper">
             <header class="menu_header">
-                <div class="menu_container">
+                <div class="menu_container" *ngIf="showMenu()">
                     <div class="menu_header__row">
                         <a href="#news" title="NICNBK" class="menu_logo menu_header__logo -active" (click)="activeMenu = 'NEWS'">NICNBK</a>
                         <nav class="menu_navigation">
@@ -200,14 +201,14 @@
                                                                                         [style.border-bottom-color]="activeMenu === 'M2S2' ? '#D9A158' : 'white'" (click)="activeMenu = 'M2S2'">M2S2</a></li>
                             <li *ngIf="showTrainings()" class="navigation__item dropdown"><a [routerLink]="['/bt']" class="navigation__link"
                                                                                              [style.border-bottom-color]="activeMenu === 'TRAININGS' ? '#D9A158' : 'white'" (click)="activeMenu = 'TRAININGS'">Trainings</a></li>
-                            <li class="navigation__item dropdown">
+                            <li class="navigation__item dropdown" *ngIf="showPrivateEquity()">
                                 <a class="navigation__link" [style.border-bottom-color]="activeMenu === 'PRIVATE_EQUITY' ? '#D9A158' : 'white'">Private Equity</a>
                                 <ul  class="dropdown-menu">
                                     <li><a [routerLink]="['/pe/firmSearch']" class="navigation__sublink" (click)="activeMenu = 'PRIVATE_EQUITY'">Firm Search</a></li>
                                     <li><a [routerLink]="['/pe/firmProfile']" class="navigation__sublink" (click)="activeMenu = 'PRIVATE_EQUITY'">New Firm</a></li>
                                 </ul>
                             </li>
-                            <li class="navigation__item dropdown">
+                            <li class="navigation__item dropdown" *ngIf="showHedgeFunds()">
                                 <a class="navigation__link" [style.border-bottom-color]="activeMenu === 'HEDGE_FUNDS' ? '#D9A158' : 'white'">Hedge Funds</a>
                                 <ul  class="dropdown-menu">
                                     <li><a [routerLink]="['/hf/fundSearch']" class="navigation__sublink" (click)="activeMenu = 'HEDGE_FUNDS'">Fund Search</a></li>
@@ -216,7 +217,7 @@
                                     <li *ngIf="showHedgeFundsEditor()"><a [routerLink]="['/hf/managerProfile/0']" class="navigation__sublink" (click)="activeMenu = 'HEDGE_FUNDS'">New Manager</a></li>
                                 </ul>
                             </li>
-                            <li class="navigation__item dropdown">
+                            <li class="navigation__item dropdown" *ngIf="showReporting()">
                                 <a class="navigation__link" [style.border-bottom-color]="activeMenu === 'REPORTING' ? '#D9A158' : 'white'">Reporting</a>
                                 <ul  class="dropdown-menu">
                                     <li><a [routerLink]="['/reporting/NBReporting']" class="navigation__sublink" (click)="activeMenu = 'REPORTING'">NB Reports</a></li>
@@ -224,25 +225,33 @@
                                     <li><a [routerLink]="['/reporting/NBReporting/lookupValues']" class="navigation__sublink" (click)="activeMenu = 'REPORTING'">Lookup Values</a></li>
                                 </ul>
                             </li>
-                            <li class="navigation__item dropdown">
+                            <li class="navigation__item dropdown" *ngIf="showCorpMeeting()">
                                 <a [routerLink]="['/corpMeetings']" class="navigation__link"
                                    [style.border-bottom-color]="activeMenu === 'CAPITAL_CALL' ? '#D9A158' : 'white'" (click)="activeMenu = 'CAPITAL_CALL'">Corp Meetings</a></li>
                         </ul>
-                        </nav>
+
+                            <a [routerLink]="['/profile']">
+                                <span class="glyphicon glyphicon-user"></span>
+                            </a>&nbsp;&nbsp;&nbsp;
+                            <a (click)="logout()">
+                                <span class="glyphicon glyphicon-off"></span>
+                            </a>
+
+                                        </nav>
+                                    </div>
+                                </div>
+                            </header>
+                        </div>
                     </div>
                 </div>
-            </header>
-        </div>
-    </div>
-</div>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
 
-<!--<div *ngIf="showMenu()">-->
+                <!--<div *ngIf="showMenu()">-->
     <!--<nav class="navbar navbar-default">-->
         <!--<div class="container-fluid">-->
             <!--<ul class="nav navbar-nav" style="margin-left: auto; margin-right: 55px;align-items: center;">-->
@@ -469,7 +478,7 @@
     <!--</div>-->
 <!--</div>-->
 
-<div style="min-height: 800px">
+<div style="min-height: 700px">
 <router-outlet></router-outlet>
 </div>
 

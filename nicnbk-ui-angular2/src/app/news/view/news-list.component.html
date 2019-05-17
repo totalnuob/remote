@@ -107,7 +107,7 @@
                                        [style.border-bottom-color]="activeTab === 'NEWS_KZ' ? '#D9A158' : 'white'"
                                        (click)="activeTab = 'NEWS_KZ'">KZ NEWS</a></li>
     </ul>
-    <div class="tab-content">
+    <div [ngBusy]="busy" class="tab-content">
         <div id="NEWS_GENERAL" role="tabpanel" aria-labelledby="NEWS_GENERAL" class="tab-pane active">
             <div id="general_content">
                 <div class="row withpadding" *ngFor = "let news of newsList">

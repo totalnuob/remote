@@ -13,38 +13,40 @@ import lastIndexOf = require("core-js/fn/array/last-index-of");
 })
 
 export class LoginComponent implements OnInit{
+    ngOnInit():void {
+        if(localStorage.getItem("authenticatedUser") != null){
+            this.router.navigate(['/']);
+        }else{
+
+        }
+    }
 
     public user = new User('','');
     public errorMsg = '';
 
-    returnUrl: string;
-    url: string;
-    params: string;
-
-    busy: Subscription;
+    //busy: Subscription;
 
     constructor(
         private router: Router,
-        private route: ActivatedRoute,
-        private authenticationService: AuthenticationService,
-        private runtimeCompiler: RuntimeCompiler) {
+        //private route: ActivatedRoute,
+        private authenticationService: AuthenticationService) {
     }
 
-    ngOnInit() {
-        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
-
-        if(this.returnUrl != '/') {
-            this.url = this.returnUrl.substring(0, this.returnUrl.indexOf(';'));
-            if(this.url == '/news') {
-                this.params = this.returnUrl.substring(this.returnUrl.indexOf('=') + 1);
-            }
-        } else {
-            this.url = this.returnUrl;
-        }
-    }
+    //ngOnInit() {
+    //    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+    //
+    //    if(this.returnUrl != '/') {
+    //        this.url = this.returnUrl.substring(0, this.returnUrl.indexOf(';'));
+    //        if(this.url == '/news') {
+    //            this.params = this.returnUrl.substring(this.returnUrl.indexOf('=') + 1);
+    //        }
+    //    } else {
+    //        this.url = this.returnUrl;
+    //    }
+    //}
 
     login() {
-        this.busy = this.authenticationService.login(this.user)
+        this.authenticationService.login(this.user)
             .subscribe(
                 response => {
 
@@ -54,14 +56,6 @@ export class LoginComponent implements OnInit{
                     localStorage.setItem("authenticatedUserRoles", JSON.stringify(response.roles));
 
                     location.reload();
-
-                    if(this.params){
-                        let params = this.params;
-                        this.router.navigate([this.url, {params}]);
-                    } else {
-                        this.router.navigate([this.url]);
-                    }
-
                 },
                 error =>  {
                     this.errorMsg = 'Failed to login';

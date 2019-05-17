@@ -10,6 +10,7 @@ declare var $: any;
 @Component({
     selector: 'monitoring-liquid-portfolio',
     templateUrl: 'view/monitoring-liquid-portfolio.component.html',
+    //templateUrl: 'view/monitoring-liquid-portfolio.component2.html',
     styleUrls: [],
     providers: [],
 })
@@ -25,31 +26,53 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
     }
 
     drawGraph(){
-        //var tableDate = this.getAllDates()[0];
-        //
-        ////$("#tableDate").val($("#tableDate option:last").val());
-        //this.tableDate = tableDate;
-        //this.drawTables(tableDate);
-        //
+        var tableDate = this.getAllDates()[0];
+
+        //$("#tableDate").val($("#tableDate option:last").val());
+        this.tableDate = tableDate;
+        this.drawTables(tableDate);
+
         //this.drawReturnsLineCharts(null);
-        //this.drawPieCharts();
+        this.drawPieCharts(tableDate);
+
         //this.drawPositionsTable(tableDate);
     }
 
     drawTables(tableDate){
-        var navData = this.getNAVData(tableDate);
-        this.drawValueTable(navData);
-        var performanceData = this.getPerformanceData(tableDate);
-        this.drawPerformanceTable(performanceData);
+        if(tableDate.endsWith("19")) {
+            //console.log("drawTables: " + tableDate);
+            var data = this.getFixedIncomeData(tableDate);
+            this.drawFixedIncomeTable(data);
 
+            var data = this.getEquityData(tableDate);
+            this.drawEquityTable(data);
+
+            var data = this.getTransitionData(tableDate);
+            this.drawTransitionTable(data);
+
+        }else{
+            var navData = this.getNAVData(tableDate);
+            this.drawValueTable(navData);
+
+            var performanceData = this.getPerformanceData(tableDate);
+            this.drawPerformanceTable(performanceData);
+        }
+
+    }
+
+    public isNewVersion(){
+        if(this.tableDate == null){
+            return true;
+        }
+        return this.tableDate.endsWith("19");
     }
 
     public redraw(){
         var date = $('#tableDate').val()
         this.drawTables(date);
-        this.drawReturnsLineCharts(null);
-        this.drawPieCharts();
-        this.drawPositionsTable(date);
+        //this.drawReturnsLineCharts(null);
+        this.drawPieCharts(date);
+        //this.drawPositionsTable(date);
     }
 
     // NAV TABLE ---------------------------------------
@@ -76,10 +99,129 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
         return data;
     }
 
+    private getFixedIncomeData(tableDate){
+        var data = new google.visualization.DataTable();
+        var formatter = new google.visualization.NumberFormat({
+            prefix:'$ ',
+            groupingSymbol: ' ',
+            fractionDigits: 0
+        });
+        var formatter_prec = new google.visualization.NumberFormat({
+            pattern:'#.##%',
+            negativeColor: 'red'
+        });
+        data.addColumn("string", "");
+        data.addColumn("number", "NAV");
+        data.addColumn("number", "MTD");
+        data.addColumn("number", "QTD");
+        data.addColumn("number", "YTD");
+        var dataByDate = this.getFixedIncomeByDate(tableDate);
+        data.addRows([
+            ["Government Bonds", dataByDate[1][0], dataByDate[2][0], dataByDate[3][0],dataByDate[4][0]],
+            ["Corporate Bonds", dataByDate[1][1], dataByDate[2][1],dataByDate[3][1],dataByDate[4][1]],
+            ["Agencies", dataByDate[1][2], dataByDate[2][2],dataByDate[3][2],dataByDate[4][2]],
+            ["Фьючерсы и средства на брокерском счете ", dataByDate[1][3], dataByDate[2][3],dataByDate[3][3],dataByDate[4][3]],
+            ["Валюта", dataByDate[1][4], dataByDate[2][4],dataByDate[3][4],dataByDate[4][4]],
+            ["Опционы", dataByDate[1][5], dataByDate[2][5],dataByDate[3][5],dataByDate[4][5]],
+            ["Cash",dataByDate[1][6], dataByDate[2][6],dataByDate[3][6],dataByDate[4][6]],
+            ["Total",dataByDate[1][7], dataByDate[2][7],dataByDate[3][7],dataByDate[4][7]]
+        ]);
+        formatter.format(data, 1);
+        formatter_prec.format(data, 2);
+        formatter_prec.format(data, 3);
+        formatter_prec.format(data, 4);
+        return data;
+    }
+
+    private getEquityData(tableDate){
+        var data = new google.visualization.DataTable();
+        var formatter = new google.visualization.NumberFormat({
+            prefix:'$ ',
+            groupingSymbol: ' ',
+            fractionDigits: 0
+        });
+        var formatter_perc = new google.visualization.NumberFormat({
+            pattern:'#.##%',
+            negativeColor: 'red'
+        });
+        data.addColumn("string", "");
+        data.addColumn("number", "NAV");
+        data.addColumn("number", "MTD");
+        data.addColumn("number", "QTD");
+        data.addColumn("number", "YTD");
+        var dataByDate = this.getEquityByDate(tableDate);
+        data.addRows([
+            ["ETF", dataByDate[1][0], dataByDate[2][0], dataByDate[3][0],dataByDate[4][0]],
+            ["Cash", dataByDate[1][1], dataByDate[2][1],dataByDate[3][1],dataByDate[4][1]],
+            ["Total", dataByDate[1][2], dataByDate[2][2],dataByDate[3][2],dataByDate[4][2]]
+        ]);
+        formatter.format(data, 1);
+        formatter_perc.format(data, 2);
+        formatter_perc.format(data, 3);
+        formatter_perc.format(data, 4);
+        return data;
+    }
+
+    private getTransitionData(tableDate){
+        var data = new google.visualization.DataTable();
+        var formatter = new google.visualization.NumberFormat({
+            prefix:'$ ',
+            groupingSymbol: ' ',
+            fractionDigits: 0
+        });
+        var formatter_perc = new google.visualization.NumberFormat({
+            pattern:'#.##%',
+            negativeColor: 'red'
+        });
+        data.addColumn("string", "");
+        data.addColumn("number", "NAV");
+        data.addColumn("number", "MTD");
+        data.addColumn("number", "QTD");
+        data.addColumn("number", "YTD");
+        var dataByDate = this.getTransitionByDate(tableDate);
+        data.addRows([
+            ["Government bonds", dataByDate[1][0], dataByDate[2][0], dataByDate[3][0], dataByDate[4][0]],
+            ["Cash", dataByDate[1][1], dataByDate[2][1], dataByDate[3][1], dataByDate[4][1]],
+            ["Total", dataByDate[1][2], dataByDate[2][2], dataByDate[3][2], dataByDate[4][2]]
+        ]);
+        formatter.format(data, 1);
+        formatter_perc.format(data, 2);
+        formatter_perc.format(data, 3);
+        formatter_perc.format(data, 4);
+        return data;
+    }
+
     private getNAVByDate(tableDate){
         for(var i = 0; i < this.nav.length; i++){
             if(this.nav[i][0] === tableDate){
                 return this.nav[i];
+            }
+        }
+        return null;
+    }
+
+    private getFixedIncomeByDate(tableDate){
+        for(var i = 0; i < this.fixed_income.length; i++){
+            if(this.fixed_income[i][0] === tableDate){
+                return this.fixed_income[i];
+            }
+        }
+        return null;
+    }
+
+    private getEquityByDate(tableDate){
+        for(var i = 0; i < this.equity.length; i++){
+            if(this.equity[i][0] === tableDate){
+                return this.equity[i];
+            }
+        }
+        return null;
+    }
+
+    private getTransitionByDate(tableDate){
+        for(var i = 0; i < this.transition.length; i++){
+            if(this.transition[i][0] === tableDate){
+                return this.transition[i];
             }
         }
         return null;
@@ -97,6 +239,46 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
         var chart = this.createTableChart(document.getElementById('net_value'));
         chart.draw(data, options);
     }
+
+    drawFixedIncomeTable(data){
+        var options = {
+            showRowNumber: false,
+            width: '100%',
+            height: '100%',
+            'allowHtml': true,
+            cssClassNames: {}
+        };
+
+        var chart = this.createTableChart(document.getElementById('fixed_income_portfolio'));
+        chart.draw(data, options);
+    }
+
+    drawEquityTable(data){
+        var options = {
+            showRowNumber: false,
+            width: '100%',
+            height: '100%',
+            'allowHtml': true,
+            cssClassNames: {}
+        };
+
+        var chart = this.createTableChart(document.getElementById('equity_portfolio'));
+        chart.draw(data, options);
+    }
+
+    drawTransitionTable(data){
+        var options = {
+            showRowNumber: false,
+            width: '100%',
+            height: '100%',
+            'allowHtml': true,
+            cssClassNames: {}
+        };
+
+        var chart = this.createTableChart(document.getElementById('transition_portfolio'));
+        chart.draw(data, options);
+    }
+
 
     // PERFORMANCE TABLE -------------------------------
     private getPerformanceData(tableDate) {
@@ -200,10 +382,16 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
     }
 
     //  PORTFOLIO STRUCTURE ----------------------------
-    drawPieCharts(){
-        this.drawPortfolioStructureChart();
-        this.drawBondsByCountryChart();
-        this.drawBondsBySectorChart();
+    drawPieCharts(tableDate){
+        if(tableDate.endsWith("19")){
+            this.drawFixedIncomeChart(tableDate);
+            this.drawEquityChart(tableDate);
+            this.drawTransitionChart(tableDate);
+        }else {
+            this.drawPortfolioStructureChart();
+            this.drawBondsByCountryChart();
+            this.drawBondsBySectorChart();
+        }
     }
 
     drawPortfolioStructureChart(){
@@ -219,10 +407,117 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
         ]);
 
         var options = {
-            title: 'Portfolio Structure'
+            title: 'Portfolio Structure',
         };
 
         var chart = new google.visualization.PieChart(document.getElementById('portfolio_structure'));
+        chart.draw(data, options);
+    }
+
+    drawFixedIncomeChart(tableDate){
+        var tableData = this.getFixedIncomeChartData(tableDate)
+        var data = google.visualization.arrayToDataTable([
+            ['Type', '%'],
+            ["Government Bonds",tableData[1][0]],
+            ["Corporate Bonds",tableData[1][1]],
+            ["Agencies",tableData[1][2]],
+            ["Фьючерсы и средства на брокерском счете",tableData[1][3]],
+            ["Валюта ",tableData[1][4]],
+            ["Cash", tableData[1][5]]
+            //["Total", 100]
+        ]);
+
+        var options = {
+            title: 'Fixed Income Portfolio Structure',
+            pieHole: 0.4,
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('portfolio_structure_fixed_income_chart'));
+        chart.draw(data, options);
+    }
+
+    getFixedIncomeChartData(tableDate){
+        for(var i = 0; i < this.fixed_income_chart.length; i++){
+            if(this.fixed_income_chart[i][0] === tableDate){
+                return this.fixed_income_chart[i];
+            }
+        }
+        return null;
+    }
+
+    getEquityChartData(tableDate){
+        for(var i = 0; i < this.equity_chart.length; i++){
+            if(this.equity_chart[i][0] === tableDate){
+                return this.equity_chart[i];
+            }
+        }
+        return null;
+    }
+
+
+
+    getTransitionChartData(tableDate){
+        for(var i = 0; i < this.transition_chart.length; i++){
+            if(this.transition_chart[i][0] === tableDate){
+                return this.transition_chart[i];
+            }
+        }
+        return null;
+    }
+
+    private fixed_income_chart = [
+        ['Jan-19',[30.48,49.02,3.85,2.69,13.51,0.01,0.44]],
+        ['Feb-19',[28.63,48.39,8.99,10.46,3.30,0.22]],
+        ['Mar-19',[37,48,4,3,8,0]]
+    ];
+
+    private equity_chart = [
+        ['Jan-19',[98.97, 1.03]],
+        ['Feb-19',[98.99,1.01]],
+        ['Mar-19',[99.64,0.36]]
+    ];
+
+    private transition_chart = [
+        ['Jan-19',[99.6, 0.40]],
+        ['Feb-19',[99.09,0.91]],
+        ['Mar-19',[99.81,0.19]]
+    ];
+
+
+
+    drawEquityChart(tableDate){
+        var tableData = this.getEquityChartData(tableDate)
+        var data = google.visualization.arrayToDataTable([
+            ['Type', '%'],
+            ["ETF",tableData[1][0]],
+            ["Cash", tableData[1][1]]
+            //["Total", 100]
+        ]);
+
+        var options = {
+            title: 'Equity Portfolio Structure',
+            pieHole: 0.4,
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('portfolio_structure_equity_chart'));
+        chart.draw(data, options);
+    }
+
+    drawTransitionChart(tableDate){
+        var tableData = this.getTransitionChartData(tableDate)
+        var data = google.visualization.arrayToDataTable([
+            ['Type', '%'],
+            ["Government bonds",tableData[1][0]],
+            ["Cash", tableData[1][1]]
+            //["Total", 1]
+        ]);
+
+        var options = {
+            title: 'Transition Portfolio Structure',
+            pieHole: 0.4
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('portfolio_structure_transition_chart'));
         chart.draw(data, options);
     }
 
@@ -301,8 +596,15 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
     // DATA SOURCES --------------------------------------
     public getAllDates(){
         var dates = [];
+        for(var i = this.fixed_income.length - 1; i >= 0; i--){
+            if(!dates.includes(this.fixed_income[i][0])){
+                dates.push(this.fixed_income[i][0]);
+            }
+        }
         for(var i = this.nav.length - 1; i >= 0; i--){
-            dates.push(this.nav[i][0]);
+            if(!dates.includes(this.nav[i][0])) {
+                dates.push(this.nav[i][0]);
+            }
         }
         return dates;
     }
@@ -317,6 +619,60 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
         ["Mar-17",104495055,292570184,55550922,64943737,5654862,1908436,550424168],
         ["Apr-17",94397032,293174382,55622068,65019968,5790134,540846,538617288],
         ["May-17",79710320,294581051,55696260,64997438,4352978,12823324,536854358],
+    ];
+
+    private fixed_income = [
+        ["Jan-19",[118022844,189787416,14924250,10399225,52309397,20312,1695973,387159417],
+            [0.0148,0.0175,0.0052,-0.0443,null,null,null,0.0120],
+            [0.0148,0.0175,0.0052,-0.0443,null,null,null,0.0120],
+            [0.0148,0.0175,0.0052,-0.0443,null,null,null,0.0120]
+        ],
+        ["Feb-19",[111074185,187723937,34891620,12810512,40595153,844611,387940018],
+            [-0.0069,-0.0003,0.0027,.2319,null,null,0.0020],
+            [0.0078,0.0172,0.0078,0.1773,null,null,0.0140],
+            [0.0078,0.0172,0.0078,0.1773,null,null,0.0140]
+        ],
+        ["Mar-19",[144732326,187901404,15053250,11669144,32959251,null,1227971,393543346],
+            [0.0271,0.0139,0.0228,-0.0891,null,null,null,0.0144],
+            [0.0351,0.0313,0.0308,0.0724,null,null,null,0.0287],
+            [0.0351,0.0313,0.0308,0.0724,null,null,null,0.0287]
+        ],
+    ];
+
+    private equity = [
+        ["Jan-19",[43192296,449366,43641662],
+            [0.0827,null,0.0818],
+            [0.0827,null,0.0818],
+            [0.0827,null,0.0818]
+        ],
+        ["Feb-19",[44324991,450226,44775217],
+            [0.0262,null,0.026],
+            [0.1111,null,0.1099],
+            [0.11,null,0.1099]
+        ],
+        ["Mar-19",[45147697,162759,45310456],
+            [0.0090,null,0.0120],
+            [0.1211,null,0.1232],
+            [0.1211,null,0.1232]
+        ],
+    ];
+
+    private transition = [
+        ["Jan-19",[278574157,1113487,279687644],
+            [0.0030,null,0.0030],
+            [0.0030,null,0.0030],
+            [0.0030,null,0.0030]
+        ],
+        ["Feb-19",[261231301,2386754,263618055],
+            [0.0004,null,0.0003],
+            [0.0034,null,0.0033],
+            [0.0034,null,0.0033]
+        ],
+        ["Mar-19",[231174987,445267,231620254],
+            [0.0065,null,0.0064],
+            [0.0099,null,0.0098],
+            [0.0099,null,0.0098]
+        ],
     ];
 
     private performance = [

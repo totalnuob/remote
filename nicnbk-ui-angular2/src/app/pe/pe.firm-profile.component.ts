@@ -378,6 +378,7 @@ export class PEFirmProfileComponent extends CommonFormViewComponent implements O
     }
 
     showMemos(){
-        return !this.moduleAccessChecker.checkAccessMemoRestricted();
+        return true;
+        //return !this.moduleAccessChecker.checkAccessMemoRestricted();
     }
 }
