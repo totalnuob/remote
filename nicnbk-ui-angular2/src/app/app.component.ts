@@ -46,7 +46,7 @@ import {CorpMeetingService} from "./corpmeetings/corp-meetings.service";
     styleUrls: [
         '../../public/css/header.css', '../../public/css/footer.css',
         '../../public/css/common.css','../../public/css/forms.css',
-        '../../node_modules/angular2-busy/build/style/busy.css'
+        '../../node_modules/angular2-busy/build/style/busy.css',
     ],
     providers: [
         //FORM_PROVIDERS, // fixes 'No provider for RadioControlRegistry!'
@@ -73,6 +73,8 @@ import {CorpMeetingService} from "./corpmeetings/corp-meetings.service";
     imports: [TextareaAutosize]
 })
 export class AppComponent {
+
+    activeMenu;
 
     private moduleAccessChecker: ModuleAccessCheckerService;
 
@@ -109,11 +111,13 @@ export class AppComponent {
     }
 
     showTrainings(){
-        return !this.moduleAccessChecker.checkAccessMemoRestricted();
+        return true;
+        //return !this.moduleAccessChecker.checkAccessMemoRestricted();
     }
 
     showM2S2(){
-        return !this.moduleAccessChecker.checkAccessMemoRestricted();
+        return true;
+        //return !this.moduleAccessChecker.checkAccessMemoRestricted();
     }
 
     getUsername(){

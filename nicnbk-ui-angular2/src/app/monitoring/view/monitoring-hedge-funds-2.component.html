@@ -7,9 +7,9 @@
         <!--</div>-->
     <!--</div>-->
 
-    <div class="row withpadding">
-        <h2>Under Construction. New monitoring forms to be updated soon.</h2>
-    </div>
+    <!--<div class="row withpadding">-->
+        <!--<h2>Under Construction. New monitoring forms to be updated soon.</h2>-->
+    <!--</div>-->
 
     <!--<ul class="nav nav-tabs">-->
         <!--<li class="active">-->
@@ -22,6 +22,443 @@
             <!--<a data-toggle="tab" href="#portfolioB">Portfolio Class B</a>-->
         <!--</li>-->
     <!--</ul>-->
+
+    <ul role="tablist" class="date-tabs nav">
+        <li class="date-tabs__item"><a data-toggle="tab"
+                                       href="#OVERALL"
+                                       role="tab" aria-controls="OVERALL"
+                                       aria-selected="true"
+                                       class="date-tabs__link"
+                                       [style.border-bottom-color]="activeTab === 'OVERALL' ? '#D9A158' : 'white'"
+                                       (click)="activeTab='OVERALL'">OVERALL</a>
+        </li>
+        <li class="date-tabs__item"><a data-toggle="tab"
+                                       href="#CLASS_A"
+                                       role="tab" aria-controls="CLASS_A"
+                                       aria-selected="false"
+                                       class="date-tabs__link"
+                                       [style.border-bottom-color]="activeTab === 'CLASS_A' ? '#D9A158' : 'white'"
+                                       (click)="activeTab = 'CLASS_A'">CLASS A</a>
+        </li>
+        <li class="date-tabs__item"><a data-toggle="tab"
+                                       href="#CLASS_B"
+                                       role="tab" aria-controls="CLASS_B"
+                                       aria-selected="false"
+                                       class="date-tabs__link"
+                                       [style.border-bottom-color]="activeTab === 'CLASS_B' ? '#D9A158' : 'white'"
+                                       (click)="activeTab = 'CLASS_B'">CLASS B</a>
+        </li>
+    </ul>
+
+
+    <div class="tab-content">
+        <div id="OVERALL" role="tabpanel" aria-labelledby="OVERALL" class="tab-pane active">
+            <br/>
+            <div class="row">
+                <div class="col-md-12">
+                    <div  style="background-color:#307240; color:white; font-size: medium; font-weight: bold">Singularity – overall hedge fund program</div>
+                </div>
+            </div>
+            <br/>
+            <div class="row">
+                <!--<button class="btn-primary pull-right" [routerLink]="['/monitoring/hf2Print']">PRINT</button>-->
+            </div>
+            <br/>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-4">
+                        <div id="generalInformation">
+                            <table class="table table-hover table-responsive" style="font-size: smaller">
+                                <tr style="background-color: #307240; color: white;" >
+                                    <td colspan="2">General Information</td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: bold">AUM of the program –total</td>
+                                    <td>600 million USD</td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: bold">AUM - invested</td>
+                                    <td>324 500 000 USD</td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: bold">NAV</td>
+                                    <td>339 845 165 USD</td>
+                                </tr>
+
+                                <tr>
+                                    <td style="font-weight: bold">AUM – uninvested</td>
+                                    <td>275.5 million USD</td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: bold">Number of funds</td>
+                                    <td>29</td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: bold">Mandate</td>
+                                    <td>Global Diversified</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div id="contributionToReturn">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div id="allocationByStrategy">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <br/>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div id="returns"></div>
+                        </div>
+                    </div>
+                    <br/>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div id="performanceMonthly"></div>
+                        </div>
+                    </div>
+                </div>
+                <!--<div class="col-md-5">-->
+                <!--<div class="row">-->
+                <!--<div class="col-md-12">-->
+                <!--<b>Total program expenses:</b><br/>-->
+                <!--<ol>-->
+                <!--<li>GCM fee paid since program inception:-->
+                <!--<ul>-->
+                <!--<li>Management fee: 940 000 USD</li>-->
+                <!--<li>Incentive fee: -</li>-->
+                <!--</ul>-->
+                <!--</li>-->
+                <!--<li>Underlying funds fees since inception:-->
+                <!--<ul>-->
+                <!--<li>Management fee: 2 095 787 USD</li>-->
+                <!--<li>Incentive fee: 579 008 USD</li>-->
+                <!--</ul>-->
+                <!--</li>-->
+                <!--<li>Subscription to database (2016-2017Q1):-->
+                <!--<ul>-->
+                <!--<li>Albourne: 240 000 USD</li>-->
+                <!--<li>HFR: 7 000 USD</li>-->
+                <!--</ul>-->
+                <!--</li>-->
+                <!--</ol>-->
+                <!--<br/>-->
+                <!--<span><b>Total: 3 861 795 USD</b></span>-->
+                <!--</div>-->
+                <!--</div>-->
+                <!--</div>-->
+            </div>
+            <br/>
+        </div>
+        <div id="CLASS_A" role="tabpanel" aria-labelledby="CLASS_A" class="tab-pane">
+            <br/>
+            <div class="row">
+                <div class="col-md-12">
+                    <div  style="background-color:#307240; color:white; font-size: medium; font-weight: bold">
+                        Portfolio Class A – GCM discretionary
+                    </div>
+                </div>
+            </div>
+            <br/>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-5">
+                        <div class="row">
+                            <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
+                                <tr style="background-color: #307240; color: white;" >
+                                    <td colspan="2">Fund details (as of June 1, 2017)</td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: bold">AUM – invested</td>
+                                    <td>150 000 000 USD</td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: bold">NAV</td>
+                                    <td>156 107 491 USD</td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: bold">Inception</td>
+                                    <td>August 1, 2015</td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: bold">Number of investment managers</td>
+                                    <td>22</td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: bold">Number of funds</td>
+                                    <td>22</td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: bold">Strategy</td>
+                                    <td>Global diversified multi-strategy</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="row">
+                            <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
+                                <tr style="background-color: #307240; color: white;" >
+                                    <td colspan="3">Top 5 Positive Contributors (%)</td>
+                                </tr>
+                                <tr style="font-weight: bolder; border-bottom:2pt solid black;">
+                                    <td>Fund</td>
+                                    <td>Strategy</td>
+                                    <td>YTD</td>
+                                </tr>
+                                <tr *ngFor="let row of getPortfolioATop5Funds()">
+                                    <td>{{row[0]}}</td>
+                                    <td>{{row[1]}}</td>
+                                    <td>{{row[2]}}</td>
+                                </tr>
+
+                            </table>
+                        </div>
+                        <div class="row">
+                            <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
+                                <tr style="background-color: #307240; color: white;" >
+                                    <td colspan="3">Top 5 Negative Contributors (%)</td>
+                                </tr>
+                                <tr style="font-weight: bolder; border-bottom:2pt solid black;">
+                                    <td>Fund</td>
+                                    <td>Strategy</td>
+                                    <td>YTD</td>
+                                </tr>
+                                <tr *ngFor="let row of getPortfolioATop5NegativeFunds()">
+                                    <td>{{row[0]}}</td>
+                                    <td>{{row[1]}}</td>
+                                    <td>{{row[2]}}</td>
+                                </tr>
+
+                            </table>
+                        </div>
+                        <div class="row">
+                            <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
+                                <tr style="background-color: #307240; color: white;" >
+                                    <td colspan="3">Top 10 Portfolio Fund Allocation</td>
+                                </tr>
+                                <tr style="font-weight: bolder; border-bottom:2pt solid black;">
+                                    <td>Fund</td>
+                                    <td>Strategy</td>
+                                    <td>Allocation, %</td>
+                                </tr>
+                                <tr *ngFor="let row of getPortfolioATop10AllocationFunds()">
+                                    <td>{{row[0]}}</td>
+                                    <td>{{row[1]}}</td>
+                                    <td>{{row[2]}}</td>
+                                </tr>
+
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <div class="row"> <!-- Allocation by Strategy, MTD-->
+                            <div id="allocationByStrategyPortfolioA" align="center">
+                            </div>
+                        </div>
+
+                        <br/>
+                        <div class="row"> <!-- Returns-->
+                            <div class="col-md-12">
+                                <div id="comparisonReturns2015"></div>
+                            </div>
+                        </div>
+
+                        <br/>
+                        <div class="row"> <!-- Returns-->
+                            <div class="col-md-12">
+                                <div id="comparisonReturns2016"></div>
+                            </div>
+                        </div>
+
+                        <br/>
+                        <div class="row"> <!-- Returns-->
+                            <div class="col-md-12">
+                                <div id="comparisonReturns2017"></div>
+                            </div>
+                        </div>
+
+                        <br/>
+                        <div class="row"> <!-- Returns-->
+                            <div class="col-md-12">
+                                <div id="comparisonReturns2018"></div>
+                            </div>
+                        </div>
+
+                        <br/>
+                        <div class="row"> <!-- Returns-->
+                            <div class="col-md-12">
+                                <div id="comparisonReturns2019"></div>
+                            </div>
+                        </div>
+
+                        <br/>
+                        <div class="row"> <!-- GCM view on the Portfolio:-->
+                            <div class="col-md-1">&nbsp;</div>
+                            <!--<b>GCM view on the Portfolio:</b><br/><br/>-->
+                            <!--<ul>-->
+                            <!--<li>Redemptions that have been in place for a number of months include GS-->
+                            <!--Gamma, Prosiris, and Discovery.</li>-->
+                            <!--<li>Also they plan to initiate redemptions from MKP Opportunity, Blue Mountain-->
+                            <!--Long/Short Equity, Basswood, GCM COM, and Nipun.</li>-->
+                            <!--<li>Additionally, they are redeeming from Argentiere Ltd; however, they intend to-->
+                            <!--maintain the existing position in Argentiere Enhanced.</li>-->
+                            <!--</ul>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br/>
+        </div>
+        <div id="CLASS_B" role="tabpanel" aria-labelledby="CLASS_B" class="tab-pane">
+            <br/>
+            <div class="row">
+                <div class="col-md-12">
+                    <div  style="background-color:#307240; color:white; font-size: medium; font-weight: bold">
+                        Portfolio Class B – GCM advisory
+                    </div>
+                </div>
+            </div>
+            <br/>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-6">
+                        <table class="table table-hover table-responsive" style="font-size: smaller">
+                            <tr style="background-color: #307240; color: white;" >
+                                <td colspan="2">Fund details (as of March 31, 2019)</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold">AUM – invested</td>
+                                <td>174 500 000 USD</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold">NAV</td>
+                                <td>183 737 674 USD</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold">AUM – uninvested</td>
+                                <td>275 500 000 USD</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold">Number of investment managers</td>
+                                <td>8</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold">Number of funds</td>
+                                <td>8</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold">Strategy</td>
+                                <td>Global diversified multi-strategy</td>
+                            </tr>
+                        </table>
+                        <br/>
+                    </div>
+                    <div class="col-md-6">
+                        <div id="allocation"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-5">
+                        <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
+                            <tr style="background-color: #307240; color: white;" >
+                                <td colspan="3">Allocation by strategy</td>
+                            </tr>
+                            <tr style="font-weight: bolder; border-bottom:2pt solid black;">
+                                <td>Fund</td>
+                                <td>Strategy</td>
+                                <td>Allocation, %</td>
+                            </tr>
+                            <tr *ngFor="let row of getPortfolioBFundAllocations()">
+                                <td>{{row[0]}}</td>
+                                <td>{{row[1]}}</td>
+                                <td>{{row[2]}}</td>
+                            </tr>
+
+                        </table>
+                    </div>
+                    <div class="col-md-7">
+                        <div class="row"> <!-- Returns-->
+                            <div id="classBComparisonReturns2017"></div>
+                        </div>
+                        <br/>
+                        <div class="row"> <!-- Returns-->
+                            <div id="classBComparisonReturns2018"></div>
+                        </div>
+                        <br/>
+                        <div class="row"> <!-- Returns-->
+                            <div id="classBComparisonReturns2019"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row withpadding">
+                <b>Approved Fund List:</b><br/><br/>
+                <ul>
+                    <li>Millennium Management LLC - Millennium Partners, L.P.</li>
+                    <li>Arrowgrass Capital Partners LLP - Arrowgrass Master Fund</li>
+                    <li>HBK Investment LP - HBK Master Fund LP</li>
+                    <li>Lyxor Asset Management - Lyxor/Bridgewater Fund Limited</li>
+                    <!--<li>Moore Capital Management, LP - Moore Macro Managers Fund Ltd</li>-->
+                    <li>Graham Capital Management, L.P. - Graham Absolute Return Ltd</li>
+                    <li>Renaissance Technologies International Equities Fund</li>
+                    <li>D.E. Shaw&Co. L.P., D.E. Shaw Valence International fund</li>
+                    <li>Alphadyne Asset Management LP – Alphadyne International Master Fund</li>
+                    <li>Alphadyne Asset Management LP – Alphadyne Global Rates Fund</li>
+                    <li>Autonomy Capital – Autonomy Global Macro Fund</li>
+                    <li>Complus Asset Management Limited – Complus Asia Macro Fund</li>
+                    <li>Element Capital Management LLC – Element Capital Fund</li>
+                    <li>Pharo Management – Pharo Gaia Fund Ltd</li>
+                    <li>Pharo Management – Pharo Macro Fund Ltd</li>
+                    <li>BlackRock Investment Management (UK) Limited – BlackRock European Hedge Fund Limited</li>
+                    <li>Suvretta Capital Management LLC – Suvretta Capital Management Fund</li>
+                    <li>Marshall Wace LLP – Marshall Wace - MW Eureka Fund</li>
+                    <li>Southpoint Capital Advisors LP – Southpoint Fund</li>
+                    <li>Palestra Capital Management LLC – Palestra Capital Management LLC</li>
+                </ul>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <!--<div>-->
+                    <!--<b>Pending Questions</b><br/><br/>-->
+                    <!--<ol>-->
+                    <!--<li>Mulit-Strategy hedge fund manager selecion process. Size of the mandate is 49.5 million USD.-->
+                    <!--Following funds will be proposed for the Board of Directors approval:-->
+                    <!--</li>-->
+                    <!--<ul>-->
+                    <!--<li>Millennium Management LLC - Millennium Partners, L.P.</li>-->
+                    <!--<li>Arrowgrass Capital Partners LLP - Arrowgrass Master Fund</li>-->
+                    <!--<li>Hutchin Hill Capital, LP - Hutchin Hill Capital Offshore Fund, Ltd</li>-->
+                    <!--<li>HBK Investment LP - HBK Master Fund LP</li>-->
+                    <!--</ul>-->
+                    <!--</ol>-->
+                    <!--</div>-->
+                    <!--<br/>-->
+                    <!--<div>-->
+                    <!--<b>Pipeline</b><br/><br/>-->
+                    <!--<ol>-->
+                    <!--<li>Macro and Managed futures hedge fund manager selection process. Screening and Scoring stage. Currently updating IDD and ODD.-->
+                    <!--</li>-->
+                    <!--<li>Long/Short Equity hedge fund manager selection process. Screening and Scoring stage-->
+                    <!--</li>-->
+                    <!--</ol>-->
+                    <!--</div>-->
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <!--<div class="tab-content">-->
         <!--<div id="overall" class="tab-pane fade in active">-->
             <!--<br/>-->
@@ -45,24 +482,24 @@
                                 <!--</tr>-->
                                 <!--<tr>-->
                                     <!--<td style="font-weight: bold">AUM of the program –total</td>-->
-                                    <!--<td>240 million USD</td>-->
+                                    <!--<td>600 million USD</td>-->
                                 <!--</tr>-->
                                 <!--<tr>-->
                                     <!--<td style="font-weight: bold">AUM - invested</td>-->
-                                    <!--<td>179 500 000 USD</td>-->
+                                    <!--<td>324 500 000 USD</td>-->
                                 <!--</tr>-->
                                 <!--<tr>-->
                                     <!--<td style="font-weight: bold">NAV</td>-->
-                                    <!--<td>180 889 915 USD</td>-->
+                                    <!--<td>339 845 165 USD</td>-->
                                 <!--</tr>-->
 
                                 <!--<tr>-->
                                     <!--<td style="font-weight: bold">AUM – uninvested</td>-->
-                                    <!--<td>60.5 million USD</td>-->
+                                    <!--<td>275.5 million USD</td>-->
                                 <!--</tr>-->
                                 <!--<tr>-->
                                     <!--<td style="font-weight: bold">Number of funds</td>-->
-                                    <!--<td>25</td>-->
+                                    <!--<td>29</td>-->
                                 <!--</tr>-->
                                 <!--<tr>-->
                                     <!--<td style="font-weight: bold">Mandate</td>-->
@@ -84,7 +521,7 @@
 
             <!--<br/>-->
             <!--<div class="row">-->
-                <!--<div class="col-md-7">-->
+                <!--<div class="col-md-12">-->
                     <!--<div class="row">-->
                         <!--<div class="col-md-12">-->
                             <!--<div id="returns"></div>-->
@@ -97,35 +534,35 @@
                         <!--</div>-->
                     <!--</div>-->
                 <!--</div>-->
-                <!--<div class="col-md-5">-->
-                    <!--<div class="row">-->
-                        <!--<div class="col-md-12">-->
-                            <!--<b>Total program expenses:</b><br/>-->
-                            <!--<ol>-->
-                                <!--<li>GCM fee paid since program inception:-->
-                                    <!--<ul>-->
-                                        <!--<li>Management fee: 940 000 USD</li>-->
-                                        <!--<li>Incentive fee: -</li>-->
-                                    <!--</ul>-->
-                                <!--</li>-->
-                                <!--<li>Underlying funds fees since inception:-->
-                                    <!--<ul>-->
-                                        <!--<li>Management fee: 2 095 787 USD</li>-->
-                                        <!--<li>Incentive fee: 579 008 USD</li>-->
-                                    <!--</ul>-->
-                                <!--</li>-->
-                                <!--<li>Subscription to database (2016-2017Q1):-->
-                                    <!--<ul>-->
-                                        <!--<li>Albourne: 240 000 USD</li>-->
-                                        <!--<li>HFR: 7 000 USD</li>-->
-                                    <!--</ul>-->
-                                <!--</li>-->
-                            <!--</ol>-->
-                            <!--<br/>-->
-                            <!--<span><b>Total: 3 861 795 USD</b></span>-->
-                        <!--</div>-->
-                    <!--</div>-->
-                <!--</div>-->
+                <!--&lt;!&ndash;<div class="col-md-5">&ndash;&gt;-->
+                    <!--&lt;!&ndash;<div class="row">&ndash;&gt;-->
+                        <!--&lt;!&ndash;<div class="col-md-12">&ndash;&gt;-->
+                            <!--&lt;!&ndash;<b>Total program expenses:</b><br/>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<ol>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<li>GCM fee paid since program inception:&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<ul>&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<li>Management fee: 940 000 USD</li>&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<li>Incentive fee: -</li>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</ul>&ndash;&gt;-->
+                                <!--&lt;!&ndash;</li>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<li>Underlying funds fees since inception:&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<ul>&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<li>Management fee: 2 095 787 USD</li>&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<li>Incentive fee: 579 008 USD</li>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</ul>&ndash;&gt;-->
+                                <!--&lt;!&ndash;</li>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<li>Subscription to database (2016-2017Q1):&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<ul>&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<li>Albourne: 240 000 USD</li>&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<li>HFR: 7 000 USD</li>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</ul>&ndash;&gt;-->
+                                <!--&lt;!&ndash;</li>&ndash;&gt;-->
+                            <!--&lt;!&ndash;</ol>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<br/>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<span><b>Total: 3 861 795 USD</b></span>&ndash;&gt;-->
+                        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                <!--&lt;!&ndash;</div>&ndash;&gt;-->
             <!--</div>-->
             <!--<br/>-->
         <!--</div>-->
@@ -153,7 +590,7 @@
                                 <!--</tr>-->
                                 <!--<tr>-->
                                     <!--<td style="font-weight: bold">NAV</td>-->
-                                    <!--<td>150 439 370 USD</td>-->
+                                    <!--<td>156 107 491 USD</td>-->
                                 <!--</tr>-->
                                 <!--<tr>-->
                                     <!--<td style="font-weight: bold">Inception</td>-->
@@ -161,11 +598,11 @@
                                 <!--</tr>-->
                                 <!--<tr>-->
                                     <!--<td style="font-weight: bold">Number of investment managers</td>-->
-                                    <!--<td>23</td>-->
+                                    <!--<td>22</td>-->
                                 <!--</tr>-->
                                 <!--<tr>-->
                                     <!--<td style="font-weight: bold">Number of funds</td>-->
-                                    <!--<td>23</td>-->
+                                    <!--<td>22</td>-->
                                 <!--</tr>-->
                                 <!--<tr>-->
                                     <!--<td style="font-weight: bold">Strategy</td>-->
@@ -249,6 +686,20 @@
                         <!--</div>-->
 
                         <!--<br/>-->
+                        <!--<div class="row"> &lt;!&ndash; Returns&ndash;&gt;-->
+                            <!--<div class="col-md-12">-->
+                                <!--<div id="comparisonReturns2018"></div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+
+                        <!--<br/>-->
+                        <!--<div class="row"> &lt;!&ndash; Returns&ndash;&gt;-->
+                            <!--<div class="col-md-12">-->
+                                <!--<div id="comparisonReturns2019"></div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+
+                        <!--<br/>-->
                         <!--<div class="row"> &lt;!&ndash; GCM view on the Portfolio:&ndash;&gt;-->
                             <!--<div class="col-md-1">&nbsp;</div>-->
                             <!--&lt;!&ndash;<b>GCM view on the Portfolio:</b><br/><br/>&ndash;&gt;-->
@@ -278,65 +729,103 @@
             <!--<br/>-->
             <!--<div class="row">-->
                 <!--<div class="col-md-12">-->
-                    <!--<div class="col-md-8">-->
-                        <!--<div class="row">-->
-                            <!--<table class="table table-hover table-responsive" style="font-size: smaller">-->
-                                <!--<tr style="background-color: #307240; color: white;" >-->
-                                    <!--<td colspan="2">Fund details (as of June 1, 2017)</td>-->
-                                <!--</tr>-->
-                                <!--<tr>-->
-                                    <!--<td style="font-weight: bold">AUM – invested</td>-->
-                                    <!--<td>29 500 000 USD</td>-->
-                                <!--</tr>-->
-                                <!--<tr>-->
-                                    <!--<td style="font-weight: bold">NAV</td>-->
-                                    <!--<td>30 450 545 USD</td>-->
-                                <!--</tr>-->
-                                <!--<tr>-->
-                                    <!--<td style="font-weight: bold">AUM – uninvested</td>-->
-                                    <!--<td>60 500 000 USD</td>-->
-                                <!--</tr>-->
-                                <!--<tr>-->
-                                    <!--<td style="font-weight: bold">Number of investment managers</td>-->
-                                    <!--<td>2</td>-->
-                                <!--</tr>-->
-                                <!--<tr>-->
-                                    <!--<td style="font-weight: bold">Number of funds</td>-->
-                                    <!--<td>2</td>-->
-                                <!--</tr>-->
-                                <!--<tr>-->
-                                    <!--<td style="font-weight: bold">Strategy</td>-->
-                                    <!--<td>Global diversified multi-strategy</td>-->
-                                <!--</tr>-->
-                            <!--</table>-->
-                        <!--</div>-->
-                        <!--<div class="row"> &lt;!&ndash; Returns&ndash;&gt;-->
-                            <!--<div class="col-md-12">-->
-                                <!--<div id="classBComparisonReturns"></div>-->
-                            <!--</div>-->
-                        <!--</div>-->
+                    <!--<div class="col-md-6">-->
+                        <!--<table class="table table-hover table-responsive" style="font-size: smaller">-->
+                            <!--<tr style="background-color: #307240; color: white;" >-->
+                                <!--<td colspan="2">Fund details (as of March 31, 2019)</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td style="font-weight: bold">AUM – invested</td>-->
+                                <!--<td>174 500 000 USD</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td style="font-weight: bold">NAV</td>-->
+                                <!--<td>183 737 674 USD</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td style="font-weight: bold">AUM – uninvested</td>-->
+                                <!--<td>275 500 000 USD</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td style="font-weight: bold">Number of investment managers</td>-->
+                                <!--<td>8</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td style="font-weight: bold">Number of funds</td>-->
+                                <!--<td>8</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td style="font-weight: bold">Strategy</td>-->
+                                <!--<td>Global diversified multi-strategy</td>-->
+                            <!--</tr>-->
+                        <!--</table>-->
                         <!--<br/>-->
-                        <!--<div class="row">-->
-                            <!--<b>Approved Fund List:</b><br/><br/>-->
-                            <!--<ul>-->
-                                <!--<li>Citadel LLC - Citadel Kensington Global strategies Fund Ltd</li>-->
-                                <!--<li>Pine River Capital Management L.P. - Pine River Master Fund Ltd</li>-->
-                                <!--<li>Millennium Management LLC - Millennium Partners, L.P.</li>-->
-                                <!--<li>Arrowgrass Capital Partners LLP - Arrowgrass Master Fund</li>-->
-                                <!--<li>Hutchin Hill Capital, LP - Hutchin Hill Capital Offshore Fund, Ltd</li>-->
-                                <!--<li>HBK Investment LP - HBK Master Fund LP</li>-->
-                                <!--<li>Lyxor Asset Management - Lyxor/Bridgewater Fund Limited</li>-->
-                                <!--<li>Moore Capital Management, LP - Moore Macro Managers Fund Ltd</li>-->
-                                <!--<li>Graham Capital Management, L.P. - Graham Absolute Return Ltd</li>-->
-                                <!--<li>Renaissance Technologies International Equities Fund</li>-->
-                                <!--<li>D.E. Shaw&Co. L.P., D.E. Shaw Valence International fund</li>-->
-                            <!--</ul>-->
-                        <!--</div>-->
                     <!--</div>-->
-                    <!--<div class="col-md-4">-->
+                    <!--<div class="col-md-6">-->
                         <!--<div id="allocation"></div>-->
                     <!--</div>-->
                 <!--</div>-->
+            <!--</div>-->
+
+            <!--<div class="row">-->
+                <!--<div class="col-md-12">-->
+                    <!--<div class="col-md-5">-->
+                        <!--<table class="table table-hover table-responsive table-condensed" style="font-size: smaller">-->
+                            <!--<tr style="background-color: #307240; color: white;" >-->
+                                <!--<td colspan="3">Allocation by strategy</td>-->
+                            <!--</tr>-->
+                            <!--<tr style="font-weight: bolder; border-bottom:2pt solid black;">-->
+                                <!--<td>Fund</td>-->
+                                <!--<td>Strategy</td>-->
+                                <!--<td>Allocation, %</td>-->
+                            <!--</tr>-->
+                            <!--<tr *ngFor="let row of getPortfolioBFundAllocations()">-->
+                                <!--<td>{{row[0]}}</td>-->
+                                <!--<td>{{row[1]}}</td>-->
+                                <!--<td>{{row[2]}}</td>-->
+                            <!--</tr>-->
+
+                        <!--</table>-->
+                    <!--</div>-->
+                    <!--<div class="col-md-7">-->
+                        <!--<div class="row"> &lt;!&ndash; Returns&ndash;&gt;-->
+                            <!--<div id="classBComparisonReturns2017"></div>-->
+                        <!--</div>-->
+                        <!--<br/>-->
+                        <!--<div class="row"> &lt;!&ndash; Returns&ndash;&gt;-->
+                            <!--<div id="classBComparisonReturns2018"></div>-->
+                        <!--</div>-->
+                        <!--<br/>-->
+                        <!--<div class="row"> &lt;!&ndash; Returns&ndash;&gt;-->
+                            <!--<div id="classBComparisonReturns2019"></div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="row withpadding">-->
+                <!--<b>Approved Fund List:</b><br/><br/>-->
+                <!--<ul>-->
+                    <!--<li>Millennium Management LLC - Millennium Partners, L.P.</li>-->
+                    <!--<li>Arrowgrass Capital Partners LLP - Arrowgrass Master Fund</li>-->
+                    <!--<li>HBK Investment LP - HBK Master Fund LP</li>-->
+                    <!--<li>Lyxor Asset Management - Lyxor/Bridgewater Fund Limited</li>-->
+                    <!--&lt;!&ndash;<li>Moore Capital Management, LP - Moore Macro Managers Fund Ltd</li>&ndash;&gt;-->
+                    <!--<li>Graham Capital Management, L.P. - Graham Absolute Return Ltd</li>-->
+                    <!--<li>Renaissance Technologies International Equities Fund</li>-->
+                    <!--<li>D.E. Shaw&Co. L.P., D.E. Shaw Valence International fund</li>-->
+                    <!--<li>Alphadyne Asset Management LP – Alphadyne International Master Fund</li>-->
+                    <!--<li>Alphadyne Asset Management LP – Alphadyne Global Rates Fund</li>-->
+                    <!--<li>Autonomy Capital – Autonomy Global Macro Fund</li>-->
+                    <!--<li>Complus Asset Management Limited – Complus Asia Macro Fund</li>-->
+                    <!--<li>Element Capital Management LLC – Element Capital Fund</li>-->
+                    <!--<li>Pharo Management – Pharo Gaia Fund Ltd</li>-->
+                    <!--<li>Pharo Management – Pharo Macro Fund Ltd</li>-->
+                    <!--<li>BlackRock Investment Management (UK) Limited – BlackRock European Hedge Fund Limited</li>-->
+                    <!--<li>Suvretta Capital Management LLC – Suvretta Capital Management Fund</li>-->
+                    <!--<li>Marshall Wace LLP – Marshall Wace - MW Eureka Fund</li>-->
+                    <!--<li>Southpoint Capital Advisors LP – Southpoint Fund</li>-->
+                    <!--<li>Palestra Capital Management LLC – Palestra Capital Management LLC</li>-->
+                <!--</ul>-->
             <!--</div>-->
 
             <!--<div class="row">-->
@@ -356,15 +845,15 @@
                         <!--&lt;!&ndash;</ol>&ndash;&gt;-->
                     <!--&lt;!&ndash;</div>&ndash;&gt;-->
                     <!--&lt;!&ndash;<br/>&ndash;&gt;-->
-                    <!--<div>-->
-                        <!--<b>Pipeline</b><br/><br/>-->
-                        <!--<ol>-->
-                            <!--<li>Macro and Managed futures hedge fund manager selection process. Screening and Scoring stage. Currently updating IDD and ODD.-->
-                            <!--</li>-->
-                            <!--<li>Long/Short Equity hedge fund manager selection process. Screening and Scoring stage-->
-                            <!--</li>-->
-                        <!--</ol>-->
-                    <!--</div>-->
+                    <!--&lt;!&ndash;<div>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<b>Pipeline</b><br/><br/>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<ol>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<li>Macro and Managed futures hedge fund manager selection process. Screening and Scoring stage. Currently updating IDD and ODD.&ndash;&gt;-->
+                            <!--&lt;!&ndash;</li>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<li>Long/Short Equity hedge fund manager selection process. Screening and Scoring stage&ndash;&gt;-->
+                            <!--&lt;!&ndash;</li>&ndash;&gt;-->
+                        <!--&lt;!&ndash;</ol>&ndash;&gt;-->
+                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
                 <!--</div>-->
             <!--</div>-->
         <!--</div>-->

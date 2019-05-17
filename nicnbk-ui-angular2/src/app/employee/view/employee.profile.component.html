@@ -1,102 +1,121 @@
 <div class="container">
-    <ul class="nav nav-tabs">
-        <li class="active">
-            <a data-toggle="tab" href="#profile">PROFILE</a>
+    <ul role="tablist" class="date-tabs nav">
+        <li class="date-tabs__item"><a data-toggle="tab"
+                                       href="#PROFILE"
+                                       role="tab" aria-controls="PROFILE"
+                                       aria-selected="true"
+                                       class="date-tabs__link"
+                                       [style.border-bottom-color]="activeTab === 'PROFILE' ? '#D9A158' : 'white'"
+                                       (click)="activeTab='PROFILE'">PROFILE</a>
         </li>
-        <li>
-            <a data-toggle="tab" href="#password">PASSWORD</a>
+        <li class="date-tabs__item"><a data-toggle="tab"
+                                       href="#PASSWORD"
+                                       role="tab" aria-controls="PASSWORD"
+                                       aria-selected="false"
+                                       class="date-tabs__link"
+                                       [style.border-bottom-color]="activeTab === 'PASSWORD' ? '#D9A158' : 'white'"
+                                       (click)="activeTab = 'PASSWORD'">PASSWORD</a>
         </li>
     </ul>
-    <div class="row withpadding">
-        <div class="tab-content">
-            <div id="profile" class="tab-pane fade in active">
-                <h4>Profile Information</h4>
 
-                <div class="col-md-3 col-lg-3 " align="center">
-                    <img alt="User Pic" src="../../../../public/img/noprofile.png" class="img-circle img-responsive">
-                </div>
 
-                <div class=" col-md-9 col-lg-9 ">
-                    <!--<div class="row form-group">-->
-                        <!--<label class="control-label col-sm-2">Firstname:</label>-->
-                        <!--<div class="col-sm-10">-->
-                            <!--<span class="form-control-static">{{getFirstname()}}</span>-->
-                        <!--</div>-->
-                    <!--</div>-->
-                    <!--<div class="row form-group">-->
-                        <!--<label class="control-label col-sm-2">Lastname:</label>-->
-                        <!--<div class="col-sm-10">-->
-                            <!--<span class="form-control-static">{{getLastname()}}</span>-->
-                        <!--</div>-->
-                    <!--</div>-->
-                    <div class="row form-group">
-                        <label class="control-label col-sm-2">Username:</label>
-                        <div class="col-sm-10">
-                            <span class="form-control-static">{{getUsername()}}</span>
-                        </div>
-                    </div>
-                </div>
+    <!--<ul class="nav nav-tabs">-->
+        <!--<li class="active">-->
+            <!--<a data-toggle="tab" href="#profile">PROFILE</a>-->
+        <!--</li>-->
+        <!--<li>-->
+            <!--<a data-toggle="tab" href="#password">PASSWORD</a>-->
+        <!--</li>-->
+    <!--</ul>-->
 
-                <br/>
-                <!--<h4>Activity History</h4>-->
+
+    <div class="tab-content">
+        <div id="PROFILE" role="tabpanel" aria-labelledby="PROFILE" class="tab-pane active">
+            <h4>Profile Information</h4>
+
+            <div class="col-md-3 col-lg-3 " align="center">
+                <img alt="User Pic" src="../../../../public/img/noprofile.png" class="img-circle img-responsive">
             </div>
-            <div id="password" class="tab-pane fade">
-                <div class="container">
-                    <div class="row" style="position: relative; min-height: 350px;">
-                        <div class="Absolute-Center is-Responsive">
-                            <!--<div *ngIf="errorMessage != null">-->
-                                <!--<span style="color:red">{{errorMessage}}</span>-->
-                            <!--</div>-->
-                            <div class="form-group input-group">
-                                <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-                                <input class="form-control" type="password" name="currentPassword" placeholder="current password"
-                                       [(ngModel)]="currentPassword"/>
-                            </div>
-                            <div class="form-group input-group">
-                                <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-                                <input class="form-control" type="password" name="newPassword" placeholder="new password"
-                                       [(ngModel)]="newPassword"/>
-                            </div>
-                            <div class="form-group input-group">
-                                <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-                                <input class="form-control" type="password" name="newPasswordConfirm" placeholder="new password again"
-                                       [(ngModel)]="newPasswordConfirm"/>
-                            </div>
-                            <div><button type="button" class="btn btn-def btn-block" (click)="changePassword()"
-                                         data-toggle="modal" data-target="#passwordChangeModal">Change</button></div>
 
-                            <br/>
-                            <!--<div class="copyrightText">&copy; 2016 NIC</div>-->
-                        </div>
+            <div class=" col-md-9 col-lg-9 ">
+                <!--<div class="row form-group">-->
+                <!--<label class="control-label col-sm-2">Firstname:</label>-->
+                <!--<div class="col-sm-10">-->
+                <!--<span class="form-control-static">{{getFirstname()}}</span>-->
+                <!--</div>-->
+                <!--</div>-->
+                <!--<div class="row form-group">-->
+                <!--<label class="control-label col-sm-2">Lastname:</label>-->
+                <!--<div class="col-sm-10">-->
+                <!--<span class="form-control-static">{{getLastname()}}</span>-->
+                <!--</div>-->
+                <!--</div>-->
+                <div class="row form-group">
+                    <label class="control-label col-sm-2">Username:</label>
+                    <div class="col-sm-10">
+                        <span class="form-control-static">{{getUsername()}}</span>
                     </div>
+                </div>
+            </div>
 
-                    <div class="modal fade" id="passwordChangeModal" role="dialog">
-                        <div class="modal-dialog" style="margin-top: 50px; margin-bottom:50px;">
-                            <div class="modal-content">
-                                <!--<div class="modal-header">-->
-                                    <!--<button type="button" class="close" data-dismiss="modal">&times;</button>-->
-                                    <!--<h3 class="modal-title" >{{selectedNews.header}}</h3>-->
-                                    <!--<h4>-->
-                                        <!--<small>{{selectedNews.source}}</small>-->
-                                    <!--</h4>-->
-                                <!--</div>-->
-                                <div class="modal-body">
-                                    <div class="col-md-12">
-                                        <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
-                                        </div>
-                                    </div>
-                                    <!--<p>Password successfully changed. Please login with your new password</p>-->
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-primary" *ngIf="errorMessage == null" data-dismiss="modal"
-                                            (click)="finishChangePassword()">OK</button>
+            <br/>
+        </div>
+        <div id="PASSWORD" role="tabpanel" aria-labelledby="PASSWORD" class="tab-pane">
+            <div class="container">
+                <div class="row" style="position: relative; min-height: 350px;">
+                    <div class="Absolute-Center is-Responsive">
+                        <!--<div *ngIf="errorMessage != null">-->
+                        <!--<span style="color:red">{{errorMessage}}</span>-->
+                        <!--</div>-->
+                        <div class="form-group input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                            <input class="form-control" type="password" name="currentPassword" placeholder="current password"
+                                   [(ngModel)]="currentPassword"/>
+                        </div>
+                        <div class="form-group input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                            <input class="form-control" type="password" name="newPassword" placeholder="new password"
+                                   [(ngModel)]="newPassword"/>
+                        </div>
+                        <div class="form-group input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                            <input class="form-control" type="password" name="newPasswordConfirm" placeholder="new password again"
+                                   [(ngModel)]="newPasswordConfirm"/>
+                        </div>
+                        <div><button type="button" class="btn btn-def btn-block" (click)="changePassword()"
+                                     data-toggle="modal" data-target="#passwordChangeModal">Change</button></div>
 
-                                    <button type="button" class="btn btn-primary" *ngIf="errorMessage != null" data-dismiss="modal">CLOSE</button>
+                        <br/>
+                        <!--<div class="copyrightText">&copy; 2016 NIC</div>-->
+                    </div>
+                </div>
+
+                <div class="modal fade" id="passwordChangeModal" role="dialog">
+                    <div class="modal-dialog" style="margin-top: 50px; margin-bottom:50px;">
+                        <div class="modal-content">
+                            <!--<div class="modal-header">-->
+                            <!--<button type="button" class="close" data-dismiss="modal">&times;</button>-->
+                            <!--<h3 class="modal-title" >{{selectedNews.header}}</h3>-->
+                            <!--<h4>-->
+                            <!--<small>{{selectedNews.source}}</small>-->
+                            <!--</h4>-->
+                            <!--</div>-->
+                            <div class="modal-body">
+                                <div class="col-md-12">
+                                    <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+                                    </div>
                                 </div>
+                                <div class="col-md-12">
+                                    <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
+                                    </div>
+                                </div>
+                                <!--<p>Password successfully changed. Please login with your new password</p>-->
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" *ngIf="errorMessage == null" data-dismiss="modal"
+                                        (click)="finishChangePassword()">OK</button>
+
+                                <button type="button" class="btn btn-primary" *ngIf="errorMessage != null" data-dismiss="modal">CLOSE</button>
                             </div>
                         </div>
                     </div>
@@ -104,4 +123,102 @@
             </div>
         </div>
     </div>
+
+    <!--<div class="row withpadding">-->
+        <!--<div class="tab-content">-->
+            <!--<div id="profile" class="tab-pane fade in active">-->
+                <!--<h4>Profile Information</h4>-->
+
+                <!--<div class="col-md-3 col-lg-3 " align="center">-->
+                    <!--<img alt="User Pic" src="../../../../public/img/noprofile.png" class="img-circle img-responsive">-->
+                <!--</div>-->
+
+                <!--<div class=" col-md-9 col-lg-9 ">-->
+                    <!--&lt;!&ndash;<div class="row form-group">&ndash;&gt;-->
+                        <!--&lt;!&ndash;<label class="control-label col-sm-2">Firstname:</label>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<div class="col-sm-10">&ndash;&gt;-->
+                            <!--&lt;!&ndash;<span class="form-control-static">{{getFirstname()}}</span>&ndash;&gt;-->
+                        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<div class="row form-group">&ndash;&gt;-->
+                        <!--&lt;!&ndash;<label class="control-label col-sm-2">Lastname:</label>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<div class="col-sm-10">&ndash;&gt;-->
+                            <!--&lt;!&ndash;<span class="form-control-static">{{getLastname()}}</span>&ndash;&gt;-->
+                        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                    <!--<div class="row form-group">-->
+                        <!--<label class="control-label col-sm-2">Username:</label>-->
+                        <!--<div class="col-sm-10">-->
+                            <!--<span class="form-control-static">{{getUsername()}}</span>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+
+                <!--<br/>-->
+                <!--&lt;!&ndash;<h4>Activity History</h4>&ndash;&gt;-->
+            <!--</div>-->
+            <!--<div id="password" class="tab-pane fade">-->
+                <!--<div class="container">-->
+                    <!--<div class="row" style="position: relative; min-height: 350px;">-->
+                        <!--<div class="Absolute-Center is-Responsive">-->
+                            <!--&lt;!&ndash;<div *ngIf="errorMessage != null">&ndash;&gt;-->
+                                <!--&lt;!&ndash;<span style="color:red">{{errorMessage}}</span>&ndash;&gt;-->
+                            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                            <!--<div class="form-group input-group">-->
+                                <!--<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>-->
+                                <!--<input class="form-control" type="password" name="currentPassword" placeholder="current password"-->
+                                       <!--[(ngModel)]="currentPassword"/>-->
+                            <!--</div>-->
+                            <!--<div class="form-group input-group">-->
+                                <!--<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>-->
+                                <!--<input class="form-control" type="password" name="newPassword" placeholder="new password"-->
+                                       <!--[(ngModel)]="newPassword"/>-->
+                            <!--</div>-->
+                            <!--<div class="form-group input-group">-->
+                                <!--<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>-->
+                                <!--<input class="form-control" type="password" name="newPasswordConfirm" placeholder="new password again"-->
+                                       <!--[(ngModel)]="newPasswordConfirm"/>-->
+                            <!--</div>-->
+                            <!--<div><button type="button" class="btn btn-def btn-block" (click)="changePassword()"-->
+                                         <!--data-toggle="modal" data-target="#passwordChangeModal">Change</button></div>-->
+
+                            <!--<br/>-->
+                            <!--&lt;!&ndash;<div class="copyrightText">&copy; 2016 NIC</div>&ndash;&gt;-->
+                        <!--</div>-->
+                    <!--</div>-->
+
+                    <!--<div class="modal fade" id="passwordChangeModal" role="dialog">-->
+                        <!--<div class="modal-dialog" style="margin-top: 50px; margin-bottom:50px;">-->
+                            <!--<div class="modal-content">-->
+                                <!--&lt;!&ndash;<div class="modal-header">&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<button type="button" class="close" data-dismiss="modal">&times;</button>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<h3 class="modal-title" >{{selectedNews.header}}</h3>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<h4>&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<small>{{selectedNews.source}}</small>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</h4>&ndash;&gt;-->
+                                <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                                <!--<div class="modal-body">-->
+                                    <!--<div class="col-md-12">-->
+                                        <!--<div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                    <!--<div class="col-md-12">-->
+                                        <!--<div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                    <!--&lt;!&ndash;<p>Password successfully changed. Please login with your new password</p>&ndash;&gt;-->
+                                <!--</div>-->
+                                <!--<div class="modal-footer">-->
+                                    <!--<button type="button" class="btn btn-primary" *ngIf="errorMessage == null" data-dismiss="modal"-->
+                                            <!--(click)="finishChangePassword()">OK</button>-->
+
+                                    <!--<button type="button" class="btn btn-primary" *ngIf="errorMessage != null" data-dismiss="modal">CLOSE</button>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
 </div>

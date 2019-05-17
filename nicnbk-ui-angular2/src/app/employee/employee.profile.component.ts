@@ -20,6 +20,7 @@ declare var $:any
 })
 export class EmployeeProfileComponent {
 
+    activeTab = "PROFILE";
     public errorMessage;
     public successMessage;
 

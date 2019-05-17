@@ -1,20 +1,43 @@
 <div class="container">
-    <ul class="nav nav-tabs">
-        <li class="active" (click)="getDataByType(1)">
-            <a data-toggle="tab" href="#global">Global</a>
+
+    <ul role="tablist" class="date-tabs nav">
+        <li class="date-tabs__item"><a data-toggle="tab"
+                                       href="#GLOBAL"
+                                       role="tab" aria-controls="GLOBAL"
+                                       aria-selected="true"
+                                       class="date-tabs__link"
+                                       [style.border-bottom-color]="activeTab === 'GLOBAL' ? '#D9A158' : 'white'"
+                                       (click)="getDataByType(1)">GLOBAL</a>
         </li>
-        <li (click)="getDataByType(2)">
-            <a data-toggle="tab" href="#us">US</a>
+        <li class="date-tabs__item"><a data-toggle="tab"
+                                       href="#US"
+                                       role="tab" aria-controls="US"
+                                       aria-selected="false"
+                                       class="date-tabs__link"
+
+                                       [style.border-bottom-color]="activeTab === 'US' ? '#D9A158' : 'white'"
+                                       (click)="getDataByType(2)">US</a>
         </li>
-        <li (click)="getDataByType(3)">
-            <a data-toggle="tab" href="#china">China</a>
+        <li class="date-tabs__item"><a data-toggle="tab"
+                                       href="#CHINA"
+                                       role="tab" aria-controls="CHINA"
+                                       aria-selected="true"
+                                       class="date-tabs__link"
+                                       [style.border-bottom-color]="activeTab === 'CHINA' ? '#D9A158' : 'white'"
+                                       (click)="getDataByType(3)">CHINA</a>
         </li>
-        <li (click)="getDataByType(4)">
-            <a data-toggle="tab" href="#eu">EU</a>
+        <li class="date-tabs__item"><a data-toggle="tab"
+                                       href="#EU"
+                                       role="tab" aria-controls="EU"
+                                       aria-selected="false"
+                                       class="date-tabs__link"
+                                       [style.border-bottom-color]="activeTab === 'EU' ? '#D9A158' : 'white'"
+                                       (click)="getDataByType(4)">EU</a>
         </li>
     </ul>
+
     <div class="tab-content">
-        <div id="global" class="tab-pane fade in active">
+        <div id="GLOBAL" role="tabpanel" aria-labelledby="GLOBAL" class="tab-pane active">
             <br/>
             <span *ngIf="showEditMacroMonitor()">
                 <button *ngIf="showEditMacroMonitor()" class="btn btn-primary" [routerLink]="['/macromonitor/1']">Edit</button>
@@ -35,7 +58,7 @@
                 </div>
             </div>
         </div>
-        <div id="us" class="tab-pane fade">
+        <div id="US" role="tabpanel" aria-labelledby="US" class="tab-pane">
             <br/>
             <span *ngIf="showEditMacroMonitor()">
                 <button *ngIf="showEditMacroMonitor()" class="btn btn-primary" [routerLink]="['/macromonitor/2']">Edit</button>
@@ -56,7 +79,7 @@
                 </div>
             </div>
         </div>
-        <div id="china" class="tab-pane fade">
+        <div id="CHINA" role="tabpanel" aria-labelledby="CHINA" class="tab-pane">
             <br/>
             <span *ngIf="showEditMacroMonitor()">
                 <button *ngIf="showEditMacroMonitor()" class="btn btn-primary" [routerLink]="['/macromonitor/3']">Edit</button>
@@ -77,7 +100,7 @@
                 </div>
             </div>
         </div>
-        <div id="eu" class="tab-pane fade">
+        <div id="EU" role="tabpanel" aria-labelledby="EU" class="tab-pane">
             <br/>
             <span *ngIf="showEditMacroMonitor()">
 
@@ -99,4 +122,107 @@
             </div>
         </div>
     </div>
+
+    <!--<ul class="nav nav-tabs">-->
+        <!--<li class="active" (click)="getDataByType(1)">-->
+            <!--<a data-toggle="tab" href="#global">Global</a>-->
+        <!--</li>-->
+        <!--<li (click)="getDataByType(2)">-->
+            <!--<a data-toggle="tab" href="#us">US</a>-->
+        <!--</li>-->
+        <!--<li (click)="getDataByType(3)">-->
+            <!--<a data-toggle="tab" href="#china">China</a>-->
+        <!--</li>-->
+        <!--<li (click)="getDataByType(4)">-->
+            <!--<a data-toggle="tab" href="#eu">EU</a>-->
+        <!--</li>-->
+    <!--</ul>-->
+
+
+    <!--<div class="tab-content">-->
+        <!--<div id="global" class="tab-pane fade in active">-->
+            <!--<br/>-->
+            <!--<span *ngIf="showEditMacroMonitor()">-->
+                <!--<button *ngIf="showEditMacroMonitor()" class="btn btn-primary" [routerLink]="['/macromonitor/1']">Edit</button>-->
+                <!--<br/>-->
+                <!--<br/>-->
+            <!--</span>-->
+            <!--<div class="row">-->
+                <!--<div class="col-md-12">-->
+                    <!--<div id="table">-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<br/>-->
+            <!--<div class="row">-->
+                <!--<div class="col-md-12">-->
+                    <!--<div id="line_chart">-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div id="us" class="tab-pane fade">-->
+            <!--<br/>-->
+            <!--<span *ngIf="showEditMacroMonitor()">-->
+                <!--<button *ngIf="showEditMacroMonitor()" class="btn btn-primary" [routerLink]="['/macromonitor/2']">Edit</button>-->
+                <!--<br/>-->
+                <!--<br/>-->
+            <!--</span>-->
+            <!--<div class="row">-->
+                <!--<div class="col-md-12">-->
+                    <!--<div id="table_us">-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<br/>-->
+            <!--<div class="row">-->
+                <!--<div class="col-md-12">-->
+                    <!--<div id="line_chart_us">-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div id="china" class="tab-pane fade">-->
+            <!--<br/>-->
+            <!--<span *ngIf="showEditMacroMonitor()">-->
+                <!--<button *ngIf="showEditMacroMonitor()" class="btn btn-primary" [routerLink]="['/macromonitor/3']">Edit</button>-->
+                <!--<br/>-->
+                <!--<br/>-->
+            <!--</span>-->
+            <!--<div class="row">-->
+                <!--<div class="col-md-12">-->
+                    <!--<div id="table_china">-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<br/>-->
+            <!--<div class="row">-->
+                <!--<div class="col-md-12">-->
+                    <!--<div id="line_chart_china">-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div id="eu" class="tab-pane fade">-->
+            <!--<br/>-->
+            <!--<span *ngIf="showEditMacroMonitor()">-->
+
+                <!--<button *ngIf="showEditMacroMonitor()" class="btn btn-primary" [routerLink]="['/macromonitor/4']">Edit</button><br/>-->
+                <!--<br/>-->
+            <!--</span>-->
+            <!--<div class="row">-->
+                <!--<div class="col-md-12">-->
+                    <!--<div id="table_eu">-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<br/>-->
+            <!--<div class="row">-->
+                <!--<div class="col-md-12">-->
+                    <!--<div id="line_chart_eu">-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
 </div>

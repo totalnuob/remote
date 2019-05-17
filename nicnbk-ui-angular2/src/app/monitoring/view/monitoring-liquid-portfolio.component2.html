@@ -1,0 +1,84 @@
+<div class="container">
+    <!--<h4><small>login: user pass: Qwerty123</small></h4>-->
+    <!--<div class="row">-->
+        <!--<div class="col-md-12">-->
+            <!--<div class='tableauPlaceholder' style='width: 100%; height: 1936px;'>-->
+                <!--<object class='tableauViz' width='100%' height='1936' style='display:none;'>-->
+                    <!--<param name='host_url' value='http%3A%2F%2F192.168.111.36%2F' />-->
+                    <!--<param name='site_root' value='' />-->
+                    <!--<param name='name' value='NIC_LQ&#47;lq_portfolio' />-->
+                    <!--<param name='tabs' value='no' />-->
+                    <!--<param name='toolbar' value='no' />-->
+                    <!--<param name='showShareOptions' value='false' />-->
+                <!--</object>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+
+    <!--<div class="row withpadding">-->
+        <!--<h2>Under Construction. New monitoring forms to be updated soon.</h2>-->
+    <!--</div>-->
+
+    <div class="row">
+        <div class="col-md-2">
+            <select (ngModelChange)="redraw()" [(ngModel)]="tableDate" id="tableDate" class="form-control">
+                <option *ngFor="let item of getAllDates()" [value]="item">{{item}}</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-4">
+                <h4>Fixed income portfolio</h4>
+                <div id="fixed_income_portfolio">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <h4>Equity portfolio</h4>
+                <div id="equity_portfolio">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <h4>Transition portfolio</h4>
+                <div id="transition_portfolio">
+                </div>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <!--<div class="row">-->
+        <!--<div class="col-md-12">-->
+            <!--<div id="cum_returns_ytd">-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+    <!--<div class="row">-->
+        <!--<div class="col-md-12">-->
+            <!--<div id="cum_returns_inception">-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-4">
+                <div id="portfolio_structure_fixed_income_chart">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div id="portfolio_structure_equity_chart">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div id="portfolio_structure_transition_chart">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--<div class="row">-->
+        <!--<div class="col-md-12">-->
+            <!--<div id="position_table">-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+    <br/>
+</div>

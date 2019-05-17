@@ -10,7 +10,8 @@ declare var $: any;
 
 @Component({
     selector: 'monitoring-portfolio',
-    templateUrl: 'view/monitoring-portfolio.component.html',
+    //templateUrl: 'view/monitoring-portfolio.component.html',
+    templateUrl: 'view/monitoring-portfolio.component2.html',
     styleUrls: [],
     providers: [],
 })
@@ -39,20 +40,30 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
     }
 
     drawGraph(){
-        //var tableDate = this.getAllDates()[0];
-        //this.tableDate = tableDate;
-        //this.performanceType = "TOTAL";
-        //
-        //this.drawTables(tableDate);
+        var tableDate = this.getAllDates()[0];
+        this.tableDate = tableDate;
+        this.performanceType = "TOTAL";
+
+        this.drawTables(tableDate);
         //this.drawAlternativePerformanceChart("TOTAL");
-        //this.drawTargetAllocationChart();
-        //this.drawActualAllocationChart();
+        this.drawTargetAllocationChart();
+        this.drawActualAllocationChart(tableDate);
         //this.drawPublicPerformanceChart();
+    }
+
+    redraw(){
+        this.redrawTables();
+        this.redrawActualAllocationPieChart();
     }
 
     public redrawTables(){
         //alert($('#tableDate').val());
         this.drawTables($("#tableDate").val());
+    }
+
+    public redrawActualAllocationPieChart(){
+        //alert($('#tableDate').val());
+        this.drawActualAllocationChart($("#tableDate").val());
     }
 
     public redrawLineChart(){
@@ -66,8 +77,8 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
         var portfolioPerformanceData = this.getPortfolioPerformanceData(tableDate);
         this.drawPortfolioPerformanceTable(portfolioPerformanceData);
 
-        var benchmarkPerformanceData = this.getBenchmarkPerformanceData(tableDate);
-        this.drawBenchmarksPerformanceTable(benchmarkPerformanceData);
+        //var benchmarkPerformanceData = this.getBenchmarkPerformanceData(tableDate);
+        //this.drawBenchmarksPerformanceTable(benchmarkPerformanceData);
     }
 
     // NAV ------------------------------
@@ -82,14 +93,28 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
         data.addColumn("number", "NAV");
 
         var NAVarray = this.getNAVByDate(tableDate);
-        data.addRows([
-            ["NIC Total", NAVarray[1]],
-            ["Liquid Portfolio", NAVarray[2]],
-            ["NICK Master Fund", NAVarray[3]],
-            ["Hedge Funds Portfolio", NAVarray[5]],
-            ["Private Equity Portfolio", NAVarray[4]],
-            ["NICK Master Fund Cash", NAVarray[6]]
-        ]);
+        if(tableDate.endsWith("19")) {
+            data.addRows([
+                ["Private Equity", NAVarray[1]],
+                ["Hedge Funds", NAVarray[2]],
+                ["Real Estate", NAVarray[3]],
+                ["Fixed income securities", NAVarray[4]],
+                ["Public Equity", NAVarray[5]],
+                ["Transition portfolio", NAVarray[6]],
+                ["NICK MF Other", NAVarray[7]],
+                ["Total", NAVarray[8]],
+                ["Transfer", NAVarray[9]]
+            ]);
+        }else {
+            data.addRows([
+                ["NIC Total", NAVarray[1]],
+                ["Liquid Portfolio", NAVarray[2]],
+                ["NICK Master Fund", NAVarray[3]],
+                ["Hedge Funds Portfolio", NAVarray[5]],
+                ["Private Equity Portfolio", NAVarray[4]],
+                ["NICK Master Fund Cash", NAVarray[6]]
+            ]);
+        }
         formatter.format(data,1);
         return data;
     }
@@ -108,12 +133,13 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
         var options = {
             showRowNumber: false,
             width: '100%',
-            height: 170,
+            height: '100%',
             'allowHtml': true,
             cssClassNames: {}
         };
 
-        var chart = this.createTableChart(document.getElementById('portfolio_value'));
+        //var chart = this.createTableChart(document.getElementById('portfolio_value'));
+        var chart = this.createTableChart(document.getElementById('portfolio_nav_table'));
         chart.draw(data, options);
     }
 
@@ -131,13 +157,25 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
         data.addColumn("number", "YTD");
 
         var performanceArray = this.getPerformanceByDate(tableDate);
-        data.addRows([
-            ["NIC Portfolio Total", performanceArray[0][2], performanceArray[1][2], performanceArray[2][2],],
-            ["Liquid Portfolio", performanceArray[0][3], performanceArray[1][3],performanceArray[2][3],],
-            ["NICK Master Fund", performanceArray[0][6], performanceArray[1][6], performanceArray[2][6]],
-            ["Hedge Funds Portfolio", performanceArray[0][5], performanceArray[1][5], performanceArray[2][5]],
-            ["Private Equity Portfolio", performanceArray[0][4], performanceArray[1][4], performanceArray[1][4]]
-        ]);
+        if(tableDate.endsWith("19")){
+            data.addRows([
+                ["Private Equity", performanceArray[0][2], performanceArray[1][2], performanceArray[2][2],],
+                ["Hedge Funds", performanceArray[0][3], performanceArray[1][3], performanceArray[2][3],],
+                ["Real Estate", performanceArray[0][4], performanceArray[1][4], performanceArray[2][4]],
+                ["Fixed income securities", performanceArray[0][5], performanceArray[1][5], performanceArray[2][5]],
+                ["Public Equity", performanceArray[0][6], performanceArray[1][6], performanceArray[1][6]],
+                ["Alternative portfolio", performanceArray[0][7], performanceArray[1][7], performanceArray[1][7]],
+                ["Transition portfolio", performanceArray[0][8], performanceArray[1][8], performanceArray[1][8]]
+            ]);
+        }else {
+            data.addRows([
+                ["NIC Portfolio Total", performanceArray[0][2], performanceArray[1][2], performanceArray[2][2],],
+                ["Liquid Portfolio", performanceArray[0][3], performanceArray[1][3], performanceArray[2][3],],
+                ["NICK Master Fund", performanceArray[0][6], performanceArray[1][6], performanceArray[2][6]],
+                ["Hedge Funds Portfolio", performanceArray[0][5], performanceArray[1][5], performanceArray[2][5]],
+                ["Private Equity Portfolio", performanceArray[0][4], performanceArray[1][4], performanceArray[1][4]]
+            ]);
+        }
         formatter.format(data, 1);
         formatter.format(data, 2);
         formatter.format(data, 3);
@@ -158,12 +196,13 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
         var options = {
             showRowNumber: false,
             width: '100%',
-            height: 170,
+            height: '100%',
             'allowHtml': true,
             cssClassNames: {}
         };
 
-        var chart = this.createTableChart(document.getElementById('portfolio_performance'));
+        //var chart = this.createTableChart(document.getElementById('portfolio_performance'));
+        var chart = this.createTableChart(document.getElementById('portfolio_performance_table'));
         chart.draw(data, options);
     }
 
@@ -338,41 +377,64 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
 
         var options = {
             title: 'Target Allocation',
+            pieHole: 0.4,
             animation: {
                 duration: 500,
                 easing: 'out',
                 startup: true,
             },
+            height: 300
         };
 
-        var chart = new google.visualization.PieChart(document.getElementById('target_allocation'));
+        var chart = new google.visualization.PieChart(document.getElementById('target_allocation_chart'));
         chart.draw(data, options);
     }
 
-    drawActualAllocationChart(){
-        var data = google.visualization.arrayToDataTable(
-            [
-                ["Allocation", "%"],
-                ["Private Equity",12],
-                ["Hedge Funds",22],
-                ["Liquid portfolio", 66],
-                ["Real Estate",0],
-                ["Infrastructure ",0],
-                ["Public Equity",0]
-            ]
-        );
+    drawActualAllocationChart(tableDate){
+        if(tableDate.endsWith("19")) {
+            var tableData = this.getActualAllocationData(tableDate);
+            console.log(tableData);
+            var data = google.visualization.arrayToDataTable(
+                [
+                    ["Allocation", "%"],
+                    ["Private Equity", tableData[1][0]],
+                    ["Hedge Funds", tableData[1][1]],
+                    ["Real Estate", tableData[1][2]],
+                    ["Fixed income securities", tableData[1][3]],
+                    ["Public Equity", tableData[1][4]],
+                    ["Transition portfolio", tableData[1][5]],
+                    ["NICK MF Other", tableData[1][6]],
+                    ["Transfer", null]
+                ]
+            );
+        }else{
+            var data = google.visualization.arrayToDataTable(
+                [
+                    ["Allocation", "%"],
+                    ["Private Equity", 12],
+                    ["Hedge Funds", 22],
+                    ["Liquid portfolio", 66],
+                    ["Real Estate", 0],
+                    ["Infrastructure ", 0],
+                    ["Public Equity", 0]
+                ]
+            );
+        }
 
         var options = {
             animation: {
                 duration: 500,
                 easing: 'out',
-                startup: true,
+                startup: true
             },
+            height: 300,
+            pieHole: 0.4,
             title: 'Actual Allocation'
+
 
         };
 
-        var chart = new google.visualization.PieChart(document.getElementById('actual_allocation'));
+        var chart = new google.visualization.PieChart(document.getElementById('actual_allocation_chart'));
         chart.draw(data, options);
     }
 
@@ -489,6 +551,9 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
         ["Mar-17",815184627,550358874,264825752,83365166,178775081,2848148],
         ["Apr-17",817411061,538901091,278509970,98665606,179691709,137571],
         ["May-17",819535274,537027941,282722341,101665606,180889915,137571],
+        ["Jan-19",347105381,321908990,3344282,387159417,43641662,279687644,9407088,1392254464],
+        ["Feb-19",363931637,334981328,3351953,387940018,44775217,263618055,102836,1398701044],
+        ["Mar-19",395429584,336837508,4920563,393543346,45310456,231620254,97586,1407759298,0]
     ];
 
     private performance = [
@@ -582,6 +647,17 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
         ["May-17","MTD",0.00261721,0.002096921,0,0.006668121,0.004282629,0,0,0.000638683,0.002973823],
         ["May-17","QTD",0.005136467,0.003935094,0,0.011829579,0.008479505,0,0.006979989,0.001393825,0.008355635],
         ["May-17","YTD",0.010059823,0.008283152,0,0.027484865,0.01559899,0,0.02667165,0.002661081,0.032544563],
+        ["Jan-19","MTD",-0.0001,0.0203,null,0.0120,0.0818,0.0128,0.0030],
+        ["Jan-19","QTD",-0.0001,0.0203,null,0.0120,0.0818,0.0128,0.0030],
+        ["Jan-19","YTD",-0.0001,0.0203,null,0.0120,0.0818,0.0128,0.0030],
+
+        ["Feb-19","MTD",0.0037,0.0094,null,0.0020,0.0260,0.0056,0.0003],
+        ["Feb-19","QTD",0.0036,0.0301,null,0.0140,0.1099,0.0185,0.0033],
+        ["Feb-19","YTD",0.0036,0.0301,null,0.0140,0.1099,0.0185,0.0033],
+
+        ["Mar-19","MTD",-0.0013,0.0053,null,0.0144,0.0120,0.0064,0.0064],
+        ["Mar-19","QTD",0.0024,0.0358,null,0.0287,0.1232,0.0250,0.0098],
+        ["Mar-19","YTD",0.0024,0.0358,null,0.0287,0.1232,0.0250,0.0098],
     ];
 
     private publicMarketsPerformance = [
@@ -608,6 +684,23 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
             ["Apr-17",0.00909122,0.01326543,0.00425038,0.009635974],
             ["May-17",0.01160000,0.01781417,0.002441764,0.010629703],
     ];
+
+
+    private getActualAllocationData(tableDate){
+        for(var i = 0; i < this.actual_allocation.length; i++){
+            if(this.actual_allocation[i][0] === tableDate){
+                return this.actual_allocation[i];
+            }
+        }
+        return null;
+    }
+
+    private actual_allocation = [
+        ['Jan-19',[24.93,23.12,0.24,27.81,3.13,20.09,0.68]],
+        ['Feb-19',[26.02,23.95,0.24,27.74,3.20,18.85,0.00]],
+        ['Mar-19',[28.09, 23.93,0.35,27.96,3.22,16.45,0.01]]
+    ];
+
 
 
     //private setStaticColumns(tableChart){

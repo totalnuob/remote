@@ -368,7 +368,8 @@ export class HFManagerProfileComponent extends CommonFormViewComponent implement
     }
 
     showMemos(){
-        return !this.moduleAccessChecker.checkAccessMemoRestricted();
+        return true;
+        //return !this.moduleAccessChecker.checkAccessMemoRestricted();
     }
 
 }

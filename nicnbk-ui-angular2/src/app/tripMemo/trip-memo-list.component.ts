@@ -130,6 +130,7 @@ export class TripMemoListComponent extends CommonFormViewComponent implements On
     }
 
     showMemo(){
-        return !this.moduleAccessChecker.checkAccessMemoRestricted();
+        return true;
+        //return !this.moduleAccessChecker.checkAccessMemoRestricted();
     }
 }
