@@ -246,7 +246,7 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
         return buildDeleteResponseEntity(deleted);
     }
 
-    @PreAuthorize("hasRole('ROLE_IC_MEMBER') OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize(corpMeetingsRole)
     @ResponseBody
     @RequestMapping(value="/ICMeeting/protocol/delete/{meetingId}/{fileId}", method=RequestMethod.DELETE)
     public ResponseEntity<?> safeDeleteICMeetingProtocolFile(@PathVariable(value="meetingId") Long meetingId, @PathVariable(value="fileId") Long fileId){
