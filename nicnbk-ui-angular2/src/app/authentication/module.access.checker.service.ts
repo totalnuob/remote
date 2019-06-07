@@ -8,6 +8,7 @@ import {ROLE_PE_EDIT} from "./roles.constants";
 import {ROLE_MM_EDIT} from "./roles.constants";
 import {ROLE_REPORTING_EDIT} from "./roles.constants";
 import {ROLE_CORPMEETINGS_EDIT} from "./roles.constants";
+import {ROLE_CORPMEETINGS_VIEW} from "./roles.constants";
 import {ROLE_STRATEGY_RISKS_EDIT} from "./roles.constants";
 import {ROLE_IC_MEMBER} from "./roles.constants";
 
@@ -23,6 +24,7 @@ export class ModuleAccessCheckerService extends CommonService{
         // TODO: refactor string
         var rolesText = localStorage.getItem("authenticatedUserRoles");
         this.roles = JSON.parse(rolesText);
+        console.log(this.roles);
     }
 
     public checkAccessMemoRestricted(){
@@ -79,8 +81,9 @@ export class ModuleAccessCheckerService extends CommonService{
 
 
     public checkAccessCorpMeetings(){
-        return this.checkAccessICMember() || this.checkAccessHedgeFundsEditor() || this.checkAccessPrivateEquityEditor() ||
-            this.checkAccessRealEstateEditor() || this.checkAccessStrategyRisksEditor() || this.checkAccessReportingEditor();
+        // return this.checkAccessICMember() || this.checkAccessHedgeFundsEditor() || this.checkAccessPrivateEquityEditor() ||
+        //     this.checkAccessRealEstateEditor() || this.checkAccessStrategyRisksEditor() || this.checkAccessReportingEditor();
+        return this.checkAccess(ROLE_CORPMEETINGS_VIEW);
     }
 
     public checkAccessICMember(){
