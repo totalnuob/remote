@@ -91,10 +91,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 return "ROLE_IC_MEMBER";
             case "MEMO_RESTR":
                 return "ROLE_MEMO_RESTRICTED";
-//            case "CM_EDIT":
-//                return "ROLE_CORPMEETINGS_EDITOR";
-//            case "CM_VIEW":
-//                return "ROLE_CORPMEETINGS_VIEWER";
+            case "CM_EDIT":
+                return "ROLE_CORPMEETINGS_EDITOR";
+            case "CM_VIEW":
+                return "ROLE_CORPMEETINGS_VIEWER";
             default:
                 return null;
         }

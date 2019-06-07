@@ -8,7 +8,6 @@ import {ROLE_PE_EDIT} from "./roles.constants";
 import {ROLE_MM_EDIT} from "./roles.constants";
 import {ROLE_REPORTING_EDIT} from "./roles.constants";
 import {ROLE_CORPMEETINGS_EDIT} from "./roles.constants";
-import {ROLE_CORPMEETINGS_VIEW} from "./roles.constants";
 import {ROLE_STRATEGY_RISKS_EDIT} from "./roles.constants";
 import {ROLE_IC_MEMBER} from "./roles.constants";
 
@@ -80,13 +79,11 @@ export class ModuleAccessCheckerService extends CommonService{
 
 
     public checkAccessCorpMeetings(){
-        // return this.checkAccessICMember() || this.checkAccessHedgeFundsEditor() || this.checkAccessPrivateEquityEditor() ||
-        //     this.checkAccessRealEstateEditor() || this.checkAccessStrategyRisksEditor() || this.checkAccessReportingEditor();
-        return this.checkAccess(ROLE_CORPMEETINGS_VIEW);
+        return this.checkAccessICMember() || this.checkAccess(ROLE_CORPMEETINGS_EDIT);
     }
 
     public checkAccessICMember(){
-        return this.checkAccess(ROLE_IC_MEMBER)
+        return this.checkAccess(ROLE_IC_MEMBER);
     }
 
     public checkAccessStrategyRisksEditor(){
