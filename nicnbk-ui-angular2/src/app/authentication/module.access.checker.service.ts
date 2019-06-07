@@ -24,7 +24,6 @@ export class ModuleAccessCheckerService extends CommonService{
         // TODO: refactor string
         var rolesText = localStorage.getItem("authenticatedUserRoles");
         this.roles = JSON.parse(rolesText);
-        console.log(this.roles);
     }
 
     public checkAccessMemoRestricted(){
