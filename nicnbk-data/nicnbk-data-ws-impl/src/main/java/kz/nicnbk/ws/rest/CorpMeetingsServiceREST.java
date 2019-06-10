@@ -41,6 +41,8 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
     @Autowired
     private EmployeeService employeeService;
 
+    private static final String corpMeetingsRole = "hasRole('ROLE_IC_MEMBER') OR hasRole('ROLE_CORPMEETINGS_EDITOR') OR hasRole('ROLE_ADMIN')";
+
 //    @Deprecated
 //    @PreAuthorize("hasRole('ROLE_CORPMEETINGS_VIEWER') OR hasRole('ROLE_CORPMEETINGS_EDITOR') OR hasRole('ROLE_ADMIN')")
 //    @RequestMapping(value = "/search", method = RequestMethod.POST)
@@ -85,9 +87,7 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
 
 
     /* IC MEETING TOPIC ***********************************************************************************************/
-    @PreAuthorize("hasRole('ROLE_IC_MEMBER') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_PRIVATE_EQUITY_EDITOR') " +
-            " OR hasRole('ROLE_REAL_ESTATE_EDITOR')  OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_STRATEGY_RISK_MANAGEMENT_EDITOR')" +
-            " OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize(corpMeetingsRole)
     @RequestMapping(value = "/ICMeetingTopic/search", method = RequestMethod.POST)
     public ResponseEntity<?> searchICMeetingTopics(@RequestBody ICMeetingTopicsSearchParamsDto searchParams) {
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
@@ -97,9 +97,7 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
         return buildNonNullResponse(searchResult);
     }
 
-    @PreAuthorize("hasRole('ROLE_IC_MEMBER') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_PRIVATE_EQUITY_EDITOR') " +
-            " OR hasRole('ROLE_REAL_ESTATE_EDITOR')  OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_STRATEGY_RISK_MANAGEMENT_EDITOR')" +
-            " OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize(corpMeetingsRole)
     @RequestMapping(value = "/ICMeetingTopic/get/{id}", method = RequestMethod.GET)
     public ResponseEntity getICMeetingTopic(@PathVariable long id) {
         ICMeetingTopicDto dto = corpMeetingService.getICMeetingTopic(id);
@@ -114,9 +112,7 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
         return buildNonNullResponse(dto);
     }
 
-    @PreAuthorize("hasRole('ROLE_IC_MEMBER') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_PRIVATE_EQUITY_EDITOR') " +
-            " OR hasRole('ROLE_REAL_ESTATE_EDITOR')  OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_STRATEGY_RISK_MANAGEMENT_EDITOR')" +
-            " OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize(corpMeetingsRole)
     @RequestMapping(value = "/ICMeetingTopic/save", method = RequestMethod.POST)
     public ResponseEntity<?> saveICMeetingTopic(@RequestBody ICMeetingTopicDto dto) {
 
@@ -131,9 +127,7 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
         return buildEntitySaveResponse(saveResponseDto);
     }
 
-    @PreAuthorize("hasRole('ROLE_IC_MEMBER') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_PRIVATE_EQUITY_EDITOR') " +
-            " OR hasRole('ROLE_REAL_ESTATE_EDITOR')  OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_STRATEGY_RISK_MANAGEMENT_EDITOR')" +
-            " OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize(corpMeetingsRole)
     @RequestMapping(value = "/ICMeetingTopic/delete/{id}", method = RequestMethod.POST)
     public ResponseEntity<?> safeDeleteICMeetingTopic(@PathVariable long id) {
 
@@ -175,9 +169,7 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
     }
 
 
-    @PreAuthorize("hasRole('ROLE_IC_MEMBER') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_PRIVATE_EQUITY_EDITOR') " +
-            " OR hasRole('ROLE_REAL_ESTATE_EDITOR')  OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_STRATEGY_RISK_MANAGEMENT_EDITOR')" +
-            " OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize(corpMeetingsRole)
     @ResponseBody
     @RequestMapping(value="/materials/delete/{meetingId}/{fileId}", method=RequestMethod.GET)
     public ResponseEntity<?> safeDeleteFile(@PathVariable(value="meetingId") Long meetingId, @PathVariable(value="fileId") Long fileId){
@@ -196,9 +188,7 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
 
 
     /* IC MEETING *****************************************************************************************************/
-    @PreAuthorize("hasRole('ROLE_IC_MEMBER') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_PRIVATE_EQUITY_EDITOR') " +
-            " OR hasRole('ROLE_REAL_ESTATE_EDITOR')  OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_STRATEGY_RISK_MANAGEMENT_EDITOR')" +
-            " OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize(corpMeetingsRole)
     @RequestMapping(value = "/ICMeeting/save", method = RequestMethod.POST)
     public ResponseEntity<?> saveICMeeting(@RequestBody ICMeetingDto icMeetingDto) {
 
@@ -209,18 +199,14 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
         return buildEntitySaveResponse(saveResponseDto);
     }
 
-    @PreAuthorize("hasRole('ROLE_IC_MEMBER') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_PRIVATE_EQUITY_EDITOR') " +
-            " OR hasRole('ROLE_REAL_ESTATE_EDITOR')  OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_STRATEGY_RISK_MANAGEMENT_EDITOR')" +
-            " OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize(corpMeetingsRole)
     @RequestMapping(value = "/ICMeeting/getAll", method = RequestMethod.GET)
     public ResponseEntity<?> getAllICMeetings() {
         List<ICMeetingDto> searchResult = corpMeetingService.getAllICMeetings();
         return buildNonNullResponse(searchResult);
     }
 
-    @PreAuthorize("hasRole('ROLE_IC_MEMBER') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_PRIVATE_EQUITY_EDITOR') " +
-            " OR hasRole('ROLE_REAL_ESTATE_EDITOR')  OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_STRATEGY_RISK_MANAGEMENT_EDITOR')" +
-            " OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize(corpMeetingsRole)
     @RequestMapping(value = "/ICMeeting/search", method = RequestMethod.POST)
     public ResponseEntity<?> searchICMeetings(@RequestBody ICMeetingsSearchParamsDto searchParams) {
         ICMeetingsPagedSearchResult searchResult = corpMeetingService.searchICMeetings(searchParams);
@@ -249,9 +235,7 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
         return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @PreAuthorize("hasRole('ROLE_IC_MEMBER') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_PRIVATE_EQUITY_EDITOR') " +
-            " OR hasRole('ROLE_REAL_ESTATE_EDITOR')  OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_STRATEGY_RISK_MANAGEMENT_EDITOR')" +
-            " OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize(corpMeetingsRole)
     @RequestMapping(value = "/ICMeeting/delete/{id}", method = RequestMethod.POST)
     public ResponseEntity<?> safeDeleteICMeeting(@PathVariable long id) {
 
@@ -262,7 +246,7 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
         return buildDeleteResponseEntity(deleted);
     }
 
-    @PreAuthorize("hasRole('ROLE_IC_MEMBER') OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize(corpMeetingsRole)
     @ResponseBody
     @RequestMapping(value="/ICMeeting/protocol/delete/{meetingId}/{fileId}", method=RequestMethod.DELETE)
     public ResponseEntity<?> safeDeleteICMeetingProtocolFile(@PathVariable(value="meetingId") Long meetingId, @PathVariable(value="fileId") Long fileId){
