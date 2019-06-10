@@ -62,12 +62,34 @@ public class DateUtils {
         return null;
     }
 
-    public static Date getDateMonthTextEngYear(String date){
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM yyyy", Locale.ENGLISH);
-        try {
-            return getLastDayOfCurrentMonth(simpleDateFormat.parse(date));
-        } catch (ParseException e) {
-            //e.printStackTrace();
+    public static Date getMMMYYYYYFormatLastDayMonthDate(String date){
+        if(date != null) {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM yyyy", Locale.ENGLISH);
+            try {
+                return getLastDayOfCurrentMonth(simpleDateFormat.parse(date));
+            } catch (ParseException e) {
+                //e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    public static Date getMM_YYYYYFormatLastDayMonthDate(String date){
+        if(date != null) {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM.yyyy", Locale.ENGLISH);
+            try {
+                return getLastDayOfCurrentMonth(simpleDateFormat.parse(date));
+            } catch (ParseException e) {
+                //e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    public static String getMM_YYYYYFormatDate(Date date){
+        if(date != null){
+            int month = getMonth(date) + 1;
+            return (month < 10 ? "0" + month : month)+ "." + getYear(date);
         }
         return null;
     }
@@ -125,6 +147,10 @@ public class DateUtils {
         cal.set(Calendar.YEAR, getYear(date));
         cal.set(Calendar.DAY_OF_MONTH, 1);// This is necessary to get proper results
         cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
         //System.out.println(cal.getTime());
         return cal.getTime();
     }
@@ -286,6 +312,10 @@ public class DateUtils {
         Date start = getFirstDayOfCurrentMonth(fromDate);
         Date end = getFirstDayOfCurrentMonth(toDate);
         return getMonthsDifference(start, end) + 1;
+    }
 
+    public static String getMonthYearDate(Date date){
+        int month = DateUtils.getMonth(date);
+        return ((month + 1) < 10 ? "0" + (month + 1) : month + 1) + "." + DateUtils.getYear(date);
     }
 }

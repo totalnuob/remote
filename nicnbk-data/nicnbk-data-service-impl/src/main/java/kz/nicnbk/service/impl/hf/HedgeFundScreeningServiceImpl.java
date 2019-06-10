@@ -8,9 +8,11 @@ import kz.nicnbk.repo.model.lookup.CurrencyLookup;
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.service.api.common.CurrencyRatesService;
 import kz.nicnbk.service.api.files.FileService;
+import kz.nicnbk.service.api.hf.HedgeFundScoringService;
 import kz.nicnbk.service.api.hf.HedgeFundScreeningService;
 import kz.nicnbk.service.converter.hf.*;
 import kz.nicnbk.service.dto.common.FileUploadResultDto;
+import kz.nicnbk.service.dto.common.ListResponseDto;
 import kz.nicnbk.service.dto.common.ResponseStatusType;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.hf.*;
@@ -40,6 +42,9 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
     private static final Logger logger = LoggerFactory.getLogger(HedgeFundScreeningServiceImpl.class);
 
     @Autowired
+    private HedgeFundScoringService scoringService;
+
+    @Autowired
     private HedgeFundScreeningRepository screeningRepository;
 
     @Autowired
@@ -53,6 +58,12 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
 
     @Autowired
     private HedgeFundScreeningParsedDataRepository parsedDataRepository;
+
+    @Autowired
+    private HedgeFundScreeningAddedFundRepository addedFundRepository;
+
+    @Autowired
+    private HedgeFundScreeningAddedFundReturnRepository addedFundReturnRepository;
 
     @Autowired
     private HedgeFundScreeningParsedUcitsDataRepository parsedUcitsDataRepository;
@@ -148,6 +159,20 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
     }
 
     @Override
+    public List<HedgeFundScreeningDto> getAll() {
+        List<HedgeFundScreeningDto> screenings = new ArrayList<>();
+        Iterator<HedgeFundScreening> entitiesIterator = this.screeningRepository.findAll().iterator();
+        if(entitiesIterator != null){
+            while(entitiesIterator.hasNext()){
+                HedgeFundScreening entity = entitiesIterator.next();
+                HedgeFundScreeningDto dto = this.screeningEntityConverter.disassemble(entity);
+                screenings.add(dto);
+            }
+        }
+        return screenings;
+    }
+
+    @Override
     public List<HedgeFundScreeningParsedDataDateValueCombinedDto> searchParsedReturns(HedgeFundScreeningParsedDataDateValueSearchParamsDto searchParamsDto) {
         List<HedgeFundScreeningParsedDataDateValueCombinedDto> returns = new ArrayList<>();
         if(searchParamsDto != null && searchParamsDto.getScreeningId() != null) {
@@ -155,17 +180,17 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
             Date dateTo = null;
             if(searchParamsDto.getNumberOfMonths() != null && searchParamsDto.getDate() != null){
                 if(searchParamsDto.getNumberOfMonths().intValue() < 0) {
-                    dateFrom = DateUtils.moveDateByMonths(searchParamsDto.getDate(), searchParamsDto.getNumberOfMonths().intValue());
-                    dateTo = DateUtils.moveDateByMonths(dateFrom, Math.abs(searchParamsDto.getNumberOfMonths().intValue()));
+                    dateFrom = DateUtils.getLastDayOfCurrentMonth(DateUtils.moveDateByMonths(searchParamsDto.getDate(), searchParamsDto.getNumberOfMonths().intValue()));
+                    dateTo = DateUtils.getLastDayOfCurrentMonth(DateUtils.moveDateByMonths(dateFrom, Math.abs(searchParamsDto.getNumberOfMonths().intValue())));
                 }else{
-                    dateTo = DateUtils.moveDateByMonths(searchParamsDto.getDate(), searchParamsDto.getNumberOfMonths().intValue() + 1);
-                    dateFrom = DateUtils.moveDateByMonths(dateTo, 0 - searchParamsDto.getNumberOfMonths().intValue());
+                    dateTo = DateUtils.getLastDayOfCurrentMonth(DateUtils.moveDateByMonths(searchParamsDto.getDate(), searchParamsDto.getNumberOfMonths().intValue() + 1));
+                    dateFrom = DateUtils.getLastDayOfCurrentMonth(DateUtils.moveDateByMonths(dateTo, 0 - searchParamsDto.getNumberOfMonths().intValue()));
                 }
             }else{
                 Date maxDate = this.parsedDataReturnRepository.getMaxDate(searchParamsDto.getScreeningId());
                 if(maxDate != null) {
-                    dateFrom = DateUtils.moveDateByMonths(maxDate, (0 - 11));
-                    dateTo = DateUtils.moveDateByMonths(dateFrom, 11);
+                    dateFrom = DateUtils.getLastDayOfCurrentMonth(DateUtils.moveDateByMonths(maxDate, (0 - 11)));
+                    dateTo = DateUtils.getLastDayOfCurrentMonth(DateUtils.moveDateByMonths(dateFrom, 11));
                 }else{
                    // no returns
                     return returns;
@@ -174,7 +199,7 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
 
             Date[] dates = new Date[12];
             for(int i = 0; i < 12; i++){
-                Date date = DateUtils.moveDateByMonths(dateFrom, i);
+                Date date = DateUtils.getLastDayOfCurrentMonth(DateUtils.moveDateByMonths(dateFrom, i));
                 dates[i] = date;
             }
 
@@ -236,17 +261,17 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
             Date dateTo = null;
             if(searchParamsDto.getNumberOfMonths() != null && searchParamsDto.getDate() != null){
                 if(searchParamsDto.getNumberOfMonths().intValue() < 0) {
-                    dateFrom = DateUtils.moveDateByMonths(searchParamsDto.getDate(), searchParamsDto.getNumberOfMonths().intValue());
-                    dateTo = DateUtils.moveDateByMonths(dateFrom, Math.abs(searchParamsDto.getNumberOfMonths().intValue()));
+                    dateFrom = DateUtils.getLastDayOfCurrentMonth(DateUtils.moveDateByMonths(searchParamsDto.getDate(), searchParamsDto.getNumberOfMonths().intValue()));
+                    dateTo = DateUtils.getLastDayOfCurrentMonth(DateUtils.moveDateByMonths(dateFrom, Math.abs(searchParamsDto.getNumberOfMonths().intValue())));
                 }else{
-                    dateTo = DateUtils.moveDateByMonths(searchParamsDto.getDate(), searchParamsDto.getNumberOfMonths().intValue() + 1);
-                    dateFrom = DateUtils.moveDateByMonths(dateTo, 0 - searchParamsDto.getNumberOfMonths().intValue());
+                    dateTo = DateUtils.getLastDayOfCurrentMonth(DateUtils.moveDateByMonths(searchParamsDto.getDate(), searchParamsDto.getNumberOfMonths().intValue() + 1));
+                    dateFrom = DateUtils.getLastDayOfCurrentMonth(DateUtils.moveDateByMonths(dateTo, 0 - searchParamsDto.getNumberOfMonths().intValue()));
                 }
             }else{
                 Date maxDate = this.parsedDataAUMRepository.getMaxDate(searchParamsDto.getScreeningId());
                 if(maxDate != null) {
-                    dateFrom = DateUtils.moveDateByMonths(maxDate, (0 - 11));
-                    dateTo = DateUtils.moveDateByMonths(dateFrom, 11);
+                    dateFrom = DateUtils.getLastDayOfCurrentMonth(DateUtils.moveDateByMonths(maxDate, (0 - 11)));
+                    dateTo = DateUtils.getLastDayOfCurrentMonth(DateUtils.moveDateByMonths(dateFrom, 11));
                 }else{
                     // no returns
                     return returns;
@@ -255,7 +280,7 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
 
             Date[] dates = new Date[12];
             for(int i = 0; i < 12; i++){
-                Date date = DateUtils.moveDateByMonths(dateFrom, i);
+                Date date = DateUtils.getLastDayOfCurrentMonth(DateUtils.moveDateByMonths(dateFrom, i));
                 dates[i] = date;
             }
 
@@ -551,19 +576,69 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
     }
 
     @Override
-    public HedgeFundScreeningFilteredResultDto getFilteredResult(Long id) {
+    public HedgeFundScreeningFilteredResultDto getFilteredResultWithFundsInfo(Long id) {
+        HedgeFundScreeningFilteredResultDto filteredResultDto = getFilteredResultWithoutFundsInfo(id);
+        if(filteredResultDto != null){
+            // result statistics
+            HedgeFundScreeningFilteredResultStatisticsDto statisticsDto = getFilteredResultStatistics(filteredResultDto);
+            filteredResultDto.setFilteredResultStatistics(statisticsDto);
+
+            // added funds
+            List<HedgeFundScreeningParsedDataDto> addedFunds = getAddedFundsByFilteredResultId(id);
+            filteredResultDto.setAddedFunds(addedFunds);
+
+            //excluded funds
+            List<HedgeFundScreeningParsedDataDto> excludedFunds = getExcludedFunds(filteredResultDto.getScreeningId());
+            filteredResultDto.setExcludedFunds(excludedFunds);
+
+            return filteredResultDto;
+        }
+
+        return null;
+    }
+
+    @Override
+    public HedgeFundScreeningFilteredResultDto getFilteredResultWithoutFundsInfo(Long id) {
         HedgeFundScreeningFilteredResult entity = this.filteredResultRepository.findOne(id);
         if(entity != null){
             HedgeFundScreeningFilteredResultDto dto =  this.filteredResultEntityConverter.disassemble(entity);
-
-            // result statistics
-            HedgeFundScreeningFilteredResultStatisticsDto statisticsDto = getFilteredResultStatistics(dto);
-            dto.setFilteredResultStatistics(statisticsDto);
 
             return dto;
         }
 
         return null;
+    }
+
+    private List<HedgeFundScreeningParsedDataDto> getAddedFundsByFilteredResultId(Long filteredResultId){
+        List<HedgeFundScreeningParsedDataDto> fundList = new ArrayList<>();
+        List<HedgeFundScreeningAddedFund> addedFunds = this.addedFundRepository.findByFilteredResultId(filteredResultId, new Sort(Sort.Direction.ASC, "fundName"));
+        if(addedFunds != null){
+            for(HedgeFundScreeningAddedFund fund: addedFunds){
+                HedgeFundScreeningParsedDataDto fundDto = new HedgeFundScreeningParsedDataDto();
+                fundDto.setFilteredResultId(filteredResultId);
+                fundDto.setFundId(fund.getFundId());
+                fundDto.setFundName(fund.getFundName());
+                fundDto.setInvestmentManager(fund.getInvestmentManager());
+                fundDto.setMainStrategy(fund.getMainStrategy());
+                fundDto.setFundAUM(fund.getFundAUM());
+                fundDto.setManagerAUM(fund.getManagerAUM());
+                fundDto.setAdded(true);
+                // fund returns
+                List<HedgeFundScreeningAddedFundReturn> returns = this.addedFundReturnRepository.findByFundId(fund.getId(), new Sort(Sort.Direction.ASC, "date"));
+                if(returns != null) {
+                    List<HedgeFundScreeningFundReturnDto> returnDtoList = new ArrayList<>();
+                    for(HedgeFundScreeningAddedFundReturn returnEntity: returns){
+                        HedgeFundScreeningFundReturnDto returnDto = new HedgeFundScreeningFundReturnDto();
+                        returnDto.setDate(DateUtils.getMM_YYYYYFormatDate(returnEntity.getDate()));
+                        returnDto.setValue(returnEntity.getValue());
+                        returnDtoList.add(returnDto);
+                    }
+                    fundDto.setReturns(returnDtoList);
+                }
+                fundList.add(fundDto);
+            }
+        }
+        return fundList;
     }
 
     /******************************************************************************************************************/
@@ -812,7 +887,7 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                                 if(value != null){
                                     HedgeFundScreeningParsedDataDateValueDto record = new HedgeFundScreeningParsedDataDateValueDto();
 
-                                    Date date = DateUtils.getDateMonthTextEngYear(key);
+                                    Date date = DateUtils.getMMMYYYYYFormatLastDayMonthDate(key);
                                     if (date != null) {
                                         record.setDate(date);
                                     }else{
@@ -910,7 +985,7 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                                 if(value != null){
                                     HedgeFundScreeningParsedDataDateValueDto record = new HedgeFundScreeningParsedDataDateValueDto();
 
-                                    Date date = DateUtils.getDateMonthTextEngYear(key);
+                                    Date date = DateUtils.getMMMYYYYYFormatLastDayMonthDate(key);
                                     if(date != null){
                                         record.setDate(date);
                                     }else{
@@ -1120,6 +1195,18 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
             Integer[][] qualified = getFilteredResultStatisticsQualified(params);
             statisticsDto.setQualified(qualified);
 
+            // Added funds (not in input file)
+            Map<Integer, List<HedgeFundScreeningParsedDataDto>> addedFundsQualifiedMap = getAddedFundsQualifiedByReturnLookbackMap(params);
+            if(addedFundsQualifiedMap != null){
+                for(int i = 0; i <= params.getLookbackReturns().intValue(); i++){
+                    if(addedFundsQualifiedMap.get(i) != null){
+                        for(int j = 1; j < qualified[i+1].length; j++){
+                            qualified[i+1][j] = qualified[i+1][j] + addedFundsQualifiedMap.get(i).size();
+                        }
+                    }
+                }
+            }
+
 //            Integer[][] qualified_ = getFilteredResultStatisticsQualified_(params);
 //
 //            System.out.println("QUALIFIED COMPARISON CHECK");
@@ -1188,7 +1275,12 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                     }else if(j == 0){
                         unqualified[i][j] = i - 1;
                     }else {
-                        unqualified[i][j] = (int) (totalCount - (long) qualified[i][j] - (long) undecided[i][j]);
+                        long count = totalCount;
+                        if(addedFundsQualifiedMap != null && addedFundsQualifiedMap.get(i - 1) != null) {
+                            count = totalCount + addedFundsQualifiedMap.get(i - 1).size();
+                        }
+
+                        unqualified[i][j] = (int) (count - (long) qualified[i][j] - (long) undecided[i][j]);
                     }
                 }
             }
@@ -1243,9 +1335,69 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
         return statisticsDto;
     }
 
-    @Override
-    public List<HedgeFundScreeningParsedDataDto> getFilteredResultQualifiedFundList(HedgeFundScreeningFilteredResultDto params) {
+    private Map<Integer, List<HedgeFundScreeningParsedDataDto>> getAddedFundsQualifiedByReturnLookbackMap(HedgeFundScreeningFilteredResultDto params){
+        Map<Integer, List<HedgeFundScreeningParsedDataDto>> fundsMap = null;
+        if(params.getId() != null) {
+            List<HedgeFundScreeningParsedDataDto> addedFunds = getAddedFundsByFilteredResultId(params.getId());
+            if(addedFunds != null && !addedFunds.isEmpty()){
+                fundsMap = new HashMap();
+                for(HedgeFundScreeningParsedDataDto addedFund: addedFunds){
+                    if(addedFund.getFundAUM() != null && addedFund.getFundAUM().doubleValue() >= params.getFundAUM().doubleValue()){
+                        // valid AUM
+                        for(int i = 0; i <= params.getLookbackReturns().intValue(); i++){
+                            Date dateFrom = DateUtils.moveDateByMonths(params.getStartDateFromTextOrCurrent(), 0 - (Math.max(0, params.getTrackRecord().intValue() + params.getLookbackReturns().intValue() - 1)));
+                            List<HedgeFundScreeningFundReturnDto> returns = addedFund.getReturns();
+                            Collections.sort(returns);
 
+                            Date previousDate = null;
+                            int count = 0;
+                            for(HedgeFundScreeningFundReturnDto returnDto: returns){
+                                Date date = DateUtils.getMM_YYYYYFormatLastDayMonthDate(returnDto.getDate());
+                                Date startDate = DateUtils.getMM_YYYYYFormatLastDayMonthDate(params.getStartDateMonth());
+                                if(date.compareTo(dateFrom) < 0 || date.compareTo(startDate) > 0){
+                                    // skip this return
+                                    continue;
+                                }
+                                if(previousDate == null){
+                                    previousDate = date;
+                                    count = 1;
+                                }else{
+                                    Date nextMonth = DateUtils.moveDateByMonths(previousDate, 1);
+                                    nextMonth = DateUtils.getLastDayOfCurrentMonth(nextMonth);
+                                    //if(DateUtils.isSameMonth(nextMonth, date)){
+                                    if(DateUtils.isSameDate(nextMonth, date)){
+                                        count++;
+                                        if(count == params.getTrackRecord().intValue()){
+                                            break;
+                                        }
+                                    }else{
+                                        count = 0;
+                                    }
+                                    previousDate = date;
+                                }
+                            }
+                            if(count >= params.getTrackRecord().intValue()){
+                                // valid fund
+                                List<HedgeFundScreeningParsedDataDto> existing = fundsMap.get(i);
+                                if(existing == null){
+                                    existing = new ArrayList<>();
+                                }
+                                existing.add(addedFund);
+                                fundsMap.put(i, existing);
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return fundsMap;
+    }
+
+    @Override
+    public ListResponseDto getFilteredResultQualifiedFundList(HedgeFundScreeningFilteredResultDto params) {
+        ListResponseDto responseDto = new ListResponseDto();
         // RETURNS
         Map<Integer, List<HedgeFundScreeningFundCounts>> returnsMap = getQualifiedFundMapByReturnLookback(params, params.getLookbackReturns().intValue());
         Assert.isTrue(returnsMap.size() == 1);
@@ -1257,15 +1409,39 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
         Assert.isTrue(aumsMap.size() == 1);
         Assert.isTrue(aumsMap.get(params.getLookbackAUM().intValue()) != null);
 
-        List<HedgeFundScreeningFundAUMDto> resultFunds = getIntersectingFunds(returnsMap.get(params.getLookbackReturns().intValue()), aumsMap.get(params.getLookbackAUM().intValue()));
+        List<HedgeFundScreeningFundAUMDto> resultFunds =
+                getIntersectingFunds(returnsMap.get(params.getLookbackReturns().intValue()), aumsMap.get(params.getLookbackAUM().intValue()), params.getScreeningId());
 
         if(resultFunds != null){
             List<HedgeFundScreeningParsedDataDto> fundList = getResultFundListWithAdditionalInfo(params.getScreeningId(), resultFunds);
-            Collections.sort(fundList);
-            return fundList;
+
+            Map<Integer, List<HedgeFundScreeningParsedDataDto>> addedFundsQualifiedMap = getAddedFundsQualifiedByReturnLookbackMap(params);
+            if(addedFundsQualifiedMap != null){
+                List<HedgeFundScreeningParsedDataDto> addedFunds = addedFundsQualifiedMap.get(params.getLookbackReturns().intValue());
+                if(addedFunds != null) {
+                    fundList.addAll(addedFunds);
+                }
+            }
+
+            // SCORING
+            HedgeFundScoringFundParamsDto scoringParams = new HedgeFundScoringFundParamsDto();
+            scoringParams.setFilteredResultId(params.getId());
+            scoringParams.setLookbackReturn(params.getLookbackReturns().intValue());
+            scoringParams.setLookbackAUM(params.getLookbackAUM().intValue());
+
+            responseDto = this.scoringService.getCalculatedScoring(fundList, scoringParams);
+            if(responseDto.getStatus() != null && responseDto.getStatus().getCode().equalsIgnoreCase(ResponseStatusType.SUCCESS.getCode())){
+                // SUCCESS
+                Collections.sort(responseDto.getRecords());
+            }else{
+                return responseDto;
+            }
+
+            responseDto.setStatus(ResponseStatusType.SUCCESS);
+            return responseDto;
         }
 
-        return new ArrayList<>();
+        return responseDto;
     }
 
     @Override
@@ -1303,7 +1479,8 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
         Assert.isTrue(aumsMap.size() == 1);
         Assert.isTrue(aumsMap.get(params.getLookbackAUM().intValue()) != null);
 
-        List<HedgeFundScreeningFundAUMDto> resultFunds = getIntersectingFunds(returnsMap.get(params.getLookbackReturns().intValue()), aumsMap.get(params.getLookbackAUM().intValue()));
+        List<HedgeFundScreeningFundAUMDto> resultFunds =
+                getIntersectingFunds(returnsMap.get(params.getLookbackReturns().intValue()), aumsMap.get(params.getLookbackAUM().intValue()), params.getScreeningId());
 
         if(resultFunds != null){
             List<HedgeFundScreeningParsedDataDto> fundList = getResultFundListWithAdditionalInfo(params.getScreeningId(), resultFunds);
@@ -1317,22 +1494,27 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
     @Override
     public List<HedgeFundScreeningParsedDataDto> getFilteredResultUnqualifiedFundList(HedgeFundScreeningFilteredResultDto params) {
         List<HedgeFundScreeningParsedDataDto> unqualifiedList = new ArrayList<>();
-        List<HedgeFundScreeningParsedDataDto> qualifiedList = getFilteredResultQualifiedFundList(params);
+        //List<HedgeFundScreeningParsedDataDto> qualifiedList = getFilteredResultQualifiedFundList(params);
+        ListResponseDto qualifiedListResponse = getFilteredResultQualifiedFundList(params);
+        if(qualifiedListResponse.getStatus() != null && qualifiedListResponse.getStatus().getCode().equalsIgnoreCase(ResponseStatusType.FAIL.getCode())){
+            // Error when generating qualified fund list, scoring returned errors
+            // TODO: if error?
+        }
         List<HedgeFundScreeningParsedDataDto> undecidedList = getFilteredResultUndecidedFundList(params);
 
         List<HedgeFundScreeningParsedDataDto> parsedDataList = getParsedDataFundInfo(params.getScreeningId());
         if(parsedDataList != null && !parsedDataList.isEmpty()){
             for(HedgeFundScreeningParsedDataDto parsedDataDto: parsedDataList){
                 boolean exists = false;
-                for(HedgeFundScreeningParsedDataDto qualified: qualifiedList){
-                    if(qualified.getFundId().longValue() == parsedDataDto.getFundId().longValue()){
+                for(HedgeFundScreeningParsedDataDto qualified: (List<HedgeFundScreeningParsedDataDto>)qualifiedListResponse.getRecords()){
+                    if(qualified.getFundId() != null && qualified.getFundId().longValue() == parsedDataDto.getFundId().longValue()){
                         exists = true;
                         break;
                     }
                 }
                 if(!exists) {
                     for (HedgeFundScreeningParsedDataDto undecided : undecidedList) {
-                        if(undecided.getFundId().longValue() == parsedDataDto.getFundId().longValue()){
+                        if(undecided.getFundId() != null && undecided.getFundId().longValue() == parsedDataDto.getFundId().longValue()){
                             exists = true;
                             break;
                         }
@@ -1354,6 +1536,7 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
         return unqualifiedList;
     }
 
+    @Deprecated
     @Override
     public boolean updateManagerAUM(List<HedgeFundScreeningParsedDataDto> fundList, String username) {
         if(fundList != null && !fundList.isEmpty()){
@@ -1380,34 +1563,210 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
     @Override
     public boolean updateFundInfo(HedgeFundScreeningParsedDataDto fund, String username) {
         try{
-            if(fund.getScreening() == null || fund.getScreening().getId() == null || fund.getFundId() == null){
+            if (fund.getScreening() == null || fund.getScreening().getId() == null) {
                 long screeningId = fund.getScreening() != null && fund.getScreening().getId() != null ? fund.getScreening().getId().longValue() : null;
-                long fundId = fund.getFundId() != null ? fund.getFundId().longValue() : null;
-                logger.error("HF Screening  - failed to update fund info [screening id =" + screeningId +
-                        ", fund id = " + fundId + "]: screening id and fund id required");
+                logger.error("HF Screening  - failed to update fund info [screening id =" + screeningId + "]: screening id required");
                 return false;
             }
-            HedgeFundScreeningParsedData entity = this.parsedDataRepository.findByFundIdAndScreeningId(fund.getFundId(), fund.getScreening().getId());
-            if(fund.getEditedFundAUM() != null && fund.getEditedFundAUM().doubleValue() > 0 && StringUtils.isEmpty(fund.getEditedFundAUMComment())){
-                // Comment required
-                logger.error("HF Screening  - failed to update fund info [screening id =" + fund.getScreening().getId().longValue() +
-                        ", fund id = " + fund.getFundId().longValue() + "]: comment required");
-                return false;
-            }
-            entity.setEditedFundAUM(fund.getEditedFundAUM());
-            entity.setEditedFundAUMComment(fund.getEditedFundAUMComment());
-            entity.setManagerAUM(fund.getManagerAUM());
 
-            this.parsedDataRepository.save(entity);
-            logger.info("HF Screening - Successfully updated Manager AUM: fund id=" + fund.getFundId().longValue() + " [user]=" + username);
-            return true;
+            if(fund.isAdded()){
+                if (StringUtils.isEmpty(fund.getFundName())) {
+                    // Fund Name required
+                    logger.error("HF Screening  - failed to update fund info [screening id =" + fund.getScreening().getId().longValue() +
+                            ", fund id = " + fund.getFundId().longValue() + "]: fund name required");
+                    return false;
+                }
+                if (fund.getFundAUM() == null || fund.getFundAUM().doubleValue() == 0){
+                    // Fund AUM required
+                    logger.error("HF Screening  - failed to update fund info [screening id =" + fund.getScreening().getId().longValue() +
+                            ", fund id = " + fund.getFundId().longValue() + "]: fund AUM required");
+                    return false;
+                }
+                if(fund.getFilteredResultId() == null){
+                    logger.error("HF Screening  - failed to update fund info [screening id =" + fund.getScreening().getId().longValue() +
+                            ", fund id = " + fund.getFilteredResultId().longValue() + "]: filtered result id required");
+                    return false;
+                }
+
+                // TODO: Check AUM
+
+
+                // TODO: Check track record
+
+
+                HedgeFundScreeningAddedFund entity = this.addedFundRepository.findByFundNameAndFilteredResultId(fund.getFundName(), fund.getFilteredResultId());
+                if(entity == null){
+                    entity = new HedgeFundScreeningAddedFund();
+                    HedgeFundScreeningFilteredResult filteredResult = new HedgeFundScreeningFilteredResult();
+                    filteredResult.setId(fund.getFilteredResultId());
+                    entity.setFilteredResult(filteredResult);
+                }
+
+                List<HedgeFundScreeningParsedData> parsedFunds = this.parsedDataRepository.findByFundNameAndScreeningId(fund.getFundName(), fund.getScreening().getId());
+                if(parsedFunds != null && !parsedFunds.isEmpty()){
+                    logger.error("Failed to create new fund (added): fund already exists");
+                    return false;
+                }
+
+                //entity.setFundId(fund.getFundId());
+                entity.setFundName(fund.getFundName());
+                entity.setInvestmentManager(fund.getInvestmentManager());
+                entity.setMainStrategy(fund.getMainStrategy());
+                entity.setFundAUM(fund.getFundAUM());
+                entity.setFundAUMDate(fund.getFundAUMDate());
+                entity.setManagerAUM(fund.getManagerAUM());
+
+                this.addedFundRepository.save(entity);
+
+                // save track record
+                if(fund.getReturns() != null && !fund.getReturns().isEmpty()){
+                    List<HedgeFundScreeningAddedFundReturn> fundReturnEntities = new ArrayList<>();
+                    for(HedgeFundScreeningFundReturnDto returnDto: fund.getReturns()) {
+                        if(returnDto.getDate() != null && returnDto.getValue() != null) {
+                            HedgeFundScreeningAddedFundReturn returnEntity = new HedgeFundScreeningAddedFundReturn();
+                            returnEntity.setAddedFund(entity);
+                            Date date = DateUtils.getMM_YYYYYFormatLastDayMonthDate(returnDto.getDate());
+                            if(date != null) {
+                                returnEntity.setDate(date);
+                                returnEntity.setValue(returnDto.getValue());
+                                fundReturnEntities.add(returnEntity);
+                            }
+                        }
+                    }
+                    this.addedFundReturnRepository.deleteByFundId(entity.getId());
+                    this.addedFundReturnRepository.save(fundReturnEntities);
+                    // TODO: delete other returns
+                }else{
+                    this.addedFundReturnRepository.deleteByFundId(entity.getId());
+                }
+
+                logger.info("HF Screening - Successfully updated fund info: " + "screening id=" +fund.getScreening().getId().longValue() +
+                        ", fund name=" + fund.getFundName() + " [user]=" + username);
+                return true;
+            }else {
+                if (fund.getEditedFundAUM() != null && fund.getEditedFundAUM().doubleValue() > 0 && StringUtils.isEmpty(fund.getEditedFundAUMComment())) {
+                    // Comment required
+                    logger.error("HF Screening  - failed to update fund info [screening id =" + fund.getScreening().getId().longValue() +
+                            ", fund id = " + fund.getFundId().longValue() + "]: comment required");
+                    return false;
+                }
+                if (fund.getEditedFundAUM() != null && fund.getEditedFundAUM().doubleValue() > 0 && StringUtils.isEmpty(fund.getEditedFundAUMDateMonthYear())) {
+                    // Date required
+                    logger.error("HF Screening  - failed to update fund info [screening id =" + fund.getScreening().getId().longValue() +
+                            ", fund id = " + fund.getFundId().longValue() + "]: date required");
+                    return false;
+                }
+
+                HedgeFundScreeningParsedData entity = this.parsedDataRepository.findByFundIdAndScreeningId(fund.getFundId(), fund.getScreening().getId());
+
+                if(entity == null){
+                    logger.error("Failed to load fund info: screening=" + fund.getScreening().getId().longValue() + ", fund id=" +fund.getFundId().longValue() );
+                    return false;
+                }
+                entity.setEditedFundAUM(fund.getEditedFundAUM());
+                if(entity.getEditedFundAUM() != null) {
+                    if (StringUtils.isNotEmpty(fund.getEditedFundAUMDateMonthYear())) {
+                        Date date = DateUtils.getMM_YYYYYFormatLastDayMonthDate(fund.getEditedFundAUMDateMonthYear());
+                        entity.setEditedFundAUMDate(date);
+                    }
+                    entity.setEditedFundAUMComment(fund.getEditedFundAUMComment());
+                }else{
+                    entity.setEditedFundAUMDate(null);
+                    entity.setEditedFundAUMComment(null);
+                }
+                entity.setManagerAUM(fund.getManagerAUM());
+
+                this.parsedDataRepository.save(entity);
+                logger.info("HF Screening - Successfully updated fund info: " + "screening id=" +fund.getScreening().getId().longValue() +
+                        ", fund id=" + fund.getFundId().longValue() + " [user]=" + username);
+                return true;
+            }
 
         }catch (Exception ex){
-            logger.error("HF Screening - failed to update Manager AUM (with exception) [user]=" + username, ex);
+            logger.error("HF Screening - failed to update fund info (with exception) [user]=" + username, ex);
         }
         return false;
     }
 
+    @Override
+    public boolean deleteAddedFund(String fundName, Long filteredResultI, String username) {
+        try {
+            HedgeFundScreeningAddedFund addedFund = this.addedFundRepository.findByFundNameAndFilteredResultId(fundName, filteredResultI);
+            if(addedFund != null) {
+                // clear returns
+                this.addedFundReturnRepository.deleteByFundId(addedFund.getId());
+
+                // delete fund
+                this.addedFundRepository.deleteByFundNameAndFilteredResultId(fundName, filteredResultI);
+                return true;
+            }
+        }catch (Exception ex){
+            this.logger.error("Failed to delete added fund: fundName=" + fundName + ", filteredResultId=" + filteredResultI + "[user=" + username + "]", ex);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean excludeParsedFund(Long screeningId, Long fundId, String username){
+        try {
+            HedgeFundScreeningParsedData entity = this.parsedDataRepository.findByFundIdAndScreeningId(fundId, screeningId);
+            if (entity != null) {
+                entity.setExcluded(true);
+                this.parsedDataRepository.save(entity);
+                return true;
+            }
+        }catch (Exception ex){
+            logger.error("Failed to exclude fund: screening id " + (screeningId != null ? screeningId.longValue() : null) +
+                    ", fund id " + (fundId != null ? fundId.longValue() : null) + " [username=" + username + "]");
+        }
+        return false;
+    }
+
+    @Override
+    public boolean includeParsedFund(Long screeningId, Long fundId, String username){
+        try {
+            HedgeFundScreeningParsedData entity = this.parsedDataRepository.findByFundIdAndScreeningId(fundId, screeningId);
+            if (entity != null) {
+                entity.setExcluded(null);
+                this.parsedDataRepository.save(entity);
+                return true;
+            }
+        }catch (Exception ex){
+            logger.error("Failed to include fund: screening id " + (screeningId != null ? screeningId.longValue() : null) +
+                    ", fund id " + (fundId != null ? fundId.longValue() : null) + " [username=" + username + "]");
+        }
+        return false;
+    }
+
+    private List<HedgeFundScreeningParsedDataDto> getExcludedFunds(Long screeningId){
+        List<HedgeFundScreeningParsedData> entities = this.parsedDataRepository.findExcludedFundsByScreeningId(screeningId);
+        if(entities != null){
+            List<HedgeFundScreeningParsedDataDto> funds = parsedDataEntityConverter.disassembleList(entities);
+            // set fund AUM
+            for(HedgeFundScreeningParsedDataDto fundDto: funds) {
+                HedgeFundScreeningParsedDataAUM maxAUM = this.parsedDataAUMRepository.getLastAUMByFundId(screeningId, fundDto.getFundId());
+                if(maxAUM != null) {
+                    if (maxAUM.getReturnsCurrency() != null && !maxAUM.getReturnsCurrency().equalsIgnoreCase(CurrencyLookup.USD.getCode())) {
+                        // oon-USD
+                        CurrencyRatesDto currencyRatesDto = this.currencyRatesService.getLstRateForMonthDateAndCurrencyBackwards(DateUtils.getLastDayOfCurrentMonth(maxAUM.getDate()), maxAUM.getReturnsCurrency());
+                        if (currencyRatesDto != null && currencyRatesDto.getValueUSD() != null) {
+                            Double fundAUMValueUSD = MathUtils.multiply(currencyRatesDto.getValueUSD(), maxAUM.getValue());
+                            fundDto.setFundAUM(fundAUMValueUSD);
+                            fundDto.setCurrency(maxAUM.getReturnsCurrency());
+                            fundDto.setFundAUMByCurrency(maxAUM.getValue());
+                        } else {
+                            //
+                        }
+                    } else {
+                        fundDto.setFundAUM(maxAUM.getValue());
+                    }
+                }else{}
+
+            }
+            return funds;
+        }
+        return null;
+    }
 
 
     private Integer[][] getFilteredResultStatisticsQualified(HedgeFundScreeningFilteredResultDto params){
@@ -1421,7 +1780,7 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
 //        long end = new Date().getTime();
 //        System.out.println("AUM time = " + (end-start) / 1000.);
         Integer[][] values = getLookbackMatrix(params.getLookbackReturns().intValue(), params.getLookbackAUM().intValue(),
-                lookbackReturnMap, lookbackAUMMap);
+                lookbackReturnMap, lookbackAUMMap, params.getScreeningId());
 
         return values;
     }
@@ -1435,7 +1794,7 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
         Map<Integer, List<HedgeFundScreeningFundAUMDto>> lookbackAUMMap = getQualifiedUndecidedAUMLookbackMap(params, 2, 0);
 
         Integer[][] values = getLookbackMatrix(params.getLookbackReturns().intValue(), params.getLookbackAUM().intValue(),
-                lookbackReturnMap, lookbackAUMMap);
+                lookbackReturnMap, lookbackAUMMap, params.getScreeningId());
         return values;
     }
 
@@ -1511,6 +1870,126 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
         return lookbackReturnMap;
     }
 
+    @Override
+    public double[] getAddedFundReturns(Long filteredResultId, String fundName, int trackRecord, Date dateFrom, Date dateTo){
+
+        double[] returns = new double[trackRecord];
+
+        List<HedgeFundScreeningAddedFundReturn> fundReturns =
+                this.addedFundReturnRepository.findByFilteredResultIdAndFundName(filteredResultId, fundName, dateFrom, dateTo, new Sort(Sort.Direction.DESC, "date"));
+
+        if(fundReturns != null){
+            Date previousDate = null;
+            int count = 0;
+            int index = 0;
+            for(HedgeFundScreeningAddedFundReturn fundReturn: fundReturns){
+                if(previousDate == null){
+                    previousDate = fundReturn.getDate();
+                    count = 1;
+                    returns[index] = fundReturn.getValue();
+                    index++;
+                }else{
+                    Date nextMonth = DateUtils.moveDateByMonths(previousDate, -1);
+                    nextMonth = DateUtils.getLastDayOfCurrentMonth(nextMonth);
+                    //if(DateUtils.isSameMonth(nextMonth, date)){
+                    if(DateUtils.isSameDate(nextMonth, fundReturn.getDate())){
+                        count++;
+                        returns[index] = fundReturn.getValue();
+                        index++;
+                        if(count == trackRecord){
+                            break;
+                        }
+                    }else{
+                        count = 0;
+                        returns = new double[trackRecord];
+                        index = 0;
+                    }
+                    previousDate = fundReturn.getDate();
+                }
+            }
+            if(count >= trackRecord){
+                return returns;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public double[] getParsedFundReturns(Long screeningId, Long fundId, int trackRecord, Date dateFrom, Date dateTo){
+
+        double[] returns = new double[trackRecord];
+
+        List<HedgeFundScreeningParsedDataReturn> fundReturns =
+                this.parsedDataReturnRepository.findByScreeningIdAndFundIdDateRange(screeningId, fundId, dateFrom, dateTo, new Sort(Sort.Direction.DESC, "date"));
+
+        if(fundReturns != null){
+            Date previousDate = null;
+            int count = 0;
+            int index = 0;
+            for(HedgeFundScreeningParsedDataReturn fundReturn: fundReturns){
+                Double value = null;
+                if(fundReturn.getReturnsCurrency() != null && !fundReturn.getReturnsCurrency().equalsIgnoreCase(CurrencyLookup.USD.getCode())){
+                    // non-ISD
+                    Date currencyDate = DateUtils.getLastDayOfCurrentMonth(fundReturn.getDate());
+                    CurrencyRatesDto currencyRatesDto = this.currencyRatesService.getLstRateForMonthDateAndCurrencyBackwards(currencyDate, fundReturn.getReturnsCurrency());
+                    if(currencyRatesDto != null && currencyRatesDto.getValueUSD() != null){
+                        Date prevMonth = DateUtils.getLastDayOfCurrentMonth(DateUtils.moveDateByMonths(currencyDate, -1));
+                        CurrencyRatesDto prevCurrencyRatesDto = this.currencyRatesService.getLstRateForMonthDateAndCurrencyBackwards(prevMonth, fundReturn.getReturnsCurrency());
+                        if(prevCurrencyRatesDto == null || prevCurrencyRatesDto.getValueUSD() == null){
+                            String errorMessage = "Failed to convert non-USD fund return - missing currency rate for currency=" + fundReturn.getReturnsCurrency() +
+                                    ", date=" + DateUtils.getDateFormatted(prevMonth) + "; screeningId=" + screeningId +
+                                    ", fundId=" + fundId;
+                            logger.error(errorMessage);
+                            throw new IllegalStateException(errorMessage);
+                        }
+                        int scale = 10;
+                        Double currencyRatio = MathUtils.divide(scale, MathUtils.subtract(scale, currencyRatesDto.getValueUSD(), prevCurrencyRatesDto.getValueUSD()), prevCurrencyRatesDto.getValueUSD());
+                        value = MathUtils.multiply(scale, MathUtils.add(scale, 1.0, currencyRatio), MathUtils.add(scale, 1.0, fundReturn.getValue()));
+                        value = MathUtils.subtract(scale, value, 1.0);
+                    }else{
+                        String errorMessage = "Failed to convert non-USD fund return - missing currency rate for currency=" + fundReturn.getReturnsCurrency() +
+                                ", date=" + DateUtils.getDateFormatted(currencyDate) + "; screeningId=" + screeningId +
+                                ", fundId=" + fundId;
+                        logger.error(errorMessage);
+                        throw new IllegalStateException(errorMessage);
+                    }
+                }else{
+                    value = fundReturn.getValue();
+                }
+
+                if(previousDate == null){
+                    previousDate = fundReturn.getDate();
+                    count = 1;
+                    returns[index] = value;
+                    index++;
+                }else{
+                    Date nextMonth = DateUtils.moveDateByMonths(previousDate, -1);
+                    nextMonth = DateUtils.getLastDayOfCurrentMonth(nextMonth);
+                    //if(DateUtils.isSameMonth(nextMonth, date)){
+                    if(DateUtils.isSameDate(nextMonth, fundReturn.getDate())){
+                        count++;
+                        returns[index] = value;
+                        index++;
+                        if(count == trackRecord){
+                            break;
+                        }
+                    }else{
+                        count = 0;
+                        returns = new double[trackRecord];
+                        index = 0;
+                    }
+                    previousDate = fundReturn.getDate();
+                }
+            }
+            return returns;
+//            if(count >= trackRecord){
+//                return returns;
+//            }
+        }
+        return null;
+
+    }
+
     private Map<Integer, List<HedgeFundScreeningFundAUMDto>> getQualifiedUndecidedAUMLookbackMap(HedgeFundScreeningFilteredResultDto params, int type, int lookbackStart){
         Map<Integer, List<HedgeFundScreeningFundAUMDto>> lookbackAUMMap = new HashMap<>();
 
@@ -1543,7 +2022,9 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                     // takes first-in, i.e. most recent since it is sorted
                     currentFund = fundAUM.getFundId();
                     HedgeFundScreeningFundAUMDto fundAUMDto = new HedgeFundScreeningFundAUMDto(fundAUM.getFundId(), fundAUM.getValue(),
-                            null, null, fundAUM.getReturnsCurrency(), null, fundAUM.getDate(), false);
+                            null, null, fundAUM.getReturnsCurrency(), null, fundAUM.getDate(),
+                            parsedDataMapByFundId.get(fundAUM.getFundId()).getEditedFundAUM(),
+                            parsedDataMapByFundId.get(fundAUM.getFundId()).getEditedFundAUMDate(), false);
                     uniqueFundsAUM.put(fundAUM.getFundId(), fundAUMDto);
 
                     String investorName = parsedDataMapByFundId.get(fundAUM.getFundId()).getInvestmentManager();
@@ -1595,20 +2076,18 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
             // Add funds with updated AUM
             for(HedgeFundScreeningParsedDataDto dataDto: parsedData){
                 if(dataDto.getEditedFundAUM() != null && dataDto.getEditedFundAUM().doubleValue() > 0){
-                    if(uniqueFundsAUM.get(dataDto.getFundId()) != null){
-                        // update funds AUM
-                        uniqueFundsAUM.get(dataDto.getFundId()).setFundAUM(dataDto.getEditedFundAUM());
-                        uniqueFundsAUM.get(dataDto.getFundId()).setFundAUMValueUSD(dataDto.getEditedFundAUM());
-                    }else{
-                        // add new
+                    if(uniqueFundsAUM.get(dataDto.getFundId()) == null){
                         HedgeFundScreeningFundAUMDto fundAUMDto = new HedgeFundScreeningFundAUMDto();
                         fundAUMDto.setFundId(dataDto.getFundId());
 
-                        fundAUMDto.setFundAUM(dataDto.getEditedFundAUM());
-                        fundAUMDto.setFundAUMValueUSD(dataDto.getEditedFundAUM());
+                        fundAUMDto.setFundAUM(null);
+                        fundAUMDto.setFundAUMValueUSD(null);
 
                         fundAUMDto.setFundAUMCurrency(dataDto.getCurrency());
                         fundAUMDto.setFundAUMDate(dataDto.getEditedFundAUMDate());
+
+                        fundAUMDto.setEditedFundAUM(dataDto.getEditedFundAUM());
+                        fundAUMDto.setEditedFundAUMDate(dataDto.getEditedFundAUMDate());
 
                         uniqueFundsAUM.put(dataDto.getFundId(), fundAUMDto);
 
@@ -1621,33 +2100,33 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
             uniqueFundsAUM.forEach((key, value)->{
                 // Check Currency
                 Double fundAUMValueUSD = null;
-                if(parsedDataMapByFundId.get(value.getFundId()).getEditedFundAUM() ==  null) {
-                    boolean fundAUMIsUSD = value.getFundAUMCurrency() == null || value.getFundAUMCurrency().equalsIgnoreCase(CurrencyLookup.USD.getCode());
-                    if (!fundAUMIsUSD) {
-                        // non-USD
-                        CurrencyRatesDto currencyRatesDto =
-                                this.currencyRatesService.getLstRateForMonthDateAndCurrencyBackwards(DateUtils.getLastDayOfCurrentMonth(value.getFundAUMDate()), value.getFundAUMCurrency());
-                        if (currencyRatesDto != null && currencyRatesDto.getValueUSD() != null) {
-                            fundAUMValueUSD = MathUtils.multiply(currencyRatesDto.getValueUSD(), value.getFundAUM());
-                        } else {
-                            // Missing currency rate
-                            if (type == 1) { // QUALIFIED
-                                return;
-                            } else if (type == 2) { // UNDECIDED
-                                HedgeFundScreeningFundAUMDto fundAUMDto = new HedgeFundScreeningFundAUMDto(value.getFundId(),
-                                        value.getFundAUM(), null, null, value.getFundAUMCurrency(), fundAUMValueUSD,
-                                        value.getFundAUMDate(), missingCurrencyInvestors.contains(parsedDataMapByFundId.get(value.getFundId()).getInvestmentManager()));
-                                fundAUMMap.put(value.getFundId(), fundAUMDto);
-                                return;
-                            }
-                        }
+                boolean fundAUMIsUSD = value.getFundAUMCurrency() == null || value.getFundAUMCurrency().equalsIgnoreCase(CurrencyLookup.USD.getCode());
+                if (!fundAUMIsUSD) {
+                    // non-USD
+                    CurrencyRatesDto currencyRatesDto =
+                            this.currencyRatesService.getLstRateForMonthDateAndCurrencyBackwards(DateUtils.getLastDayOfCurrentMonth(value.getFundAUMDate()), value.getFundAUMCurrency());
+                    if (currencyRatesDto != null && currencyRatesDto.getValueUSD() != null) {
+                        fundAUMValueUSD = MathUtils.multiply(currencyRatesDto.getValueUSD(), value.getFundAUM());
                     } else {
-                        fundAUMValueUSD = value.getFundAUM();
+                        // Missing currency rate
+                        if (type == 1) { // QUALIFIED
+                            return;
+                        } else if (type == 2) { // UNDECIDED
+                            HedgeFundScreeningFundAUMDto fundAUMDto = new HedgeFundScreeningFundAUMDto(value.getFundId(),
+                                    value.getFundAUM(), null, null, value.getFundAUMCurrency(), fundAUMValueUSD,
+                                    value.getFundAUMDate(),value.getEditedFundAUM(), value.getEditedFundAUMDate(),
+                                    missingCurrencyInvestors.contains(parsedDataMapByFundId.get(value.getFundId()).getInvestmentManager()));
+                            fundAUMMap.put(value.getFundId(), fundAUMDto);
+                            return;
+                        }
                     }
-                }else{
-                    // fund AUM updated
-                    fundAUMValueUSD = parsedDataMapByFundId.get(value.getFundId()).getEditedFundAUM();
+                } else {
+                    fundAUMValueUSD = value.getFundAUM();
                 }
+                if(value.getEditedFundAUM() != null){
+                    fundAUMValueUSD = value.getEditedFundAUM();
+                }
+
 
                 // Strategy AUM
                 String investorName = parsedDataMapByFundId.get(value.getFundId()).getInvestmentManager();
@@ -1664,7 +2143,8 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                         if(fundAUMValue.doubleValue() >= params.getManagerAUM().doubleValue()) {
                             HedgeFundScreeningFundAUMDto fundAUMDto = new HedgeFundScreeningFundAUMDto(value.getFundId(),
                                     value.getFundAUM(), strategyAUM, null, value.getFundAUMCurrency(), fundAUMValueUSD,
-                                    value.getFundAUMDate(), missingCurrencyInvestors.contains(parsedDataMapByFundId.get(value.getFundId()).getInvestmentManager()));
+                                    value.getFundAUMDate(), value.getEditedFundAUM(), value.getEditedFundAUMDate(),
+                                    missingCurrencyInvestors.contains(parsedDataMapByFundId.get(value.getFundId()).getInvestmentManager()));
                             fundAUMMap.put(value.getFundId(), fundAUMDto);
                         }else{
                             // check manager AUM
@@ -1673,6 +2153,7 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                             if(managerAUM != null && managerAUM.doubleValue() >= params.getManagerAUM().doubleValue()){
                                 HedgeFundScreeningFundAUMDto fundAUMDto = new HedgeFundScreeningFundAUMDto(value.getFundId(),
                                         value.getFundAUM(), strategyAUM, null, value.getFundAUMCurrency(), fundAUMValueUSD, value.getFundAUMDate(),
+                                        value.getEditedFundAUM(), value.getEditedFundAUMDate(),
                                         missingCurrencyInvestors.contains(parsedDataMapByFundId.get(value.getFundId()).getInvestmentManager()));
                                 fundAUMMap.put(value.getFundId(), fundAUMDto);
                             }
@@ -1686,6 +2167,7 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                                 //manager AUM missing, or manager AUM less that threshold but there are missing strategy AUM (by currency)
                                 HedgeFundScreeningFundAUMDto fundAUMDto = new HedgeFundScreeningFundAUMDto(value.getFundId(),
                                         value.getFundAUM(), strategyAUM, null, value.getFundAUMCurrency(), fundAUMValueUSD, value.getFundAUMDate(),
+                                        value.getEditedFundAUM(), value.getEditedFundAUMDate(),
                                         missingCurrencyInvestors.contains(parsedDataMapByFundId.get(value.getFundId()).getInvestmentManager()));
                                 fundAUMMap.put(value.getFundId(), fundAUMDto);
                             }
@@ -1693,6 +2175,7 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                         }else if(fundAUMValue.doubleValue() < params.getFundAUM().doubleValue() && strategyAUMHasMissingCurrencyRates){
                             HedgeFundScreeningFundAUMDto fundAUMDto = new HedgeFundScreeningFundAUMDto(value.getFundId(),
                                     value.getFundAUM(), strategyAUM, null, value.getFundAUMCurrency(), fundAUMValueUSD, value.getFundAUMDate(),
+                                    value.getEditedFundAUM(), value.getEditedFundAUMDate(),
                                     missingCurrencyInvestors.contains(parsedDataMapByFundId.get(value.getFundId()).getInvestmentManager()));
                             fundAUMMap.put(value.getFundId(), fundAUMDto);
                         }
@@ -1741,6 +2224,8 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                                             parsedDataMapByFundId.get(dataEntry.getFundId()).getManagerAUM() : null;
                                     HedgeFundScreeningFundAUMDto fundAUMDto = new HedgeFundScreeningFundAUMDto(dataEntry.getFundId(),
                                             null, strategyAUM, managerAUM, strategyAUMByInvestorName.get(investor).getCurrency(), null, null,
+                                            parsedDataMapByFundId.get(dataEntry.getFundId()).getEditedFundAUM(),
+                                            parsedDataMapByFundId.get(dataEntry.getFundId()).getEditedFundAUMDate(),
                                             missingCurrencyInvestors.contains(investor));
                                     fundAUMMap.put(dataEntry.getFundId(), fundAUMDto);
                                     // TODO: currency null ?!
@@ -1753,6 +2238,8 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                                         // add fund
                                         HedgeFundScreeningFundAUMDto fundAUMDto = new HedgeFundScreeningFundAUMDto(dataEntry.getFundId(),
                                                 null, strategyAUMByInvestorName.get(investor).getValue(), managerAUM, strategyAUMByInvestorName.get(investor).getCurrency(), null, null,
+                                                parsedDataMapByFundId.get(dataEntry.getFundId()).getEditedFundAUM(),
+                                                parsedDataMapByFundId.get(dataEntry.getFundId()).getEditedFundAUMDate(),
                                                 missingCurrencyInvestors.contains(investor));
                                         fundAUMMap.put(dataEntry.getFundId(), fundAUMDto);
                                     }
@@ -1768,6 +2255,8 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                                         // add fund
                                         HedgeFundScreeningFundAUMDto fundAUMDto = new HedgeFundScreeningFundAUMDto(dataEntry.getFundId(),
                                                 null, strategyAUMByInvestorName.get(investor).getValue(), managerAUM, strategyAUMByInvestorName.get(investor).getCurrency(), null, null,
+                                                parsedDataMapByFundId.get(dataEntry.getFundId()).getEditedFundAUM(),
+                                                parsedDataMapByFundId.get(dataEntry.getFundId()).getEditedFundAUMDate(),
                                                 missingCurrencyInvestors.contains(investor));
                                         fundAUMMap.put(dataEntry.getFundId(), fundAUMDto);
                                     }
@@ -1784,6 +2273,8 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                                     parsedDataMapByFundId.get(dataEntry.getFundId()).getManagerAUM() : null;
                             HedgeFundScreeningFundAUMDto fundAUMDto = new HedgeFundScreeningFundAUMDto(dataEntry.getFundId(),
                                     null, strategyAUMByInvestorName.get(investor).getValue(), managerAUM, strategyAUMByInvestorName.get(investor).getCurrency(), null, null,
+                                    parsedDataMapByFundId.get(dataEntry.getFundId()).getEditedFundAUM(),
+                                    parsedDataMapByFundId.get(dataEntry.getFundId()).getEditedFundAUMDate(),
                                     missingCurrencyInvestors.contains(investor));
                             fundAUMMap.put(dataEntry.getFundId(), fundAUMDto);
                         }
@@ -1850,7 +2341,8 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
 
     private Integer[][] getLookbackMatrix(int lookBackReturn, int lookbackAUM,
                                           Map<Integer, List<HedgeFundScreeningFundCounts>> lookbackReturnMap,
-                                          Map<Integer,List<HedgeFundScreeningFundAUMDto>> lookbackAUMMap){
+                                          Map<Integer,List<HedgeFundScreeningFundAUMDto>> lookbackAUMMap,
+                                          Long screeningId){
         Integer[][] values = new Integer[lookBackReturn + 2][lookbackAUM + 2];
         for(int i = 0; i < lookBackReturn + 2; i++){
             for(int j = 0; j < lookbackAUM + 2; j++){
@@ -1862,7 +2354,8 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                 }else if(j == 0){
                     values[i][j] = i - 1;
                 }else {
-                    List<HedgeFundScreeningFundAUMDto> resultFunds = getIntersectingFunds(lookbackReturnMap.get(i - 1), lookbackAUMMap.get(j - 1));
+                    List<HedgeFundScreeningFundAUMDto> resultFunds =
+                            getIntersectingFunds(lookbackReturnMap.get(i - 1), lookbackAUMMap.get(j - 1), screeningId);
                     values[i][j] = resultFunds.size();
                 }
             }
@@ -1969,17 +2462,18 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
         }
         Date dateFromLookback =  DateUtils.moveDateByMonths(params.getStartDateFromTextOrCurrent(), 0 - params.getLookbackAUM().intValue());
         Date dateFrom = DateUtils.getFirstDayOfCurrentMonth(DateUtils.getDate("01.01.1970"));
-        Date dateTo = DateUtils.getFirstDayOfNextMonth(new Date());
+        Date dateTo = params.getStartDateFromTextOrCurrent() != null ? params.getStartDateFromTextOrCurrent() : DateUtils.getFirstDayOfNextMonth(new Date());
         for(HedgeFundScreeningParsedDataDto record: fundList) {
-            HedgeFundScreeningParsedDataAUM  fundAUM = this.parsedDataAUMRepository.getLastAUMByFundId(params.getScreeningId(),
+            HedgeFundScreeningParsedDataAUM  fundAUM = this.parsedDataAUMRepository.getLastAUMByDatesAndFundId(params.getScreeningId(),
                     dateFrom, dateTo, record.getFundId());
 
             if(fundAUM != null) {
                 // Set most recent fund AUM
                 if (fundAUM.getReturnsCurrency() != null && !fundAUM.getReturnsCurrency().equalsIgnoreCase(CurrencyLookup.USD.getCode())) {
-                    CurrencyRatesDto currencyRatesDto = this.currencyRatesService.getLstRateForMonthDateAndCurrencyBackwards(DateUtils.getLastDayOfCurrentMonth(fundAUM.getDate()), fundAUM.getReturnsCurrency());
+                    CurrencyRatesDto currencyRatesDto =
+                            this.currencyRatesService.getLstRateForMonthDateAndCurrencyBackwards(DateUtils.getLastDayOfCurrentMonth(fundAUM.getDate()), fundAUM.getReturnsCurrency());
+                    record.setCurrency(fundAUM.getReturnsCurrency());
                     if (currencyRatesDto != null && currencyRatesDto.getValueUSD() != null) {
-                        record.setCurrency(fundAUM.getReturnsCurrency());
                         // check AUM date
                         if(fundAUM.getDate().compareTo(dateFromLookback) < 0) {
                             // not in lookback period
@@ -1990,6 +2484,9 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                             record.setFundAUM(MathUtils.multiply(fundAUM.getValue(), currencyRatesDto.getValueUSD()));
                             //record.setFundAUMDate(fundAUM.getDate());
                         }
+                    }else{
+                        record.setFundAUMByCurrency(fundAUM.getValue());
+                        record.setFundAUMDate(fundAUM.getDate());
                     }
                 } else {
                     if(fundAUM.getDate().compareTo(dateFromLookback) < 0) {
@@ -2125,7 +2622,7 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
 
 
     private List<HedgeFundScreeningFundAUMDto> getIntersectingFunds(List<HedgeFundScreeningFundCounts> returnsByFund,
-                                         List<HedgeFundScreeningFundAUMDto> AUMByFund) {
+                                         List<HedgeFundScreeningFundAUMDto> AUMByFund, Long screeningId) {
 
         Set<Long> existingFunds = new HashSet<>();
         List<HedgeFundScreeningFundAUMDto> resultFunds = new ArrayList<>();
@@ -2146,9 +2643,34 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                     if(fundAUM.getFundId() != null && existingFunds.contains(fundAUM.getFundId())){
                         resultFunds.add(fundAUM);
                     }
+                }else if(fundAUM.getEditedFundAUM() != null && fundAUM.getEditedFundAUM().doubleValue() != 0.0){
+                    if(fundAUM.getFundId() != null && existingFunds.contains(fundAUM.getFundId())){
+                        resultFunds.add(fundAUM);
+                    }
                 }
             }
         }
+
+        List<HedgeFundScreeningParsedData>  excludedFunds = this.parsedDataRepository.findExcludedFundsByScreeningId(screeningId);
+        if(excludedFunds != null && !excludedFunds.isEmpty()){
+            List<HedgeFundScreeningFundAUMDto> resultFundsWithoutExcluded = new ArrayList<>();
+            for(HedgeFundScreeningFundAUMDto fund: resultFunds){
+                boolean found = false;
+                for(HedgeFundScreeningParsedData excludedFund: excludedFunds){
+                    if(fund.getFundId().longValue() == excludedFund.getFundId().longValue()){
+                        // skip this fund
+                        found = true;
+                        break;
+                    }
+                }
+                if(!found){
+                    resultFundsWithoutExcluded.add(fund);
+                }
+            }
+
+            return resultFundsWithoutExcluded;
+        }
+
 
         return resultFunds;
     }
@@ -2170,11 +2692,16 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                         }else{
                             // USD
                             parsedDataDto.setFundAUM(fund.getFundAUMValueUSD());
+
                         }
                         parsedDataDto.setFundAUMDate(fund.getFundAUMDate());
 
                         parsedDataDto.setStrategyAUM(fund.getStrategyAUM());
                         parsedDataDto.setStrategyAUMWithMissingCurrency(fund.isStrategyAUMWithMissingCurrency());
+
+                        if(fund.getEditedFundAUM() != null && fund.getEditedFundAUMDate() != null){
+                            parsedDataDto.setEditedFundAUMDateMonthYear(DateUtils.getMonthYearDate(fund.getEditedFundAUMDate()));
+                        }
 
                         resultList.add(parsedDataDto);
                     }
@@ -2190,47 +2717,47 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
 
 
 
-    private int checkQualifiedFundList(HedgeFundScreeningFilteredResultDto params){
-        StrBuilder sb = new StrBuilder();
-        List<HedgeFundScreeningParsedDataDto> fundList = getFilteredResultQualifiedFundList(params);
-        List<HedgeFundScreeningParsedDataDto> fundList_ = getFilteredResultQualifiedFundList_(params);
-        int errors = 0;
-        if(fundList.size() != fundList_.size()){
-            sb.append("QUALIFIED FUND LIST SIZE MISMATCH:" + fundList.size() + ", " + fundList_.size());
-            sb.append("\n");
-            errors++;
-        }
-        for(int i = 0; i < fundList.size(); i++){
-            // Fund Id
-            if(fundList.get(i).getFundId().longValue() != fundList_.get(i).getFundId().longValue()){
-                sb.append("QUALIFIED FUND LIST (FundId) at i=" + i + " : " + fundList.get(i).getFundId().longValue() + ", " + + fundList_.get(i).getFundId().longValue());
-                sb.append("\n");
-                errors++;
-            }
-            // Fund AUM
-            if(NumberUtils.getDouble(fundList.get(i).getFundAUM()) != NumberUtils.getDouble(fundList_.get(i).getFundAUM())){
-                sb.append("QUALIFIED FUND LIST (FundAUM) at i=" + i + " : " + fundList.get(i).getFundAUM().doubleValue() + ", " + + fundList_.get(i).getFundAUM().doubleValue());
-                sb.append("\n");
-                errors++;
-            }
-
-            // Strategy AUM
-            if(NumberUtils.getDouble(fundList.get(i).getStrategyAUM()) != NumberUtils.getDouble(fundList_.get(i).getStrategyAUM())){
-                sb.append("QUALIFIED FUND LIST (strategyAUM) at i=" + i + " : " + fundList.get(i).getStrategyAUM().doubleValue() + ", " + + fundList_.get(i).getStrategyAUM().doubleValue());
-                sb.append("\n");
-                errors++;
-            }
-        }
-        if(errors > 0){
-            System.out.println("CHECKING QUALIFIED FUND LIST: " + "Return l=" + params.getLookbackReturns() + ", AUM l=" + params.getLookbackAUM());
-            //System.out.println("QUALIFIED FUND LIST with Errors: " + errors);
-            System.out.println(sb.toString());
-        }else{
-            //System.out.println("QUALIFIED FUND LIST - (Return l=" + params.getLookbackReturns() + ", AUM l=" + params.getLookbackAUM() + ") - OK");
-        }
-
-        return errors;
-    }
+//    private int checkQualifiedFundList(HedgeFundScreeningFilteredResultDto params){
+//        StrBuilder sb = new StrBuilder();
+//        List<HedgeFundScreeningParsedDataDto> fundList = getFilteredResultQualifiedFundList(params);
+//        List<HedgeFundScreeningParsedDataDto> fundList_ = getFilteredResultQualifiedFundList_(params);
+//        int errors = 0;
+//        if(fundList.size() != fundList_.size()){
+//            sb.append("QUALIFIED FUND LIST SIZE MISMATCH:" + fundList.size() + ", " + fundList_.size());
+//            sb.append("\n");
+//            errors++;
+//        }
+//        for(int i = 0; i < fundList.size(); i++){
+//            // Fund Id
+//            if(fundList.get(i).getFundId().longValue() != fundList_.get(i).getFundId().longValue()){
+//                sb.append("QUALIFIED FUND LIST (FundId) at i=" + i + " : " + fundList.get(i).getFundId().longValue() + ", " + + fundList_.get(i).getFundId().longValue());
+//                sb.append("\n");
+//                errors++;
+//            }
+//            // Fund AUM
+//            if(NumberUtils.getDouble(fundList.get(i).getFundAUM()) != NumberUtils.getDouble(fundList_.get(i).getFundAUM())){
+//                sb.append("QUALIFIED FUND LIST (FundAUM) at i=" + i + " : " + fundList.get(i).getFundAUM().doubleValue() + ", " + + fundList_.get(i).getFundAUM().doubleValue());
+//                sb.append("\n");
+//                errors++;
+//            }
+//
+//            // Strategy AUM
+//            if(NumberUtils.getDouble(fundList.get(i).getStrategyAUM()) != NumberUtils.getDouble(fundList_.get(i).getStrategyAUM())){
+//                sb.append("QUALIFIED FUND LIST (strategyAUM) at i=" + i + " : " + fundList.get(i).getStrategyAUM().doubleValue() + ", " + + fundList_.get(i).getStrategyAUM().doubleValue());
+//                sb.append("\n");
+//                errors++;
+//            }
+//        }
+//        if(errors > 0){
+//            System.out.println("CHECKING QUALIFIED FUND LIST: " + "Return l=" + params.getLookbackReturns() + ", AUM l=" + params.getLookbackAUM());
+//            //System.out.println("QUALIFIED FUND LIST with Errors: " + errors);
+//            System.out.println(sb.toString());
+//        }else{
+//            //System.out.println("QUALIFIED FUND LIST - (Return l=" + params.getLookbackReturns() + ", AUM l=" + params.getLookbackAUM() + ") - OK");
+//        }
+//
+//        return errors;
+//    }
 
     private int checkUndecidedFundList(HedgeFundScreeningFilteredResultDto params){
         StrBuilder sb = new StrBuilder();
@@ -2282,74 +2809,46 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
         return errors;
     }
 
-    private void checkMatrixWithFundList(HedgeFundScreeningFilteredResultStatisticsDto statisticsDto, HedgeFundScreeningFilteredResultDto params){
-
-        int errorCount = 0;
-        // TEST QUALIFIED
-        System.out.println("CHECK MATRIX - QUALIFIED... ");
-        if(statisticsDto.getQualified() != null && statisticsDto.getQualified().length > 0){
-            for(int i = 1; i < statisticsDto.getQualified().length; i++){
-                for(int j = 1; j < statisticsDto.getQualified()[i].length; j++){
-                    int count = statisticsDto.getQualified()[i][j];
-
-                    HedgeFundScreeningFilteredResultDto newParams = new HedgeFundScreeningFilteredResultDto(params);
-                    newParams.setLookbackReturns(i - 1);
-                    newParams.setLookbackAUM(j - 1);
-                    List<HedgeFundScreeningParsedDataDto> fundList = getFilteredResultQualifiedFundList(newParams);
-
-                    if(fundList.size() != count){
-                        System.out.println((i - 1) + "-" + (j - 1) + ": MISMATCH stats=" + count + ", fundlist=" + fundList.size());
-                        errorCount++;
-                    }else{
-                        //System.out.println((i - 1) + "-" + (j - 1) + ": OK");
-                    }
-                }
-            }
-        }
-        if(errorCount == 0){
-            System.out.println("CHECK QUALIFIED: OK");
-        }
-
-        // TEST UNDECIDED
-        errorCount = 0;
-        System.out.println("CHECK MATRIX - UNDECIDED... ");
-        if(statisticsDto.getQualified() != null && statisticsDto.getUndecided().length > 0){
-            for(int i = 1; i < statisticsDto.getUndecided().length; i++){
-                for(int j = 1; j < statisticsDto.getUndecided()[i].length; j++){
-                    int count = statisticsDto.getUndecided()[i][j];
-
-                    HedgeFundScreeningFilteredResultDto newParams = new HedgeFundScreeningFilteredResultDto(params);
-                    newParams.setLookbackReturns(i - 1);
-                    newParams.setLookbackAUM(j - 1);
-                    List<HedgeFundScreeningParsedDataDto> fundList = getFilteredResultUndecidedFundList(newParams);
-
-                    if(fundList.size() != count){
-                        System.out.println((i - 1) + "-" + (j - 1) + ": MISMATCH stats=" + count + ", fundlist=" + fundList.size());
-                        errorCount++;
-                    }else{
-                        //System.out.println((i - 1) + "-" + (j - 1) + ": OK");
-                    }
-                }
-            }
-        }
-
-        if(errorCount == 0){
-            System.out.println("CHECK UNDECIDED: OK");
-        }
-
-
-        // TEST UNQUALIFIED
-//        errorCount = 0;
-//        System.out.println("CHECK MATRIX - UNQUALIFIED...");
-//        if(statisticsDto.getQualified() != null && statisticsDto.getUnqualified().length > 0){
-//            for(int i = 1; i < statisticsDto.getUnqualified().length; i++){
-//                for(int j = 1; j < statisticsDto.getUnqualified()[i].length; j++){
-//                    int count = statisticsDto.getUnqualified()[i][j];
+//    private void checkMatrixWithFundList(HedgeFundScreeningFilteredResultStatisticsDto statisticsDto, HedgeFundScreeningFilteredResultDto params){
+//
+//        int errorCount = 0;
+//        // TEST QUALIFIED
+//        System.out.println("CHECK MATRIX - QUALIFIED... ");
+//        if(statisticsDto.getQualified() != null && statisticsDto.getQualified().length > 0){
+//            for(int i = 1; i < statisticsDto.getQualified().length; i++){
+//                for(int j = 1; j < statisticsDto.getQualified()[i].length; j++){
+//                    int count = statisticsDto.getQualified()[i][j];
 //
 //                    HedgeFundScreeningFilteredResultDto newParams = new HedgeFundScreeningFilteredResultDto(params);
 //                    newParams.setLookbackReturns(i - 1);
 //                    newParams.setLookbackAUM(j - 1);
-//                    List<HedgeFundScreeningParsedDataDto> fundList = getFilteredResultUnqualifiedFundList(newParams);
+//                    List<HedgeFundScreeningParsedDataDto> fundList = getFilteredResultQualifiedFundList(newParams);
+//
+//                    if(fundList.size() != count){
+//                        System.out.println((i - 1) + "-" + (j - 1) + ": MISMATCH stats=" + count + ", fundlist=" + fundList.size());
+//                        errorCount++;
+//                    }else{
+//                        //System.out.println((i - 1) + "-" + (j - 1) + ": OK");
+//                    }
+//                }
+//            }
+//        }
+//        if(errorCount == 0){
+//            System.out.println("CHECK QUALIFIED: OK");
+//        }
+//
+//        // TEST UNDECIDED
+//        errorCount = 0;
+//        System.out.println("CHECK MATRIX - UNDECIDED... ");
+//        if(statisticsDto.getQualified() != null && statisticsDto.getUndecided().length > 0){
+//            for(int i = 1; i < statisticsDto.getUndecided().length; i++){
+//                for(int j = 1; j < statisticsDto.getUndecided()[i].length; j++){
+//                    int count = statisticsDto.getUndecided()[i][j];
+//
+//                    HedgeFundScreeningFilteredResultDto newParams = new HedgeFundScreeningFilteredResultDto(params);
+//                    newParams.setLookbackReturns(i - 1);
+//                    newParams.setLookbackAUM(j - 1);
+//                    List<HedgeFundScreeningParsedDataDto> fundList = getFilteredResultUndecidedFundList(newParams);
 //
 //                    if(fundList.size() != count){
 //                        System.out.println((i - 1) + "-" + (j - 1) + ": MISMATCH stats=" + count + ", fundlist=" + fundList.size());
@@ -2362,11 +2861,39 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
 //        }
 //
 //        if(errorCount == 0){
-//            System.out.println("CHECK UNQUALIFIED: OK");
+//            System.out.println("CHECK UNDECIDED: OK");
 //        }
-
-        System.out.println("CHECK MATRIX FINISHED");
-    }
+//
+//
+//        // TEST UNQUALIFIED
+////        errorCount = 0;
+////        System.out.println("CHECK MATRIX - UNQUALIFIED...");
+////        if(statisticsDto.getQualified() != null && statisticsDto.getUnqualified().length > 0){
+////            for(int i = 1; i < statisticsDto.getUnqualified().length; i++){
+////                for(int j = 1; j < statisticsDto.getUnqualified()[i].length; j++){
+////                    int count = statisticsDto.getUnqualified()[i][j];
+////
+////                    HedgeFundScreeningFilteredResultDto newParams = new HedgeFundScreeningFilteredResultDto(params);
+////                    newParams.setLookbackReturns(i - 1);
+////                    newParams.setLookbackAUM(j - 1);
+////                    List<HedgeFundScreeningParsedDataDto> fundList = getFilteredResultUnqualifiedFundList(newParams);
+////
+////                    if(fundList.size() != count){
+////                        System.out.println((i - 1) + "-" + (j - 1) + ": MISMATCH stats=" + count + ", fundlist=" + fundList.size());
+////                        errorCount++;
+////                    }else{
+////                        //System.out.println((i - 1) + "-" + (j - 1) + ": OK");
+////                    }
+////                }
+////            }
+////        }
+////
+////        if(errorCount == 0){
+////            System.out.println("CHECK UNQUALIFIED: OK");
+////        }
+//
+//        System.out.println("CHECK MATRIX FINISHED");
+//    }
 
 
 
@@ -2901,5 +3428,7 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
 
         return qualifiedValues;
     }
+
+    /******************************************************************************************************************/
 
 }

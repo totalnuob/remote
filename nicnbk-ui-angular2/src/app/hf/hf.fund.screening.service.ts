@@ -9,6 +9,7 @@ import {ModuleAccessCheckerService} from "../authentication/module.access.checke
 import {FileUploadService} from "../upload/file.upload.service";
 import {HedgeFundScreeningFilteredResult} from "./model/hf.screening.filtered.result";
 import {HedgeFundScreeningFilteredResultStatistics} from "./model/hf.screening.filtered.result.statistics";
+import {ListResponse} from "../common/list.response";
 
 @Injectable()
 export class HedgeFundScreeningService extends CommonService{
@@ -18,6 +19,8 @@ export class HedgeFundScreeningService extends CommonService{
     private HF_SCREENING_SAVE_URL = this.HF_BASE_URL + "save/";
     private HF_SCREENING_GET_URL = this.HF_BASE_URL + "get/";
     private HF_SCREENING_SEARCH_URL = this.HF_BASE_URL + "search/";
+    private HF_SCREENING_GET_ALL_URL = this.HF_BASE_URL + "getAll/";
+
     private HF_SCREENING_DATA_FILE_UPLOAD_URL = this.HF_BASE_URL + "file/upload/";
     private HF_SCREENING_UCITS_FILE_UPLOAD_URL = this.HF_BASE_URL + "file/ucits/upload/";
 
@@ -40,6 +43,11 @@ export class HedgeFundScreeningService extends CommonService{
 
     private HF_SCREENING_FILTERED_UPDATE_MANAGER_AUM_URL = this.HF_BASE_URL + "filteredResults/updateManagerAUM/";
     private HF_SCREENING_FILTERED_UPDATE_FUND_URL = this.HF_BASE_URL + "filteredResults/updateFund/";
+    private HF_SCREENING_FILTERED_DELETE_ADDED_FUND_URL = this.HF_BASE_URL + "filteredResults/deleteAddedFund/";
+    private HF_SCREENING_FILTERED_EXCLUDE_FUND_URL = this.HF_BASE_URL + "filteredResults/excludeFund/";
+    private HF_SCREENING_FILTERED_INCLUDE_FUND_URL = this.HF_BASE_URL + "filteredResults/includeFund/";
+
+
 
 
 
@@ -75,6 +83,13 @@ export class HedgeFundScreeningService extends CommonService{
 
         //console.log(body);
         return this.http.post(this.HF_SCREENING_SEARCH_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    getALlScreenings(){
+        //console.log(body);
+        return this.http.get(this.HF_SCREENING_GET_ALL_URL, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }
@@ -144,7 +159,7 @@ export class HedgeFundScreeningService extends CommonService{
             .catch(this.handleErrorResponse);
     }
 
-    getFilteredResultQualifiedFundList(params): Observable<any[]> {
+    getFilteredResultQualifiedFundList(params): Observable<ListResponse> {
 
         let body = JSON.stringify(params);
 
@@ -200,6 +215,33 @@ export class HedgeFundScreeningService extends CommonService{
         let body = JSON.stringify(fund);
 
         return this.http.post(this.HF_SCREENING_FILTERED_UPDATE_FUND_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    deleteFund(fund){
+
+        let body = JSON.stringify(fund);
+
+        return this.http.post(this.HF_SCREENING_FILTERED_DELETE_ADDED_FUND_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    excludeFund(fund){
+
+        let body = JSON.stringify(fund);
+
+        return this.http.post(this.HF_SCREENING_FILTERED_EXCLUDE_FUND_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    includeFund(fund){
+
+        let body = JSON.stringify(fund);
+
+        return this.http.post(this.HF_SCREENING_FILTERED_INCLUDE_FUND_URL, body, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }

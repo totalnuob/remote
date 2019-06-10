@@ -31,5 +31,5 @@ public interface HedgeFundScreeningParsedUcitsDataAUMRepository extends PagingAn
 //            " AND e.value is not null AND e.date=(SELECT MAX(e2.date) from HedgeFundScreeningParsedDataAUM e2 " +
 //            "WHERE e2.value is not null AND " +
 //            "e2.screening.id=?1 AND e2.date >= ?2 AND e2.date <= ?3 AND e.fundId=e2.fundId)")
-//    List<HedgeFundScreeningParsedDataAUM> getLastAUMByFundId(Long screeningId, Date dateFrom, Date dateTo);
+//    List<HedgeFundScreeningParsedDataAUM> getLastAUMByDatesAndFundId(Long screeningId, Date dateFrom, Date dateTo);
 }

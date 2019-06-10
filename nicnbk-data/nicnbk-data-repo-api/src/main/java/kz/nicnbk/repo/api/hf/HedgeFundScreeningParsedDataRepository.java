@@ -9,6 +9,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 
 public interface HedgeFundScreeningParsedDataRepository extends PagingAndSortingRepository<HedgeFundScreeningParsedData, Long> {
@@ -23,4 +24,9 @@ public interface HedgeFundScreeningParsedDataRepository extends PagingAndSorting
     void deleteByScreeningId(Long screeningId);
 
     HedgeFundScreeningParsedData findByFundIdAndScreeningId(Long fundId, Long screeningId);
+
+    List<HedgeFundScreeningParsedData> findByFundNameAndScreeningId(String fundName, Long screeningId);
+
+    @Query("SELECT e FROM HedgeFundScreeningParsedData e WHERE e.screening.id=?1 AND e.excluded is not null AND e.excluded=true")
+    List<HedgeFundScreeningParsedData> findExcludedFundsByScreeningId(Long screeningId);
 }

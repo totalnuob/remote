@@ -38,6 +38,7 @@ import {MacroMonitorService} from "./macromonitor/macromonitor.service";
 import {FileDownloadService} from "./common/file.download.service";
 import {CorpMeetingService} from "./corpmeetings/corp-meetings.service";
 import {HedgeFundScreeningService} from "./hf/hf.fund.screening.service";
+import {HedgeFundScoringService} from "./hf/hf.fund.scoring.service";
 
 @Component({
     selector: 'app-main',
@@ -66,7 +67,8 @@ import {HedgeFundScreeningService} from "./hf/hf.fund.screening.service";
         MacroMonitorService,
         PeriodicReportService,
         CorpMeetingService,
-        HedgeFundScreeningService
+        HedgeFundScreeningService,
+        HedgeFundScoringService
     ]
 })
 @NgModule({

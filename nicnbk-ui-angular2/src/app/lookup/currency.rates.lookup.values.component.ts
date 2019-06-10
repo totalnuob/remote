@@ -55,12 +55,18 @@ export class CurrencyRatesLookupValuesComponent extends CommonNBReportingCompone
     errorMessageSaveCurrencyRate;
     successMessageSaveCurrencyRate;
 
+    currencyUploadModalSuccessMessage;
+    currencyUploadModalErrorMessage
+
     busy: Subscription;
     currencyList = [];
     searchResults: CurrencyRatesSearchResults;
     searchParams = new CurrencyRatesSearchParams();
     newCurrencyRateParams = new NewCurrencyRateParams();
     selectedCurrencyRate = new CurrencyRate();
+
+    uploadedValues;
+    uploadCurrencyCode;
 
     ngOnInit():void {
         $('#fromDateDTPickeer').datetimepicker({
@@ -87,7 +93,7 @@ export class CurrencyRatesLookupValuesComponent extends CommonNBReportingCompone
 
                     this.search(0);
 
-                    if(this.newCurrencyRateParams) {
+                    if(this.newCurrencyRateParams && this.newCurrencyRateParams.date != null && this.newCurrencyRateParams.currency != null) {
                         console.log("auto click button")
                         document.getElementById("openCurrencyModalButton").click();
                     }
@@ -164,7 +170,7 @@ export class CurrencyRatesLookupValuesComponent extends CommonNBReportingCompone
             this.errorMessageSaveCurrencyRate = "Value KZT or USD required.";
             return false;
         }
-        if(this.selectedCurrencyRate.value <= 0 || this.selectedCurrencyRate.valueUSD <= 0){
+        if(this.selectedCurrencyRate.value <= 0 && this.selectedCurrencyRate.valueUSD <= 0){
             this.errorMessageSaveCurrencyRate = "Value must be positive";
             return false;
         }
@@ -270,5 +276,77 @@ export class CurrencyRatesLookupValuesComponent extends CommonNBReportingCompone
             return true;
         }
         return false;
+    }
+
+    closeCurrencyUploadModal(){
+        this.uploadedValues = "";
+        this.uploadCurrencyCode = null;
+        this.currencyUploadModalSuccessMessage = null;
+        this.currencyUploadModalErrorMessage = null;
+    }
+
+    parseCurrencyValues(){
+        var currencies = [];
+        if(this.uploadCurrencyCode == null || this.uploadCurrencyCode === ''){
+            this.currencyUploadModalSuccessMessage = null;
+            this.currencyUploadModalErrorMessage = "Currency required";
+            return;
+        }
+        var rows = this.uploadedValues.split("\n");
+        for(var i = 0; i < rows.length; i++){
+            if(rows[i].trim() === ""){
+                continue;
+            }
+            var row = rows[i].split("\t");
+            if(row.length != 2){
+                this.currencyUploadModalSuccessMessage = null;
+                this.currencyUploadModalErrorMessage = "Invalid returns format";
+                return;
+            }
+            if(row[0] == null || row[0] === 'undefined' || row[0].split(".").length != 3){
+                this.currencyUploadModalSuccessMessage = null;
+                this.currencyUploadModalErrorMessage = "Invalid return format - date";
+                return;
+            }
+
+            var day = row[0].split(".")[0];
+            var month = row[0].split(".")[1];
+            var year = row[0].split(".")[2];
+
+            var value = row[1].replace(/,/g, '.');
+            value = value.replace('%', '');
+            var currency =  new BaseDictionary();
+            currency.code = this.uploadCurrencyCode;
+            currencies.push({"date": day + '-' + month + '-' + year, "valueUSD": parseFloat(Number(value)).toFixed(4), "currency":currency});
+        }
+
+        console.log(currencies);
+
+        this.busy = this.lookupService.saveCurrencyRatesList(currencies)
+            .subscribe(
+                (saveResponse: SaveResponse) => {
+                    if(saveResponse.status === 'SUCCESS' ){
+                        this.search(0);
+                        this.currencyUploadModalSuccessMessage = saveResponse.message.nameEn;
+                        this.currencyUploadModalErrorMessage = null;
+
+                    }else{
+                        if(saveResponse.message != null){
+                            var message = saveResponse.message.nameEn != null ? saveResponse.message.nameEn :
+                                saveResponse.message.nameRu != null ? saveResponse.message.nameRu : saveResponse.message.nameKz;
+                            if(message != null && message != ''){
+                                this.postAction(null, message);
+                            }else{
+                                this.postAction(null, "Error saving currency rate list");
+                            }
+                        }
+                    }
+                },
+                (error: ErrorResponse) => {
+                    this.currencyUploadModalErrorMessage = error && error.message ? error.message : "Error saving currency rate list.";
+                    //this.processErrorMessage(error);
+                }
+            );
+
     }
 }

@@ -94,6 +94,9 @@ import {HFScreeningFilteredResultsComponent} from "./hf/hf.screening.filters.com
 import {HFScreeningFilteredResultsEditComponent} from "./hf/hf.screening.filters.edit.component";
 import {LookupValuesComponent} from "./lookup/lookup.values.component";
 import {CurrencyRatesLookupValuesComponent} from "./lookup/currency.rates.lookup.values.component";
+import {HFScoringListComponent} from "./hf/hf.scoring.list.component";
+import {HFScoringEditComponent} from "./hf/hf-scoring-edit.component";
+import {BenchmarkLookupValuesComponent} from "./lookup/benchmark.lookup.values.component";
 
 
 const routes: Routes  = [
@@ -298,6 +301,16 @@ const routes: Routes  = [
     {
         path: 'hf/screening/filteredResults/edit/:screeningId/:id',
         component: HFScreeningFilteredResultsEditComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'hf/scoring',
+        component: HFScoringListComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'hf/scoring/edit/:id',
+        component: HFScoringEditComponent,
         canActivate: [AuthGuard]
     },
     /* Private Equity ************************************/
@@ -580,6 +593,11 @@ const routes: Routes  = [
     {
         path: 'lookups/currency',
         component: CurrencyRatesLookupValuesComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'lookups/benchmarks',
+        component: BenchmarkLookupValuesComponent,
         canActivate: [AuthGuard]
     },
 

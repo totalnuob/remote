@@ -19,7 +19,7 @@ public class BenchmarkValue extends BaseEntity {
     private Double indexValue;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "benchmark_id")
+    @JoinColumn(name = "benchmark_id", nullable = false)
     public Benchmark getBenchmark() {
         return benchmark;
     }
@@ -28,7 +28,7 @@ public class BenchmarkValue extends BaseEntity {
         this.benchmark = benchmark;
     }
 
-    @Column(name="asof_date")
+    @Column(name="asof_date", nullable = false)
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern="dd-MM-yyyy")
     public Date getDate() {
@@ -39,7 +39,7 @@ public class BenchmarkValue extends BaseEntity {
         this.date = date;
     }
 
-    @Column (name = "return_value")
+    @Column (name = "return_value", nullable = false)
     public Double getReturnValue() {
         return returnValue;
     }
@@ -48,7 +48,7 @@ public class BenchmarkValue extends BaseEntity {
         this.returnValue = returnValue;
     }
 
-    @Column (name = "index_value")
+    @Column (name = "index_value", nullable = false)
     public Double getIndexValue() {
         return indexValue;
     }

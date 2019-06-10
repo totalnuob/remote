@@ -6,6 +6,7 @@ import kz.nicnbk.repo.model.base.BaseEntity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -14,6 +15,7 @@ import java.util.Date;
 public class HedgeFundScreeningParsedDataDto extends BaseEntityDto implements Comparable, Serializable {
 
     private HedgeFundScreeningDto screening;
+    private Long filteredResultId;
 
     private Long fundId;
     private String fundName;
@@ -41,7 +43,20 @@ public class HedgeFundScreeningParsedDataDto extends BaseEntityDto implements Co
 
     private Double editedFundAUM;
     private Date editedFundAUMDate;
+    private String editedFundAUMDateMonthYear;
     private String editedFundAUMComment;
+
+    private boolean added;
+    private List<HedgeFundScreeningFundReturnDto> returns;
+
+    /* SCORING ***********************************************************/
+    private Double annualizedReturn;
+    private Double sortino;
+    private Double beta;
+    private Double alpha;
+    private Double omega;
+    private Double cfVar;
+    private Double totalScore;
 
     public HedgeFundScreeningDto getScreening() {
         return screening;
@@ -217,10 +232,116 @@ public class HedgeFundScreeningParsedDataDto extends BaseEntityDto implements Co
         this.editedFundAUMDate = editedFundAUMDate;
     }
 
+    public String getEditedFundAUMDateMonthYear() {
+        return editedFundAUMDateMonthYear;
+    }
+
+    public void setEditedFundAUMDateMonthYear(String editedFundAUMDateMonthYear) {
+        this.editedFundAUMDateMonthYear = editedFundAUMDateMonthYear;
+    }
+
+    public boolean isAdded() {
+        return added;
+    }
+
+    public void setAdded(boolean added) {
+        this.added = added;
+    }
+
+    public List<HedgeFundScreeningFundReturnDto> getReturns() {
+        return returns;
+    }
+
+    public void setReturns(List<HedgeFundScreeningFundReturnDto> returns) {
+        this.returns = returns;
+    }
+
+    public Long getFilteredResultId() {
+        return filteredResultId;
+    }
+
+    public void setFilteredResultId(Long filteredResultId) {
+        this.filteredResultId = filteredResultId;
+    }
+
+    public Double getAnnualizedReturn() {
+        return annualizedReturn;
+    }
+
+    public void setAnnualizedReturn(Double annualizedReturn) {
+        this.annualizedReturn = annualizedReturn;
+    }
+
+    public Double getSortino() {
+        return sortino;
+    }
+
+    public void setSortino(Double sortino) {
+        this.sortino = sortino;
+    }
+
+    public Double getBeta() {
+        return beta;
+    }
+
+    public void setBeta(Double beta) {
+        this.beta = beta;
+    }
+
+    public Double getAlpha() {
+        return alpha;
+    }
+
+    public void setAlpha(Double alpha) {
+        this.alpha = alpha;
+    }
+
+    public Double getTotalScore() {
+        return totalScore;
+    }
+
+    public void setTotalScore(Double totalScore) {
+        this.totalScore = totalScore;
+    }
+
+    public Double getOmega() {
+        return omega;
+    }
+
+    public void setOmega(Double omega) {
+        this.omega = omega;
+    }
+
+    public Double getCfVar() {
+        return cfVar;
+    }
+
+    public void setCfVar(Double cfVar) {
+        this.cfVar = cfVar;
+    }
+
     @Override
     public int compareTo(Object o) {
-        return this.fundId.compareTo(((HedgeFundScreeningParsedDataDto) o).fundId);
+//        if(this.fundId == null){
+//            return -1;
+//        }
+//        if(((HedgeFundScreeningParsedDataDto) o).fundId == null){
+//            return 1;
+//        }
+//        return this.fundId.compareTo(((HedgeFundScreeningParsedDataDto) o).fundId);
+        if(this.totalScore == null){
+            return -1;
+        }
+        if(((HedgeFundScreeningParsedDataDto) o).totalScore == null){
+            return 1;
+        }
+        return this.totalScore.compareTo(((HedgeFundScreeningParsedDataDto) o).totalScore) * (-1);
     }
+
+//    @Override
+//    public int compareTo(Object o) {
+//        return this.fundName.toLowerCase().compareTo(((HedgeFundScreeningParsedDataDto) o).fundName.toLowerCase());
+//    }
 }
 
 

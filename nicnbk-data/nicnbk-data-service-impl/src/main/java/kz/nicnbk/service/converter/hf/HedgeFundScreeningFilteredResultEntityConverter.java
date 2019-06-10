@@ -38,11 +38,8 @@ public class HedgeFundScreeningFilteredResultEntityConverter extends BaseDozerEn
         entity.setScreening(new HedgeFundScreening(dto.getScreeningId()));
 
         if(StringUtils.isNotEmpty(dto.getStartDateMonth())){
-            Date monthDate = DateUtils.getDate("01." + dto.getStartDateMonth());
-            if(monthDate != null) {
-                Date lastDayDate = DateUtils.getLastDayOfCurrentMonth(monthDate);
-                entity.setStartDate(lastDayDate);
-            }
+            Date date = DateUtils.getMM_YYYYYFormatLastDayMonthDate(dto.getStartDateMonth());
+            entity.setStartDate(date);
         }
 
         if(entity.getId() == null){
@@ -81,8 +78,7 @@ public class HedgeFundScreeningFilteredResultEntityConverter extends BaseDozerEn
         dto.setScreeningId(entity.getScreening().getId());
 
         if(entity.getStartDate() != null){
-            int month = DateUtils.getMonth(entity.getStartDate());
-            dto.setStartDateMonth(((month + 1) < 10 ? "0" + (month + 1) : month + 1) + "." + DateUtils.getYear(entity.getStartDate()));
+            dto.setStartDateMonth(DateUtils.getMonthYearDate(entity.getStartDate()));
         }
         // creator
         if(entity.getCreator() != null){

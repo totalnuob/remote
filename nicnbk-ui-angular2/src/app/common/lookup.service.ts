@@ -61,6 +61,10 @@ import {SEARCH_NIC_REPORTING_CHART_OF_ACCOUNTS_URL} from "./lookup.service.url";
 import {DELETE_LOOKUP_VALUE_BY_TYPE_URL} from "./lookup.service.url";
 import {DELETE_MATCHING_LOOKUP_VALUE_BY_TYPE_URL} from "./lookup.service.url";
 import {IC_MEETING_TOPIC_TYPES_URL} from "./lookup.service.url";
+import {BENCHMARK_TYPE_URL} from "./lookup.service.url";
+import {SEARCH_BENCHMARKS_URL} from "./lookup.service.url";
+import {SAVE_BENCHMARK_URL} from "./lookup.service.url";
+import {SAVE_CURRENCY_RATES_LIST_URL} from "./lookup.service.url";
 
 
 @Injectable()
@@ -158,6 +162,12 @@ export class LookupService extends CommonService{
 
     getCurrencyList(){
         return this.http.get(CURRENCIES_URL, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+
+    getBenchmarkTypeList(){
+        return this.http.get(BENCHMARK_TYPE_URL, this.getOptionsWithCredentials())
             .map(this.extractDataList)
             .catch(this.handleErrorResponse);
     }
@@ -421,8 +431,15 @@ export class LookupService extends CommonService{
     getCurrencyRates(searchParams){
         let body = JSON.stringify(searchParams);
 
-        console.log(body);
         return this.http.post(SEARCH_CURRENCY_RATES_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    getBenchmarks(searchParams){
+        let body = JSON.stringify(searchParams);
+
+        return this.http.post(SEARCH_BENCHMARKS_URL, body, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }
@@ -430,6 +447,20 @@ export class LookupService extends CommonService{
     saveCurrencyRates(item){
         let body = JSON.stringify(item);
         return this.http.post(SAVE_CURRENCY_RATES_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    saveCurrencyRatesList(list){
+        let body = JSON.stringify(list);
+        return this.http.post(SAVE_CURRENCY_RATES_LIST_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    saveBenchmark(item){
+        let body = JSON.stringify(item);
+        return this.http.post(SAVE_BENCHMARK_URL, body, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }

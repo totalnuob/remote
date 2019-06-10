@@ -1,26 +1,18 @@
 package kz.nicnbk.ws.rest;
 
-import kz.nicnbk.common.service.util.DateUtils;
-import kz.nicnbk.common.service.util.MathUtils;
-import kz.nicnbk.repo.model.hf.HedgeFundScreeningFundCounts;
-import kz.nicnbk.repo.model.hf.HedgeFundScreeningParsedData;
-import kz.nicnbk.repo.model.hf.HedgeFundScreeningParsedDataAUM;
-import kz.nicnbk.repo.model.lookup.CurrencyLookup;
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.hf.HedgeFundScreeningService;
 import kz.nicnbk.service.dto.common.FileUploadResultDto;
+import kz.nicnbk.service.dto.common.ListResponseDto;
 import kz.nicnbk.service.dto.common.ResponseStatusType;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.hf.*;
-import kz.nicnbk.service.dto.lookup.CurrencyRatesDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -44,6 +36,13 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
     @RequestMapping(value = "/get/{id}", method = RequestMethod.GET)
     public ResponseEntity get(@PathVariable long id){
         HedgeFundScreeningDto dto = this.screeningService.get(id);
+        return buildNonNullResponse(dto);
+    }
+
+    @PreAuthorize("hasRole('ROLE_HEDGE_FUND_VIEWER') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/getAll", method = RequestMethod.GET)
+    public ResponseEntity getAll(){
+        List<HedgeFundScreeningDto> dto = this.screeningService.getAll();
         return buildNonNullResponse(dto);
     }
 
@@ -165,7 +164,7 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
     @PreAuthorize("hasRole('ROLE_HEDGE_FUND_VIEWER') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/filteredResults/get/{id}", method = RequestMethod.GET)
     public ResponseEntity getFilteredResult(@PathVariable long id){
-        HedgeFundScreeningFilteredResultDto dto = this.screeningService.getFilteredResult(id);
+        HedgeFundScreeningFilteredResultDto dto = this.screeningService.getFilteredResultWithFundsInfo(id);
 
         return buildNonNullResponse(dto);
     }
@@ -202,12 +201,12 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
     public ResponseEntity getFilteredResultQualifiedFundList(@RequestBody HedgeFundScreeningFilteredResultDto params){
         long start = new Date().getTime();
 
-        List<HedgeFundScreeningParsedDataDto> fundList = this.screeningService.getFilteredResultQualifiedFundList(params);
+        ListResponseDto responseDto = this.screeningService.getFilteredResultQualifiedFundList(params);
 
         long end = new Date().getTime();
         System.out.println("Qualified fund list total time = " + (end-start) / 1000.);
 
-        return buildNonNullResponse(fundList);
+        return buildNonNullResponse(responseDto);
     }
 
     @PreAuthorize("hasRole('ROLE_HEDGE_FUND_VIEWER') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
@@ -235,6 +234,7 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
         return buildNonNullResponse(fundList);
     }
 
+    @Deprecated
     @PreAuthorize("hasRole('ROLE_HEDGE_FUND_VIEWER') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/filteredResults/updateManagerAUM/", method = RequestMethod.POST)
     public ResponseEntity updateManagerAUM(@RequestBody List<HedgeFundScreeningParsedDataDto> fundList){
@@ -252,6 +252,36 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
         String username = this.tokenService.decode(token).getUsername();
 
         boolean saved = this.screeningService.updateFundInfo(fund, username);
-        return buildNonNullResponse(saved);
+        return buildEntitySaveResponseEntity(saved);
+    }
+
+    @PreAuthorize("hasRole('ROLE_HEDGE_FUND_VIEWER') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/filteredResults/deleteAddedFund/", method = RequestMethod.POST)
+    public ResponseEntity deleteAddedFund(@RequestBody HedgeFundScreeningParsedDataDto fund){
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        boolean saved = this.screeningService.deleteAddedFund(fund.getFundName(), fund.getFilteredResultId(), username);
+        return buildEntitySaveResponseEntity(saved);
+    }
+
+    @PreAuthorize("hasRole('ROLE_HEDGE_FUND_VIEWER') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/filteredResults/excludeFund/", method = RequestMethod.POST)
+    public ResponseEntity excludeParsedFund(@RequestBody HedgeFundScreeningParsedDataDto fund){
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        boolean saved = this.screeningService.excludeParsedFund(fund.getScreening().getId(), fund.getFundId(), username);
+        return buildEntitySaveResponseEntity(saved);
+    }
+
+    @PreAuthorize("hasRole('ROLE_HEDGE_FUND_VIEWER') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/filteredResults/includeFund/", method = RequestMethod.POST)
+    public ResponseEntity includeParsedFund(@RequestBody HedgeFundScreeningParsedDataDto fund){
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        boolean saved = this.screeningService.includeParsedFund(fund.getScreening().getId(), fund.getFundId(), username);
+        return buildEntitySaveResponseEntity(saved);
     }
 }

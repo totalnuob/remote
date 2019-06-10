@@ -20,10 +20,14 @@ public class HedgeFundScreeningFundAUMDto implements BaseDto {
 
     private boolean strategyAUMWithMissingCurrency;
 
+    private Double editedFundAUM;
+    private Date editedFundAUMDate;
+
     public HedgeFundScreeningFundAUMDto(){}
 
     public HedgeFundScreeningFundAUMDto(Long fundId, Double fundAUM, Double strategyAUM, Double managerAUM,
-                                        String fundAUMCurrency, Double fundAUMValueUSD, Date fundAUMDate, boolean strategyAUMWithMissingCurrency){
+                                        String fundAUMCurrency, Double fundAUMValueUSD, Date fundAUMDate,
+                                        Double editedFundAUM, Date editedFundAUMDate, boolean strategyAUMWithMissingCurrency){
         this.fundId = fundId;
         this.fundAUM = fundAUM;
         this.strategyAUM = strategyAUM;
@@ -31,6 +35,8 @@ public class HedgeFundScreeningFundAUMDto implements BaseDto {
         this.fundAUMCurrency = fundAUMCurrency;
         this.fundAUMValueUSD = fundAUMValueUSD;
         this.fundAUMDate = fundAUMDate;
+        this.editedFundAUM = editedFundAUM;
+        this.editedFundAUMDate = editedFundAUMDate;
         this.strategyAUMWithMissingCurrency = strategyAUMWithMissingCurrency;
     }
 
@@ -96,6 +102,22 @@ public class HedgeFundScreeningFundAUMDto implements BaseDto {
 
     public void setStrategyAUMWithMissingCurrency(boolean strategyAUMWithMissingCurrency) {
         this.strategyAUMWithMissingCurrency = strategyAUMWithMissingCurrency;
+    }
+
+    public Double getEditedFundAUM() {
+        return editedFundAUM;
+    }
+
+    public void setEditedFundAUM(Double editedFundAUM) {
+        this.editedFundAUM = editedFundAUM;
+    }
+
+    public Date getEditedFundAUMDate() {
+        return editedFundAUMDate;
+    }
+
+    public void setEditedFundAUMDate(Date editedFundAUMDate) {
+        this.editedFundAUMDate = editedFundAUMDate;
     }
 }
 

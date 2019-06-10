@@ -1,5 +1,10 @@
 package kz.nicnbk.common.service.util;
 
+import org.apache.commons.math3.stat.descriptive.moment.Kurtosis;
+import org.apache.commons.math3.stat.descriptive.moment.Mean;
+import org.apache.commons.math3.stat.descriptive.moment.Skewness;
+import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
+import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 
 import java.math.BigDecimal;
@@ -11,6 +16,8 @@ import java.util.Random;
  */
 public class MathUtils {
 
+    public static final Double Z_SCORE_99_PERCENT = -2.33;
+
     public static final int DEFAULT_SCALE = MathUtils.SCALE_50;
     public static final int SCALE_50 = 50;
     public static final int SCALE_100 = 100;
@@ -21,16 +28,25 @@ public class MathUtils {
         return simpleRegression.getSlope();
     }
 
+    public static BigDecimal divide(int scale, BigDecimal a, BigDecimal b){
+        return a.divide(b, DEFAULT_SCALE, RoundingMode.HALF_UP).setScale(scale, RoundingMode.HALF_UP);
+    }
+
     public static BigDecimal divide(BigDecimal a, BigDecimal b){
         return a.divide(b, DEFAULT_SCALE, RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP);
     }
-
     public static Double divide(Double a, Double b){
-        return divide(new BigDecimal(a).setScale(2, RoundingMode.HALF_UP),
-                new BigDecimal(b).setScale(2, RoundingMode.HALF_UP)).doubleValue();
+        return divide(2, a, b);
+    }
+    public static Double divide(int scale, Double a, Double b){
+        return divide(scale, new BigDecimal(a).setScale(scale, RoundingMode.HALF_UP),
+                new BigDecimal(b).setScale(scale, RoundingMode.HALF_UP)).doubleValue();
     }
 
     public static Double multiply(Double value1, Double value2){
+        return multiply(2, value1, value2);
+    }
+    public static Double multiply(int scale, Double value1, Double value2){
         if(value1 == null || value2 == null){
             return null;
         }
@@ -38,22 +54,21 @@ public class MathUtils {
             return 0.0;
         }
 
-        BigDecimal calculated = new BigDecimal(value1).setScale(2, RoundingMode.HALF_UP);
-        calculated = calculated.multiply(new BigDecimal(value2).setScale(2, RoundingMode.HALF_UP)).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal calculated = new BigDecimal(value1).setScale(scale, RoundingMode.HALF_UP);
+        calculated = calculated.multiply(new BigDecimal(value2).setScale(scale, RoundingMode.HALF_UP)).setScale(scale, RoundingMode.HALF_UP);
         return calculated.doubleValue();
     }
 
     public static BigDecimal sqrt(BigDecimal number){
         return sqrt(number, DEFAULT_SCALE);
     }
-
     public static BigDecimal sqrt(BigDecimal number, final int SCALE) {
-        BigDecimal x0 = new BigDecimal("0");
-        BigDecimal x1 = new BigDecimal(Math.sqrt(number.doubleValue()));
+        BigDecimal x0 = new BigDecimal("0").setScale(SCALE, RoundingMode.HALF_UP);
+        BigDecimal x1 = new BigDecimal(Math.sqrt(number.doubleValue())).setScale(SCALE, RoundingMode.HALF_UP);
         while (!x0.equals(x1)) {
             x0 = x1;
             x1 = number.divide(x0, SCALE, BigDecimal.ROUND_HALF_UP);
-            x1 = x1.add(x0);
+            x1 = x1.add(x0).setScale(SCALE, RoundingMode.HALF_UP);
             x1 = x1.divide(BigDecimal.valueOf(2), SCALE, BigDecimal.ROUND_HALF_UP);
 
         }
@@ -61,9 +76,13 @@ public class MathUtils {
     }
 
     public static Double subtract(Double a, Double b){
+        return subtract(2, a, b);
+    }
+    public static Double subtract(int scale, Double a, Double b){
         a = a != null ? a : 0;
         b = b != null ? b : 0;
-        return new BigDecimal(a).setScale(2, RoundingMode.HALF_UP).subtract(new BigDecimal(b).setScale(2, RoundingMode.HALF_UP)).setScale(2, RoundingMode.HALF_UP).doubleValue();
+        return new BigDecimal(a).setScale(scale, RoundingMode.HALF_UP).subtract(new BigDecimal(b)
+                .setScale(scale, RoundingMode.HALF_UP)).setScale(scale, RoundingMode.HALF_UP).doubleValue();
     }
 
 
@@ -76,10 +95,13 @@ public class MathUtils {
 //    }
 
     public static Double add(Double... args){
+        return add(2, args);
+    }
+    public static Double add(int scale, Double... args){
         BigDecimal sum = new BigDecimal("0");
         for(Double arg: args){
-            BigDecimal value = arg != null ? new BigDecimal(arg).setScale(2, RoundingMode.HALF_UP) : new BigDecimal("0");
-            sum = add(sum ,value);
+            BigDecimal value = arg != null ? new BigDecimal(arg).setScale(scale, RoundingMode.HALF_UP) : new BigDecimal("0");
+            sum = add(scale, sum ,value);
         }
         return sum.doubleValue();
     }
@@ -89,9 +111,12 @@ public class MathUtils {
 //    }
 
     public static BigDecimal add(BigDecimal... args){
+        return add(2, args);
+    }
+    public static BigDecimal add(int scale, BigDecimal... args){
         BigDecimal sum = new BigDecimal("0");
         for(BigDecimal arg: args){
-            sum = sum.add(arg.setScale(2, RoundingMode.HALF_UP)).setScale(2, RoundingMode.HALF_UP);
+            sum = sum.add(arg.setScale(scale, RoundingMode.HALF_UP)).setScale(scale, RoundingMode.HALF_UP);
         }
         return sum;
     }
@@ -105,9 +130,181 @@ public class MathUtils {
         return getRandomNumber(0, 1000);
     }
 
+    /************************************************************************/
 
+    public static Double getAnnualizedReturn(double[] returns, int scale){
+        if(returns == null || returns.length == 0) {
+            return null;
+        }
+        // ( 1 + r / 100)
 
+        Double product = 1.0;
+        for (int i = 0; i < returns.length; i++) {
+            Double value = add(scale, returns[i], 1.0);
+            product = multiply(scale, product, value);
+        }
+        Double returnValue = subtract(scale,Math.pow(product.doubleValue(), divide(scale, 12.0, returns.length + 0.0)), 1.0);
+        return (new BigDecimal(returnValue).setScale(scale, RoundingMode.HALF_UP)).doubleValue();
 
+    }
+
+    public static Double getSortinoRatio(Double fundAnnualizedReturn, Double benchmarkAnnualizedReturn, double[] returns, int scale){
+        if(returns == null || returns.length == 0 || fundAnnualizedReturn == null || benchmarkAnnualizedReturn == null) {
+            return null;
+        }
+        Double sumNegativeReturns = 0.0;
+        int count = 0;
+        for(int i = 0; i < returns.length; i++){
+            if(returns[i] < 0){
+                sumNegativeReturns = add(scale, sumNegativeReturns, multiply(scale, multiply(scale, returns[i], 100.0), multiply(scale, returns[i], 100.0)));
+                count++;
+            }
+
+        }
+        double divider = Math.max(0.01, multiply(scale, Math.sqrt(sumNegativeReturns.doubleValue()), Math.sqrt(12.0 / returns.length)));
+        double value = divide(scale, subtract(scale, fundAnnualizedReturn, benchmarkAnnualizedReturn), divider);
+        //return getRoundedValue(value);
+        value = MathUtils.multiply(scale, value, 100.0);
+        return (new BigDecimal(value).setScale(scale, RoundingMode.HALF_UP)).doubleValue();
+
+    }
+
+    /**
+     * Calculates beta using SLOPE() function from apache-commons-math.
+     *
+     * @param fundReturns
+     * @param benchmarkReturns
+     * @return
+     */
+    public static Double getBeta(double[] fundReturns, double[] benchmarkReturns, int scale){
+
+        if(fundReturns == null  || fundReturns.length == 0 || benchmarkReturns == null || benchmarkReturns.length == 0){
+            return null;
+        }
+
+        // TODO: handle - check benchmarks array size no less than returns size
+        if(fundReturns.length != benchmarkReturns.length){
+            return null;
+        }
+
+        // prepare data
+        double[][] data = new double[fundReturns.length][2];
+        for(int i = 0; i < fundReturns.length; i++){
+            data[i][1] = fundReturns[i];
+            data[i][0] = benchmarkReturns[i];
+        }
+
+        // call slope function
+        double value = MathUtils.calculateSlope(data);
+        //return getRoundedValue(value);
+        return (new BigDecimal(value).setScale(scale, RoundingMode.HALF_UP)).doubleValue();
+    }
+
+    public static Double getAlpha(int scale, double[] returns, double[] riskfree, double[] indices, double beta){
+        if(returns == null || riskfree == null || indices == null || returns.length == 0
+                || returns.length == 0 || riskfree.length == 0 || indices.length == 0
+                || returns.length != riskfree.length ||  indices.length != riskfree.length){
+            return null;
+        }
+
+//        double returnSum = 0.0;
+//        double riskfreeSum = 0.0;
+//        double indicesSum = 0.0;
+//        int scale = 4;
+//        for(int i = 0; i < returns.length; i++){
+//            returnSum = add(scale, returnSum, returns[i]);
+//            riskfreeSum = add(scale, riskfreeSum, riskfree[i]);
+//            indicesSum = add(scale, indicesSum, indices[i]);
+//        }
+//
+//        double meanReturn = divide(scale, returnSum, returns.length + 0.0);
+//        double meanRiskfree = divide(scale, riskfreeSum, riskfree.length + 0.0);
+//        double meanIndices = divide(scale, indicesSum, indices.length + 0.0);
+
+        double meanReturn = getMean(returns);
+        double meanRiskfree = getMean(riskfree);
+        double meanIndices = getMean(indices);
+
+        meanReturn = new BigDecimal(meanReturn).setScale(scale, RoundingMode.HALF_UP).doubleValue();
+        meanRiskfree = new BigDecimal(meanRiskfree).setScale(scale, RoundingMode.HALF_UP).doubleValue();
+        meanIndices = new BigDecimal(meanIndices).setScale(scale, RoundingMode.HALF_UP).doubleValue();
+
+        double a = add(scale, 1.0, subtract(scale, meanReturn, meanRiskfree));
+        double b = multiply(scale, beta, subtract(scale, meanIndices, meanRiskfree));
+        double result = subtract(scale, a, b);
+        result = subtract(scale, Math.pow(result, 12.0), 1.0);
+        return result;
+    }
+
+    public static Double getOmega(int scale, double[] returns){
+        if(returns != null){
+            int totalPositive = 0;
+            int totalNegative = 0;
+            for(int i = 0; i < returns.length; i++){
+                if(returns[i] > 0){
+                    totalPositive++;
+                }else if(returns[i] < 0){
+                    totalNegative++;
+                }
+            }
+            return divide(scale, new Double(totalPositive), totalNegative != 0 ? new Double(totalNegative) : 0.01);
+        }
+        return null;
+    }
+
+    public static Double getCFVar(int scale, double[] returns, Double zScore){
+        Double meanReturn = getMean(returns);
+        Double std = getStandardDeviation(returns);
+        Double skew = getSkew(returns);
+        Double kurtosis = getKurtosis(returns);
+
+        meanReturn = new BigDecimal(meanReturn).setScale(scale, RoundingMode.HALF_UP).doubleValue();
+        std = new BigDecimal(std).setScale(scale, RoundingMode.HALF_UP).doubleValue();
+        skew = new BigDecimal(skew).setScale(scale, RoundingMode.HALF_UP).doubleValue();
+        kurtosis = new BigDecimal(kurtosis).setScale(scale, RoundingMode.HALF_UP).doubleValue();
+
+        if(skew == null){
+            return null;
+        }
+        if(kurtosis == null){
+            return null;
+        }
+
+        Double part1 = divide(scale, multiply(scale, subtract(scale, Math.pow(zScore, 2), 1.0), skew), 6.0);
+        Double part2 = divide(scale, multiply(scale, subtract(scale, Math.pow(zScore, 3), multiply(scale, 3.0, zScore)), kurtosis), 24.0);
+        Double part3 = divide(scale, multiply(scale, subtract(scale, multiply(2.0, Math.pow(zScore, 3)), multiply(scale, 5.0, zScore)), Math.pow(skew, 2)), -36.0);
+        Double cfScore = add(scale, part1, part2, part3, zScore);
+
+        return add(scale, meanReturn, multiply(scale, cfScore, multiply(scale, std, sqrt(new BigDecimal(12.0), scale).doubleValue())));
+    }
+
+    public static Double getSkew(double[] values){
+        Skewness skewness = new Skewness();
+        Double skew = skewness.evaluate(values);
+        return skew.isNaN() ?  null : skew;
+    }
+
+    public static Double getStandardDeviation(double[] values){
+        StandardDeviation standardDeviation = new StandardDeviation(false);
+        return standardDeviation.evaluate(values);
+    }
+
+    public static Double getMean(double[] values){
+        Mean mean = new Mean();
+        return mean.evaluate(values);
+    }
+
+    public static Double getKurtosis(double[] values){
+        Kurtosis kurtosis = new Kurtosis();
+        Double kurtosisValue = kurtosis.evaluate(values);
+        return kurtosisValue.isNaN() ? null : kurtosisValue;
+    }
+
+    public static Double getPercentile(double[] values, double p){
+        Percentile percentile = new Percentile();
+        Double value = percentile.evaluate(values, p);
+        return value.isNaN()? null : value;
+    }
 
 
     public static void main (String[] args){

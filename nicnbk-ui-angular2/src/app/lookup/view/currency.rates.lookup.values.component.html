@@ -23,9 +23,19 @@
 
         <div class="row">
             <div class="col-md-12">
-                <div class="col-md-1 pull-right">
+                <div class="col-md-2 pull-right">
                     <a class="btn btn-primary" id="openCurrencyModalButton" data-toggle="modal" data-target="#addNewModal" (click)="edit()" style="cursor: pointer">
                         <!--<span class="glyphicon glyphicon-edit"></span>-->Add
+                    </a>
+                </div>
+            </div>
+        </div>
+        <br/>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-2 pull-right">
+                    <a class="btn btn-primary" data-toggle="modal" data-target="#currencyUploadModal" style="cursor: pointer">
+                        <!--<span class="glyphicon glyphicon-edit"></span>-->Upload multiple
                     </a>
                 </div>
             </div>
@@ -141,7 +151,6 @@
             </div>
         </div>
 
-
         <div class="modal fade" id="addNewModal" role="dialog">
             <div class="modal-dialog" style="overflow-y: scroll; max-height:85%;  margin-top: 50px; margin-bottom:50px; width:65%;">
                 <div class="modal-content" style="min-height: 400px">
@@ -196,6 +205,43 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="currencyUploadModal" role="dialog">
+            <div class="modal-dialog" style="overflow-y: scroll; max-height:85%;  margin-top: 50px; margin-bottom:50px;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <!--<h3 class="modal-title" >HEADER</h3>-->
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-danger" *ngIf="currencyUploadModalErrorMessage != null"><span>{{currencyUploadModalErrorMessage}}</span></div>
+                        <div class="alert alert-info" *ngIf="currencyUploadModalSuccessMessage != null"><span>{{currencyUploadModalSuccessMessage}}</span></div>
+                        <br/>
+                        <div>
+                            <label>Currency</label>
+                            <select class="form-control" style="width: 100%" [(ngModel)]="uploadCurrencyCode" id="uploadCurrencyCode"
+                                    [ngModelOptions]="{standalone: true}">
+                                <option *ngFor="let currency of currencyList" [value]="currency.code">{{currency.code}}</option>
+                            </select>
+                        </div>
+                        <br/>
+                        <div>Format: <span style="font-weight: bold">date [tab] px_last</span></div>
+                        <div>
+                            Date format: <span style="font-weight: bold">dd.mm.yyyy</span>
+                        </div>
+                        <div>
+                            Return format: <span style="font-weight: bold">xx.xxxx</span>
+                        </div>
+                    <textarea class="form-control" placeholder="Paste values here..."
+                              name="uploadedValues" [(ngModel)]="uploadedValues"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal" (click)='closeCurrencyUploadModal()'>Close</button>
+                        <button type="button" class="btn btn-success pull-right" (click)="parseCurrencyValues()">Save</button>
                     </div>
                 </div>
             </div>

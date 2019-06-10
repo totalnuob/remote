@@ -16,9 +16,9 @@ import kz.nicnbk.repo.api.reporting.privateequity.TarragonNICChartOfAccountsRepo
 import kz.nicnbk.repo.api.reporting.realestate.TerraNICChartOfAccountsRepository;
 import kz.nicnbk.repo.model.base.BaseTypeEntity;
 import kz.nicnbk.repo.model.base.BaseTypeEntityImpl;
+import kz.nicnbk.repo.model.benchmark.Benchmark;
 import kz.nicnbk.repo.model.common.*;
 import kz.nicnbk.repo.model.corpmeetings.CorpMeetingType;
-import kz.nicnbk.repo.model.corpmeetings.ICMeetingTopic;
 import kz.nicnbk.repo.model.corpmeetings.ICMeetingTopicType;
 import kz.nicnbk.repo.model.files.FilesType;
 import kz.nicnbk.repo.model.hf.*;
@@ -235,6 +235,9 @@ public class LookupServiceImpl implements LookupService {
     @Autowired
     private ICMeetingTypeRepository icMeetingTypeRepository;
 
+    @Autowired
+    private BenchmarkRepository benchmarkTypeRepository;
+
 
     @Override
     public <T extends BaseTypeEntity> T findByTypeAndCode(Class<T> clazz, String code) {
@@ -316,6 +319,8 @@ public class LookupServiceImpl implements LookupService {
                 return (T) this.reBalanceTypeRepository.findByCode(code);
             } else if (clazz.equals(ICMeetingTopicType.class)) {
                 return (T) this.icMeetingTypeRepository.findByCode(code);
+            } else if (clazz.equals(Benchmark.class)) {
+                return (T) this.benchmarkTypeRepository.findByCode(code);
             }else{
                 logger.error("Failed to load lookups for clazz=" + clazz + ", code=" + code);
             }
@@ -359,6 +364,23 @@ public class LookupServiceImpl implements LookupService {
             return dtoList;
         }catch (Exception ex){
             logger.error("Failed to load lookup: Currency", ex);
+        }
+        return null;
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getBenchmarkTypes() {
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            Iterator<Benchmark> iterator = this.benchmarkTypeRepository.findAll().iterator();
+            while (iterator.hasNext()) {
+                Benchmark entity = iterator.next();
+                BaseDictionaryDto dto = disassemble(entity);
+                dtoList.add(dto);
+            }
+            return dtoList;
+        }catch (Exception ex){
+            logger.error("Failed to load lookup: Benchmark", ex);
         }
         return null;
     }

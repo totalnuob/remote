@@ -2,12 +2,13 @@ package kz.nicnbk.ws.rest;
 
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.service.api.authentication.TokenService;
+import kz.nicnbk.service.api.benchmark.BenchmarkService;
 import kz.nicnbk.service.api.common.CurrencyRatesService;
 import kz.nicnbk.service.datamanager.LookupService;
+import kz.nicnbk.service.dto.benchmark.BenchmarkValueDto;
+import kz.nicnbk.service.dto.common.EntityListSaveResponseDto;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
-import kz.nicnbk.service.dto.lookup.CurrencyRatesDto;
-import kz.nicnbk.service.dto.lookup.CurrencyRatesPagedSearchResult;
-import kz.nicnbk.service.dto.lookup.CurrencyRatesSearchParams;
+import kz.nicnbk.service.dto.lookup.*;
 import kz.nicnbk.service.dto.reporting.*;
 import kz.nicnbk.service.dto.reporting.realestate.TerraNICReportingChartOfAccountsDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,9 @@ public class LookupServiceREST extends CommonServiceREST{
 
     @Autowired
     private CurrencyRatesService currencyRatesService;
+
+    @Autowired
+    private BenchmarkService benchmarkService;
 
     @RequestMapping(value = "/NewsType", method = RequestMethod.GET)
     public ResponseEntity getAllNewsTypes(){
@@ -93,6 +97,12 @@ public class LookupServiceREST extends CommonServiceREST{
     @RequestMapping(value = "/Currency", method = RequestMethod.GET)
     public ResponseEntity getCurrencies(){
         List<BaseDictionaryDto> lookups = this.lookupService.getCurrencies();
+        return buildNonNullResponse(lookups);
+    }
+
+    @RequestMapping(value = "/BenchmarkType", method = RequestMethod.GET)
+    public ResponseEntity getBenchmarkTypes(){
+        List<BaseDictionaryDto> lookups = this.lookupService.getBenchmarkTypes();
         return buildNonNullResponse(lookups);
     }
 
@@ -216,6 +226,12 @@ public class LookupServiceREST extends CommonServiceREST{
         return lookups;
     }
 
+    @RequestMapping(value = "/benchmarks", method = RequestMethod.POST)
+    public BenchmarkPagedSearchResult getBenchmarkValues(@RequestBody BenchmarkSearchParams searchParams){
+        BenchmarkPagedSearchResult searchResult = this.benchmarkService.search(searchParams);
+        return searchResult;
+    }
+
     @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/currencyRates/save", method = RequestMethod.POST)
     public ResponseEntity saveCurrencyRates(@RequestBody CurrencyRatesDto currencyRatesDto){
@@ -223,6 +239,26 @@ public class LookupServiceREST extends CommonServiceREST{
         String username = this.tokenService.decode(token).getUsername();
 
         EntitySaveResponseDto saveResponse = this.currencyRatesService.save(currencyRatesDto, username);
+        return buildEntitySaveResponse(saveResponse);
+    }
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/currencyRates/saveList", method = RequestMethod.POST)
+    public ResponseEntity saveCurrencyRatesList(@RequestBody List<CurrencyRatesDto> currencyRatessDtoList){
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        EntityListSaveResponseDto saveResponse = this.currencyRatesService.save(currencyRatessDtoList, username);
+        return buildEntityListSaveResponse(saveResponse);
+    }
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/benchmarks/save", method = RequestMethod.POST)
+    public ResponseEntity saveBenchmarkValue(@RequestBody BenchmarkValueDto benchmarkValueDto){
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        EntitySaveResponseDto saveResponse = this.benchmarkService.save(benchmarkValueDto, username);
         return buildEntitySaveResponse(saveResponse);
     }
 

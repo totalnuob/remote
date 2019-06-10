@@ -10,7 +10,9 @@ import kz.nicnbk.service.api.common.CurrencyRatesService;
 import kz.nicnbk.service.api.reporting.PeriodicReportService;
 import kz.nicnbk.service.converter.currency.CurrencyRatesEntityConverter;
 import kz.nicnbk.service.datamanager.LookupService;
+import kz.nicnbk.service.dto.common.EntityListSaveResponseDto;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
+import kz.nicnbk.service.dto.common.ResponseStatusType;
 import kz.nicnbk.service.dto.lookup.CurrencyRatesDto;
 import kz.nicnbk.service.dto.lookup.CurrencyRatesPagedSearchResult;
 import kz.nicnbk.service.dto.lookup.CurrencyRatesSearchParams;
@@ -288,6 +290,23 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
             saveResponse.setErrorMessageEn("Error saving currency rate");
             return saveResponse;
         }
+    }
+
+    @Override
+    public EntityListSaveResponseDto save(List<CurrencyRatesDto> dtoList, String username) {
+        EntityListSaveResponseDto saveListResponse = new EntityListSaveResponseDto();
+        for(CurrencyRatesDto dto: dtoList){
+            EntitySaveResponseDto saveResponseDto = save(dto, username);
+            if(saveResponseDto.getStatus() != null && saveResponseDto.getStatus().getCode().equalsIgnoreCase(ResponseStatusType.FAIL.getCode())){
+                // Error
+                saveListResponse.setErrorMessageEn(saveResponseDto.getMessage().getNameEn());
+                saveListResponse.setStatus(ResponseStatusType.FAIL);
+
+                return saveListResponse;
+            }
+        }
+        saveListResponse.setSuccessMessageEn("Successfully saved currency rate list");
+        return saveListResponse;
     }
 
     @Override

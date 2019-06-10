@@ -4,6 +4,7 @@ import {HedgeFundScreeningFilteredResultStatistics} from "./hf.screening.filtere
 export class HedgeFundScreeningFilteredResultFund {
 
     screening: any;
+    filteredResultId: any;
 
     id: number;
 
@@ -12,7 +13,7 @@ export class HedgeFundScreeningFilteredResultFund {
     investmentManager: string;
     mainStrategy: string;
 
-    fundAUM: number;
+    fundAUM;
     fundAUMDate: string;
 
     recentFundAUM: number;
@@ -28,8 +29,12 @@ export class HedgeFundScreeningFilteredResultFund {
     managerAUM;
 
     editedFundAUM;
-    editedFundAUMDate;
+    editedFundAUMDateMonthYear;
     editedFundAUMComment;
+
+    added: boolean;
+
+    returns;
 
     constructor(){}
 
@@ -43,10 +48,16 @@ export class HedgeFundScreeningFilteredResultFund {
         this.fundAUM = copy.fundAUM;
         this.fundAUMDate = copy.fundAUMDate;
 
+        this.added = copy.added;
         this.editedFundAUM = copy.editedFundAUM;
         this.editedFundAUMComment = copy.editedFundAUMComment;
+        this.editedFundAUMDateMonthYear = copy.editedFundAUMDateMonthYear;
 
         this.managerAUM = copy.managerAUM;
+
+        this.returns = copy.returns;
+
+
     }
 
 }

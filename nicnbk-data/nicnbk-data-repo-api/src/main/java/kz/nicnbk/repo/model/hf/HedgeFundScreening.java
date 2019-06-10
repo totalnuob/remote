@@ -1,14 +1,11 @@
 package kz.nicnbk.repo.model.hf;
 
 import kz.nicnbk.repo.model.base.CreateUpdateBaseEntity;
-import kz.nicnbk.repo.model.common.Currency;
-import kz.nicnbk.repo.model.common.Strategy;
 import kz.nicnbk.repo.model.files.Files;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.Set;
 
 /**
  * Created by magzumov on 04.07.2016.

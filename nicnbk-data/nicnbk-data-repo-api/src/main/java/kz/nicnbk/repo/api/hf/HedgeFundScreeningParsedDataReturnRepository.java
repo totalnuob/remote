@@ -35,5 +35,8 @@ public interface HedgeFundScreeningParsedDataReturnRepository extends PagingAndS
 
     List<HedgeFundScreeningParsedDataReturn> findByScreeningIdAndFundId(Long screeningId, Long fundId, Sort sorting);
 
+    @Query("SELECT e FROM HedgeFundScreeningParsedDataReturn e WHERE e.screening.id=?1 AND e.fundId=?2 AND e.date >= ?3 AND e.date <= ?4")
+    List<HedgeFundScreeningParsedDataReturn> findByScreeningIdAndFundIdDateRange(Long screeningId, Long fundId, Date dateFrom, Date dateTo, Sort sorting);
+
 
 }

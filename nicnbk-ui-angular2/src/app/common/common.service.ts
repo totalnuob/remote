@@ -17,6 +17,7 @@ export class CommonService{
 
 
     public handleErrorResponse (error: any) {
+        console.log(error);
         var errorResponse = new ErrorResponse;
         try{
             if(error.json() && error.json().messageEn) {

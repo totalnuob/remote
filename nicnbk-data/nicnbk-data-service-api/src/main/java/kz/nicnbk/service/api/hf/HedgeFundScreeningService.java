@@ -2,9 +2,11 @@ package kz.nicnbk.service.api.hf;
 
 import kz.nicnbk.service.api.base.BaseService;
 import kz.nicnbk.service.dto.common.FileUploadResultDto;
+import kz.nicnbk.service.dto.common.ListResponseDto;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.hf.*;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -21,6 +23,7 @@ public interface HedgeFundScreeningService extends BaseService {
     Long save(HedgeFundScreeningDto screeningDto, String username);
 
     HedgeFundScreeningDto get(Long id);
+    List<HedgeFundScreeningDto> getAll();
 
     List<HedgeFundScreeningParsedDataDateValueCombinedDto> searchParsedReturns(HedgeFundScreeningParsedDataDateValueSearchParamsDto searchParamsDto);
 
@@ -42,11 +45,13 @@ public interface HedgeFundScreeningService extends BaseService {
 
     Long saveFilteredResult(HedgeFundScreeningFilteredResultDto screeningDto, String username);
 
-    HedgeFundScreeningFilteredResultDto getFilteredResult(Long id);
+    HedgeFundScreeningFilteredResultDto getFilteredResultWithFundsInfo(Long id);
+
+    HedgeFundScreeningFilteredResultDto getFilteredResultWithoutFundsInfo(Long id);
 
     HedgeFundScreeningFilteredResultStatisticsDto getFilteredResultStatistics(HedgeFundScreeningFilteredResultDto params);
 
-    List<HedgeFundScreeningParsedDataDto> getFilteredResultQualifiedFundList( HedgeFundScreeningFilteredResultDto params);
+    ListResponseDto getFilteredResultQualifiedFundList(HedgeFundScreeningFilteredResultDto params);
 
     List<HedgeFundScreeningParsedDataDto> getFilteredResultUnqualifiedFundList( HedgeFundScreeningFilteredResultDto params);
 
@@ -55,4 +60,15 @@ public interface HedgeFundScreeningService extends BaseService {
     boolean updateManagerAUM(List<HedgeFundScreeningParsedDataDto> fundList, String username);
 
     boolean updateFundInfo(HedgeFundScreeningParsedDataDto fund, String username);
+
+    boolean deleteAddedFund(String fundName, Long screeningId, String username);
+
+    boolean excludeParsedFund(Long screeningId, Long fundId, String username);
+
+    boolean includeParsedFund(Long screeningId, Long fundId, String username);
+
+    double[] getAddedFundReturns(Long filteredResultId, String fundName, int trackRecord, Date dateFrom, Date dateTo);
+
+    double[] getParsedFundReturns(Long screeningId, Long fundId, int trackRecord, Date dateFrom, Date dateTo);
 }
+
