@@ -79,12 +79,11 @@ export class ModuleAccessCheckerService extends CommonService{
 
 
     public checkAccessCorpMeetings(){
-        return this.checkAccessICMember() || this.checkAccessHedgeFundsEditor() || this.checkAccessPrivateEquityEditor() ||
-            this.checkAccessRealEstateEditor() || this.checkAccessStrategyRisksEditor() || this.checkAccessReportingEditor();
+        return this.checkAccessICMember() || this.checkAccess(ROLE_CORPMEETINGS_EDIT);
     }
 
     public checkAccessICMember(){
-        return this.checkAccess(ROLE_IC_MEMBER)
+        return this.checkAccess(ROLE_IC_MEMBER);
     }
 
     public checkAccessStrategyRisksEditor(){
