@@ -150,7 +150,7 @@ export class AppComponent {
     }
 
     showCorpMeeting(){
-        return this.moduleAccessChecker.checkAccessCorpMeetings();
+        return this.moduleAccessChecker.checkAccessCorpMeetingsView();
     }
 }
 

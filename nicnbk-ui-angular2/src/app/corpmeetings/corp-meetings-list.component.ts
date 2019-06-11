@@ -388,17 +388,15 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
     }
 
     canViewProtocol(icMeeting){
-        return icMeeting != null && icMeeting.closed &&  this.moduleAccessChecker.checkAccessICMember();
+        return icMeeting != null && icMeeting.closed && (this.moduleAccessChecker.checkAccessAdmin() || this.moduleAccessChecker.checkAccessCorpMeetingsView());
     }
 
     canAddProtocol(icMeeting){
-        return icMeeting != null && !icMeeting.closed &&  this.moduleAccessChecker.checkAccessICMember();
+        return icMeeting != null && !icMeeting.closed && (this.moduleAccessChecker.checkAccessAdmin() || this.moduleAccessChecker.checkAccessCorpMeetingsEdit());
     }
 
     canCreateNewTopic(){
-        return this.moduleAccessChecker.checkAccessHedgeFundsEditor() ||
-            this.moduleAccessChecker.checkAccessPrivateEquityEditor() || this.moduleAccessChecker.checkAccessRealEstateEditor() ||
-            this.moduleAccessChecker.checkAccessStrategyRisksEditor() || this.moduleAccessChecker.checkAccessReportingEditor();
+        return (this.moduleAccessChecker.checkAccessAdmin() || this.moduleAccessChecker.checkAccessCorpMeetingsView());
     }
 
 }

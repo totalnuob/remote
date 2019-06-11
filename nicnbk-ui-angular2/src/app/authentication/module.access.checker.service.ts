@@ -78,8 +78,12 @@ export class ModuleAccessCheckerService extends CommonService{
     //}
 
 
-    public checkAccessCorpMeetings(){
+    public checkAccessCorpMeetingsView(){
         return this.checkAccessICMember() || this.checkAccess(ROLE_CORPMEETINGS_EDIT);
+    }
+
+    public checkAccessCorpMeetingsEdit(){
+        return this.checkAccess(ROLE_CORPMEETINGS_EDIT);
     }
 
     public checkAccessICMember(){

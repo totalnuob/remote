@@ -46,22 +46,23 @@ export class CorpMeetingService extends CommonService {
     }
 
     public checkICMeetingTopicEditAccess(type){
-        if(this.moduleAccessChecker.checkAccessAdmin()){
+        if(this.moduleAccessChecker.checkAccessAdmin() || this.moduleAccessChecker.checkAccessCorpMeetingsEdit()){
            return true;
         }
-        if(type != null && type === "HF"){
-            return this.moduleAccessChecker.checkAccessHedgeFundsEditor();
-        }else if(type != null && type === "PE"){
-            return this.moduleAccessChecker.checkAccessPrivateEquityEditor();
-        }else if(type != null && type === "RE"){
-            return this.moduleAccessChecker.checkAccessRealEstateEditor();
-        }else if(type != null && type === "SRM"){
-            return this.moduleAccessChecker.checkAccessStrategyRisksEditor();
-        }else if(type != null && type === "REP"){
-            return this.moduleAccessChecker.checkAccessReportingEditor();
-        }else{
-            return false;
+        if(this.moduleAccessChecker.checkAccessICMember()) {
+            if (this.moduleAccessChecker.checkAccessHedgeFundsEditor()) {
+                return type != null && type === "HF";
+            } else if (this.moduleAccessChecker.checkAccessPrivateEquityEditor()) {
+                return type != null && type === "PE";
+            } else if (this.moduleAccessChecker.checkAccessRealEstateEditor()) {
+                return type != null && type === "RE";
+            } else if (this.moduleAccessChecker.checkAccessStrategyRisksEditor()) {
+                return type != null && type === "SRM";
+            } else if (this.moduleAccessChecker.checkAccessReportingEditor()) {
+                return type != null && type === "REP";
+            }
         }
+        return false;
     }
 
     search(searchParam) {
@@ -101,7 +102,6 @@ export class CorpMeetingService extends CommonService {
     save(entity){
         let body = JSON.stringify(entity);
 
-        console.log(body);
         return this.http.post(this.CORP_MEETINGS_SAVE_URL, body, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);

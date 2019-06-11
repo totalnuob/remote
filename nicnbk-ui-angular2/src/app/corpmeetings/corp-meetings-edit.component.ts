@@ -87,36 +87,44 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                     });
 
                     this.icMeetingTopicTypes = [];
+                    data2.forEach(element => {
+                        this.icMeetingTopicTypes.push(element);
+                    });
 
                     // Check rights
-                    for(var i = 0; i < data2.length; i++){
-                        var element = data2[i];
-                        if(this.moduleAccessChecker.checkAccessAdmin() || this.moduleAccessChecker.checkAccessICMember()){
-                            this.icMeetingTopicTypes.push(element);
-                        }else if(element.code === "PE"){
-                            if(this.moduleAccessChecker.checkAccessPrivateEquityEditor()){
-                                this.icMeetingTopicTypes.push(element);
-                            }
-                        }else if(element.code === "HF"){
-                            if(this.moduleAccessChecker.checkAccessHedgeFundsEditor()){
-                                this.icMeetingTopicTypes.push(element);
-                            }
-                        }else if(element.code === "RE"){
-                            if(this.moduleAccessChecker.checkAccessRealEstateEditor()){
-                                this.icMeetingTopicTypes.push(element);
-                            }
-                        }else if(element.code === "SRM"){
-                            if(this.moduleAccessChecker.checkAccessStrategyRisksEditor()){
-                                this.icMeetingTopicTypes.push(element);
-                            }
-                        }else if(element.code === "REP"){
-                            if(this.moduleAccessChecker.checkAccessReportingEditor()){
-                                this.icMeetingTopicTypes.push(element);
-                            }
-                        }else{
-
-                        }
-                    }
+                    //
+                    //for(var i = 0; i < data2.length; i++){
+                    //    var element = data2[i];
+                    //    if(this.moduleAccessChecker.checkAccessAdmin() || this.moduleAccessChecker.checkAccessCorpMeetingsEdit()){
+                    //        // Admin or CorpMeeting Editor
+                    //        this.icMeetingTopicTypes.push(element);
+                    //    }else if(this.moduleAccessChecker.checkAccessICMember()){
+                    //        // IC Member
+                    //        if(element.code === "PE"){
+                    //            if(this.moduleAccessChecker.checkAccessPrivateEquityEditor()){
+                    //                this.icMeetingTopicTypes.push(element);
+                    //            }
+                    //        }else if(element.code === "HF"){
+                    //            if(this.moduleAccessChecker.checkAccessHedgeFundsEditor()){
+                    //                this.icMeetingTopicTypes.push(element);
+                    //            }
+                    //        }else if(element.code === "RE"){
+                    //            if(this.moduleAccessChecker.checkAccessRealEstateEditor()){
+                    //                this.icMeetingTopicTypes.push(element);
+                    //            }
+                    //        }else if(element.code === "SRM"){
+                    //            if(this.moduleAccessChecker.checkAccessStrategyRisksEditor()){
+                    //                this.icMeetingTopicTypes.push(element);
+                    //            }
+                    //        }else if(element.code === "REP"){
+                    //            if(this.moduleAccessChecker.checkAccessReportingEditor()){
+                    //                this.icMeetingTopicTypes.push(element);
+                    //            }
+                    //        }else{
+                    //
+                    //        }
+                    //    }
+                    //}
 
                     //data2.forEach(element => {
                     //    this.icMeetingTopicTypes.push(element);
@@ -144,7 +152,8 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                                                 // When IC Member and access to edit some types
                                                 var allowedTypes = [];
                                                 for (var i = 0; i < this.icMeetingTopicTypes.length; i++) {
-                                                    if (this.corpMeetingService.checkICMeetingTopicEditAccess(this.icMeetingTopicTypes[i].code)) {
+                                                    if ((this.icMeetingTopic != null && this.icMeetingTopic.type == this.icMeetingTopicTypes[i].code) ||
+                                                        this.corpMeetingService.checkICMeetingTopicEditAccess(this.icMeetingTopicTypes[i].code)) {
                                                         allowedTypes.push(this.icMeetingTopicTypes[i]);
                                                     }
                                                 }
@@ -195,13 +204,14 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
     }
 
     public canEdit(){
-        if(this.icMeetingTopic.type == null || this.icMeetingTopic.id == null){
-            return true;
-        }
+        //if(this.icMeetingTopic.type == null || this.icMeetingTopic.id == null){
+        //    return true;
+        //}
         if(this.icMeetingTopic.icMeeting != null && this.icMeetingTopic.icMeeting.closed){
             return false;
         }
-        return this.corpMeetingService.checkICMeetingTopicEditAccess(this.icMeetingTopic.type);
+        var accessOk = this.corpMeetingService.checkICMeetingTopicEditAccess(this.icMeetingTopic.type);
+        return accessOk;
 
         //return this.moduleAccessChecker.checkAccessCorpMeetingsEditor();
     }
