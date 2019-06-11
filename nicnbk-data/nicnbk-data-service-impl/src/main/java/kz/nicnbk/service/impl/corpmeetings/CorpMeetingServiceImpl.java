@@ -399,42 +399,40 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
         if(updaterDto == null || updaterDto.getRoles() == null || updaterDto.getRoles().isEmpty()){
             return false;
         }
-        boolean allowed = false;
+        boolean icMember = false;
+        boolean accessByDept = false;
         for(BaseDictionaryDto role: updaterDto.getRoles()){
             if(role.getCode().equalsIgnoreCase(UserRoles.ADMIN.getCode()) ||
                     role.getCode().equalsIgnoreCase(UserRoles.CORP_MEETING_EDIT.getCode()) || type == null){
-                allowed = true;
-                break;
-            }else if(role.getCode().equalsIgnoreCase(UserRoles.IC_MEMBER.getCode())){
-                if(!editing) {
+                return true;
+            }
+            if(role.getCode().equalsIgnoreCase(UserRoles.IC_MEMBER.getCode())){
+                icMember = true;
+            }
+            if(icMember) {
+                if (!editing) {
                     // IC Members can view all
-                    allowed = true;
-                    break;
+                    return true;
                 }
-                if(type != null && type.equalsIgnoreCase(ICMeetingTopicTypeLookup.HEDGE_FUNDS.getCode()) &&
-                        role.getCode().equalsIgnoreCase(UserRoles.HEDGE_FUNDS_EDIT.getCode())){
-                    allowed = true;
-                    break;
-                }else if(type != null && type.equalsIgnoreCase(ICMeetingTopicTypeLookup.PRIVATE_EQUITY.getCode()) &&
-                        role.getCode().equalsIgnoreCase(UserRoles.PRIVATE_EQUITY_EDIT.getCode())){
-                    allowed = true;
-                    break;
-                }else if(type != null && type.equalsIgnoreCase(ICMeetingTopicTypeLookup.REAL_ESTATE.getCode()) &&
-                        role.getCode().equalsIgnoreCase(UserRoles.REAL_ESTATE_EDIT.getCode())){
-                    allowed = true;
-                    break;
-                }else if(type != null && type.equalsIgnoreCase(ICMeetingTopicTypeLookup.STRATEGY_RISKS.getCode()) &&
-                        role.getCode().equalsIgnoreCase(UserRoles.STRATEGY_RISK_EDIT.getCode())){
-                    allowed = true;
-                    break;
-                }else if(type != null && type.equalsIgnoreCase(ICMeetingTopicTypeLookup.REPORTING.getCode()) &&
-                        role.getCode().equalsIgnoreCase(UserRoles.REPORTING_EDIT.getCode())){
-                    allowed = true;
-                    break;
-                }
-            }else {}
+            }
+            if(type != null && type.equalsIgnoreCase(ICMeetingTopicTypeLookup.HEDGE_FUNDS.getCode()) &&
+                    role.getCode().equalsIgnoreCase(UserRoles.HEDGE_FUNDS_EDIT.getCode())){
+                accessByDept = true;
+            }else if(type != null && type.equalsIgnoreCase(ICMeetingTopicTypeLookup.PRIVATE_EQUITY.getCode()) &&
+                    role.getCode().equalsIgnoreCase(UserRoles.PRIVATE_EQUITY_EDIT.getCode())){
+                accessByDept = true;
+            }else if(type != null && type.equalsIgnoreCase(ICMeetingTopicTypeLookup.REAL_ESTATE.getCode()) &&
+                    role.getCode().equalsIgnoreCase(UserRoles.REAL_ESTATE_EDIT.getCode())){
+                accessByDept = true;
+            }else if(type != null && type.equalsIgnoreCase(ICMeetingTopicTypeLookup.STRATEGY_RISKS.getCode()) &&
+                    role.getCode().equalsIgnoreCase(UserRoles.STRATEGY_RISK_EDIT.getCode())){
+                accessByDept = true;
+            }else if(type != null && type.equalsIgnoreCase(ICMeetingTopicTypeLookup.REPORTING.getCode()) &&
+                    role.getCode().equalsIgnoreCase(UserRoles.REPORTING_EDIT.getCode())){
+                accessByDept = true;
+            }
         }
-        return allowed;
+        return icMember && accessByDept;
     }
 
     private Set<String> getAllowedICMeetingTopicTypeCodesForUser(String username, boolean editing){

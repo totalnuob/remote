@@ -204,9 +204,9 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
     }
 
     public canEdit(){
-        //if(this.icMeetingTopic.type == null || this.icMeetingTopic.id == null){
-        //    return true;
-        //}
+        if(this.icMeetingTopic.type == null || this.icMeetingTopic.id == null){
+            return true;
+        }
         if(this.icMeetingTopic.icMeeting != null && this.icMeetingTopic.icMeeting.closed){
             return false;
         }
