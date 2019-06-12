@@ -306,34 +306,34 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
     //
     // }
 
-    private getLabelsByType(type, index){
-        if(type === "LIQUID"){
-            if(index == 0){
-                return "NIC Liquid";
-            }else{
-                return "US 6mT-bills";
-            }
-        }else if(type === "PE"){
-            if(index == 0){
-                return "NIC Private Equity";
-            }else{
-                return "CPI + 5%";
-            }
-
-        }else if(type === "HF"){
-            if(index == 0){
-                return "NIC Hedge Funds";
-            }else{
-                return "HFRI FoF Index";
-            }
-        }else{
-            if(index == 0){
-                return "NIC Portfolio";
-            }else{
-                return "Composite Benchmark";
-            }
-        }
-    }
+    // private getLabelsByType(type, index){
+    //     if(type === "LIQUID"){
+    //         if(index == 0){
+    //             return "NIC Liquid";
+    //         }else{
+    //             return "US 6mT-bills";
+    //         }
+    //     }else if(type === "PE"){
+    //         if(index == 0){
+    //             return "NIC Private Equity";
+    //         }else{
+    //             return "CPI + 5%";
+    //         }
+    //
+    //     }else if(type === "HF"){
+    //         if(index == 0){
+    //             return "NIC Hedge Funds";
+    //         }else{
+    //             return "HFRI FoF Index";
+    //         }
+    //     }else{
+    //         if(index == 0){
+    //             return "NIC Portfolio";
+    //         }else{
+    //             return "Composite Benchmark";
+    //         }
+    //     }
+    // }
 
     // private getPerformanceWithBenchmarks(type){
     //     var values = [];
