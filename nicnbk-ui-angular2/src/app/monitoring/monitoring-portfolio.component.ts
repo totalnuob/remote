@@ -10,7 +10,7 @@ declare var $: any;
 
 @Component({
     selector: 'monitoring-portfolio',
-    //templateUrl: 'view/monitoring-portfolio.component.html',
+    // templateUrl: 'view/monitoring-portfolio.component.html',  //if used, check redrawLineChart(), getAssetTypes() methods
     templateUrl: 'view/monitoring-portfolio.component2.html',
     styleUrls: [],
     providers: [],
@@ -66,9 +66,9 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
         this.drawActualAllocationChart($("#tableDate").val());
     }
 
-    public redrawLineChart(){
-        this.drawAlternativePerformanceChart($('#performanceType').val());
-    }
+    // public redrawLineChart(){
+    //     this.drawAlternativePerformanceChart($('#performanceType').val());
+    // }
 
     drawTables(tableDate) {
         var NAVdata = this.getNAVData(tableDate);
@@ -207,104 +207,104 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
     }
 
     // BENCHMARK PERFORMANCE ------------------
-    getBenchmarkPerformanceData(tableDate){
+    // getBenchmarkPerformanceData(tableDate){
+    //
+    //     var data = new google.visualization.DataTable();
+    //     var formatter = new google.visualization.NumberFormat({
+    //         pattern:'#.##%',
+    //         negativeColor: 'red'
+    //     });
+    //     data.addColumn("string", "");
+    //     data.addColumn("number", "MTD");
+    //     data.addColumn("number", "QTD");
+    //     data.addColumn("number", "YTD");
+    //
+    //     var performanceArray = this.getPerformanceByDate(tableDate)
+    //     data.addRows([
+    //         ["Composite Benchmark", performanceArray[0][11], performanceArray[1][11], performanceArray[2][11]],
+    //         ["Cpi + 5%", performanceArray[0][9], performanceArray[1][9], performanceArray[2][9]],
+    //         ["US 6m T-bills1", performanceArray[0][8], performanceArray[1][8], performanceArray[2][8]],
+    //         ["HFRI FoF index", performanceArray[0][10], performanceArray[1][10], performanceArray[2][10]]
+    //     ]);
+    //     formatter.format(data,1);
+    //     formatter.format(data,2);
+    //     formatter.format(data,3);
+    //     return data;
+    // }
 
-        var data = new google.visualization.DataTable();
-        var formatter = new google.visualization.NumberFormat({
-            pattern:'#.##%',
-            negativeColor: 'red'
-        });
-        data.addColumn("string", "");
-        data.addColumn("number", "MTD");
-        data.addColumn("number", "QTD");
-        data.addColumn("number", "YTD");
-
-        var performanceArray = this.getPerformanceByDate(tableDate)
-        data.addRows([
-            ["Composite Benchmark", performanceArray[0][11], performanceArray[1][11], performanceArray[2][11]],
-            ["Cpi + 5%", performanceArray[0][9], performanceArray[1][9], performanceArray[2][9]],
-            ["US 6m T-bills1", performanceArray[0][8], performanceArray[1][8], performanceArray[2][8]],
-            ["HFRI FoF index", performanceArray[0][10], performanceArray[1][10], performanceArray[2][10]]
-        ]);
-        formatter.format(data,1);
-        formatter.format(data,2);
-        formatter.format(data,3);
-        return data;
-    }
-
-    drawBenchmarksPerformanceTable(data){
-        var options = {
-            showRowNumber: false,
-            width: '100%',
-            height: 170,
-            'allowHtml': true,
-            cssClassNames: {}
-        };
-
-        var chart = this.createTableChart(document.getElementById('benchmarks_performance'));
-        chart.draw(data, options);
-    }
+    // drawBenchmarksPerformanceTable(data){
+    //     var options = {
+    //         showRowNumber: false,
+    //         width: '100%',
+    //         height: 170,
+    //         'allowHtml': true,
+    //         cssClassNames: {}
+    //     };
+    //
+    //     var chart = this.createTableChart(document.getElementById('benchmarks_performance'));
+    //     chart.draw(data, options);
+    // }
 
     // ALTERNATIVE PERFORMANCE -----------------
-    drawAlternativePerformanceChart(type){
-        var data = new google.visualization.DataTable();
-        var formatter = new google.visualization.NumberFormat({
-            pattern:'#.##%'
-        });
-        data.addColumn("string", "Date");
-        data.addColumn("number", this.getLabelsByType(type, 0));
-        data.addColumn("number", this.getLabelsByType(type, 1));
-
-        var compareValue = this.getPerformanceWithBenchmarks(type);
-        data.addRows(compareValue);
-
-        formatter.format(data, 1);
-        formatter.format(data, 2);
-
-        var options = {
-            chart: {
-                title: "Alternative portfolio performance",
-                subtitle: "monthly",
-                legend: { position: 'top' },
-                width: 600,
-                height: 500,
-            },
-            animation: {
-                duration: 500,
-                easing: 'out',
-                startup: true,
-            },
-            vAxis: {
-                format: '#.##%',
-            },
-            showRowNumber: false,
-            width: '100%',
-            height: '100%'
-        };
-
-        var chart = this.createLineChart(document.getElementById('alternative_performance'));
-        chart.draw(data, options);
-
-        //this.data_alt_perf = new google.visualization.DataTable();
-        //for(var i = 0; i < this.tableChart_alt_perf.columns.length; i++){
-        //    this.data_alt_perf.addColumn(this.tableChart_alt_perf.columns[i].type, this.tableChart_alt_perf.columns[i].name);
-        //}
-        //this.data_alt_perf.addRows(this.tableChart_alt_perf.rows);
-        //
-        //this.options_alt_perf = {
-        //    chart: {
-        //        title: "Alternative portfolio performance",
-        //        subtitle: "monthly",
-        //        legend: { position: 'right' },
-        //    },
-        //    showRowNumber: false,
-        //    width: '100%',
-        //    height: '100%'
-        //};
-        //var chart = this.createLineChart(document.getElementById('alternative_performance'));
-        //chart.draw(this.data_alt_perf, this.options_alt_perf);
-
-    }
+    // drawAlternativePerformanceChart(type){
+    //     var data = new google.visualization.DataTable();
+    //     var formatter = new google.visualization.NumberFormat({
+    //         pattern:'#.##%'
+    //     });
+    //     data.addColumn("string", "Date");
+    //     data.addColumn("number", this.getLabelsByType(type, 0));
+    //     data.addColumn("number", this.getLabelsByType(type, 1));
+    //
+    //     var compareValue = this.getPerformanceWithBenchmarks(type);
+    //     data.addRows(compareValue);
+    //
+    //     formatter.format(data, 1);
+    //     formatter.format(data, 2);
+    //
+    //     var options = {
+    //         chart: {
+    //             title: "Alternative portfolio performance",
+    //             subtitle: "monthly",
+    //             legend: { position: 'top' },
+    //             width: 600,
+    //             height: 500,
+    //         },
+    //         animation: {
+    //             duration: 500,
+    //             easing: 'out',
+    //             startup: true,
+    //         },
+    //         vAxis: {
+    //             format: '#.##%',
+    //         },
+    //         showRowNumber: false,
+    //         width: '100%',
+    //         height: '100%'
+    //     };
+    //
+    //     var chart = this.createLineChart(document.getElementById('alternative_performance'));
+    //     chart.draw(data, options);
+    //
+    //     //this.data_alt_perf = new google.visualization.DataTable();
+    //     //for(var i = 0; i < this.tableChart_alt_perf.columns.length; i++){
+    //     //    this.data_alt_perf.addColumn(this.tableChart_alt_perf.columns[i].type, this.tableChart_alt_perf.columns[i].name);
+    //     //}
+    //     //this.data_alt_perf.addRows(this.tableChart_alt_perf.rows);
+    //     //
+    //     //this.options_alt_perf = {
+    //     //    chart: {
+    //     //        title: "Alternative portfolio performance",
+    //     //        subtitle: "monthly",
+    //     //        legend: { position: 'right' },
+    //     //    },
+    //     //    showRowNumber: false,
+    //     //    width: '100%',
+    //     //    height: '100%'
+    //     //};
+    //     //var chart = this.createLineChart(document.getElementById('alternative_performance'));
+    //     //chart.draw(this.data_alt_perf, this.options_alt_perf);
+    //
+    // }
 
     private getLabelsByType(type, index){
         if(type === "LIQUID"){
@@ -335,32 +335,32 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
         }
     }
 
-    private getPerformanceWithBenchmarks(type){
-        var values = [];
-
-        var index1;
-        var index2;
-        if(type === "TOTAL"){
-            index1 = 2;
-            index2 = 11;
-        }else if(type === "LIQUID"){
-            index1 = 3;
-            index2 = 8;
-        }else if(type === "PE"){
-            index1 = 4;
-            index2 = 9;
-        }else if(type === "HF"){
-            index1 = 5;
-            index2 = 10;
-        }
-        for(var i = 0; i < this.performance.length; i++ ){
-            if(this.performance[i][1] === "MTD"){
-                var item = [this.performance[i][0], this.performance[i][index1], this.performance[i][index2]];
-                values.push(item);
-            }
-        }
-        return values;
-    }
+    // private getPerformanceWithBenchmarks(type){
+    //     var values = [];
+    //
+    //     var index1;
+    //     var index2;
+    //     if(type === "TOTAL"){
+    //         index1 = 2;
+    //         index2 = 11;
+    //     }else if(type === "LIQUID"){
+    //         index1 = 3;
+    //         index2 = 8;
+    //     }else if(type === "PE"){
+    //         index1 = 4;
+    //         index2 = 9;
+    //     }else if(type === "HF"){
+    //         index1 = 5;
+    //         index2 = 10;
+    //     }
+    //     for(var i = 0; i < this.performance.length; i++ ){
+    //         if(this.performance[i][1] === "MTD"){
+    //             var item = [this.performance[i][0], this.performance[i][index1], this.performance[i][index2]];
+    //             values.push(item);
+    //         }
+    //     }
+    //     return values;
+    // }
 
     // ALLOCATIONS -----------------------------
     drawTargetAllocationChart(){
@@ -439,72 +439,72 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
     }
 
     // PUBLIC PERFORMANCE ----------------------
-    drawPublicPerformanceChart(){
-        var data = new google.visualization.DataTable();
-        var formatter = new google.visualization.NumberFormat({
-            pattern:'#.##%'
-        });
-        data.addColumn("string", "Date");
-        data.addColumn("number", "S&P500 Index");
-        data.addColumn("number", "MSCI World Index");
-        data.addColumn("number", "HFRX Global Hedge Fund Index");
-        data.addColumn("number", "Barclays Capital Bond Index");
+    // drawPublicPerformanceChart(){
+    //     var data = new google.visualization.DataTable();
+    //     var formatter = new google.visualization.NumberFormat({
+    //         pattern:'#.##%'
+    //     });
+    //     data.addColumn("string", "Date");
+    //     data.addColumn("number", "S&P500 Index");
+    //     data.addColumn("number", "MSCI World Index");
+    //     data.addColumn("number", "HFRX Global Hedge Fund Index");
+    //     data.addColumn("number", "Barclays Capital Bond Index");
+    //
+    //     var benchmarks = this.getPublicPerformance();
+    //     data.addRows(benchmarks);
+    //     formatter.format(data,1);
+    //     formatter.format(data,2);
+    //     formatter.format(data,3);
+    //     formatter.format(data,4);
+    //     var options = {
+    //         chart: {
+    //             title: "Public markets performance",
+    //             legend: { position: 'top' },
+    //             width: 600,
+    //             height: 500
+    //         },
+    //         animation: {
+    //             duration: 500,
+    //             easing: 'out',
+    //             startup: true,
+    //         },
+    //         vAxis: {
+    //             format: '#.##%',
+    //         },
+    //         showRowNumber: false,
+    //         width: '100%',
+    //         height: '100%'
+    //     };
+    //
+    //     var chart = this.createLineChart(document.getElementById('public_performance'));
+    //     chart.draw(data, options);
+    //
+    //
+    //     //this.data_public_perf = new google.visualization.DataTable();
+    //     //for(var i = 0; i < this.tableChart_public_perf.columns.length; i++){
+    //     //    this.data_public_perf.addColumn(this.tableChart_public_perf.columns[i].type, this.tableChart_public_perf.columns[i].name);
+    //     //}
+    //     //this.data_public_perf.addRows(this.tableChart_public_perf.rows);
+    //     //
+    //     //this.options_public_perf = {
+    //     //    chart: {
+    //     //        title: "Alternative portfolio performance",
+    //     //        subtitle: "since inception",
+    //     //        legend: { position: 'right' },
+    //     //    },
+    //     //    showRowNumber: false,
+    //     //    width: '100%',
+    //     //    height: '100%'
+    //     //};
+    //     //
+    //     //var chart = this.createLineChart(document.getElementById('public_performance'));
+    //     //chart.draw(this.data_public_perf, this.options_public_perf);
+    //
+    // }
 
-        var benchmarks = this.getPublicPerformance();
-        data.addRows(benchmarks);
-        formatter.format(data,1);
-        formatter.format(data,2);
-        formatter.format(data,3);
-        formatter.format(data,4);
-        var options = {
-            chart: {
-                title: "Public markets performance",
-                legend: { position: 'top' },
-                width: 600,
-                height: 500
-            },
-            animation: {
-                duration: 500,
-                easing: 'out',
-                startup: true,
-            },
-            vAxis: {
-                format: '#.##%',
-            },
-            showRowNumber: false,
-            width: '100%',
-            height: '100%'
-        };
-
-        var chart = this.createLineChart(document.getElementById('public_performance'));
-        chart.draw(data, options);
-
-
-        //this.data_public_perf = new google.visualization.DataTable();
-        //for(var i = 0; i < this.tableChart_public_perf.columns.length; i++){
-        //    this.data_public_perf.addColumn(this.tableChart_public_perf.columns[i].type, this.tableChart_public_perf.columns[i].name);
-        //}
-        //this.data_public_perf.addRows(this.tableChart_public_perf.rows);
-        //
-        //this.options_public_perf = {
-        //    chart: {
-        //        title: "Alternative portfolio performance",
-        //        subtitle: "since inception",
-        //        legend: { position: 'right' },
-        //    },
-        //    showRowNumber: false,
-        //    width: '100%',
-        //    height: '100%'
-        //};
-        //
-        //var chart = this.createLineChart(document.getElementById('public_performance'));
-        //chart.draw(this.data_public_perf, this.options_public_perf);
-
-    }
-
-    private getPublicPerformance(){
-        return this.publicMarketsPerformance;
-    }
+    // private getPublicPerformance(){
+    //     return this.publicMarketsPerformance;
+    // }
 
     public getAllDates(){
         var dates = [];
@@ -514,11 +514,11 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
         return dates;
     }
 
-    public getAssetTypes(){
-        var assetTypes = ["TOTAL", "LIQUID", "PE", "HF"];
-        return assetTypes;
-
-    }
+    // public getAssetTypes(){
+    //     var assetTypes = ["TOTAL", "LIQUID", "PE", "HF"];
+    //     return assetTypes;
+    //
+    // }
 
     private nav = [
         ["Dec-14",799882987,799882987,0,0,0,0],
@@ -660,30 +660,30 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
         ["Mar-19","YTD",0.0024,0.0358,null,0.0287,0.1232,0.0250,0.0098],
     ];
 
-    private publicMarketsPerformance = [
-            ["Aug-15",-0.0626,-0.0681,-0.0221,0.0010],
-            ["Sep-15",-0.0264,-0.0386,-0.0207,0.0079],
-            ["Oct-15",0.0830,0.0783,0.0146,0.0004],
-            ["Nov-15",0.0005,-0.0067,-0.0072,-0.0088],
-            ["Dec-15",-0.0175,-0.0187,-0.0133,0.0016],
-            ["Jan-16",-0.0507,-0.0605,-0.0276,0.0116],
-            ["Feb-16",-0.0041,-0.0096,-0.0032,0.0169],
-            ["Mar-16",0.0660,0.0652,0.0124,0.0163],
-            ["Apr-16",0.0027,0.0138,0.0041,0.0100],
-            ["May-16",0.0153,0.0023,0.0046,-0.0052],
-            ["Jun-16",0.0009,-0.0128,0.0020,0.0256],
-            ["Jul-16",0.0356,0.0415,0.0145,0.0061],
-            ["Aug-16",-0.0012,-0.0013,0.0016,-0.0033],
-            ["Sep-16",-0.0012,0.0036,0.0055,0.0026],
-            ["Oct-16",-0.0194,-0.0201,-0.0057,-0.0173],
-            ["Nov-16",0.03417445,0.01251981,0.00872417,-0.03221788],
-            ["Dec-16",0.01820075,0.02285511,0.00856492,-0.0041],
-            ["Jan-17",0.0178843,0.0235150,0.0050189,0.0077559],
-            ["Feb-17",0.03719826,0.02583129,0.01122778,0.00641355],
-            ["Mar-17",-0.00038923,0.00815250,0.00027799,-0.00005098],
-            ["Apr-17",0.00909122,0.01326543,0.00425038,0.009635974],
-            ["May-17",0.01160000,0.01781417,0.002441764,0.010629703],
-    ];
+    // private publicMarketsPerformance = [
+    //         ["Aug-15",-0.0626,-0.0681,-0.0221,0.0010],
+    //         ["Sep-15",-0.0264,-0.0386,-0.0207,0.0079],
+    //         ["Oct-15",0.0830,0.0783,0.0146,0.0004],
+    //         ["Nov-15",0.0005,-0.0067,-0.0072,-0.0088],
+    //         ["Dec-15",-0.0175,-0.0187,-0.0133,0.0016],
+    //         ["Jan-16",-0.0507,-0.0605,-0.0276,0.0116],
+    //         ["Feb-16",-0.0041,-0.0096,-0.0032,0.0169],
+    //         ["Mar-16",0.0660,0.0652,0.0124,0.0163],
+    //         ["Apr-16",0.0027,0.0138,0.0041,0.0100],
+    //         ["May-16",0.0153,0.0023,0.0046,-0.0052],
+    //         ["Jun-16",0.0009,-0.0128,0.0020,0.0256],
+    //         ["Jul-16",0.0356,0.0415,0.0145,0.0061],
+    //         ["Aug-16",-0.0012,-0.0013,0.0016,-0.0033],
+    //         ["Sep-16",-0.0012,0.0036,0.0055,0.0026],
+    //         ["Oct-16",-0.0194,-0.0201,-0.0057,-0.0173],
+    //         ["Nov-16",0.03417445,0.01251981,0.00872417,-0.03221788],
+    //         ["Dec-16",0.01820075,0.02285511,0.00856492,-0.0041],
+    //         ["Jan-17",0.0178843,0.0235150,0.0050189,0.0077559],
+    //         ["Feb-17",0.03719826,0.02583129,0.01122778,0.00641355],
+    //         ["Mar-17",-0.00038923,0.00815250,0.00027799,-0.00005098],
+    //         ["Apr-17",0.00909122,0.01326543,0.00425038,0.009635974],
+    //         ["May-17",0.01160000,0.01781417,0.002441764,0.010629703],
+    // ];
 
 
     private getActualAllocationData(tableDate){
