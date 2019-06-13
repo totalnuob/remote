@@ -4,6 +4,10 @@ import {CommonFormViewComponent} from "../common/common.component";
 import {CommonTableau} from "./common-tableau.component";
 import {GoogleChartComponent} from "../google-chart/google-chart.component";
 import {TableChartDto, TableColumnDto} from "../google-chart/table-chart.dto";
+import {MonitoringPortfolioService} from "./monitoring-portfolio.service";
+import {Subscription} from "../../../node_modules/rxjs";
+import {ErrorResponse} from "../common/error-response";
+import {MonitoringNicPortfolio} from "./model/monitoring.nicPortfolio";
 
 declare var google:any;
 declare var $: any;
@@ -13,7 +17,7 @@ declare var $: any;
     // templateUrl: 'view/monitoring-portfolio.component.html',  //if used, check redrawLineChart(), getAssetTypes() methods
     templateUrl: 'view/monitoring-portfolio.component2.html',
     styleUrls: [],
-    providers: [],
+    providers: [MonitoringPortfolioService],
 })
 export class MonitoringPortfolioComponent extends GoogleChartComponent {
     //ngAfterViewInit():void {
@@ -23,7 +27,12 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
     private tableDate;
     private performanceType;
 
+    private nicPortfolioList: Array<MonitoringNicPortfolio> = [];
+
+    busy: Subscription;
+
     constructor(
+        private monitoringPortfolioService: MonitoringPortfolioService
     ){
         super();
 
@@ -37,6 +46,7 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
         //$("#tableDate").val($("#tableDate option:first").val());
         //$("#performanceType").val($("#performanceType option:first").val());
 
+        this.getData();
     }
 
     drawGraph(){
@@ -503,6 +513,29 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
     // private getPublicPerformance(){
     //     return this.publicMarketsPerformance;
     // }
+
+    postAction(successMessage, errorMessage) {
+        this.successMessage = successMessage;
+        this.errorMessage = errorMessage;
+
+        // TODO: non jQuery
+        $('html, body').animate({scrollTop: 0}, 'fast');
+    }
+
+    public getData(){
+        this.busy = this.monitoringPortfolioService.get()
+            .subscribe(
+                (response) => {
+                    this.nicPortfolioList = response;
+                    console.log(this.nicPortfolioList);
+                },
+                (error: ErrorResponse) => {
+                    this.processErrorMessage(error);
+                    this.postAction(null, "Error loading NIC Portfolio Data");
+                    console.log(error);
+                }
+            )
+    }
 
     public getAllDates(){
         var dates = [];
