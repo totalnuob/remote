@@ -33,9 +33,7 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
     public List<NicPortfolioDto> get() {
         try {
             List<NicPortfolioDto> nicPortfolioDtoList = new ArrayList<>();
-            Iterator<NicPortfolio> iterator = this.repository.findAll().iterator();
-            while(iterator.hasNext()){
-                NicPortfolio entity = iterator.next();
+            for (NicPortfolio entity : this.repository.findAll()) {
                 nicPortfolioDtoList.add(this.converter.disassemble(entity));
             }
             return nicPortfolioDtoList;
