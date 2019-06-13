@@ -70,7 +70,7 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
     //     this.drawAlternativePerformanceChart($('#performanceType').val());
     // }
 
-    drawTables(tableDate) {
+    drawTables(tableDate){
         var NAVdata = this.getNAVData(tableDate);
         this.drawPortfolioValueTable(NAVdata);
 
@@ -163,9 +163,9 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
                 ["Hedge Funds", performanceArray[0][3], performanceArray[1][3], performanceArray[2][3],],
                 ["Real Estate", performanceArray[0][4], performanceArray[1][4], performanceArray[2][4]],
                 ["Fixed income securities", performanceArray[0][5], performanceArray[1][5], performanceArray[2][5]],
-                ["Public Equity", performanceArray[0][6], performanceArray[1][6], performanceArray[1][6]],
-                ["Alternative portfolio", performanceArray[0][7], performanceArray[1][7], performanceArray[1][7]],
-                ["Transition portfolio", performanceArray[0][8], performanceArray[1][8], performanceArray[1][8]]
+                ["Public Equity", performanceArray[0][6], performanceArray[1][6], performanceArray[2][6]],
+                ["Alternative portfolio", performanceArray[0][7], performanceArray[1][7], performanceArray[2][7]],
+                ["Transition portfolio", performanceArray[0][8], performanceArray[1][8], performanceArray[2][8]]
             ]);
         }else {
             data.addRows([
@@ -173,7 +173,7 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
                 ["Liquid Portfolio", performanceArray[0][3], performanceArray[1][3], performanceArray[2][3],],
                 ["NICK Master Fund", performanceArray[0][6], performanceArray[1][6], performanceArray[2][6]],
                 ["Hedge Funds Portfolio", performanceArray[0][5], performanceArray[1][5], performanceArray[2][5]],
-                ["Private Equity Portfolio", performanceArray[0][4], performanceArray[1][4], performanceArray[1][4]]
+                ["Private Equity Portfolio", performanceArray[0][4], performanceArray[1][4], performanceArray[2][4]]
             ]);
         }
         formatter.format(data, 1);
@@ -430,8 +430,6 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
             height: 300,
             pieHole: 0.4,
             title: 'Actual Allocation'
-
-
         };
 
         var chart = new google.visualization.PieChart(document.getElementById('actual_allocation_chart'));
