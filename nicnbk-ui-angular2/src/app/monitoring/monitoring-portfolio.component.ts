@@ -8,6 +8,7 @@ import {MonitoringPortfolioService} from "./monitoring-portfolio.service";
 import {Subscription} from "../../../node_modules/rxjs";
 import {ErrorResponse} from "../common/error-response";
 import {MonitoringNicPortfolio} from "./model/monitoring.nicPortfolio";
+import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 
 declare var google:any;
 declare var $: any;
@@ -29,12 +30,18 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
 
     private nicPortfolioList: Array<MonitoringNicPortfolio> = [];
 
+    private moduleAccessChecker = new ModuleAccessCheckerService;
+
+    private myFiles: File[];
+
     busy: Subscription;
 
     constructor(
         private monitoringPortfolioService: MonitoringPortfolioService
     ){
         super();
+
+        this.myFiles = [];
 
         //this.getLineChartLAternativePerformance();
         //this.getLineChartLPublicPerformance();
@@ -606,7 +613,7 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
         this.busy = this.monitoringPortfolioService.get()
             .subscribe(
                 (response) => {
-                    this.nicPortfolioList = response;
+                    this.nicPortfolioList = response.nicPortfolioDtoList;
                     // console.log(this.nicPortfolioList);
 
                     this.tableDate = this.getAllDates()[0];
@@ -621,7 +628,7 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
                 },
                 (error: ErrorResponse) => {
                     this.processErrorMessage(error);
-                    this.postAction(null, "Error loading NIC Portfolio Data");
+                    this.postAction(null, error.message);
                     console.log(error);
                 }
             )
@@ -646,6 +653,38 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
             }
         }
         return null;
+    }
+
+    fileChange(files: any){
+        this.myFiles = files;
+        console.log(this.myFiles);
+    }
+
+    private onSubmitNicPortfolio() {
+        this.busy = this.monitoringPortfolioService.postFiles(this.myFiles)
+            .subscribe(
+                (response) => {
+                    this.nicPortfolioList = response.nicPortfolioDtoList;
+                    // console.log(this.nicPortfolioList);
+
+                    this.tableDate = this.getAllDates()[0];
+
+                    this.drawTables(this.tableDate);
+                    this.drawTargetAllocationChart();
+                    this.drawActualAllocationChart(this.tableDate);
+
+                    this.postAction(response.messageEn, null);
+                },
+                (error: ErrorResponse) => {
+                    this.processErrorMessage(error);
+                    this.postAction(null, JSON.parse(error).messageEn);
+                    console.log(error);
+                }
+            )
+    }
+
+    canEdit(){
+        return this.moduleAccessChecker.checkAccessReportingEditor();
     }
 
     // public getAssetTypes(){

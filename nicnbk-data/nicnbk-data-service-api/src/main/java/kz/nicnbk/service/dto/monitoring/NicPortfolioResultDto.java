@@ -8,12 +8,12 @@ import java.util.List;
 /**
  * Created by Pak on 13.06.2019.
  */
-@Deprecated
-public class NicPortfolioListResultDto extends StatusResultDto {
+
+public class NicPortfolioResultDto extends StatusResultDto {
 
     private List<NicPortfolioDto> nicPortfolioDtoList;
 
-    public NicPortfolioListResultDto(List<NicPortfolioDto> nicPortfolioDtoList, StatusResultType status, String messageRu, String messageEn, String messageKz) {
+    public NicPortfolioResultDto(List<NicPortfolioDto> nicPortfolioDtoList, StatusResultType status, String messageRu, String messageEn, String messageKz) {
         super(status, messageRu, messageEn, messageKz);
         this.nicPortfolioDtoList = nicPortfolioDtoList;
     }

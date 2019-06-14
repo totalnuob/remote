@@ -8,6 +8,7 @@ import {Http} from "@angular/http";
 export class MonitoringPortfolioService extends CommonService {
     private MONITORING_PORTFOLIO_BASE_URL = DATA_APP_URL + "monitoring/portfolio/";
     private MONITORING_PORTFOLIO_GET_URL = this.MONITORING_PORTFOLIO_BASE_URL + "get/";
+    private MONITORING_PORTFOLIO_UPLOAD_URL = this.MONITORING_PORTFOLIO_BASE_URL + "upload/";
 
     constructor(
         private uploadService: FileUploadService,
@@ -20,5 +21,9 @@ export class MonitoringPortfolioService extends CommonService {
         return this.http.get(this.MONITORING_PORTFOLIO_GET_URL, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
+    }
+
+    postFiles(files) {
+        return this.uploadService.postFiles(this.MONITORING_PORTFOLIO_UPLOAD_URL, [], files);
     }
 }

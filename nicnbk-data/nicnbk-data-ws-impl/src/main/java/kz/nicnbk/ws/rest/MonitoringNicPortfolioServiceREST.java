@@ -1,7 +1,8 @@
 package kz.nicnbk.ws.rest;
 
 import kz.nicnbk.service.api.monitoring.NicPortfolioService;
-import kz.nicnbk.service.dto.monitoring.NicPortfolioDto;
+import kz.nicnbk.service.dto.files.FilesDto;
+import kz.nicnbk.service.dto.monitoring.NicPortfolioResultDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +11,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Pak on 13.06.2019.
@@ -27,14 +30,30 @@ public class MonitoringNicPortfolioServiceREST extends CommonServiceREST {
     @Autowired
     private NicPortfolioService service;
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/get", method = RequestMethod.GET)
-    public ResponseEntity get(){
-        List<NicPortfolioDto> nicPortfolioDtoList = this.service.get();
-        if (nicPortfolioDtoList != null) {
-            return new ResponseEntity<>(nicPortfolioDtoList, null, HttpStatus.OK);
+    public ResponseEntity get() {
+
+        NicPortfolioResultDto resultDto = this.service.get();
+
+        if (resultDto.getStatus().getCode().equals("SUCCESS")) {
+            return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/upload", method = RequestMethod.POST)
+    public ResponseEntity upload(@RequestParam(value = "file", required = false) MultipartFile[] files) {
+
+        Set<FilesDto> filesDtoSet = buildFilesDtoFromMultipart(files, null);
+
+        NicPortfolioResultDto resultDto = this.service.upload(filesDtoSet);
+
+        if (resultDto.getStatus().getCode().equals("SUCCESS")) {
+            return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
