@@ -63,6 +63,47 @@ public class NicPortfolio extends BaseEntity {
     private Double transferQtd;
     private Double transferYtd;
 
+    public NicPortfolio(Date date, Double nicTotalAumNav, Double transitionPortfolioNav, Double transitionPortfolioMtd, Double transitionPortfolioQtd, Double transitionPortfolioYtd, Double alternativePortfolioNav, Double alternativePortfolioMtd, Double alternativePortfolioQtd, Double alternativePortfolioYtd, Double fixedPortfolioNav, Double fixedPortfolioMtd, Double fixedPortfolioQtd, Double fixedPortfolioYtd, Double equityPortfolioNav, Double equityPortfolioMtd, Double equityPortfolioQtd, Double equityPortfolioYtd, Double hedgeFundsNav, Double hedgeFundsMtd, Double hedgeFundsQtd, Double hedgeFundsYtd, Double privateEquityNav, Double privateEquityMtd, Double privateEquityQtd, Double privateEquityYtd, Double realEstateNav, Double realEstateMtd, Double realEstateQtd, Double realEstateYtd, Double nickMfOtherNav, Double nickMfOtherMtd, Double nickMfOtherQtd, Double nickMfOtherYtd, Double transferNav, Double transferMtd, Double transferQtd, Double transferYtd) {
+        this.date = date;
+        this.nicTotalAumNav = nicTotalAumNav;
+        this.transitionPortfolioNav = transitionPortfolioNav;
+        this.transitionPortfolioMtd = transitionPortfolioMtd;
+        this.transitionPortfolioQtd = transitionPortfolioQtd;
+        this.transitionPortfolioYtd = transitionPortfolioYtd;
+        this.alternativePortfolioNav = alternativePortfolioNav;
+        this.alternativePortfolioMtd = alternativePortfolioMtd;
+        this.alternativePortfolioQtd = alternativePortfolioQtd;
+        this.alternativePortfolioYtd = alternativePortfolioYtd;
+        this.fixedPortfolioNav = fixedPortfolioNav;
+        this.fixedPortfolioMtd = fixedPortfolioMtd;
+        this.fixedPortfolioQtd = fixedPortfolioQtd;
+        this.fixedPortfolioYtd = fixedPortfolioYtd;
+        this.equityPortfolioNav = equityPortfolioNav;
+        this.equityPortfolioMtd = equityPortfolioMtd;
+        this.equityPortfolioQtd = equityPortfolioQtd;
+        this.equityPortfolioYtd = equityPortfolioYtd;
+        this.hedgeFundsNav = hedgeFundsNav;
+        this.hedgeFundsMtd = hedgeFundsMtd;
+        this.hedgeFundsQtd = hedgeFundsQtd;
+        this.hedgeFundsYtd = hedgeFundsYtd;
+        this.privateEquityNav = privateEquityNav;
+        this.privateEquityMtd = privateEquityMtd;
+        this.privateEquityQtd = privateEquityQtd;
+        this.privateEquityYtd = privateEquityYtd;
+        this.realEstateNav = realEstateNav;
+        this.realEstateMtd = realEstateMtd;
+        this.realEstateQtd = realEstateQtd;
+        this.realEstateYtd = realEstateYtd;
+        this.nickMfOtherNav = nickMfOtherNav;
+        this.nickMfOtherMtd = nickMfOtherMtd;
+        this.nickMfOtherQtd = nickMfOtherQtd;
+        this.nickMfOtherYtd = nickMfOtherYtd;
+        this.transferNav = transferNav;
+        this.transferMtd = transferMtd;
+        this.transferQtd = transferQtd;
+        this.transferYtd = transferYtd;
+    }
+
     public Date getDate() {
         return date;
     }
