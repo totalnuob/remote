@@ -53,7 +53,7 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
             for (NicPortfolio entity : this.repository.findAll()) {
                 nicPortfolioDtoList.add(this.converter.disassemble(entity));
             }
-//            return new NicPortfolioResultDto(nicPortfolioDtoList, ResponseStatusType.SUCCESS, "", "NIC Portfolio data has been updated successfully!", "");
+            return new NicPortfolioResultDto(nicPortfolioDtoList, ResponseStatusType.SUCCESS, "", "NIC Portfolio data has been updated successfully!", "");
         } catch (Exception ex) {
             logger.error("Failed to update NIC Portfolio data, ", ex);
         }

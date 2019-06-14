@@ -672,6 +672,8 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
                     this.nicPortfolioList = response.nicPortfolioDtoList;
                     // console.log(this.nicPortfolioList);
 
+                    console.log(response.message.nameEn);
+
                     if(this.nicPortfolioList.length > 0) {
                         this.tableDate = this.getAllDates()[0];
 
@@ -684,11 +686,9 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
                 },
                 error => {
                     // this.processErrorMessage(error);
-                    // this.postAction(null, JSON.parse(error).messageEn);
+                    this.postAction(null, JSON.parse(error).message.nameEn);
                     console.log(error);
-                    // console.log(JSON.parse(error));
-                    // console.log(error.);
-                    console.log(error.message);
+                    console.log(JSON.parse(error).message.nameEn);
                 }
             )
     }
