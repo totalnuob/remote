@@ -24,6 +24,6 @@ export class MonitoringPortfolioService extends CommonService {
     }
 
     postFiles(files) {
-        return this.uploadService.postFiles(this.MONITORING_PORTFOLIO_UPLOAD_URL, [], files);
+        return this.uploadService.postFiles(this.MONITORING_PORTFOLIO_UPLOAD_URL, [], files, null);
     }
 }

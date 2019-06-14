@@ -4,7 +4,7 @@ import kz.nicnbk.repo.api.monitoring.NicPortfolioRepository;
 import kz.nicnbk.repo.model.monitoring.NicPortfolio;
 import kz.nicnbk.service.api.monitoring.NicPortfolioService;
 import kz.nicnbk.service.converter.monitoring.NicPortfolioEntityConverter;
-import kz.nicnbk.service.dto.common.StatusResultType;
+import kz.nicnbk.service.dto.common.ResponseStatusType;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.monitoring.NicPortfolioDto;
 import kz.nicnbk.service.dto.monitoring.NicPortfolioResultDto;
@@ -39,11 +39,11 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
             for (NicPortfolio entity : this.repository.findAll()) {
                 nicPortfolioDtoList.add(this.converter.disassemble(entity));
             }
-            return new NicPortfolioResultDto(nicPortfolioDtoList, StatusResultType.SUCCESS, "", "NIC Portfolio data has been loaded successfully!", "");
+            return new NicPortfolioResultDto(nicPortfolioDtoList, ResponseStatusType.SUCCESS, "", "NIC Portfolio data has been loaded successfully!", "");
         } catch (Exception ex) {
             logger.error("Error loading NIC Portfolio data, ", ex);
         }
-        return new NicPortfolioResultDto(null, StatusResultType.FAIL, "", "Failed to load NIC Portfolio data!", "");
+        return new NicPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to load NIC Portfolio data!", "");
     }
 
     @Override
@@ -53,10 +53,10 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
             for (NicPortfolio entity : this.repository.findAll()) {
                 nicPortfolioDtoList.add(this.converter.disassemble(entity));
             }
-            return new NicPortfolioResultDto(nicPortfolioDtoList, StatusResultType.SUCCESS, "", "NIC Portfolio data has been updated successfully!", "");
+//            return new NicPortfolioResultDto(nicPortfolioDtoList, ResponseStatusType.SUCCESS, "", "NIC Portfolio data has been updated successfully!", "");
         } catch (Exception ex) {
             logger.error("Failed to update NIC Portfolio data, ", ex);
         }
-        return new NicPortfolioResultDto(null, StatusResultType.FAIL, "", "Failed to update NIC Portfolio data!", "");
+        return new NicPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update NIC Portfolio data!", "");
     }
 }

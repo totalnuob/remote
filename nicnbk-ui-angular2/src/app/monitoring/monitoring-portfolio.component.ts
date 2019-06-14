@@ -616,20 +616,25 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
                     this.nicPortfolioList = response.nicPortfolioDtoList;
                     // console.log(this.nicPortfolioList);
 
-                    this.tableDate = this.getAllDates()[0];
-                    // this.performanceType = "TOTAL";
+                    console.log(response.message.nameEn);
 
-                    this.drawTables(this.tableDate);
-                    this.drawTargetAllocationChart();
-                    this.drawActualAllocationChart(this.tableDate);
+                    if(this.nicPortfolioList.length > 0) {
+                        this.tableDate = this.getAllDates()[0];
+                        // this.performanceType = "TOTAL";
 
-                    //this.drawAlternativePerformanceChart("TOTAL");
-                    //this.drawPublicPerformanceChart();
+                        this.drawTables(this.tableDate);
+                        this.drawTargetAllocationChart();
+                        this.drawActualAllocationChart(this.tableDate);
+
+                        //this.drawAlternativePerformanceChart("TOTAL");
+                        //this.drawPublicPerformanceChart();
+                    }
                 },
                 (error: ErrorResponse) => {
                     this.processErrorMessage(error);
                     this.postAction(null, error.message);
                     console.log(error);
+                    console.log(error.message);
                 }
             )
     }
@@ -667,18 +672,23 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
                     this.nicPortfolioList = response.nicPortfolioDtoList;
                     // console.log(this.nicPortfolioList);
 
-                    this.tableDate = this.getAllDates()[0];
+                    if(this.nicPortfolioList.length > 0) {
+                        this.tableDate = this.getAllDates()[0];
 
-                    this.drawTables(this.tableDate);
-                    this.drawTargetAllocationChart();
-                    this.drawActualAllocationChart(this.tableDate);
+                        this.drawTables(this.tableDate);
+                        this.drawTargetAllocationChart();
+                        this.drawActualAllocationChart(this.tableDate);
 
-                    this.postAction(response.messageEn, null);
+                        this.postAction(response.messageEn, null);
+                    }
                 },
-                (error: ErrorResponse) => {
-                    this.processErrorMessage(error);
-                    this.postAction(null, JSON.parse(error).messageEn);
+                error => {
+                    // this.processErrorMessage(error);
+                    // this.postAction(null, JSON.parse(error).messageEn);
                     console.log(error);
+                    // console.log(JSON.parse(error));
+                    // console.log(error.);
+                    console.log(error.message);
                 }
             )
     }
