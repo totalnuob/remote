@@ -40,10 +40,7 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
     @Override
     public NicPortfolioResultDto get() {
         try {
-            List<NicPortfolioDto> nicPortfolioDtoList = new ArrayList<>();
-            for (NicPortfolio entity : this.repository.findAll()) {
-                nicPortfolioDtoList.add(this.converter.disassemble(entity));
-            }
+            List<NicPortfolioDto> nicPortfolioDtoList = this.converter.disassembleList(this.repository.findAllByOrderByDateAsc());
             return new NicPortfolioResultDto(nicPortfolioDtoList, ResponseStatusType.SUCCESS, "", "NIC Portfolio data has been loaded successfully!", "");
         } catch (Exception ex) {
             logger.error("Error loading NIC Portfolio data, ", ex);
@@ -157,10 +154,8 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
                 previousRow = currentRow;
             }
 
-            List<NicPortfolioDto> nicPortfolioDtoList = new ArrayList<>();
-            for (NicPortfolio entity : this.repository.findAll()) {
-                nicPortfolioDtoList.add(this.converter.disassemble(entity));
-            }
+            List<NicPortfolioDto> nicPortfolioDtoList = this.converter.disassembleList(this.repository.findAllByOrderByDateAsc());
+
             return new NicPortfolioResultDto(nicPortfolioDtoList, ResponseStatusType.SUCCESS, "", "NIC Portfolio data has been updated successfully!", "");
         } catch (Exception ex) {
             logger.error("Failed to update NIC Portfolio data, ", ex);
