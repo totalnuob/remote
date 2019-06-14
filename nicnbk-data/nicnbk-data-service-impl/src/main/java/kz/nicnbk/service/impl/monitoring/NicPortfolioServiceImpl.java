@@ -81,8 +81,19 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
                 rowNumber++;
 
                 try {
-                    previousDate = previousRow.getCell(0).getDateCellValue();
-                    currentDate = currentRow.getCell(0).getDateCellValue();
+                    if(previousRow.getCell(0) == null || previousRow.getCell(0).getDateCellValue() == null) {
+                        //end of data
+                        break;
+                    } else {
+                        previousDate = previousRow.getCell(0).getDateCellValue();
+                    }
+
+                    if(currentRow.getCell(0) == null || currentRow.getCell(0).getDateCellValue() == null) {
+                        //end of data
+                        break;
+                    } else {
+                        currentDate = currentRow.getCell(0).getDateCellValue();
+                    }
 
                     previousMonth = DateUtils.getMonth(previousDate);
                     currentMonth = DateUtils.getMonth(currentDate);
