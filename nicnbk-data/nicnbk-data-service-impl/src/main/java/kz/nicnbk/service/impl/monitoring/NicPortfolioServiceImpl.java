@@ -55,6 +55,9 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
             Iterator<Row> rowIterator;
             Row previousRow = null;
             Row currentRow;
+            int previousMonth;
+            int currentMonth;
+            int rowNumber = 0;
             List<NicPortfolio> portfolioList = new ArrayList<>();
 
             try {
@@ -71,6 +74,7 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
             for (int i = 0; i < 15; i++) {
                 if(rowIterator.hasNext()) {
                     previousRow = rowIterator.next();
+                    rowNumber++;
                 } else {
                     logger.error("Failed to update NIC Portfolio data: the sheet 'Database' contains less than 15 rows!");
                     return new NicPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update NIC Portfolio data: the sheet 'Database' contains less than 15 rows!", "");
@@ -79,23 +83,27 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
 
             while (rowIterator.hasNext()) {
                 currentRow = rowIterator.next();
+                rowNumber++;
 
-                if (previousRow.getCell(0) == null || previousRow.getCell(0).getDateCellValue() == null ||
-                        currentRow.getCell(0) == null || currentRow.getCell(0).getDateCellValue() == null) {
+                if (previousRow.getCell(0) == null || currentRow.getCell(0) == null) {
                     //end of data
                     break;
                 }
 
-                if (previousRow.getCell(0).getDateCellValue().after(new Date())) {
-                    break;
-                }
+                try {
+                    previousMonth = DateUtils.getMonth(previousRow.getCell(0).getDateCellValue());
+                    currentMonth = DateUtils.getMonth(currentRow.getCell(0).getDateCellValue());
 
-                int previousMonth = DateUtils.getMonth(previousRow.getCell(0).getDateCellValue());
-                int currentMonth = DateUtils.getMonth(currentRow.getCell(0).getDateCellValue());
+                    if (previousRow.getCell(0).getDateCellValue().after(new Date())) {
+                        break;
+                    }
 
-                if (previousMonth != currentMonth) {
-                    NicPortfolio a = this.create(previousRow);
-                    portfolioList.add(a);
+                    if (previousMonth != currentMonth) {
+                        portfolioList.add(this.create(previousRow));
+                    }
+                } catch (Exception ex) {
+                    logger.error("Failed to update NIC Portfolio data: error parsing row #" + rowNumber + ", ", ex);
+                    return new NicPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update NIC Portfolio data: error parsing row #" + rowNumber + "!", "");
                 }
 
                 previousRow = currentRow;
@@ -172,7 +180,7 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
                     ExcelUtils.getDoubleValueFromCell(row.getCell(116))
             );
         } catch (Exception ex) {
-            logger.error("Failed to update NIC Portfolio data: row read error, ", ex);
+            logger.error("Failed to update NIC Portfolio data: row parsing error, ", ex);
             throw ex;
         }
     }
