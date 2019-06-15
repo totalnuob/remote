@@ -50,116 +50,128 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
 
     @Override
     public NicPortfolioResultDto upload(Set<FilesDto> filesDtoSet) {
-        try {
-            FilesDto filesDto = filesDtoSet.iterator().next();
-            InputStream inputFile = new ByteArrayInputStream(filesDto.getBytes());
-            XSSFWorkbook workbook = new XSSFWorkbook(inputFile);
-            XSSFSheet sheet = workbook.getSheet("Database");
-            Iterator<Row> rowIterator = sheet.iterator();
 
+        try {
+            Iterator<Row> rowIterator;
             Row previousRow = null;
             Row currentRow;
-            Date previousDate;
-            Date currentDate;
-            int previousMonth;
-            int currentMonth;
+            List<NicPortfolio> portfolioList = new ArrayList<>();
 
-            int rowNumber = 0;
-
-            for (int i = 0; i < 15; i++) {
-                previousRow = rowIterator.next();
-                rowNumber++;
+            try {
+                FilesDto filesDto = filesDtoSet.iterator().next();
+                InputStream inputFile = new ByteArrayInputStream(filesDto.getBytes());
+                XSSFWorkbook workbook = new XSSFWorkbook(inputFile);
+                XSSFSheet sheet = workbook.getSheet("Database");
+                rowIterator = sheet.iterator();
+            } catch (Exception ex) {
+                logger.error("Failed to update NIC Portfolio data: the file or the sheet 'Database' cannot be opened, ", ex);
+                return new NicPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update NIC Portfolio data: the file or the sheet 'Database' cannot be opened!", "");
             }
 
-            this.repository.deleteAll();
+            for (int i = 0; i < 15; i++) {
+                if(rowIterator.hasNext()) {
+                    previousRow = rowIterator.next();
+                } else {
+                    logger.error("Failed to update NIC Portfolio data: the sheet 'Database' contains less than 15 rows!");
+                    return new NicPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update NIC Portfolio data: the sheet 'Database' contains less than 15 rows!", "");
+                }
+            }
 
             while (rowIterator.hasNext()) {
                 currentRow = rowIterator.next();
-                rowNumber++;
 
-                try {
-                    if(previousRow.getCell(0) == null || previousRow.getCell(0).getDateCellValue() == null) {
-                        //end of data
-                        break;
-                    } else {
-                        previousDate = previousRow.getCell(0).getDateCellValue();
-                    }
-
-                    if(currentRow.getCell(0) == null || currentRow.getCell(0).getDateCellValue() == null) {
-                        //end of data
-                        break;
-                    } else {
-                        currentDate = currentRow.getCell(0).getDateCellValue();
-                    }
-
-                    previousMonth = DateUtils.getMonth(previousDate);
-                    currentMonth = DateUtils.getMonth(currentDate);
-                } catch (Exception ex) {
-                    logger.error("Error getting date from cell, row number: " + rowNumber, ex);
+                if (previousRow.getCell(0) == null || previousRow.getCell(0).getDateCellValue() == null ||
+                        currentRow.getCell(0) == null || currentRow.getCell(0).getDateCellValue() == null) {
+                    //end of data
                     break;
                 }
 
+                if (previousRow.getCell(0).getDateCellValue().after(new Date())) {
+                    break;
+                }
+
+                int previousMonth = DateUtils.getMonth(previousRow.getCell(0).getDateCellValue());
+                int currentMonth = DateUtils.getMonth(currentRow.getCell(0).getDateCellValue());
+
                 if (previousMonth != currentMonth) {
-                    this.repository.save(new NicPortfolio(
-                            previousRow.getCell(0).getDateCellValue(),
-                            ExcelUtils.getDoubleValueFromCell(previousRow.getCell(3)),
-
-                            ExcelUtils.getDoubleValueFromCell(previousRow.getCell(88)),
-                            ExcelUtils.getDoubleValueFromCell(previousRow.getCell(92)),
-                            ExcelUtils.getDoubleValueFromCell(previousRow.getCell(93)),
-                            ExcelUtils.getDoubleValueFromCell(previousRow.getCell(94)),
-
-                            ExcelUtils.getDoubleValueFromCell(previousRow.getCell(23)),
-                            ExcelUtils.getDoubleValueFromCell(previousRow.getCell(26)),
-                            ExcelUtils.getDoubleValueFromCell(previousRow.getCell(27)),
-                            ExcelUtils.getDoubleValueFromCell(previousRow.getCell(28)),
-
-                            ExcelUtils.getDoubleValueFromCell(previousRow.getCell(44)),
-                            ExcelUtils.getDoubleValueFromCell(previousRow.getCell(48)),
-                            ExcelUtils.getDoubleValueFromCell(previousRow.getCell(49)),
-                            ExcelUtils.getDoubleValueFromCell(previousRow.getCell(50)),
-
-                            ExcelUtils.getDoubleValueFromCell(previousRow.getCell(66)),
-                            ExcelUtils.getDoubleValueFromCell(previousRow.getCell(70)),
-                            ExcelUtils.getDoubleValueFromCell(previousRow.getCell(71)),
-                            ExcelUtils.getDoubleValueFromCell(previousRow.getCell(72)),
-
-                            ExcelUtils.getDoubleValueFromCell(previousRow.getCell(152)),
-                            ExcelUtils.getDoubleValueFromCell(previousRow.getCell(157)),
-                            ExcelUtils.getDoubleValueFromCell(previousRow.getCell(158)),
-                            ExcelUtils.getDoubleValueFromCell(previousRow.getCell(159)),
-
-                            ExcelUtils.getDoubleValueFromCell(previousRow.getCell(218)),
-                            ExcelUtils.getDoubleValueFromCell(previousRow.getCell(222)),
-                            ExcelUtils.getDoubleValueFromCell(previousRow.getCell(223)),
-                            ExcelUtils.getDoubleValueFromCell(previousRow.getCell(224)),
-
-                            ExcelUtils.getDoubleValueFromCell(previousRow.getCell(240)),
-                            ExcelUtils.getDoubleValueFromCell(previousRow.getCell(244)),
-                            ExcelUtils.getDoubleValueFromCell(previousRow.getCell(245)),
-                            ExcelUtils.getDoubleValueFromCell(previousRow.getCell(246)),
-
-                            ExcelUtils.getDoubleValueFromCell(previousRow.getCell(272)),
-                            ExcelUtils.getDoubleValueFromCell(previousRow.getCell(275)),
-                            ExcelUtils.getDoubleValueFromCell(previousRow.getCell(276)),
-                            ExcelUtils.getDoubleValueFromCell(previousRow.getCell(277)),
-
-                            ExcelUtils.getDoubleValueFromCell(previousRow.getCell(110)),
-                            ExcelUtils.getDoubleValueFromCell(previousRow.getCell(114)),
-                            ExcelUtils.getDoubleValueFromCell(previousRow.getCell(115)),
-                            ExcelUtils.getDoubleValueFromCell(previousRow.getCell(116))
-                            ));
+                    NicPortfolio a = this.create(previousRow);
+                    portfolioList.add(a);
                 }
 
                 previousRow = currentRow;
             }
 
-            List<NicPortfolioDto> nicPortfolioDtoList = this.converter.disassembleList(this.repository.findAllByOrderByDateAsc());
+            try {
+                this.repository.deleteAll();
+                this.repository.save(portfolioList);
+            } catch (Exception ex) {
+                logger.error("Failed to update NIC Portfolio data: repository problem, ", ex);
+                return new NicPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update NIC Portfolio data: repository problem!", "");
+            }
 
+            List<NicPortfolioDto> nicPortfolioDtoList = this.converter.disassembleList(this.repository.findAllByOrderByDateAsc());
             return new NicPortfolioResultDto(nicPortfolioDtoList, ResponseStatusType.SUCCESS, "", "NIC Portfolio data has been updated successfully!", "");
         } catch (Exception ex) {
             logger.error("Failed to update NIC Portfolio data, ", ex);
+            return new NicPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update NIC Portfolio data!", "");
         }
-        return new NicPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update NIC Portfolio data!", "");
+    }
+
+    @Override
+    public NicPortfolio create(Row row) {
+        try {
+            return new NicPortfolio(
+                    row.getCell(0).getDateCellValue(),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(3)),
+
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(88)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(92)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(93)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(94)),
+
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(23)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(26)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(27)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(28)),
+
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(44)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(48)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(49)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(50)),
+
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(66)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(70)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(71)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(72)),
+
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(152)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(157)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(158)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(159)),
+
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(218)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(222)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(223)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(224)),
+
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(240)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(244)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(245)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(246)),
+
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(272)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(275)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(276)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(277)),
+
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(110)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(114)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(115)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(116))
+            );
+        } catch (Exception ex) {
+            logger.error("Failed to update NIC Portfolio data: row read error, ", ex);
+            throw ex;
+        }
     }
 }
