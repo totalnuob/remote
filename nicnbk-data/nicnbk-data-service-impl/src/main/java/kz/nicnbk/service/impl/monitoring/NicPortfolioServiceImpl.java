@@ -102,8 +102,10 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
             }
 
             try {
-                this.repository.deleteAll();
-                this.repository.save(portfolioList);
+                if(portfolioList.size() > 0) {
+                    this.repository.deleteAll();
+                    this.repository.save(portfolioList);
+                }
             } catch (Exception ex) {
                 logger.error("Failed to update NIC Portfolio data: repository problem, ", ex);
                 return new NicPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update NIC Portfolio data: repository problem!", "");
