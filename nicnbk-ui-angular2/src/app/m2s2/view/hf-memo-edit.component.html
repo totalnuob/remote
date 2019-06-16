@@ -5,7 +5,8 @@
                 <div class="col-md-12">
                     <ol class="breadcrumb">
                         <li>
-                            <span *ngIf="this.breadcrumbParams != null"><a [routerLink]="[this.searchParams.path, {params: this.breadcrumbParams }]">
+                            <span *ngIf="this.breadcrumbParams != null">
+                                <a [routerLink]="[this.searchParams.path, {params: this.breadcrumbParams }]">
                                 {{searchParams.path.indexOf('/hf/managerProfile') != -1 ? 'Manager Profile' : searchParams.path == '/m2s2' ? 'M2S2' : searchParams.path }}</a></span>
                             <span *ngIf="this.breadcrumbParams == null"><a [routerLink]="['/m2s2']">M2S2</a></span>
                         </li>

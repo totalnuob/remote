@@ -24,6 +24,12 @@ public class Files extends CreateUpdateBaseEntity  implements TypedEntity<FilesT
 
     private Boolean deleted;
 
+    public Files(){}
+
+    public Files(Long id){
+        setId(id);
+    }
+
 
     @Override
     @ManyToOne(fetch = FetchType.EAGER)

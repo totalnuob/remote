@@ -1,0 +1,506 @@
+<div class="container">
+    <div class="row withpadding" style="position: relative; min-height: 150px;">
+        <div [ngBusy]="busy">
+            <div class="row top-buffer" >
+                <div class="col-md-12">
+                    <ol class="breadcrumb">
+                        <li>
+                            <span *ngIf="this.breadcrumbParams != null"><a [routerLink]="['/hf/screening', {params: this.breadcrumbParams }]">HF Screenings</a></span>
+                            <span *ngIf="this.breadcrumbParams == null"><a [routerLink]="['/hf/screening']">HF Screenings</a></span>
+                        </li>
+                        <li class="active">Screening</li>
+                    </ol>
+                </div>
+            </div>
+            <!--<div class="row top-buffer" >-->
+                <!--<div class="col-md-12">-->
+                    <!--<div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span></div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <div class="row top-buffer" >
+                <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+                </div>
+                <div class="alert alert-info" *ngIf="!submitted && successMessage != null"><span>{{successMessage}}</span>
+                </div>
+            </div>
+
+            <div>
+                <form (ngSubmit)="save()" #screeningForm="ngForm" class="well span">
+                    <div class="row top-buffer">
+                        <div class="col-md-12">
+                            <div class="form-group form-horizontal">
+                                <label class="control-label col-md-2" for="name">Name:</label>
+                                <div class="col-md-10">
+                                    <input type="text" id="name" class="form-control" placeholder="Enter name..." maxlength="250" name="name" [(ngModel)]="screening.name"
+                                    required #name="ngModel"/>
+                                    <div [hidden]="name.valid || name.pristine" class="alert alert-danger">Name is required</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row top-buffer">
+                        <div class="col-md-12">
+                            <div class="form-group form-horizontal">
+                                <label class="control-label col-md-2" for="shortName">Short Name:</label>
+                                <div class="col-md-10">
+                                    <input type="text" id="shortName" class="form-control" placeholder="Short name..." maxlength="250" name="shortName" [(ngModel)]="screening.shortName"
+                                           required #shortName="ngModel"/>
+                                    <div [hidden]="shortName.valid || shortName.pristine" class="alert alert-danger">Short Name is required</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row top-buffer">
+                        <div class="col-md-12">
+                            <div class="form-group form-horizontal">
+                                <label class="control-label col-md-2" for="description">Description:</label>
+                                <div class="col-md-10">
+                                    <textarea fz-elastic type="text" id="description" class="form-control" maxlength="250" name="description" [(ngModel)]="screening.description"
+                                              #description="ngModel"></textarea>
+                                    <!--<div [hidden]="description.valid || description.pristine" class="alert alert-danger">Description is required</div>-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row top-buffer">
+                        <div class="col-md-12">
+                            <div class="form-group form-horizontal">
+                                <label class="control-label col-md-2" for="screeningDate">Date:</label>
+                                <div class="col-md-10">
+                                    <div class='input-group date col-md-3' id='screeningDateDiv'>
+                                        <input type='text' class="form-control" name="screeningDate" id="screeningDate" [(ngModel)]="screening.date" #screeningDate="ngModel"/>
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row top-buffer">
+                        <div class="col-md-4">
+                            <div class="form-group form-horizontal">
+                                <div class="row">
+                                    <label class="control-label">Author: {{screening.creator}}</label>
+                                </div>
+                                <div class="row" *ngIf="screening.updater != null || screening.updateDate != null">
+                                    <label class="control-label" >Last Update: {{screening.updater}} {{screening.updateDate != null ? 'on ' + screening.updateDate : ''}}</label>
+                                </div>
+                                <!--<div class="col-md-4">-->
+                                <!--&lt;!&ndash;<input type="text" placeholder="Your name... " class="form-control col-md-4" id="author"&ndash;&gt;-->
+                                <!--&lt;!&ndash;name="author" maxlength="250" name="author" [(ngModel)]="memo.author"/>&ndash;&gt;-->
+                                <!--<span>{{memo.owner}}</span>-->
+                                <!--</div>-->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row top-buffer">
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-success pull-right" [disabled]="!screeningForm.form.valid" *ngIf="canEdit()">Save</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="row withpadding" *ngIf="screening.id > 0">
+                <div class="col-md-12">
+                    <div class="col-md-6">
+                        <div class="jumbotron" style="padding-top: 5px; padding-bottom: 5px;">
+                            <div class="row">
+                                <label>DATA FILE</label>
+                            </div>
+
+                            <div class="row" *ngIf="canEdit()">
+                                <label class="btn btn-primary col-md-3" for="attachmentFile">
+                                    <input type="file" id="attachmentFile" (change)="onFileChange($event, 1)" name="file" style="display:none;" [disabled] = "screening?.fileId != null"/>Add</label>
+                                <div class="col-md-6">
+                                    <div class="row" *ngIf="uploadFile != null" style="display: table;">
+                                        <span  class="label label-info" >
+                                            {{uploadFile.name}}&nbsp;
+                                        </span>
+                                        <a (click)="deleteUnsavedDataFile(1)" *ngIf="canEdit()">
+                                            <i class="glyphicon glyphicon-trash"></i>
+                                        </a>
+                                        <button class="btn btn-xs btn-success" (click)="uploadDataFile()" >
+                                            <span class="glyphicon glyphicon-circle-arrow-right"></span>
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="row" *ngIf="screening?.fileId != null">
+                                <div>
+                                    <file-attachment-downloader fileId="{{screening?.fileId}}"
+                                                                fileName="{{screening?.fileName}}"
+                                                                fileType="HFSCRNDATA">
+                                    </file-attachment-downloader>
+
+                                    <a (click)="deleteAttachment(screening.fileId)" *ngIf="canEdit()">
+                                        <i class="glyphicon glyphicon-trash"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="jumbotron" style="padding-top: 5px; padding-bottom: 5px;">
+                            <div class="row">
+                                <label>Ucits FILE</label>
+                            </div>
+
+                            <div class="row" *ngIf="canEdit()">
+                                <label class="btn btn-primary col-md-3" for="attachmentUcitsFile">
+                                    <input type="file" id="attachmentUcitsFile" (change)="onFileChange($event, 2)" name="file" style="display:none;" [disabled] = "screening?.ucitsFileId != null"/>Add</label>
+                                <div class="col-md-6">
+                                    <div class="row" *ngIf="ucitsUploadFile != null" style="display: table;">
+                                        <span class="label label-info">
+                                            {{ucitsUploadFile.name}}&nbsp;
+                                        </span>
+                                        <a (click)="deleteUnsavedDataFile(2)" *ngIf="canEdit()">
+                                            <i class="glyphicon glyphicon-trash"></i>
+                                        </a>
+                                        <button class="btn btn-xs btn-success" (click)="uploadUcitsFile()">
+                                            <span class="glyphicon glyphicon-circle-arrow-right"></span>
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="row" *ngIf="screening?.ucitsFileId != null">
+                                <div>
+                                    <file-attachment-downloader fileId="{{screening?.ucitsFileId}}"
+                                                                fileName="{{screening?.ucitsFileName}}"
+                                                                fileType="HFSCRNUCTS">
+                                    </file-attachment-downloader>
+
+                                    <a (click)="deleteUcitsAttachment(screening.ucitsFileId)" *ngIf="canEdit()">
+                                        <i class="glyphicon glyphicon-trash"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <br/>
+            <br/>
+            <a *ngIf="screening?.fileId != null && screening.parsedData != null" class="btn btn-primary pull-right"
+               [routerLink]="['/hf/screening/filteredResults/', screeningId]">FILTERS</a>
+
+            <div *ngIf="screening?.fileId != null || screening?.ucitsFileId != null">
+                <ul class="nav nav-tabs">
+                    <li class="active">
+                        <a data-toggle="tab" href="#data">DATA</a>
+                    </li>
+                    <li>
+                        <a data-toggle="tab" href="#ucits">UCITS</a>
+                    </li>
+                </ul>
+                <br/>
+                <br/>
+
+                <div class="tab-content">
+                    <div id="data" class="tab-pane fade in active">
+                        <ul class="nav nav-tabs">
+                            <li class="active small">
+                                <a data-toggle="tab" href="#main">MAIN</a>
+                            </li>
+                            <li (click)="searchReturns()" class="small">
+                                <a data-toggle="tab" href="#returns">RETURNS</a>
+                            </li>
+                            <li (click)="searchAUMs()" class="small">
+                                <a data-toggle="tab" href="#aum">AUM</a>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content">
+                            <div id="main" class="tab-pane fade in active">
+                                <br/>
+                                <span> TOTAL: {{getTotalParsedDataRecords()}}</span>
+                                <br/>
+                                <br/>
+
+                                <div *ngIf="screening.parsedData != null">
+                                    <table [ngBusy]="busy" class="table table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Fund Id</th>
+                                            <th>Fund Name</th>
+                                            <th>Investment Manager</th>
+                                            <th>Main Strategy</th>
+                                        </tr>
+                                        </thead>
+
+                                        <tbody>
+                                        <tr *ngFor = "let data of screening.parsedData; let i=index" >
+                                            <td>{{i+1}}</td>
+                                            <td width="10%">{{data.fundId}}</td>
+                                            <td width="30%" >{{data.fundName}}</td>
+                                            <td width="30%" >{{data.investmentManager}}</td>
+                                            <td width="30%" >{{data.mainStrategy}}</td>
+                                            <!--<td width="5%">-->
+                                            <!--<a><i class="glyphicon glyphicon-file"></i></a>-->
+                                            <!--</td>-->
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div id="returns" class="tab-pane fade withpadding">
+                                <br/>
+                                <span> TOTAL: {{getTotalParsedReturnsDataRecords()}}</span>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <button class="btn btn-sm btn-primary" (click)="searchReturns(-12)"> < 12 months</button>
+                                <button class="btn btn-sm btn-primary" (click)="searchReturns(12)"> > 12 months</button>
+                                <span>&nbsp;</span>
+                                <button class="btn btn-sm btn-primary" (click)="searchReturns()"> >> END</button>
+
+                                <br/>
+                                <div *ngIf="parsedDataReturns != null">
+                                    <table [ngBusy]="busy" class="table table-hover" style="font-size: small">
+                                        <thead>
+                                        <tr>
+                                            <!--<th>&nbsp;</th>-->
+                                            <th>#</th>
+                                            <th>Fund Id</th>
+                                            <th>Fund Name</th>
+                                            <th>Returns currency</th>
+                                            <th>{{getReportDateShortFormatted(headerDatesReturns[0])}}</th>
+                                            <th>{{getReportDateShortFormatted(headerDatesReturns[1])}}</th>
+                                            <th>{{getReportDateShortFormatted(headerDatesReturns[2])}}</th>
+                                            <th>{{getReportDateShortFormatted(headerDatesReturns[3])}}</th>
+                                            <th>{{getReportDateShortFormatted(headerDatesReturns[4])}}</th>
+                                            <th>{{getReportDateShortFormatted(headerDatesReturns[5])}}</th>
+                                            <th>{{getReportDateShortFormatted(headerDatesReturns[6])}}</th>
+                                            <th>{{getReportDateShortFormatted(headerDatesReturns[7])}}</th>
+                                            <th>{{getReportDateShortFormatted(headerDatesReturns[8])}}</th>
+                                            <th>{{getReportDateShortFormatted(headerDatesReturns[9])}}</th>
+                                            <th>{{getReportDateShortFormatted(headerDatesReturns[10])}}</th>
+                                            <th>{{getReportDateShortFormatted(headerDatesReturns[11])}}</th>
+                                        </tr>
+                                        </thead>
+
+                                        <tbody>
+                                        <tr *ngFor = "let data of parsedDataReturns; let i=index" >
+                                            <!--<td width="5%"></td>-->
+                                            <td>{{i+1}}</td>
+                                            <td>{{data.fundId}}</td>
+                                            <td>{{data.fundName}}</td>
+                                            <td>{{data.returnsCurrency}}</td>
+                                            <td>{{data.values != null && data.values[0] != null ? (data.values[0] | percent:'1.2-4': '') : ''}}</td>
+                                            <td>{{data.values != null && data.values[1] != null ? (data.values[1] | percent:'1.2-4': '') : ''}}</td>
+                                            <td>{{data.values != null && data.values[2] != null ? (data.values[2] | percent:'1.2-4': '') : ''}}</td>
+                                            <td>{{data.values != null && data.values[3] != null ? (data.values[3] | percent:'1.2-4': '') : ''}}</td>
+                                            <td>{{data.values != null && data.values[4] != null ? (data.values[4] | percent:'1.2-4': '') : ''}}</td>
+                                            <td>{{data.values != null && data.values[5] != null ? (data.values[5] | percent:'1.2-4': '') : ''}}</td>
+                                            <td>{{data.values != null && data.values[6] != null ? (data.values[6] | percent:'1.2-4': '') : ''}}</td>
+                                            <td>{{data.values != null && data.values[7] != null ? (data.values[7] | percent:'1.2-4': '') : ''}}</td>
+                                            <td>{{data.values != null && data.values[8] != null ? (data.values[8] | percent:'1.2-4': '') : ''}}</td>
+                                            <td>{{data.values != null && data.values[9] != null ? (data.values[9] | percent:'1.2-4': '') : ''}}</td>
+                                            <td>{{data.values != null && data.values[10] != null ? (data.values[10] | percent:'1.2-4': '') : ''}}</td>
+                                            <td>{{data.values != null && data.values[11] != null ? (data.values[11] | percent:'1.2-4': '') : ''}}</td>
+                                            <!--<td width="5%">-->
+                                            <!--<a><i class="glyphicon glyphicon-file"></i></a>-->
+                                            <!--</td>-->
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div id="aum" class="tab-pane fade">
+                                <br/>
+                                <span> TOTAL: {{getTotalParsedAUMDataRecords()}}</span>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <button class="btn btn-sm btn-primary" (click)="searchAUMs(-12)"> < 12 months</button>
+                                <button class="btn btn-sm btn-primary" (click)="searchAUMs(12)"> > 12 months</button>
+                                <span>&nbsp;</span>
+                                <button class="btn btn-sm btn-primary" (click)="searchAUMs()"> >> END</button>
+
+                                <br/>
+                                <br/>
+                                <div *ngIf="parsedDataAUM != null">
+                                    <table [ngBusy]="busy" class="table table-hover" style="font-size: small">
+                                        <thead>
+                                        <tr>
+                                            <!--<th>&nbsp;</th>-->
+                                            <th>#</th>
+                                            <th>Fund Id</th>
+                                            <th>Fund Name</th>
+                                            <th>Returns currency</th>
+                                            <th>{{getReportDateShortFormatted(headerDatesAUM[0])}}</th>
+                                            <th>{{getReportDateShortFormatted(headerDatesAUM[1])}}</th>
+                                            <th>{{getReportDateShortFormatted(headerDatesAUM[2])}}</th>
+                                            <th>{{getReportDateShortFormatted(headerDatesAUM[3])}}</th>
+                                            <th>{{getReportDateShortFormatted(headerDatesAUM[4])}}</th>
+                                            <th>{{getReportDateShortFormatted(headerDatesAUM[5])}}</th>
+                                            <th>{{getReportDateShortFormatted(headerDatesAUM[6])}}</th>
+                                            <th>{{getReportDateShortFormatted(headerDatesAUM[7])}}</th>
+                                            <th>{{getReportDateShortFormatted(headerDatesAUM[8])}}</th>
+                                            <th>{{getReportDateShortFormatted(headerDatesAUM[9])}}</th>
+                                            <th>{{getReportDateShortFormatted(headerDatesAUM[10])}}</th>
+                                            <th>{{getReportDateShortFormatted(headerDatesAUM[11])}}</th>
+                                        </tr>
+                                        </thead>
+
+                                        <tbody>
+                                        <tr *ngFor = "let data of parsedDataAUM; let i=index" >
+                                            <!--<td width="5%"></td>-->
+                                            <td>{{i+1}}</td>
+                                            <td>{{data.fundId}}</td>
+                                            <td width="15%">{{data.fundName}}</td>
+                                            <td>{{data.returnsCurrency}}</td>
+                                            <!--<td>{{data.values != null && data.values[0] != null ? (data.values[0] | number :'1.0': '') : ''}}</td>-->
+                                            <td>{{data.values != null && data.values[0] != null ? getAmountShort(data.values[0]) : ''}}</td>
+                                            <td>{{data.values != null && data.values[1] != null ? getAmountShort(data.values[1]) : ''}}</td>
+                                            <td>{{data.values != null && data.values[2] != null ? getAmountShort(data.values[2]) : ''}}</td>
+                                            <td>{{data.values != null && data.values[3] != null ? getAmountShort(data.values[3]) : ''}}</td>
+                                            <td>{{data.values != null && data.values[4] != null ? getAmountShort(data.values[4]) : ''}}</td>
+                                            <td>{{data.values != null && data.values[5] != null ? getAmountShort(data.values[5]) : ''}}</td>
+                                            <td>{{data.values != null && data.values[6] != null ? getAmountShort(data.values[6]) : ''}}</td>
+                                            <td>{{data.values != null && data.values[7] != null ? getAmountShort(data.values[7]) : ''}}</td>
+                                            <td>{{data.values != null && data.values[8] != null ? getAmountShort(data.values[8]) : ''}}</td>
+                                            <td>{{data.values != null && data.values[9] != null ? getAmountShort(data.values[9]) : ''}}</td>
+                                            <td>{{data.values != null && data.values[10] != null ? getAmountShort(data.values[10]) : ''}}</td>
+                                            <td>{{data.values != null && data.values[11] != null ? getAmountShort(data.values[11]) : ''}}</td>
+                                            <!--<td width="5%">-->
+                                            <!--<a><i class="glyphicon glyphicon-file"></i></a>-->
+                                            <!--</td>-->
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="ucits" class="tab-pane fade">
+                        <ul class="nav nav-tabs">
+                            <li class="active small">
+                                <a data-toggle="tab" href="#ucits_main">MAIN</a>
+                            </li>
+                            <li (click)="searchUcitsAUMs()" class="small">
+                                <a data-toggle="tab" href="#ucits_aum">AUM</a>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content">
+                            <div id="ucits_main" class="tab-pane fade in active">
+                                <br/>
+                                <span> TOTAL: {{screening.parsedUcitsData != null ? screening.parsedUcitsData.length: 0}}</span>
+                                <br/>
+                                <br/>
+
+                                <div *ngIf="screening.parsedUcitsData != null">
+                                    <table [ngBusy]="busy" class="table table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Fund Id</th>
+                                            <th>Fund Name</th>
+                                            <th>Investment Manager</th>
+                                            <th>Main Strategy</th>
+                                        </tr>
+                                        </thead>
+
+                                        <tbody>
+                                        <tr *ngFor = "let data of screening.parsedUcitsData; let i=index" >
+                                            <td>{{i+1}}</td>
+                                            <td width="10%">{{data.fundId}}</td>
+                                            <td width="30%" >{{data.fundName}}</td>
+                                            <td width="30%" >{{data.investmentManager}}</td>
+                                            <td width="30%" >{{data.mainStrategy}}</td>
+                                            <!--<td width="5%">-->
+                                            <!--<a><i class="glyphicon glyphicon-file"></i></a>-->
+                                            <!--</td>-->
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div id="ucits_aum" class="tab-pane fade">
+                                <br/>
+                                <span> TOTAL: {{parsedDataUcitsAUM != null ? parsedDataUcitsAUM.length: 0}}</span>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <button class="btn btn-sm btn-primary" (click)="searchUcitsAUMs(-12)"> < 12 months</button>
+                                <button class="btn btn-sm btn-primary" (click)="searchUcitsAUMs(12)"> > 12 months</button>
+                                <span>&nbsp;</span>
+                                <button class="btn btn-sm btn-primary" (click)="searchUcitsAUMs()"> >> END</button>
+
+                                <br/>
+                                <br/>
+                                <div *ngIf="parsedDataUcitsAUM != null">
+                                    <table [ngBusy]="busy" class="table table-hover" style="font-size: small">
+                                        <thead>
+                                        <tr>
+                                            <!--<th>&nbsp;</th>-->
+                                            <th>#</th>
+                                            <th>Fund Id</th>
+                                            <th>Fund Name</th>
+                                            <th>Returns currency</th>
+                                            <th>{{getReportDateShortFormatted(headerDatesUcitsAUM[0])}}</th>
+                                            <th>{{getReportDateShortFormatted(headerDatesUcitsAUM[1])}}</th>
+                                            <th>{{getReportDateShortFormatted(headerDatesUcitsAUM[2])}}</th>
+                                            <th>{{getReportDateShortFormatted(headerDatesUcitsAUM[3])}}</th>
+                                            <th>{{getReportDateShortFormatted(headerDatesUcitsAUM[4])}}</th>
+                                            <th>{{getReportDateShortFormatted(headerDatesUcitsAUM[5])}}</th>
+                                            <th>{{getReportDateShortFormatted(headerDatesUcitsAUM[6])}}</th>
+                                            <th>{{getReportDateShortFormatted(headerDatesUcitsAUM[7])}}</th>
+                                            <th>{{getReportDateShortFormatted(headerDatesUcitsAUM[8])}}</th>
+                                            <th>{{getReportDateShortFormatted(headerDatesUcitsAUM[9])}}</th>
+                                            <th>{{getReportDateShortFormatted(headerDatesUcitsAUM[10])}}</th>
+                                            <th>{{getReportDateShortFormatted(headerDatesUcitsAUM[11])}}</th>
+                                        </tr>
+                                        </thead>
+
+                                        <tbody>
+                                        <tr *ngFor = "let data of parsedDataUcitsAUM; let i=index" >
+                                            <!--<td width="5%"></td>-->
+                                            <td>{{i+1}}</td>
+                                            <td>{{data.fundId}}</td>
+                                            <td width="15%">{{data.fundName}}</td>
+                                            <td>{{data.returnsCurrency}}</td>
+                                            <!--<td>{{data.values != null && data.values[0] != null ? (data.values[0] | number :'1.0': '') : ''}}</td>-->
+                                            <td>{{data.values != null && data.values[0] != null ? getAmountShort(data.values[0]) : ''}}</td>
+                                            <td>{{data.values != null && data.values[1] != null ? getAmountShort(data.values[1]) : ''}}</td>
+                                            <td>{{data.values != null && data.values[2] != null ? getAmountShort(data.values[2]) : ''}}</td>
+                                            <td>{{data.values != null && data.values[3] != null ? getAmountShort(data.values[3]) : ''}}</td>
+                                            <td>{{data.values != null && data.values[4] != null ? getAmountShort(data.values[4]) : ''}}</td>
+                                            <td>{{data.values != null && data.values[5] != null ? getAmountShort(data.values[5]) : ''}}</td>
+                                            <td>{{data.values != null && data.values[6] != null ? getAmountShort(data.values[6]) : ''}}</td>
+                                            <td>{{data.values != null && data.values[7] != null ? getAmountShort(data.values[7]) : ''}}</td>
+                                            <td>{{data.values != null && data.values[8] != null ? getAmountShort(data.values[8]) : ''}}</td>
+                                            <td>{{data.values != null && data.values[9] != null ? getAmountShort(data.values[9]) : ''}}</td>
+                                            <td>{{data.values != null && data.values[10] != null ? getAmountShort(data.values[10]) : ''}}</td>
+                                            <td>{{data.values != null && data.values[11] != null ? getAmountShort(data.values[11]) : ''}}</td>
+                                            <!--<td width="5%">-->
+                                            <!--<a><i class="glyphicon glyphicon-file"></i></a>-->
+                                            <!--</td>-->
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <br>
+    <br>
+    <br>
+</div>

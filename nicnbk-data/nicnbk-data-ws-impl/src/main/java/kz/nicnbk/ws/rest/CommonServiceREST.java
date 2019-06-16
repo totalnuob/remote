@@ -118,6 +118,19 @@ public abstract class CommonServiceREST {
         return new ResponseEntity<>(entitySaveResponseDto, null, httpStatus);
     }
 
+    public ResponseEntity<EntitySaveResponseDto> buildEntitySaveResponse(Long entityId){
+
+        EntitySaveResponseDto responseDto = new EntitySaveResponseDto();
+        HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+        responseDto.setStatus(ResponseStatusType.FAIL);
+        if(entityId != null && entityId > 0) {
+            httpStatus = HttpStatus.OK;
+            responseDto.setStatus(ResponseStatusType.SUCCESS);
+            responseDto.setEntityId(entityId);
+        }
+        return new ResponseEntity<>(responseDto, null, httpStatus);
+    }
+
     public ResponseEntity<EntityListSaveResponseDto> buildEntityListSaveResponse(EntityListSaveResponseDto entityListSaveResponseDto){
         if(entityListSaveResponseDto == null || entityListSaveResponseDto.getStatus() == null){
             return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);

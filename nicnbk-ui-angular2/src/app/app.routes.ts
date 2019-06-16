@@ -91,6 +91,15 @@ import {CurrencyRatesLookupValuesNBReportingComponent} from "./reporting/currenc
 import {TypedLookupValuesNBReportingComponent} from "./reporting/typed.lookup.values.nb.reporting.component";
 import {PeriodicDataNBReportingComponent} from "./reporting/periodic.data.nb.reporting.component";
 import {MatchingLookupValuesNBReportingComponent} from "./reporting/matching.lookup.values.nb.reporting.component";
+import {HFScreeningEditComponent} from "./hf/hf-screening-edit.component";
+import {HFScreeningListComponent} from "./hf/hf.screening.list.component";
+import {HFScreeningFilteredResultsComponent} from "./hf/hf.screening.filters.component";
+import {HFScreeningFilteredResultsEditComponent} from "./hf/hf.screening.filters.edit.component";
+import {LookupValuesComponent} from "./lookup/lookup.values.component";
+import {CurrencyRatesLookupValuesComponent} from "./lookup/currency.rates.lookup.values.component";
+import {HFScoringListComponent} from "./hf/hf.scoring.list.component";
+import {HFScoringEditComponent} from "./hf/hf-scoring-edit.component";
+import {BenchmarkLookupValuesComponent} from "./lookup/benchmark.lookup.values.component";
 import {ICMeetingTopicEditComponent} from "./corpmeetings/ic-meeting-topic-edit.component";
 import {HFResearchPageComponent} from "./hf/hf.research-page.component";
 import {MonitoringHFListComponent} from "./monitoring/monitoring-hedge-funds-list.component";
@@ -304,6 +313,36 @@ const routes: Routes  = [
     {
         path: 'hf/managerProfile/:id',
         component: HFManagerProfileComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'hf/screening',
+        component: HFScreeningListComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'hf/screening/edit/:id',
+        component: HFScreeningEditComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'hf/screening/filteredResults/:id',
+        component: HFScreeningFilteredResultsComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'hf/screening/filteredResults/edit/:screeningId/:id',
+        component: HFScreeningFilteredResultsEditComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'hf/scoring',
+        component: HFScoringListComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'hf/scoring/edit/:id',
+        component: HFScoringEditComponent,
         canActivate: [AuthGuard]
     },
     /* Private Equity ************************************/
@@ -576,6 +615,24 @@ const routes: Routes  = [
         component: CorpMeetingEditComponent,
         canActivate: [AuthGuard]
     },
+
+    /* Lookup values ******************************************/
+    {
+        path: 'lookups',
+        component: LookupValuesComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'lookups/currency',
+        component: CurrencyRatesLookupValuesComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'lookups/benchmarks',
+        component: BenchmarkLookupValuesComponent,
+        canActivate: [AuthGuard]
+    },
+
 
     /* Page not found. ERROR 404 *********************/
     {

@@ -10,7 +10,9 @@ import kz.nicnbk.service.api.common.CurrencyRatesService;
 import kz.nicnbk.service.api.reporting.PeriodicReportService;
 import kz.nicnbk.service.converter.currency.CurrencyRatesEntityConverter;
 import kz.nicnbk.service.datamanager.LookupService;
+import kz.nicnbk.service.dto.common.EntityListSaveResponseDto;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
+import kz.nicnbk.service.dto.common.ResponseStatusType;
 import kz.nicnbk.service.dto.lookup.CurrencyRatesDto;
 import kz.nicnbk.service.dto.lookup.CurrencyRatesPagedSearchResult;
 import kz.nicnbk.service.dto.lookup.CurrencyRatesSearchParams;
@@ -62,7 +64,31 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
             dto.setDate(entity.getDate());
             dto.setValue(entity.getValue());
             dto.setAverageValue(entity.getAverageValue());
+            dto.setValueUSD(entity.getValueUSD());
             return dto;
+        }
+        return null;
+    }
+
+    @Override
+    public CurrencyRatesDto getLstRateForMonthDateAndCurrencyBackwards(Date date, String currencyCode){
+        Date dateFormatted = DateUtils.getDateOnly(date);
+        boolean sameMonth = true;
+        while(sameMonth) {
+            CurrencyRates entity = this.currencyRatesRepository.getRateForDateAndCurrency(dateFormatted, currencyCode);
+            if (entity != null) {
+                CurrencyRatesDto dto = new CurrencyRatesDto();
+                dto.setDate(entity.getDate());
+                dto.setValue(entity.getValue());
+                dto.setAverageValue(entity.getAverageValue());
+                dto.setValueUSD(entity.getValueUSD());
+                return dto;
+            }else{
+
+                Date newDateFormatted = DateUtils.getDateOnly(DateUtils.moveDateByDays(dateFormatted, -1));
+                sameMonth = DateUtils.getMonth(dateFormatted) == DateUtils.getMonth(newDateFormatted);
+                dateFormatted = newDateFormatted;
+            }
         }
         return null;
     }
@@ -94,7 +120,7 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
 
         CurrencyRatesPagedSearchResult result = new CurrencyRatesPagedSearchResult();
         int page = searchParams != null && searchParams.getPage() > 0 ? searchParams.getPage() - 1 : 0;
-        Page<CurrencyRates> entityPage = this.currencyRatesRepository.search(searchParams.getFromDate(), searchParams.getToDate(),
+        Page<CurrencyRates> entityPage = this.currencyRatesRepository.search(searchParams.getCurrencyCode(), searchParams.getFromDate(), searchParams.getToDate(),
                 new PageRequest(page, searchParams.getPageSize(),
                 new Sort(Sort.Direction.DESC, "date", "id")));
         if(entityPage != null && entityPage.getContent() != null){
@@ -213,7 +239,7 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
                     }
                 }
 
-                if(dto.getValue() <= 0){
+                if((dto.getValue() != null && dto.getValue() <= 0) || (dto.getValueUSD() != null && dto.getValueUSD() <= 0)){
                     String errorMessage = "Currency rate save failed: value must be positive";
                     logger.error(errorMessage);
                     saveResponse.setErrorMessageEn(errorMessage);
@@ -267,6 +293,23 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
     }
 
     @Override
+    public EntityListSaveResponseDto save(List<CurrencyRatesDto> dtoList, String username) {
+        EntityListSaveResponseDto saveListResponse = new EntityListSaveResponseDto();
+        for(CurrencyRatesDto dto: dtoList){
+            EntitySaveResponseDto saveResponseDto = save(dto, username);
+            if(saveResponseDto.getStatus() != null && saveResponseDto.getStatus().getCode().equalsIgnoreCase(ResponseStatusType.FAIL.getCode())){
+                // Error
+                saveListResponse.setErrorMessageEn(saveResponseDto.getMessage().getNameEn());
+                saveListResponse.setStatus(ResponseStatusType.FAIL);
+
+                return saveListResponse;
+            }
+        }
+        saveListResponse.setSuccessMessageEn("Successfully saved currency rate list");
+        return saveListResponse;
+    }
+
+    @Override
     public boolean delete(Long id, String username) {
         try {
             CurrencyRates currencyRate = this.currencyRatesRepository.findOne(id);
@@ -294,6 +337,9 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
                     return false;
                 }
 
+                // TODO: check with screening and scoring
+                //
+
                 this.currencyRatesRepository.delete(id);
                 logger.info("Successfully deleted currency rate: id=" +id + ", date=" +
                         DateUtils.getDateFormatted(currencyRate.getDate()) + "[user=" + username + "]");
@@ -308,6 +354,15 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
             logger.error("Error deleting currency rate record: id " + id, ex);
             return false;
         }
+    }
+
+    @Override
+    public Double getUSDValueRateForDateAndCurrency(Date date, String currencyCode) {
+        CurrencyRatesDto currencyRatesDto = getRateForDateAndCurrency(date, currencyCode);
+        if(currencyRatesDto != null && currencyRatesDto.getValueUSD() != null){
+            return currencyRatesDto.getValueUSD();
+        }
+        return null;
     }
 
 }

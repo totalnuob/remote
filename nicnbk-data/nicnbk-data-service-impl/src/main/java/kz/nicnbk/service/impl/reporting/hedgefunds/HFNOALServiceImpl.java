@@ -1,5 +1,6 @@
 package kz.nicnbk.service.impl.reporting.hedgefunds;
 
+import kz.nicnbk.common.service.exception.ExcelFileParseException;
 import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.api.reporting.hedgefunds.ReportingHFNOALRepository;
 import kz.nicnbk.repo.model.common.Currency;
@@ -10,10 +11,7 @@ import kz.nicnbk.service.api.reporting.hedgefunds.HFNOALService;
 import kz.nicnbk.service.converter.reporting.PeriodicReportConverter;
 import kz.nicnbk.service.datamanager.LookupService;
 import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordHolderDto;
-import kz.nicnbk.service.dto.reporting.ReportingFundRenameInfoDto;
-import kz.nicnbk.service.dto.reporting.ReportingFundRenamePairDto;
 import kz.nicnbk.service.dto.reporting.SingularityNOALRecordDto;
-import kz.nicnbk.service.dto.reporting.exception.ExcelFileParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

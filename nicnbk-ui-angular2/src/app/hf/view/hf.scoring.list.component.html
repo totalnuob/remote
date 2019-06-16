@@ -1,0 +1,134 @@
+<div class="container">
+
+    <div class="row">
+        <div class="row top-buffer" >
+            <div class="col-md-12">
+                <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
+                </div>
+            </div>
+        </div>
+        <div class="row top-buffer" >
+            <div class="col-md-12">
+                <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row withpadding">
+        <a [routerLink]="['/hf/scoring/edit/',0 ]" class="btn btn-primary pull-right">NEW</a>
+    </div>
+    <br/>
+
+    <div class="jumbotron">
+        <br/>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="searchText">Search text</label>
+                        <input type="text" class="form-control" id="searchText" [(ngModel)]="searchParams.searchText" name="searchText"
+                        placeholder="Enter keywords to search..."
+                        />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label for="fromDateDTPickeer">From</label>
+                    <div class='input-group date col-md-3' id='fromDateDTPickeer' style="width: 100%">
+                        <input type='text' class="form-control" id="dateFrom" [(ngModel)]="searchParams.dateFrom"/>
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label for="untilDateDTPickeer">To</label>
+                    <div class='input-group date col-md-3' id='untilDateDTPickeer' style="width: 100%">
+                        <input type='text' class="form-control" id="dateTo" [(ngModel)]="searchParams.dateTo"/>
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <button type="button" (click)="clearSearchForm()" class="btn btn-xs btn-default pull-left">Clear</button>
+                <button type="button" (click)="search()" class="btn btn-success pull-right">Search</button>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <label>Total found: <span>{{searchResult?.totalElements > 0 ?  searchResult?.totalElements : 0}}</span></label>
+    </div>
+    <div class="row withpadding" style="position: relative; min-height: 80px;">
+        <div class="row pull-right">
+            <ul class="pagination" *ngIf="searchResult?.showPageFrom > 0">
+                <li><a *ngIf="searchResult?.showPageFrom > 1" (click)="search(searchResult.showPageFrom - 1)">&laquo;</a></li>
+                <li *ngFor="let i of range(searchResult.showPageFrom, searchResult.showPageTo)" [class.active]="i == searchResult.currentPage">
+                    <a (click)="search(i)">{{i}}</a>
+                </li>
+                <li><a *ngIf="searchResult.showPageTo < searchResult.totalPages" (click)="search(searchResult.showPageTo + 1)">&raquo;</a></li>
+            </ul>
+        </div>
+        <table [ngBusy]="busy" class="table table-hover table-bordered">
+            <thead>
+            <tr>
+                <!--<th>&nbsp;</th>-->
+                <th colspan="2" style="text-align: center">SCREENING</th>
+                <th colspan="5" style="text-align: center">FILTERS</th>
+                <th colspan="4" style="text-align: center">SCORING</th>
+            </tr>
+            <tr>
+                <!--<th>&nbsp;</th>-->
+                <td>Name</td>
+                <td>Date</td>
+                <td>Fund AUM</td>
+                <td>Manager AUM</td>
+                <td>Track record</td>
+                <td>Lookback return</td>
+                <td>Lookback AUM</td>
+                <td>Scoring date</td>
+                <td>Created by</td>
+                <td>Updated</td>
+                <td>Updated by</td>
+            </tr>
+            </thead>
+
+            <tbody>
+
+            <tr *ngFor = "let scoring of scorings" style="cursor: pointer">
+                <!--<td width="5%"></td>-->
+                <td width="25%" (click)="navigate(scoring.id)">{{scoring.filteredResult.screening.name}}</td>
+                <td width="10%" (click)="navigate(scoring.id)">{{scoring.filteredResult.screening.date}}</td>
+                <td width="5%" (click)="navigate(scoring.id)">{{scoring.filteredResult.fundAUM}}</td>
+                <td width="5%" (click)="navigate(scoring.id)">{{scoring.filteredResult.managerAUM}}</td>
+                <td width="5%" (click)="navigate(scoring.id)">{{scoring.filteredResult.trackRecord}}</td>
+                <td width="5%" (click)="navigate(scoring.id)">{{scoring.filteredResult.lookbackReturns}}</td>
+                <td width="5%" (click)="navigate(scoring.id)">{{scoring.filteredResult.lookbackAUM}}</td>
+                <td width="10%"(click)="navigate(scoring.id)">{{scoring.date}}</td>
+                <td width="10%" (click)="navigate(scoring.id)">{{scoring.creator}}</td>
+                <td width="10%" (click)="navigate(scoring.id)">{{scoring.updateDate}}</td>
+                <td width="10%" (click)="navigate(scoring.id)">{{scoring.updater}}</td>
+                <!--<td width="5%">-->
+                    <!--<a><i class="glyphicon glyphicon-file"></i></a>-->
+                <!--</td>-->
+            </tr>
+            </tbody>
+        </table>
+
+        <!--</div>-->
+        <div class="row pull-right">
+            <ul class="pagination" *ngIf="searchResult?.showPageFrom > 0">
+                <li><a *ngIf="searchResult?.showPageFrom > 1" (click)="search(searchResult.showPageFrom - 1)">&laquo;</a></li>
+                <li *ngFor="let i of range(searchResult.showPageFrom, searchResult.showPageTo)" [class.active]="i == searchResult.currentPage">
+                    <a (click)="search(i)">{{i}}</a>
+                </li>
+                <li><a *ngIf="searchResult.showPageTo < searchResult.totalPages" (click)="search(searchResult.showPageTo + 1)">&raquo;</a></li>
+            </ul>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,146 @@
+<div class="container">
+    <div class="row withpadding" style="position: relative; min-height: 150px;">
+        <div [ngBusy]="busy">
+            <div class="row top-buffer" >
+                <div class="col-md-12">
+                    <ol class="breadcrumb">
+                        <li>
+                            <span *ngIf="this.breadcrumbParams != null"><a [routerLink]="['/hf/scoring', {params: this.breadcrumbParams }]">HF Scoring</a></span>
+                            <span *ngIf="this.breadcrumbParams == null"><a [routerLink]="['/hf/scoring']">HF Scoring</a></span>
+                        </li>
+                        <li class="active">Scoring</li>
+                    </ol>
+                </div>
+            </div>
+            <!--<div class="row top-buffer" >-->
+                <!--<div class="col-md-12">-->
+                    <!--<div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span></div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <div class="row top-buffer" >
+                <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+                </div>
+                <div class="alert alert-info" *ngIf="!submitted && successMessage != null"><span>{{successMessage}}</span>
+                </div>
+            </div>
+
+            <div style="min-height: 500px">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-3">
+                            <label for="screeningSelect">Screening</label>
+                            <select class="form-control" id="screeningSelect" [(ngModel)]="selectedScreeningId" (change)="selectScreening($event.target.value)">
+                                <option *ngFor="let screening of screenings" value="{{screening.id}}">{{screening.name}}</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="filtersSelect">Filters</label>
+                            <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right"
+                                  title="fund AUM - manager AUM - track record - lookback AUM - lookback return">
+                            </span>
+
+                            <select class="form-control" id="filtersSelect" [(ngModel)]="selectedFilterId" (change)="selectFilter($event.target.value)">
+                                <option *ngFor="let filter of filters" value="{{filter.id}}">
+                                    {{getFilterShort(filter)}}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="filtersSelect">Lookback AUM</label>
+                            <select class="form-control" id="lookbackAUM" [(ngModel)]="selectedLookbackAUM">
+                                <option *ngFor="let lookback of lookbackAUMList" value="{{lookback}}">
+                                    {{lookback}}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="filtersSelect">Lookback Return</label>
+                            <select class="form-control" id="lookbackReturn" [(ngModel)]="selectedLookbackReturn">
+                                <option *ngFor="let lookback of lookbackReturnList" value="{{lookback}}">
+                                    {{lookback}}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label>&nbsp;</label>
+                            <button type="button" class="btn btn-primary" *ngIf="canEdit()" (click)="loadFunds()">Score</button>
+                        </div>
+                    </div>
+                </div>
+                <br/>
+                <!--<div class="row">-->
+                    <!--<div class="col-md-2">-->
+                        <!--<label class="control-label" for="scoringDate">Scoring Date:</label>-->
+                        <!--<div class='input-group date' id='scoringDateDiv'>-->
+                            <!--<input type='text' class="form-control" name="scoringDate" id="scoringDate" [(ngModel)]="scoring.date" #scoringDate="ngModel"/>-->
+                            <!--<span class="input-group-addon">-->
+                                <!--<span class="glyphicon glyphicon-calendar"></span>-->
+                            <!--</span>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+
+                <div class="row withpadding">
+                    <div *ngIf="qualifiedFunds != null">
+                        <br/>
+                        <table class="table table-hover small">
+                            <thead>
+                            <tr>
+                                <!--<th>&nbsp;</th>-->
+                                <th>#</th>
+                                <th>FUND ID</th>
+                                <th>FUND NAME</th>
+                                <th>INVESTMENT MANAGER</th>
+                                <th>MAIN STRATEGY</th>
+                                <th>FUND AUM</th>
+                                <th>ANN ROR</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+
+                            <tr *ngFor = "let fund of qualifiedFunds; let i=index" id="{{fund.fundId}}" [style.background-color]="fund.added ? '#dcd196' : 'white'">
+                                <td>{{i + 1}}</td>
+                                <td>{{fund.fundId}}</td>
+                                <td>{{fund.fundName}}</td>
+                                <td>{{fund.investmentManager}}</td>
+                                <td>{{fund.mainStrategy}}</td>
+                                <td>{{fund.fundAUM}}</td>
+                                <td>{{fund.annualizedReturn}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <br/>
+
+                <div class="row top-buffer">
+                    <div class="col-md-12">
+                        <div class="col-md-8">
+                            &nbsp;
+                        </div>
+                        <div class="col-md-2">
+                            <label class="control-label" for="scoringDate">Scoring Date:</label>
+                            <div class='input-group date' id='scoringDateDiv'>
+                                <input type='text' class="form-control" name="scoringDate" id="scoringDate" [(ngModel)]="scoring.date" #scoringDate="ngModel"/>
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="control-label">&nbsp;</label>
+                            <button type="button" class="btn btn-success" *ngIf="canEdit()" (click)="save()">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <br>
+    <br>
+    <br>
+</div>

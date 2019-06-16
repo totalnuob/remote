@@ -55,6 +55,9 @@ export class LoginComponent implements OnInit{
                     localStorage.setItem("authenticatedUser", this.user.username);
                     localStorage.setItem("authenticatedUserRoles", JSON.stringify(response.roles));
 
+
+                    console.log(this.url);
+
                     location.reload();
                 },
                 error =>  {

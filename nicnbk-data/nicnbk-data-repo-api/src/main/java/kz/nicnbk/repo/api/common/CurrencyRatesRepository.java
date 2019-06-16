@@ -37,4 +37,10 @@ public interface CurrencyRatesRepository extends PagingAndSortingRepository<Curr
             " (e.date >= ?1 AND e.date <= ?2)" +
             " ORDER BY e.date DESC")
     Page<CurrencyRates> search(@Temporal(TemporalType.DATE) Date dateFrom,@Temporal(TemporalType.DATE) Date dateTo,Pageable pageable);
+
+    @Query("select e from CurrencyRates e where " +
+            " (?1 is null OR e.currency.code = ?1) AND (e.date >= ?2 AND e.date <= ?3)" +
+            " ORDER BY e.date DESC")
+    Page<CurrencyRates> search(@Param("currencyCode") String currencyCode, @Param("dateFrom") @Temporal(TemporalType.DATE) Date dateFrom,
+                               @Param("dateTo") @Temporal(TemporalType.DATE) Date dateTo,Pageable pageable);
 }

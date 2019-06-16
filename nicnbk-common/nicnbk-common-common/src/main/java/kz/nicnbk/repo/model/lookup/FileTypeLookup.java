@@ -32,7 +32,9 @@ public enum FileTypeLookup {
     CC_ATTACHMENT("CC_ATTACH", "reporting/cc_attachments"),
 
     IC_MATERIALS("IC_MATRL", "ic_meeting"),
-    IC_PROTOCOL("IC_PRTCL", "ic_meeting");
+    IC_PROTOCOL("IC_PRTCL", "ic_meeting"),
+    HF_SCREENING_DATA_FILE("HFSCRNDATA", "hf_screening"),
+    HF_SCREENING_UCITS_FILE("HFSCRNUCTS", "hf_screening");
 
     private String code;
     private String catalog;

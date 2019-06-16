@@ -87,6 +87,123 @@
         <!--&lt;!&ndash;</div>&ndash;&gt;-->
         <!--<div class="row">-->
             <!--<div class="col-md-3 pull-right">-->
+                <!--<div>Hello, {{getUsername()}}</div>-->
+            <!--</div>-->
+        <!--</div>-->
+        <div class="row">
+            <div class="col-md-3 pull-right">
+                <div id="custom-search-input">
+                    <div class="input-group col-md-12">
+                        <input type="text" class="form-control" placeholder="search..." />
+                        <span class="input-group-btn">
+                            <button class="btn btn-info" type="button">
+                                <i class="glyphicon glyphicon-search"></i>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr/>
+    </div>
+</div>
+<div class="container" *ngIf="showMenu()">
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <ul class="nav navbar-nav">
+                <li [routerLinkActive]="['active']">
+                    <a data-toggle="tooltip" [routerLink]="['/news']" >
+                        <span class="glyphicon glyphicon-home"></span>
+                    </a>
+                </li>
+                <li [routerLinkActive]="['active']"  class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        Monitoring <span class="bootstrapCaret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a [routerLink]="['/monitoring/portfolio']" data-toggle="tooltip" title="Monitoring NIC Portfolio">NIC Portfolio</a></li>
+                        <li><a [routerLink]="['/monitoring/liq']" data-toggle="tooltip" title="Monitoring Liquid Portfolio">Liquid Portfolio</a></li>
+                        <li role="separator" class="divider"></li>
+                        <!--<li><a [routerLink]="['/monitoring/pe']" data-toggle="tooltip" title="Monitoring Private Equity Portfolio">Private Equity Portfolio</a></li>-->
+                        <li><a [routerLink]="['/monitoring/peFund']" data-toggle="tooltip" title="Monitoring Tarragon">Tarragon</a></li>
+                        <li role="separator" class="divider"></li>
+                        <!--<li><a [routerLink]="['/monitoring/hf']" data-toggle="tooltip" title="Monitoring Hedge Funds Portfolio">Hedge Funds Portfolio</a></li>-->
+                        <li><a [routerLink]="['/monitoring/hf2']" data-toggle="tooltip" title="Monitoring Tarragon">Singularity</a></li>
+                    </ul>
+                </li>
+                <!--<li [routerLinkActive]="['active']" >-->
+                    <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">-->
+                        <!--Risk Management <span class="bootstrapCaret"></span>-->
+                    <!--</a>-->
+                    <!--&lt;!&ndash;<a th:href="@{/risks}">Risk Management</a></li>&ndash;&gt;-->
+                    <!--<ul class="dropdown-menu">-->
+                        <!--&lt;!&ndash;<li><a [routerLink]="['/monitoring/mm']" data-toggle="tooltip" title="Macro Monitor">Macro Monitor</a></li>&ndash;&gt;-->
+                        <!--<li><a [routerLink]="['/monitoring/axioma']" data-toggle="tooltip" title="Axioma Reporting">Axioma Reporting</a></li>-->
+                        <!--&lt;!&ndash;<li><a href="#">Risk</a></li>&ndash;&gt;-->
+                    <!--</ul>-->
+                <!--</li>-->
+                <li [routerLinkActive]="['active']"><a [routerLink]="['/macromonitor']" data-toggle="tooltip" title="Macro Monitor">Macro Monitor</a></li>
+                <li [routerLinkActive]="['active']"><a [routerLink]="['/m2s2']" data-toggle="tooltip" title="Meeting Memo Scoring System">M2S2</a></li>
+                <li [routerLinkActive]="['active']"  class="dropdown" *ngIf="showPrivateEquity()">
+                    <!--<a th:href="@{/pe}">Private Equity</a>-->
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        Private Equity <span class="bootstrapCaret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <!--<li><a href="#">Dashboard</a></li>-->
+                        <li><a [routerLink]="['/pe/firmSearch']">Firm Search</a></li>
+                        <li role="separator" class="divider"></li>
+                        <!--<li><a [routerLink]="['/pe/fundProfile']">New Fund</a></li>-->
+                        <li *ngIf="showPrivateEquityEditor()"><a [routerLink]="['/pe/firmProfile']">New Firm</a></li>
+                        <!--<li><a href="#">Forward Calendar</a></li>-->
+                    </ul>
+                </li>
+                <!--<li [routerLinkActive]="['active']" *ngIf="showRealEstate()"><a href="#">Real Estate</a></li>-->
+                <!--<li [routerLinkActive]="['active']" ><a href="#">Hedge Funds</a></li>-->
+                <!--<li [routerLinkActive]="['active']" class="dropdown" *ngIf="showHedgeFunds()">-->
+                <li [routerLinkActive]="['active']"  class="dropdown" *ngIf="showHedgeFunds()">
+                    <!--<a th:href="@{/pe}">Private Equity</a>-->
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        Hedge Funds <span class="bootstrapCaret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <!--<li><a [routerLink]="['/hf/dashboard']" >Dashboard</a></li>-->
+                        <li><a [routerLink]="['/hf/fundSearch']">Fund Search</a></li>
+                        <li><a [routerLink]="['/hf/managerSearch']">Manager Search</a></li>
+                        <!--<li><a [routerLink]="['/hf/fundSelection']">Fund Selection </a></li>-->
+                        <!--<li><a [routerLink]="['/hf/portfolio']">Portfolio </a></li>-->
+                        <!--<li><a [routerLink]="['/hf/report']">Report </a></li>-->
+                        <!--<li><a [routerLink]="['/hf/fundProfile/0']">New Fund </a></li>-->
+                        <li *ngIf="showHedgeFundsEditor()"><a [routerLink]="['/hf/managerProfile/0']">New Manager </a></li>
+                        <li role="separator" class="divider"></li>
+                        <li *ngIf="showHedgeFundsEditor()"><a [routerLink]="['/hf/screening/']">Scoring </a></li>
+                        <!--<li *ngIf="showHedgeFundsEditor()"><a [routerLink]="['/hf/scoring/']">Scoring </a></li>-->
+
+                    </ul>
+                </li>
+                <li [routerLinkActive]="['active']"><a [routerLink]="['/bt']" data-toggle="tooltip" title="Trip Memo">Trainings</a></li>
+                <li [routerLinkActive]="['active']"  class="dropdown" *ngIf="showReporting()">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        Reporting <span class="bootstrapCaret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a [routerLink]="['/reporting/NBReporting']">NB Reports</a></li>
+                        <!--<li role="separator" class="divider"></li>-->
+                        <li><a [routerLink]="['/reporting/NBReporting/reserveCalculation']">Capital Calls</a></li>
+                        <li><a [routerLink]="['/reporting/NBReporting/lookupValues']">Lookup Values</a></li>
+
+                    </ul>
+                </li>
+                <li [routerLinkActive]="['active']" *ngIf="showCorpMeeting()">
+                    <a [routerLink]="['/corpMeetings']" data-toggle="tooltip" title="Corp Meetings">Corp Meetings</a>
+                </li>
+                <li [routerLinkActive]="['active']">
+                    <a [routerLink]="['/lookups']" data-toggle="tooltip" title="Lookups">Lookups</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</div>
                 <!--<div id="custom-search-input">-->
                     <!--<div class="input-group col-md-12">-->
                         <!--<input type="text" class="form-control" placeholder="search..." />-->
@@ -482,8 +599,8 @@
 <router-outlet></router-outlet>
 </div>
 
-<div class="copyrightText">&copy; 2019 National Investment Corporation NBK </div>
-<div class="copyrightText">UNIC v.1.9.0 </div>
+<div class="copyrightText">&copy;National Investment Corporation NBK </div>
+<!--<div class="copyrightText">UNIC v.1.9.0 </div>-->
 <br/>
 </body>
 </html>

@@ -13,7 +13,7 @@ import kz.nicnbk.service.api.reporting.realestate.REGeneralLedgerBalanceService;
 import kz.nicnbk.service.converter.reporting.PeriodicReportConverter;
 import kz.nicnbk.service.datamanager.LookupService;
 import kz.nicnbk.service.dto.reporting.*;
-import kz.nicnbk.service.dto.reporting.exception.ExcelFileParseException;
+import kz.nicnbk.common.service.exception.ExcelFileParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

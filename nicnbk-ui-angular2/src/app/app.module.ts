@@ -104,6 +104,16 @@ import {CurrencyRatesLookupValuesNBReportingComponent} from "./reporting/currenc
 import {TypedLookupValuesNBReportingComponent} from "./reporting/typed.lookup.values.nb.reporting.component";
 import {PeriodicDataNBReportingComponent} from "./reporting/periodic.data.nb.reporting.component";
 import {MatchingLookupValuesNBReportingComponent} from "./reporting/matching.lookup.values.nb.reporting.component";
+import {HFScreeningEditComponent} from "./hf/hf-screening-edit.component";
+import {HFScreeningListComponent} from "./hf/hf.screening.list.component";
+import {HedgeFundScreeningService} from "./hf/hf.fund.screening.service";
+import {HFScreeningFilteredResultsComponent} from "./hf/hf.screening.filters.component";
+import {HFScreeningFilteredResultsEditComponent} from "./hf/hf.screening.filters.edit.component";
+import {LookupValuesComponent} from "./lookup/lookup.values.component";
+import {CurrencyRatesLookupValuesComponent} from "./lookup/currency.rates.lookup.values.component";
+import {HFScoringListComponent} from "./hf/hf.scoring.list.component";
+import {HFScoringEditComponent} from "./hf/hf-scoring-edit.component";
+import {BenchmarkLookupValuesComponent} from "./lookup/benchmark.lookup.values.component";
 import {HFResearchPageComponent} from "./hf/hf.research-page.component";
 import {MonitoringHFListComponent} from "./monitoring/monitoring-hedge-funds-list.component";
 import {MonitoringHFResearchComponent} from "./monitoring/monitoring-hedge-funds-research.component";
@@ -138,6 +148,9 @@ import {MonitoringHFResearchComponent} from "./monitoring/monitoring-hedge-funds
         MonitoringHedgeFunds2Component, MonitoringHedgeFunds2PrintComponent, MonitoringHFListComponent, MonitoringHFResearchComponent,
         MainNBReportingComponent, InputFileUploadNBReportingComponent,
 
+        HFDashboardComponent, HFFundSearchComponent, HFFundSelectionComponent, HFPortfolioComponent, HFReportComponent,
+        HFFundProfileComponent, HFManagerProfileComponent, HFManagerSearchComponent, HFScreeningListComponent, HFScreeningEditComponent, HFScreeningFilteredResultsComponent,HFScreeningFilteredResultsEditComponent,
+        HFScoringListComponent, HFScoringEditComponent,
         HFDashboardComponent, HFFundSearchComponent, HFFundSelectionComponent, HFPortfolioComponent, HFResearchComponent, HFReportComponent, HFResearchPageComponent,
         HFFundProfileComponent, HFManagerProfileComponent, HFManagerSearchComponent, HFResearchFormComponent,
         PEFundProfileComponent, PEFirmProfileComponent, PEFirmSearchComponent, PEFundReportComponent,
@@ -152,7 +165,8 @@ import {MonitoringHFResearchComponent} from "./monitoring/monitoring-hedge-funds
         ConsolidatedKZTForm1NBReportingComponent, ReserveCalculationFormNBReportingComponent,ConsolidatedKZTForm2NBReportingComponent, ConsolidatedKZTForm19NBReportingComponent, ConsolidatedKZTForm22NBReportingComponent,
         ConsolidatedKZTForm3NBReportingComponent, ConsolidatedKZTForm6NBReportingComponent,
         AccessDeniedComponent, MMEditComponent, MMViewComponent,NotFoundComponent,
-        CorpMeetingsListComponent, CorpMeetingEditComponent
+        CorpMeetingsListComponent, CorpMeetingEditComponent,
+        LookupValuesComponent, CurrencyRatesLookupValuesComponent, BenchmarkLookupValuesComponent
     ],
     bootstrap: [ AppComponent ]
 })

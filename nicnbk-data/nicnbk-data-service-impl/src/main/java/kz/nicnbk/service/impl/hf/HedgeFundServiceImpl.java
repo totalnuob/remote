@@ -219,7 +219,7 @@ public class HedgeFundServiceImpl implements HedgeFundService {
                 fundDto.setYTD(getYTD(fundDto.getReturns()));
 
                 // annualized return
-                fundDto.setAnnualizedReturn(getAnnualizedReturn(fundReturnsArray));
+                fundDto.setAnnualizedReturn(MathUtils.getAnnualizedReturn(fundReturnsArray, 2));
 
                 // beta
                 Date dateFrom = fundDto.getReturns().get(0).getFirstNotNullMonth();
@@ -233,7 +233,7 @@ public class HedgeFundServiceImpl implements HedgeFundService {
                     logger.error("HF fund calculations: fund returns and S&P returns array size different for fund=" + fundDto.getId() +
                             ". Beta - will not be calculated");
                 } else {
-                    fundDto.setBeta(getBeta(fundReturnsArray, SNPBenchmarkReturns));
+                    fundDto.setBeta(MathUtils.getBeta(fundReturnsArray, SNPBenchmarkReturns, 4));
                 }
 
                 // annual volatility
@@ -246,7 +246,7 @@ public class HedgeFundServiceImpl implements HedgeFundService {
                 fundDto.setWorstDrawdownPeriod(worsdDrawdownResult.getSecond());
 
                 // fund annualized return
-                double fundAnnualizedReturn = getAnnualizedReturn(fundReturnsArray);
+                double fundAnnualizedReturn = MathUtils.getAnnualizedReturn(fundReturnsArray, 2);
                 double[] TBillsBenchmarkReturns = this.benchmarkService.getReturnValuesBetweenDatesAsArray(dateFrom, dateTo, BenchmarkLookup.T_BILLS.getCode());
                 // check returns array sizes
                 if (fundReturnsArray.length != TBillsBenchmarkReturns.length) {
@@ -254,7 +254,7 @@ public class HedgeFundServiceImpl implements HedgeFundService {
                             " .Sharpe Ratio, Sortino Ratio - will not be calculated");
                     return;
                 }
-                Double benchmarkAnnualizedReturn = getAnnualizedReturn(TBillsBenchmarkReturns);
+                Double benchmarkAnnualizedReturn = MathUtils.getAnnualizedReturn(TBillsBenchmarkReturns, 2);
 
                 // std deviation
                 Double stdDeviation = getStandardDeviation(fundReturnsArray);
@@ -263,31 +263,11 @@ public class HedgeFundServiceImpl implements HedgeFundService {
                 fundDto.setSharpeRatio(getSharpeRatio(fundAnnualizedReturn, benchmarkAnnualizedReturn, stdDeviation));
 
                 // sortino ratio
-                fundDto.setSortinoRatio(getSortinoRatio(fundAnnualizedReturn, benchmarkAnnualizedReturn, fundReturnsArray));
+                fundDto.setSortinoRatio(MathUtils.getSortinoRatio(fundAnnualizedReturn, benchmarkAnnualizedReturn, fundReturnsArray, 4));
             }
         }catch (Exception ex){
             logger.error("Failed to set calculated values for HF fund: fund=" + fundDto.getId(), ex);
         }
-    }
-
-    private Double getSortinoRatio(Double fundAnnualizedReturn, Double benchmarkAnnualizedReturn, double[] returns){
-        if(returns == null || returns.length == 0 || fundAnnualizedReturn == null || benchmarkAnnualizedReturn == null) {
-            return null;
-        }
-        BigDecimal sumNegativeReturns = BigDecimal.ZERO;
-        int count = 0;
-        for(int i = 0; i < returns.length; i++){
-            if(returns[i] < 0){
-                sumNegativeReturns = sumNegativeReturns.add(BigDecimal.valueOf(returns[i]).multiply(BigDecimal.valueOf(returns[i])));
-                count++;
-            }
-
-        }
-        double divider = Math.max(0.01, Math.sqrt(sumNegativeReturns.doubleValue()) * Math.sqrt(12.0 / returns.length));
-        double value = (fundAnnualizedReturn - benchmarkAnnualizedReturn) / divider;
-        //return getRoundedValue(value);
-        return value;
-
     }
 
     private Double getSharpeRatio(Double fundAnnualizedReturn, Double benchmarkAnnualizedReturn, Double stdDeviation){
@@ -407,29 +387,6 @@ public class HedgeFundServiceImpl implements HedgeFundService {
         return value;
     }
 
-    private Double getAnnualizedReturn(double[] returns){
-        if(returns == null || returns.length == 0) {
-            return null;
-        }
-        // ( 1 + r / 100)
-
-        BigDecimal product = new BigDecimal("1.0");
-        for (int i = 0; i < returns.length; i++) {
-            BigDecimal value = BigDecimal.valueOf(returns[i]).add(new BigDecimal("1.0"));
-            product = product.multiply(value);
-        }
-        Double returnValue = Math.pow(product.doubleValue(), 12.0 / returns.length) - 1.0;
-        return returnValue;
-
-
-//        double value = 1.0;
-//        for (int i = 0; i < returns.length; i++) {
-//            value *= (1.0 + returns[i]);
-//        }
-//        double returnValue = Math.pow(value, 12.0 / returns.length) - 1.0;
-//        return returnValue;
-    }
-
     private int getNumberOfPositiveMonths(List<ReturnDto> returns){
         if(returns != null && !returns.isEmpty()){
             int count = 0;
@@ -508,39 +465,6 @@ public class HedgeFundServiceImpl implements HedgeFundService {
             return YTDexists ? sum.doubleValue() : null;
         }
         return null;
-    }
-
-    /**
-     * Calculates beta using SLOPE() function from apache-commons-math.
-     *
-     * @param fundReturns
-     * @param benchmarkReturns
-     * @return
-     */
-    private Double getBeta(double[] fundReturns, double[] benchmarkReturns){
-
-        if(fundReturns == null  || fundReturns.length == 0 || benchmarkReturns == null || benchmarkReturns.length == 0){
-            logger.error("HF fund calculations[Beta]: returns missing");
-            return null;
-        }
-
-        // TODO: handle - check benchmarks array size no less than returns size
-        if(fundReturns.length != benchmarkReturns.length){
-            logger.error("HF fund calculations[Beta]: fund returns and benchmarks arrays of different size");
-            return null;
-        }
-
-        // prepare data
-        double[][] data = new double[fundReturns.length][2];
-        for(int i = 0; i < fundReturns.length; i++){
-            data[i][1] = fundReturns[i];
-            data[i][0] = benchmarkReturns[i];
-        }
-
-        // call slope function
-        double value = MathUtils.calculateSlope(data);
-        //return getRoundedValue(value);
-        return value;
     }
 
     private Double getStandardDeviation(double[] values){

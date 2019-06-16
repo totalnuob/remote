@@ -16,6 +16,7 @@ public class FilesDto extends BaseEntityDto<Files> {
     private Long size;
     private byte[] bytes;
     private InputStream inputStream;
+    private String outputFileName;
 
     public String getType() {
         return type;
@@ -63,5 +64,13 @@ public class FilesDto extends BaseEntityDto<Files> {
 
     public void setInputStream(InputStream inputStream) {
         this.inputStream = inputStream;
+    }
+
+    public String getOutputFileName() {
+        return outputFileName;
+    }
+
+    public void setOutputFileName(String outputFileName) {
+        this.outputFileName = outputFileName;
     }
 }

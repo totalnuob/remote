@@ -37,6 +37,8 @@ import {AuthenticationService} from "./authentication/authentication.service";
 import {MacroMonitorService} from "./macromonitor/macromonitor.service";
 import {FileDownloadService} from "./common/file.download.service";
 import {CorpMeetingService} from "./corpmeetings/corp-meetings.service";
+import {HedgeFundScreeningService} from "./hf/hf.fund.screening.service";
+import {HedgeFundScoringService} from "./hf/hf.fund.scoring.service";
 
 
 
@@ -66,7 +68,9 @@ import {CorpMeetingService} from "./corpmeetings/corp-meetings.service";
         ModuleAccessCheckerService,
         MacroMonitorService,
         PeriodicReportService,
-        CorpMeetingService
+        CorpMeetingService,
+        HedgeFundScreeningService,
+        HedgeFundScoringService
     ]
 })
 @NgModule({

@@ -13,6 +13,8 @@ import java.util.Date;
  */
 public class CurrencyRatesSearchParams implements BaseParams {
 
+    String currencyCode;
+
     //@DateTimeFormat(pattern="dd-MM-yyyy")
     private Date fromDate;
 
@@ -23,6 +25,14 @@ public class CurrencyRatesSearchParams implements BaseParams {
     private int page;
     private int pageSize;
 
+    public String getCurrencyCode() {
+        return currencyCode;
+    }
+
+    public void setCurrencyCode(String currencyCode) {
+        this.currencyCode = currencyCode;
+    }
+
     public Date getFromDate() {
         return fromDate != null ? fromDate : DateUtils.getDate("01.01.1970");
     }
@@ -32,7 +42,7 @@ public class CurrencyRatesSearchParams implements BaseParams {
     }
 
     public Date getToDate() {
-        return toDate != null ? toDate : DateUtils.getDate("12.31.2030");
+        return toDate != null ? toDate : DateUtils.getDate("12.31." + (DateUtils.getYear(new Date()) + 10));
     }
 
     public void setToDate(Date toDate) {
