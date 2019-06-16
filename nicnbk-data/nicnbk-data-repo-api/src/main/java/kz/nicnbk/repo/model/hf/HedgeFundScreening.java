@@ -16,6 +16,7 @@ import java.util.Date;
 public class HedgeFundScreening extends CreateUpdateBaseEntity {
 
     private String name;
+    private String shortName;
     private String description;
     private Date date;
     private Files dataFile;
@@ -73,5 +74,14 @@ public class HedgeFundScreening extends CreateUpdateBaseEntity {
 
     public void setUcitsFile(Files ucitsFile) {
         this.ucitsFile = ucitsFile;
+    }
+
+    @Column(name="short_name", nullable = false)
+    public String getShortName() {
+        return shortName;
+    }
+
+    public void setShortName(String shortName) {
+        this.shortName = shortName;
     }
 }

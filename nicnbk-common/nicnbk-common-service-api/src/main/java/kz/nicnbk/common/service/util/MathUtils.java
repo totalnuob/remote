@@ -1,11 +1,15 @@
 package kz.nicnbk.common.service.util;
 
+import org.apache.commons.math3.exception.MathIllegalArgumentException;
 import org.apache.commons.math3.stat.descriptive.moment.Kurtosis;
 import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import org.apache.commons.math3.stat.descriptive.moment.Skewness;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
+import org.apache.commons.math3.stat.ranking.NaNStrategy;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
+import org.apache.commons.math3.util.KthSelector;
+import org.apache.commons.math3.util.MedianOf3PivotingStrategy;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -16,7 +20,7 @@ import java.util.Random;
  */
 public class MathUtils {
 
-    public static final Double Z_SCORE_99_PERCENT = -2.33;
+    public static final Double Z_SCORE_99_PERCENT = -2.32634787404084;
 
     public static final int DEFAULT_SCALE = MathUtils.SCALE_50;
     public static final int SCALE_50 = 50;
@@ -196,8 +200,12 @@ public class MathUtils {
 
         // call slope function
         double value = MathUtils.calculateSlope(data);
-        //return getRoundedValue(value);
-        return (new BigDecimal(value).setScale(scale, RoundingMode.HALF_UP)).doubleValue();
+        return value;
+//        double newValue = (new BigDecimal(value).setScale(1, RoundingMode.HALF_UP)).doubleValue();
+//        if(newValue == 0.0){
+//            newValue = value > 0 ? 0.1 : -0.1;
+//        }
+//        return newValue;
     }
 
     public static Double getAlpha(int scale, double[] returns, double[] riskfree, double[] indices, double beta){
@@ -232,8 +240,23 @@ public class MathUtils {
         double a = add(scale, 1.0, subtract(scale, meanReturn, meanRiskfree));
         double b = multiply(scale, beta, subtract(scale, meanIndices, meanRiskfree));
         double result = subtract(scale, a, b);
-        result = subtract(scale, Math.pow(result, 12.0), 1.0);
+        result = subtract(scale, positivePower(scale, result, 12), 1.0);
         return result;
+    }
+
+    public static Double positivePower(int scale, Double a, int power){
+        if(power < 0.0){
+            return null;
+        }else if(power == 0){
+            return multiply(scale, a, 1.0);
+        }else{
+            Double result = a;
+            while(power > 1){
+                result = multiply(scale, result, a);
+                power--;
+            }
+            return result;
+        }
     }
 
     public static Double getOmega(int scale, double[] returns){
@@ -272,7 +295,7 @@ public class MathUtils {
 
         Double part1 = divide(scale, multiply(scale, subtract(scale, Math.pow(zScore, 2), 1.0), skew), 6.0);
         Double part2 = divide(scale, multiply(scale, subtract(scale, Math.pow(zScore, 3), multiply(scale, 3.0, zScore)), kurtosis), 24.0);
-        Double part3 = divide(scale, multiply(scale, subtract(scale, multiply(2.0, Math.pow(zScore, 3)), multiply(scale, 5.0, zScore)), Math.pow(skew, 2)), -36.0);
+        Double part3 = divide(scale, multiply(scale, subtract(scale, multiply(2.0, multiply(scale, zScore, multiply(scale, zScore, zScore))), multiply(scale, 5.0, zScore)), multiply(scale, skew, skew)), -36.0);
         Double cfScore = add(scale, part1, part2, part3, zScore);
 
         return add(scale, meanReturn, multiply(scale, cfScore, multiply(scale, std, sqrt(new BigDecimal(12.0), scale).doubleValue())));
@@ -304,6 +327,21 @@ public class MathUtils {
         Percentile percentile = new Percentile();
         Double value = percentile.evaluate(values, p);
         return value.isNaN()? null : value;
+    }
+    public static Double getPercentileExcel(double[] values, double p){
+        Percentile percentile = new PercentileExcel();
+        Double value = percentile.evaluate(values, p);
+        return value.isNaN()? null : value;
+    }
+
+    private static class PercentileExcel extends Percentile {
+        public PercentileExcel() throws MathIllegalArgumentException {
+
+            super(50.0,
+                    EstimationType.R_7, // use excel style interpolation
+                    NaNStrategy.REMOVED,
+                    new KthSelector(new MedianOf3PivotingStrategy()));
+        }
     }
 
 

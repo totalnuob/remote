@@ -17,6 +17,11 @@ import kz.nicnbk.service.dto.benchmark.BenchmarkValueDto;
 import kz.nicnbk.service.dto.common.ListResponseDto;
 import kz.nicnbk.service.dto.common.ResponseStatusType;
 import kz.nicnbk.service.dto.hf.*;
+import org.apache.commons.math3.exception.MathIllegalArgumentException;
+import org.apache.commons.math3.stat.descriptive.rank.Percentile;
+import org.apache.commons.math3.stat.ranking.NaNStrategy;
+import org.apache.commons.math3.util.KthSelector;
+import org.apache.commons.math3.util.MedianOf3PivotingStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +32,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -204,14 +208,14 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
                         return responseDto;
                     }
                 }
-                System.out.print(fund.getFundName() + "\t");
-                for(int i = returns.length - 1; i >= 0; i--){
-                    if(i == 0){
-                        System.out.println(returns[i]);
-                    }else {
-                        System.out.print(returns[i] + "\t");
-                    }
-                }
+//                System.out.print(fund.getFundName() + "\t");
+//                for(int i = returns.length - 1; i >= 0; i--){
+//                    if(i == 0){
+//                        System.out.println(returns[i]);
+//                    }else {
+//                        System.out.print(returns[i] + "\t");
+//                    }
+//                }
             }
 
             for(HedgeFundScreeningParsedDataDto fund: screeningList){
@@ -237,7 +241,7 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
                     //throw new IllegalStateException(errorMessage);
                 }
 
-                int scale = 10;
+                int scale = 18;
                 if(returns != null && returns.length == filteredResultDto.getTrackRecord().intValue()) {
                     // Annualized return
                     fund.setAnnualizedReturn(MathUtils.getAnnualizedReturn(returns, scale));
@@ -249,11 +253,18 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
                     }
 
                     // Beta
-                    fund.setBeta(MathUtils.getBeta(returns, snpReturns, scale));
+                    Double beta = MathUtils.getBeta(returns, snpReturns, scale);
+                    if(beta != null){
+                        double newValue = (new BigDecimal(beta).setScale(1, RoundingMode.HALF_UP)).doubleValue();
+                        if(newValue == 0.0){
+                            newValue = beta > 0 ? 0.1 : -0.1;
+                        }
+                        fund.setBeta(newValue);
+                    }
 
                     // Alpha
                     if(fund.getBeta() != null) {
-                        fund.setAlpha(MathUtils.getAlpha(scale, returns, tbillsReturns, snpReturns, fund.getBeta()));
+                        fund.setAlpha(MathUtils.getAlpha(scale, returns, tbillsReturns, snpReturns, beta));
                     }
 
                     // Omega
@@ -267,7 +278,17 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
             }
 
             calculateTotalScore(screeningList);
-
+//            Collections.sort(screeningList);
+//            for(HedgeFundScreeningParsedDataDto fund: screeningList){
+//                System.out.print(fund.getFundName() + "\t");
+//                System.out.print(fund.getAnnualizedReturn() + "\t");
+//                System.out.print(fund.getSortino() + "\t");
+//                System.out.print(fund.getBeta() + "\t");
+//                System.out.print(fund.getCfVar() + "\t");
+//                System.out.print(fund.getAlpha() + "\t");
+//                System.out.print(fund.getOmega() + "\t");
+//                System.out.println(fund.getTotalScore());
+//            }
         }
         responseDto.setStatus(ResponseStatusType.SUCCESS);
         responseDto.setRecords(screeningList);
@@ -282,7 +303,6 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
             double[] alphaList = new double[funds.size()];
             double[] omegaList = new double[funds.size()];
             double[] cfVarList = new double[funds.size()];
-            String[] fundnames = new String[funds.size()];
             for(int i = 0; i < funds.size(); i++){
                 annualizedReturnsList[i] = funds.get(i).getAnnualizedReturn().doubleValue();
                 sortinoList[i] = funds.get(i).getSortino().doubleValue();
@@ -290,10 +310,6 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
                 alphaList[i] = funds.get(i).getAlpha().doubleValue();
                 omegaList[i] = funds.get(i).getOmega().doubleValue();
                 cfVarList[i] = funds.get(i).getCfVar().doubleValue();
-
-                fundnames[i] = funds.get(i).getFundName();
-
-                System.out.println(funds.get(i).getFundName() + "\t" + funds.get(i).getSortino().doubleValue());
             }
 
 //            System.out.println("ANN ROR Percentile");
@@ -311,19 +327,41 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
                 int totalScore = 0;
                 totalScore += getPercentileCoeff(annualizedReturnsList, fund.getAnnualizedReturn());
                 totalScore += getPercentileCoeff(sortinoList, fund.getSortino());
-                totalScore += getBeatPercentileCoeff(fund.getBeta());
+                totalScore += getBetaPercentileCoeff(fund.getBeta());
                 totalScore += getPercentileCoeff(alphaList, fund.getAlpha());
                 totalScore += getPercentileCoeff(omegaList, fund.getOmega());
                 totalScore += getPercentileCoeff(cfVarList, fund.getCfVar());
 
-                fund.setTotalScore(MathUtils.divide(totalScore + 0.0, 6.0));
+                // TODO: adjustable scale?
+                int scale = 18;
+                fund.setTotalScore(MathUtils.divide(18, totalScore + 0.0, 6.0));
             }
+
+//            for(int p = 10; p <= 90; p = p + 10){
+//                System.out.print(p);
+//                System.out.print("\t" + MathUtils.getPercentile(annualizedReturnsList, p));
+//                System.out.print("\t" + MathUtils.getPercentile(sortinoList, p));
+//                System.out.print("\t" + p/100.0);
+//                System.out.print("\t" +  MathUtils.getPercentile(cfVarList, p));
+//                System.out.print("\t" +  MathUtils.getPercentile(alphaList, p));
+//                System.out.println("\t" + MathUtils.getPercentile(omegaList, p));
+//            }
+//
+//            for(int p = 10; p <= 90; p = p + 10){
+//                System.out.print(p);
+//                System.out.print("\t" + MathUtils.getPercentileExcel(annualizedReturnsList, p));
+//                System.out.print("\t" + MathUtils.getPercentileExcel(sortinoList, p));
+//                System.out.print("\t" + p/100.0);
+//                System.out.print("\t" +  MathUtils.getPercentileExcel(cfVarList, p));
+//                System.out.print("\t" +  MathUtils.getPercentileExcel(alphaList, p));
+//                System.out.println("\t" + MathUtils.getPercentileExcel(omegaList, p));
+//            }
         }
     }
 
     private int getPercentileCoeff(double[] values, Double checkValue){
         for(int p = 10; p <= 90; p = p + 10){
-            Double percentileValue = MathUtils.getPercentile(values, p);
+            Double percentileValue = MathUtils.getPercentileExcel(values, p);
             if(checkValue < percentileValue.doubleValue()){
                 int coeff = p/10;
                 return coeff;
@@ -332,15 +370,17 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
         return 10;
     }
 
-    private int getBeatPercentileCoeff(Double checkValue){
+    private int getBetaPercentileCoeff(Double checkValue){
         Double newCheckValue = new BigDecimal(checkValue).setScale(1, RoundingMode.HALF_UP).doubleValue();
-        if(newCheckValue.doubleValue() == 0.0){
-            newCheckValue = checkValue > 0 ? 0.1 : -0.1;
-        }
+//        if(newCheckValue.doubleValue() == 0.0){
+//            newCheckValue = checkValue > 0 ? 0.1 : -0.1;
+//        }
         checkValue = newCheckValue;
         for(int p = 1; p <= 9; p = p + 1){
-            if(checkValue.doubleValue() < p/10.0){
-                return 10 - p + 1;
+            if(Math.abs(checkValue.doubleValue()) < p/10.0){
+                int coeff = 10 - p + 1;
+                return coeff;
+                //return (coeff == 10 ? 9 : coeff);
             }
         }
         return 1;

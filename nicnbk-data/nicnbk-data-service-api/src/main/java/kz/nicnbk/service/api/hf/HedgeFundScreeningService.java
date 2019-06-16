@@ -33,7 +33,7 @@ public interface HedgeFundScreeningService extends BaseService {
 
     HedgeFundScreeningPagedSearchResult search(HedgeFundScreeningSearchParams searchParams);
 
-    FileUploadResultDto saveAttachmentDataFile(Long screeningId, FilesDto filesDto, String username);
+    FileUploadResultDto saveAndParseAttachmentDataFile(Long screeningId, FilesDto filesDto, String username);
 
     FileUploadResultDto saveAttachmentUcitsFile(Long screeningId, FilesDto filesDto, String username);
 
@@ -63,12 +63,14 @@ public interface HedgeFundScreeningService extends BaseService {
 
     boolean deleteAddedFund(String fundName, Long screeningId, String username);
 
-    boolean excludeParsedFund(Long screeningId, Long fundId, String username);
+    boolean excludeParsedFund(Long filteredResultId, Long fundId, String excludeComment, String username);
 
-    boolean includeParsedFund(Long screeningId, Long fundId, String username);
+    boolean includeParsedFund(Long filteredResultId, Long fundId, String username);
 
     double[] getAddedFundReturns(Long filteredResultId, String fundName, int trackRecord, Date dateFrom, Date dateTo);
 
     double[] getParsedFundReturns(Long screeningId, Long fundId, int trackRecord, Date dateFrom, Date dateTo);
+
+    FilesDto getFundListAsStream(Long filteredResultId, int lookbackAUM, int lookbackReturn);
 }
 

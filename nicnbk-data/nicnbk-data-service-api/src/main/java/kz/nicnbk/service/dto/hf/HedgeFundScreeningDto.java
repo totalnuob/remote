@@ -13,6 +13,7 @@ import java.util.List;
 public class HedgeFundScreeningDto extends CreateUpdateBaseEntityDto<HedgeFundScreening> {
 
     private String name;
+    private String shortName;
     private String description;
     private Date date;
     private String startDate;
@@ -111,6 +112,14 @@ public class HedgeFundScreeningDto extends CreateUpdateBaseEntityDto<HedgeFundSc
 
     public void setStartDate(String startDate) {
         this.startDate = startDate;
+    }
+
+    public String getShortName() {
+        return shortName;
+    }
+
+    public void setShortName(String shortName) {
+        this.shortName = shortName;
     }
 }
 

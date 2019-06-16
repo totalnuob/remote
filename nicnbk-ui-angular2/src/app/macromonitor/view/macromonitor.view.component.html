@@ -14,7 +14,7 @@
         </li>
     </ul>
     <div class="tab-content">
-        <div id="global" class="tab-pane fade in active">
+        <div [ngBusy]="busy" id="global" class="tab-pane fade in active">
             <br/>
             <span *ngIf="showEditMacroMonitor()">
                 <button *ngIf="showEditMacroMonitor()" class="btn btn-primary" [routerLink]="['/macromonitor/1']">Edit</button>

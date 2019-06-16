@@ -26,7 +26,4 @@ public interface HedgeFundScreeningParsedDataRepository extends PagingAndSorting
     HedgeFundScreeningParsedData findByFundIdAndScreeningId(Long fundId, Long screeningId);
 
     List<HedgeFundScreeningParsedData> findByFundNameAndScreeningId(String fundName, Long screeningId);
-
-    @Query("SELECT e FROM HedgeFundScreeningParsedData e WHERE e.screening.id=?1 AND e.excluded is not null AND e.excluded=true")
-    List<HedgeFundScreeningParsedData> findExcludedFundsByScreeningId(Long screeningId);
 }

@@ -41,6 +41,18 @@
                     <div class="row top-buffer">
                         <div class="col-md-12">
                             <div class="form-group form-horizontal">
+                                <label class="control-label col-md-2" for="shortName">Short Name:</label>
+                                <div class="col-md-10">
+                                    <input type="text" id="shortName" class="form-control" placeholder="Short name..." maxlength="250" name="shortName" [(ngModel)]="screening.shortName"
+                                           required #shortName="ngModel"/>
+                                    <div [hidden]="shortName.valid || shortName.pristine" class="alert alert-danger">Short Name is required</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row top-buffer">
+                        <div class="col-md-12">
+                            <div class="form-group form-horizontal">
                                 <label class="control-label col-md-2" for="description">Description:</label>
                                 <div class="col-md-10">
                                     <textarea fz-elastic type="text" id="description" class="form-control" maxlength="250" name="description" [(ngModel)]="screening.description"

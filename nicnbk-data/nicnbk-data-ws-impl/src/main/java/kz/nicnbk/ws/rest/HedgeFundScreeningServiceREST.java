@@ -8,6 +8,8 @@ import kz.nicnbk.service.dto.common.ListResponseDto;
 import kz.nicnbk.service.dto.common.ResponseStatusType;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.hf.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 /**
@@ -25,6 +31,8 @@ import java.util.*;
 @RestController
 @RequestMapping("/hf/screening")
 public class HedgeFundScreeningServiceREST extends CommonServiceREST{
+
+    private static final Logger logger = LoggerFactory.getLogger(HedgeFundScreeningServiceREST.class);
 
     @Autowired
     private HedgeFundScreeningService screeningService;
@@ -73,7 +81,7 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
         }
         FilesDto filesDto = buildFilesDtoFromMultipart(files[0], FileTypeLookup.HF_SCREENING_DATA_FILE.getCode());
         if (filesDto != null) {
-            FileUploadResultDto result = this.screeningService.saveAttachmentDataFile(screeningId, filesDto, username);
+            FileUploadResultDto result = this.screeningService.saveAndParseAttachmentDataFile(screeningId, filesDto, username);
             if (result != null && result.getStatus() == ResponseStatusType.SUCCESS) {
                 return new ResponseEntity<>(result, null, HttpStatus.OK);
             } else {
@@ -271,7 +279,7 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
-        boolean saved = this.screeningService.excludeParsedFund(fund.getScreening().getId(), fund.getFundId(), username);
+        boolean saved = this.screeningService.excludeParsedFund(fund.getFilteredResultId(), fund.getFundId(), fund.getExcludeComment(), username);
         return buildEntitySaveResponseEntity(saved);
     }
 
@@ -281,7 +289,54 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
-        boolean saved = this.screeningService.includeParsedFund(fund.getScreening().getId(), fund.getFundId(), username);
+        boolean saved = this.screeningService.includeParsedFund(fund.getFilteredResultId(), fund.getFundId(), username);
         return buildEntitySaveResponseEntity(saved);
+    }
+
+    @RequestMapping(value="/scoring/export/{filteredResultId}/{lookbackAUM}//{lookbackReturn}", method= RequestMethod.GET)
+    @ResponseBody
+    public void exportFundList(@PathVariable(value="filteredResultId") Long filteredResultId,
+                             @PathVariable(value = "lookbackAUM") int lookbackAUM,
+                             @PathVariable(value = "lookbackReturn") int lookbackReturn,
+                             HttpServletResponse response) {
+
+        // TODO: control file download by user role
+        // TODO: Check rights
+
+        FilesDto filesDto = null;
+        try{
+            filesDto = this.screeningService.getFundListAsStream(filteredResultId, lookbackAUM, lookbackReturn);
+        }catch (IllegalStateException ex){
+            filesDto = null;
+        }
+
+        if(filesDto == null || filesDto.getInputStream() == null){
+            try {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                return;
+            } catch (IOException e) {
+                return;
+            }
+        }
+
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        try {
+            response.addHeader("Access-Control-Expose-Headers", "Content-Disposition");
+            response.setHeader("Content-disposition", "attachment; filename=\"" + filesDto.getOutputFileName() + "\"");
+            org.apache.commons.io.IOUtils.copy(filesDto.getInputStream(), response.getOutputStream());
+            response.flushBuffer();
+        } catch (UnsupportedEncodingException e) {
+            logger.error("(PeriodicReport) File export request failed: unsupported encoding", e);
+        } catch (IOException e) {
+            logger.error("(PeriodicReport) File export request failed: io exception", e);
+        } catch (Exception e){
+            logger.error("(PeriodicReport) File export request failed", e);
+        }
+        try {
+            filesDto.getInputStream().close();
+            new File(filesDto.getFileName()).delete();
+        } catch (IOException e) {
+            logger.error("(PeriodicReport) File export: failed to close input stream", e);
+        }
     }
 }

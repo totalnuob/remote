@@ -29,8 +29,6 @@ public class HedgeFundScreeningParsedData extends BaseEntity {
     private String editedFundAUMComment;
     private Date editedFundAUMDate;
 
-    private Boolean excluded;
-
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="screening_id")
     public HedgeFundScreening getScreening() {
@@ -111,13 +109,5 @@ public class HedgeFundScreeningParsedData extends BaseEntity {
 
     public void setEditedFundAUMDate(Date editedFundAUMDate) {
         this.editedFundAUMDate = editedFundAUMDate;
-    }
-
-    public Boolean getExcluded() {
-        return excluded;
-    }
-
-    public void setExcluded(Boolean excluded) {
-        this.excluded = excluded;
     }
 }

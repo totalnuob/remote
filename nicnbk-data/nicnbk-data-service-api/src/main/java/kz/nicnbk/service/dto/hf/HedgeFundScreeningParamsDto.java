@@ -109,6 +109,9 @@ public class HedgeFundScreeningParamsDto extends CreateUpdateBaseEntityDto<Hedge
                 startDate = lastDayDate;
             }
         }
+        if(startDate == null){
+            return this.startDate;
+        }
         return startDate;
     }
 }

@@ -12,6 +12,7 @@ import {HedgeFundScreeningService} from "./hf.fund.screening.service";
 import {HedgeFundScreeningFilteredResult} from "./model/hf.screening.filtered.result";
 import {HedgeFundScreeningFilteredResultStatistics} from "./model/hf.screening.filtered.result.statistics";
 import {HedgeFundScreeningFilteredResultFund} from "./model/hf.screening.filtered.result.fund";
+import {DATA_APP_URL} from "../common/common.service.constants";
 
 declare var $:any
 @Component({
@@ -57,6 +58,9 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
     uploadedReturns;
     returnUploadErrorMessage;
     returnUploadSuccessMessage;
+
+    excludeFundModalErrorMessage;
+    excludeFundModalSuccessMessage;
 
     constructor(
         private screeningService: HedgeFundScreeningService,
@@ -123,6 +127,11 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
         $('#fundEditModal').on('hidden.bs.modal', function () {
             $('#modalMessagesDiv').css("background-color", "white");
             $('#closeFundEditModalBtn').click();
+        });
+
+        $('#excludeFundModal').on('hidden.bs.modal', function () {
+            $('#modalMessagesDiv').css("background-color", "white");
+            $('#closeFundExcludeModalBtn').click();
         });
     }
 
@@ -218,6 +227,21 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
         return this.checkFundAUM(strategyAUM);
     }
 
+
+    exportFundList() {
+        //console.log(this.fundListLookbackAUM, this.fundListLookbackReturn, this.fundListType);
+        this.busyModal = this.screeningService.makeFileRequest(DATA_APP_URL + `hf/screening/scoring/export/${this.filteredResult.id}/${this.fundListLookbackAUM}/${this.fundListLookbackReturn}`)
+            .subscribe(
+                response  => {
+                    //console.log("ok");
+                },
+                error => {
+                    //console.log("fails")
+                    this.modalErrorMessage = "Error exporting data";
+                    this.modalSuccessMessage = null;
+                }
+            );
+    }
 
     showFunds(lookbackReturn, lookbackAUM, type, value: number){
 
@@ -498,6 +522,14 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
 
     }
 
+    closeFundExcludeModal(){
+        if(this.needUpdate) {
+            this.showFunds(this.fundListLookbackReturn, this.fundListLookbackAUM, this.fundListType, null);
+            //this.needUpdate = false;
+        }
+        this.selectedFund = null;
+    }
+
     public onNumberChangeFundAUM(){
         if(this.filteredResult.fundAUM != null && this.filteredResult.fundAUM != 'undefined' && this.filteredResult.fundAUM.toString().length > 0) {
             if(this.filteredResult.fundAUM.toString()[this.filteredResult.fundAUM.toString().length - 1] != '.' || this.filteredResult.fundAUM.toString().split('.').length > 2){
@@ -725,7 +757,6 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
             // Added fund
             if(this.selectedFund.added) {
                 this.selectedFund.screening = {"id": this.filteredResult.screeningId};
-                this.selectedFund.filteredResultId = this.filteredResult.id;
                 // Check AUM
                 var minFundAUM = this.filteredResult.fundAUM != null ? Number(this.filteredResult.fundAUM.toString().replace(/,/g, '')) : 0;
                 if (this.selectedFund.fundAUM < minFundAUM) {
@@ -736,6 +767,7 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
 
                 // TODO: Check track record
             }
+            this.selectedFund.filteredResultId = this.filteredResult.id;
 
             // Edited Fund AUM
             if(this.selectedFund.editedFundAUM != null && this.selectedFund.editedFundAUM != ''){
@@ -790,6 +822,7 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
                 }
             }
 
+            console.log(this.selectedFund);
             // Save fund info
             this.busyFundEdit = this.screeningService.updateFund(this.selectedFund)
                 .subscribe(
@@ -836,29 +869,39 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
             }
         }
     }
+    openExcludeFund(fund){
+        $('#modalMessagesDiv').css("background-color", "grey");
+        this.selectedFund = fund;
+    }
 
-    excludeFund(fund){
-        if(confirm("Are you sure want to exclude fund " + fund.fundName + " ?")){
-
+    excludeFund(){
+        if(this.selectedFund.excludeComment == null || this.selectedFund.excludeComment.trim() === ''){
+            this.excludeFundModalErrorMessage = "Comment required";
+            this.excludeFundModalSuccessMessage = null;
+            return;
+        }
+        if(confirm("Are you sure want to exclude fund " + this.selectedFund.fundName + " ?")){
             var fundShort = new HedgeFundScreeningFilteredResultFund();
-            fundShort.fundId= fund.fundId;
+            fundShort.fundId= this.selectedFund.fundId;
+            fundShort.excludeComment = this.selectedFund.excludeComment;
             fundShort.screening = new HedgeFundScreening();
             fundShort.screening.id = this.screeningId;
+            fundShort.filteredResultId = this.filteredResult.id;
             this.busyModal = this.screeningService.excludeFund(fundShort)
                 .subscribe(
                     result => {
-                        this.modalSuccessMessage = "Successfully excluded fund."
-                        this.modalErrorMessage = null;
+                        this.excludeFundModalSuccessMessage = "Successfully excluded fund."
+                        this.excludeFundModalErrorMessage = null;
 
                         this.needUpdate = true;
 
-                        this.postAction(this.modalSuccessMessage, this.modalErrorMessage);
+                        this.postAction(this.excludeFundModalSuccessMessage, this.excludeFundModalErrorMessage);
                     },
                     error => {
-                        this.successMessage = "Failed to delete fund info";
-                        this.errorMessage = null;
+                        this.excludeFundModalErrorMessage = "Failed to exclude fund info";
+                        this.excludeFundModalSuccessMessage = null;
 
-                        this.postAction(this.successMessage, this.errorMessage);
+                        this.postAction(this.excludeFundModalSuccessMessage, this.excludeFundModalErrorMessage);
                     }
                 );
             this.showFunds(this.fundListLookbackReturn, this.fundListLookbackAUM, this.fundListType, null);
@@ -874,6 +917,7 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
             fundShort.fundId= fund.fundId;
             fundShort.screening = new HedgeFundScreening();
             fundShort.screening.id = this.screeningId;
+            fundShort.filteredResultId = this.filteredResult.id;
             this.busyModal = this.screeningService.includeFund(fundShort)
                 .subscribe(
                     result => {
@@ -885,7 +929,7 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
                         this.postAction(this.successMessage, this.errorMessage);
                     },
                     error => {
-                        this.successMessage = "Failed to delete fund info";
+                        this.successMessage = "Failed to include fund info";
                         this.errorMessage = null;
 
                         this.postAction(this.successMessage, this.errorMessage);

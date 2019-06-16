@@ -2,7 +2,6 @@ package kz.nicnbk.service.dto.hf;
 
 import kz.nicnbk.common.service.model.BaseEntityDto;
 import kz.nicnbk.common.service.util.StringUtils;
-import kz.nicnbk.repo.model.base.BaseEntity;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -47,6 +46,9 @@ public class HedgeFundScreeningParsedDataDto extends BaseEntityDto implements Co
     private String editedFundAUMComment;
 
     private boolean added;
+    private boolean excluded;
+    private String excludeComment;
+
     private List<HedgeFundScreeningFundReturnDto> returns;
 
     /* SCORING ***********************************************************/
@@ -320,20 +322,32 @@ public class HedgeFundScreeningParsedDataDto extends BaseEntityDto implements Co
         this.cfVar = cfVar;
     }
 
+    public boolean isExcluded() {
+        return excluded;
+    }
+
+    public void setExcluded(boolean excluded) {
+        this.excluded = excluded;
+    }
+
+    public String getExcludeComment() {
+        return excludeComment;
+    }
+
+    public void setExcludeComment(String excludeComment) {
+        this.excludeComment = excludeComment;
+    }
+
     @Override
     public int compareTo(Object o) {
-//        if(this.fundId == null){
-//            return -1;
-//        }
-//        if(((HedgeFundScreeningParsedDataDto) o).fundId == null){
-//            return 1;
-//        }
-//        return this.fundId.compareTo(((HedgeFundScreeningParsedDataDto) o).fundId);
         if(this.totalScore == null){
             return -1;
         }
         if(((HedgeFundScreeningParsedDataDto) o).totalScore == null){
             return 1;
+        }
+        if(this.totalScore.doubleValue() == ((HedgeFundScreeningParsedDataDto) o).totalScore.doubleValue()){
+            return this.fundName.toLowerCase().compareTo(((HedgeFundScreeningParsedDataDto) o).fundName.toLowerCase());
         }
         return this.totalScore.compareTo(((HedgeFundScreeningParsedDataDto) o).totalScore) * (-1);
     }

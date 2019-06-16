@@ -11,6 +11,8 @@ import {HedgeFundScreeningFilteredResult} from "./model/hf.screening.filtered.re
 import {HedgeFundScreeningFilteredResultStatistics} from "./model/hf.screening.filtered.result.statistics";
 import {ListResponse} from "../common/list.response";
 
+var fileSaver = require("file-saver");
+
 @Injectable()
 export class HedgeFundScreeningService extends CommonService{
 
@@ -244,6 +246,60 @@ export class HedgeFundScreeningService extends CommonService{
         return this.http.post(this.HF_SCREENING_FILTERED_INCLUDE_FUND_URL, body, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
+    }
+
+    public makeFileRequest(url, method?: string, body?): Observable<Response> {
+        return Observable.fromPromise(new Promise((resolve, reject) => {
+            let xhr = new XMLHttpRequest();
+            xhr.withCredentials = true; // send auth token with the request
+            // TODO: url const
+            //let url =  DATA_APP_URL + `periodicReport/export/${this.reportId}/${'KZT_FORM_1'}`;
+
+            var methodName = 'GET';
+            if(method){
+                if(method === 'GET'){
+                    methodName = 'GET';
+                }else if(method === 'POST'){
+                    methodName = 'POST';
+                }
+            }
+            xhr.open(methodName, url, true);
+
+            xhr.setRequestHeader("Content-type", "application/json");
+            xhr.responseType = 'blob';
+
+            // Xhr callback when we get a result back
+            // We are not using arrow function because we need the 'this' context
+            xhr.onreadystatechange = function () {
+                // We use setTimeout to trigger change detection in Zones
+                setTimeout(() => {
+                    //self.pending = false;
+                }, 0);
+
+                // If we get an HTTP status OK (200), save the file using fileSaver
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        resolve(JSON.parse("{\"message\" : \"OK\"}"));
+                        var blob = new Blob([this.response], {type: this.response.type});
+                        var file_name = xhr.getResponseHeader("Content-Disposition").match(/filename=(.*?)$/)[1];
+                        fileSaver.saveAs(blob, file_name);
+                    }else {
+                        console.log("Error - " + xhr.status);
+                        console.log(xhr);
+                        reject(xhr.response);
+                    }
+                }
+            };
+            // Start the Ajax request
+            //xhr.open("GET", url);
+            if(body){
+                xhr.send(JSON.stringify(body));
+            }else {
+                xhr.send();
+            }
+        }));
+        //.map(this.extractData);
+        //.catch(this.handleErrorResponse);
     }
 
 }

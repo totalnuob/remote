@@ -32,6 +32,8 @@ export class HedgeFundScreeningFilteredResultFund {
     editedFundAUMDateMonthYear;
     editedFundAUMComment;
 
+    excludeComment: string;
+
     added: boolean;
 
     returns;
@@ -54,6 +56,8 @@ export class HedgeFundScreeningFilteredResultFund {
         this.editedFundAUMDateMonthYear = copy.editedFundAUMDateMonthYear;
 
         this.managerAUM = copy.managerAUM;
+
+        this.excludeComment = copy.excludeComment;
 
         this.returns = copy.returns;
 
