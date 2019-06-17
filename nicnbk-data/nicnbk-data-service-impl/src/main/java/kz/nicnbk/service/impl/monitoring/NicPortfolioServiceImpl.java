@@ -131,7 +131,7 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
                     List<Long> entitiesToDelete = new ArrayList<>();
 
                     for (NicPortfolio portfolio : this.repository.findAll()) {
-                        if(portfolio.getFile().getId() != fileId) {
+                        if(! portfolio.getFile().getId().equals(fileId)) {
                             entitiesToDelete.add(portfolio.getId());
                         }
                     }
