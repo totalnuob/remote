@@ -682,6 +682,9 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
                         this.drawActualAllocationChart(this.tableDate);
 
                         this.postAction(response.messageEn, null);
+
+                        this.myFiles = [];
+                        $("#fileupload").val(null);
                     }
                 },
                 error => {

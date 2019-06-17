@@ -26,13 +26,20 @@
                 <option *ngFor="let item of getAllDates()" [value]="item">{{item}}</option>
             </select>
         </div>
-        <div class="pull-right">
-            <form #yourForm="ngForm" (ngSubmit)="onSubmitNicPortfolio()" *ngIf="canEdit()">
-                <h4>Update NIC portfolio data</h4>
-                <input type="file" #fileupload (change)="fileChange(fileupload.files)"/>
-                <button type="submit" class="btn btn-success">Submit</button>
+        <div class="pull-right" *ngIf="canEdit()">
+            <form #yourForm="ngForm" (ngSubmit)="onSubmitNicPortfolio()">
+                <label class="btn btn-primary">
+                    <input type="file" #fileupload id="fileupload" (change)="fileChange(fileupload.files)" style="display: none"/>Update
+                </label>
+                <button type="submit" class="btn btn-success" *ngIf="this.myFiles.length > 0">Submit</button>
             </form>
+            <div *ngFor="let file of this.myFiles" class="label label-info">
+                <span>{{file.name}}</span>
+            </div>
         </div>
+        <!--<div class="pull-right col-md-3" *ngIf="canEdit()">-->
+            <!--<h4>Update NIC portfolio data</h4>-->
+        <!--</div>-->
     </div>
     <div class="row">
         <div class="col-md-12">
