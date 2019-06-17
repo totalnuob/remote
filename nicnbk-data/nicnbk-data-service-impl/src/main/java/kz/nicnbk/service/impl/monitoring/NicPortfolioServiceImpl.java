@@ -3,7 +3,10 @@ package kz.nicnbk.service.impl.monitoring;
 import kz.nicnbk.common.service.util.DateUtils;
 import kz.nicnbk.common.service.util.ExcelUtils;
 import kz.nicnbk.repo.api.monitoring.NicPortfolioRepository;
+import kz.nicnbk.repo.model.files.Files;
+import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.repo.model.monitoring.NicPortfolio;
+import kz.nicnbk.service.api.files.FileService;
 import kz.nicnbk.service.api.monitoring.NicPortfolioService;
 import kz.nicnbk.service.converter.monitoring.NicPortfolioEntityConverter;
 import kz.nicnbk.service.dto.common.ResponseStatusType;
@@ -37,6 +40,9 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
     @Autowired
     private NicPortfolioEntityConverter converter;
 
+    @Autowired
+    private FileService fileService;
+
     @Override
     public NicPortfolioResultDto get() {
         try {
@@ -52,6 +58,7 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
     public NicPortfolioResultDto upload(Set<FilesDto> filesDtoSet, String updater) {
 
         try {
+            FilesDto filesDto;
             Iterator<Row> rowIterator;
             Row previousRow = null;
             Row currentRow;
@@ -61,7 +68,7 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
             List<NicPortfolio> portfolioList = new ArrayList<>();
 
             try {
-                FilesDto filesDto = filesDtoSet.iterator().next();
+                filesDto = filesDtoSet.iterator().next();
                 InputStream inputFile = new ByteArrayInputStream(filesDto.getBytes());
                 XSSFWorkbook workbook = new XSSFWorkbook(inputFile);
                 XSSFSheet sheet = workbook.getSheet("Database");
@@ -111,8 +118,31 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
 
             try {
                 if(portfolioList.size() > 0) {
-                    this.repository.deleteAll();
+                    Long fileId = fileService.save(filesDto, FileTypeLookup.MONITORING_NIC_PORTFOLIO.getCatalog());
+
+                    Files file = new Files();
+                    file.setId(fileId);
+                    for (NicPortfolio portfolio : portfolioList) {
+                        portfolio.setFile(file);
+                    }
+
                     this.repository.save(portfolioList);
+
+                    List<Long> entitiesToDelete = new ArrayList<>();
+
+                    for (NicPortfolio portfolio : this.repository.findAll()) {
+                        if(portfolio.getFile().getId() != fileId) {
+                            entitiesToDelete.add(portfolio.getId());
+                        }
+                    }
+
+                    for (Long id : entitiesToDelete) {
+                        this.repository.delete(id);
+                    }
+
+
+
+
                 }
             } catch (Exception ex) {
                 logger.error("Failed to update NIC Portfolio data: repository problem, ", ex);
@@ -133,6 +163,7 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
         try {
             return new NicPortfolio(
                     updater,
+                    new Files(),
                     row.getCell(0).getDateCellValue(),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(3)),
 

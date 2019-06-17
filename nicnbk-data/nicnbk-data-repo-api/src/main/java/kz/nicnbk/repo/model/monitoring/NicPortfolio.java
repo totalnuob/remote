@@ -1,9 +1,12 @@
 package kz.nicnbk.repo.model.monitoring;
 
 import kz.nicnbk.repo.model.base.BaseEntity;
+import kz.nicnbk.repo.model.files.Files;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.util.Date;
 
 /**
@@ -14,6 +17,8 @@ import java.util.Date;
 public class NicPortfolio extends BaseEntity {
 
     private String updater;
+
+    private Files file;
 
     @Column(nullable = false)
     private Date date;
@@ -68,8 +73,9 @@ public class NicPortfolio extends BaseEntity {
     public NicPortfolio() {
     }
 
-    public NicPortfolio(String updater, Date date, Double nicTotalAumNav, Double transitionPortfolioNav, Double transitionPortfolioMtd, Double transitionPortfolioQtd, Double transitionPortfolioYtd, Double alternativePortfolioNav, Double alternativePortfolioMtd, Double alternativePortfolioQtd, Double alternativePortfolioYtd, Double fixedPortfolioNav, Double fixedPortfolioMtd, Double fixedPortfolioQtd, Double fixedPortfolioYtd, Double equityPortfolioNav, Double equityPortfolioMtd, Double equityPortfolioQtd, Double equityPortfolioYtd, Double hedgeFundsNav, Double hedgeFundsMtd, Double hedgeFundsQtd, Double hedgeFundsYtd, Double privateEquityNav, Double privateEquityMtd, Double privateEquityQtd, Double privateEquityYtd, Double realEstateNav, Double realEstateMtd, Double realEstateQtd, Double realEstateYtd, Double nickMfOtherNav, Double nickMfOtherMtd, Double nickMfOtherQtd, Double nickMfOtherYtd, Double transferNav, Double transferMtd, Double transferQtd, Double transferYtd) {
+    public NicPortfolio(String updater, Files file, Date date, Double nicTotalAumNav, Double transitionPortfolioNav, Double transitionPortfolioMtd, Double transitionPortfolioQtd, Double transitionPortfolioYtd, Double alternativePortfolioNav, Double alternativePortfolioMtd, Double alternativePortfolioQtd, Double alternativePortfolioYtd, Double fixedPortfolioNav, Double fixedPortfolioMtd, Double fixedPortfolioQtd, Double fixedPortfolioYtd, Double equityPortfolioNav, Double equityPortfolioMtd, Double equityPortfolioQtd, Double equityPortfolioYtd, Double hedgeFundsNav, Double hedgeFundsMtd, Double hedgeFundsQtd, Double hedgeFundsYtd, Double privateEquityNav, Double privateEquityMtd, Double privateEquityQtd, Double privateEquityYtd, Double realEstateNav, Double realEstateMtd, Double realEstateQtd, Double realEstateYtd, Double nickMfOtherNav, Double nickMfOtherMtd, Double nickMfOtherQtd, Double nickMfOtherYtd, Double transferNav, Double transferMtd, Double transferQtd, Double transferYtd) {
         this.updater = updater;
+        this.file = file;
         this.date = date;
         this.nicTotalAumNav = nicTotalAumNav;
         this.transitionPortfolioNav = transitionPortfolioNav;
@@ -116,6 +122,16 @@ public class NicPortfolio extends BaseEntity {
 
     public void setUpdater(String updater) {
         this.updater = updater;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "file_id")
+    public Files getFile() {
+        return file;
+    }
+
+    public void setFile(Files file) {
+        this.file = file;
     }
 
     public Date getDate() {
