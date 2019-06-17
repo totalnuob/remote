@@ -13,6 +13,8 @@ import java.util.Date;
 @Entity(name = "monitoring_nic_portfolio")
 public class NicPortfolio extends BaseEntity {
 
+    private String updater;
+
     @Column(nullable = false)
     private Date date;
 
@@ -66,7 +68,8 @@ public class NicPortfolio extends BaseEntity {
     public NicPortfolio() {
     }
 
-    public NicPortfolio(Date date, Double nicTotalAumNav, Double transitionPortfolioNav, Double transitionPortfolioMtd, Double transitionPortfolioQtd, Double transitionPortfolioYtd, Double alternativePortfolioNav, Double alternativePortfolioMtd, Double alternativePortfolioQtd, Double alternativePortfolioYtd, Double fixedPortfolioNav, Double fixedPortfolioMtd, Double fixedPortfolioQtd, Double fixedPortfolioYtd, Double equityPortfolioNav, Double equityPortfolioMtd, Double equityPortfolioQtd, Double equityPortfolioYtd, Double hedgeFundsNav, Double hedgeFundsMtd, Double hedgeFundsQtd, Double hedgeFundsYtd, Double privateEquityNav, Double privateEquityMtd, Double privateEquityQtd, Double privateEquityYtd, Double realEstateNav, Double realEstateMtd, Double realEstateQtd, Double realEstateYtd, Double nickMfOtherNav, Double nickMfOtherMtd, Double nickMfOtherQtd, Double nickMfOtherYtd, Double transferNav, Double transferMtd, Double transferQtd, Double transferYtd) {
+    public NicPortfolio(String updater, Date date, Double nicTotalAumNav, Double transitionPortfolioNav, Double transitionPortfolioMtd, Double transitionPortfolioQtd, Double transitionPortfolioYtd, Double alternativePortfolioNav, Double alternativePortfolioMtd, Double alternativePortfolioQtd, Double alternativePortfolioYtd, Double fixedPortfolioNav, Double fixedPortfolioMtd, Double fixedPortfolioQtd, Double fixedPortfolioYtd, Double equityPortfolioNav, Double equityPortfolioMtd, Double equityPortfolioQtd, Double equityPortfolioYtd, Double hedgeFundsNav, Double hedgeFundsMtd, Double hedgeFundsQtd, Double hedgeFundsYtd, Double privateEquityNav, Double privateEquityMtd, Double privateEquityQtd, Double privateEquityYtd, Double realEstateNav, Double realEstateMtd, Double realEstateQtd, Double realEstateYtd, Double nickMfOtherNav, Double nickMfOtherMtd, Double nickMfOtherQtd, Double nickMfOtherYtd, Double transferNav, Double transferMtd, Double transferQtd, Double transferYtd) {
+        this.updater = updater;
         this.date = date;
         this.nicTotalAumNav = nicTotalAumNav;
         this.transitionPortfolioNav = transitionPortfolioNav;
@@ -105,6 +108,14 @@ public class NicPortfolio extends BaseEntity {
         this.transferMtd = transferMtd;
         this.transferQtd = transferQtd;
         this.transferYtd = transferYtd;
+    }
+
+    public String getUpdater() {
+        return updater;
+    }
+
+    public void setUpdater(String updater) {
+        this.updater = updater;
     }
 
     public Date getDate() {

@@ -49,7 +49,7 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
     }
 
     @Override
-    public NicPortfolioResultDto upload(Set<FilesDto> filesDtoSet) {
+    public NicPortfolioResultDto upload(Set<FilesDto> filesDtoSet, String updater) {
 
         try {
             Iterator<Row> rowIterator;
@@ -99,7 +99,7 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
                     }
 
                     if (previousMonth != currentMonth) {
-                        portfolioList.add(this.create(previousRow));
+                        portfolioList.add(this.create(previousRow, updater));
                     }
                 } catch (Exception ex) {
                     logger.error("Failed to update NIC Portfolio data: error parsing row #" + rowNumber + ", ", ex);
@@ -119,6 +119,7 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
                 return new NicPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update NIC Portfolio data: repository problem!", "");
             }
 
+            logger.info("NIC Portfolio data has been updated successfully, updater: " + updater);
             List<NicPortfolioDto> nicPortfolioDtoList = this.converter.disassembleList(this.repository.findAllByOrderByDateAsc());
             return new NicPortfolioResultDto(nicPortfolioDtoList, ResponseStatusType.SUCCESS, "", "NIC Portfolio data has been updated successfully!", "");
         } catch (Exception ex) {
@@ -128,9 +129,10 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
     }
 
     @Override
-    public NicPortfolio create(Row row) {
+    public NicPortfolio create(Row row, String updater) {
         try {
             return new NicPortfolio(
+                    updater,
                     row.getCell(0).getDateCellValue(),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(3)),
 
