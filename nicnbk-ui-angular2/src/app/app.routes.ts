@@ -100,7 +100,6 @@ import {CurrencyRatesLookupValuesComponent} from "./lookup/currency.rates.lookup
 import {HFScoringListComponent} from "./hf/hf.scoring.list.component";
 import {HFScoringEditComponent} from "./hf/hf-scoring-edit.component";
 import {BenchmarkLookupValuesComponent} from "./lookup/benchmark.lookup.values.component";
-import {ICMeetingTopicEditComponent} from "./corpmeetings/ic-meeting-topic-edit.component";
 import {HFResearchPageComponent} from "./hf/hf.research-page.component";
 import {MonitoringHFListComponent} from "./monitoring/monitoring-hedge-funds-list.component";
 import {MonitoringHFResearchComponent} from "./monitoring/monitoring-hedge-funds-research.component";
