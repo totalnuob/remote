@@ -28,7 +28,7 @@ public enum FileTypeLookup {
 
     PE_FIRM_LOGO("PE_LOGO", "pe_logo"),
 
-    MONITORING_NIC_PORTFOLIO("MONITORING_NIC_PORTFOLIO", "monitoring_nic_portfolio"),
+    MONITORING_NIC_PORTFOLIO("MON_NIC", "monitoring/nic_portfolio"),
 
     CORP_MEETING_MATERIALS("CM_MATRL", "corp_meetings"),
     CC_ATTACHMENT("CC_ATTACH", "reporting/cc_attachments"),

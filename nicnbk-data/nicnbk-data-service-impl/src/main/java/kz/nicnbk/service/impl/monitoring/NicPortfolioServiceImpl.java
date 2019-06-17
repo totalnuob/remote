@@ -118,7 +118,8 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
 
             try {
                 if(portfolioList.size() > 0) {
-                    Long fileId = fileService.save(filesDto, FileTypeLookup.MONITORING_NIC_PORTFOLIO.getCatalog());
+                    filesDto.setType("MON_NIC");
+                    Long fileId = this.fileService.save(filesDto, FileTypeLookup.MONITORING_NIC_PORTFOLIO.getCatalog());
 
                     Files file = new Files();
                     file.setId(fileId);
@@ -128,21 +129,25 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
 
                     this.repository.save(portfolioList);
 
-                    List<Long> entitiesToDelete = new ArrayList<>();
+                    List<Long> portfoliosToDelete = new ArrayList<>();
+                    List<Long> filesToDelete = new ArrayList<>();
 
                     for (NicPortfolio portfolio : this.repository.findAll()) {
-                        if(! portfolio.getFile().getId().equals(fileId)) {
-                            entitiesToDelete.add(portfolio.getId());
+                        if ( ! portfolio.getFile().getId().equals(fileId)) {
+                            portfoliosToDelete.add(portfolio.getId());
+                            if ( ! filesToDelete.contains(portfolio.getFile().getId())) {
+                                filesToDelete.add(portfolio.getFile().getId());
+                            }
                         }
                     }
 
-                    for (Long id : entitiesToDelete) {
+                    for (Long id : portfoliosToDelete) {
                         this.repository.delete(id);
                     }
 
-
-
-
+                    for (Long id : filesToDelete) {
+                        this.fileService.delete(id);
+                    }
                 }
             } catch (Exception ex) {
                 logger.error("Failed to update NIC Portfolio data: repository problem, ", ex);
