@@ -19,7 +19,18 @@
         <!--<h2>Under Construction. New monitoring forms to be updated soon.</h2>-->
     <!--</div>-->
 
-
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-2">
             <select (ngModelChange)="redraw()" [(ngModel)]="tableDate" id="tableDate" class="form-control" >

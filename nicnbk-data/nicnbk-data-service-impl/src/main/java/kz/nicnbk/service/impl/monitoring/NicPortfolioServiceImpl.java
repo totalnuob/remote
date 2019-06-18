@@ -118,7 +118,7 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
 
             try {
                 if(portfolioList.size() > 0) {
-                    filesDto.setType("MON_NIC");
+                    filesDto.setType(FileTypeLookup.MONITORING_NIC_PORTFOLIO.getCode());
                     Long fileId = this.fileService.save(filesDto, FileTypeLookup.MONITORING_NIC_PORTFOLIO.getCatalog());
 
                     Files file = new Files();

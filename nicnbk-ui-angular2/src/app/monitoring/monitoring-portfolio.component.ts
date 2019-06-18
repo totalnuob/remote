@@ -222,31 +222,31 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
 
         var currentData = this.getDataByDate(tableDate);
         if(currentData != null) {
-            if(currentData.transitionPortfolioMtd != null && currentData.transitionPortfolioQtd != null && currentData.transitionPortfolioYtd != null) {
+            if(currentData.transitionPortfolioMtd != null || currentData.transitionPortfolioQtd != null || currentData.transitionPortfolioYtd != null) {
                 data.addRows([["Transition portfolio", currentData.transitionPortfolioMtd, currentData.transitionPortfolioQtd, currentData.transitionPortfolioYtd]]);
             }
-            if(currentData.alternativePortfolioMtd != null && currentData.alternativePortfolioQtd != null && currentData.alternativePortfolioYtd != null) {
+            if(currentData.alternativePortfolioMtd != null || currentData.alternativePortfolioQtd != null || currentData.alternativePortfolioYtd != null) {
                 data.addRows([["Alternative portfolio", currentData.alternativePortfolioMtd, currentData.alternativePortfolioQtd, currentData.alternativePortfolioYtd]]);
             }
-            if(currentData.fixedPortfolioMtd != null && currentData.fixedPortfolioQtd != null && currentData.fixedPortfolioYtd != null) {
+            if(currentData.fixedPortfolioMtd != null || currentData.fixedPortfolioQtd != null || currentData.fixedPortfolioYtd != null) {
                 data.addRows([["Fixed portfolio", currentData.fixedPortfolioMtd, currentData.fixedPortfolioQtd, currentData.fixedPortfolioYtd]]);
             }
-            if(currentData.equityPortfolioMtd != null && currentData.equityPortfolioQtd != null && currentData.equityPortfolioYtd != null) {
+            if(currentData.equityPortfolioMtd != null || currentData.equityPortfolioQtd != null || currentData.equityPortfolioYtd != null) {
                 data.addRows([["Equity portfolio", currentData.equityPortfolioMtd, currentData.equityPortfolioQtd, currentData.equityPortfolioYtd]]);
             }
-            if(currentData.hedgeFundsMtd != null && currentData.hedgeFundsQtd != null && currentData.hedgeFundsYtd != null) {
+            if(currentData.hedgeFundsMtd != null || currentData.hedgeFundsQtd != null || currentData.hedgeFundsYtd != null) {
                 data.addRows([["Hedge funds", currentData.hedgeFundsMtd, currentData.hedgeFundsQtd, currentData.hedgeFundsYtd]]);
             }
-            if(currentData.privateEquityMtd != null && currentData.privateEquityQtd != null && currentData.privateEquityYtd != null) {
+            if(currentData.privateEquityMtd != null || currentData.privateEquityQtd != null || currentData.privateEquityYtd != null) {
                 data.addRows([["Private equity", currentData.privateEquityMtd, currentData.privateEquityQtd, currentData.privateEquityYtd]]);
             }
-            if(currentData.realEstateMtd != null && currentData.realEstateQtd != null && currentData.realEstateYtd != null) {
+            if(currentData.realEstateMtd != null || currentData.realEstateQtd != null || currentData.realEstateYtd != null) {
                 data.addRows([["Real estate", currentData.realEstateMtd, currentData.realEstateQtd, currentData.realEstateYtd]]);
             }
-            if(currentData.nickMfOtherMtd != null && currentData.nickMfOtherQtd != null && currentData.nickMfOtherYtd != null) {
+            if(currentData.nickMfOtherMtd != null || currentData.nickMfOtherQtd != null || currentData.nickMfOtherYtd != null) {
                 data.addRows([["NICK Mf other", currentData.nickMfOtherMtd, currentData.nickMfOtherQtd, currentData.nickMfOtherYtd]]);
             }
-            if(currentData.transferMtd != null && currentData.transferQtd != null && currentData.transferYtd != null) {
+            if(currentData.transferMtd != null || currentData.transferQtd != null || currentData.transferYtd != null) {
                 data.addRows([["Transfer", currentData.transferMtd, currentData.transferQtd, currentData.transferYtd]]);
             }
         }
@@ -681,7 +681,7 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
                         this.drawTargetAllocationChart();
                         this.drawActualAllocationChart(this.tableDate);
 
-                        this.postAction(response.messageEn, null);
+                        this.postAction(response.message.nameEn, null);
 
                         this.myFiles = [];
                         $("#fileupload").val(null);
