@@ -7,7 +7,6 @@ import {TableChartDto, TableColumnDto} from "../google-chart/table-chart.dto";
 import {MonitoringPortfolioService} from "./monitoring-portfolio.service";
 import {Subscription} from "../../../node_modules/rxjs";
 import {ErrorResponse} from "../common/error-response";
-import {MonitoringNicPortfolio} from "./model/monitoring.nicPortfolio";
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 import {FileDownloadService} from "../common/file.download.service";
 import {DATA_APP_URL} from "../common/common.service.constants";
@@ -30,13 +29,13 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
     private tableDate;
     // private performanceType;
 
-    private nicPortfolioList: Array<MonitoringNicPortfolio> = [];
+    private nicPortfolioList = [];
 
     private moduleAccessChecker = new ModuleAccessCheckerService;
 
     private myFiles: File[];
 
-    private FILE_DOWNLOAD_URL = DATA_APP_URL + "monitoring/portfolio/download/"
+    private FILE_DOWNLOAD_URL = DATA_APP_URL + "monitoring/portfolio/download/";
 
     busy: Subscription;
 
@@ -189,7 +188,21 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
         //var chart = this.createTableChart(document.getElementById('portfolio_value'));
         var chart = this.createTableChart(document.getElementById('portfolio_nav_table'));
         chart.draw(data, options);
+
+        // google.visualization.events.addListener(chart, 'select', selectHandler);
+        //
+        // function selectHandler() {
+        //     console.log(chart.getSelection()[0].row);
+        //     // this.selectHandler2();
+        // }
     }
+
+    // public selectHandler2(a) {
+    //     // this.drawActualAllocationChart(this.tableDate, a);
+    //     console.log("123");
+    //     console.log(a);
+    //     console.log(this.tableDate);
+    // }
 
     // PORTFOLIO PERFORMANCE -------------
 
@@ -536,6 +549,9 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
 
         var chart = new google.visualization.PieChart(document.getElementById('actual_allocation_chart'));
         chart.draw(data, options);
+        // if (rowNumber >= 0 && rowNumber <=8) {
+        //     chart.setSelection([{row: rowNumber}]);
+        // }
     }
 
     // PUBLIC PERFORMANCE ----------------------
