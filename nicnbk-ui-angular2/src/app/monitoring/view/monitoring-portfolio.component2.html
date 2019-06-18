@@ -37,6 +37,11 @@
                 <option *ngFor="let item of getAllDates()" [value]="item">{{item}}</option>
             </select>
         </div>
+        <div class="col-md-3" *ngIf="canEdit()">
+            <label class="btn btn-primary" (click)="fileDownload()">
+                Download the latest uploaded file
+            </label>
+        </div>
         <div class="pull-right" *ngIf="canEdit()">
             <form #yourForm="ngForm" (ngSubmit)="onSubmitNicPortfolio()">
                 <label class="btn btn-primary">

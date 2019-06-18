@@ -11,12 +11,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Set;
 
 /**
@@ -62,6 +63,48 @@ public class MonitoringNicPortfolioServiceREST extends CommonServiceREST {
             return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/download", method = RequestMethod.GET)
+    @ResponseBody
+    public void FileDownload(HttpServletResponse response) {
+
+        FilesDto filesDto;
+        try {
+            filesDto = this.service.getFile();
+        } catch (Exception ex) {
+            filesDto = null;
+        }
+
+        if (filesDto == null || filesDto.getInputStream() == null) {
+            try {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                return;
+            } catch (IOException e) {
+                return;
+            }
+        }
+
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+
+        try {
+            response.setHeader("Content-disposition", "attachment;");
+            org.apache.commons.io.IOUtils.copy(filesDto.getInputStream(), response.getOutputStream());
+            response.flushBuffer();
+        } catch (UnsupportedEncodingException e) {
+            logger.error("(Monitoring, NIC Portfolio) File export request failed: unsupported encoding", e);
+        } catch (IOException e) {
+            logger.error("(Monitoring, NIC Portfolio) File export request failed: io exception", e);
+        } catch (Exception e){
+            logger.error("(Monitoring, NIC Portfolio) File export request failed", e);
+        }
+        try {
+            filesDto.getInputStream().close();
+            new File(filesDto.getFileName()).delete();
+        } catch (IOException e) {
+            logger.error("(Monitoring, NIC Portfolio) File export: failed to close input stream", e);
         }
     }
 }

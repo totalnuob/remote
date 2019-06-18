@@ -18,4 +18,6 @@ public interface NicPortfolioService {
     NicPortfolioResultDto upload(Set<FilesDto> filesDtoSet, String username);
 
     NicPortfolio create(Row row, String username);
+
+    FilesDto getFile();
 }

@@ -2,17 +2,21 @@ package kz.nicnbk.service.impl.monitoring;
 
 import kz.nicnbk.common.service.util.DateUtils;
 import kz.nicnbk.common.service.util.ExcelUtils;
+import kz.nicnbk.common.service.util.HashUtils;
+import kz.nicnbk.repo.api.files.FilesRepository;
 import kz.nicnbk.repo.api.monitoring.NicPortfolioRepository;
 import kz.nicnbk.repo.model.files.Files;
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.repo.model.monitoring.NicPortfolio;
 import kz.nicnbk.service.api.files.FileService;
 import kz.nicnbk.service.api.monitoring.NicPortfolioService;
+import kz.nicnbk.service.converter.files.FilesEntityConverter;
 import kz.nicnbk.service.converter.monitoring.NicPortfolioEntityConverter;
 import kz.nicnbk.service.dto.common.ResponseStatusType;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.monitoring.NicPortfolioDto;
 import kz.nicnbk.service.dto.monitoring.NicPortfolioResultDto;
+import kz.nicnbk.service.impl.files.FilePathResolver;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -22,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.*;
 
@@ -42,6 +47,15 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
 
     @Autowired
     private FileService fileService;
+
+    @Autowired
+    private FilesRepository filesRepository;
+
+    @Autowired
+    private FilesEntityConverter filesEntityConverter;
+
+    @Autowired
+    private FilePathResolver filePathResolver;
 
     @Override
     public NicPortfolioResultDto get() {
@@ -221,5 +235,22 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
             logger.error("Failed to update NIC Portfolio data: row parsing error, ", ex);
             throw ex;
         }
+    }
+
+    @Override
+    public FilesDto getFile() {
+        if(this.repository.findAllByOrderByDateAsc().size() > 0) {
+            try {
+                Long fileId = this.repository.findAllByOrderByDateAsc().get(0).getFile().getId();
+                FilesDto filesDto = this.filesEntityConverter.disassemble(this.filesRepository.findOne(fileId));
+                String path = filePathResolver.resolveDirectory(fileId, FileTypeLookup.MONITORING_NIC_PORTFOLIO.getCatalog());
+                String fileName = HashUtils.hashMD5String(fileId.toString());
+                InputStream inputStream = new FileInputStream(path+fileName);
+                filesDto.setInputStream(inputStream);
+                return filesDto;
+            } catch (Exception ex) {
+            }
+        }
+        return null;
     }
 }

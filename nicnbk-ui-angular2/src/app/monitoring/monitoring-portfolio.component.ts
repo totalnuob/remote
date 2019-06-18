@@ -9,6 +9,8 @@ import {Subscription} from "../../../node_modules/rxjs";
 import {ErrorResponse} from "../common/error-response";
 import {MonitoringNicPortfolio} from "./model/monitoring.nicPortfolio";
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
+import {FileDownloadService} from "../common/file.download.service";
+import {DATA_APP_URL} from "../common/common.service.constants";
 
 declare var google:any;
 declare var $: any;
@@ -34,10 +36,13 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
 
     private myFiles: File[];
 
+    private FILE_DOWNLOAD_URL = DATA_APP_URL + "monitoring/portfolio/download/"
+
     busy: Subscription;
 
     constructor(
-        private monitoringPortfolioService: MonitoringPortfolioService
+        private monitoringPortfolioService: MonitoringPortfolioService,
+        private downloadService: FileDownloadService,
     ){
         super();
 
@@ -692,6 +697,19 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
                     this.postAction(null, JSON.parse(error).message.nameEn);
                     console.log(error);
                     console.log(JSON.parse(error).message.nameEn);
+                }
+            )
+    }
+
+    private fileDownload() {
+        this.busy = this.downloadService.makeFileRequest(this.FILE_DOWNLOAD_URL, '')
+            .subscribe(
+                (response) => {
+                    console.log("File downloaded!");
+                },
+                (error) => {
+                    this.postAction(null, "Error loading file!");
+                    console.log(error);
                 }
             )
     }
