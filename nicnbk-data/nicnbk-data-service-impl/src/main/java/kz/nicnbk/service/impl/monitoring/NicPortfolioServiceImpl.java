@@ -238,7 +238,7 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
     }
 
     @Override
-    public FilesDto getFile() {
+    public FilesDto getFileWithInputStream() {
         if(this.repository.findAllByOrderByDateAsc().size() > 0) {
             try {
                 Long fileId = this.repository.findAllByOrderByDateAsc().get(0).getFile().getId();

@@ -19,5 +19,5 @@ public interface NicPortfolioService {
 
     NicPortfolio create(Row row, String username);
 
-    FilesDto getFile();
+    FilesDto getFileWithInputStream();
 }

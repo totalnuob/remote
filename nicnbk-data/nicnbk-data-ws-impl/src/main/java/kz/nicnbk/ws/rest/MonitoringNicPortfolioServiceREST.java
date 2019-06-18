@@ -73,7 +73,7 @@ public class MonitoringNicPortfolioServiceREST extends CommonServiceREST {
 
         FilesDto filesDto;
         try {
-            filesDto = this.service.getFile();
+            filesDto = this.service.getFileWithInputStream();
         } catch (Exception ex) {
             filesDto = null;
         }
@@ -87,7 +87,7 @@ public class MonitoringNicPortfolioServiceREST extends CommonServiceREST {
             }
         }
 
-        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setContentType(filesDto.getMimeType());
 
         try {
             response.setHeader("Content-disposition", "attachment;");
