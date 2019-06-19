@@ -64,107 +64,119 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
     }
 
     redraw(){
-        this.redrawTables();
-        this.redrawActualAllocationPieChart();
+        // this.redrawTables();
+        // this.redrawActualAllocationPieChart();
+        this.redrawTablesAndActualAllocationPieChart();
     }
 
-    public redrawTables(){
-        //alert($('#tableDate').val());
-        this.drawTables($("#tableDate").val());
-    }
+    // public redrawTables(){
+    //     //alert($('#tableDate').val());
+    //     this.drawTables($("#tableDate").val());
+    // }
 
-    public redrawActualAllocationPieChart(){
-        //alert($('#tableDate').val());
-        this.drawActualAllocationChart($("#tableDate").val());
+    // public redrawActualAllocationPieChart(){
+    //     //alert($('#tableDate').val());
+    //     this.drawActualAllocationChart($("#tableDate").val());
+    // }
+
+    public redrawTablesAndActualAllocationPieChart(){
+        this.drawTablesAndActualAllocationChart($("#tableDate").val());
     }
 
     // public redrawLineChart(){
     //     this.drawAlternativePerformanceChart($('#performanceType').val());
     // }
 
-    drawTables(tableDate){
-        var NAVdata = this.getNAVData(tableDate);
-        this.drawPortfolioValueTable(NAVdata);
+    // drawTables(tableDate){
+    //     var NAVdata = this.getNAVData(tableDate);
+    //     this.drawPortfolioValueTable(NAVdata);
+    //
+    //     var portfolioPerformanceData = this.getPortfolioPerformanceData(tableDate);
+    //     this.drawPortfolioPerformanceTable(portfolioPerformanceData);
+    //
+    //     //var benchmarkPerformanceData = this.getBenchmarkPerformanceData(tableDate);
+    //     //this.drawBenchmarksPerformanceTable(benchmarkPerformanceData);
+    // }
+
+    drawTablesAndActualAllocationChart(tableDate){
+        this.drawPortfolioValueTableAndActualAllocationChart(tableDate);
 
         var portfolioPerformanceData = this.getPortfolioPerformanceData(tableDate);
         this.drawPortfolioPerformanceTable(portfolioPerformanceData);
-
-        //var benchmarkPerformanceData = this.getBenchmarkPerformanceData(tableDate);
-        //this.drawBenchmarksPerformanceTable(benchmarkPerformanceData);
     }
 
     // NAV ------------------------------
-    getNAVData(tableDate){
-        var data = new google.visualization.DataTable();
-        var formatter = new google.visualization.NumberFormat({
-            prefix:'$ ',
-            groupingSymbol: ' ',
-            fractionDigits: 0
-        });
-        data.addColumn("string", "");
-        data.addColumn("number", "NAV");
-
-        // var NAVarray = this.getNAVByDate(tableDate);
-        // if(tableDate.endsWith("19")) {
-        //     data.addRows([
-        //         ["Private Equity", NAVarray[1]],
-        //         ["Hedge Funds", NAVarray[2]],
-        //         ["Real Estate", NAVarray[3]],
-        //         ["Fixed income securities", NAVarray[4]],
-        //         ["Public Equity", NAVarray[5]],
-        //         ["Transition portfolio", NAVarray[6]],
-        //         ["NICK MF Other", NAVarray[7]],
-        //         ["Total", NAVarray[8]],
-        //         ["Transfer", NAVarray[9]]
-        //     ]);
-        // }else {
-        //     data.addRows([
-        //         ["NIC Total", NAVarray[1]],
-        //         ["Liquid Portfolio", NAVarray[2]],
-        //         ["NICK Master Fund", NAVarray[3]],
-        //         ["Hedge Funds Portfolio", NAVarray[5]],
-        //         ["Private Equity Portfolio", NAVarray[4]],
-        //         ["NICK Master Fund Cash", NAVarray[6]]
-        //     ]);
-        // }
-
-        var currentData = this.getDataByDate(tableDate);
-        if(currentData != null) {
-            if(currentData.nicTotalAumNav != null) {
-                data.addRows([["NIC total AUM", currentData.nicTotalAumNav]]);
-            }
-            if(currentData.transitionPortfolioNav != null) {
-                data.addRows([["Transition portfolio", currentData.transitionPortfolioNav]]);
-            }
-            if(currentData.alternativePortfolioNav != null) {
-                data.addRows([["Alternative portfolio", currentData.alternativePortfolioNav]]);
-            }
-            if(currentData.fixedPortfolioNav != null) {
-                data.addRows([["Fixed portfolio", currentData.fixedPortfolioNav]]);
-            }
-            if(currentData.equityPortfolioNav != null) {
-                data.addRows([["Equity portfolio", currentData.equityPortfolioNav]]);
-            }
-            if(currentData.hedgeFundsNav != null) {
-                data.addRows([["Hedge funds", currentData.hedgeFundsNav]]);
-            }
-            if(currentData.privateEquityNav != null) {
-                data.addRows([["Private equity", currentData.privateEquityNav]]);
-            }
-            if(currentData.realEstateNav != null) {
-                data.addRows([["Real estate", currentData.realEstateNav]]);
-            }
-            if(currentData.nickMfOtherNav != null) {
-                data.addRows([["NICK Mf other", currentData.nickMfOtherNav]]);
-            }
-            if(currentData.transferNav != null) {
-                data.addRows([["Transfer", currentData.transferNav]]);
-            }
-        }
-
-        formatter.format(data,1);
-        return data;
-    }
+    // getNAVData(tableDate){
+    //     var data = new google.visualization.DataTable();
+    //     var formatter = new google.visualization.NumberFormat({
+    //         prefix:'$ ',
+    //         groupingSymbol: ' ',
+    //         fractionDigits: 0
+    //     });
+    //     data.addColumn("string", "");
+    //     data.addColumn("number", "NAV");
+    //
+    //     // var NAVarray = this.getNAVByDate(tableDate);
+    //     // if(tableDate.endsWith("19")) {
+    //     //     data.addRows([
+    //     //         ["Private Equity", NAVarray[1]],
+    //     //         ["Hedge Funds", NAVarray[2]],
+    //     //         ["Real Estate", NAVarray[3]],
+    //     //         ["Fixed income securities", NAVarray[4]],
+    //     //         ["Public Equity", NAVarray[5]],
+    //     //         ["Transition portfolio", NAVarray[6]],
+    //     //         ["NICK MF Other", NAVarray[7]],
+    //     //         ["Total", NAVarray[8]],
+    //     //         ["Transfer", NAVarray[9]]
+    //     //     ]);
+    //     // }else {
+    //     //     data.addRows([
+    //     //         ["NIC Total", NAVarray[1]],
+    //     //         ["Liquid Portfolio", NAVarray[2]],
+    //     //         ["NICK Master Fund", NAVarray[3]],
+    //     //         ["Hedge Funds Portfolio", NAVarray[5]],
+    //     //         ["Private Equity Portfolio", NAVarray[4]],
+    //     //         ["NICK Master Fund Cash", NAVarray[6]]
+    //     //     ]);
+    //     // }
+    //
+    //     var currentData = this.getDataByDate(tableDate);
+    //     if(currentData != null) {
+    //         if(currentData.nicTotalAumNav != null) {
+    //             data.addRows([["NIC total AUM", currentData.nicTotalAumNav]]);
+    //         }
+    //         if(currentData.transitionPortfolioNav != null) {
+    //             data.addRows([["Transition portfolio", currentData.transitionPortfolioNav]]);
+    //         }
+    //         if(currentData.alternativePortfolioNav != null) {
+    //             data.addRows([["Alternative portfolio", currentData.alternativePortfolioNav]]);
+    //         }
+    //         if(currentData.fixedPortfolioNav != null) {
+    //             data.addRows([["Fixed portfolio", currentData.fixedPortfolioNav]]);
+    //         }
+    //         if(currentData.equityPortfolioNav != null) {
+    //             data.addRows([["Equity portfolio", currentData.equityPortfolioNav]]);
+    //         }
+    //         if(currentData.hedgeFundsNav != null) {
+    //             data.addRows([["Hedge funds", currentData.hedgeFundsNav]]);
+    //         }
+    //         if(currentData.privateEquityNav != null) {
+    //             data.addRows([["Private equity", currentData.privateEquityNav]]);
+    //         }
+    //         if(currentData.realEstateNav != null) {
+    //             data.addRows([["Real estate", currentData.realEstateNav]]);
+    //         }
+    //         if(currentData.nickMfOtherNav != null) {
+    //             data.addRows([["NICK Mf other", currentData.nickMfOtherNav]]);
+    //         }
+    //         if(currentData.transferNav != null) {
+    //             data.addRows([["Transfer portfolio", currentData.transferNav]]);
+    //         }
+    //     }
+    //
+    //     formatter.format(data,1);
+    //     return data;
+    // }
 
     // private getNAVByDate(tableDate){
     //
@@ -176,8 +188,87 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
     //     return null;
     // }
 
-    drawPortfolioValueTable(data){
-        var options = {
+    // drawPortfolioValueTable(data){
+    //     var options = {
+    //         showRowNumber: false,
+    //         width: '100%',
+    //         height: '100%',
+    //         'allowHtml': true,
+    //         cssClassNames: {}
+    //     };
+    //
+    //     //var chart = this.createTableChart(document.getElementById('portfolio_value'));
+    //     var chart = this.createTableChart(document.getElementById('portfolio_nav_table'));
+    //     chart.draw(data, options);
+    // }
+
+    drawPortfolioValueTableAndActualAllocationChart(tableDate){
+        var tableData = this.getDataByDate(tableDate);
+
+        var dataNAV = new google.visualization.DataTable();
+
+        var formatter = new google.visualization.NumberFormat({
+            prefix:'$ ',
+            groupingSymbol: ' ',
+            fractionDigits: 0
+        });
+
+        dataNAV.addColumn("string", "");
+        dataNAV.addColumn("number", "NAV");
+
+        if(tableData != null) {
+            if(tableData.nicTotalAumNav != null) {
+                dataNAV.addRows([["NIC total AUM", tableData.nicTotalAumNav]]);
+                dataNAV.setProperty(0, 0, 'style', 'font-weight: bold;')
+                dataNAV.setProperty(0, 1, 'style', 'font-weight: bold;')
+            }
+            if(tableData.transitionPortfolioNav != null) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;" + "Transition portfolio", tableData.transitionPortfolioNav]]);
+            }
+            if(tableData.alternativePortfolioNav != null) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;" + "Alternative portfolio", tableData.alternativePortfolioNav]]);
+            }
+            if(tableData.fixedPortfolioNav != null) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Fixed portfolio", tableData.fixedPortfolioNav]]);
+            }
+            if(tableData.equityPortfolioNav != null) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Equity portfolio", tableData.equityPortfolioNav]]);
+            }
+            if(tableData.hedgeFundsNav != null) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Hedge funds", tableData.hedgeFundsNav]]);
+            }
+            if(tableData.privateEquityNav != null) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Private equity", tableData.privateEquityNav]]);
+            }
+            if(tableData.realEstateNav != null) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Real estate", tableData.realEstateNav]]);
+            }
+            if(tableData.nickMfOtherNav != null) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "NICK Mf other", tableData.nickMfOtherNav]]);
+            }
+            if(tableData.transferNav != null) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;" + "Transfer portfolio", tableData.transferNav]]);
+            }
+
+            var dataActualAllocation = google.visualization.arrayToDataTable(
+                [
+                    ["Allocation", "%"],
+                    ["Transition portfolio", 0],
+                    ["Fixed portfolio", tableData.fixedPortfolioNav != null ? tableData.fixedPortfolioNav : 0],
+                    ["Equity portfolio", tableData.equityPortfolioNav != null ? tableData.equityPortfolioNav : 0],
+                    ["Hedge funds", tableData.hedgeFundsNav != null ? tableData.hedgeFundsNav : 0],
+                    ["Private equity", tableData.privateEquityNav != null ? tableData.privateEquityNav : 0],
+                    ["Real estate", tableData.realEstateNav != null ? tableData.realEstateNav : 0],
+                    ["Infrastructure", 0],
+                    ["NICK MF other", tableData.nickMfOtherNav != null ? tableData.nickMfOtherNav : 0],
+                    ["Transfer portfolio", 0],
+                ]
+            );
+        }
+
+        formatter.format(dataNAV,1);
+
+        var optionsNAV = {
             showRowNumber: false,
             width: '100%',
             height: '100%',
@@ -185,24 +276,48 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
             cssClassNames: {}
         };
 
-        //var chart = this.createTableChart(document.getElementById('portfolio_value'));
-        var chart = this.createTableChart(document.getElementById('portfolio_nav_table'));
-        chart.draw(data, options);
+        var optionsActualAllocation = {
+            animation: {
+                duration: 800,
+                easing: 'out',
+                startup: true
+            },
+            height: 300,
+            pieHole: 0.4,
+            title: 'Actual Allocation'
+        };
 
-        // google.visualization.events.addListener(chart, 'select', selectHandler);
-        //
+        var chartNAV = this.createTableChart(document.getElementById('portfolio_nav_table'));
+        chartNAV.draw(dataNAV, optionsNAV);
+
+        var chartActualAllocation = new google.visualization.PieChart(document.getElementById('actual_allocation_chart'));
+        chartActualAllocation.draw(dataActualAllocation, optionsActualAllocation);
+
+        google.visualization.events.addListener(chartNAV, 'select',
+            function() {
+                chartActualAllocation.draw(dataActualAllocation, optionsActualAllocation);
+
+                var x = dataNAV.Tf[chartNAV.getSelection()[0].row].c[0].v.split(';');
+
+                for (var i = 0; i < dataActualAllocation.Tf.length; i++) {
+                    if (dataActualAllocation.Tf[i].c[0].v == x[x.length == 1 ? 0 : x.length - 1]) {
+                        console.log(i);
+                        chartActualAllocation.setSelection([{row: i}]);
+                    }
+                }
+
+                chartNAV.setSelection(null);
+            });
+
+        // google.visualization.events.addListener(chartActualAllocation, 'select',
+        //     function() {
+        //         chartNAV.setSelection(chartActualAllocation.getSelection());
+        //     });
+
         // function selectHandler() {
-        //     console.log(chart.getSelection()[0].row);
-        //     // this.selectHandler2();
+        //     console.log(chartNAV.getSelection()[0].row);
         // }
     }
-
-    // public selectHandler2(a) {
-    //     // this.drawActualAllocationChart(this.tableDate, a);
-    //     console.log("123");
-    //     console.log(a);
-    //     console.log(this.tableDate);
-    // }
 
     // PORTFOLIO PERFORMANCE -------------
 
@@ -238,34 +353,34 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
         //     ]);
         // }
 
-        var currentData = this.getDataByDate(tableDate);
-        if(currentData != null) {
-            if(currentData.transitionPortfolioMtd != null || currentData.transitionPortfolioQtd != null || currentData.transitionPortfolioYtd != null) {
-                data.addRows([["Transition portfolio", currentData.transitionPortfolioMtd, currentData.transitionPortfolioQtd, currentData.transitionPortfolioYtd]]);
+        var tableData = this.getDataByDate(tableDate);
+        if(tableData != null) {
+            if(tableData.transitionPortfolioMtd != null || tableData.transitionPortfolioQtd != null || tableData.transitionPortfolioYtd != null) {
+                data.addRows([["Transition portfolio", tableData.transitionPortfolioMtd, tableData.transitionPortfolioQtd, tableData.transitionPortfolioYtd]]);
             }
-            if(currentData.alternativePortfolioMtd != null || currentData.alternativePortfolioQtd != null || currentData.alternativePortfolioYtd != null) {
-                data.addRows([["Alternative portfolio", currentData.alternativePortfolioMtd, currentData.alternativePortfolioQtd, currentData.alternativePortfolioYtd]]);
+            if(tableData.alternativePortfolioMtd != null || tableData.alternativePortfolioQtd != null || tableData.alternativePortfolioYtd != null) {
+                data.addRows([["Alternative portfolio", tableData.alternativePortfolioMtd, tableData.alternativePortfolioQtd, tableData.alternativePortfolioYtd]]);
             }
-            if(currentData.fixedPortfolioMtd != null || currentData.fixedPortfolioQtd != null || currentData.fixedPortfolioYtd != null) {
-                data.addRows([["Fixed portfolio", currentData.fixedPortfolioMtd, currentData.fixedPortfolioQtd, currentData.fixedPortfolioYtd]]);
+            if(tableData.fixedPortfolioMtd != null || tableData.fixedPortfolioQtd != null || tableData.fixedPortfolioYtd != null) {
+                data.addRows([["Fixed portfolio", tableData.fixedPortfolioMtd, tableData.fixedPortfolioQtd, tableData.fixedPortfolioYtd]]);
             }
-            if(currentData.equityPortfolioMtd != null || currentData.equityPortfolioQtd != null || currentData.equityPortfolioYtd != null) {
-                data.addRows([["Equity portfolio", currentData.equityPortfolioMtd, currentData.equityPortfolioQtd, currentData.equityPortfolioYtd]]);
+            if(tableData.equityPortfolioMtd != null || tableData.equityPortfolioQtd != null || tableData.equityPortfolioYtd != null) {
+                data.addRows([["Equity portfolio", tableData.equityPortfolioMtd, tableData.equityPortfolioQtd, tableData.equityPortfolioYtd]]);
             }
-            if(currentData.hedgeFundsMtd != null || currentData.hedgeFundsQtd != null || currentData.hedgeFundsYtd != null) {
-                data.addRows([["Hedge funds", currentData.hedgeFundsMtd, currentData.hedgeFundsQtd, currentData.hedgeFundsYtd]]);
+            if(tableData.hedgeFundsMtd != null || tableData.hedgeFundsQtd != null || tableData.hedgeFundsYtd != null) {
+                data.addRows([["Hedge funds", tableData.hedgeFundsMtd, tableData.hedgeFundsQtd, tableData.hedgeFundsYtd]]);
             }
-            if(currentData.privateEquityMtd != null || currentData.privateEquityQtd != null || currentData.privateEquityYtd != null) {
-                data.addRows([["Private equity", currentData.privateEquityMtd, currentData.privateEquityQtd, currentData.privateEquityYtd]]);
+            if(tableData.privateEquityMtd != null || tableData.privateEquityQtd != null || tableData.privateEquityYtd != null) {
+                data.addRows([["Private equity", tableData.privateEquityMtd, tableData.privateEquityQtd, tableData.privateEquityYtd]]);
             }
-            if(currentData.realEstateMtd != null || currentData.realEstateQtd != null || currentData.realEstateYtd != null) {
-                data.addRows([["Real estate", currentData.realEstateMtd, currentData.realEstateQtd, currentData.realEstateYtd]]);
+            if(tableData.realEstateMtd != null || tableData.realEstateQtd != null || tableData.realEstateYtd != null) {
+                data.addRows([["Real estate", tableData.realEstateMtd, tableData.realEstateQtd, tableData.realEstateYtd]]);
             }
-            if(currentData.nickMfOtherMtd != null || currentData.nickMfOtherQtd != null || currentData.nickMfOtherYtd != null) {
-                data.addRows([["NICK Mf other", currentData.nickMfOtherMtd, currentData.nickMfOtherQtd, currentData.nickMfOtherYtd]]);
+            if(tableData.nickMfOtherMtd != null || tableData.nickMfOtherQtd != null || tableData.nickMfOtherYtd != null) {
+                data.addRows([["NICK Mf other", tableData.nickMfOtherMtd, tableData.nickMfOtherQtd, tableData.nickMfOtherYtd]]);
             }
-            if(currentData.transferMtd != null || currentData.transferQtd != null || currentData.transferYtd != null) {
-                data.addRows([["Transfer", currentData.transferMtd, currentData.transferQtd, currentData.transferYtd]]);
+            if(tableData.transferMtd != null || tableData.transferQtd != null || tableData.transferYtd != null) {
+                data.addRows([["Transfer", tableData.transferMtd, tableData.transferQtd, tableData.transferYtd]]);
             }
         }
 
@@ -486,73 +601,73 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
         chart.draw(data, options);
     }
 
-    drawActualAllocationChart(tableDate){
-
-        // if(tableDate.endsWith("19")) {
-        //     var tableData = this.getActualAllocationData(tableDate);
-        //     console.log(tableData);
-        //     var data = google.visualization.arrayToDataTable(
-        //         [
-        //             ["Allocation", "%"],
-        //             ["Private Equity", tableData[1][0]],
-        //             ["Hedge Funds", tableData[1][1]],
-        //             ["Real Estate", tableData[1][2]],
-        //             ["Fixed income securities", tableData[1][3]],
-        //             ["Public Equity", tableData[1][4]],
-        //             ["Transition portfolio", tableData[1][5]],
-        //             ["NICK MF Other", tableData[1][6]],
-        //             ["Transfer", null]
-        //         ]
-        //     );
-        // }else{
-        //     var data = google.visualization.arrayToDataTable(
-        //         [
-        //             ["Allocation", "%"],
-        //             ["Private Equity", 12],
-        //             ["Hedge Funds", 22],
-        //             ["Liquid portfolio", 66],
-        //             ["Real Estate", 0],
-        //             ["Infrastructure ", 0],
-        //             ["Public Equity", 0]
-        //         ]
-        //     );
-        // }
-
-        var tableData = this.getDataByDate(tableDate);
-        if(tableData != null) {
-            var data = google.visualization.arrayToDataTable(
-                [
-                    ["Allocation", "%"],
-                    ["Transition portfolio", 0],
-                    ["Fixed portfolio", tableData.fixedPortfolioNav != null ? tableData.fixedPortfolioNav : 0],
-                    ["Equity portfolio", tableData.equityPortfolioNav != null ? tableData.equityPortfolioNav : 0],
-                    ["Hedge funds", tableData.hedgeFundsNav != null ? tableData.hedgeFundsNav : 0],
-                    ["Private equity", tableData.privateEquityNav != null ? tableData.privateEquityNav : 0],
-                    ["Real estate", tableData.realEstateNav != null ? tableData.realEstateNav : 0],
-                    ["Infrastructure", 0],
-                    ["NICK MF other", tableData.nickMfOtherNav != null ? tableData.nickMfOtherNav : 0],
-                    ["Transfer portfolio", 0],
-                ]
-            );
-        }
-
-        var options = {
-            animation: {
-                duration: 500,
-                easing: 'out',
-                startup: true
-            },
-            height: 300,
-            pieHole: 0.4,
-            title: 'Actual Allocation'
-        };
-
-        var chart = new google.visualization.PieChart(document.getElementById('actual_allocation_chart'));
-        chart.draw(data, options);
-        // if (rowNumber >= 0 && rowNumber <=8) {
-        //     chart.setSelection([{row: rowNumber}]);
-        // }
-    }
+    // drawActualAllocationChart(tableDate){
+    //
+    //     // if(tableDate.endsWith("19")) {
+    //     //     var tableData = this.getActualAllocationData(tableDate);
+    //     //     console.log(tableData);
+    //     //     var data = google.visualization.arrayToDataTable(
+    //     //         [
+    //     //             ["Allocation", "%"],
+    //     //             ["Private Equity", tableData[1][0]],
+    //     //             ["Hedge Funds", tableData[1][1]],
+    //     //             ["Real Estate", tableData[1][2]],
+    //     //             ["Fixed income securities", tableData[1][3]],
+    //     //             ["Public Equity", tableData[1][4]],
+    //     //             ["Transition portfolio", tableData[1][5]],
+    //     //             ["NICK MF Other", tableData[1][6]],
+    //     //             ["Transfer", null]
+    //     //         ]
+    //     //     );
+    //     // }else{
+    //     //     var data = google.visualization.arrayToDataTable(
+    //     //         [
+    //     //             ["Allocation", "%"],
+    //     //             ["Private Equity", 12],
+    //     //             ["Hedge Funds", 22],
+    //     //             ["Liquid portfolio", 66],
+    //     //             ["Real Estate", 0],
+    //     //             ["Infrastructure ", 0],
+    //     //             ["Public Equity", 0]
+    //     //         ]
+    //     //     );
+    //     // }
+    //
+    //     var tableData = this.getDataByDate(tableDate);
+    //     if(tableData != null) {
+    //         var data = google.visualization.arrayToDataTable(
+    //             [
+    //                 ["Allocation", "%"],
+    //                 ["Transition portfolio", 0],
+    //                 ["Fixed portfolio", tableData.fixedPortfolioNav != null ? tableData.fixedPortfolioNav : 0],
+    //                 ["Equity portfolio", tableData.equityPortfolioNav != null ? tableData.equityPortfolioNav : 0],
+    //                 ["Hedge funds", tableData.hedgeFundsNav != null ? tableData.hedgeFundsNav : 0],
+    //                 ["Private equity", tableData.privateEquityNav != null ? tableData.privateEquityNav : 0],
+    //                 ["Real estate", tableData.realEstateNav != null ? tableData.realEstateNav : 0],
+    //                 ["Infrastructure", 0],
+    //                 ["NICK MF other", tableData.nickMfOtherNav != null ? tableData.nickMfOtherNav : 0],
+    //                 ["Transfer portfolio", 0],
+    //             ]
+    //         );
+    //     }
+    //
+    //     var options = {
+    //         animation: {
+    //             duration: 500,
+    //             easing: 'out',
+    //             startup: true
+    //         },
+    //         height: 300,
+    //         pieHole: 0.4,
+    //         title: 'Actual Allocation'
+    //     };
+    //
+    //     var chart = new google.visualization.PieChart(document.getElementById('actual_allocation_chart'));
+    //     chart.draw(data, options);
+    //     // if (rowNumber >= 0 && rowNumber <=8) {
+    //     //     chart.setSelection([{row: rowNumber}]);
+    //     // }
+    // }
 
     // PUBLIC PERFORMANCE ----------------------
     // drawPublicPerformanceChart(){
@@ -643,9 +758,9 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
                         this.tableDate = this.getAllDates()[0];
                         // this.performanceType = "TOTAL";
 
-                        this.drawTables(this.tableDate);
+                        this.drawTablesAndActualAllocationChart(this.tableDate);
                         this.drawTargetAllocationChart();
-                        this.drawActualAllocationChart(this.tableDate);
+                        // this.drawActualAllocationChart(this.tableDate);
 
                         //this.drawAlternativePerformanceChart("TOTAL");
                         //this.drawPublicPerformanceChart();
@@ -698,9 +813,9 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
                     if(this.nicPortfolioList.length > 0) {
                         this.tableDate = this.getAllDates()[0];
 
-                        this.drawTables(this.tableDate);
+                        this.drawTablesAndActualAllocationChart(this.tableDate);
                         this.drawTargetAllocationChart();
-                        this.drawActualAllocationChart(this.tableDate);
+                        // this.drawActualAllocationChart(this.tableDate);
 
                         this.postAction(response.message.nameEn, null);
 
