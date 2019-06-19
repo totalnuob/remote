@@ -124,11 +124,13 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
             HedgeFundScreening entity = this.screeningEntityConverter.assemble(screeningDto);
 
             if (entity != null) {
-                HedgeFundScreening existingEntity = this.screeningRepository.findOne(screeningDto.getId());
-                if(existingEntity != null) {
-                    entity.setCreator(existingEntity.getCreator());
-                    entity.setDataFile(existingEntity.getDataFile());
-                    entity.setUcitsFile(existingEntity.getUcitsFile());
+                if(screeningDto.getId() != null) {
+                    HedgeFundScreening existingEntity = this.screeningRepository.findOne(screeningDto.getId());
+                    if (existingEntity != null) {
+                        entity.setCreator(existingEntity.getCreator());
+                        entity.setDataFile(existingEntity.getDataFile());
+                        entity.setUcitsFile(existingEntity.getUcitsFile());
+                    }
                 }
 
                 Long id = this.screeningRepository.save(entity).getId();
