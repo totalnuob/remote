@@ -81,7 +81,7 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
             int rowNumberEquity = 0;
             int rowNumberTransition = 0;
             List<LiquidPortfolio> portfolioList;
-            Files dummyFile = new Files();
+            Long fileId;
 
             // Read all the data that we have in the repository
 
@@ -145,9 +145,7 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
 
             try {
                 filesDto.setType(FileTypeLookup.MONITORING_LIQUID_PORTFOLIO.getCode());
-                Long fileId = this.fileService.save(filesDto, FileTypeLookup.MONITORING_LIQUID_PORTFOLIO.getCatalog());
-
-                dummyFile.setId(fileId);
+                fileId = this.fileService.save(filesDto, FileTypeLookup.MONITORING_LIQUID_PORTFOLIO.getCatalog());
             } catch (Exception ex) {
                 logger.error("Failed to update Liquid Portfolio data: repository problem, ", ex);
                 return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data: repository problem!", "");
@@ -168,6 +166,8 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
                         break;
                     }
 
+                    portfolioList = this.updateFixed(portfolioList, row, updater, fileId);
+
                 } catch (Exception ex) {
                     logger.error("Failed to update Liquid Portfolio data: error parsing row #" + rowNumberFixed + " in sheet 'Fixed', ", ex);
                     return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data: error parsing row #" + rowNumberFixed + " in sheet 'Fixed'!", "");
@@ -187,6 +187,8 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
                         break;
                     }
 
+                    portfolioList = this.updateEquity(portfolioList, row, updater, fileId);
+
                 } catch (Exception ex) {
                     logger.error("Failed to update Liquid Portfolio data: error parsing row #" + rowNumberEquity + " in sheet 'Equity', ", ex);
                     return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data: error parsing row #" + rowNumberEquity + " in sheet 'Equity'!", "");
@@ -205,6 +207,8 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
                     if (row.getCell(0).getDateCellValue().after(new Date())) {
                         break;
                     }
+
+                    portfolioList = this.updateTransition(portfolioList, row, updater, fileId);
 
                 } catch (Exception ex) {
                     logger.error("Failed to update Liquid Portfolio data: error parsing row #" + rowNumberTransition + " in sheet 'Transition', ", ex);
@@ -249,5 +253,23 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
             logger.error("Failed to update Liquid Portfolio data, ", ex);
             return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data!", "");
         }
+    }
+
+    @Override
+    public List<LiquidPortfolio> updateFixed(List<LiquidPortfolio> portfolioList, Row row, String updater, Long fileId) {
+        Files dummyFile = new Files();
+        dummyFile.setId(fileId);
+
+        return portfolioList;
+    }
+
+    @Override
+    public List<LiquidPortfolio> updateEquity(List<LiquidPortfolio> portfolioList, Row row, String updater, Long fileId) {
+        return portfolioList;
+    }
+
+    @Override
+    public List<LiquidPortfolio> updateTransition(List<LiquidPortfolio> portfolioList, Row row, String updater, Long fileId) {
+        return portfolioList;
     }
 }
