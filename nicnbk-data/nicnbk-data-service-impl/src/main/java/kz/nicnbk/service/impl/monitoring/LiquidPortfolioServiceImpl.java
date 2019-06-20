@@ -237,13 +237,14 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
                         this.fileService.delete(files.getId());
                     }
                 }
-
             } catch (Exception ex) {
                 logger.error("Failed to update Liquid Portfolio data: repository problem, ", ex);
                 return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data: repository problem!", "");
             }
 
-            return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data!", "");
+            logger.info("Liquid Portfolio data has been updated successfully, updater: " + updater);
+            List<LiquidPortfolioDto> liquidPortfolioDtoList = this.converter.disassembleList(this.repository.findAllByOrderByDateAsc());
+            return new LiquidPortfolioResultDto(liquidPortfolioDtoList, ResponseStatusType.SUCCESS, "", "Liquid Portfolio data has been updated successfully!", "");
         } catch (Exception ex) {
             logger.error("Failed to update Liquid Portfolio data, ", ex);
             return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data!", "");
