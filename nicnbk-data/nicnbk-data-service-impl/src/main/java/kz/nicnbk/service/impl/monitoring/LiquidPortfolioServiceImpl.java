@@ -1,5 +1,6 @@
 package kz.nicnbk.service.impl.monitoring;
 
+import kz.nicnbk.common.service.util.ExcelUtils;
 import kz.nicnbk.repo.api.files.FilesRepository;
 import kz.nicnbk.repo.api.lookup.FilesTypeRepository;
 import kz.nicnbk.repo.api.monitoring.LiquidPortfolioRepository;
@@ -228,14 +229,11 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
 
                 for (Files files : filesList) {
                     boolean delete = true;
-                    for (LiquidPortfolio portfolio : portfolioList) {
-                        if ((portfolio.getFileFixed() != null && portfolio.getFileFixed().getId().equals(files.getId())) ||
-                                (portfolio.getFileEquity() != null && portfolio.getFileEquity().getId().equals(files.getId())) ||
-                                (portfolio.getFileTransition() != null && portfolio.getFileTransition().getId().equals(files.getId()))
-                                ) {
-                            delete = false;
-                            break;
-                        }
+                    if (this.repository.findByFileFixed(files).size() > 0 ||
+                            this.repository.findByFileEquity(files).size() > 0 ||
+                            this.repository.findByFileTransition(files).size() > 0
+                            ) {
+                        delete = false;
                     }
                     if (delete) {
                         this.fileService.delete(files.getId());
@@ -260,16 +258,193 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
         Files dummyFile = new Files();
         dummyFile.setId(fileId);
 
+        boolean alreadyExists = false;
+
+        for (LiquidPortfolio portfolio : portfolioList) {
+            if (portfolio.getDate().getTime() == row.getCell(0).getDateCellValue().getTime()) {
+
+                portfolio.setUpdaterFixed(updater);
+                portfolio.setFileFixed(dummyFile);
+
+                portfolio.setTotalFixed(ExcelUtils.getDoubleValueFromCell(row.getCell(8)));
+                portfolio.setTotalFixedFlow(ExcelUtils.getDoubleValueFromCell(row.getCell(7)));
+                portfolio.setGovernmentsFixed(ExcelUtils.getDoubleValueFromCell(row.getCell(15)));
+                portfolio.setGovernmentsFixedFlow(ExcelUtils.getDoubleValueFromCell(row.getCell(14)));
+                portfolio.setCorporates(ExcelUtils.getDoubleValueFromCell(row.getCell(22)));
+                portfolio.setCorporatesFlow(ExcelUtils.getDoubleValueFromCell(row.getCell(21)));
+                portfolio.setAgencies(ExcelUtils.getDoubleValueFromCell(row.getCell(29)));
+                portfolio.setAgenciesFlow(ExcelUtils.getDoubleValueFromCell(row.getCell(28)));
+                portfolio.setSupranationals(ExcelUtils.getDoubleValueFromCell(row.getCell(36)));
+                portfolio.setSupranationalsFlow(ExcelUtils.getDoubleValueFromCell(row.getCell(35)));
+                portfolio.setCurrency(ExcelUtils.getDoubleValueFromCell(row.getCell(43)));
+                portfolio.setOptions(ExcelUtils.getDoubleValueFromCell(row.getCell(107)));
+                portfolio.setCashFixed(ExcelUtils.getDoubleValueFromCell(row.getCell(204)));
+                portfolio.setCashBrokerAndFutures(ExcelUtils.getDoubleValueFromCell(row.getCell(196)));
+
+                alreadyExists = true;
+            }
+        }
+
+        if (!alreadyExists) {
+            portfolioList.add(new LiquidPortfolio(
+                    updater,
+                    null,
+                    null,
+                    dummyFile,
+                    null,
+                    null,
+                    row.getCell(0).getDateCellValue(),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(8)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(7)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(15)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(14)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(22)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(21)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(29)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(28)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(36)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(35)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(43)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(107)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(204)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(196)),
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+            ));
+        }
+
         return portfolioList;
     }
 
     @Override
     public List<LiquidPortfolio> updateEquity(List<LiquidPortfolio> portfolioList, Row row, String updater, Long fileId) {
+        Files dummyFile = new Files();
+        dummyFile.setId(fileId);
+
+        boolean alreadyExists = false;
+
+        for (LiquidPortfolio portfolio : portfolioList) {
+            if (portfolio.getDate().getTime() == row.getCell(0).getDateCellValue().getTime()) {
+
+                portfolio.setUpdaterEquity(updater);
+                portfolio.setFileEquity(dummyFile);
+
+                portfolio.setTotalEquity(ExcelUtils.getDoubleValueFromCell(row.getCell(9)));
+                portfolio.setTotalEquityFlow(ExcelUtils.getDoubleValueFromCell(row.getCell(8)));
+                portfolio.setCashEquity(ExcelUtils.getDoubleValueFromCell(row.getCell(15)));
+                portfolio.setEtf(ExcelUtils.getDoubleValueFromCell(row.getCell(30)));
+                portfolio.setEtfFlow(ExcelUtils.getDoubleValueFromCell(row.getCell(29)));
+
+                alreadyExists = true;
+            }
+        }
+
+        if (!alreadyExists) {
+            portfolioList.add(new LiquidPortfolio(
+                    null,
+                    updater,
+                    null,
+                    null,
+                    dummyFile,
+                    null,
+                    row.getCell(0).getDateCellValue(),
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(9)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(8)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(15)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(30)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(29)),
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+            ));
+        }
+
         return portfolioList;
     }
 
     @Override
     public List<LiquidPortfolio> updateTransition(List<LiquidPortfolio> portfolioList, Row row, String updater, Long fileId) {
+        Files dummyFile = new Files();
+        dummyFile.setId(fileId);
+
+        boolean alreadyExists = false;
+
+        for (LiquidPortfolio portfolio : portfolioList) {
+            if (portfolio.getDate().getTime() == row.getCell(0).getDateCellValue().getTime()) {
+
+                portfolio.setUpdaterTransition(updater);
+                portfolio.setFileTransition(dummyFile);
+
+                portfolio.setTotalTransition(ExcelUtils.getDoubleValueFromCell(row.getCell(8)));
+                portfolio.setTotalTransitionFlow(ExcelUtils.getDoubleValueFromCell(row.getCell(7)));
+                portfolio.setCashTransition(ExcelUtils.getDoubleValueFromCell(row.getCell(22)));
+                portfolio.setGovernmentsTransition(ExcelUtils.getDoubleValueFromCell(row.getCell(15)));
+                portfolio.setGovernmentsTransitionFlow(ExcelUtils.getDoubleValueFromCell(row.getCell(14)));
+
+                alreadyExists = true;
+            }
+        }
+
+        if (!alreadyExists) {
+            portfolioList.add(new LiquidPortfolio(
+                    null,
+                    null,
+                    updater,
+                    null,
+                    null,
+                    dummyFile,
+                    row.getCell(0).getDateCellValue(),
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(8)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(7)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(22)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(15)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(14))
+            ));
+        }
+
         return portfolioList;
     }
 }

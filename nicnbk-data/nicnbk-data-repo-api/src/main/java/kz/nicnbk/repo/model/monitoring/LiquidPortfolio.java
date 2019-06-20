@@ -41,7 +41,6 @@ public class LiquidPortfolio extends BaseEntity {
     private Double options;
     private Double cashFixed;
     private Double cashBrokerAndFutures;
-    private Double cashBrokerAndFuturesFlow;
 
     private Double totalEquity;
     private Double totalEquityFlow;
@@ -58,7 +57,7 @@ public class LiquidPortfolio extends BaseEntity {
     public LiquidPortfolio() {
     }
 
-    public LiquidPortfolio(String updaterFixed, String updaterEquity, String updaterTransition, Files fileFixed, Files fileEquity, Files fileTransition, Date date, Double totalFixed, Double totalFixedFlow, Double governmentsFixed, Double governmentsFixedFlow, Double corporates, Double corporatesFlow, Double agencies, Double agenciesFlow, Double supranationals, Double supranationalsFlow, Double currency, Double options, Double cashFixed, Double cashBrokerAndFutures, Double cashBrokerAndFuturesFlow, Double totalEquity, Double totalEquityFlow, Double cashEquity, Double etf, Double etfFlow, Double totalTransition, Double totalTransitionFlow, Double cashTransition, Double governmentsTransition, Double governmentsTransitionFlow) {
+    public LiquidPortfolio(String updaterFixed, String updaterEquity, String updaterTransition, Files fileFixed, Files fileEquity, Files fileTransition, Date date, Double totalFixed, Double totalFixedFlow, Double governmentsFixed, Double governmentsFixedFlow, Double corporates, Double corporatesFlow, Double agencies, Double agenciesFlow, Double supranationals, Double supranationalsFlow, Double currency, Double options, Double cashFixed, Double cashBrokerAndFutures, Double totalEquity, Double totalEquityFlow, Double cashEquity, Double etf, Double etfFlow, Double totalTransition, Double totalTransitionFlow, Double cashTransition, Double governmentsTransition, Double governmentsTransitionFlow) {
         this.updaterFixed = updaterFixed;
         this.updaterEquity = updaterEquity;
         this.updaterTransition = updaterTransition;
@@ -80,7 +79,6 @@ public class LiquidPortfolio extends BaseEntity {
         this.options = options;
         this.cashFixed = cashFixed;
         this.cashBrokerAndFutures = cashBrokerAndFutures;
-        this.cashBrokerAndFuturesFlow = cashBrokerAndFuturesFlow;
         this.totalEquity = totalEquity;
         this.totalEquityFlow = totalEquityFlow;
         this.cashEquity = cashEquity;
@@ -265,14 +263,6 @@ public class LiquidPortfolio extends BaseEntity {
 
     public void setCashBrokerAndFutures(Double cashBrokerAndFutures) {
         this.cashBrokerAndFutures = cashBrokerAndFutures;
-    }
-
-    public Double getCashBrokerAndFuturesFlow() {
-        return cashBrokerAndFuturesFlow;
-    }
-
-    public void setCashBrokerAndFuturesFlow(Double cashBrokerAndFuturesFlow) {
-        this.cashBrokerAndFuturesFlow = cashBrokerAndFuturesFlow;
     }
 
     public Double getTotalEquity() {
