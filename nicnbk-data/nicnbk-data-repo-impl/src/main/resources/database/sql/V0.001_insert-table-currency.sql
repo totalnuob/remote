@@ -7,3 +7,6 @@ INSERT INTO currency(id, code, name_en, name_ru, name_kz) VALUES(6, 'CNY', 'Chin
 INSERT INTO currency(id, code, name_en, name_ru, name_kz) VALUES(7, 'CHF', 'Swiss Franc', '', '' );
 INSERT INTO currency(id, code, name_en, name_ru, name_kz) VALUES(8, 'KRW', 'S.Korean Won', '', '' );
 INSERT INTO currency(id, code, name_en, name_ru, name_kz) VALUES(9, 'CAD', 'Canadian Dollar', '', '' );
+INSERT INTO currency(id, code, name_en, name_ru, name_kz) VALUES(10, 'AUD', 'Australian Dollar', '', '' );
+INSERT INTO currency(id, code, name_en, name_ru, name_kz) VALUES(11, 'SEK', 'Swedish Krona', '', '' );
+INSERT INTO currency(id, code, name_en, name_ru, name_kz) VALUES(12, 'NOK', 'Norwegian Krona', '', '' );
