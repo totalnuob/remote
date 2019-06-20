@@ -2,9 +2,11 @@ package kz.nicnbk.service.api.monitoring;
 
 import kz.nicnbk.repo.model.monitoring.LiquidPortfolio;
 import kz.nicnbk.service.dto.files.FilesDto;
+import kz.nicnbk.service.dto.monitoring.LiquidPortfolioDto;
 import kz.nicnbk.service.dto.monitoring.LiquidPortfolioResultDto;
 import org.apache.poi.ss.usermodel.Row;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -23,4 +25,6 @@ public interface LiquidPortfolioService {
     List<LiquidPortfolio> updateEquity(List<LiquidPortfolio> portfolioList, Row row, String username, Long fileId);
 
     List<LiquidPortfolio> updateTransition(List<LiquidPortfolio> portfolioList, Row row, String username, Long fileId);
+
+    LiquidPortfolioDto calculateMtdQtdYtd(Date date, List<LiquidPortfolioDto> liquidPortfolioDtoList);
 }

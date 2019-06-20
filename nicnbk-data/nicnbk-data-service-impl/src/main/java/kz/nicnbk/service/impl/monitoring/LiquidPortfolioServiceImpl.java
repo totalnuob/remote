@@ -68,11 +68,9 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
 
             for (int i = 0; i < liquidPortfolioDtoList.size() - 1; i++) {
                 if (DateUtils.getMonth(liquidPortfolioDtoList.get(i).getDate()) !=  DateUtils.getMonth(liquidPortfolioDtoList.get(i+1).getDate())) {
-                    shortList.add(liquidPortfolioDtoList.get(i));
+                    shortList.add(this.calculateMtdQtdYtd(liquidPortfolioDtoList.get(i).getDate(), liquidPortfolioDtoList));
                 }
             }
-
-            shortList.get(0).setGovernmentsFixedMtd(1.12);
 
             return new LiquidPortfolioResultDto(shortList, ResponseStatusType.SUCCESS, "", "Liquid Portfolio data has been loaded successfully!", "");
         } catch (Exception ex) {
@@ -472,5 +470,10 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
         }
 
         return portfolioList;
+    }
+
+    @Override
+    public LiquidPortfolioDto calculateMtdQtdYtd(Date date, List<LiquidPortfolioDto> liquidPortfolioDtoList) {
+        return liquidPortfolioDtoList.get(0);
     }
 }
