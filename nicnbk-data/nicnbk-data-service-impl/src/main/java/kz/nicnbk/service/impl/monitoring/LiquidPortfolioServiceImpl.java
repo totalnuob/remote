@@ -1,5 +1,6 @@
 package kz.nicnbk.service.impl.monitoring;
 
+import kz.nicnbk.common.service.util.DateUtils;
 import kz.nicnbk.common.service.util.ExcelUtils;
 import kz.nicnbk.repo.api.files.FilesRepository;
 import kz.nicnbk.repo.api.lookup.FilesTypeRepository;
@@ -63,7 +64,15 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
     public LiquidPortfolioResultDto get() {
         try {
             List<LiquidPortfolioDto> liquidPortfolioDtoList = this.converter.disassembleList(this.repository.findAllByOrderByDateAsc());
-            return new LiquidPortfolioResultDto(liquidPortfolioDtoList, ResponseStatusType.SUCCESS, "", "Liquid Portfolio data has been loaded successfully!", "");
+            List<LiquidPortfolioDto> shortList = new ArrayList<>();
+
+            for (int i = 0; i < liquidPortfolioDtoList.size() - 1; i++) {
+                if (DateUtils.getMonth(liquidPortfolioDtoList.get(i).getDate()) !=  DateUtils.getMonth(liquidPortfolioDtoList.get(i+1).getDate())) {
+                    shortList.add(liquidPortfolioDtoList.get(i));
+                }
+            }
+
+            return new LiquidPortfolioResultDto(shortList, ResponseStatusType.SUCCESS, "", "Liquid Portfolio data has been loaded successfully!", "");
         } catch (Exception ex) {
             logger.error("Error loading Liquid Portfolio data, ", ex);
         }
