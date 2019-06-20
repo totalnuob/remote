@@ -16,9 +16,13 @@ import java.util.Date;
 @Entity(name = "monitoring_liquid_portfolio")
 public class LiquidPortfolio extends BaseEntity {
 
-    private String updater;
+    private String updaterFixed;
+    private String updaterEquity;
+    private String updaterTransition;
 
-    private Files file;
+    private Files fileFixed;
+    private Files fileEquity;
+    private Files fileTransition;
 
     @Column(nullable = false)
     private Date date;
@@ -54,9 +58,13 @@ public class LiquidPortfolio extends BaseEntity {
     public LiquidPortfolio() {
     }
 
-    public LiquidPortfolio(String updater, Files file, Date date, Double totalFixed, Double totalFixedFlow, Double governmentsFixed, Double governmentsFixedFlow, Double corporates, Double corporatesFlow, Double agencies, Double agenciesFlow, Double supranationals, Double supranationalsFlow, Double currency, Double options, Double cashFixed, Double cashBrokerAndFutures, Double cashBrokerAndFuturesFlow, Double totalEquity, Double totalEquityFlow, Double cashEquity, Double etf, Double etfFlow, Double totalTransition, Double totalTransitionFlow, Double cashTransition, Double governmentsTransition, Double governmentsTransitionFlow) {
-        this.updater = updater;
-        this.file = file;
+    public LiquidPortfolio(String updaterFixed, String updaterEquity, String updaterTransition, Files fileFixed, Files fileEquity, Files fileTransition, Date date, Double totalFixed, Double totalFixedFlow, Double governmentsFixed, Double governmentsFixedFlow, Double corporates, Double corporatesFlow, Double agencies, Double agenciesFlow, Double supranationals, Double supranationalsFlow, Double currency, Double options, Double cashFixed, Double cashBrokerAndFutures, Double cashBrokerAndFuturesFlow, Double totalEquity, Double totalEquityFlow, Double cashEquity, Double etf, Double etfFlow, Double totalTransition, Double totalTransitionFlow, Double cashTransition, Double governmentsTransition, Double governmentsTransitionFlow) {
+        this.updaterFixed = updaterFixed;
+        this.updaterEquity = updaterEquity;
+        this.updaterTransition = updaterTransition;
+        this.fileFixed = fileFixed;
+        this.fileEquity = fileEquity;
+        this.fileTransition = fileTransition;
         this.date = date;
         this.totalFixed = totalFixed;
         this.totalFixedFlow = totalFixedFlow;
@@ -85,22 +93,58 @@ public class LiquidPortfolio extends BaseEntity {
         this.governmentsTransitionFlow = governmentsTransitionFlow;
     }
 
-    public String getUpdater() {
-        return updater;
+    public String getUpdaterFixed() {
+        return updaterFixed;
     }
 
-    public void setUpdater(String updater) {
-        this.updater = updater;
+    public void setUpdaterFixed(String updaterFixed) {
+        this.updaterFixed = updaterFixed;
+    }
+
+    public String getUpdaterEquity() {
+        return updaterEquity;
+    }
+
+    public void setUpdaterEquity(String updaterEquity) {
+        this.updaterEquity = updaterEquity;
+    }
+
+    public String getUpdaterTransition() {
+        return updaterTransition;
+    }
+
+    public void setUpdaterTransition(String updaterTransition) {
+        this.updaterTransition = updaterTransition;
     }
 
     @ManyToOne
-    @JoinColumn(name = "file_id")
-    public Files getFile() {
-        return file;
+    @JoinColumn(name = "file_fixed_id")
+    public Files getFileFixed() {
+        return fileFixed;
     }
 
-    public void setFile(Files file) {
-        this.file = file;
+    public void setFileFixed(Files fileFixed) {
+        this.fileFixed = fileFixed;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "file_equity_id")
+    public Files getFileEquity() {
+        return fileEquity;
+    }
+
+    public void setFileEquity(Files fileEquity) {
+        this.fileEquity = fileEquity;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "file_transition_id")
+    public Files getFileTransition() {
+        return fileTransition;
+    }
+
+    public void setFileTransition(Files fileTransition) {
+        this.fileTransition = fileTransition;
     }
 
     public Date getDate() {
