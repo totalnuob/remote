@@ -1,7 +1,10 @@
 package kz.nicnbk.service.impl.monitoring;
 
 import kz.nicnbk.repo.api.files.FilesRepository;
+import kz.nicnbk.repo.api.lookup.FilesTypeRepository;
 import kz.nicnbk.repo.api.monitoring.LiquidPortfolioRepository;
+import kz.nicnbk.repo.model.files.Files;
+import kz.nicnbk.repo.model.files.FilesType;
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.repo.model.monitoring.LiquidPortfolio;
 import kz.nicnbk.service.api.files.FileService;
@@ -41,6 +44,9 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
     private LiquidPortfolioEntityConverter converter;
 
     @Autowired
+    private FilesTypeRepository filesTypeRepository;
+
+    @Autowired
     private FileService fileService;
 
     @Autowired
@@ -75,6 +81,9 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
             int rowNumberEquity = 0;
             int rowNumberTransition = 0;
             List<LiquidPortfolio> portfolioList;
+            Files dummyFile = new Files();
+
+            // Read all the data that we have in the repository
 
             try {
                 portfolioList = this.repository.findAllByOrderByDateAsc();
@@ -82,6 +91,8 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
                 logger.error("Failed to update Liquid Portfolio data: repository problem, ", ex);
                 return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data: repository problem!", "");
             }
+
+            // Try to open the file
 
             try {
                 filesDto = filesDtoSet.iterator().next();
@@ -97,6 +108,8 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
                 logger.error("Failed to update Liquid Portfolio data: the file or one of the sheets 'Fixed', 'Equity', 'Transition' cannot be opened, ", ex);
                 return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data: the file or one of the sheets 'Fixed', 'Equity', 'Transition' cannot be opened!", "");
             }
+
+            // Check if the sheets have headers
 
             for (int i = 0; i < 6; i++) {
                 if(rowIteratorFixed.hasNext()) {
@@ -127,6 +140,20 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
                     return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data: the sheet 'Transition' contains less than 6 rows!", "");
                 }
             }
+
+            // Save the file
+
+            try {
+                filesDto.setType(FileTypeLookup.MONITORING_LIQUID_PORTFOLIO.getCode());
+                Long fileId = this.fileService.save(filesDto, FileTypeLookup.MONITORING_LIQUID_PORTFOLIO.getCatalog());
+
+                dummyFile.setId(fileId);
+            } catch (Exception ex) {
+                logger.error("Failed to update Liquid Portfolio data: repository problem, ", ex);
+                return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data: repository problem!", "");
+            }
+
+            // Update our data with information from the file
 
             while (rowIteratorFixed.hasNext()) {
                 Row row = rowIteratorFixed.next();
@@ -185,9 +212,32 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
                 }
             }
 
+            // Save the data back to the repository
+
             try {
-                filesDto.setType(FileTypeLookup.MONITORING_LIQUID_PORTFOLIO.getCode());
-                Long fileId = this.fileService.save(filesDto, FileTypeLookup.MONITORING_LIQUID_PORTFOLIO.getCatalog());
+                this.repository.save(portfolioList);
+
+                FilesType dummyFilesType = new FilesType();
+                dummyFilesType.setId(filesTypeRepository.findByCode(FileTypeLookup.MONITORING_LIQUID_PORTFOLIO.getCode()).getId());
+
+                List<Files> filesList = filesRepository.findAllByType(dummyFilesType);
+
+                for (Files files : filesList) {
+                    boolean delete = true;
+                    for (LiquidPortfolio portfolio : portfolioList) {
+                        if ((portfolio.getFileFixed() != null && portfolio.getFileFixed().getId().equals(files.getId())) ||
+                                (portfolio.getFileEquity() != null && portfolio.getFileEquity().getId().equals(files.getId())) ||
+                                (portfolio.getFileTransition() != null && portfolio.getFileTransition().getId().equals(files.getId()))
+                                ) {
+                            delete = false;
+                            break;
+                        }
+                    }
+                    if (delete) {
+                        this.fileService.delete(files.getId());
+                    }
+                }
+
             } catch (Exception ex) {
                 logger.error("Failed to update Liquid Portfolio data: repository problem, ", ex);
                 return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data: repository problem!", "");
