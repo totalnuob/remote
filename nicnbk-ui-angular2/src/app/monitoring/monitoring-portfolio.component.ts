@@ -792,7 +792,6 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
     }
 
     private getDataByDate(tableDate){
-
         for(var i = 0; i < this.nicPortfolioList.length; i++){
             if(this.nicPortfolioList[i].date === tableDate){
                 return this.nicPortfolioList[i];
