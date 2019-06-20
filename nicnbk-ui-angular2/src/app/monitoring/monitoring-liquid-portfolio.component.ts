@@ -337,17 +337,17 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
         dataTable.addColumn("number", "YTD");
 
         if(tableData != null) {
-            if(tableData.governmentsFixed != null) {
-                dataTable.addRows([["Government bonds", tableData.governmentsFixed, 0, 0, 0]]);
+            if(tableData.governmentsFixed != null || tableData.governmentsFixedMtd != null || tableData.governmentsFixedQtd != null || tableData.governmentsFixedYtd != null) {
+                dataTable.addRows([["Government bonds", tableData.governmentsFixed, tableData.governmentsFixedMtd, tableData.governmentsFixedQtd, tableData.governmentsFixedYtd]]);
             }
-            if(tableData.corporates != null) {
-                dataTable.addRows([["Corporate bonds", tableData.corporates, 0, 0, 0]]);
+            if(tableData.corporates != null || tableData.corporatesMtd != null || tableData.corporatesQtd != null || tableData.corporatesYtd != null) {
+                dataTable.addRows([["Corporate bonds", tableData.corporates, tableData.corporatesMtd, tableData.corporatesQtd, tableData.corporatesYtd]]);
             }
-            if(tableData.agencies != null) {
-                dataTable.addRows([["Agencies", tableData.agencies, 0, 0, 0]]);
+            if(tableData.agencies != null || tableData.agenciesMtd != null || tableData.agenciesQtd != null || tableData.agenciesYtd != null) {
+                dataTable.addRows([["Agencies", tableData.agencies, tableData.agenciesMtd, tableData.agenciesQtd, tableData.agenciesYtd]]);
             }
-            if(tableData.supranationals != null) {
-                dataTable.addRows([["Supranationals", tableData.supranationals, 0, 0, 0]]);
+            if(tableData.supranationals != null || tableData.supranationalsMtd != null || tableData.supranationalsQtd != null || tableData.supranationalsYtd != null) {
+                dataTable.addRows([["Supranationals", tableData.supranationals, tableData.supranationalsMtd, tableData.supranationalsQtd, tableData.supranationalsYtd]]);
             }
             if(tableData.currency != null) {
                 dataTable.addRows([["Currency", tableData.currency, null, null, null]]);
@@ -358,11 +358,11 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
             if(tableData.cashFixed != null) {
                 dataTable.addRows([["Cash", tableData.cashFixed, null, null, null]]);
             }
-            if(tableData.cashBrokerAndFutures != null) {
-                dataTable.addRows([["Cash margin at broker + futures", tableData.cashBrokerAndFutures, 0, 0, 0]]);
+            if(tableData.cashBrokerAndFutures != null || tableData.cashBrokerAndFuturesMtd != null || tableData.cashBrokerAndFuturesQtd != null || tableData.cashBrokerAndFuturesYtd != null) {
+                dataTable.addRows([["Cash margin at broker + futures", tableData.cashBrokerAndFutures, tableData.cashBrokerAndFuturesMtd, tableData.cashBrokerAndFuturesQtd, tableData.cashBrokerAndFuturesYtd]]);
             }
-            if(tableData.totalFixed != null) {
-                dataTable.addRows([["Total", tableData.totalFixed, 0, 0, 0]]);
+            if(tableData.totalFixed != null || tableData.totalFixedMtd != null || tableData.totalFixedQtd != null || tableData.totalFixedYtd != null) {
+                dataTable.addRows([["Total", tableData.totalFixed, tableData.totalFixedMtd, tableData.totalFixedQtd, tableData.totalFixedYtd]]);
             }
 
             var dataChart = google.visualization.arrayToDataTable([
@@ -440,14 +440,14 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
         dataTable.addColumn("number", "YTD");
 
         if(tableData != null) {
-            if(tableData.etf != null) {
-                dataTable.addRows([["ETF", tableData.etf, 0, 0, 0]]);
+            if(tableData.etf != null || tableData.etfMtd != null || tableData.etfQtd != null || tableData.etfYtd != null) {
+                dataTable.addRows([["ETF", tableData.etf, tableData.etfMtd, tableData.etfQtd, tableData.etfYtd]]);
             }
             if(tableData.cashEquity != null) {
                 dataTable.addRows([["Cash", tableData.cashEquity, null, null, null]]);
             }
-            if(tableData.totalEquity != null) {
-                dataTable.addRows([["Total", tableData.totalEquity, 0, 0, 0]]);
+            if(tableData.totalEquity != null || tableData.totalEquityMtd != null || tableData.totalEquityQtd != null || tableData.totalEquityYtd != null) {
+                dataTable.addRows([["Total", tableData.totalEquity, tableData.totalEquityMtd, tableData.totalEquityQtd, tableData.totalEquityYtd]]);
             }
 
             var dataChart = google.visualization.arrayToDataTable([
@@ -519,14 +519,14 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
         dataTable.addColumn("number", "YTD");
 
         if(tableData != null) {
-            if(tableData.governmentsTransition != null) {
-                dataTable.addRows([["Government bonds", tableData.governmentsTransition, 0, 0, 0]]);
+            if(tableData.governmentsTransition != null || tableData.governmentsTransitionMtd != null || tableData.governmentsTransitionQtd != null || tableData.governmentsTransitionYtd != null) {
+                dataTable.addRows([["Government bonds", tableData.governmentsTransition, tableData.governmentsTransitionMtd, tableData.governmentsTransitionQtd, tableData.governmentsTransitionYtd]]);
             }
             if(tableData.cashTransition != null) {
                 dataTable.addRows([["Cash", tableData.cashTransition, null, null, null]]);
             }
-            if(tableData.totalTransition != null) {
-                dataTable.addRows([["Total", tableData.totalTransition, 0, 0, 0]]);
+            if(tableData.totalTransition != null || tableData.totalTransitionMtd != null || tableData.totalTransitionQtd != null || tableData.totalTransitionYtd != null) {
+                dataTable.addRows([["Total", tableData.totalTransition, tableData.totalTransitionMtd, tableData.totalTransitionQtd, tableData.totalTransitionYtd]]);
             }
 
             var dataChart = google.visualization.arrayToDataTable([

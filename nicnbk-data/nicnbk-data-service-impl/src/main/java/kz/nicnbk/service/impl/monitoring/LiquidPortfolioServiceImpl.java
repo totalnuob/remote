@@ -72,6 +72,8 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
                 }
             }
 
+            shortList.get(0).setGovernmentsFixedMtd(1.12);
+
             return new LiquidPortfolioResultDto(shortList, ResponseStatusType.SUCCESS, "", "Liquid Portfolio data has been loaded successfully!", "");
         } catch (Exception ex) {
             logger.error("Error loading Liquid Portfolio data, ", ex);
