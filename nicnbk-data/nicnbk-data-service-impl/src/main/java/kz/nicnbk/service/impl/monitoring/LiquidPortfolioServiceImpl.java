@@ -63,12 +63,13 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
     @Override
     public LiquidPortfolioResultDto get() {
         try {
-            List<LiquidPortfolioDto> liquidPortfolioDtoList = this.converter.disassembleList(this.repository.findAllByOrderByDateAsc());
+            List<LiquidPortfolio> liquidPortfolioList = this.repository.findAllByOrderByDateAsc();
+            List<LiquidPortfolioDto> liquidPortfolioDtoList = this.converter.disassembleList(liquidPortfolioList);
             List<LiquidPortfolioDto> shortList = new ArrayList<>();
 
             for (int i = 0; i < liquidPortfolioDtoList.size() - 1; i++) {
                 if (DateUtils.getMonth(liquidPortfolioDtoList.get(i).getDate()) !=  DateUtils.getMonth(liquidPortfolioDtoList.get(i+1).getDate())) {
-                    shortList.add(this.calculateMtdQtdYtd(liquidPortfolioDtoList.get(i).getDate(), liquidPortfolioDtoList));
+                    shortList.add(this.calculateMtdQtdYtd(liquidPortfolioDtoList.get(i).getDate(), liquidPortfolioList));
                 }
             }
 
@@ -473,7 +474,50 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
     }
 
     @Override
-    public LiquidPortfolioDto calculateMtdQtdYtd(Date date, List<LiquidPortfolioDto> liquidPortfolioDtoList) {
-        return liquidPortfolioDtoList.get(0);
+    public LiquidPortfolioDto calculateMtdQtdYtd(Date date, List<LiquidPortfolio> liquidPortfolioList) {
+        List<Double> returnsTotalFixedMtd = new ArrayList<>();
+        List<Double> returnsTotalFixedQtd = new ArrayList<>();
+        List<Double> returnsTotalFixedYtd = new ArrayList<>();
+        List<Double> returnsGovernmentsFixedMtd = new ArrayList<>();
+        List<Double> returnsGovernmentsFixedQtd = new ArrayList<>();
+        List<Double> returnsGovernmentsFixedYtd = new ArrayList<>();
+        List<Double> returnsCorporatesMtd = new ArrayList<>();
+        List<Double> returnsCorporatesQtd = new ArrayList<>();
+        List<Double> returnsCorporatesYtd = new ArrayList<>();
+        List<Double> returnsAgenciesMtd = new ArrayList<>();
+        List<Double> returnsAgenciesQtd = new ArrayList<>();
+        List<Double> returnsAgenciesYtd = new ArrayList<>();
+        List<Double> returnsSupranationalsMtd = new ArrayList<>();
+        List<Double> returnsSupranationalsQtd = new ArrayList<>();
+        List<Double> returnsSupranationalsYtd = new ArrayList<>();
+        List<Double> returnsCashBrokerAndFuturesMtd = new ArrayList<>();
+        List<Double> returnsCashBrokerAndFuturesQtd = new ArrayList<>();
+        List<Double> returnsCashBrokerAndFuturesYtd = new ArrayList<>();
+        List<Double> returnsTotalEquityMtd = new ArrayList<>();
+        List<Double> returnsTotalEquityQtd = new ArrayList<>();
+        List<Double> returnsTotalEquityYtd = new ArrayList<>();
+        List<Double> returnsEtfMtd = new ArrayList<>();
+        List<Double> returnsEtfQtd = new ArrayList<>();
+        List<Double> returnsEtfYtd = new ArrayList<>();
+        List<Double> returnsTotalTransitionMtd = new ArrayList<>();
+        List<Double> returnsTotalTransitionQtd = new ArrayList<>();
+        List<Double> returnsTotalTransitionYtd = new ArrayList<>();
+        List<Double> returnsGovernmentsTransitionMtd = new ArrayList<>();
+        List<Double> returnsGovernmentsTransitionQtd = new ArrayList<>();
+        List<Double> returnsGovernmentsTransitionYtd = new ArrayList<>();
+
+        for (int i = 0; i < liquidPortfolioList.size(); i++) {
+            if (liquidPortfolioList.get(i).getDate().after(date)) {
+                break;
+            }
+
+            if (DateUtils.getMonth(liquidPortfolioList.get(i).getDate()) == DateUtils.getMonth(date)) {
+                returnsTotalFixedMtd.add(
+                        liquidPortfolioList.get(i).getTotalFixed() - liquidPortfolioList.get(i).getTotalFixedFlow()
+                );
+            }
+        }
+
+        return this.converter.disassemble(liquidPortfolioList.get(0));
     }
 }
