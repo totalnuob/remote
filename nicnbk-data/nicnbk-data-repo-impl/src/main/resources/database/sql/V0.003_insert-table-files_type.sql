@@ -3,6 +3,7 @@ INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(1, '
 INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(2, 'PE_LOGO', 'PE Firm Logo', '', '', 'pe_logo');
 
 INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(3, 'MON_NIC', 'Monitoring NIC Portfolio', '', '', 'monitoring/nic_portfolio');
+INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(4, 'MON_LIQ', 'Monitoring Liquid Portfolio', '', '', 'monitoring/liquid_portfolio');
 
 INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(11, 'NB_REP_T1', 'NBRK Reporting Tarragon Schedule of Investments', '', '', 'reporting/nbrk');
 INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(12, 'NB_REP_T2', 'NBRK Reporting Tarragon Statement of Assets', '', '', 'reporting/nbrk');

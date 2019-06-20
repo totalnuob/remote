@@ -2,6 +2,7 @@ package kz.nicnbk.service.impl.monitoring;
 
 import kz.nicnbk.repo.api.files.FilesRepository;
 import kz.nicnbk.repo.api.monitoring.LiquidPortfolioRepository;
+import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.repo.model.monitoring.LiquidPortfolio;
 import kz.nicnbk.service.api.files.FileService;
 import kz.nicnbk.service.api.monitoring.LiquidPortfolioService;
@@ -73,7 +74,14 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
             int rowNumberFixed = 0;
             int rowNumberEquity = 0;
             int rowNumberTransition = 0;
-            List<LiquidPortfolio> portfolioList = new ArrayList<>();
+            List<LiquidPortfolio> portfolioList;
+
+            try {
+                portfolioList = this.repository.findAllByOrderByDateAsc();
+            } catch (Exception ex) {
+                logger.error("Failed to update Liquid Portfolio data: repository problem, ", ex);
+                return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data: repository problem!", "");
+            }
 
             try {
                 filesDto = filesDtoSet.iterator().next();
@@ -177,7 +185,15 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
                 }
             }
 
-            throw new Exception();
+            try {
+                filesDto.setType(FileTypeLookup.MONITORING_LIQUID_PORTFOLIO.getCode());
+                Long fileId = this.fileService.save(filesDto, FileTypeLookup.MONITORING_LIQUID_PORTFOLIO.getCatalog());
+            } catch (Exception ex) {
+                logger.error("Failed to update Liquid Portfolio data: repository problem, ", ex);
+                return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data: repository problem!", "");
+            }
+
+            return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data!", "");
         } catch (Exception ex) {
             logger.error("Failed to update Liquid Portfolio data, ", ex);
             return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data!", "");
