@@ -202,4 +202,22 @@ public class ExcelUtils {
         return null;
     }
 
+    public static void setCellValueSafe(Cell cell, String value){
+        if(cell != null && value != null){
+            cell.setCellValue(value);
+        }
+    }
+
+    public static void setCellValueSafe(Cell cell, Double value){
+        if(cell != null && value != null){
+            cell.setCellValue(value);
+        }
+    }
+
+    public static void setCellValueSafe(Cell cell, Integer value){
+        if(cell != null && value != null){
+            cell.setCellValue(value);
+        }
+    }
+
 }

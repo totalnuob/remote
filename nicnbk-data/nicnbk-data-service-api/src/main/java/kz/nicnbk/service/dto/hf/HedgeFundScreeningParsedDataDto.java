@@ -341,10 +341,14 @@ public class HedgeFundScreeningParsedDataDto extends BaseEntityDto implements Co
     @Override
     public int compareTo(Object o) {
         if(this.totalScore == null){
-            return -1;
+            //return -1;
+            return this.fundName == null ? -1 :
+                    this.fundName.toLowerCase().compareTo(((HedgeFundScreeningParsedDataDto) o).fundName.toLowerCase());
         }
         if(((HedgeFundScreeningParsedDataDto) o).totalScore == null){
-            return 1;
+            //return 1;
+            return this.fundName == null ? 1 :
+                    this.fundName.toLowerCase().compareTo(((HedgeFundScreeningParsedDataDto) o).fundName.toLowerCase());
         }
         if(this.totalScore.doubleValue() == ((HedgeFundScreeningParsedDataDto) o).totalScore.doubleValue()){
             return this.fundName.toLowerCase().compareTo(((HedgeFundScreeningParsedDataDto) o).fundName.toLowerCase());
