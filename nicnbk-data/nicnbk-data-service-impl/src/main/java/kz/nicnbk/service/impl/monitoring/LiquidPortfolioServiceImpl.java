@@ -75,6 +75,11 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
 
         try {
             FilesDto filesDto;
+            InputStream inputFile;
+            XSSFWorkbook workbook;
+            XSSFSheet sheetFixed;
+            XSSFSheet sheetEquity;
+            XSSFSheet sheetTransition;
             Iterator<Row> rowIteratorFixed;
             Iterator<Row> rowIteratorEquity;
             Iterator<Row> rowIteratorTransition;
@@ -85,7 +90,6 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
             Long fileId;
 
             // Read all the data that we have in the repository
-
             try {
                 portfolioList = this.repository.findAllByOrderByDateAsc();
             } catch (Exception ex) {
@@ -94,56 +98,20 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
             }
 
             // Try to open the file
-
             try {
                 filesDto = filesDtoSet.iterator().next();
-                InputStream inputFile = new ByteArrayInputStream(filesDto.getBytes());
-                XSSFWorkbook workbook = new XSSFWorkbook(inputFile);
-                XSSFSheet sheetFixed = workbook.getSheet("Fixed");
-                rowIteratorFixed = sheetFixed.iterator();
-                XSSFSheet sheetEquity = workbook.getSheet("Equity");
-                rowIteratorEquity = sheetEquity.iterator();
-                XSSFSheet sheetTransition = workbook.getSheet("Transition");
-                rowIteratorTransition = sheetTransition.iterator();
+                inputFile = new ByteArrayInputStream(filesDto.getBytes());
+                workbook = new XSSFWorkbook(inputFile);
+                sheetFixed = workbook.getSheet("Fixed");
+                sheetEquity = workbook.getSheet("Equity");
+                sheetTransition = workbook.getSheet("Transition");
+
             } catch (Exception ex) {
-                logger.error("Failed to update Liquid Portfolio data: the file or one of the sheets 'Fixed', 'Equity', 'Transition' cannot be opened, ", ex);
-                return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data: the file or one of the sheets 'Fixed', 'Equity', 'Transition' cannot be opened!", "");
-            }
-
-            // Check if the sheets have headers
-
-            for (int i = 0; i < 6; i++) {
-                if(rowIteratorFixed.hasNext()) {
-                    rowIteratorFixed.next();
-                    rowNumberFixed++;
-                } else {
-                    logger.error("Failed to update Liquid Portfolio data: the sheet 'Fixed' contains less than 6 rows!");
-                    return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data: the sheet 'Fixed' contains less than 6 rows!", "");
-                }
-            }
-
-            for (int i = 0; i < 4; i++) {
-                if(rowIteratorEquity.hasNext()) {
-                    rowIteratorEquity.next();
-                    rowNumberEquity++;
-                } else {
-                    logger.error("Failed to update Liquid Portfolio data: the sheet 'Equity' contains less than 4 rows!");
-                    return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data: the sheet 'Equity' contains less than 4 rows!", "");
-                }
-            }
-
-            for (int i = 0; i < 6; i++) {
-                if(rowIteratorTransition.hasNext()) {
-                    rowIteratorTransition.next();
-                    rowNumberTransition++;
-                } else {
-                    logger.error("Failed to update Liquid Portfolio data: the sheet 'Transition' contains less than 6 rows!");
-                    return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data: the sheet 'Transition' contains less than 6 rows!", "");
-                }
+                logger.error("Failed to update Liquid Portfolio data: the file cannot be opened, ", ex);
+                return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data: the file cannot be opened!", "");
             }
 
             // Save the file
-
             try {
                 filesDto.setType(FileTypeLookup.MONITORING_LIQUID_PORTFOLIO.getCode());
                 fileId = this.fileService.save(filesDto, FileTypeLookup.MONITORING_LIQUID_PORTFOLIO.getCatalog());
@@ -152,73 +120,120 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
                 return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data: repository problem!", "");
             }
 
-            // Update our data with information from the file
+            // Open the three sheets one by one
 
-            while (rowIteratorFixed.hasNext()) {
-                Row row = rowIteratorFixed.next();
-                rowNumberFixed++;
+            if (sheetFixed != null) {
+                rowIteratorFixed = sheetFixed.iterator();
 
-                if (row.getCell(0) == null) {
-                    break;
+                // Check if the sheet has a header
+                for (int i = 0; i < 6; i++) {
+                    if(rowIteratorFixed.hasNext()) {
+                        rowIteratorFixed.next();
+                        rowNumberFixed++;
+                    } else {
+                        logger.error("Failed to update Liquid Portfolio data: the sheet 'Fixed' contains less than 6 rows!");
+                        return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data: the sheet 'Fixed' contains less than 6 rows!", "");
+                    }
                 }
 
-                try {
-                    if (row.getCell(0).getDateCellValue().after(new Date())) {
+                // Update our data with information from the sheet
+                while (rowIteratorFixed.hasNext()) {
+                    Row row = rowIteratorFixed.next();
+                    rowNumberFixed++;
+
+                    if (row.getCell(0) == null) {
                         break;
                     }
 
-                    portfolioList = this.updateFixed(portfolioList, row, updater, fileId);
+                    try {
+                        if (row.getCell(0).getDateCellValue().after(new Date())) {
+                            break;
+                        }
 
-                } catch (Exception ex) {
-                    logger.error("Failed to update Liquid Portfolio data: error parsing row #" + rowNumberFixed + " in sheet 'Fixed', ", ex);
-                    return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data: error parsing row #" + rowNumberFixed + " in sheet 'Fixed'!", "");
+                        portfolioList = this.updateFixed(portfolioList, row, updater, fileId);
+
+                    } catch (Exception ex) {
+                        logger.error("Failed to update Liquid Portfolio data: error parsing row #" + rowNumberFixed + " in sheet 'Fixed', ", ex);
+                        return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data: error parsing row #" + rowNumberFixed + " in sheet 'Fixed'!", "");
+                    }
                 }
             }
 
-            while (rowIteratorEquity.hasNext()) {
-                Row row = rowIteratorEquity.next();
-                rowNumberEquity++;
+            if (sheetEquity != null) {
+                rowIteratorEquity = sheetEquity.iterator();
 
-                if (row.getCell(0) == null) {
-                    break;
+                // Check if the sheet has a header
+                for (int i = 0; i < 4; i++) {
+                    if(rowIteratorEquity.hasNext()) {
+                        rowIteratorEquity.next();
+                        rowNumberEquity++;
+                    } else {
+                        logger.error("Failed to update Liquid Portfolio data: the sheet 'Equity' contains less than 4 rows!");
+                        return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data: the sheet 'Equity' contains less than 4 rows!", "");
+                    }
                 }
 
-                try {
-                    if (row.getCell(0).getDateCellValue().after(new Date())) {
+                // Update our data with information from the sheet
+                while (rowIteratorEquity.hasNext()) {
+                    Row row = rowIteratorEquity.next();
+                    rowNumberEquity++;
+
+                    if (row.getCell(0) == null) {
                         break;
                     }
 
-                    portfolioList = this.updateEquity(portfolioList, row, updater, fileId);
+                    try {
+                        if (row.getCell(0).getDateCellValue().after(new Date())) {
+                            break;
+                        }
 
-                } catch (Exception ex) {
-                    logger.error("Failed to update Liquid Portfolio data: error parsing row #" + rowNumberEquity + " in sheet 'Equity', ", ex);
-                    return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data: error parsing row #" + rowNumberEquity + " in sheet 'Equity'!", "");
+                        portfolioList = this.updateEquity(portfolioList, row, updater, fileId);
+
+                    } catch (Exception ex) {
+                        logger.error("Failed to update Liquid Portfolio data: error parsing row #" + rowNumberEquity + " in sheet 'Equity', ", ex);
+                        return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data: error parsing row #" + rowNumberEquity + " in sheet 'Equity'!", "");
+                    }
                 }
             }
 
-            while (rowIteratorTransition.hasNext()) {
-                Row row = rowIteratorTransition.next();
-                rowNumberTransition++;
+            if (sheetTransition != null) {
+                rowIteratorTransition = sheetTransition.iterator();
 
-                if (row.getCell(0) == null) {
-                    break;
+                // Check if the sheet has a header
+                for (int i = 0; i < 6; i++) {
+                    if(rowIteratorTransition.hasNext()) {
+                        rowIteratorTransition.next();
+                        rowNumberTransition++;
+                    } else {
+                        logger.error("Failed to update Liquid Portfolio data: the sheet 'Transition' contains less than 6 rows!");
+                        return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data: the sheet 'Transition' contains less than 6 rows!", "");
+                    }
                 }
 
-                try {
-                    if (row.getCell(0).getDateCellValue().after(new Date())) {
+                // Update our data with information from the sheet
+                while (rowIteratorTransition.hasNext()) {
+                    Row row = rowIteratorTransition.next();
+                    rowNumberTransition++;
+
+                    if (row.getCell(0) == null) {
                         break;
                     }
 
-                    portfolioList = this.updateTransition(portfolioList, row, updater, fileId);
+                    try {
+                        if (row.getCell(0).getDateCellValue().after(new Date())) {
+                            break;
+                        }
 
-                } catch (Exception ex) {
-                    logger.error("Failed to update Liquid Portfolio data: error parsing row #" + rowNumberTransition + " in sheet 'Transition', ", ex);
-                    return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data: error parsing row #" + rowNumberTransition + " in sheet 'Transition'!", "");
+                        portfolioList = this.updateTransition(portfolioList, row, updater, fileId);
+
+                    } catch (Exception ex) {
+                        logger.error("Failed to update Liquid Portfolio data: error parsing row #" + rowNumberTransition + " in sheet 'Transition', ", ex);
+                        return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data: error parsing row #" + rowNumberTransition + " in sheet 'Transition'!", "");
+                    }
                 }
             }
 
-            // Save the data back to the repository
-
+            // Save the data back to the repository, delete old files
             try {
                 this.repository.save(portfolioList);
 
@@ -244,9 +259,9 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
                 return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data: repository problem!", "");
             }
 
-            logger.info("Liquid Portfolio data has been updated successfully, updater: " + updater);
+            logger.info("Liquid Portfolio data has been updated successfully from sheets 'Fixed', 'Equity', 'Transition', updater: " + updater);
             List<LiquidPortfolioDto> liquidPortfolioDtoList = this.converter.disassembleList(this.repository.findAllByOrderByDateAsc());
-            return new LiquidPortfolioResultDto(liquidPortfolioDtoList, ResponseStatusType.SUCCESS, "", "Liquid Portfolio data has been updated successfully!", "");
+            return new LiquidPortfolioResultDto(liquidPortfolioDtoList, ResponseStatusType.SUCCESS, "", "Liquid Portfolio data has been updated successfully from sheets 'Fixed', 'Equity', 'Transition'!", "");
         } catch (Exception ex) {
             logger.error("Failed to update Liquid Portfolio data, ", ex);
             return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data!", "");
