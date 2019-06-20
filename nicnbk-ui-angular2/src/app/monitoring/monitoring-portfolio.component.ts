@@ -106,6 +106,7 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
     }
 
     // NAV ------------------------------
+
     // getNAVData(tableDate){
     //     var data = new google.visualization.DataTable();
     //     var formatter = new google.visualization.NumberFormat({
@@ -415,6 +416,7 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
     }
 
     // BENCHMARK PERFORMANCE ------------------
+
     // getBenchmarkPerformanceData(tableDate){
     //
     //     var data = new google.visualization.DataTable();
@@ -454,6 +456,7 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
     // }
 
     // ALTERNATIVE PERFORMANCE -----------------
+
     // drawAlternativePerformanceChart(type){
     //     var data = new google.visualization.DataTable();
     //     var formatter = new google.visualization.NumberFormat({
@@ -571,6 +574,7 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
     // }
 
     // ALLOCATIONS -----------------------------
+
     drawTargetAllocationChart(){
         var data = google.visualization.arrayToDataTable(
         [
@@ -670,6 +674,7 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
     // }
 
     // PUBLIC PERFORMANCE ----------------------
+
     // drawPublicPerformanceChart(){
     //     var data = new google.visualization.DataTable();
     //     var formatter = new google.visualization.NumberFormat({
