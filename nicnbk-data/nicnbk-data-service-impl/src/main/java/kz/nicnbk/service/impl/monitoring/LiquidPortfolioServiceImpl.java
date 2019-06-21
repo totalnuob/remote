@@ -166,8 +166,13 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
                     Row row = rowIteratorFixed.next();
                     rowNumberFixed++;
 
-                    if (row.getCell(0) == null) {
-                        break;
+                    if (ExcelUtils.isEmptyCellRange(row, 0, 16383)) {
+                        continue;
+                    }
+
+                    if (row.getCell(0) == null || row.getCell(0).getDateCellValue() == null) {
+                        logger.error("Failed to update Liquid Portfolio data: error parsing row #" + rowNumberFixed + " in sheet 'Fixed'!");
+                        return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data: error parsing row #" + rowNumberFixed + " in sheet 'Fixed'!", "");
                     }
 
                     try {
@@ -203,8 +208,13 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
                     Row row = rowIteratorEquity.next();
                     rowNumberEquity++;
 
-                    if (row.getCell(0) == null) {
-                        break;
+                    if (ExcelUtils.isEmptyCellRange(row, 0, 16383)) {
+                        continue;
+                    }
+
+                    if (row.getCell(0) == null || row.getCell(0).getDateCellValue() == null) {
+                        logger.error("Failed to update Liquid Portfolio data: error parsing row #" + rowNumberEquity + " in sheet 'Equity'!");
+                        return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data: error parsing row #" + rowNumberEquity + " in sheet 'Equity'!", "");
                     }
 
                     try {
@@ -240,8 +250,13 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
                     Row row = rowIteratorTransition.next();
                     rowNumberTransition++;
 
-                    if (row.getCell(0) == null) {
-                        break;
+                    if (ExcelUtils.isEmptyCellRange(row, 0, 16383)) {
+                        continue;
+                    }
+
+                    if (row.getCell(0) == null || row.getCell(0).getDateCellValue() == null) {
+                        logger.error("Failed to update Liquid Portfolio data: error parsing row #" + rowNumberTransition + " in sheet 'Transition'!");
+                        return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data: error parsing row #" + rowNumberTransition + " in sheet 'Transition'!", "");
                     }
 
                     try {
