@@ -65,6 +65,7 @@ import {BENCHMARK_TYPE_URL} from "./lookup.service.url";
 import {SEARCH_BENCHMARKS_URL} from "./lookup.service.url";
 import {SAVE_BENCHMARK_URL} from "./lookup.service.url";
 import {SAVE_CURRENCY_RATES_LIST_URL} from "./lookup.service.url";
+import {SAVE_BENCHMARKS_LIST_URL} from "./lookup.service.url";
 
 
 @Injectable()
@@ -454,6 +455,13 @@ export class LookupService extends CommonService{
     saveCurrencyRatesList(list){
         let body = JSON.stringify(list);
         return this.http.post(SAVE_CURRENCY_RATES_LIST_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    saveBenchmarksList(list){
+        let body = JSON.stringify(list);
+        return this.http.post(SAVE_BENCHMARKS_LIST_URL, body, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }

@@ -1,6 +1,7 @@
 package kz.nicnbk.repo.model.benchmark;
 
 import kz.nicnbk.repo.model.base.BaseEntity;
+import kz.nicnbk.repo.model.base.CreateUpdateBaseEntity;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -12,7 +13,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "benchmark_value")
-public class BenchmarkValue extends BaseEntity {
+public class BenchmarkValue extends CreateUpdateBaseEntity {
     private Benchmark benchmark;
     private Date date;
     private Double returnValue;

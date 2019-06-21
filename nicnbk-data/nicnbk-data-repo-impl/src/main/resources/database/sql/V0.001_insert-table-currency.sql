@@ -10,3 +10,4 @@ INSERT INTO currency(id, code, name_en, name_ru, name_kz) VALUES(9, 'CAD', 'Cana
 INSERT INTO currency(id, code, name_en, name_ru, name_kz) VALUES(10, 'AUD', 'Australian Dollar', '', '' );
 INSERT INTO currency(id, code, name_en, name_ru, name_kz) VALUES(11, 'SEK', 'Swedish Krona', '', '' );
 INSERT INTO currency(id, code, name_en, name_ru, name_kz) VALUES(12, 'NOK', 'Norwegian Krona', '', '' );
+INSERT INTO currency(id, code, name_en, name_ru, name_kz) VALUES(13, 'ZAR', 'South Africa Rand', '', '' );

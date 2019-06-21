@@ -1,5 +1,6 @@
 package kz.nicnbk.service.impl.hf;
 
+import kz.nicnbk.common.service.exception.ExcelFileParseException;
 import kz.nicnbk.common.service.util.*;
 import kz.nicnbk.repo.api.hf.*;
 import kz.nicnbk.repo.model.files.Files;
@@ -262,6 +263,7 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                         dto.setFundName(parsedDataDto.getFundName());
                         if(combinedMap.get(dto.getFundId()) != null){
                             dto.setValues(combinedMap.get(dto.getFundId()).getValues());
+                            dto.setReturnsCurrency(combinedMap.get(dto.getFundId()).getReturnsCurrency());
                         }
                         dto.setDates(dates);
                         returns.add(dto);
@@ -772,7 +774,14 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
     private FileUploadResultDto parseDataFileSheet1(FilesDto filesDto, Long screeningId){
         FileUploadResultDto resultDto = new FileUploadResultDto();
         List<HedgeFundScreeningParsedDataDto> records = new ArrayList<>();
-        Iterator<Row> rowIterator = ExcelUtils.getRowIterator(filesDto.getBytes(), filesDto.getFileName(), 0);
+        Iterator<Row> rowIterator = null;
+        try {
+            rowIterator = ExcelUtils.getRowIterator(filesDto.getBytes(), filesDto.getFileName(), 0);
+        }catch (ExcelFileParseException ex){
+            String errorMessage = "Error parsing data file." + ex.getMessage();
+            logger.error(errorMessage, ex);
+            resultDto.setErrorMessageEn(errorMessage);
+        }
         if(rowIterator != null) {
             int rowNum = 0;
             Map<String, Integer> headers = new HashMap<>();

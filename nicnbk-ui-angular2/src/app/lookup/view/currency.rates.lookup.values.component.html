@@ -35,7 +35,7 @@
             <div class="col-md-12">
                 <div class="col-md-2 pull-right">
                     <a class="btn btn-primary" data-toggle="modal" data-target="#currencyUploadModal" style="cursor: pointer">
-                        <!--<span class="glyphicon glyphicon-edit"></span>-->Upload multiple
+                        <!--<span class="glyphicon glyphicon-edit"></span>-->Add multiple
                     </a>
                 </div>
             </div>
@@ -241,7 +241,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default pull-left" data-dismiss="modal" (click)='closeCurrencyUploadModal()'>Close</button>
-                        <button type="button" class="btn btn-success pull-right" (click)="parseCurrencyValues()">Save</button>
+                        <button [disabled]="uploadCurrencyCode === 'USD' " type="button" class="btn btn-success pull-right" (click)="parseCurrencyValues()">Save</button>
                     </div>
                 </div>
             </div>

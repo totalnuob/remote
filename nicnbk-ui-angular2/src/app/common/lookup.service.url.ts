@@ -50,6 +50,8 @@ export const SEARCH_CURRENCY_RATES_URL = LOOKUP_SERVICE_URL + "currencyRates/";
 export const SEARCH_BENCHMARKS_URL = LOOKUP_SERVICE_URL + "benchmarks/";
 export const SAVE_CURRENCY_RATES_URL = LOOKUP_SERVICE_URL + "currencyRates/save/";
 export const SAVE_CURRENCY_RATES_LIST_URL = LOOKUP_SERVICE_URL + "currencyRates/saveList/";
+export const SAVE_BENCHMARKS_LIST_URL = LOOKUP_SERVICE_URL + "benchmarks/saveList/";
+
 
 export const SAVE_BENCHMARK_URL = LOOKUP_SERVICE_URL + "benchmarks/save/";
 export const DELETE_CURRENCY_RATES_URL = LOOKUP_SERVICE_URL + "currencyRates/delete/";

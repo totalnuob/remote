@@ -156,5 +156,9 @@ export class AppComponent {
     showCorpMeeting(){
         return this.moduleAccessChecker.checkAccessCorpMeetingsView();
     }
+
+    showLookups(){
+        return true;
+    }
 }
 
