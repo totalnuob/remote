@@ -562,45 +562,45 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
             return null;
         }
 
-        portfolioDto.setTotalFixedMtd(this.product(returnsTotalFixedMtd));
-        portfolioDto.setTotalFixedQtd(this.product(returnsTotalFixedQtd));
-        portfolioDto.setTotalFixedYtd(this.product(returnsTotalFixedYtd));
+        portfolioDto.setTotalFixedMtd((this.product(returnsTotalFixedMtd) == null) ? null : (this.product(returnsTotalFixedMtd) - 1.0));
+        portfolioDto.setTotalFixedQtd((this.product(returnsTotalFixedQtd) == null) ? null : (this.product(returnsTotalFixedQtd) - 1.0));
+        portfolioDto.setTotalFixedYtd((this.product(returnsTotalFixedYtd) == null) ? null : (this.product(returnsTotalFixedYtd) - 1.0));
 
-        portfolioDto.setGovernmentsFixedMtd(this.product(returnsGovernmentsFixedMtd));
-        portfolioDto.setGovernmentsFixedQtd(this.product(returnsGovernmentsFixedQtd));
-        portfolioDto.setGovernmentsFixedYtd(this.product(returnsGovernmentsFixedYtd));
+        portfolioDto.setGovernmentsFixedMtd((this.product(returnsGovernmentsFixedMtd) == null) ? null : (this.product(returnsGovernmentsFixedMtd) - 1.0));
+        portfolioDto.setGovernmentsFixedQtd((this.product(returnsGovernmentsFixedQtd) == null) ? null : (this.product(returnsGovernmentsFixedQtd) - 1.0));
+        portfolioDto.setGovernmentsFixedYtd((this.product(returnsGovernmentsFixedYtd) == null) ? null : (this.product(returnsGovernmentsFixedYtd) - 1.0));
 
-        portfolioDto.setCorporatesMtd(this.product(returnsCorporatesMtd));
-        portfolioDto.setCorporatesQtd(this.product(returnsCorporatesQtd));
-        portfolioDto.setCorporatesYtd(this.product(returnsCorporatesYtd));
+        portfolioDto.setCorporatesMtd((this.product(returnsCorporatesMtd) == null) ? null : (this.product(returnsCorporatesMtd) - 1.0));
+        portfolioDto.setCorporatesQtd((this.product(returnsCorporatesQtd) == null) ? null : (this.product(returnsCorporatesQtd) - 1.0));
+        portfolioDto.setCorporatesYtd((this.product(returnsCorporatesYtd) == null) ? null : (this.product(returnsCorporatesYtd) - 1.0));
 
-        portfolioDto.setAgenciesMtd(this.product(returnsAgenciesMtd));
-        portfolioDto.setAgenciesQtd(this.product(returnsAgenciesQtd));
-        portfolioDto.setAgenciesYtd(this.product(returnsAgenciesYtd));
+        portfolioDto.setAgenciesMtd((this.product(returnsAgenciesMtd) == null) ? null : (this.product(returnsAgenciesMtd) - 1.0));
+        portfolioDto.setAgenciesQtd((this.product(returnsAgenciesQtd) == null) ? null : (this.product(returnsAgenciesQtd) - 1.0));
+        portfolioDto.setAgenciesYtd((this.product(returnsAgenciesYtd) == null) ? null : (this.product(returnsAgenciesYtd) - 1.0));
 
-        portfolioDto.setSupranationalsMtd(this.product(returnsSupranationalsMtd));
-        portfolioDto.setSupranationalsQtd(this.product(returnsSupranationalsQtd));
-        portfolioDto.setSupranationalsYtd(this.product(returnsSupranationalsYtd));
+        portfolioDto.setSupranationalsMtd((this.product(returnsSupranationalsMtd) == null) ? null : (this.product(returnsSupranationalsMtd) - 1.0));
+        portfolioDto.setSupranationalsQtd((this.product(returnsSupranationalsQtd) == null) ? null : (this.product(returnsSupranationalsQtd) - 1.0));
+        portfolioDto.setSupranationalsYtd((this.product(returnsSupranationalsYtd) == null) ? null : (this.product(returnsSupranationalsYtd) - 1.0));
 
-        portfolioDto.setCashBrokerAndFuturesMtd(this.product(returnsCashBrokerAndFuturesMtd));
-        portfolioDto.setCashBrokerAndFuturesQtd(this.product(returnsCashBrokerAndFuturesQtd));
-        portfolioDto.setCashBrokerAndFuturesYtd(this.product(returnsCashBrokerAndFuturesYtd));
+        portfolioDto.setCashBrokerAndFuturesMtd((this.product(returnsCashBrokerAndFuturesMtd) == null) ? null : (this.product(returnsCashBrokerAndFuturesMtd) - 1.0));
+        portfolioDto.setCashBrokerAndFuturesQtd((this.product(returnsCashBrokerAndFuturesQtd) == null) ? null : (this.product(returnsCashBrokerAndFuturesQtd) - 1.0));
+        portfolioDto.setCashBrokerAndFuturesYtd((this.product(returnsCashBrokerAndFuturesYtd) == null) ? null : (this.product(returnsCashBrokerAndFuturesYtd) - 1.0));
 
-        portfolioDto.setTotalEquityMtd(this.product(returnsTotalEquityMtd));
-        portfolioDto.setTotalEquityQtd(this.product(returnsTotalEquityQtd));
-        portfolioDto.setTotalEquityYtd(this.product(returnsTotalEquityYtd));
+        portfolioDto.setTotalEquityMtd((this.product(returnsTotalEquityMtd) == null) ? null : (this.product(returnsTotalEquityMtd) - 1.0));
+        portfolioDto.setTotalEquityQtd((this.product(returnsTotalEquityQtd) == null) ? null : (this.product(returnsTotalEquityQtd) - 1.0));
+        portfolioDto.setTotalEquityYtd((this.product(returnsTotalEquityYtd) == null) ? null : (this.product(returnsTotalEquityYtd) - 1.0));
 
-        portfolioDto.setEtfMtd(this.product(returnsEtfMtd));
-        portfolioDto.setEtfQtd(this.product(returnsEtfQtd));
-        portfolioDto.setEtfYtd(this.product(returnsEtfYtd));
+        portfolioDto.setEtfMtd((this.product(returnsEtfMtd) == null) ? null : (this.product(returnsEtfMtd) - 1.0));
+        portfolioDto.setEtfQtd((this.product(returnsEtfQtd) == null) ? null : (this.product(returnsEtfQtd) - 1.0));
+        portfolioDto.setEtfYtd((this.product(returnsEtfYtd) == null) ? null : (this.product(returnsEtfYtd) - 1.0));
 
-        portfolioDto.setTotalTransitionMtd(this.product(returnsTotalTransitionMtd));
-        portfolioDto.setTotalTransitionQtd(this.product(returnsTotalTransitionQtd));
-        portfolioDto.setTotalTransitionYtd(this.product(returnsTotalTransitionYtd));
+        portfolioDto.setTotalTransitionMtd((this.product(returnsTotalTransitionMtd) == null) ? null : (this.product(returnsTotalTransitionMtd) - 1.0));
+        portfolioDto.setTotalTransitionQtd((this.product(returnsTotalTransitionQtd) == null) ? null : (this.product(returnsTotalTransitionQtd) - 1.0));
+        portfolioDto.setTotalTransitionYtd((this.product(returnsTotalTransitionYtd) == null) ? null : (this.product(returnsTotalTransitionYtd) - 1.0));
 
-        portfolioDto.setGovernmentsTransitionMtd(this.product(returnsGovernmentsTransitionMtd));
-        portfolioDto.setGovernmentsTransitionQtd(this.product(returnsGovernmentsTransitionQtd));
-        portfolioDto.setGovernmentsTransitionYtd(this.product(returnsGovernmentsTransitionYtd));
+        portfolioDto.setGovernmentsTransitionMtd((this.product(returnsGovernmentsTransitionMtd) == null) ? null : (this.product(returnsGovernmentsTransitionMtd) - 1.0));
+        portfolioDto.setGovernmentsTransitionQtd((this.product(returnsGovernmentsTransitionQtd) == null) ? null : (this.product(returnsGovernmentsTransitionQtd) - 1.0));
+        portfolioDto.setGovernmentsTransitionYtd((this.product(returnsGovernmentsTransitionYtd) == null) ? null : (this.product(returnsGovernmentsTransitionYtd) - 1.0));
 
         return portfolioDto;
     }
