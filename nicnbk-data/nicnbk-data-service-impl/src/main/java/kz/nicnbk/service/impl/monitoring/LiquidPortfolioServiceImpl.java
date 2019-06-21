@@ -509,9 +509,13 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
 
         LiquidPortfolioDto portfolioDto = null;
 
-        for (int i = 1; i < liquidPortfolioList.size(); i++) {
+        for (int i = 0; i < liquidPortfolioList.size(); i++) {
             if (liquidPortfolioList.get(i).getDate().getTime() == date.getTime()) {
                 portfolioDto = this.converter.disassemble(liquidPortfolioList.get(i));
+            }
+
+            if (i == 0) {
+                continue;
             }
 
             if (liquidPortfolioList.get(i).getDate().after(date)) {

@@ -177,8 +177,7 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
         }
     }
 
-    @Override
-    public NicPortfolio create(Row row, String updater) {
+    private NicPortfolio create(Row row, String updater) {
         try {
             return new NicPortfolio(
                     updater,
