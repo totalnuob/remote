@@ -27,8 +27,4 @@ public interface LiquidPortfolioService {
     List<LiquidPortfolio> updateTransition(List<LiquidPortfolio> portfolioList, Row row, String username, Long fileId);
 
     LiquidPortfolioDto calculateMtdQtdYtd(Date date, List<LiquidPortfolio> liquidPortfolioList);
-
-    Double interest(Double valueCurrent, Double valuePrevious, Double valueCurrentFlow);
-
-    Double product(List<Double> list);
 }

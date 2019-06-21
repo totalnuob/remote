@@ -2,6 +2,7 @@ package kz.nicnbk.service.impl.monitoring;
 
 import kz.nicnbk.common.service.util.DateUtils;
 import kz.nicnbk.common.service.util.ExcelUtils;
+import kz.nicnbk.common.service.util.MathUtils;
 import kz.nicnbk.repo.api.files.FilesRepository;
 import kz.nicnbk.repo.api.lookup.FilesTypeRepository;
 import kz.nicnbk.repo.api.monitoring.LiquidPortfolioRepository;
@@ -562,61 +563,59 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
             return null;
         }
 
-        portfolioDto.setTotalFixedMtd((this.product(returnsTotalFixedMtd) == null) ? null : (this.product(returnsTotalFixedMtd) - 1.0));
-        portfolioDto.setTotalFixedQtd((this.product(returnsTotalFixedQtd) == null) ? null : (this.product(returnsTotalFixedQtd) - 1.0));
-        portfolioDto.setTotalFixedYtd((this.product(returnsTotalFixedYtd) == null) ? null : (this.product(returnsTotalFixedYtd) - 1.0));
+        portfolioDto.setTotalFixedMtd((this.product(returnsTotalFixedMtd) == null) ? null : MathUtils.subtract(this.product(returnsTotalFixedMtd), 1.0));
+        portfolioDto.setTotalFixedQtd((this.product(returnsTotalFixedQtd) == null) ? null : MathUtils.subtract(this.product(returnsTotalFixedQtd), 1.0));
+        portfolioDto.setTotalFixedYtd((this.product(returnsTotalFixedYtd) == null) ? null : MathUtils.subtract(this.product(returnsTotalFixedYtd), 1.0));
 
-        portfolioDto.setGovernmentsFixedMtd((this.product(returnsGovernmentsFixedMtd) == null) ? null : (this.product(returnsGovernmentsFixedMtd) - 1.0));
-        portfolioDto.setGovernmentsFixedQtd((this.product(returnsGovernmentsFixedQtd) == null) ? null : (this.product(returnsGovernmentsFixedQtd) - 1.0));
-        portfolioDto.setGovernmentsFixedYtd((this.product(returnsGovernmentsFixedYtd) == null) ? null : (this.product(returnsGovernmentsFixedYtd) - 1.0));
+        portfolioDto.setGovernmentsFixedMtd((this.product(returnsGovernmentsFixedMtd) == null) ? null : MathUtils.subtract(this.product(returnsGovernmentsFixedMtd), 1.0));
+        portfolioDto.setGovernmentsFixedQtd((this.product(returnsGovernmentsFixedQtd) == null) ? null : MathUtils.subtract(this.product(returnsGovernmentsFixedQtd), 1.0));
+        portfolioDto.setGovernmentsFixedYtd((this.product(returnsGovernmentsFixedYtd) == null) ? null : MathUtils.subtract(this.product(returnsGovernmentsFixedYtd), 1.0));
 
-        portfolioDto.setCorporatesMtd((this.product(returnsCorporatesMtd) == null) ? null : (this.product(returnsCorporatesMtd) - 1.0));
-        portfolioDto.setCorporatesQtd((this.product(returnsCorporatesQtd) == null) ? null : (this.product(returnsCorporatesQtd) - 1.0));
-        portfolioDto.setCorporatesYtd((this.product(returnsCorporatesYtd) == null) ? null : (this.product(returnsCorporatesYtd) - 1.0));
+        portfolioDto.setCorporatesMtd((this.product(returnsCorporatesMtd) == null) ? null : MathUtils.subtract(this.product(returnsCorporatesMtd), 1.0));
+        portfolioDto.setCorporatesQtd((this.product(returnsCorporatesQtd) == null) ? null : MathUtils.subtract(this.product(returnsCorporatesQtd), 1.0));
+        portfolioDto.setCorporatesYtd((this.product(returnsCorporatesYtd) == null) ? null : MathUtils.subtract(this.product(returnsCorporatesYtd), 1.0));
 
-        portfolioDto.setAgenciesMtd((this.product(returnsAgenciesMtd) == null) ? null : (this.product(returnsAgenciesMtd) - 1.0));
-        portfolioDto.setAgenciesQtd((this.product(returnsAgenciesQtd) == null) ? null : (this.product(returnsAgenciesQtd) - 1.0));
-        portfolioDto.setAgenciesYtd((this.product(returnsAgenciesYtd) == null) ? null : (this.product(returnsAgenciesYtd) - 1.0));
+        portfolioDto.setAgenciesMtd((this.product(returnsAgenciesMtd) == null) ? null : MathUtils.subtract(this.product(returnsAgenciesMtd), 1.0));
+        portfolioDto.setAgenciesQtd((this.product(returnsAgenciesQtd) == null) ? null : MathUtils.subtract(this.product(returnsAgenciesQtd), 1.0));
+        portfolioDto.setAgenciesYtd((this.product(returnsAgenciesYtd) == null) ? null : MathUtils.subtract(this.product(returnsAgenciesYtd), 1.0));
 
-        portfolioDto.setSupranationalsMtd((this.product(returnsSupranationalsMtd) == null) ? null : (this.product(returnsSupranationalsMtd) - 1.0));
-        portfolioDto.setSupranationalsQtd((this.product(returnsSupranationalsQtd) == null) ? null : (this.product(returnsSupranationalsQtd) - 1.0));
-        portfolioDto.setSupranationalsYtd((this.product(returnsSupranationalsYtd) == null) ? null : (this.product(returnsSupranationalsYtd) - 1.0));
+        portfolioDto.setSupranationalsMtd((this.product(returnsSupranationalsMtd) == null) ? null : MathUtils.subtract(this.product(returnsSupranationalsMtd), 1.0));
+        portfolioDto.setSupranationalsQtd((this.product(returnsSupranationalsQtd) == null) ? null : MathUtils.subtract(this.product(returnsSupranationalsQtd), 1.0));
+        portfolioDto.setSupranationalsYtd((this.product(returnsSupranationalsYtd) == null) ? null : MathUtils.subtract(this.product(returnsSupranationalsYtd), 1.0));
 
-        portfolioDto.setCashBrokerAndFuturesMtd((this.product(returnsCashBrokerAndFuturesMtd) == null) ? null : (this.product(returnsCashBrokerAndFuturesMtd) - 1.0));
-        portfolioDto.setCashBrokerAndFuturesQtd((this.product(returnsCashBrokerAndFuturesQtd) == null) ? null : (this.product(returnsCashBrokerAndFuturesQtd) - 1.0));
-        portfolioDto.setCashBrokerAndFuturesYtd((this.product(returnsCashBrokerAndFuturesYtd) == null) ? null : (this.product(returnsCashBrokerAndFuturesYtd) - 1.0));
+        portfolioDto.setCashBrokerAndFuturesMtd((this.product(returnsCashBrokerAndFuturesMtd) == null) ? null : MathUtils.subtract(this.product(returnsCashBrokerAndFuturesMtd), 1.0));
+        portfolioDto.setCashBrokerAndFuturesQtd((this.product(returnsCashBrokerAndFuturesQtd) == null) ? null : MathUtils.subtract(this.product(returnsCashBrokerAndFuturesQtd), 1.0));
+        portfolioDto.setCashBrokerAndFuturesYtd((this.product(returnsCashBrokerAndFuturesYtd) == null) ? null : MathUtils.subtract(this.product(returnsCashBrokerAndFuturesYtd), 1.0));
 
-        portfolioDto.setTotalEquityMtd((this.product(returnsTotalEquityMtd) == null) ? null : (this.product(returnsTotalEquityMtd) - 1.0));
-        portfolioDto.setTotalEquityQtd((this.product(returnsTotalEquityQtd) == null) ? null : (this.product(returnsTotalEquityQtd) - 1.0));
-        portfolioDto.setTotalEquityYtd((this.product(returnsTotalEquityYtd) == null) ? null : (this.product(returnsTotalEquityYtd) - 1.0));
+        portfolioDto.setTotalEquityMtd((this.product(returnsTotalEquityMtd) == null) ? null : MathUtils.subtract(this.product(returnsTotalEquityMtd), 1.0));
+        portfolioDto.setTotalEquityQtd((this.product(returnsTotalEquityQtd) == null) ? null : MathUtils.subtract(this.product(returnsTotalEquityQtd), 1.0));
+        portfolioDto.setTotalEquityYtd((this.product(returnsTotalEquityYtd) == null) ? null : MathUtils.subtract(this.product(returnsTotalEquityYtd), 1.0));
 
-        portfolioDto.setEtfMtd((this.product(returnsEtfMtd) == null) ? null : (this.product(returnsEtfMtd) - 1.0));
-        portfolioDto.setEtfQtd((this.product(returnsEtfQtd) == null) ? null : (this.product(returnsEtfQtd) - 1.0));
-        portfolioDto.setEtfYtd((this.product(returnsEtfYtd) == null) ? null : (this.product(returnsEtfYtd) - 1.0));
+        portfolioDto.setEtfMtd((this.product(returnsEtfMtd) == null) ? null : MathUtils.subtract(this.product(returnsEtfMtd), 1.0));
+        portfolioDto.setEtfQtd((this.product(returnsEtfQtd) == null) ? null : MathUtils.subtract(this.product(returnsEtfQtd), 1.0));
+        portfolioDto.setEtfYtd((this.product(returnsEtfYtd) == null) ? null : MathUtils.subtract(this.product(returnsEtfYtd), 1.0));
 
-        portfolioDto.setTotalTransitionMtd((this.product(returnsTotalTransitionMtd) == null) ? null : (this.product(returnsTotalTransitionMtd) - 1.0));
-        portfolioDto.setTotalTransitionQtd((this.product(returnsTotalTransitionQtd) == null) ? null : (this.product(returnsTotalTransitionQtd) - 1.0));
-        portfolioDto.setTotalTransitionYtd((this.product(returnsTotalTransitionYtd) == null) ? null : (this.product(returnsTotalTransitionYtd) - 1.0));
+        portfolioDto.setTotalTransitionMtd((this.product(returnsTotalTransitionMtd) == null) ? null : MathUtils.subtract(this.product(returnsTotalTransitionMtd), 1.0));
+        portfolioDto.setTotalTransitionQtd((this.product(returnsTotalTransitionQtd) == null) ? null : MathUtils.subtract(this.product(returnsTotalTransitionQtd), 1.0));
+        portfolioDto.setTotalTransitionYtd((this.product(returnsTotalTransitionYtd) == null) ? null : MathUtils.subtract(this.product(returnsTotalTransitionYtd), 1.0));
 
-        portfolioDto.setGovernmentsTransitionMtd((this.product(returnsGovernmentsTransitionMtd) == null) ? null : (this.product(returnsGovernmentsTransitionMtd) - 1.0));
-        portfolioDto.setGovernmentsTransitionQtd((this.product(returnsGovernmentsTransitionQtd) == null) ? null : (this.product(returnsGovernmentsTransitionQtd) - 1.0));
-        portfolioDto.setGovernmentsTransitionYtd((this.product(returnsGovernmentsTransitionYtd) == null) ? null : (this.product(returnsGovernmentsTransitionYtd) - 1.0));
+        portfolioDto.setGovernmentsTransitionMtd((this.product(returnsGovernmentsTransitionMtd) == null) ? null : MathUtils.subtract(this.product(returnsGovernmentsTransitionMtd), 1.0));
+        portfolioDto.setGovernmentsTransitionQtd((this.product(returnsGovernmentsTransitionQtd) == null) ? null : MathUtils.subtract(this.product(returnsGovernmentsTransitionQtd), 1.0));
+        portfolioDto.setGovernmentsTransitionYtd((this.product(returnsGovernmentsTransitionYtd) == null) ? null : MathUtils.subtract(this.product(returnsGovernmentsTransitionYtd), 1.0));
 
         return portfolioDto;
     }
 
-    @Override
-    public Double interest(Double valueCurrent, Double valuePrevious, Double valueCurrentFlow) {
+    private Double interest(Double valueCurrent, Double valuePrevious, Double valueCurrentFlow) {
         if (valueCurrent == null || valuePrevious == null || valuePrevious == 0.0) {
             return null;
         } else {
-            return (valueCurrent - ((valueCurrentFlow == null)?0.0:valueCurrentFlow)) / valuePrevious;
+            return MathUtils.divide(MathUtils.subtract(valueCurrent, (valueCurrentFlow == null) ? 0.0 : valueCurrentFlow), valuePrevious);
         }
     }
 
-    @Override
-    public Double product(List<Double> list) {
-        double prod = 1.0;
+    private Double product(List<Double> list) {
+        Double prod = 1.0;
         if (list == null) {
             return null;
         }
@@ -624,7 +623,7 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
             if (element == null) {
                 return null;
             }
-            prod *= element;
+            prod = MathUtils.multiply(prod, element);
         }
         return prod;
     }
