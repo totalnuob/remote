@@ -19,18 +19,20 @@ import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.monitoring.NicPortfolioDto;
 import kz.nicnbk.service.dto.monitoring.NicPortfolioResultDto;
 import kz.nicnbk.service.impl.files.FilePathResolver;
+import org.apache.commons.io.IOUtils;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * Created by Pak on 13.06.2019.
@@ -40,6 +42,10 @@ import java.util.*;
 public class NicPortfolioServiceImpl implements NicPortfolioService {
 
     private static final Logger logger = LoggerFactory.getLogger(NicPortfolioServiceImpl.class);
+
+    /* Root folder on the server */
+    @Value("${filestorage.root.directory}")
+    private String rootDirectory;
 
     @Autowired
     private NicPortfolioRepository repository;
@@ -260,10 +266,48 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
                     InputStream inputStream = new FileInputStream(path+fileName);
                     filesDto.setInputStream(inputStream);
                     return filesDto;
+                } else {
+                    FilesDto zipFile = new FilesDto();
+                    String zipFileName = this.rootDirectory + "/tmp/" + HashUtils.hashMD5String(new Date().getTime() + "") + ".zip";
+                    ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipFileName));
+
+                    for (int i = 0; i < filesList.size(); i++) {
+                        Long fileId = filesList.get(i).getId();
+                        FilesDto excelFile = this.filesEntityConverter.disassemble(this.filesRepository.findOne(fileId));
+
+                        String path = filePathResolver.resolveDirectory(fileId, FileTypeLookup.MONITORING_LIQUID_PORTFOLIO.getCatalog());
+                        String name = HashUtils.hashMD5String(fileId.toString());
+                        InputStream inputStream = new FileInputStream(path+name);
+                        excelFile.setInputStream(inputStream);
+
+                        setExportZipContent("file_" + String.valueOf(i) + ".xlsx", out, excelFile);
+                    }
+
+                    out.close();
+
+                    zipFile.setInputStream(new FileInputStream(zipFileName));
+                    zipFile.setFileName(zipFileName);
+                    zipFile.setMimeType("application/zip");
+
+                    return zipFile;
                 }
             } catch (Exception ex) {
             }
         }
         return null;
+    }
+
+    private void setExportZipContent(String fileName, ZipOutputStream out, FilesDto filesDto){
+        try {
+            ZipEntry e = new ZipEntry(fileName);
+            out.putNextEntry(e);
+            byte[] data = IOUtils.toByteArray(filesDto.getInputStream());
+            out.write(data, 0, data.length);
+            out.closeEntry();
+            filesDto.getInputStream().close();
+            new File(filesDto.getFileName()).delete();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
     }
 }
