@@ -170,11 +170,6 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
                         continue;
                     }
 
-                    if (row.getCell(0) == null || row.getCell(0).getDateCellValue() == null) {
-                        logger.error("Failed to update Liquid Portfolio data: error parsing row #" + rowNumberFixed + " in sheet 'Fixed'!");
-                        return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data: error parsing row #" + rowNumberFixed + " in sheet 'Fixed'!", "");
-                    }
-
                     try {
                         if (row.getCell(0).getDateCellValue().after(new Date())) {
                             break;
@@ -212,11 +207,6 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
                         continue;
                     }
 
-                    if (row.getCell(0) == null || row.getCell(0).getDateCellValue() == null) {
-                        logger.error("Failed to update Liquid Portfolio data: error parsing row #" + rowNumberEquity + " in sheet 'Equity'!");
-                        return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data: error parsing row #" + rowNumberEquity + " in sheet 'Equity'!", "");
-                    }
-
                     try {
                         if (row.getCell(0).getDateCellValue().after(new Date())) {
                             break;
@@ -252,11 +242,6 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
 
                     if (ExcelUtils.isEmptyCellRange(row, 0, 16383)) {
                         continue;
-                    }
-
-                    if (row.getCell(0) == null || row.getCell(0).getDateCellValue() == null) {
-                        logger.error("Failed to update Liquid Portfolio data: error parsing row #" + rowNumberTransition + " in sheet 'Transition'!");
-                        return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data: error parsing row #" + rowNumberTransition + " in sheet 'Transition'!", "");
                     }
 
                     try {
