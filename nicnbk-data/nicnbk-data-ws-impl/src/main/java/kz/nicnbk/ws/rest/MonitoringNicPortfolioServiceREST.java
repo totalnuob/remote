@@ -102,7 +102,9 @@ public class MonitoringNicPortfolioServiceREST extends CommonServiceREST {
         }
         try {
             filesDto.getInputStream().close();
-            new File(filesDto.getFileName()).delete();
+            if (filesDto.getMimeType().equals("application/zip")) {
+                new File(filesDto.getFileName()).delete();
+            }
         } catch (IOException e) {
             logger.error("(Monitoring, NIC Portfolio) File export: failed to close input stream", e);
         }
