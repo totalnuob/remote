@@ -250,16 +250,12 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
 
                 List<Files> filesList = filesRepository.findAllByType(dummyFilesType);
 
-                Long fileId = 0L;
-                for (Files files : filesList) {
-                    if (fileId < files.getId()) {
-                        fileId = files.getId();
-                    }
-                }
-
-                if (fileId > 0) {
+                if (filesList == null || filesList.size() == 0) {
+                    return null;
+                } else if (filesList.size() == 1) {
+                    Long fileId = filesList.get(0).getId();
                     FilesDto filesDto = this.filesEntityConverter.disassemble(this.filesRepository.findOne(fileId));
-                    String path = filePathResolver.resolveDirectory(fileId, FileTypeLookup.MONITORING_NIC_PORTFOLIO.getCatalog());
+                    String path = filePathResolver.resolveDirectory(fileId, FileTypeLookup.MONITORING_LIQUID_PORTFOLIO.getCatalog());
                     String fileName = HashUtils.hashMD5String(fileId.toString());
                     InputStream inputStream = new FileInputStream(path+fileName);
                     filesDto.setInputStream(inputStream);
