@@ -506,18 +506,126 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
         List<Double> returnsGovernmentsTransitionQtd = new ArrayList<>();
         List<Double> returnsGovernmentsTransitionYtd = new ArrayList<>();
 
-        for (int i = 0; i < liquidPortfolioList.size(); i++) {
+        LiquidPortfolioDto portfolioDto = null;
+
+        for (int i = 1; i < liquidPortfolioList.size(); i++) {
+            if (liquidPortfolioList.get(i).getDate().getTime() == date.getTime()) {
+                portfolioDto = this.converter.disassemble(liquidPortfolioList.get(i));
+            }
+
             if (liquidPortfolioList.get(i).getDate().after(date)) {
                 break;
             }
 
             if (DateUtils.getMonth(liquidPortfolioList.get(i).getDate()) == DateUtils.getMonth(date)) {
-                returnsTotalFixedMtd.add(
-                        liquidPortfolioList.get(i).getTotalFixed() - liquidPortfolioList.get(i).getTotalFixedFlow()
-                );
+                returnsTotalFixedMtd.add(this.interest(liquidPortfolioList.get(i).getTotalFixed(), liquidPortfolioList.get(i-1).getTotalFixed(), liquidPortfolioList.get(i).getTotalFixedFlow()));
+                returnsGovernmentsFixedMtd.add(this.interest(liquidPortfolioList.get(i).getGovernmentsFixed(), liquidPortfolioList.get(i-1).getGovernmentsFixed(), liquidPortfolioList.get(i).getGovernmentsFixedFlow()));
+                returnsCorporatesMtd.add(this.interest(liquidPortfolioList.get(i).getCorporates(), liquidPortfolioList.get(i-1).getCorporates(), liquidPortfolioList.get(i).getCorporatesFlow()));
+                returnsAgenciesMtd.add(this.interest(liquidPortfolioList.get(i).getAgencies(), liquidPortfolioList.get(i-1).getAgencies(), liquidPortfolioList.get(i).getAgenciesFlow()));
+                returnsSupranationalsMtd.add(this.interest(liquidPortfolioList.get(i).getSupranationals(), liquidPortfolioList.get(i-1).getSupranationals(), liquidPortfolioList.get(i).getSupranationalsFlow()));
+                returnsCashBrokerAndFuturesMtd.add(this.interest(liquidPortfolioList.get(i).getCashBrokerAndFutures(), liquidPortfolioList.get(i-1).getCashBrokerAndFutures(), null));
+                returnsTotalEquityMtd.add(this.interest(liquidPortfolioList.get(i).getTotalEquity(), liquidPortfolioList.get(i-1).getTotalEquity(), liquidPortfolioList.get(i).getTotalEquityFlow()));
+                returnsEtfMtd.add(this.interest(liquidPortfolioList.get(i).getEtf(), liquidPortfolioList.get(i-1).getEtf(), liquidPortfolioList.get(i).getEtfFlow()));
+                returnsTotalTransitionMtd.add(this.interest(liquidPortfolioList.get(i).getTotalTransition(), liquidPortfolioList.get(i-1).getTotalTransition(), liquidPortfolioList.get(i).getTotalTransitionFlow()));
+                returnsGovernmentsTransitionMtd.add(this.interest(liquidPortfolioList.get(i).getGovernmentsTransition(), liquidPortfolioList.get(i-1).getGovernmentsTransition(), liquidPortfolioList.get(i).getGovernmentsTransitionFlow()));
             }
+
+            if (DateUtils.getMonth(liquidPortfolioList.get(i).getDate()) / 3 == DateUtils.getMonth(date) / 3) {
+                returnsTotalFixedQtd.add(this.interest(liquidPortfolioList.get(i).getTotalFixed(), liquidPortfolioList.get(i-1).getTotalFixed(), liquidPortfolioList.get(i).getTotalFixedFlow()));
+                returnsGovernmentsFixedQtd.add(this.interest(liquidPortfolioList.get(i).getGovernmentsFixed(), liquidPortfolioList.get(i-1).getGovernmentsFixed(), liquidPortfolioList.get(i).getGovernmentsFixedFlow()));
+                returnsCorporatesQtd.add(this.interest(liquidPortfolioList.get(i).getCorporates(), liquidPortfolioList.get(i-1).getCorporates(), liquidPortfolioList.get(i).getCorporatesFlow()));
+                returnsAgenciesQtd.add(this.interest(liquidPortfolioList.get(i).getAgencies(), liquidPortfolioList.get(i-1).getAgencies(), liquidPortfolioList.get(i).getAgenciesFlow()));
+                returnsSupranationalsQtd.add(this.interest(liquidPortfolioList.get(i).getSupranationals(), liquidPortfolioList.get(i-1).getSupranationals(), liquidPortfolioList.get(i).getSupranationalsFlow()));
+                returnsCashBrokerAndFuturesQtd.add(this.interest(liquidPortfolioList.get(i).getCashBrokerAndFutures(), liquidPortfolioList.get(i-1).getCashBrokerAndFutures(), null));
+                returnsTotalEquityQtd.add(this.interest(liquidPortfolioList.get(i).getTotalEquity(), liquidPortfolioList.get(i-1).getTotalEquity(), liquidPortfolioList.get(i).getTotalEquityFlow()));
+                returnsEtfQtd.add(this.interest(liquidPortfolioList.get(i).getEtf(), liquidPortfolioList.get(i-1).getEtf(), liquidPortfolioList.get(i).getEtfFlow()));
+                returnsTotalTransitionQtd.add(this.interest(liquidPortfolioList.get(i).getTotalTransition(), liquidPortfolioList.get(i-1).getTotalTransition(), liquidPortfolioList.get(i).getTotalTransitionFlow()));
+                returnsGovernmentsTransitionQtd.add(this.interest(liquidPortfolioList.get(i).getGovernmentsTransition(), liquidPortfolioList.get(i-1).getGovernmentsTransition(), liquidPortfolioList.get(i).getGovernmentsTransitionFlow()));
+            }
+
+            if (DateUtils.getYear(liquidPortfolioList.get(i).getDate()) == DateUtils.getYear(date)) {
+                returnsTotalFixedYtd.add(this.interest(liquidPortfolioList.get(i).getTotalFixed(), liquidPortfolioList.get(i-1).getTotalFixed(), liquidPortfolioList.get(i).getTotalFixedFlow()));
+                returnsGovernmentsFixedYtd.add(this.interest(liquidPortfolioList.get(i).getGovernmentsFixed(), liquidPortfolioList.get(i-1).getGovernmentsFixed(), liquidPortfolioList.get(i).getGovernmentsFixedFlow()));
+                returnsCorporatesYtd.add(this.interest(liquidPortfolioList.get(i).getCorporates(), liquidPortfolioList.get(i-1).getCorporates(), liquidPortfolioList.get(i).getCorporatesFlow()));
+                returnsAgenciesYtd.add(this.interest(liquidPortfolioList.get(i).getAgencies(), liquidPortfolioList.get(i-1).getAgencies(), liquidPortfolioList.get(i).getAgenciesFlow()));
+                returnsSupranationalsYtd.add(this.interest(liquidPortfolioList.get(i).getSupranationals(), liquidPortfolioList.get(i-1).getSupranationals(), liquidPortfolioList.get(i).getSupranationalsFlow()));
+                returnsCashBrokerAndFuturesYtd.add(this.interest(liquidPortfolioList.get(i).getCashBrokerAndFutures(), liquidPortfolioList.get(i-1).getCashBrokerAndFutures(), null));
+                returnsTotalEquityYtd.add(this.interest(liquidPortfolioList.get(i).getTotalEquity(), liquidPortfolioList.get(i-1).getTotalEquity(), liquidPortfolioList.get(i).getTotalEquityFlow()));
+                returnsEtfYtd.add(this.interest(liquidPortfolioList.get(i).getEtf(), liquidPortfolioList.get(i-1).getEtf(), liquidPortfolioList.get(i).getEtfFlow()));
+                returnsTotalTransitionYtd.add(this.interest(liquidPortfolioList.get(i).getTotalTransition(), liquidPortfolioList.get(i-1).getTotalTransition(), liquidPortfolioList.get(i).getTotalTransitionFlow()));
+                returnsGovernmentsTransitionYtd.add(this.interest(liquidPortfolioList.get(i).getGovernmentsTransition(), liquidPortfolioList.get(i-1).getGovernmentsTransition(), liquidPortfolioList.get(i).getGovernmentsTransitionFlow()));
+            }
+
         }
 
-        return this.converter.disassemble(liquidPortfolioList.get(0));
+        if (portfolioDto == null) {
+            return null;
+        }
+
+        portfolioDto.setTotalFixedMtd(this.product(returnsTotalFixedMtd));
+        portfolioDto.setTotalFixedQtd(this.product(returnsTotalFixedQtd));
+        portfolioDto.setTotalFixedYtd(this.product(returnsTotalFixedYtd));
+
+        portfolioDto.setGovernmentsFixedMtd(this.product(returnsGovernmentsFixedMtd));
+        portfolioDto.setGovernmentsFixedQtd(this.product(returnsGovernmentsFixedQtd));
+        portfolioDto.setGovernmentsFixedYtd(this.product(returnsGovernmentsFixedYtd));
+
+        portfolioDto.setCorporatesMtd(this.product(returnsCorporatesMtd));
+        portfolioDto.setCorporatesQtd(this.product(returnsCorporatesQtd));
+        portfolioDto.setCorporatesYtd(this.product(returnsCorporatesYtd));
+
+        portfolioDto.setAgenciesMtd(this.product(returnsAgenciesMtd));
+        portfolioDto.setAgenciesQtd(this.product(returnsAgenciesQtd));
+        portfolioDto.setAgenciesYtd(this.product(returnsAgenciesYtd));
+
+        portfolioDto.setSupranationalsMtd(this.product(returnsSupranationalsMtd));
+        portfolioDto.setSupranationalsQtd(this.product(returnsSupranationalsQtd));
+        portfolioDto.setSupranationalsYtd(this.product(returnsSupranationalsYtd));
+
+        portfolioDto.setCashBrokerAndFuturesMtd(this.product(returnsCashBrokerAndFuturesMtd));
+        portfolioDto.setCashBrokerAndFuturesQtd(this.product(returnsCashBrokerAndFuturesQtd));
+        portfolioDto.setCashBrokerAndFuturesYtd(this.product(returnsCashBrokerAndFuturesYtd));
+
+        portfolioDto.setTotalEquityMtd(this.product(returnsTotalEquityMtd));
+        portfolioDto.setTotalEquityQtd(this.product(returnsTotalEquityQtd));
+        portfolioDto.setTotalEquityYtd(this.product(returnsTotalEquityYtd));
+
+        portfolioDto.setEtfMtd(this.product(returnsEtfMtd));
+        portfolioDto.setEtfQtd(this.product(returnsEtfQtd));
+        portfolioDto.setEtfYtd(this.product(returnsEtfYtd));
+
+        portfolioDto.setTotalTransitionMtd(this.product(returnsTotalTransitionMtd));
+        portfolioDto.setTotalTransitionQtd(this.product(returnsTotalTransitionQtd));
+        portfolioDto.setTotalTransitionYtd(this.product(returnsTotalTransitionYtd));
+
+        portfolioDto.setGovernmentsTransitionMtd(this.product(returnsGovernmentsTransitionMtd));
+        portfolioDto.setGovernmentsTransitionQtd(this.product(returnsGovernmentsTransitionQtd));
+        portfolioDto.setGovernmentsTransitionYtd(this.product(returnsGovernmentsTransitionYtd));
+
+        return portfolioDto;
+    }
+
+    @Override
+    public Double interest(Double valueCurrent, Double valuePrevious, Double valueCurrentFlow) {
+        if (valueCurrent == null || valuePrevious == null || valuePrevious == 0.0) {
+            return null;
+        } else {
+            return (valueCurrent - ((valueCurrentFlow == null)?0.0:valueCurrentFlow)) / valuePrevious;
+        }
+    }
+
+    @Override
+    public Double product(List<Double> list) {
+        double prod = 1.0;
+        if (list == null) {
+            return null;
+        }
+        for (Double element : list) {
+            if (element == null) {
+                return null;
+            }
+            prod *= element;
+        }
+        return prod;
     }
 }
