@@ -2,6 +2,7 @@ package kz.nicnbk.service.impl.monitoring;
 
 import kz.nicnbk.common.service.util.DateUtils;
 import kz.nicnbk.common.service.util.ExcelUtils;
+import kz.nicnbk.common.service.util.HashUtils;
 import kz.nicnbk.common.service.util.MathUtils;
 import kz.nicnbk.repo.api.files.FilesRepository;
 import kz.nicnbk.repo.api.lookup.FilesTypeRepository;
@@ -28,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.*;
 
@@ -280,7 +282,36 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
     }
 
     @Override
-    public List<LiquidPortfolio> updateFixed(List<LiquidPortfolio> portfolioList, Row row, String updater, Long fileId) {
+    public FilesDto getFileWithInputStream() {
+        if(this.repository.findAllByOrderByDateAsc().size() > 0) {
+            try {
+                FilesType dummyFilesType = new FilesType();
+                dummyFilesType.setId(filesTypeRepository.findByCode(FileTypeLookup.MONITORING_LIQUID_PORTFOLIO.getCode()).getId());
+
+                List<Files> filesList = filesRepository.findAllByType(dummyFilesType);
+
+                Long fileId = 0L;
+                for (Files files : filesList) {
+                    if (fileId < files.getId()) {
+                        fileId = files.getId();
+                    }
+                }
+
+                if (fileId > 0) {
+                    FilesDto filesDto = this.filesEntityConverter.disassemble(this.filesRepository.findOne(fileId));
+                    String path = filePathResolver.resolveDirectory(fileId, FileTypeLookup.MONITORING_LIQUID_PORTFOLIO.getCatalog());
+                    String fileName = HashUtils.hashMD5String(fileId.toString());
+                    InputStream inputStream = new FileInputStream(path+fileName);
+                    filesDto.setInputStream(inputStream);
+                    return filesDto;
+                }
+            } catch (Exception ex) {
+            }
+        }
+        return null;
+    }
+
+    private List<LiquidPortfolio> updateFixed(List<LiquidPortfolio> portfolioList, Row row, String updater, Long fileId) {
         Files dummyFile = new Files();
         dummyFile.setId(fileId);
 
@@ -350,8 +381,7 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
         return portfolioList;
     }
 
-    @Override
-    public List<LiquidPortfolio> updateEquity(List<LiquidPortfolio> portfolioList, Row row, String updater, Long fileId) {
+    private List<LiquidPortfolio> updateEquity(List<LiquidPortfolio> portfolioList, Row row, String updater, Long fileId) {
         Files dummyFile = new Files();
         dummyFile.setId(fileId);
 
@@ -412,8 +442,7 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
         return portfolioList;
     }
 
-    @Override
-    public List<LiquidPortfolio> updateTransition(List<LiquidPortfolio> portfolioList, Row row, String updater, Long fileId) {
+    private List<LiquidPortfolio> updateTransition(List<LiquidPortfolio> portfolioList, Row row, String updater, Long fileId) {
         Files dummyFile = new Files();
         dummyFile.setId(fileId);
 
@@ -472,11 +501,6 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
         }
 
         return portfolioList;
-    }
-
-    @Override
-    public FilesDto getFileWithInputStream() {
-        return null;
     }
 
     private LiquidPortfolioDto calculateMtdQtdYtd(Date date, List<LiquidPortfolio> liquidPortfolioList) {

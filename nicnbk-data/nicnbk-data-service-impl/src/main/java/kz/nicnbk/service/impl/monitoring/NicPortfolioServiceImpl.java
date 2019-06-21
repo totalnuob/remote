@@ -4,8 +4,10 @@ import kz.nicnbk.common.service.util.DateUtils;
 import kz.nicnbk.common.service.util.ExcelUtils;
 import kz.nicnbk.common.service.util.HashUtils;
 import kz.nicnbk.repo.api.files.FilesRepository;
+import kz.nicnbk.repo.api.lookup.FilesTypeRepository;
 import kz.nicnbk.repo.api.monitoring.NicPortfolioRepository;
 import kz.nicnbk.repo.model.files.Files;
+import kz.nicnbk.repo.model.files.FilesType;
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.repo.model.monitoring.NicPortfolio;
 import kz.nicnbk.service.api.files.FileService;
@@ -44,6 +46,9 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
 
     @Autowired
     private NicPortfolioEntityConverter converter;
+
+    @Autowired
+    private FilesTypeRepository filesTypeRepository;
 
     @Autowired
     private FileService fileService;
@@ -240,13 +245,26 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
     public FilesDto getFileWithInputStream() {
         if(this.repository.findAllByOrderByDateAsc().size() > 0) {
             try {
-                Long fileId = this.repository.findAllByOrderByDateAsc().get(0).getFile().getId();
-                FilesDto filesDto = this.filesEntityConverter.disassemble(this.filesRepository.findOne(fileId));
-                String path = filePathResolver.resolveDirectory(fileId, FileTypeLookup.MONITORING_NIC_PORTFOLIO.getCatalog());
-                String fileName = HashUtils.hashMD5String(fileId.toString());
-                InputStream inputStream = new FileInputStream(path+fileName);
-                filesDto.setInputStream(inputStream);
-                return filesDto;
+                FilesType dummyFilesType = new FilesType();
+                dummyFilesType.setId(filesTypeRepository.findByCode(FileTypeLookup.MONITORING_NIC_PORTFOLIO.getCode()).getId());
+
+                List<Files> filesList = filesRepository.findAllByType(dummyFilesType);
+
+                Long fileId = 0L;
+                for (Files files : filesList) {
+                    if (fileId < files.getId()) {
+                        fileId = files.getId();
+                    }
+                }
+
+                if (fileId > 0) {
+                    FilesDto filesDto = this.filesEntityConverter.disassemble(this.filesRepository.findOne(fileId));
+                    String path = filePathResolver.resolveDirectory(fileId, FileTypeLookup.MONITORING_NIC_PORTFOLIO.getCatalog());
+                    String fileName = HashUtils.hashMD5String(fileId.toString());
+                    InputStream inputStream = new FileInputStream(path+fileName);
+                    filesDto.setInputStream(inputStream);
+                    return filesDto;
+                }
             } catch (Exception ex) {
             }
         }
