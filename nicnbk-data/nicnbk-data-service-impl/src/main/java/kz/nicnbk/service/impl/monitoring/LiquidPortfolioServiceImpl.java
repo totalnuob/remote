@@ -124,6 +124,12 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
                 return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data: the file cannot be opened!", "");
             }
 
+            // If no sheets found
+            if (sheetFixed == null && sheetEquity == null && sheetTransition == null) {
+                logger.error("Failed to update Liquid Portfolio data: the file doesn't contain either of the sheets 'Fixed', 'Equity', 'Transition'!");
+                return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data: the file doesn't contain either of the sheets 'Fixed', 'Equity', 'Transition'!", "");
+            }
+
             // Save the file
             try {
                 filesDto.setType(FileTypeLookup.MONITORING_LIQUID_PORTFOLIO.getCode());
@@ -272,9 +278,9 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
                 return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data: repository problem!", "");
             }
 
-            logger.info("Liquid Portfolio data has been updated successfully from sheets 'Fixed', 'Equity', 'Transition', updater: " + updater);
+            logger.info("Liquid Portfolio data has been updated successfully from sheet(s)" + ((sheetFixed != null) ? " 'Fixed'," : "") + ((sheetEquity != null) ? " 'Equity'," : "") + ((sheetTransition != null) ? " 'Transition'," : "") + " updater: " + updater);
             LiquidPortfolioResultDto resultDto = this.get();
-            return new LiquidPortfolioResultDto(resultDto.getLiquidPortfolioDtoList(), ResponseStatusType.SUCCESS, "", "Liquid Portfolio data has been updated successfully from sheets 'Fixed', 'Equity', 'Transition'!", "");
+            return new LiquidPortfolioResultDto(resultDto.getLiquidPortfolioDtoList(), ResponseStatusType.SUCCESS, "", "Liquid Portfolio data has been updated successfully from sheet(s)" + ((sheetFixed != null) ? " 'Fixed'," : "") + ((sheetEquity != null) ? " 'Equity'," : "") + ((sheetTransition != null) ? " 'Transition'," : "") + "!", "");
         } catch (Exception ex) {
             logger.error("Failed to update Liquid Portfolio data, ", ex);
             return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data!", "");
