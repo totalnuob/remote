@@ -530,7 +530,7 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
                 Double _returnsSupranationals = this.interest(liquidPortfolioList.get(i).getSupranationals(), liquidPortfolioList.get(i-1).getSupranationals(), liquidPortfolioList.get(i).getSupranationalsFlow());
                 Double _returnsCashBrokerAndFutures = this.interest(liquidPortfolioList.get(i).getCashBrokerAndFutures(), liquidPortfolioList.get(i-1).getCashBrokerAndFutures(), null);
                 Double _returnsTotalEquity = this.interest(liquidPortfolioList.get(i).getTotalEquity(), liquidPortfolioList.get(i-1).getTotalEquity(), liquidPortfolioList.get(i).getTotalEquityFlow());
-                Double _returnsEtf = this.interest(liquidPortfolioList.get(i).getEtf(), liquidPortfolioList.get(i-1).getEtf(), liquidPortfolioList.get(i).getEtfFlow()));
+                Double _returnsEtf = this.interest(liquidPortfolioList.get(i).getEtf(), liquidPortfolioList.get(i-1).getEtf(), liquidPortfolioList.get(i).getEtfFlow());
                 Double _returnsTotalTransition = this.interest(liquidPortfolioList.get(i).getTotalTransition(), liquidPortfolioList.get(i-1).getTotalTransition(), liquidPortfolioList.get(i).getTotalTransitionFlow());
                 Double _returnsGovernmentsTransition = this.interest(liquidPortfolioList.get(i).getGovernmentsTransition(), liquidPortfolioList.get(i-1).getGovernmentsTransition(), liquidPortfolioList.get(i).getGovernmentsTransitionFlow());
 
