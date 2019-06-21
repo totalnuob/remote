@@ -275,7 +275,7 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
                         Long fileId = filesList.get(i).getId();
                         FilesDto excelFile = this.filesEntityConverter.disassemble(this.filesRepository.findOne(fileId));
 
-                        String path = filePathResolver.resolveDirectory(fileId, FileTypeLookup.MONITORING_LIQUID_PORTFOLIO.getCatalog());
+                        String path = filePathResolver.resolveDirectory(fileId, FileTypeLookup.MONITORING_NIC_PORTFOLIO.getCatalog());
                         String name = HashUtils.hashMD5String(fileId.toString());
                         InputStream inputStream = new FileInputStream(path+name);
                         excelFile.setInputStream(inputStream);
