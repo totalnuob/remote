@@ -271,8 +271,8 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
             }
 
             logger.info("Liquid Portfolio data has been updated successfully from sheets 'Fixed', 'Equity', 'Transition', updater: " + updater);
-            List<LiquidPortfolioDto> liquidPortfolioDtoList = this.converter.disassembleList(this.repository.findAllByOrderByDateAsc());
-            return new LiquidPortfolioResultDto(liquidPortfolioDtoList, ResponseStatusType.SUCCESS, "", "Liquid Portfolio data has been updated successfully from sheets 'Fixed', 'Equity', 'Transition'!", "");
+            LiquidPortfolioResultDto resultDto = this.get();
+            return new LiquidPortfolioResultDto(resultDto.getLiquidPortfolioDtoList(), ResponseStatusType.SUCCESS, "", "Liquid Portfolio data has been updated successfully from sheets 'Fixed', 'Equity', 'Transition'!", "");
         } catch (Exception ex) {
             logger.error("Failed to update Liquid Portfolio data, ", ex);
             return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data!", "");
@@ -475,7 +475,11 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
     }
 
     @Override
-    public LiquidPortfolioDto calculateMtdQtdYtd(Date date, List<LiquidPortfolio> liquidPortfolioList) {
+    public FilesDto getFileWithInputStream() {
+        return null;
+    }
+
+    private LiquidPortfolioDto calculateMtdQtdYtd(Date date, List<LiquidPortfolio> liquidPortfolioList) {
         List<Double> returnsTotalFixedMtd = new ArrayList<>();
         List<Double> returnsTotalFixedQtd = new ArrayList<>();
         List<Double> returnsTotalFixedYtd = new ArrayList<>();
