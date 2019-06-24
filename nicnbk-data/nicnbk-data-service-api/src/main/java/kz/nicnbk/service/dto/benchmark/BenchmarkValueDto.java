@@ -13,7 +13,7 @@ public class BenchmarkValueDto extends BaseEntityDto<BenchmarkValue> {
     private BaseDictionaryDto benchmark;
     private Date date;
     private Double returnValue;
-    private Double indexValue;
+//    private Double indexValue;
 
     public BaseDictionaryDto getBenchmark() {
         return benchmark;
@@ -39,11 +39,11 @@ public class BenchmarkValueDto extends BaseEntityDto<BenchmarkValue> {
         this.returnValue = returnValue;
     }
 
-    public Double getIndexValue() {
-        return indexValue;
-    }
-
-    public void setIndexValue(Double indexValue) {
-        this.indexValue = indexValue;
-    }
+//    public Double getIndexValue() {
+//        return indexValue;
+//    }
+//
+//    public void setIndexValue(Double indexValue) {
+//        this.indexValue = indexValue;
+//    }
 }

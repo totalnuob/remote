@@ -250,7 +250,7 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
                 continue;
             }
             var row = rows[i].split("\t");
-            if(row.length != 3){
+            if(row.length != 2){
                 this.benchmarkUploadModalSuccessMessage = null;
                 this.benchmarkUploadModalErrorMessage = "Invalid data format";
                 return;
@@ -265,15 +265,15 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
             var month = row[0].split(".")[1];
             var year = row[0].split(".")[2];
 
-            var index_value = row[1].replace(/,/g, '.');
-            index_value = index_value.replace('%', '');
+            //var index_value = row[1].replace(/,/g, '.');
+            //index_value = index_value.replace('%', '');
 
-            var return_value = row[2].replace(/,/g, '.');
+            var return_value = row[1].replace(/,/g, '.');
             return_value = return_value.replace('%', '');
 
             var benchmark =  new BaseDictionary();
             benchmark.code = this.uploadBenchmarkCode;
-            benchmarks.push({"date": day + '-' + month + '-' + year, "indexValue": parseFloat(Number(index_value)).toFixed(4),
+            benchmarks.push({"date": day + '-' + month + '-' + year, /*"indexValue": parseFloat(Number(index_value)).toFixed(4),*/
                 "returnValue": parseFloat(Number(return_value)).toFixed(4),"benchmark":benchmark});
         }
 
