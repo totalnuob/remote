@@ -143,9 +143,9 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
         if(screeningList != null){
             HedgeFundScreeningFilteredResultDto filteredResultDto = this.screeningService.getFilteredResultWithoutFundsInfo(scoringParams.getFilteredResultId());
 
-            Date dateFrom =  DateUtils.moveDateByMonths(filteredResultDto.getStartDate(),
-                    0 - (Math.max(0, filteredResultDto.getTrackRecord().intValue() + scoringParams.getLookbackReturn().intValue()- 1)));
-            Date dateTo = DateUtils.moveDateByMonths(filteredResultDto.getStartDate(), 0 - scoringParams.getLookbackReturn().intValue());
+            Date dateFrom =  DateUtils.getLastDayOfCurrentMonth(DateUtils.moveDateByMonths(filteredResultDto.getStartDate(),
+                    0 - (Math.max(0, filteredResultDto.getTrackRecord().intValue() + scoringParams.getLookbackReturn().intValue()- 1))));
+            Date dateTo = DateUtils.getLastDayOfCurrentMonth(DateUtils.moveDateByMonths(filteredResultDto.getStartDate(), 0 - scoringParams.getLookbackReturn().intValue()));
 
             // T-bills
             List<BenchmarkValueDto> tbills = this.benchmarkService.getBenchmarkValuesForDatesAndType(dateFrom, dateTo, BenchmarkLookup.T_BILLS.getCode());
@@ -203,7 +203,7 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
                     try {
                         returns = this.screeningService.getParsedFundReturns(filteredResultDto.getScreeningId(), fund.getFundId(), filteredResultDto.getTrackRecord().intValue(), dateFrom, dateTo);
                     }catch (Exception ex){
-                        responseDto.setErrorMessageEn(ex.getMessage());
+                        responseDto.setErrorMessageEn("Scoring failed. " + ex.getMessage());
                         responseDto.setRecords(screeningList);
                         return responseDto;
                     }
@@ -227,7 +227,7 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
                     try {
                         returns = this.screeningService.getParsedFundReturns(filteredResultDto.getScreeningId(), fund.getFundId(), filteredResultDto.getTrackRecord().intValue(), dateFrom, dateTo);
                     }catch (Exception ex){
-                        responseDto.setErrorMessageEn(ex.getMessage());
+                        responseDto.setErrorMessageEn("Scoring failed. " + ex.getMessage());
                         responseDto.setRecords(screeningList);
                         return responseDto;
                     }
