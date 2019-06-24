@@ -203,7 +203,7 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
                     try {
                         returns = this.screeningService.getParsedFundReturns(filteredResultDto.getScreeningId(), fund.getFundId(), filteredResultDto.getTrackRecord().intValue(), dateFrom, dateTo);
                     }catch (Exception ex){
-                        responseDto.setErrorMessageEn(ex.getMessage());
+                        responseDto.setErrorMessageEn("Scoring failed. " + ex.getMessage());
                         responseDto.setRecords(screeningList);
                         return responseDto;
                     }
@@ -227,7 +227,7 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
                     try {
                         returns = this.screeningService.getParsedFundReturns(filteredResultDto.getScreeningId(), fund.getFundId(), filteredResultDto.getTrackRecord().intValue(), dateFrom, dateTo);
                     }catch (Exception ex){
-                        responseDto.setErrorMessageEn(ex.getMessage());
+                        responseDto.setErrorMessageEn("Scoring failed. " + ex.getMessage());
                         responseDto.setRecords(screeningList);
                         return responseDto;
                     }
