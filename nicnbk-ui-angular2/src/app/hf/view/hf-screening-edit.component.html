@@ -111,8 +111,9 @@
                             </div>
 
                             <div class="row" *ngIf="canEdit()">
-                                <label class="btn btn-primary col-md-3" for="attachmentFile">
-                                    <input type="file" id="attachmentFile" (change)="onFileChange($event, 1)" name="file" style="display:none;" [disabled] = "screening?.fileId != null"/>Add</label>
+                                <label class="btn btn-primary col-md-3"  *ngIf="screening?.fileId == null"  for="attachmentFile">
+                                    <input type="file" id="attachmentFile"(change)="onFileChange($event, 1)" name="file" style="display:none;" [disabled] = "screening?.fileId != null"/>Add
+                                </label>
                                 <div class="col-md-6">
                                     <div class="row" *ngIf="uploadFile != null" style="display: table;">
                                         <span  class="label label-info" >
@@ -122,24 +123,21 @@
                                             <i class="glyphicon glyphicon-trash"></i>
                                         </a>
                                         <button class="btn btn-xs btn-success" (click)="uploadDataFile()" >
-                                            <span class="glyphicon glyphicon-circle-arrow-right"></span>
+                                            UPLOAD <span class="glyphicon glyphicon-circle-arrow-right"></span>
                                         </button>
                                     </div>
 
                                 </div>
                             </div>
 
-                            <div class="row" *ngIf="screening?.fileId != null">
-                                <div>
+                            <div class="row form-inline" *ngIf="screening?.fileId != null">
                                     <file-attachment-downloader fileId="{{screening?.fileId}}"
                                                                 fileName="{{screening?.fileName}}"
                                                                 fileType="HFSCRNDATA">
                                     </file-attachment-downloader>
-
                                     <a (click)="deleteAttachment(screening.fileId)" *ngIf="canEdit()">
                                         <i class="glyphicon glyphicon-trash"></i>
                                     </a>
-                                </div>
                             </div>
                         </div>
                     </div>

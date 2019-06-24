@@ -1,5 +1,6 @@
 package kz.nicnbk.service.impl.hf;
 
+import kz.nicnbk.common.service.exception.ExcelFileParseException;
 import kz.nicnbk.common.service.util.*;
 import kz.nicnbk.repo.api.hf.*;
 import kz.nicnbk.repo.model.files.Files;
@@ -124,11 +125,13 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
             HedgeFundScreening entity = this.screeningEntityConverter.assemble(screeningDto);
 
             if (entity != null) {
-                HedgeFundScreening existingEntity = this.screeningRepository.findOne(screeningDto.getId());
-                if(existingEntity != null) {
-                    entity.setCreator(existingEntity.getCreator());
-                    entity.setDataFile(existingEntity.getDataFile());
-                    entity.setUcitsFile(existingEntity.getUcitsFile());
+                if(screeningDto.getId() != null) {
+                    HedgeFundScreening existingEntity = this.screeningRepository.findOne(screeningDto.getId());
+                    if (existingEntity != null) {
+                        entity.setCreator(existingEntity.getCreator());
+                        entity.setDataFile(existingEntity.getDataFile());
+                        entity.setUcitsFile(existingEntity.getUcitsFile());
+                    }
                 }
 
                 Long id = this.screeningRepository.save(entity).getId();
@@ -260,6 +263,7 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                         dto.setFundName(parsedDataDto.getFundName());
                         if(combinedMap.get(dto.getFundId()) != null){
                             dto.setValues(combinedMap.get(dto.getFundId()).getValues());
+                            dto.setReturnsCurrency(combinedMap.get(dto.getFundId()).getReturnsCurrency());
                         }
                         dto.setDates(dates);
                         returns.add(dto);
@@ -770,7 +774,14 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
     private FileUploadResultDto parseDataFileSheet1(FilesDto filesDto, Long screeningId){
         FileUploadResultDto resultDto = new FileUploadResultDto();
         List<HedgeFundScreeningParsedDataDto> records = new ArrayList<>();
-        Iterator<Row> rowIterator = ExcelUtils.getRowIterator(filesDto.getBytes(), filesDto.getFileName(), 0);
+        Iterator<Row> rowIterator = null;
+        try {
+            rowIterator = ExcelUtils.getRowIterator(filesDto.getBytes(), filesDto.getFileName(), 0);
+        }catch (ExcelFileParseException ex){
+            String errorMessage = "Error parsing data file." + ex.getMessage();
+            logger.error(errorMessage, ex);
+            resultDto.setErrorMessageEn(errorMessage);
+        }
         if(rowIterator != null) {
             int rowNum = 0;
             Map<String, Integer> headers = new HashMap<>();
@@ -1504,10 +1515,11 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
             scoringParams.setLookbackAUM(params.getLookbackAUM().intValue());
 
             responseDto = this.scoringService.getCalculatedScoring(fundList, scoringParams);
+            Collections.sort(responseDto.getRecords());
             if(responseDto.getStatus() != null && responseDto.getStatus().getCode().equalsIgnoreCase(ResponseStatusType.SUCCESS.getCode())){
                 // SUCCESS
-                Collections.sort(responseDto.getRecords());
             }else{
+                // FAILED
                 return responseDto;
             }
 
@@ -3075,7 +3087,7 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
         if(responseDto.getStatus() != null && responseDto.getStatus().getCode().equalsIgnoreCase(ResponseStatusType.FAIL.getCode())){
             logger.error("HF Scoring - Failed to export fund list: filter id=" + filteredResultId.longValue() + ", lookback AUM=" +
                     lookbackAUM + ", lookback return=" + lookbackReturn + (responseDto.getMessage() != null ? responseDto.getMessage().getMessageText() : ""));
-            return null;
+            //return null;
         }
         try {
             excelFileToRead = resource.getInputStream();
@@ -3103,15 +3115,15 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                         }
                     }
 
-                    row.getCell(0).setCellValue(i+1);
-                    row.getCell(1).setCellValue(fund.getFundName());
-                    row.getCell(2).setCellValue(fund.getAnnualizedReturn());
-                    row.getCell(3).setCellValue(fund.getSortino());
-                    row.getCell(4).setCellValue(fund.getBeta());
-                    row.getCell(5).setCellValue(fund.getCfVar());
-                    row.getCell(6).setCellValue(fund.getAlpha());
-                    row.getCell(7).setCellValue(fund.getOmega());
-                    row.getCell(8).setCellValue(fund.getTotalScore());
+                    ExcelUtils.setCellValueSafe(row.getCell(0), i+1);
+                    ExcelUtils.setCellValueSafe(row.getCell(1), fund.getFundName());
+                    ExcelUtils.setCellValueSafe(row.getCell(2), fund.getAnnualizedReturn());
+                    ExcelUtils.setCellValueSafe(row.getCell(3), fund.getSortino());
+                    ExcelUtils.setCellValueSafe(row.getCell(4), fund.getBeta());
+                    ExcelUtils.setCellValueSafe(row.getCell(5), fund.getCfVar());
+                    ExcelUtils.setCellValueSafe(row.getCell(6), fund.getAlpha());
+                    ExcelUtils.setCellValueSafe(row.getCell(7), fund.getOmega());
+                    ExcelUtils.setCellValueSafe(row.getCell(8), fund.getTotalScore());
                 }
             }
 
@@ -3131,8 +3143,9 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
             filesDto.setFileName(filePath);
 
             HedgeFundScreeningDto screeningDto = get(filteredResultDto.getScreeningId());
-            String fileName = "HF Scoring - " + screeningDto.getShortName() + " (" + DateUtils.getDay(new Date()) + "-" +
-                    (DateUtils.getMonth(new Date()) + 1 < 10 ? "0" : "") + (DateUtils.getMonth(new Date()) + 1) + "-" + DateUtils.getYear(new Date()) + ")";
+            String fileName = "HF Scoring - " + screeningDto.getShortName() + " (" + DateUtils.getDay(screeningDto.getDate()) + "-" +
+                    (DateUtils.getMonth(screeningDto.getDate()) + 1 < 10 ? "0" : "") +
+                    (DateUtils.getMonth(screeningDto.getDate()) + 1) + "-" + DateUtils.getYear(screeningDto.getDate()) + ")";
             filesDto.setOutputFileName(fileName);
             return filesDto;
         } catch (IOException e) {

@@ -52,6 +52,12 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
     errorMessageSaveBenchmark;
     successMessageSaveBenchmark;
 
+    benchmarkUploadModalSuccessMessage;
+    benchmarkUploadModalErrorMessage
+
+    uploadBenchmarkCode;
+    uploadedValues;
+
     busy: Subscription;
     benchmarkTypes = [];
     searchResults: BenchmarkSearchResults;
@@ -223,5 +229,83 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
     //            );
     //    }
     //}
+
+    closeBenchmarkUploadModal(){
+        this.uploadedValues = "";
+        this.uploadBenchmarkCode = null;
+        this.benchmarkUploadModalSuccessMessage = null;
+        this.benchmarkUploadModalErrorMessage = null;
+    }
+
+    parseBenchmarkValues(){
+        var benchmarks = [];
+        if(this.uploadBenchmarkCode == null || this.uploadBenchmarkCode === ''){
+            this.benchmarkUploadModalSuccessMessage = null;
+            this.benchmarkUploadModalErrorMessage = "Benchmark required";
+            return;
+        }
+        var rows = this.uploadedValues.split("\n");
+        for(var i = 0; i < rows.length; i++){
+            if(rows[i].trim() === ""){
+                continue;
+            }
+            var row = rows[i].split("\t");
+            if(row.length != 2){
+                this.benchmarkUploadModalSuccessMessage = null;
+                this.benchmarkUploadModalErrorMessage = "Invalid data format";
+                return;
+            }
+            if(row[0] == null || row[0] === 'undefined' || row[0].split(".").length != 3){
+                this.benchmarkUploadModalSuccessMessage = null;
+                this.benchmarkUploadModalErrorMessage = "Invalid format - date";
+                return;
+            }
+
+            var day = row[0].split(".")[0];
+            var month = row[0].split(".")[1];
+            var year = row[0].split(".")[2];
+
+            //var index_value = row[1].replace(/,/g, '.');
+            //index_value = index_value.replace('%', '');
+
+            var return_value = row[1].replace(/,/g, '.');
+            return_value = return_value.replace('%', '');
+
+            var benchmark =  new BaseDictionary();
+            benchmark.code = this.uploadBenchmarkCode;
+            benchmarks.push({"date": day + '-' + month + '-' + year, /*"indexValue": parseFloat(Number(index_value)).toFixed(4),*/
+                "returnValue": parseFloat(Number(return_value)).toFixed(4),"benchmark":benchmark});
+        }
+
+        console.log(benchmarks);
+
+        this.busy = this.lookupService.saveBenchmarksList(benchmarks)
+            .subscribe(
+                (saveResponse: SaveResponse) => {
+                    if(saveResponse.status === 'SUCCESS' ){
+                        this.search(0);
+                        this.benchmarkUploadModalSuccessMessage = saveResponse.message.nameEn;
+                        this.benchmarkUploadModalErrorMessage = null;
+
+                    }else{
+                        if(saveResponse.message != null){
+                            var message = saveResponse.message.nameEn != null ? saveResponse.message.nameEn :
+                                saveResponse.message.nameRu != null ? saveResponse.message.nameRu : saveResponse.message.nameKz;
+                            if(message != null && message != ''){
+                                this.postAction(null, message);
+                            }else{
+                                this.postAction(null, "Error saving benchmark list");
+                            }
+                        }
+                    }
+                },
+                (error: ErrorResponse) => {
+                    this.benchmarkUploadModalSuccessMessage = null;
+                    this.benchmarkUploadModalErrorMessage = error && error.message ? error.message : "Error saving benchmark list.";
+                    //this.processErrorMessage(error);
+                }
+            );
+
+    }
 
 }

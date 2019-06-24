@@ -4,10 +4,15 @@ import kz.nicnbk.common.service.util.DateUtils;
 import kz.nicnbk.common.service.util.PaginationUtils;
 import kz.nicnbk.repo.api.benchmark.BenchmarkValueRepository;
 import kz.nicnbk.repo.model.benchmark.BenchmarkValue;
+import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.service.api.benchmark.BenchmarkService;
+import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.converter.benchmark.BenchmarkValueEntityConverter;
 import kz.nicnbk.service.dto.benchmark.BenchmarkValueDto;
+import kz.nicnbk.service.dto.common.EntityListSaveResponseDto;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
+import kz.nicnbk.service.dto.common.ResponseStatusType;
+import kz.nicnbk.service.dto.employee.EmployeeDto;
 import kz.nicnbk.service.dto.lookup.BenchmarkPagedSearchResult;
 import kz.nicnbk.service.dto.lookup.BenchmarkSearchParams;
 import org.slf4j.Logger;
@@ -41,6 +46,9 @@ public class BenchmarkServiceImpl implements BenchmarkService {
 
     @Autowired
     private BenchmarkValueEntityConverter benchmarkValueEntityConverter;
+
+    @Autowired
+    private EmployeeService employeeService;
 
     @Override
     public List<BenchmarkValueDto> getValuesFromDateAsList(Date fromDate, String benchmarkCode) {
@@ -134,18 +142,18 @@ public class BenchmarkServiceImpl implements BenchmarkService {
                     saveResponse.setErrorMessageEn(errorMessage);
                     return saveResponse;
                 }
+
+                // Check if can edit
+                // TODO: check usage in scoring
+                // TODO: if saved scoring exists, editing not allowed
+
+
                 if(dto.getId() != null) {
-                    // Check if can edit
-                    BenchmarkValue entity = this.benchmarkValueRepository.findOne(dto.getId());
-
-                    // TODO: check usage in scoring
-                    // TODO: if saved scoring exists, editing not allowed
-
 
                     // Check existing date
                     BenchmarkValue existingCurrencyRates =
                             this.benchmarkValueRepository.getValuesForDateAndType(dto.getDate(), dto.getBenchmark().getCode());
-                    if (existingCurrencyRates != null && existingCurrencyRates.getId() != dto.getId()) {
+                    if (existingCurrencyRates != null && existingCurrencyRates.getId().longValue() != dto.getId().longValue()) {
                         String errorMessage = "Benchmark record save failed: record already exists for date " + DateUtils.getDateFormatted(dto.getDate());
                         logger.error(errorMessage);
                         saveResponse.setErrorMessageEn(errorMessage);
@@ -156,6 +164,12 @@ public class BenchmarkServiceImpl implements BenchmarkService {
                     // Check existing date
                     BenchmarkValue existingBenchmarks =
                             this.benchmarkValueRepository.getValuesForDateAndType(dto.getDate(), dto.getBenchmark().getCode());
+
+                    // TODO: after check if can edit is implemented, instead of returning error --> delete record and insert new
+                    // TODO:
+//                    if(existingBenchmarks.getId() != null) {
+//                        this.benchmarkValueRepository.delete(existingBenchmarks.getId());
+//                    }
                     if (existingBenchmarks != null) {
                         String errorMessage = "Benchmark record save failed: record already exists for date " + DateUtils.getDateFormatted(dto.getDate());
                         logger.error(errorMessage);
@@ -165,6 +179,17 @@ public class BenchmarkServiceImpl implements BenchmarkService {
                 }
 
                 BenchmarkValue entity = this.benchmarkValueEntityConverter.assemble(dto);
+                EmployeeDto employeeDto = this.employeeService.findByUsername(username);
+                if(dto.getId() == null){
+                    // new instance
+                    if(employeeDto != null){
+                        entity.setCreator(new Employee(employeeDto.getId()));
+                    }
+                }else{
+                    //update
+                    entity.setUpdateDate(new Date());
+                    entity.setUpdater(new Employee(employeeDto.getId()));
+                }
                 this.benchmarkValueRepository.save(entity);
                 saveResponse.setSuccessMessageEn("Successfully saved.");
                 logger.info("Successfully saved benchmark value: id=" + dto.getId() + ", date=" + DateUtils.getDateFormatted(dto.getDate()) +
@@ -176,6 +201,23 @@ public class BenchmarkServiceImpl implements BenchmarkService {
             saveResponse.setErrorMessageEn("Error saving benchmark");
             return saveResponse;
         }
+    }
+
+    @Override
+    public EntityListSaveResponseDto save(List<BenchmarkValueDto> dtoList, String username) {
+        EntityListSaveResponseDto saveListResponse = new EntityListSaveResponseDto();
+        for(BenchmarkValueDto dto: dtoList){
+            EntitySaveResponseDto saveResponseDto = save(dto, username);
+            if(saveResponseDto.getStatus() != null && saveResponseDto.getStatus().getCode().equalsIgnoreCase(ResponseStatusType.FAIL.getCode())){
+                // Error
+                saveListResponse.setErrorMessageEn(saveResponseDto.getMessage().getNameEn());
+                saveListResponse.setStatus(ResponseStatusType.FAIL);
+
+                return saveListResponse;
+            }
+        }
+        saveListResponse.setSuccessMessageEn("Successfully saved benchmark rate list");
+        return saveListResponse;
     }
 
     @Override

@@ -312,8 +312,8 @@
                                     </li>
                                 </ul>
                             </li>
-                            <li class="navigation__item dropdown"><a [routerLink]="['/macromonitor']" class="navigation__link"
-                                                                     [style.border-bottom-color]="activeMenu === 'MACROMONITOR' ? '#D9A158' : 'white'" (click)="activeMenu = 'MACROMONITOR'">Macro Monitor</a></li>
+                            <li class="navigation__item dropdown"><a [routerLink]="['/macromonitor']" class="navigation__link" title="Macro Monitor"
+                                                                     [style.border-bottom-color]="activeMenu === 'MACROMONITOR' ? '#D9A158' : 'white'" (click)="activeMenu = 'MACROMONITOR'">MM</a></li>
                             <li *ngIf="showM2S2()" class="navigation__item dropdown"><a [routerLink]="['/m2s2']"  class="navigation__link"
                                                                                         [style.border-bottom-color]="activeMenu === 'M2S2' ? '#D9A158' : 'white'" (click)="activeMenu = 'M2S2'">M2S2</a></li>
                             <li *ngIf="showTrainings()" class="navigation__item dropdown"><a [routerLink]="['/bt']" class="navigation__link"
@@ -346,7 +346,12 @@
                             </li>
                             <li class="navigation__item dropdown" *ngIf="showCorpMeeting()">
                                 <a [routerLink]="['/corpMeetings']" class="navigation__link"
-                                   [style.border-bottom-color]="activeMenu === 'CAPITAL_CALL' ? '#D9A158' : 'white'" (click)="activeMenu = 'CAPITAL_CALL'">Corp Meetings</a></li>
+                                   [style.border-bottom-color]="activeMenu === 'CAPITAL_CALL' ? '#D9A158' : 'white'" (click)="activeMenu = 'CAPITAL_CALL'">Corp Meetings</a>
+                            </li>
+                            <li class="navigation__item dropdown" *ngIf="showLookups()">
+                                <a [routerLink]="['/lookups']" class="navigation__link"
+                                   [style.border-bottom-color]="activeMenu === 'LOOKUPS' ? '#D9A158' : 'white'" (click)="activeMenu = 'LOOKUPS'">Lookups</a>
+                            </li>
                         </ul>
 
                             <a [routerLink]="['/profile']">
