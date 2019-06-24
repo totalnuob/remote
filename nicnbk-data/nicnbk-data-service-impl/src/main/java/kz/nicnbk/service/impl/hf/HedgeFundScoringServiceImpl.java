@@ -143,9 +143,9 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
         if(screeningList != null){
             HedgeFundScreeningFilteredResultDto filteredResultDto = this.screeningService.getFilteredResultWithoutFundsInfo(scoringParams.getFilteredResultId());
 
-            Date dateFrom =  DateUtils.moveDateByMonths(filteredResultDto.getStartDate(),
-                    0 - (Math.max(0, filteredResultDto.getTrackRecord().intValue() + scoringParams.getLookbackReturn().intValue()- 1)));
-            Date dateTo = DateUtils.moveDateByMonths(filteredResultDto.getStartDate(), 0 - scoringParams.getLookbackReturn().intValue());
+            Date dateFrom =  DateUtils.getLastDayOfCurrentMonth(DateUtils.moveDateByMonths(filteredResultDto.getStartDate(),
+                    0 - (Math.max(0, filteredResultDto.getTrackRecord().intValue() + scoringParams.getLookbackReturn().intValue()- 1))));
+            Date dateTo = DateUtils.getLastDayOfCurrentMonth(DateUtils.moveDateByMonths(filteredResultDto.getStartDate(), 0 - scoringParams.getLookbackReturn().intValue()));
 
             // T-bills
             List<BenchmarkValueDto> tbills = this.benchmarkService.getBenchmarkValuesForDatesAndType(dateFrom, dateTo, BenchmarkLookup.T_BILLS.getCode());
