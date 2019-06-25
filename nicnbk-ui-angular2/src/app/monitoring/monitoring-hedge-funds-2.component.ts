@@ -3,6 +3,7 @@ import {ActivatedRoute} from "@angular/router";
 import {CommonFormViewComponent} from "../common/common.component";
 import {CommonTableau} from "./common-tableau.component";
 import {GoogleChartComponent} from "../google-chart/google-chart.component";
+import {MonitoringHFData} from "./model/monitoring-hf-data";
 
 declare var google:any;
 declare var $: any;
@@ -17,6 +18,9 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
     activeTab = "OVERALL";
 
     reportDates = [];
+    selectedDate;
+
+    selectedData: MonitoringHFData;
 
     constructor(
     ) {
@@ -905,4 +909,8 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
         ["Apr-19","MTD",0.0088,0.0099]
 
     ];
+
+
+    selectDate(){
+    }
 }

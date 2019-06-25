@@ -23,11 +23,12 @@
         <!--</li>-->
     <!--</ul>-->
     <div class="row withpadding">
-        <select class="form-control" [(ngModel)]="selectedDate" (change)="selectDate($event.target.value)">
-            <option *ngFor="let reportDate of reportDates">{{reportDate}}</option>
-        </select>
+        <div class="col-md-2">
+            <select class="form-control" [(ngModel)]="selectedDate" (change)="selectDate($event.target.value)">
+                <option *ngFor="let reportDate of reportDates">{{reportDate}}</option>
+            </select>
+        </div>
     </div>
-
     <ul role="tablist" class="date-tabs nav">
         <li class="date-tabs__item"><a data-toggle="tab"
                                        href="#OVERALL"
