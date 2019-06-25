@@ -16,6 +16,8 @@ declare var $: any;
 export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
     activeTab = "OVERALL";
 
+    reportDates = [];
+
     constructor(
     ) {
         super();

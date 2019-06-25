@@ -22,6 +22,11 @@
             <!--<a data-toggle="tab" href="#portfolioB">Portfolio Class B</a>-->
         <!--</li>-->
     <!--</ul>-->
+    <div class="row withpadding">
+        <select class="form-control" [(ngModel)]="selectedDate" (change)="selectDate($event.target.value)">
+            <option *ngFor="let reportDate of reportDates">{{reportDate}}</option>
+        </select>
+    </div>
 
     <ul role="tablist" class="date-tabs nav">
         <li class="date-tabs__item"><a data-toggle="tab"
@@ -56,7 +61,8 @@
             <br/>
             <div class="row">
                 <div class="col-md-12">
-                    <div  style="background-color:#307240; color:white; font-size: medium; font-weight: bold">Singularity – overall hedge fund program</div>
+                    <div  style="background-color:#307240; color:white; font-size: medium; font-weight: bold">
+                        Singularity – overall hedge fund program</div>
                 </div>
             </div>
             <br/>
