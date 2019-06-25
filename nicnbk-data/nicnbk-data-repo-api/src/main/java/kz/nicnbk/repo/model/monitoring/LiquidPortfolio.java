@@ -1,12 +1,10 @@
 package kz.nicnbk.repo.model.monitoring;
 
 import kz.nicnbk.repo.model.base.BaseEntity;
+import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.files.Files;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -16,9 +14,9 @@ import java.util.Date;
 @Entity(name = "monitoring_liquid_portfolio")
 public class LiquidPortfolio extends BaseEntity {
 
-    private String updaterFixed;
-    private String updaterEquity;
-    private String updaterTransition;
+    private Employee updaterFixed;
+    private Employee updaterEquity;
+    private Employee updaterTransition;
 
     private Files fileFixed;
     private Files fileEquity;
@@ -57,7 +55,7 @@ public class LiquidPortfolio extends BaseEntity {
     public LiquidPortfolio() {
     }
 
-    public LiquidPortfolio(String updaterFixed, String updaterEquity, String updaterTransition, Files fileFixed, Files fileEquity, Files fileTransition, Date date, Double totalFixed, Double totalFixedFlow, Double governmentsFixed, Double governmentsFixedFlow, Double corporates, Double corporatesFlow, Double agencies, Double agenciesFlow, Double supranationals, Double supranationalsFlow, Double currency, Double options, Double cashFixed, Double cashBrokerAndFutures, Double totalEquity, Double totalEquityFlow, Double cashEquity, Double etf, Double etfFlow, Double totalTransition, Double totalTransitionFlow, Double cashTransition, Double governmentsTransition, Double governmentsTransitionFlow) {
+    public LiquidPortfolio(Employee updaterFixed, Employee updaterEquity, Employee updaterTransition, Files fileFixed, Files fileEquity, Files fileTransition, Date date, Double totalFixed, Double totalFixedFlow, Double governmentsFixed, Double governmentsFixedFlow, Double corporates, Double corporatesFlow, Double agencies, Double agenciesFlow, Double supranationals, Double supranationalsFlow, Double currency, Double options, Double cashFixed, Double cashBrokerAndFutures, Double totalEquity, Double totalEquityFlow, Double cashEquity, Double etf, Double etfFlow, Double totalTransition, Double totalTransitionFlow, Double cashTransition, Double governmentsTransition, Double governmentsTransitionFlow) {
         this.updaterFixed = updaterFixed;
         this.updaterEquity = updaterEquity;
         this.updaterTransition = updaterTransition;
@@ -91,27 +89,33 @@ public class LiquidPortfolio extends BaseEntity {
         this.governmentsTransitionFlow = governmentsTransitionFlow;
     }
 
-    public String getUpdaterFixed() {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "UpdatedFixedBy")
+    public Employee getUpdaterFixed() {
         return updaterFixed;
     }
 
-    public void setUpdaterFixed(String updaterFixed) {
+    public void setUpdaterFixed(Employee updaterFixed) {
         this.updaterFixed = updaterFixed;
     }
 
-    public String getUpdaterEquity() {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "UpdatedEquityBy")
+    public Employee getUpdaterEquity() {
         return updaterEquity;
     }
 
-    public void setUpdaterEquity(String updaterEquity) {
+    public void setUpdaterEquity(Employee updaterEquity) {
         this.updaterEquity = updaterEquity;
     }
 
-    public String getUpdaterTransition() {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "UpdatedTransitionBy")
+    public Employee getUpdaterTransition() {
         return updaterTransition;
     }
 
-    public void setUpdaterTransition(String updaterTransition) {
+    public void setUpdaterTransition(Employee updaterTransition) {
         this.updaterTransition = updaterTransition;
     }
 
