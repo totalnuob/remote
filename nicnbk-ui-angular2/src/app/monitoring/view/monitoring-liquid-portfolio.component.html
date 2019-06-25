@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container" [ngBusy]="busy">
     <!--<h4><small>login: user pass: Qwerty123</small></h4>-->
     <!--<div class="row">-->
         <!--<div class="col-md-12">-->
@@ -18,112 +18,139 @@
     <!--<div class="row withpadding">-->
         <!--<h2>Under Construction. New monitoring forms to be updated soon.</h2>-->
     <!--</div>-->
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-2">
             <select (ngModelChange)="redraw()" [(ngModel)]="tableDate" id="tableDate" class="form-control">
                 <option *ngFor="let item of getAllDates()" [value]="item">{{item}}</option>
             </select>
         </div>
+        <div class="pull-right" *ngIf="canEdit()">
+            <span class="glyphicon glyphicon-download-alt btn btn-sm" (click)="fileDownload()" title="Download the latest uploaded file(s)"></span>
+            <!--<a (click)="fileDownload()" title="We will not spam you.">Privacy Policy</a>-->
+        </div>
+        <div class="pull-right" *ngIf="canEdit()">
+            <form #yourForm="ngForm" (ngSubmit)="onSubmitLiquidPortfolio()">
+                <label class="btn btn-sm btn-primary">
+                    <input type="file" #fileupload id="fileupload" (change)="fileChange(fileupload.files)" style="display: none"/>Update
+                </label>
+                <button type="submit" class="btn btn-sm btn-success" *ngIf="this.myFiles.length > 0">Submit</button>
+            </form>
+            <div *ngFor="let file of this.myFiles" class="label label-info">
+                <span>{{file.name}}</span>
+            </div>
+        </div>
     </div>
 
-    <div [hidden]="isNewVersion()">
-        <!--<div class="row">-->
-            <!--<div class="col-md-2">-->
-                <!--<select (ngModelChange)="redraw()" [(ngModel)]="tableDate" id="tableDate" class="form-control">-->
-                    <!--<option *ngFor="let item of getAllDates()" [value]="item">{{item}}</option>-->
-                <!--</select>-->
-            <!--</div>-->
-        <!--</div>-->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="col-md-6">
-                    <h4>NET Asset Value, $</h4>
-                    <div id="net_value">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <h4>Performance, %</h4>
-                    <div id="performance">
-                    </div>
-                </div>
-            </div>
-        </div>
-        <br/>
+    <!--<div [hidden]="isNewVersion()">-->
+        <!--&lt;!&ndash;<div class="row">&ndash;&gt;-->
+            <!--&lt;!&ndash;<div class="col-md-2">&ndash;&gt;-->
+                <!--&lt;!&ndash;<select (ngModelChange)="redraw()" [(ngModel)]="tableDate" id="tableDate" class="form-control">&ndash;&gt;-->
+                    <!--&lt;!&ndash;<option *ngFor="let item of getAllDates()" [value]="item">{{item}}</option>&ndash;&gt;-->
+                <!--&lt;!&ndash;</select>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+        <!--&lt;!&ndash;</div>&ndash;&gt;-->
         <!--<div class="row">-->
             <!--<div class="col-md-12">-->
-                <!--<div id="cum_returns_ytd">-->
+                <!--<div class="col-md-6">-->
+                    <!--<h4>NET Asset Value, $</h4>-->
+                    <!--<div id="net_value">-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class="col-md-6">-->
+                    <!--<h4>Performance, %</h4>-->
+                    <!--<div id="performance">-->
+                    <!--</div>-->
                 <!--</div>-->
             <!--</div>-->
         <!--</div>-->
+        <!--<br/>-->
+        <!--&lt;!&ndash;<div class="row">&ndash;&gt;-->
+            <!--&lt;!&ndash;<div class="col-md-12">&ndash;&gt;-->
+                <!--&lt;!&ndash;<div id="cum_returns_ytd">&ndash;&gt;-->
+                <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+        <!--&lt;!&ndash;<div class="row">&ndash;&gt;-->
+            <!--&lt;!&ndash;<div class="col-md-12">&ndash;&gt;-->
+                <!--&lt;!&ndash;<div id="cum_returns_inception">&ndash;&gt;-->
+                <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+        <!--&lt;!&ndash;</div>&ndash;&gt;-->
         <!--<div class="row">-->
             <!--<div class="col-md-12">-->
-                <!--<div id="cum_returns_inception">-->
+                <!--<div class="col-md-4">-->
+                    <!--<div id="portfolio_structure">-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class="col-md-4">-->
+                    <!--<div id="bonds_by_country">-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class="col-md-4">-->
+                    <!--<div id="bonds_by_sector">-->
+                    <!--</div>-->
                 <!--</div>-->
             <!--</div>-->
         <!--</div>-->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="col-md-4">
-                    <div id="portfolio_structure">
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div id="bonds_by_country">
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div id="bonds_by_sector">
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!--<div class="row">-->
-            <!--<div class="col-md-12">-->
-                <!--<div id="position_table">-->
-                <!--</div>-->
-            <!--</div>-->
-        <!--</div>-->
-        <br/>
-    </div>
+        <!--&lt;!&ndash;<div class="row">&ndash;&gt;-->
+            <!--&lt;!&ndash;<div class="col-md-12">&ndash;&gt;-->
+                <!--&lt;!&ndash;<div id="position_table">&ndash;&gt;-->
+                <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+        <!--<br/>-->
+    <!--</div>-->
 
-    <div [hidden]="!isNewVersion()">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="col-md-4">
-                    <h4>Fixed income portfolio</h4>
-                    <div id="fixed_income_portfolio">
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <h4>Equity portfolio</h4>
-                    <div id="equity_portfolio">
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <h4>Transition portfolio</h4>
-                    <div id="transition_portfolio">
-                    </div>
+    <!--<div [hidden]="!isNewVersion()">-->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-4">
+                <h4>Fixed income portfolio</h4>
+                <div id="fixed_income_portfolio">
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="col-md-4">
-                    <h4>Fixed income portfolio</h4>
-                    <div id="portfolio_structure_fixed_income_chart">
-                    </div>
+            <div class="col-md-4">
+                <h4>Equity portfolio</h4>
+                <div id="equity_portfolio">
                 </div>
-                <div class="col-md-4">
-                    <h4>Equity portfolio</h4>
-                    <div id="portfolio_structure_equity_chart">
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <h4>Transition portfolio</h4>
-                    <div id="portfolio_structure_transition_chart">
-                    </div>
+            </div>
+            <div class="col-md-4">
+                <h4>Transition portfolio</h4>
+                <div id="transition_portfolio">
                 </div>
             </div>
         </div>
     </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-4">
+                <!--<h4>Fixed income portfolio</h4>-->
+                <div id="portfolio_structure_fixed_income_chart">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <!--<h4>Equity portfolio</h4>-->
+                <div id="portfolio_structure_equity_chart">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <!--<h4>Transition portfolio</h4>-->
+                <div id="portfolio_structure_transition_chart">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--</div>-->
 </div>
