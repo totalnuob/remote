@@ -3,9 +3,11 @@ package kz.nicnbk.service.impl.monitoring;
 import kz.nicnbk.common.service.util.DateUtils;
 import kz.nicnbk.common.service.util.ExcelUtils;
 import kz.nicnbk.common.service.util.HashUtils;
+import kz.nicnbk.repo.api.employee.EmployeeRepository;
 import kz.nicnbk.repo.api.files.FilesRepository;
 import kz.nicnbk.repo.api.lookup.FilesTypeRepository;
 import kz.nicnbk.repo.api.monitoring.NicPortfolioRepository;
+import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.files.Files;
 import kz.nicnbk.repo.model.files.FilesType;
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
@@ -54,6 +56,9 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
     private NicPortfolioEntityConverter converter;
 
     @Autowired
+    private EmployeeRepository employeeRepository;
+
+    @Autowired
     private FilesTypeRepository filesTypeRepository;
 
     @Autowired
@@ -83,6 +88,13 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
     public NicPortfolioResultDto upload(Set<FilesDto> filesDtoSet, String updater) {
 
         try {
+            Employee employee = this.employeeRepository.findByUsername(updater);
+
+            if (employee == null) {
+                logger.error("Failed to update NIC Portfolio data: the user is not found in the database!");
+                return new NicPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update NIC Portfolio data: the user is not found in the database!", "");
+            }
+
             FilesDto filesDto;
             Iterator<Row> rowIterator;
             Row previousRow = null;
@@ -131,7 +143,7 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
                     }
 
                     if (previousMonth != currentMonth) {
-                        portfolioList.add(this.create(previousRow, updater));
+                        portfolioList.add(this.create(previousRow, employee));
                     }
                 } catch (Exception ex) {
                     logger.error("Failed to update NIC Portfolio data: error parsing row #" + rowNumber + ", ", ex);
@@ -188,7 +200,7 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
         }
     }
 
-    private NicPortfolio create(Row row, String updater) {
+    private NicPortfolio create(Row row, Employee updater) {
         try {
             return new NicPortfolio(
                     updater,

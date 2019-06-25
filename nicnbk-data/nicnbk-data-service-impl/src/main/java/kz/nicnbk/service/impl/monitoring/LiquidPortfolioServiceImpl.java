@@ -4,9 +4,11 @@ import kz.nicnbk.common.service.util.DateUtils;
 import kz.nicnbk.common.service.util.ExcelUtils;
 import kz.nicnbk.common.service.util.HashUtils;
 import kz.nicnbk.common.service.util.MathUtils;
+import kz.nicnbk.repo.api.employee.EmployeeRepository;
 import kz.nicnbk.repo.api.files.FilesRepository;
 import kz.nicnbk.repo.api.lookup.FilesTypeRepository;
 import kz.nicnbk.repo.api.monitoring.LiquidPortfolioRepository;
+import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.files.Files;
 import kz.nicnbk.repo.model.files.FilesType;
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
@@ -55,6 +57,9 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
     private LiquidPortfolioEntityConverter converter;
 
     @Autowired
+    private EmployeeRepository employeeRepository;
+
+    @Autowired
     private FilesTypeRepository filesTypeRepository;
 
     @Autowired
@@ -93,6 +98,13 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
     public LiquidPortfolioResultDto upload(Set<FilesDto> filesDtoSet, String updater) {
 
         try {
+            Employee employee = this.employeeRepository.findByUsername(updater);
+
+            if (employee == null) {
+                logger.error("Failed to update Liquid Portfolio data: the user is not found in the database!");
+                return new LiquidPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Liquid Portfolio data: the user is not found in the database!", "");
+            }
+
             FilesDto filesDto;
             InputStream inputFile;
             XSSFWorkbook workbook;
@@ -175,7 +187,7 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
                             break;
                         }
 
-                        portfolioList = this.updateFixed(portfolioList, row, updater, fileId);
+                        portfolioList = this.updateFixed(portfolioList, row, employee, fileId);
 
                     } catch (Exception ex) {
                         logger.error("Failed to update Liquid Portfolio data: error parsing row #" + rowNumberFixed + " in sheet 'Fixed', ", ex);
@@ -212,7 +224,7 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
                             break;
                         }
 
-                        portfolioList = this.updateEquity(portfolioList, row, updater, fileId);
+                        portfolioList = this.updateEquity(portfolioList, row, employee, fileId);
 
                     } catch (Exception ex) {
                         logger.error("Failed to update Liquid Portfolio data: error parsing row #" + rowNumberEquity + " in sheet 'Equity', ", ex);
@@ -249,7 +261,7 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
                             break;
                         }
 
-                        portfolioList = this.updateTransition(portfolioList, row, updater, fileId);
+                        portfolioList = this.updateTransition(portfolioList, row, employee, fileId);
 
                     } catch (Exception ex) {
                         logger.error("Failed to update Liquid Portfolio data: error parsing row #" + rowNumberTransition + " in sheet 'Transition', ", ex);
@@ -357,7 +369,7 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
         }
     }
 
-    private List<LiquidPortfolio> updateFixed(List<LiquidPortfolio> portfolioList, Row row, String updater, Long fileId) {
+    private List<LiquidPortfolio> updateFixed(List<LiquidPortfolio> portfolioList, Row row, Employee updater, Long fileId) {
         Files dummyFile = new Files();
         dummyFile.setId(fileId);
 
@@ -427,7 +439,7 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
         return portfolioList;
     }
 
-    private List<LiquidPortfolio> updateEquity(List<LiquidPortfolio> portfolioList, Row row, String updater, Long fileId) {
+    private List<LiquidPortfolio> updateEquity(List<LiquidPortfolio> portfolioList, Row row, Employee updater, Long fileId) {
         Files dummyFile = new Files();
         dummyFile.setId(fileId);
 
@@ -488,7 +500,7 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
         return portfolioList;
     }
 
-    private List<LiquidPortfolio> updateTransition(List<LiquidPortfolio> portfolioList, Row row, String updater, Long fileId) {
+    private List<LiquidPortfolio> updateTransition(List<LiquidPortfolio> portfolioList, Row row, Employee updater, Long fileId) {
         Files dummyFile = new Files();
         dummyFile.setId(fileId);
 
