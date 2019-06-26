@@ -63,42 +63,50 @@
                                        (click)="activeTab = 'NEWS_GENERAL'">GENERAL</a>
         </li>
         <li class="date-tabs__item"><a data-toggle="tab"
-                                       href="#NEWS_PE"
-                                       role="tab" aria-controls="NEWS_PE"
-                                       aria-selected="false"
+                                       href="#NEWS_ALTERNATIVE"
+                                       role="tab" aria-controls="NEWS_ALTERNATIVE"
+                                       aria-selected="true"
                                        class="date-tabs__link"
-                                       [class.active]="activeTab === 'NEWS_PE'"
-                                       [class.show]="activeTab === 'NEWS_PE'"
-                                       [style.border-bottom-color]="activeTab === 'NEWS_PE' ? '#D9A158' : 'white'"
-                                       (click)="activeTab = 'NEWS_PE'">PRIVATE EQUITY</a></li>
-        <li class="date-tabs__item"><a data-toggle="tab"
-                                       href="#NEWS_HF"
-                                       role="tab" aria-controls="NEWS_HF"
-                                       aria-selected="false"
-                                       class="date-tabs__link"
-                                       [style.border-bottom-color]="activeTab === 'NEWS_HF' ? '#D9A158' : 'white'"
-                                       (click)="activeTab = 'NEWS_HF'">HEDGE FUNDS</a></li>
-        <li class="date-tabs__item"><a data-toggle="tab"
-                                       href="#NEWS_SWF"
-                                       role="tab" aria-controls="NEWS_SWF"
-                                       aria-selected="false"
-                                       class="date-tabs__link"
-                                       [style.border-bottom-color]="activeTab === 'NEWS_SWF' ? '#D9A158' : 'white'"
-                                       (click)="activeTab = 'NEWS_SWF'">SOVEREIGN WEALTH FUNDS</a></li>
-        <li class="date-tabs__item"><a data-toggle="tab"
-                                       href="#NEWS_RE"
-                                       role="tab" aria-controls="NEWS_RE"
-                                       aria-selected="false"
-                                       class="date-tabs__link"
-                                       [style.border-bottom-color]="activeTab === 'NEWS_RE' ? '#D9A158' : 'white'"
-                                       (click)="activeTab = 'NEWS_RE'">REAL ESTATE</a></li>
-        <li class="date-tabs__item"><a data-toggle="tab"
-                                       href="#NEWS_RISK"
-                                       role="tab" aria-controls="NEWS_RISK"
-                                       aria-selected="false"
-                                       class="date-tabs__link"
-                                       [style.border-bottom-color]="activeTab === 'NEWS_RISK' ? '#D9A158' : 'white'"
-                                       (click)="activeTab = 'NEWS_RISK'">RISK MANAGEMENT</a></li>
+                                       [style.border-bottom-color]="activeTab === 'NEWS_ALTERNATIVE' ? '#D9A158' : 'white'"
+                                       (click)="activeTab = 'NEWS_ALTERNATIVE'">ALTERNATIVE INVESTMENTS</a>
+        </li>
+        <!--<li class="date-tabs__item"><a data-toggle="tab"-->
+                                       <!--href="#NEWS_PE"-->
+                                       <!--role="tab" aria-controls="NEWS_PE"-->
+                                       <!--aria-selected="false"-->
+                                       <!--class="date-tabs__link"-->
+                                       <!--[class.active]="activeTab === 'NEWS_PE'"-->
+                                       <!--[class.show]="activeTab === 'NEWS_PE'"-->
+                                       <!--[style.border-bottom-color]="activeTab === 'NEWS_PE' ? '#D9A158' : 'white'"-->
+                                       <!--(click)="activeTab = 'NEWS_PE'">PRIVATE EQUITY</a></li>-->
+        <!--<li class="date-tabs__item"><a data-toggle="tab"-->
+                                       <!--href="#NEWS_HF"-->
+                                       <!--role="tab" aria-controls="NEWS_HF"-->
+                                       <!--aria-selected="false"-->
+                                       <!--class="date-tabs__link"-->
+                                       <!--[style.border-bottom-color]="activeTab === 'NEWS_HF' ? '#D9A158' : 'white'"-->
+                                       <!--(click)="activeTab = 'NEWS_HF'">HEDGE FUNDS</a></li>-->
+        <!--<li class="date-tabs__item"><a data-toggle="tab"-->
+                                       <!--href="#NEWS_SWF"-->
+                                       <!--role="tab" aria-controls="NEWS_SWF"-->
+                                       <!--aria-selected="false"-->
+                                       <!--class="date-tabs__link"-->
+                                       <!--[style.border-bottom-color]="activeTab === 'NEWS_SWF' ? '#D9A158' : 'white'"-->
+                                       <!--(click)="activeTab = 'NEWS_SWF'">SOVEREIGN WEALTH FUNDS</a></li>-->
+        <!--<li class="date-tabs__item"><a data-toggle="tab"-->
+                                       <!--href="#NEWS_RE"-->
+                                       <!--role="tab" aria-controls="NEWS_RE"-->
+                                       <!--aria-selected="false"-->
+                                       <!--class="date-tabs__link"-->
+                                       <!--[style.border-bottom-color]="activeTab === 'NEWS_RE' ? '#D9A158' : 'white'"-->
+                                       <!--(click)="activeTab = 'NEWS_RE'">REAL ESTATE</a></li>-->
+        <!--<li class="date-tabs__item"><a data-toggle="tab"-->
+                                       <!--href="#NEWS_RISK"-->
+                                       <!--role="tab" aria-controls="NEWS_RISK"-->
+                                       <!--aria-selected="false"-->
+                                       <!--class="date-tabs__link"-->
+                                       <!--[style.border-bottom-color]="activeTab === 'NEWS_RISK' ? '#D9A158' : 'white'"-->
+                                       <!--(click)="activeTab = 'NEWS_RISK'">RISK MANAGEMENT</a></li>-->
         <li class="date-tabs__item"><a data-toggle="tab"
                                        href="#NEWS_KZ"
                                        role="tab" aria-controls="NEWS_KZ"
@@ -150,12 +158,13 @@
                 </div>
             </div>
         </div>
-        <div id="NEWS_PE" role="tabpanel" aria-labelledby="NEWS_PE" class="tab-pane">
-            <div id="private_equity_content">
+        <div id="NEWS_ALTERNATIVE" role="tabpanel" aria-labelledby="NEWS_ALTERNATIVE" class="tab-pane">
+            <div id="alternative_investments_content">
                 <div class="row withpadding" *ngFor = "let news of newsList">
-                    <div class="col-md-12" *ngIf = "news.type == 'PE'">
+                    <div class="col-md-12" *ngIf = "isAlternativeInvestments(news.type)">
                         <div class="row">
-                            <h4 style="word-wrap: break-word"><a data-toggle="modal" (click) = "getNewsById(news.id)" data-target="#newsModal" style="cursor: pointer">{{news.header}}</a></h4>
+                            <!--<a target="_blank" [routerLink]="['/news/view/', news.id]">-->
+                            <h4 style="word-wrap: break-word;"><a data-toggle="modal" (click) = "getNewsById(news.id)" data-target="#newsModal" style="cursor: pointer">{{news.header}}</a></h4>
                         </div>
                         <div class="row">
                             <h4 style="word-wrap: break-word"><small>{{news.source}}</small></h4>
@@ -166,11 +175,14 @@
                         <div class="row">
                             <div class="col-md-1">
                                 <a class="btn btn-info btn-sm" data-toggle="modal"
-                                   (click) = "getNewsById(news.id)" data-target="#newsModal">view</a>
+                                   (click) = "getNewsById(news.id)" data-target="#newsModal">View</a>
                             </div>
                             <div class="col-md-1">
                                 <a [routerLink]="['/news/edit/', news.id]" class="btn btn-primary btn-sm" *ngIf="canEdit()" >Edit</a>
                             </div>
+                            <!--<div class="col-md-1 pull-right">-->
+                            <!--<span class="glyphicon glyphicon-user"></span> {{news.owner}}-->
+                            <!--</div>-->
                         </div>
                         <div class="row">
                             <hr style="border-top: 1px solid #B5AEAE"/>
@@ -179,167 +191,205 @@
                 </div>
             </div>
             <div class="row withpadding">
-                <div id="loadmoreajaxloader_private_equity" style="display:none;" class="center-block">
+                <div id="loadmoreajaxloader_alternative" style="display:none;" class="center-block">
                     <!--<img src="app/static/img/ajax-loader.gif" height="42" width="42"/>-->
                 </div>
-                <div id="moreBtn_private_equity">
-                    <button class="btn btn-default" (click)="loadMore('PE')" *ngIf="isShowMoreButton('PE')">More</button>
-                    <div *ngIf="!isShowMoreButton('PE')">No more posts to show</div>
+                <div id="moreBtn_alternative">
+                    <button class="btn btn-default" (click)="loadMore('ALTERNATIVE_INVESTMENTS')" *ngIf="isShowMoreButton('ALTERNATIVE_INVESTMENTS')">More</button>
+                    <div *ngIf="!isShowMoreButton('ALTERNATIVE_INVESTMENTS')">No more posts to show</div>
                 </div>
             </div>
         </div>
-        <div id="NEWS_HF" role="tabpanel" aria-labelledby="NEWS_HF" class="tab-pane">
-            <div id="hedge_funds_content">
-                <div class="row withpadding" *ngFor = "let news of newsList">
-                    <div class="col-md-12" *ngIf = "news.type == 'HF'">
-                        <div class="row">
-                           <h4 style="word-wrap: break-word"> <a data-toggle="modal" (click) = "getNewsById(news.id)" data-target="#newsModal" style="cursor: pointer">{{news.header}}</a></h4>
-                        </div>
-                        <div class="row">
-                            <h4 style="word-wrap: break-word"><small>{{news.source}}</small></h4>
-                        </div>
-                        <div class="row">
-                            <p style="word-wrap: break-word">{{news.shortContent}}</p>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-1">
-                                <a class="btn btn-info btn-sm" data-toggle="modal"
-                                   (click) = "getNewsById(news.id)" data-target="#newsModal">view</a>
-                            </div>
-                            <div class="col-md-1">
-                                <a [routerLink]="['/news/edit/', news.id]" class="btn btn-primary btn-sm" *ngIf="canEdit()" >Edit</a>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <hr style="border-top: 1px solid #B5AEAE"/>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row withpadding">
-                <div id="loadmoreajaxloader_hedge_funds" style="display:none;" class="center-block">
-                    <!--<img src="app/static/img/ajax-loader.gif" height="42" width="42"/>-->
-                </div>
-                <div id="moreBtn_hedge_funds">
-                    <button class="btn btn-default" (click)="loadMore('HF')" *ngIf="isShowMoreButton('HF')">More</button>
-                    <div *ngIf="!isShowMoreButton('HF')">No more posts to show</div>
-                </div>
-            </div>
-        </div>
-        <div id="NEWS_SWF" role="tabpanel" aria-labelledby="NEWS_SWF" class="tab-pane">
-            <div id="sovereign_wealth_funds_content">
-                <div class="row withpadding" *ngFor = "let news of newsList">
-                    <div class="col-md-12" *ngIf = "news.type == 'SWF'">
-                        <div class="row">
-                            <h4 style="word-wrap: break-word"><a data-toggle="modal" (click) = "getNewsById(news.id)" data-target="#newsModal" style="cursor: pointer">{{news.header}}</a></h4>
-                        </div>
-                        <div class="row">
-                            <h4 style="word-wrap: break-word"><small>{{news.source}}</small></h4>
-                        </div>
-                        <div class="row">
-                            <p style="word-wrap: break-word">{{news.shortContent}}</p>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-1">
-                                <a class="btn btn-info btn-sm" data-toggle="modal"
-                                   (click) = "getNewsById(news.id)" data-target="#newsModal">view</a>
-                            </div>
-                            <div class="col-md-1">
-                                <a [routerLink]="['/news/edit/', news.id]" class="btn btn-primary btn-sm" *ngIf="canEdit()" >Edit</a>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <hr style="border-top: 1px solid #B5AEAE"/>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row withpadding">
-                <div id="loadmoreajaxloader_sovereign_wealth_funds" style="display:none;" class="center-block">
-                    <!--<img src="app/static/img/ajax-loader.gif" height="42" width="42"/>-->
-                </div>
-                <div id="moreBtn_sovereign_wealth_funds">
-                    <button class="btn btn-default" (click)="loadMore('SWF')" *ngIf="isShowMoreButton('SWF')">More</button>
-                    <div *ngIf="!isShowMoreButton('SWF')">No more posts to show</div>
-                </div>
-            </div>
-        </div>
-        <div id="NEWS_RE" role="tabpanel" aria-labelledby="NEWS_RE" class="tab-pane">
-            <div id="real_estate_content">
-                <div class="row withpadding" *ngFor = "let news of newsList">
-                    <div class="col-md-12" *ngIf = "news.type == 'RE'">
-                        <div class="row">
-                            <h4 style="word-wrap: break-word"><a data-toggle="modal" (click) = "getNewsById(news.id)" data-target="#newsModal" style="cursor: pointer">{{news.header}}</a></h4>
-                        </div>
-                        <div class="row">
-                            <h4 style="word-wrap: break-word"><small>{{news.source}}</small></h4>
-                        </div>
-                        <div class="row">
-                            <p style="word-wrap: break-word">{{news.shortContent}}</p>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-1">
-                                <a class="btn btn-info btn-sm" data-toggle="modal"
-                                   (click) = "getNewsById(news.id)" data-target="#newsModal">view</a>
-                            </div>
-                            <div class="col-md-1">
-                                <a [routerLink]="['/news/edit/', news.id]" class="btn btn-primary btn-sm" *ngIf="canEdit()" >Edit</a>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <hr style="border-top: 1px solid #B5AEAE"/>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row withpadding">
-                <div id="loadmoreajaxloader_real_estate" style="display:none;" class="center-block">
-                    <!--<img src="app/static/img/ajax-loader.gif" height="42" width="42"/>-->
-                </div>
-                <div id="moreBtn_real_estate">
-                    <button class="btn btn-default" (click)="loadMore('RE')" *ngIf="isShowMoreButton('RE')">More</button>
-                    <div *ngIf="!isShowMoreButton('RE')">No more posts to show</div>
-                </div>
-            </div>
-        </div>
-        <div id="NEWS_RISK" role="tabpanel" aria-labelledby="NEWS_RISK" class="tab-pane">
-            <div id="risk_management_content">
-                <div class="row withpadding" *ngFor = "let news of newsList" >
-                    <div class="col-md-12" *ngIf = "news.type == 'RM'">
-                        <div class="row">
-                            <h4 style="word-wrap: break-word"><a data-toggle="modal" (click) = "getNewsById(news.id)" data-target="#newsModal" style="cursor: pointer">{{news.header}}</a></h4>
-                        </div>
-                        <div class="row">
-                            <h4 style = "word-wrap: break-word"><small>{{news.source}}</small></h4>
-                        </div>
-                        <div class="row">
-                            <p style = "word-wrap: break-word">{{news.shortContent}}</p>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-1">
-                                <a class="btn btn-info btn-sm" data-toggle="modal"
-                                   (click) = "getNewsById(news.id)" data-target="#newsModal">view</a>
-                            </div>
-                            <div class="col-md-1">
-                                <a [routerLink]="['/news/edit/', news.id]" class="btn btn-primary btn-sm" *ngIf="canEdit()" >Edit</a>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <hr style="border-top: 1px solid #B5AEAE"/>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row withpadding">
-                <div id="loadmoreajaxloader_risk_management" style="display:none;" class="center-block">
-                    <!--<img src="app/static/img/ajax-loader.gif" height="42" width="42"/>-->
-                </div>
-                <div id="moreBtn_risk_management">
-                    <button class="btn btn-default" (click)="loadMore('RM')" *ngIf="isShowMoreButton('RM')">More</button>
-                    <div *ngIf="!isShowMoreButton('RM')">No more posts to show</div>
-                </div>
-            </div>
-        </div>
+        <!--<div id="NEWS_PE" role="tabpanel" aria-labelledby="NEWS_PE" class="tab-pane">-->
+            <!--<div id="private_equity_content">-->
+                <!--<div class="row withpadding" *ngFor = "let news of newsList">-->
+                    <!--<div class="col-md-12" *ngIf = "news.type == 'PE'">-->
+                        <!--<div class="row">-->
+                            <!--<h4 style="word-wrap: break-word"><a data-toggle="modal" (click) = "getNewsById(news.id)" data-target="#newsModal" style="cursor: pointer">{{news.header}}</a></h4>-->
+                        <!--</div>-->
+                        <!--<div class="row">-->
+                            <!--<h4 style="word-wrap: break-word"><small>{{news.source}}</small></h4>-->
+                        <!--</div>-->
+                        <!--<div class="row">-->
+                            <!--<p style="word-wrap: break-word">{{news.shortContent}}</p>-->
+                        <!--</div>-->
+                        <!--<div class="row">-->
+                            <!--<div class="col-md-1">-->
+                                <!--<a class="btn btn-info btn-sm" data-toggle="modal"-->
+                                   <!--(click) = "getNewsById(news.id)" data-target="#newsModal">view</a>-->
+                            <!--</div>-->
+                            <!--<div class="col-md-1">-->
+                                <!--<a [routerLink]="['/news/edit/', news.id]" class="btn btn-primary btn-sm" *ngIf="canEdit()" >Edit</a>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--<div class="row">-->
+                            <!--<hr style="border-top: 1px solid #B5AEAE"/>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="row withpadding">-->
+                <!--<div id="loadmoreajaxloader_private_equity" style="display:none;" class="center-block">-->
+                    <!--&lt;!&ndash;<img src="app/static/img/ajax-loader.gif" height="42" width="42"/>&ndash;&gt;-->
+                <!--</div>-->
+                <!--<div id="moreBtn_private_equity">-->
+                    <!--<button class="btn btn-default" (click)="loadMore('PE')" *ngIf="isShowMoreButton('PE')">More</button>-->
+                    <!--<div *ngIf="!isShowMoreButton('PE')">No more posts to show</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div id="NEWS_HF" role="tabpanel" aria-labelledby="NEWS_HF" class="tab-pane">-->
+            <!--<div id="hedge_funds_content">-->
+                <!--<div class="row withpadding" *ngFor = "let news of newsList">-->
+                    <!--<div class="col-md-12" *ngIf = "news.type == 'HF'">-->
+                        <!--<div class="row">-->
+                           <!--<h4 style="word-wrap: break-word"> <a data-toggle="modal" (click) = "getNewsById(news.id)" data-target="#newsModal" style="cursor: pointer">{{news.header}}</a></h4>-->
+                        <!--</div>-->
+                        <!--<div class="row">-->
+                            <!--<h4 style="word-wrap: break-word"><small>{{news.source}}</small></h4>-->
+                        <!--</div>-->
+                        <!--<div class="row">-->
+                            <!--<p style="word-wrap: break-word">{{news.shortContent}}</p>-->
+                        <!--</div>-->
+                        <!--<div class="row">-->
+                            <!--<div class="col-md-1">-->
+                                <!--<a class="btn btn-info btn-sm" data-toggle="modal"-->
+                                   <!--(click) = "getNewsById(news.id)" data-target="#newsModal">view</a>-->
+                            <!--</div>-->
+                            <!--<div class="col-md-1">-->
+                                <!--<a [routerLink]="['/news/edit/', news.id]" class="btn btn-primary btn-sm" *ngIf="canEdit()" >Edit</a>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--<div class="row">-->
+                            <!--<hr style="border-top: 1px solid #B5AEAE"/>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="row withpadding">-->
+                <!--<div id="loadmoreajaxloader_hedge_funds" style="display:none;" class="center-block">-->
+                    <!--&lt;!&ndash;<img src="app/static/img/ajax-loader.gif" height="42" width="42"/>&ndash;&gt;-->
+                <!--</div>-->
+                <!--<div id="moreBtn_hedge_funds">-->
+                    <!--<button class="btn btn-default" (click)="loadMore('HF')" *ngIf="isShowMoreButton('HF')">More</button>-->
+                    <!--<div *ngIf="!isShowMoreButton('HF')">No more posts to show</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div id="NEWS_SWF" role="tabpanel" aria-labelledby="NEWS_SWF" class="tab-pane">-->
+            <!--<div id="sovereign_wealth_funds_content">-->
+                <!--<div class="row withpadding" *ngFor = "let news of newsList">-->
+                    <!--<div class="col-md-12" *ngIf = "news.type == 'SWF'">-->
+                        <!--<div class="row">-->
+                            <!--<h4 style="word-wrap: break-word"><a data-toggle="modal" (click) = "getNewsById(news.id)" data-target="#newsModal" style="cursor: pointer">{{news.header}}</a></h4>-->
+                        <!--</div>-->
+                        <!--<div class="row">-->
+                            <!--<h4 style="word-wrap: break-word"><small>{{news.source}}</small></h4>-->
+                        <!--</div>-->
+                        <!--<div class="row">-->
+                            <!--<p style="word-wrap: break-word">{{news.shortContent}}</p>-->
+                        <!--</div>-->
+                        <!--<div class="row">-->
+                            <!--<div class="col-md-1">-->
+                                <!--<a class="btn btn-info btn-sm" data-toggle="modal"-->
+                                   <!--(click) = "getNewsById(news.id)" data-target="#newsModal">view</a>-->
+                            <!--</div>-->
+                            <!--<div class="col-md-1">-->
+                                <!--<a [routerLink]="['/news/edit/', news.id]" class="btn btn-primary btn-sm" *ngIf="canEdit()" >Edit</a>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--<div class="row">-->
+                            <!--<hr style="border-top: 1px solid #B5AEAE"/>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="row withpadding">-->
+                <!--<div id="loadmoreajaxloader_sovereign_wealth_funds" style="display:none;" class="center-block">-->
+                    <!--&lt;!&ndash;<img src="app/static/img/ajax-loader.gif" height="42" width="42"/>&ndash;&gt;-->
+                <!--</div>-->
+                <!--<div id="moreBtn_sovereign_wealth_funds">-->
+                    <!--<button class="btn btn-default" (click)="loadMore('SWF')" *ngIf="isShowMoreButton('SWF')">More</button>-->
+                    <!--<div *ngIf="!isShowMoreButton('SWF')">No more posts to show</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div id="NEWS_RE" role="tabpanel" aria-labelledby="NEWS_RE" class="tab-pane">-->
+            <!--<div id="real_estate_content">-->
+                <!--<div class="row withpadding" *ngFor = "let news of newsList">-->
+                    <!--<div class="col-md-12" *ngIf = "news.type == 'RE'">-->
+                        <!--<div class="row">-->
+                            <!--<h4 style="word-wrap: break-word"><a data-toggle="modal" (click) = "getNewsById(news.id)" data-target="#newsModal" style="cursor: pointer">{{news.header}}</a></h4>-->
+                        <!--</div>-->
+                        <!--<div class="row">-->
+                            <!--<h4 style="word-wrap: break-word"><small>{{news.source}}</small></h4>-->
+                        <!--</div>-->
+                        <!--<div class="row">-->
+                            <!--<p style="word-wrap: break-word">{{news.shortContent}}</p>-->
+                        <!--</div>-->
+                        <!--<div class="row">-->
+                            <!--<div class="col-md-1">-->
+                                <!--<a class="btn btn-info btn-sm" data-toggle="modal"-->
+                                   <!--(click) = "getNewsById(news.id)" data-target="#newsModal">view</a>-->
+                            <!--</div>-->
+                            <!--<div class="col-md-1">-->
+                                <!--<a [routerLink]="['/news/edit/', news.id]" class="btn btn-primary btn-sm" *ngIf="canEdit()" >Edit</a>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--<div class="row">-->
+                            <!--<hr style="border-top: 1px solid #B5AEAE"/>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="row withpadding">-->
+                <!--<div id="loadmoreajaxloader_real_estate" style="display:none;" class="center-block">-->
+                    <!--&lt;!&ndash;<img src="app/static/img/ajax-loader.gif" height="42" width="42"/>&ndash;&gt;-->
+                <!--</div>-->
+                <!--<div id="moreBtn_real_estate">-->
+                    <!--<button class="btn btn-default" (click)="loadMore('RE')" *ngIf="isShowMoreButton('RE')">More</button>-->
+                    <!--<div *ngIf="!isShowMoreButton('RE')">No more posts to show</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div id="NEWS_RISK" role="tabpanel" aria-labelledby="NEWS_RISK" class="tab-pane">-->
+            <!--<div id="risk_management_content">-->
+                <!--<div class="row withpadding" *ngFor = "let news of newsList" >-->
+                    <!--<div class="col-md-12" *ngIf = "news.type == 'RM'">-->
+                        <!--<div class="row">-->
+                            <!--<h4 style="word-wrap: break-word"><a data-toggle="modal" (click) = "getNewsById(news.id)" data-target="#newsModal" style="cursor: pointer">{{news.header}}</a></h4>-->
+                        <!--</div>-->
+                        <!--<div class="row">-->
+                            <!--<h4 style = "word-wrap: break-word"><small>{{news.source}}</small></h4>-->
+                        <!--</div>-->
+                        <!--<div class="row">-->
+                            <!--<p style = "word-wrap: break-word">{{news.shortContent}}</p>-->
+                        <!--</div>-->
+                        <!--<div class="row">-->
+                            <!--<div class="col-md-1">-->
+                                <!--<a class="btn btn-info btn-sm" data-toggle="modal"-->
+                                   <!--(click) = "getNewsById(news.id)" data-target="#newsModal">view</a>-->
+                            <!--</div>-->
+                            <!--<div class="col-md-1">-->
+                                <!--<a [routerLink]="['/news/edit/', news.id]" class="btn btn-primary btn-sm" *ngIf="canEdit()" >Edit</a>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--<div class="row">-->
+                            <!--<hr style="border-top: 1px solid #B5AEAE"/>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="row withpadding">-->
+                <!--<div id="loadmoreajaxloader_risk_management" style="display:none;" class="center-block">-->
+                    <!--&lt;!&ndash;<img src="app/static/img/ajax-loader.gif" height="42" width="42"/>&ndash;&gt;-->
+                <!--</div>-->
+                <!--<div id="moreBtn_risk_management">-->
+                    <!--<button class="btn btn-default" (click)="loadMore('RM')" *ngIf="isShowMoreButton('RM')">More</button>-->
+                    <!--<div *ngIf="!isShowMoreButton('RM')">No more posts to show</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
         <div id="NEWS_KZ" role="tabpanel" aria-labelledby="NEWS_KZ" class="tab-pane">
             <div id="kz_news_content">
                 <div class="row withpadding" *ngFor = "let news of newsList" >

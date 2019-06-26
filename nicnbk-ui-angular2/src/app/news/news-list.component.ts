@@ -40,6 +40,8 @@ export class NewsListComponent extends CommonFormViewComponent implements OnInit
 
     showMoreButtonMap = {};
 
+    alternativeInvestmentTypes = ['PE', 'HF', 'RE', 'SWF', 'RM'];
+
     id: number;
 
     private moduleAccessChecker: ModuleAccessCheckerService;
@@ -94,7 +96,26 @@ export class NewsListComponent extends CommonFormViewComponent implements OnInit
         //alert(category);
 
         // TODO: loading icon
-        this.busy = this.newsService.loadMore(category, this.getPage(category))
+        var categoryWithNews;
+        if(category === 'ALTERNATIVE_INVESTMENTS'){
+            for(var i = 0; i < this.alternativeInvestmentTypes.length; i++){
+                var type = this.alternativeInvestmentTypes[i];
+                if(type in this.showMoreButtonMap){
+                    if(this.showMoreButtonMap[type]){
+                        categoryWithNews = type;
+                        break;
+                    }
+                }else{
+                    this.showMoreButtonMap[type] = true;
+                    categoryWithNews = type;
+                    break;
+                }
+            }
+        }else{
+            categoryWithNews = category;
+        }
+        console.log(categoryWithNews);
+        this.busy = this.newsService.loadMore(categoryWithNews, this.getPage(categoryWithNews))
             .subscribe(
                 loadedNews => {
                     Array.prototype.push.apply(this.newsList,loadedNews);
@@ -111,7 +132,20 @@ export class NewsListComponent extends CommonFormViewComponent implements OnInit
     }
 
     isShowMoreButton(category){
-        if(category in this.showMoreButtonMap){
+        if(category === 'ALTERNATIVE_INVESTMENTS'){
+            for(var i = 0; i < this.alternativeInvestmentTypes.length; i++){
+                var type = this.alternativeInvestmentTypes[i];
+                if(type in this.showMoreButtonMap){
+                    if(this.showMoreButtonMap[category]){
+                        return true;
+                    }
+                }else{
+                    this.showMoreButtonMap[category] = true;
+                    return true;
+                }
+            }
+            return false;
+        }else if(category in this.showMoreButtonMap){
             return this.showMoreButtonMap[category];
         }else{
             this.showMoreButtonMap[category] = true;
@@ -169,5 +203,9 @@ export class NewsListComponent extends CommonFormViewComponent implements OnInit
 
     public canEdit(){
         return this.moduleAccessChecker.checkAccessNewsEdit();
+    }
+
+    isAlternativeInvestments(type){
+        return type === 'PE' || type === 'HF' || type === 'RE' || type === 'SWF' || type === 'RM';
     }
 }
