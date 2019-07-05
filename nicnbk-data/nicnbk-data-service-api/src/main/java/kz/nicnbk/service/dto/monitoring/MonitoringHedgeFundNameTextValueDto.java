@@ -10,6 +10,13 @@ public class MonitoringHedgeFundNameTextValueDto implements BaseDto{
     private String name;
     private String value;
 
+    public MonitoringHedgeFundNameTextValueDto(){}
+
+    public MonitoringHedgeFundNameTextValueDto(String name, String value){
+        this.name = name;
+        this.value = value;
+    }
+
     public String getName() {
         return name;
     }

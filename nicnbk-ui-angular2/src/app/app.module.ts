@@ -117,6 +117,7 @@ import {BenchmarkLookupValuesComponent} from "./lookup/benchmark.lookup.values.c
 import {HFResearchPageComponent} from "./hf/hf.research-page.component";
 import {MonitoringHFListComponent} from "./monitoring/monitoring-hedge-funds-list.component";
 import {MonitoringHFResearchComponent} from "./monitoring/monitoring-hedge-funds-research.component";
+import {MonitoringHedgeFundsEditComponent} from "./monitoring/monitoring-hedge-funds-edit.component";
 //import {CorpMeetingEditComponent} from "./corpmeetings/ic-meeting-topic-edit.component";
 
 @NgModule({
@@ -145,7 +146,7 @@ import {MonitoringHFResearchComponent} from "./monitoring/monitoring-hedge-funds
         GeneralMemoEditComponent, PrivateEquityMemoEditComponent, HedgeFundsMemoEditComponent, RealEstateMemoEditComponent,
         TripMemoListComponent, TripMemoEditComponent, RiskManagementAxiomaReportingComponent, MonitoringHedgeFundsComponent, MonitoringLiquidPortfolioComponent,
         MonitoringMacroMonitorComponent, MonitoringPortfolioComponent, MonitoringPrivateEquityComponent, MonitoringPrivateEquityFundComponent,
-        MonitoringHedgeFunds2Component, MonitoringHedgeFunds2PrintComponent, MonitoringHFListComponent, MonitoringHFResearchComponent,
+        MonitoringHedgeFunds2Component,MonitoringHedgeFundsEditComponent, MonitoringHedgeFunds2PrintComponent, MonitoringHFListComponent, MonitoringHFResearchComponent,
         MainNBReportingComponent, InputFileUploadNBReportingComponent,
 
         HFDashboardComponent, HFFundSearchComponent, HFFundSelectionComponent, HFPortfolioComponent, HFReportComponent,

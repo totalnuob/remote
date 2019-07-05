@@ -12,6 +12,13 @@ public class MonitoringHedgeFundDateDoubleValueDto implements BaseDto{
     private Date date;
     private Double value;
 
+    public MonitoringHedgeFundDateDoubleValueDto(){}
+
+    public MonitoringHedgeFundDateDoubleValueDto(Date date, Double value){
+        this.date = date;
+        this.value = value;
+    }
+
     public Date getDate() {
         return date;
     }

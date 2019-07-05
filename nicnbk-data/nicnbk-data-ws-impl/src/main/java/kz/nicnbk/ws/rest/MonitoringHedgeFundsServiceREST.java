@@ -1,16 +1,13 @@
 package kz.nicnbk.ws.rest;
 
-import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.service.api.authentication.TokenService;
-import kz.nicnbk.service.api.corpmeetings.CorpMeetingService;
 import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.api.monitoring.MonitoringHedgeFundService;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
-import kz.nicnbk.service.dto.corpmeetings.*;
-import kz.nicnbk.service.dto.files.FilesDto;
-import kz.nicnbk.service.dto.monitoring.MonitoringHedgeFundDataDto;
+import kz.nicnbk.service.dto.common.ResponseStatusType;
+import kz.nicnbk.service.dto.monitoring.MonitoringHedgeFundDataHolderDto;
+import kz.nicnbk.service.dto.monitoring.MonitoringHedgeFundSearchParamsDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -46,7 +43,19 @@ public class MonitoringHedgeFundsServiceREST extends CommonServiceREST{
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
-        List<MonitoringHedgeFundDataDto> data = this.monitoringHedgeFundService.getAllData();
+        List<MonitoringHedgeFundDataHolderDto> data = this.monitoringHedgeFundService.getAllData();
+
+        return buildNonNullResponse(data);
+    }
+
+    @PreAuthorize(hedgeFundsViewerRole)
+    @RequestMapping(value = "/get", method = RequestMethod.POST)
+    public ResponseEntity getMonitoringDataByDate(@RequestBody MonitoringHedgeFundSearchParamsDto searchParams) {
+
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        MonitoringHedgeFundDataHolderDto data = this.monitoringHedgeFundService.getMonitoringDataByDate(searchParams);
 
         return buildNonNullResponse(data);
     }
@@ -54,14 +63,20 @@ public class MonitoringHedgeFundsServiceREST extends CommonServiceREST{
 
     /* IC MEETING *****************************************************************************************************/
     @PreAuthorize(hedgeFundsEditorRole)
-    @RequestMapping(value = "/ICMeeting/save", method = RequestMethod.POST)
-    public ResponseEntity<?> saveICMeeting(@RequestBody MonitoringHedgeFundDataDto dataDto) {
+    @RequestMapping(value = "/save", method = RequestMethod.POST)
+    public ResponseEntity<?> saveData(@RequestBody MonitoringHedgeFundDataHolderDto dataDto) {
 
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
-        boolean saved  = this.monitoringHedgeFundService.save(dataDto, username);
-        return buildEntitySaveResponseEntity(saved);
+        try {
+            EntitySaveResponseDto saveResponseDto = this.monitoringHedgeFundService.save(dataDto, username);
+            return buildEntitySaveResponse(saveResponseDto);
+        }catch (Exception ex){
+            EntitySaveResponseDto saveResponseDto = new EntitySaveResponseDto();
+            saveResponseDto.setStatus(ResponseStatusType.FAIL);
+            return buildEntitySaveResponse(saveResponseDto);
+        }
     }
 
 }

@@ -46,4 +46,5 @@ public class MonitoringHedgeFundDataOverallDto implements BaseDto{
     public void setReturns(List<MonitoringHedgeFundDateDoubleValueDto> returns) {
         this.returns = returns;
     }
+
 }
