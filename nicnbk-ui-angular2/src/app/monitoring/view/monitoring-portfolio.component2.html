@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container" [ngBusy]="busy">
     <!--<h4><small>login: user pass: Qwerty123</small></h4>-->
     <!--<div class="row">-->
         <!--<div class="col-md-12">-->
@@ -19,13 +19,42 @@
         <!--<h2>Under Construction. New monitoring forms to be updated soon.</h2>-->
     <!--</div>-->
 
-
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-2">
-            <select (ngModelChange)="redraw()" [(ngModel)]="tableDate" id="tableDate" class="form-control" >
+            <select (ngModelChange)="redraw()" [(ngModel)]="tableDate" id="tableDate" class="form-control">
                 <option *ngFor="let item of getAllDates()" [value]="item">{{item}}</option>
             </select>
         </div>
+        <div class="pull-right" *ngIf="canEdit()">
+            <span class="glyphicon glyphicon-download-alt btn btn-sm" (click)="fileDownload()" title="Download the latest uploaded file"></span>
+            <!--<a (click)="fileDownload()" title="We will not spam you.">Privacy Policy</a>-->
+        </div>
+        <div class="pull-right" *ngIf="canEdit()">
+            <form #yourForm="ngForm" (ngSubmit)="onSubmitNicPortfolio()">
+                <label class="btn btn-sm btn-primary">
+                    <input type="file" #fileupload id="fileupload" (change)="fileChange(fileupload.files)" style="display: none"/>Update
+                </label>
+                <button type="submit" class="btn btn-sm btn-success" *ngIf="this.myFiles.length > 0">Submit</button>
+            </form>
+            <div *ngFor="let file of this.myFiles" class="label label-info">
+                <span>{{file.name}}</span>
+            </div>
+        </div>
+        <!--<div class="pull-right col-md-3" *ngIf="canEdit()">-->
+            <!--<h4>Update NIC portfolio data</h4>-->
+        <!--</div>-->
     </div>
     <div class="row">
         <div class="col-md-12">
