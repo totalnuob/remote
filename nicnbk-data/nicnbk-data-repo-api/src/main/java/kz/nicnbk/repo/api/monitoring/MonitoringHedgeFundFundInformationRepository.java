@@ -24,4 +24,8 @@ public interface MonitoringHedgeFundFundInformationRepository extends PagingAndS
 
     @Query("SELECT e FROM MonitoringHedgeFundFundInformation e ")
     List<MonitoringHedgeFundFundInformation> findAll();
+
+    @Query("SELECT e FROM MonitoringHedgeFundFundInformation e WHERE e.type.id=?1 AND e.fundInfoType.id=?2 AND e.monitoringDate=" +
+            "(SELECT MAX(e2.monitoringDate) FROM MonitoringHedgeFundFundInformation e2 WHERE e2.type.id=?1 AND e2.fundInfoType.id=?2)")
+    List<MonitoringHedgeFundFundInformation> getMostRecentRecordsBeforeDate(Integer typeId, Integer fundInfoTypeId);
 }

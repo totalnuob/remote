@@ -81,8 +81,8 @@
                 </div>
             </div>
             <br/>
-            <div class="row">
-                <!--<button class="btn-primary pull-right" [routerLink]="['/monitoring/hf2Print']">PRINT</button>-->
+            <div class="row withpadding">
+                <button class="btn btn-primary pull-right" (click)="copyFromPreviousOverall()">Copy most recent</button>
             </div>
             <br/>
             <div class="row">
@@ -265,6 +265,10 @@
                         Portfolio Class A – GCM discretionary
                     </div>
                 </div>
+            </div>
+            <br/>
+            <div class="row withpadding">
+                <button class="btn btn-primary pull-right" (click)="copyFromPreviousClassA()">Copy most recent</button>
             </div>
             <br/>
             <div class="row">
@@ -518,6 +522,10 @@
                 </div>
             </div>
             <br/>
+            <div class="row withpadding">
+                <button class="btn btn-primary pull-right" (click)="copyFromPreviousClassB()">Copy most recent</button>
+            </div>
+            <br/>
             <div class="row">
                 <div class="col-md-12">
                     <div class="col-md-5">
@@ -647,6 +655,10 @@
                         Approved funds
                     </div>
                 </div>
+            </div>
+            <br/>
+            <div class="row withpadding">
+                <button class="btn btn-primary pull-right" (click)="copyFromPreviousApprovedFunds()">Copy most recent</button>
             </div>
             <br/>
 

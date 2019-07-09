@@ -7,6 +7,7 @@ import {MonitoringHFData} from "./model/monitoring-hf-data";
 import {Subscription} from 'rxjs';
 import {MonitoringHedgeFundService} from "./monitoring-hf.service";
 import {MonitoringHFDataHolder} from "./model/monitoring-hf-data-holder";
+import {MonitoringHFListDataHolder} from "./model/monitoring-hf-list-data-holder";
 
 declare var google:any;
 declare var $: any;
@@ -28,7 +29,7 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
     selectedDate;
     selectedData: MonitoringHFDataHolder;
 
-    monitoringData: MonitoringHFDataHolder[];
+    monitoringDataAll: MonitoringHFListDataHolder;
 
     constructor(
         private route: ActivatedRoute,
@@ -42,20 +43,21 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
                 monitoringData => {
                     console.log(monitoringData);
 
-                    this.monitoringData = monitoringData;
-                    if(this.monitoringData && this.monitoringData.length > 0){
-                        for(var i = 0; i < this.monitoringData.length; i++) {
-                            this.monitoringDates.push(this.monitoringData[i].date);
+                    this.monitoringDataAll = monitoringData;
+
+                    if(this.monitoringDataAll.data && this.monitoringDataAll.data.length > 0){
+                        for(var i = 0; i < this.monitoringDataAll.data.length; i++) {
+                            this.monitoringDates.push(this.monitoringDataAll.data[i].date);
                         }
 
-                        this.selectedDate = this.monitoringData[0].date;
-                        this.selectedData = this.monitoringData[0];
+                        this.selectedDate = this.monitoringDataAll.data[0].date;
+                        this.selectedData = this.monitoringDataAll.data[0];
 
 
                         this.drawGraph();
                     }
 
-                    //console.log(this.monitoringData);
+                    //console.log(this.monitoringDataAll.data);
                     //console.log(this.monitoringDates);
                     //console.log(this.selectedDate);
                     //console.log(this.selectedData);
@@ -661,12 +663,12 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
 
     drawPortfolioAComparisonReturns(yearNum){
         if(this.selectedData == null || this.selectedData.monitoringData == null || this.selectedData.monitoringData.classA == null ||
-            this.selectedData.monitoringData.classA.returns == null || this.selectedData.monitoringData.returnsHFRI == null){
+            this.selectedData.monitoringData.classA.returns == null || this.monitoringDataAll.returnsHFRI == null){
             return null;
         }
 
         var returns = this.getReturnsByYear(this.selectedData.monitoringData.classA.returns);
-        var returnsHFRI = this.getReturnsByYear(this.selectedData.monitoringData.returnsHFRI);
+        var returnsHFRI = this.getReturnsByYear(this.monitoringDataAll.returnsHFRI);
 
         if(yearNum > returns.length || yearNum > returnsHFRI.length){
             return;
@@ -1240,10 +1242,10 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
 
     selectDate(value){
         //console.log(value);
-        for(var i = 0; i < this.monitoringData.length; i++){
-            if(this.monitoringData[i].date === value){
-                this.selectedData = this.monitoringData[i];
-                this.selectedDate = this.monitoringData[i].date;
+        for(var i = 0; i < this.monitoringDataAll.data.length; i++){
+            if(this.monitoringDataAll.data[i].date === value){
+                this.selectedData = this.monitoringDataAll.data[i];
+                this.selectedDate = this.monitoringDataAll.data[i].date;
                 this.drawGraph();
 
                 return;
@@ -1274,7 +1276,7 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
         if(date) {
             var params = JSON.stringify({"monitoringDate": date});
         }else{
-            params = JSON.stringify({"foo": "bar"});
+            params = JSON.stringify({});
         }
         console.log(params);
         this.router.navigate(['/monitoring/hf/edit/', {params}]);

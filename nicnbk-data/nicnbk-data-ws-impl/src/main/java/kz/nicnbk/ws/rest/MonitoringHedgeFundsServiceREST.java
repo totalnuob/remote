@@ -5,8 +5,7 @@ import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.api.monitoring.MonitoringHedgeFundService;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
 import kz.nicnbk.service.dto.common.ResponseStatusType;
-import kz.nicnbk.service.dto.monitoring.MonitoringHedgeFundDataHolderDto;
-import kz.nicnbk.service.dto.monitoring.MonitoringHedgeFundSearchParamsDto;
+import kz.nicnbk.service.dto.monitoring.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -43,7 +42,7 @@ public class MonitoringHedgeFundsServiceREST extends CommonServiceREST{
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
-        List<MonitoringHedgeFundDataHolderDto> data = this.monitoringHedgeFundService.getAllData();
+        MonitoringHedgeFundListDataHolderDto data = this.monitoringHedgeFundService.getAllData();
 
         return buildNonNullResponse(data);
     }
@@ -59,6 +58,19 @@ public class MonitoringHedgeFundsServiceREST extends CommonServiceREST{
 
         return buildNonNullResponse(data);
     }
+
+    @PreAuthorize(hedgeFundsViewerRole)
+    @RequestMapping(value = "/getPrevious", method = RequestMethod.POST)
+    public ResponseEntity getMonitoringDataForPreviousDate(@RequestBody MonitoringHedgeFundTypedSearchParamsDto searchParams) {
+
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        MonitoringHedgeFundDataDto data = this.monitoringHedgeFundService.getMonitoringDataForPreviousDate(searchParams);
+
+        return buildNonNullResponse(data);
+    }
+
 
 
     /* IC MEETING *****************************************************************************************************/

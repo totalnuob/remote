@@ -441,6 +441,91 @@ export class MonitoringHedgeFundsEditComponent extends CommonFormViewComponent i
             );
     }
 
+    copyFromPreviousOverall(){
+        if(confirm("Are you sure want to copy data from most recent date?")) {
+            this.busy = this.monitoringHFService.getPreviousData({"type": "OVERALL"})
+                .subscribe(
+                    monitoringData => {
+                        console.log(monitoringData);
+                        this.selectedData.monitoringData.overall = monitoringData.overall;
+                        this.successMessage = "Successfully loaded previous date OVERALL data.";
+                    },
+                    (error:ErrorResponse) => {
+                        this.errorMessage = "Error loading monitoring data (previous)";
+                        if (error && !error.isEmpty()) {
+                            this.processErrorMessage(error);
+                        }
+                        this.postAction(null, null);
+                    }
+                );
+        }
+    }
+    copyFromPreviousClassA(){
+        if(confirm("Are you sure want to copy data from most recent date?")) {
+            this.busy = this.monitoringHFService.getPreviousData({"type": "CLASS_A"})
+                .subscribe(
+                    monitoringData => {
+                        console.log(monitoringData);
+                        this.selectedData.monitoringData.classA = monitoringData.classA;
+                        this.successMessage = "Successfully loaded previous date CLASS A data.";
+                    },
+                    (error:ErrorResponse) => {
+                        this.errorMessage = "Error loading monitoring data (previous)";
+                        if (error && !error.isEmpty()) {
+                            this.processErrorMessage(error);
+                        }
+                        this.postAction(null, null);
+                    }
+                );
+        }
+    }
+    copyFromPreviousClassB(){
+        if(confirm("Are you sure want to copy data from most recent date?")) {
+            this.busy = this.monitoringHFService.getPreviousData({"type": "CLASS_B"})
+                .subscribe(
+                    monitoringData => {
+                        console.log(monitoringData);
+                        this.selectedData.monitoringData.classB = monitoringData.classB;
+                        this.successMessage = "Successfully loaded previous date CLASS B data.";
+                    },
+                    (error:ErrorResponse) => {
+                        this.errorMessage = "Error loading monitoring data (previous)";
+                        if (error && !error.isEmpty()) {
+                            this.processErrorMessage(error);
+                        }
+                        this.postAction(null, null);
+                    }
+                );
+        }
+    }
+    copyFromPreviousApprovedFunds(){
+        if(confirm("Are you sure want to copy data from most recent date?")) {
+            this.busy = this.monitoringHFService.getPreviousData({"type": "APPROVED_FUNDS"})
+                .subscribe(
+                    monitoringData => {
+                        console.log(monitoringData);
+                        this.selectedData.monitoringData.approvedFunds = monitoringData.approvedFunds;
+                        this.successMessage = "Successfully loaded previous date APPROVED FUNDS data.";
+                        if (this.selectedData.monitoringData.approvedFunds != null && this.selectedData.monitoringData.approvedFunds.length > 0) {
+                            for (var i = 0; i < this.selectedData.monitoringData.approvedFunds.length; i++) {
+                                $('#approveDateDTPicker' + i).datetimepicker({
+                                    //defaultDate: new Date(),
+                                    format: 'DD-MM-YYYY'
+                                });
+                            }
+                        }
+                    },
+                    (error:ErrorResponse) => {
+                        this.errorMessage = "Error loading monitoring data (previous)";
+                        if (error && !error.isEmpty()) {
+                            this.processErrorMessage(error);
+                        }
+                        this.postAction(null, null);
+                    }
+                );
+        }
+    }
+
     checkDataFields(){
         return true;
         if(this.selectedData == null || this.selectedData.monitoringData == null){

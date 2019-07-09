@@ -2,9 +2,7 @@ package kz.nicnbk.service.api.monitoring;
 
 import kz.nicnbk.service.api.base.BaseService;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
-import kz.nicnbk.service.dto.monitoring.MonitoringHedgeFundDataDto;
-import kz.nicnbk.service.dto.monitoring.MonitoringHedgeFundDataHolderDto;
-import kz.nicnbk.service.dto.monitoring.MonitoringHedgeFundSearchParamsDto;
+import kz.nicnbk.service.dto.monitoring.*;
 
 import java.util.Date;
 import java.util.List;
@@ -14,9 +12,11 @@ import java.util.List;
  */
 public interface MonitoringHedgeFundService extends BaseService {
 
-    List<MonitoringHedgeFundDataHolderDto> getAllData();
+    MonitoringHedgeFundListDataHolderDto getAllData();
 
     MonitoringHedgeFundDataHolderDto getMonitoringDataByDate(MonitoringHedgeFundSearchParamsDto searchParams);
+
+    MonitoringHedgeFundDataDto getMonitoringDataForPreviousDate(MonitoringHedgeFundTypedSearchParamsDto searchParams);
 
     EntitySaveResponseDto save(MonitoringHedgeFundDataHolderDto dataDto, String username);
 }

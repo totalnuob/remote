@@ -28,4 +28,8 @@ public interface MonitoringHedgeFundGeneralInformationRepository extends PagingA
 
     @Query("SELECT e FROM MonitoringHedgeFundGeneralInformation e")
     List<MonitoringHedgeFundGeneralInformation> findAll();
+
+    @Query("SELECT e FROM MonitoringHedgeFundGeneralInformation e WHERE e.type.id=?1 AND e.monitoringDate=" +
+            "(SELECT MAX(e2.monitoringDate) FROM MonitoringHedgeFundGeneralInformation e2 WHERE e2.type.id=?1)")
+    List<MonitoringHedgeFundGeneralInformation> getMostRecentRecordsBeforeDate(Integer type);
 }

@@ -25,4 +25,8 @@ public interface MonitoringHedgeFundApprovedFundRepository extends PagingAndSort
 
     @Query("SELECT e FROM MonitoringHedgeFundApprovedFund e")
     List<MonitoringHedgeFundApprovedFund> findAll();
+
+    @Query("SELECT e FROM MonitoringHedgeFundApprovedFund e WHERE e.monitoringDate=" +
+            "(SELECT MAX(e2.monitoringDate) FROM MonitoringHedgeFundApprovedFund e2)")
+    List<MonitoringHedgeFundApprovedFund> getMostRecentRecordsBeforeDate();
 }

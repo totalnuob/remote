@@ -24,4 +24,8 @@ public interface MonitoringHedgeFundFundAllocationByStrategyRepository extends P
 
     @Query("SELECT e FROM MonitoringHedgeFundAllocationByStrategy e")
     List<MonitoringHedgeFundAllocationByStrategy> findAll();
+
+    @Query("SELECT e FROM MonitoringHedgeFundAllocationByStrategy e WHERE e.type.id=?1 AND e.monitoringDate=" +
+            "(SELECT MAX(e2.monitoringDate) FROM MonitoringHedgeFundAllocationByStrategy e2 WHERE e2.type.id=?1)")
+    List<MonitoringHedgeFundAllocationByStrategy> getMostRecentRecordsBeforeDate(Integer typeId);
 }

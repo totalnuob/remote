@@ -12,10 +12,9 @@ public class MonitoringHedgeFundDataDto implements BaseDto{
     private MonitoringHedgeFundDataOverallDto overall;
     private MonitoringHedgeFundDataClassADto classA;
     private MonitoringHedgeFundDataClassBDto classB;
-
     private List<MonitoringHedgeFundApprovedFundInfoDto> approvedFunds;
 
-    List<MonitoringHedgeFundDateDoubleValueDto> returnsHFRI;
+    //List<MonitoringHedgeFundDateDoubleValueDto> returnsHFRI;
 
     public MonitoringHedgeFundDataOverallDto getOverall() {
         return overall;
@@ -41,13 +40,13 @@ public class MonitoringHedgeFundDataDto implements BaseDto{
         this.classB = classB;
     }
 
-    public List<MonitoringHedgeFundDateDoubleValueDto> getReturnsHFRI() {
-        return returnsHFRI;
-    }
-
-    public void setReturnsHFRI(List<MonitoringHedgeFundDateDoubleValueDto> returnsHFRI) {
-        this.returnsHFRI = returnsHFRI;
-    }
+//    public List<MonitoringHedgeFundDateDoubleValueDto> getReturnsHFRI() {
+//        return returnsHFRI;
+//    }
+//
+//    public void setReturnsHFRI(List<MonitoringHedgeFundDateDoubleValueDto> returnsHFRI) {
+//        this.returnsHFRI = returnsHFRI;
+//    }
 
     public List<MonitoringHedgeFundApprovedFundInfoDto> getApprovedFunds() {
         return approvedFunds;

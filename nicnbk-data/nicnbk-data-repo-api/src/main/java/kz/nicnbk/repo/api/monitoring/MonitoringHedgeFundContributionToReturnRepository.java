@@ -26,4 +26,8 @@ public interface MonitoringHedgeFundContributionToReturnRepository extends Pagin
 
     @Query("SELECT e FROM MonitoringHedgeFundContributionToReturn e")
     List<MonitoringHedgeFundContributionToReturn> findAll();
+
+    @Query("SELECT e FROM MonitoringHedgeFundContributionToReturn e WHERE e.type.id=?1 AND e.monitoringDate=" +
+            "(SELECT MAX(e2.monitoringDate) FROM MonitoringHedgeFundContributionToReturn e2 WHERE e2.type.id=?1)")
+    List<MonitoringHedgeFundContributionToReturn> getMostRecentRecordsBeforeDate(Integer typeId);
 }

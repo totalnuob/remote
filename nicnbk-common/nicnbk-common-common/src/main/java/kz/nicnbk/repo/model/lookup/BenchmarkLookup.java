@@ -6,7 +6,8 @@ package kz.nicnbk.repo.model.lookup;
 public enum BenchmarkLookup {
 
     S_AND_P("S_AND_P"),
-    T_BILLS("T_BILLS");
+    T_BILLS("T_BILLS"),
+    HFRI("HFRI");
 
     private String code;
 
