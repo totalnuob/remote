@@ -7,7 +7,7 @@ import java.util.Date;
 /**
  * Created by magzumov on 07.07.2016.
  */
-public class MonitoringHedgeFundDateDoubleValueDto implements BaseDto{
+public class MonitoringHedgeFundDateDoubleValueDto implements BaseDto, Comparable{
 
     private Date date;
     private Double value;
@@ -33,5 +33,10 @@ public class MonitoringHedgeFundDateDoubleValueDto implements BaseDto{
 
     public void setValue(Double value) {
         this.value = value;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return this.date.compareTo(((MonitoringHedgeFundDateDoubleValueDto) o).date);
     }
 }

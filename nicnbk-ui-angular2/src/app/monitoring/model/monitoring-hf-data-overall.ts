@@ -8,5 +8,5 @@ export class MonitoringHFDataOverall extends UpdatedEntity{
     contributionToReturn: MonitoringHFDataNameNumericValue[];
     allocationByStrategy: MonitoringHFDataNameNumericValue[];
 
-    returns: MonitoringHFDataNameDateValue[];
+    //returns: MonitoringHFDataNameDateValue[];
 }

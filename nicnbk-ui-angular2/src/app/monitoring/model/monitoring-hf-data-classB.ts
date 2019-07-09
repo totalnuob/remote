@@ -11,5 +11,5 @@ export class MonitoringHFDataClassB extends UpdatedEntity{
 
     fundAllocations: MonitoringHFDataTopFundInfo[];
 
-    returns: MonitoringHFDataNameDateValue[];
+    //returns: MonitoringHFDataNameDateValue[];
 }

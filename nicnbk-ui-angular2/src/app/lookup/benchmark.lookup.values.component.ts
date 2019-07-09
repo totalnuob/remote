@@ -156,11 +156,11 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
             this.errorMessageSaveBenchmark = "Return value required.";
             return false;
         }
-        if(!this.selectedBenchmark.indexValue){
-            this.successMessageSaveBenchmark = null;
-            this.errorMessageSaveBenchmark = "Index value required.";
-            return false;
-        }
+        //if(!this.selectedBenchmark.indexValue){
+        //    this.successMessageSaveBenchmark = null;
+        //    this.errorMessageSaveBenchmark = "Index value required.";
+        //    return false;
+        //}
 
         this.busy = this.lookupService.saveBenchmark(this.selectedBenchmark)
             .subscribe(

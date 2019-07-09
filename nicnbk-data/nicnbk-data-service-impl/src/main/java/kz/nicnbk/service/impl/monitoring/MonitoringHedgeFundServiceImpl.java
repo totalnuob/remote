@@ -11,6 +11,7 @@ import kz.nicnbk.repo.model.monitoring.*;
 import kz.nicnbk.service.api.benchmark.BenchmarkService;
 import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.api.monitoring.MonitoringHedgeFundService;
+import kz.nicnbk.service.api.monitoring.NicPortfolioService;
 import kz.nicnbk.service.dto.benchmark.BenchmarkValueDto;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
 import kz.nicnbk.service.dto.common.ResponseStatusType;
@@ -51,6 +52,9 @@ public class MonitoringHedgeFundServiceImpl implements MonitoringHedgeFundServic
     @Autowired
     private BenchmarkService benchmarkService;
 
+    @Autowired
+    private NicPortfolioService nicPortfolioService;
+
     @Override
     public MonitoringHedgeFundListDataHolderDto getAllData() {
         //return getDummyData();
@@ -72,17 +76,53 @@ public class MonitoringHedgeFundServiceImpl implements MonitoringHedgeFundServic
         // Approved funds
         setApprovedFunds(dataMap);
 
+        // Check dates
+        //Date minDate = null;
+        Date maxDate = null;
+        for(Date date: dataMap.keySet()){
+//            if(minDate == null || minDate.after(date)){
+//                minDate = date;
+//            }
+            if(maxDate == null || maxDate.before(date)){
+                maxDate = date;
+            }
+        }
+
         // Set returns
-        // TODO: Load data from Monitoring NIC Portfolio
+        NicPortfolioResultDto nicPortfolioResultDto = this.nicPortfolioService.get();
+        if(nicPortfolioResultDto != null && nicPortfolioResultDto.getStatus() != null &&
+                nicPortfolioResultDto.getStatus().getCode().equalsIgnoreCase(ResponseStatusType.SUCCESS.getCode()) && nicPortfolioResultDto.getNicPortfolioDtoList() != null){
+            for(NicPortfolioDto portfolioDto: nicPortfolioResultDto.getNicPortfolioDtoList()){
+//                if(minDate != null && portfolioDto.getDate() != null && minDate.after(portfolioDto.getDate())){
+//                    continue;
+//                }
+                if(maxDate != null && portfolioDto.getDate() != null && maxDate.before(portfolioDto.getDate())){
+                    continue;
+                }
+                if(portfolioDto.getHedgeFundsMtd() != null){
+                    dateHolder.getReturnsConsolidated().add(new MonitoringHedgeFundDateDoubleValueDto(DateUtils.getLastDayOfCurrentMonth(portfolioDto.getDate()), portfolioDto.getHedgeFundsMtd()));
+                }
+                if(portfolioDto.getHedgeFundsClassAMtd() != null) {
+                    dateHolder.getReturnsClassA().add(new MonitoringHedgeFundDateDoubleValueDto(DateUtils.getLastDayOfCurrentMonth(portfolioDto.getDate()), portfolioDto.getHedgeFundsClassAMtd()));
+                }
+                if(portfolioDto.getHedgeFundsClassBMtd() != null) {
+                    dateHolder.getReturnsClassB().add(new MonitoringHedgeFundDateDoubleValueDto(DateUtils.getLastDayOfCurrentMonth(portfolioDto.getDate()), portfolioDto.getHedgeFundsClassBMtd()));
+                }
+            }
+
+            Collections.sort(dateHolder.getReturnsConsolidated());
+            Collections.sort(dateHolder.getReturnsClassA());
+            Collections.sort(dateHolder.getReturnsClassB());
+        }
 
 
         // Set HFRI
-        // TODO: Earliest date from Singularity returns
-        Date dateFrom = DateUtils.getDate("01.08.2015");
-        Date dateTo = null;
-        for(MonitoringHedgeFundDataHolderDto dataValue: dataMap.values()){
+        Date dateFrom = DateUtils.getDate("01.08.2015"); // TODO: min date for benchmarks
+        Date dateTo = maxDate;
+
+/*        for(MonitoringHedgeFundDataHolderDto dataValue: dataMap.values()){
             dateTo = dateTo == null ? dataValue.getDate() : (dateTo.before(dataValue.getDate()) ? dataValue.getDate() : dateTo);
-        }
+        }*/
         List<BenchmarkValueDto> benchmarks = benchmarkService.getBenchmarkValuesForDatesAndType(dateFrom, dateTo, BenchmarkLookup.HFRI.getCode());
         if(benchmarks != null){
             List<MonitoringHedgeFundDateDoubleValueDto> returnsHFRI = new ArrayList<>();
@@ -95,7 +135,6 @@ public class MonitoringHedgeFundServiceImpl implements MonitoringHedgeFundServic
 
             dateHolder.setReturnsHFRI(returnsHFRI);
         }
-
 
         List<MonitoringHedgeFundDataHolderDto> valueList = new ArrayList<MonitoringHedgeFundDataHolderDto>(dataMap.values());
         Collections.sort(valueList);
@@ -1231,7 +1270,7 @@ public class MonitoringHedgeFundServiceImpl implements MonitoringHedgeFundServic
         returns.add(new MonitoringHedgeFundDateDoubleValueDto(DateUtils.getDate("31.03.2019"), 0.01));
         returns.add(new MonitoringHedgeFundDateDoubleValueDto(DateUtils.getDate("30.04.2019"), 0.01));
 
-        overall.setReturns(returns);
+        //overall.setReturns(returns);
 
         data.setOverall(overall);
 
@@ -1334,7 +1373,7 @@ public class MonitoringHedgeFundServiceImpl implements MonitoringHedgeFundServic
         classA.setAllocationByStrategy(allocationsA);
 
         // RETURNS
-        classA.setReturns(returns);
+        //classA.setReturns(returns);
 
         data.setClassA(classA);
 
@@ -1394,7 +1433,7 @@ public class MonitoringHedgeFundServiceImpl implements MonitoringHedgeFundServic
         classB.setAllocationByStrategy(allocationsB);
 
         // returns
-        classB.setReturns(returns);
+        //classB.setReturns(returns);
 
         data.setClassB(classB);
 

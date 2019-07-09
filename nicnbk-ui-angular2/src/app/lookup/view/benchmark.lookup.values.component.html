@@ -176,12 +176,13 @@
                                         <option *ngFor="let type of benchmarkTypes" [value]="type.code">{{type.nameEn}}</option>
                                     </select>
                                 </div>
+
                                 <div class="col-md-2">
-                                    <input type="number" required class="form-control" placeholder="Enter value..." [(ngModel)]="selectedBenchmark.returnValue"/>
+                                    <input type="number" required class="form-control" placeholder="Enter return value..." [(ngModel)]="selectedBenchmark.returnValue"/>
                                 </div>
-                                <div class="col-md-2">
-                                    <input type="number" required class="form-control" placeholder="Enter value..." [(ngModel)]="selectedBenchmark.indexValue"/>
-                                </div>
+                                <!--<div class="col-md-2">-->
+                                    <!--<input type="number" required class="form-control" placeholder="Enter value..." [(ngModel)]="selectedBenchmark.indexValue"/>-->
+                                <!--</div>-->
                                 <!--<div class="col-md-2">-->
                                     <!--<input type="number" class="form-control" [disabled]="!checkAverageValue()" placeholder="KZT MON AVG..." [(ngModel)]="selectedBenchmark.averageValue"/>-->
                                 <!--</div>-->

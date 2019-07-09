@@ -13,7 +13,7 @@ public class MonitoringHedgeFundDataOverallDto implements BaseDto{
     List<MonitoringHedgeFundNameDoubleValueDto> contributionToReturn;
     List<MonitoringHedgeFundNameDoubleValueDto> allocationByStrategy;
 
-    List<MonitoringHedgeFundDateDoubleValueDto> returns;
+    //List<MonitoringHedgeFundDateDoubleValueDto> returns;
 
     public List<MonitoringHedgeFundNameTextValueDto> getGeneralInformation() {
         return generalInformation;
@@ -39,12 +39,12 @@ public class MonitoringHedgeFundDataOverallDto implements BaseDto{
         this.allocationByStrategy = allocationByStrategy;
     }
 
-    public List<MonitoringHedgeFundDateDoubleValueDto> getReturns() {
-        return returns;
-    }
-
-    public void setReturns(List<MonitoringHedgeFundDateDoubleValueDto> returns) {
-        this.returns = returns;
-    }
+//    public List<MonitoringHedgeFundDateDoubleValueDto> getReturns() {
+//        return returns;
+//    }
+//
+//    public void setReturns(List<MonitoringHedgeFundDateDoubleValueDto> returns) {
+//        this.returns = returns;
+//    }
 
 }
