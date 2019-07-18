@@ -521,12 +521,12 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
     }
 
     private getPerformanceMonthlyRowData(){
-        if(this.monitoringDataAll == null || this.monitoringDataAll.returnsConsolidated == null || this.monitoringDataAll.returnsHFRI == null){
+        if(this.monitoringDataAll == null || this.monitoringDataAll.cumulativeReturnsConsolidated == null || this.monitoringDataAll.cumulativeReturnsHFRI == null){
             return null;
         }
 
-        var returns = this.getReturnsByYear(this.monitoringDataAll.returnsConsolidated);
-        var returnsHFRI = this.getReturnsByYear(this.monitoringDataAll.returnsHFRI);
+        var returns = this.getReturnsByYear(this.monitoringDataAll.cumulativeReturnsConsolidated);
+        var returnsHFRI = this.getReturnsByYear(this.monitoringDataAll.cumulativeReturnsHFRI);
         //console.log(returns);
         //console.log(returnsHFRI);
 

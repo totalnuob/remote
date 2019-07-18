@@ -344,6 +344,38 @@ public class MathUtils {
         }
     }
 
+    public static Double[] getCumulativeReturns(int scale, Double[] returns){
+        if(returns == null){
+            return null;
+        }
+        Double[] cumulativeReturns = new Double[returns.length];
+        for(int i = 0; i < returns.length; i++){
+            if(i == 0){
+                cumulativeReturns[i] = returns[i];
+            }else{
+                double value = MathUtils.subtract(scale, cumulativeReturns[i - 1], 1.0);
+                value = MathUtils.multiply(scale, MathUtils.add(scale, returns[i], 1.0), value);
+                cumulativeReturns[i] = MathUtils.subtract(scale, value, 1.0);
+            }
+
+        }
+        return cumulativeReturns;
+    }
+
+    public static Double[] getCumulativeReturns(Double[] returns){
+        return getCumulativeReturns(2, returns);
+    }
+
+    public static Double getCumulativeReturn(int scale, Double previousCumulative, Double currentValue){
+        double value = MathUtils.subtract(scale, previousCumulative, 1.0);
+        value = MathUtils.multiply(scale, MathUtils.add(scale, currentValue, 1.0), value);
+        return MathUtils.subtract(scale, value, 1.0);
+    }
+
+    public static Double getCumulativeReturn(Double previousCumulative, Double currentValue){
+        return getCumulativeReturn(2, previousCumulative, currentValue);
+    }
+
 
     public static void main (String[] args){
         testSlope1();
