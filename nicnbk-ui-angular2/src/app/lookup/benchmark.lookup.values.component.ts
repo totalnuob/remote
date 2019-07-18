@@ -237,6 +237,12 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
         this.benchmarkUploadModalErrorMessage = null;
     }
 
+    closeBenchmarkEditModal(){
+        this.selectedBenchmark = new BenchmarkValue();
+        this.errorMessageSaveBenchmark = null;
+        this.successMessageSaveBenchmark = null;
+    }
+
     parseBenchmarkValues(){
         var benchmarks = [];
         if(this.uploadBenchmarkCode == null || this.uploadBenchmarkCode === ''){
