@@ -1,7 +1,8 @@
 package kz.nicnbk.repo.model.benchmark;
 
-import kz.nicnbk.repo.model.base.BaseEntity;
 import kz.nicnbk.repo.model.base.CreateUpdateBaseEntity;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.RelationTargetAuditMode;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -12,6 +13,7 @@ import java.util.Date;
  */
 
 @Entity
+@Audited
 @Table(name = "benchmark_value")
 public class BenchmarkValue extends CreateUpdateBaseEntity {
     private Benchmark benchmark;
@@ -21,6 +23,7 @@ public class BenchmarkValue extends CreateUpdateBaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "benchmark_id", nullable = false)
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     public Benchmark getBenchmark() {
         return benchmark;
     }

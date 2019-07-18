@@ -11,8 +11,6 @@ import java.util.Date;
 public abstract class CreateUpdateBaseEntity extends CreatorBaseEntity implements UpdateDate, Updater<Employee> {
 
 	private Date updateDate;
-
-    // TODO: User
     private Employee updater;
 
     @Column(name = "Updated")
@@ -36,16 +34,5 @@ public abstract class CreateUpdateBaseEntity extends CreatorBaseEntity implement
     public void setUpdater(Employee updater) {
         this.updater = updater;
     }
-
-    // TODO: User
-//    @ManyToOne(fetch= FetchType.LAZY)
-//    @JoinColumn(name = "UpdatedBy")
-//    public User getUpdater() {
-//        return updater;
-//    }
-//
-//    public void setUpdater(User updater) {
-//        this.updater = updater;
-//    }
 
 }

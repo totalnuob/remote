@@ -2,6 +2,8 @@ package kz.nicnbk.service.dto.lookup;
 
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.common.service.model.BaseDto;
+import kz.nicnbk.common.service.model.CreateUpdateBaseEntityDto;
+import kz.nicnbk.repo.model.common.CurrencyRates;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
@@ -9,7 +11,7 @@ import java.util.Date;
 /**
  * Created by magzumov on 08.07.2016.
  */
-public class CurrencyRatesDto implements BaseDto {
+public class CurrencyRatesDto extends CreateUpdateBaseEntityDto<CurrencyRates> {
     private Long id;
     private BaseDictionaryDto currency;
 

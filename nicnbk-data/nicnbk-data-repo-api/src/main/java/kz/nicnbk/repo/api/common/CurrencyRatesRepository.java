@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Created by magzumov on 02.08.2016.
  */
-public interface CurrencyRatesRepository extends PagingAndSortingRepository<CurrencyRates, Long> {
+public interface CurrencyRatesRepository extends PagingAndSortingRepository<CurrencyRates, Long>/*, RevisionRepository<CurrencyRates, Long, Integer>*/ {
 
     @Query("SELECT entity FROM CurrencyRates entity WHERE entity.date = ?1 AND entity.currency.code = ?2")
     CurrencyRates getRateForDateAndCurrency(@Param("date") @Temporal(TemporalType.DATE) Date date,
@@ -43,4 +43,6 @@ public interface CurrencyRatesRepository extends PagingAndSortingRepository<Curr
             " ORDER BY e.date DESC")
     Page<CurrencyRates> search(@Param("currencyCode") String currencyCode, @Param("dateFrom") @Temporal(TemporalType.DATE) Date dateFrom,
                                @Param("dateTo") @Temporal(TemporalType.DATE) Date dateTo,Pageable pageable);
+
+    //Revisions<Integer, CurrencyRates> findRevisions(Long id);
 }

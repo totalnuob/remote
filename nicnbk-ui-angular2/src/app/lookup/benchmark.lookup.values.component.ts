@@ -162,11 +162,11 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
             this.errorMessageSaveBenchmark = "Return value required.";
             return false;
         }
-        if(!this.selectedBenchmark.indexValue){
-            this.successMessageSaveBenchmark = null;
-            this.errorMessageSaveBenchmark = "Index value required.";
-            return false;
-        }
+        //if(!this.selectedBenchmark.indexValue){
+        //    this.successMessageSaveBenchmark = null;
+        //    this.errorMessageSaveBenchmark = "Index value required.";
+        //    return false;
+        //}
 
         this.busy = this.lookupService.saveBenchmark(this.selectedBenchmark)
             .subscribe(
@@ -244,6 +244,11 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
             this.benchmarkUploadModalErrorMessage = "Benchmark required";
             return;
         }
+        if(this.uploadedValues == null || this.uploadedValues.trim() === ''){
+            this.benchmarkUploadModalSuccessMessage = null;
+            this.benchmarkUploadModalErrorMessage = "Values required";
+            return;
+        }
         var rows = this.uploadedValues.split("\n");
         for(var i = 0; i < rows.length; i++){
             if(rows[i].trim() === ""){
@@ -252,7 +257,7 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
             var row = rows[i].split("\t");
             if(row.length != 2){
                 this.benchmarkUploadModalSuccessMessage = null;
-                this.benchmarkUploadModalErrorMessage = "Invalid data format";
+                this.benchmarkUploadModalErrorMessage = "Invalid format. Expected: date [tab] return";
                 return;
             }
             if(row[0] == null || row[0] === 'undefined' || row[0].split(".").length != 3){
