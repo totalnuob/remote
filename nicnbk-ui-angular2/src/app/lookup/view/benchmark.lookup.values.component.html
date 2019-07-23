@@ -106,6 +106,7 @@
                     <th>DATE</th>
                     <th>TYPE</th>
                     <th>RETURN</th>
+                    <th>YTD</th>
                     <!--<th>INDEX</th>-->
                     <!--<th>AVG VALUE</th>-->
                     <!--<th>AVG VALUE YR</th>-->
@@ -117,6 +118,7 @@
                         <td>{{item.date}}</td>
                         <td>{{item?.benchmark?.nameEn}}</td>
                         <td>{{item.returnValue}}</td>
+                        <td>{{item.ytd}}</td>
                         <!--<td>{{item.indexValue}}</td>-->
                         <!--<td>{{item.averageValue}}</td>-->
                         <!--<td>{{item.averageValueYear}}</td>-->
@@ -191,6 +193,10 @@
                                 <div class="col-md-3">
                                     <label>Return value</label>
                                     <input type="number" required class="form-control" placeholder="Enter return value..." [(ngModel)]="selectedBenchmark.returnValue"/>
+                                </div>
+                                <div class="col-md-3">
+                                    <label>Return value</label>
+                                    <input type="number" [disabled]="!checkYTD()" class="form-control" placeholder="Enter YTD value..." [(ngModel)]="selectedBenchmark.ytd"/>
                                 </div>
                                 <!--<div class="col-md-2">-->
                                     <!--<input type="number" required class="form-control" placeholder="Enter value..." [(ngModel)]="selectedBenchmark.indexValue"/>-->

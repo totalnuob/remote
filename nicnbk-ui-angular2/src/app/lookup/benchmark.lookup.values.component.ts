@@ -131,13 +131,12 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
 
     edit(item){
         this.errorMessageSaveBenchmark = null;
+        this.errorMessageSaveBenchmark = null;
         this.successMessageSaveBenchmark = null;
         if(item){
             this.selectedBenchmark = item;
         }else{
-
         }
-
     }
 
     save(){
@@ -288,7 +287,7 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
                 "returnValue": parseFloat(Number(return_value)).toFixed(4),"benchmark":benchmark});
         }
 
-        console.log(benchmarks);
+        //console.log(benchmarks);
 
         this.busy = this.lookupService.saveBenchmarksList(benchmarks)
             .subscribe(
@@ -319,4 +318,13 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
 
     }
 
+    checkYTD(){
+        var date = moment($('#valueDate').val(), "DD-MM-YYYY");
+        //console.log(date.toDate());
+        if(date.toDate().getMonth() == 11 && date.toDate().getDate() == 31){
+            return true;
+        }else{
+        }
+        return false;
+    }
 }

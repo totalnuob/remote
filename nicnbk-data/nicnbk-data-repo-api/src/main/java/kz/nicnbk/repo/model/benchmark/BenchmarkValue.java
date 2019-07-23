@@ -19,6 +19,7 @@ public class BenchmarkValue extends CreateUpdateBaseEntity {
     private Benchmark benchmark;
     private Date date;
     private Double returnValue;
+    private Double ytd;
     //private Double indexValue;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -60,4 +61,13 @@ public class BenchmarkValue extends CreateUpdateBaseEntity {
 //    public void setIndexValue(Double indexValue) {
 //        this.indexValue = indexValue;
 //    }
+
+
+    public Double getYtd() {
+        return ytd;
+    }
+
+    public void setYtd(Double ytd) {
+        this.ytd = ytd;
+    }
 }

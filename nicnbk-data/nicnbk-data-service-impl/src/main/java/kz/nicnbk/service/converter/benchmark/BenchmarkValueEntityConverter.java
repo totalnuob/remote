@@ -1,5 +1,6 @@
 package kz.nicnbk.service.converter.benchmark;
 
+import kz.nicnbk.common.service.util.DateUtils;
 import kz.nicnbk.repo.model.benchmark.Benchmark;
 import kz.nicnbk.repo.model.benchmark.BenchmarkValue;
 import kz.nicnbk.service.converter.dozer.BaseDozerEntityConverter;
@@ -24,6 +25,9 @@ public class BenchmarkValueEntityConverter extends BaseDozerEntityConverter<Benc
         if (dto.getBenchmark() != null && dto.getBenchmark().getCode() != null) {
             Benchmark currency = this.lookupService.findByTypeAndCode(Benchmark.class, dto.getBenchmark().getCode());
             entity.setBenchmark(currency);
+        }
+        if(dto.getDate() == null || DateUtils.getMonth(dto.getDate()) != 11 || DateUtils.getDay(dto.getDate()) != 31 ){
+            entity.setYtd(null);
         }
         return entity;
     }
