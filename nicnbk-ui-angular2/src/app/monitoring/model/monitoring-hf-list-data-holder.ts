@@ -14,6 +14,10 @@ export class MonitoringHFListDataHolder {
     returnsClassA: MonitoringHFDataNameDateValue[];
     returnsClassB: MonitoringHFDataNameDateValue[];
 
+    returnsYTDConsolidated: MonitoringHFDataNameDateValue[];
+    returnsYTDClassA: MonitoringHFDataNameDateValue[];
+    returnsYTDClassB: MonitoringHFDataNameDateValue[];
+
 
     cumulativeReturnsHFRI: MonitoringHFDataNameDateValue[];
     cumulativeReturnsConsolidated: MonitoringHFDataNameDateValue[];

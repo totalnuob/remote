@@ -110,46 +110,36 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
         }
 
         //console.log(dataArray);
-        if(!google.visualization){
-            return;
-        }
-        var data = google.visualization.arrayToDataTable(dataArray);
-        //var data = google.visualization.arrayToDataTable([
-        //    ['Element', 'Contribution to Return'],
-        //    ['Quantitative', 0.00],
-        //    ['Equities', 2.86],
-        //    ['Credit', 0.62],
-        //    ['Multi-Strategy', 0.10],
-        //    ['Macro', 0.55],
-        //    ['Relative Value', 0.48],
-        //]);
+        if(google && google.visualization) {
+            var data = google.visualization.arrayToDataTable(dataArray);
 
-        var options = {
-            title: "Contribution To Return, YTD %",
-            titleTextStyle: {
-                color: 'black',    // any HTML string color ('red', '#cc00cc')
-                //fontName: <string>, // i.e. 'Times New Roman'
-                fontSize: 14, // 12, 18 whatever you want (don't specify px)
-                bold: true,    // true or false
-                italic: false   // true of false
-            },
-            //width: 600,
-            //height: 400,
-            animation: {
-                duration: 500,
-                easing: 'out',
-                startup: true,
-            },
-            hAxis: {
-                format: '#.##',
-            },
-            chartArea: {left:100},
-            bar: {groupWidth: "80%"},
-            colors: ['#307240'],
-            legend: { position: "none" },
-        };
-        var chart = new google.visualization.BarChart(document.getElementById("contributionToReturn"));
-        chart.draw(data, options);
+            var options = {
+                title: "Contribution To Return, YTD %",
+                titleTextStyle: {
+                    color: 'black',    // any HTML string color ('red', '#cc00cc')
+                    //fontName: <string>, // i.e. 'Times New Roman'
+                    fontSize: 14, // 12, 18 whatever you want (don't specify px)
+                    bold: true,    // true or false
+                    italic: false   // true of false
+                },
+                //width: 600,
+                //height: 400,
+                animation: {
+                    duration: 500,
+                    easing: 'out',
+                    startup: true,
+                },
+                hAxis: {
+                    format: '#.##',
+                },
+                chartArea: {left: 100},
+                bar: {groupWidth: "80%"},
+                colors: ['#307240'],
+                legend: {position: "none"},
+            };
+            var chart = new google.visualization.BarChart(document.getElementById("contributionToReturn"));
+            chart.draw(data, options);
+        }
 
     }
 
@@ -292,9 +282,49 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
         var rowData = this.getReturnsRowData();
         if(rowData == null){
             return;
+        }else{
+            for(var i = 0; i < rowData.length; i++){
+                for(var j = 1; j < rowData[i].length; j++){
+                    if(rowData[i][j]) {
+                        rowData[i][j] = Number((parseFloat(rowData[i][j])*100).toFixed(2));
+                    }
+
+                    if(j == rowData[i].length - 1) { // YTD
+                        var year = Number(rowData[i][0]);
+
+                        if (this.monitoringDataAll && this.monitoringDataAll.returnsYTDConsolidated) {
+                            for (var k = 0; k < this.monitoringDataAll.returnsYTDConsolidated.length; k++) {
+                                if (this.monitoringDataAll.returnsYTDConsolidated[k].date) {
+                                    var yearYTD = Number(this.monitoringDataAll.returnsYTDConsolidated[k].date.split("-")[2]);
+                                    var monthYTD = Number(this.monitoringDataAll.returnsYTDConsolidated[k].date.split("-")[1]);
+                                    var dayYTD = Number(this.monitoringDataAll.returnsYTDConsolidated[k].date.split("-")[0]);
+                                    if (yearYTD == year && monthYTD == 12 && dayYTD == 31) {
+                                        rowData[i][j] = Number(parseFloat(this.monitoringDataAll.returnsYTDConsolidated[k].value*100).toFixed(2));
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
+
+        // TODO: limit by selected date
+        var month = Number(this.selectedData.date.split("-")[1]);
+        var year = Number(this.selectedData.date.split("-")[2]);
+        for(var i = 0; i < rowData.length; i++){
+            for(var j = 1; j < rowData[i].length; j++){
+                if(Number(rowData[i][0]) > year || (Number(rowData[i][0]) == year && j > month)){
+                    rowData[i][j] = null;
+                }
+            }
+        }
+
         data.addRows(rowData);
         //this.setReturnsRowData(data);
+
+        console.log(rowData);
 
         var options = {
             showRowNumber: false,
@@ -319,24 +349,28 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
     }
 
     private formatCells(data, rowData, colFrom, colTo) {
-
-        // row 0
-        var minMax = this.getMinMax(rowData[0]);
-        this.setColor(-1,1, 0, data, colFrom, colTo);
-
-        // row 1
-        minMax = this.getMinMax(rowData[1]);
-        this.setColor(-1,1, 1, data, colFrom, colTo);
-
-        // row 2
-        minMax = this.getMinMax(rowData[2]);
-        this.setColor(-1,1, 2, data, colFrom, colTo);
-        // row 3
-        minMax = this.getMinMax(rowData[3]);
-        this.setColor(-1,1, 3, data, colFrom, colTo);
-        // row 4
-        minMax = this.getMinMax(rowData[4]);
-        this.setColor(-1,1, 4, data, colFrom, colTo);
+        for(var i = 0; i < rowData.length; i++){
+            var minMax = this.getMinMax(rowData[i]);
+            this.setColor(-1,1, i, data, colFrom, colTo);
+        }
+        //
+        //// row 0
+        //var minMax = this.getMinMax(rowData[0]);
+        //this.setColor(-1,1, 0, data, colFrom, colTo);
+        //
+        //// row 1
+        //minMax = this.getMinMax(rowData[1]);
+        //this.setColor(-1,1, 1, data, colFrom, colTo);
+        //
+        //// row 2
+        //minMax = this.getMinMax(rowData[2]);
+        //this.setColor(-1,1, 2, data, colFrom, colTo);
+        //// row 3
+        //minMax = this.getMinMax(rowData[3]);
+        //this.setColor(-1,1, 3, data, colFrom, colTo);
+        //// row 4
+        //minMax = this.getMinMax(rowData[4]);
+        //this.setColor(-1,1, 4, data, colFrom, colTo);
 
     }
 
@@ -413,8 +447,8 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
             if(currentYear != year){
                 // different year
 
-                // TODO: YTD
-                currentYearReturns.push(-1000);
+                // YTD
+                currentYearReturns.push(0);
 
                 returnsArray.push(currentYearReturns);
 
@@ -437,28 +471,18 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
                 currentYearReturns.push(null);
                 currentMonth++;
             }
-            // TODO: YTD
-            currentYearReturns.push(-1000);
+            //YTD
+            currentYearReturns.push(0);
             returnsArray.push(currentYearReturns);
         }
-        //console.log(returnsArray);
         return returnsArray;
     }
 
     private getReturnsRowData(){
-        if(this.selectedData == null ||this.selectedData.monitoringData == null || this.selectedData.monitoringData.overall == null ||
-            this.selectedData.monitoringData.overall.returns == null){
+        if(this.monitoringDataAll == null || this.monitoringDataAll.returnsConsolidated == null){
             return null;
         }
-        //console.log(this.selectedData.monitoringData.overall.returns);
-        return this.getReturnsByYear(this.selectedData.monitoringData.overall.returns);
-        //return [
-        //    ["2015", null,null,null,null,null,null,null,-1.59,-2.17,0.12,0.19,-0.56,-3.96],
-        //    ["2016", -2.42,-1.56,0.14,0.76,0.83,-0.31,0.42,0.88,0.17,0.04,1.27,0.88,1.02],
-        //    ["2017", 0.95,0.57,0.02,0.51,0.67,-0.07,0.70,0.22,0.54,1.21,0.33,0.54,6.39],
-        //    ["2018",2.25,-0.89,-0.16,0.16,1.32,0.03,0.15,0.53,0.53,-2.69,-0.95,-1.43,-1.22],
-        //    ["2019", 2.05,0.97,0.53,0.88,null,null,null,null,null,null,null,null,4.50]
-        //];
+        return this.getReturnsByYear(this.monitoringDataAll.returnsConsolidated);
     }
 
     drawPerformanceMonthlyOverall(){
@@ -475,6 +499,7 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
         data.addColumn({type: 'number', role: 'interval'});
         data.addColumn({type: 'number', role: 'interval'});
         var dataRows = this.getPerformanceMonthlyRowData()
+        //console.log(dataRows);
         if(dataRows == null){
             return;
         }
@@ -536,16 +561,16 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
             return null;
         }
         //check dates match
-        for(var i = 0; i < returns.length; i++){
-            //console.log(returns[i]);
-            for(var j = 0; j < returns[i].length; j++) {
-                // must be in sorted order
-                if ((returns[i][j] != null && returnsHFRI[i][j] == null) || (returns[i][j] == null && returnsHFRI[i][j] != null)) {
-                    console.log("Returns and HFRI differ: " + returns[i][j] + " - " + returnsHFRI[i][j]);
-                    return null;
-                }
-            }
-        }
+        //for(var i = 0; i < returns.length; i++){
+        //    //console.log(returns[i]);
+        //    for(var j = 0; j < returns[i].length; j++) {
+        //        // must be in sorted order
+        //        if ((returns[i][j] != null && returnsHFRI[i][j] == null) || (returns[i][j] == null && returnsHFRI[i][j] != null)) {
+        //            console.log("Returns and HFRI differ: " + returns[i][j] + " - " + returnsHFRI[i][j]);
+        //            return null;
+        //        }
+        //    }
+        //}
 
         // limit by selected data date
         if(this.selectedData.date != null){
@@ -580,9 +605,9 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
         var performance = [];
         for(var i = 0; i < returns.length; i++){
             for(var j = 1; j <= 12; j++){
-                if((returns[i][j] == null && returnsHFRI[i][j] != null) || (returnsHFRI[i][j] == null && returns[i][j] != null)){
-                    return null;
-                }
+                //if((returns[i][j] == null && returnsHFRI[i][j] != null) || (returnsHFRI[i][j] == null && returns[i][j] != null)){
+                //    return null;
+                //}
                 if(returns[i][j] == null && returnsHFRI[i][j] == null){
                     continue;
                 }
@@ -662,33 +687,98 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
     //}
 
     drawReturnsComparisonTable(yearNum, portfolioName){
-        if(this.selectedData == null || this.selectedData.monitoringData == null || this.selectedData.monitoringData.returnsHFRI == null){
+        if(this.monitoringDataAll == null || this.monitoringDataAll.returnsHFRI == null){
             return null;
         }
         var selectedReturns = null;
         if(portfolioName === 'PortfolioA'){
-            if(this.selectedData.monitoringData.classA == null || this.selectedData.monitoringData.classA.returns == null){
+            if(this.monitoringDataAll == null || this.monitoringDataAll.returnsClassA == null){
                 return;
             }
-            selectedReturns = this.selectedData.monitoringData.classA.returns;
+            selectedReturns = this.monitoringDataAll.returnsClassA;
         }else if(portfolioName === 'PortfolioB'){
-            if(this.selectedData.monitoringData.classB == null || this.selectedData.monitoringData.classB.returns == null){
+            if(this.monitoringDataAll == null || this.monitoringDataAll.returnsClassB == null){
                 return;
             }
-            selectedReturns = this.selectedData.monitoringData.classB.returns;
+            selectedReturns = this.monitoringDataAll.returnsClassB;
         }else{
             return;
         }
 
         var returns = this.getReturnsByYear(selectedReturns);
-        var returnsHFRI = this.getReturnsByYear(this.selectedData.monitoringData.returnsHFRI);
+        var returnsHFRI = this.getReturnsByYear(this.monitoringDataAll.returnsHFRI);
 
         if(yearNum > returns.length || yearNum > returnsHFRI.length){
             return;
         }
 
-        var rowData = [returns[yearNum - 1], returnsHFRI[yearNum - 1]];
+        var returnsHFRIMathchingYear = null; for (var i = 0; i < returnsHFRI.length; i++){
+            if(returns[yearNum - 1][0] == returnsHFRI[i][0]){
+                returnsHFRIMathchingYear = returnsHFRI[i];
+            }
+        }
+
+        if(returnsHFRIMathchingYear == null){
+            return;
+        }
+
+        var rowData = [returns[yearNum - 1], returnsHFRIMathchingYear];
         var year = returns[yearNum - 1][0];
+        //console.log(year);
+        //console.log(rowData);
+
+        if(rowData == null){
+            return;
+        }else{
+            for(var i = 0; i < rowData.length; i++){
+                for(var j = 1; j < rowData[i].length; j++){
+                    if(rowData[i][j]) {
+                        rowData[i][j] = Number((parseFloat(rowData[i][j])*100).toFixed(2));
+                    }
+
+                    if(i == 0 && j == rowData[i].length - 1) { // YTD
+                        var year = Number(rowData[i][0]);
+
+                        if(portfolioName === "PortfolioA"){
+                            var returnsYTD = this.monitoringDataAll.returnsYTDClassA;
+                        }else if(portfolioName === "PortfolioB"){
+                            var returnsYTD = this.monitoringDataAll.returnsYTDClassB;
+                       }
+                        if (returnsYTD) {
+                            for (var k = 0; k < returnsYTD.length; k++) {
+                                if (returnsYTD[k].date) {
+                                    var yearYTD = Number(returnsYTD[k].date.split("-")[2]);
+                                    var monthYTD = Number(returnsYTD[k].date.split("-")[1]);
+                                    var dayYTD = Number(returnsYTD[k].date.split("-")[0]);
+                                    if (yearYTD == year && monthYTD == 12 && dayYTD == 31) {
+                                        rowData[i][j] = Number(parseFloat(returnsYTD[k].value*100).toFixed(2));
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        for(var i = 1; rowData.length > 0 && i < rowData[0].length; i++){
+            if(rowData[0][i] == null){
+                if(rowData.length > 1 && i < rowData[1].length) {
+                    rowData[1][i] = null;
+                }
+            }
+        }
+
+        var month = Number(this.selectedData.date.split("-")[1]);
+        var year = Number(this.selectedData.date.split("-")[2]);
+        for(var i = 0; i < rowData.length; i++){
+            for(var j = 1; j < rowData[i].length; j++){
+                if(Number(rowData[i][0]) > year || (Number(rowData[i][0]) == year && j > month)){
+                    rowData[i][j] = null;
+                }
+            }
+        }
 
         rowData[0][0] = "Singularity";
         rowData[1][0] = "HFRI";
@@ -1339,19 +1429,19 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
     }
 
     saveOverall(){
-        console.log(this.selectedData.monitoringData.overall);
+        //console.log(this.selectedData.monitoringData.overall);
     }
 
     saveClassA(){
-        console.log(this.selectedData.monitoringData.classA);
+        //console.log(this.selectedData.monitoringData.classA);
     }
 
     saveClassB(){
-        console.log(this.selectedData.monitoringData.classB);
+        //console.log(this.selectedData.monitoringData.classB);
     }
 
     saveApprovedFunds(){
-        console.log(this.selectedData.monitoringData.approvedFunds);
+        //console.log(this.selectedData.monitoringData.approvedFunds);
     }
 
     navigateToEditComponent(date){
@@ -1360,7 +1450,7 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
         }else{
             params = JSON.stringify({});
         }
-        console.log(params);
+        //console.log(params);
         this.router.navigate(['/monitoring/hf/edit/', {params}]);
     }
 

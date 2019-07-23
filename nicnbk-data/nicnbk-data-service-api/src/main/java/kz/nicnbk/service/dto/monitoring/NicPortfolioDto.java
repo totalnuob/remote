@@ -9,7 +9,7 @@ import java.util.Date;
  * Created by Pak on 13.06.2019.
  */
 
-public class NicPortfolioDto extends BaseEntityDto<NicPortfolio> {
+public class NicPortfolioDto extends BaseEntityDto<NicPortfolio> implements Comparable {
 
     private Date date;
 
@@ -499,5 +499,10 @@ public class NicPortfolioDto extends BaseEntityDto<NicPortfolio> {
 
     public void setHedgeFundsClassBYtd(Double hedgeFundsClassBYtd) {
         this.hedgeFundsClassBYtd = hedgeFundsClassBYtd;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return this.date.compareTo(((NicPortfolioDto) o).date);
     }
 }

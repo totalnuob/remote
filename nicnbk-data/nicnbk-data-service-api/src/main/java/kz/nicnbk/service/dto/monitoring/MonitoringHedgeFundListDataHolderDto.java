@@ -18,6 +18,12 @@ public class MonitoringHedgeFundListDataHolderDto implements BaseDto{
     List<MonitoringHedgeFundDateDoubleValueDto> returnsClassA;
     List<MonitoringHedgeFundDateDoubleValueDto> returnsClassB;
 
+    List<MonitoringHedgeFundDateDoubleValueDto> returnsYTDConsolidated;
+    List<MonitoringHedgeFundDateDoubleValueDto> returnsYTDClassA;
+    List<MonitoringHedgeFundDateDoubleValueDto> returnsYTDClassB;
+
+    List<MonitoringHedgeFundDateDoubleValueDto> returnsYTDHFRI;
+
     List<MonitoringHedgeFundDateDoubleValueDto> cumulativeReturnsHFRI;
     List<MonitoringHedgeFundDateDoubleValueDto> cumulativeReturnsConsolidated;
     List<MonitoringHedgeFundDateDoubleValueDto> cumulativeReturnsClassA;
@@ -29,6 +35,10 @@ public class MonitoringHedgeFundListDataHolderDto implements BaseDto{
         this.returnsConsolidated = new ArrayList<>();
         this.returnsClassA = new ArrayList<>();
         this.returnsClassB = new ArrayList<>();
+
+        this.returnsYTDConsolidated = new ArrayList<>();
+        this.returnsYTDClassA = new ArrayList<>();
+        this.returnsYTDClassB = new ArrayList<>();
 
         this.cumulativeReturnsHFRI = new ArrayList<>();
         this.cumulativeReturnsConsolidated = new ArrayList<>();
@@ -106,5 +116,29 @@ public class MonitoringHedgeFundListDataHolderDto implements BaseDto{
 
     public void setCumulativeReturnsHFRI(List<MonitoringHedgeFundDateDoubleValueDto> cumulativeReturnsHFRI) {
         this.cumulativeReturnsHFRI = cumulativeReturnsHFRI;
+    }
+
+    public List<MonitoringHedgeFundDateDoubleValueDto> getReturnsYTDConsolidated() {
+        return returnsYTDConsolidated;
+    }
+
+    public void setReturnsYTDConsolidated(List<MonitoringHedgeFundDateDoubleValueDto> returnsYTDConsolidated) {
+        this.returnsYTDConsolidated = returnsYTDConsolidated;
+    }
+
+    public List<MonitoringHedgeFundDateDoubleValueDto> getReturnsYTDClassA() {
+        return returnsYTDClassA;
+    }
+
+    public void setReturnsYTDClassA(List<MonitoringHedgeFundDateDoubleValueDto> returnsYTDClassA) {
+        this.returnsYTDClassA = returnsYTDClassA;
+    }
+
+    public List<MonitoringHedgeFundDateDoubleValueDto> getReturnsYTDClassB() {
+        return returnsYTDClassB;
+    }
+
+    public void setReturnsYTDClassB(List<MonitoringHedgeFundDateDoubleValueDto> returnsYTDClassB) {
+        this.returnsYTDClassB = returnsYTDClassB;
     }
 }

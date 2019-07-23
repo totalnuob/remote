@@ -367,7 +367,10 @@ public class MathUtils {
     }
 
     public static Double getCumulativeReturn(int scale, Double previousCumulative, Double currentValue){
-        double value = MathUtils.subtract(scale, previousCumulative, 1.0);
+        if(previousCumulative == null || previousCumulative.doubleValue() == 0.0){
+            return currentValue;
+        }
+        double value = MathUtils.add(scale, previousCumulative, 1.0);
         value = MathUtils.multiply(scale, MathUtils.add(scale, currentValue, 1.0), value);
         return MathUtils.subtract(scale, value, 1.0);
     }

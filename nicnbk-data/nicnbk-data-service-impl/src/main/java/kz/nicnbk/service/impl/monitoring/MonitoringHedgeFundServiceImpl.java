@@ -59,7 +59,7 @@ public class MonitoringHedgeFundServiceImpl implements MonitoringHedgeFundServic
     @Override
     public MonitoringHedgeFundListDataHolderDto getAllData() {
         //return getDummyData();
-        MonitoringHedgeFundListDataHolderDto dateHolder = new MonitoringHedgeFundListDataHolderDto();
+        MonitoringHedgeFundListDataHolderDto dataHolder = new MonitoringHedgeFundListDataHolderDto();
 
         Map<Date, MonitoringHedgeFundDataHolderDto> dataMap = new HashMap<>();
         // General information
@@ -94,9 +94,12 @@ public class MonitoringHedgeFundServiceImpl implements MonitoringHedgeFundServic
         if(nicPortfolioResultDto != null && nicPortfolioResultDto.getStatus() != null &&
                 nicPortfolioResultDto.getStatus().getCode().equalsIgnoreCase(ResponseStatusType.SUCCESS.getCode()) && nicPortfolioResultDto.getNicPortfolioDtoList() != null){
 
-            Double previousCumulativeConsolidatedReturn = 0.0;
-            Double previousCumulativeClassAReturn = 0.0;
-            Double previousCumulativeClassBReturn = 0.0;
+            Double previousCumulativeConsolidatedReturn = null;
+            Double previousCumulativeClassAReturn = null;
+            Double previousCumulativeClassBReturn = null;
+
+            // Must be in ascending order to calculate Cumulative returns
+            Collections.sort(nicPortfolioResultDto.getNicPortfolioDtoList());
             for(NicPortfolioDto portfolioDto: nicPortfolioResultDto.getNicPortfolioDtoList()){
 //                if(minDate != null && portfolioDto.getDate() != null && minDate.after(portfolioDto.getDate())){
 //                    continue;
@@ -105,7 +108,9 @@ public class MonitoringHedgeFundServiceImpl implements MonitoringHedgeFundServic
                     continue;
                 }
                 if(portfolioDto.getHedgeFundsMtd() != null){
-                    dateHolder.getReturnsConsolidated().add(new MonitoringHedgeFundDateDoubleValueDto(DateUtils.getLastDayOfCurrentMonth(portfolioDto.getDate()), portfolioDto.getHedgeFundsMtd()));
+                    dataHolder.getReturnsConsolidated().add(new MonitoringHedgeFundDateDoubleValueDto(DateUtils.getLastDayOfCurrentMonth(portfolioDto.getDate()), portfolioDto.getHedgeFundsMtd()));
+
+                    dataHolder.getReturnsYTDConsolidated().add(new MonitoringHedgeFundDateDoubleValueDto(DateUtils.getLastDayOfCurrentMonth(portfolioDto.getDate()), portfolioDto.getHedgeFundsYtd()));
 
                     Double cumulativeValue = null;
                     if(previousCumulativeConsolidatedReturn == null) {
@@ -113,14 +118,15 @@ public class MonitoringHedgeFundServiceImpl implements MonitoringHedgeFundServic
                     }else {
                         cumulativeValue = MathUtils.getCumulativeReturn(18, previousCumulativeConsolidatedReturn, portfolioDto.getHedgeFundsMtd());
                     }
-                    dateHolder.getCumulativeReturnsConsolidated()
+                    dataHolder.getCumulativeReturnsConsolidated()
                             .add(new MonitoringHedgeFundDateDoubleValueDto(DateUtils.getLastDayOfCurrentMonth(portfolioDto.getDate()), cumulativeValue));
 
                     previousCumulativeConsolidatedReturn = cumulativeValue;
 
                 }
                 if(portfolioDto.getHedgeFundsClassAMtd() != null) {
-                    dateHolder.getReturnsClassA().add(new MonitoringHedgeFundDateDoubleValueDto(DateUtils.getLastDayOfCurrentMonth(portfolioDto.getDate()), portfolioDto.getHedgeFundsClassAMtd()));
+                    dataHolder.getReturnsClassA().add(new MonitoringHedgeFundDateDoubleValueDto(DateUtils.getLastDayOfCurrentMonth(portfolioDto.getDate()), portfolioDto.getHedgeFundsClassAMtd()));
+                    dataHolder.getReturnsYTDClassA().add(new MonitoringHedgeFundDateDoubleValueDto(DateUtils.getLastDayOfCurrentMonth(portfolioDto.getDate()), portfolioDto.getHedgeFundsClassAYtd()));
 
                     Double cumulativeValue = null;
                     if(previousCumulativeClassAReturn == null) {
@@ -128,13 +134,14 @@ public class MonitoringHedgeFundServiceImpl implements MonitoringHedgeFundServic
                     }else {
                         cumulativeValue = MathUtils.getCumulativeReturn(18, previousCumulativeClassAReturn, portfolioDto.getHedgeFundsClassAMtd());
                     }
-                    dateHolder.getCumulativeReturnsClassA()
+                    dataHolder.getCumulativeReturnsClassA()
                             .add(new MonitoringHedgeFundDateDoubleValueDto(DateUtils.getLastDayOfCurrentMonth(portfolioDto.getDate()), cumulativeValue));
 
                     previousCumulativeClassAReturn = cumulativeValue;
                 }
                 if(portfolioDto.getHedgeFundsClassBMtd() != null) {
-                    dateHolder.getReturnsClassB().add(new MonitoringHedgeFundDateDoubleValueDto(DateUtils.getLastDayOfCurrentMonth(portfolioDto.getDate()), portfolioDto.getHedgeFundsClassBMtd()));
+                    dataHolder.getReturnsClassB().add(new MonitoringHedgeFundDateDoubleValueDto(DateUtils.getLastDayOfCurrentMonth(portfolioDto.getDate()), portfolioDto.getHedgeFundsClassBMtd()));
+                    dataHolder.getReturnsYTDClassB().add(new MonitoringHedgeFundDateDoubleValueDto(DateUtils.getLastDayOfCurrentMonth(portfolioDto.getDate()), portfolioDto.getHedgeFundsClassBYtd()));
 
                     Double cumulativeValue = null;
                     if(previousCumulativeClassBReturn == null) {
@@ -142,20 +149,13 @@ public class MonitoringHedgeFundServiceImpl implements MonitoringHedgeFundServic
                     }else {
                         cumulativeValue = MathUtils.getCumulativeReturn(18, previousCumulativeClassBReturn, portfolioDto.getHedgeFundsClassBMtd());
                     }
-                    dateHolder.getCumulativeReturnsClassB()
+                    dataHolder.getCumulativeReturnsClassB()
                             .add(new MonitoringHedgeFundDateDoubleValueDto(DateUtils.getLastDayOfCurrentMonth(portfolioDto.getDate()), cumulativeValue));
 
                     previousCumulativeClassBReturn = cumulativeValue;
                 }
             }
 
-            Collections.sort(dateHolder.getReturnsConsolidated());
-            Collections.sort(dateHolder.getReturnsClassA());
-            Collections.sort(dateHolder.getReturnsClassB());
-
-            Collections.sort(dateHolder.getCumulativeReturnsConsolidated());
-            Collections.sort(dateHolder.getCumulativeReturnsClassA());
-            Collections.sort(dateHolder.getCumulativeReturnsClassB());
         }
 
 
@@ -171,6 +171,9 @@ public class MonitoringHedgeFundServiceImpl implements MonitoringHedgeFundServic
             List<MonitoringHedgeFundDateDoubleValueDto> returnsHFRI = new ArrayList<>();
             List<MonitoringHedgeFundDateDoubleValueDto> cumulativeReturnsHFRI = new ArrayList<>();
             Double previousCumulativeValue = null;
+
+            //MUST be in Ascending order to calculate Cumulative
+            Collections.sort(benchmarks);
             for(BenchmarkValueDto dto: benchmarks){
                 MonitoringHedgeFundDateDoubleValueDto valueHFRI = new MonitoringHedgeFundDateDoubleValueDto();
                 valueHFRI.setDate(dto.getDate());
@@ -192,19 +195,19 @@ public class MonitoringHedgeFundServiceImpl implements MonitoringHedgeFundServic
                 previousCumulativeValue = cumulativeValue;
             }
 
-            dateHolder.setReturnsHFRI(returnsHFRI);
-            Collections.sort(dateHolder.getReturnsHFRI());
+            dataHolder.setReturnsHFRI(returnsHFRI);
+            Collections.sort(dataHolder.getReturnsHFRI());
 
-            dateHolder.setCumulativeReturnsHFRI(cumulativeReturnsHFRI);
-            Collections.sort(dateHolder.getCumulativeReturnsHFRI());
+            dataHolder.setCumulativeReturnsHFRI(cumulativeReturnsHFRI);
+            Collections.sort(dataHolder.getCumulativeReturnsHFRI());
         }
 
         List<MonitoringHedgeFundDataHolderDto> valueList = new ArrayList<MonitoringHedgeFundDataHolderDto>(dataMap.values());
         Collections.sort(valueList);
 
-        dateHolder.setData(valueList);
+        dataHolder.setData(valueList);
 
-        return dateHolder;
+        return dataHolder;
     }
 
     private void setGeneralInformation(Map<Date, MonitoringHedgeFundDataHolderDto> dataMap){
