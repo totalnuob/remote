@@ -77,6 +77,7 @@ public class MonitoringHedgeFundServiceImpl implements MonitoringHedgeFundServic
         // Approved funds
         setApprovedFunds(dataMap);
 
+
         // Check dates
         //Date minDate = null;
         Date maxDate = null;
@@ -170,6 +171,8 @@ public class MonitoringHedgeFundServiceImpl implements MonitoringHedgeFundServic
         if(benchmarks != null){
             List<MonitoringHedgeFundDateDoubleValueDto> returnsHFRI = new ArrayList<>();
             List<MonitoringHedgeFundDateDoubleValueDto> cumulativeReturnsHFRI = new ArrayList<>();
+
+            List<MonitoringHedgeFundDateDoubleValueDto> returnsYTDHFRI = new ArrayList<>();
             Double previousCumulativeValue = null;
 
             //MUST be in Ascending order to calculate Cumulative
@@ -179,6 +182,11 @@ public class MonitoringHedgeFundServiceImpl implements MonitoringHedgeFundServic
                 valueHFRI.setDate(dto.getDate());
                 valueHFRI.setValue(dto.getReturnValue());
                 returnsHFRI.add(valueHFRI);
+
+                if(DateUtils.getMonth(dto.getDate()) == 11 && DateUtils.getDay(dto.getDate()) == 31){
+                    // December 31
+                    returnsYTDHFRI.add(new MonitoringHedgeFundDateDoubleValueDto(dto.getDate(), dto.getYtd()));
+                }
 
                 // Cumulative
                 MonitoringHedgeFundDateDoubleValueDto cumulativeValueHFRI = new MonitoringHedgeFundDateDoubleValueDto();
@@ -200,6 +208,9 @@ public class MonitoringHedgeFundServiceImpl implements MonitoringHedgeFundServic
 
             dataHolder.setCumulativeReturnsHFRI(cumulativeReturnsHFRI);
             Collections.sort(dataHolder.getCumulativeReturnsHFRI());
+
+            dataHolder.setReturnsYTDHFRI(returnsYTDHFRI);
+            Collections.sort(dataHolder.getReturnsYTDHFRI());
         }
 
         List<MonitoringHedgeFundDataHolderDto> valueList = new ArrayList<MonitoringHedgeFundDataHolderDto>(dataMap.values());
@@ -214,35 +225,35 @@ public class MonitoringHedgeFundServiceImpl implements MonitoringHedgeFundServic
         List<MonitoringHedgeFundGeneralInformation> allGeneralInfo = this.generalInformationRepository.findAll();
         if(allGeneralInfo != null){
             for(MonitoringHedgeFundGeneralInformation generalInfo: allGeneralInfo){
-                if(dataMap.get(generalInfo.getMonitoringDate()) == null){
-                    dataMap.put(generalInfo.getMonitoringDate(), new MonitoringHedgeFundDataHolderDto(DateUtils.getDateOnly(generalInfo.getMonitoringDate())));
+                if(dataMap.get(generalInfo.getReportDate().getDate()) == null){
+                    dataMap.put(generalInfo.getReportDate().getDate(), new MonitoringHedgeFundDataHolderDto(DateUtils.getDateOnly(generalInfo.getReportDate().getDate())));
                 }
 
                 if(generalInfo.getType().getCode().equalsIgnoreCase(MonitoringHedgeFundClassTypeLookup.OVERALL.getCode())){
-                    if(dataMap.get(generalInfo.getMonitoringDate()).getMonitoringData().getOverall().getGeneralInformation() == null){
-                        dataMap.get(generalInfo.getMonitoringDate()).getMonitoringData().getOverall().setGeneralInformation(new ArrayList<>());
+                    if(dataMap.get(generalInfo.getReportDate().getDate()).getMonitoringData().getOverall().getGeneralInformation() == null){
+                        dataMap.get(generalInfo.getReportDate().getDate()).getMonitoringData().getOverall().setGeneralInformation(new ArrayList<>());
                     }
                     MonitoringHedgeFundNameTextValueDto dto = new MonitoringHedgeFundNameTextValueDto();
                     dto.setName(generalInfo.getName());
                     dto.setValue(generalInfo.getValue());
-                    dataMap.get(generalInfo.getMonitoringDate()).getMonitoringData().getOverall().getGeneralInformation().add(dto);
+                    dataMap.get(generalInfo.getReportDate().getDate()).getMonitoringData().getOverall().getGeneralInformation().add(dto);
 
                 }else if(generalInfo.getType().getCode().equalsIgnoreCase(MonitoringHedgeFundClassTypeLookup.CLASS_A.getCode())){
-                    if(dataMap.get(generalInfo.getMonitoringDate()).getMonitoringData().getClassA().getGeneralInformation() == null){
-                        dataMap.get(generalInfo.getMonitoringDate()).getMonitoringData().getClassA().setGeneralInformation(new ArrayList<>());
+                    if(dataMap.get(generalInfo.getReportDate().getDate()).getMonitoringData().getClassA().getGeneralInformation() == null){
+                        dataMap.get(generalInfo.getReportDate().getDate()).getMonitoringData().getClassA().setGeneralInformation(new ArrayList<>());
                     }
                     MonitoringHedgeFundNameTextValueDto dto = new MonitoringHedgeFundNameTextValueDto();
                     dto.setName(generalInfo.getName());
                     dto.setValue(generalInfo.getValue());
-                    dataMap.get(generalInfo.getMonitoringDate()).getMonitoringData().getClassA().getGeneralInformation().add(dto);
+                    dataMap.get(generalInfo.getReportDate().getDate()).getMonitoringData().getClassA().getGeneralInformation().add(dto);
                 }else if(generalInfo.getType().getCode().equalsIgnoreCase(MonitoringHedgeFundClassTypeLookup.CLASS_B.getCode())){
-                    if(dataMap.get(generalInfo.getMonitoringDate()).getMonitoringData().getClassB().getGeneralInformation() == null){
-                        dataMap.get(generalInfo.getMonitoringDate()).getMonitoringData().getClassB().setGeneralInformation(new ArrayList<>());
+                    if(dataMap.get(generalInfo.getReportDate().getDate()).getMonitoringData().getClassB().getGeneralInformation() == null){
+                        dataMap.get(generalInfo.getReportDate().getDate()).getMonitoringData().getClassB().setGeneralInformation(new ArrayList<>());
                     }
                     MonitoringHedgeFundNameTextValueDto dto = new MonitoringHedgeFundNameTextValueDto();
                     dto.setName(generalInfo.getName());
                     dto.setValue(generalInfo.getValue());
-                    dataMap.get(generalInfo.getMonitoringDate()).getMonitoringData().getClassB().getGeneralInformation().add(dto);
+                    dataMap.get(generalInfo.getReportDate().getDate()).getMonitoringData().getClassB().getGeneralInformation().add(dto);
                 }
             }
         }
@@ -252,35 +263,35 @@ public class MonitoringHedgeFundServiceImpl implements MonitoringHedgeFundServic
         List<MonitoringHedgeFundAllocationByStrategy> allAllocationByStrategy = this.allocationByStrategyRepository.findAll();
         if(allAllocationByStrategy != null){
             for(MonitoringHedgeFundAllocationByStrategy allocationByStrategy: allAllocationByStrategy){
-                if(dataMap.get(allocationByStrategy.getMonitoringDate()) == null){
-                    dataMap.put(allocationByStrategy.getMonitoringDate(), new MonitoringHedgeFundDataHolderDto(DateUtils.getDateOnly(allocationByStrategy.getMonitoringDate())));
+                if(dataMap.get(allocationByStrategy.getReportDate().getDate()) == null){
+                    dataMap.put(allocationByStrategy.getReportDate().getDate(), new MonitoringHedgeFundDataHolderDto(DateUtils.getDateOnly(allocationByStrategy.getReportDate().getDate())));
                 }
 
                 if(allocationByStrategy.getType().getCode().equalsIgnoreCase(MonitoringHedgeFundClassTypeLookup.OVERALL.getCode())){
-                    if(dataMap.get(allocationByStrategy.getMonitoringDate()).getMonitoringData().getOverall().getAllocationByStrategy() == null){
-                        dataMap.get(allocationByStrategy.getMonitoringDate()).getMonitoringData().getOverall().setAllocationByStrategy(new ArrayList<>());
+                    if(dataMap.get(allocationByStrategy.getReportDate().getDate()).getMonitoringData().getOverall().getAllocationByStrategy() == null){
+                        dataMap.get(allocationByStrategy.getReportDate().getDate()).getMonitoringData().getOverall().setAllocationByStrategy(new ArrayList<>());
                     }
                     MonitoringHedgeFundNameDoubleValueDto dto = new MonitoringHedgeFundNameDoubleValueDto();
                     dto.setName(allocationByStrategy.getName());
                     dto.setValue(allocationByStrategy.getValue());
-                    dataMap.get(allocationByStrategy.getMonitoringDate()).getMonitoringData().getOverall().getAllocationByStrategy().add(dto);
+                    dataMap.get(allocationByStrategy.getReportDate().getDate()).getMonitoringData().getOverall().getAllocationByStrategy().add(dto);
 
                 }else if(allocationByStrategy.getType().getCode().equalsIgnoreCase(MonitoringHedgeFundClassTypeLookup.CLASS_A.getCode())){
-                    if(dataMap.get(allocationByStrategy.getMonitoringDate()).getMonitoringData().getClassA().getAllocationByStrategy() == null){
-                        dataMap.get(allocationByStrategy.getMonitoringDate()).getMonitoringData().getClassA().setAllocationByStrategy(new ArrayList<>());
+                    if(dataMap.get(allocationByStrategy.getReportDate().getDate()).getMonitoringData().getClassA().getAllocationByStrategy() == null){
+                        dataMap.get(allocationByStrategy.getReportDate().getDate()).getMonitoringData().getClassA().setAllocationByStrategy(new ArrayList<>());
                     }
                     MonitoringHedgeFundNameDoubleValueDto dto = new MonitoringHedgeFundNameDoubleValueDto();
                     dto.setName(allocationByStrategy.getName());
                     dto.setValue(allocationByStrategy.getValue());
-                    dataMap.get(allocationByStrategy.getMonitoringDate()).getMonitoringData().getClassA().getAllocationByStrategy().add(dto);
+                    dataMap.get(allocationByStrategy.getReportDate().getDate()).getMonitoringData().getClassA().getAllocationByStrategy().add(dto);
                 }else if(allocationByStrategy.getType().getCode().equalsIgnoreCase(MonitoringHedgeFundClassTypeLookup.CLASS_B.getCode())){
-                    if(dataMap.get(allocationByStrategy.getMonitoringDate()).getMonitoringData().getClassB().getAllocationByStrategy() == null){
-                        dataMap.get(allocationByStrategy.getMonitoringDate()).getMonitoringData().getClassB().setAllocationByStrategy(new ArrayList<>());
+                    if(dataMap.get(allocationByStrategy.getReportDate().getDate()).getMonitoringData().getClassB().getAllocationByStrategy() == null){
+                        dataMap.get(allocationByStrategy.getReportDate().getDate()).getMonitoringData().getClassB().setAllocationByStrategy(new ArrayList<>());
                     }
                     MonitoringHedgeFundNameDoubleValueDto dto = new MonitoringHedgeFundNameDoubleValueDto();
                     dto.setName(allocationByStrategy.getName());
                     dto.setValue(allocationByStrategy.getValue());
-                    dataMap.get(allocationByStrategy.getMonitoringDate()).getMonitoringData().getClassB().getAllocationByStrategy().add(dto);
+                    dataMap.get(allocationByStrategy.getReportDate().getDate()).getMonitoringData().getClassB().getAllocationByStrategy().add(dto);
                 }
             }
         }
@@ -290,53 +301,53 @@ public class MonitoringHedgeFundServiceImpl implements MonitoringHedgeFundServic
         List<MonitoringHedgeFundFundInformation> allFundInfo = this.fundFundInformationRepository.findAll();
         if(allFundInfo != null){
             for(MonitoringHedgeFundFundInformation fundInfo: allFundInfo){
-                if(dataMap.get(fundInfo.getMonitoringDate()) == null){
-                    dataMap.put(fundInfo.getMonitoringDate(), new MonitoringHedgeFundDataHolderDto(DateUtils.getDateOnly(fundInfo.getMonitoringDate())));
+                if(dataMap.get(fundInfo.getReportDate().getDate()) == null){
+                    dataMap.put(fundInfo.getReportDate().getDate(), new MonitoringHedgeFundDataHolderDto(DateUtils.getDateOnly(fundInfo.getReportDate().getDate())));
                 }
 
                 if(fundInfo.getType().getCode().equalsIgnoreCase(MonitoringHedgeFundClassTypeLookup.CLASS_A.getCode())){
                     if(fundInfo.getFundInfoType().getCode().equalsIgnoreCase(MonitoringHedgeFundFundInfoTypeLookup.POSITIVE_CONTRIBUTORS.getCode())){
-                        if(dataMap.get(fundInfo.getMonitoringDate()).getMonitoringData().getClassA().getPositiveContributors() == null){
-                            dataMap.get(fundInfo.getMonitoringDate()).getMonitoringData().getClassA().setPositiveContributors(new ArrayList<>());
+                        if(dataMap.get(fundInfo.getReportDate().getDate()).getMonitoringData().getClassA().getPositiveContributors() == null){
+                            dataMap.get(fundInfo.getReportDate().getDate()).getMonitoringData().getClassA().setPositiveContributors(new ArrayList<>());
                         }
                         MonitoringHedgeFundTopFundInfoDto dto = new MonitoringHedgeFundTopFundInfoDto();
                         dto.setFundName(fundInfo.getFundName());
                         dto.setStrategy(fundInfo.getStrategy());
                         dto.setYtd(fundInfo.getYtd());
-                        dataMap.get(fundInfo.getMonitoringDate()).getMonitoringData().getClassA().getPositiveContributors().add(dto);
+                        dataMap.get(fundInfo.getReportDate().getDate()).getMonitoringData().getClassA().getPositiveContributors().add(dto);
 
                     }else if(fundInfo.getFundInfoType().getCode().equalsIgnoreCase(MonitoringHedgeFundFundInfoTypeLookup.NEGATIVE_CONTRIBUTORS.getCode())){
-                        if(dataMap.get(fundInfo.getMonitoringDate()).getMonitoringData().getClassA().getNegativeContributors() == null){
-                            dataMap.get(fundInfo.getMonitoringDate()).getMonitoringData().getClassA().setNegativeContributors(new ArrayList<>());
+                        if(dataMap.get(fundInfo.getReportDate().getDate()).getMonitoringData().getClassA().getNegativeContributors() == null){
+                            dataMap.get(fundInfo.getReportDate().getDate()).getMonitoringData().getClassA().setNegativeContributors(new ArrayList<>());
                         }
                         MonitoringHedgeFundTopFundInfoDto dto = new MonitoringHedgeFundTopFundInfoDto();
                         dto.setFundName(fundInfo.getFundName());
                         dto.setStrategy(fundInfo.getStrategy());
                         dto.setYtd(fundInfo.getYtd());
-                        dataMap.get(fundInfo.getMonitoringDate()).getMonitoringData().getClassA().getNegativeContributors().add(dto);
+                        dataMap.get(fundInfo.getReportDate().getDate()).getMonitoringData().getClassA().getNegativeContributors().add(dto);
 
                     }else if(fundInfo.getFundInfoType().getCode().equalsIgnoreCase(MonitoringHedgeFundFundInfoTypeLookup.FUND_ALLOCATIONS.getCode())){
-                        if(dataMap.get(fundInfo.getMonitoringDate()).getMonitoringData().getClassA().getFundAllocations() == null){
-                            dataMap.get(fundInfo.getMonitoringDate()).getMonitoringData().getClassA().setFundAllocations(new ArrayList<>());
+                        if(dataMap.get(fundInfo.getReportDate().getDate()).getMonitoringData().getClassA().getFundAllocations() == null){
+                            dataMap.get(fundInfo.getReportDate().getDate()).getMonitoringData().getClassA().setFundAllocations(new ArrayList<>());
                         }
                         MonitoringHedgeFundTopFundInfoDto dto = new MonitoringHedgeFundTopFundInfoDto();
                         dto.setFundName(fundInfo.getFundName());
                         dto.setStrategy(fundInfo.getStrategy());
                         dto.setAllocation(fundInfo.getAllocation());
-                        dataMap.get(fundInfo.getMonitoringDate()).getMonitoringData().getClassA().getFundAllocations().add(dto);
+                        dataMap.get(fundInfo.getReportDate().getDate()).getMonitoringData().getClassA().getFundAllocations().add(dto);
 
                     }
 
                 }else if(fundInfo.getType().getCode().equalsIgnoreCase(MonitoringHedgeFundClassTypeLookup.CLASS_B.getCode())){
                     if(fundInfo.getFundInfoType().getCode().equalsIgnoreCase(MonitoringHedgeFundFundInfoTypeLookup.FUND_ALLOCATIONS.getCode())){
-                        if(dataMap.get(fundInfo.getMonitoringDate()).getMonitoringData().getClassB().getFundAllocations() == null){
-                            dataMap.get(fundInfo.getMonitoringDate()).getMonitoringData().getClassB().setFundAllocations(new ArrayList<>());
+                        if(dataMap.get(fundInfo.getReportDate().getDate()).getMonitoringData().getClassB().getFundAllocations() == null){
+                            dataMap.get(fundInfo.getReportDate().getDate()).getMonitoringData().getClassB().setFundAllocations(new ArrayList<>());
                         }
                         MonitoringHedgeFundTopFundInfoDto dto = new MonitoringHedgeFundTopFundInfoDto();
                         dto.setFundName(fundInfo.getFundName());
                         dto.setStrategy(fundInfo.getStrategy());
                         dto.setAllocation(fundInfo.getAllocation());
-                        dataMap.get(fundInfo.getMonitoringDate()).getMonitoringData().getClassB().getFundAllocations().add(dto);
+                        dataMap.get(fundInfo.getReportDate().getDate()).getMonitoringData().getClassB().getFundAllocations().add(dto);
 
                     }
                 }
@@ -348,18 +359,18 @@ public class MonitoringHedgeFundServiceImpl implements MonitoringHedgeFundServic
         List<MonitoringHedgeFundContributionToReturn> allContributionToReturns = this.contributionToReturnRepository.findAll();
         if(allContributionToReturns != null){
             for(MonitoringHedgeFundContributionToReturn contributionToReturn: allContributionToReturns){
-                if(dataMap.get(contributionToReturn.getMonitoringDate()) == null){
-                    dataMap.put(contributionToReturn.getMonitoringDate(), new MonitoringHedgeFundDataHolderDto(DateUtils.getDateOnly(contributionToReturn.getMonitoringDate())));
+                if(dataMap.get(contributionToReturn.getReportDate().getDate()) == null){
+                    dataMap.put(contributionToReturn.getReportDate().getDate(), new MonitoringHedgeFundDataHolderDto(DateUtils.getDateOnly(contributionToReturn.getReportDate().getDate())));
                 }
 
                 if(contributionToReturn.getType().getCode().equalsIgnoreCase(MonitoringHedgeFundClassTypeLookup.OVERALL.getCode())){
-                    if(dataMap.get(contributionToReturn.getMonitoringDate()).getMonitoringData().getOverall().getContributionToReturn() == null){
-                        dataMap.get(contributionToReturn.getMonitoringDate()).getMonitoringData().getOverall().setContributionToReturn(new ArrayList<>());
+                    if(dataMap.get(contributionToReturn.getReportDate().getDate()).getMonitoringData().getOverall().getContributionToReturn() == null){
+                        dataMap.get(contributionToReturn.getReportDate().getDate()).getMonitoringData().getOverall().setContributionToReturn(new ArrayList<>());
                     }
                     MonitoringHedgeFundNameDoubleValueDto dto = new MonitoringHedgeFundNameDoubleValueDto();
                     dto.setName(contributionToReturn.getName());
                     dto.setValue(contributionToReturn.getValue());
-                    dataMap.get(contributionToReturn.getMonitoringDate()).getMonitoringData().getOverall().getContributionToReturn().add(dto);
+                    dataMap.get(contributionToReturn.getReportDate().getDate()).getMonitoringData().getOverall().getContributionToReturn().add(dto);
                 }
             }
         }
@@ -369,11 +380,11 @@ public class MonitoringHedgeFundServiceImpl implements MonitoringHedgeFundServic
         List<MonitoringHedgeFundApprovedFund> allApprovedFunds = this.approvedFundRepository.findAll();
         if(allApprovedFunds != null){
             for(MonitoringHedgeFundApprovedFund approvedFund: allApprovedFunds){
-                if(dataMap.get(approvedFund.getMonitoringDate()) == null){
-                    dataMap.put(approvedFund.getMonitoringDate(), new MonitoringHedgeFundDataHolderDto(DateUtils.getDateOnly(approvedFund.getMonitoringDate())));
+                if(dataMap.get(approvedFund.getReportDate().getDate()) == null){
+                    dataMap.put(approvedFund.getReportDate().getDate(), new MonitoringHedgeFundDataHolderDto(DateUtils.getDateOnly(approvedFund.getReportDate().getDate())));
                 }
-                if(dataMap.get(approvedFund.getMonitoringDate()).getMonitoringData().getApprovedFunds() == null){
-                    dataMap.get(approvedFund.getMonitoringDate()).getMonitoringData().setApprovedFunds(new ArrayList<>());
+                if(dataMap.get(approvedFund.getReportDate().getDate()).getMonitoringData().getApprovedFunds() == null){
+                    dataMap.get(approvedFund.getReportDate().getDate()).getMonitoringData().setApprovedFunds(new ArrayList<>());
                 }
                 MonitoringHedgeFundApprovedFundInfoDto dto = new MonitoringHedgeFundApprovedFundInfoDto();
                 dto.setFundName(approvedFund.getFundName());
@@ -382,7 +393,7 @@ public class MonitoringHedgeFundServiceImpl implements MonitoringHedgeFundServic
                 dto.setProtocol(approvedFund.getProtocol());
                 dto.setApproveDate(DateUtils.getDateOnly(approvedFund.getApproveDate()));
                 dto.setLimits(approvedFund.getLimits());
-                dataMap.get(approvedFund.getMonitoringDate()).getMonitoringData().getApprovedFunds().add(dto);
+                dataMap.get(approvedFund.getReportDate().getDate()).getMonitoringData().getApprovedFunds().add(dto);
             }
         }
     }
@@ -711,7 +722,7 @@ public class MonitoringHedgeFundServiceImpl implements MonitoringHedgeFundServic
                 entity.setCreator(new Employee(employeeDto.getId()));
                 entity.setCreationDate(new Date());
                 entity.setType(new MonitoringHedgeFundClassType(MonitoringHedgeFundClassTypeLookup.OVERALL.getId()));
-                entity.setMonitoringDate(dataDto.getDate());
+                entity.getReportDate().setDate(dataDto.getDate());
                 entity.setName(infoDto.getName());
                 entity.setValue(infoDto.getValue());
                 entities.add(entity);
@@ -775,7 +786,7 @@ public class MonitoringHedgeFundServiceImpl implements MonitoringHedgeFundServic
                 MonitoringHedgeFundApprovedFund entity = new MonitoringHedgeFundApprovedFund();
                 entity.setCreator(new Employee(employeeDto.getId()));
                 entity.setCreationDate(new Date());
-                entity.setMonitoringDate(dataDto.getDate());
+                entity.getReportDate().setDate(dataDto.getDate());
 
                 entity.setFundName(infoDto.getFundName());
                 entity.setManagerName(infoDto.getManagerName());
@@ -800,7 +811,7 @@ public class MonitoringHedgeFundServiceImpl implements MonitoringHedgeFundServic
                 entity.setCreator(new Employee(employeeDto.getId()));
                 entity.setCreationDate(new Date());
                 entity.setType(new MonitoringHedgeFundClassType(typeId));
-                entity.setMonitoringDate(monitoringDate);
+                entity.getReportDate().setDate(monitoringDate);
                 entity.setName(generalInfoDto.getName());
                 entity.setValue(generalInfoDto.getValue());
                 entities.add(entity);
@@ -819,7 +830,7 @@ public class MonitoringHedgeFundServiceImpl implements MonitoringHedgeFundServic
                 entity.setCreator(new Employee(employeeDto.getId()));
                 entity.setCreationDate(new Date());
                 entity.setType(new MonitoringHedgeFundClassType(typeId));
-                entity.setMonitoringDate(monitoringDate);
+                entity.getReportDate().setDate(monitoringDate);
                 entity.setName(infoDto.getName());
                 entity.setValue(infoDto.getValue());
                 entities.add(entity);
@@ -838,7 +849,7 @@ public class MonitoringHedgeFundServiceImpl implements MonitoringHedgeFundServic
                 entity.setCreator(new Employee(employeeDto.getId()));
                 entity.setCreationDate(new Date());
                 entity.setType(new MonitoringHedgeFundClassType(typeId));
-                entity.setMonitoringDate(monitoringDate);
+                entity.getReportDate().setDate(monitoringDate);
                 entity.setFundInfoType(new MonitoringHedgeFundInfoType(fundInfoTypeId));
 
                 entity.setFundName(infoDto.getFundName());

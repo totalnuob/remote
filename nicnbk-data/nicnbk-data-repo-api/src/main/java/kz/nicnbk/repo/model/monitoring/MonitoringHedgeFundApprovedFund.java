@@ -16,13 +16,24 @@ import java.util.Date;
 @Table(name="monitoring_hf_approved_fund")
 public class MonitoringHedgeFundApprovedFund extends CreatorBaseEntity {
 
-    private Date monitoringDate;
+    private MonitoringHedgeFundReportDate reportDate;
+    //private Date monitoringDate;
     private String fundName;
     private String managerName;
     private String strategy;
     private String protocol;
     private Date approveDate;
     private String limits;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "report_date_id", nullable = false)
+    public MonitoringHedgeFundReportDate getReportDate() {
+        return reportDate;
+    }
+
+    public void setReportDate(MonitoringHedgeFundReportDate reportDate) {
+        this.reportDate = reportDate;
+    }
 
     @Column(name="fund_name")
     public String getFundName() {
@@ -79,14 +90,14 @@ public class MonitoringHedgeFundApprovedFund extends CreatorBaseEntity {
         this.limits = limits;
     }
 
-    @Column(name="monitoring_date", nullable = false)
-    @Temporal(TemporalType.DATE)
-    @DateTimeFormat(pattern="dd-MM-yyyy")
-    public Date getMonitoringDate() {
-        return monitoringDate;
-    }
-
-    public void setMonitoringDate(Date monitoringDate) {
-        this.monitoringDate = monitoringDate;
-    }
+//    @Column(name="monitoring_date", nullable = false)
+//    @Temporal(TemporalType.DATE)
+//    @DateTimeFormat(pattern="dd-MM-yyyy")
+//    public Date getMonitoringDate() {
+//        return monitoringDate;
+//    }
+//
+//    public void setMonitoringDate(Date monitoringDate) {
+//        this.monitoringDate = monitoringDate;
+//    }
 }

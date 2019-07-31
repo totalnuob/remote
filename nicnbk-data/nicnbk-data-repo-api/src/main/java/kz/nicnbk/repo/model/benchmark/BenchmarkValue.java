@@ -17,6 +17,7 @@ public class BenchmarkValue extends BaseEntity {
     private Date date;
     private Double returnValue;
     private Double indexValue;
+    private Double ytd;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "benchmark_id", nullable = false)
@@ -55,5 +56,13 @@ public class BenchmarkValue extends BaseEntity {
 
     public void setIndexValue(Double indexValue) {
         this.indexValue = indexValue;
+    }
+
+    public Double getYtd() {
+        return ytd;
+    }
+
+    public void setYtd(Double ytd) {
+        this.ytd = ytd;
     }
 }

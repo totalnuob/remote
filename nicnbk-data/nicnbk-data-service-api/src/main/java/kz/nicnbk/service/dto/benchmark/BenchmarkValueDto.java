@@ -14,6 +14,7 @@ public class BenchmarkValueDto extends BaseEntityDto<BenchmarkValue> implements 
     private Date date;
     private Double returnValue;
     private Double indexValue;
+    private Double ytd;
 
     public BaseDictionaryDto getBenchmark() {
         return benchmark;
@@ -45,6 +46,14 @@ public class BenchmarkValueDto extends BaseEntityDto<BenchmarkValue> implements 
 
     public void setIndexValue(Double indexValue) {
         this.indexValue = indexValue;
+    }
+
+    public Double getYtd() {
+        return ytd;
+    }
+
+    public void setYtd(Double ytd) {
+        this.ytd = ytd;
     }
 
     @Override

@@ -8,6 +8,7 @@ import {Subscription} from 'rxjs';
 import {MonitoringHedgeFundService} from "./monitoring-hf.service";
 import {MonitoringHFDataHolder} from "./model/monitoring-hf-data-holder";
 import {MonitoringHFListDataHolder} from "./model/monitoring-hf-list-data-holder";
+import {MonitoringHFDataApprovedFundInfo} from "./model/monitoring-hf-data-approved-fund-info";
 
 declare var google:any;
 declare var $: any;
@@ -48,13 +49,44 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
                     if(this.monitoringDataAll.data && this.monitoringDataAll.data.length > 0){
                         for(var i = 0; i < this.monitoringDataAll.data.length; i++) {
                             this.monitoringDates.push(this.monitoringDataAll.data[i].date);
-                        }
 
+                            if(this.monitoringDataAll.data[i].monitoringData && this.monitoringDataAll.data[i].monitoringData.approvedFunds){
+                                // SORT ARRAY
+                                this.monitoringDataAll.data[i].monitoringData.approvedFunds.sort((a, b) => (a.strategy > b.strategy) ? 1 : -1);
+
+                                var approvedFunds = [];
+                                var currentStrategy = null;
+                                for(var j = 0; j < this.monitoringDataAll.data[i].monitoringData.approvedFunds.length; j++){
+                                    var fund = this.monitoringDataAll.data[i].monitoringData.approvedFunds[j];
+                                    if(currentStrategy == null){
+                                        currentStrategy = fund.strategy;
+                                        // header row
+                                        var headerRow = new MonitoringHFDataApprovedFundInfo();
+                                        headerRow.headerRow = true;
+                                        headerRow.fundName = fund.strategy;
+                                        approvedFunds.push(headerRow);
+
+                                    }else if(currentStrategy != fund.strategy){
+                                        // header row
+                                        var headerRow = new MonitoringHFDataApprovedFundInfo();
+                                        headerRow.headerRow = true;
+                                        headerRow.fundName = fund.strategy;
+
+                                        approvedFunds.push(headerRow);
+                                        currentStrategy = fund.strategy;
+                                    }
+
+                                    approvedFunds.push(fund);
+                                }
+                                this.monitoringDataAll.data[i].monitoringData.approvedFunds = approvedFunds;
+                            }
+                        }
                         this.selectedDate = this.monitoringDataAll.data[0].date;
                         this.selectedData = this.monitoringDataAll.data[0];
 
-
                         this.drawGraph();
+
+
                     }
 
                     //console.log(this.monitoringDataAll.data);
@@ -287,6 +319,7 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
                 for(var j = 1; j < rowData[i].length; j++){
                     if(rowData[i][j]) {
                         rowData[i][j] = Number((parseFloat(rowData[i][j])*100).toFixed(2));
+                    }else{
                     }
 
                     if(j == rowData[i].length - 1) { // YTD
@@ -332,7 +365,8 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
             height: '100%',
             'allowHtml': true,
             cssClassNames: {
-                tableCell: '',
+                headerCell: 'tableCellCenter',
+                tableCell: 'tableCellCenter',
             }
         };
 
@@ -342,7 +376,7 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
         //}
 
         // set cell format
-        this.formatCells(data, rowData, 1, 12);
+        this.formatCells(data, rowData, 0, 13);
 
         var chart = this.createTableChart(document.getElementById('returns'));
         chart.draw(data, options);
@@ -352,7 +386,7 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
         for(var i = 0; i < rowData.length; i++){
             var minMax = this.getMinMax(rowData[i]);
             this.setColor(-1,1, i, data, colFrom, colTo);
-        }
+                    }
         //
         //// row 0
         //var minMax = this.getMinMax(rowData[0]);
@@ -392,23 +426,32 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
         for (var i = colFrom; i <= colTo; i++) {
             var value = data.getValue(rowIndex, i) != null ?
                 Number(data.getValue(rowIndex, i)) : null;
-            if(value == null){
-                continue;
-            }
-            var bgColor = '#CC312B';
+            //if (value == null) {
+            //    continue;
+            //}
+            var bgColor = '#f5f2f2';
             var textColor = 'black';
-            if (value >= Number(min + diff) && value < Number(min + (2*diff))) {
-                bgColor = '#ec816a';
-            } else if (value >= Number(min + (2*diff)) && value < Number(min + (3*diff))) {
-                bgColor = '#f4cd87';
-            } else if (value >= Number(min + (3*diff)) && value < Number(min + (4*diff))) {
-                bgColor = 'orange';
-            } else if (value >= Number(min + (4*diff)) && value < Number(min + (5*diff))) {
-                bgColor = '#b1e05b';
-            } else if (value >= Number(min + (5*diff))) {
-                bgColor = 'green';
+            //if (value >= Number(min + diff) && value < Number(min + (2*diff))) {
+            //    bgColor = '#ec816a';
+            //} else if (value >= Number(min + (2*diff)) && value < Number(min + (3*diff))) {
+            //    bgColor = '#f4cd87';
+            //} else if (value >= Number(min + (3*diff)) && value < Number(min + (4*diff))) {
+            //    bgColor = 'orange';
+            //} else if (value >= Number(min + (4*diff)) && value < Number(min + (5*diff))) {
+            //    bgColor = '#b1e05b';
+            //} else if (value >= Number(min + (5*diff))) {
+            //    bgColor = 'green';
+            //}
+
+            if (i >= 1 && i <= 12 && value != null){
+                if (value >= 1) {
+                    bgColor = "#18c451"; //green
+                } else if (value <= -1) {
+                    bgColor = "#f54568"; //red
+                }
             }
-            data.setProperty(rowIndex, i, 'style', 'background-color:' + bgColor + '; color: ' + textColor);
+
+            data.setProperty(rowIndex, i, 'style', 'text-align: center; background-color:' + bgColor + '; color: ' + textColor);
         }
         //console.log(min, max);
         //console.log(diff);
@@ -512,7 +555,7 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
             title: 'Monthly historical performance vs. benchmark',
             showRowNumber: false,
             width: '100%',
-            height: '400',
+            height: '450',
             animation: {
                 duration: 500,
                 easing: 'out',
@@ -521,7 +564,11 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
             'allowHtml': true,
             cssClassNames: {},
             colors:['green', '#a4dfb2'],
-            chartArea: {width: '80%'},
+            chartArea: {
+                top: 55,
+                height: '60%',
+                width: '80%'
+            },
             legend: {position: 'top'},
             vAxis: {
                 format: 'percent',
@@ -530,11 +577,10 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
                 slantedText: false,
                 textStyle: {
                     color: 'black',
-                    //fontName: ,
-                    fontSize: 11,
-                    //bold: <boolean>,
-                    //italic: <boolean>
-                }
+                    fontSize: 10
+                },
+                showTextEvery: 1,
+                minTextSpacing: 1
             },
             annotations: {
                 style: 'interval'
@@ -614,8 +660,8 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
                 var year = returns[i][0];
                 var month = j < 10 ? '0' + j : j + '';
                 if(returns[i][j] != null && returnsHFRI[i][j] != null) {
-                    var date = j == 1 || performance.length == 0 ? (month + '-' + year) : '';
-                    performance.push([date, returns[i][j], returnsHFRI[i][j], j == 1 ? -0.04 : null, j == 1 ? 0.04 : null]);
+                    var date = j == 1 || performance.length == 0 ? (month + '-' + year) : null;
+                    performance.push([date, returns[i][j], returnsHFRI[i][j], j == 1 ? -0.1 : null, j == 1 ? 0.1 : null]);
                 }
             }
         }
@@ -723,7 +769,7 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
         }
 
         var rowData = [returns[yearNum - 1], returnsHFRIMathchingYear];
-        var year = returns[yearNum - 1][0];
+        var headerYear = returns[yearNum - 1][0];
         //console.log(year);
         //console.log(rowData);
 
@@ -744,6 +790,23 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
                         }else if(portfolioName === "PortfolioB"){
                             var returnsYTD = this.monitoringDataAll.returnsYTDClassB;
                        }
+                        if (returnsYTD) {
+                            for (var k = 0; k < returnsYTD.length; k++) {
+                                if (returnsYTD[k].date) {
+                                    var yearYTD = Number(returnsYTD[k].date.split("-")[2]);
+                                    var monthYTD = Number(returnsYTD[k].date.split("-")[1]);
+                                    var dayYTD = Number(returnsYTD[k].date.split("-")[0]);
+                                    if (yearYTD == year && monthYTD == 12 && dayYTD == 31) {
+                                        rowData[i][j] = Number(parseFloat(returnsYTD[k].value*100).toFixed(2));
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }else if(i == 1 && j == rowData[i].length - 1) { // YTD
+                        var year = Number(rowData[i][0]);
+
+                        var returnsYTD = this.monitoringDataAll.returnsYTDHFRI;
                         if (returnsYTD) {
                             for (var k = 0; k < returnsYTD.length; k++) {
                                 if (returnsYTD[k].date) {
@@ -787,7 +850,7 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
             return;
         }
         var data = new google.visualization.DataTable();
-        data.addColumn("string", year);
+        data.addColumn("string", headerYear);
         data.addColumn("number", "Jan");
         data.addColumn("number", "Feb");
         data.addColumn("number", "Mar");
@@ -810,7 +873,8 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
             height: '100%',
             'allowHtml': true,
             cssClassNames: {
-                tableCell: '',
+                headerCell: 'tableCellCenter',
+                tableCell: 'tableCellCenter',
             }
         };
 
@@ -820,74 +884,74 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
         //}
 
         // set cell format
-        this.formatCells2(data, rowData, 1, 12);
+        this.formatCells2(data, rowData, 0, 13);
 
         var chart = this.createTableChart(document.getElementById('comparisonReturns' + portfolioName + yearNum));
         chart.draw(data, options);
     }
 
-    drawPortfolioAComparisonReturns(yearNum){
-        if(this.selectedData == null || this.selectedData.monitoringData == null || this.selectedData.monitoringData.classA == null ||
-            this.selectedData.monitoringData.classA.returns == null || this.monitoringDataAll.returnsHFRI == null){
-            return null;
-        }
-
-        var returns = this.getReturnsByYear(this.selectedData.monitoringData.classA.returns);
-        var returnsHFRI = this.getReturnsByYear(this.monitoringDataAll.returnsHFRI);
-
-        if(yearNum > returns.length || yearNum > returnsHFRI.length){
-            return;
-        }
-
-        var rowData = [returns[yearNum - 1], returnsHFRI[yearNum - 1]];
-        var year = returns[yearNum - 1][0];
-
-        rowData[0][0] = "Singularity";
-        rowData[1][0] = "HFRI";
-
-        if(!google.visualization){
-            return;
-        }
-
-        var data = new google.visualization.DataTable();
-        data.addColumn("string", year);
-        data.addColumn("number", "Jan");
-        data.addColumn("number", "Feb");
-        data.addColumn("number", "Mar");
-        data.addColumn("number", "Apr");
-        data.addColumn("number", "May");
-        data.addColumn("number", "Jun");
-        data.addColumn("number", "Jul");
-        data.addColumn("number", "Aug");
-        data.addColumn("number", "Sep");
-        data.addColumn("number", "Oct");
-        data.addColumn("number", "Nov");
-        data.addColumn("number", "Dec");
-        data.addColumn("number", "YTD");
-
-        data.addRows(rowData);
-
-        var options = {
-            showRowNumber: false,
-            width: '100%',
-            height: '100%',
-            'allowHtml': true,
-            cssClassNames: {
-                tableCell: '',
-            }
-        };
-
-        //var colorFormatter = this.getReturnsFormatter(rowData);
-        //for(var i = 1; i <= 12; i++){
-        //    colorFormatter.format(data, i);
-        //}
-
-        // set cell format
-        this.formatCells2(data, rowData, 1, 12);
-
-        var chart = this.createTableChart(document.getElementById('comparisonReturns' + yearNum));
-        chart.draw(data, options);
-    }
+    //drawPortfolioAComparisonReturns(yearNum){
+    //    if(this.selectedData == null || this.selectedData.monitoringData == null || this.selectedData.monitoringData.classA == null ||
+    //        this.selectedData.monitoringData.classA.returns == null || this.monitoringDataAll.returnsHFRI == null){
+    //        return null;
+    //    }
+    //
+    //    var returns = this.getReturnsByYear(this.selectedData.monitoringData.classA.returns);
+    //    var returnsHFRI = this.getReturnsByYear(this.monitoringDataAll.returnsHFRI);
+    //
+    //    if(yearNum > returns.length || yearNum > returnsHFRI.length){
+    //        return;
+    //    }
+    //
+    //    var rowData = [returns[yearNum - 1], returnsHFRI[yearNum - 1]];
+    //    var year = returns[yearNum - 1][0];
+    //
+    //    rowData[0][0] = "Singularity";
+    //    rowData[1][0] = "HFRI";
+    //
+    //    if(!google.visualization){
+    //        return;
+    //    }
+    //
+    //    var data = new google.visualization.DataTable();
+    //    data.addColumn("string", year);
+    //    data.addColumn("number", "Jan");
+    //    data.addColumn("number", "Feb");
+    //    data.addColumn("number", "Mar");
+    //    data.addColumn("number", "Apr");
+    //    data.addColumn("number", "May");
+    //    data.addColumn("number", "Jun");
+    //    data.addColumn("number", "Jul");
+    //    data.addColumn("number", "Aug");
+    //    data.addColumn("number", "Sep");
+    //    data.addColumn("number", "Oct");
+    //    data.addColumn("number", "Nov");
+    //    data.addColumn("number", "Dec");
+    //    data.addColumn("number", "YTD");
+    //
+    //    data.addRows(rowData);
+    //
+    //    var options = {
+    //        showRowNumber: false,
+    //        width: '100%',
+    //        height: '100%',
+    //        'allowHtml': true,
+    //        cssClassNames: {
+    //            tableCell: '',
+    //        }
+    //    };
+    //
+    //    //var colorFormatter = this.getReturnsFormatter(rowData);
+    //    //for(var i = 1; i <= 12; i++){
+    //    //    colorFormatter.format(data, i);
+    //    //}
+    //
+    //    // set cell format
+    //    this.formatCells2(data, rowData, 1, 12);
+    //
+    //    var chart = this.createTableChart(document.getElementById('comparisonReturns' + yearNum));
+    //    chart.draw(data, options);
+    //}
 
     //drawPortfolioAComparisonReturns2(){
     //    var data = new google.visualization.DataTable();

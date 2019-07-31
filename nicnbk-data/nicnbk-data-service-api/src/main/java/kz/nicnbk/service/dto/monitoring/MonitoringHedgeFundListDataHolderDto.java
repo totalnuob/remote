@@ -141,4 +141,12 @@ public class MonitoringHedgeFundListDataHolderDto implements BaseDto{
     public void setReturnsYTDClassB(List<MonitoringHedgeFundDateDoubleValueDto> returnsYTDClassB) {
         this.returnsYTDClassB = returnsYTDClassB;
     }
+
+    public List<MonitoringHedgeFundDateDoubleValueDto> getReturnsYTDHFRI() {
+        return returnsYTDHFRI;
+    }
+
+    public void setReturnsYTDHFRI(List<MonitoringHedgeFundDateDoubleValueDto> returnsYTDHFRI) {
+        this.returnsYTDHFRI = returnsYTDHFRI;
+    }
 }

@@ -16,7 +16,8 @@ import java.util.Date;
 @Table(name="monitoring_hf_fund_info")
 public class MonitoringHedgeFundFundInformation extends CreatorBaseEntity implements TypedEntity<MonitoringHedgeFundClassType> {
 
-    private Date monitoringDate;
+    private MonitoringHedgeFundReportDate reportDate;
+    //private Date monitoringDate;
     private MonitoringHedgeFundClassType type;
 
     private MonitoringHedgeFundInfoType fundInfoType;
@@ -24,6 +25,16 @@ public class MonitoringHedgeFundFundInformation extends CreatorBaseEntity implem
     private String strategy;
     private Double ytd;
     private Double allocation;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "report_date_id", nullable = false)
+    public MonitoringHedgeFundReportDate getReportDate() {
+        return reportDate;
+    }
+
+    public void setReportDate(MonitoringHedgeFundReportDate reportDate) {
+        this.reportDate = reportDate;
+    }
 
     @Override
     @ManyToOne(fetch = FetchType.LAZY)
@@ -82,14 +93,14 @@ public class MonitoringHedgeFundFundInformation extends CreatorBaseEntity implem
         this.allocation = allocation;
     }
 
-    @Column(name="monitoring_date", nullable = false)
-    @Temporal(TemporalType.DATE)
-    @DateTimeFormat(pattern="dd-MM-yyyy")
-    public Date getMonitoringDate() {
-        return monitoringDate;
-    }
-
-    public void setMonitoringDate(Date monitoringDate) {
-        this.monitoringDate = monitoringDate;
-    }
+//    @Column(name="monitoring_date", nullable = false)
+//    @Temporal(TemporalType.DATE)
+//    @DateTimeFormat(pattern="dd-MM-yyyy")
+//    public Date getMonitoringDate() {
+//        return monitoringDate;
+//    }
+//
+//    public void setMonitoringDate(Date monitoringDate) {
+//        this.monitoringDate = monitoringDate;
+//    }
 }

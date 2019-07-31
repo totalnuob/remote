@@ -144,7 +144,13 @@
 
             <br/>
             <div class="row">
-                <div id="returns"></div>
+                <div class="col-md-12">
+                    <!--<div class="col-md-1">&nbsp;</div>-->
+                    <div class="col-md-12">
+                        <div id="returns"></div>
+                    </div>
+                    <!--<div class="col-md-1">&nbsp;</div>-->
+                </div>
             </div>
             <br/>
             <div class="row">
@@ -397,6 +403,7 @@
                         <div class="row"> <!-- Returns-->
                             <div id="comparisonReturnsPortfolioB3"></div>
                         </div>
+                        <br/>
                         <div class="row"> <!-- Returns-->
                             <div id="comparisonReturnsPortfolioB4"></div>
                         </div>
@@ -431,7 +438,8 @@
                             <td>Approve date</td>
                             <td>Limits</td>
                         </tr>
-                        <tr *ngFor="let item of selectedData?.monitoringData?.approvedFunds">
+                        <tr *ngFor="let item of selectedData?.monitoringData?.approvedFunds" [style.background-color]="item.headerRow? '#dcd196' : 'white'"
+                            [style.font-weight]="item.headerRow? 'bold' : ''">
                             <td>{{item.fundName}}</td>
                             <td>{{item.managerName}}</td>
                             <td>{{item.strategy}}</td>

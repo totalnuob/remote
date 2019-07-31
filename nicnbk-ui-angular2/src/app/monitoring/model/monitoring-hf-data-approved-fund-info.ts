@@ -9,4 +9,6 @@ export class MonitoringHFDataApprovedFundInfo extends UpdatedEntity{
     approveDate: string;
     limits: string;
 
+    headerRow: boolean;
+
 }
