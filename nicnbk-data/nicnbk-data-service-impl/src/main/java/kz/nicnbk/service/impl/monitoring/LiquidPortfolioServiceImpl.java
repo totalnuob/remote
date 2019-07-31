@@ -87,6 +87,8 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
                 }
             }
 
+            shortList.add(this.calculateMtdQtdYtd(liquidPortfolioDtoList.get(liquidPortfolioDtoList.size() - 1).getDate(), liquidPortfolioList));
+
             return new LiquidPortfolioResultDto(shortList, ResponseStatusType.SUCCESS, "", "Liquid Portfolio data has been loaded successfully!", "");
         } catch (Exception ex) {
             logger.error("Error loading Liquid Portfolio data, ", ex);
@@ -178,7 +180,7 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
                     Row row = rowIteratorFixed.next();
                     rowNumberFixed++;
 
-                    if (ExcelUtils.isEmptyCellRange(row, 0, 16383)) {
+                    if (ExcelUtils.isEmptyCellRange(row, 1, 16383)) {
                         continue;
                     }
 
@@ -215,7 +217,7 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
                     Row row = rowIteratorEquity.next();
                     rowNumberEquity++;
 
-                    if (ExcelUtils.isEmptyCellRange(row, 0, 16383)) {
+                    if (ExcelUtils.isEmptyCellRange(row, 1, 16383)) {
                         continue;
                     }
 
@@ -252,7 +254,7 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
                     Row row = rowIteratorTransition.next();
                     rowNumberTransition++;
 
-                    if (ExcelUtils.isEmptyCellRange(row, 0, 16383)) {
+                    if (ExcelUtils.isEmptyCellRange(row, 1, 16383)) {
                         continue;
                     }
 
