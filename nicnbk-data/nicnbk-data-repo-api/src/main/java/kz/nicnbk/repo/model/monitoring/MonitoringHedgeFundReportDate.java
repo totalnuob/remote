@@ -15,18 +15,17 @@ import java.util.Date;
 @Entity
 @Table(name="monitoring_hf_report_date")
 public class MonitoringHedgeFundReportDate extends CreateUpdateBaseEntity{
-
-    private Date date;
-
-    @Column(name="date", nullable = false)
+    @Basic
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern="dd-MM-yyyy")
+    private Date date;
 
-    public Date getDate() {
+    @Column(name="monitoring_date", nullable = false, unique = true)
+    public Date getMonitoringDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setMonitoringDate(Date date) {
         this.date = date;
     }
 }

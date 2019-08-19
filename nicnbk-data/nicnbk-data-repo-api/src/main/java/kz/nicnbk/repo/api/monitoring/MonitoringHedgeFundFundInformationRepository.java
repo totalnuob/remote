@@ -16,16 +16,16 @@ public interface MonitoringHedgeFundFundInformationRepository extends PagingAndS
 
     @Modifying
     @Transactional
-    @Query("DELETE FROM MonitoringHedgeFundFundInformation e WHERE e.type.id=?1 AND e.fundInfoType.id = ?2 AND e.monitoringDate=?3")
+    @Query("DELETE FROM MonitoringHedgeFundFundInformation e WHERE e.type.id=?1 AND e.fundInfoType.id = ?2 AND e.reportDate.monitoringDate=?3")
     void deleteByTypeIdAndFundInfoTypeIdAndDate(Integer typeId, Integer fundInfoType, Date monitoringDate);
 
-    @Query("SELECT e FROM MonitoringHedgeFundFundInformation e WHERE e.type.id=?1 AND e.fundInfoType.id = ?2 AND e.monitoringDate=?3")
+    @Query("SELECT e FROM MonitoringHedgeFundFundInformation e WHERE e.type.id=?1 AND e.fundInfoType.id = ?2 AND e.reportDate.monitoringDate=?3")
     List<MonitoringHedgeFundFundInformation> findByTypeIdAndFundInfoTypeIdAndMonitoringDate(Integer typeId, Integer fundInfoTypeId, Date monitoringDate);
 
     @Query("SELECT e FROM MonitoringHedgeFundFundInformation e ")
     List<MonitoringHedgeFundFundInformation> findAll();
 
-    @Query("SELECT e FROM MonitoringHedgeFundFundInformation e WHERE e.type.id=?1 AND e.fundInfoType.id=?2 AND e.monitoringDate=" +
-            "(SELECT MAX(e2.monitoringDate) FROM MonitoringHedgeFundFundInformation e2 WHERE e2.type.id=?1 AND e2.fundInfoType.id=?2)")
+    @Query("SELECT e FROM MonitoringHedgeFundFundInformation e WHERE e.type.id=?1 AND e.fundInfoType.id=?2 AND e.reportDate.monitoringDate=" +
+            "(SELECT MAX(e2.reportDate.monitoringDate) FROM MonitoringHedgeFundFundInformation e2 WHERE e2.type.id=?1 AND e2.fundInfoType.id=?2)")
     List<MonitoringHedgeFundFundInformation> getMostRecentRecordsBeforeDate(Integer typeId, Integer fundInfoTypeId);
 }

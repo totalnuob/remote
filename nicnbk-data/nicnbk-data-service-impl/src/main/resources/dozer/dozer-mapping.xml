@@ -89,6 +89,10 @@
             <a>updater</a>
             <b>updater</b>
         </field-exclude>
+        <field-exclude>
+            <a>creator</a>
+            <b>creator</b>
+        </field-exclude>
     </mapping>
 
 

@@ -17,12 +17,11 @@ import java.util.Date;
 public class MonitoringHedgeFundGeneralInformation extends CreatorBaseEntity implements TypedEntity<MonitoringHedgeFundClassType> {
 
     private MonitoringHedgeFundReportDate reportDate;
-    //private Date monitoringDate;
     private MonitoringHedgeFundClassType type;
     private String name;
     private String value;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "report_date_id", nullable = false)
     public MonitoringHedgeFundReportDate getReportDate() {
         return reportDate;

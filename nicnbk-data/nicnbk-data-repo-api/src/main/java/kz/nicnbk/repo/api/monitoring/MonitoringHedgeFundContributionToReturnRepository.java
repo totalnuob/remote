@@ -18,16 +18,16 @@ public interface MonitoringHedgeFundContributionToReturnRepository extends Pagin
 
     @Modifying
     @Transactional
-    @Query("DELETE FROM MonitoringHedgeFundContributionToReturn e WHERE e.type.id=?1 AND e.monitoringDate=?2")
+    @Query("DELETE FROM MonitoringHedgeFundContributionToReturn e WHERE e.type.id=?1 AND e.reportDate.monitoringDate=?2")
     void deleteByTypeIdAndDate(Integer typeId, Date monitoringDate);
 
-    @Query("SELECT e FROM MonitoringHedgeFundContributionToReturn e WHERE e.type.id=?1 AND e.monitoringDate=?2")
+    @Query("SELECT e FROM MonitoringHedgeFundContributionToReturn e WHERE e.type.id=?1 AND e.reportDate.monitoringDate=?2")
     List<MonitoringHedgeFundContributionToReturn> findByTypeIdAndMonitoringDate(Integer typeId, Date monitoringDate);
 
     @Query("SELECT e FROM MonitoringHedgeFundContributionToReturn e")
     List<MonitoringHedgeFundContributionToReturn> findAll();
 
-    @Query("SELECT e FROM MonitoringHedgeFundContributionToReturn e WHERE e.type.id=?1 AND e.monitoringDate=" +
-            "(SELECT MAX(e2.monitoringDate) FROM MonitoringHedgeFundContributionToReturn e2 WHERE e2.type.id=?1)")
+    @Query("SELECT e FROM MonitoringHedgeFundContributionToReturn e WHERE e.type.id=?1 AND e.reportDate.monitoringDate=" +
+            "(SELECT MAX(e2.reportDate.monitoringDate) FROM MonitoringHedgeFundContributionToReturn e2 WHERE e2.type.id=?1)")
     List<MonitoringHedgeFundContributionToReturn> getMostRecentRecordsBeforeDate(Integer typeId);
 }

@@ -16,16 +16,16 @@ public interface MonitoringHedgeFundFundAllocationByStrategyRepository extends P
 
     @Modifying
     @Transactional
-    @Query("DELETE FROM MonitoringHedgeFundAllocationByStrategy e WHERE e.type.id=?1 AND e.monitoringDate=?2")
+    @Query("DELETE FROM MonitoringHedgeFundAllocationByStrategy e WHERE e.type.id=?1 AND e.reportDate.monitoringDate=?2")
     void deleteByTypeIdAndDate(Integer typeId, Date monitoringDate);
 
-    @Query("SELECT e FROM MonitoringHedgeFundAllocationByStrategy e WHERE e.type.id=?1 AND e.monitoringDate=?2")
+    @Query("SELECT e FROM MonitoringHedgeFundAllocationByStrategy e WHERE e.type.id=?1 AND e.reportDate.monitoringDate=?2")
     List<MonitoringHedgeFundAllocationByStrategy> findByTypeIdAndMonitoringDate(Integer typeId, Date monitoringDate);
 
     @Query("SELECT e FROM MonitoringHedgeFundAllocationByStrategy e")
     List<MonitoringHedgeFundAllocationByStrategy> findAll();
 
-    @Query("SELECT e FROM MonitoringHedgeFundAllocationByStrategy e WHERE e.type.id=?1 AND e.monitoringDate=" +
-            "(SELECT MAX(e2.monitoringDate) FROM MonitoringHedgeFundAllocationByStrategy e2 WHERE e2.type.id=?1)")
+    @Query("SELECT e FROM MonitoringHedgeFundAllocationByStrategy e WHERE e.type.id=?1 AND e.reportDate.monitoringDate=" +
+            "(SELECT MAX(e2.reportDate.monitoringDate) FROM MonitoringHedgeFundAllocationByStrategy e2 WHERE e2.type.id=?1)")
     List<MonitoringHedgeFundAllocationByStrategy> getMostRecentRecordsBeforeDate(Integer typeId);
 }

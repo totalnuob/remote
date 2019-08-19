@@ -10,6 +10,7 @@ import java.util.Date;
  */
 public class MonitoringHedgeFundDataHolderDto extends CreateUpdateBaseEntityDto implements Comparable{
 
+    private Long id;
     private Date date;
     private MonitoringHedgeFundDataDto monitoringData;
 
@@ -20,7 +21,8 @@ public class MonitoringHedgeFundDataHolderDto extends CreateUpdateBaseEntityDto 
         this.monitoringData.setClassB(new MonitoringHedgeFundDataClassBDto());
     }
 
-    public MonitoringHedgeFundDataHolderDto(Date date){
+    public MonitoringHedgeFundDataHolderDto(Long id, Date date){
+        this.id = id;
         this.date = date;
         this.monitoringData = new MonitoringHedgeFundDataDto();
         this.monitoringData.setOverall(new MonitoringHedgeFundDataOverallDto());
@@ -42,6 +44,16 @@ public class MonitoringHedgeFundDataHolderDto extends CreateUpdateBaseEntityDto 
 
     public void setMonitoringData(MonitoringHedgeFundDataDto monitoringData) {
         this.monitoringData = monitoringData;
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @Override
