@@ -10,6 +10,7 @@ import {ROLE_REPORTING_EDIT} from "./roles.constants";
 import {ROLE_CORPMEETINGS_EDIT} from "./roles.constants";
 import {ROLE_STRATEGY_RISKS_EDIT} from "./roles.constants";
 import {ROLE_IC_MEMBER} from "./roles.constants";
+import {ROLE_USER_PROFILE_EDIT} from "./roles.constants";
 
 
 @Injectable()
@@ -23,6 +24,10 @@ export class ModuleAccessCheckerService extends CommonService{
         // TODO: refactor string
         var rolesText = localStorage.getItem("authenticatedUserRoles");
         this.roles = JSON.parse(rolesText);
+    }
+
+    public checkAccessEmployeeProfileEditor(){
+        return this.checkAccess(ROLE_USER_PROFILE_EDIT);
     }
 
     public checkAccessMemoRestricted(){

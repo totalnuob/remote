@@ -17,7 +17,7 @@ export class CommonService{
 
 
     public handleErrorResponse (error: any) {
-        console.log(error);
+        //console.log(error);
         var errorResponse = new ErrorResponse;
         try{
             if(error.json() && error.json().messageEn) {
@@ -46,6 +46,7 @@ export class CommonService{
     }
 
     public handleError(error: any){
+        console.log(error);
         let errMsg = (error.message) ? error.message :
             error.status ? `${error.status} - ${error.statusText}` : 'Server error';
         return Observable.throw(errMsg);

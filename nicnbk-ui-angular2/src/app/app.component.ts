@@ -39,6 +39,7 @@ import {FileDownloadService} from "./common/file.download.service";
 import {CorpMeetingService} from "./corpmeetings/corp-meetings.service";
 import {HedgeFundScreeningService} from "./hf/hf.fund.screening.service";
 import {HedgeFundScoringService} from "./hf/hf.fund.scoring.service";
+import {HRNewsService} from "./hr/hr-news.service";
 
 
 
@@ -70,7 +71,8 @@ import {HedgeFundScoringService} from "./hf/hf.fund.scoring.service";
         PeriodicReportService,
         CorpMeetingService,
         HedgeFundScreeningService,
-        HedgeFundScoringService
+        HedgeFundScoringService,
+        HRNewsService
     ]
 })
 @NgModule({
@@ -159,6 +161,10 @@ export class AppComponent {
 
     showLookups(){
         return true;
+    }
+
+    getCurrencyEmployeeId(){
+        return localStorage.getItem('authenticatedUser');
     }
 }
 

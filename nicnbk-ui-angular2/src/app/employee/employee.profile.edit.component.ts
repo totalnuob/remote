@@ -6,7 +6,6 @@ import {ErrorResponse} from "../common/error-response";
 import {CommonFormViewComponent} from "../common/common.component";
 import {Employee} from "../hr/model/employee";
 import {cursorTo} from "readline";
-import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 
 
 export class ChangePasswordCredentials {
@@ -18,12 +17,12 @@ export class ChangePasswordCredentials {
 declare var $:any
 
 @Component({
-    selector: 'employee-profile',
+    selector: 'employee-profile-edit',
     providers: [],
-    templateUrl: './view/employee.profile.component.html',
+    templateUrl: './view/employee.profile.edit.component.html',
     styleUrls: ['../../../public/css/footer.css']
 })
-export class EmployeeProfileComponent extends CommonFormViewComponent implements OnInit{
+export class EmployeeProfileEditComponent extends CommonFormViewComponent implements OnInit{
 
     activeTab = "PROFILE";
     public errorMessage;
@@ -38,9 +37,13 @@ export class EmployeeProfileComponent extends CommonFormViewComponent implements
     private username: string;
     private breadcrumbParams: string;
 
-    private employee: Employee;
+    private employee = new Employee();
 
-    private moduleAccessChecker: ModuleAccessCheckerService;
+    ngOnInit(){
+        $('#birthDatePicker').datetimepicker({
+            format: 'DD-MM-YYYY'
+        });
+    }
 
     constructor(
         private router: Router,
@@ -49,35 +52,21 @@ export class EmployeeProfileComponent extends CommonFormViewComponent implements
 
         super(router);
 
-        this.moduleAccessChecker = new ModuleAccessCheckerService;
-
         this.sub = this.route
             .params
             .subscribe(params => {
                 //this.employeeId = +params['id'];
                 this.username = params['username'];
                 this.breadcrumbParams = params['params'];
-                console.log(this.breadcrumbParams);
-                //if(this.employeeId > 0) {
-                //    this.employeeService.getEmployeeById(this.employeeId)
-                //        .subscribe(
-                //            employee => {
-                //                this.employee = employee;
-                //            },
-                //            (error:ErrorResponse) => {
-                //                this.errorMessage = "Error loading news";
-                //                if (error && !error.isEmpty()) {
-                //                    this.processErrorMessage(error);
-                //                }
-                //                this.postAction(null, null);
-                //            }
-                //        );
-                //}
+                //console.log(this.breadcrumbParams);
                 if(this.username != null){
                     this.employeeService.getEmployeeByUsername(this.username)
                         .subscribe(
                             employee => {
                                 this.employee = employee;
+                                $('#birthDatePicker').datetimepicker({
+                                    format: 'DD-MM-YYYY'
+                                });
                             },
                             (error:ErrorResponse) => {
                                 this.errorMessage = "Error loading news";
@@ -89,11 +78,11 @@ export class EmployeeProfileComponent extends CommonFormViewComponent implements
                         );
                 } else {
                     this.employee = new Employee();
+                    $('#birthDatePicker').datetimepicker({
+                        format: 'DD-MM-YYYY'
+                    });
                 }
             });
-    }
-
-    ngOnInit(){
     }
 
     public checkPassword(){
@@ -150,17 +139,6 @@ export class EmployeeProfileComponent extends CommonFormViewComponent implements
         this.router.navigate(['/login']);
     }
 
-    getFirstname(){
-        return "";
-    }
-
-    getLastname(){
-        return "";
-    }
-
-    getUsername(){
-    }
-
     userOwned(){
         var currentUser = localStorage.getItem("authenticatedUser");
         if(this.employee != null && currentUser != null && this.employee.username === currentUser){
@@ -169,11 +147,22 @@ export class EmployeeProfileComponent extends CommonFormViewComponent implements
         return false;
     }
 
-    public canEditEmployeeProfile(){
-        return this.moduleAccessChecker.checkAccessEmployeeProfileEditor();
+    saveEmployeeProfile(){
+        this.employee.birthDate= $('#birthDate').val();
+        //console.log(this.employee);
+        this.employeeService.save(this.employee)
+            .subscribe(
+                response => {
+                    this.postAction("Successfully saved profile", null);
+                },
+                (error:ErrorResponse) => {
+                    if (error && !error.isEmpty()) {
+                        this.processErrorMessage(error);
+                    }else {
+                        this.postAction(null, "Error saving profile");
+                    }
+                }
+            );
     }
 
-    editEmployeeProfile(){
-        this.router.navigate(['/profile/edit/', this.username]);
-    }
 }

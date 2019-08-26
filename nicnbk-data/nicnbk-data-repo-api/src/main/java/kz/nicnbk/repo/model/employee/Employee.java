@@ -94,7 +94,7 @@ public class Employee extends BaseEntity {
         this.salt = salt;
     }
 
-    @Column(name="active"/*, nullable=false*/)
+    @Column(name="active", nullable=false)
     public Boolean getActive() {
         return active;
     }
@@ -103,7 +103,7 @@ public class Employee extends BaseEntity {
         this.active = active;
     }
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name="employee_roles",
             joinColumns=

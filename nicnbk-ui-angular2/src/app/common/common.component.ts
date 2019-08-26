@@ -80,8 +80,10 @@ export class CommonFormViewComponent {
     }
 
     processErrorMessage(errorResponse){
+        ///console.log(errorResponse);
         if(errorResponse.message){
             this.errorMessage = errorResponse.message;
+            this.successMessage = null;
         }else if(errorResponse.status){
             if(errorResponse.status == 401){
                 this.errorMessage = "Access Denied";

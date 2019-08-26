@@ -15,9 +15,12 @@ public class EmployeeDto extends BaseEntityDto<Employee> {
     private String firstName;
     private String patronymic;
     private Date birthDate;
+    private Boolean active;
 
     private String username;
     private Set<BaseDictionaryDto> roles;
+
+
 
     public String getLastName() {
         return lastName;
@@ -66,5 +69,13 @@ public class EmployeeDto extends BaseEntityDto<Employee> {
 
     public void setRoles(Set<BaseDictionaryDto> roles) {
         this.roles = roles;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 }

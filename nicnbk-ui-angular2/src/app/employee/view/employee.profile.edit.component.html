@@ -42,11 +42,15 @@
 
 
     <div class="tab-content">
-        <div id="PROFILE" role="tabpanel" aria-labelledby="PROFILE" class="tab-pane active" *ngIf="employee != null">
-            <div class="row">
-                <button *ngIf="canEditEmployeeProfile()" class="btn btn-primary pull-right" (click)="editEmployeeProfile()">Edit</button>
+
+        <div class="row top-buffer" >
+            <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
             </div>
-            <br/>
+            <div class="alert alert-info" *ngIf="!submitted && successMessage != null"><span>{{successMessage}}</span>
+            </div>
+        </div>
+
+        <div id="PROFILE" role="tabpanel" aria-labelledby="PROFILE" class="tab-pane active">
             <h4>Profile Information</h4>
 
             <div class="col-md-3 col-lg-3 " align="center">
@@ -57,19 +61,24 @@
                 <div class="row form-group">
                     <label class="control-label col-sm-2">First name:</label>
                     <div class="col-sm-10">
-                        <span class="form-control-static">{{employee.firstName}}</span>
+                        <input type="text" class="form-control" [(ngModel)]="employee.firstName"/>
                     </div>
                 </div>
                 <div class="row form-group">
                     <label class="control-label col-sm-2">Last name:</label>
                     <div class="col-sm-10">
-                        <span class="form-control-static">{{employee.lastName}}</span>
+                        <input type="text" class="form-control" [(ngModel)]="employee.lastName"/>
                     </div>
                 </div>
                 <div class="row form-group">
                     <label class="control-label col-sm-2">Date of birth:</label>
-                    <div class="col-sm-10">
-                        <span class="form-control-static">{{employee.birthDate}}</span>
+                    <div class="col-sm-3">
+                        <div class='input-group date col-md-2' id='birthDatePicker' style="width: 100%">
+                            <input type='text' class="form-control" id="birthDate" name="birthDate" style="font-size: small" [(ngModel)]="employee.birthDate"/>
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                        </div>
                     </div>
                 </div>
                 <div class="row form-group">
@@ -84,6 +93,10 @@
                         <button *ngIf="employee.active == null || employee.active" disabled="true" class="btn btn-xs btn-success">ACTIVE</button>
                         <button *ngIf="employee.active != null && !employee.active" disabled="true" class="btn btn-xs btn-default">IN-ACTIVE</button>
                     </div>
+                </div>
+
+                <div class="row form-group pull-right">
+                    <button class="btn btn-success" (click)="saveEmployeeProfile()">Save</button>
                 </div>
             </div>
 

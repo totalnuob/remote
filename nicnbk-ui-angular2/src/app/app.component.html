@@ -292,9 +292,19 @@
             <header class="menu_header">
                 <div class="menu_container" *ngIf="showMenu()">
                     <div class="menu_header__row">
-                        <a href="#news" title="NICNBK" class="menu_logo menu_header__logo -active" (click)="activeMenu = 'NEWS'">NICNBK</a>
+                        <a href="#hr/news" title="NICNBK" class="menu_logo menu_header__logo -active" (click)="activeMenu = 'NEWS'">NICNBK</a>
                         <nav class="menu_navigation">
                         <ul class="navigation__menu" style="background-color: white">
+                            <li class="navigation__item dropdown">
+                                <a class="navigation__link" style="font-family: IBM Plex Sans" [routerLink]="['/hr/news']"
+                                   [style.border-bottom-color]="activeMenu === 'HR' ? '#D9A158' : 'white'">HR</a>
+                                <ul  class="dropdown-menu">
+                                    <li><a [routerLink]="['/hr/employees']" class="navigation__sublink"
+                                           (click)="activeMenu = 'EMPLOYEES'">Employees</a></li>
+                                    <li><a [routerLink]="['/hr/docs']" class="navigation__sublink"
+                                           (click)="activeMenu = 'HR_DOCS'">Docs</a></li>
+                                </ul>
+                            </li>
                             <li class="navigation__item dropdown">
                                 <a class="navigation__link" style="font-family: IBM Plex Sans" [routerLink]="['/monitoring/portfolio']"
                                    [style.border-bottom-color]="activeMenu === 'MONITORING' ? '#D9A158' : 'white'">Monitoring</a>
@@ -319,14 +329,14 @@
                             <li *ngIf="showTrainings()" class="navigation__item dropdown"><a [routerLink]="['/bt']" class="navigation__link"
                                                                                              [style.border-bottom-color]="activeMenu === 'TRAININGS' ? '#D9A158' : 'white'" (click)="activeMenu = 'TRAININGS'">Trainings</a></li>
                             <li class="navigation__item dropdown" *ngIf="showPrivateEquity()">
-                                <a class="navigation__link" [routerLink]="['/pe/firmSearch']" [style.border-bottom-color]="activeMenu === 'PRIVATE_EQUITY' ? '#D9A158' : 'white'">Private Equity</a>
+                                <a class="navigation__link" [routerLink]="['/pe/firmSearch']" [style.border-bottom-color]="activeMenu === 'PRIVATE_EQUITY' ? '#D9A158' : 'white'">PE</a>
                                 <ul  class="dropdown-menu">
                                     <li><a [routerLink]="['/pe/firmSearch']" class="navigation__sublink" (click)="activeMenu = 'PRIVATE_EQUITY'">Firm Search</a></li>
                                     <li><a [routerLink]="['/pe/firmProfile']" class="navigation__sublink" (click)="activeMenu = 'PRIVATE_EQUITY'">New Firm</a></li>
                                 </ul>
                             </li>
                             <li class="navigation__item dropdown" *ngIf="showHedgeFunds()">
-                                <a class="navigation__link" [routerLink]="['/hf/fundSearch']" [style.border-bottom-color]="activeMenu === 'HEDGE_FUNDS' ? '#D9A158' : 'white'">Hedge Funds</a>
+                                <a class="navigation__link" [routerLink]="['/hf/fundSearch']" [style.border-bottom-color]="activeMenu === 'HEDGE_FUNDS' ? '#D9A158' : 'white'">HF</a>
                                 <ul  class="dropdown-menu">
                                     <li><a [routerLink]="['/hf/fundSearch']" class="navigation__sublink" (click)="activeMenu = 'HEDGE_FUNDS'">Fund Search</a></li>
                                     <li><a [routerLink]="['/hf/managerSearch']" class="navigation__sublink" (click)="activeMenu = 'HEDGE_FUNDS'">Manager Search</a></li>
@@ -354,7 +364,7 @@
                             </li>
                         </ul>
 
-                            <a [routerLink]="['/profile']">
+                            <a [routerLink]="['/profile/' + getCurrencyEmployeeId()]">
                                 <span class="glyphicon glyphicon-user" style="color: grey"></span>
                             </a>&nbsp;&nbsp;&nbsp;
                             <a (click)="logout()">

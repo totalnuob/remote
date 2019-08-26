@@ -1,15 +1,23 @@
 package kz.nicnbk.service.impl.employee;
 
 import kz.nicnbk.common.service.util.HashUtils;
+import kz.nicnbk.common.service.util.PaginationUtils;
 import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.api.employee.EmployeeRepository;
 import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.converter.employee.EmployeeEntityConverter;
+import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
+import kz.nicnbk.service.dto.common.ResponseStatusType;
 import kz.nicnbk.service.dto.employee.EmployeeDto;
+import kz.nicnbk.service.dto.employee.EmployeePagedSearchResult;
+import kz.nicnbk.service.dto.employee.EmployeeSearchParamsDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,6 +29,9 @@ import java.util.List;
  */
 @Service
 public class EmployeeServiceImpl implements EmployeeService{
+
+    public static final int DEFAULT_PAGE_SIZE =  20;
+    public static final int DEFAULT_PAGES_PER_VIEW = 5;
 
     private static final Logger logger = LoggerFactory.getLogger(EmployeeServiceImpl.class);
 
@@ -45,6 +56,128 @@ public class EmployeeServiceImpl implements EmployeeService{
             logger.error("Failed to load full employee list", ex);
         }
         return null;
+    }
+
+    @Override
+    public EmployeeDto getEmployeeById(Long employeeId) {
+        if(employeeId != null) {
+            Employee employee = this.employeeRepository.findOne(employeeId);
+            if (employee != null) {
+                EmployeeDto employeeDto = this.employeeEntityConverter.disassemble(employee);
+                return employeeDto;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public EmployeeDto getEmployeeByUsername(String username) {
+        if(username != null) {
+            Employee employee = this.employeeRepository.findByUsername(username);
+            if (employee != null) {
+                EmployeeDto employeeDto = this.employeeEntityConverter.disassemble(employee);
+                return employeeDto;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public EmployeePagedSearchResult search(EmployeeSearchParamsDto searchParams) {
+        try {
+            Page<Employee> entityPage = null;
+            int page = 0;
+            if (searchParams == null || searchParams.isEmpty()) {
+                int pageSize = searchParams != null && searchParams.getPageSize() > 0 ? searchParams.getPageSize() : DEFAULT_PAGE_SIZE;
+                page = searchParams != null && searchParams.getPage() > 0 ? searchParams.getPage() - 1 : 0;
+                entityPage = employeeRepository.findAll(new PageRequest(page, pageSize, new Sort(Sort.Direction.ASC, "lastName", "firstName")));
+            } else {
+                page = searchParams.getPage() > 0 ? searchParams.getPage() - 1 : 0;
+                Boolean status = searchParams.getStatusBoolean();
+                entityPage = employeeRepository.search(searchParams.getFirstNameOrEmpty(), searchParams.getLastNameOrEmpty(),
+                        status, new PageRequest(page, searchParams.getPageSize(), new Sort(Sort.Direction.ASC, "lastName", "firstName")));
+            }
+
+            EmployeePagedSearchResult result = new EmployeePagedSearchResult();
+            if (entityPage != null) {
+                result.setTotalElements(entityPage.getTotalElements());
+                if (entityPage.getTotalElements() > 0) {
+                    result.setShowPageFrom(PaginationUtils.getShowPageFrom(DEFAULT_PAGES_PER_VIEW, page));
+                    result.setShowPageTo(PaginationUtils.getShowPageTo(DEFAULT_PAGES_PER_VIEW,
+                            page, result.getShowPageFrom(), entityPage.getTotalPages()));
+                }
+                result.setTotalPages(entityPage.getTotalPages());
+                result.setCurrentPage(page + 1);
+                if (searchParams != null) {
+                    result.setSearchParams(searchParams.getSearchParamsAsString());
+                }
+                result.setEmployees(employeeEntityConverter.disassembleList(entityPage.getContent()));
+            }
+            return result;
+        }catch(Exception ex){
+            // TODO: log search params
+            logger.error("Error searching trip memos", ex);
+        }
+        return null;
+    }
+
+    @Override
+    public EntitySaveResponseDto save(EmployeeDto employeeDto, String updater) {
+        EntitySaveResponseDto saveResponseDto = checkEmployeeProfile(employeeDto);
+        if(saveResponseDto.getStatus() == null || saveResponseDto.getStatus().getCode().equalsIgnoreCase(ResponseStatusType.FAIL.getCode())){
+            logger.error("Failed to save employee profile." + saveResponseDto.getMessage().getMessageText() + " [updater=" + updater + "]");
+            return saveResponseDto;
+        }
+        try {
+            Employee entity = null;
+            if(employeeDto.getId() == null){
+                entity = this.employeeEntityConverter.assemble(employeeDto);
+            }else{
+                entity = this.employeeRepository.findOne(employeeDto.getId());
+
+                entity.setFirstName(employeeDto.getFirstName());
+                entity.setLastName(employeeDto.getLastName());
+                entity.setBirthDate(employeeDto.getBirthDate());
+            }
+
+            this.employeeRepository.save(entity);
+            logger.info("Successfully saved employee profile: id= " + entity.getId().longValue() + ", username=" + employeeDto.getUsername() + " [updater=" + updater + "]");
+            saveResponseDto.setSuccessMessageEn("Successfully saved employee profile");
+            return saveResponseDto;
+        }catch (Exception ex){
+            logger.error("Failed to save employee profile.", ex);
+            saveResponseDto.setErrorMessageEn("Failed to save employee profile");
+            return saveResponseDto;
+        }
+    }
+
+    private EntitySaveResponseDto checkEmployeeProfile(EmployeeDto employeeDto){
+        EntitySaveResponseDto saveResponseDto = new EntitySaveResponseDto();
+        saveResponseDto.setStatus(ResponseStatusType.SUCCESS);
+
+        if(StringUtils.isEmpty(employeeDto.getLastName())){
+            saveResponseDto.setErrorMessageEn("Last name cannot be empty");
+        }else if(StringUtils.isEmpty(employeeDto.getFirstName())){
+            saveResponseDto.setErrorMessageEn("First name cannot be empty");
+        }else if(employeeDto.getBirthDate() == null){
+            saveResponseDto.setErrorMessageEn("Date of birth cannot be empty");
+        }
+
+        if(employeeDto.getId() != null) {
+            Employee entity = this.employeeRepository.findOne(employeeDto.getId());
+            if(entity == null){
+                logger.error("Failed to save employee profile with id=" + employeeDto.getId().longValue() + ". No entity with id found");
+                saveResponseDto.setErrorMessageEn("Failed to save employee profile with id=" + employeeDto.getId().longValue() + ". No entity with id found");
+                return saveResponseDto;
+            }
+            if(!entity.getUsername().equals(employeeDto.getUsername())){
+                // CANNOT CHANGE USERNAME
+                logger.error("Failed to save employee profile: username cannot be changed");
+                saveResponseDto.setErrorMessageEn("Failed to save employee profile: username cannot be changed");
+                return saveResponseDto;
+            }
+        }
+        return saveResponseDto;
     }
 
     /**

@@ -1,0 +1,16 @@
+
+<div class="container">
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <div class="alert alert-danger" *ngIf="errorMessage != null">{{errorMessage}}</div>
+        </div>
+    </div>
+    <!--<div class="row withpadding">-->
+        <!--<a [routerLink]="['/hr/news/edit/',0 ]" class="btn btn-primary pull-right" *ngIf="canEdit()">Add News</a>-->
+    <!--</div>-->
+
+    <div [ngBusy]="busy" class="row">
+        HR DOCS LIST
+    </div>
+
+</div>
