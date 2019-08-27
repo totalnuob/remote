@@ -296,13 +296,13 @@
                             <ul class="navigation__menu" style="background-color: white; height: 25px">
                                 <li class="navigation__item dropdown">
                                     <a [routerLink]="['/macromonitor']" class="navigation__link"
-                                       [style.background-color]="activeBlock === 'invest' ? '#D9A158' : 'white'" (click)="activeBlock = 'invest'; activeMenu = 'MACROMONITOR'">Investment</a>
+                                       [style.background-color]="activeBlock === 'invest' ? '#D9A158' : 'white'" (click)="activeBlock = 'invest'; activeMenu = 'MACROMONITOR'">INVEST</a>
                                 </li>
                                 <li class="navigation__item dropdown">
                                     <a [routerLink]="['/monitoring/portfolio']" class="navigation__link"
-                                       [style.background-color]="activeBlock === 'corp' ? '#D9A158' : 'white'" (click)="activeBlock = 'corp'; activeMenu = 'MONITORING'">Corporate</a>
+                                       [style.background-color]="activeBlock === 'corp' ? '#D9A158' : 'white'" (click)="activeBlock = 'corp'; activeMenu = 'MONITORING'">CORP</a>
                                 </li>
-
+                                &nbsp;&nbsp;&nbsp;
                                 <a [routerLink]="['/profile']">
                                     <span class="glyphicon glyphicon-user" style="color: grey"></span>
                                 </a>&nbsp;&nbsp;&nbsp;
