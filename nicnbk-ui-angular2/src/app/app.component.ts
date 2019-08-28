@@ -82,6 +82,8 @@ export class AppComponent {
 
     activeMenu;
 
+    activeBlock = 'invest';
+
     private moduleAccessChecker: ModuleAccessCheckerService;
 
     constructor(
