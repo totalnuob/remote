@@ -6,7 +6,7 @@ import {Http} from "@angular/http";
 
 @Injectable()
 export class HrDocsService extends CommonService {
-    private HR_DOCS_BASE_URL = DATA_APP_URL + "hrdocs/";
+    private HR_DOCS_BASE_URL = DATA_APP_URL + "hr/docs/";
     private HR_DOCS_GET_URL = this.HR_DOCS_BASE_URL + "get/";
     private HR_DOCS_UPLOAD_URL = this.HR_DOCS_BASE_URL + "upload/";
 
