@@ -1,16 +1,21 @@
-
 <div class="container">
     <div class="row top-buffer" >
         <div class="col-md-12">
             <div class="alert alert-danger" *ngIf="errorMessage != null">{{errorMessage}}</div>
         </div>
     </div>
-    <!--<div class="row withpadding">-->
-        <!--<a [routerLink]="['/hr/news/edit/',0 ]" class="btn btn-primary pull-right" *ngIf="canEdit()">Add News</a>-->
-    <!--</div>-->
 
     <div [ngBusy]="busy" class="row">
-        HR DOCS LIST
+        <div class="pull-right" *ngIf="canEdit()">
+            <form #yourForm="ngForm" (ngSubmit)="onSubmitHRDocument()">
+                <label class="btn btn-sm btn-primary">
+                    <input type="file" #fileupload id="fileupload" (change)="fileChange(fileupload.files)" style="display: none"/>Upload a new document
+                </label>
+                <button type="submit" class="btn btn-sm btn-success" *ngIf="this.myFiles.length > 0">Submit</button>
+            </form>
+            <div *ngFor="let file of this.myFiles" class="label label-info">
+                <span>{{file.name}}</span>
+            </div>
+        </div>
     </div>
-
 </div>
