@@ -55,21 +55,33 @@
 
             <div class=" col-md-9 col-lg-9 ">
                 <div class="row form-group">
-                    <label class="control-label col-sm-2">First name:</label>
-                    <div class="col-sm-10">
-                        <span class="form-control-static">{{employee.firstName}}</span>
-                    </div>
-                </div>
-                <div class="row form-group">
                     <label class="control-label col-sm-2">Last name:</label>
                     <div class="col-sm-10">
                         <span class="form-control-static">{{employee.lastName}}</span>
                     </div>
                 </div>
                 <div class="row form-group">
+                    <label class="control-label col-sm-2">First name:</label>
+                    <div class="col-sm-10">
+                        <span class="form-control-static">{{employee.firstName}}</span>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label class="control-label col-sm-2">Patronymic:</label>
+                    <div class="col-sm-10">
+                        <span class="form-control-static">{{employee.patronymic}}</span>
+                    </div>
+                </div>
+                <div class="row form-group">
                     <label class="control-label col-sm-2">Date of birth:</label>
                     <div class="col-sm-10">
                         <span class="form-control-static">{{employee.birthDate}}</span>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label class="control-label col-sm-2">Position:</label>
+                    <div class="col-sm-10">
+                        <span class="form-control-static">{{getFullPositionNameEn()}}</span>
                     </div>
                 </div>
                 <div class="row form-group">

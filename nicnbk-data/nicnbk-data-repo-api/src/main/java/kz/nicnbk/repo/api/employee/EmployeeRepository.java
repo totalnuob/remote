@@ -21,5 +21,6 @@ public interface EmployeeRepository extends PagingAndSortingRepository<Employee,
     Page<Employee> search(@Param("firstName")String firstName, @Param("lastName")String lastName,
                           @Param("status") Boolean status, Pageable pageable);
 
+    @Query("SELECT e FROM  Employee e " )
     Page<Employee> findAll(Pageable pageable);
 }

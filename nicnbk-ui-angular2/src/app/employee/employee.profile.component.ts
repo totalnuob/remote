@@ -7,6 +7,7 @@ import {CommonFormViewComponent} from "../common/common.component";
 import {Employee} from "../hr/model/employee";
 import {cursorTo} from "readline";
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
+import {EmployeesSearchParams} from "../hr/model/employees-search-params";
 
 
 export class ChangePasswordCredentials {
@@ -174,6 +175,16 @@ export class EmployeeProfileComponent extends CommonFormViewComponent implements
     }
 
     editEmployeeProfile(){
-        this.router.navigate(['/profile/edit/', this.username]);
+        let params = this.breadcrumbParams;
+        this.router.navigate(['/profile/edit/', this.username, { params }]);
+    }
+
+    getFullPositionNameEn(){
+        if(this.employee && this.employee.position){
+            return this.employee.position.nameEn +
+                (this.employee.position.department != null  && this.employee.position.department.nameEn != null ?
+                " of " + this.employee.position.department.nameEn : "");
+
+        }
     }
 }

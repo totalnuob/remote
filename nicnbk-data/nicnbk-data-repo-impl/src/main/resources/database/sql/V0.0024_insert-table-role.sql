@@ -19,3 +19,5 @@ INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(101, 'NEWS_EDIT', '
 
 INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(201, 'MEMO_RESTR', 'Memos Restricted', '', '');
 
+INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(301, 'USER_EDIT', 'User Profile - Editor', '', '');
+

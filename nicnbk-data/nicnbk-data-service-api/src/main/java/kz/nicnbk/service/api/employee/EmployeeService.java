@@ -6,6 +6,7 @@ import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
 import kz.nicnbk.service.dto.employee.EmployeeDto;
 import kz.nicnbk.service.dto.employee.EmployeePagedSearchResult;
 import kz.nicnbk.service.dto.employee.EmployeeSearchParamsDto;
+import kz.nicnbk.service.dto.employee.PositionDto;
 
 import java.util.List;
 
@@ -33,5 +34,7 @@ public interface EmployeeService extends BaseService {
     boolean deactivate(String username);
 
     boolean activate(String username);
+
+    List<PositionDto> getALlPositions();
 
 }

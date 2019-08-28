@@ -1,10 +1,13 @@
 package kz.nicnbk.service.impl.employee;
 
+import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.common.service.util.HashUtils;
 import kz.nicnbk.common.service.util.PaginationUtils;
 import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.api.employee.EmployeeRepository;
+import kz.nicnbk.repo.api.employee.PositionRepository;
 import kz.nicnbk.repo.model.employee.Employee;
+import kz.nicnbk.repo.model.employee.Position;
 import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.converter.employee.EmployeeEntityConverter;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
@@ -12,6 +15,7 @@ import kz.nicnbk.service.dto.common.ResponseStatusType;
 import kz.nicnbk.service.dto.employee.EmployeeDto;
 import kz.nicnbk.service.dto.employee.EmployeePagedSearchResult;
 import kz.nicnbk.service.dto.employee.EmployeeSearchParamsDto;
+import kz.nicnbk.service.dto.employee.PositionDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +45,9 @@ public class EmployeeServiceImpl implements EmployeeService{
 
     @Autowired
     private EmployeeEntityConverter employeeEntityConverter;
+
+    @Autowired
+    private PositionRepository positionRepository;
 
     @Override
     public List<EmployeeDto> findAll(){
@@ -130,6 +137,7 @@ public class EmployeeServiceImpl implements EmployeeService{
         }
         try {
             Employee entity = null;
+
             if(employeeDto.getId() == null){
                 entity = this.employeeEntityConverter.assemble(employeeDto);
             }else{
@@ -138,7 +146,13 @@ public class EmployeeServiceImpl implements EmployeeService{
                 entity.setFirstName(employeeDto.getFirstName());
                 entity.setLastName(employeeDto.getLastName());
                 entity.setBirthDate(employeeDto.getBirthDate());
+
             }
+            Position position = null;
+            if(employeeDto.getPosition() != null && StringUtils.isNotEmpty(employeeDto.getPosition().getCode())){
+                position = this.positionRepository.findByCode(employeeDto.getPosition().getCode());
+            }
+            entity.setPosition(position);
 
             this.employeeRepository.save(entity);
             logger.info("Successfully saved employee profile: id= " + entity.getId().longValue() + ", username=" + employeeDto.getUsername() + " [updater=" + updater + "]");
@@ -281,6 +295,25 @@ public class EmployeeServiceImpl implements EmployeeService{
             logger.error("Failed to activate user: username=" + username, ex);
         }
         return false;
+    }
+
+    @Override
+    public List<PositionDto> getALlPositions() {
+        List<PositionDto> positions = new ArrayList<>();
+        List<Position> entities = this.positionRepository.getAllPositions();
+        if(positions != null){
+            // TODO: converter
+            for(Position entity: entities){
+                PositionDto positionDto = new PositionDto(entity.getId(), entity.getCode(), entity.getNameRu(),
+                        entity.getNameEn(), entity.getNameKz(), null);
+                if(entity.getDepartment() != null){
+                    positionDto.setDepartment(new BaseDictionaryDto(entity.getDepartment().getCode(), entity.getDepartment().getNameEn(),
+                            entity.getDepartment().getNameRu(), entity.getDepartment().getNameKz()));
+                }
+                positions.add(positionDto);
+            }
+        }
+        return positions;
     }
 
     private String generateSalt(){

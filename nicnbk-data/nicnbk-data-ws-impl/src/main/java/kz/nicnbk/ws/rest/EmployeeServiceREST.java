@@ -11,6 +11,7 @@ import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
 import kz.nicnbk.service.dto.employee.EmployeeDto;
 import kz.nicnbk.service.dto.employee.EmployeePagedSearchResult;
 import kz.nicnbk.service.dto.employee.EmployeeSearchParamsDto;
+import kz.nicnbk.service.dto.employee.PositionDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -75,6 +76,7 @@ public class EmployeeServiceREST extends CommonServiceREST{
         return buildNonNullResponse(searchResult);
     }
 
+    @PreAuthorize(" hasRole('ROLE_USER_PROFILE_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public ResponseEntity<?> save(@RequestBody EmployeeDto employeeDto) {
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
@@ -165,5 +167,16 @@ public class EmployeeServiceREST extends CommonServiceREST{
             }
         }
         return new ResponseEntity<>(null, null, HttpStatus.BAD_REQUEST);
+    }
+
+    @RequestMapping(value = "/getAllPositions", method = RequestMethod.GET)
+    public ResponseEntity getALlPositions(){
+        List<PositionDto> employees = this.employeeService.getALlPositions();
+        if(employees == null){
+            // error occurred
+            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }else{
+            return new ResponseEntity<>(employees, null, HttpStatus.OK);
+        }
     }
 }
