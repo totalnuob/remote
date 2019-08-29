@@ -9,10 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Set;
@@ -53,6 +50,19 @@ public class HRServiceRest extends CommonServiceREST {
         Set<FilesDto> filesDtoSet = buildFilesDtoFromMultipart(files, null);
 
         DocsResultDto resultDto = this.docsService.upload(filesDtoSet, username);
+
+        if (resultDto.getStatus().getCode().equals("SUCCESS")) {
+            return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PreAuthorize("hasRole('ROLE_HR_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/docs/delete/{fileId}", method = RequestMethod.DELETE)
+    public ResponseEntity deleteDocument(@PathVariable(value="fileId") Long fileId) {
+
+        DocsResultDto resultDto = this.docsService.deleteDocument(fileId);
 
         if (resultDto.getStatus().getCode().equals("SUCCESS")) {
             return new ResponseEntity<>(resultDto, null, HttpStatus.OK);

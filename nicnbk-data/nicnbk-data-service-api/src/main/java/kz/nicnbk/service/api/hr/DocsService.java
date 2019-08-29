@@ -14,4 +14,6 @@ public interface DocsService {
     DocsResultDto get();
 
     DocsResultDto upload(Set<FilesDto> filesDtoSet, String username);
+
+    DocsResultDto deleteDocument(Long fileId);
 }

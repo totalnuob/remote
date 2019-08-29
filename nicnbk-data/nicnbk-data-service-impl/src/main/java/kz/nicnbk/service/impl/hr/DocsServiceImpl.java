@@ -99,4 +99,20 @@ public class DocsServiceImpl implements DocsService {
             return new DocsResultDto(ResponseStatusType.FAIL, "", "Failed to upload the document!", "", null);
         }
     }
+
+    @Override
+    public DocsResultDto deleteDocument(Long fileId) {
+        FilesDto filesDto = this.fileService.getFileInfo(fileId);
+        if(filesDto != null &&
+                filesDto.getType() != null &&
+                filesDto.getType().equalsIgnoreCase(FileTypeLookup.HR_DOCS.getCode()) &&
+                this.fileService.safeDelete(fileId)) {
+            DocsResultDto resultDto = this.get();
+            if(resultDto.getStatus().getCode().equals("SUCCESS")) {
+                return new DocsResultDto(ResponseStatusType.SUCCESS, "", "The document has been deleted successfully!","", resultDto.getFilesDtoList());
+            }
+        }
+
+        return new DocsResultDto(ResponseStatusType.FAIL, "", "Failed to delete the document!", "", null);
+    }
 }

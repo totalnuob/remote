@@ -36,15 +36,21 @@
             <thead>
                 <tr>
                     <th>NAME</th>
-                    <th>ACTIONS</th>
+                    <th *ngIf="canEdit()">ACTIONS</th>
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor = "let doc of docsList" style="cursor: pointer">
-                    <td width="90%"><a>{{doc.fileName}}</a></td>
-                    <!--<td width="10%">-->
-                        <!--<a><i class="glyphicon glyphicon-file" (click)="navigate('/pe/fundReport/', firm.id)"></i></a>-->
-                    <!--</td>-->
+                <tr *ngFor = "let doc of docsList">
+                    <td width="90%">
+                        <a (click)="fileDownload(doc.id)" style="cursor: pointer">
+                            {{doc.fileName}}
+                        </a>
+                    </td>
+                    <td width="10%" *ngIf="canEdit()">
+                        <a (click)="deleteAttachment(doc.id)" style="cursor: pointer">
+                            <i class="glyphicon glyphicon-trash"></i>
+                        </a>
+                    </td>
                 </tr>
             </tbody>
         </table>

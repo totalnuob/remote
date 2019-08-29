@@ -69,7 +69,7 @@ public class MonitoringNicPortfolioServiceREST extends CommonServiceREST {
     @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/download", method = RequestMethod.GET)
     @ResponseBody
-    public void FileDownload(HttpServletResponse response) {
+    public void fileDownload(HttpServletResponse response) {
 
         FilesDto filesDto;
         try {
