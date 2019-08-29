@@ -24,4 +24,6 @@ public interface FilesRepository extends PagingAndSortingRepository<Files, Long>
     int revertDeleted(Long fileId);
 
     List<Files> findAllByType(FilesType type);
+
+    List<Files> findAllByTypeOrderByFileNameAsc(FilesType type);
 }

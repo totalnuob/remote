@@ -11,7 +11,7 @@ import {ROLE_CORPMEETINGS_EDIT} from "./roles.constants";
 import {ROLE_STRATEGY_RISKS_EDIT} from "./roles.constants";
 import {ROLE_IC_MEMBER} from "./roles.constants";
 import {ROLE_USER_PROFILE_EDIT} from "./roles.constants";
-import {ROLE_HR_DOCS_EDIT} from "./roles.constants";
+import {ROLE_HR_EDIT} from "./roles.constants";
 
 
 @Injectable()
@@ -28,7 +28,7 @@ export class ModuleAccessCheckerService extends CommonService{
     }
 
     public checkAccessHRDocsEditor(){
-        return this.checkAccess(ROLE_HR_DOCS_EDIT)
+        return this.checkAccess(ROLE_HR_EDIT)
     }
 
     public checkAccessEmployeeProfileEditor(){

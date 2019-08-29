@@ -43,7 +43,7 @@ public class HRServiceRest extends CommonServiceREST {
         }
     }
 
-    @PreAuthorize("hasRole('ROLE_HR_DOCS_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_HR_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/docs/upload", method = RequestMethod.POST)
     public ResponseEntity docsUpload(@RequestParam(value = "file", required = false) MultipartFile[] files) {
 

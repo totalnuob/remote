@@ -43,7 +43,7 @@ public class DocsServiceImpl implements DocsService {
             FilesType dummyFilesType = new FilesType();
             dummyFilesType.setId(this.filesTypeRepository.findByCode(FileTypeLookup.HR_DOCS.getCode()).getId());
 
-            List<Files> filesList = this.filesRepository.findAllByType(dummyFilesType);
+            List<Files> filesList = this.filesRepository.findAllByTypeOrderByFileNameAsc(dummyFilesType);
 
             List<FilesDto> filesDtoList = new ArrayList<>();
 
