@@ -25,5 +25,5 @@ public interface FilesRepository extends PagingAndSortingRepository<Files, Long>
 
     List<Files> findAllByType(FilesType type);
 
-    List<Files> findAllByTypeOrderByFileNameAsc(FilesType type);
+    List<Files> findAllByTypeCodeOrderByFileNameAsc(String code);
 }

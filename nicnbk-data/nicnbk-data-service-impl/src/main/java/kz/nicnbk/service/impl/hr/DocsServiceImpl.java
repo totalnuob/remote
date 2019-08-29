@@ -1,13 +1,8 @@
 package kz.nicnbk.service.impl.hr;
 
-import kz.nicnbk.repo.api.files.FilesRepository;
-import kz.nicnbk.repo.api.lookup.FilesTypeRepository;
-import kz.nicnbk.repo.model.files.Files;
-import kz.nicnbk.repo.model.files.FilesType;
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.service.api.files.FileService;
 import kz.nicnbk.service.api.hr.DocsService;
-import kz.nicnbk.service.converter.files.FilesEntityConverter;
 import kz.nicnbk.service.dto.common.ResponseStatusType;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.hr.DocsResultDto;
@@ -16,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -32,32 +26,17 @@ public class DocsServiceImpl implements DocsService {
     @Autowired
     private FileService fileService;
 
-    @Autowired
-    private FilesRepository filesRepository;
-
-    @Autowired
-    private FilesEntityConverter filesEntityConverter;
-
-    @Autowired
-    private FilesTypeRepository filesTypeRepository;
-
     @Override
     public DocsResultDto get() {
         try {
-            FilesType dummyFilesType = new FilesType();
-            dummyFilesType.setId(this.filesTypeRepository.findByCode(FileTypeLookup.HR_DOCS.getCode()).getId());
 
-            List<Files> filesList = this.filesRepository.findAllByTypeOrderByFileNameAsc(dummyFilesType);
+            List<FilesDto> filesDtoList = this.fileService.findAllByTypeCodeOrderByFileNameAscNotDeleted(FileTypeLookup.HR_DOCS.getCode());
 
-            List<FilesDto> filesDtoList = new ArrayList<>();
-
-            for(Files file : filesList) {
-                if(file.getDeleted() == null || !file.getDeleted()) {
-                    filesDtoList.add(this.filesEntityConverter.disassemble(file));
-                }
+            if (filesDtoList != null) {
+                return new DocsResultDto(ResponseStatusType.SUCCESS, "", "The list of documents has been loaded successfully","", filesDtoList);
             }
 
-            return new DocsResultDto(ResponseStatusType.SUCCESS, "", "The list of documents has been loaded successfully","", filesDtoList);
+            return new DocsResultDto(ResponseStatusType.FAIL, "", "Failed to load the list: repository problem!", "", null);
         } catch (Exception ex) {
             logger.error("Failed to load the list: repository problem, ", ex);
             return new DocsResultDto(ResponseStatusType.FAIL, "", "Failed to load the list: repository problem!", "", null);
