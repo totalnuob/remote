@@ -6,7 +6,6 @@ import kz.nicnbk.repo.model.files.Files;
 import kz.nicnbk.repo.model.files.FilesType;
 import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.converter.dozer.BaseDozerEntityConverter;
-import kz.nicnbk.service.converter.employee.EmployeeEntityConverter;
 import kz.nicnbk.service.datamanager.LookupService;
 import kz.nicnbk.service.dto.employee.EmployeeDto;
 import kz.nicnbk.service.dto.files.FilesDto;
@@ -24,9 +23,6 @@ public class FilesEntityConverter extends BaseDozerEntityConverter<Files, FilesD
 
     @Autowired
     private EmployeeService employeeService;
-
-    @Autowired
-    private EmployeeEntityConverter employeeEntityConverter;
 
     @Override
     public Files assemble(FilesDto dto) {

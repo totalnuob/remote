@@ -4,8 +4,6 @@ import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.hr.DocsService;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.hr.DocsResultDto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,8 +24,6 @@ import java.util.Set;
 @RestController
 @RequestMapping("/hr")
 public class HRServiceRest extends CommonServiceREST {
-
-    private static final Logger logger = LoggerFactory.getLogger(HRServiceRest.class);
 
     @Autowired
     private TokenService tokenService;
