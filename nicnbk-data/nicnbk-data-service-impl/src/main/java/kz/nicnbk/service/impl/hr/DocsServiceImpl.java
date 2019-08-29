@@ -63,12 +63,7 @@ public class DocsServiceImpl implements DocsService {
                 fileId = this.fileService.save(filesDto, FileTypeLookup.HR_DOCS.getCatalog());
 
                 if(fileId != null) {
-
-                    DocsResultDto resultDto = this.get();
-
-                    if(resultDto.getStatus().getCode().equals("SUCCESS")) {
-                        return new DocsResultDto(ResponseStatusType.SUCCESS, "", "The document has been uploaded successfully!","", resultDto.getFilesDtoList());
-                    }
+                    return new DocsResultDto(ResponseStatusType.SUCCESS, "", "The document has been uploaded successfully!","", null);
                 }
 
                 logger.error("Failed to update Liquid Portfolio data: repository problem!");
@@ -90,10 +85,7 @@ public class DocsServiceImpl implements DocsService {
                 filesDto.getType() != null &&
                 filesDto.getType().equalsIgnoreCase(FileTypeLookup.HR_DOCS.getCode()) &&
                 this.fileService.safeDelete(fileId)) {
-            DocsResultDto resultDto = this.get();
-            if(resultDto.getStatus().getCode().equals("SUCCESS")) {
-                return new DocsResultDto(ResponseStatusType.SUCCESS, "", "The document has been deleted successfully!","", resultDto.getFilesDtoList());
-            }
+            return new DocsResultDto(ResponseStatusType.SUCCESS, "", "The document has been deleted successfully!","", null);
         }
 
         return new DocsResultDto(ResponseStatusType.FAIL, "", "Failed to delete the document!", "", null);

@@ -76,7 +76,7 @@ export class HRDocsListComponent extends CommonFormViewComponent implements OnIn
                     // console.log(response);
                     // console.log(this.docsList);
                     // console.log(response.message.nameEn);
-                    this.docsList = response.filesDtoList;
+                    this.getList();
                     this.postAction(response.message.nameEn, null);
                     this.myFiles = [];
                     $("#fileupload").val(null);
@@ -108,7 +108,7 @@ export class HRDocsListComponent extends CommonFormViewComponent implements OnIn
             this.hrDocsService.deleteDocument(fileId)
                 .subscribe(
                     (response) => {
-                        this.docsList = response.filesDtoList;
+                        this.getList();
                         this.postAction(response.message.nameEn, null);
                     },
                     (error: ErrorResponse) => {
