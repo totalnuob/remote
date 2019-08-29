@@ -4,8 +4,8 @@ import {ModuleAccessCheckerService} from "../authentication/module.access.checke
 import {Subscription} from "../../../node_modules/rxjs";
 import {HrDocsService} from "./hr-docs.service";
 import {Router} from "@angular/router";
-import {FileDownloadService} from "../common/file.download.service";
-import {DATA_APP_URL} from "../common/common.service.constants";
+// import {FileDownloadService} from "../common/file.download.service";
+// import {DATA_APP_URL} from "../common/common.service.constants";
 import {ErrorResponse} from "../common/error-response";
 
 declare var $: any;
@@ -20,7 +20,7 @@ export class HRDocsListComponent extends CommonFormViewComponent implements OnIn
 
     private moduleAccessChecker = new ModuleAccessCheckerService;
 
-    private FILE_DOWNLOAD_URL = DATA_APP_URL + "files/download/";
+    // private FILE_DOWNLOAD_URL = DATA_APP_URL + "files/download/";
 
     private docsList = [];
 
@@ -31,7 +31,7 @@ export class HRDocsListComponent extends CommonFormViewComponent implements OnIn
     constructor(
         private hrDocsService: HrDocsService,
         private router: Router,
-        private downloadService: FileDownloadService,
+        // private downloadService: FileDownloadService,
     ){
         super(router);
 
@@ -89,18 +89,18 @@ export class HRDocsListComponent extends CommonFormViewComponent implements OnIn
             )
     }
 
-    private fileDownload(id) {
-        this.busy = this.downloadService.makeFileRequest(this.FILE_DOWNLOAD_URL + "HR_DOCS/" + id, '')
-            .subscribe(
-                (response) => {
-                    console.log("File downloaded!");
-                },
-                (error) => {
-                    this.postAction(null, "Error loading file!");
-                    console.log(error);
-                }
-            )
-    }
+    // private fileDownload(id) {
+    //     this.busy = this.downloadService.makeFileRequest(this.FILE_DOWNLOAD_URL + "HR_DOCS/" + id, '')
+    //         .subscribe(
+    //             (response) => {
+    //                 console.log("File downloaded!");
+    //             },
+    //             (error) => {
+    //                 this.postAction(null, "Error loading file!");
+    //                 console.log(error);
+    //             }
+    //         )
+    // }
 
     deleteAttachment(fileId) {
         var confirmed = window.confirm("Are you sure you want to delete the document?");

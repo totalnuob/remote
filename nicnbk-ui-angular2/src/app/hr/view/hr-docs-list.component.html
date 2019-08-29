@@ -42,9 +42,13 @@
             <tbody>
                 <tr *ngFor = "let doc of docsList">
                     <td width="90%">
-                        <a (click)="fileDownload(doc.id)" style="cursor: pointer">
-                            {{doc.fileName}}
-                        </a>
+                        <!--<a (click)="fileDownload(doc.id)" style="cursor: pointer">-->
+                            <!--{{doc.fileName}}-->
+                        <!--</a>-->
+                        <file-attachment-downloader fileId="{{doc.id}}"
+                                                    fileName="{{doc?.fileName}}"
+                                                    fileType="HR_DOCS">
+                        </file-attachment-downloader>
                     </td>
                     <td width="10%" *ngIf="canEdit()">
                         <a (click)="deleteAttachment(doc.id)" style="cursor: pointer">
