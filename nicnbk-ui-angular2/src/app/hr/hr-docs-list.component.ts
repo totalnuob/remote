@@ -50,15 +50,14 @@ export class HRDocsListComponent extends CommonFormViewComponent implements OnIn
             .subscribe(
                 (response) => {
                     // console.log(response);
+                    // console.log(this.docsList);
+                    // console.log(response.message.nameEn);
                     this.docsList = response.filesDtoList;
-                    console.log(this.docsList);
-
-                    console.log(response.message.nameEn);
-                    this.postAction(response.message.nameEn, null);
+                    // this.postAction(response.message.nameEn, null);
                 },
                 error => {
+                    // console.log(error.message);
                     this.docsList = [];
-                    console.log(error.message);
                     this.postAction(null, error.message);
                 }
             )
@@ -69,18 +68,16 @@ export class HRDocsListComponent extends CommonFormViewComponent implements OnIn
             .subscribe(
                 (response) => {
                     // console.log(response);
+                    // console.log(this.docsList);
+                    // console.log(response.message.nameEn);
                     this.docsList = response.filesDtoList;
-                    console.log(this.docsList);
-
-                    console.log(response.message.nameEn);
                     this.postAction(response.message.nameEn, null);
-
                     this.myFiles = [];
                     $("#fileupload").val(null);
                 },
                 error => {
-                    console.log(this.docsList);
-                    console.log(JSON.parse(error).message.nameEn);
+                    // console.log(this.docsList);
+                    // console.log(JSON.parse(error).message.nameEn);
                     this.postAction(null, JSON.parse(error).message.nameEn);
                 }
             )
