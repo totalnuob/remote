@@ -15,7 +15,7 @@
         <div class="pull-right" *ngIf="canEdit()">
             <form #yourForm="ngForm" (ngSubmit)="onSubmitHRDocument()">
                 <label class="btn btn-sm btn-primary">
-                    <input type="file" #fileupload id="fileupload" (change)="fileChange(fileupload.files)" style="display: none"/>Upload a new document
+                    <input type="file" #fileupload id="fileupload" (change)="fileChange(fileupload.files)" style="display: none"/>NEW (max 20Mb)
                 </label>
                 <button type="submit" class="btn btn-sm btn-success" *ngIf="this.myFiles.length > 0">Submit</button>
             </form>
