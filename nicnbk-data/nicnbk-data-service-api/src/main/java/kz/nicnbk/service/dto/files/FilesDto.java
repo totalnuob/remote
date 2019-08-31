@@ -10,6 +10,7 @@ import java.io.InputStream;
  */
 public class FilesDto extends BaseEntityDto<Files> {
 
+    private String insertedBy;
     private String type;
     private String fileName;
     private String mimeType;
@@ -17,6 +18,14 @@ public class FilesDto extends BaseEntityDto<Files> {
     private byte[] bytes;
     private InputStream inputStream;
     private String outputFileName;
+
+    public String getInsertedBy() {
+        return insertedBy;
+    }
+
+    public void setInsertedBy(String insertedBy) {
+        this.insertedBy = insertedBy;
+    }
 
     public String getType() {
         return type;

@@ -97,6 +97,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 return "ROLE_CORPMEETINGS_EDITOR";
             case "CM_VIEW":
                 return "ROLE_CORPMEETINGS_VIEWER";
+            case "HR_EDIT":
+                return "ROLE_HR_EDITOR";
             case "USER_EDIT":
                 return "ROLE_USER_PROFILE_EDITOR";
             case "MONIT_VIEW":

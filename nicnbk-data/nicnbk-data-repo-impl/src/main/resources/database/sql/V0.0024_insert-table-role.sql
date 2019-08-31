@@ -24,3 +24,4 @@ INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(304, 'MONIT_EDIT', 
 INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(305, 'LOOKP_VIEW', 'Lookups - Viewer', '', '');
 INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(306, 'LOOKP_EDIT', 'Lookups - Editor', '', '');
 
+INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(777, 'HR_EDIT', 'HR - Editor', '', '');

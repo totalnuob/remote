@@ -1,84 +1,128 @@
-import { Component, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {Location} from '@angular/common';
-import {AuthenticationService} from "../authentication/authentication.service";
-
-//import '../../../public/js/star-rating/star-rating.min.js';
-import {Subscription} from 'rxjs';
-import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
-import {ErrorResponse} from "../common/error-response";
+import {Component, OnInit} from '@angular/core';
 import {CommonFormViewComponent} from "../common/common.component";
-import {HRNewsService} from "./hr-news.service";
+import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
+import {Subscription} from "../../../node_modules/rxjs";
+import {HrDocsService} from "./hr-docs.service";
+import {Router} from "@angular/router";
+// import {FileDownloadService} from "../common/file.download.service";
+// import {DATA_APP_URL} from "../common/common.service.constants";
+import {ErrorResponse} from "../common/error-response";
 
-
-declare var $: any
+declare var $: any;
 
 @Component({
     selector: 'hr-docs-list',
     templateUrl: 'view/hr-docs-list.component.html',
-    styleUrls: [
-        //'../../../public/css/star-rating/star-rating.min.css',
-        //'../../../public/css/star-rating/theme-krajee-fa.min.css',
-        //'../../../public/css/star-rating/theme-krajee-svg.min.css',
-        //'../../../public/css/star-rating/theme-krajee-uni.min.css',
-    ],
-    providers: [AuthenticationService],
-    changeDetection: ChangeDetectionStrategy.Default // TODO: change to OnPush ??
+    styleUrls: [],
+    providers: [HrDocsService],
 })
-export class HRDocsListComponent extends CommonFormViewComponent implements OnInit{
+export class HRDocsListComponent extends CommonFormViewComponent implements OnInit {
+
+    private moduleAccessChecker = new ModuleAccessCheckerService;
+
+    // private FILE_DOWNLOAD_URL = DATA_APP_URL + "files/download/";
+
+    private docsList = [];
+
+    private myFiles: File[];
+
     busy: Subscription;
-    newsList:  any[];
-    selectedNews = {};
-    pageMap = {};
-
-    errorMessage: string;
-
-    showMoreButtonMap = {};
-
-    alternativeInvestmentTypes = ['PE', 'HF', 'RE', 'SWF', 'RM'];
-
-    id: number;
-
-    private moduleAccessChecker: ModuleAccessCheckerService;
-    private sub: any;
 
     constructor(
-        private hrNewsService: HRNewsService,
-        private route: ActivatedRoute,
+        private hrDocsService: HrDocsService,
         private router: Router,
-        private location: Location
+        // private downloadService: FileDownloadService,
     ){
         super(router);
-        this.moduleAccessChecker = new ModuleAccessCheckerService;
 
+        this.myFiles = [];
     }
 
     ngOnInit(){
-
-        // load news
-        this.loadNews();
+        this.getList();
     }
-
 
     canEdit(){
-        return false;
-    }
-    loadNews(){
-
-        //this.busy = this.hrNewsService.loadNews()
-        //    .subscribe(
-        //        newsList => {
-        //            this.newsList = newsList;
-        //        },
-        //        (error: ErrorResponse) => {
-        //            this.successMessage = null;
-        //            this.errorMessage = "Error loading news";
-        //            if(error && !error.isEmpty()){
-        //                this.processErrorMessage(error);
-        //            }
-        //            this.postAction(null, null);
-        //        }
-        //    );
+        return this.moduleAccessChecker.checkAccessHRDocsEditor();
     }
 
+    fileChange(files: any){
+        this.myFiles = files;
+        console.log(this.myFiles);
+    }
+
+    private getList() {
+        this.busy = this.hrDocsService.get()
+            .subscribe(
+                (response) => {
+                    // console.log(response);
+                    // console.log(this.docsList);
+                    // console.log(response.message.nameEn);
+                    this.docsList = response.filesDtoList;
+                    // this.postAction(response.message.nameEn, null);
+                },
+                error => {
+                    // console.log(error.message);
+                    this.docsList = [];
+                    this.postAction(null, error.message);
+                }
+            )
+    }
+
+    private onSubmitHRDocument() {
+        this.busy = this.hrDocsService.postFiles(this.myFiles)
+            .subscribe(
+                (response) => {
+                    // console.log(response);
+                    // console.log(this.docsList);
+                    // console.log(response.message.nameEn);
+                    this.getList();
+                    this.postAction(response.message.nameEn, null);
+                    this.myFiles = [];
+                    $("#fileupload").val(null);
+                },
+                error => {
+                    // console.log(this.docsList);
+                    // console.log(JSON.parse(error).message.nameEn);
+                    this.postAction(null, JSON.parse(error).message.nameEn);
+                }
+            )
+    }
+
+    // private fileDownload(id) {
+    //     this.busy = this.downloadService.makeFileRequest(this.FILE_DOWNLOAD_URL + "HR_DOCS/" + id, '')
+    //         .subscribe(
+    //             (response) => {
+    //                 console.log("File downloaded!");
+    //             },
+    //             (error) => {
+    //                 this.postAction(null, "Error loading file!");
+    //                 console.log(error);
+    //             }
+    //         )
+    // }
+
+    deleteAttachment(fileId) {
+        var confirmed = window.confirm("Are you sure you want to delete the document?");
+        if(confirmed) {
+            this.hrDocsService.deleteDocument(fileId)
+                .subscribe(
+                    (response) => {
+                        this.getList();
+                        this.postAction(response.message.nameEn, null);
+                    },
+                    (error: ErrorResponse) => {
+                        this.postAction(null, error.message);
+                    }
+                );
+        }
+    }
+
+    postAction(successMessage, errorMessage) {
+        this.successMessage = successMessage;
+        this.errorMessage = errorMessage;
+
+        // TODO: non jQuery
+        $('html, body').animate({scrollTop: 0}, 'fast');
+    }
 }
