@@ -14,6 +14,7 @@ import {ROLE_USER_PROFILE_EDIT} from "./roles.constants";
 import {ROLE_MONITORING_EDIT} from "./roles.constants";
 import {ROLE_LOOKUPS_EDIT} from "./roles.constants";
 import {ROLE_M2S2_EDIT} from "./roles.constants";
+import {ROLE_HR_DOCS_EDIT} from "./roles.constants";
 
 
 @Injectable()
@@ -31,6 +32,10 @@ export class ModuleAccessCheckerService extends CommonService{
 
     public checkAccessInvest(){
         return this.checkAccess("ROLE_INVEST");
+    }
+
+    public checkAccessHRDocsEditor(){
+        return this.checkAccess(ROLE_HR_DOCS_EDIT)
     }
 
     public checkAccessEmployeeProfileEditor(){
