@@ -82,7 +82,7 @@ export class AppComponent {
 
     activeMenu;
 
-    activeBlock = 'invest';
+    activeBlock = 'corp';
 
     private moduleAccessChecker: ModuleAccessCheckerService;
 
@@ -118,18 +118,53 @@ export class AppComponent {
         return localStorage.getItem("authenticatedUser") != null;
     }
 
-    showTrainings(){
-        return true;
-        //return !this.moduleAccessChecker.checkAccessMemoRestricted();
+    checkAvailable(menu){
+        if(menu === "HR"){
+            return this.activeBlock === 'corp';
+        }else if(menu === "TRAININGS"){
+            return this.activeBlock === 'corp';
+        }else if(menu === "MONITORING"){
+            return this.activeBlock === 'invest' && this.showMonitoring();
+        }else if(menu === "MACROMONITOR"){
+            return this.activeBlock === 'invest' && this.showMacromonitor();;
+        }else if(menu === "M2S2"){
+            return this.activeBlock === 'invest' && this.showM2S2();
+        }else if(menu === "PRIVATE_EQUITY"){
+            return this.activeBlock === 'invest' && this.showPrivateEquity();
+        }else if(menu === "HEDGE_FUNDS"){
+            return this.activeBlock === 'invest' && this.showHedgeFunds();
+        }else if(menu === "REPORTING"){
+            return this.activeBlock === 'invest' && this.showReporting();
+        }else if(menu === "CORP_MEETINGS"){
+            return this.activeBlock === 'invest' && this.showCorpMeeting();
+        }else if(menu === "LOOKUPS"){
+            return this.activeBlock === 'invest' && this.showLookups();;
+        }
     }
 
-    showM2S2(){
-        return true;
-        //return !this.moduleAccessChecker.checkAccessMemoRestricted();
-    }
 
     getUsername(){
         return localStorage.getItem("authenticatedUser") != null ? "," + localStorage.getItem("authenticatedUser") : "";
+    }
+
+    showM2S2(){
+        return this.moduleAccessChecker.checkAccessM2S2();
+    }
+
+    showInvestNews(){
+        return this.moduleAccessChecker.checkAccessNews();
+    }
+
+    showMonitoring(){
+        return this.moduleAccessChecker.checkAccessMonitoring();
+    }
+
+    showMacromonitor(){
+        return this.moduleAccessChecker.checkAccessMacroMonitor();
+    }
+
+    showLookups(){
+        return this.moduleAccessChecker.checkAccessLookups();
     }
 
     showPrivateEquity(){
@@ -161,12 +196,17 @@ export class AppComponent {
         return this.moduleAccessChecker.checkAccessCorpMeetingsView();
     }
 
-    showLookups(){
-        return true;
+    getCurrentEmployeeId(){
+        return localStorage.getItem('authenticatedUser');
     }
 
-    getCurrencyEmployeeId(){
-        return localStorage.getItem('authenticatedUser');
+    getHomePageURLByType(type){
+        if(type === 'corp'){
+            return 'hr/news';
+        }else if(type === 'invest'){
+            return "news";
+        }
+        return null;
     }
 }
 

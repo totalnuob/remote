@@ -14,10 +14,13 @@ INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(53, 'MM_EDIT', 'Mac
 --INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(54, 'CM_EDIT', 'Corp Meetings - Editor', '', '');
 --INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(55, 'CM_VIEW', 'Corp Meetings - Viewer', '', '');
 INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(56, 'IC_MEMBR', 'IC Member', '', '');
-
 INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(101, 'NEWS_EDIT', 'News - Editor', '', '');
-
 INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(201, 'MEMO_RESTR', 'Memos Restricted', '', '');
-
 INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(301, 'USER_EDIT', 'User Profile - Editor', '', '');
+
+INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(302, 'MM_VIEW', 'MacroMonitor - Viewer', '', '');
+INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(303, 'MONIT_VIEW', 'Monitoring - Viewer', '', '');
+INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(304, 'MONIT_EDIT', 'Monitoring - Editor', '', '');
+INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(305, 'LOOKP_VIEW', 'Lookups - Viewer', '', '');
+INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(306, 'LOOKP_EDIT', 'Lookups - Editor', '', '');
 

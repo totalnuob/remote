@@ -26,6 +26,7 @@ import java.util.Set;
  */
 
 @RestController
+@PreAuthorize("hasRole('ROLE_M2S2_VIEWER') OR hasRole('ROLE_M2S2_EDITOR') OR hasRole('ROLE_ADMIN')")
 @RequestMapping("/m2s2")
 public class MemoServiceREST extends CommonServiceREST {
 
@@ -130,7 +131,7 @@ public class MemoServiceREST extends CommonServiceREST {
 //        return HFmemoService.get(memoId);
 //    }
 
-    @PreAuthorize("hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_M2S2_EDITOR') OR hasRole('ROLE_PRIVATE_EQUITY_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/PE/save", method = RequestMethod.POST)
     public ResponseEntity<?>  save(@RequestBody PrivateEquityMeetingMemoDto memoDto){
         if(memoDto.getFund() != null && memoDto.getFund().getId() == null) {
@@ -153,7 +154,7 @@ public class MemoServiceREST extends CommonServiceREST {
         }
     }
 
-    @PreAuthorize("hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_M2S2_EDITOR') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/HF/save", method = RequestMethod.POST)
     public ResponseEntity<?>  save(@RequestBody HedgeFundsMeetingMemoDto memoDto){
         if(memoDto.getFund() != null && memoDto.getFund().getId() == null) {
@@ -175,7 +176,7 @@ public class MemoServiceREST extends CommonServiceREST {
         }
     }
 
-    @PreAuthorize("hasRole('ROLE_REAL_ESTATE_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_M2S2_EDITOR') OR hasRole('ROLE_REAL_ESTATE_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/RE/save", method = RequestMethod.POST)
     public ResponseEntity<?>  save(@RequestBody RealEstateMeetingMemoDto memoDto){
         // set creator
@@ -210,6 +211,7 @@ public class MemoServiceREST extends CommonServiceREST {
         }
     }
 
+    @PreAuthorize("hasRole('ROLE_M2S2_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/GN/save", method = RequestMethod.POST)
     public ResponseEntity<?>  save(@RequestBody GeneralMeetingMemoDto memoDto){
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();

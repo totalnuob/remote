@@ -72,6 +72,8 @@ public class HedgeFundManagerServiceREST extends CommonServiceREST{
         return buildNonNullResponse(searchResult);
     }
 
+    @PreAuthorize("hasRole('ROLE_MONITORING_EDITOR') OR hasRole('ROLE_MONITORING_VIEWER') OR " +
+            "hasRole('ROLE_HEDGE_FUND_VIEWER') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/invested", method = RequestMethod.GET)
     public ResponseEntity findInvestedInBFunds(){
         List<HFManagerDto> searchResult = this.service.findInvestedInBFunds();

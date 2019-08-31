@@ -11,6 +11,9 @@ import {ROLE_CORPMEETINGS_EDIT} from "./roles.constants";
 import {ROLE_STRATEGY_RISKS_EDIT} from "./roles.constants";
 import {ROLE_IC_MEMBER} from "./roles.constants";
 import {ROLE_USER_PROFILE_EDIT} from "./roles.constants";
+import {ROLE_MONITORING_EDIT} from "./roles.constants";
+import {ROLE_LOOKUPS_EDIT} from "./roles.constants";
+import {ROLE_M2S2_EDIT} from "./roles.constants";
 
 
 @Injectable()
@@ -26,6 +29,10 @@ export class ModuleAccessCheckerService extends CommonService{
         this.roles = JSON.parse(rolesText);
     }
 
+    public checkAccessInvest(){
+        return this.checkAccess("ROLE_INVEST");
+    }
+
     public checkAccessEmployeeProfileEditor(){
         return this.checkAccess(ROLE_USER_PROFILE_EDIT);
     }
@@ -36,6 +43,14 @@ export class ModuleAccessCheckerService extends CommonService{
 
     public checkAccessPrivateEquity(){
         return this.checkAccess("ROLE_PRIVATE_EQUITY");
+    }
+
+    public checkAccessM2S2(){
+        return this.checkAccess("ROLE_M2S2");
+    }
+
+    public checkAccessM2S2Editor(){
+        return this.checkAccess(ROLE_M2S2_EDIT);
     }
 
     public checkAccessPrivateEquityEditor(){
@@ -58,6 +73,10 @@ export class ModuleAccessCheckerService extends CommonService{
         return this.checkAccess(ROLE_RE_EDIT);
     }
 
+    public checkAccessNews(){
+        return this.checkAccess("ROLE_NEWS");
+    }
+
     public checkAccessNewsEdit(){
         return this.checkAccess(ROLE_NEWS_EDIT);
     }
@@ -70,12 +89,32 @@ export class ModuleAccessCheckerService extends CommonService{
         return this.checkAccess(ROLE_REPORTING_EDIT);
     }
 
+    public checkAccessMonitoringEditor(){
+        return this.checkAccess(ROLE_MONITORING_EDIT);
+    }
+
+    public checkAccessMonitoring(){
+        return this.checkAccess("ROLE_MONITORING");
+    }
+
+    public checkAccessLookupsEditor(){
+        return this.checkAccess(ROLE_LOOKUPS_EDIT);
+    }
+
+    public checkAccessLookups(){
+        return this.checkAccess("ROLE_LOOKUPS");
+    }
+
     public checkAccessAdmin(){
         return this.checkAccess(ROLE_ADMIN);
     }
 
-    public checkAccessMacroMonitor(){
+    public checkAccessMacroMonitorEditor(){
         return this.checkAccess(ROLE_MM_EDIT);
+    }
+
+    public checkAccessMacroMonitor(){
+        return this.checkAccess("ROLE_MM");
     }
 
     //public checkAccessCorpMeetingsEditor(){

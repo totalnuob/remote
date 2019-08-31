@@ -29,7 +29,7 @@ public class MacroMonitorScoreServiceREST {
     @Autowired
     private TokenService tokenService;
 
-//    @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_MACROMONITOR_EDITOR')")
+    @PreAuthorize("hasRole('ROLE_MACROMONITOR_EDITOR') OR hasRole('ROLE_MACROMONITOR_VIEWER') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/get/{id}", method = RequestMethod.GET)
     public List<MacroMonitorScoreDto> get(@PathVariable Integer id) {
         List<MacroMonitorScoreDto> dto = this.service.getList(id);

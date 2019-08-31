@@ -85,6 +85,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 return "ROLE_STRATEGY_RISK_MANAGEMENT_EDITOR";
             case "SRM_VIEW":
                 return "ROLE_STRATEGY_RISK_MANAGEMENT_VIEWER";
+            case "MM_VIEW":
+                return "ROLE_MACROMONITOR_VIEWER";
             case "MM_EDIT":
                 return "ROLE_MACROMONITOR_EDITOR";
             case "IC_MEMBR":
@@ -97,6 +99,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 return "ROLE_CORPMEETINGS_VIEWER";
             case "USER_EDIT":
                 return "ROLE_USER_PROFILE_EDITOR";
+            case "MONIT_VIEW":
+                return "ROLE_MONITORING_VIEWER";
+            case "MONIT_EDIT":
+                return "ROLE_MONITORING_EDITOR";
+            case "LOOKP_VIEW":
+                return "ROLE_LOOKUPS_VIEWER";
+            case "LOOKP_EDIT":
+                return "ROLE_LOOKUPS_EDITOR";
+            case "M2S2_VIEW":
+                return "ROLE_M2S2_VIEWER";
+            case "M2S2_EDIT":
+                return "ROLE_M2S2_EDITOR";
             default:
                 return null;
         }

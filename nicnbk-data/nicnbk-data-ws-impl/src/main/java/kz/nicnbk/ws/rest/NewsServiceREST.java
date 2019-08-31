@@ -29,6 +29,7 @@ public class NewsServiceREST extends CommonServiceREST{
     @Autowired
     private TokenService tokenService;
 
+    //@PreAuthorize("hasRole('ROLE_NEWS_VIEWER') OR hasRole('ROLE_NEWS_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/load", method = RequestMethod.GET)
     public ResponseEntity<?> getNewsShort(){
         List<NewsDto> news = newsService.loadNewsShort(DEFAULT_PAGE_SIZE);
@@ -42,6 +43,7 @@ public class NewsServiceREST extends CommonServiceREST{
 //        return new ResponseEntity<>(news, getHeaders(), HttpStatus.CREATED);
 //    }
 
+    //@PreAuthorize("hasRole('ROLE_NEWS_VIEWER') OR hasRole('ROLE_NEWS_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/load/{pageSize}/{newsType}/{page}", method = RequestMethod.GET)
     public ResponseEntity<?> getNewsShort(@PathVariable Integer pageSize, @PathVariable String newsType, @PathVariable Integer page){
         List<NewsDto> news = newsService.loadNewsShort(newsType, page, Math.min(pageSize, MAX_PAGE_SIZE));
@@ -69,6 +71,7 @@ public class NewsServiceREST extends CommonServiceREST{
         }
     }
 
+    //@PreAuthorize("hasRole('ROLE_NEWS_VIEWER') OR hasRole('ROLE_NEWS_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value="/get/{id}", method = RequestMethod.GET)
     public ResponseEntity<?> get(@PathVariable Long id){
         NewsDto newsDto = this.newsService.get(id);
