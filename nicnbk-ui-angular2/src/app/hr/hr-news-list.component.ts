@@ -8,7 +8,8 @@ import {Subscription} from 'rxjs';
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 import {ErrorResponse} from "../common/error-response";
 import {CommonFormViewComponent} from "../common/common.component";
-import {HRNewsService} from "./hr-news.service";
+import {HRService} from "./hr.service";
+import {NEWS_PAGE_SIZE} from "./hr-news.constants";
 
 
 declare var $: any
@@ -31,11 +32,8 @@ export class HRNewsListComponent extends CommonFormViewComponent implements OnIn
     selectedNews = {};
     pageMap = {};
 
-    errorMessage: string;
-
-    showMoreButtonMap = {};
-
-    alternativeInvestmentTypes = ['PE', 'HF', 'RE', 'SWF', 'RM'];
+    currentPage = 0;
+    moreNewsExist = true;
 
     id: number;
 
@@ -43,7 +41,7 @@ export class HRNewsListComponent extends CommonFormViewComponent implements OnIn
     private sub: any;
 
     constructor(
-        private hrNewsService: HRNewsService,
+        private hrService: HRService,
         private route: ActivatedRoute,
         private router: Router,
         private location: Location
@@ -61,24 +59,70 @@ export class HRNewsListComponent extends CommonFormViewComponent implements OnIn
 
 
     canEdit(){
-        return false;
+        return this.moduleAccessChecker.checkAccessHREditor();
     }
     loadNews(){
 
-        //this.busy = this.hrNewsService.loadNews()
-        //    .subscribe(
-        //        newsList => {
-        //            this.newsList = newsList;
-        //        },
-        //        (error: ErrorResponse) => {
-        //            this.successMessage = null;
-        //            this.errorMessage = "Error loading news";
-        //            if(error && !error.isEmpty()){
-        //                this.processErrorMessage(error);
-        //            }
-        //            this.postAction(null, null);
-        //        }
-        //    );
+        this.busy = this.hrService.loadNews()
+            .subscribe(
+                newsList => {
+                    this.newsList = newsList;
+                },
+                (error: ErrorResponse) => {
+                    this.successMessage = null;
+                    this.errorMessage = "Error loading hr news";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
+            );
+    }
+
+
+    isShowMoreButton(){
+        return this.moreNewsExist;
+    }
+
+    getNewsById(id){
+
+        this.selectedNews = null;
+        //this.location.go('/news;params=' + id);
+
+        this.hrService.getNewsById(id)
+            .subscribe(
+                newsItem => this.selectedNews = newsItem,
+                (error: ErrorResponse) => {
+                    //this.successMessage = null;
+                    //this.errorMessage = "Error loading news details";
+                    this.selectedNews = null;
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null, null);
+                }
+            );
+    }
+
+    loadMore(){
+        var nextPage = this.currentPage + 1;
+        var pageSize = 5;
+        this.busy = this.hrService.loadMoreNews(pageSize, nextPage)
+            .subscribe(
+                loadedNews => {
+                    this.currentPage = nextPage;
+                    Array.prototype.push.apply(this.newsList,loadedNews);
+                    console.log(loadedNews.length);
+                    if(loadedNews.length < NEWS_PAGE_SIZE){
+                        this.moreNewsExist = false;
+                    }
+                },
+                error => this.errorMessage = <any>error
+            );
+    }
+
+    closeNewsModal(){
+        this.selectedNews = null;
     }
 
 }

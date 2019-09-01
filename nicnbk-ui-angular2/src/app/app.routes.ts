@@ -107,6 +107,7 @@ import {HRNewsListComponent} from "./hr/hr-news-list.component";
 import {HREmployeesListComponent} from "./hr/hr-employees-list.component";
 import {HRDocsListComponent} from "./hr/hr-docs-list.component";
 import {EmployeeProfileEditComponent} from "./employee/employee.profile.edit.component";
+import {HRNewsEditComponent} from "./hr/hr-news-edit.component";
 
 
 const routes: Routes  = [
@@ -644,6 +645,11 @@ const routes: Routes  = [
     {
         path: 'hr/news',
         component: HRNewsListComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'hr/news/edit/:id',
+        component: HRNewsEditComponent,
         canActivate: [AuthGuard]
     },
     {

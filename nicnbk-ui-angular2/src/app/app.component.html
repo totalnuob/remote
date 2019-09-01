@@ -318,7 +318,7 @@
                         <ul class="navigation__menu" style="background-color: white">
                             <li class="navigation__item dropdown">&nbsp;</li>
                             <li class="navigation__item dropdown" *ngIf="checkAvailable('HR')">
-                                <a class="navigation__link" style="font-family: IBM Plex Sans" [routerLink]="['/hr/news']"
+                                <a class="navigation__link" style="font-family: IBM Plex Sans" [routerLink]="['/hr/employees']"
                                    [style.border-bottom-color]="activeMenu === 'HR' ? '#D9A158' : 'white'">Human Resources</a>
                                 <ul  class="dropdown-menu">
                                     <li><a [routerLink]="['/hr/employees']" class="navigation__sublink"

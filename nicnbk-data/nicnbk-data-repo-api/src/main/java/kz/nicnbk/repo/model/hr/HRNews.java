@@ -16,7 +16,7 @@ public class HRNews extends CreateUpdateBaseEntity{
 
     private String header;
 
-    private String source;
+    private String subheader;
 
     private String content;
 
@@ -31,12 +31,12 @@ public class HRNews extends CreateUpdateBaseEntity{
     }
 
     @Column(columnDefinition="TEXT")
-    public String getSource() {
-        return source;
+    public String getSubheader() {
+        return subheader;
     }
 
-    public void setSource(String source) {
-        this.source = source;
+    public void setSubheader(String subheader) {
+        this.subheader = subheader;
     }
 
     @Column(columnDefinition="TEXT")

@@ -14,7 +14,7 @@ import java.util.Date;
 public class HRNewsDto extends CreateUpdateBaseEntityDto<HRNews> {
 
     private String header;
-    private String source;
+    private String subheader;
     private String content;
     private String shortContent;
 
@@ -26,12 +26,12 @@ public class HRNewsDto extends CreateUpdateBaseEntityDto<HRNews> {
         this.header = header;
     }
 
-    public String getSource() {
-        return source;
+    public String getSubheader() {
+        return subheader;
     }
 
-    public void setSource(String source) {
-        this.source = source;
+    public void setSubheader(String subheader) {
+        this.subheader = subheader;
     }
 
     public String getContent() {

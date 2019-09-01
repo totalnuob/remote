@@ -35,8 +35,8 @@ export class ModuleAccessCheckerService extends CommonService{
         return this.checkAccess("ROLE_INVEST");
     }
 
-    public checkAccessHRDocsEditor(){
-        return this.checkAccess(ROLE_HR_EDIT)
+    public checkAccessHREditor(){
+        return this.checkAccess(ROLE_HR_EDIT);
     }
 
     public checkAccessEmployeeProfileEditor(){

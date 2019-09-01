@@ -5,12 +5,80 @@
             <div class="alert alert-danger" *ngIf="errorMessage != null">{{errorMessage}}</div>
         </div>
     </div>
-    <div class="row withpadding">
-        <a [routerLink]="['/hr/news/edit/',0 ]" class="btn btn-primary pull-right" *ngIf="canEdit()">Add News</a>
-    </div>
 
     <div [ngBusy]="busy" class="row">
-        HR NEWS LIST
+        <div class="row withpadding">
+            <a [routerLink]="['/hr/news/edit/', 0 ]" class="btn btn-primary pull-right" *ngIf="canEdit()">Add News</a>
+        </div>
+
+        <div class="row">
+            <div id="news_content">
+                <div class="row withpadding" *ngFor = "let news of newsList">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <h4 style="word-wrap: break-word;"><a data-toggle="modal" (click) = "getNewsById(news.id)" data-target="#newsModal" style="cursor: pointer">{{news.header}}</a></h4>
+                        </div>
+                        <div class="row">
+                            <h4 style="word-wrap: break-word"><small>{{news.subheader}}</small></h4>
+                        </div>
+                        <div class="row">
+                            <p style="word-wrap: break-word">{{news.shortContent}}</p>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-1">
+                                <a class="btn btn-info btn-sm" data-toggle="modal"
+                                   (click) = "getNewsById(news.id)" data-target="#newsModal">View</a>
+                            </div>
+                            <div class="col-md-1">
+                                <a [routerLink]="['/hr/news/edit/', news.id]" class="btn btn-primary btn-sm" *ngIf="canEdit()" >Edit</a>
+                            </div>
+                            <!--<div class="col-md-1 pull-right">-->
+                            <!--<span class="glyphicon glyphicon-user"></span> {{news.owner}}-->
+                            <!--</div>-->
+                        </div>
+                        <div class="row">
+                            <hr style="border-top: 1px solid #B5AEAE"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row withpadding">
+                <div id="loadmoreajaxloader_general" style="display:none;" class="center-block">
+                </div>
+                <div id="moreBtn_general">
+                    <button class="btn btn-default" (click)="loadMore('GENERAL')" *ngIf="isShowMoreButton('GENERAL')">More</button>
+                    <div *ngIf="!isShowMoreButton('GENERAL')">No more posts to show</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="newsModal" role="dialog">
+            <div class="modal-dialog" style="overflow-y: scroll; max-height:85%;  margin-top: 50px; margin-bottom:50px; width:65%;">
+                <div class="modal-content" style="background-color: #fff1e0">
+                    <div class="loader" *ngIf="selectedNews == null"></div>
+                    <div class="row withpadding">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <h4><span class="label label-info" >{{selectedNews?.type}}</span></h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-header">
+                        <!--<button type="button" class="close" data-dismiss="modal">&times;</button>-->
+                        <h3 class="modal-title"  style="word-wrap: break-word">{{selectedNews?.header}}</h3>
+                        <h4 style="word-wrap: break-word">
+                            <small>{{selectedNews?.subheader}}</small>
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <p style="word-wrap: break-word;" [innerHTML]="selectedNews?.content"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" (click)="closeNewsModal()">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
 </div>

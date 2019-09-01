@@ -1,12 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import {CommonFormViewComponent} from "../common/common.component";
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
-import {Subscription} from "../../../node_modules/rxjs";
-import {HrDocsService} from "./hr-docs.service";
+import {Subscription} from 'rxjs';
 import {Router} from "@angular/router";
 // import {FileDownloadService} from "../common/file.download.service";
 // import {DATA_APP_URL} from "../common/common.service.constants";
 import {ErrorResponse} from "../common/error-response";
+import {HRService} from "./hr.service";
 
 declare var $: any;
 
@@ -14,7 +14,7 @@ declare var $: any;
     selector: 'hr-docs-list',
     templateUrl: 'view/hr-docs-list.component.html',
     styleUrls: [],
-    providers: [HrDocsService],
+    providers: [HRService],
 })
 export class HRDocsListComponent extends CommonFormViewComponent implements OnInit {
 
@@ -29,7 +29,7 @@ export class HRDocsListComponent extends CommonFormViewComponent implements OnIn
     busy: Subscription;
 
     constructor(
-        private hrDocsService: HrDocsService,
+        private hrDocsService: HRService,
         private router: Router,
         // private downloadService: FileDownloadService,
     ){
@@ -43,7 +43,7 @@ export class HRDocsListComponent extends CommonFormViewComponent implements OnIn
     }
 
     canEdit(){
-        return this.moduleAccessChecker.checkAccessHRDocsEditor();
+        return this.moduleAccessChecker.checkAccessHREditor();
     }
 
     fileChange(files: any){

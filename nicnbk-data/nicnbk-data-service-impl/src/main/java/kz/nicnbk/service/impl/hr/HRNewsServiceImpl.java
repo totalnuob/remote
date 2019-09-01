@@ -29,7 +29,7 @@ public class HRNewsServiceImpl implements HRNewsService {
     private static final Logger logger = LoggerFactory.getLogger(HRNewsServiceImpl.class);
 
     /* Max number of characters in short version of news content (excerpt) */
-    private static final int SHORT_NEWS_CONTENT_SIZE = 600;
+
 
     @Autowired
     private HRNewsEntityConverter hrNewsConverter;
@@ -42,8 +42,7 @@ public class HRNewsServiceImpl implements HRNewsService {
 
     @Override
     public Long save(HRNewsDto newsItemDto, String updater) {
-        // set short content
-        newsItemDto.setShortContent(extractShort(newsItemDto.getContent()));
+
         try {
             HRNews entity = hrNewsConverter.assemble(newsItemDto);
             if(newsItemDto.getId() == null){ // CREATE
@@ -124,20 +123,5 @@ public class HRNewsServiceImpl implements HRNewsService {
         return newsItems;
     }
 
-
-    /**
-     * Returns short version, i.e. without html tags, of the news content.
-     * Uses jsoup library.
-     *
-     * @param htmlContent - html string
-     * @return
-     */
-    private String extractShort(String htmlContent){
-        if(htmlContent == null){
-            return "";
-        }
-        String strippedContent = Jsoup.parse(htmlContent).text();
-        return strippedContent.substring(0, Math.min(SHORT_NEWS_CONTENT_SIZE, strippedContent.length()));
-    }
 
 }

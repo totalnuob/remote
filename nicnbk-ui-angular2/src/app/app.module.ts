@@ -121,6 +121,7 @@ import {HRNewsListComponent} from "./hr/hr-news-list.component";
 import {HREmployeesListComponent} from "./hr/hr-employees-list.component";
 import {HRDocsListComponent} from "./hr/hr-docs-list.component";
 import {EmployeeProfileEditComponent} from "./employee/employee.profile.edit.component";
+import {HRNewsEditComponent} from "./hr/hr-news-edit.component";
 //import {CorpMeetingEditComponent} from "./corpmeetings/ic-meeting-topic-edit.component";
 
 @NgModule({
@@ -171,7 +172,7 @@ import {EmployeeProfileEditComponent} from "./employee/employee.profile.edit.com
         AccessDeniedComponent, MMEditComponent, MMViewComponent,NotFoundComponent,
         CorpMeetingsListComponent, CorpMeetingEditComponent,
         LookupValuesComponent, CurrencyRatesLookupValuesComponent, BenchmarkLookupValuesComponent,
-        HRNewsListComponent, HREmployeesListComponent, HRDocsListComponent
+        HRNewsListComponent, HRNewsEditComponent, HREmployeesListComponent, HRDocsListComponent
     ],
     bootstrap: [ AppComponent ]
 })
