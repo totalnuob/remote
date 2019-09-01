@@ -60,6 +60,10 @@ export class CorpMeetingService extends CommonService {
                 return type != null && type === "SRM";
             } else if (this.moduleAccessChecker.checkAccessReportingEditor()) {
                 return type != null && type === "REP";
+            }else if (this.moduleAccessChecker.checkAccessStrategyEditor()) {
+                return type != null && type === "STRTG";
+            }else if (this.moduleAccessChecker.checkAccessRisksEditor()) {
+                return type != null && type === "RISKS";
             }
         }
         return false;

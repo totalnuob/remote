@@ -16,6 +16,8 @@ import {ROLE_LOOKUPS_EDIT} from "./roles.constants";
 import {ROLE_M2S2_EDIT} from "./roles.constants";
 import {ROLE_HR_DOCS_EDIT} from "./roles.constants";
 import {ROLE_HR_EDIT} from "./roles.constants";
+import {ROLE_STRATEGY_EDIT} from "./roles.constants";
+import {ROLE_RISKS_EDIT} from "./roles.constants";
 
 
 @Injectable()
@@ -120,7 +122,7 @@ export class ModuleAccessCheckerService extends CommonService{
     }
 
     public checkAccessMacroMonitor(){
-        return this.checkAccess("ROLE_MM");
+        return this.checkAccess("ROLE_MACROMONITOR");
     }
 
     //public checkAccessCorpMeetingsEditor(){
@@ -142,6 +144,13 @@ export class ModuleAccessCheckerService extends CommonService{
 
     public checkAccessStrategyRisksEditor(){
         return this.checkAccess(ROLE_STRATEGY_RISKS_EDIT);
+    }
+
+    public checkAccessStrategyEditor(){
+        return this.checkAccess(ROLE_STRATEGY_EDIT);
+    }
+    public checkAccessRisksEditor(){
+        return this.checkAccess(ROLE_RISKS_EDIT);
     }
 
 

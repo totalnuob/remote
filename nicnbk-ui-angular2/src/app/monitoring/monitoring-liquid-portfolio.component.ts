@@ -1535,6 +1535,6 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
     }
 
     canEdit(){
-        return this.moduleAccessChecker.checkAccessReportingEditor();
+        return this.moduleAccessChecker.checkAccessMonitoringEditor();
     }
 }
