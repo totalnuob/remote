@@ -119,11 +119,11 @@
                 <div class="row withpadding" style="position: relative; min-height: 80px;">
                     <div class="row pull-right">
                         <ul class="pagination" *ngIf="icTopicSearchResult?.showPageFrom > 0">
-                            <li><a *ngIf="icTopicSearchResult?.showPageFrom > 1" (click)="search(icTopicSearchResult.showPageFrom - 1)">&laquo;</a></li>
+                            <li><a *ngIf="icTopicSearchResult?.showPageFrom > 1" (click)="searchICMeetingTopics(icTopicSearchResult.showPageFrom - 1)">&laquo;</a></li>
                             <li *ngFor="let i of range(icTopicSearchResult.showPageFrom, icTopicSearchResult.showPageTo)" [class.active]="i == icTopicSearchResult.currentPage">
-                                <a (click)="search(i)">{{i}}</a>
+                                <a (click)="searchICMeetingTopics(i)">{{i}}</a>
                             </li>
-                            <li><a *ngIf="icTopicSearchResult.showPageTo < icTopicSearchResult.totalPages" (click)="search(icTopicSearchResult.showPageTo + 1)">&raquo;</a></li>
+                            <li><a *ngIf="icTopicSearchResult.showPageTo < icTopicSearchResult.totalPages" (click)="searchICMeetingTopics(icTopicSearchResult.showPageTo + 1)">&raquo;</a></li>
                         </ul>
                     </div>
                     <table [ngBusy]="busy"  class = "table table-hover">
@@ -149,11 +149,11 @@
                     </table>
                     <div class="row pull-right">
                         <ul class="pagination" *ngIf="icTopicSearchResult?.showPageFrom > 0">
-                            <li><a *ngIf="icTopicSearchResult?.showPageFrom > 1" (click)="search(icTopicSearchResult.showPageFrom - 1)">&laquo;</a></li>
+                            <li><a *ngIf="icTopicSearchResult?.showPageFrom > 1" (click)="searchICMeetingTopics(icTopicSearchResult.showPageFrom - 1)">&laquo;</a></li>
                             <li *ngFor="let i of range(icTopicSearchResult.showPageFrom, icTopicSearchResult.showPageTo)" [class.active]="i == icTopicSearchResult.currentPage">
-                                <a (click)="search(i)">{{i}}</a>
+                                <a (click)="searchICMeetingTopics(i)">{{i}}</a>
                             </li>
-                            <li><a *ngIf="icTopicSearchResult.showPageTo < icTopicSearchResult.totalPages" (click)="search(icTopicSearchResult.showPageTo + 1)">&raquo;</a></li>
+                            <li><a *ngIf="icTopicSearchResult.showPageTo < icTopicSearchResult.totalPages" (click)="searchICMeetingTopics(icTopicSearchResult.showPageTo + 1)">&raquo;</a></li>
                         </ul>
                     </div>
                 </div>
