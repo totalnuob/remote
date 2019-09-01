@@ -227,6 +227,6 @@ export class  MMViewComponent extends GoogleChartComponent {
     }
 
     public showEditMacroMonitor(){
-        return this.moduleAccessChecker.checkAccessMacroMonitor();
+        return this.moduleAccessChecker.checkAccessMacroMonitorEditor();
     }
 }

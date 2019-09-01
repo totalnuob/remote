@@ -232,7 +232,7 @@ public class LookupServiceREST extends CommonServiceREST{
         return searchResult;
     }
 
-    @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_LOOKUPS_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/currencyRates/save", method = RequestMethod.POST)
     public ResponseEntity saveCurrencyRates(@RequestBody CurrencyRatesDto currencyRatesDto){
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
@@ -242,7 +242,7 @@ public class LookupServiceREST extends CommonServiceREST{
         return buildEntitySaveResponse(saveResponse);
     }
 
-    @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_LOOKUPS_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/currencyRates/saveList", method = RequestMethod.POST)
     public ResponseEntity saveCurrencyRatesList(@RequestBody List<CurrencyRatesDto> currencyRatessDtoList){
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
@@ -252,7 +252,7 @@ public class LookupServiceREST extends CommonServiceREST{
         return buildEntityListSaveResponse(saveResponse);
     }
 
-    @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_LOOKUPS_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/benchmarks/save", method = RequestMethod.POST)
     public ResponseEntity saveBenchmarkValue(@RequestBody BenchmarkValueDto benchmarkValueDto){
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
@@ -262,7 +262,7 @@ public class LookupServiceREST extends CommonServiceREST{
         return buildEntitySaveResponse(saveResponse);
     }
 
-    @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_LOOKUPS_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/benchmarks/saveList", method = RequestMethod.POST)
     public ResponseEntity saveBenchmarksList(@RequestBody List<BenchmarkValueDto> benchmarkDtoList){
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
@@ -272,7 +272,7 @@ public class LookupServiceREST extends CommonServiceREST{
         return buildEntityListSaveResponse(saveResponse);
     }
 
-    @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_LOOKUPS_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/currencyRates/delete/{id}", method = RequestMethod.DELETE)
     public ResponseEntity deleteCurrencyRates(@PathVariable Long id){
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();

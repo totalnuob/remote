@@ -17,6 +17,7 @@ export class BenchmarkValue{
     date: Date;
     returnValue: number;
     indexValue: number;
+    ytd: number;
 
     editable: boolean;
 

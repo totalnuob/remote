@@ -108,6 +108,8 @@ public class GenereicFileServiceREST {
                     }
                 }
                 return false;
+            }else if(filesDto.getType().equalsIgnoreCase(FileTypeLookup.HR_DOCS.getCode())){
+                return true;
             }
             return true;
         }

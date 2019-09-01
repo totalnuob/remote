@@ -1,0 +1,192 @@
+<div class="container">
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li *ngIf="this.breadcrumbParams != null">
+                    <span><a [routerLink]="['/hr/employees', {params: this.breadcrumbParams }]">EMPLOYEES</a></span>
+                </li>
+                <li class="active">PROFILE</li>
+            </ol>
+        </div>
+    </div>
+    <br/>
+    <ul role="tablist" class="date-tabs nav">
+        <li class="date-tabs__item"><a data-toggle="tab"
+                                       href="#PROFILE"
+                                       role="tab" aria-controls="PROFILE"
+                                       aria-selected="true"
+                                       class="date-tabs__link"
+                                       [style.border-bottom-color]="activeTab === 'PROFILE' ? '#D9A158' : 'white'"
+                                       (click)="activeTab='PROFILE'">PROFILE</a>
+        </li>
+        <li class="date-tabs__item" *ngIf="userOwned()">
+            <a data-toggle="tab"
+               href="#PASSWORD"
+               role="tab" aria-controls="PASSWORD"
+               aria-selected="false"
+               class="date-tabs__link"
+               [style.border-bottom-color]="activeTab === 'PASSWORD' ? '#D9A158' : 'white'"
+               (click)="activeTab = 'PASSWORD'">PASSWORD</a>
+        </li>
+    </ul>
+
+
+    <!--<ul class="nav nav-tabs">-->
+        <!--<li class="active">-->
+            <!--<a data-toggle="tab" href="#profile">PROFILE</a>-->
+        <!--</li>-->
+        <!--<li>-->
+            <!--<a data-toggle="tab" href="#password">PASSWORD</a>-->
+        <!--</li>-->
+    <!--</ul>-->
+
+
+    <div class="tab-content">
+
+        <div class="row top-buffer" >
+            <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+            </div>
+            <div class="alert alert-info" *ngIf="!submitted && successMessage != null"><span>{{successMessage}}</span>
+            </div>
+        </div>
+
+        <div [ngBusy]="busy" id="PROFILE" role="tabpanel" aria-labelledby="PROFILE" class="tab-pane active">
+            <h4>Profile Information</h4>
+
+            <div class="col-md-3 col-lg-3 " align="center">
+                <img alt="User Pic" src="../../../../public/img/noprofile.png" class="img-circle img-responsive">
+            </div>
+
+            <div class=" col-md-9 col-lg-9 ">
+                <div class="row form-group">
+                    <label class="control-label col-sm-2">Last name:</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" [(ngModel)]="employee.lastName"/>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label class="control-label col-sm-2">First name:</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" [(ngModel)]="employee.firstName"/>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label class="control-label col-sm-2">Patronymic:</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" [(ngModel)]="employee.patronymic"/>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label class="control-label col-sm-2">Date of birth:</label>
+                    <div class="col-sm-3">
+                        <div class='input-group date col-md-2' id='birthDatePicker' style="width: 100%">
+                            <input type='text' class="form-control" id="birthDate" name="birthDate" style="font-size: small" [(ngModel)]="employee.birthDate"/>
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-12">
+                        <label class="control-label col-sm-2">Position:</label>
+                        <div class="col-sm-5">
+                            <select id="department" class="form-control" name="department" [(ngModel)]="chosenDepartment"
+                                    (change)="departmentChanged($event.target.value)">
+                                <option *ngFor = "let department of departments" [value]="department?.code">{{department?.nameEn}}</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-5">
+                            <select [disabled] = "chosenDepartment == null" id="position" class="form-control" name="position" [(ngModel)]="chosenPosition">
+                                <option *ngFor = "let position of departmentPositions" [value]="position?.code">{{position?.nameEn}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label class="control-label col-sm-2">Username:</label>
+                    <div class="col-sm-10">
+                        <span class="form-control-static">{{employee.username}}</span>
+                    </div>
+                </div>
+
+                <br/>
+                <div class="row form-group">
+                    <label class="control-label col-sm-2">Status:</label>
+                    <div class="col-sm-10">
+                        <button *ngIf="employee.active == null || employee.active" disabled="true" class="btn btn-xs btn-success">ACTIVE</button>
+                        <button *ngIf="employee.active != null && !employee.active" disabled="true" class="btn btn-xs btn-default">IN-ACTIVE</button>
+                    </div>
+                </div>
+
+                <div class="row form-group pull-right">
+                    <button class="btn btn-success" (click)="saveEmployeeProfile()">Save</button>
+                </div>
+            </div>
+
+            <br/>
+        </div>
+        <div id="PASSWORD" role="tabpanel" aria-labelledby="PASSWORD" class="tab-pane">
+            <div class="container">
+                <div class="row" style="position: relative; min-height: 350px;">
+                    <div class="Absolute-Center is-Responsive">
+                        <!--<div *ngIf="errorMessage != null">-->
+                        <!--<span style="color:red">{{errorMessage}}</span>-->
+                        <!--</div>-->
+                        <div class="form-group input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                            <input class="form-control" type="password" name="currentPassword" placeholder="current password"
+                                   [(ngModel)]="currentPassword"/>
+                        </div>
+                        <div class="form-group input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                            <input class="form-control" type="password" name="newPassword" placeholder="new password"
+                                   [(ngModel)]="newPassword"/>
+                        </div>
+                        <div class="form-group input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                            <input class="form-control" type="password" name="newPasswordConfirm" placeholder="new password again"
+                                   [(ngModel)]="newPasswordConfirm"/>
+                        </div>
+                        <div><button type="button" class="btn btn-def btn-block" (click)="changePassword()"
+                                     data-toggle="modal" data-target="#passwordChangeModal">Change</button></div>
+
+                        <br/>
+                        <!--<div class="copyrightText">&copy; 2016 NIC</div>-->
+                    </div>
+                </div>
+
+                <div class="modal fade" id="passwordChangeModal" role="dialog">
+                    <div class="modal-dialog" style="margin-top: 50px; margin-bottom:50px;">
+                        <div class="modal-content">
+                            <!--<div class="modal-header">-->
+                            <!--<button type="button" class="close" data-dismiss="modal">&times;</button>-->
+                            <!--<h3 class="modal-title" >{{selectedNews.header}}</h3>-->
+                            <!--<h4>-->
+                            <!--<small>{{selectedNews.source}}</small>-->
+                            <!--</h4>-->
+                            <!--</div>-->
+                            <div class="modal-body">
+                                <div class="col-md-12">
+                                    <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
+                                    </div>
+                                </div>
+                                <!--<p>Password successfully changed. Please login with your new password</p>-->
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" *ngIf="errorMessage == null" data-dismiss="modal"
+                                        (click)="finishChangePassword()">OK</button>
+
+                                <button type="button" class="btn btn-primary" *ngIf="errorMessage != null" data-dismiss="modal">CLOSE</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

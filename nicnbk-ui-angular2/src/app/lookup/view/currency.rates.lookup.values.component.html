@@ -35,7 +35,7 @@
             <div class="col-md-12">
                 <div class="col-md-2 pull-right">
                     <a class="btn btn-primary" data-toggle="modal" data-target="#currencyUploadModal" style="cursor: pointer">
-                        <!--<span class="glyphicon glyphicon-edit"></span>-->Add multiple
+                        <!--<span class="glyphicon glyphicon-edit"></span>-->Add multiple USD rates
                     </a>
                 </div>
             </div>
@@ -106,6 +106,8 @@
                     <th>CURRENCY</th>
                     <th>KZT</th>
                     <th>USD</th>
+                    <th>AVG MONTH</th>
+                    <th>AVG YEAR</th>
                     <!--<th>AVG VALUE</th>-->
                     <!--<th>AVG VALUE YR</th>-->
                     <th>&nbsp;</th>
@@ -117,18 +119,18 @@
                         <td>{{item?.currency?.code}}</td>
                         <td>{{item.value}}</td>
                         <td>{{item.valueUSD}}</td>
-                        <!--<td>{{item.averageValue}}</td>-->
-                        <!--<td>{{item.averageValueYear}}</td>-->
+                        <td>{{item.averageValue}}</td>
+                        <td>{{item.averageValueYear}}</td>
                         <td>
-                            <button *ngIf = "item.editable" type="button" class="btn-xs btn-success" style="display: inline-block"
+                            <button type="button" class="btn-xs btn-success" style="display: inline-block"
                                     data-toggle="modal" data-target="#addNewModal" (click)="edit(item)">
                                 <span class="glyphicon glyphicon-pencil"></span>
                             </button>
 
-                            <button *ngIf = "item.editable" type="button" class="btn btn-xs btn-danger" style="display: inline-block"
-                                    disabled (click)="delete(item)">
-                                <span class="glyphicon glyphicon-trash"></span>
-                            </button>
+                            <!--<button *ngIf = "item.editable" type="button" class="btn btn-xs btn-danger" style="display: inline-block"-->
+                                    <!--disabled (click)="delete(item)">-->
+                                <!--<span class="glyphicon glyphicon-trash"></span>-->
+                            <!--</button>-->
 
                             <!--<a class="btn btn-primary" data-toggle="modal" data-target="#addNewModal" (click)="edit(item)" style="cursor: pointer">-->
                                 <!--<span class="glyphicon glyphicon-edit"></span>-->
@@ -153,7 +155,7 @@
 
         <div class="modal fade" id="addNewModal" role="dialog">
             <div class="modal-dialog" style="overflow-y: scroll; max-height:85%;  margin-top: 50px; margin-bottom:50px; width:65%;">
-                <div class="modal-content" style="min-height: 400px">
+                <div class="modal-content" style="min-height: 500px">
                     <div class="modal-header">
                         <h3 class="modal-title"  style="word-wrap: break-word">Enter new currency rate record</h3>
                     </div>
@@ -170,8 +172,9 @@
 
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="col-md-2">
-                                    <div class='input-group date col-md-3' id='valueDateDTPickeer' style="width: 100%">
+                                <div class="col-md-3">
+                                    <label>Date</label>
+                                    <div class='input-group date' id='valueDateDTPickeer' style="width: 100%">
                                         <input type='text' class="form-control" id="valueDate" [(ngModel)]="selectedCurrencyRate.date"/>
                                         <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
@@ -179,16 +182,32 @@
                                     </div>
                                 </div>
                                 <div class="col-md-2">
+                                    <label>Currency</label>
                                     <select class="form-control" style="width: 100%" [(ngModel)]="selectedCurrencyRate.currency.code"
                                             [ngModelOptions]="{standalone: true}" (ngModelChange)="currencyChanged()">
                                         <option *ngFor="let currency of currencyList" [value]="currency.code">{{currency.code}}</option>
                                     </select>
                                 </div>
-                                <div class="col-md-2">
-                                    <input type="number" class="form-control" placeholder="Enter KZT..." [(ngModel)]="selectedCurrencyRate.value"/>
+                                <div class="col-md-3">
+                                    <label>Value KZT</label>
+                                    <input type="number" class="form-control" placeholder="Value KZT..." [(ngModel)]="selectedCurrencyRate.value"/>
                                 </div>
-                                <div class="col-md-2">
-                                    <input type="number" [disabled]="selectedCurrencyRate.currency.code == 'USD'" class="form-control" placeholder="Enter USD..." [(ngModel)]="selectedCurrencyRate.valueUSD"/>
+                                <div class="col-md-3">
+                                    <label>Value USD</label>
+                                    <input type="number" [disabled]="selectedCurrencyRate.currency.code == 'USD'" class="form-control" placeholder="Value USD..." [(ngModel)]="selectedCurrencyRate.valueUSD"/>
+                                </div>
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-3">
+                                    <label>Avg value month</label>
+                                    <input type="number" class="form-control" [disabled]="!checkAverageValue()" placeholder="Avg value month..." [(ngModel)]="selectedCurrencyRate.averageValue"/>
+                                </div>
+                                <div class="col-md-3">
+                                    <label>Avg value year</label>
+                                    <input type="number" class="form-control" [disabled]="!checkAverageYearValue()" placeholder="Avg value year..." [(ngModel)]="selectedCurrencyRate.averageValueYear"/>
                                 </div>
                                 <!--<div class="col-md-2">-->
                                     <!--<input type="number" class="form-control" [disabled]="!checkAverageValue()" placeholder="KZT MON AVG..." [(ngModel)]="selectedCurrencyRate.averageValue"/>-->
@@ -225,11 +244,11 @@
                             <label>Currency</label>
                             <select class="form-control" style="width: 100%" [(ngModel)]="uploadCurrencyCode" id="uploadCurrencyCode"
                                     [ngModelOptions]="{standalone: true}">
-                                <option *ngFor="let currency of currencyList" [value]="currency.code">{{currency.code}}</option>
+                                <option *ngFor="let currency of getNonUSDCurrencyList(currencyList)" [value]="currency.code">{{currency.code}}</option>
                             </select>
                         </div>
                         <br/>
-                        <div>Format: <span style="font-weight: bold">date [tab] px_last</span></div>
+                        <div>Format: <span style="font-weight: bold">date [tab] rate USD</span></div>
                         <div>
                             Date format: <span style="font-weight: bold">dd.mm.yyyy</span>
                         </div>

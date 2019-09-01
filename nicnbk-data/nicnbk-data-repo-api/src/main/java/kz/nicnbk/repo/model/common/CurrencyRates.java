@@ -1,6 +1,10 @@
 package kz.nicnbk.repo.model.common;
 
 import kz.nicnbk.repo.model.base.BaseEntity;
+import kz.nicnbk.repo.model.base.CreateUpdateBaseEntity;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.RelationTargetAuditMode;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -12,7 +16,9 @@ import java.util.Date;
 
 @Entity
 @Table(name = "currency_rates")
-public class CurrencyRates extends BaseEntity {
+@EntityListeners(AuditingEntityListener.class)
+@Audited
+public class CurrencyRates extends CreateUpdateBaseEntity {
 
     private Currency currency;
     private Date date;
@@ -23,6 +29,7 @@ public class CurrencyRates extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "currency_id", nullable = false)
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     public Currency getCurrency() {
         return currency;
     }

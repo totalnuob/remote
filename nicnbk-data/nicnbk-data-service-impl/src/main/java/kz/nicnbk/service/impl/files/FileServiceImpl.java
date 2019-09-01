@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by magzumov on 18.07.2016.
@@ -92,6 +94,24 @@ public class FileServiceImpl implements FileService {
             if(lookup.getCode().equals(code)){
                 return lookup.getCatalog();
             }
+        }
+        return null;
+    }
+
+    @Override
+    public List<FilesDto> findAllByTypeCodeOrderByFileNameAscNotDeleted(String code) {
+        List<Files> filesListAll = this.filesRepository.findAllByTypeCodeOrderByFileNameAsc(code);
+        if (filesListAll != null) {
+
+            List<Files> filesListNotDeleted = new ArrayList<>();
+
+            for(Files file : filesListAll) {
+                if(file.getDeleted() == null || !file.getDeleted()) {
+                    filesListNotDeleted.add(file);
+                }
+            }
+
+            return this.filesConverter.disassembleList(filesListNotDeleted);
         }
         return null;
     }

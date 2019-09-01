@@ -11,11 +11,14 @@ import java.util.Set;
  * Created by magzumov on 08.07.2016.
  */
 public class EmployeeDto extends BaseEntityDto<Employee> {
+
     private String lastName;
     private String firstName;
     private String patronymic;
     private Date birthDate;
+    private PositionDto position;
 
+    private Boolean active;
     private String username;
     private Set<BaseDictionaryDto> roles;
 
@@ -66,5 +69,21 @@ public class EmployeeDto extends BaseEntityDto<Employee> {
 
     public void setRoles(Set<BaseDictionaryDto> roles) {
         this.roles = roles;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    public PositionDto getPosition() {
+        return position;
+    }
+
+    public void setPosition(PositionDto position) {
+        this.position = position;
     }
 }

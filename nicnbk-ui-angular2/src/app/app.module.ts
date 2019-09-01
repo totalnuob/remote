@@ -117,6 +117,11 @@ import {BenchmarkLookupValuesComponent} from "./lookup/benchmark.lookup.values.c
 import {HFResearchPageComponent} from "./hf/hf.research-page.component";
 import {MonitoringHFListComponent} from "./monitoring/monitoring-hedge-funds-list.component";
 import {MonitoringHFResearchComponent} from "./monitoring/monitoring-hedge-funds-research.component";
+import {HRNewsListComponent} from "./hr/hr-news-list.component";
+import {HREmployeesListComponent} from "./hr/hr-employees-list.component";
+import {HRDocsListComponent} from "./hr/hr-docs-list.component";
+import {EmployeeProfileEditComponent} from "./employee/employee.profile.edit.component";
+import {HRNewsEditComponent} from "./hr/hr-news-edit.component";
 //import {CorpMeetingEditComponent} from "./corpmeetings/ic-meeting-topic-edit.component";
 
 @NgModule({
@@ -138,7 +143,7 @@ import {MonitoringHFResearchComponent} from "./monitoring/monitoring-hedge-funds
         ],
     declarations: [
         AppComponent,
-        LoginComponent, EmployeeProfileComponent,
+        LoginComponent, EmployeeProfileComponent,EmployeeProfileEditComponent,
         NewsListComponent, NewsEditComponent, NewsViewComponent,
         MemoListComponent,
         MemoAttachmentDownloaderComponent, FileAttachmentDownloaderComponent,
@@ -166,7 +171,8 @@ import {MonitoringHFResearchComponent} from "./monitoring/monitoring-hedge-funds
         ConsolidatedKZTForm3NBReportingComponent, ConsolidatedKZTForm6NBReportingComponent,
         AccessDeniedComponent, MMEditComponent, MMViewComponent,NotFoundComponent,
         CorpMeetingsListComponent, CorpMeetingEditComponent,
-        LookupValuesComponent, CurrencyRatesLookupValuesComponent, BenchmarkLookupValuesComponent
+        LookupValuesComponent, CurrencyRatesLookupValuesComponent, BenchmarkLookupValuesComponent,
+        HRNewsListComponent, HRNewsEditComponent, HREmployeesListComponent, HRDocsListComponent
     ],
     bootstrap: [ AppComponent ]
 })

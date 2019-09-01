@@ -1,0 +1,58 @@
+
+<title>News Create</title>
+<div class="container">
+    <!--<div class="row top-buffer" >-->
+        <!--<div class="col-md-12">-->
+            <!--<div class="alert alert-info" *ngIf="successMessage != null">{{successMessage}}</div>-->
+        <!--</div>-->
+    <!--</div>-->
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li>
+                    <span *ngIf="this.breadcrumbParams != null"><a [routerLink]="['/hr/news', {params: this.breadcrumbParams }]">News list</a></span>
+                    <span *ngIf="this.breadcrumbParams == null"><a [routerLink]="['/hr/news']">News list</a></span>
+                </li>
+                <li class="active">Create news</li>
+            </ol>
+        </div>
+    </div>
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+            </div>
+            <div class="alert alert-info" *ngIf="!submitted && successMessage != null"><span>{{successMessage}}</span>
+            </div>
+        </div>
+    </div>
+    <div [hidden]="submitted">
+        <form (ngSubmit)="save()" #newsForm="ngForm" class="well span">
+            <br/>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Enter header..." name="header" [(ngModel)]="newsItem.header" required #header="ngModel"/>
+                        <div [hidden]="header.valid || header.pristine" class="alert alert-danger">
+                            Header is required
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <input type="text" required class="form-control" placeholder="Enter subheader..." name="subheader" [(ngModel)]="newsItem.subheader"/>
+                    </div>
+                </div>
+            </div>
+            <br/>
+            <div class="row withpadding">
+                <textarea class="form-control" required placeholder="Enter content..." name="content" [(ngModel)]="newsItem.content" style="min-height: 400px"></textarea>
+            </div>
+            <br/>
+            <div class="row withpadding">
+                <button type="submit" class="btn btn-success pull-right" name="saveNews" [disabled]="!newsForm.form.valid">Save</button>
+            </div>
+        </form>
+    </div>
+</div>

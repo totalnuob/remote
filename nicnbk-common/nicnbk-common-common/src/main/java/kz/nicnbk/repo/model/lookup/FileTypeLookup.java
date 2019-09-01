@@ -31,6 +31,8 @@ public enum FileTypeLookup {
     MONITORING_NIC_PORTFOLIO("MON_NIC", "monitoring/nic_portfolio"),
     MONITORING_LIQUID_PORTFOLIO("MON_LIQ", "monitoring/liquid_portfolio"),
 
+    HR_DOCS("HR_DOCS", "hr/docs"),
+
     CORP_MEETING_MATERIALS("CM_MATRL", "corp_meetings"),
     CC_ATTACHMENT("CC_ATTACH", "reporting/cc_attachments"),
 

@@ -103,12 +103,17 @@ import {BenchmarkLookupValuesComponent} from "./lookup/benchmark.lookup.values.c
 import {HFResearchPageComponent} from "./hf/hf.research-page.component";
 import {MonitoringHFListComponent} from "./monitoring/monitoring-hedge-funds-list.component";
 import {MonitoringHFResearchComponent} from "./monitoring/monitoring-hedge-funds-research.component";
+import {HRNewsListComponent} from "./hr/hr-news-list.component";
+import {HREmployeesListComponent} from "./hr/hr-employees-list.component";
+import {HRDocsListComponent} from "./hr/hr-docs-list.component";
+import {EmployeeProfileEditComponent} from "./employee/employee.profile.edit.component";
+import {HRNewsEditComponent} from "./hr/hr-news-edit.component";
 
 
 const routes: Routes  = [
     {
         path: '',
-        redirectTo: '/news',
+        redirectTo: '/hr/news',
         pathMatch: 'full'
     },
     /* LOGIN ***************************************/
@@ -118,8 +123,13 @@ const routes: Routes  = [
     },
     /* USER PROFILE ***************************************/
     {
-        path: 'profile',
+        path: 'profile/:username',
         component: EmployeeProfileComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'profile/edit/:username',
+        component: EmployeeProfileEditComponent,
         canActivate: [AuthGuard]
     },
 
@@ -631,7 +641,27 @@ const routes: Routes  = [
         component: BenchmarkLookupValuesComponent,
         canActivate: [AuthGuard]
     },
-
+    /* HR ******************************************/
+    {
+        path: 'hr/news',
+        component: HRNewsListComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'hr/news/edit/:id',
+        component: HRNewsEditComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'hr/employees',
+        component: HREmployeesListComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'hr/docs',
+        component: HRDocsListComponent,
+        canActivate: [AuthGuard]
+    },
 
     /* Page not found. ERROR 404 *********************/
     {

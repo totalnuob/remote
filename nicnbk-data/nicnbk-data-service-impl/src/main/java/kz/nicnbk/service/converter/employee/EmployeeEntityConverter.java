@@ -16,4 +16,18 @@ import java.util.Set;
 @Component
 public class EmployeeEntityConverter extends BaseDozerEntityConverter<Employee, EmployeeDto> {
 
+    @Override
+    public EmployeeDto disassemble(Employee entity) {
+        EmployeeDto dto = super.disassemble(entity);
+        dto.setActive(entity.getActive());
+        return dto;
+    }
+
+    @Override
+    public Employee assemble(EmployeeDto dto) {
+        Employee entity = super.assemble(dto);
+
+        return entity;
+    }
+
 }

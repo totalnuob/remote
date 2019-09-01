@@ -55,7 +55,7 @@ export class MMEditComponent extends CommonFormViewComponent{
 
         this.moduleAccessChecker = new ModuleAccessCheckerService;
 
-        if(!this.moduleAccessChecker.checkAccessMacroMonitor()){
+        if(!this.moduleAccessChecker.checkAccessMacroMonitorEditor()){
             this.router.navigate(['accessDenied']);
         }
 

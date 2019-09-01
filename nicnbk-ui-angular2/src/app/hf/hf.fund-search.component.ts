@@ -49,6 +49,7 @@ export class HFFundSearchComponent extends CommonFormViewComponent{
             .subscribe(params => {
                 if (params['params'] != null) {
                     this.searchParams = JSON.parse(params['params']);
+                    console.log(this.searchParams);
                     this.busy = this.fundService.search(this.searchParams)
                         .subscribe(
                             searchResult  => {
@@ -74,6 +75,7 @@ export class HFFundSearchComponent extends CommonFormViewComponent{
 
         this.searchParams.page = page;
 
+        console.log(this.searchParams);
         this.busy = this.fundService.search(this.searchParams)
             .subscribe(
                 searchResult  => {

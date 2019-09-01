@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -95,6 +96,18 @@ public class BenchmarkServiceImpl implements BenchmarkService {
 
     @Override
     public BenchmarkPagedSearchResult search(BenchmarkSearchParams searchParams) {
+
+//        Iterator<BenchmarkValue> iterator = this.benchmarkValueRepository.findAll().iterator();
+//        while(iterator.hasNext()){
+//            BenchmarkValue entity = iterator.next();
+//
+//            this.benchmarkValueRepository.delete(entity.getId());
+//            entity.setId(null);
+//            entity.setCreator(new Employee(35L));
+//            entity.setCreationDate(new Date());
+//            this.benchmarkValueRepository.save(entity);
+//        }
+
         if(searchParams == null){
             searchParams = new BenchmarkSearchParams();
             searchParams.setPage(0);
@@ -143,21 +156,18 @@ public class BenchmarkServiceImpl implements BenchmarkService {
                     return saveResponse;
                 }
 
-                // Check if can edit
-                // TODO: check usage in scoring
-                // TODO: if saved scoring exists, editing not allowed
-
-
+                BenchmarkValue existingEntity = null;
                 if(dto.getId() != null) {
-
                     // Check existing date
-                    BenchmarkValue existingCurrencyRates =
+                    BenchmarkValue existingBenchmarkValue =
                             this.benchmarkValueRepository.getValuesForDateAndType(dto.getDate(), dto.getBenchmark().getCode());
-                    if (existingCurrencyRates != null && existingCurrencyRates.getId().longValue() != dto.getId().longValue()) {
+                    if (existingBenchmarkValue != null && existingBenchmarkValue.getId().longValue() != dto.getId().longValue()) {
                         String errorMessage = "Benchmark record save failed: record already exists for date " + DateUtils.getDateFormatted(dto.getDate());
                         logger.error(errorMessage);
                         saveResponse.setErrorMessageEn(errorMessage);
                         return saveResponse;
+                    }else if(existingBenchmarkValue != null && existingBenchmarkValue.getId().longValue() == dto.getId().longValue()){
+                        existingEntity = existingBenchmarkValue;
                     }
 
                 }else {// New record
@@ -165,11 +175,6 @@ public class BenchmarkServiceImpl implements BenchmarkService {
                     BenchmarkValue existingBenchmarks =
                             this.benchmarkValueRepository.getValuesForDateAndType(dto.getDate(), dto.getBenchmark().getCode());
 
-                    // TODO: after check if can edit is implemented, instead of returning error --> delete record and insert new
-                    // TODO:
-//                    if(existingBenchmarks.getId() != null) {
-//                        this.benchmarkValueRepository.delete(existingBenchmarks.getId());
-//                    }
                     if (existingBenchmarks != null) {
                         String errorMessage = "Benchmark record save failed: record already exists for date " + DateUtils.getDateFormatted(dto.getDate());
                         logger.error(errorMessage);
@@ -184,11 +189,17 @@ public class BenchmarkServiceImpl implements BenchmarkService {
                     // new instance
                     if(employeeDto != null){
                         entity.setCreator(new Employee(employeeDto.getId()));
+                        entity.setCreationDate(new Date());
                     }
                 }else{
                     //update
                     entity.setUpdateDate(new Date());
                     entity.setUpdater(new Employee(employeeDto.getId()));
+
+                    if(existingEntity != null) {
+                        entity.setCreator(existingEntity.getCreator());
+                        entity.setCreationDate(existingEntity.getCreationDate());
+                    }
                 }
                 this.benchmarkValueRepository.save(entity);
                 saveResponse.setSuccessMessageEn("Successfully saved.");

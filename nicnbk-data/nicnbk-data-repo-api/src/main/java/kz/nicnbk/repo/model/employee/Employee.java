@@ -18,6 +18,7 @@ public class Employee extends BaseEntity {
     private String firstName;
     private String patronymic;
     private Date birthDate;
+    private Position position;
 
     private String username;
     private String salt;
@@ -72,6 +73,16 @@ public class Employee extends BaseEntity {
         return username;
     }
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "position_id")
+    public Position getPosition() {
+        return position;
+    }
+
+    public void setPosition(Position position) {
+        this.position = position;
+    }
+
     public void setUsername(String username) {
         this.username = username;
     }
@@ -94,7 +105,7 @@ public class Employee extends BaseEntity {
         this.salt = salt;
     }
 
-    @Column(name="active"/*, nullable=false*/)
+    @Column(name="active", nullable=false)
     public Boolean getActive() {
         return active;
     }
@@ -103,7 +114,7 @@ public class Employee extends BaseEntity {
         this.active = active;
     }
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name="employee_roles",
             joinColumns=
@@ -118,4 +129,5 @@ public class Employee extends BaseEntity {
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
+
 }

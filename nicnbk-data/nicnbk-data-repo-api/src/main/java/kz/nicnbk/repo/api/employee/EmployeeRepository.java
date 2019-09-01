@@ -1,7 +1,11 @@
 package kz.nicnbk.repo.api.employee;
 
 import kz.nicnbk.repo.model.employee.Employee;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.query.Param;
 
 /**
  * Created by magzumov on 02.08.2016.
@@ -9,4 +13,14 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 public interface EmployeeRepository extends PagingAndSortingRepository<Employee, Long> {
 
     Employee findByUsername(String username);
+
+    @Query("SELECT e FROM  Employee e WHERE " +
+            " (:status is null OR e.active=:status) " +
+            " AND (:firstName is null OR LOWER(e.firstName) LIKE LOWER(CONCAT('%', :firstName,'%'))) " +
+            " AND (:lastName is null OR LOWER(e.lastName) LIKE LOWER(CONCAT('%', :lastName,'%')))")
+    Page<Employee> search(@Param("firstName")String firstName, @Param("lastName")String lastName,
+                          @Param("status") Boolean status, Pageable pageable);
+
+    @Query("SELECT e FROM  Employee e " )
+    Page<Employee> findAll(Pageable pageable);
 }

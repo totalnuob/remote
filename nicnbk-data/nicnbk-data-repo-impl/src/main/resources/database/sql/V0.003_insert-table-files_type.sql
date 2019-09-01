@@ -5,6 +5,8 @@ INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(2, '
 INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(3, 'MON_NIC', 'Monitoring NIC Portfolio', '', '', 'monitoring/nic_portfolio');
 INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(4, 'MON_LIQ', 'Monitoring Liquid Portfolio', '', '', 'monitoring/liquid_portfolio');
 
+INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(5, 'HR_DOCS', 'HR Documents', '', '', 'hr/docs');
+
 INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(11, 'NB_REP_T1', 'NBRK Reporting Tarragon Schedule of Investments', '', '', 'reporting/nbrk');
 INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(12, 'NB_REP_T2', 'NBRK Reporting Tarragon Statement of Assets', '', '', 'reporting/nbrk');
 INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(13, 'NB_REP_T3', 'NBRK Reporting Tarragon Statement of Cash flows', '', '', 'reporting/nbrk');

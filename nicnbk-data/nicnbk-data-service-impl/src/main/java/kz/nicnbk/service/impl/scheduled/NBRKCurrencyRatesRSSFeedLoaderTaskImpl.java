@@ -27,11 +27,12 @@ import java.util.Date;
 public class NBRKCurrencyRatesRSSFeedLoaderTaskImpl {
 
     private static final Logger logger = LoggerFactory.getLogger(NBRKCurrencyRatesRSSFeedLoaderTaskImpl.class);
+    public static final String JOBNAME = "SYSTEM_USER";
 
     @Autowired
     private CurrencyRatesService currencyRatesService;
 
-    @Scheduled(cron="0 0 7 * * *") // Every day at 7 am
+    @Scheduled(cron="0 57 9 * * *") // Every day at 7 am
     public void loadUSDCurrencyRates() {
         try {
             URL feedUrl = new URL("http://www.nationalbank.kz/rss/rates_all.xml");
@@ -52,7 +53,7 @@ public class NBRKCurrencyRatesRSSFeedLoaderTaskImpl {
                         currencyRatesDto.setValue(value);
                         currencyRatesDto.setCurrency(new BaseDictionaryDto(CurrencyLookup.USD.getCode(), null, null, null));
 
-                        EntitySaveResponseDto saveResponseDto = this.currencyRatesService.save(currencyRatesDto, "AUTOLOAD JOB");
+                        EntitySaveResponseDto saveResponseDto = this.currencyRatesService.save(currencyRatesDto, JOBNAME);
                         if(saveResponseDto.getStatus().getCode().equalsIgnoreCase(ResponseStatusType.SUCCESS.getCode())){
                             logger.info("Successfully saved NBRK Currency rate USD (from RSS Feed): " + currencyRatesDto.getValue());
                         }else{

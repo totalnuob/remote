@@ -1,22 +1,24 @@
 package kz.nicnbk.ws.rest;
 
 import kz.nicnbk.common.service.util.StringUtils;
+import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.dto.authentication.ChangePasswordCredentialsDto;
 import kz.nicnbk.service.dto.authentication.TokenUserInfo;
 import kz.nicnbk.service.dto.authentication.UserCredentialsDto;
+import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
 import kz.nicnbk.service.dto.employee.EmployeeDto;
+import kz.nicnbk.service.dto.employee.EmployeePagedSearchResult;
+import kz.nicnbk.service.dto.employee.EmployeeSearchParamsDto;
+import kz.nicnbk.service.dto.employee.PositionDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,7 +29,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/employee")
-public class EmployeeServiceREST {
+public class EmployeeServiceREST extends CommonServiceREST{
 
     @Autowired
     private EmployeeService employeeService;
@@ -44,6 +46,44 @@ public class EmployeeServiceREST {
         }else{
             return new ResponseEntity<>(employees, null, HttpStatus.OK);
         }
+    }
+
+    @RequestMapping(value = "/get/{employeeId}", method = RequestMethod.GET)
+    public ResponseEntity getEmployeeById(@PathVariable Long employeeId){
+        EmployeeDto employeeDto = this.employeeService.getEmployeeById(employeeId);
+        if(employeeDto == null){
+            // error occurred
+            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }else{
+            return new ResponseEntity<>(employeeDto, null, HttpStatus.OK);
+        }
+    }
+
+    @RequestMapping(value = "/getByUsername/{username}", method = RequestMethod.GET)
+    public ResponseEntity getEmployeeByUsername(@PathVariable String username){
+        EmployeeDto employeeDto = this.employeeService.getEmployeeByUsername(username);
+        if(employeeDto == null){
+            // error occurred
+            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }else{
+            return new ResponseEntity<>(employeeDto, null, HttpStatus.OK);
+        }
+    }
+
+    @RequestMapping(value = "/search", method = RequestMethod.POST)
+    public ResponseEntity<?> search(@RequestBody EmployeeSearchParamsDto searchParams) {
+        EmployeePagedSearchResult searchResult = this.employeeService.search(searchParams);
+        return buildNonNullResponse(searchResult);
+    }
+
+    @PreAuthorize(" hasRole('ROLE_USER_PROFILE_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/save", method = RequestMethod.POST)
+    public ResponseEntity<?> save(@RequestBody EmployeeDto employeeDto) {
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        EntitySaveResponseDto saveResponseDto = this.employeeService.save(employeeDto, username);
+        return buildEntitySaveResponse(saveResponseDto);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -127,5 +167,16 @@ public class EmployeeServiceREST {
             }
         }
         return new ResponseEntity<>(null, null, HttpStatus.BAD_REQUEST);
+    }
+
+    @RequestMapping(value = "/getAllPositions", method = RequestMethod.GET)
+    public ResponseEntity getALlPositions(){
+        List<PositionDto> employees = this.employeeService.getALlPositions();
+        if(employees == null){
+            // error occurred
+            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }else{
+            return new ResponseEntity<>(employees, null, HttpStatus.OK);
+        }
     }
 }

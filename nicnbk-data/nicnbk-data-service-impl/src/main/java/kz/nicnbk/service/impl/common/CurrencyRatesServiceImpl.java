@@ -4,15 +4,17 @@ import kz.nicnbk.common.service.util.DateUtils;
 import kz.nicnbk.common.service.util.MathUtils;
 import kz.nicnbk.common.service.util.PaginationUtils;
 import kz.nicnbk.repo.api.common.CurrencyRatesRepository;
-import kz.nicnbk.repo.model.common.Currency;
 import kz.nicnbk.repo.model.common.CurrencyRates;
+import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.service.api.common.CurrencyRatesService;
+import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.api.reporting.PeriodicReportService;
 import kz.nicnbk.service.converter.currency.CurrencyRatesEntityConverter;
 import kz.nicnbk.service.datamanager.LookupService;
 import kz.nicnbk.service.dto.common.EntityListSaveResponseDto;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
 import kz.nicnbk.service.dto.common.ResponseStatusType;
+import kz.nicnbk.service.dto.employee.EmployeeDto;
 import kz.nicnbk.service.dto.lookup.CurrencyRatesDto;
 import kz.nicnbk.service.dto.lookup.CurrencyRatesPagedSearchResult;
 import kz.nicnbk.service.dto.lookup.CurrencyRatesSearchParams;
@@ -24,9 +26,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.history.Revisions;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -54,6 +58,10 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
 
     @Autowired
     private PeriodicReportService periodicReportService;
+
+    @Autowired
+    private EmployeeService employeeService;
+
 
     @Override
     public CurrencyRatesDto getRateForDateAndCurrency(Date date, String currencyCode){
@@ -110,6 +118,18 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
 
     @Override
     public CurrencyRatesPagedSearchResult search(CurrencyRatesSearchParams searchParams) {
+
+//        Iterator<CurrencyRates> iterator = this.currencyRatesRepository.findAll().iterator();
+//        while(iterator.hasNext()){
+//            CurrencyRates entity = iterator.next();
+//
+//            this.currencyRatesRepository.delete(entity.getId());
+//            entity.setId(null);
+//            entity.setCreator(new Employee(35L));
+//            entity.setCreationDate(new Date());
+//            this.currencyRatesRepository.save(entity);
+//        }
+
         if(searchParams == null){
             searchParams = new CurrencyRatesSearchParams();
             searchParams.setPage(0);
@@ -183,39 +203,9 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
         EntitySaveResponseDto saveResponse = new EntitySaveResponseDto();
         try {
             if (dto != null) {
-                if(dto.getDate() != null && new Date().compareTo(dto.getDate()) < 0){
-                    String errorMessage = "Error saving currency rate for date " + DateUtils.getDateFormatted(dto.getDate()) +
-                            ". Date cannot be greater than current date.";
-                    logger.error(errorMessage);
-                    saveResponse.setErrorMessageEn(errorMessage);
-                    return saveResponse;
-                }
+                CurrencyRates existingEntity = null;
                 if(dto.getId() != null) {
-                    // Check if can edit
-                    CurrencyRates entity = this.currencyRatesRepository.findOne(dto.getId());
-
-                    // Get date of most recent report with status SUBMITTED
-                    Date mostRecentFinalReportDate = null;
-                    List<PeriodicReportDto> periodicReportDtos = this.periodicReportService.getAllPeriodicReports();
-                    if(periodicReportDtos != null){
-                        for(PeriodicReportDto periodicReportDto: periodicReportDtos){
-                            if(periodicReportDto.getStatus() != null && periodicReportDto.getStatus().equalsIgnoreCase(PeriodicReportType.SUBMITTED.getCode())) {
-                                if (mostRecentFinalReportDate == null || mostRecentFinalReportDate.compareTo(periodicReportDto.getReportDate()) < 0) {
-                                    mostRecentFinalReportDate = periodicReportDto.getReportDate();
-                                }
-                            }
-                        }
-                    }
-
-                    // Cannot delete record with date earlier than most recent SUBMITTED report date
-                    if(mostRecentFinalReportDate != null && entity.getDate().compareTo(mostRecentFinalReportDate) <= 0){
-                        String errorMessage = "Currency rate record save failed: record id " + entity.getId() +
-                                ": finalized report exists with date '" + DateUtils.getDateFormatted(mostRecentFinalReportDate) +
-                                "', record date '" + DateUtils.getDateFormatted(entity.getDate()) + "'";
-                        logger.error(errorMessage);
-                        saveResponse.setErrorMessageEn(errorMessage);
-                        return saveResponse;
-                    }
+                    existingEntity = this.currencyRatesRepository.findOne(dto.getId());
 
                     // Check existing date
                     CurrencyRates existingCurrencyRates =
@@ -226,7 +216,6 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
                         saveResponse.setErrorMessageEn(errorMessage);
                         return saveResponse;
                     }
-
                 }else {// New record
                     // Check existing date
                     CurrencyRates existingCurrencyRates =
@@ -239,46 +228,26 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
                     }
                 }
 
-                if((dto.getValue() != null && dto.getValue() <= 0) || (dto.getValueUSD() != null && dto.getValueUSD() <= 0)){
-                    String errorMessage = "Currency rate save failed: value must be positive";
-                    logger.error(errorMessage);
-                    saveResponse.setErrorMessageEn(errorMessage);
+                saveResponse = checkCurrencyRateDto(dto);
+                if(saveResponse.getStatus().getCode().equalsIgnoreCase(ResponseStatusType.FAIL.getCode())){
                     return saveResponse;
-                }
-                if(dto.getAverageValue() != null){
-                    if(dto.getAverageValue() <= 0){
-                        String errorMessage = "Currency rate (average) save failed: value must be positive";
-                        logger.error(errorMessage);
-                        saveResponse.setErrorMessageEn(errorMessage);
-                        return saveResponse;
-                    }else{
-                        if(dto.getDate() == null ||
-                                !DateUtils.isSameDate(DateUtils.getLastDayOfCurrentMonth(dto.getDate()), dto.getDate())){
-                            String errorMessage = "Currency rate (average) save failed: date must be last day of month";
-                            logger.error(errorMessage);
-                            saveResponse.setErrorMessageEn(errorMessage);
-                            return saveResponse;
-                        }
-                    }
-                }
-                if(dto.getAverageValueYear() != null){
-                    if(dto.getAverageValueYear() <= 0){
-                        String errorMessage = "Currency rate (average year) save failed: value must be positive";
-                        logger.error(errorMessage);
-                        saveResponse.setErrorMessageEn(errorMessage);
-                        return saveResponse;
-                    }else{
-                        if(dto.getDate() == null ||
-                                !DateUtils.isSameDate(DateUtils.getLastDayOfCurrentYear(dto.getDate()), dto.getDate())){
-                            String errorMessage = "Currency rate (average year) save failed: date must be December 31";
-                            logger.error(errorMessage);
-                            saveResponse.setErrorMessageEn(errorMessage);
-                            return saveResponse;
-                        }
-                    }
                 }
 
                 CurrencyRates entity = this.currencyRatesEntityConverter.assemble(dto);
+                EmployeeDto employeeDto = this.employeeService.findByUsername(username);
+                if(dto.getId() != null){
+                    entity.setUpdateDate(new Date());
+                    entity.setUpdater(new Employee(employeeDto.getId()));
+
+                    if(existingEntity != null) {
+                        entity.setCreator(existingEntity.getCreator());
+                        entity.setCreationDate(existingEntity.getCreationDate());
+                    }
+                }else{
+                    entity.setCreationDate(new Date());
+                    entity.setCreator(new Employee(employeeDto.getId()));
+                }
+
                 this.currencyRatesRepository.save(entity);
                 saveResponse.setSuccessMessageEn("Successfully saved.");
                 logger.info("Successfully saved currency rate: id=" + dto.getId() + ", date=" + DateUtils.getDateFormatted(dto.getDate()) +
@@ -291,6 +260,58 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
             return saveResponse;
         }
     }
+
+    private EntitySaveResponseDto checkCurrencyRateDto(CurrencyRatesDto dto){
+        EntitySaveResponseDto saveResponse = new EntitySaveResponseDto();
+        saveResponse.setStatus(ResponseStatusType.SUCCESS);
+        if(dto.getDate() != null && new Date().compareTo(dto.getDate()) < 0){
+            String errorMessage = "Currency rate save failed: date " + DateUtils.getDateFormatted(dto.getDate()) +
+                    ". Date cannot be greater than current date.";
+            logger.error(errorMessage);
+            saveResponse.setErrorMessageEn(errorMessage);
+            return saveResponse;
+        }
+        if((dto.getValue() != null && dto.getValue() <= 0) || (dto.getValueUSD() != null && dto.getValueUSD() <= 0)){
+            String errorMessage = "Currency rate save failed: value must be positive";
+            logger.error(errorMessage);
+            saveResponse.setErrorMessageEn(errorMessage);
+            return saveResponse;
+        }
+        if(dto.getAverageValue() != null){
+            if(dto.getAverageValue() <= 0){
+                String errorMessage = "Currency rate (average) save failed: value must be positive";
+                logger.error(errorMessage);
+                saveResponse.setErrorMessageEn(errorMessage);
+                return saveResponse;
+            }else{
+                if(dto.getDate() == null ||
+                        !DateUtils.isSameDate(DateUtils.getLastDayOfCurrentMonth(dto.getDate()), dto.getDate())){
+                    String errorMessage = "Currency rate (average) save failed: date must be last day of month";
+                    logger.error(errorMessage);
+                    saveResponse.setErrorMessageEn(errorMessage);
+                    return saveResponse;
+                }
+            }
+        }
+        if(dto.getAverageValueYear() != null){
+            if(dto.getAverageValueYear() <= 0){
+                String errorMessage = "Currency rate (average year) save failed: value must be positive";
+                logger.error(errorMessage);
+                saveResponse.setErrorMessageEn(errorMessage);
+                return saveResponse;
+            }else{
+                if(dto.getDate() == null ||
+                        !DateUtils.isSameDate(DateUtils.getLastDayOfCurrentYear(dto.getDate()), dto.getDate())){
+                    String errorMessage = "Currency rate (average year) save failed: date must be December 31";
+                    logger.error(errorMessage);
+                    saveResponse.setErrorMessageEn(errorMessage);
+                    return saveResponse;
+                }
+            }
+        }
+        return saveResponse;
+    }
+
 
     @Override
     public EntityListSaveResponseDto save(List<CurrencyRatesDto> dtoList, String username) {

@@ -131,13 +131,12 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
 
     edit(item){
         this.errorMessageSaveBenchmark = null;
+        this.errorMessageSaveBenchmark = null;
         this.successMessageSaveBenchmark = null;
         if(item){
             this.selectedBenchmark = item;
         }else{
-
         }
-
     }
 
     save(){
@@ -162,11 +161,11 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
             this.errorMessageSaveBenchmark = "Return value required.";
             return false;
         }
-        if(!this.selectedBenchmark.indexValue){
-            this.successMessageSaveBenchmark = null;
-            this.errorMessageSaveBenchmark = "Index value required.";
-            return false;
-        }
+        //if(!this.selectedBenchmark.indexValue){
+        //    this.successMessageSaveBenchmark = null;
+        //    this.errorMessageSaveBenchmark = "Index value required.";
+        //    return false;
+        //}
 
         this.busy = this.lookupService.saveBenchmark(this.selectedBenchmark)
             .subscribe(
@@ -237,11 +236,22 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
         this.benchmarkUploadModalErrorMessage = null;
     }
 
+    closeBenchmarkEditModal(){
+        this.selectedBenchmark = new BenchmarkValue();
+        this.errorMessageSaveBenchmark = null;
+        this.successMessageSaveBenchmark = null;
+    }
+
     parseBenchmarkValues(){
         var benchmarks = [];
         if(this.uploadBenchmarkCode == null || this.uploadBenchmarkCode === ''){
             this.benchmarkUploadModalSuccessMessage = null;
             this.benchmarkUploadModalErrorMessage = "Benchmark required";
+            return;
+        }
+        if(this.uploadedValues == null || this.uploadedValues.trim() === ''){
+            this.benchmarkUploadModalSuccessMessage = null;
+            this.benchmarkUploadModalErrorMessage = "Values required";
             return;
         }
         var rows = this.uploadedValues.split("\n");
@@ -252,7 +262,7 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
             var row = rows[i].split("\t");
             if(row.length != 2){
                 this.benchmarkUploadModalSuccessMessage = null;
-                this.benchmarkUploadModalErrorMessage = "Invalid data format";
+                this.benchmarkUploadModalErrorMessage = "Invalid format. Expected: date [tab] return";
                 return;
             }
             if(row[0] == null || row[0] === 'undefined' || row[0].split(".").length != 3){
@@ -277,7 +287,7 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
                 "returnValue": parseFloat(Number(return_value)).toFixed(4),"benchmark":benchmark});
         }
 
-        console.log(benchmarks);
+        //console.log(benchmarks);
 
         this.busy = this.lookupService.saveBenchmarksList(benchmarks)
             .subscribe(
@@ -308,4 +318,13 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
 
     }
 
+    checkYTD(){
+        var date = moment($('#valueDate').val(), "DD-MM-YYYY");
+        //console.log(date.toDate());
+        if(date.toDate().getMonth() == 11 && date.toDate().getDate() == 31){
+            return true;
+        }else{
+        }
+        return false;
+    }
 }

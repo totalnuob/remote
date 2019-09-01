@@ -81,10 +81,14 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
             List<LiquidPortfolioDto> liquidPortfolioDtoList = this.converter.disassembleList(liquidPortfolioList);
             List<LiquidPortfolioDto> shortList = new ArrayList<>();
 
-            for (int i = 0; i < liquidPortfolioDtoList.size() - 1; i++) {
-                if (DateUtils.getMonth(liquidPortfolioDtoList.get(i).getDate()) !=  DateUtils.getMonth(liquidPortfolioDtoList.get(i+1).getDate())) {
-                    shortList.add(this.calculateMtdQtdYtd(liquidPortfolioDtoList.get(i).getDate(), liquidPortfolioList));
+            if(liquidPortfolioDtoList != null && !liquidPortfolioDtoList.isEmpty()) {
+                for (int i = 0; i < liquidPortfolioDtoList.size() - 1; i++) {
+                    if (DateUtils.getMonth(liquidPortfolioDtoList.get(i).getDate()) != DateUtils.getMonth(liquidPortfolioDtoList.get(i + 1).getDate())) {
+                        shortList.add(this.calculateMtdQtdYtd(liquidPortfolioDtoList.get(i).getDate(), liquidPortfolioList));
+                    }
                 }
+
+                shortList.add(this.calculateMtdQtdYtd(liquidPortfolioDtoList.get(liquidPortfolioDtoList.size() - 1).getDate(), liquidPortfolioList));
             }
 
             return new LiquidPortfolioResultDto(shortList, ResponseStatusType.SUCCESS, "", "Liquid Portfolio data has been loaded successfully!", "");
@@ -178,7 +182,7 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
                     Row row = rowIteratorFixed.next();
                     rowNumberFixed++;
 
-                    if (ExcelUtils.isEmptyCellRange(row, 0, 16383)) {
+                    if (ExcelUtils.isEmptyCellRange(row, 1, 16383)) {
                         continue;
                     }
 
@@ -215,7 +219,7 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
                     Row row = rowIteratorEquity.next();
                     rowNumberEquity++;
 
-                    if (ExcelUtils.isEmptyCellRange(row, 0, 16383)) {
+                    if (ExcelUtils.isEmptyCellRange(row, 1, 16383)) {
                         continue;
                     }
 
@@ -252,7 +256,7 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
                     Row row = rowIteratorTransition.next();
                     rowNumberTransition++;
 
-                    if (ExcelUtils.isEmptyCellRange(row, 0, 16383)) {
+                    if (ExcelUtils.isEmptyCellRange(row, 1, 16383)) {
                         continue;
                     }
 

@@ -158,7 +158,7 @@ export class CurrencyRatesLookupValuesComponent extends CommonNBReportingCompone
     save(){
         this.selectedCurrencyRate.date = $('#valueDate').val();
 
-        // TODO: check required fields
+        // Check required fields
         if(!this.selectedCurrencyRate.date){
             this.successMessageSaveCurrencyRate = null;
             this.errorMessageSaveCurrencyRate = "Date required.";
@@ -170,7 +170,8 @@ export class CurrencyRatesLookupValuesComponent extends CommonNBReportingCompone
             this.errorMessageSaveCurrencyRate = "Value KZT or USD required.";
             return false;
         }
-        if(this.selectedCurrencyRate.value <= 0 && this.selectedCurrencyRate.valueUSD <= 0){
+        if((this.selectedCurrencyRate.value && this.selectedCurrencyRate.value <= 0) ||
+            (this.selectedCurrencyRate.valueUSD && this.selectedCurrencyRate.valueUSD <= 0)){
             this.errorMessageSaveCurrencyRate = "Value must be positive";
             return false;
         }
@@ -291,6 +292,15 @@ export class CurrencyRatesLookupValuesComponent extends CommonNBReportingCompone
             this.currencyUploadModalSuccessMessage = null;
             this.currencyUploadModalErrorMessage = "Currency required";
             return;
+        }else if(this.uploadCurrencyCode === 'USD'){
+            this.currencyUploadModalSuccessMessage = null;
+            this.currencyUploadModalErrorMessage = "Cannot choose USD";
+            return;
+        }
+        if(this.uploadedValues == null || this.uploadedValues.trim() === ''){
+            this.currencyUploadModalSuccessMessage = null;
+            this.currencyUploadModalErrorMessage = "Values required";
+            return;
         }
         var rows = this.uploadedValues.split("\n");
         for(var i = 0; i < rows.length; i++){
@@ -300,12 +310,12 @@ export class CurrencyRatesLookupValuesComponent extends CommonNBReportingCompone
             var row = rows[i].split("\t");
             if(row.length != 2){
                 this.currencyUploadModalSuccessMessage = null;
-                this.currencyUploadModalErrorMessage = "Invalid returns format";
+                this.currencyUploadModalErrorMessage = "Invalid format";
                 return;
             }
             if(row[0] == null || row[0] === 'undefined' || row[0].split(".").length != 3){
                 this.currencyUploadModalSuccessMessage = null;
-                this.currencyUploadModalErrorMessage = "Invalid return format - date";
+                this.currencyUploadModalErrorMessage = "Invalid format of date";
                 return;
             }
 
@@ -348,5 +358,36 @@ export class CurrencyRatesLookupValuesComponent extends CommonNBReportingCompone
                 }
             );
 
+    }
+
+    checkAverageYearValue(){
+        var date = moment($('#valueDate').val(), "DD-MM-YYYY");
+        //console.log(date.toDate());
+        if(date.toDate().getMonth() == 11 && date.toDate().getDate() == 31){
+            // DECEMBER 31
+            return true;
+        }
+        return false;
+    }
+
+    checkAverageValue(){
+        var date = moment($('#valueDate').val(), "DD-MM-YYYY");
+        //console.log(date.toDate());
+        var lastDay =  new Date(date.toDate().getFullYear(), date.toDate().getMonth()+1, 0).getDate();
+        if(date.toDate().getDate() == lastDay){
+            // Last day of month
+            return true;
+        }
+        return false;
+    }
+
+    getNonUSDCurrencyList(){
+        var rates = [];
+        for(var i = 0; i < this.currencyList.length; i ++){
+            if(this.currencyList[i].code != 'USD'){
+                rates.push(this.currencyList[i]);
+            }
+        }
+        return rates;
     }
 }

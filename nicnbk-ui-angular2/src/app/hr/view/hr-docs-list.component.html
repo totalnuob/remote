@@ -1,0 +1,71 @@
+<div class="container">
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <div class="alert alert-danger" *ngIf="errorMessage != null">{{errorMessage}}</div>
+        </div>
+    </div>
+
+    <div [ngBusy]="busy" class="row">
+        <div class="pull-right" *ngIf="canEdit()">
+            <form #yourForm="ngForm" (ngSubmit)="onSubmitHRDocument()">
+                <label class="btn btn-sm btn-primary">
+                    <input type="file" #fileupload id="fileupload" (change)="fileChange(fileupload.files)" style="display: none"/>NEW (max 20Mb)
+                </label>
+                <button type="submit" class="btn btn-sm btn-success" *ngIf="this.myFiles.length > 0">Submit</button>
+            </form>
+            <div *ngFor="let file of this.myFiles" class="label label-info">
+                <span>{{file.name}}</span>
+            </div>
+        </div>
+        <!--<div class="row pull-right">-->
+            <!--<ul class="pagination" *ngIf="searchResult?.showPageFrom > 0">-->
+                <!--<li><a *ngIf="searchResult?.showPageFrom > 1" (click)="search(searchResult.showPageFrom - 1)">&laquo;</a></li>-->
+                <!--<li *ngFor="let i of range(searchResult.showPageFrom, searchResult.showPageTo)" [class.active]="i == searchResult.currentPage">-->
+                    <!--<a (click)="search(i)">{{i}}</a>-->
+                <!--</li>-->
+                <!--<li><a *ngIf="searchResult.showPageTo < searchResult.totalPages" (click)="search(searchResult.showPageTo + 1)">&raquo;</a></li>-->
+            <!--</ul>-->
+        <!--</div>-->
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>NAME</th>
+                    <th *ngIf="canEdit()">ACTIONS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor = "let doc of docsList">
+                    <td width="90%">
+                        <!--<a (click)="fileDownload(doc.id)" style="cursor: pointer">-->
+                            <!--{{doc.fileName}}-->
+                        <!--</a>-->
+                        <file-attachment-downloader fileId="{{doc.id}}"
+                                                    fileName="{{doc?.fileName}}"
+                                                    fileType="HR_DOCS">
+                        </file-attachment-downloader>
+                    </td>
+                    <td width="10%" *ngIf="canEdit()">
+                        <a (click)="deleteAttachment(doc.id)" style="cursor: pointer">
+                            <i class="glyphicon glyphicon-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <!--<div class="row pull-right">-->
+            <!--<ul class="pagination" *ngIf="searchResult?.showPageFrom > 0">-->
+                <!--<li><a *ngIf="searchResult?.showPageFrom > 1" (click)="search(searchResult.showPageFrom - 1)">&laquo;</a></li>-->
+                <!--<li *ngFor="let i of range(searchResult.showPageFrom, searchResult.showPageTo)" [class.active]="i == searchResult.currentPage">-->
+                    <!--<a (click)="search(i)">{{i}}</a>-->
+                <!--</li>-->
+                <!--<li><a *ngIf="searchResult.showPageTo < searchResult.totalPages" (click)="search(searchResult.showPageTo + 1)">&raquo;</a></li>-->
+            <!--</ul>-->
+        <!--</div>-->
+    </div>
+</div>

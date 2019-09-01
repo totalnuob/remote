@@ -36,6 +36,7 @@ public class MonitoringNicPortfolioServiceREST extends CommonServiceREST {
     @Autowired
     private TokenService tokenService;
 
+    @PreAuthorize("hasRole('ROLE_MONITORING_EDITOR') OR hasRole('ROLE_MONITORING_VIEWER') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     public ResponseEntity get() {
 
@@ -48,7 +49,7 @@ public class MonitoringNicPortfolioServiceREST extends CommonServiceREST {
         }
     }
 
-    @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_MONITORING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     public ResponseEntity upload(@RequestParam(value = "file", required = false) MultipartFile[] files) {
 
@@ -66,10 +67,10 @@ public class MonitoringNicPortfolioServiceREST extends CommonServiceREST {
         }
     }
 
-    @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_MONITORING_EDITOR') OR hasRole('ROLE_MONITORING_VIEWER')OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/download", method = RequestMethod.GET)
     @ResponseBody
-    public void FileDownload(HttpServletResponse response) {
+    public void fileDownload(HttpServletResponse response) {
 
         FilesDto filesDto;
         try {

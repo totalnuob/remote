@@ -850,7 +850,7 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
     }
 
     canEdit(){
-        return this.moduleAccessChecker.checkAccessReportingEditor();
+        return this.moduleAccessChecker.checkAccessMonitoringEditor();
     }
 
     // public getAssetTypes(){

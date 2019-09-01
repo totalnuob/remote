@@ -106,6 +106,7 @@
                     <th>DATE</th>
                     <th>TYPE</th>
                     <th>RETURN</th>
+                    <th>YTD</th>
                     <!--<th>INDEX</th>-->
                     <!--<th>AVG VALUE</th>-->
                     <!--<th>AVG VALUE YR</th>-->
@@ -117,19 +118,20 @@
                         <td>{{item.date}}</td>
                         <td>{{item?.benchmark?.nameEn}}</td>
                         <td>{{item.returnValue}}</td>
+                        <td>{{item.ytd}}</td>
                         <!--<td>{{item.indexValue}}</td>-->
                         <!--<td>{{item.averageValue}}</td>-->
                         <!--<td>{{item.averageValueYear}}</td>-->
                         <td>
-                            <button *ngIf = "item.editable" type="button" class="btn-xs btn-success" style="display: inline-block"
+                            <button type="button" class="btn-xs btn-success" style="display: inline-block"
                                     data-toggle="modal" data-target="#addNewModal" (click)="edit(item)">
                                 <span class="glyphicon glyphicon-pencil"></span>
                             </button>
 
-                            <button *ngIf = "item.editable" type="button" class="btn btn-xs btn-danger" style="display: inline-block"
-                                    disabled (click)="delete(item)">
-                                <span class="glyphicon glyphicon-trash"></span>
-                            </button>
+                            <!--<button *ngIf = "item.editable" type="button" class="btn btn-xs btn-danger" style="display: inline-block"-->
+                                    <!--disabled (click)="delete(item)">-->
+                                <!--<span class="glyphicon glyphicon-trash"></span>-->
+                            <!--</button>-->
 
                             <!--<a class="btn btn-primary" data-toggle="modal" data-target="#addNewModal" (click)="edit(item)" style="cursor: pointer">-->
                                 <!--<span class="glyphicon glyphicon-edit"></span>-->
@@ -172,26 +174,33 @@
 
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="col-md-2">
-                                    <div class='input-group date col-md-3' id='valueDateDTPickeer' style="width: 100%">
-                                        <input type='text' class="form-control" id="valueDate" [(ngModel)]="selectedBenchmark.date"/>
+                                <div class="col-md-3">
+                                    <label>Date</label>
+                                    <div class='input-group date' id='valueDateDTPickeer' style="width: 100%">
+                                        <input type='text' required class="form-control" id="valueDate" [(ngModel)]="selectedBenchmark.date"/>
                                         <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
                                         </span>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
-                                    <select class="form-control" style="width: 100%" [(ngModel)]="selectedBenchmark.benchmark.code"
+                                    <label>Benchmark</label>
+                                    <select class="form-control" required style="width: 100%" [(ngModel)]="selectedBenchmark.benchmark.code"
                                             [ngModelOptions]="{standalone: true}">
                                         <option *ngFor="let type of benchmarkTypes" [value]="type.code">{{type.nameEn}}</option>
                                     </select>
                                 </div>
-                                <div class="col-md-2">
-                                    <input type="number" required class="form-control" placeholder="Enter value..." [(ngModel)]="selectedBenchmark.returnValue"/>
+                                <div class="col-md-3">
+                                    <label>Return value</label>
+                                    <input type="number" required class="form-control" placeholder="Enter return value..." [(ngModel)]="selectedBenchmark.returnValue"/>
                                 </div>
-                                <div class="col-md-2">
-                                    <input type="number" required class="form-control" placeholder="Enter value..." [(ngModel)]="selectedBenchmark.indexValue"/>
+                                <div class="col-md-3">
+                                    <label>Return value</label>
+                                    <input type="number" [disabled]="!checkYTD()" class="form-control" placeholder="Enter YTD value..." [(ngModel)]="selectedBenchmark.ytd"/>
                                 </div>
+                                <!--<div class="col-md-2">-->
+                                    <!--<input type="number" required class="form-control" placeholder="Enter value..." [(ngModel)]="selectedBenchmark.indexValue"/>-->
+                                <!--</div>-->
                                 <!--<div class="col-md-2">-->
                                     <!--<input type="number" class="form-control" [disabled]="!checkAverageValue()" placeholder="KZT MON AVG..." [(ngModel)]="selectedBenchmark.averageValue"/>-->
                                 <!--</div>-->
@@ -206,7 +215,7 @@
                         <button type="button" class="btn btn-success" (click)="save()">Save</button>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-default" (click)='closeBenchmarkEditModal()' data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
@@ -225,7 +234,7 @@
                         <br/>
                         <div>
                             <label>Benchmark</label>
-                            <select class="form-control" style="width: 100%" [(ngModel)]="uploadBenchmarkCode" id="uploadBenchmarkCode"
+                            <select class="form-control" required style="width: 100%" [(ngModel)]="uploadBenchmarkCode" id="uploadBenchmarkCode"
                                     [ngModelOptions]="{standalone: true}">
                                 <option *ngFor="let type of benchmarkTypes" [value]="type.code">{{type.nameEn}}</option>
                             </select>

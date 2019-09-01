@@ -1,7 +1,13 @@
-import {Component, ElementRef, Compiler } from '@angular/core';
-import {Router} from '@angular/router';
+import {Component, OnInit, ElementRef, Compiler } from '@angular/core';
+import {Router, ActivatedRoute} from '@angular/router';
 import {User} from "../authentication/authentication.service";
 import {EmployeeService} from "./employee.service";
+import {ErrorResponse} from "../common/error-response";
+import {CommonFormViewComponent} from "../common/common.component";
+import {Employee} from "../hr/model/employee";
+import {cursorTo} from "readline";
+import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
+import {EmployeesSearchParams} from "../hr/model/employees-search-params";
 
 
 export class ChangePasswordCredentials {
@@ -18,7 +24,7 @@ declare var $:any
     templateUrl: './view/employee.profile.component.html',
     styleUrls: ['../../../public/css/footer.css']
 })
-export class EmployeeProfileComponent {
+export class EmployeeProfileComponent extends CommonFormViewComponent implements OnInit{
 
     activeTab = "PROFILE";
     public errorMessage;
@@ -28,10 +34,67 @@ export class EmployeeProfileComponent {
     newPassword: string;
     newPasswordConfirm: string;
 
+    private sub: any;
+    //private employeeId: number;
+    private username: string;
+    private breadcrumbParams: string;
+
+    private employee: Employee;
+
+    private moduleAccessChecker: ModuleAccessCheckerService;
 
     constructor(
         private router: Router,
+        private route: ActivatedRoute,
         private employeeService: EmployeeService) {
+
+        super(router);
+
+        this.moduleAccessChecker = new ModuleAccessCheckerService;
+
+        this.sub = this.route
+            .params
+            .subscribe(params => {
+                //this.employeeId = +params['id'];
+                this.username = params['username'];
+                this.breadcrumbParams = params['params'];
+                console.log(this.breadcrumbParams);
+                //if(this.employeeId > 0) {
+                //    this.employeeService.getEmployeeById(this.employeeId)
+                //        .subscribe(
+                //            employee => {
+                //                this.employee = employee;
+                //            },
+                //            (error:ErrorResponse) => {
+                //                this.errorMessage = "Error loading news";
+                //                if (error && !error.isEmpty()) {
+                //                    this.processErrorMessage(error);
+                //                }
+                //                this.postAction(null, null);
+                //            }
+                //        );
+                //}
+                if(this.username != null){
+                    this.employeeService.getEmployeeByUsername(this.username)
+                        .subscribe(
+                            employee => {
+                                this.employee = employee;
+                            },
+                            (error:ErrorResponse) => {
+                                this.errorMessage = "Error loading news";
+                                if (error && !error.isEmpty()) {
+                                    this.processErrorMessage(error);
+                                }
+                                this.postAction(null, null);
+                            }
+                        );
+                } else {
+                    this.employee = new Employee();
+                }
+            });
+    }
+
+    ngOnInit(){
     }
 
     public checkPassword(){
@@ -97,8 +160,31 @@ export class EmployeeProfileComponent {
     }
 
     getUsername(){
-        return localStorage.getItem("authenticatedUser");
     }
 
+    userOwned(){
+        var currentUser = localStorage.getItem("authenticatedUser");
+        if(this.employee != null && currentUser != null && this.employee.username === currentUser){
+            return true;
+        }
+        return false;
+    }
 
+    public canEditEmployeeProfile(){
+        return this.moduleAccessChecker.checkAccessEmployeeProfileEditor();
+    }
+
+    editEmployeeProfile(){
+        let params = this.breadcrumbParams;
+        this.router.navigate(['/profile/edit/', this.username, { params }]);
+    }
+
+    getFullPositionNameEn(){
+        if(this.employee && this.employee.position){
+            return this.employee.position.nameEn +
+                (this.employee.position.department != null  && this.employee.position.department.nameEn != null ?
+                " of " + this.employee.position.department.nameEn : "");
+
+        }
+    }
 }
