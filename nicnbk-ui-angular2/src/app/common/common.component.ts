@@ -132,6 +132,40 @@ export class CommonFormViewComponent {
         return "";
     }
 
+    public getDateMonthTextDay(date){
+        if(date){
+            var day = date.split("-")[0];
+            var monthNum = date.split("-")[1];
+            //var yearNum = date.split("-")[2];
+            if(monthNum === '01'){
+                return 'JAN ' + day;
+            }else if(monthNum === '02'){
+                return 'FEB ' + day;
+            }else if(monthNum === '03'){
+                return 'MAR ' + day;
+            }else if(monthNum === '04'){
+                return 'APR ' + day;
+            }else if(monthNum === '05'){
+                return 'MAY ' + day;
+            }else if(monthNum === '06'){
+                return 'JUN ' + day;
+            }else if(monthNum === '07'){
+                return 'JUL ' + day;
+            }else if(monthNum === '08'){
+                return 'AUG ' + day;
+            }else if(monthNum === '09'){
+                return 'SEP ' + day;
+            }else if(monthNum === '10'){
+                return 'OCT ' + day;
+            }else if(monthNum === '11'){
+                return 'NOV ' + day;
+            }else if(monthNum === '12'){
+                return 'DEC ' + day;
+            }
+        }
+        return "";
+    }
+
     getAmountShort(value){
         if(value) {
             value = Number(value.toString().replace(/,/g, '')).toFixed(0);
