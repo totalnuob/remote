@@ -93,9 +93,14 @@ export class EmployeeProfileEditComponent extends CommonFormViewComponent implem
                                                 format: 'DD-MM-YYYY'
                                             });
                                             if(this.departments && this.positions && this.employee.position) {
-                                                this.chosenDepartment = this.employee.position.department.code;
+                                                if(this.employee.position.department != null){
+                                                    this.chosenDepartment = this.employee.position.department.code;
+                                                }else{
+                                                    this.chosenDepartment = "NONE";
+                                                }
+
                                                 this.departmentChanged(this.chosenDepartment);
-                                                this.chosenPosition = this.employee.position.code;;
+                                                this.chosenPosition = this.employee.position.code;
                                             }
                                         },
                                         (error:ErrorResponse) => {
@@ -134,6 +139,7 @@ export class EmployeeProfileEditComponent extends CommonFormViewComponent implem
                     }
                 }
             }
+            this.departments.push({"code": "NONE", "nameEn": "-- no dept --", "nameRu": "-- без департамента --" });
         }
     }
 
@@ -221,10 +227,14 @@ export class EmployeeProfileEditComponent extends CommonFormViewComponent implem
     }
 
     departmentChanged(value){
+        console.log(this.positions);
+        console.log(value);
         if(this.positions != null){
             this.departmentPositions = [];
             for(var i = 0; i < this.positions.length; i++){
-                if(this.positions[i].department.code === value){
+                if(value === "NONE" && this.positions[i].department == null){
+                    this.departmentPositions.push(this.positions[i]);
+                }else if(this.positions[i].department != null && this.positions[i].department.code === value){
                     this.departmentPositions.push(this.positions[i]);
                 }
             }
