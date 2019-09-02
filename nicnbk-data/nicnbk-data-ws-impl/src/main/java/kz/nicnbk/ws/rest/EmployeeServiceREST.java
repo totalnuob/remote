@@ -171,12 +171,12 @@ public class EmployeeServiceREST extends CommonServiceREST{
 
     @RequestMapping(value = "/getAllPositions", method = RequestMethod.GET)
     public ResponseEntity getALlPositions(){
-        List<PositionDto> employees = this.employeeService.getALlPositions();
-        if(employees == null){
+        List<PositionDto> positions = this.employeeService.getALlPositions();
+        if(positions == null){
             // error occurred
             return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
         }else{
-            return new ResponseEntity<>(employees, null, HttpStatus.OK);
+            return new ResponseEntity<>(positions, null, HttpStatus.OK);
         }
     }
 }
