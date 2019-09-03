@@ -375,9 +375,8 @@ INSERT INTO public.employee_roles(employee_id, role_id)VALUES (68, 802); -- M2S2
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (35, 1); -- ADMIN
 
 -- Alexey
-INSERT INTO public.employee_roles(employee_id, role_id)VALUES (57, 305); -- Lookup view
-INSERT INTO public.employee_roles(employee_id, role_id)VALUES (57, 801); -- M2S2 Editor
-INSERT INTO public.employee_roles(employee_id, role_id)VALUES (57, 802); -- M2S2 Viewer
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (57, 1); -- ADMIN
+
 
 
 
