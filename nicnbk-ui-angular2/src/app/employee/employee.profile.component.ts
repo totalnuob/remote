@@ -57,8 +57,9 @@ export class EmployeeProfileComponent extends CommonFormViewComponent implements
             .subscribe(params => {
                 //this.employeeId = +params['id'];
                 this.username = params['username'];
-                this.breadcrumbParams = params['params'];
-                console.log(this.breadcrumbParams);
+                if(params['params']){
+                    this.breadcrumbParams = params['params'];
+                }
                 //if(this.employeeId > 0) {
                 //    this.employeeService.getEmployeeById(this.employeeId)
                 //        .subscribe(
@@ -175,8 +176,13 @@ export class EmployeeProfileComponent extends CommonFormViewComponent implements
     }
 
     editEmployeeProfile(){
-        let params = this.breadcrumbParams;
-        this.router.navigate(['/profile/edit/', this.username, { params }]);
+        if(this.breadcrumbParams != null) {
+            let params = this.breadcrumbParams;
+            this.router.navigate(['/profile/edit/', this.username, {params}]);
+        }else{
+            this.router.navigate(['/profile/edit/', this.username]);
+        }
+
     }
 
     getFullPositionNameEn(){
