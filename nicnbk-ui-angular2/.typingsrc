@@ -1,0 +1,2 @@
+proxy="http://10.10.163.253:8080"
+rejectUnauthorized=false
