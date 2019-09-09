@@ -327,7 +327,7 @@ export class CurrencyRatesLookupValuesComponent extends CommonNBReportingCompone
             value = value.replace('%', '');
             var currency =  new BaseDictionary();
             currency.code = this.uploadCurrencyCode;
-            currencies.push({"date": day + '-' + month + '-' + year, "valueUSD": parseFloat(Number(value)).toFixed(4), "currency":currency});
+            currencies.push({"date": day + '-' + month + '-' + year, "valueUSD": parseFloat(Number(value)).toFixed(10), "currency":currency});
         }
 
         console.log(currencies);
