@@ -144,6 +144,17 @@ INSERT INTO public.employee_roles(employee_id, role_id)VALUES (39, 305); -- Berd
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (39, 801); -- M2S2 Editor
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (39, 802); -- M2S2 Viewer
 
+-- Oleg
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (71, 21); -- PE Edit
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (71, 22); -- PE View
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (71, 31); -- RE Edit
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (71, 32); -- RE View
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (71, 302);  -- Macromonitor view
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (71, 303);  -- Monitoring view
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (71, 305);  -- Lookup view
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (71, 801); -- M2S2 Editor
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (71, 802); -- M2S2 Viewer
+
 
 -- DAI - II
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (21, 11); -- Aldiyar -- HF Edit
@@ -242,6 +253,15 @@ INSERT INTO public.employee_roles(employee_id, role_id)VALUES (64, 303); -- Moni
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (64, 305); -- Lookup view
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (64, 801); -- M2S2 Editor
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (64, 802); -- M2S2 Viewer
+
+-- Temirlan
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (72, 59); -- Strategy Edit
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (72, 60); -- Strategy View
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (72, 302); -- Macromonitor view
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (72, 303); -- Monitoring view
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (72, 305); -- Lookup view
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (72, 801); -- M2S2 Editor
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (72, 802); -- M2S2 Viewer
 
 -- REPORTING
 -- Timur O
