@@ -209,7 +209,7 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
     public ResponseEntity getFilteredResultQualifiedFundList(@RequestBody HedgeFundScreeningFilteredResultDto params){
         long start = new Date().getTime();
 
-        ListResponseDto responseDto = this.screeningService.getFilteredResultQualifiedFundList(params);
+        ListResponseDto responseDto = this.screeningService.getFilteredResultQualifiedFundList(params, true);
 
         long end = new Date().getTime();
         System.out.println("Qualified fund list total time = " + (end-start) / 1000.);
@@ -305,7 +305,7 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
 
         FilesDto filesDto = null;
         try{
-            filesDto = this.screeningService.getFundListAsStream(filteredResultId, lookbackAUM, lookbackReturn);
+            filesDto = this.screeningService.getQualifiedFundListAsStream(filteredResultId, lookbackAUM, lookbackReturn);
         }catch (IllegalStateException ex){
             filesDto = null;
         }

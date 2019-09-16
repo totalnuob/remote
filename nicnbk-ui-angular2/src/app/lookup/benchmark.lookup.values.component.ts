@@ -284,7 +284,7 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
             var benchmark =  new BaseDictionary();
             benchmark.code = this.uploadBenchmarkCode;
             benchmarks.push({"date": day + '-' + month + '-' + year, /*"indexValue": parseFloat(Number(index_value)).toFixed(4),*/
-                "returnValue": parseFloat(Number(return_value)).toFixed(4),"benchmark":benchmark});
+                "returnValue": parseFloat(Number(return_value)).toFixed(10),"benchmark":benchmark});
         }
 
         //console.log(benchmarks);
