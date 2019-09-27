@@ -30,11 +30,10 @@ public class MonitoringHedgeFundsServiceREST extends CommonServiceREST{
     @Autowired
     private MonitoringHedgeFundService monitoringHedgeFundService;
 
-    private static final String monitoringViewerRole = "hasRole('ROLE_HEDGE_FUND_VIEWER') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')";
+    private static final String monitoringViewerRole = "hasRole('ROLE_MONITORING_VIEWER') OR hasRole('ROLE_MONITORING_EDITOR') OR hasRole('ROLE_ADMIN')";
     private static final String hedgeFundsEditorRole = "hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')";
-    private static final String hedgeFundsViewerRole = "hasRole('ROLE_HEDGE_FUND_VIEWER') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')";
 
-    @PreAuthorize(hedgeFundsViewerRole)
+    @PreAuthorize(monitoringViewerRole)
     @RequestMapping(value = "/getAll", method = RequestMethod.GET)
     public ResponseEntity getAllData() {
 
@@ -46,7 +45,7 @@ public class MonitoringHedgeFundsServiceREST extends CommonServiceREST{
         return buildNonNullResponse(data);
     }
 
-    @PreAuthorize(hedgeFundsViewerRole)
+    @PreAuthorize(monitoringViewerRole)
     @RequestMapping(value = "/get", method = RequestMethod.POST)
     public ResponseEntity getMonitoringDataByDate(@RequestBody MonitoringHedgeFundSearchParamsDto searchParams) {
 
@@ -58,7 +57,7 @@ public class MonitoringHedgeFundsServiceREST extends CommonServiceREST{
         return buildNonNullResponse(data);
     }
 
-    @PreAuthorize(hedgeFundsViewerRole)
+    @PreAuthorize(monitoringViewerRole)
     @RequestMapping(value = "/getPrevious", method = RequestMethod.POST)
     public ResponseEntity getMonitoringDataForPreviousDate(@RequestBody MonitoringHedgeFundTypedSearchParamsDto searchParams) {
 
