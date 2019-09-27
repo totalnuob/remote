@@ -122,6 +122,7 @@ import {HREmployeesListComponent} from "./hr/hr-employees-list.component";
 import {HRDocsListComponent} from "./hr/hr-docs-list.component";
 import {EmployeeProfileEditComponent} from "./employee/employee.profile.edit.component";
 import {HRNewsEditComponent} from "./hr/hr-news-edit.component";
+import {MonitoringHedgeFundsEditComponent} from "./monitoring/monitoring-hedge-funds-edit.component";
 //import {CorpMeetingEditComponent} from "./corpmeetings/ic-meeting-topic-edit.component";
 
 @NgModule({
@@ -150,7 +151,7 @@ import {HRNewsEditComponent} from "./hr/hr-news-edit.component";
         GeneralMemoEditComponent, PrivateEquityMemoEditComponent, HedgeFundsMemoEditComponent, RealEstateMemoEditComponent,
         TripMemoListComponent, TripMemoEditComponent, RiskManagementAxiomaReportingComponent, MonitoringHedgeFundsComponent, MonitoringLiquidPortfolioComponent,
         MonitoringMacroMonitorComponent, MonitoringPortfolioComponent, MonitoringPrivateEquityComponent, MonitoringPrivateEquityFundComponent,
-        MonitoringHedgeFunds2Component, MonitoringHedgeFunds2PrintComponent, MonitoringHFListComponent, MonitoringHFResearchComponent,
+        MonitoringHedgeFunds2Component,MonitoringHedgeFundsEditComponent, MonitoringHedgeFunds2PrintComponent, MonitoringHFListComponent, MonitoringHFResearchComponent,
         MainNBReportingComponent, InputFileUploadNBReportingComponent,
 
         HFDashboardComponent, HFFundSearchComponent, HFFundSelectionComponent, HFPortfolioComponent, HFReportComponent,

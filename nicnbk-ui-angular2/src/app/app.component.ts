@@ -40,6 +40,7 @@ import {CorpMeetingService} from "./corpmeetings/corp-meetings.service";
 import {HedgeFundScreeningService} from "./hf/hf.fund.screening.service";
 import {HedgeFundScoringService} from "./hf/hf.fund.scoring.service";
 import {HRService} from "./hr/hr.service";
+import {MonitoringHedgeFundService} from "./monitoring/monitoring-hf.service";
 
 
 
@@ -73,6 +74,8 @@ import {HRService} from "./hr/hr.service";
         HedgeFundScreeningService,
         HedgeFundScoringService,
         HRService
+        HedgeFundScoringService,
+        MonitoringHedgeFundService
     ]
 })
 @NgModule({
