@@ -18,14 +18,24 @@ public class MonitoringHedgeFundReportDate extends CreateUpdateBaseEntity{
     @Basic
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern="dd-MM-yyyy")
-    private Date date;
+    private Date monitoringDate;
+
+    public MonitoringHedgeFundReportDate(){}
+
+    public MonitoringHedgeFundReportDate(Long id){
+        setId(id);
+    }
+
+    public MonitoringHedgeFundReportDate(Date date){
+        this.monitoringDate = date;
+    }
 
     @Column(name="monitoring_date", nullable = false, unique = true)
     public Date getMonitoringDate() {
-        return date;
+        return monitoringDate;
     }
 
     public void setMonitoringDate(Date date) {
-        this.date = date;
+        this.monitoringDate = date;
     }
 }

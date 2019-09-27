@@ -27,6 +27,7 @@ declare var $: any;
 export class MonitoringHedgeFundsEditComponent extends CommonFormViewComponent implements OnInit, AfterViewChecked{
     private sub: any;
     monitoringDate;
+    monitoringId;
     busy: Subscription;
 
     activeTab = "OVERALL";
@@ -44,11 +45,11 @@ export class MonitoringHedgeFundsEditComponent extends CommonFormViewComponent i
             .subscribe(params => {
                 if(params['params'] != null) {
                     this.monitoringDate = JSON.parse(params['params']).monitoringDate;
+                    this.monitoringId = JSON.parse(params['params']).monitoringId;
                 }
                 this.selectedData.date = this.monitoringDate;
-
-                console.log(this.monitoringDate);
-                if(this.monitoringDate) {
+                //console.log(this.monitoringId);
+                if(this.monitoringId) {
                     this.busy = this.monitoringHFService.get(JSON.parse(params['params']))
                         .subscribe(
                             monitoringData => {

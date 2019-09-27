@@ -18,14 +18,17 @@ public interface MonitoringHedgeFundContributionToReturnRepository extends Pagin
 
     @Modifying
     @Transactional
-    @Query("DELETE FROM MonitoringHedgeFundContributionToReturn e WHERE e.type.id=?1 AND e.reportDate.monitoringDate=?2")
-    void deleteByTypeIdAndDate(Integer typeId, Date monitoringDate);
+    @Query("DELETE FROM MonitoringHedgeFundContributionToReturn e WHERE e.type.id=?1 AND e.reportDate.id=?2")
+    void deleteByTypeIdAndDate(Integer typeId, Long monitoringDateId);
 
-    @Query("SELECT e FROM MonitoringHedgeFundContributionToReturn e WHERE e.type.id=?1 AND e.reportDate.monitoringDate=?2")
-    List<MonitoringHedgeFundContributionToReturn> findByTypeIdAndMonitoringDate(Integer typeId, Date monitoringDate);
+    @Query("SELECT e FROM MonitoringHedgeFundContributionToReturn e WHERE e.type.id=?1 AND e.reportDate.id=?2")
+    List<MonitoringHedgeFundContributionToReturn> findByTypeIdAndMonitoringId(Integer typeId, Long monitoringId);
 
     @Query("SELECT e FROM MonitoringHedgeFundContributionToReturn e")
     List<MonitoringHedgeFundContributionToReturn> findAll();
+
+    @Query("SELECT e FROM MonitoringHedgeFundContributionToReturn e WHERE e.reportDate.id=?1")
+    List<MonitoringHedgeFundContributionToReturn> findAllByMonitoringId(Long monitoringId);
 
     @Query("SELECT e FROM MonitoringHedgeFundContributionToReturn e WHERE e.type.id=?1 AND e.reportDate.monitoringDate=" +
             "(SELECT MAX(e2.reportDate.monitoringDate) FROM MonitoringHedgeFundContributionToReturn e2 WHERE e2.type.id=?1)")

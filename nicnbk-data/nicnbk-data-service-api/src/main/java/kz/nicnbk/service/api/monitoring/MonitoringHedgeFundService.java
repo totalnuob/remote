@@ -14,7 +14,7 @@ public interface MonitoringHedgeFundService extends BaseService {
 
     MonitoringHedgeFundListDataHolderDto getAllData();
 
-    MonitoringHedgeFundDataHolderDto getMonitoringDataByDate(MonitoringHedgeFundSearchParamsDto searchParams);
+    MonitoringHedgeFundDataHolderDto getMonitoringData(MonitoringHedgeFundSearchParamsDto searchParams);
 
     MonitoringHedgeFundDataDto getMonitoringDataForPreviousDate(MonitoringHedgeFundTypedSearchParamsDto searchParams);
 

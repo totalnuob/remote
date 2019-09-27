@@ -15,4 +15,7 @@ public interface MonitoringHedgeFundReportDateRepository extends PagingAndSortin
     @Query("SELECT e FROM MonitoringHedgeFundReportDate e WHERE e.monitoringDate=?1")
     List<MonitoringHedgeFundReportDate> findByMonitoringDate(Date monitoringDate);
 
+    @Query("SELECT e FROM MonitoringHedgeFundReportDate e WHERE e.id=?1")
+    List<MonitoringHedgeFundReportDate> findByMonitoringId(Long monitoringId);
+
 }

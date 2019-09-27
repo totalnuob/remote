@@ -16,11 +16,11 @@ public interface MonitoringHedgeFundApprovedFundRepository extends PagingAndSort
 
     @Modifying
     @Transactional
-    @Query("DELETE FROM MonitoringHedgeFundApprovedFund e WHERE e.reportDate.monitoringDate=?1")
-    void deleteByDate(Date monitoringDate);
+    @Query("DELETE FROM MonitoringHedgeFundApprovedFund e WHERE e.reportDate.id=?1")
+    void deleteByMonitoringDateId(Long monitoringDate);
 
-    @Query("SELECT e FROM MonitoringHedgeFundApprovedFund e WHERE e.reportDate.monitoringDate=?1")
-    List<MonitoringHedgeFundApprovedFund> findByMonitoringDate(Date monitoringDate);
+    @Query("SELECT e FROM MonitoringHedgeFundApprovedFund e WHERE e.reportDate.id=?1")
+    List<MonitoringHedgeFundApprovedFund> findByMonitoringId(Long monitoringId);
 
 
     @Query("SELECT e FROM MonitoringHedgeFundApprovedFund e")

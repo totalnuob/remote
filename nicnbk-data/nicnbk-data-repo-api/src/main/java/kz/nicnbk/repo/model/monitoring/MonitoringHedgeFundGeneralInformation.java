@@ -21,8 +21,8 @@ public class MonitoringHedgeFundGeneralInformation extends CreatorBaseEntity imp
     private String name;
     private String value;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "report_date_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "monitoring_hf_report_date_id", nullable = false)
     public MonitoringHedgeFundReportDate getReportDate() {
         return reportDate;
     }

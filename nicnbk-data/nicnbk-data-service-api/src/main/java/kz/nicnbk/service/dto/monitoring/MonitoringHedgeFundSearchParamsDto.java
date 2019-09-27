@@ -10,13 +10,22 @@ import java.util.Date;
  */
 public class MonitoringHedgeFundSearchParamsDto implements BaseDto {
 
-    private Date monitoringDate;
+    //private Date monitoringDate;
+    private Long monitoringId;
 
-    public Date getMonitoringDate() {
-        return monitoringDate;
+//    public Date getMonitoringDate() {
+//        return monitoringDate;
+//    }
+//
+//    public void setMonitoringDate(Date monitoringDate) {
+//        this.monitoringDate = monitoringDate;
+//    }
+
+    public Long getMonitoringId() {
+        return monitoringId;
     }
 
-    public void setMonitoringDate(Date monitoringDate) {
-        this.monitoringDate = monitoringDate;
+    public void setMonitoringId(Long monitoringId) {
+        this.monitoringId = monitoringId;
     }
 }

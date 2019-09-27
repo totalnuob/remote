@@ -31,18 +31,17 @@
         <div class="col-md-8">&nbsp;
         </div>
         <div class="col-md-2">
-            <button class="btn btn-primary btn-sm pull-right" (click)="navigateToEditComponent(null)">Add</button>
+            <button class="btn btn-primary btn-sm pull-right" (click)="navigateToEditComponent(true)">Add</button>
         </div>
     </div>
     <div class="row withpadding" *ngIf="selectedData != null && selectedData.date != null">
         <div class="col-md-10">&nbsp;
         </div>
         <div class="col-md-2">
-            <button class="btn btn-success btn-sm pull-right" (click)="navigateToEditComponent(selectedData.date)">Edit</button>
+            <button class="btn btn-success btn-sm pull-right" (click)="navigateToEditComponent(false)">Edit</button>
         </div>
     </div>
     <br/>
-
     <ul role="tablist" class="date-tabs nav">
         <li class="date-tabs__item"><a data-toggle="tab"
                                        href="#OVERALL"
@@ -77,9 +76,7 @@
                                        (click)="activeTab = 'APPROVED_FUNDS'">APPROVED FUNDS</a>
         </li>
     </ul>
-
-
-    <div class="tab-content">
+    <div [ngBusy]="busy" class="tab-content">
         <div id="OVERALL" role="tabpanel" aria-labelledby="OVERALL" class="tab-pane active">
             <br/>
             <div class="row">
@@ -221,7 +218,6 @@
                                     <td>{{item.strategy}}</td>
                                     <td>{{item.ytd}}</td>
                                 </tr>
-
                             </table>
                         </div>
                         <div class="row">
@@ -373,7 +369,7 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    <div class="col-md-5">
+                    <div class="col-md-6">
                         <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
                             <tr style="background-color: #307240; color: white;" >
                                 <td colspan="3">Allocation by strategy</td>
@@ -391,7 +387,7 @@
 
                         </table>
                     </div>
-                    <div class="col-md-7">
+                    <div class="col-md-6">
                         <div class="row"> <!-- Returns-->
                             <div id="comparisonReturnsPortfolioB1"></div>
                         </div>

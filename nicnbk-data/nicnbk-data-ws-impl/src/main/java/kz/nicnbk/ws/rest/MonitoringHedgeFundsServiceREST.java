@@ -12,8 +12,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 
 /**
  * Created by magzumov.
@@ -54,7 +52,7 @@ public class MonitoringHedgeFundsServiceREST extends CommonServiceREST{
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
-        MonitoringHedgeFundDataHolderDto data = this.monitoringHedgeFundService.getMonitoringDataByDate(searchParams);
+        MonitoringHedgeFundDataHolderDto data = this.monitoringHedgeFundService.getMonitoringData(searchParams);
 
         return buildNonNullResponse(data);
     }

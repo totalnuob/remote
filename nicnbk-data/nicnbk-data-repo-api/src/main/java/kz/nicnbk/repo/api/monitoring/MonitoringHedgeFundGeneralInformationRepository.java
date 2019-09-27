@@ -22,11 +22,16 @@ public interface MonitoringHedgeFundGeneralInformationRepository extends PagingA
 
     @Modifying
     @Transactional
-    @Query("DELETE FROM MonitoringHedgeFundGeneralInformation e WHERE e.type.id=?1 AND e.reportDate.monitoringDate=?2")
-    void deleteByTypeIdAndDate(Integer typeId,  @Temporal(TemporalType.DATE) Date monitoringDate);
+//    @Query("DELETE FROM MonitoringHedgeFundGeneralInformation e WHERE e.type.id=?1 AND e2.reportDate.monitoringDate=?2")
+//    void deleteByTypeIdAndDate(Integer typeId,  @Temporal(TemporalType.DATE) Date monitoringDate);
+    @Query("DELETE FROM MonitoringHedgeFundGeneralInformation e WHERE e.type.id=?1 AND e.reportDate.id=?2")
+    void deleteByTypeIdAndReportDateId(Integer typeId, Long reportDateId);
 
-    @Query("SELECT e FROM MonitoringHedgeFundGeneralInformation e WHERE e.type.id=?1 AND e.reportDate.monitoringDate=?2")
-    List<MonitoringHedgeFundGeneralInformation> findByTypeIdAndMonitoringDate(Integer typeId, Date monitoringDate);
+    @Query("SELECT e FROM MonitoringHedgeFundGeneralInformation e WHERE e.type.id=?1 AND e.reportDate.id=?2")
+    List<MonitoringHedgeFundGeneralInformation> findByTypeIdAndMonitoringId(Integer typeId, Long monitoringId);
+
+    @Query("SELECT e FROM MonitoringHedgeFundGeneralInformation e WHERE e.reportDate.id=?1")
+    List<MonitoringHedgeFundGeneralInformation> findAllByMonitoringId(Long monitoringId);
 
     @Query("SELECT e FROM MonitoringHedgeFundGeneralInformation e")
     List<MonitoringHedgeFundGeneralInformation> findAll();
