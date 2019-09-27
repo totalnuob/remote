@@ -30,14 +30,14 @@
         </div>
         <div class="col-md-8">&nbsp;
         </div>
-        <div class="col-md-2">
+        <div class="col-md-2" *ngIf="canEdit()">
             <button class="btn btn-primary btn-sm pull-right" (click)="navigateToEditComponent(true)">Add</button>
         </div>
     </div>
     <div class="row withpadding" *ngIf="selectedData != null && selectedData.date != null">
         <div class="col-md-10">&nbsp;
         </div>
-        <div class="col-md-2">
+        <div class="col-md-2" *ngIf="canEdit()">
             <button class="btn btn-success btn-sm pull-right" (click)="navigateToEditComponent(false)">Edit</button>
         </div>
     </div>
@@ -82,12 +82,9 @@
             <div class="row">
                 <div class="col-md-12">
                     <div  style="background-color:#307240; color:white; font-size: medium; font-weight: bold">
-                        Singularity – overall hedge fund program</div>
+                        Singularity – overall hedge fund program
+                    </div>
                 </div>
-            </div>
-            <br/>
-            <div class="row">
-                <!--<button class="btn-primary pull-right" [routerLink]="['/monitoring/hf2Print']">PRINT</button>-->
             </div>
             <br/>
             <div class="row">
@@ -138,20 +135,19 @@
                     </div>
                 </div>
             </div>
-
             <br/>
+
             <div class="row">
                 <div class="col-md-12">
-                    <!--<div class="col-md-1">&nbsp;</div>-->
-                    <div class="col-md-12">
-                        <div id="returns"></div>
-                    </div>
-                    <!--<div class="col-md-1">&nbsp;</div>-->
+                    <span class="pull-right" style="font-size: x-small; font-style: italic;">* returns are loaded from Monitoring-NIC Portfolio</span>
+                    <div id="returns"></div>
                 </div>
             </div>
             <br/>
             <div class="row">
-                <div id="performanceMonthly"></div>
+                <div class="col-md-12">
+                    <div id="performanceMonthly"></div>
+                </div>
             </div>
             <br/>
         </div>
@@ -168,94 +164,86 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="col-md-5">
-                        <div class="row">
-                            <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
-                                <tr style="background-color: #307240; color: white;" >
-                                    <td colspan="2">Fund details (as of June 1, 2017)</td>
-                                </tr>
-                                <tr *ngFor="let item of selectedData?.monitoringData?.classA?.generalInformation">
-                                    <td style="font-weight: bold">{{item.name}}</td>
-                                    <td>{{item.value}}</td>
-                                </tr>
-                                <!--<tr>-->
-                                    <!--<td style="font-weight: bold">AUM – invested</td>-->
-                                    <!--<td>150 000 000 USD</td>-->
-                                <!--</tr>-->
-                                <!--<tr>-->
-                                    <!--<td style="font-weight: bold">NAV</td>-->
-                                    <!--<td>156 107 491 USD</td>-->
-                                <!--</tr>-->
-                                <!--<tr>-->
-                                    <!--<td style="font-weight: bold">Inception</td>-->
-                                    <!--<td>August 1, 2015</td>-->
-                                <!--</tr>-->
-                                <!--<tr>-->
-                                    <!--<td style="font-weight: bold">Number of investment managers</td>-->
-                                    <!--<td>22</td>-->
-                                <!--</tr>-->
-                                <!--<tr>-->
-                                    <!--<td style="font-weight: bold">Number of funds</td>-->
-                                    <!--<td>22</td>-->
-                                <!--</tr>-->
-                                <!--<tr>-->
-                                    <!--<td style="font-weight: bold">Strategy</td>-->
-                                    <!--<td>Global diversified multi-strategy</td>-->
-                                <!--</tr>-->
-                            </table>
-                        </div>
-                        <div class="row">
-                            <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
-                                <tr style="background-color: #307240; color: white;" >
-                                    <td colspan="3">Top 5 Positive Contributors (%)</td>
-                                </tr>
-                                <tr style="font-weight: bolder; border-bottom:2pt solid black;">
-                                    <td>Fund</td>
-                                    <td>Strategy</td>
-                                    <td>YTD</td>
-                                </tr>
-                                <tr *ngFor="let item of selectedData?.monitoringData?.classA?.positiveContributors">
-                                    <td>{{item.fundName}}</td>
-                                    <td>{{item.strategy}}</td>
-                                    <td>{{item.ytd}}</td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="row">
-                            <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
-                                <tr style="background-color: #307240; color: white;" >
-                                    <td colspan="3">Top 5 Negative Contributors (%)</td>
-                                </tr>
-                                <tr style="font-weight: bolder; border-bottom:2pt solid black;">
-                                    <td>Fund</td>
-                                    <td>Strategy</td>
-                                    <td>YTD</td>
-                                </tr>
-                                <tr *ngFor="let item of selectedData?.monitoringData?.classA?.negativeContributors">
-                                    <td>{{item.fundName}}</td>
-                                    <td>{{item.strategy}}</td>
-                                    <td>{{item.ytd}}</td>
-                                </tr>
+                        <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
+                            <tr style="background-color: #307240; color: white;" >
+                                <td colspan="2">Fund details (as of June 1, 2017)</td>
+                            </tr>
+                            <tr *ngFor="let item of selectedData?.monitoringData?.classA?.generalInformation">
+                                <td style="font-weight: bold">{{item.name}}</td>
+                                <td>{{item.value}}</td>
+                            </tr>
+                            <!--<tr>-->
+                            <!--<td style="font-weight: bold">AUM – invested</td>-->
+                            <!--<td>150 000 000 USD</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                            <!--<td style="font-weight: bold">NAV</td>-->
+                            <!--<td>156 107 491 USD</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                            <!--<td style="font-weight: bold">Inception</td>-->
+                            <!--<td>August 1, 2015</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                            <!--<td style="font-weight: bold">Number of investment managers</td>-->
+                            <!--<td>22</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                            <!--<td style="font-weight: bold">Number of funds</td>-->
+                            <!--<td>22</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                            <!--<td style="font-weight: bold">Strategy</td>-->
+                            <!--<td>Global diversified multi-strategy</td>-->
+                            <!--</tr>-->
+                        </table>
+                        <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
+                            <tr style="background-color: #307240; color: white;" >
+                                <td colspan="3">Top Positive Contributors (%)</td>
+                            </tr>
+                            <tr style="font-weight: bolder; border-bottom:2pt solid black;">
+                                <td>Fund</td>
+                                <td>Strategy</td>
+                                <td>YTD</td>
+                            </tr>
+                            <tr *ngFor="let item of selectedData?.monitoringData?.classA?.positiveContributors">
+                                <td>{{item.fundName}}</td>
+                                <td>{{item.strategy}}</td>
+                                <td>{{item.ytd}}</td>
+                            </tr>
+                        </table>
+                        <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
+                            <tr style="background-color: #307240; color: white;" >
+                                <td colspan="3">Top Negative Contributors (%)</td>
+                            </tr>
+                            <tr style="font-weight: bolder; border-bottom:2pt solid black;">
+                                <td>Fund</td>
+                                <td>Strategy</td>
+                                <td>YTD</td>
+                            </tr>
+                            <tr *ngFor="let item of selectedData?.monitoringData?.classA?.negativeContributors">
+                                <td>{{item.fundName}}</td>
+                                <td>{{item.strategy}}</td>
+                                <td>{{item.ytd}}</td>
+                            </tr>
 
-                            </table>
-                        </div>
-                        <div class="row">
-                            <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
-                                <tr style="background-color: #307240; color: white;" >
-                                    <td colspan="3">Top 10 Portfolio Fund Allocation</td>
-                                </tr>
-                                <tr style="font-weight: bolder; border-bottom:2pt solid black;">
-                                    <td>Fund</td>
-                                    <td>Strategy</td>
-                                    <td>Allocation, %</td>
-                                </tr>
-                                <tr *ngFor="let item of selectedData?.monitoringData?.classA?.fundAllocations">
-                                    <td>{{item.fundName}}</td>
-                                    <td>{{item.strategy}}</td>
-                                    <td>{{item.allocation}}</td>
-                                </tr>
+                        </table>
+                        <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
+                            <tr style="background-color: #307240; color: white;" >
+                                <td colspan="3">Top Portfolio Fund Allocation</td>
+                            </tr>
+                            <tr style="font-weight: bolder; border-bottom:2pt solid black;">
+                                <td>Fund</td>
+                                <td>Strategy</td>
+                                <td>Allocation, %</td>
+                            </tr>
+                            <tr *ngFor="let item of selectedData?.monitoringData?.classA?.fundAllocations">
+                                <td>{{item.fundName}}</td>
+                                <td>{{item.strategy}}</td>
+                                <td>{{item.allocation}}</td>
+                            </tr>
 
-                            </table>
-                        </div>
+                        </table>
                     </div>
                     <div class="col-md-7">
                         <div class="row"> <!-- Allocation by Strategy, MTD-->
@@ -266,6 +254,7 @@
                         <br/>
                         <div class="row"> <!-- Returns-->
                             <div class="col-md-12">
+                                <span class="pull-right" style="font-size: x-small; font-style: italic;">* returns are loaded from Monitoring-NIC Portfolio</span>
                                 <div id="comparisonReturnsPortfolioA1"></div>
                             </div>
                         </div>
@@ -315,6 +304,7 @@
                 </div>
             </div>
             <br/>
+
         </div>
         <div id="CLASS_B" role="tabpanel" aria-labelledby="CLASS_B" class="tab-pane">
             <br/>
@@ -328,7 +318,7 @@
             <br/>
             <div class="row">
                 <div class="col-md-12">
-                    <div class="col-md-6">
+                    <div class="col-md-5">
                         <table class="table table-hover table-responsive" style="font-size: smaller">
                             <tr style="background-color: #307240; color: white;" >
                                 <td colspan="2">Fund details (as of March 31, 2019)</td>
@@ -361,7 +351,7 @@
                         </table>
                         <br/>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-7">
                         <div id="allocationByStrategyPortfolioB"></div>
                     </div>
                 </div>
@@ -369,7 +359,7 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    <div class="col-md-6">
+                    <div class="col-md-5">
                         <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
                             <tr style="background-color: #307240; color: white;" >
                                 <td colspan="3">Allocation by strategy</td>
@@ -387,8 +377,10 @@
 
                         </table>
                     </div>
-                    <div class="col-md-6">
+
+                    <div class="col-md-7">
                         <div class="row"> <!-- Returns-->
+                            <span class="pull-right" style="font-size: x-small; font-style: italic;">* returns are loaded from Monitoring-NIC Portfolio</span>
                             <div id="comparisonReturnsPortfolioB1"></div>
                         </div>
                         <br/>

@@ -9,6 +9,7 @@ import {MonitoringHedgeFundService} from "./monitoring-hf.service";
 import {MonitoringHFDataHolder} from "./model/monitoring-hf-data-holder";
 import {MonitoringHFListDataHolder} from "./model/monitoring-hf-list-data-holder";
 import {MonitoringHFDataApprovedFundInfo} from "./model/monitoring-hf-data-approved-fund-info";
+import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 
 declare var google:any;
 declare var $: any;
@@ -32,12 +33,15 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
 
     monitoringDataAll: MonitoringHFListDataHolder;
 
+    private moduleAccessChecker: ModuleAccessCheckerService;
+
     constructor(
         private route: ActivatedRoute,
         private router: Router,
         private monitoringHFService: MonitoringHedgeFundService
     ) {
         super();
+        this.moduleAccessChecker = new ModuleAccessCheckerService;
 
         this.busy = this.monitoringHFService.getAll()
             .subscribe(
@@ -63,6 +67,10 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
                     this.successMessage = null;
                 }
             );
+    }
+
+    canEdit(){
+        return this.moduleAccessChecker.checkAccessHedgeFundsEditor();
     }
 
     regroupApprovedFunds(){
@@ -397,7 +405,7 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
         for(var i = 0; i < rowData.length; i++){
             var minMax = this.getMinMax(rowData[i]);
             this.setColor(-1,1, i, data, colFrom, colTo);
-                    }
+        }
         //
         //// row 0
         //var minMax = this.getMinMax(rowData[0]);
@@ -441,7 +449,11 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
             //    continue;
             //}
             var bgColor = '#f5f2f2';
-            var textColor = 'black';
+            var textColor = '#5a5656';
+            var fontWeight = '';
+
+
+
             //if (value >= Number(min + diff) && value < Number(min + (2*diff))) {
             //    bgColor = '#ec816a';
             //} else if (value >= Number(min + (2*diff)) && value < Number(min + (3*diff))) {
@@ -456,14 +468,19 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
 
             if (i >= 1 && i <= 12 && value != null){
                 if (value >= 1) {
-                    bgColor = "#18c451"; //green
+                    //bgColor = "#18c451"; //green
+                    textColor = "#09a709";
+                    fontWeight = "bold";
                 } else if (value <= -1) {
-                    bgColor = "#f54568"; //red
+                    //bgColor = "#f54568"; //red
+                    textColor = "#de0404";
+                    fontWeight = "bold";
                 }
             }
 
-            data.setProperty(rowIndex, i, 'style', 'text-align: center; background-color:' + bgColor + '; color: ' + textColor);
+            data.setProperty(rowIndex, i, 'style', 'text-align: center; background-color:' + bgColor + '; color: ' + textColor + "; font-weight: " + fontWeight);
         }
+
         //console.log(min, max);
         //console.log(diff);
         //console.log("-----------------");
@@ -474,6 +491,7 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
         //console.log(Number(min + (4*diff)) + " to " + Number(min + (5*diff)));
         //console.log(Number(min + (5*diff)) + " to " + Number(max + 1));
     }
+
 
     private getReturnsByYear(returns){
         var currentYear = 0;
@@ -592,7 +610,7 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
                 slantedText: false,
                 textStyle: {
                     color: 'black',
-                    fontSize: 10
+                    fontSize: 9
                 },
                 showTextEvery: 1,
                 minTextSpacing: 1

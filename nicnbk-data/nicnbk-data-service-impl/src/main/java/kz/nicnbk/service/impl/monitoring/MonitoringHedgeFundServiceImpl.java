@@ -915,7 +915,7 @@ public class MonitoringHedgeFundServiceImpl implements MonitoringHedgeFundServic
         }else{
             if(data.getId() == null){
                 //check existing date
-                List<MonitoringHedgeFundReportDate> reportDates = this.monitoringHedgeFundReportDateRepository.findByMonitoringId(data.getId());
+                List<MonitoringHedgeFundReportDate> reportDates = this.monitoringHedgeFundReportDateRepository.findByMonitoringDate(data.getDate());
                 if(reportDates != null && !reportDates.isEmpty()){
                     String errorMessage = "Failed to save Hedge Fund monitoring data: date already exists " + DateUtils.getDateFormatted(data.getDate());
                     logger.error(errorMessage + " [username=" + username + "]");
@@ -1598,4 +1598,5 @@ public class MonitoringHedgeFundServiceImpl implements MonitoringHedgeFundServic
 
         return dataList;
     }
+
 }

@@ -30,6 +30,7 @@ public class MonitoringHedgeFundsServiceREST extends CommonServiceREST{
     @Autowired
     private MonitoringHedgeFundService monitoringHedgeFundService;
 
+    private static final String monitoringViewerRole = "hasRole('ROLE_HEDGE_FUND_VIEWER') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')";
     private static final String hedgeFundsEditorRole = "hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')";
     private static final String hedgeFundsViewerRole = "hasRole('ROLE_HEDGE_FUND_VIEWER') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')";
 
@@ -71,7 +72,6 @@ public class MonitoringHedgeFundsServiceREST extends CommonServiceREST{
 
 
 
-    /* IC MEETING *****************************************************************************************************/
     @PreAuthorize(hedgeFundsEditorRole)
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public ResponseEntity<?> saveData(@RequestBody MonitoringHedgeFundDataHolderDto dataDto) {

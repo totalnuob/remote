@@ -108,7 +108,7 @@ export class MonitoringHedgeFundsEditComponent extends CommonFormViewComponent i
         this.selectedData.monitoringData.overall.generalInformation = [];
         var info1 = new MonitoringHFDataNameTextValue();
         info1.name = "AUM of the program –total";
-        info1.value = "600 million USD";
+        //info1.value = "600 million USD";
 
         var info2 = new MonitoringHFDataNameTextValue();
         info2.name = "AUM - invested";
@@ -161,31 +161,31 @@ export class MonitoringHedgeFundsEditComponent extends CommonFormViewComponent i
         ///////////// TOP 5 POSITIVE CONTRIBUTORS
         this.selectedData.monitoringData.classA.positiveContributors = [];
         this.selectedData.monitoringData.classA.positiveContributors.push(new MonitoringHFDataTopFundInfo());
-        //this.selectedData.monitoringData.classA.positiveContributors.push(new MonitoringHFDataTopFundInfo());
-        //this.selectedData.monitoringData.classA.positiveContributors.push(new MonitoringHFDataTopFundInfo());
-        //this.selectedData.monitoringData.classA.positiveContributors.push(new MonitoringHFDataTopFundInfo());
-        //this.selectedData.monitoringData.classA.positiveContributors.push(new MonitoringHFDataTopFundInfo());
+        this.selectedData.monitoringData.classA.positiveContributors.push(new MonitoringHFDataTopFundInfo());
+        this.selectedData.monitoringData.classA.positiveContributors.push(new MonitoringHFDataTopFundInfo());
+        this.selectedData.monitoringData.classA.positiveContributors.push(new MonitoringHFDataTopFundInfo());
+        this.selectedData.monitoringData.classA.positiveContributors.push(new MonitoringHFDataTopFundInfo());
 
         ///////////// TOP 5 NEGATIVE CONTRIBUTORS
         this.selectedData.monitoringData.classA.negativeContributors = [];
         this.selectedData.monitoringData.classA.negativeContributors.push(new MonitoringHFDataTopFundInfo());
-        //this.selectedData.monitoringData.classA.negativeContributors.push(new MonitoringHFDataTopFundInfo());
-        //this.selectedData.monitoringData.classA.negativeContributors.push(new MonitoringHFDataTopFundInfo());
-        //this.selectedData.monitoringData.classA.negativeContributors.push(new MonitoringHFDataTopFundInfo());
-        //this.selectedData.monitoringData.classA.negativeContributors.push(new MonitoringHFDataTopFundInfo());
+        this.selectedData.monitoringData.classA.negativeContributors.push(new MonitoringHFDataTopFundInfo());
+        this.selectedData.monitoringData.classA.negativeContributors.push(new MonitoringHFDataTopFundInfo());
+        this.selectedData.monitoringData.classA.negativeContributors.push(new MonitoringHFDataTopFundInfo());
+        this.selectedData.monitoringData.classA.negativeContributors.push(new MonitoringHFDataTopFundInfo());
 
         ///////////// TOP 10 ALLOCATIONS
         this.selectedData.monitoringData.classA.fundAllocations = [];
         this.selectedData.monitoringData.classA.fundAllocations.push(new MonitoringHFDataTopFundInfo());
-        //this.selectedData.monitoringData.classA.fundAllocations.push(new MonitoringHFDataTopFundInfo());
-        //this.selectedData.monitoringData.classA.fundAllocations.push(new MonitoringHFDataTopFundInfo());
-        //this.selectedData.monitoringData.classA.fundAllocations.push(new MonitoringHFDataTopFundInfo());
-        //this.selectedData.monitoringData.classA.fundAllocations.push(new MonitoringHFDataTopFundInfo());
-        //this.selectedData.monitoringData.classA.fundAllocations.push(new MonitoringHFDataTopFundInfo());
-        //this.selectedData.monitoringData.classA.fundAllocations.push(new MonitoringHFDataTopFundInfo());
-        //this.selectedData.monitoringData.classA.fundAllocations.push(new MonitoringHFDataTopFundInfo());
-        //this.selectedData.monitoringData.classA.fundAllocations.push(new MonitoringHFDataTopFundInfo());
-        //this.selectedData.monitoringData.classA.fundAllocations.push(new MonitoringHFDataTopFundInfo());
+        this.selectedData.monitoringData.classA.fundAllocations.push(new MonitoringHFDataTopFundInfo());
+        this.selectedData.monitoringData.classA.fundAllocations.push(new MonitoringHFDataTopFundInfo());
+        this.selectedData.monitoringData.classA.fundAllocations.push(new MonitoringHFDataTopFundInfo());
+        this.selectedData.monitoringData.classA.fundAllocations.push(new MonitoringHFDataTopFundInfo());
+        this.selectedData.monitoringData.classA.fundAllocations.push(new MonitoringHFDataTopFundInfo());
+        this.selectedData.monitoringData.classA.fundAllocations.push(new MonitoringHFDataTopFundInfo());
+        this.selectedData.monitoringData.classA.fundAllocations.push(new MonitoringHFDataTopFundInfo());
+        this.selectedData.monitoringData.classA.fundAllocations.push(new MonitoringHFDataTopFundInfo());
+        this.selectedData.monitoringData.classA.fundAllocations.push(new MonitoringHFDataTopFundInfo());
 
 
 
@@ -217,19 +217,16 @@ export class MonitoringHedgeFundsEditComponent extends CommonFormViewComponent i
 
         ///////////// TOP 10 ALLOCATIONS
         this.selectedData.monitoringData.classB.fundAllocations = [];
+        this.selectedData.monitoringData.classB.fundAllocations.push(new MonitoringHFDataTopFundInfo());
         //this.selectedData.monitoringData.classB.fundAllocations.push(new MonitoringHFDataTopFundInfo());
         //this.selectedData.monitoringData.classB.fundAllocations.push(new MonitoringHFDataTopFundInfo());
         //this.selectedData.monitoringData.classB.fundAllocations.push(new MonitoringHFDataTopFundInfo());
         //this.selectedData.monitoringData.classB.fundAllocations.push(new MonitoringHFDataTopFundInfo());
-        //this.selectedData.monitoringData.classB.fundAllocations.push(new MonitoringHFDataTopFundInfo());
-
 
         // APPROVED FUNDS
         this.selectedData.monitoringData.approvedFunds = [];
 
-
     }
-
 
     removeOverallGeneralInfo(element){
         for(var i = 0; i < this.selectedData.monitoringData.overall.generalInformation.length; i++){
@@ -291,35 +288,35 @@ export class MonitoringHedgeFundsEditComponent extends CommonFormViewComponent i
         this.selectedData.monitoringData.classA.generalInformation.push(new MonitoringHFDataNameTextValue());
     }
 
-    //removeClassAPositiveContributor(element){
-    //    for(var i = 0; i < this.selectedData.monitoringData.classA.positiveContributors.length; i++){
-    //        if(this.selectedData.monitoringData.classA.positiveContributors[i] === element) {
-    //            this.selectedData.monitoringData.classA.positiveContributors.splice(i, 1);
-    //        }
-    //    }
-    //}
-    //
-    //addClassAPositiveContributor(){
-    //    if(this.selectedData.monitoringData.classA.positiveContributors == null){
-    //        this.selectedData.monitoringData.classA.positiveContributors = [];
-    //    }
-    //    this.selectedData.monitoringData.classA.positiveContributors.push(new MonitoringHFDataTopFundInfo());
-    //}
-    //
-    //removeClassANegativeContributor(element){
-    //    for(var i = 0; i < this.selectedData.monitoringData.classA.negativeContributors.length; i++){
-    //        if(this.selectedData.monitoringData.classA.negativeContributors[i] === element) {
-    //            this.selectedData.monitoringData.classA.negativeContributors.splice(i, 1);
-    //        }
-    //    }
-    //}
-    //
-    //addClassANegativeContributor(){
-    //    if(this.selectedData.monitoringData.classA.negativeContributors == null){
-    //        this.selectedData.monitoringData.classA.negativeContributors = [];
-    //    }
-    //    this.selectedData.monitoringData.classA.negativeContributors.push(new MonitoringHFDataTopFundInfo());
-    //}
+    removeClassAPositiveContributor(element){
+        for(var i = 0; i < this.selectedData.monitoringData.classA.positiveContributors.length; i++){
+            if(this.selectedData.monitoringData.classA.positiveContributors[i] === element) {
+                this.selectedData.monitoringData.classA.positiveContributors.splice(i, 1);
+            }
+        }
+    }
+
+    addClassAPositiveContributor(){
+        if(this.selectedData.monitoringData.classA.positiveContributors == null){
+            this.selectedData.monitoringData.classA.positiveContributors = [];
+        }
+        this.selectedData.monitoringData.classA.positiveContributors.push(new MonitoringHFDataTopFundInfo());
+    }
+
+    removeClassANegativeContributor(element){
+        for(var i = 0; i < this.selectedData.monitoringData.classA.negativeContributors.length; i++){
+            if(this.selectedData.monitoringData.classA.negativeContributors[i] === element) {
+                this.selectedData.monitoringData.classA.negativeContributors.splice(i, 1);
+            }
+        }
+    }
+
+    addClassANegativeContributor(){
+        if(this.selectedData.monitoringData.classA.negativeContributors == null){
+            this.selectedData.monitoringData.classA.negativeContributors = [];
+        }
+        this.selectedData.monitoringData.classA.negativeContributors.push(new MonitoringHFDataTopFundInfo());
+    }
 
     removeClassAFundAllocation(element){
         for(var i = 0; i < this.selectedData.monitoringData.classA.fundAllocations.length; i++){
