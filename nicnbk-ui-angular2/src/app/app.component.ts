@@ -73,7 +73,7 @@ import {MonitoringHedgeFundService} from "./monitoring/monitoring-hf.service";
         CorpMeetingService,
         HedgeFundScreeningService,
         HedgeFundScoringService,
-        HRService
+        HRService,
         HedgeFundScoringService,
         MonitoringHedgeFundService
     ]

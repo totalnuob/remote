@@ -48,7 +48,7 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
         maxItems: 10
     }
 
-    private moduleAccessChecler: ModuleAccessCheckerService
+    private moduleAccessChecker: ModuleAccessCheckerService
 
     public onItemAdded(item) {
         this.searchParams.tags.push(item);
@@ -70,7 +70,7 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
     ){
         super(router);
 
-        this.moduleAccessChecler = new ModuleAccessCheckerService;
+        this.moduleAccessChecker = new ModuleAccessCheckerService;
 
         this.sub = this.route
             .params
@@ -204,6 +204,8 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
             return "HF";
         }else if(type == 4 ){
             return "RE";
+        }else if(type == 5 ){
+            return "INFR";
         }else{
             return "";
         }
@@ -216,19 +218,19 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
             }
         }
     }
-
     public showHedgeFunds(){
-        return this.moduleAccessChecler.checkAccessHedgeFundsEditor();
+        return this.moduleAccessChecker.checkAccessHedgeFundsEditor();
     }
-
     public showPrivateEquity(){
-        return this.moduleAccessChecler.checkAccessPrivateEquityEditor();
+        return this.moduleAccessChecker.checkAccessPrivateEquityEditor();
     }
-
     public showRealEstate(){
-        return this.moduleAccessChecler.checkAccessRealEstateEditor();
+        return this.moduleAccessChecker.checkAccessRealEstateEditor();
     }
 
+    public showInfrastructure(){
+        return this.moduleAccessChecker.checkAccessInfrastructureEditor();
+    }
     remove(item){
         if (confirm('Are you sure?')) {
             this.busy = this.memoService.deleteMemo(item.id)
@@ -300,14 +302,21 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
                     }
                 }
             }
-        }
+        }else if(this.getMemoTypeName(memo.memoType) === 'INFR'){
+             if(roles != null && roles.length > 0){
+                 for(var i = 0; i < roles.length; i++){
+                     if(roles[i] === ROLE_ADMIN || roles[i].indexOf(ROLE_RE_EDIT) != -1){
+                         return true;
+                     }
+                 }
+             }
+         }
 
         return false;
 
     }
-
     showMemo(){
         return true;
-        //return !this.moduleAccessChecler.checkAccessMemoRestricted();
+        //return !this.moduleAccessChecker.checkAccessMemoRestricted();
     }
 }

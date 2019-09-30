@@ -24,6 +24,8 @@
                             <a [routerLink]="['/m2s2/edit/2/', 0]" role="menuitem" tabindex="-1" >Private Equity</a></li>
                         <li role="presentation" *ngIf="showRealEstate()">
                             <a [routerLink]="['/m2s2/edit/4/', 0]" role="menuitem" tabindex="-1" >Real Estate</a></li>
+                        <li role="presentation" *ngIf="showInfrastructure()">
+                            <a [routerLink]="['/m2s2/edit/5/', 0]" role="menuitem" tabindex="-1" >Infrastructure</a></li>
                         <li role="presentation" *ngIf="showHedgeFunds()">
                             <a [routerLink]="['/m2s2/edit/3/', 0]" role="menuitem" tabindex="-1" >Hedge Fund</a></li>
                         <li role="presentation" class="divider"></li>

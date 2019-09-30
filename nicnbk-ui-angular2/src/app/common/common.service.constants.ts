@@ -4,7 +4,7 @@
 
 
 /* SERVER TEST */
-//export const DATA_APP_URL = "http://testunic.nicnbk.kz:8087/";
+export const DATA_APP_URL = "http://testunic.nicnbk.kz:8087/";
 
 
 /* PROD */
