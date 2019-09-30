@@ -44,4 +44,8 @@ public class EntitySaveResponseDto extends ResponseDto {
         this.setStatus(ResponseStatusType.SUCCESS);
         this.setMessageEn(messageEn);
     }
+
+    public boolean isError(){
+        return this.getStatus() != null && this.getStatus().getCode().equalsIgnoreCase(ResponseStatusType.FAIL.getCode());
+    }
 }

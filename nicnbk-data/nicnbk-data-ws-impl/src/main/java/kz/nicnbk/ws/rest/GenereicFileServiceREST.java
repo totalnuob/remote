@@ -93,6 +93,7 @@ public class GenereicFileServiceREST {
         }
     }
 
+    // TODO: refactor
     private boolean checkFileDownloadPermission(Long fileId, String username){
         FilesDto filesDto = this.fileService.getFileInfo(fileId);
         if(filesDto != null && filesDto.getType() != null){
@@ -102,16 +103,34 @@ public class GenereicFileServiceREST {
                 if(employeeDto.getRoles() != null && !employeeDto.getRoles().isEmpty()){
                     // Check rights
                     for(BaseDictionaryDto role: employeeDto.getRoles()){
-                        if(role.getCode().equalsIgnoreCase(UserRoles.IC_MEMBER.getCode())){
+                        if(role.getCode().equalsIgnoreCase(UserRoles.ADMIN.getCode()) ||
+                                role.getCode().equalsIgnoreCase(UserRoles.IC_MEMBER.getCode())){
                             return true;
                         }
                     }
                 }
                 return false;
             }else if(filesDto.getType().equalsIgnoreCase(FileTypeLookup.HR_DOCS.getCode())){
+                // HR DOCS
+                return true;
+            }else if(filesDto.getType().equalsIgnoreCase(FileTypeLookup.CC_ATTACHMENT.getCode())){
+                // Capital Call Attachment
+                EmployeeDto employeeDto = this.employeeService.findByUsername(username);
+                if(employeeDto.getRoles() != null && !employeeDto.getRoles().isEmpty()){
+                    // Check rights
+                    for(BaseDictionaryDto role: employeeDto.getRoles()){
+                        if(role.getCode().equalsIgnoreCase(UserRoles.ADMIN.getCode()) ||
+                                role.getCode().equalsIgnoreCase(UserRoles.REPORTING_VIEW.getCode()) ||
+                                role.getCode().equalsIgnoreCase(UserRoles.REPORTING_EDIT.getCode())){
+                            return true;
+                        }
+                    }
+                }
+            }else {
+                // Other files types?
+                // TODO
                 return true;
             }
-            return true;
         }
         return false;
     }

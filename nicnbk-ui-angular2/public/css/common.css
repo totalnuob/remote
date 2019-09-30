@@ -666,3 +666,18 @@ h4 a:focus, h4 a:hover {
     background: #F5F0E7;
     text-decoration: none;
 }
+
+
+
+/* Google table styles */
+.tableCellCenter {
+    text-align: center;
+}
+
+.tableCellFontColorRed {
+    color: red;
+}
+
+.tableCellFontColorGreen {
+    color: green;
+}

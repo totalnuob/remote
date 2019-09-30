@@ -48,6 +48,16 @@ public class NicPortfolio extends BaseEntity {
     private Double hedgeFundsQtd;
     private Double hedgeFundsYtd;
 
+    private Double hedgeFundsClassANav;
+    private Double hedgeFundsClassAMtd;
+    private Double hedgeFundsClassAQtd;
+    private Double hedgeFundsClassAYtd;
+
+    private Double hedgeFundsClassBNav;
+    private Double hedgeFundsClassBMtd;
+    private Double hedgeFundsClassBQtd;
+    private Double hedgeFundsClassBYtd;
+
     private Double privateEquityNav;
     private Double privateEquityMtd;
     private Double privateEquityQtd;
@@ -71,7 +81,18 @@ public class NicPortfolio extends BaseEntity {
     public NicPortfolio() {
     }
 
-    public NicPortfolio(Employee updater, Files file, Date date, Double nicTotalAumNav, Double transitionPortfolioNav, Double transitionPortfolioMtd, Double transitionPortfolioQtd, Double transitionPortfolioYtd, Double alternativePortfolioNav, Double alternativePortfolioMtd, Double alternativePortfolioQtd, Double alternativePortfolioYtd, Double fixedPortfolioNav, Double fixedPortfolioMtd, Double fixedPortfolioQtd, Double fixedPortfolioYtd, Double equityPortfolioNav, Double equityPortfolioMtd, Double equityPortfolioQtd, Double equityPortfolioYtd, Double hedgeFundsNav, Double hedgeFundsMtd, Double hedgeFundsQtd, Double hedgeFundsYtd, Double privateEquityNav, Double privateEquityMtd, Double privateEquityQtd, Double privateEquityYtd, Double realEstateNav, Double realEstateMtd, Double realEstateQtd, Double realEstateYtd, Double nickMfOtherNav, Double nickMfOtherMtd, Double nickMfOtherQtd, Double nickMfOtherYtd, Double transferNav, Double transferMtd, Double transferQtd, Double transferYtd) {
+    public NicPortfolio(Employee updater, Files file, Date date, Double nicTotalAumNav,
+                        Double transitionPortfolioNav, Double transitionPortfolioMtd, Double transitionPortfolioQtd, Double transitionPortfolioYtd,
+                        Double alternativePortfolioNav, Double alternativePortfolioMtd, Double alternativePortfolioQtd, Double alternativePortfolioYtd,
+                        Double fixedPortfolioNav, Double fixedPortfolioMtd, Double fixedPortfolioQtd, Double fixedPortfolioYtd,
+                        Double equityPortfolioNav, Double equityPortfolioMtd, Double equityPortfolioQtd, Double equityPortfolioYtd,
+                        Double hedgeFundsNav, Double hedgeFundsMtd, Double hedgeFundsQtd, Double hedgeFundsYtd,
+                        Double hedgeFundsClassANav, Double hedgeFundsClassAMtd, Double hedgeFundsClassAQtd, Double hedgeFundsClassAYtd,
+                        Double hedgeFundsClassBNav, Double hedgeFundsClassBMtd, Double hedgeFundsClassBQtd, Double hedgeFundsClassBYtd,
+                        Double privateEquityNav, Double privateEquityMtd, Double privateEquityQtd,Double privateEquityYtd,
+                        Double realEstateNav, Double realEstateMtd, Double realEstateQtd, Double realEstateYtd,
+                        Double nickMfOtherNav, Double nickMfOtherMtd, Double nickMfOtherQtd,Double nickMfOtherYtd,
+                        Double transferNav, Double transferMtd, Double transferQtd, Double transferYtd) {
         this.updater = updater;
         this.file = file;
         this.date = date;
@@ -96,6 +117,14 @@ public class NicPortfolio extends BaseEntity {
         this.hedgeFundsMtd = hedgeFundsMtd;
         this.hedgeFundsQtd = hedgeFundsQtd;
         this.hedgeFundsYtd = hedgeFundsYtd;
+        this.hedgeFundsClassANav = hedgeFundsClassANav;
+        this.hedgeFundsClassAMtd = hedgeFundsClassAMtd;
+        this.hedgeFundsClassAQtd = hedgeFundsClassAQtd;
+        this.hedgeFundsClassAYtd = hedgeFundsClassAYtd;
+        this.hedgeFundsClassBNav = hedgeFundsClassBNav;
+        this.hedgeFundsClassBMtd = hedgeFundsClassBMtd;
+        this.hedgeFundsClassBQtd = hedgeFundsClassBQtd;
+        this.hedgeFundsClassBYtd = hedgeFundsClassBYtd;
         this.privateEquityNav = privateEquityNav;
         this.privateEquityMtd = privateEquityMtd;
         this.privateEquityQtd = privateEquityQtd;
@@ -436,5 +465,69 @@ public class NicPortfolio extends BaseEntity {
 
     public void setTransferYtd(Double transferYtd) {
         this.transferYtd = transferYtd;
+    }
+
+    public Double getHedgeFundsClassANav() {
+        return hedgeFundsClassANav;
+    }
+
+    public void setHedgeFundsClassANav(Double hedgeFundsClassANav) {
+        this.hedgeFundsClassANav = hedgeFundsClassANav;
+    }
+
+    public Double getHedgeFundsClassAMtd() {
+        return hedgeFundsClassAMtd;
+    }
+
+    public void setHedgeFundsClassAMtd(Double hedgeFundsClassAMtd) {
+        this.hedgeFundsClassAMtd = hedgeFundsClassAMtd;
+    }
+
+    public Double getHedgeFundsClassAQtd() {
+        return hedgeFundsClassAQtd;
+    }
+
+    public void setHedgeFundsClassAQtd(Double hedgeFundsClassAQtd) {
+        this.hedgeFundsClassAQtd = hedgeFundsClassAQtd;
+    }
+
+    public Double getHedgeFundsClassAYtd() {
+        return hedgeFundsClassAYtd;
+    }
+
+    public void setHedgeFundsClassAYtd(Double hedgeFundsClassAYtd) {
+        this.hedgeFundsClassAYtd = hedgeFundsClassAYtd;
+    }
+
+    public Double getHedgeFundsClassBNav() {
+        return hedgeFundsClassBNav;
+    }
+
+    public void setHedgeFundsClassBNav(Double hedgeFundsClassBNav) {
+        this.hedgeFundsClassBNav = hedgeFundsClassBNav;
+    }
+
+    public Double getHedgeFundsClassBMtd() {
+        return hedgeFundsClassBMtd;
+    }
+
+    public void setHedgeFundsClassBMtd(Double hedgeFundsClassBMtd) {
+        this.hedgeFundsClassBMtd = hedgeFundsClassBMtd;
+    }
+
+    public Double getHedgeFundsClassBQtd() {
+        return hedgeFundsClassBQtd;
+    }
+
+    public void setHedgeFundsClassBQtd(Double hedgeFundsClassBQtd) {
+        this.hedgeFundsClassBQtd = hedgeFundsClassBQtd;
+    }
+
+    public Double getHedgeFundsClassBYtd() {
+        return hedgeFundsClassBYtd;
+    }
+
+    public void setHedgeFundsClassBYtd(Double hedgeFundsClassBYtd) {
+        this.hedgeFundsClassBYtd = hedgeFundsClassBYtd;
     }
 }

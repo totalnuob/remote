@@ -207,47 +207,57 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
                     new Files(),
                     row.getCell(0).getDateCellValue(),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(3)),
-
+                    // Transition
                     ExcelUtils.getDoubleValueFromCell(row.getCell(88)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(92)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(93)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(94)),
-
+                    // Alternative
                     ExcelUtils.getDoubleValueFromCell(row.getCell(23)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(26)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(27)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(28)),
-
+                    // Fixed
                     ExcelUtils.getDoubleValueFromCell(row.getCell(44)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(48)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(49)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(50)),
-
+                    // Equity
                     ExcelUtils.getDoubleValueFromCell(row.getCell(66)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(70)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(71)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(72)),
-
+                    // Hedge funds - Consolidated
                     ExcelUtils.getDoubleValueFromCell(row.getCell(152)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(157)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(158)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(159)),
-
+                    // Hedge funds - CLASS A
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(174)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(179)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(180)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(181)),
+                    // Hedge funds - CLASS B
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(196)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(201)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(202)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(203)),
+                    // Private equity
                     ExcelUtils.getDoubleValueFromCell(row.getCell(218)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(222)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(223)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(224)),
-
+                    // Real estate
                     ExcelUtils.getDoubleValueFromCell(row.getCell(240)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(244)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(245)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(246)),
-
+                    // NICK MF
                     ExcelUtils.getDoubleValueFromCell(row.getCell(272)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(275)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(276)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(277)),
-
+                    // Transfer
                     ExcelUtils.getDoubleValueFromCell(row.getCell(110)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(114)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(115)),

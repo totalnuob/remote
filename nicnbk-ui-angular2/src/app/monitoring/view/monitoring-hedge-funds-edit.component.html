@@ -1,45 +1,40 @@
 <div class="container">
-    <!--<div class="row">-->
-        <!--<div class="col-md-2">-->
-            <!--<select (ngModelChange)="redraw()" [(ngModel)]="tableDate" id="tableDate" class="form-control">-->
-                <!--<option *ngFor="let item of getAllDates()" [value]="item">{{item}}</option>-->
-            <!--</select>-->
-        <!--</div>-->
-    <!--</div>-->
-
-    <!--<div class="row withpadding">-->
-        <!--<h2>Under Construction. New monitoring forms to be updated soon.</h2>-->
-    <!--</div>-->
-
-    <!--<ul class="nav nav-tabs">-->
-        <!--<li class="active">-->
-            <!--<a data-toggle="tab" href="#overall">Overall</a>-->
-        <!--</li>-->
-        <!--<li>-->
-            <!--<a data-toggle="tab" href="#portfolioA">Portfolio Class A</a>-->
-        <!--</li>-->
-        <!--<li>-->
-            <!--<a data-toggle="tab" href="#portfolioB">Portfolio Class B</a>-->
-        <!--</li>-->
-    <!--</ul>-->
-    <div class="row withpadding" *ngIf="monitoringDates != null">
-        <div class="col-md-2">
-            <select class="form-control" [(ngModel)]="selectedDate" (change)="selectDate($event.target.value)">
-                <option *ngFor="let monitoringDate of monitoringDates">{{monitoringDate}}</option>
-            </select>
-        </div>
-        <div class="col-md-8"></div>
-        <div class="col-md-2" *ngIf="canEdit()">
-            <button class="btn btn-primary btn-sm pull-right" (click)="navigateToEditComponent(true)">Add</button>
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li>
+                    <a [routerLink]="['/monitoring/hf2']">Monitoring - Singularity</a>
+                </li>
+                <li class="active">Edit</li>
+            </ol>
         </div>
     </div>
-    <div class="row withpadding" *ngIf="selectedData != null && selectedData.id != null">
-        <div class="col-md-10"></div>
-        <div class="col-md-2" *ngIf="canEdit()">
-            <button class="btn btn-success btn-sm pull-right" (click)="navigateToEditComponent(false)">Edit</button>
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+            </div>
+            <div class="alert alert-info" *ngIf="!submitted && successMessage != null"><span>{{successMessage}}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row withpadding">
+        <div class="col-md-3">
+            <label for="monitoringDateDTPickeer">Date</label>
+            <div class='input-group date col-md-3' id='monitoringDateDTPickeer' style="width: 100%">
+                <input type='text' class="form-control" id="monitoringDate" [(ngModel)]="selectedData.date"/>
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+            </div>
+        </div>
+        <div class="col-md-7">&nbsp;</div>
+        <div class="col-md-2">
+            <button class="btn btn-success btn-sm pull-right" (click)="save()">Save</button>
         </div>
     </div>
     <br/>
+
     <ul role="tablist" class="date-tabs nav">
         <li class="date-tabs__item"><a data-toggle="tab"
                                        href="#OVERALL"
@@ -74,15 +69,20 @@
                                        (click)="activeTab = 'APPROVED_FUNDS'">APPROVED FUNDS</a>
         </li>
     </ul>
+
+
     <div [ngBusy]="busy" class="tab-content">
         <div id="OVERALL" role="tabpanel" aria-labelledby="OVERALL" class="tab-pane active">
             <br/>
             <div class="row">
                 <div class="col-md-12">
                     <div  style="background-color:#307240; color:white; font-size: medium; font-weight: bold">
-                        Singularity – overall hedge fund program
-                    </div>
+                        Singularity – overall hedge fund program</div>
                 </div>
+            </div>
+            <br/>
+            <div class="row withpadding">
+                <button class="btn btn-primary pull-right" (click)="copyFromPreviousOverall()">Copy most recent</button>
             </div>
             <br/>
             <div class="row">
@@ -91,13 +91,29 @@
                         <div id="generalInformation">
                             <table class="table table-hover table-responsive" style="font-size: smaller">
                                 <tr style="background-color: #307240; color: white;" >
-                                    <td colspan="2">General Information</td>
+                                    <td colspan="3">General Information</td>
                                 </tr>
                                 <tr *ngFor="let item of selectedData?.monitoringData?.overall?.generalInformation">
                                     <!--<td style="font-weight: bold">AUM of the program –total</td>-->
                                     <!--<td>600 million USD</td>-->
-                                    <td style="font-weight: bold">{{item?.name}}</td>
-                                    <td>{{item?.value}}</td>
+                                    <td style="font-weight: bold;" width="60%">
+                                        <input type="text" style="font-size: 10px" class="form-control" [(ngModel)]="item.name"/>
+                                    </td>
+                                    <td width="35%">
+                                        <input type="text" style="font-size: 10px" class="form-control" [(ngModel)]="item.value"/>
+                                    </td>
+                                    <td width="5%">
+                                        <button type="button" class="btn btn-xs btn-danger" (click)="removeOverallGeneralInfo(item)">
+                                            <span class="glyphicon glyphicon-trash"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                        <button type="button" class="btn btn-xs btn-default pull-right" (click)="addOverallGeneralInfo()">
+                                            <span class="glyphicon glyphicon-plus-sign"></span>
+                                        </button>
+                                    </td>
                                 </tr>
                                 <!--<tr>-->
                                     <!--<td style="font-weight: bold">AUM - invested</td>-->
@@ -125,30 +141,121 @@
                     </div>
                     <div class="col-md-4">
                         <div id="contributionToReturn">
+                            <table class="table table-hover table-responsive" style="font-size: smaller">
+                                <tr style="background-color: #307240; color: white;" >
+                                    <td colspan="3">Contribution to return</td>
+                                </tr>
+                                <tr *ngFor="let item of selectedData?.monitoringData?.overall?.contributionToReturn">
+                                    <!--<td style="font-weight: bold">AUM of the program –total</td>-->
+                                    <!--<td>600 million USD</td>-->
+                                    <td width="60%">
+                                        <input type="text" style="font-size: 12px" class="form-control" [(ngModel)]="item.name"/>
+                                    </td>
+                                    <td width="35%">
+                                        <input type="number" style="font-size: 12px" class="form-control" [(ngModel)]="item.value"/>
+                                    </td>
+                                    <td width="5%">
+                                        <button type="button" class="btn btn-xs btn-danger" (click)="removeOverallContributionToReturn(item)">
+                                            <span class="glyphicon glyphicon-trash"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                        <button type="button" class="btn btn-xs btn-default pull-right" (click)="addOverallContributionToReturn()">
+                                            <span class="glyphicon glyphicon-plus-sign"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </table>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div id="allocationByStrategyOverall">
+                            <table class="table table-hover table-responsive" style="font-size: smaller">
+                                <tr style="background-color: #307240; color: white;" >
+                                    <td colspan="3">Allocation by strategy</td>
+                                </tr>
+                                <tr *ngFor="let item of selectedData?.monitoringData?.overall?.allocationByStrategy">
+                                    <!--<td style="font-weight: bold">AUM of the program –total</td>-->
+                                    <!--<td>600 million USD</td>-->
+                                    <td width="60%">
+                                        <input type="text" style="font-size: 12px" class="form-control" [(ngModel)]="item.name"/>
+                                    </td>
+                                    <td width="35%">
+                                        <input type="number" style="font-size: 12px" class="form-control" [(ngModel)]="item.value"/>
+                                    </td>
+                                    <td width="5%">
+                                        <button type="button" class="btn btn-xs btn-danger" (click)="removeOverallAllocationByStrategy(item)">
+                                            <span class="glyphicon glyphicon-trash"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                        <button type="button" class="btn btn-xs btn-default pull-right" (click)="addOverallAllocationByStrategy()">
+                                            <span class="glyphicon glyphicon-plus-sign"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
+
             <br/>
             <div class="row">
                 <div class="col-md-12">
-                    <span class="pull-right" style="font-size: x-small; font-style: italic;">* returns are loaded from Monitoring-NIC Portfolio</span>
-                    <div id="returns"></div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div id="returns"></div>
+                        </div>
+                    </div>
+                    <br/>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div id="performanceMonthly"></div>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <br/>
-
-            <div class="row">
-                <div class="col-md-12">
-                    <div id="performanceMonthly"></div>
-                </div>
+                <!--<div class="col-md-5">-->
+                <!--<div class="row">-->
+                <!--<div class="col-md-12">-->
+                <!--<b>Total program expenses:</b><br/>-->
+                <!--<ol>-->
+                <!--<li>GCM fee paid since program inception:-->
+                <!--<ul>-->
+                <!--<li>Management fee: 940 000 USD</li>-->
+                <!--<li>Incentive fee: -</li>-->
+                <!--</ul>-->
+                <!--</li>-->
+                <!--<li>Underlying funds fees since inception:-->
+                <!--<ul>-->
+                <!--<li>Management fee: 2 095 787 USD</li>-->
+                <!--<li>Incentive fee: 579 008 USD</li>-->
+                <!--</ul>-->
+                <!--</li>-->
+                <!--<li>Subscription to database (2016-2017Q1):-->
+                <!--<ul>-->
+                <!--<li>Albourne: 240 000 USD</li>-->
+                <!--<li>HFR: 7 000 USD</li>-->
+                <!--</ul>-->
+                <!--</li>-->
+                <!--</ol>-->
+                <!--<br/>-->
+                <!--<span><b>Total: 3 861 795 USD</b></span>-->
+                <!--</div>-->
+                <!--</div>-->
+                <!--</div>-->
             </div>
             <br/>
+            <!--<div class="row">-->
+                <!--<div class="col-md-12">-->
+                    <!--<button class="btn btn-success btn-sm pull-right" (click)="saveOverall()">Save</button>-->
+                <!--</div>-->
+            <!--</div>-->
         </div>
         <div id="CLASS_A" role="tabpanel" aria-labelledby="CLASS_A" class="tab-pane">
             <br/>
@@ -160,100 +267,196 @@
                 </div>
             </div>
             <br/>
+            <div class="row withpadding">
+                <button class="btn btn-primary pull-right" (click)="copyFromPreviousClassA()">Copy most recent</button>
+            </div>
+            <br/>
             <div class="row">
                 <div class="col-md-12">
                     <div class="col-md-5">
-                        <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
-                            <tr style="background-color: #307240; color: white;" >
-                                <td colspan="2">Fund details (as of June 1, 2017)</td>
-                            </tr>
-                            <tr *ngFor="let item of selectedData?.monitoringData?.classA?.generalInformation">
-                                <td style="font-weight: bold">{{item.name}}</td>
-                                <td>{{item.value}}</td>
-                            </tr>
-                            <!--<tr>-->
-                            <!--<td style="font-weight: bold">AUM – invested</td>-->
-                            <!--<td>150 000 000 USD</td>-->
-                            <!--</tr>-->
-                            <!--<tr>-->
-                            <!--<td style="font-weight: bold">NAV</td>-->
-                            <!--<td>156 107 491 USD</td>-->
-                            <!--</tr>-->
-                            <!--<tr>-->
-                            <!--<td style="font-weight: bold">Inception</td>-->
-                            <!--<td>August 1, 2015</td>-->
-                            <!--</tr>-->
-                            <!--<tr>-->
-                            <!--<td style="font-weight: bold">Number of investment managers</td>-->
-                            <!--<td>22</td>-->
-                            <!--</tr>-->
-                            <!--<tr>-->
-                            <!--<td style="font-weight: bold">Number of funds</td>-->
-                            <!--<td>22</td>-->
-                            <!--</tr>-->
-                            <!--<tr>-->
-                            <!--<td style="font-weight: bold">Strategy</td>-->
-                            <!--<td>Global diversified multi-strategy</td>-->
-                            <!--</tr>-->
-                        </table>
-                        <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
-                            <tr style="background-color: #307240; color: white;" >
-                                <td colspan="3">Top Positive Contributors (%)</td>
-                            </tr>
-                            <tr style="font-weight: bolder; border-bottom:2pt solid black;">
-                                <td>Fund</td>
-                                <td>Strategy</td>
-                                <td>YTD</td>
-                            </tr>
-                            <tr *ngFor="let item of selectedData?.monitoringData?.classA?.positiveContributors">
-                                <td>{{item.fundName}}</td>
-                                <td>{{item.strategy}}</td>
-                                <td>{{item.ytd}}</td>
-                            </tr>
-                        </table>
-                        <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
-                            <tr style="background-color: #307240; color: white;" >
-                                <td colspan="3">Top Negative Contributors (%)</td>
-                            </tr>
-                            <tr style="font-weight: bolder; border-bottom:2pt solid black;">
-                                <td>Fund</td>
-                                <td>Strategy</td>
-                                <td>YTD</td>
-                            </tr>
-                            <tr *ngFor="let item of selectedData?.monitoringData?.classA?.negativeContributors">
-                                <td>{{item.fundName}}</td>
-                                <td>{{item.strategy}}</td>
-                                <td>{{item.ytd}}</td>
-                            </tr>
+                        <div class="row">
+                            <table class="table table-hover table-responsive" style="font-size: smaller">
+                                <tr style="background-color: #307240; color: white;" >
+                                    <td colspan="3">General Information</td>
+                                </tr>
+                                <tr *ngFor="let item of selectedData?.monitoringData?.classA?.generalInformation">
+                                    <!--<td style="font-weight: bold">AUM of the program –total</td>-->
+                                    <!--<td>600 million USD</td>-->
+                                    <td style="font-weight: bold;" width="60%">
+                                        <input type="text" style="font-size: 10px" class="form-control" [(ngModel)]="item.name"/>
+                                    </td>
+                                    <td width="35%">
+                                        <input type="text" style="font-size: 10px" class="form-control" [(ngModel)]="item.value"/>
+                                    </td>
+                                    <td width="5%">
+                                        <button type="button" class="btn btn-xs btn-danger" (click)="removeClassAGeneralInfo(item)">
+                                            <span class="glyphicon glyphicon-trash"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                        <button type="button" class="btn btn-xs btn-default pull-right" (click)="addClassAGeneralInfo()">
+                                            <span class="glyphicon glyphicon-plus-sign"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="row">
+                            <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
+                                <tr style="background-color: #307240; color: white;" >
+                                    <td colspan="3">Top Positive Contributors (%)</td>
+                                </tr>
+                                <tr style="font-weight: bolder; border-bottom:2pt solid black;">
+                                    <td>Fund</td>
+                                    <td>Strategy</td>
+                                    <td>YTD</td>
+                                </tr>
+                                <tr *ngFor="let item of selectedData?.monitoringData?.classA?.positiveContributors">
+                                    <!--<td style="font-weight: bold">AUM of the program –total</td>-->
+                                    <!--<td>600 million USD</td>-->
+                                    <td>
+                                        <input type="text" style="font-size: 10px" class="form-control" [(ngModel)]="item.fundName"/>
+                                    </td>
+                                    <td>
+                                        <input type="text" style="font-size: 10px" class="form-control" [(ngModel)]="item.strategy"/>
+                                    </td>
+                                    <td>
+                                        <input type="number" style="font-size: 10px" class="form-control" [(ngModel)]="item.ytd"/>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-xs btn-danger" (click)="removeClassAPositiveContributor(item)">
+                                            <span class="glyphicon glyphicon-trash"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                        <button type="button" class="btn btn-xs btn-default pull-right" (click)="addClassAPositiveContributor()">
+                                            <span class="glyphicon glyphicon-plus-sign"></span>
+                                        </button>
+                                    </td>
+                                </tr>
 
-                        </table>
-                        <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
-                            <tr style="background-color: #307240; color: white;" >
-                                <td colspan="3">Top Portfolio Fund Allocation</td>
-                            </tr>
-                            <tr style="font-weight: bolder; border-bottom:2pt solid black;">
-                                <td>Fund</td>
-                                <td>Strategy</td>
-                                <td>Allocation, %</td>
-                            </tr>
-                            <tr *ngFor="let item of selectedData?.monitoringData?.classA?.fundAllocations">
-                                <td>{{item.fundName}}</td>
-                                <td>{{item.strategy}}</td>
-                                <td>{{item.allocation}}</td>
-                            </tr>
+                            </table>
+                        </div>
+                        <div class="row">
+                            <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
+                                <tr style="background-color: #307240; color: white;" >
+                                    <td colspan="3">Top Negative Contributors (%)</td>
+                                </tr>
+                                <tr style="font-weight: bolder; border-bottom:2pt solid black;">
+                                    <td>Fund</td>
+                                    <td>Strategy</td>
+                                    <td>YTD</td>
+                                </tr>
+                                <tr *ngFor="let item of selectedData?.monitoringData?.classA?.negativeContributors">
+                                    <!--<td style="font-weight: bold">AUM of the program –total</td>-->
+                                    <!--<td>600 million USD</td>-->
+                                    <td>
+                                        <input type="text" style="font-size: 10px" class="form-control" [(ngModel)]="item.fundName"/>
+                                    </td>
+                                    <td>
+                                        <input type="text" style="font-size: 10px" class="form-control" [(ngModel)]="item.strategy"/>
+                                    </td>
+                                    <td>
+                                        <input type="number" style="font-size: 10px" class="form-control" [(ngModel)]="item.ytd"/>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-xs btn-danger" (click)="removeClassANegativeContributor(item)">
+                                            <span class="glyphicon glyphicon-trash"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                        <button type="button" class="btn btn-xs btn-default pull-right" (click)="addClassANegativeContributor()">
+                                            <span class="glyphicon glyphicon-plus-sign"></span>
+                                        </button>
+                                    </td>
+                                </tr>
 
-                        </table>
+                            </table>
+                        </div>
+                        <div class="row">
+                            <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
+                                <tr style="background-color: #307240; color: white;" >
+                                    <td colspan="3">Top Portfolio Fund Allocation</td>
+                                </tr>
+                                <tr style="font-weight: bolder; border-bottom:2pt solid black;">
+                                    <td>Fund</td>
+                                    <td>Strategy</td>
+                                    <td>Allocation, %</td>
+                                </tr>
+                                <tr *ngFor="let item of selectedData?.monitoringData?.classA?.fundAllocations">
+                                    <!--<td style="font-weight: bold">AUM of the program –total</td>-->
+                                    <!--<td>600 million USD</td>-->
+                                    <td>
+                                        <input type="text" style="font-size: 10px" class="form-control" [(ngModel)]="item.fundName"/>
+                                    </td>
+                                    <td>
+                                        <input type="text" style="font-size: 10px" class="form-control" [(ngModel)]="item.strategy"/>
+                                    </td>
+                                    <td>
+                                        <input type="number" style="font-size: 10px" class="form-control" [(ngModel)]="item.allocation"/>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-xs btn-danger" (click)="removeClassAFundAllocation(item)">
+                                            <span class="glyphicon glyphicon-trash"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                        <button type="button" class="btn btn-xs btn-default pull-right" (click)="addClassAFundAllocation()">
+                                            <span class="glyphicon glyphicon-plus-sign"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
                     </div>
-                    <div class="col-md-7">
+
+                    <div class="col-md-1">
+                        &nbsp;
+                    </div>
+                    <div class="col-md-6">
                         <div class="row"> <!-- Allocation by Strategy, MTD-->
                             <div id="allocationByStrategyPortfolioA" align="center">
+                                <table class="table table-hover table-responsive" style="font-size: smaller">
+                                    <tr style="background-color: #307240; color: white;" >
+                                        <td colspan="3">Allocation by strategy</td>
+                                    </tr>
+                                    <tr *ngFor="let item of selectedData?.monitoringData?.classA?.allocationByStrategy">
+                                        <!--<td style="font-weight: bold">AUM of the program –total</td>-->
+                                        <!--<td>600 million USD</td>-->
+                                        <td width="60%">
+                                            <input type="text" style="font-size: 12px" class="form-control" [(ngModel)]="item.name"/>
+                                        </td>
+                                        <td width="35%">
+                                            <input type="number" style="font-size: 12px" class="form-control" [(ngModel)]="item.value"/>
+                                        </td>
+                                        <td width="5%">
+                                            <button type="button" class="btn btn-xs btn-danger" (click)="removeClassAAllocationByStrategy(item)">
+                                                <span class="glyphicon glyphicon-trash"></span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3">
+                                            <button type="button" class="btn btn-xs btn-default pull-right" (click)="addClassAAllocationByStrategy()">
+                                                <span class="glyphicon glyphicon-plus-sign"></span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </table>
                             </div>
                         </div>
 
                         <br/>
                         <div class="row"> <!-- Returns-->
                             <div class="col-md-12">
-                                <span class="pull-right" style="font-size: x-small; font-style: italic;">* returns are loaded from Monitoring-NIC Portfolio</span>
                                 <div id="comparisonReturnsPortfolioA1"></div>
                             </div>
                         </div>
@@ -303,7 +506,11 @@
                 </div>
             </div>
             <br/>
-
+            <!--<div class="row">-->
+                <!--<div class="col-md-12">-->
+                    <!--<button class="btn btn-success btn-sm pull-right" (click)="saveClassA()">Save</button>-->
+                <!--</div>-->
+            <!--</div>-->
         </div>
         <div id="CLASS_B" role="tabpanel" aria-labelledby="CLASS_B" class="tab-pane">
             <br/>
@@ -315,93 +522,130 @@
                 </div>
             </div>
             <br/>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="col-md-5">
-                        <table class="table table-hover table-responsive" style="font-size: smaller">
-                            <tr style="background-color: #307240; color: white;" >
-                                <td colspan="2">Fund details (as of March 31, 2019)</td>
-                            </tr>
-                            <tr *ngFor="let item of selectedData?.monitoringData?.classB?.generalInformation">
-                                <td style="font-weight: bold">{{item.name}}</td>
-                                <td>{{item.value}}</td>
-                            </tr>
-
-                            <!--<tr>-->
-                                <!--<td style="font-weight: bold">NAV</td>-->
-                                <!--<td>183 737 674 USD</td>-->
-                            <!--</tr>-->
-                            <!--<tr>-->
-                                <!--<td style="font-weight: bold">AUM – uninvested</td>-->
-                                <!--<td>275 500 000 USD</td>-->
-                            <!--</tr>-->
-                            <!--<tr>-->
-                                <!--<td style="font-weight: bold">Number of investment managers</td>-->
-                                <!--<td>8</td>-->
-                            <!--</tr>-->
-                            <!--<tr>-->
-                                <!--<td style="font-weight: bold">Number of funds</td>-->
-                                <!--<td>8</td>-->
-                            <!--</tr>-->
-                            <!--<tr>-->
-                                <!--<td style="font-weight: bold">Strategy</td>-->
-                                <!--<td>Global diversified multi-strategy</td>-->
-                            <!--</tr>-->
-                        </table>
-                        <br/>
-                    </div>
-                    <div class="col-md-7">
-                        <div id="allocationByStrategyPortfolioB"></div>
-                    </div>
-                </div>
+            <div class="row withpadding">
+                <button class="btn btn-primary pull-right" (click)="copyFromPreviousClassB()">Copy most recent</button>
             </div>
-
+            <br/>
             <div class="row">
                 <div class="col-md-12">
                     <div class="col-md-5">
-                        <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
-                            <tr style="background-color: #307240; color: white;" >
-                                <td colspan="3">Allocation by strategy</td>
-                            </tr>
-                            <tr style="font-weight: bolder; border-bottom:2pt solid black;">
-                                <td>Fund</td>
-                                <td>Strategy</td>
-                                <td>Allocation, %</td>
-                            </tr>
-                            <tr *ngFor="let item of selectedData?.monitoringData?.classB?.fundAllocations">
-                                <td>{{item.fundName}}</td>
-                                <td>{{item.strategy}}</td>
-                                <td>{{item.allocation}}</td>
-                            </tr>
+                        <div class="row">
+                            <table class="table table-hover table-responsive" style="font-size: smaller">
+                                <tr style="background-color: #307240; color: white;" >
+                                    <td colspan="3">General Information</td>
+                                </tr>
+                                <tr *ngFor="let item of selectedData?.monitoringData?.classB?.generalInformation">
+                                    <!--<td style="font-weight: bold">AUM of the program –total</td>-->
+                                    <!--<td>600 million USD</td>-->
+                                    <td style="font-weight: bold;" width="60%">
+                                        <input type="text" style="font-size: 10px" class="form-control" [(ngModel)]="item.name"/>
+                                    </td>
+                                    <td width="35%">
+                                        <input type="text" style="font-size: 10px" class="form-control" [(ngModel)]="item.value"/>
+                                    </td>
+                                    <td width="5%">
+                                        <button type="button" class="btn btn-xs btn-danger" (click)="removeClassBGeneralInfo(item)">
+                                            <span class="glyphicon glyphicon-trash"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                        <button type="button" class="btn btn-xs btn-default pull-right" (click)="addClassBGeneralInfo()">
+                                            <span class="glyphicon glyphicon-plus-sign"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="row">
+                            <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
+                                <tr style="background-color: #307240; color: white;" >
+                                    <td colspan="3">Fund allocation by strategy</td>
+                                </tr>
+                                <tr style="font-weight: bolder; border-bottom:2pt solid black;">
+                                    <td>Fund</td>
+                                    <td>Strategy</td>
+                                    <td>Allocation, %</td>
+                                </tr>
+                                <tr *ngFor="let item of selectedData?.monitoringData?.classB?.fundAllocations">
+                                    <!--<td style="font-weight: bold">AUM of the program –total</td>-->
+                                    <!--<td>600 million USD</td>-->
+                                    <td>
+                                        <input type="text" style="font-size: 10px" class="form-control" [(ngModel)]="item.fundName"/>
+                                    </td>
+                                    <td>
+                                        <input type="text" style="font-size: 10px" class="form-control" [(ngModel)]="item.strategy"/>
+                                    </td>
+                                    <td>
+                                        <input type="number" style="font-size: 10px" class="form-control" [(ngModel)]="item.allocation"/>
+                                    </td>
+                                    <td>
+                                    <button type="button" class="btn btn-xs btn-danger" (click)="removeClassBFundAllocationByStrategy(item)">
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                    </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                        <button type="button" class="btn btn-xs btn-default pull-right" (click)="addClassBFundAllocationByStrategy()">
+                                            <span class="glyphicon glyphicon-plus-sign"></span>
+                                        </button>
+                                    </td>
+                                </tr>
 
-                        </table>
+                            </table>
+                        </div>
                     </div>
+                    <div class="col-md-1">
+                        &nbsp;
+                    </div>
+                    <div class="col-md-6">
+                        <div class="row"> <!-- Allocation by Strategy, MTD-->
+                            <div id="allocationByStrategyPortfolioB" align="center">
+                                <table class="table table-hover table-responsive" style="font-size: smaller">
+                                    <tr style="background-color: #307240; color: white;" >
+                                        <td colspan="3">Allocation by strategy</td>
+                                    </tr>
+                                    <tr *ngFor="let item of selectedData?.monitoringData?.classB?.allocationByStrategy">
+                                        <!--<td style="font-weight: bold">AUM of the program –total</td>-->
+                                        <!--<td>600 million USD</td>-->
+                                        <td width="60%">
+                                            <input type="text" style="font-size: 12px" class="form-control" [(ngModel)]="item.name"/>
+                                        </td>
+                                        <td width="35%">
+                                            <input type="number" style="font-size: 12px" class="form-control" [(ngModel)]="item.value"/>
+                                        </td>
+                                        <td width="5%">
+                                            <button type="button" class="btn btn-xs btn-danger" (click)="removeClassBAllocationByStrategy(item)">
+                                                <span class="glyphicon glyphicon-trash"></span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3">
+                                            <button type="button" class="btn btn-xs btn-default pull-right" (click)="addClassBAllocationByStrategy()">
+                                                <span class="glyphicon glyphicon-plus-sign"></span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
 
-                    <div class="col-md-7">
-                        <div class="row"> <!-- Returns-->
-                            <span class="pull-right" style="font-size: x-small; font-style: italic;">* returns are loaded from Monitoring-NIC Portfolio</span>
-                            <div id="comparisonReturnsPortfolioB1"></div>
-                        </div>
                         <br/>
-                        <div class="row"> <!-- Returns-->
-                            <div id="comparisonReturnsPortfolioB2"></div>
-                        </div>
+
                         <br/>
-                        <div class="row"> <!-- Returns-->
-                            <div id="comparisonReturnsPortfolioB3"></div>
-                        </div>
-                        <br/>
-                        <div class="row"> <!-- Returns-->
-                            <div id="comparisonReturnsPortfolioB4"></div>
-                        </div>
-                        <br/>
-                        <div class="row"> <!-- Returns-->
-                            <div id="comparisonReturnsPortfolioB5"></div>
-                        </div>
                     </div>
                 </div>
             </div>
             <br/>
+            <br/>
+            <!--<div class="row">-->
+                <!--<div class="col-md-12">-->
+                    <!--<button class="btn btn-success btn-sm pull-right" (click)="saveClassB()">Save</button>-->
+                <!--</div>-->
+            <!--</div>-->
         </div>
         <div id="APPROVED_FUNDS" role="tabpanel" aria-labelledby="APPROVED_FUNDS" class="tab-pane">
             <br/>
@@ -413,8 +657,12 @@
                 </div>
             </div>
             <br/>
+            <div class="row withpadding">
+                <button class="btn btn-primary pull-right" (click)="copyFromPreviousApprovedFunds()">Copy most recent</button>
+            </div>
+            <br/>
 
-            <div class="row">
+            <div class="row" *ngIf="selectedData != null && selectedData.monitoringData != null">
                 <div class="col-md-12">
                     <table class="table table-hover table-responsive table-condensed" style="font-size: smaller">
                         <tr style="font-weight: bolder; border-bottom:2pt solid black;">
@@ -424,21 +672,58 @@
                             <td>Protocol</td>
                             <td>Approve date</td>
                             <td>Limits</td>
+                            <td>&nbsp;</td>
                         </tr>
-                        <tr *ngFor="let item of selectedData?.monitoringData?.approvedFunds" [style.background-color]="item.headerRow? '#dcd196' : 'white'"
-                            [style.font-weight]="item.headerRow? 'bold' : ''">
-                            <td>{{item.fundName}}</td>
-                            <td>{{item.managerName}}</td>
-                            <td>{{item.strategy}}</td>
-                            <td>{{item.protocol}}</td>
-                            <td>{{item.approveDate}}</td>
-                            <td>{{item.limits}}</td>
+                        <tr *ngFor="let item of selectedData?.monitoringData?.approvedFunds; let i=index" [attr.data-index]="i">
+                            <!--<td style="font-weight: bold">AUM of the program –total</td>-->
+                            <!--<td>600 million USD</td>-->
+                            <td>
+                                <input type="text" style="font-size: 10px" class="form-control" [(ngModel)]="item.fundName"/>
+                            </td>
+                            <td>
+                                <input type="text" style="font-size: 10px" class="form-control" [(ngModel)]="item.managerName"/>
+                            </td>
+                            <td>
+                                <input type="text" style="font-size: 10px" class="form-control" [(ngModel)]="item.strategy"/>
+                            </td>
+                            <td>
+                                <input type="text" style="font-size: 10px" class="form-control" [(ngModel)]="item.protocol"/>
+                            </td>
+                            <td>
+                                <!--<input type="text" style="font-size: 10px" class="form-control" [(ngModel)]="item.approveDate"/>-->
+                                <div class='input-group date col-md-3' [attr.id]="'approveDateDTPicker' + i" style="width: 100%">
+                                    <input type='text' class="form-control" [attr.id]="'approveDate' + i" [(ngModel)]="item.approveDate"/>
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                </div>
+                            </td>
+                            <td>
+                                <input type="text" style="font-size: 10px" class="form-control" [(ngModel)]="item.limits"/>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-xs btn-danger" (click)="removeApprovedFund(item)">
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="7">
+                                <button type="button" class="btn btn-xs btn-default pull-right" (click)="addApprovedFund()">
+                                    <span class="glyphicon glyphicon-plus-sign"></span>
+                                </button>
+                            </td>
                         </tr>
 
                     </table>
                 </div>
             </div>
             <br/>
+            <!--<div class="row">-->
+                <!--<div class="col-md-12">-->
+                    <!--<button class="btn btn-success btn-sm pull-right" (click)="saveApprovedFunds()">Save</button>-->
+                <!--</div>-->
+            <!--</div>-->
         </div>
     </div>
 

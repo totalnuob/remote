@@ -108,6 +108,7 @@ import {HREmployeesListComponent} from "./hr/hr-employees-list.component";
 import {HRDocsListComponent} from "./hr/hr-docs-list.component";
 import {EmployeeProfileEditComponent} from "./employee/employee.profile.edit.component";
 import {HRNewsEditComponent} from "./hr/hr-news-edit.component";
+import {MonitoringHedgeFundsEditComponent} from "./monitoring/monitoring-hedge-funds-edit.component";
 
 
 const routes: Routes  = [
@@ -210,11 +211,11 @@ const routes: Routes  = [
         component: MonitoringPortfolioComponent,
         canActivate: [AuthGuard]
     },
-    {
-        path: 'monitoring/hf',
-        component: MonitoringHedgeFundsComponent,
-        canActivate: [AuthGuard]
-    },
+    //{
+    //    path: 'monitoring/hf',
+    //    component: MonitoringHedgeFundsComponent,
+    //    canActivate: [AuthGuard]
+    //},
     {
         path: 'monitoring/liq',
         component: MonitoringLiquidPortfolioComponent,
@@ -245,12 +246,17 @@ const routes: Routes  = [
         component: MonitoringHedgeFunds2Component,
         canActivate: [AuthGuard]
     },
-
     {
-        path: 'monitoring/hf2Print',
-        component: MonitoringHedgeFunds2PrintComponent,
+        path: 'monitoring/hf/edit',
+        component: MonitoringHedgeFundsEditComponent,
         canActivate: [AuthGuard]
     },
+
+    //{
+    //    path: 'monitoring/hf2Print',
+    //    component: MonitoringHedgeFunds2PrintComponent,
+    //    canActivate: [AuthGuard]
+    //},
     {
         path: 'monitoring/hflist',
         component: MonitoringHFListComponent,
