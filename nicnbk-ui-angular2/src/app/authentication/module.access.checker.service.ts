@@ -81,6 +81,10 @@ export class ModuleAccessCheckerService extends CommonService{
         return this.checkAccess(ROLE_RE_EDIT);
     }
 
+    public checkAccessInfrastructureEditor(){
+            return this.checkAccess(ROLE_RE_EDIT);
+        }
+
     public checkAccessNews(){
         return this.checkAccess("ROLE_NEWS");
     }

@@ -19,6 +19,7 @@ export class MemoService extends CommonService{
     private HF_MEMO_SEARCH_URL = this.MEMO_BASE_URL + "HF/search/";
 
     private RE_MEMO_SAVE_URL = this.MEMO_BASE_URL + "RE/save/";
+    private INFR_MEMO_SAVE_URL = this.MEMO_BASE_URL + "INFR/save/";
     private GN_MEMO_SAVE_URL = this.MEMO_BASE_URL + "GN/save/";
 
 
@@ -74,6 +75,9 @@ export class MemoService extends CommonService{
     saveRE(entity){
         return this.save(this.RE_MEMO_SAVE_URL, entity);
     }
+    saveINFR(entity){
+            return this.save(this.INFR_MEMO_SAVE_URL, entity);
+        }
     saveGeneral(entity){
         return this.save(this.GN_MEMO_SAVE_URL, entity);
     }

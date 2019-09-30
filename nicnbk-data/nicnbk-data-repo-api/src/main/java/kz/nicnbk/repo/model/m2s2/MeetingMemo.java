@@ -25,6 +25,7 @@ public class MeetingMemo extends CreateUpdateBaseEntity{
     public static final int PE_DISCRIMINATOR = 2;
     public static final int HF_DISCRIMINATOR = 3;
     public static final int RE_DISCRIMINATOR = 4;
+    public static final int INFR_DISCRIMINATOR = 5;
 
 
     //private MemoType memoType;

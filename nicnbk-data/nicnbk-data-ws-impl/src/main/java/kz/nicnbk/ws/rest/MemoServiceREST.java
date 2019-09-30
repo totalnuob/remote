@@ -41,6 +41,8 @@ public class MemoServiceREST extends CommonServiceREST {
     private HFMeetingMemoService HFmemoService;
     @Autowired
     private REMeetingMemoService REmemoService;
+    @Autowired
+    private INFRMeetingMemoService INFRmemoService;
 
     @Autowired
     private FileService fileService;
@@ -120,6 +122,14 @@ public class MemoServiceREST extends CommonServiceREST {
                     // error occurred
                     return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
                 }
+            case MeetingMemo.INFR_DISCRIMINATOR:
+                MeetingMemoDto infrastructureMeetingMemoDto =  INFRmemoService.get(memoId);
+                if(infrastructureMeetingMemoDto != null){
+                    return new ResponseEntity<>(infrastructureMeetingMemoDto, null, HttpStatus.OK);
+                }else{
+                    // error occurred
+                    return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+                }
             default:
                 // error occurred
                 return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -186,6 +196,25 @@ public class MemoServiceREST extends CommonServiceREST {
             memoDto.setOwner(username);
         }
         Long id = REmemoService.save(memoDto, username);
+        if(id == null){
+            // error occurred
+            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }else {
+            // TODO: response from DB, not UI
+            return buildEntitySaveResponse(id, memoDto.getCreationDate());
+        }
+    }
+
+    @PreAuthorize("hasRole('ROLE_M2S2_EDITOR') OR hasRole('ROLE_REAL_ESTATE_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/INFR/save", method = RequestMethod.POST)
+    public ResponseEntity<?>  save(@RequestBody InfrastructureMeetingMemoDto memoDto){
+        // set creator
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+        if(memoDto.getId() == null){
+            memoDto.setOwner(username);
+        }
+        Long id = INFRmemoService.save(memoDto, username);
         if(id == null){
             // error occurred
             return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -297,7 +326,7 @@ public class MemoServiceREST extends CommonServiceREST {
             roleName = "ROLE_PRIVATE_EQUITY_EDITOR";
         }else if(memoType == 3){ // HEDGE FUNDS
             roleName = "ROLE_HEDGE_FUND_EDITOR";
-        }else if(memoType == 4){ // REAL ESTATE
+        }else if(memoType == 4 || memoType == 5){ // REAL ESTATE & INFRASTRUCTURE
             roleName = "ROLE_REAL_ESTATE_EDITOR";
         }
         if(userInfo != null && userInfo.getRoles() != null) {

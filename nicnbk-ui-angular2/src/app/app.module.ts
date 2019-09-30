@@ -25,6 +25,7 @@ import {GeneralMemoEditComponent} from "./m2s2/general-memo-edit.component";
 import {PrivateEquityMemoEditComponent} from "./m2s2/pe-memo-edit.component";
 import {HedgeFundsMemoEditComponent} from "./m2s2/hf-memo-edit.component";
 import {RealEstateMemoEditComponent} from "./m2s2/re-memo-edit.component";
+import {InfrastructureMemoEditComponent} from "./m2s2/infr-memo-edit.component";
 import {TripMemoListComponent} from "./tripMemo/trip-memo-list.component";
 import {TripMemoEditComponent} from "./tripMemo/trip-memo-edit.component";
 import {MemoAttachmentDownloaderComponent} from "./m2s2/memo-attachment-downloader.component";
@@ -148,7 +149,7 @@ import {MonitoringHedgeFundsEditComponent} from "./monitoring/monitoring-hedge-f
         NewsListComponent, NewsEditComponent, NewsViewComponent,
         MemoListComponent,
         MemoAttachmentDownloaderComponent, FileAttachmentDownloaderComponent,
-        GeneralMemoEditComponent, PrivateEquityMemoEditComponent, HedgeFundsMemoEditComponent, RealEstateMemoEditComponent,
+        GeneralMemoEditComponent, PrivateEquityMemoEditComponent, HedgeFundsMemoEditComponent, RealEstateMemoEditComponent,InfrastructureMemoEditComponent,
         TripMemoListComponent, TripMemoEditComponent, RiskManagementAxiomaReportingComponent, MonitoringHedgeFundsComponent, MonitoringLiquidPortfolioComponent,
         MonitoringMacroMonitorComponent, MonitoringPortfolioComponent, MonitoringPrivateEquityComponent, MonitoringPrivateEquityFundComponent,
         MonitoringHedgeFunds2Component,MonitoringHedgeFundsEditComponent, MonitoringHedgeFunds2PrintComponent, MonitoringHFListComponent, MonitoringHFResearchComponent,
