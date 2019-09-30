@@ -245,7 +245,6 @@ export class MonitoringHedgeFunds2Component extends GoogleChartComponent {
         };
         var chartOverall = new google.visualization.BarChart(document.getElementById("allocationByStrategyOverall"));
         chartOverall.draw(data, options);
-
     }
 
     drawAllocationByStrategyClassA(){

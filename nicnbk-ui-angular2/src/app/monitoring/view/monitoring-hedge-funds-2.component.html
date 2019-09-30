@@ -28,15 +28,13 @@
                 <option *ngFor="let monitoringDate of monitoringDates">{{monitoringDate}}</option>
             </select>
         </div>
-        <div class="col-md-8">&nbsp;
-        </div>
+        <div class="col-md-8"></div>
         <div class="col-md-2" *ngIf="canEdit()">
             <button class="btn btn-primary btn-sm pull-right" (click)="navigateToEditComponent(true)">Add</button>
         </div>
     </div>
-    <div class="row withpadding" *ngIf="selectedData != null && selectedData.date != null">
-        <div class="col-md-10">&nbsp;
-        </div>
+    <div class="row withpadding" *ngIf="selectedData != null && selectedData.id != null">
+        <div class="col-md-10"></div>
         <div class="col-md-2" *ngIf="canEdit()">
             <button class="btn btn-success btn-sm pull-right" (click)="navigateToEditComponent(false)">Edit</button>
         </div>
@@ -136,14 +134,15 @@
                 </div>
             </div>
             <br/>
-
             <div class="row">
                 <div class="col-md-12">
                     <span class="pull-right" style="font-size: x-small; font-style: italic;">* returns are loaded from Monitoring-NIC Portfolio</span>
                     <div id="returns"></div>
                 </div>
             </div>
+
             <br/>
+
             <div class="row">
                 <div class="col-md-12">
                     <div id="performanceMonthly"></div>

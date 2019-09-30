@@ -9,7 +9,7 @@ import java.util.Date;
 /**
  * Created by magzumov on 05.01.2017.
  */
-public class BenchmarkValueDto extends BaseEntityDto<BenchmarkValue> {
+public class BenchmarkValueDto extends BaseEntityDto<BenchmarkValue> implements Comparable{
     private BaseDictionaryDto benchmark;
     private Date date;
     private Double returnValue;
@@ -55,5 +55,10 @@ public class BenchmarkValueDto extends BaseEntityDto<BenchmarkValue> {
 
     public void setYtd(Double ytd) {
         this.ytd = ytd;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return this.date.compareTo(((BenchmarkValueDto) o).date);
     }
 }
