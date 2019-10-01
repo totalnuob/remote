@@ -454,7 +454,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
             if (searchParams == null || searchParams.isEmpty()) {
                 int pageSize = searchParams != null && searchParams.getPageSize() > 0 ? searchParams.getPageSize() : DEFAULT_PAGE_SIZE;
                 page = searchParams != null && searchParams.getPage() > 0 ? searchParams.getPage() - 1 : 0;
-                entitiesPage = icMeetingTopicRepository.searchAll(new PageRequest(page, pageSize, new Sort(Sort.Direction.DESC, "id")), allowedTypes);
+                entitiesPage = icMeetingTopicRepository.searchAll(new PageRequest(page, pageSize, new Sort(Sort.Direction.DESC, "icMeeting.number")), allowedTypes);
             } else {
                 page = searchParams.getPage() > 0 ? searchParams.getPage() - 1 : 0;
 

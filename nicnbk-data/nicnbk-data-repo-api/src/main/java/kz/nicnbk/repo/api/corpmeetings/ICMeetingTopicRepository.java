@@ -41,7 +41,7 @@ public interface ICMeetingTopicRepository extends PagingAndSortingRepository<ICM
                                 @Param("type") String type, Pageable pageable,  @Param("types") Set<String> types);
 
 
-    @Query("select DISTINCT e from ICMeetingTopic e where ((:types) is null OR e.type.code IN (:types)) AND (e.deleted is null OR e.deleted=false)")
+    @Query("select e FROM ICMeetingTopic e where ((:types) is null OR e.type.code IN (:types)) AND (e.deleted is null OR e.deleted=false)")
     Page<ICMeetingTopic> searchAll(Pageable pageable, @Param("types") Set<String> types);
 
     @Query("select DISTINCT e from ICMeetingTopic e where e.icMeeting.number=?1 AND " +
