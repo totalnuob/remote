@@ -1,0 +1,2 @@
+ALTER TABLE rep_re_general_ledger_balance DROP COLUMN re_chart_accounts_type_id;
+ALTER TABLE rep_re_general_ledger_balance DROP COLUMN chart_account_type_id;

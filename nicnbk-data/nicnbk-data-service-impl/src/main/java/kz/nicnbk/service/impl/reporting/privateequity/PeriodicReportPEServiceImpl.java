@@ -7,13 +7,10 @@ import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.api.reporting.privateequity.PEGeneralLedgerFormDataRepository;
 import kz.nicnbk.repo.api.reporting.privateequity.TarragonNICChartOfAccountsRepository;
 
-import kz.nicnbk.repo.model.lookup.reporting.ExcludeRecordTypeLookup;
-import kz.nicnbk.repo.model.lookup.reporting.TarragonExcludeRecordTypeLookup;
+import kz.nicnbk.repo.model.lookup.reporting.*;
 import kz.nicnbk.repo.model.reporting.PeriodicReport;
 import kz.nicnbk.repo.model.reporting.privateequity.PEGeneralLedgerFormData;
 import kz.nicnbk.repo.model.reporting.privateequity.TarragonNICChartOfAccounts;
-import kz.nicnbk.repo.model.reporting.realestate.ReportingREBalanceSheet;
-import kz.nicnbk.repo.model.reporting.realestate.ReportingRESecuritiesCost;
 import kz.nicnbk.service.api.reporting.PeriodicReportService;
 import kz.nicnbk.service.api.reporting.privateequity.*;
 import kz.nicnbk.service.converter.reporting.PEGeneralLedgerFormDataConverter;
@@ -34,7 +31,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -116,9 +112,9 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
 //            double totalAssets = 0.0;
 //            double totalOther = 0.0;
             for(PEGeneralLedgerFormDataDto record: records){
-                if(record.getTranche() != 1 && record.getTranche() != 2){
-                    throw new IllegalArgumentException("Tranche value invalid : " + record.getTranche() + "; expected values 1, 2");
-                }
+//                if(record.getTranche() != 1 && record.getTranche() != 2){
+//                    throw new IllegalArgumentException("Tranche value invalid : " + record.getTranche() + "; expected values 1, 2");
+//                }
                 if(!isValidFinancialStatementCategory(record.getFinancialStatementCategory())){
                     throw new IllegalArgumentException("Financial statement category value invalid : '" + record.getFinancialStatementCategory() + "'; expected values A, L, E, X, I");
                 }
@@ -181,26 +177,28 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
             if (currentReport != null) {
                 Date previousDate = DateUtils.getLastDayOfPreviousMonth(currentReport.getReportDate());
                 PeriodicReportDto previousReport = this.periodicReportService.findReportByReportDate(previousDate);
-                List<PEGeneralLedgerFormData> addedRecods =
-                        this.peGeneralLedgerFormDataRepository.getEntitiesByReportId(previousReport.getId(), new PageRequest(0, 1000, new Sort(Sort.Direction.ASC, "id")));
-                if (addedRecods != null) {
-                    for (PEGeneralLedgerFormData entity : addedRecods) {
-                        PEGeneralLedgerFormDataDto addedRecordDto = this.peGeneralLedgerFormDataConverter.disassemble(entity);
-                        TarragonGeneratedGeneralLedgerFormDto recordDto = new TarragonGeneratedGeneralLedgerFormDto();
-                        recordDto.setAcronym(addedRecordDto.getTranche() == 1 ? "TARRAGON" : "TARRAGON B");
-                        if (addedRecordDto.getReport() != null) {
-                            recordDto.setBalanceDate(addedRecordDto.getReport().getReportDate());
+                if(previousReport != null) {
+                    List<PEGeneralLedgerFormData> addedRecords =
+                            this.peGeneralLedgerFormDataRepository.getEntitiesByReportId(previousReport.getId(), new PageRequest(0, 1000, new Sort(Sort.Direction.ASC, "id")));
+                    if (addedRecords != null) {
+                        for (PEGeneralLedgerFormData entity : addedRecords) {
+                            PEGeneralLedgerFormDataDto addedRecordDto = this.peGeneralLedgerFormDataConverter.disassemble(entity);
+                            TarragonGeneratedGeneralLedgerFormDto recordDto = new TarragonGeneratedGeneralLedgerFormDto();
+                            recordDto.setAcronym(addedRecordDto.getTranche() == 1 ? PETrancheTypeLookup.TARRAGON_A.getNameEn() : PETrancheTypeLookup.TARRAGON_B.getNameEn());
+                            if (addedRecordDto.getReport() != null) {
+                                recordDto.setBalanceDate(addedRecordDto.getReport().getReportDate());
+                            }
+                            recordDto.setFinancialStatementCategory(addedRecordDto.getFinancialStatementCategory());
+                            recordDto.setChartAccountsLongDescription(addedRecordDto.getTarragonNICChartOfAccountsName());
+                            recordDto.setNbAccountNumber(addedRecordDto.getNbAccountNumber());
+                            String entityName = addedRecordDto.getEntityName() != null ? addedRecordDto.getEntityName() : "";
+                            recordDto.setNicAccountName(addedRecordDto.getNicAccountName() + entityName);
+                            recordDto.setSubscriptionRedemptionEntity(entityName);
+                            recordDto.setGLAccountBalance(addedRecordDto.getGLAccountBalance());
+                            recordDto.setAdded(true);
+                            recordDto.setAddedRecordId(entity.getId());
+                            records.add(recordDto);
                         }
-                        recordDto.setFinancialStatementCategory(addedRecordDto.getFinancialStatementCategory());
-                        recordDto.setChartAccountsLongDescription(addedRecordDto.getTarragonNICChartOfAccountsName());
-                        recordDto.setNbAccountNumber(addedRecordDto.getNbAccountNumber());
-                        String entityName = addedRecordDto.getEntityName() != null ? addedRecordDto.getEntityName() : "";
-                        recordDto.setNicAccountName(addedRecordDto.getNicAccountName() + entityName);
-                        recordDto.setSubscriptionRedemptionEntity(entityName);
-                        recordDto.setGLAccountBalance(addedRecordDto.getGLAccountBalance());
-                        recordDto.setAdded(true);
-                        recordDto.setAddedRecordId(entity.getId());
-                        records.add(recordDto);
                     }
                 }
 
@@ -213,6 +211,18 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
         }
     }
 
+    private boolean hasOtherEntityName(TarragonNICChartOfAccounts accountDto){
+        return accountDto != null && accountDto.getNicReportingChartOfAccounts() != null && accountDto.getNicReportingChartOfAccounts().getNbChartOfAccounts() != null &&
+                accountDto.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode() != null &&
+                (accountDto.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_1123_010)
+                        || accountDto.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_1183_040)
+                        || accountDto.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_6113_030)
+                        || accountDto.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_6150_010)
+                        || accountDto.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_6280_010)
+                        || accountDto.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_7470_010)
+                        || accountDto.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_7330_010));
+    }
+
     private void setNICChartOfAccounts(List<TarragonGeneratedGeneralLedgerFormDto> records){
         if(records != null) {
             for(GeneratedGeneralLedgerFormDto record: records){
@@ -222,14 +232,20 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
                     if (nicChartOfAccounts != null && !nicChartOfAccounts.isEmpty()) {
                         if(nicChartOfAccounts.size() == 1){
                             TarragonNICChartOfAccounts entity = nicChartOfAccounts.get(0);
-                            if(entity.getPositiveOnly() != null && entity.getPositiveOnly().booleanValue() &&
+                            if(entity.getChartAccountsType() != null && entity.getChartAccountsType().getCode().equalsIgnoreCase(ChartAccountsTypeLookup.POSITIVE.getCode()) &&
                                     record.getGLAccountBalance() != null && record.getGLAccountBalance() < 0){
                                 continue;
-                            }else if(entity.getNegativeOnly() != null && entity.getNegativeOnly().booleanValue() &&
+                            }else if(entity.getChartAccountsType() != null &&
+                                    entity.getChartAccountsType().getCode().equalsIgnoreCase(ChartAccountsTypeLookup.NEGATIVE.getCode()) &&
                                     record.getGLAccountBalance() != null && record.getGLAccountBalance() >= 0){
                                 continue;
                             }
-                            record.setNicAccountName(entity.getNicReportingChartOfAccounts().getNameRu());
+                            if(hasOtherEntityName(entity)){
+                                String fundName = StringUtils.isNotEmpty(record.getSubscriptionRedemptionEntity()) ? " " + record.getSubscriptionRedemptionEntity() : "";
+                                record.setNicAccountName(entity.getNicReportingChartOfAccounts().getNameRu() + fundName);
+                            }else {
+                                record.setNicAccountName(entity.getNicReportingChartOfAccounts().getNameRu());
+                            }
                             if (entity.getNicReportingChartOfAccounts().getNbChartOfAccounts() != null) {
                                 record.setNbAccountNumber(entity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode());
                             }
@@ -237,8 +253,15 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
                             boolean found = false;
                             for(TarragonNICChartOfAccounts entity: nicChartOfAccounts) {
                                 if (record.getGLAccountBalance() != null && record.getGLAccountBalance() < 0) {
-                                    if (entity.getNegativeOnly() != null && entity.getNegativeOnly().booleanValue()) {
-                                        record.setNicAccountName(entity.getNicReportingChartOfAccounts().getNameRu());
+                                    if (entity.getChartAccountsType() != null &&
+                                            entity.getChartAccountsType().getCode().equalsIgnoreCase(ChartAccountsTypeLookup.NEGATIVE.getCode())) {
+
+                                        if(hasOtherEntityName(entity)){
+                                            String fundName = StringUtils.isNotEmpty(record.getSubscriptionRedemptionEntity()) ? " " + record.getSubscriptionRedemptionEntity() : "";
+                                            record.setNicAccountName(entity.getNicReportingChartOfAccounts().getNameRu() + fundName);
+                                        }else {
+                                            record.setNicAccountName(entity.getNicReportingChartOfAccounts().getNameRu());
+                                        }
                                         if (entity.getNicReportingChartOfAccounts().getNbChartOfAccounts() != null) {
                                             record.setNbAccountNumber(entity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode());
                                         }
@@ -246,8 +269,14 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
                                         break;
                                     }
                                 } else if (record.getGLAccountBalance() != null && record.getGLAccountBalance() >= 0) {
-                                    if (entity.getPositiveOnly() != null && entity.getPositiveOnly().booleanValue()) {
-                                        record.setNicAccountName(entity.getNicReportingChartOfAccounts().getNameRu());
+                                    if (entity.getChartAccountsType() != null &&
+                                            entity.getChartAccountsType().getCode().equalsIgnoreCase(ChartAccountsTypeLookup.POSITIVE.getCode())) {
+                                        if(hasOtherEntityName(entity)){
+                                            String fundName = StringUtils.isNotEmpty(record.getSubscriptionRedemptionEntity()) ? " " + record.getSubscriptionRedemptionEntity() : "";
+                                            record.setNicAccountName(entity.getNicReportingChartOfAccounts().getNameRu() + fundName);
+                                        }else {
+                                            record.setNicAccountName(entity.getNicReportingChartOfAccounts().getNameRu());
+                                        }
                                         if (entity.getNicReportingChartOfAccounts().getNbChartOfAccounts() != null) {
                                             record.setNbAccountNumber(entity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode());
                                         }
@@ -328,8 +357,6 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
 
             // update account balance
             List<TarragonGeneratedGeneralLedgerFormDto> updatedRecords = new ArrayList<>();
-            //BigDecimal sum = new BigDecimal("0");
-            //Double sum = 0.0;
             for (TarragonGeneratedGeneralLedgerFormDto record : records) {
                 if (record.getGLAccountBalance() != null && record.getGLAccountBalance().doubleValue() != 0.0) {
                     if (record.getGLAccountBalance() != null && record.getFinancialStatementCategory() != null &&
@@ -342,7 +369,6 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
                         }else {
                             Double newValue = MathUtils.multiply(record.getGLAccountBalance() != null ? record.getGLAccountBalance() : 0.0, -1.0);
                             record.setGLAccountBalance(newValue);
-                            //sum = MathUtils.add(sum, newValue);
                         }
                     }
                     updatedRecords.add(record);
@@ -352,7 +378,6 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
             }
 
             // From capital calls
-
             List<ReserveCalculationDto> reserveCalculationRecords =
                     this.reserveCalculationService.getReserveCalculationsForMonth(ReserveCalculationsExpenseTypeLookup.ADD.getCode(), report.getReportDate(), true);
             if(reserveCalculationRecords != null){
@@ -361,8 +386,11 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
                         continue;
                     }
                     TarragonGeneratedGeneralLedgerFormDto recordDto = new TarragonGeneratedGeneralLedgerFormDto();
-                    String acronym = reserveCalculationDto.getRecipient().getCode().equalsIgnoreCase(ReserveCalculationsEntityTypeLookup.TARRAGON_A.getCode()) ? "TARRAGON A" :
-                            reserveCalculationDto.getRecipient().getCode().equalsIgnoreCase(ReserveCalculationsEntityTypeLookup.TARRAGON_B.getCode()) ? "TARRAGON B" : "TARRAGON";
+                    String acronym = reserveCalculationDto.getRecipient().getCode().equalsIgnoreCase(ReserveCalculationsEntityTypeLookup.TARRAGON_A.getCode()) ? PETrancheTypeLookup.TARRAGON_A.getNameEn() :
+                            reserveCalculationDto.getRecipient().getCode().equalsIgnoreCase(ReserveCalculationsEntityTypeLookup.TARRAGON_B.getCode()) ? PETrancheTypeLookup.TARRAGON_B.getNameEn() :
+                                    reserveCalculationDto.getRecipient().getCode().equalsIgnoreCase(ReserveCalculationsEntityTypeLookup.TARRAGON_A2.getCode()) ? PETrancheTypeLookup.TARRAGON_A2.getNameEn():
+                                            reserveCalculationDto.getRecipient().getCode().equalsIgnoreCase(ReserveCalculationsEntityTypeLookup.TARRAGON_B2.getCode()) ? PETrancheTypeLookup.TARRAGON_B2.getNameEn():
+                                                    "TARRAGON";
                     if(acronym.equalsIgnoreCase("TARRAGON")) {
                         logger.error("Error generating Tarragon GL Form: capital call recipient is specified as 'Tarragon', must be either 'Tarragon A' or 'Tarragon B'");
                         responseDto.setErrorMessageEn("Error generating Tarragon GL Form: capital call recipient is specified as 'Tarragon', must be either 'Tarragon A' or 'Tarragon B'");
@@ -418,7 +446,12 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
                 for (PEGeneralLedgerFormData entity : addedRecods) {
                     PEGeneralLedgerFormDataDto addedRecordDto = this.peGeneralLedgerFormDataConverter.disassemble(entity);
                     TarragonGeneratedGeneralLedgerFormDto recordDto = new TarragonGeneratedGeneralLedgerFormDto();
-                    recordDto.setAcronym(addedRecordDto.getTranche() == 1 ? "TARRAGON" : "TARRAGON B");
+                    if(entity.getTrancheType() != null){
+                        recordDto.setAcronym(entity.getTrancheType().getNameEn());
+                    }else if(recordDto.getAcronym() == null && addedRecordDto.getTranche() > 0) {
+                        recordDto.setAcronym(addedRecordDto.getTranche() == 1 ? PETrancheTypeLookup.TARRAGON_A.getNameEn() : PETrancheTypeLookup.TARRAGON_B.getNameEn());
+                    }
+
                     if (addedRecordDto.getReport() != null) {
                         recordDto.setBalanceDate(addedRecordDto.getReport().getReportDate());
                     }
@@ -435,10 +468,16 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
 
                     if (recordDto.getChartAccountsLongDescription().equalsIgnoreCase("Net Realized Gains/Losses from Portfolio Funds")) {
                         switch (recordDto.getAcronym()) {
-                            case "TARRAGON":
+                            case "Tarragon A":
                                 netRealizedTrancheA += recordDto.getGLAccountBalance();
                                 break;
-                            case "TARRAGON B":
+                            case "Tarragon A-2":
+                                netRealizedTrancheA += recordDto.getGLAccountBalance();
+                                break;
+                            case "Tarragon B":
+                                netRealizedTrancheB += recordDto.getGLAccountBalance();
+                                break;
+                            case "Tarragon B-2":
                                 netRealizedTrancheB += recordDto.getGLAccountBalance();
                                 break;
                         }
@@ -451,7 +490,6 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
 
 
             // Check Net Realized Gains Losses
-
             // UPDATE: "Net realized gain on investments" record added from Statement of Operations, no need to add Net realized records
 //            if (operationsRecords != null) {
 //                for (StatementBalanceOperationsDto record : operationsRecords) {
@@ -546,37 +584,44 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
                     // skip total sums
                     continue;
                 }
-                if(dto.getName().equalsIgnoreCase("Capital Contributions") || dto.getName().equalsIgnoreCase("Distributions") ||
-                        dto.getName().equalsIgnoreCase("Unrealized Gain (Loss)") || dto.getName().equalsIgnoreCase("Unrealized Gain (Loss), Net of Related Taxes")){
+//                if(dto.getName().equalsIgnoreCase("Capital Contributions") || dto.getName().equalsIgnoreCase("Distributions") ||
+//                        dto.getName().equalsIgnoreCase("Unrealized Gain (Loss)") ||
+//                        dto.getName().equalsIgnoreCase("Unrealized Gain (Loss), Net of Related Taxes")){
+
+                if(dto.getName().equalsIgnoreCase(PeriodicReportConstants.TARR_STATEMENT_CHANGES_CONTRIBUTIONS_RECEIVED) ||
+                        dto.getName().equalsIgnoreCase(PeriodicReportConstants.TARR_STATEMENT_CHANGES_DISTRIBUTIONS_PAID)){
 
                     TarragonGeneratedGeneralLedgerFormDto trancheARecord = new TarragonGeneratedGeneralLedgerFormDto();
-                    String acronym = "TARRAGON";
-                    trancheARecord.setAcronym(acronym);
+                    trancheARecord.setAcronym(PETrancheTypeLookup.TARRAGON_A.getNameEn());
                     trancheARecord.setBalanceDate(dto.getReport().getReportDate());
                     trancheARecord.setChartAccountsLongDescription(dto.getName());
                     trancheARecord.setFinancialStatementCategory("E");
-                    //record.setSegVal1("");
-                    //record.setNbAccountNumber("");
-                    //record.setNicAccountName("");
                     trancheARecord.setGLAccountBalance(dto.getTrancheA());
-                    //record.setFundCCY();
-                    //record.setSegValCCY();
                     trancheARecord.setId(dto.getId());
                     trancheARecord.setExcludeFromTarragonCalculation(dto.getExcludeFromTarragonCalculation());
                     trancheARecord.setType(TarragonExcludeRecordTypeLookup.STATEMENT_CHANGES.getCode());
+                    records.add(trancheARecord);
 
                     TarragonGeneratedGeneralLedgerFormDto trancheBRecord = new TarragonGeneratedGeneralLedgerFormDto(trancheARecord);
-                    trancheBRecord.setAcronym("TARRAGON B");
+                    trancheBRecord.setAcronym(PETrancheTypeLookup.TARRAGON_B.getNameEn());
                     trancheBRecord.setGLAccountBalance(dto.getTrancheB());
-
-                    // TODO:
-                    //trancheBRecord.setId();
-
                     trancheBRecord.setExcludeFromTarragonCalculation(dto.getExcludeFromTarragonCalculation());
                     trancheBRecord.setType(TarragonExcludeRecordTypeLookup.STATEMENT_CHANGES.getCode());
-
-                    records.add(trancheARecord);
                     records.add(trancheBRecord);
+
+                    TarragonGeneratedGeneralLedgerFormDto trancheA2Record = new TarragonGeneratedGeneralLedgerFormDto(trancheARecord);
+                    trancheA2Record.setAcronym(PETrancheTypeLookup.TARRAGON_A2.getNameEn());
+                    trancheA2Record.setGLAccountBalance(dto.getTrancheA2());
+                    trancheA2Record.setExcludeFromTarragonCalculation(dto.getExcludeFromTarragonCalculation());
+                    trancheA2Record.setType(TarragonExcludeRecordTypeLookup.STATEMENT_CHANGES.getCode());
+                    records.add(trancheA2Record);
+
+                    TarragonGeneratedGeneralLedgerFormDto trancheB2Record = new TarragonGeneratedGeneralLedgerFormDto(trancheARecord);
+                    trancheB2Record.setAcronym(PETrancheTypeLookup.TARRAGON_B2.getNameEn());
+                    trancheB2Record.setGLAccountBalance(dto.getTrancheB2());
+                    trancheB2Record.setExcludeFromTarragonCalculation(dto.getExcludeFromTarragonCalculation());
+                    trancheB2Record.setType(TarragonExcludeRecordTypeLookup.STATEMENT_CHANGES.getCode());
+                    records.add(trancheB2Record);
                 }
 
             }
@@ -597,7 +642,11 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
                     record.setFinancialStatementCategory("I");
                 }else if(isExpenses(operationsRecord)){
                     record.setFinancialStatementCategory("X");
-                }else if(operationsRecord.getName().equalsIgnoreCase("Net realized gain on investments")) {
+                }// TODO: controlled list of accepted/matched values
+                else if(operationsRecord.getName().equalsIgnoreCase(PeriodicReportConstants.TARR_OPERATIONS_INCOME_TYPE_NET_REALIZED_GAIN_NAME) ||
+                        operationsRecord.getName().equalsIgnoreCase(PeriodicReportConstants.TARR_OPERATIONS_INCOME_TYPE_NET_REALIZED_GAIN_LOSS_LONG_NAME) ||
+                        operationsRecord.getName().equalsIgnoreCase(PeriodicReportConstants.TARR_OPERATIONS_INCOME_TYPE_DEFERRED_TAX_BENEFIT_NAME) ||
+                        operationsRecord.getName().equalsIgnoreCase(PeriodicReportConstants.TARR_OPERATIONS_INCOME_TYPE_NET_CHANGE_UNREALIZED_APPR_DEPR_LONG_NAME)) {
                     record.setFinancialStatementCategory("I");
                 }else{
                     continue;
@@ -606,18 +655,23 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
 //                    record.setFinancialStatementCategory("E");
 //                }
 
-                String acronym = operationsRecord.getTranche() != null && operationsRecord.getTranche() == 1 ? "TARRAGON" :
-                        operationsRecord.getTranche() != null && operationsRecord.getTranche() == 2 ? "TARRAGON B" : "UNMATCHED";
+                String acronym = operationsRecord.getTrancheType() != null &&
+                        operationsRecord.getTrancheType().getCode().equalsIgnoreCase(PETrancheTypeLookup.TARRAGON_A.getCode()) ? PETrancheTypeLookup.TARRAGON_A.getNameEn() :
+                        operationsRecord.getTrancheType() != null &&
+                        operationsRecord.getTrancheType().getCode().equalsIgnoreCase(PETrancheTypeLookup.TARRAGON_B.getCode()) ? PETrancheTypeLookup.TARRAGON_B.getNameEn() :
+                        operationsRecord.getTrancheType() != null &&
+                        operationsRecord.getTrancheType().getCode().equalsIgnoreCase(PETrancheTypeLookup.TARRAGON_A2.getCode()) ? PETrancheTypeLookup.TARRAGON_A2.getNameEn() :
+                        operationsRecord.getTrancheType() != null &&
+                        operationsRecord.getTrancheType().getCode().equalsIgnoreCase(PETrancheTypeLookup.TARRAGON_B2.getCode()) ? PETrancheTypeLookup.TARRAGON_B2.getNameEn() : "UNMATCHED";
+                if(operationsRecord.getTrancheType() == null && operationsRecord.getTranche() != null
+                        && acronym.equalsIgnoreCase("UNMATCHED")){
+                    acronym = operationsRecord.getTranche().intValue() == 1 ? PETrancheTypeLookup.TARRAGON_A.getNameEn() : PETrancheTypeLookup.TARRAGON_B.getNameEn();
+                }
                 record.setAcronym(acronym);
                 record.setBalanceDate(operationsRecord.getReport().getReportDate());
                 record.setChartAccountsLongDescription(operationsRecord.getName());
-                //record.setSegVal1("");
-                //record.setNbAccountNumber("");
-                //record.setNicAccountName("");
                 Double accountBalance = operationsRecord.getNICKMFShareConsolidated();
                 record.setGLAccountBalance(accountBalance);
-                //record.setFundCCY();
-                //record.setSegValCCY();
                 record.setId(operationsRecord.getId());
                 record.setExcludeFromTarragonCalculation(operationsRecord.getExcludeFromTarragonCalculation());
                 record.setType(TarragonExcludeRecordTypeLookup.STATEMENT_OPERATIONS.getCode());
@@ -653,8 +707,18 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
                     // ?
                 }
 
-                String acronym = balanceRecord.getTranche() != null && balanceRecord.getTranche() == 1 ? "TARRAGON" :
-                        balanceRecord.getTranche() != null && balanceRecord.getTranche() == 2 ? "TARRAGON B" : "UNMATCHED";
+                String acronym = balanceRecord.getTrancheType() != null &&
+                        balanceRecord.getTrancheType().getCode().equalsIgnoreCase(PETrancheTypeLookup.TARRAGON_A.getCode()) ? PETrancheTypeLookup.TARRAGON_A.getNameEn():
+                        balanceRecord.getTrancheType() != null &&
+                        balanceRecord.getTrancheType().getCode().equalsIgnoreCase(PETrancheTypeLookup.TARRAGON_B.getCode()) ? PETrancheTypeLookup.TARRAGON_B.getNameEn() :
+                        balanceRecord.getTrancheType() != null &&
+                        balanceRecord.getTrancheType().getCode().equalsIgnoreCase(PETrancheTypeLookup.TARRAGON_A2.getCode()) ? PETrancheTypeLookup.TARRAGON_A2.getNameEn() :
+                        balanceRecord.getTrancheType() != null &&
+                        balanceRecord.getTrancheType().getCode().equalsIgnoreCase(PETrancheTypeLookup.TARRAGON_B2.getCode()) ? PETrancheTypeLookup.TARRAGON_B2.getNameEn() : "UNMATCHED";
+                if(balanceRecord.getTrancheType() == null && balanceRecord.getTranche() != null
+                        && acronym.equalsIgnoreCase("UNMATCHED")){
+                    acronym = balanceRecord.getTranche().intValue() == 1 ? PETrancheTypeLookup.TARRAGON_A.getNameEn() : PETrancheTypeLookup.TARRAGON_B.getNameEn();
+                }
                 record.setAcronym(acronym);
                 record.setBalanceDate(balanceRecord.getReport().getReportDate());
                 record.setChartAccountsLongDescription(balanceRecord.getName());
@@ -680,33 +744,49 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
         if(investments != null ){
             boolean madeEditable = false;
             for(ScheduleInvestmentsDto investment: investments){
-                if(investment.getTotalSum() != null && !investment.getTotalSum()) { // total sum records not added
-                    String acronym = investment.getTranche() != null && investment.getTranche() == 1 ? "TARRAGON" :
-                            investment.getTranche() != null && investment.getTranche() == 2 ? "TARRAGON B" : "";
+                if(investment.getTotalSum() == null || !investment.getTotalSum().booleanValue()) { // total sum records not added
+                    String acronym = investment.getTrancheType() != null &&
+                            investment.getTrancheType().getCode().equalsIgnoreCase(PETrancheTypeLookup.TARRAGON_A.getCode()) ? PETrancheTypeLookup.TARRAGON_A.getNameEn() :
+                            investment.getTrancheType() != null &&
+                            investment.getTrancheType().getCode().equalsIgnoreCase(PETrancheTypeLookup.TARRAGON_B.getCode()) ? PETrancheTypeLookup.TARRAGON_B.getNameEn() :
+                            investment.getTrancheType() != null &&
+                            investment.getTrancheType().getCode().equalsIgnoreCase(PETrancheTypeLookup.TARRAGON_A2.getCode()) ? PETrancheTypeLookup.TARRAGON_A2.getNameEn() :
+                            investment.getTrancheType() != null &&
+                            investment.getTrancheType().getCode().equalsIgnoreCase(PETrancheTypeLookup.TARRAGON_B2.getCode()) ? PETrancheTypeLookup.TARRAGON_B2.getNameEn() : "UNMATCHED";
+
+                    if(investment.getTrancheType() == null && investment.getTranche() != null
+                            && acronym.equalsIgnoreCase("UNMATCHED")){
+                        acronym = investment.getTranche().intValue() == 1 ? PETrancheTypeLookup.TARRAGON_A.getNameEn() : PETrancheTypeLookup.TARRAGON_B.getNameEn();
+                    }
                     TarragonGeneratedGeneralLedgerFormDto record = new TarragonGeneratedGeneralLedgerFormDto();
                     record.setAcronym(acronym);
                     record.setBalanceDate(investment.getReport().getReportDate());
                     record.setFinancialStatementCategory("A");
                     record.setChartAccountsLongDescription(investment.getName());
                     record.setSegVal1("1200");
-                    record.setNbAccountNumber("2033.010");
-                    record.setNicAccountName("Инвестиции в фонд частного капитала " + investment.getName());
-                    Double accountBalance = investment.getFairValue() != null && investment.getTranche() != null ?
-                            (investment.getTranche() == 1 ? MathUtils.multiply(investment.getFairValue().doubleValue(), 0.99) : investment.getFairValue().doubleValue()) : null;
+                    //record.setNbAccountNumber(PeriodicReportConstants.ACC_NUM_2033_010);
+                    record.setNbAccountNumber(PeriodicReportConstants.ACC_NUM_1123_010);
+                    record.setNicAccountName(PeriodicReportConstants.RU_PE_FUND_INVESTMENT + " " + investment.getName());
+                    Double accountBalance = investment.getFairValue() != null && investment.getTrancheType() != null ?
+                            (investment.getTrancheType().getCode().equalsIgnoreCase(PETrancheTypeLookup.TARRAGON_A.getCode()) ||
+                            investment.getTrancheType().getCode().equalsIgnoreCase(PETrancheTypeLookup.TARRAGON_A2.getCode())
+                                    ? MathUtils.multiply(investment.getFairValue().doubleValue(), 0.99) :
+                                    investment.getFairValue().doubleValue()) : null;
                     record.setGLAccountBalance(investment.getEditedFairValue() != null ? investment.getEditedFairValue() : accountBalance);
-                    //record.setFundCCY();
-                    //record.setSegValCCY();
 
-                    if(!madeEditable && investment.getTranche() != null && investment.getTranche() == 1){
+
+                    if(!madeEditable && investment.getTrancheType() != null &&
+                            (investment.getTrancheType().getCode().equalsIgnoreCase(PETrancheTypeLookup.TARRAGON_A.getCode()) ||
+                            investment.getTrancheType().getCode().equalsIgnoreCase(PETrancheTypeLookup.TARRAGON_A2.getCode()))){
                         record.setEditable(true);
                         madeEditable = true;
                     }
 
                     if(record.getGLAccountBalance() != null && record.getGLAccountBalance() < 0){
                         //record.setGLAccountBalance(MathUtils.multiply(record.getGLAccountBalance(), -1.0));
-                        record.setNbAccountNumber("3053.060");
+                        record.setNbAccountNumber(PeriodicReportConstants.ACC_NUM_3053_060);
                         record.setFinancialStatementCategory("L");
-                        record.setNicAccountName("Прочие краткосрочные финансовые обязательства");
+                        record.setNicAccountName(PeriodicReportConstants.RU_3053_060);
                         record.setSubscriptionRedemptionEntity((StringUtils.isNotEmpty(acronym) ? acronym + " - " : "") + investment.getName());
                     }
                     record.setId(investment.getId());
@@ -723,7 +803,7 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
         if(dto != null){
             HierarchicalBaseDictionaryDto type = dto.getType();
             while(type != null){
-                if(type.getCode().equalsIgnoreCase("ASSETS")){
+                if(type.getCode().equalsIgnoreCase(PEBalanceTypeLookup.ASSETS.getCode())){
                     return true;
                 }
                 type = type.getParent();
@@ -736,7 +816,7 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
         if(dto != null){
             HierarchicalBaseDictionaryDto type = dto.getType();
             while(type != null){
-                if(type.getCode().equalsIgnoreCase("LIABLTY")){
+                if(type.getCode().equalsIgnoreCase(PEBalanceTypeLookup.LIABILITIES.getCode())){
                     return true;
                 }
                 type = type.getParent();
@@ -749,7 +829,8 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
         if(dto != null){
             HierarchicalBaseDictionaryDto type = dto.getType();
             while(type != null){
-                if(type.getCode().equalsIgnoreCase("INCOME") && !dto.getName().equalsIgnoreCase("FDAP tax expense")){
+                if(type.getCode().equalsIgnoreCase(PEOperationsTypeLookup.INCOME.getCode()) &&
+                        !dto.getName().equalsIgnoreCase(PeriodicReportConstants.TARR_OPERATIONS_TAX_EXPENSE_NAME)){
                     return true;
                 }
                 type = type.getParent();
@@ -760,12 +841,12 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
 
     private boolean isExpenses(StatementBalanceOperationsDto dto){
         if(dto != null){
-            if(dto.getName() != null && dto.getName().equalsIgnoreCase("FDAP tax expense")){
+            if(dto.getName() != null && dto.getName().equalsIgnoreCase(PeriodicReportConstants.TARR_OPERATIONS_TAX_EXPENSE_NAME)){
                 return true;
             }
             HierarchicalBaseDictionaryDto type = dto.getType();
             while(type != null){
-                if(type.getCode().equalsIgnoreCase("EXPENSES")){
+                if(type.getCode().equalsIgnoreCase(PEOperationsTypeLookup.EXPENSES.getCode())){
                     return true;
                 }
                 type = type.getParent();

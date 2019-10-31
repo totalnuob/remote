@@ -14,10 +14,11 @@ public class StatementChangesDto implements BaseDto{
     private Double trancheB;
     private Double total;
     private PeriodicReportDto report;
-
     private Boolean isTotalSum;
-
     private Boolean excludeFromTarragonCalculation;
+
+    private Double trancheA2;
+    private Double trancheB2;
 
     public String getName() {
         return name;
@@ -81,5 +82,21 @@ public class StatementChangesDto implements BaseDto{
 
     public void setExcludeFromTarragonCalculation(Boolean excludeFromTarragonCalculation) {
         this.excludeFromTarragonCalculation = excludeFromTarragonCalculation;
+    }
+
+    public Double getTrancheA2() {
+        return trancheA2;
+    }
+
+    public void setTrancheA2(Double trancheA2) {
+        this.trancheA2 = trancheA2;
+    }
+
+    public Double getTrancheB2() {
+        return trancheB2;
+    }
+
+    public void setTrancheB2(Double trancheB2) {
+        this.trancheB2 = trancheB2;
     }
 }

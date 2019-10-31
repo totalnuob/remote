@@ -3,6 +3,7 @@ import {GeneratedGLFormRecord} from "./generated.form.record";
 export class PEGeneralLedgerFormDataRecord {
 
     tranche: number;
+    trancheType: string;
     financialStatementCategory: string;
     tarragonNICChartOfAccountsName: string;
     glaccountBalance: number;

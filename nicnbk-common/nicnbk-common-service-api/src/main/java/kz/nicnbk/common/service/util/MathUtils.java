@@ -344,6 +344,14 @@ public class MathUtils {
         }
     }
 
+    public static Double getDouble(String value){
+        try{
+           return Double.parseDouble(value);
+        }catch (Exception ex){
+            return null;
+        }
+    }
+
 
     public static void main (String[] args){
         testSlope1();

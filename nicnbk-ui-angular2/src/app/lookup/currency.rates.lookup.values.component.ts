@@ -86,18 +86,18 @@ export class CurrencyRatesLookupValuesComponent extends CommonNBReportingCompone
         Observable.forkJoin(
             // Load lookups
             this.lookupService.getCurrencyList()
-            )
-            .subscribe(
-                ([data1]) => {
-                    this.currencyList = data1;
+                           )
+                           .subscribe(
+                               ([data1]) => {
+                                   this.currencyList = data1;
 
-                    this.search(0);
+                                   this.search(0);
 
-                    if(this.newCurrencyRateParams && this.newCurrencyRateParams.date != null && this.newCurrencyRateParams.currency != null) {
-                        console.log("auto click button")
-                        document.getElementById("openCurrencyModalButton").click();
-                    }
-            });
+                                   if(this.newCurrencyRateParams && this.newCurrencyRateParams.date != null && this.newCurrencyRateParams.currency != null) {
+                                       console.log("auto click button")
+                                       document.getElementById("openCurrencyModalButton").click();
+                                   }
+                           });
 
     }
 

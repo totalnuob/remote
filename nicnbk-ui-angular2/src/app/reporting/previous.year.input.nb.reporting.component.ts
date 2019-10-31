@@ -188,7 +188,8 @@ export class PreviousYearInputNBReportingComponent extends CommonNBReportingComp
     }
 
     public showNextButton(){
-        return this.recordsValid;
+        return true;
+        //return this.recordsValid;
     }
 
     public checkRecords(){
@@ -245,7 +246,7 @@ export class PreviousYearInputNBReportingComponent extends CommonNBReportingComp
     }
 
     isRequiredUSDAmount(record){
-        record.chartOfAccounts.code != 'KZT3_5_1' && record.chartOfAccounts.code != 'KZT1_51_adj';
+        return record.chartOfAccounts.code != 'KZT3_5_1' && record.chartOfAccounts.code != 'KZT1_51_adj';
     }
 
 }

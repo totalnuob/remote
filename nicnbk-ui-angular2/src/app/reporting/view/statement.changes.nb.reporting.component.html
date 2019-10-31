@@ -26,32 +26,58 @@
     <div class="row withpadding">
         <h3 *ngIf="report != null">{{getReportDateShortFormatted(report.reportDate)}} - Statement of Changes</h3>
     </div>
-    <div class="row withpadding" style="overflow-y: scroll;">
+    <div class="row withpadding">
         <table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small">
-            <tr bgcolor="#e7e7e7">
-                <td>&nbsp;</td>
-                <td *ngFor="let record of records.changes">{{record.name}}</td>
-            </tr>
-
-            <tr>
-                <td>Tranche A</td>
-                <td *ngFor="let record of records.changes">{{record.values != null && record.values[0] != null ? (record.values[0] | number:'1.0-0'): ''}}</td>
-            </tr>
-
-            <tr>
-                <td>Tranche B</td>
-                <td *ngFor="let record of records.changes">{{record.values != null && record.values[1] != null ? (record.values[1] | number:'1.0-0'): ''}}</td>
-            </tr>
-
-            <tr>
-                <td>Total</td>
-                <td style="border-top: 1pt solid black" *ngFor="let record of records.changes">{{record.values != null && record.values[2] != null ? (record.values[2] | number:'1.0-0'): ''}}</td>
-            </tr>
+            <thead>
+                <tr>
+                    <th width="50%">&nbsp;</th>
+                    <th width="10%">Tranche A</th>
+                    <th width="10%">Tranche B</th>
+                    <th width="10%">Tranche A-2</th>
+                    <th width="10%">Tranche B-2</th>
+                    <th width="10%">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let record of records.changes">
+                    <td>{{record.name}}</td>
+                    <td>{{record.values != null && record.values[0] != null ? (record.values[0] | number:'1.0-0'): ''}}</td>
+                    <td>{{record.values != null && record.values[1] != null ? (record.values[1] | number:'1.0-0'): ''}}</td>
+                    <td>{{record.values != null && record.values[2] != null ? (record.values[2] | number:'1.0-0'): ''}}</td>
+                    <td>{{record.values != null && record.values[3] != null ? (record.values[3] | number:'1.0-0'): ''}}</td>
+                    <td>{{record.values != null && record.values[4] != null ? (record.values[4] | number:'1.0-0'): ''}}</td>
+                </tr>
+            </tbody>
         </table>
     </div>
 
-    <div class="row">
-        <div class="col-md-12">
-        </div>
-    </div>
+
+<!--    <div class="row withpadding" style="overflow-y: scroll;">-->
+<!--        <table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small">-->
+<!--            <tr bgcolor="#e7e7e7">-->
+<!--                <td>&nbsp;</td>-->
+<!--                <td *ngFor="let record of records.changes">{{record.name}}</td>-->
+<!--            </tr>-->
+
+<!--            <tr>-->
+<!--                <td>Tranche A</td>-->
+<!--                <td *ngFor="let record of records.changes">{{record.values != null && record.values[0] != null ? (record.values[0] | number:'1.0-0'): ''}}</td>-->
+<!--            </tr>-->
+
+<!--            <tr>-->
+<!--                <td>Tranche B</td>-->
+<!--                <td *ngFor="let record of records.changes">{{record.values != null && record.values[1] != null ? (record.values[1] | number:'1.0-0'): ''}}</td>-->
+<!--            </tr>-->
+
+<!--            <tr>-->
+<!--                <td>Total</td>-->
+<!--                <td style="border-top: 1pt solid black" *ngFor="let record of records.changes">{{record.values != null && record.values[2] != null ? (record.values[2] | number:'1.0-0'): ''}}</td>-->
+<!--            </tr>-->
+<!--        </table>-->
+<!--    </div>-->
+
+<!--    <div class="row">-->
+<!--        <div class="col-md-12">-->
+<!--        </div>-->
+<!--    </div>-->
 </div>

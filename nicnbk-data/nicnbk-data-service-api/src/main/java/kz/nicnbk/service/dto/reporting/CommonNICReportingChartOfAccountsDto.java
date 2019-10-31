@@ -1,5 +1,6 @@
 package kz.nicnbk.service.dto.reporting;
 
+import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.common.service.model.BaseDto;
 
 /**
@@ -16,6 +17,7 @@ public class CommonNICReportingChartOfAccountsDto implements BaseDto {
     private Boolean negativeOnly;
     private Boolean positiveOnly;
     private Boolean deletable;
+    private BaseDictionaryDto chartAccountsType;
 
     public Long getId() {
         return id;
@@ -87,5 +89,13 @@ public class CommonNICReportingChartOfAccountsDto implements BaseDto {
 
     public void setDeletable(Boolean deletable) {
         this.deletable = deletable;
+    }
+
+    public BaseDictionaryDto getChartAccountsType() {
+        return chartAccountsType;
+    }
+
+    public void setChartAccountsType(BaseDictionaryDto chartAccountsType) {
+        this.chartAccountsType = chartAccountsType;
     }
 }

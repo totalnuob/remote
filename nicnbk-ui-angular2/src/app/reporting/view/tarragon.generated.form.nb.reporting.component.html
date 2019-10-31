@@ -61,10 +61,13 @@
                     </thead>
                     <tr  *ngFor="let addedRecord of addedRecordsHolder.records" style="font-size: small">
                         <td>
-                            <select required class="form-control" style="width: 100%; font-size: small" [ngModelOptions]="{standalone: true}" [(ngModel)]="addedRecord.tranche">
-                                <!--TODO: load from component-->
-                                <option value="1">TARRAGON</option>
-                                <option value="2">TARRAGON B</option>
+<!--                            <select required class="form-control" style="width: 100%; font-size: small" [ngModelOptions]="{standalone: true}" [(ngModel)]="addedRecord.tranche">-->
+<!--                                &lt;!&ndash;TODO: load from component&ndash;&gt;-->
+<!--                                <option value="1">TARRAGON</option>-->
+<!--                                <option value="2">TARRAGON B</option>-->
+<!--                            </select>-->
+                            <select required class="form-control" style="width: 100%; font-size: small" [(ngModel)]="addedRecord.trancheType" [ngModelOptions]="{standalone: true}">
+                                <option *ngFor="let trancheType of peTrancheTypes" [value]="trancheType.code">{{trancheType.nameEn}}</option>
                             </select>
                         </td>
                         <td>
@@ -175,7 +178,7 @@
             </tr>
             <tr *ngFor="let record of records" [style.background-color]="record.added ? '#dcd196' : record.nbAccountNumber == null ? '#ec4747' : 'white'"
                 [style.color]="isRecordExcluded(record) ? '#aaa7a7' : 'black'">
-                <td>{{record.acronym}}</td>
+                <td [style.color]="record.acronym == null || record.acronym.trim() === '' || record.acronym.trim() === 'UNMATCHED' ? '#ec4747' : 'black'">{{record.acronym}}</td>
                 <td>{{record.balanceDate}}</td>
                 <td>{{record.financialStatementCategory}}</td>
                 <td>{{record.glaccount}}</td>

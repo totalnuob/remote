@@ -10,9 +10,12 @@ export class CommonMatchingNICReportingChartOfAccounts{
     negativeOnly: boolean;
     positiveOnly: boolean;
     editable: boolean;
-    deletable: boolean;
+    deletable: boolean
+
+    chartAccountsType: BaseDictionary;
 
     constructor(){
         this.nicchartOfAccounts = new NICReportingChartOfAccounts();
+        this.chartAccountsType = new BaseDictionary();
     }
 }

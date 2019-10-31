@@ -2,6 +2,7 @@ import {DATA_APP_URL} from "./common.service.constants";
 
 export const LOOKUP_SERVICE_URL = DATA_APP_URL + "lookup/";
 
+export const ALL_STRATEGIES_URL = LOOKUP_SERVICE_URL + "StrategyAll";
 export const PE_STRATEGIES_URL = LOOKUP_SERVICE_URL + "PEStrategy";
 export const HF_STRATEGIES_URL = LOOKUP_SERVICE_URL + "HFStrategy";
 export const RE_STRATEGIES_URL = LOOKUP_SERVICE_URL + "REStrategy";
@@ -23,6 +24,8 @@ export const SIDE_POCKET_URL = LOOKUP_SERVICE_URL + "SidePocket";
 
 export const NB_CHART_OF_ACCOUNTS_URL =  LOOKUP_SERVICE_URL +"NBChartOfAccounts";
 export const NIC_REPORTING_CHART_OF_ACCOUNTS_URL =  LOOKUP_SERVICE_URL +"NICReportingChartOfAccounts/";
+export const NIC_REPORTING_CHART_OF_ACCOUNTS_TYPE_URL =  LOOKUP_SERVICE_URL +"NICReportingChartOfAccountsType/";
+
 export const SEARCH_NIC_REPORTING_CHART_OF_ACCOUNTS_URL =  LOOKUP_SERVICE_URL + "searchNICReportingChartOfAccounts/";
 
 
@@ -57,15 +60,20 @@ export const SAVE_BENCHMARK_URL = LOOKUP_SERVICE_URL + "benchmarks/save/";
 export const DELETE_CURRENCY_RATES_URL = LOOKUP_SERVICE_URL + "currencyRates/delete/";
 
 export const SAVE_LOOKUP_VALUE_URL = LOOKUP_SERVICE_URL + "saveLookupValue/";
+export const SAVE_STRATEGY_LOOKUP_VALUE_URL = LOOKUP_SERVICE_URL + "saveStrategyLookupValue/";
+
 
 export const NB_REP_TARRAGON_BALANCE_TYPE_URL = LOOKUP_SERVICE_URL + "repTarragonBalanceType/";
 export const NB_REP_TARRAGON_OPERATIONS_TYPE_URL = LOOKUP_SERVICE_URL + "repTarragonOperationsType/";
 export const NB_REP_TARRAGON_CASHFLOWS_TYPE_URL = LOOKUP_SERVICE_URL + "repTarragonCashflowsType/";
+export const NB_REP_TARRAGON_INVESTMENT_TYPE_URL = LOOKUP_SERVICE_URL + "repTarragonInvestmentType/";
 export const NB_REP_SINGULARITY_CHART_ACCOUNTS_TYPE_URL = LOOKUP_SERVICE_URL + "repSingularityChartAccountsType/";
 export const NB_REP_TERRA_CHART_ACCOUNTS_TYPE_URL = LOOKUP_SERVICE_URL + "repTerraChartAccountsType/";
 export const NB_REP_TERRA_BALANCE_TYPE_URL = LOOKUP_SERVICE_URL + "repTerraBalanceType/";
 export const NB_REP_TERRA_PROFIT_LOSS_TYPE_URL = LOOKUP_SERVICE_URL + "repTerraProfitLossType/";
 export const NB_CHART_ACCOUNTS__URL = LOOKUP_SERVICE_URL + "NBChartOfAccounts/";
+export const NIC_REPORTING_PE_TRANCHE_TYPES_URL = LOOKUP_SERVICE_URL + "PETrancheTypes/";
+export const NIC_REPORTING_RE_TRANCHE_TYPES_URL = LOOKUP_SERVICE_URL + "RETrancheTypes/";
 
 export const PERIODIC_DATA_TYPES_URL = LOOKUP_SERVICE_URL + "periodicDataTypes/";
 

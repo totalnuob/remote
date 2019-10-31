@@ -1,5 +1,6 @@
 package kz.nicnbk.service.converter.reporting;
 
+import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.common.service.model.HierarchicalBaseDictionaryDto;
 import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.model.reporting.PeriodicReport;
@@ -70,6 +71,11 @@ public class ReportingPEStatementOperationsConverter extends BaseDozerEntityConv
                 childDto = parentDto;
             }
             dto.setType(typeDto);
+        }
+        // tranche type
+        if(entity.getTrancheType() != null){
+            dto.setTrancheType(new BaseDictionaryDto(entity.getTrancheType().getCode(),
+                    entity.getTrancheType().getNameEn(), entity.getTrancheType().getNameRu(), entity.getTrancheType().getNameKz()));
         }
         //report
         if(entity.getReport() != null) {

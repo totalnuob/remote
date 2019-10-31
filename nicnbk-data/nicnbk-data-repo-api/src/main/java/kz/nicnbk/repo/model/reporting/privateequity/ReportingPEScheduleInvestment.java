@@ -17,26 +17,43 @@ import javax.persistence.*;
 public class ReportingPEScheduleInvestment extends CreateUpdateBaseEntity{
 
     // TODO: refactor as enum lookup
-    public static final String TYPE_FUND_INVESTMENTS = "Fund Investments";
-    public static final String TYPE_COINVESTMENTS = "Co-Investments";
+    public static final String TYPE_FUND_INVESTMENTS = "Fund Investment";
+    public static final String TYPE_COINVESTMENTS = "Co-Investment";
+    public static final String TYPE_SECONDARY = "Secondary";
 
     private String name;
     private Double capitalCommitments;
-    private Double netCost;
-    private Double fairValue;
-    private Double editedFairValue;
-    private PeriodicReport report;
-
-    private PEInvestmentType type;
-    private Strategy strategy;
-    private Currency currency;
     private Integer tranche;
     private String description;
     private Boolean isTotalSum;
 
+    private PeriodicReport report;
+    private Double netCost;
+    private Double fairValue;
+    private Double editedFairValue;
+    private PEInvestmentType type;
+    private Strategy strategy;
+    private Currency currency;
+
     private Boolean excludeFromTarragonCalculation;
 
-    @Column(name = "name", length = DataConstraints.C_TYPE_ENTITY_NAME, nullable = false)
+    // updated input data for Schedule of Investments
+    private String securityNo;
+    private String investment;
+    private PETrancheType trancheType;
+    private Double exchangeRateRatioUSD;
+    private Double investmentCommitment;
+    private Double unfundedCommitment;
+    private Double investmentCommitmentUSD;
+    private Double unfundedCommitmentUSD;
+    private Double contributionsUSD;
+    private Double returnOfCapitalDistributionsUSD;
+    private Double unrealizedGainLossUSD;
+    private Double realizedGainLossUSD;
+    private String operatingCompany;
+    private String ownershipDetails;
+
+    @Column(name = "name", length = DataConstraints.C_TYPE_ENTITY_NAME)
     public String getName() {
         return name;
     }
@@ -112,7 +129,7 @@ public class ReportingPEScheduleInvestment extends CreateUpdateBaseEntity{
         this.currency = currency;
     }
 
-    @Column(name = "tranche", nullable = false)
+    @Column(name = "tranche")
     public Integer getTranche() {
         return tranche;
     }
@@ -155,5 +172,132 @@ public class ReportingPEScheduleInvestment extends CreateUpdateBaseEntity{
 
     public void setExcludeFromTarragonCalculation(Boolean excludeFromTarragonCalculation) {
         this.excludeFromTarragonCalculation = excludeFromTarragonCalculation;
+    }
+
+    @Column(name="security_no")
+    public String getSecurityNo() {
+        return securityNo;
+    }
+
+    public void setSecurityNo(String securityNo) {
+        this.securityNo = securityNo;
+    }
+
+    @Column(name="investment")
+    public String getInvestment() {
+        return investment;
+    }
+
+    public void setInvestment(String investment) {
+        this.investment = investment;
+    }
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "pe_tranche_type_id"/*, nullable = false*/)
+    public PETrancheType getTrancheType() {
+        return trancheType;
+    }
+
+    public void setTrancheType(PETrancheType trancheType) {
+        this.trancheType = trancheType;
+    }
+
+    @Column(name="exchange_rate_ratio_usd")
+    public Double getExchangeRateRatioUSD() {
+        return exchangeRateRatioUSD;
+    }
+
+    public void setExchangeRateRatioUSD(Double exchangeRateRatioUSD) {
+        this.exchangeRateRatioUSD = exchangeRateRatioUSD;
+    }
+
+    @Column(name="investment_commitment")
+    public Double getInvestmentCommitment() {
+        return investmentCommitment;
+    }
+
+    public void setInvestmentCommitment(Double investmentCommitment) {
+        this.investmentCommitment = investmentCommitment;
+    }
+
+    @Column(name="unfunded_commitment")
+    public Double getUnfundedCommitment() {
+        return unfundedCommitment;
+    }
+
+    public void setUnfundedCommitment(Double unfundedCommitment) {
+        this.unfundedCommitment = unfundedCommitment;
+    }
+
+    @Column(name="investment_commitment_usd")
+    public Double getInvestmentCommitmentUSD() {
+        return investmentCommitmentUSD;
+    }
+
+    public void setInvestmentCommitmentUSD(Double investmentCommitmentUSD) {
+        this.investmentCommitmentUSD = investmentCommitmentUSD;
+    }
+
+    @Column(name="unfunded_commitment_usd")
+    public Double getUnfundedCommitmentUSD() {
+        return unfundedCommitmentUSD;
+    }
+
+    public void setUnfundedCommitmentUSD(Double unfundedCommitmentUSD) {
+        this.unfundedCommitmentUSD = unfundedCommitmentUSD;
+    }
+
+    @Column(name="contributions_usd")
+    public Double getContributionsUSD() {
+        return contributionsUSD;
+    }
+
+    public void setContributionsUSD(Double contributionsUSD) {
+        this.contributionsUSD = contributionsUSD;
+    }
+
+    @Column(name="return_of_capital_distr_usd")
+    public Double getReturnOfCapitalDistributionsUSD() {
+        return returnOfCapitalDistributionsUSD;
+    }
+
+    public void setReturnOfCapitalDistributionsUSD(Double returnOfCapitalDistributionsUSD) {
+        this.returnOfCapitalDistributionsUSD = returnOfCapitalDistributionsUSD;
+    }
+
+    @Column(name="unrealized_gain_loss_usd")
+    public Double getUnrealizedGainLossUSD() {
+        return unrealizedGainLossUSD;
+    }
+
+    public void setUnrealizedGainLossUSD(Double unrealizedGainLossUSD) {
+        this.unrealizedGainLossUSD = unrealizedGainLossUSD;
+    }
+
+    @Column(name="realized_gain_loss_usd")
+    public Double getRealizedGainLossUSD() {
+        return realizedGainLossUSD;
+    }
+
+    public void setRealizedGainLossUSD(Double realizedGainLossUSD) {
+        this.realizedGainLossUSD = realizedGainLossUSD;
+    }
+
+    @Column(name="operating_company")
+    public String getOperatingCompany() {
+        return operatingCompany;
+    }
+
+    public void setOperatingCompany(String operatingCompany) {
+        this.operatingCompany = operatingCompany;
+    }
+
+    @Column(name="ownership_details")
+    public String getOwnershipDetails() {
+        return ownershipDetails;
+    }
+
+    public void setOwnershipDetails(String ownershipDetails) {
+        this.ownershipDetails = ownershipDetails;
     }
 }

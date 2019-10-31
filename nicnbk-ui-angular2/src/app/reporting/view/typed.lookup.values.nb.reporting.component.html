@@ -32,12 +32,14 @@
                         <!--<option value="NONE">-&#45;&#45;</option>-->
                         <option value="PE_BALANCE_TYPE">PE(Tarragon) Balance type</option>
                         <option value="PE_OPS_TYPE">PE(Tarragon) Operations type</option>
-                        <option value="PE_CASHFLOW_TYPE">PE(Tarragon) Cash Flow type</option>
-                        <option value="HF_CHART_ACCOUNTS_TYPE">HF(Singularity) Chart of Accounts type</option>
-                        <!--<option value="RE_CHART_ACCOUNTS_TYPE">RE(Terra) Chart of Accounts type</option>-->
-                        <option value="RE_BALANCE_TYPE">RE(Terra) Balance type</option>
-                        <option value="RE_PROFIT_LOSS_TYPE">RE(Terra) Profit Loss type</option>
+                        <option value="PE_INVESTMENT_TYPE">PE(Tarragon) Investment type</option>
+<!--                        <option value="PE_CASHFLOW_TYPE">PE(Tarragon) Cash Flow type</option>-->
+                        <option value="HF_CHART_ACCOUNTS_TYPE">HF(Singularity) Financial Statement Category Description</option>
+<!--                        <option value="RE_CHART_ACCOUNTS_TYPE">RE(Terra) Chart of Accounts type</option>-->
+<!--                        <option value="RE_BALANCE_TYPE">RE(Terra) Balance type</option>-->
+<!--                        <option value="RE_PROFIT_LOSS_TYPE">RE(Terra) Profit Loss type</option>-->
                         <option value="NB_CHART_ACCOUNTS">NB Chart of Accounts</option>
+                        <option value="STRATEGY">Strategy</option>
                     </select>
                 </div>
                 <!--<div class="col-md-1">-->
@@ -70,6 +72,7 @@
                     <th>NAME RU</th>
                     <th>NAME KZ</th>
                     <th>PARENT</th>
+                    <th *ngIf="selectedLookupName == 'STRATEGY'">TYPE</th>
                     <th>&nbsp;</th>
                     <th>&nbsp;</th>
                 </tr>
@@ -81,6 +84,7 @@
                     <td>{{item.nameRu}}</td>
                     <td>{{item.nameKz}}</td>
                     <td>{{item.parent != null ? (item.parent.nameEn != null ? item.parent.nameEn : item.parent.nameRu) : ''}}</td>
+                    <td *ngIf="selectedLookupName == 'STRATEGY'">{{getGroupTypeName(item.groupType)}}</td>
                     <td>
                         <button *ngIf = "item.editable" type="button" class="btn-xs btn-success" style="display: inline-block"
                                 data-toggle="modal" data-target="#editModal" (click)="edit(item)">
@@ -165,6 +169,21 @@
                                     <select class="form-control" [(ngModel)]="selectedEditLookup.parent.code">
                                         <option [value]="NONE">---</option>
                                         <option *ngFor="let item of selectedLookupValues" [value]="item.code">{{item.nameEn}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row" *ngIf="selectedLookupName == 'STRATEGY'">
+                            <div class="col-md-12">
+                                <div class="col-md-2">
+                                    <label>Group type</label>
+                                </div>
+                                <div class="col-md-10">
+                                    <select class="form-control" [(ngModel)]="selectedEditLookup.groupType">
+                                        <option [value]="1">Private Equity</option>
+                                        <option [value]="2">Hedge Funds</option>
+                                        <option [value]="3">Real Estate</option>
                                     </select>
                                 </div>
                             </div>

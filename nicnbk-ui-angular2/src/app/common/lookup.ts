@@ -1,4 +1,4 @@
-export class Lookup{
+export class Lookup {
     id: number;
     code: string;
     nameRu: string;

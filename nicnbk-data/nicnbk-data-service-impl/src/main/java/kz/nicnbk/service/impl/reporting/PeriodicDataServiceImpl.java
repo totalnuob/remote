@@ -167,12 +167,12 @@ public class PeriodicDataServiceImpl implements PeriodicDataService {
                     return saveResponse;
                 }
 
-                if(dto.getValue() <= 0){
-                    String errorMessage = "Periodic data save failed: value must be positive";
-                    logger.error(errorMessage);
-                    saveResponse.setErrorMessageEn(errorMessage);
-                    return saveResponse;
-                }
+//                if(dto.getValue() <= 0){
+//                    String errorMessage = "Periodic data save failed: value must be positive";
+//                    logger.error(errorMessage);
+//                    saveResponse.setErrorMessageEn(errorMessage);
+//                    return saveResponse;
+//                }
 
                 PeriodicData entity = this.periodicDataEntityConverter.assemble(dto);
                 entity.setRevaluated(null);

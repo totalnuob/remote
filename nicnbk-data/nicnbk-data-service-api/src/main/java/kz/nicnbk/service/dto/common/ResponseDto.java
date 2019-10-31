@@ -66,8 +66,20 @@ public class ResponseDto implements BaseDto {
         this.setMessageEn(messageEn);
     }
 
+    public void appendErrorMessageEn(String message){
+        String existingMessage = getErrorMessageEn() != null ? getErrorMessageEn() : "";
+        setErrorMessageEn(existingMessage + " " + message);
+    }
+
     public void setSuccessMessageEn(String messageEn){
         this.setStatus(ResponseStatusType.SUCCESS);
         this.setMessageEn(messageEn);
+    }
+
+    public String getErrorMessageEn(){
+        if(this.status != null && this.status == ResponseStatusType.FAIL && this.message != null){
+            return this.message.getNameEn();
+        }
+        return null;
     }
 }

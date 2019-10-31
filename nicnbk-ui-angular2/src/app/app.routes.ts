@@ -49,6 +49,7 @@ import {NotFoundComponent} from "./page-not-found.component";
 import {MainNBReportingComponent} from "./reporting/main.nb.reporting.component";
 import {InputFileUploadNBReportingComponent} from "./reporting/input.file.upload.nb.reporting.component";
 import {ScheduleInvestmentsNBReportingComponent} from "./reporting/schedule.investments.nb.reporting.component";
+import {SOIReportNBReportingComponent} from "./reporting/soi.report.nb.reporting.component";
 import {StatementBalanceOperationsNBReportingComponent} from "./reporting/statement.balance.operations.nb.reporting.component";
 import {StatementCashflowsNBReportingComponent} from "./reporting/statement.cashflows.nb.reporting.component";
 import {StatementChangesNBReportingComponent} from "./reporting/statement.changes.nb.reporting.component";
@@ -84,6 +85,7 @@ import {CorpMeetingEditComponent} from "./corpmeetings/corp-meetings-edit.compon
 import {TerraGeneralLedgerBalanceNBReportingComponent} from "./reporting/terra.general.ledger.balance.nb.reporting.component";
 import {TerraGeneratedFormNBReportingComponent} from "./reporting/terra.generated.form.nb.reporting.component";
 import {TerraCombinedNBReportingComponent} from "./reporting/terra.combined.nb.reporting.component";
+import {TerraGeneralLedgerFormNBReportingComponent} from "./reporting/terra.general.ledger.form.nb.reporting.component";
 import {PreviousYearInputViewNBReportingComponent} from "./reporting/previous.year.input.view.nb.reporting.component";
 import {TerraGeneratedFormViewNBReportingComponent} from "./reporting/terra.generated.form.view.nb.reporting.component";
 import {LookupValuesNBReportingComponent} from "./reporting/lookup.values.nb.reporting.component";
@@ -412,6 +414,11 @@ const routes: Routes  = [
         canActivate: [AuthGuard]
     },
     {
+        path: 'reporting/NBReporting/pe/soiReport/:id/:prevPageSource',
+              component: SOIReportNBReportingComponent,
+              canActivate: [AuthGuard]
+          },
+    {
         path: 'reporting/NBReporting/pe/statementBalanceOperations/:id/:prevPageSource',
         component: StatementBalanceOperationsNBReportingComponent,
         canActivate: [AuthGuard]
@@ -440,6 +447,11 @@ const routes: Routes  = [
     {
         path: 'reporting/NBReporting/re/terraCombined/:id/:prevPageSource',
         component: TerraCombinedNBReportingComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'reporting/NBReporting/re/terraGeneralLedger/:id/:prevPageSource',
+        component: TerraGeneralLedgerFormNBReportingComponent,
         canActivate: [AuthGuard]
     },
     {

@@ -24,14 +24,18 @@ public class ConsolidatedReportKZTForm7 extends CreateUpdateBaseEntity{
     private Date purchaseDate;
 
     private Double debtStartPeriod;
+    private Double interestStartPeriod;
+    //private Double remuneration;
     private Double fairValueAdjustmentsStartPeriod;
     private Double totalStartPeriod;
 
     private Double debtTurnover;
+    private Double interestTurnover;
     private Double fairValueAdjustmentsTurnoverPositive;
     private Double fairValueAdjustmentsTurnoverNegative;
 
     private Double debtEndPeriod;
+    private Double interestEndPeriod;
     private Double fairValueAdjustmentsEndPeriod;
     private Double totalEndPeriod;
 
@@ -179,5 +183,42 @@ public class ConsolidatedReportKZTForm7 extends CreateUpdateBaseEntity{
 
     public void setTotalEndPeriod(Double totalEndPeriod) {
         this.totalEndPeriod = totalEndPeriod;
+    }
+
+//    @Column(name="remuneration")
+//    public Double getRemuneration() {
+//        return remuneration;
+//    }
+//
+//    public void setRemuneration(Double remuneration) {
+//        this.remuneration = remuneration;
+//    }
+
+
+    @Column(name="interest_start_period")
+    public Double getInterestStartPeriod() {
+        return interestStartPeriod;
+    }
+
+    public void setInterestStartPeriod(Double interestStartPeriod) {
+        this.interestStartPeriod = interestStartPeriod;
+    }
+
+    @Column(name="interest_turnover")
+    public Double getInterestTurnover() {
+        return interestTurnover;
+    }
+
+    public void setInterestTurnover(Double interestTurnover) {
+        this.interestTurnover = interestTurnover;
+    }
+
+    @Column(name="interest_end_period")
+    public Double getInterestEndPeriod() {
+        return interestEndPeriod;
+    }
+
+    public void setInterestEndPeriod(Double interestEndPeriod) {
+        this.interestEndPeriod = interestEndPeriod;
     }
 }

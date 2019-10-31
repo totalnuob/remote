@@ -60,6 +60,7 @@ import {NotFoundComponent} from "./page-not-found.component";
 import {MainNBReportingComponent} from "./reporting/main.nb.reporting.component";
 import {InputFileUploadNBReportingComponent} from "./reporting/input.file.upload.nb.reporting.component";
 import {ScheduleInvestmentsNBReportingComponent} from "./reporting/schedule.investments.nb.reporting.component";
+import {SOIReportNBReportingComponent} from "./reporting/soi.report.nb.reporting.component";
 import {StatementBalanceOperationsNBReportingComponent} from "./reporting/statement.balance.operations.nb.reporting.component";
 import {StatementCashflowsNBReportingComponent} from "./reporting/statement.cashflows.nb.reporting.component";
 import {StatementChangesNBReportingComponent} from "./reporting/statement.changes.nb.reporting.component";
@@ -71,6 +72,7 @@ import {FileAttachmentDownloaderComponent} from "./common/file-attachment-downlo
 //import {GenerateReportsNBReportingComponent} from "./reporting/generate.reports.nb.reporting.component";
 import {NICKMFInputNBReportingComponent} from "./reporting/nick.mf.input.nb.reporting.component";
 import {SingularGeneratedFormNBReportingComponent} from "./reporting/singular.generated.form.nb.reporting.component";
+import {TerraGeneralLedgerFormNBReportingComponent} from "./reporting/terra.general.ledger.form.nb.reporting.component";
 import {TarragonGeneratedFormNBReportingComponent} from "./reporting/tarragon.generated.form.nb.reporting.component";
 import {GeneratedReportsNBReportingComponent} from "./reporting/generated.reports.nb.reporting.component";
 import {ConsolidatedBalanceUSDFormNBReportingComponent} from "./reporting/consolidated.balance.usd.form.nb.reporting.component";
@@ -161,11 +163,11 @@ import {HRNewsEditComponent} from "./hr/hr-news-edit.component";
         PEFundProfileComponent, PEFirmProfileComponent, PEFirmSearchComponent, PEFundReportComponent,
         AccessDeniedComponent,NotFoundComponent,
         LookupValuesNBReportingComponent, CurrencyRatesLookupValuesNBReportingComponent, TypedLookupValuesNBReportingComponent,PeriodicDataNBReportingComponent,MatchingLookupValuesNBReportingComponent,
-        ScheduleInvestmentsNBReportingComponent, StatementBalanceOperationsNBReportingComponent, StatementCashflowsNBReportingComponent, StatementChangesNBReportingComponent,
+        ScheduleInvestmentsNBReportingComponent, SOIReportNBReportingComponent, StatementBalanceOperationsNBReportingComponent, StatementCashflowsNBReportingComponent, StatementChangesNBReportingComponent,
         SingularityGeneralLedgerBalanceNBReportingComponent, SingularityNOALTrancheANBReportingComponent, SingularityNOALTrancheBNBReportingComponent,TerraGeneralLedgerBalanceNBReportingComponent,TerraCombinedNBReportingComponent,
         OtherInfoInputNBReportingComponent, /*GenerateReportsNBReportingComponent,*/ NICKMFInputNBReportingComponent, SingularGeneratedFormNBReportingComponent, TarragonGeneratedFormNBReportingComponent,
         GeneratedReportsNBReportingComponent, ConsolidatedBalanceUSDFormNBReportingComponent, PreviousYearInputNBReportingComponent, PreviousYearInputViewNBReportingComponent, ConsolidatedIncomeExpenseUSDFormNBReportingComponent,
-        ConsolidatedTotalIncomeUSDFormNBReportingComponent, NICKMFInputViewNBReportingComponent, TarragonGeneratedFormViewNBReportingComponent,TerraGeneratedFormNBReportingComponent, TerraGeneratedFormViewNBReportingComponent,
+        ConsolidatedTotalIncomeUSDFormNBReportingComponent, NICKMFInputViewNBReportingComponent, TarragonGeneratedFormViewNBReportingComponent,TerraGeneratedFormNBReportingComponent, TerraGeneratedFormViewNBReportingComponent,TerraGeneralLedgerFormNBReportingComponent,
         ConsolidatedKZTForm8NBReportingComponent, ConsolidatedKZTForm7NBReportingComponent, ConsolidatedKZTForm10NBReportingComponent, ConsolidatedKZTForm14NBReportingComponent, ConsolidatedKZTForm13NBReportingComponent,
         ConsolidatedKZTForm1NBReportingComponent, ReserveCalculationFormNBReportingComponent,ConsolidatedKZTForm2NBReportingComponent, ConsolidatedKZTForm19NBReportingComponent, ConsolidatedKZTForm22NBReportingComponent,
         ConsolidatedKZTForm3NBReportingComponent, ConsolidatedKZTForm6NBReportingComponent,

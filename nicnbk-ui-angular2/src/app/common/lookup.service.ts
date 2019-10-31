@@ -4,10 +4,13 @@ import { Injectable } from '@angular/core';
 //import {MEMO_TYPES} from "./mock.news.lookups";
 import {Lookup} from "./lookup";
 
+import {Strategy} from "./model/strategy";
+
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import {Observable} from "rxjs/Observable";
 import {CommonService} from "./common.service";
 import {PE_STRATEGIES_URL} from "./lookup.service.url";
+import {ALL_STRATEGIES_URL} from "./lookup.service.url";
 import {RE_STRATEGIES_URL} from "./lookup.service.url";
 import {HF_STRATEGIES_URL, HF_SUBSTRATEGIES_URL} from "./lookup.service.url";
 import {GEOGRAPHIES_URL} from "./lookup.service.url";
@@ -20,7 +23,11 @@ import {PE_INDUSTRY_FOCUS_URL} from "./lookup.service.url";
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 import {TRIP_TYPES} from "./mock.news.lookups";
 import {NB_CHART_OF_ACCOUNTS_URL} from "./lookup.service.url";
+import {NIC_REPORTING_PE_TRANCHE_TYPES_URL} from "./lookup.service.url";
+import {NIC_REPORTING_RE_TRANCHE_TYPES_URL} from "./lookup.service.url";
+
 import {NIC_REPORTING_CHART_OF_ACCOUNTS_URL} from "./lookup.service.url";
+import {NIC_REPORTING_CHART_OF_ACCOUNTS_TYPE_URL} from "./lookup.service.url";
 import {NICReportingChartOfAccounts} from "../reporting/model/nic.reporting.chart.of.accounts.";
 import {OptionsBehavior} from "ng2-select/index";
 import {BaseDictionary} from "./model/base-dictionary";
@@ -45,7 +52,9 @@ import {DELETE_CURRENCY_RATES_URL} from "./lookup.service.url";
 import {NB_REP_TARRAGON_BALANCE_TYPE_URL} from "./lookup.service.url";
 import {NB_REP_TARRAGON_OPERATIONS_TYPE_URL} from "./lookup.service.url";
 import {NB_REP_TARRAGON_CASHFLOWS_TYPE_URL} from "./lookup.service.url";
+import {NB_REP_TARRAGON_INVESTMENT_TYPE_URL} from "./lookup.service.url";
 import {SAVE_LOOKUP_VALUE_URL} from "./lookup.service.url";
+import {SAVE_STRATEGY_LOOKUP_VALUE_URL} from "./lookup.service.url";
 import {NB_REP_SINGULARITY_CHART_ACCOUNTS_TYPE_URL} from "./lookup.service.url";
 import {NB_CHART_ACCOUNTS__URL} from "./lookup.service.url";
 import {NB_REP_TERRA_CHART_ACCOUNTS_TYPE_URL} from "./lookup.service.url";
@@ -173,6 +182,12 @@ export class LookupService extends CommonService{
             .catch(this.handleErrorResponse);
     }
 
+    getAllStrategies(): Observable<Strategy[]>{
+            return this.http.get(ALL_STRATEGIES_URL, this.getOptionsWithCredentials())
+                .map(this.extractDataList)
+                .catch(this.handleErrorResponse);
+        }
+
     getPEStrategies(): Observable<Lookup[]>{
         return this.http.get(PE_STRATEGIES_URL, this.getOptionsWithCredentials())
             .map(this.extractDataList)
@@ -260,6 +275,18 @@ export class LookupService extends CommonService{
             .catch(this.handleErrorResponse);
     }
 
+    getPETrancheTypes(): Observable<BaseDictionary[]>{
+        return this.http.get(NIC_REPORTING_PE_TRANCHE_TYPES_URL, this.getOptionsWithCredentials())
+                .map(this.extractDataList)
+                .catch(this.handleErrorResponse);
+    }
+
+    getRETrancheTypes(): Observable<BaseDictionary[]>{
+        return this.http.get(NIC_REPORTING_RE_TRANCHE_TYPES_URL, this.getOptionsWithCredentials())
+                .map(this.extractDataList)
+                .catch(this.handleErrorResponse);
+    }
+
 
     //TODO: switch to searching
 
@@ -274,6 +301,12 @@ export class LookupService extends CommonService{
                 .catch(this.handleErrorResponse);
         }
 
+    }
+
+    getChartAccountsType(){
+        return this.http.get(NIC_REPORTING_CHART_OF_ACCOUNTS_TYPE_URL, this.getOptionsWithCredentials())
+                .map(this.extractDataList)
+                .catch(this.handleErrorResponse);
     }
 
     searchNICReportingChartOfAccounts(searchParams){
@@ -496,6 +529,11 @@ export class LookupService extends CommonService{
             .map(this.extractDataList)
             .catch(this.handleErrorResponse);
     }
+    getNBReportingTarragonInvestmentType(): Observable<BaseDictionary[]>{
+            return this.http.get(NB_REP_TARRAGON_INVESTMENT_TYPE_URL, this.getOptionsWithCredentials())
+                .map(this.extractDataList)
+                .catch(this.handleErrorResponse);
+        }
     getNBReportingSingularityChartAccountsType(): Observable<BaseDictionary[]>{
         return this.http.get(NB_REP_SINGULARITY_CHART_ACCOUNTS_TYPE_URL, this.getOptionsWithCredentials())
             .map(this.extractDataList)
@@ -525,6 +563,13 @@ export class LookupService extends CommonService{
     saveLookupValue(lookupType, item){
         let body = JSON.stringify(item);
         return this.http.post(SAVE_LOOKUP_VALUE_URL + lookupType, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    saveStrategyLookupValue(item){
+        let body = JSON.stringify(item);
+        return this.http.post(SAVE_STRATEGY_LOOKUP_VALUE_URL, body, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }

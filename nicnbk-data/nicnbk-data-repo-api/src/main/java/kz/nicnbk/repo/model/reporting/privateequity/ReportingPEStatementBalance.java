@@ -29,6 +29,8 @@ public class ReportingPEStatementBalance extends CreateUpdateBaseEntity{
     private Integer tranche;
     private Boolean isTotalSum;
 
+    private PETrancheType trancheType;
+
     private Boolean excludeFromTarragonCalculation;
 
     @Column(name = "name", length = DataConstraints.C_TYPE_ENTITY_NAME, nullable = false)
@@ -148,5 +150,15 @@ public class ReportingPEStatementBalance extends CreateUpdateBaseEntity{
 
     public void setExcludeFromTarragonCalculation(Boolean excludeFromTarragonCalculation) {
         this.excludeFromTarragonCalculation = excludeFromTarragonCalculation;
+    }
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "pe_tranche_type_id"/*, nullable = false*/)
+    public PETrancheType getTrancheType() {
+        return trancheType;
+    }
+
+    public void setTrancheType(PETrancheType trancheType) {
+        this.trancheType = trancheType;
     }
 }

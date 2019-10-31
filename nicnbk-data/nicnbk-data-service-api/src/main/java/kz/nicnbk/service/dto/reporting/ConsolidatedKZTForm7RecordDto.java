@@ -17,14 +17,18 @@ public class ConsolidatedKZTForm7RecordDto implements BaseDto {
     private Date purchaseDate;
 
     private Double debtStartPeriod;
+    private Double interestStartPeriod;
+    //private Double interest;
     private Double fairValueAdjustmentsStartPeriod;
     private Double totalStartPeriod;
 
     private Double debtTurnover;
+    private Double interestTurnover;
     private Double fairValueAdjustmentsTurnoverPositive;
     private Double fairValueAdjustmentsTurnoverNegative;
 
     private Double debtEndPeriod;
+    private Double interestEndPeriod;
     private Double fairValueAdjustmentsEndPeriod;
     private Double totalEndPeriod;
 
@@ -160,6 +164,14 @@ public class ConsolidatedKZTForm7RecordDto implements BaseDto {
         this.totalEndPeriod = totalEndPeriod;
     }
 
+//    public Double getInterest() {
+//        return interest;
+//    }
+//
+//    public void setInterest(Double interest) {
+//        this.interest = interest;
+//    }
+
     public boolean isBecameZero() {
         return becameZero;
     }
@@ -186,5 +198,29 @@ public class ConsolidatedKZTForm7RecordDto implements BaseDto {
 
     public void setCurrency(String currency) {
         this.currency = currency;
+    }
+
+    public Double getInterestStartPeriod() {
+        return interestStartPeriod;
+    }
+
+    public void setInterestStartPeriod(Double interestStartPeriod) {
+        this.interestStartPeriod = interestStartPeriod;
+    }
+
+    public Double getInterestTurnover() {
+        return interestTurnover;
+    }
+
+    public void setInterestTurnover(Double interestTurnover) {
+        this.interestTurnover = interestTurnover;
+    }
+
+    public Double getInterestEndPeriod() {
+        return interestEndPeriod;
+    }
+
+    public void setInterestEndPeriod(Double interestEndPeriod) {
+        this.interestEndPeriod = interestEndPeriod;
     }
 }

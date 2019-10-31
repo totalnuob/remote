@@ -39,9 +39,9 @@ export class TypedLookupValuesNBReportingComponent extends CommonNBReportingComp
 
     busy: Subscription;
     selectedLookupName;
-    selectedLookupValues: BaseDictionary[];
+    selectedLookupValues: any[];
 
-    selectedEditLookup: BaseDictionary;
+    selectedEditLookup: any;
 
     errorMessageSaveLookup;
     successMessageSaveLookup;
@@ -103,7 +103,21 @@ export class TypedLookupValuesNBReportingComponent extends CommonNBReportingComp
                             this.postAction(null, null);
                         }
                     );
-            }else if(this.selectedLookupName === 'HF_CHART_ACCOUNTS_TYPE'){
+            }else if(this.selectedLookupName === 'PE_INVESTMENT_TYPE'){
+                    this.busy = this.lookupService.getNBReportingTarragonInvestmentType()
+                        .subscribe(
+                            result  => {
+                                this.selectedLookupValues = result;
+                            },
+                            (error: ErrorResponse) => {
+                                this.errorMessage = "Error loading lookup";
+                                if(error && !error.isEmpty()){
+                                    this.processErrorMessage(error);
+                                }
+                                this.postAction(null, null);
+                            }
+                        );
+             }else if(this.selectedLookupName === 'HF_CHART_ACCOUNTS_TYPE'){
                 this.busy = this.lookupService.getNBReportingSingularityChartAccountsType()
                     .subscribe(
                         result  => {
@@ -174,7 +188,35 @@ export class TypedLookupValuesNBReportingComponent extends CommonNBReportingComp
                             this.postAction(null, null);
                         }
                     );
-            }
+            }else if(this.selectedLookupName === 'RE_CHART_ACCOUNTS_TYPE'){
+                 this.busy = this.lookupService.getNBReportingTerraChartAccountsType()
+                     .subscribe(
+                         result  => {
+                             this.selectedLookupValues = result;
+                         },
+                         (error: ErrorResponse) => {
+                             this.errorMessage = "Error loading lookup";
+                             if(error && !error.isEmpty()){
+                                 this.processErrorMessage(error);
+                             }
+                             this.postAction(null, null);
+                         }
+                     );
+             }else if(this.selectedLookupName === 'STRATEGY'){
+                   this.busy = this.lookupService.getAllStrategies()
+                       .subscribe(
+                           result  => {
+                               this.selectedLookupValues = result;
+                           },
+                           (error: ErrorResponse) => {
+                               this.errorMessage = "Error loading lookup";
+                               if(error && !error.isEmpty()){
+                                   this.processErrorMessage(error);
+                               }
+                               this.postAction(null, null);
+                           }
+                       );
+               }
         }
     }
 
@@ -268,34 +310,77 @@ export class TypedLookupValuesNBReportingComponent extends CommonNBReportingComp
             }
 
         }
+        if(this.selectedLookupName == 'STRATEGY'){
+            this.busy = this.lookupService.saveStrategyLookupValue(this.selectedEditLookup)
+                .subscribe(
+                    (saveResponse: SaveResponse) => {
+                        if(saveResponse.status === 'SUCCESS' ){
+                            this.errorMessageSaveLookup = null;
+                            this.successMessageSaveLookup = saveResponse.message.nameEn;
+                            this.selectedEditLookup.id = saveResponse.entityId;
 
-        this.busy = this.lookupService.saveLookupValue(this.selectedLookupName, this.selectedEditLookup)
-            .subscribe(
-                (saveResponse: SaveResponse) => {
-                    if(saveResponse.status === 'SUCCESS' ){
-                        this.errorMessageSaveLookup = null;
-                        this.successMessageSaveLookup = saveResponse.message.nameEn;
-                        this.selectedEditLookup.id = saveResponse.entityId;
+                            this.selectLookup(this.selectedLookupName);
 
-                        this.selectLookup(this.selectedLookupName);
-
-                    }else{
-                        if(saveResponse.message != null){
-                            var message = saveResponse.message.nameEn != null ? saveResponse.message.nameEn :
-                                saveResponse.message.nameRu != null ? saveResponse.message.nameRu : saveResponse.message.nameKz;
-                            if(message != null && message != ''){
-                                this.postAction(null, message);
-                            }else{
-                                this.postAction(null, "Error saving lookup value");
+                        }else{
+                            if(saveResponse.message != null){
+                                var message = saveResponse.message.nameEn != null ? saveResponse.message.nameEn :
+                                    saveResponse.message.nameRu != null ? saveResponse.message.nameRu : saveResponse.message.nameKz;
+                                if(message != null && message != ''){
+                                    this.postAction(null, message);
+                                }else{
+                                    this.postAction(null, "Error saving Strategy lookup value");
+                                }
+                                this.successMessageSaveLookup = null;
                             }
-                            this.successMessageSaveLookup = null;
                         }
+                    },
+                    (error: ErrorResponse) => {
+                        this.errorMessageSaveLookup = error && error.message ? error.message : "Error saving Strategy lookup value.";
+                        this.successMessageSaveLookup = null;
                     }
-                },
-                (error: ErrorResponse) => {
-                    this.errorMessageSaveLookup = error && error.message ? error.message : "Error saving lookup value.";
-                    this.successMessageSaveLookup = null;
-                }
-            );
+                );
+        }else{
+
+            this.busy = this.lookupService.saveLookupValue(this.selectedLookupName, this.selectedEditLookup)
+                .subscribe(
+                    (saveResponse: SaveResponse) => {
+                        if(saveResponse.status === 'SUCCESS' ){
+                            this.errorMessageSaveLookup = null;
+                            this.successMessageSaveLookup = saveResponse.message.nameEn;
+                            this.selectedEditLookup.id = saveResponse.entityId;
+
+                            this.selectLookup(this.selectedLookupName);
+
+                        }else{
+                            if(saveResponse.message != null){
+                                var message = saveResponse.message.nameEn != null ? saveResponse.message.nameEn :
+                                    saveResponse.message.nameRu != null ? saveResponse.message.nameRu : saveResponse.message.nameKz;
+                                if(message != null && message != ''){
+                                    this.postAction(null, message);
+                                }else{
+                                    this.postAction(null, "Error saving lookup value");
+                                }
+                                this.successMessageSaveLookup = null;
+                            }
+                        }
+                    },
+                    (error: ErrorResponse) => {
+                        this.errorMessageSaveLookup = error && error.message ? error.message : "Error saving lookup value.";
+                        this.successMessageSaveLookup = null;
+                    }
+                );
+        }
+    }
+
+    getGroupTypeName(groupType){
+        if(groupType == 1){
+            return "PE";
+        }else if(groupType == 2){
+            return "HF";
+        }else if(groupType == 3){
+            return "RE";
+        }else{
+            return '';
+        }
     }
 }

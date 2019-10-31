@@ -43,7 +43,9 @@ public class PEStatementChangesServiceImpl implements PEStatementChangesService 
 
         entity.setTrancheA(dto.getValues()[0]);
         entity.setTrancheB(dto.getValues()[1]);
-        entity.setTotal(dto.getValues()[2]);
+        entity.setTrancheA2(dto.getValues()[2]);
+        entity.setTrancheB2(dto.getValues()[3]);
+        entity.setTotal(dto.getValues()[4]);
 
         // report
         entity.setReport(new PeriodicReport(reportId));
@@ -147,7 +149,7 @@ public class PEStatementChangesServiceImpl implements PEStatementChangesService 
         if(entities != null && !entities.isEmpty()){
             for(ReportingPEStatementChanges entity: entities) {
 
-                Double[] values = {entity.getTrancheA(), entity.getTrancheB(), entity.getTotal()};
+                Double[] values = {entity.getTrancheA(), entity.getTrancheB(), entity.getTrancheA2(), entity.getTrancheB2(), entity.getTotal()};
                 ConsolidatedReportRecordDto recordDto = new ConsolidatedReportRecordDto(entity.getName(), null, values, null, false, false);
                 records.add(recordDto);
             }
