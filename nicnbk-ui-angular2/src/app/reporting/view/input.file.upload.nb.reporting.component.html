@@ -28,44 +28,83 @@
             <tr bgcolor="#e7e7e7">
                 <td colspan="2">Tarragon</td>
             </tr>
+<!--            <tr>-->
+<!--                <td><span style="color: red;">*&nbsp;</span>Schedule of Investments</td>-->
+<!--                <td>-->
+<!--                    <label class="btn btn-xs btn-default" for="attachmentFileT1" *ngIf="showUploadButton('tarragon_schedule_investment')">-->
+<!--                        <input type="file" id="attachmentFileT1" (change)="onFileChange($event, 'tarragon_schedule_investment')" name="attachmentFileT1" style="display:none;"/>-->
+<!--                        <span class="glyphicon glyphicon-circle-arrow-up"></span>-->
+<!--                    </label>-->
+<!--                    <label *ngIf="fileTarragonScheduleInvestment != null" class="label label-info">{{fileTarragonScheduleInvestment[0].name}}</label>-->
+
+<!--                    <button *ngIf="showDownloadButton('tarragon_schedule_investment')" class="btn btn-xs btn-default"-->
+<!--                            (click)="download('NB_REP_T1', report.tarragonScheduleInvestmentFileId, report.tarragonScheduleInvestmentFileName)">-->
+<!--                        <span class="glyphicon glyphicon-download-alt"></span>-->
+<!--                        <i class="glyphicon glyphicon-refresh" *ngIf="pending"></i>-->
+<!--                    </button>-->
+
+<!--                    <button *ngIf="showProcessButton('tarragon_schedule_investment')" class="btn btn-xs btn-success"-->
+<!--                            (click)="uploadFile('tarragon_schedule_investment')">-->
+<!--                        <span class="glyphicon glyphicon-play-circle"></span>-->
+<!--                    </button>-->
+
+<!--                    <button *ngIf="showProcessButton('tarragon_schedule_investment')" class="btn btn-xs btn-danger"-->
+<!--                            (click)="clearFile('tarragon_schedule_investment')">-->
+<!--                        <span class="glyphicon glyphicon-trash"></span>-->
+<!--                    </button>-->
+
+<!--                    <button *ngIf="showViewButton('tarragon_schedule_investment')" class="btn btn-xs btn-primary"-->
+<!--                            [routerLink]="['/reporting/NBReporting/pe/scheduleInvestments/', periodicReport.id, 'INPUT']">-->
+<!--                            <span class="glyphicon glyphicon-search"></span>-->
+<!--                    </button>-->
+<!--                    <button *ngIf="showDeleteButton('tarragon_schedule_investment')" class="btn btn-xs btn-danger" (click)="deleteFile('tarragon_schedule_investment')">-->
+<!--                        <span class="glyphicon glyphicon-trash"></span>-->
+<!--                    </button>-->
+
+<!--                    &lt;!&ndash;<a data-toggle="modal" data-target="#infoModal" (click)="getInfo('tarragon_schedule_investment')" style="cursor: pointer">&ndash;&gt;-->
+<!--                        &lt;!&ndash;<span class="glyphicon glyphicon-question-sign"></span>&ndash;&gt;-->
+<!--                    &lt;!&ndash;</a>&ndash;&gt;-->
+<!--                </td>-->
+<!--            </tr>-->
             <tr>
-                <td><span style="color: red;">*&nbsp;</span>Schedule of Investments</td>
+                <td><span style="color: red;">*&nbsp;</span>SOI Report</td>
                 <td>
-                    <label class="btn btn-xs btn-default" for="attachmentFileT1" *ngIf="showUploadButton('tarragon_schedule_investment')">
-                        <input type="file" id="attachmentFileT1" (change)="onFileChange($event, 'tarragon_schedule_investment')" name="attachmentFileT1" style="display:none;"/>
+                    <label class="btn btn-xs btn-default" for="attachmentFileT5" *ngIf="showUploadButton('tarragon_soi_report')">
+                        <input type="file" id="attachmentFileT5" (change)="onFileChange($event, 'tarragon_soi_report')" name="attachmentFileT5" style="display:none;"/>
                         <span class="glyphicon glyphicon-circle-arrow-up"></span>
                     </label>
-                    <label *ngIf="fileTarragonScheduleInvestment != null" class="label label-info">{{fileTarragonScheduleInvestment[0].name}}</label>
+                    <label *ngIf="fileTarragonSOIReport != null" class="label label-info">{{fileTarragonSOIReport[0].name}}</label>
 
-                    <button *ngIf="showDownloadButton('tarragon_schedule_investment')" class="btn btn-xs btn-default"
-                            (click)="download('NB_REP_T1', report.tarragonScheduleInvestmentFileId, report.tarragonScheduleInvestmentFileName)">
+                    <button *ngIf="showDownloadButton('tarragon_soi_report')" class="btn btn-xs btn-default"
+                            (click)="download('NB_REP_T5', report.tarragonSOIReportFileId, report.tarragonSOIReportFileName)">
                         <span class="glyphicon glyphicon-download-alt"></span>
                         <i class="glyphicon glyphicon-refresh" *ngIf="pending"></i>
                     </button>
 
-                    <button *ngIf="showProcessButton('tarragon_schedule_investment')" class="btn btn-xs btn-success"
-                            (click)="uploadFile('tarragon_schedule_investment')">
+                    <button *ngIf="showProcessButton('tarragon_soi_report')" class="btn btn-xs btn-success"
+                            (click)="uploadFile('tarragon_soi_report')">
                         <span class="glyphicon glyphicon-play-circle"></span>
                     </button>
 
-                    <button *ngIf="showProcessButton('tarragon_schedule_investment')" class="btn btn-xs btn-danger"
-                            (click)="clearFile('tarragon_schedule_investment')">
+                    <button *ngIf="showProcessButton('tarragon_soi_report')" class="btn btn-xs btn-danger"
+                            (click)="clearFile('tarragon_soi_report')">
                         <span class="glyphicon glyphicon-trash"></span>
                     </button>
 
-                    <button *ngIf="showViewButton('tarragon_schedule_investment')" class="btn btn-xs btn-primary"
-                            [routerLink]="['/reporting/NBReporting/pe/scheduleInvestments/', periodicReport.id, 'INPUT']">
-                            <span class="glyphicon glyphicon-search"></span>
+                    <button *ngIf="showViewButton('tarragon_soi_report')" class="btn btn-xs btn-primary"
+                            [routerLink]="['/reporting/NBReporting/pe/soiReport/', periodicReport.id, 'INPUT']">
+                        <span class="glyphicon glyphicon-search"></span>
                     </button>
-                    <button *ngIf="showDeleteButton('tarragon_schedule_investment')" class="btn btn-xs btn-danger" (click)="deleteFile('tarragon_schedule_investment')">
+                    <button *ngIf="showDeleteButton('tarragon_soi_report')" class="btn btn-xs btn-danger" (click)="deleteFile('tarragon_soi_report')">
                         <span class="glyphicon glyphicon-trash"></span>
                     </button>
 
                     <!--<a data-toggle="modal" data-target="#infoModal" (click)="getInfo('tarragon_schedule_investment')" style="cursor: pointer">-->
-                        <!--<span class="glyphicon glyphicon-question-sign"></span>-->
+                    <!--<span class="glyphicon glyphicon-question-sign"></span>-->
                     <!--</a>-->
                 </td>
             </tr>
+
             <tr>
                 <td><span style="color: red;">*&nbsp;</span>Statement of Assets Liability</td>
                 <td>
@@ -102,42 +141,42 @@
                     <!--</a>-->
                 </td>
             </tr>
-            <tr>
-                <td><span>&nbsp;</span>Statement of Cash Flows</td>
-                <td>
-                    <label class="btn btn-xs btn-default" for="attachmentFileT3" *ngIf="showUploadButton('tarragon_statement_cashflows')">
-                        <input type="file" id="attachmentFileT3" (change)="onFileChange($event, 'tarragon_statement_cashflows')" name="attachmentFileT3" style="display:none;"/>
-                        <span class="glyphicon glyphicon-circle-arrow-up"></span>
-                    </label>
-                    <label *ngIf="fileTarragonStatementCashflows != null" class="label label-info">{{fileTarragonStatementCashflows[0].name}}</label>
+<!--            <tr>-->
+<!--                <td><span>&nbsp;</span>Statement of Cash Flows</td>-->
+<!--                <td>-->
+<!--                    <label class="btn btn-xs btn-default" for="attachmentFileT3" *ngIf="showUploadButton('tarragon_statement_cashflows')">-->
+<!--                        <input type="file" id="attachmentFileT3" (change)="onFileChange($event, 'tarragon_statement_cashflows')" name="attachmentFileT3" style="display:none;"/>-->
+<!--                        <span class="glyphicon glyphicon-circle-arrow-up"></span>-->
+<!--                    </label>-->
+<!--                    <label *ngIf="fileTarragonStatementCashflows != null" class="label label-info">{{fileTarragonStatementCashflows[0].name}}</label>-->
 
-                    <button *ngIf="showDownloadButton('tarragon_statement_cashflows')" class="btn btn-xs btn-default"
-                            (click)="download('NB_REP_T3', report.tarragonStatementCashflowsFileId, report.tarragonStatementCashflowsFileName)">
-                        <span class="glyphicon glyphicon-download-alt"></span>
-                        <i class="glyphicon glyphicon-refresh" *ngIf="pending"></i>
-                    </button>
+<!--                    <button *ngIf="showDownloadButton('tarragon_statement_cashflows')" class="btn btn-xs btn-default"-->
+<!--                            (click)="download('NB_REP_T3', report.tarragonStatementCashflowsFileId, report.tarragonStatementCashflowsFileName)">-->
+<!--                        <span class="glyphicon glyphicon-download-alt"></span>-->
+<!--                        <i class="glyphicon glyphicon-refresh" *ngIf="pending"></i>-->
+<!--                    </button>-->
 
-                    <button *ngIf="showProcessButton('tarragon_statement_cashflows')" class="btn btn-xs btn-success"
-                            (click)="uploadFile('tarragon_statement_cashflows')">
-                        <span class="glyphicon glyphicon-play-circle"></span>
-                    </button>
-                    <button *ngIf="showProcessButton('tarragon_statement_cashflows')" class="btn btn-xs btn-danger"
-                            (click)="clearFile('tarragon_statement_cashflows')">
-                        <span class="glyphicon glyphicon-trash"></span>
-                    </button>
-                    <button *ngIf="showViewButton('tarragon_statement_cashflows')" class="btn btn-xs btn-primary"
-                            [routerLink]="['/reporting/NBReporting/pe/statementCashflows/', periodicReport.id, 'INPUT']">
-                        <span class="glyphicon glyphicon-search"></span>
-                    </button>
-                    <button *ngIf="showDeleteButton('tarragon_statement_cashflows')" class="btn btn-xs btn-danger" (click)="deleteFile('tarragon_statement_cashflows')">
-                        <span class="glyphicon glyphicon-trash"></span>
-                    </button>
+<!--                    <button *ngIf="showProcessButton('tarragon_statement_cashflows')" class="btn btn-xs btn-success"-->
+<!--                            (click)="uploadFile('tarragon_statement_cashflows')">-->
+<!--                        <span class="glyphicon glyphicon-play-circle"></span>-->
+<!--                    </button>-->
+<!--                    <button *ngIf="showProcessButton('tarragon_statement_cashflows')" class="btn btn-xs btn-danger"-->
+<!--                            (click)="clearFile('tarragon_statement_cashflows')">-->
+<!--                        <span class="glyphicon glyphicon-trash"></span>-->
+<!--                    </button>-->
+<!--                    <button *ngIf="showViewButton('tarragon_statement_cashflows')" class="btn btn-xs btn-primary"-->
+<!--                            [routerLink]="['/reporting/NBReporting/pe/statementCashflows/', periodicReport.id, 'INPUT']">-->
+<!--                        <span class="glyphicon glyphicon-search"></span>-->
+<!--                    </button>-->
+<!--                    <button *ngIf="showDeleteButton('tarragon_statement_cashflows')" class="btn btn-xs btn-danger" (click)="deleteFile('tarragon_statement_cashflows')">-->
+<!--                        <span class="glyphicon glyphicon-trash"></span>-->
+<!--                    </button>-->
 
-                    <!--<a data-toggle="modal" data-target="#infoModal" (click)="getInfo('tarragon_statement_cashflows')" style="cursor: pointer">-->
-                        <!--<span class="glyphicon glyphicon-question-sign"></span>-->
-                    <!--</a>-->
-                </td>
-            </tr>
+<!--                    &lt;!&ndash;<a data-toggle="modal" data-target="#infoModal" (click)="getInfo('tarragon_statement_cashflows')" style="cursor: pointer">&ndash;&gt;-->
+<!--                        &lt;!&ndash;<span class="glyphicon glyphicon-question-sign"></span>&ndash;&gt;-->
+<!--                    &lt;!&ndash;</a>&ndash;&gt;-->
+<!--                </td>-->
+<!--            </tr>-->
             <tr>
                 <td><span style="color: red;">*&nbsp;</span>Statement of Changes </td>
                 <td>
@@ -545,34 +584,66 @@
                     <!--</button>-->
                 <!--</td>-->
             <!--</tr>-->
+<!--            <tr>-->
+<!--                <td><span style="color: red;">*&nbsp;</span>Terra - Combined</td>-->
+<!--                <td>-->
+<!--                    <label class="btn btn-xs btn-default" for="attachmentFileTerraCombined" *ngIf="showUploadButton('terra_combined')">-->
+<!--                        <input type="file" id="attachmentFileTerraCombined" (change)="onFileChange($event, 'terra_combined')" name="attachmentFileTerraCombined" style="display:none;"/>-->
+<!--                        <span class="glyphicon glyphicon-circle-arrow-up"></span>-->
+<!--                    </label>-->
+<!--                    <label *ngIf="fileTerraCombined != null" class="label label-info">{{fileTerraCombined[0].name}}</label>-->
+
+<!--                    <button *ngIf="showDownloadButton('terra_combined')" class="btn btn-xs btn-default"-->
+<!--                            (click)="download('NB_REP_CMB', report.terraCombinedFileId, report.terraCombinedFileName)">-->
+<!--                        <span class="glyphicon glyphicon-download-alt"></span>-->
+<!--                        <i class="glyphicon glyphicon-refresh" *ngIf="pending"></i>-->
+<!--                    </button>-->
+
+<!--                    <button *ngIf="showProcessButton('terra_combined')" class="btn btn-xs btn-success"-->
+<!--                            (click)="uploadFile('terra_combined')">-->
+<!--                        <span class="glyphicon glyphicon-play-circle"></span>-->
+<!--                    </button>-->
+<!--                    <button *ngIf="showProcessButton('terra_combined')" class="btn btn-xs btn-danger"-->
+<!--                            (click)="clearFile('terra_combined')">-->
+<!--                        <span class="glyphicon glyphicon-trash"></span>-->
+<!--                    </button>-->
+<!--                    <button *ngIf="showViewButton('terra_combined')" class="btn btn-xs btn-primary"-->
+<!--                            [routerLink]="['/reporting/NBReporting/re/terraCombined/', periodicReport.id, 'INPUT']">-->
+<!--                        <span class="glyphicon glyphicon-search"></span>-->
+<!--                    </button>-->
+<!--                    <button *ngIf="showDeleteButton('terra_combined')" class="btn btn-xs btn-danger" (click)="deleteFile('terra_combined')">-->
+<!--                        <span class="glyphicon glyphicon-trash"></span>-->
+<!--                    </button>-->
+<!--                </td>-->
+<!--            </tr>-->
             <tr>
-                <td><span style="color: red;">*&nbsp;</span>Terra - Combined</td>
+                <td><span style="color: red;">*&nbsp;</span>Terra - General Ledger</td>
                 <td>
-                    <label class="btn btn-xs btn-default" for="attachmentFileTerraCombined" *ngIf="showUploadButton('terra_combined')">
-                        <input type="file" id="attachmentFileTerraCombined" (change)="onFileChange($event, 'terra_combined')" name="attachmentFileTerraCombined" style="display:none;"/>
+                    <label class="btn btn-xs btn-default" for="attachmentFileTerraGeneralLedger" *ngIf="showUploadButton('terra_general_ledger')">
+                        <input type="file" id="attachmentFileTerraGeneralLedger" (change)="onFileChange($event, 'terra_general_ledger')" name="attachmentFileTerraGeneralLedger" style="display:none;"/>
                         <span class="glyphicon glyphicon-circle-arrow-up"></span>
                     </label>
-                    <label *ngIf="fileTerraCombined != null" class="label label-info">{{fileTerraCombined[0].name}}</label>
+                    <label *ngIf="fileTerraGeneralLedger != null" class="label label-info">{{fileTerraGeneralLedger[0].name}}</label>
 
-                    <button *ngIf="showDownloadButton('terra_combined')" class="btn btn-xs btn-default"
-                            (click)="download('NB_REP_CMB', report.terraCombinedFileId, report.terraCombinedFileName)">
+                    <button *ngIf="showDownloadButton('terra_general_ledger')" class="btn btn-xs btn-default"
+                            (click)="download('NB_REP_TGL', report.terraGeneralLedgerFileId, report.terraGeneralLedgerFileName)">
                         <span class="glyphicon glyphicon-download-alt"></span>
                         <i class="glyphicon glyphicon-refresh" *ngIf="pending"></i>
                     </button>
 
-                    <button *ngIf="showProcessButton('terra_combined')" class="btn btn-xs btn-success"
-                            (click)="uploadFile('terra_combined')">
+                    <button *ngIf="showProcessButton('terra_general_ledger')" class="btn btn-xs btn-success"
+                            (click)="uploadFile('terra_general_ledger')">
                         <span class="glyphicon glyphicon-play-circle"></span>
                     </button>
-                    <button *ngIf="showProcessButton('terra_combined')" class="btn btn-xs btn-danger"
-                            (click)="clearFile('terra_combined')">
+                    <button *ngIf="showProcessButton('terra_general_ledger')" class="btn btn-xs btn-danger"
+                            (click)="clearFile('terra_general_ledger')">
                         <span class="glyphicon glyphicon-trash"></span>
                     </button>
-                    <button *ngIf="showViewButton('terra_combined')" class="btn btn-xs btn-primary"
-                            [routerLink]="['/reporting/NBReporting/re/terraCombined/', periodicReport.id, 'INPUT']">
+                    <button *ngIf="showViewButton('terra_general_ledger')" class="btn btn-xs btn-primary"
+                            [routerLink]="['/reporting/NBReporting/re/terraGeneralLedger/', periodicReport.id, 'INPUT']">
                         <span class="glyphicon glyphicon-search"></span>
                     </button>
-                    <button *ngIf="showDeleteButton('terra_combined')" class="btn btn-xs btn-danger" (click)="deleteFile('terra_combined')">
+                    <button *ngIf="showDeleteButton('terra_general_ledger')" class="btn btn-xs btn-danger" (click)="deleteFile('terra_general_ledger')">
                         <span class="glyphicon glyphicon-trash"></span>
                     </button>
                 </td>

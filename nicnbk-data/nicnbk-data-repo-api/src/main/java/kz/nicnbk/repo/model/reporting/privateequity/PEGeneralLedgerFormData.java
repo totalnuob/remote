@@ -15,6 +15,7 @@ import javax.persistence.*;
 public class PEGeneralLedgerFormData extends CreateUpdateBaseEntity{
 
     private Integer tranche;
+    private PETrancheType trancheType;
     private FinancialStatementCategory financialStatementCategory;
     private TarragonNICChartOfAccounts tarragonNICChartOfAccounts;
     private Double GLAccountBalance;
@@ -27,6 +28,16 @@ public class PEGeneralLedgerFormData extends CreateUpdateBaseEntity{
 
     public void setTranche(Integer tranche) {
         this.tranche = tranche;
+    }
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "pe_tranche_type_id"/*, nullable = false*/)
+    public PETrancheType getTrancheType() {
+        return trancheType;
+    }
+
+    public void setTrancheType(PETrancheType trancheType) {
+        this.trancheType = trancheType;
     }
 
     @ManyToOne(fetch = FetchType.EAGER)

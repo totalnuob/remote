@@ -1,10 +1,13 @@
 package kz.nicnbk.service.impl.reporting.privateequity;
 
+import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.api.lookup.PEOperationsTypeRepository;
+import kz.nicnbk.repo.api.lookup.PETrancheTypeRepository;
 import kz.nicnbk.repo.api.reporting.privateequity.ReportingPEStatementOperationsRepository;
 import kz.nicnbk.repo.model.reporting.PeriodicReport;
 import kz.nicnbk.repo.model.reporting.privateequity.PEOperationsType;
+import kz.nicnbk.repo.model.reporting.privateequity.PETrancheType;
 import kz.nicnbk.repo.model.reporting.privateequity.ReportingPEStatementOperations;
 import kz.nicnbk.service.api.reporting.privateequity.PEStatementOperationsService;
 import kz.nicnbk.service.converter.reporting.PeriodicReportConverter;
@@ -13,6 +16,8 @@ import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordDto;
 import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordHolderDto;
 import kz.nicnbk.service.dto.reporting.StatementBalanceOperationsDto;
 import kz.nicnbk.common.service.exception.ExcelFileParseException;
+import kz.nicnbk.service.dto.reporting.privateequity.TarragonStatementBalanceOperationsHolderDto;
+import kz.nicnbk.service.dto.reporting.privateequity.TarragonStatementBalanceOperationsTrancheDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +25,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by magzumov on 14.07.2017.
@@ -37,6 +39,9 @@ public class PEStatementOperationsServiceImpl implements PEStatementOperationsSe
     private PEOperationsTypeRepository peOperationsTypeRepository;
 
     @Autowired
+    private PETrancheTypeRepository peTrancheTypeRepository;
+
+    @Autowired
     private ReportingPEStatementOperationsRepository peStatementOperationsRepository;
 
     @Autowired
@@ -46,8 +51,8 @@ public class PEStatementOperationsServiceImpl implements PEStatementOperationsSe
     private ReportingPEStatementOperationsConverter statementOperationsConverter;
 
     @Override
-    public ReportingPEStatementOperations assemble(ConsolidatedReportRecordDto dto, int tranche, Long reportId) {
-        String trancheName = tranche == 1 ? "[Tranche A]" : tranche == 2 ? "[Tranche B]" : "";
+    public ReportingPEStatementOperations assemble(ConsolidatedReportRecordDto dto, String trancheTypeNameEn, Long reportId) {
+        String trancheName = trancheTypeNameEn;
         ReportingPEStatementOperations entity = new ReportingPEStatementOperations();
         entity.setName(dto.getName());
         entity.setTarragonMFTotal(dto.getValues()[0]);
@@ -59,12 +64,21 @@ public class PEStatementOperationsServiceImpl implements PEStatementOperationsSe
         entity.setNICKMFShareConsolidated(dto.getValues()[6]);
         entity.setTotalSum(dto.isTotalSum());
 
-
         // report
         entity.setReport(new PeriodicReport(reportId));
 
         // tranche
-        entity.setTranche(tranche);
+        //entity.setTranche(tranche);
+        if(trancheTypeNameEn != null){
+            PETrancheType trancheType = this.peTrancheTypeRepository.findByNameEnIgnoreCase(trancheTypeNameEn);
+            if(trancheType != null){
+                entity.setTrancheType(trancheType);
+            }else{
+                String errorMessage = " Tranche type could not be determined for record '" + entity.getName() + "' (" + trancheTypeNameEn + ")";
+                logger.error(errorMessage);
+                throw new ExcelFileParseException(errorMessage);
+            }
+        }
 
         // operations type
         for(String classification: dto.getClassifications()){
@@ -77,9 +91,9 @@ public class PEStatementOperationsServiceImpl implements PEStatementOperationsSe
             }
         }
         if(entity.getType() == null){
-            PEOperationsType balanceType = this.peOperationsTypeRepository.findByNameEnIgnoreCase(dto.getName().trim());
-            if(balanceType != null){
-                entity.setType(balanceType);
+            PEOperationsType operationsType = this.peOperationsTypeRepository.findByNameEnIgnoreCase(dto.getName().trim());
+            if(operationsType != null){
+                entity.setType(operationsType);
                 //break;
             }
         }
@@ -94,11 +108,11 @@ public class PEStatementOperationsServiceImpl implements PEStatementOperationsSe
     }
 
     @Override
-    public List<ReportingPEStatementOperations> assembleList(List<ConsolidatedReportRecordDto> dtoList, int tranche, Long reportId) {
+    public List<ReportingPEStatementOperations> assembleList(List<ConsolidatedReportRecordDto> dtoList, String trancheTypeNameEn, Long reportId) {
         List<ReportingPEStatementOperations> entities = new ArrayList<>();
         if(dtoList != null){
             for(ConsolidatedReportRecordDto dto: dtoList){
-                ReportingPEStatementOperations entity = assemble(dto, tranche, reportId);
+                ReportingPEStatementOperations entity = assemble(dto, trancheTypeNameEn, reportId);
                 entities.add(entity);
             }
         }
@@ -143,18 +157,34 @@ public class PEStatementOperationsServiceImpl implements PEStatementOperationsSe
     }
 
     @Override
+    public TarragonStatementBalanceOperationsHolderDto getStatementOperations(Long reportId){
+        List<ReportingPEStatementOperations> entities = this.peStatementOperationsRepository.getEntitiesByReportId(reportId);
+        TarragonStatementBalanceOperationsHolderDto holderDto = new TarragonStatementBalanceOperationsHolderDto();
+        List<TarragonStatementBalanceOperationsTrancheDto> recordsByTranche = disassembleByTranche(entities);
+        holderDto.setOperationsRecords(recordsByTranche);
+        if(entities != null && !entities.isEmpty()) {
+            holderDto.setReport(periodicReportConverter.disassemble(entities.get(0).getReport()));
+        }
+        return holderDto;
+    }
+
+    @Override
     public List<StatementBalanceOperationsDto> getStatementOperationsRecords(Long reportId) {
-        List<ReportingPEStatementOperations> entitiesTrancheA = this.peStatementOperationsRepository.getEntitiesByReportIdAndTranche(reportId, 1,
-                new PageRequest(0, 1000, new Sort(Sort.Direction.ASC, "id")));
+//        List<ReportingPEStatementOperations> entitiesTrancheA = this.peStatementOperationsRepository.getEntitiesByReportIdAndTranche(reportId, 1,
+//                new PageRequest(0, 1000, new Sort(Sort.Direction.ASC, "id")));
+//
+//        List<ReportingPEStatementOperations> entitiesTrancheB = this.peStatementOperationsRepository.getEntitiesByReportIdAndTranche(reportId, 2,
+//                new PageRequest(0, 1000, new Sort(Sort.Direction.ASC, "id")));
+//
+//        List<StatementBalanceOperationsDto> dtoListTrancheA = disassembleStatementOperationsList(entitiesTrancheA);
+//        List<StatementBalanceOperationsDto> dtoListTrancheB = disassembleStatementOperationsList(entitiesTrancheB);
+//        dtoListTrancheA.addAll(dtoListTrancheB);
 
-        List<ReportingPEStatementOperations> entitiesTrancheB = this.peStatementOperationsRepository.getEntitiesByReportIdAndTranche(reportId, 2,
-                new PageRequest(0, 1000, new Sort(Sort.Direction.ASC, "id")));
 
-        List<StatementBalanceOperationsDto> dtoListTrancheA = disassembleStatementOperationsList(entitiesTrancheA);
-        List<StatementBalanceOperationsDto> dtoListTrancheB = disassembleStatementOperationsList(entitiesTrancheB);
+        List<ReportingPEStatementOperations> entities = this.peStatementOperationsRepository.getEntitiesByReportId(reportId);
+        List<StatementBalanceOperationsDto> dtoList= disassembleStatementOperationsList(entities);
 
-        dtoListTrancheA.addAll(dtoListTrancheB);
-        return dtoListTrancheA;
+        return dtoList;
     }
 
     @Override
@@ -213,6 +243,53 @@ public class PEStatementOperationsServiceImpl implements PEStatementOperationsSe
             }
         }
         return records;
+    }
+
+    private List<TarragonStatementBalanceOperationsTrancheDto> disassembleByTranche(List<ReportingPEStatementOperations> entities){
+        Map<String, List<ConsolidatedReportRecordDto>> trancheMap = new HashMap<>();
+        if(entities != null){
+            PEOperationsType currentType = null;
+            Set<String> types = new HashSet<>();
+            for(ReportingPEStatementOperations entity: entities){
+                boolean operationsTypeSwitch = currentType != null && entity.getType() != null
+                        && !entity.getType().getCode().equalsIgnoreCase(currentType.getCode());
+                // add headers by type
+                if(operationsTypeSwitch || currentType == null){
+                    // check if need header
+                    List<String> headers = new ArrayList<>();
+                    if(types == null || (entity.getType() != null && !types.contains(entity.getType().getNameEn()))){
+                        // add headers
+                        PEOperationsType parent = entity.getType();
+                        while(parent != null && !types.contains(parent.getNameEn())){
+                            headers.add(parent.getNameEn());
+                            parent = parent.getParent();
+                        }
+
+                        for(int i = headers.size() - 1; i >= 0; i--){
+                            if(trancheMap.get(entity.getTrancheType().getNameEn()) == null){
+                                trancheMap.put(entity.getTrancheType().getNameEn(), new ArrayList<>());
+                            }
+                            trancheMap.get(entity.getTrancheType().getNameEn()).add(new ConsolidatedReportRecordDto(headers.get(i), null, null, null, true, false));
+                            types.add(headers.get(i));
+                        }
+                    }
+                }
+
+                currentType = entity.getType();
+                if(trancheMap.get(entity.getTrancheType().getNameEn()) == null){
+                    trancheMap.put(entity.getTrancheType().getNameEn(), new ArrayList<>());
+                }
+                trancheMap.get(entity.getTrancheType().getNameEn()).add(disassemble(entity));
+            }
+        }
+        List<TarragonStatementBalanceOperationsTrancheDto> resultRecords = new ArrayList<>();
+        trancheMap.forEach((trancheName, values)->{
+            TarragonStatementBalanceOperationsTrancheDto trancheDto = new TarragonStatementBalanceOperationsTrancheDto();
+            trancheDto.setTrancheType(new BaseDictionaryDto(null, trancheName, null, null));
+            trancheDto.setRecords(values);
+            resultRecords.add(trancheDto);
+        });
+        return resultRecords;
     }
 
     public ConsolidatedReportRecordDto disassemble(ReportingPEStatementOperations entity){

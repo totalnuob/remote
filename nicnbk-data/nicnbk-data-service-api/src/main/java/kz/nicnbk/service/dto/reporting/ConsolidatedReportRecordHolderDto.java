@@ -19,6 +19,8 @@ public class ConsolidatedReportRecordHolderDto implements BaseDto {
     private List<ConsolidatedReportRecordDto> trancheA;
     private List<ConsolidatedReportRecordDto> trancheB;
 
+    private List<ScheduleInvestmentsDto> scheduleInvestments;
+
     // Statement of Assets, Liabilities and Partners Capital (Statement of Operations)
     private List<ConsolidatedReportRecordDto> balanceTrancheA;
     private List<ConsolidatedReportRecordDto> balanceTrancheB;
@@ -144,12 +146,23 @@ public class ConsolidatedReportRecordHolderDto implements BaseDto {
         this.realEstateGeneralLedgerBalanceList = realEstateGeneralLedgerBalanceList;
     }
 
+    public List<ScheduleInvestmentsDto> getScheduleInvestments() {
+        return scheduleInvestments;
+    }
+
+    public void setScheduleInvestments(List<ScheduleInvestmentsDto> scheduleInvestments) {
+        this.scheduleInvestments = scheduleInvestments;
+    }
+
     public void merge(ConsolidatedReportRecordHolderDto other){
         if(other.trancheA != null && !other.trancheA.isEmpty()){
             this.trancheA = other.trancheA;
         }
         if(other.trancheB != null && !other.trancheB.isEmpty()){
             this.trancheB = other.trancheB;
+        }
+        if(other.scheduleInvestments != null && !other.scheduleInvestments.isEmpty()){
+            this.scheduleInvestments = other.scheduleInvestments;
         }
         if(other.balanceTrancheA != null && !other.balanceTrancheA.isEmpty()){
             this.balanceTrancheA = other.balanceTrancheA;

@@ -21,6 +21,22 @@
     <div class="row withpadding">
         <h3 *ngIf="reportId != null">2. NICK Master Fund</h3>
     </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="col-md-1 pull-left">
+                <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">PREVIOUS</button>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="col-md-1 pull-right">
+                <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/TarragonGeneratedForm/', reportId]" [disabled]="!showNextButton() || !checkTotal()">NEXT</button>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <br/>
+
     <div [ngBusy]="busy" class="row withpadding" style="min-height: 500px">
 
         <form (ngSubmit)="save()" #nickMFForm="ngForm" class="well span">
@@ -92,6 +108,7 @@
                 </div>
             </div>
         </form>
+
         <!--<div class="row">-->
             <!--<div class="col-md-12">-->
                 <!--<button class="btn btn-default pull-left" [routerLink]="['/reporting/NBReporting/SingularGeneratedForm/', reportId]" [disabled]="!checkTotal()" >Singular</button>-->

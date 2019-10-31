@@ -79,29 +79,30 @@ public class PeriodicReportPrevYearInputServiceImpl implements PeriodicReportPre
 
     @Override
     public List<PreviousYearInputDataDto> getPreviousYearInputDataFromPreviousMonth(Long reportId) {
-
         try {
             List<PreviousYearInputDataDto> records = new ArrayList<>();
             PeriodicReportDto currentReport = this.periodicReportService.getPeriodicReport(reportId);
             if (currentReport != null) {
                 Date previousDate = DateUtils.getLastDayOfPreviousMonth(currentReport.getReportDate());
                 PeriodicReportDto previousReport = this.periodicReportService.findReportByReportDate(previousDate);
-                List<PreviousYearInputData> entities = previousYearInputDataRepository.getEntitiesByReportId(previousReport.getId());
-                if (entities != null) {
-                    for (PreviousYearInputData entity : entities) {
-                        PreviousYearInputDataDto record = new PreviousYearInputDataDto();
-                        if (entity.getChartOfAccounts() != null) {
-                            BaseDictionaryDto nicChartAccountsBaseDto = baseTypeEntityConverter.disassemble(entity.getChartOfAccounts());
-                            NICReportingChartOfAccountsDto nicChartAccountsDto = new NICReportingChartOfAccountsDto(nicChartAccountsBaseDto);
-                            if (entity.getChartOfAccounts().getNbChartOfAccounts() != null) {
-                                nicChartAccountsDto.setNBChartOfAccounts(baseTypeEntityConverter.disassemble(entity.getChartOfAccounts().getNbChartOfAccounts()));
+                if (previousReport != null) {
+                    List<PreviousYearInputData> entities = previousYearInputDataRepository.getEntitiesByReportId(previousReport.getId());
+                    if (entities != null) {
+                        for (PreviousYearInputData entity : entities) {
+                            PreviousYearInputDataDto record = new PreviousYearInputDataDto();
+                            if (entity.getChartOfAccounts() != null) {
+                                BaseDictionaryDto nicChartAccountsBaseDto = baseTypeEntityConverter.disassemble(entity.getChartOfAccounts());
+                                NICReportingChartOfAccountsDto nicChartAccountsDto = new NICReportingChartOfAccountsDto(nicChartAccountsBaseDto);
+                                if (entity.getChartOfAccounts().getNbChartOfAccounts() != null) {
+                                    nicChartAccountsDto.setNBChartOfAccounts(baseTypeEntityConverter.disassemble(entity.getChartOfAccounts().getNbChartOfAccounts()));
+                                }
+                                record.setChartOfAccounts(nicChartAccountsDto);
                             }
-                            record.setChartOfAccounts(nicChartAccountsDto);
+                            record.setAccountBalance(entity.getAccountBalance());
+                            record.setAccountBalanceKZT(entity.getAccountBalanceKZT());
+                            record.setReport(previousReport);
+                            records.add(record);
                         }
-                        record.setAccountBalance(entity.getAccountBalance());
-                        record.setAccountBalanceKZT(entity.getAccountBalanceKZT());
-                        record.setReport(previousReport);
-                        records.add(record);
                     }
                 }
             }

@@ -28,16 +28,12 @@
     </div>
 
     <ul class="nav nav-tabs">
-        <li class="active">
-            <a data-toggle="tab" href="#trancheA">Tranche A</a>
-        </li>
-        <li>
-            <a data-toggle="tab" href="#trancheB">Tranche B</a>
+        <li *ngFor="let tranche of trancheTypes; let i=index" [class.active]="i == 0">
+            <a data-toggle="tab" href="#{{tranche.code}}">{{tranche.nameEn}}</a>
         </li>
     </ul>
-
     <div class="tab-content">
-        <div id="trancheA" class="tab-pane fade in active">
+        <div id="{{tranche.code}}" *ngFor="let tranche of trancheTypes; let i=index" [class]="i == 0 ? 'tab-pane fade in active' : 'tab-pane fade'">
             <div class="row withpadding">
                 <table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small">
                     <tr bgcolor="#a8a6a6">
@@ -59,7 +55,7 @@
                         <td>&nbsp;</td>
                         <td>NICK Master Fund Ltd.'s Share of Tranche A Consolidated</td>
                     </tr>
-                    <tr *ngFor="let record of records.balanceTrancheA">
+                    <tr *ngFor="let record of getBalanceRecordsByTrancheName(tranche.nameEn)">
                         <td [style.font-weight]="record.header ? 'bold': ''" [align]="record.totalSum ? 'right' : 'left'">{{record.name}}</td>
                         <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[0] != null ? (record.values[0] | number:'1.0-0'): ''}}</td>
                         <td>&nbsp;</td>
@@ -76,10 +72,10 @@
                         <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[6] != null ? (record.values[6] | number:'1.0-0'): ''}}</td>
                     </tr>
 
-                <!--</table>-->
-                <!--<br/>-->
+                    <!--</table>-->
+                    <!--<br/>-->
 
-                <!--<table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small">-->
+                    <!--<table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small">-->
                     <tr bgcolor="#a8a6a6">
                         <td colspan="14" style="font-weight: bold; border: 1pt solid black" > Consolidated Statement of Operations</td>
                     </tr>
@@ -99,7 +95,7 @@
                         <td>&nbsp;</td>
                         <td>NICK Master Fund Ltd.'s Share of Tranche A Consolidated</td>
                     </tr>
-                    <tr *ngFor="let record of records.operationsTrancheA">
+                    <tr *ngFor="let record of getOperationsRecordsByTrancheName(tranche.nameEn)">
                         <td [style.font-weight]="record.header ? 'bold': ''" [align]="record.totalSum ? 'right' : 'left'">{{record.name}}</td>
                         <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[0] != null ? (record.values[0] | number:'1.0-0'): ''}}</td>
                         <td>&nbsp;</td>
@@ -107,93 +103,6 @@
                         <td>&nbsp;</td>
                         <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[2] != null ? (record.values[2] | number:'1.0-0'): ''}}</td>
                         <td>&nbsp;</td>
-                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[3] != null ? (record.values[3] | number:'1.0-0'): ''}}</td>
-                        <td>&nbsp;</td>
-                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[4] != null ? (record.values[4] | number:'1.0-0'): ''}}</td>
-                        <td>&nbsp;</td>
-                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[5] != null ? (record.values[5] | number:'1.0-0'): ''}}</td>
-                        <td>&nbsp;</td>
-                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[6] != null ? (record.values[6] | number:'1.0-0'): ''}}</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-
-        <div id="trancheB" class="tab-pane fade">
-            <div class="row withpadding">
-                <table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small">
-                    <tr bgcolor="#a8a6a6">
-                        <td colspan="14" style="font-weight: bold; border: 1pt solid black" > Consolidated Statement of Assets, Liabilities and Partners Capital</td>
-                    </tr>
-                    <tr bgcolor="#e7e7e7">
-                        <td>Name</td>
-                        <td>Tarragon Master Fund LP</td>
-                        <td>&nbsp;</td>
-                        <td>Tarragon LP</td>
-                        <td>&nbsp;</td>
-                        <td>Total</td>
-                        <td>&nbsp;</td>
-                        <td>Consolidated Adjustments</td>
-                        <td>&nbsp;</td>
-                        <td>Tranche B Consolidated</td>
-                    </tr>
-                    <tr *ngFor="let record of records.balanceTrancheB">
-                        <td [style.font-weight]="record.header ? 'bold': ''" [align]="record.totalSum ? 'right' : 'left'">{{record.name}}</td>
-                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[0] != null ? (record.values[0] | number:'1.0-0'): ''}}</td>
-                        <td>&nbsp;</td>
-                        <!--<td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[1] != null ? (record.values[1] | number:'1.0-0'): ''}}</td>-->
-                        <!--<td>&nbsp;</td>-->
-                        <!--<td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[2] != null ? (record.values[2] | number:'1.0-0'): ''}}</td>-->
-                        <!--<td>&nbsp;</td>-->
-                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[3] != null ? (record.values[3] | number:'1.0-0'): ''}}</td>
-                        <td>&nbsp;</td>
-                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[4] != null ? (record.values[4] | number:'1.0-0'): ''}}</td>
-                        <td>&nbsp;</td>
-                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[5] != null ? (record.values[5] | number:'1.0-0'): ''}}</td>
-                        <td>&nbsp;</td>
-                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[6] != null ? (record.values[6] | number:'1.0-0'): ''}}</td>
-                    </tr>
-                <!--</table>-->
-                <!--<br/>-->
-                <!--<table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small">-->
-                    <tr bgcolor="#a8a6a6">
-                        <td colspan="14" style="font-weight: bold; border: 1pt solid black" > Consolidated Statement of Operations</td>
-                    </tr>
-                    <tr bgcolor="#e7e7e7">
-                        <td>Name</td>
-                        <td>Tarragon Master Fund LP</td>
-                        <td>&nbsp;</td>
-                        <td>Tarragon LP</td>
-                        <td>&nbsp;</td>
-                        <td>Total</td>
-                        <td>&nbsp;</td>
-                        <td>Consolidated Adjustments</td>
-                        <td>&nbsp;</td>
-                        <td>Tranche B Consolidated</td>
-
-                        <!--<td>Name</td>-->
-                        <!--<td>Tarragon MF Total</td>-->
-                        <!--<td>&nbsp;</td>-->
-                        <!--<td>Tarragon GP Share</td>-->
-                        <!--<td>&nbsp;</td>-->
-                        <!--<td>Tarragon NICK Share</td>-->
-                        <!--<td>&nbsp;</td>-->
-                        <!--<td>Tarragon LP</td>-->
-                        <!--<td>&nbsp;</td>-->
-                        <!--<td>TOTAL</td>-->
-                        <!--<td>&nbsp;</td>-->
-                        <!--<td>Consolidated Adjustments</td>-->
-                        <!--<td>&nbsp;</td>-->
-                        <!--<td>Tranche A Consolidated</td>-->
-                    </tr>
-                    <tr *ngFor="let record of records.operationsTrancheB">
-                        <td [style.font-weight]="record.header ? 'bold': ''" [align]="record.totalSum ? 'right' : 'left'">{{record.name}}</td>
-                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[0] != null ? (record.values[0] | number:'1.0-0'): ''}}</td>
-                        <td>&nbsp;</td>
-                        <!--<td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[1] != null ? (record.values[1] | number:'1.0-0'): ''}}</td>-->
-                        <!--<td>&nbsp;</td>-->
-                        <!--<td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[2] != null ? (record.values[2] | number:'1.0-0'): ''}}</td>-->
-                        <!--<td>&nbsp;</td>-->
                         <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[3] != null ? (record.values[3] | number:'1.0-0'): ''}}</td>
                         <td>&nbsp;</td>
                         <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[4] != null ? (record.values[4] | number:'1.0-0'): ''}}</td>
@@ -208,8 +117,189 @@
     </div>
     <br/>
 
-    <div class="row">
-        <div class="col-md-12">
-        </div>
-    </div>
+<!--    <ul class="nav nav-tabs">-->
+<!--        <li class="active">-->
+<!--            <a data-toggle="tab" href="#trancheA">Tranche A</a>-->
+<!--        </li>-->
+<!--        <li>-->
+<!--            <a data-toggle="tab" href="#trancheB">Tranche B</a>-->
+<!--        </li>-->
+<!--    </ul>-->
+
+<!--    <div class="tab-content">-->
+<!--        <div id="trancheA" class="tab-pane fade in active">-->
+<!--            <div class="row withpadding">-->
+<!--                <table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small">-->
+<!--                    <tr bgcolor="#a8a6a6">-->
+<!--                        <td colspan="14" style="font-weight: bold; border: 1pt solid black" > Consolidated Statement of Assets, Liabilities and Partners Capital</td>-->
+<!--                    </tr>-->
+<!--                    <tr bgcolor="#e7e7e7">-->
+<!--                        <td>Name</td>-->
+<!--                        <td>Total*</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        <td>Tarragon GP LLC'sShare</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        <td>NICK Master Fund Ltd.'s Share</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        <td>Tarragon LP</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        <td>NICK Master Fund Ltd.'s Share of Total</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        <td>Consolidated Adjustments</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        <td>NICK Master Fund Ltd.'s Share of Tranche A Consolidated</td>-->
+<!--                    </tr>-->
+<!--                    <tr *ngFor="let record of records.balanceTrancheA">-->
+<!--                        <td [style.font-weight]="record.header ? 'bold': ''" [align]="record.totalSum ? 'right' : 'left'">{{record.name}}</td>-->
+<!--                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[0] != null ? (record.values[0] | number:'1.0-0'): ''}}</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[1] != null ? (record.values[1] | number:'1.0-0'): ''}}</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[2] != null ? (record.values[2] | number:'1.0-0'): ''}}</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[3] != null ? (record.values[3] | number:'1.0-0'): ''}}</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[4] != null ? (record.values[4] | number:'1.0-0'): ''}}</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[5] != null ? (record.values[5] | number:'1.0-0'): ''}}</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[6] != null ? (record.values[6] | number:'1.0-0'): ''}}</td>-->
+<!--                    </tr>-->
+
+<!--                &lt;!&ndash;</table>&ndash;&gt;-->
+<!--                &lt;!&ndash;<br/>&ndash;&gt;-->
+
+<!--                &lt;!&ndash;<table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small">&ndash;&gt;-->
+<!--                    <tr bgcolor="#a8a6a6">-->
+<!--                        <td colspan="14" style="font-weight: bold; border: 1pt solid black" > Consolidated Statement of Operations</td>-->
+<!--                    </tr>-->
+<!--                    <tr bgcolor="#e7e7e7">-->
+<!--                        <td>Name</td>-->
+<!--                        <td>Total*</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        <td>Tarragon GP LLC'sShare</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        <td>NICK Master Fund Ltd.'s Share</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        <td>Tarragon LP</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        <td>NICK Master Fund Ltd.'s Share of Total</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        <td>Consolidated Adjustments</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        <td>NICK Master Fund Ltd.'s Share of Tranche A Consolidated</td>-->
+<!--                    </tr>-->
+<!--                    <tr *ngFor="let record of records.operationsTrancheA">-->
+<!--                        <td [style.font-weight]="record.header ? 'bold': ''" [align]="record.totalSum ? 'right' : 'left'">{{record.name}}</td>-->
+<!--                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[0] != null ? (record.values[0] | number:'1.0-0'): ''}}</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[1] != null ? (record.values[1] | number:'1.0-0'): ''}}</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[2] != null ? (record.values[2] | number:'1.0-0'): ''}}</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[3] != null ? (record.values[3] | number:'1.0-0'): ''}}</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[4] != null ? (record.values[4] | number:'1.0-0'): ''}}</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[5] != null ? (record.values[5] | number:'1.0-0'): ''}}</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[6] != null ? (record.values[6] | number:'1.0-0'): ''}}</td>-->
+<!--                    </tr>-->
+<!--                </table>-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--        <div id="trancheB" class="tab-pane fade">-->
+<!--            <div class="row withpadding">-->
+<!--                <table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small">-->
+<!--                    <tr bgcolor="#a8a6a6">-->
+<!--                        <td colspan="14" style="font-weight: bold; border: 1pt solid black" > Consolidated Statement of Assets, Liabilities and Partners Capital</td>-->
+<!--                    </tr>-->
+<!--                    <tr bgcolor="#e7e7e7">-->
+<!--                        <td>Name</td>-->
+<!--                        <td>Tarragon Master Fund LP</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        <td>Tarragon LP</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        <td>Total</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        <td>Consolidated Adjustments</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        <td>Tranche B Consolidated</td>-->
+<!--                    </tr>-->
+<!--                    <tr *ngFor="let record of records.balanceTrancheB">-->
+<!--                        <td [style.font-weight]="record.header ? 'bold': ''" [align]="record.totalSum ? 'right' : 'left'">{{record.name}}</td>-->
+<!--                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[0] != null ? (record.values[0] | number:'1.0-0'): ''}}</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        &lt;!&ndash;<td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[1] != null ? (record.values[1] | number:'1.0-0'): ''}}</td>&ndash;&gt;-->
+<!--                        &lt;!&ndash;<td>&nbsp;</td>&ndash;&gt;-->
+<!--                        &lt;!&ndash;<td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[2] != null ? (record.values[2] | number:'1.0-0'): ''}}</td>&ndash;&gt;-->
+<!--                        &lt;!&ndash;<td>&nbsp;</td>&ndash;&gt;-->
+<!--                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[3] != null ? (record.values[3] | number:'1.0-0'): ''}}</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[4] != null ? (record.values[4] | number:'1.0-0'): ''}}</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[5] != null ? (record.values[5] | number:'1.0-0'): ''}}</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[6] != null ? (record.values[6] | number:'1.0-0'): ''}}</td>-->
+<!--                    </tr>-->
+<!--                &lt;!&ndash;</table>&ndash;&gt;-->
+<!--                &lt;!&ndash;<br/>&ndash;&gt;-->
+<!--                &lt;!&ndash;<table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small">&ndash;&gt;-->
+<!--                    <tr bgcolor="#a8a6a6">-->
+<!--                        <td colspan="14" style="font-weight: bold; border: 1pt solid black" > Consolidated Statement of Operations</td>-->
+<!--                    </tr>-->
+<!--                    <tr bgcolor="#e7e7e7">-->
+<!--                        <td>Name</td>-->
+<!--                        <td>Tarragon Master Fund LP</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        <td>Tarragon LP</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        <td>Total</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        <td>Consolidated Adjustments</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        <td>Tranche B Consolidated</td>-->
+
+<!--                        &lt;!&ndash;<td>Name</td>&ndash;&gt;-->
+<!--                        &lt;!&ndash;<td>Tarragon MF Total</td>&ndash;&gt;-->
+<!--                        &lt;!&ndash;<td>&nbsp;</td>&ndash;&gt;-->
+<!--                        &lt;!&ndash;<td>Tarragon GP Share</td>&ndash;&gt;-->
+<!--                        &lt;!&ndash;<td>&nbsp;</td>&ndash;&gt;-->
+<!--                        &lt;!&ndash;<td>Tarragon NICK Share</td>&ndash;&gt;-->
+<!--                        &lt;!&ndash;<td>&nbsp;</td>&ndash;&gt;-->
+<!--                        &lt;!&ndash;<td>Tarragon LP</td>&ndash;&gt;-->
+<!--                        &lt;!&ndash;<td>&nbsp;</td>&ndash;&gt;-->
+<!--                        &lt;!&ndash;<td>TOTAL</td>&ndash;&gt;-->
+<!--                        &lt;!&ndash;<td>&nbsp;</td>&ndash;&gt;-->
+<!--                        &lt;!&ndash;<td>Consolidated Adjustments</td>&ndash;&gt;-->
+<!--                        &lt;!&ndash;<td>&nbsp;</td>&ndash;&gt;-->
+<!--                        &lt;!&ndash;<td>Tranche A Consolidated</td>&ndash;&gt;-->
+<!--                    </tr>-->
+<!--                    <tr *ngFor="let record of records.operationsTrancheB">-->
+<!--                        <td [style.font-weight]="record.header ? 'bold': ''" [align]="record.totalSum ? 'right' : 'left'">{{record.name}}</td>-->
+<!--                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[0] != null ? (record.values[0] | number:'1.0-0'): ''}}</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        &lt;!&ndash;<td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[1] != null ? (record.values[1] | number:'1.0-0'): ''}}</td>&ndash;&gt;-->
+<!--                        &lt;!&ndash;<td>&nbsp;</td>&ndash;&gt;-->
+<!--                        &lt;!&ndash;<td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[2] != null ? (record.values[2] | number:'1.0-0'): ''}}</td>&ndash;&gt;-->
+<!--                        &lt;!&ndash;<td>&nbsp;</td>&ndash;&gt;-->
+<!--                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[3] != null ? (record.values[3] | number:'1.0-0'): ''}}</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[4] != null ? (record.values[4] | number:'1.0-0'): ''}}</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[5] != null ? (record.values[5] | number:'1.0-0'): ''}}</td>-->
+<!--                        <td>&nbsp;</td>-->
+<!--                        <td [style.border-top]="record.totalSum ? '1pt solid black': ''">{{record.values != null && record.values[6] != null ? (record.values[6] | number:'1.0-0'): ''}}</td>-->
+<!--                    </tr>-->
+<!--                </table>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--    <br/>-->
+
+<!--    <div class="row">-->
+<!--        <div class="col-md-12">-->
+<!--        </div>-->
+<!--    </div>-->
 </div>

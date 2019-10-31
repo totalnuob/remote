@@ -314,6 +314,22 @@
         </field-exclude>
     </mapping>
     <mapping>
+        <class-a>kz.nicnbk.service.dto.reporting.realestate.RealEstateGeneralLedgerFormDataDto</class-a>
+        <class-b>kz.nicnbk.repo.model.reporting.realestate.RealEstateGeneralLedgerFormData</class-b>
+        <field-exclude>
+            <a>financialStatementCategory</a>
+            <b>financialStatementCategory</b>
+        </field-exclude>
+        <field-exclude>
+            <a>terraNICChartOfAccounts</a>
+            <b>terraNICChartOfAccounts</b>
+        </field-exclude>
+        <field-exclude>
+            <a>trancheType</a>
+            <b>trancheType</b>
+        </field-exclude>
+    </mapping>
+    <mapping>
         <class-a>kz.nicnbk.service.dto.reporting.privateequity.PEGeneralLedgerFormDataDto</class-a>
         <class-b>kz.nicnbk.repo.model.reporting.privateequity.PEGeneralLedgerFormData</class-b>
         <field-exclude>
@@ -323,6 +339,10 @@
         <field-exclude>
             <a>tarragonNICChartOfAccounts</a>
             <b>tarragonNICChartOfAccounts</b>
+        </field-exclude>
+        <field-exclude>
+            <a>trancheType</a>
+            <b>trancheType</b>
         </field-exclude>
     </mapping>
     <mapping>

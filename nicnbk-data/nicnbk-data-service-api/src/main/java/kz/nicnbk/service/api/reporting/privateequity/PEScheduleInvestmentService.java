@@ -17,15 +17,23 @@ public interface PEScheduleInvestmentService extends BaseService {
 
     ReportingPEScheduleInvestment assemble(ConsolidatedReportRecordDto dto, int tranche, Long reportId);
 
+    ReportingPEScheduleInvestment assemble(ScheduleInvestmentsDto dto, Long reportId);
+
     List<ReportingPEScheduleInvestment> assembleList(List<ConsolidatedReportRecordDto> dtoList, int tranche, Long reportId);
 
+    List<ReportingPEScheduleInvestment> assembleList(List<ScheduleInvestmentsDto> dtoList, Long reportId);
+
     boolean save(List<ReportingPEScheduleInvestment> entities);
+
+    boolean save(List<ScheduleInvestmentsDto> dtoList, Long reportId);
 
     boolean save(ScheduleInvestmentsDto dto);
 
     ConsolidatedReportRecordHolderDto get(Long reportId);
 
     List<ScheduleInvestmentsDto> getScheduleInvestments(Long reportId);
+
+    ConsolidatedReportRecordHolderDto getSOIReport(Long reportId);
 
     EntitySaveResponseDto updateScheduleInvestments(UpdateTarragonInvestmentDto updateDto);
 

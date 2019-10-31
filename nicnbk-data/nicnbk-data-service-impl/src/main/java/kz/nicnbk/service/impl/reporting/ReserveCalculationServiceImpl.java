@@ -440,7 +440,7 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
 
                 // set amount kzt
                 if (dto.getAmount() != null) {
-                    dto.setAmountKZT(new BigDecimal(currencyRatesDto.getValue().doubleValue()).multiply(new BigDecimal(dto.getAmount())).setScale(2, RoundingMode.HALF_UP).doubleValue());
+                    dto.setAmountKZT(MathUtils.multiply(currencyRatesDto.getValue(), dto.getAmount()));
                 }
 
                 if(mostRecentFinalReportDate == null || dto.getDate() == null){

@@ -318,7 +318,8 @@ export class NICKMFInputNBReportingComponent extends CommonNBReportingComponent 
     }
 
     public showNextButton(){
-        return this.checkTotal();
+        return true;
+        //return this.checkTotal();
     }
 
     public onNumberChange(record){

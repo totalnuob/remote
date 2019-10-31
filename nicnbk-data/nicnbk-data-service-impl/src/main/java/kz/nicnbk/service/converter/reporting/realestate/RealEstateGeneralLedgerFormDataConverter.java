@@ -1,8 +1,10 @@
 package kz.nicnbk.service.converter.reporting.realestate;
 
 import kz.nicnbk.repo.api.reporting.realestate.TerraNICChartOfAccountsRepository;
+import kz.nicnbk.repo.model.lookup.reporting.ChartAccountsTypeLookup;
 import kz.nicnbk.repo.model.reporting.hedgefunds.FinancialStatementCategory;
 
+import kz.nicnbk.repo.model.reporting.realestate.RETrancheType;
 import kz.nicnbk.repo.model.reporting.realestate.RealEstateGeneralLedgerFormData;
 import kz.nicnbk.repo.model.reporting.realestate.TerraNICChartOfAccounts;
 import kz.nicnbk.service.converter.dozer.BaseDozerEntityConverter;
@@ -36,24 +38,39 @@ public class RealEstateGeneralLedgerFormDataConverter extends BaseDozerEntityCon
         }
         RealEstateGeneralLedgerFormData entity = super.assemble(dto);
         //entity.setId(null);
+        if(dto.getTrancheType() != null){
+            RETrancheType reTrancheType = this.lookupService.findByTypeAndCode(RETrancheType.class, dto.getTrancheType());
+            entity.setTrancheType(reTrancheType);
+        }
+        if(entity.getTrancheType() == null){
+            logger.error("Error assembling RealEstateGeneralLedgerFormData: tranche type is null: searching code=" + dto.getTrancheType());
+            throw new IllegalArgumentException("Tranche type could not be determined: code=" + dto.getTrancheType());
+        }
+
         if(dto.getFinancialStatementCategory() != null){
             FinancialStatementCategory financialStatementCategory =
                     this.lookupService.findByTypeAndCode(FinancialStatementCategory.class, dto.getFinancialStatementCategory());
             entity.setFinancialStatementCategory(financialStatementCategory);
         }
+        if(entity.getFinancialStatementCategory() == null){
+            logger.error("Error assembling RealEstateGeneralLedgerFormData: financial statement category is null: searching code=" + dto.getFinancialStatementCategory());
+            throw new IllegalArgumentException("Financial statement category could not be determined: code=" + dto.getFinancialStatementCategory());
+        }
+
         if(dto.getTerraNICChartOfAccountsName() != null){
             List<TerraNICChartOfAccounts> terraNICChartOfAccounts =
                     this.terraNICChartOfAccountsRepository.findByTerraChartOfAccountsNameAndAddable(dto.getTerraNICChartOfAccountsName(), true);
 
             if (terraNICChartOfAccounts != null && !terraNICChartOfAccounts.isEmpty()) {
                 if (terraNICChartOfAccounts.size() == 1) {
-                    boolean match = (terraNICChartOfAccounts.get(0).getPositiveOnly() != null &&
-                            terraNICChartOfAccounts.get(0).getPositiveOnly().booleanValue() &&
-                            dto.getGLAccountBalance() != null && dto.getGLAccountBalance() >= 0) ||
-                            (terraNICChartOfAccounts.get(0).getNegativeOnly() != null &&
-                            terraNICChartOfAccounts.get(0).getNegativeOnly().booleanValue() &&
-                            dto.getGLAccountBalance() != null && dto.getGLAccountBalance() < 0) ||
-                            (terraNICChartOfAccounts.get(0).getPositiveOnly() == null && terraNICChartOfAccounts.get(0).getNegativeOnly() == null);
+                    boolean isPositiveOnly = terraNICChartOfAccounts.get(0).getChartAccountsType() != null &&
+                            terraNICChartOfAccounts.get(0).getChartAccountsType().getCode().equalsIgnoreCase(ChartAccountsTypeLookup.POSITIVE.getCode()) ? true : false;
+                    boolean isNegativeOnly = terraNICChartOfAccounts.get(0).getChartAccountsType() != null &&
+                            terraNICChartOfAccounts.get(0).getChartAccountsType().getCode().equalsIgnoreCase(ChartAccountsTypeLookup.NEGATIVE.getCode()) ? true : false;
+
+                    boolean match = (isPositiveOnly && dto.getGLAccountBalance() != null && dto.getGLAccountBalance() >= 0) ||
+                            (isNegativeOnly && dto.getGLAccountBalance() != null && dto.getGLAccountBalance() < 0) ||
+                            (!isPositiveOnly && !isNegativeOnly);
                     if(match) {
                         entity.setTerraNICChartOfAccounts(terraNICChartOfAccounts.get(0));
                     }
@@ -61,13 +78,13 @@ public class RealEstateGeneralLedgerFormDataConverter extends BaseDozerEntityCon
                     boolean found = false;
                     for (TerraNICChartOfAccounts anEntity : terraNICChartOfAccounts) {
                         if (dto.getGLAccountBalance() != null && dto.getGLAccountBalance() < 0) {
-                            if (anEntity.getNegativeOnly() != null && anEntity.getNegativeOnly().booleanValue()) {
+                            if (anEntity.getChartAccountsType() != null && anEntity.getChartAccountsType().getCode().equalsIgnoreCase(ChartAccountsTypeLookup.NEGATIVE.getCode())) {
                                 entity.setTerraNICChartOfAccounts(anEntity);
                                 found = true;
                                 break;
                             }
                         } else if (dto.getGLAccountBalance() != null && dto.getGLAccountBalance() >= 0) {
-                            if (anEntity.getPositiveOnly() != null && anEntity.getPositiveOnly().booleanValue()) {
+                            if (anEntity.getChartAccountsType() != null && anEntity.getChartAccountsType().getCode().equalsIgnoreCase(ChartAccountsTypeLookup.POSITIVE.getCode())) {
                                 entity.setTerraNICChartOfAccounts(anEntity);
                                 found = true;
                                 break;

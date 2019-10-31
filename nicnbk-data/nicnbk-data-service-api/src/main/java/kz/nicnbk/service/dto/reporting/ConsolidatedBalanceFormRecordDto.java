@@ -88,7 +88,23 @@ public class ConsolidatedBalanceFormRecordDto implements BaseDto, Comparable {
                 }else if(StringUtils.isNotEmpty(accountNumber) && StringUtils.isNotEmpty(other.accountNumber)){
                     //return this.accountNumber.compareTo(other.accountNumber);
                     if(this.accountNumber.equalsIgnoreCase(other.accountNumber)){
-                        return this.getName().compareTo(other.getName());
+                        if(this.otherEntityName != null){
+                            if(StringUtils.isEmpty(otherEntityName) && StringUtils.isNotEmpty(other.otherEntityName)){
+                                return -1;
+                            }else if(StringUtils.isNotEmpty(otherEntityName) && StringUtils.isEmpty(other.otherEntityName)){
+                                return 1;
+                            }else if(StringUtils.isNotEmpty(otherEntityName) && StringUtils.isNotEmpty(other.otherEntityName)){
+                                if(this.otherEntityName.equalsIgnoreCase(other.otherEntityName)){
+                                    return this.name.compareTo(other.name);
+                                }else{
+                                    return this.otherEntityName.compareTo(other.otherEntityName);
+                                }
+                            }else{
+                                return 0;
+                            }
+                        }else {
+                            return this.name.compareTo(other.name);
+                        }
                     }else {
                         return this.accountNumber.compareTo(other.accountNumber);
                     }

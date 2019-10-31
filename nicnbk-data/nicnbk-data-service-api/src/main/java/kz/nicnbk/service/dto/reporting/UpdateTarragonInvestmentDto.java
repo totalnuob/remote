@@ -10,6 +10,7 @@ public class UpdateTarragonInvestmentDto implements BaseDto {
     private Long reportId;
     private String fundName;
     private int tranche;
+    private String trancheTypeNameEn;
     private Double accountBalance;
 
     public Long getReportId() {
@@ -42,5 +43,13 @@ public class UpdateTarragonInvestmentDto implements BaseDto {
 
     public void setAccountBalance(Double accountBalance) {
         this.accountBalance = accountBalance;
+    }
+
+    public String getTrancheTypeNameEn() {
+        return trancheTypeNameEn;
+    }
+
+    public void setTrancheTypeNameEn(String trancheTypeNameEn) {
+        this.trancheTypeNameEn = trancheTypeNameEn;
     }
 }

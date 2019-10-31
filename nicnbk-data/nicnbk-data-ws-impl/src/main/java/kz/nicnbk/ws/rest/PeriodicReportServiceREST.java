@@ -16,10 +16,8 @@ import kz.nicnbk.service.dto.reporting.hedgefunds.ExcludeSingularityRecordDto;
 import kz.nicnbk.service.dto.reporting.nickmf.NICKMFReportingDataCalculatedValueRequestDto;
 import kz.nicnbk.service.dto.reporting.privateequity.ExcludeTarragonRecordDto;
 import kz.nicnbk.service.dto.reporting.privateequity.TarragonGeneratedGeneralLedgerFormDto;
-import kz.nicnbk.service.dto.reporting.realestate.ExcludeTerraRecordDto;
-import kz.nicnbk.service.dto.reporting.realestate.RealEstateGeneralLedgerFormDataHolderDto;
-import kz.nicnbk.service.dto.reporting.realestate.TerraCombinedDataHolderDto;
-import kz.nicnbk.service.dto.reporting.realestate.TerraGeneratedGeneralLedgerFormDto;
+import kz.nicnbk.service.dto.reporting.privateequity.TarragonStatementBalanceOperationsHolderDto;
+import kz.nicnbk.service.dto.reporting.realestate.*;
 import kz.nicnbk.service.impl.files.FilePathResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -397,11 +395,18 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
 
     /* TERRA GL Form ***********************************************************************************************/
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
-    @RequestMapping(value = "/terraGeneratedForm/{reportId}", method = RequestMethod.GET)
-    public ResponseEntity getTerraGeneratedForm(@PathVariable Long reportId) {
-        ListResponseDto responseDto  = this.realEstateService.getTerraGeneratedForm(reportId);
+    @RequestMapping(value = "/terraGeneralLedgerForm/{reportId}", method = RequestMethod.GET)
+    public ResponseEntity getTerraGeneraLLedgerForm(@PathVariable Long reportId) {
+        ListResponseDto responseDto  = this.realEstateService.getTerraGeneralLedgerFormData(reportId);
         return buildNonNullResponse(responseDto);
     }
+
+//    @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+//    @RequestMapping(value = "/terraGeneratedForm/{reportId}", method = RequestMethod.GET)
+//    public ResponseEntity getTerraGeneratedForm(@PathVariable Long reportId) {
+//        ListResponseDto responseDto  = this.realEstateService.getTerraGeneratedForm(reportId);
+//        return buildNonNullResponse(responseDto);
+//    }
 
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/terraGeneratedFormDataFromPreviousMonth/{reportId}", method = RequestMethod.GET)
@@ -560,11 +565,18 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
         return buildNonNullResponse(recordsHolder);
     }
 
+    @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/get/soiReport/{id}", method = RequestMethod.GET)
+    public ResponseEntity getSOIReport(@PathVariable Long id) {
+        ConsolidatedReportRecordHolderDto recordsHolder = this.peScheduleInvestmentService.getSOIReport(id);
+        return buildNonNullResponse(recordsHolder);
+    }
+
 
     @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/get/balanceOperations/{id}", method = RequestMethod.GET)
     public ResponseEntity getBalanceAndOperations(@PathVariable Long id) {
-        ConsolidatedReportRecordHolderDto recordsHolder = this.periodicReportService.getStatementBalanceOperations(id);
+        TarragonStatementBalanceOperationsHolderDto recordsHolder = this.periodicReportService.getStatementBalanceOperations(id);
         return buildNonNullResponse(recordsHolder);
     }
 
@@ -614,6 +626,13 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
     @RequestMapping(value = "/get/terraCombined/{id}", method = RequestMethod.GET)
     public ResponseEntity getTerraCombined(@PathVariable Long id) {
         TerraCombinedDataHolderDto recordsHolder = this.realEstateService.getTerraCombinedParsedData(id);
+        return buildNonNullResponse(recordsHolder);
+    }
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_VIEWER') OR hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/get/terraGeneralLedger/{id}", method = RequestMethod.GET)
+    public ResponseEntity getTerraGeneralLedger(@PathVariable Long id) {
+        TerraGeneralLedgerDataHolderDto recordsHolder = this.realEstateService.getTerraGeneralLedgerDataWithoutExcluded(id);
         return buildNonNullResponse(recordsHolder);
     }
     /* ****************************************************************************************************************/

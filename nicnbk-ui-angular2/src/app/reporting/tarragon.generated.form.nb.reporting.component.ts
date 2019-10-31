@@ -40,6 +40,7 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
     private records: GeneratedGLFormRecord[];
     private tarragonNICReportingChartOfAccounts: TarragonNICReportingChartOfAccounts[];
     private addedRecordsHolder: PEGeneralLedgerFormDataHolder;
+    private peTrancheTypes: BaseDictionary[];
 
     private availableFundList: string[];
 
@@ -71,11 +72,13 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
 
         Observable.forkJoin(
             // Load lookups
-            this.lookupService.getAddableTarragonNICReportingChartOfAccounts()
+            this.lookupService.getAddableTarragonNICReportingChartOfAccounts(),
+            this.lookupService.getPETrancheTypes()
             )
             .subscribe(
-                ([data]) => {
-                    this.tarragonNICReportingChartOfAccounts = data;
+                ([data1, data2]) => {
+                    this.tarragonNICReportingChartOfAccounts = data1;
+                    this.peTrancheTypes = data2;
 
                     this.sub = this.route
                         .params
@@ -231,10 +234,16 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
     }
 
     editSavedRecord(record){
-        if(record.acronym === 'TARRAGON'){
-            record.tranche = 1;
-        }else if(record.acronym === 'TARRAGON B'){
-            record.tranche = 2;
+//        if(record.acronym === 'TARRAGON'){
+//            record.tranche = 1;
+//        }else if(record.acronym === 'TARRAGON B'){
+//            record.tranche = 2;
+//        }
+        for(var i = 0; i < this.peTrancheTypes.length; i++){
+            if(this.peTrancheTypes[i].nameEn === record.acronym){
+                record.trancheType = this.peTrancheTypes[i].code;
+                break;
+            }
         }
         record.tarragonNICChartOfAccountsName = record.chartAccountsLongDescription.trim();
         record.id = record.addedRecordId;
@@ -404,7 +413,7 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
     }
 
     saveEditAccountBalance(record){
-        let updateDto = {"reportId": this.reportId,"fundName": record.chartAccountsLongDescription, "tranche": record.acronym === 'TARRAGON' ? 1 : 2,
+        let updateDto = {"reportId": this.reportId,"fundName": record.chartAccountsLongDescription, "trancheTypeNameEn": record.acronym,
             "accountBalance": record.glaccountBalance.toString().replace(/,/g , '')};
         console.log(updateDto);
         this.busy = this.periodicReportService.updateTarragonInvestment(updateDto)
@@ -429,12 +438,14 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
     }
 
     showNextButton(){
+    /*
         var diff = this.totalAssetsSum + this.totalOtherSum;
         if(diff > 2 || diff < -2){
             return false;
         }else if(!this.recordsValid){
             return false;
         }
+    */
         return true;
     }
 

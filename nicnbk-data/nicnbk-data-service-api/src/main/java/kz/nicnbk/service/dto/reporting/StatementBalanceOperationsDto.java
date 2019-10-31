@@ -1,5 +1,6 @@
 package kz.nicnbk.service.dto.reporting;
 
+import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.common.service.model.BaseDto;
 import kz.nicnbk.common.service.model.HierarchicalBaseDictionaryDto;
 
@@ -23,6 +24,8 @@ public class StatementBalanceOperationsDto implements BaseDto {
     private Integer tranche;
     private Boolean isTotalSum;
     private Boolean excludeFromTarragonCalculation;
+
+    private BaseDictionaryDto trancheType;
 
     public String getName() {
         return name;
@@ -134,5 +137,13 @@ public class StatementBalanceOperationsDto implements BaseDto {
 
     public void setExcludeFromTarragonCalculation(Boolean excludeFromTarragonCalculation) {
         this.excludeFromTarragonCalculation = excludeFromTarragonCalculation;
+    }
+
+    public BaseDictionaryDto getTrancheType() {
+        return trancheType;
+    }
+
+    public void setTrancheType(BaseDictionaryDto trancheType) {
+        this.trancheType = trancheType;
     }
 }

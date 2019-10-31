@@ -1,11 +1,14 @@
 package kz.nicnbk.service.impl.reporting.privateequity;
 
+import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.api.lookup.PEBalanceTypeRepository;
+import kz.nicnbk.repo.api.lookup.PETrancheTypeRepository;
 import kz.nicnbk.repo.api.reporting.privateequity.ReportingPEStatementBalanceRepository;
 import kz.nicnbk.repo.model.lookup.BalanceTypeLookup;
 import kz.nicnbk.repo.model.reporting.PeriodicReport;
 import kz.nicnbk.repo.model.reporting.privateequity.PEBalanceType;
+import kz.nicnbk.repo.model.reporting.privateequity.PETrancheType;
 import kz.nicnbk.repo.model.reporting.privateequity.ReportingPEStatementBalance;
 import kz.nicnbk.service.api.reporting.privateequity.PEStatementBalanceService;
 import kz.nicnbk.service.converter.reporting.PeriodicReportConverter;
@@ -14,6 +17,8 @@ import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordDto;
 import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordHolderDto;
 import kz.nicnbk.service.dto.reporting.StatementBalanceOperationsDto;
 import kz.nicnbk.common.service.exception.ExcelFileParseException;
+import kz.nicnbk.service.dto.reporting.privateequity.TarragonStatementBalanceOperationsHolderDto;
+import kz.nicnbk.service.dto.reporting.privateequity.TarragonStatementBalanceOperationsTrancheDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +26,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by magzumov on 01.07.2017.
@@ -41,15 +43,17 @@ public class PEStatementBalanceServiceImpl implements PEStatementBalanceService 
     private PEBalanceTypeRepository peBalanceTypeRepository;
 
     @Autowired
+    private PETrancheTypeRepository peTrancheTypeRepository;
+
+    @Autowired
     private ReportingPEStatementBalanceRepository peStatementBalanceRepository;
 
     @Autowired
     private PeriodicReportConverter periodicReportConverter;
 
     @Override
-    public ReportingPEStatementBalance assemble(ConsolidatedReportRecordDto dto, int tranche, Long reportId) {
+    public ReportingPEStatementBalance assemble(ConsolidatedReportRecordDto dto, String trancheTypeNameEn, Long reportId) {
 
-        String trancheName = tranche == 1 ? "[Tranche A]" : tranche == 2 ? "[Tranche B]" : "";
         ReportingPEStatementBalance entity = new ReportingPEStatementBalance();
         entity.setName(dto.getName());
         entity.setTarragonMFTotal(dto.getValues()[0]);
@@ -65,7 +69,17 @@ public class PEStatementBalanceServiceImpl implements PEStatementBalanceService 
         entity.setReport(new PeriodicReport(reportId));
 
         // tranche
-        entity.setTranche(tranche);
+        //entity.setTranche(tranche);
+        if(trancheTypeNameEn != null){
+            PETrancheType trancheType = this.peTrancheTypeRepository.findByNameEnIgnoreCase(trancheTypeNameEn);
+            if(trancheType != null){
+                entity.setTrancheType(trancheType);
+            }else{
+                String errorMessage = " Tranche type could not be determined for record '" + entity.getName() + "' (" + trancheTypeNameEn + ")";
+                logger.error(errorMessage);
+                throw new ExcelFileParseException(errorMessage);
+            }
+        }
 
         // balance type
 
@@ -104,19 +118,19 @@ public class PEStatementBalanceServiceImpl implements PEStatementBalanceService 
         }
 
         if(entity.getType() == null && !isTotalTypeSum(entity.getName()) && dto.isClassificationRequired()){
-            logger.error(trancheName + " Balance record type could not be determined for record '" + entity.getName() + "'. Expected values are 'Assets', 'Liabilities', etc.  Check for possible spaces in names.");
-            throw new ExcelFileParseException(trancheName + " Balance record type could not be determined for record '" + entity.getName() + "'. Expected values are 'Assets', 'Liabilities', etc.  Check for possible spaces in names.");
+            logger.error("[" + trancheTypeNameEn + "]"  + " Balance record type could not be determined for record '" + entity.getName() + "'. Expected values are 'Assets', 'Liabilities', etc.  Check for possible spaces in names.");
+            throw new ExcelFileParseException("[" + trancheTypeNameEn + "]" + " Balance record type could not be determined for record '" + entity.getName() + "'. Expected values are 'Assets', 'Liabilities', etc.  Check for possible spaces in names.");
         }
 
         return entity;
     }
 
     @Override
-    public List<ReportingPEStatementBalance> assembleList(List<ConsolidatedReportRecordDto> dtoList, int tranche, Long reportId) {
+    public List<ReportingPEStatementBalance> assembleList(List<ConsolidatedReportRecordDto> dtoList, String trancheTypeNameEn, Long reportId) {
         List<ReportingPEStatementBalance> entities = new ArrayList<>();
         if(dtoList != null){
             for(ConsolidatedReportRecordDto dto: dtoList){
-                ReportingPEStatementBalance entity = assemble(dto, tranche, reportId);
+                ReportingPEStatementBalance entity = assemble(dto, trancheTypeNameEn, reportId);
                 entities.add(entity);
             }
         }
@@ -160,6 +174,18 @@ public class PEStatementBalanceServiceImpl implements PEStatementBalanceService 
     }
 
     @Override
+    public TarragonStatementBalanceOperationsHolderDto getStatementBalanceDto(Long reportId) {
+        List<ReportingPEStatementBalance> entities = this.peStatementBalanceRepository.getEntitiesByReportId(reportId);
+        TarragonStatementBalanceOperationsHolderDto holderDto = new TarragonStatementBalanceOperationsHolderDto();
+        List<TarragonStatementBalanceOperationsTrancheDto> recordsByTranche = disassembleByTranche(entities);
+        holderDto.setBalanceRecords(recordsByTranche);
+        if(entities != null && !entities.isEmpty()) {
+            holderDto.setReport(periodicReportConverter.disassemble(entities.get(0).getReport()));
+        }
+        return holderDto;
+    }
+
+    @Override
     public boolean excludeIncludeTarragonRecord(Long recordId) {
         try {
             ReportingPEStatementBalance entity = peStatementBalanceRepository.findOne(recordId);
@@ -184,17 +210,20 @@ public class PEStatementBalanceServiceImpl implements PEStatementBalanceService 
 
     @Override
     public List<StatementBalanceOperationsDto> getStatementBalanceRecords(Long reportId) {
-        List<ReportingPEStatementBalance> entitiesTrancheA = this.peStatementBalanceRepository.getEntitiesByReportIdAndTranche(reportId, 1,
-                new PageRequest(0, 1000, new Sort(Sort.Direction.ASC, "id")));
+//        List<ReportingPEStatementBalance> entitiesTrancheA = this.peStatementBalanceRepository.getEntitiesByReportIdAndTranche(reportId, 1,
+//                new PageRequest(0, 1000, new Sort(Sort.Direction.ASC, "id")));
+//
+//        List<ReportingPEStatementBalance> entitiesTrancheB = this.peStatementBalanceRepository.getEntitiesByReportIdAndTranche(reportId, 2,
+//                new PageRequest(0, 1000, new Sort(Sort.Direction.ASC, "id")));
+//
+//        List<StatementBalanceOperationsDto> dtoListTrancheA = disassembleStatementBalanceList(entitiesTrancheA);
+//        List<StatementBalanceOperationsDto> dtoListTrancheB = disassembleStatementBalanceList(entitiesTrancheB);
 
-        List<ReportingPEStatementBalance> entitiesTrancheB = this.peStatementBalanceRepository.getEntitiesByReportIdAndTranche(reportId, 2,
-                new PageRequest(0, 1000, new Sort(Sort.Direction.ASC, "id")));
 
-        List<StatementBalanceOperationsDto> dtoListTrancheA = disassembleStatementBalanceList(entitiesTrancheA);
-        List<StatementBalanceOperationsDto> dtoListTrancheB = disassembleStatementBalanceList(entitiesTrancheB);
+        List<ReportingPEStatementBalance> entities = this.peStatementBalanceRepository.getEntitiesByReportId(reportId);
+        List<StatementBalanceOperationsDto> dtoList = disassembleStatementBalanceList(entities);
 
-        dtoListTrancheA.addAll(dtoListTrancheB);
-        return dtoListTrancheA;
+        return dtoList;
     }
 
     @Override
@@ -255,6 +284,56 @@ public class PEStatementBalanceServiceImpl implements PEStatementBalanceService 
             }
         }
         return records;
+    }
+
+
+    private List<TarragonStatementBalanceOperationsTrancheDto> disassembleByTranche(List<ReportingPEStatementBalance> entities){
+        Map<String, List<ConsolidatedReportRecordDto>> trancheMap = new HashMap<>();
+        if(entities != null){
+            PEBalanceType currentType = null;
+            Set<String> types = new HashSet<>();
+            for(ReportingPEStatementBalance entity: entities){
+
+                boolean balanceTypeSwitch = currentType != null && entity.getType() != null
+                        && !entity.getType().getCode().equalsIgnoreCase(currentType.getCode());
+
+                // add headers by type
+                if(balanceTypeSwitch || currentType == null){
+                    // check if need header
+                    List<String> headers = new ArrayList<>();
+                    if(types == null || !types.contains(entity.getType().getNameEn())){
+                        // add headers
+                        PEBalanceType parent = entity.getType();
+                        while(parent != null && !types.contains(parent.getNameEn())){
+                            headers.add(parent.getNameEn());
+                            parent = parent.getParent();
+                        }
+
+                        for(int i = headers.size() - 1; i >= 0; i--){
+                            if(trancheMap.get(entity.getTrancheType().getNameEn()) == null){
+                                trancheMap.put(entity.getTrancheType().getNameEn(), new ArrayList<>());
+                            }
+                            trancheMap.get(entity.getTrancheType().getNameEn()).add(new ConsolidatedReportRecordDto(headers.get(i), null, null, null, true, false));
+                            types.add(headers.get(i));
+                        }
+                    }
+                }
+
+                currentType = entity.getType();
+                if(trancheMap.get(entity.getTrancheType().getNameEn()) == null){
+                    trancheMap.put(entity.getTrancheType().getNameEn(), new ArrayList<>());
+                }
+                trancheMap.get(entity.getTrancheType().getNameEn()).add(disassemble(entity));
+            }
+        }
+        List<TarragonStatementBalanceOperationsTrancheDto> resultRecords = new ArrayList<>();
+        trancheMap.forEach((trancheName, values)->{
+            TarragonStatementBalanceOperationsTrancheDto trancheDto = new TarragonStatementBalanceOperationsTrancheDto();
+            trancheDto.setTrancheType(new BaseDictionaryDto(null, trancheName, null, null));
+            trancheDto.setRecords(values);
+            resultRecords.add(trancheDto);
+        });
+        return resultRecords;
     }
 
     private ConsolidatedReportRecordDto disassemble(ReportingPEStatementBalance entity){

@@ -37,16 +37,26 @@ public interface PeriodicReportREService {
 
     boolean deleteByReportId(Long reportId);
 
+    boolean deleteGeneralLedgerByReportId(Long reportId);
+
     List<TerraBalanceSheetRecordDto> getBalanceSheetRecords(Long reportId);
 
     List<TerraProfitLossRecordDto> getProfitLossRecords(Long reportId);
 
     List<TerraSecuritiesCostRecordDto> getSecuritiesCostRecords(Long reportId);
 
-    ListResponseDto getTerraGeneratedForm(Long reportId);
+//    @Deprecated
+//    ListResponseDto getTerraGeneratedForm(Long reportId);
+//    @Deprecated
+//    ListResponseDto getTerraGeneratedFormWithoutExcluded(Long reportId);
 
-    ListResponseDto getTerraGeneratedFormWithoutExcluded(Long reportId);
+    ListResponseDto getTerraGeneralLedgerFormData(Long reportId);
 
+    ListResponseDto getTerraGeneralLedgerFormDataWithoutExcluded(Long reportId);
+
+
+
+    //EntityListSaveResponseDto saveTeraGeneralLedgerFormData(TerraGeneralLedgerFormDataHolderDto dataHolderDto);
     EntityListSaveResponseDto saveRealEstateGeneralLedgerFormData(RealEstateGeneralLedgerFormDataHolderDto dataHolderDto);
 
     boolean deleteRealEstateGeneralLedgerFormDataRecordById(Long recordId);
@@ -56,6 +66,10 @@ public interface PeriodicReportREService {
     boolean excludeIncludeTerraRecord(ExcludeTerraRecordDto excludeTerraRecordDto, String username);
 
     TerraCombinedDataHolderDto getTerraCombinedParsedData(Long reportId);
+
+    TerraGeneralLedgerDataHolderDto getTerraGeneralLedgerData(Long reportId);
+
+    TerraGeneralLedgerDataHolderDto getTerraGeneralLedgerDataWithoutExcluded(Long reportId);
 
     boolean existBalanceEntityWithType(String code);
 

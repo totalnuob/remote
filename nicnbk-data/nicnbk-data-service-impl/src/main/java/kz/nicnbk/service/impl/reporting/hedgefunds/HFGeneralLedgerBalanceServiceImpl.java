@@ -14,6 +14,7 @@ import kz.nicnbk.service.api.reporting.hedgefunds.HFGeneralLedgerBalanceService;
 import kz.nicnbk.service.converter.reporting.PeriodicReportConverter;
 import kz.nicnbk.service.datamanager.LookupService;
 import kz.nicnbk.service.dto.reporting.*;
+import kz.nicnbk.service.impl.reporting.PeriodicReportConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -172,9 +173,9 @@ public class HFGeneralLedgerBalanceServiceImpl implements HFGeneralLedgerBalance
             logger.error("Error parsing 'Singularity General Ledger Balance' file: tranche could not be determined - empty value");
             throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: tranche could not be determined - empty value");
         }else if(tranche.intValue() == 1){
-            return "SINGULAR";
+            return PeriodicReportConstants.SINGULARITY_A_LOWER_CASE;
         }else if(tranche.intValue() == 2){
-            return "SINGULAR B";
+            return PeriodicReportConstants.SINGULARITY_B_LOWER_CASE;
         }else{
             logger.error("Error parsing 'Singularity General Ledger Balance' file: tranche could not be determined from tranche - " + tranche);
             throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: tranche could not be determined from tranche - " + tranche);

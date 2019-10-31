@@ -61,12 +61,9 @@
                     </thead>
                     <tr  *ngFor="let addedRecord of addedRecordsHolder.records" style="font-size: small">
                         <td>
-                            <!--<select required class="form-control" style="width: 100%; font-size: small" [ngModelOptions]="{standalone: true}" [(ngModel)]="addedRecord.tranche">-->
-                                <!--&lt;!&ndash;TODO: load from component&ndash;&gt;-->
-                                <!--<option value="1">TARRAGON</option>-->
-                                <!--<option value="2">TARRAGON B</option>-->
-                            <!--</select>-->
-                            TERRA
+                            <select required class="form-control" style="width: 100%; font-size: small" [ngModelOptions]="{standalone: true}" [(ngModel)]="addedRecord.trancheType">
+                                <option *ngFor="let trancheType of reTrancheTypes" [value]="trancheType.code">{{trancheType.nameEn}}</option>
+                            </select>
                         </td>
                         <td>
                             <select required class="form-control" style="width: 100%; font-size: small" [ngModelOptions]="{standalone: true}" [(ngModel)]="addedRecord.financialStatementCategory">
@@ -180,7 +177,7 @@
                 <td>{{record.glaccount}}</td>
                 <td>{{record.financialStatementCategoryDescription}}</td>
                 <td>{{record.chartAccountsLongDescription}}</td>
-                <td>{{record.subscriptionRedemptionEntity}}</td>
+                <td>{{record.shortName != null ? record.shortName : record.subscriptionRedemptionEntity}}</td>
                 <td>{{record.nbAccountNumber}}</td>
                 <td>{{record.nicAccountName}}</td>
                 <td *ngIf="!record.editing">
@@ -204,9 +201,9 @@
                         <span class="glyphicon glyphicon-plus"></span>
                     </button>
 
-                    <!--<button *ngIf="record.added" [disabled] = "addedRecordsHolder.records != null && addedRecordsHolder.records.length > 0" type="button" class="btn-xs btn-success" style="display: inline-block"  (click)="editSavedRecord(record)">-->
-                        <!--<span class="glyphicon glyphicon-pencil"></span>-->
-                    <!--</button>-->
+                    <button *ngIf="record.added" [disabled] = "addedRecordsHolder.records != null && addedRecordsHolder.records.length > 0" type="button" class="btn-xs btn-success" style="display: inline-block"  (click)="editSavedRecord(record)">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </button>
 
                     <!--<button *ngIf="record.editable && !record.editing" type="button" class="btn-xs" style="display: inline-block"  (click)="record.editing = true">-->
                         <!--<span class="glyphicon glyphicon-pencil"></span>-->

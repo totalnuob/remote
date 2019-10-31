@@ -39,6 +39,7 @@ export class MatchingLookupValuesNBReportingComponent extends CommonNBReportingC
 
     nicChartAccountsLookupValues;
     nbChartAccountsLookupValues;
+    chartAccountsTypeLookupValues;
 
     nicChartAccountsSearchParams;
     nicChartAccountsSearchResult;
@@ -61,12 +62,15 @@ export class MatchingLookupValuesNBReportingComponent extends CommonNBReportingC
         Observable.forkJoin(
             // Load lookups
             this.lookupService.getNICReportingChartOfAccounts(null),
-            this.lookupService.getNBChartAccounts()
+            this.lookupService.getNBChartAccounts(),
+            this.lookupService.getChartAccountsType()
             )
             .subscribe(
-                ([data1, data2]) => {
+                ([data1, data2, data3]) => {
                     this.nicChartAccountsLookupValues = data1;
                     this.nbChartAccountsLookupValues = data2;
+                    this.chartAccountsTypeLookupValues = data3;
+                    console.log(data3);
                 });
 
     }
@@ -114,11 +118,12 @@ export class MatchingLookupValuesNBReportingComponent extends CommonNBReportingC
                     );
 
             }else if(this.selectedLookupName === 'NIC_SINGULARITY_CHART_ACCOUNTS'){
+
                 this.clearSearchForm();
                 this.busy = this.lookupService.getNBReportingNICSingularityChartAccounts()
                     .subscribe(
                         result  => {
-                            //console.log(result);
+                            console.log(result);
                             this.selectedLookupValues = result;
                         },
                         (error: ErrorResponse) => {
@@ -210,10 +215,11 @@ export class MatchingLookupValuesNBReportingComponent extends CommonNBReportingC
                 this.selectedEditLookup.nicchartOfAccounts.code.trim() === ''){
                 this.errorMessageSaveLookup = "NIC Chart of accounts required.";
                 return;
-            }else if(this.selectedEditLookup.positiveOnly && this.selectedEditLookup.negativeOnly){
-                this.errorMessageSaveLookup = "Cannot be positive only and negative only at the same time";
-                return;
             }
+//            else if(this.selectedEditLookup.positiveOnly && this.selectedEditLookup.negativeOnly){
+//                this.errorMessageSaveLookup = "Cannot be positive only and negative only at the same time";
+//                return;
+//            }
         }
 
         if(this.selectedLookupName === 'NIC_CHART_ACCOUNTS'){
@@ -254,27 +260,26 @@ export class MatchingLookupValuesNBReportingComponent extends CommonNBReportingC
                         if(this.selectedEditLookup.id != null && Number(this.selectedEditLookup.id) == Number(this.selectedLookupValues[i].id)){
                             continue;
                         }else if(this.selectedEditLookup.accountNumber === this.selectedLookupValues[i].accountNumber){
-                            if(this.selectedEditLookup.positiveOnly != null && this.selectedEditLookup.positiveOnly &&
+/*                            if(this.selectedEditLookup.positiveOnly != null && this.selectedEditLookup.positiveOnly &&
                                 this.selectedLookupValues[i].negativeOnly != null && this.selectedLookupValues[i].negativeOnly){
                                 // OK: positive and negative
-                                console.log("OK 1");
                             }else if(this.selectedEditLookup.negativeOnly != null && this.selectedEditLookup.negativeOnly &&
                                 this.selectedLookupValues[i].positiveOnly != null && this.selectedLookupValues[i].positiveOnly){
                                 // OK: positive and negative
-                                console.log("OK 2");
                             }else{
                                 this.errorMessageSaveLookup = "Account number matches another record, 'Negative only' or " +
                                     " 'Positive only' must be selected and must be opposite to matching record.";
                                 this.successMessageSaveLookup = null;
                                 return;
                             }
+*/
                         }
 
                     }else if( this.selectedEditLookup.nameEn != null && this.selectedEditLookup.nameEn.trim() != ''){
                         if(this.selectedEditLookup.id != null && Number(this.selectedEditLookup.id) == Number(this.selectedLookupValues[i].id)){
                             continue;
                         }else if(this.selectedEditLookup.nameEn === this.selectedLookupValues[i].nameEn){
-                            if(this.selectedEditLookup.positiveOnly != null && this.selectedEditLookup.positiveOnly &&
+/*                            if(this.selectedEditLookup.positiveOnly != null && this.selectedEditLookup.positiveOnly &&
                                 this.selectedLookupValues[i].negativeOnly != null && this.selectedLookupValues[i].negativeOnly){
                                 // OK: positive and negative
                                 console.log("OK 1");
@@ -288,6 +293,7 @@ export class MatchingLookupValuesNBReportingComponent extends CommonNBReportingC
                                 this.successMessageSaveLookup = null;
                                 return;
                             }
+*/
                         }
                     }
                 }

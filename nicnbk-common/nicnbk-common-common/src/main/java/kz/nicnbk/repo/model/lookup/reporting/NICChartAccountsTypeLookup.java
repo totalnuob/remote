@@ -1,0 +1,20 @@
+package kz.nicnbk.repo.model.lookup.reporting;
+
+/**
+ * Created by magzumov on 18.07.2016.
+ */
+public enum NICChartAccountsTypeLookup {
+
+    NOMATCH("NOMATCH");
+
+
+    private String code;
+
+    NICChartAccountsTypeLookup(String code) {
+        this.code = code;
+    }
+
+    public String getCode() {
+        return code;
+    }
+}

@@ -13,7 +13,6 @@ import {ReportingFundRenameInfo} from "./model/reporting.fund.rename.info";
 import {FundNameHolder} from "./model/fund.name.holder";
 
 var fileSaver = require("file-saver");
-
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
 import {ReportingFundRenamePair} from "./model/reporting.fund.rename.pair";
@@ -50,7 +49,8 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
 
     private moduleAccessChecker: ModuleAccessCheckerService;
 
-    private fileTarragonScheduleInvestment;
+    //private fileTarragonScheduleInvestment;
+    private fileTarragonSOIReport;
     private fileTarragonStatementAssets;
     private fileTarragonStatementCashflows;
     private fileTarragonStatementChanges;
@@ -66,6 +66,7 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
     private fileSingularityNOALTrancheA;
     private fileSingularityNOALTrancheB;
     private fileTerraCombined;
+    private fileTerraGeneralLedger;
 
 
     private fundNameListHolder: FundNameHolder;
@@ -141,6 +142,7 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
     }
 
     uploadFile(fileType){
+        console.log(fileType);
         if(fileType === 'tarragon_schedule_investment'){
             this.busy = this.periodicReportService.postFiles(this.report.reportId, this.fileTarragonScheduleInvestment, 'NB_REP_T1').subscribe(
                 res => {
@@ -158,7 +160,26 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     this.fileTarragonScheduleInvestment = null;
                     this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
-        } else if(fileType === 'tarragon_statement_assets'){
+        } else if(fileType === 'tarragon_soi_report'){
+            console.log("tarragon_soi_report");
+            console.log(this.fileTarragonSOIReport);
+           this.busy = this.periodicReportService.postFiles(this.report.reportId, this.fileTarragonSOIReport, 'NB_REP_T5').subscribe(
+               res => {
+                   console.log(this.periodicReport);
+                   // clear upload file on view
+                   this.fileTarragonSOIReport = null;
+                   // set file id
+                   this.report.tarragonSOIReportFileId = res.fileId;
+                   this.report.tarragonSOIReportFileName = res.fileName;
+                   this.postAction(res != null && res.message != null && res.message.nameEn != null ? res.message.nameEn : "Successfully uploaded file - SOI Report", null);
+               },
+               error => {
+                   var result = JSON.parse(error);
+                   var message = result != null && result.message != null && result.message.nameEn != null ? result.message.nameEn : null;
+                   this.fileTarragonSOIReport = null;
+                   this.postAction(null, message != null && message != null ? message : "Error uploading file");
+               });
+       }else if(fileType === 'tarragon_statement_assets'){
             console.log("tarragon_statement_assets");
             this.busy = this.periodicReportService.postFiles(this.report.reportId, this.fileTarragonStatementAssets, 'NB_REP_T2').subscribe(
                 res => {
@@ -400,12 +421,31 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                     this.postAction(null, message != null && message != null ? message : "Error uploading file");
                 });
         }
+        else if(fileType === 'terra_general_ledger'){
+                this.busy = this.periodicReportService.postFiles(this.report.reportId, this.fileTerraGeneralLedger, 'NB_REP_TGL').subscribe(
+                        res => {
+                            // clear upload file on view
+                            this.fileTerraGeneralLedger = null;
+                            // set file id
+                            this.report.terraGeneralLedgerFileId= res.fileId;
+                            this.report.terraGeneralLedgerFileName = res.fileName;
+                            this.postAction(res != null && res.message != null && res.message.nameEn != null ? res.message.nameEn : "Successfully uploaded file - Terra General Ledger", null);
+                        },
+                        error => {
+                            var result = JSON.parse(error);
+                            var message = result != null && result.message != null && result.message.nameEn != null ? result.message.nameEn : null;
+                            this.fileTerraGeneralLedger = null;
+                            this.postAction(null, message != null && message != null ? message : "Error uploading file");
+                        });
+                }
     }
 
     clearFile(fileType){
         if(fileType === 'tarragon_schedule_investment'){
             this.fileTarragonScheduleInvestment = null;
-        } else if(fileType === 'tarragon_statement_assets'){
+        } else if(fileType === 'tarragon_soi_report'){
+           this.fileTarragonSOIReport = null;
+       }else if(fileType === 'tarragon_statement_assets'){
             this.fileTarragonStatementAssets = null;
         } else if(fileType === 'tarragon_statement_cashflows'){
             this.fileTarragonStatementCashflows = null;
@@ -435,6 +475,8 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
             this.fileSingularityNOALTrancheB = null;
         } else if(fileType === 'terra_combined'){
             this.fileTerraCombined = null;
+        }else if(fileType === 'terra_general_ledger'){
+            this.fileTerraGeneralLedger = null;
         }
     }
 
@@ -444,7 +486,10 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                 if(filesList[i].type == 'NB_REP_T1'){
                     this.report.tarragonScheduleInvestmentFileId = filesList[i].id;
                     this.report.tarragonScheduleInvestmentFileName = filesList[i].fileName;
-                } else if(filesList[i].type == 'NB_REP_T2'){
+                } else if(filesList[i].type == 'NB_REP_T5'){
+                    this.report.tarragonSOIReportFileId = filesList[i].id;
+                    this.report.tarragonSOIReportFileName = filesList[i].fileName;
+                }else if(filesList[i].type == 'NB_REP_T2'){
                     this.report.tarragonStatementAssetsFileId = filesList[i].id;
                     this.report.tarragonStatementAssetsFileName = filesList[i].fileName;
                 } else if(filesList[i].type == 'NB_REP_T3'){
@@ -489,6 +534,9 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                 } else if(filesList[i].type == 'NB_REP_CMB'){
                     this.report.terraCombinedFileId = filesList[i].id;
                     this.report.terraCombinedFileName = filesList[i].fileName;
+                }else if(filesList[i].type == 'NB_REP_TGL'){
+                    this.report.terraGeneralLedgerFileId = filesList[i].id;
+                    this.report.terraGeneralLedgerFileName = filesList[i].fileName;
                 }
             }
         }
@@ -532,6 +580,8 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
         var files = target.files;
         if(fileType === 'tarragon_schedule_investment'){
             this.fileTarragonScheduleInvestment = files;
+        } else if(fileType === 'tarragon_soi_report'){
+            this.fileTarragonSOIReport = files;
         } else if(fileType === 'tarragon_statement_assets'){
             this.fileTarragonStatementAssets = files;
         } else if(fileType === 'tarragon_statement_cashflows'){
@@ -562,6 +612,8 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
             this.fileSingularityNOALTrancheB = files;
         } else if(fileType === 'terra_combined'){
             this.fileTerraCombined = files;
+        }else if(fileType === 'terra_general_ledger'){
+            this.fileTerraGeneralLedger = files;
         }
 
 
@@ -569,6 +621,8 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
 
     showUploadButton(fileType){
         if(fileType === 'tarragon_schedule_investment' && !this.fileTarragonScheduleInvestment && this.report != null && !this.report.tarragonScheduleInvestmentFileId){
+            return true;
+        }else if(fileType === 'tarragon_soi_report' && !this.fileTarragonSOIReport && this.report != null && !this.report.tarragonSOIReportFileId){
             return true;
         } else if(fileType === 'tarragon_statement_assets' && !this.fileTarragonStatementAssets && this.report != null && !this.report.tarragonStatementAssetsFileId){
             return true;
@@ -600,6 +654,8 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
             return true;
         } else if(fileType === 'terra_combined' && !this.fileTerraCombined && this.report != null && !this.report.terraCombinedFileId){
             return true;
+        }else if(fileType === 'terra_general_ledger' && !this.fileTerraGeneralLedger && this.report != null && !this.report.terraGeneralLedgerFileId){
+            return true;
         }
 
         return false;
@@ -607,6 +663,8 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
 
     showDownloadButton(fileType){
         if(fileType === 'tarragon_schedule_investment' && this.report != null && this.report.tarragonScheduleInvestmentFileId > 0){
+            return true;
+        }else if(fileType === 'tarragon_soi_report' && this.report != null && this.report.tarragonSOIReportFileId > 0){
             return true;
         } else if(fileType === 'tarragon_statement_assets' && this.report != null && this.report.tarragonStatementAssetsFileId > 0){
             return true;
@@ -638,6 +696,8 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
             return true;
         } else if(fileType === 'terra_combined' && this.report != null && this.report.terraCombinedFileId > 0){
             return true;
+        }else if(fileType === 'terra_general_ledger' && this.report != null && this.report.terraGeneralLedgerFileId > 0){
+            return true;
         }
 
         return false;
@@ -645,6 +705,8 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
 
     showProcessButton(fileType){
         if(fileType === 'tarragon_schedule_investment' && this.fileTarragonScheduleInvestment && this.report != null && !this.report.tarragonScheduleInvestmentFileId){
+            return true;
+        }else if(fileType === 'tarragon_soi_report' && this.fileTarragonSOIReport && this.report != null && !this.report.tarragonSOIReportFileId){
             return true;
         } else if(fileType === 'tarragon_statement_assets' && this.fileTarragonStatementAssets && this.report != null && !this.report.tarragonStatementAssetsFileId){
             return true;
@@ -676,6 +738,8 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
             return true;
         } else if(fileType === 'terra_combined' && this.fileTerraCombined && this.report != null && !this.report.terraCombinedFileId){
             return true;
+        }else if(fileType === 'terra_general_ledger' && this.fileTerraGeneralLedger && this.report != null && !this.report.terraGeneralLedgerFileId){
+            return true;
         }
 
         return false;
@@ -703,6 +767,22 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                         response => {
                             this.report.tarragonScheduleInvestmentFileId = null;
                             this.report.tarragonScheduleInvestmentFileName = null;
+                            this.postAction("File deleted.", null);
+                        },
+                        (error: ErrorResponse) => {
+                            this.errorMessage = "Error deleting file";
+                            if(error && !error.isEmpty()){
+                                this.processErrorMessage(error);
+                            }
+                            this.postAction(null, this.errorMessage);
+                        }
+                    );
+            } else if (fileType === 'tarragon_soi_report' && this.report != null && this.report.tarragonSOIReportFileId > 0) {
+                this.periodicReportService.deleteFile(this.report.tarragonSOIReportFileId)
+                    .subscribe(
+                        response => {
+                            this.report.tarragonSOIReportFileId = null;
+                            this.report.tarragonSOIReportFileName = null;
                             this.postAction("File deleted.", null);
                         },
                         (error: ErrorResponse) => {
@@ -825,12 +905,29 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
                             this.postAction(null, this.errorMessage);
                         }
                     );
-            }
+            }else if (fileType === 'terra_general_ledger' && this.report != null && this.report.terraGeneralLedgerFileId > 0) {
+                 this.periodicReportService.deleteFile(this.report.terraGeneralLedgerFileId)
+                     .subscribe(
+                         response => {
+                             this.report.terraGeneralLedgerFileId = null;
+                             this.report.terraGeneralLedgerFileName = null;
+                             this.postAction("File deleted.", null);
+                         },
+                         (error: ErrorResponse) => {
+                             this.errorMessage = "Error deleting file";
+                             if(error && !error.isEmpty()){
+                                 this.processErrorMessage(error);
+                             }
+                             this.postAction(null, this.errorMessage);
+                         }
+                     );
+             }
         }
     }
 
     showNextButton() {
-        if (this.report != null && !this.report.tarragonScheduleInvestmentFileId) {
+/*
+        if (this.report != null && !this.report.tarragonSOIReportFileId) {
             return false;
         } else if (this.report != null && !this.report.tarragonStatementAssetsFileId) {
             return false;
@@ -842,9 +939,12 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
             return false
         } else if(this.report != null && !this.report.singularityNOALTrancheAFileId){
             return false
-        } else if(this.report != null && !this.report.terraCombinedFileId){
+        //} else if(this.report != null && !this.report.terraCombinedFileId){
+        //    return false
+        }else if(this.report != null && !this.report.terraGeneralLedgerFileId){
             return false
         }
+*/
 
 
         //else if (this.report != null && !this.report.tarragonStatementChangesFileId) {
@@ -1006,6 +1106,9 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
     public getInfo(fileType){
         if(fileType === 'tarragon_schedule_investment'){
             this.selectedInfoHeader = "Schedule of Investments";
+            this.selectedInfoContent = InputFilesInfoLookupNBReport.SCHEDULE_INVESTMENTS_DESCRIPTION;
+        }else if(fileType === 'tarragon_soi_report'){
+            this.selectedInfoHeader = "SOI Report";
             this.selectedInfoContent = InputFilesInfoLookupNBReport.SCHEDULE_INVESTMENTS_DESCRIPTION;
         } else if(fileType === 'tarragon_statement_assets'){
             this.selectedInfoHeader = "Statement of Asssets, Liabilities, and Partners' Capital";

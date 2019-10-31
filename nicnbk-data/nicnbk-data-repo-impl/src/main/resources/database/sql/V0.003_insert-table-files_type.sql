@@ -25,6 +25,10 @@ INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(24, 
 INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(25, 'NB_REP_SNB', 'NBRK Reporting Singularity NOAL - Tranche B', '', '', 'reporting/nbrk');
 INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(26, 'NB_REP_MCS', 'NBRK Reporting Monthly Cash Statement', '', '', 'reporting/nbrk');
 
+INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(27, 'NB_REP_T5', 'NBRK Reporting Tarragon SOI Report', '', '', 'reporting/nbrk');
+
+INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(28, 'NB_REP_TGL', 'NBRK Reporting Terra General Ledger', '', '', 'reporting/nbrk');
+
 INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(30, 'CM_MATRL', 'Corp Meeting Matrials', '', '', 'corp_meetings');
 
 INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(31, 'CC_ATTACH', 'Capital Call attachments', '', '', 'reporting/cc_attachments');
@@ -36,5 +40,6 @@ INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(34, 
 
 INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(35, 'HFSCRNDATA', 'HF Screeening Data File', '', '', 'hf_screening');
 INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(36, 'HFSCRNUCTS', 'HF Screeening Ucits File', '', '', 'hf_screening');
+
 
 

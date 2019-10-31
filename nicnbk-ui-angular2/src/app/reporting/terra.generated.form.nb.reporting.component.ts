@@ -34,6 +34,8 @@ export class TerraGeneratedFormNBReportingComponent extends CommonNBReportingCom
 
     busy: Subscription;
 
+     private reTrancheTypes: BaseDictionary[];
+
     private records: TerraGeneratedGLFormRecord[];
     private terraNICReportingChartOfAccounts: TerraNICReportingChartOfAccounts[];
     private addedRecordsHolder: REGeneralLedgerFormDataHolder;
@@ -68,12 +70,13 @@ export class TerraGeneratedFormNBReportingComponent extends CommonNBReportingCom
 
         Observable.forkJoin(
             // Load lookups
-            this.lookupService.getAddableTerraNICReportingChartOfAccounts()
+            this.lookupService.getAddableTerraNICReportingChartOfAccounts(),
+            this.lookupService.getRETrancheTypes()
             )
             .subscribe(
-                ([data]) => {
-                    this.terraNICReportingChartOfAccounts = data;
-
+                ([data1, data2]) => {
+                    this.terraNICReportingChartOfAccounts = data1;
+                    this.reTrancheTypes = data2;
                     this.sub = this.route
                         .params
                         .subscribe(params => {
@@ -83,11 +86,12 @@ export class TerraGeneratedFormNBReportingComponent extends CommonNBReportingCom
                                 this.addedRecordsHolder.report = new PeriodicReport();
                                 this.addedRecordsHolder.report.id = this.reportId;
 
-                                this.busy = this.periodicReportService.getGeneratedTerraForm(this.reportId)
+                                this.busy = this.periodicReportService.getTerraGeneralLedgerForm(this.reportId)
                                     .subscribe(
                                         (response: ListResponse) => {
                                             if (response) {
                                                 this.records = response.records;
+                                                console.log(response);
                                                 if (response.status === 'FAIL') {
                                                     if(response.message != null){
                                                         this.errorMessage = response.message.nameEn ? response.message.nameEn :
@@ -236,7 +240,7 @@ export class TerraGeneratedFormNBReportingComponent extends CommonNBReportingCom
                     response => {
                         this.successMessage ="Successfully deleted record";
                         // get tarragon records
-                        this.busy = this.periodicReportService.getGeneratedTerraForm(this.reportId)
+                        this.busy = this.periodicReportService.getTerraGeneralLedgerForm(this.reportId)
                             .subscribe(
                                 (response: ListResponse) => {
                                     if (response) {
@@ -332,7 +336,7 @@ export class TerraGeneratedFormNBReportingComponent extends CommonNBReportingCom
 
                     this.addedRecordsHolder.records = [];
 
-                    this.busy = this.periodicReportService.getGeneratedTerraForm(this.reportId)
+                    this.busy = this.periodicReportService.getTerraGeneralLedgerForm(this.reportId)
                         .subscribe(
                             (response: ListResponse) => {
                                 if (response) {
@@ -403,13 +407,40 @@ export class TerraGeneratedFormNBReportingComponent extends CommonNBReportingCom
     //        );
     //}
 
+    editSavedRecord(record){
+//        if(record.acronym === 'TARRAGON'){
+//            record.tranche = 1;
+//        }else if(record.acronym === 'TARRAGON B'){
+//            record.tranche = 2;
+//        }
+        for(var i = 0; i < this.reTrancheTypes.length; i++){
+            if(this.reTrancheTypes[i].nameEn === record.acronym){
+                record.trancheType = this.reTrancheTypes[i].code;
+                break;
+            }
+        }
+        record.terraNICChartOfAccountsName = record.chartAccountsLongDescription.trim();
+        record.id = record.addedRecordId;
+        record.entityName = record.subscriptionRedemptionEntity.trim();
+        this.addedRecordsHolder.records.push(record);
+
+        for (var i = this.records.length; i--;) {
+            if (this.records[i] === record) {
+                this.records.splice(i, 1);
+            }
+        }
+
+        this.postAction(this.successMessage, this.errorMessage);
+    }
+
     showNextButton(){
-        var diff = this.totalAssetsSum + this.totalOtherSum;
+/*        var diff = this.totalAssetsSum + this.totalOtherSum;
         if(diff > 2 || diff < -2){
             return false;
         }else if(!this.recordsValid){
             return false;
         }
+*/
         return true;
     }
 

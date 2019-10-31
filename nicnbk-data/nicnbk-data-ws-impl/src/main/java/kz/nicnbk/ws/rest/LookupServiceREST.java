@@ -11,6 +11,7 @@ import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
 import kz.nicnbk.service.dto.lookup.*;
 import kz.nicnbk.service.dto.reporting.*;
 import kz.nicnbk.service.dto.reporting.realestate.TerraNICReportingChartOfAccountsDto;
+import kz.nicnbk.service.dto.strategy.StrategyDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -67,6 +68,12 @@ public class LookupServiceREST extends CommonServiceREST{
     @RequestMapping(value = "/PEStrategy", method = RequestMethod.GET)
     public ResponseEntity getPEStrategies(){
         List<BaseDictionaryDto> lookups = this.lookupService.getPrivateEquityStrategies();
+        return buildNonNullResponse(lookups);
+    }
+
+    @RequestMapping(value = "/StrategyAll", method = RequestMethod.GET)
+    public ResponseEntity getAllStrategies(){
+        List<StrategyDto> lookups = this.lookupService.getAllStrategies();
         return buildNonNullResponse(lookups);
     }
 
@@ -148,6 +155,18 @@ public class LookupServiceREST extends CommonServiceREST{
         return buildNonNullResponse(lookups);
     }
 
+    @RequestMapping(value = "/PETrancheTypes", method = RequestMethod.GET)
+    public ResponseEntity getPETrancheTypes(){
+        List<BaseDictionaryDto> lookups = this.lookupService.getTarragonTrancheTypes();
+        return buildNonNullResponse(lookups);
+    }
+
+    @RequestMapping(value = "/RETrancheTypes", method = RequestMethod.GET)
+    public ResponseEntity getRETrancheTypes(){
+        List<BaseDictionaryDto> lookups = this.lookupService.getTerraTrancheTypes();
+        return buildNonNullResponse(lookups);
+    }
+
     // TODO: replace with searchNICReportingChartOfAccountsByCode(...)
 
     @RequestMapping(value = "/NICReportingChartOfAccounts/{code}", method = RequestMethod.GET)
@@ -167,6 +186,12 @@ public class LookupServiceREST extends CommonServiceREST{
     public ResponseEntity getNICReportingChartOfAccounts(){
         List<NICReportingChartOfAccountsDto> lookups = this.lookupService.getNICReportingChartOfAccounts(null);
         Collections.sort(lookups);
+        return buildNonNullResponse(lookups);
+    }
+
+    @RequestMapping(value = "/NICReportingChartOfAccountsType/", method = RequestMethod.GET)
+    public ResponseEntity getNICReportingChartOfAccountsType(){
+        List<BaseDictionaryDto> lookups = this.lookupService.getNICReportingChartOfAccountsType();
         return buildNonNullResponse(lookups);
     }
 
@@ -300,17 +325,23 @@ public class LookupServiceREST extends CommonServiceREST{
         return buildNonNullResponse(lookups);
     }
 
+    @RequestMapping(value = "/repTarragonInvestmentType/", method = RequestMethod.GET)
+    public ResponseEntity getNBReportingTarragonInvestmentTypeLookup(){
+        List<BaseDictionaryDto> lookups = this.lookupService.getNBReportingTarragonInvestmentTypeLookup();
+        return buildNonNullResponse(lookups);
+    }
+
     @RequestMapping(value = "/repSingularityChartAccountsType/", method = RequestMethod.GET)
     public ResponseEntity getNBReportingSingularityChartAccountsTypeLookup(){
         List<BaseDictionaryDto> lookups = this.lookupService.getNBReportingSingularityChartAccountsTypeLookup();
         return buildNonNullResponse(lookups);
     }
 
-//    @RequestMapping(value = "/repTerraChartAccountsType/", method = RequestMethod.GET)
-//    public ResponseEntity getNBReportingTerraChartAccountsTypeLookup(){
-//        List<BaseDictionaryDto> lookups = this.lookupService.getNBReportingTerraChartAccountsTypeLookup();
-//        return buildNonNullResponse(lookups);
-//    }
+    @RequestMapping(value = "/repTerraChartAccountsType/", method = RequestMethod.GET)
+    public ResponseEntity getNBReportingTerraChartAccountsTypeLookup(){
+        List<BaseDictionaryDto> lookups = this.lookupService.getNBReportingTerraChartAccountsTypeLookup();
+        return buildNonNullResponse(lookups);
+    }
 
     @RequestMapping(value = "/repTerraBalanceType/", method = RequestMethod.GET)
     public ResponseEntity getNBReportingTerraBalanceTypeLookup(){
@@ -337,6 +368,16 @@ public class LookupServiceREST extends CommonServiceREST{
         String username = this.tokenService.decode(token).getUsername();
 
         EntitySaveResponseDto saveResponseDto = this.lookupService.saveTypedLookupValue(type, lookupValue, username);
+        return buildEntitySaveResponse(saveResponseDto);
+    }
+
+    @PreAuthorize("hasRole('ROLE_REPORTING_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/saveStrategyLookupValue", method = RequestMethod.POST)
+    public ResponseEntity saveStrategyLookup(@RequestBody StrategyDto strategyDto){
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        EntitySaveResponseDto saveResponseDto = this.lookupService.saveStrategyLookup(strategyDto, username);
         return buildEntitySaveResponse(saveResponseDto);
     }
 

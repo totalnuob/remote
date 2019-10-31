@@ -5,6 +5,7 @@ import kz.nicnbk.repo.model.reporting.realestate.ReportingREGeneralLedgerBalance
 import kz.nicnbk.service.api.base.BaseService;
 import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordHolderDto;
 import kz.nicnbk.service.dto.reporting.SingularityGeneralLedgerBalanceRecordDto;
+import kz.nicnbk.service.dto.reporting.realestate.TerraGeneralLedgerBalanceRecordDto;
 
 import java.util.List;
 
@@ -13,12 +14,19 @@ import java.util.List;
  */
 public interface REGeneralLedgerBalanceService extends BaseService {
 
-    ReportingREGeneralLedgerBalance assemble(SingularityGeneralLedgerBalanceRecordDto dto, Long reportId);
+    ReportingREGeneralLedgerBalance assemble(TerraGeneralLedgerBalanceRecordDto dto, Long reportId);
 
-    List<ReportingREGeneralLedgerBalance> assembleList(List<SingularityGeneralLedgerBalanceRecordDto> dtoList, Long reportId);
+    List<ReportingREGeneralLedgerBalance> assembleList(List<TerraGeneralLedgerBalanceRecordDto> dtoList, Long reportId);
 
     boolean save(List<ReportingREGeneralLedgerBalance> entities);
 
-    ConsolidatedReportRecordHolderDto get(Long reportId);
+    //ConsolidatedReportRecordHolderDto get(Long reportId);
 
+    boolean deleteByReportId(Long reportId);
+
+    List<TerraGeneralLedgerBalanceRecordDto> getRecordsByReportId(Long reportId);
+
+    boolean excludeIncludeRecord(Long recordId);
+    boolean excludeRecord(Long recordId);
+    boolean includeRecord(Long recordId);
 }

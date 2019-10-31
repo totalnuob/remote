@@ -9,6 +9,7 @@ import kz.nicnbk.service.api.base.BaseService;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
 import kz.nicnbk.service.dto.reporting.*;
 import kz.nicnbk.service.dto.reporting.realestate.TerraNICReportingChartOfAccountsDto;
+import kz.nicnbk.service.dto.strategy.StrategyDto;
 
 import java.util.List;
 
@@ -19,13 +20,17 @@ public interface LookupService extends BaseService {
     String PE_BALANCE_TYPE = "PE_BALANCE_TYPE";
     String PE_OPS_TYPE = "PE_OPS_TYPE";
     String PE_CASHFLOW_TYPE = "PE_CASHFLOW_TYPE";
+    String PE_INVESTMENT_TYPE = "PE_INVESTMENT_TYPE";
     String HF_CHART_ACCOUNTS_TYPE = "HF_CHART_ACCOUNTS_TYPE";
+    String RE_CHART_ACCOUNTS_TYPE = "RE_CHART_ACCOUNTS_TYPE";
     String RE_BALANCE_TYPE = "RE_BALANCE_TYPE";
     String RE_PROFIT_LOSS_TYPE = "RE_PROFIT_LOSS_TYPE";
     String NB_CHART_ACCOUNTS = "NB_CHART_ACCOUNTS";
+    String STRATEGY = "STRATEGY";
 
     <T extends BaseTypeEntity> T findByTypeAndCode(Class<T> clazz, String code);
 
+    List<StrategyDto> getAllStrategies();
     List<BaseDictionaryDto> getPrivateEquityStrategies();
     List<BaseDictionaryDto> getHedgeFundsStrategies();
     List<BaseDictionaryDto> getHedgeFundsSubStrategies(String strategy);
@@ -40,9 +45,12 @@ public interface LookupService extends BaseService {
     List<BaseDictionaryDto> getSidePockets();
 
     List<BaseDictionaryDto> getPEIndustry();
+    List<BaseDictionaryDto> getTarragonTrancheTypes();
+    List<BaseDictionaryDto> getTerraTrancheTypes();
 
     List<BaseDictionaryDto> getNBChartOfAccounts();
     List<NICReportingChartOfAccountsDto> getNICReportingChartOfAccounts(String code);
+    List<BaseDictionaryDto> getNICReportingChartOfAccountsType();
     NICChartOfAccountsPagedSearchResultDto searchNICReportingChartOfAccounts(NICChartOfAccountsSearchParamsDto searchParams);
     List<TarragonNICReportingChartOfAccountsDto> getAddableTarragonNICReportingChartOfAccounts();
     List<TerraNICReportingChartOfAccountsDto> getAddableTerraNICReportingChartOfAccounts();
@@ -64,12 +72,14 @@ public interface LookupService extends BaseService {
     List<BaseDictionaryDto> getNBReportingTarragonBalanceTypeLookup();
     List<BaseDictionaryDto> getNBReportingTarragonOperationsTypeLookup();
     List<BaseDictionaryDto> getNBReportingTarragonCashflowsTypeLookup();
+    List<BaseDictionaryDto> getNBReportingTarragonInvestmentTypeLookup();
     List<BaseDictionaryDto> getNBReportingSingularityChartAccountsTypeLookup();
-    //List<BaseDictionaryDto> getNBReportingTerraChartAccountsTypeLookup();
+    List<BaseDictionaryDto> getNBReportingTerraChartAccountsTypeLookup();
     List<BaseDictionaryDto> getNBReportingTerraBalanceTypeLookup();
     List<BaseDictionaryDto> getNBReportingTerraProfitLossTypeLookup();
     List<BaseDictionaryDto> getPeriodicDataTypesLookup();
 
+    public EntitySaveResponseDto saveStrategyLookup(StrategyDto strategyDto, String username);
     EntitySaveResponseDto saveTypedLookupValue(String type, BaseDictionaryDto lookup, String username);
     boolean deleteTypedLookupValueByTypeAndId(String type, Integer id, String username);
 

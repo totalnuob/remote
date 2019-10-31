@@ -11,6 +11,7 @@ import kz.nicnbk.repo.model.reporting.realestate.RealEstateGeneralLedgerFormData
 public class RealEstateGeneralLedgerFormDataDto extends CreateUpdateBaseEntityDto<RealEstateGeneralLedgerFormData> {
 
     private int tranche;
+    private String trancheType;
     private String financialStatementCategory;
     private String terraNICChartOfAccountsName;
     private String nbAccountNumber;
@@ -25,6 +26,14 @@ public class RealEstateGeneralLedgerFormDataDto extends CreateUpdateBaseEntityDt
 
     public void setTranche(int tranche) {
         this.tranche = tranche;
+    }
+
+    public String getTrancheType() {
+        return trancheType;
+    }
+
+    public void setTrancheType(String trancheType) {
+        this.trancheType = trancheType;
     }
 
     public String getFinancialStatementCategory() {

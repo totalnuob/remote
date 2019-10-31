@@ -55,6 +55,7 @@ export class PeriodicReportService extends CommonService{
     private PERIODIC_REPORT_FILE_LIST_URL  = this.PERIODIC_REPORT_BASE_URL + "inputFilesList/";
 
     private PERIODIC_REPORT_SCHEDULE_INVESTMENTS_URL  = this.PERIODIC_REPORT_BASE_URL + "get/scheduleInvestments/";
+    private PERIODIC_REPORT_SOI_REPORT_URL  = this.PERIODIC_REPORT_BASE_URL + "get/soiReport/";
     private PERIODIC_REPORT_STATEMENT_BALANCE_OPERATIONS_URL  = this.PERIODIC_REPORT_BASE_URL + "get/balanceOperations/";
     private PERIODIC_REPORT_STATEMENT_CASHFLOWS_URL = this.PERIODIC_REPORT_BASE_URL + "get/cashflows/";
     private PERIODIC_REPORT_STATEMENT_CHANGES_URL = this.PERIODIC_REPORT_BASE_URL + "get/changes/";
@@ -67,6 +68,8 @@ export class PeriodicReportService extends CommonService{
     private PERIODIC_REPORT_SINGULARITY_NOAL_A_URL = this.PERIODIC_REPORT_BASE_URL + "get/noalA/";
     private PERIODIC_REPORT_SINGULARITY_NOAL_B_URL = this.PERIODIC_REPORT_BASE_URL + "get/noalB/";
     private PERIODIC_REPORT_TERRA_COMBINED_URL = this.PERIODIC_REPORT_BASE_URL + "get/terraCombined/";
+    private PERIODIC_REPORT_TERRA_GENERAL_LEDGER_URL = this.PERIODIC_REPORT_BASE_URL + "get/terraGeneralLedger/";
+
     private PERIODIC_REPORT_OTHER_INFO_URL = this.PERIODIC_REPORT_BASE_URL + "get/otherInfo/";
     private PERIODIC_REPORT_NICK_MF_REPORTING_INFO_URL = this.PERIODIC_REPORT_BASE_URL + "NICKMFReportingInfo/";
     private PERIODIC_REPORT_NICK_MF_REPORTING_INFO_PREVIOUS_MONTH_URL = this.PERIODIC_REPORT_BASE_URL + "NICKMFReportingInfoPreviousMonth/";
@@ -75,6 +78,7 @@ export class PeriodicReportService extends CommonService{
     private PERIODIC_REPORT_SINGULAR_GENERATED_FORM_URL = this.PERIODIC_REPORT_BASE_URL + "singularGeneratedForm/";
     private PERIODIC_REPORT_TARRAGON_GENERATED_FORM_URL = this.PERIODIC_REPORT_BASE_URL + "tarragonGeneratedForm/";
     private PERIODIC_REPORT_TERRA_GENERATED_FORM_URL = this.PERIODIC_REPORT_BASE_URL + "terraGeneratedForm/";
+    private PERIODIC_REPORT_TERRA_GENERAL_LEDGER_FORM_URL = this.PERIODIC_REPORT_BASE_URL + "terraGeneralLedgerForm/";
     private PERIODIC_REPORT_TARRAGON_GENERATED_FROM_PREV_MONTH_URL = this.PERIODIC_REPORT_BASE_URL + "tarragonGeneratedFormDataFromPreviousMonth/";
     private PERIODIC_REPORT_TERRA_GENERATED_FROM_PREV_MONTH_URL = this.PERIODIC_REPORT_BASE_URL + "terraGeneratedFormDataFromPreviousMonth/";
     private PERIODIC_REPORT_TERRA_INCLUDE_EXCLUDE_URL= this.PERIODIC_REPORT_BASE_URL + "excludeTerraRecord/";
@@ -212,6 +216,12 @@ export class PeriodicReportService extends CommonService{
             .catch(this.handleErrorResponse);
     }
 
+    getSOIReport(reportId): Observable<PeriodicReportRecordHolder>{
+        return this.http.get(this.PERIODIC_REPORT_SOI_REPORT_URL + reportId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
     getStatementBalanceOperations(reportId): Observable<PeriodicReportRecordHolder>{
         return this.http.get(this.PERIODIC_REPORT_STATEMENT_BALANCE_OPERATIONS_URL + reportId, this.getOptionsWithCredentials())
             .map(this.extractData)
@@ -274,6 +284,12 @@ export class PeriodicReportService extends CommonService{
             .catch(this.handleErrorResponse);
     }
 
+    getTerraGeneralLedger(reportId): Observable<TerraCombinedRecordHolder>{
+        return this.http.get(this.PERIODIC_REPORT_TERRA_GENERAL_LEDGER_URL + reportId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
     getNICKMFReportingInfo(reportId): Observable<NICKMFReportingInfoHolder>{
         return this.http.get(this.PERIODIC_REPORT_NICK_MF_REPORTING_INFO_URL + reportId, this.getOptionsWithCredentials())
             .map(this.extractData)
@@ -304,6 +320,12 @@ export class PeriodicReportService extends CommonService{
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }
+    getTerraGeneralLedgerForm(reportId): Observable<ListResponse>{
+            return this.http.get(this.PERIODIC_REPORT_TERRA_GENERAL_LEDGER_FORM_URL + reportId, this.getOptionsWithCredentials())
+                .map(this.extractData)
+                .catch(this.handleErrorResponse);
+        }
+
 
     getNICKMFReportingInfoPreviousMonth(reportId): Observable<NICKMFReportingInfoHolder>{
         return this.http.get(this.PERIODIC_REPORT_NICK_MF_REPORTING_INFO_PREVIOUS_MONTH_URL + reportId, this.getOptionsWithCredentials())

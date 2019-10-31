@@ -17,6 +17,8 @@ public interface ReportingPEStatementBalanceRepository extends PagingAndSortingR
     @Query("SELECT e from ReportingPEStatementBalance e where e.report.id=?1 and e.tranche=?2")
     List<ReportingPEStatementBalance> getEntitiesByReportIdAndTranche(Long reportId, int tranche, Pageable pageable);
 
+    List<ReportingPEStatementBalance> getEntitiesByReportId(Long reportId);
+
     @Modifying
     @Transactional
     @Query("DELETE from ReportingPEStatementBalance e where e.report.id=?1")
