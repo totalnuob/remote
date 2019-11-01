@@ -62,7 +62,7 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
     private FilesTypeRepository filesTypeRepository;
 
     @Autowired
-    private FileService fileService;f
+    private FileService fileService;
 
     @Autowired
     private FilesRepository filesRepository;
