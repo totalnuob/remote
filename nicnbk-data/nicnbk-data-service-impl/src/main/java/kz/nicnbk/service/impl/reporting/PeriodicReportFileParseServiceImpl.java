@@ -723,7 +723,7 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
             }
             for(int i = 0; i < trancheTypes.size(); i++){
                 String trancheName = trancheTypes.get(i).getNameEn();
-                Iterator<Row> rowIterator = getRowIterator(filesDto, trancheName);
+                Iterator<Row> rowIterator = getRowIterator(filesDto, trancheName.replace("Tarragon", "Tranche"));
                 if(rowIterator == null){
                     break;
                 }
@@ -938,6 +938,10 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
 
     }
 
+    private boolean isTarragonTrancheA(String name){
+        return name.startsWith("Tarragon A") || name.startsWith("Tranche A");
+    }
+
     private List<ConsolidatedReportRecordDto> parseStatementAssetsLiabilitiesSheetRaw(Iterator<Row> rowIterator, String sheetName){
 
         List<ConsolidatedReportRecordDto> records = new ArrayList<>();
@@ -945,9 +949,9 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
         String[] classifications = new String[5]; // TODO: size? dynamic?
         while (rowIterator.hasNext()) { // each row
             Row row = rowIterator.next();
-            if(sheetName.startsWith("Tranche A") && rowNum <= 5){
+            if(isTarragonTrancheA(sheetName) && rowNum <= 5){
                 checkStatementAssetsLiabilitiesTrancheATableHeader(row, rowNum);
-            }else if(!sheetName.startsWith("Tranche A") && rowNum <= 2){
+            }else if(!isTarragonTrancheA(sheetName) && rowNum <= 2){
                 checkStatementAssetsLiabilitiesTrancheBTableHeader(row, rowNum);
             }else{ /* Rows with data, not headers */
                 Cell cell = row.getCell(0);
@@ -980,7 +984,7 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                         String name = cell.getStringCellValue();
                         Double[] values = new Double[7];
                         values[0] = ExcelUtils.getDoubleValueFromCell(row.getCell(2));
-                        if(sheetName.startsWith("Tranche A")){
+                        if(isTarragonTrancheA(sheetName)){
                             values[1] = ExcelUtils.getDoubleValueFromCell(row.getCell(4));
                             values[2] = ExcelUtils.getDoubleValueFromCell(row.getCell(6));
                             values[3] = ExcelUtils.getDoubleValueFromCell(row.getCell(8));
@@ -3575,6 +3579,9 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
             } else if (extension.equalsIgnoreCase("xlsx")) {
                 XSSFWorkbook workbook = new XSSFWorkbook(inputFile);
                 XSSFSheet sheet = workbook.getSheet(sheetName);
+                if(sheet == null){
+                    throw new ExcelFileParseException("Could not find sheet with name '" + sheetName + "'");
+                }
                 return sheet.iterator();
             } else {
                 // log error

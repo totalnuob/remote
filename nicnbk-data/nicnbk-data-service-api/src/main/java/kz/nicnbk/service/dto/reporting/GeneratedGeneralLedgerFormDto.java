@@ -89,10 +89,17 @@ public class GeneratedGeneralLedgerFormDto extends GeneralLedgerBalanceRecordDto
             return -1;
         }else if(getSortingScore(this) > getSortingScore((GeneratedGeneralLedgerFormDto)o)){
             return 1;
-        }else if(this.getNbAccountNumber() != null && ((GeneratedGeneralLedgerFormDto) o).getNbAccountNumber() != null){
-            return this.getNbAccountNumber().compareTo(((GeneratedGeneralLedgerFormDto) o).getNbAccountNumber());
         }else {
-            return 0;
+            if(this.getNbAccountNumber() == null){
+                if(((GeneratedGeneralLedgerFormDto) o).getNbAccountNumber() == null){
+                    return 0;
+                }
+                return 1;
+            }
+            if(((GeneratedGeneralLedgerFormDto) o).getNbAccountNumber() == null){
+                return -1;
+            }
+            return this.getNbAccountNumber().compareTo(((GeneratedGeneralLedgerFormDto) o).getNbAccountNumber());
         }
     }
 

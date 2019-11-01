@@ -2505,7 +2505,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         }else if(difference > 1 || difference < -1){
             String errorMessage = "Record '5450.010' (код строки #51) value = " + String.format(Locale.ENGLISH, "%,.2f", value) + ", #28 - #37 - #45 - #47 - #52 - '5440.010'(код строки #51) = " +
                     String.format(Locale.ENGLISH, "%,.2f", totalSumCheck) +
-                    ". Difference can not be ignored = " + String.format(Locale.ENGLISH, "%,.2f", difference);
+                    ". Difference = " + String.format(Locale.ENGLISH, "%,.2f", difference);
             logger.error(errorMessage);
 
             responseDto.setErrorMessageEn(errorMessage);
@@ -3526,9 +3526,13 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                     record.setDebtTurnover(totalRecord.getDebtTurnover());
                     record.setFairValueAdjustmentsTurnoverPositive(totalRecord.getFairValueAdjustmentsTurnoverPositive());
                     record.setFairValueAdjustmentsTurnoverNegative(totalRecord.getFairValueAdjustmentsTurnoverNegative());
+                    record.setInterestTurnover(totalRecord.getInterestTurnover());
+
+                    record.setInterestEndPeriod(totalRecord.getInterestEndPeriod());
                     record.setDebtEndPeriod(totalRecord.getDebtEndPeriod());
                     record.setFairValueAdjustmentsEndPeriod(totalRecord.getFairValueAdjustmentsEndPeriod());
                     record.setTotalEndPeriod(totalRecord.getTotalEndPeriod());
+
                 }
 
                 if(record.getAccountNumber() != null && record.getLineNumber() != null && record.getLineNumber() == 3 &&
