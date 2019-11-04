@@ -35,9 +35,7 @@ import kz.nicnbk.repo.model.reporting.hedgefunds.FinancialStatementCategory;
 import kz.nicnbk.repo.model.reporting.hedgefunds.HFChartOfAccountsType;
 import kz.nicnbk.repo.model.reporting.hedgefunds.SingularityNICChartOfAccounts;
 import kz.nicnbk.repo.model.reporting.privateequity.*;
-import kz.nicnbk.repo.model.reporting.realestate.REBalanceType;
-import kz.nicnbk.repo.model.reporting.realestate.REProfitLossType;
-import kz.nicnbk.repo.model.reporting.realestate.TerraNICChartOfAccounts;
+import kz.nicnbk.repo.model.reporting.realestate.*;
 import kz.nicnbk.repo.model.tripmemo.TripType;
 import kz.nicnbk.service.api.reporting.PeriodicReportService;
 import kz.nicnbk.service.api.reporting.hedgefunds.HFGeneralLedgerBalanceService;
@@ -50,6 +48,7 @@ import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
 import kz.nicnbk.service.dto.common.ListResponseDto;
 import kz.nicnbk.service.dto.reporting.*;
 import kz.nicnbk.service.dto.reporting.realestate.TerraNICReportingChartOfAccountsDto;
+import kz.nicnbk.service.dto.strategy.StrategyDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -155,10 +154,19 @@ public class LookupServiceImpl implements LookupService {
     private NBChartOfAccountsRepository nbChartOfAccountsRepository;
 
     @Autowired
+    private PeriodicDataChartAccountsTypeRepository chartAccountsTypeRepository;
+
+    @Autowired
     private NICReportingChartOfAccountsRepository nicReportingChartOfAccountsRepository;
 
     @Autowired
     private TarragonNICChartOfAccountsRepository tarragonNICChartOfAccountsRepository;
+
+    @Autowired
+    private PETrancheTypeRepository peTrancheTypeRepository;
+
+    @Autowired
+    private RETrancheTypeRepository reTrancheTypeRepository;
 
     @Autowired
     private TerraNICChartOfAccountsRepository terraNICChartOfAccountsRepository;
@@ -321,6 +329,12 @@ public class LookupServiceImpl implements LookupService {
                 return (T) this.icMeetingTypeRepository.findByCode(code);
             } else if (clazz.equals(Benchmark.class)) {
                 return (T) this.benchmarkTypeRepository.findByCode(code);
+            } else if (clazz.equals(REChartOfAccountsType.class)) {
+                return (T) this.reChartOfAccountsTypeRepository.findByCode(code);
+            }else if(clazz.equals(PETrancheType.class)){
+                return (T) this.peTrancheTypeRepository.findByCode(code);
+            }else if(clazz.equals(RETrancheType.class)){
+                return (T) this.reTrancheTypeRepository.findByCode(code);
             }else{
                 logger.error("Failed to load lookups for clazz=" + clazz + ", code=" + code);
             }
@@ -490,10 +504,29 @@ public class LookupServiceImpl implements LookupService {
         return getStrategies(Strategy.TYPE_REAL_ESTATE);
     }
 
+    @Override
+    public List<StrategyDto> getAllStrategies(){
+        try {
+            List<StrategyDto> dtoList = new ArrayList<>();
+            List<Strategy> entityList = this.strategyRepository.findByAllGroups();
+            if (entityList != null) {
+                for (Strategy entity : entityList) {
+                    BaseDictionaryDto dto = disassemble(entity);
+                    StrategyDto strategyDto = new StrategyDto(dto, entity.getGroupType());
+                    dtoList.add(strategyDto);
+                }
+            }
+            return dtoList;
+        }catch (Exception ex){
+            logger.error("Failed to load lookup: Strategy (all)", ex);
+        }
+        return null;
+    }
+
     private List<BaseDictionaryDto> getStrategies(int group){
         try {
             List<BaseDictionaryDto> dtoList = new ArrayList<>();
-            List<Strategy> entityList = this.strategyRepository.findByGroupType(group);
+            List<Strategy> entityList = group != 0 ? this.strategyRepository.findByGroupType(group) : this.strategyRepository.findByAllGroups();
             if (entityList != null) {
                 for (Strategy entity : entityList) {
                     BaseDictionaryDto dto = disassemble(entity);
@@ -605,6 +638,23 @@ public class LookupServiceImpl implements LookupService {
     }
 
     @Override
+    public List<BaseDictionaryDto> getNICReportingChartOfAccountsType() {
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            Iterator<PeriodicDataChartAccountsType> iterator = this.chartAccountsTypeRepository.findAll(new Sort(Sort.Direction.ASC, "code")).iterator();
+            while (iterator.hasNext()) {
+                PeriodicDataChartAccountsType entity = iterator.next();
+                BaseDictionaryDto dto = disassemble(entity);
+                dtoList.add(dto);
+            }
+            return dtoList;
+        }catch (Exception ex){
+            logger.error("Failed to load lookup: ChartOfAccountsType", ex);
+        }
+        return null;
+    }
+
+    @Override
     public NICChartOfAccountsPagedSearchResultDto searchNICReportingChartOfAccounts(NICChartOfAccountsSearchParamsDto searchParams) {
         if(searchParams == null){
             searchParams = new NICChartOfAccountsSearchParamsDto();
@@ -674,6 +724,42 @@ public class LookupServiceImpl implements LookupService {
         }
         return null;
 
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getTarragonTrancheTypes() {
+
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            Iterator<PETrancheType> iterator = this.peTrancheTypeRepository.findAll().iterator();
+            while (iterator.hasNext()) {
+                PETrancheType entity = iterator.next();
+                BaseDictionaryDto dto = disassemble(entity);
+                dtoList.add(dto);
+            }
+            return dtoList;
+        } catch (Exception ex) {
+            logger.error("Failed to load lookup: PETrancheType", ex);
+        }
+        return null;
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getTerraTrancheTypes() {
+
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            Iterator<RETrancheType> iterator = this.reTrancheTypeRepository.findAll().iterator();
+            while (iterator.hasNext()) {
+                RETrancheType entity = iterator.next();
+                BaseDictionaryDto dto = disassemble(entity);
+                dtoList.add(dto);
+            }
+            return dtoList;
+        } catch (Exception ex) {
+            logger.error("Failed to load lookup: RETrancheType", ex);
+        }
+        return null;
     }
 
     @Override
@@ -930,6 +1016,24 @@ public class LookupServiceImpl implements LookupService {
     }
 
     @Override
+    public List<BaseDictionaryDto> getNBReportingTarragonInvestmentTypeLookup() {
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            Iterator<PEInvestmentType> iterator = this.peInvestmentTypeRepository.findAll().iterator();
+            while (iterator.hasNext()) {
+                PEInvestmentType entity = iterator.next();
+                BaseDictionaryDto dto = disassemble(entity);
+                //dto.setEditable(checkEditableTypedLookup(PE_INVESTMENT_TYPE, dto));
+                dtoList.add(dto);
+            }
+            return dtoList;
+        } catch (Exception ex) {
+            logger.error("Failed to load lookup: PEInvestmentType", ex);
+        }
+        return null;
+    }
+
+    @Override
     public List<BaseDictionaryDto> getNBReportingSingularityChartAccountsTypeLookup() {
         try {
             List<BaseDictionaryDto> dtoList = new ArrayList<>();
@@ -950,26 +1054,26 @@ public class LookupServiceImpl implements LookupService {
         return null;
     }
 
-//    @Override
-//    public List<BaseDictionaryDto> getNBReportingTerraChartAccountsTypeLookup() {
-//        // UNUSED
-//        try {
-//            List<BaseDictionaryDto> dtoList = new ArrayList<>();
-//            Iterator<REChartOfAccountsType> iterator = this.reChartOfAccountsTypeRepository.findAll().iterator();
-//            while (iterator.hasNext()) {
-//                REChartOfAccountsType entity = iterator.next();
-//                BaseDictionaryDto dto = disassemble(entity);
-//                if(entity.getParent() != null){
-//                    dto.setParent(disassemble(entity.getParent()));
-//                }
-//                dtoList.add(dto);
-//            }
-//            return dtoList;
-//        } catch (Exception ex) {
-//            logger.error("Failed to load lookup: REChartOfAccountsType", ex);
-//        }
-//        return null;
-//    }
+    @Override
+    public List<BaseDictionaryDto> getNBReportingTerraChartAccountsTypeLookup() {
+        // UNUSED
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            Iterator<REChartOfAccountsType> iterator = this.reChartOfAccountsTypeRepository.findAll().iterator();
+            while (iterator.hasNext()) {
+                REChartOfAccountsType entity = iterator.next();
+                BaseDictionaryDto dto = disassemble(entity);
+                if(entity.getParent() != null){
+                    dto.setParent(disassemble(entity.getParent()));
+                }
+                dtoList.add(dto);
+            }
+            return dtoList;
+        } catch (Exception ex) {
+            logger.error("Failed to load lookup: REChartOfAccountsType", ex);
+        }
+        return null;
+    }
 
     @Override
     public List<BaseDictionaryDto> getNBReportingTerraBalanceTypeLookup() {
@@ -1032,6 +1136,9 @@ public class LookupServiceImpl implements LookupService {
 
 
     private boolean checkEditableTypedLookup(String type, BaseDictionaryDto lookup){
+        if(lookup.getId() == null){
+            return true;
+        }
         if (type.equalsIgnoreCase(PE_BALANCE_TYPE)) {
             boolean exists = this.peStatementBalanceService.existEntityWithType(lookup.getCode());
             if(exists){
@@ -1061,6 +1168,12 @@ public class LookupServiceImpl implements LookupService {
             if(entitiesByParent != null && !entitiesByParent.isEmpty()){
                 return false;
             }
+            return true;
+        }else if (type.equalsIgnoreCase(PE_INVESTMENT_TYPE)) {
+//            boolean exists = this.peScheduleInvestmentService.existEntityWithType(lookup.getCode());
+//            if(exists){
+//                return false;
+//            }
             return true;
         }else if (type.equalsIgnoreCase(HF_CHART_ACCOUNTS_TYPE)) {
             boolean exists = this.hfGeneralLedgerBalanceService.existEntityWithChartAccountsType(lookup.getCode());
@@ -1261,6 +1374,50 @@ public class LookupServiceImpl implements LookupService {
         return saveResponseDto;
     }
 
+    private EntitySaveResponseDto saveLookupPEInvestmentType(BaseDictionaryDto lookup, String username){
+        EntitySaveResponseDto saveResponseDto = new EntitySaveResponseDto();
+        if(StringUtils.isEmpty(lookup.getCode())){
+            String errorMessage = "Error saving lookup value: code is required";
+            logger.error(errorMessage);
+            saveResponseDto.setErrorMessageEn(errorMessage);
+            return saveResponseDto;
+        }else if(StringUtils.isEmpty(lookup.getNameEn())){
+            String errorMessage = "Error saving lookup value: name en is required";
+            logger.error(errorMessage);
+            saveResponseDto.setErrorMessageEn(errorMessage);
+            return saveResponseDto;
+        }
+        PEInvestmentType entity = new PEInvestmentType();
+        if(lookup.getId() != null){
+            //Check editable
+            if(!checkEditableTypedLookup(PE_INVESTMENT_TYPE, lookup)){
+                String errorMessage = "Error saving PE Investment type: lookup value is not editable";
+                logger.error(errorMessage);
+                saveResponseDto.setErrorMessageEn(errorMessage);
+                return saveResponseDto;
+            }
+            entity.setId(lookup.getId());
+
+        }else{
+            PEInvestmentType existingEntity = this.peInvestmentTypeRepository.findByCode(lookup.getCode());
+            if(existingEntity != null){
+                String errorMessage = "Error saving lookup value: duplicate code '" + lookup.getCode() + "'";
+                logger.error(errorMessage);
+                saveResponseDto.setErrorMessageEn(errorMessage);
+                return saveResponseDto;
+            }
+        }
+
+        setValues(lookup, entity);
+
+        Integer id = this.peInvestmentTypeRepository.save(entity).getId();
+        saveResponseDto.setEntityId(new Long(id));
+        saveResponseDto.setSuccessMessageEn("Successfully saved lookup value");
+        logger.info("Successfully saved PE Investment type lookup value: id=" + lookup.getId() + ", code=" + lookup.getCode()
+                + ", name en=" + lookup.getNameEn() + "[user=" + username + "]");
+        return saveResponseDto;
+    }
+
     private EntitySaveResponseDto saveLookupHFChartAccountsType(BaseDictionaryDto lookup, String username){
         EntitySaveResponseDto saveResponseDto = new EntitySaveResponseDto();
         if(StringUtils.isEmpty(lookup.getCode())){
@@ -1304,6 +1461,53 @@ public class LookupServiceImpl implements LookupService {
         saveResponseDto.setEntityId(new Long(id));
         saveResponseDto.setSuccessMessageEn("Successfully saved lookup value");
         logger.info("Successfully saved HF Chart of accounts type lookup value: id=" + lookup.getId() + ", code=" +
+                lookup.getCode() + ", name en=" + lookup.getNameEn() + "[user=" + username + "]");
+        return saveResponseDto;
+    }
+
+    private EntitySaveResponseDto saveLookupREChartAccountsType(BaseDictionaryDto lookup, String username){
+        EntitySaveResponseDto saveResponseDto = new EntitySaveResponseDto();
+        if(StringUtils.isEmpty(lookup.getCode())){
+            String errorMessage = "Error saving lookup value: code is required";
+            logger.error(errorMessage);
+            saveResponseDto.setErrorMessageEn(errorMessage);
+            return saveResponseDto;
+        }else if(StringUtils.isEmpty(lookup.getNameEn())){
+            String errorMessage = "Error saving lookup value: name en is required";
+            logger.error(errorMessage);
+            saveResponseDto.setErrorMessageEn(errorMessage);
+            return saveResponseDto;
+        }
+        REChartOfAccountsType entity = new REChartOfAccountsType();
+        if(lookup.getId() != null){
+            //Check editable
+            if(!checkEditableTypedLookup(RE_CHART_ACCOUNTS_TYPE, lookup)){
+                String errorMessage = "Error saving HF Chart of accounts type: lookup value is not editable";
+                logger.error(errorMessage);
+                saveResponseDto.setErrorMessageEn(errorMessage);
+                return saveResponseDto;
+            }
+            entity.setId(lookup.getId());
+        }else{
+            REChartOfAccountsType existingEntity = this.reChartOfAccountsTypeRepository.findByCode(lookup.getCode());
+            if(existingEntity != null){
+                String errorMessage = "Error saving lookup value: duplicate code '" + lookup.getCode() + "'";
+                logger.error(errorMessage);
+                saveResponseDto.setErrorMessageEn(errorMessage);
+                return saveResponseDto;
+            }
+        }
+        setValues(lookup, entity);
+        if(lookup.getParent() != null && lookup.getParent().getCode() != null) {
+            REChartOfAccountsType parent = this.reChartOfAccountsTypeRepository.findByCode(lookup.getParent().getCode());
+            if(parent != null){
+                entity.setParent(parent);
+            }
+        }
+        Integer id = this.reChartOfAccountsTypeRepository.save(entity).getId();
+        saveResponseDto.setEntityId(new Long(id));
+        saveResponseDto.setSuccessMessageEn("Successfully saved lookup value");
+        logger.info("Successfully saved RE Chart of accounts type lookup value: id=" + lookup.getId() + ", code=" +
                 lookup.getCode() + ", name en=" + lookup.getNameEn() + "[user=" + username + "]");
         return saveResponseDto;
     }
@@ -1447,6 +1651,43 @@ public class LookupServiceImpl implements LookupService {
                 lookup.getCode() + ", name ru=" + lookup.getNameRu() + " [user=" + username + "]");
         return saveResponseDto;
     }
+    @Override
+    public EntitySaveResponseDto saveStrategyLookup(StrategyDto strategyDto, String username){
+        EntitySaveResponseDto saveResponseDto = new EntitySaveResponseDto();
+        if(StringUtils.isEmpty(strategyDto.getCode())){
+            String errorMessage = "Error saving lookup value: code is required";
+            logger.error(errorMessage);
+            saveResponseDto.setErrorMessageEn(errorMessage);
+            return saveResponseDto;
+        }
+        if(strategyDto.getParent() != null){
+            if(strategyDto.getCode().equalsIgnoreCase(strategyDto.getParent().getCode())){
+                String errorMessage = "Error saving lookup value: cannot be self parent";
+                logger.error(errorMessage);
+                saveResponseDto.setErrorMessageEn(errorMessage);
+                return saveResponseDto;
+            }
+        }
+
+        try{
+            Strategy entity = new Strategy();
+            entity.setId(strategyDto.getId());
+            setValues(strategyDto, entity);
+            entity.setGroupType(strategyDto.getGroupType());
+
+            Integer id = this.strategyRepository.save(entity).getId();
+            saveResponseDto.setEntityId(new Long(id));
+            saveResponseDto.setSuccessMessageEn("Successfully saved Strategy lookup value");
+            logger.info("Successfully saved Strategy lookup value: id=" + id.longValue()+ ", code=" +
+                    strategyDto.getCode() + ", name en=" + strategyDto.getNameEn() + " [user=" + username + "]");
+            return saveResponseDto;
+        }catch (Exception ex){
+            String errorMessage = "Error saving Strategy lookup value";
+            logger.error(errorMessage, ex);
+            saveResponseDto.setErrorMessageEn(errorMessage);
+            return saveResponseDto;
+        }
+    }
 
     @Override
     public EntitySaveResponseDto saveTypedLookupValue(String type, BaseDictionaryDto lookup, String username) {
@@ -1485,9 +1726,12 @@ public class LookupServiceImpl implements LookupService {
                 return saveLookupPEOperationsType(lookup, username);
             }else if (type.equalsIgnoreCase(PE_CASHFLOW_TYPE)) {
                 return saveLookupPECashflowsType(lookup, username);
+            }else if (type.equalsIgnoreCase(PE_INVESTMENT_TYPE)) {
+                return saveLookupPEInvestmentType(lookup, username);
             }else if (type.equalsIgnoreCase(HF_CHART_ACCOUNTS_TYPE)) {
                 return saveLookupHFChartAccountsType(lookup, username);
-            //}else if (type.equalsIgnoreCase("RE_CHART_ACCOUNTS_TYPE")) {
+            }else if (type.equalsIgnoreCase("RE_CHART_ACCOUNTS_TYPE")) {
+                return saveLookupREChartAccountsType(lookup, username);
             }else if (type.equalsIgnoreCase(RE_BALANCE_TYPE)) {
                 return saveLookupREBalanceType(lookup, username);
             }else if (type.equalsIgnoreCase(RE_PROFIT_LOSS_TYPE)) {
@@ -1702,12 +1946,17 @@ public class LookupServiceImpl implements LookupService {
                 dto.setId(entity.getId());
                 dto.setAccountNumber(entity.getSingularityAccountNumber());
                 dto.setNICChartOfAccounts(new NICReportingChartOfAccountsDto(entity.getNicReportingChartOfAccounts()));
-                //dto.setAddable();
+                dto.setAddable(false);
                 //dto.setNegativeOnly();
                 //dto.setPositiveOnly();
                 //dto.setEditable(checkEditableMatchingSingularityAccountNumber(entity.getSingularityAccountNumber()));
                 dto.setEditable(true);
                 dto.setDeletable(checkDeletableMatchingSingularityAccountNumber(dto.getAccountNumber()));
+
+                if(entity.getChartAccountsType() != null) {
+                    dto.setChartAccountsType(new BaseDictionaryDto(entity.getChartAccountsType().getCode(),
+                            entity.getChartAccountsType().getNameEn(), entity.getChartAccountsType().getNameRu(), entity.getChartAccountsType().getNameKz()));
+                }
                 dtoList.add(dto);
             }
         }
@@ -1727,9 +1976,13 @@ public class LookupServiceImpl implements LookupService {
                 dto.setNameEn(entity.getTarragonChartOfAccountsName());
                 dto.setNICChartOfAccounts(new NICReportingChartOfAccountsDto(entity.getNicReportingChartOfAccounts()));
                 dto.setAddable(entity.isAddable());
-                dto.setNegativeOnly(entity.getNegativeOnly());
-                dto.setPositiveOnly(entity.getPositiveOnly());
+//                dto.setNegativeOnly(entity.getNegativeOnly());
+//                dto.setPositiveOnly(entity.getPositiveOnly());
                 //dto.setEditable(checkEditableMatchingTarragonChartAccountsLongDescription(entity.getTarragonChartOfAccountsName()));
+                if(entity.getChartAccountsType() != null) {
+                    dto.setChartAccountsType(new BaseDictionaryDto(entity.getChartAccountsType().getCode(),
+                            entity.getChartAccountsType().getNameEn(), entity.getChartAccountsType().getNameRu(), entity.getChartAccountsType().getNameKz()));
+                }
                 dto.setEditable(true);
                 dto.setDeletable(checkDeletableMatchingTarragonChartAccountsLongDescription(dto.getNameEn()));
                 dtoList.add(dto);
@@ -1752,8 +2005,13 @@ public class LookupServiceImpl implements LookupService {
                 dto.setAddable(entity.isAddable());
                 //dto.setNegativeOnly(entity.getNegativeOnly());
                 //dto.setPositiveOnly(entity.getPositiveOnly());
+                if(entity.getChartAccountsType() != null) {
+                    dto.setChartAccountsType(new BaseDictionaryDto(entity.getChartAccountsType().getCode(),
+                            entity.getChartAccountsType().getNameEn(), entity.getChartAccountsType().getNameRu(), entity.getChartAccountsType().getNameKz()));
+                }
                 dto.setEditable(true);
                 dto.setDeletable(checkDeletableMatchingTerraChartAccountsLongDescription(dto.getNameEn()));
+
                 dtoList.add(dto);
             }
         }
@@ -1788,50 +2046,61 @@ public class LookupServiceImpl implements LookupService {
         }
 
         // Positive/Negative only
-        List<SingularityNICChartOfAccounts> existingRecords =
-                this.singularityNICChartOfAccountsRepository.findBySingularityAccountNumber(dto.getAccountNumber());
-        if(existingRecords != null && !existingRecords.isEmpty()){
-            if(existingRecords.size() > 1){
-                // cannot add
-                String errorMessage = "Error saving value for NIC_SINGULARITY_CHART_ACCOUNTS: already exist more " +
-                        "than 1 record matching account number (" + dto.getAccountNumber() + ")";
-                logger.error(errorMessage);
-                saveResponseDto.setErrorMessageEn(errorMessage);
-                return saveResponseDto;
-            }else{ //== 1
-                SingularityNICChartOfAccounts record = existingRecords.get(0);
-                if(dto.getId() != null && dto.getId().longValue() != record.getId().longValue()) {
-                    if (record.getPositiveOnly() != null && record.getPositiveOnly().booleanValue()) {
-                        if (dto.getNegativeOnly() == null || !dto.getNegativeOnly().booleanValue()) {
-                            String errorMessage = "Error saving value for NIC_SINGULARITY_CHART_ACCOUNTS: exists " +
-                                    "record matching account number (" + dto.getAccountNumber() + ") with 'Positive only' flag," +
-                                    " 'Negative only' flag must be set for this record";
-                            logger.error(errorMessage);
-                            saveResponseDto.setErrorMessageEn(errorMessage);
-                            return saveResponseDto;
-                        }
-                    } else if (record.getNegativeOnly() != null && record.getNegativeOnly().booleanValue()) {
-                        if (dto.getPositiveOnly() == null || !dto.getPositiveOnly().booleanValue()) {
-                            String errorMessage = "Error saving value for NIC_SINGULARITY_CHART_ACCOUNTS: exists " +
-                                    "record matching account number (" + dto.getAccountNumber() + ") with 'Positive only' flag," +
-                                    " 'Negative only' flag must be set for this record";
-                            logger.error(errorMessage);
-                            saveResponseDto.setErrorMessageEn(errorMessage);
-                            return saveResponseDto;
-                        }
-                    } else {
-                        String errorMessage = "Error saving value for NIC_SINGULARITY_CHART_ACCOUNTS: exists " +
-                                "record matching account number (" + dto.getAccountNumber() + ") with 'Positive only' or 'Negative only' " +
-                                "flags not set. When more than 1 record matches, flags must be set.";
-                        logger.error(errorMessage);
-                        saveResponseDto.setErrorMessageEn(errorMessage);
-                        return saveResponseDto;
-                    }
-                }
-            }
+//        List<SingularityNICChartOfAccounts> existingRecords =
+//                this.singularityNICChartOfAccountsRepository.findBySingularityAccountNumber(dto.getAccountNumber());
+//        if(existingRecords != null && !existingRecords.isEmpty()){
+//            if(existingRecords.size() > 1){
+//                // cannot add
+//                String errorMessage = "Error saving value for NIC_SINGULARITY_CHART_ACCOUNTS: already exist more " +
+//                        "than 1 record matching account number (" + dto.getAccountNumber() + ")";
+//                logger.error(errorMessage);
+//                saveResponseDto.setErrorMessageEn(errorMessage);
+//                return saveResponseDto;
+//            }else{ //== 1
+//                SingularityNICChartOfAccounts record = existingRecords.get(0);
+//                if(dto.getId() != null && dto.getId().longValue() != record.getId().longValue()) {
+//                    if (record.getPositiveOnly() != null && record.getPositiveOnly().booleanValue()) {
+//                        if (dto.getNegativeOnly() == null || !dto.getNegativeOnly().booleanValue()) {
+//                            String errorMessage = "Error saving value for NIC_SINGULARITY_CHART_ACCOUNTS: exists " +
+//                                    "record matching account number (" + dto.getAccountNumber() + ") with 'Positive only' flag," +
+//                                    " 'Negative only' flag must be set for this record";
+//                            logger.error(errorMessage);
+//                            saveResponseDto.setErrorMessageEn(errorMessage);
+//                            return saveResponseDto;
+//                        }
+//                    } else if (record.getNegativeOnly() != null && record.getNegativeOnly().booleanValue()) {
+//                        if (dto.getPositiveOnly() == null || !dto.getPositiveOnly().booleanValue()) {
+//                            String errorMessage = "Error saving value for NIC_SINGULARITY_CHART_ACCOUNTS: exists " +
+//                                    "record matching account number (" + dto.getAccountNumber() + ") with 'Positive only' flag," +
+//                                    " 'Negative only' flag must be set for this record";
+//                            logger.error(errorMessage);
+//                            saveResponseDto.setErrorMessageEn(errorMessage);
+//                            return saveResponseDto;
+//                        }
+//                    } else {
+//                        String errorMessage = "Error saving value for NIC_SINGULARITY_CHART_ACCOUNTS: exists " +
+//                                "record matching account number (" + dto.getAccountNumber() + ") with 'Positive only' or 'Negative only' " +
+//                                "flags not set. When more than 1 record matches, flags must be set.";
+//                        logger.error(errorMessage);
+//                        saveResponseDto.setErrorMessageEn(errorMessage);
+//                        return saveResponseDto;
+//                    }
+//                }
+//            }
+//        }
+//        entity.setPositiveOnly(dto.getPositiveOnly());
+//        entity.setNegativeOnly(dto.getNegativeOnly());
+
+        if(dto.getChartAccountsType() != null && dto.getChartAccountsType().getCode() != null) {
+            PeriodicDataChartAccountsType type = this.chartAccountsTypeRepository.findByCode(dto.getChartAccountsType().getCode());
+            entity.setChartAccountsType(type);
         }
-        entity.setPositiveOnly(dto.getPositiveOnly());
-        entity.setNegativeOnly(dto.getNegativeOnly());
+        if(entity.getChartAccountsType() == null){
+            String errorMessage = "Error saving value for NIC_SINGULARITY_CHART_ACCOUNTS: Chart of Accounts type missing.";
+            logger.error(errorMessage);
+            saveResponseDto.setErrorMessageEn(errorMessage);
+            return saveResponseDto;
+        }
 
         this.singularityNICChartOfAccountsRepository.save(entity);
         saveResponseDto.setSuccessMessageEn("Successfully saved lookup value for NIC_SINGULARITY_CHART_ACCOUNTS");
@@ -1850,8 +2119,8 @@ public class LookupServiceImpl implements LookupService {
         if(dto.getAddable() != null) {
             entity.setAddable(dto.getAddable());
         }
-        entity.setPositiveOnly(dto.getPositiveOnly());
-        entity.setNegativeOnly(dto.getNegativeOnly());
+//        entity.setPositiveOnly(dto.getPositiveOnly());
+//        entity.setNegativeOnly(dto.getNegativeOnly());
         if(dto.getNICChartOfAccounts() != null && dto.getNICChartOfAccounts().getCode() != null) {
             NICReportingChartOfAccounts nicReportingChartOfAccounts =
                     this.nicReportingChartOfAccountsRepository.findByCode(dto.getNICChartOfAccounts().getCode());
@@ -1873,50 +2142,61 @@ public class LookupServiceImpl implements LookupService {
         }
 
         // Positive/Negative only
-        List<TarragonNICChartOfAccounts> existingRecords =
-                this.tarragonNICChartOfAccountsRepository.findByTarragonChartOfAccountsName(dto.getNameEn());
-        if(existingRecords != null && !existingRecords.isEmpty()){
-            if(existingRecords.size() > 1){
-                // cannot add
-                String errorMessage = "Error saving value for NIC_TARRAGON_CHART_ACCOUNTS: already exist more " +
-                        "than 1 record matching name en (" + dto.getNameEn() + ")";
-                logger.error(errorMessage);
-                saveResponseDto.setErrorMessageEn(errorMessage);
-                return saveResponseDto;
-            }else{ //== 1
-                TarragonNICChartOfAccounts record = existingRecords.get(0);
-                if(dto.getId() != null && dto.getId().longValue() != record.getId().longValue()) {
-                    if (record.getPositiveOnly() != null && record.getPositiveOnly().booleanValue()) {
-                        if (dto.getNegativeOnly() == null || !dto.getNegativeOnly().booleanValue()) {
-                            String errorMessage = "Error saving value for NIC_TARRAGON_CHART_ACCOUNTS: exists " +
-                                    "record matching name en(" + dto.getNameEn() + ") with 'Positive only' flag," +
-                                    " 'Negative only' flag must be set for this record";
-                            logger.error(errorMessage);
-                            saveResponseDto.setErrorMessageEn(errorMessage);
-                            return saveResponseDto;
-                        }
-                    } else if (record.getNegativeOnly() != null && record.getNegativeOnly().booleanValue()) {
-                        if (dto.getPositiveOnly() == null || !dto.getPositiveOnly().booleanValue()) {
-                            String errorMessage = "Error saving value for NIC_TARRAGON_CHART_ACCOUNTS: exists " +
-                                    "record matching name en (" + dto.getNameEn() + ") with 'Positive only' flag," +
-                                    " 'Negative only' flag must be set for this record";
-                            logger.error(errorMessage);
-                            saveResponseDto.setErrorMessageEn(errorMessage);
-                            return saveResponseDto;
-                        }
-                    } else {
-                        String errorMessage = "Error saving value for NIC_TARRAGON_CHART_ACCOUNTS: exists " +
-                                "record matching name en(" + dto.getNameEn() + ") with 'Positive only' or 'Negative only' " +
-                                "flags not set. When more than 1 record matches, flags must be set.";
-                        logger.error(errorMessage);
-                        saveResponseDto.setErrorMessageEn(errorMessage);
-                        return saveResponseDto;
-                    }
-                }
-            }
+//        List<TarragonNICChartOfAccounts> existingRecords =
+//                this.tarragonNICChartOfAccountsRepository.findByTarragonChartOfAccountsName(dto.getNameEn());
+//        if(existingRecords != null && !existingRecords.isEmpty()){
+//            if(existingRecords.size() > 1){
+//                // cannot add
+//                String errorMessage = "Error saving value for NIC_TARRAGON_CHART_ACCOUNTS: already exist more " +
+//                        "than 1 record matching name en (" + dto.getNameEn() + ")";
+//                logger.error(errorMessage);
+//                saveResponseDto.setErrorMessageEn(errorMessage);
+//                return saveResponseDto;
+//            }else{ //== 1
+//                TarragonNICChartOfAccounts record = existingRecords.get(0);
+//                if(dto.getId() != null && dto.getId().longValue() != record.getId().longValue()) {
+//                    if (record.getPositiveOnly() != null && record.getPositiveOnly().booleanValue()) {
+//                        if (dto.getNegativeOnly() == null || !dto.getNegativeOnly().booleanValue()) {
+//                            String errorMessage = "Error saving value for NIC_TARRAGON_CHART_ACCOUNTS: exists " +
+//                                    "record matching name en(" + dto.getNameEn() + ") with 'Positive only' flag," +
+//                                    " 'Negative only' flag must be set for this record";
+//                            logger.error(errorMessage);
+//                            saveResponseDto.setErrorMessageEn(errorMessage);
+//                            return saveResponseDto;
+//                        }
+//                    } else if (record.getNegativeOnly() != null && record.getNegativeOnly().booleanValue()) {
+//                        if (dto.getPositiveOnly() == null || !dto.getPositiveOnly().booleanValue()) {
+//                            String errorMessage = "Error saving value for NIC_TARRAGON_CHART_ACCOUNTS: exists " +
+//                                    "record matching name en (" + dto.getNameEn() + ") with 'Positive only' flag," +
+//                                    " 'Negative only' flag must be set for this record";
+//                            logger.error(errorMessage);
+//                            saveResponseDto.setErrorMessageEn(errorMessage);
+//                            return saveResponseDto;
+//                        }
+//                    } else {
+//                        String errorMessage = "Error saving value for NIC_TARRAGON_CHART_ACCOUNTS: exists " +
+//                                "record matching name en(" + dto.getNameEn() + ") with 'Positive only' or 'Negative only' " +
+//                                "flags not set. When more than 1 record matches, flags must be set.";
+//                        logger.error(errorMessage);
+//                        saveResponseDto.setErrorMessageEn(errorMessage);
+//                        return saveResponseDto;
+//                    }
+//                }
+//            }
+//        }
+//        entity.setPositiveOnly(dto.getPositiveOnly());
+//        entity.setNegativeOnly(dto.getNegativeOnly());
+        if(dto.getChartAccountsType() != null && dto.getChartAccountsType().getCode() != null) {
+            PeriodicDataChartAccountsType type = this.chartAccountsTypeRepository.findByCode(dto.getChartAccountsType().getCode());
+            entity.setChartAccountsType(type);
         }
-        entity.setPositiveOnly(dto.getPositiveOnly());
-        entity.setNegativeOnly(dto.getNegativeOnly());
+        if(entity.getChartAccountsType() == null){
+            String errorMessage = "Error saving value for NIC_TARRAGON_CHART_ACCOUNTS: Chart of Accounts type missing.";
+            logger.error(errorMessage);
+            saveResponseDto.setErrorMessageEn(errorMessage);
+            return saveResponseDto;
+        }
+
 
 
         this.tarragonNICChartOfAccountsRepository.save(entity);
@@ -1934,8 +2214,8 @@ public class LookupServiceImpl implements LookupService {
         if(dto.getAddable() != null) {
             entity.setAddable(dto.getAddable());
         }
-        entity.setPositiveOnly(dto.getPositiveOnly());
-        entity.setNegativeOnly(dto.getNegativeOnly());
+//        entity.setPositiveOnly(dto.getPositiveOnly());
+//        entity.setNegativeOnly(dto.getNegativeOnly());
         if(dto.getNICChartOfAccounts() != null && dto.getNICChartOfAccounts().getCode() != null) {
             NICReportingChartOfAccounts nicReportingChartOfAccounts =
                     this.nicReportingChartOfAccountsRepository.findByCode(dto.getNICChartOfAccounts().getCode());
@@ -1957,50 +2237,58 @@ public class LookupServiceImpl implements LookupService {
         }
 
         // Positive/Negative only
-        List<TerraNICChartOfAccounts> existingRecords =
-                this.terraNICChartOfAccountsRepository.findByTerraChartOfAccountsName(dto.getNameEn());
-        if(existingRecords != null && !existingRecords.isEmpty()){
-            if(existingRecords.size() > 1){
-                // cannot add
-                String errorMessage = "Error saving value for NIC_TERRA_CHART_ACCOUNTS: already exist more " +
-                        "than 1 record matching name en (" + dto.getNameEn() + ")";
-                logger.error(errorMessage);
-                saveResponseDto.setErrorMessageEn(errorMessage);
-                return saveResponseDto;
-            }else{ //== 1
-                TerraNICChartOfAccounts record = existingRecords.get(0);
-                if(dto.getId() != null && dto.getId().longValue() != record.getId().longValue()) {
-                    if (record.getPositiveOnly() != null && record.getPositiveOnly().booleanValue()) {
-                        if (dto.getNegativeOnly() == null || !dto.getNegativeOnly().booleanValue()) {
-                            String errorMessage = "Error saving value for NIC_TERRA_CHART_ACCOUNTS: exists " +
-                                    "record matching name en(" + dto.getNameEn() + ") with 'Positive only' flag," +
-                                    " 'Negative only' flag must be set for this record";
-                            logger.error(errorMessage);
-                            saveResponseDto.setErrorMessageEn(errorMessage);
-                            return saveResponseDto;
-                        }
-                    } else if (record.getNegativeOnly() != null && record.getNegativeOnly().booleanValue()) {
-                        if (dto.getPositiveOnly() == null || !dto.getPositiveOnly().booleanValue()) {
-                            String errorMessage = "Error saving value for NIC_TERRA_CHART_ACCOUNTS: exists " +
-                                    "record matching name en (" + dto.getNameEn() + ") with 'Positive only' flag," +
-                                    " 'Negative only' flag must be set for this record";
-                            logger.error(errorMessage);
-                            saveResponseDto.setErrorMessageEn(errorMessage);
-                            return saveResponseDto;
-                        }
-                    } else {
-                        String errorMessage = "Error saving value for NIC_TERRA_CHART_ACCOUNTS: exists " +
-                                "record matching name en(" + dto.getNameEn() + ") with 'Positive only' or 'Negative only' " +
-                                "flags not set. When more than 1 record matches, flags must be set.";
-                        logger.error(errorMessage);
-                        saveResponseDto.setErrorMessageEn(errorMessage);
-                        return saveResponseDto;
-                    }
-                }
-            }
+//        List<TerraNICChartOfAccounts> existingRecords =
+//                this.terraNICChartOfAccountsRepository.findByTerraChartOfAccountsName(dto.getNameEn());
+//        if(existingRecords != null && !existingRecords.isEmpty()){
+//            if(existingRecords.size() > 1){
+//                // cannot add
+//                String errorMessage = "Error saving value for NIC_TERRA_CHART_ACCOUNTS: already exist more " +
+//                        "than 1 record matching name en (" + dto.getNameEn() + ")";
+//                logger.error(errorMessage);
+//                saveResponseDto.setErrorMessageEn(errorMessage);
+//                return saveResponseDto;
+//            }else{ //== 1
+//                TerraNICChartOfAccounts record = existingRecords.get(0);
+//                if(dto.getId() != null && dto.getId().longValue() != record.getId().longValue()) {
+//                    if (record.getPositiveOnly() != null && record.getPositiveOnly().booleanValue()) {
+//                        if (dto.getNegativeOnly() == null || !dto.getNegativeOnly().booleanValue()) {
+//                            String errorMessage = "Error saving value for NIC_TERRA_CHART_ACCOUNTS: exists " +
+//                                    "record matching name en(" + dto.getNameEn() + ") with 'Positive only' flag," +
+//                                    " 'Negative only' flag must be set for this record";
+//                            logger.error(errorMessage);
+//                            saveResponseDto.setErrorMessageEn(errorMessage);
+//                            return saveResponseDto;
+//                        }
+//                    } else if (record.getNegativeOnly() != null && record.getNegativeOnly().booleanValue()) {
+//                        if (dto.getPositiveOnly() == null || !dto.getPositiveOnly().booleanValue()) {
+//                            String errorMessage = "Error saving value for NIC_TERRA_CHART_ACCOUNTS: exists " +
+//                                    "record matching name en (" + dto.getNameEn() + ") with 'Positive only' flag," +
+//                                    " 'Negative only' flag must be set for this record";
+//                            logger.error(errorMessage);
+//                            saveResponseDto.setErrorMessageEn(errorMessage);
+//                            return saveResponseDto;
+//                        }
+//                    } else {
+//                        String errorMessage = "Error saving value for NIC_TERRA_CHART_ACCOUNTS: exists " +
+//                                "record matching name en(" + dto.getNameEn() + ") with 'Positive only' or 'Negative only' " +
+//                                "flags not set. When more than 1 record matches, flags must be set.";
+//                        logger.error(errorMessage);
+//                        saveResponseDto.setErrorMessageEn(errorMessage);
+//                        return saveResponseDto;
+//                    }
+//                }
+//            }
+//        }
+        if(dto.getChartAccountsType() != null && dto.getChartAccountsType().getCode() != null) {
+            PeriodicDataChartAccountsType type = this.chartAccountsTypeRepository.findByCode(dto.getChartAccountsType().getCode());
+            entity.setChartAccountsType(type);
         }
-        entity.setPositiveOnly(dto.getPositiveOnly());
-        entity.setNegativeOnly(dto.getNegativeOnly());
+        if(entity.getChartAccountsType() == null){
+            String errorMessage = "Error saving value for NIC_TERRA_CHART_ACCOUNTS: Chart of Accounts type missing.";
+            logger.error(errorMessage);
+            saveResponseDto.setErrorMessageEn(errorMessage);
+            return saveResponseDto;
+        }
 
         this.terraNICChartOfAccountsRepository.save(entity);
         saveResponseDto.setSuccessMessageEn("Successfully saved lookup value for NIC_TERRA_CHART_ACCOUNTS");
@@ -2266,7 +2554,7 @@ public class LookupServiceImpl implements LookupService {
         List<PeriodicReportDto> periodicReportDots = this.periodicReportService.getAllPeriodicReports();
         for(PeriodicReportDto report: periodicReportDots){
             //if(report.getStatus() != null && !report.getStatus().equalsIgnoreCase(kz.nicnbk.service.dto.reporting.PeriodicReportType.SUBMITTED.getCode())){
-                ListResponseDto listResponseDto = this.periodicReportREService.getTerraGeneratedForm(report.getId());
+                ListResponseDto listResponseDto = this.periodicReportREService.getTerraGeneralLedgerFormDataWithoutExcluded(report.getId());
                 if(listResponseDto != null && listResponseDto.getRecords() != null){
                     for(GeneratedGeneralLedgerFormDto record: (List<GeneratedGeneralLedgerFormDto>) listResponseDto.getRecords()){
                         if(record.getChartAccountsLongDescription() != null && record.getChartAccountsLongDescription().equalsIgnoreCase(chartAccountsLongDescription)){

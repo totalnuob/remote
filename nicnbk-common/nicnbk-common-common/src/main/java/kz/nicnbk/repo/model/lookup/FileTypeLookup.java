@@ -8,6 +8,7 @@ public enum FileTypeLookup {
     MEMO_ATTACHMENT("MEMO_ATT", "memo"),
 
     NB_REP_TARR_SCHED_INVEST("NB_REP_T1", "reporting/nbrk"),
+    NB_REP_TARR_SOI_REPORT("NB_REP_T5", "reporting/nbrk"),
     NB_REP_TARR_STMT_BALANCE_OPERATIONS("NB_REP_T2", "reporting/nbrk"),
     NB_REP_TARR_STMT_CASHFLOW("NB_REP_T3", "reporting/nbrk"),
     NB_REP_TARR_STMT_CHANGES("NB_REP_T4", "reporting/nbrk"),

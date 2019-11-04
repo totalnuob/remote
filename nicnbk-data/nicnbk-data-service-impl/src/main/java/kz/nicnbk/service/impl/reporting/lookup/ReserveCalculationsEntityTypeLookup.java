@@ -10,6 +10,8 @@ public enum ReserveCalculationsEntityTypeLookup {
     NICKMF("NICKMF"),
     TARRAGON_A("TARR_A"),
     TARRAGON_B("TARR_B"),
+    TARRAGON_A2("TARR_A2"),
+    TARRAGON_B2("TARR_B2"),
     TARRAGON("TARR"),
     SINGULARITY("SING"),
     SINGULARITY_A("SING_A"),
@@ -19,7 +21,6 @@ public enum ReserveCalculationsEntityTypeLookup {
     TERRA_B("TERRA_B");
 
     private String code;
-
 
     ReserveCalculationsEntityTypeLookup(String code) {
         this.code = code;

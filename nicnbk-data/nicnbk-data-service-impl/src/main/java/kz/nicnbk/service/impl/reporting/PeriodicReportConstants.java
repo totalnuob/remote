@@ -9,16 +9,73 @@ public final class PeriodicReportConstants {
 
     // TODO: RU_ prefix for russian
     // TODO: EN_
+    /* PARSE CONSTANTS ************************************************************************************************/
 
+    /*SOI REPORT */
+    public static final String PARSE_SOI_REPORT_HEADER_SECURITY_NO = "Security No.";
+    public static final String PARSE_SOI_REPORT_HEADER_INVESTMENT = "Investment";
+    public static final String PARSE_SOI_REPORT_HEADER_TRANCHE = "Tranche";
+    public static final String PARSE_SOI_REPORT_HEADER_TYPE = "Type: Fund, Secondary, Co-investment";
+    public static final String PARSE_SOI_REPORT_HEADER_STRATEGY = "Strategy";
+    public static final String PARSE_SOI_REPORT_HEADER_EXCHANGE_RATE = "Exchange rate \nin terms of USD";
+    public static final String PARSE_SOI_REPORT_HEADER_CURRENCY = "Currency";
+    public static final String PARSE_SOI_REPORT_HEADER_INVESTMENT_COMMITMENT = "Investment\nCommitment";
+    public static final String PARSE_SOI_REPORT_HEADER_UNFUNDED_COMMITMENT = "Unfunded\nCommitment";
+    public static final String PARSE_SOI_REPORT_HEADER_INVESTMENT_COMMITMENT_USD = "Investment\nCommitment\nUSD";
+    public static final String PARSE_SOI_REPORT_HEADER_UNFUNDED_COMMITMENT_USD = "Unfunded\nCommitment\nUSD";
+    public static final String PARSE_SOI_REPORT_HEADER_CONTRIBUTIONS_USD = "Contributions\nUSD";
+    public static final String PARSE_SOI_REPORT_HEADER_RETURN_CAPITAL_DISTRIBUTIONS_USD = "Return of Capital\nDistributions\nUSD";
+    public static final String PARSE_SOI_REPORT_HEADER_NET_COST_USD = "Net Cost\nUSD";
+    public static final String PARSE_SOI_REPORT_HEADER_FAIR_VALUE_USD = "Fair Value\nUSD";
+    public static final String PARSE_SOI_REPORT_HEADER_UNREALIZED_GAIN_LOSS_SINCE_INCEPTION_USD = "Unrealized\nGain (Loss)\nSince Inception\nUSD";
+    public static final String PARSE_SOI_REPORT_HEADER_REALIZED_GAIN_LOSS_SINCE_INCEPTION_USD = "Realized\nGain (Loss)\nSince Inception\nUSD";
+    public static final String PARSE_SOI_REPORT_HEADER_OPERATING_COMPANY = "Operating Company";
+    public static final String PARSE_SOI_REPORT_HEADER_OWNERSHIP_DETAILS = "Ownership Details";
+
+    /* STATEMENT OF ASSETS, LIABILITIES AND PARTNERS CAPITAL */
+    public static final String STMT_ASST_LBLT_PC_TOTAL_RECORD_NAME_V1 = "Net increase (decrease) in partners' capital resulting from operations";
+    public static final String STMT_ASST_LBLT_PC_TOTAL_RECORD_NAME_V2 = "Net increase (decrease) in partner's capital resulting from operations";
+    public static final String STMT_ASST_LBLT_PC_TOTAL_RECORD_NAME_V3 = "Net increase (decrease) in partners capital resulting from operations";
+
+    public static final String STMT_ASST_LBLT_PC_BALANCE_HEADER_V1 = "Consolidated Statement of Assets, Liabilities and Partners' Capital";
+    public static final String STMT_ASST_LBLT_PC_BALANCE_HEADER_V2 = "Consolidated Statement of Assets, Liabilities and Partner's Capital";
+    public static final String STMT_ASST_LBLT_PC_BALANCE_HEADER_V3 = "Consolidated Statement of Assets, Liabilities and Partners Capital";
+    public static final String STMT_ASST_LBLT_PC_OPERATIONS_HEADER_V1 = "Consolidated Statement of Operations";
+
+    public static final String STMT_ASST_LBLT_PC_ASSETS_CAPITAL_CASE = "ASSETS";
+    public static final String STMT_ASST_LBLT_PC_LIABILITIES_CAPITAL_CASE = "LIABILITIES";
+    public static final String STMT_ASST_LBLT_PC_PARTNERS_CAPITAL_CAPITAL_CASE_V1 = "PARTNERS' CAPITAL";
+    public static final String STMT_ASST_LBLT_PC_PARTNERS_CAPITAL_CAPITAL_CASE_V2 = "PARTNER'S CAPITAL";
+    public static final String STMT_ASST_LBLT_PC_PARTNERS_CAPITAL_CAPITAL_CASE_V3 = "PARTNERS CAPITAL";
+
+    public static final String STMT_ASST_LBLT_PC_LIABILITIES_AND_PARTNERS_CAPITAL_CAPITAL_CASE_V1 = "LIABILITIES AND PARTNERS' CAPITAL";
+    public static final String STMT_ASST_LBLT_PC_LIABILITIES_AND_PARTNERS_CAPITAL_CAPITAL_CASE_V2 = "LIABILITIES AND PARTNER'S CAPITAL";
+    public static final String STMT_ASST_LBLT_PC_LIABILITIES_AND_PARTNERS_CAPITAL_CAPITAL_CASE_V3 = "LIABILITIES AND PARTNERS CAPITAL";
+
+    public static final String TARR_OPERATIONS_TAX_EXPENSE_NAME = "FDAP tax expense";
+    public static final String TARR_OPERATIONS_INCOME_TYPE_NET_REALIZED_GAIN_NAME = "Net realized gain on investments";
+    public static final String TARR_OPERATIONS_INCOME_TYPE_NET_REALIZED_GAIN_LOSS_LONG_NAME = "Net realized gain (loss) on investments, including the effect of foreign currency translations";
+    public static final String TARR_OPERATIONS_INCOME_TYPE_NET_CHANGE_UNREALIZED_APPR_DEPR_LONG_NAME = "Net change in unrealized appreciation / depreciation on investments, including the effect of foreign currency translations";
+    public static final String TARR_OPERATIONS_INCOME_TYPE_DEFERRED_TAX_BENEFIT_NAME = "Deferred tax (expense) benefit";
+
+    /* STATMENT OF CHANGES ********************************************************************************************/
+
+    public static final String TARR_STATEMENT_CHANGES_CONTRIBUTIONS_RECEIVED = "Contributions received";
+    public static final String TARR_STATEMENT_CHANGES_DISTRIBUTIONS_PAID = "Distributions paid";
+
+    /* SPV NAMES *********************************************************************************************/
     public static final String SINGULAR_CAPITAL_CASE = "SINGULAR";
-    public static final String SINGULAR_LOWER_CASE = "Singular";
-    public static final String SINGULARITY_LOWER_CASE = "Singularity";
-
     public static final String SINGULAR_B_CAPITAL_CASE = "SINGULAR B";
 
+    public static final String SINGULAR_LOWER_CASE = "Singular";
+
+    public static final String SINGULARITY_LOWER_CASE = "Singularity";
+    public static final String SINGULARITY_A_LOWER_CASE = "Singularity A";
+    public static final String SINGULARITY_B_LOWER_CASE = "Singularity B";
+
     public static final String TARRAGON_CAPITAL_CASE = "TARRAGON";
-    public static final String TARRAGON_LOWER_CASE = "Tarragon";
     public static final String TARRAGON_B_CAPITAL_CASE = "TARRAGON B";
+    public static final String TARRAGON_LOWER_CASE = "Tarragon";
 
     public static final String TERRA_CAPITAL_CASE = "TERRA";
     public static final String TERRA_LOWER_CASE = "Terra";
@@ -41,9 +98,11 @@ public final class PeriodicReportConstants {
     public static final String KZT_FORM_22 = "KZT_FORM_22";
     /* ****************************************************************************************************************/
 
+    /* NOAL CONSTANTS *************************************************************************************************/
+    public static final String GCM_NOAL_TRANSACTION_ENDING_BALANCE_NAME_V1 = "Ending Balance";
+    public static final String GCM_NOAL_TRANSACTION_ENDING_BALANCE_NAME_V2 = "Ending";
 
-
-    /* REPORT LITERALS ************************************************************************************************/
+    /* GENERATED REPORT KZT LITERALS **********************************************************************************/
     public static final String SUBACCOUNT_GROUP_NUMBER = "Номер группы субсчетов";
     public static final String SUBACCOUNT_GROUP_NAME = "Наименование группы субсчетов";
     public static final String LINE_CODE = "Код строки";
@@ -114,11 +173,26 @@ public final class PeriodicReportConstants {
     public static final String ACC_NUM_6150_030 = "6150.030";
     public static final String ACC_NUM_7330_030 = "7330.030";
 
+    public static final String ACC_NUM_7470_010 = "7470.010";
+
     public static final String ACC_NUM_1033_010 = "1033.010";
     public static final String RU_1033_010 = "Деньги на текущих счетах";
 
+    public static final String ACC_NUM_1123_010 = "1123.010";
+    public static final String RU_1123_010 = "Краткосрочные ценные бумаги, оцениваемые по справедливой стоимости через прибыль или убыток";
+
+    public static final String ACC_NUM_1123_020 = "1123.020";
+    public static final String RU_1123_020 = "Положительная корректировка справедливой стоимости краткосрочных ценных бумаг, оцениваемых по справедливой стоимости через прибыль или убыток";
+
+    public static final String ACC_NUM_1123_030 = "1123.030";
+    public static final String RU_1123_030 = "Отрицательная корректировка справедливой стоимости краткосрочных ценных бумаг, оцениваемых по справедливой стоимости через прибыль или убыток";
+
+
     public static final String ACC_NUM_1283_020 = "1283.020";
     public static final String RU_1283_020 = "Прочая краткосрочная дебиторская задолженность";
+
+    public static final String ACC_NUM_1183_040 = "1183.040";
+    public static final String RU_1183_040 = "Начисленные доходы в виде вознаграждения по краткосрочным финансовым активам, оцениваемым по справедливой стоимости через прибыль или убыток";
 
     public static final String ACC_NUM_1623_010 = "1623.010";
     public static final String ACC_NUM_2923_010 = "2923.010";
@@ -160,10 +234,15 @@ public final class PeriodicReportConstants {
     public static final String ACC_NUM_5450_010_CODE_ADJUSTMENT_RU = "Резерв на пересчет иностранной валюты по зарубежной деятельности (Корректировка ОФП-1)";
 
     public static final String ACC_NUM_6150_020 = "6150.020";
+    public static final String ACC_NUM_6150_010 = "6150.010";
+    public static final String ACC_NUM_6113_030 = "6113.030";
+    public static final String ACC_NUM_6280_010 = "6280.010";
     public static final String ACC_NUM_6283_080 = "6283.080";
 
     public static final String ACC_NUM_7313_010 = "7313.010";
     public static final String RU_7313_010 = "Расходы по вознаграждению по краткосрочным банковским займам";
+
+    public static final String ACC_NUM_7330_010 = "7330.010";
 
     public static final String ACC_NUM_7330_020 = "7330.020";
 
@@ -176,10 +255,10 @@ public final class PeriodicReportConstants {
 
 
 
-    /* RECORD NAMES ********************************************************************************************/
+    /* GENERATED REPORT KZT RECORD NAMES ********************************************************************************************/
     public static final String USD_FORM_1_LAST_RECORD = "Всего обязательства и капитал (сумма строк 37, 45, 53)";
     public static final String USD_FORM_2_LAST_RECORD = "Чистая прибыль (убыток) (сумма строк 19, 20)";
-    public static final String USD_FORM_3_LAST_RECORD = "Итого совокупного дохода (сумма строк 1, 5)";
+    public static final String USD_FORM_3_LAST_RECORD = "Всего совокупного дохода (сумма строк 1, 12)";
 //    public static final String KZT_FORM_3_LAST_RECORD = "Итого совокупного дохода (сумма строк 1, 6)";
     public static final String KZT_FORM_3_LAST_RECORD = "Всего совокупного дохода (сумма строк 1, 12)";
     public static final String KZT_FORM_6_LAST_RECORD = "Остаток на конец текущего отчетного периода (сумма строк 3, 6, 14)";

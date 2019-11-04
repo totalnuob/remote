@@ -10,6 +10,7 @@ import kz.nicnbk.repo.model.reporting.privateequity.PEGeneralLedgerFormData;
 public class PEGeneralLedgerFormDataDto extends CreateUpdateBaseEntityDto<PEGeneralLedgerFormData> {
 
     private int tranche;
+    private String trancheType;
     private String financialStatementCategory;
     private String tarragonNICChartOfAccountsName;
     private String nbAccountNumber;
@@ -80,5 +81,13 @@ public class PEGeneralLedgerFormDataDto extends CreateUpdateBaseEntityDto<PEGene
 
     public void setEntityName(String entityName) {
         this.entityName = entityName;
+    }
+
+    public String getTrancheType() {
+        return trancheType;
+    }
+
+    public void setTrancheType(String trancheType) {
+        this.trancheType = trancheType;
     }
 }

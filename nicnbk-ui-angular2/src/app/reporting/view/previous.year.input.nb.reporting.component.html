@@ -60,7 +60,7 @@
                             </td>
                             <!--<td>{{record.accountNumber}}</td>-->
                             <td>
-                                <input required="isRequiredUSDAmount(record)" [disabled]="!isRequiredUSDAmount(record)" (keyup)="onNumberChange(record)" type="text" class="form-control" [(ngModel)]="record.accountBalance" [ngModelOptions]="{standalone: true}"/>
+                                <input required="isRequiredUSDAmount(record)" (keyup)="onNumberChange(record)" type="text" class="form-control" [(ngModel)]="record.accountBalance" [ngModelOptions]="{standalone: true}"/>
                             </td>
                             <td>
                                 <input required (keyup)="onNumberChange(record)" type="text" class="form-control" [(ngModel)]="record.accountBalanceKZT" [ngModelOptions]="{standalone: true}"/>

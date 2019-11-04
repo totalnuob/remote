@@ -5,6 +5,7 @@ import kz.nicnbk.service.api.base.BaseService;
 import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordDto;
 import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordHolderDto;
 import kz.nicnbk.service.dto.reporting.StatementBalanceOperationsDto;
+import kz.nicnbk.service.dto.reporting.privateequity.TarragonStatementBalanceOperationsHolderDto;
 
 import java.util.List;
 
@@ -13,13 +14,15 @@ import java.util.List;
  */
 public interface PEStatementBalanceService extends BaseService {
 
-    ReportingPEStatementBalance assemble(ConsolidatedReportRecordDto dto, int tranche, Long reportId);
+    ReportingPEStatementBalance assemble(ConsolidatedReportRecordDto dto, String trancheTypeNameEn, Long reportId);
 
-    List<ReportingPEStatementBalance> assembleList(List<ConsolidatedReportRecordDto> dtoList, int tranche, Long reportId);
+    List<ReportingPEStatementBalance> assembleList(List<ConsolidatedReportRecordDto> dtoList, String trancheTypeNameEn, Long reportId);
 
     boolean save(List<ReportingPEStatementBalance> entities);
 
     ConsolidatedReportRecordHolderDto get(Long reportId);
+
+    TarragonStatementBalanceOperationsHolderDto getStatementBalanceDto(Long reportId);
 
     boolean excludeIncludeTarragonRecord(Long recordId);
 

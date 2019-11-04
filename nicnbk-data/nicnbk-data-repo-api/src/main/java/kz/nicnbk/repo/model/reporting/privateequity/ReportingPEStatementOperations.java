@@ -27,6 +27,8 @@ public class ReportingPEStatementOperations extends CreateUpdateBaseEntity{
 
     private PEOperationsType type;
     private Integer tranche;
+    private PETrancheType trancheType;
+
     private Boolean totalSum;
 
     private Boolean excludeFromTarragonCalculation;
@@ -148,5 +150,15 @@ public class ReportingPEStatementOperations extends CreateUpdateBaseEntity{
 
     public void setExcludeFromTarragonCalculation(Boolean excludeFromTarragonCalculation) {
         this.excludeFromTarragonCalculation = excludeFromTarragonCalculation;
+    }
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "pe_tranche_type_id"/*, nullable = false*/)
+    public PETrancheType getTrancheType() {
+        return trancheType;
+    }
+
+    public void setTrancheType(PETrancheType trancheType) {
+        this.trancheType = trancheType;
     }
 }

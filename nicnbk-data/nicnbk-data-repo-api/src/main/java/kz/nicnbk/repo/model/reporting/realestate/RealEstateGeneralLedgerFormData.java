@@ -16,6 +16,7 @@ import javax.persistence.*;
 public class RealEstateGeneralLedgerFormData extends CreateUpdateBaseEntity{
 
     private Integer tranche;
+    private RETrancheType trancheType;
     private FinancialStatementCategory financialStatementCategory;
     private TerraNICChartOfAccounts terraNICChartOfAccounts;
     private Double GLAccountBalance;
@@ -28,6 +29,16 @@ public class RealEstateGeneralLedgerFormData extends CreateUpdateBaseEntity{
 
     public void setTranche(Integer tranche) {
         this.tranche = tranche;
+    }
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "re_tranche_type_id"/*, nullable = false*/)
+    public RETrancheType getTrancheType() {
+        return trancheType;
+    }
+
+    public void setTrancheType(RETrancheType trancheType) {
+        this.trancheType = trancheType;
     }
 
     @ManyToOne(fetch = FetchType.EAGER)

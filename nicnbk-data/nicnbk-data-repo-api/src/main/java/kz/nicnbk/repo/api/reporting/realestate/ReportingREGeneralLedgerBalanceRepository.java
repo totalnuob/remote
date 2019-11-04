@@ -15,14 +15,11 @@ import java.util.List;
 public interface ReportingREGeneralLedgerBalanceRepository extends PagingAndSortingRepository<ReportingREGeneralLedgerBalance, Long> {
 
     @Query("SELECT e from ReportingREGeneralLedgerBalance e where e.report.id=?1")
-    List<ReportingREGeneralLedgerBalance> getEntitiesByReportId(Long reportId, Pageable pageable);
+    List<ReportingREGeneralLedgerBalance> getEntitiesByReportId(Long reportId);
 
     @Modifying
     @Transactional
     @Query("DELETE from ReportingREGeneralLedgerBalance e where e.report.id=?1")
     void deleteByReportId(long reportId);
-
-    @Query("SELECT e from ReportingREGeneralLedgerBalance e where (e.adjustedRedemption IS NOT NULL OR e.interestRate IS NOT NULL) AND e.report.id=?1")
-    List<ReportingREGeneralLedgerBalance> getAdjustedEntitiesByReportId(Long reportId, Pageable pageable);
 
 }

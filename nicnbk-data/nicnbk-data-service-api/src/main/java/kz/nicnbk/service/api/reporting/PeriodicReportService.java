@@ -5,6 +5,7 @@ import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
 import kz.nicnbk.service.dto.common.ListResponseDto;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.reporting.*;
+import kz.nicnbk.service.dto.reporting.privateequity.TarragonStatementBalanceOperationsHolderDto;
 
 import java.util.Date;
 import java.util.List;
@@ -32,7 +33,7 @@ public interface PeriodicReportService extends BaseService {
 
     FilesDto saveInputFile(Long reportId, FilesDto file);
 
-    ConsolidatedReportRecordHolderDto getStatementBalanceOperations(Long reportId);
+    TarragonStatementBalanceOperationsHolderDto getStatementBalanceOperations(Long reportId);
 
     ConsolidatedReportRecordHolderDto getNOAL(Long reportId, int tranche);
 

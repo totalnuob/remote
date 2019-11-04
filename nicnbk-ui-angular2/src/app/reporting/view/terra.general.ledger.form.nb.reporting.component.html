@@ -1,0 +1,58 @@
+<div class="container">
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting']">Reports Main</a></span>
+                </li>
+                <li *ngIf="reportId != null && report != null && report.status != 'SUBMITTED'">
+                    <span><a [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">Input</a></span>
+                </li>
+                <li *ngIf="reportId != null && prevPageSource == 'REPORTS'"><span><a [routerLink]="['/reporting/NBReporting/GeneratedReports/', reportId, 'INPUT']">Generate report</a></span></li>
+                <li class="active">Terra General Ledger</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row top-buffer" *ngIf="errorMessage != null || successMessage != null">
+        <div class="col-md-12">
+            <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+            </div>
+            <div class="alert alert-info" *ngIf="!submitted && successMessage != null"><span>{{successMessage}}</span>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <div class="row withpadding">
+        <h3 *ngIf="report != null">{{getReportDateShortFormatted(report.reportDate)}} - Terra General Ledger</h3>
+    </div>
+    <div class="row withpadding">
+        <table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small" *ngIf="recordsHolder != null && recordsHolder.records != null">
+            <tr bgcolor="#e7e7e7">
+                <td>Acronym</td>
+                <td>Balance Date</td>
+                <td>Financial Statement Category</td>
+                <td>GL Sub-class</td>
+                <td>Portfolio Fund</td>
+                <td>Account balance (GP)</td>
+                <td>Account balance (NICK MF)</td>
+                <td>Grand Total</td>
+            </tr>
+            <tr *ngFor="let record of recordsHolder.records">
+                <td>{{record.acronym}}</td>
+                <td>{{record.balanceDate}}</td>
+                <td>{{record.financialStatementCategory}}</td>
+                <td>{{record.glSubclass}}</td>
+                <td>{{record.portfolioFund}}</td>
+                <td>{{record.accountBalanceGP != null ? (record.accountBalanceGP | number:'1.2-2'): ''}}</td>
+                <td>{{record.accountBalanceNICKMF != null ? (record.accountBalanceNICKMF | number:'1.2-2'): ''}}</td>
+                <td>{{record.accountBalanceGrandTotal != null ? (record.accountBalanceGrandTotal | number:'1.2-2'): ''}}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+        </div>
+    </div>
+</div>

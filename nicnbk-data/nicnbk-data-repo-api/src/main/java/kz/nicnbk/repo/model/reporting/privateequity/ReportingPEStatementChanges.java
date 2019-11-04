@@ -22,6 +22,9 @@ public class ReportingPEStatementChanges extends CreateUpdateBaseEntity{
     private Double trancheB;
     private Double total;
 
+    private Double trancheA2;
+    private Double trancheB2;
+
     private Boolean excludeFromTarragonCalculation;
 
 
@@ -78,5 +81,23 @@ public class ReportingPEStatementChanges extends CreateUpdateBaseEntity{
 
     public void setExcludeFromTarragonCalculation(Boolean excludeFromTarragonCalculation) {
         this.excludeFromTarragonCalculation = excludeFromTarragonCalculation;
+    }
+
+    @Column(name = "tranche_a2")
+    public Double getTrancheA2() {
+        return trancheA2;
+    }
+
+    public void setTrancheA2(Double trancheA2) {
+        this.trancheA2 = trancheA2;
+    }
+
+    @Column(name = "tranche_b2")
+    public Double getTrancheB2() {
+        return trancheB2;
+    }
+
+    public void setTrancheB2(Double trancheB2) {
+        this.trancheB2 = trancheB2;
     }
 }

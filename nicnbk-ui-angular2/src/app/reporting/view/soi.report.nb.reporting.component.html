@@ -1,0 +1,83 @@
+<div class="container">
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting']">Reports Main</a></span>
+                </li>
+                <li *ngIf="reportId != null && report != null && report.status != 'SUBMITTED'">
+                    <span><a [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">Input</a></span>
+                </li>
+                <li *ngIf="reportId != null && prevPageSource == 'REPORTS'"><span><a [routerLink]="['/reporting/NBReporting/GeneratedReports/', reportId, 'INPUT']">Generate report</a></span></li>
+                <li class="active">SOI Report</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row top-buffer" *ngIf="errorMessage != null || successMessage != null">
+        <div class="col-md-12">
+            <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+            </div>
+            <div class="alert alert-info" *ngIf="!submitted && successMessage != null"><span>{{successMessage}}</span>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <div class="row withpadding">
+        <h3 *ngIf="report != null">{{getReportDateShortFormatted(report.reportDate)}} - SOI Report</h3>
+    </div>
+
+<!--    <ul class="nav nav-tabs">-->
+<!--        <li class="active">-->
+<!--            <a data-toggle="tab" href="#trancheA">Tranche A</a>-->
+<!--        </li>-->
+<!--        <li>-->
+<!--            <a data-toggle="tab" href="#trancheB">Tranche B</a>-->
+<!--        </li>-->
+<!--    </ul>-->
+
+    <div class="tab-content">
+        <div id="trancheA" class="tab-pane fade in active">
+            <div class="row withpadding">
+                <table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small">
+                    <tr bgcolor="#e7e7e7">
+                        <td>Sec No</td>
+                        <td>Investment</td>
+                        <td>Tranche</td>
+                        <td>Type</td>
+                        <td>Strategy</td>
+                        <td>Exch rate</td>
+                        <td>Currency</td>
+                        <td>Investment commitment/ USD</td>
+                        <td>Unfunded commitment/ USD</td>
+                        <td>Net cost USD</td>
+                        <td>Fair value USD</td>
+                    </tr>
+                    <tr *ngFor="let record of records.scheduleInvestments">
+                        <td>{{record.securityNo}}</td>
+                        <td>{{record.investment}}</td>
+                        <td>{{record.trancheType != null ? record.trancheType.nameEn : ''}}</td>
+                        <td>{{record.type != null ? record.type.nameEn : ''}}</td>
+                        <td>{{record.strategy != null ? record.strategy.nameEn : ''}}</td>
+                        <td>{{record.exchangeRateRatioUSD != null ? (record.exchangeRateRatioUSD | number:'1.2-2'): ''}}</td>
+                        <td>{{record.currency != null ? record.currency.code : ''}}</td>
+                        <td>{{record.investmentCommitment != null ? (record.investmentCommitment | number:'1.2-2'): ''}}
+                            {{record.investmentCommitmentUSD != null &&  record.investmentCommitment != record.investmentCommitmentUSD
+                            ? '/ ' + (record.investmentCommitmentUSD | number:'1.2-2'): ''}}
+                        </td>
+                        <td>{{record.unfundedCommitment != null ? (record.unfundedCommitment | number:'1.2-2'): ''}}
+                            {{record.unfundedCommitmentUSD != null &&  record.unfundedCommitment != record.unfundedCommitmentUSD
+                            ? '/ ' + (record.unfundedCommitmentUSD | number:'1.2-2'): ''}}
+                        </td>
+                        <td>{{record.netCost != null ? (record.netCost | number:'1.2-2'): ''}}</td>
+                        <td>{{record.fairValue != null ? (record.fairValue | number:'1.2-2'): ''}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+        </div>
+    </div>
+</div>

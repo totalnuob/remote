@@ -143,9 +143,10 @@
                     <th rowspan="2">ACCOUNT NUMBER</th>
                     <th rowspan="2">NAME EN</th>
                     <th colspan="2">NIC CHART OF ACCOUNTS</th>
-                    <th rowspan="2">ADDABLE</th>
-                    <th rowspan="2">NEGATIVE ONLY</th>
-                    <th rowspan="2">POSITIVE ONLY</th>
+                    <th rowspan="2" *ngIf="selectedLookupName != 'NIC_SINGULARITY_CHART_ACCOUNTS'">ADDABLE</th>
+<!--                    <th rowspan="2">NEGATIVE ONLY</th>-->
+<!--                    <th rowspan="2">POSITIVE ONLY</th>-->
+                    <th rowspan="2">ACCOUNT TYPE</th>
                     <th rowspan="2">&nbsp;</th>
                     <th rowspan="2">&nbsp;</th>
                 </tr>
@@ -160,9 +161,10 @@
                     <td>{{item.nameEn}}</td>
                     <td>{{item.nicchartOfAccounts.nameRu}}</td>
                     <td>{{item.nicchartOfAccounts.code}}</td>
-                    <td>{{item.addable}}</td>
-                    <td>{{item.negativeOnly}}</td>
-                    <td>{{item.positiveOnly}}</td>
+                    <td *ngIf="selectedLookupName != 'NIC_SINGULARITY_CHART_ACCOUNTS'">{{item.addable ? '+' : '-'}}</td>
+<!--                    <td>{{item.negativeOnly}}</td>-->
+<!--                    <td>{{item.positiveOnly}}</td>-->
+                    <td>{{item.chartAccountsType?.nameEn}}</td>
                     <td>
                         <button *ngIf = "item.editable" type="button" class="btn-xs btn-success" style="display: inline-block"
                                 data-toggle="modal" data-target="#editModal" (click)="edit(item)">
@@ -217,21 +219,28 @@
                                     </div>
                                 </div>
                             </div>
+
                             <br/>
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div class="col-md-1">
+                                    <div class="col-md-1" *ngIf="selectedLookupName != 'NIC_SINGULARITY_CHART_ACCOUNTS'">
                                         <label lass="form-check-label" for="addableCheckbox">Addable</label>
                                         <input type="checkbox" id="addableCheckbox" class="form-check-input" [(ngModel)]="selectedEditLookup.addable"/>
                                     </div>
-                                    <div class="col-md-1">
-                                        <label lass="form-check-label" for="negativeOnlyCheckbox">Neg.Only</label>
-                                        <input type="checkbox" id="negativeOnlyCheckbox" class="form-check-input" [(ngModel)]="selectedEditLookup.negativeOnly"/>
+                                    <div class="col-md-5" *ngIf="selectedEditLookup != null && this.selectedLookupName != 'NIC_CHART_ACCOUNTS'">
+                                        <label lass="form-check-label">Chart of Accounts type</label>
+                                        <select class="form-control" required [(ngModel)]="selectedEditLookup.chartAccountsType.code">
+                                            <option *ngFor="let item of chartAccountsTypeLookupValues" [value]="item.code">{{item.code + '-' + item.nameEn}}</option>
+                                        </select>
                                     </div>
-                                    <div class="col-md-1">
-                                        <label lass="form-check-label" for="positiveOnlyCheckbox">Pos.Only</label>
-                                        <input type="checkbox" id="positiveOnlyCheckbox" class="form-check-input" [(ngModel)]="selectedEditLookup.positiveOnly"/>
-                                    </div>
+<!--                                    <div class="col-md-1">-->
+<!--                                        <label lass="form-check-label" for="negativeOnlyCheckbox">Neg.Only</label>-->
+<!--                                        <input type="checkbox" id="negativeOnlyCheckbox" class="form-check-input" [(ngModel)]="selectedEditLookup.negativeOnly"/>-->
+<!--                                    </div>-->
+<!--                                    <div class="col-md-1">-->
+<!--                                        <label lass="form-check-label" for="positiveOnlyCheckbox">Pos.Only</label>-->
+<!--                                        <input type="checkbox" id="positiveOnlyCheckbox" class="form-check-input" [(ngModel)]="selectedEditLookup.positiveOnly"/>-->
+<!--                                    </div>-->
                                 </div>
                             </div>
                                 <!--<div class="col-md-2">-->

@@ -4,6 +4,7 @@ import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.common.service.util.NumberUtils;
 import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.api.reporting.hedgefunds.SingularityNICChartOfAccountsRepository;
+import kz.nicnbk.repo.model.lookup.reporting.ChartAccountsTypeLookup;
 import kz.nicnbk.repo.model.reporting.hedgefunds.SingularityNICChartOfAccounts;
 import kz.nicnbk.service.api.reporting.hedgefunds.HFGeneralLedgerBalanceService;
 import kz.nicnbk.service.api.reporting.hedgefunds.HFNOALService;
@@ -51,11 +52,12 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
         Map<String, Double> noalTrancheARedemptionsRecords = new HashMap<>();
         if(noalTrancheARecordHolder != null && noalTrancheARecordHolder.getNoalTrancheAList() != null){
             for(SingularityNOALRecordDto noalRecordDto: noalTrancheARecordHolder.getNoalTrancheAList()){
-                if(noalRecordDto.getTransaction().equalsIgnoreCase("Ending Balance") || noalRecordDto.getTransaction().equalsIgnoreCase("Ending")) {
+                if(noalRecordDto.getTransaction().equalsIgnoreCase(PeriodicReportConstants.GCM_NOAL_TRANSACTION_ENDING_BALANCE_NAME_V1) ||
+                        noalRecordDto.getTransaction().equalsIgnoreCase(PeriodicReportConstants.GCM_NOAL_TRANSACTION_ENDING_BALANCE_NAME_V2)) {
                     if(noalRecordDto.getAccountNumber() == null){
                         continue;
                     }
-                    if (noalRecordDto.getAccountNumber().startsWith("1500")) {
+                    if (noalRecordDto.getAccountNumber().startsWith(PeriodicReportConstants.GROSVENOR_ACCOUNT_NUMBER_1500)) {
                         if(noalTrancheASubscriptionsRecords.get(noalRecordDto.getName()) != null){
                             BigDecimal a = NumberUtils.getBigDecimal(noalTrancheASubscriptionsRecords.get(noalRecordDto.getName()));
                             BigDecimal sum = a.add(NumberUtils.getBigDecimal(noalRecordDto.getFunctionalAmount()));
@@ -64,7 +66,7 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
                             noalTrancheASubscriptionsRecords.put(noalRecordDto.getName(), noalRecordDto.getFunctionalAmount());
                         }
 
-                    }else if (noalRecordDto.getAccountNumber().startsWith("1550")) {
+                    }else if (noalRecordDto.getAccountNumber().startsWith(PeriodicReportConstants.GROSVENOR_ACCOUNT_NUMBER_1550)) {
                         if(noalTrancheARedemptionsRecords.get(noalRecordDto.getName()) != null){
                             BigDecimal a = NumberUtils.getBigDecimal(noalTrancheARedemptionsRecords.get(noalRecordDto.getName()));
                             BigDecimal sum = a.add(NumberUtils.getBigDecimal(noalRecordDto.getFunctionalAmount()));
@@ -83,11 +85,12 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
         Map<String, Double> noalTrancheBRedemptionsRecords = new HashMap<>();
         if(noalTrancheBRecordHolder != null && noalTrancheBRecordHolder.getNoalTrancheBList() != null){
             for(SingularityNOALRecordDto noalRecordDto: noalTrancheBRecordHolder.getNoalTrancheBList()){
-                if(noalRecordDto.getTransaction().equalsIgnoreCase("Ending Balance") || noalRecordDto.getTransaction().equalsIgnoreCase("Ending")) {
+                if(noalRecordDto.getTransaction() != null && (noalRecordDto.getTransaction().equalsIgnoreCase(PeriodicReportConstants.GCM_NOAL_TRANSACTION_ENDING_BALANCE_NAME_V1) ||
+                        noalRecordDto.getTransaction().equalsIgnoreCase(PeriodicReportConstants.GCM_NOAL_TRANSACTION_ENDING_BALANCE_NAME_V2))) {
                     if(noalRecordDto.getAccountNumber() == null){
                         continue;
                     }
-                    if (noalRecordDto.getAccountNumber().startsWith("1500")) {
+                    if (noalRecordDto.getAccountNumber().startsWith(PeriodicReportConstants.GROSVENOR_ACCOUNT_NUMBER_1500)) {
                         if(noalTrancheBSubscriptionsRecords.get(noalRecordDto.getName()) != null){
                             BigDecimal a = NumberUtils.getBigDecimal(noalTrancheBSubscriptionsRecords.get(noalRecordDto.getName()));
                             BigDecimal sum = a.add(NumberUtils.getBigDecimal(noalRecordDto.getFunctionalAmount()));
@@ -95,7 +98,7 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
                         }else{
                             noalTrancheBSubscriptionsRecords.put(noalRecordDto.getName(), noalRecordDto.getFunctionalAmount());
                         }
-                    }else if (noalRecordDto.getAccountNumber().startsWith("1550")) {
+                    }else if (noalRecordDto.getAccountNumber().startsWith(PeriodicReportConstants.GROSVENOR_ACCOUNT_NUMBER_1550)) {
                         if(noalTrancheBRedemptionsRecords.get(noalRecordDto.getName()) != null){
                             BigDecimal a = NumberUtils.getBigDecimal(noalTrancheBRedemptionsRecords.get(noalRecordDto.getName()));
                             BigDecimal sum = a.add(NumberUtils.getBigDecimal(noalRecordDto.getFunctionalAmount()));
@@ -137,6 +140,12 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
                     NICReportingChartOfAccountsDto accountDto = getNICChartOfAccountsFromSingularityAccount(singularityAccountNumber, record.getGLAccountBalance());
                     if (accountDto != null) {
                         record.setNbAccountNumber(accountDto.getNBChartOfAccounts().getCode());
+//                        if(hasOtherEntityName(accountDto)){
+//                            String fundName = StringUtils.isNotEmpty(glRecordDto.getShortName()) ? " " + glRecordDto.getShortName() : "";
+//                            record.setNicAccountName(accountDto.getNameRu() + fundName);
+//                        }else {
+//                            record.setNicAccountName(accountDto.getNameRu());
+//                        }
                         record.setNicAccountName(accountDto.getNameRu());
                     } else {
                         logger.error("No matching NIC Chart of Accounts record found for Singularity Account Number '" + singularityAccountNumber + "'");
@@ -146,50 +155,94 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
 
 
                 if(record.getGLAccount().startsWith(PeriodicReportConstants.GROSVENOR_ACCOUNT_NUMBER_1500)){ // SUBSCRIPTIONS - Tranche A
-                    if(record.getAcronym().equalsIgnoreCase(PeriodicReportConstants.SINGULAR_CAPITAL_CASE)){
+                    if(record.getAcronym().equalsIgnoreCase(PeriodicReportConstants.SINGULARITY_A_LOWER_CASE)){
                         for (String key : noalTrancheASubscriptionsRecords.keySet()) {
                             GeneratedGeneralLedgerFormDto newRecordDto = new GeneratedGeneralLedgerFormDto(record);
                             newRecordDto.setSubscriptionRedemptionEntity(key);
                             newRecordDto.setGLAccountBalance(noalTrancheASubscriptionsRecords.get(key));
                             setAccountNameAdditionalDescription(newRecordDto);
+
+                            NICReportingChartOfAccountsDto accountDto = getNICChartOfAccountsFromSingularityAccount(PeriodicReportConstants.GROSVENOR_ACCOUNT_NUMBER_1500, newRecordDto.getGLAccountBalance());
+                            if (accountDto != null) {
+                                newRecordDto.setNbAccountNumber(accountDto.getNBChartOfAccounts().getCode());
+                                if(hasOtherEntityName(accountDto)){
+                                    String fundName = StringUtils.isNotEmpty(newRecordDto.getSubscriptionRedemptionEntity()) ? " " + newRecordDto.getSubscriptionRedemptionEntity() : "";
+                                    newRecordDto.setNicAccountName(accountDto.getNameRu() + fundName);
+                                }else {
+                                    newRecordDto.setNicAccountName(accountDto.getNameRu());
+                                }
+                            }
                             records.add(newRecordDto);
                         }
 
-                    }else if(record.getAcronym().equalsIgnoreCase(PeriodicReportConstants.SINGULAR_B_CAPITAL_CASE)){ // SUBSCRIPTIONS - Tranche B
+                    }else if(record.getAcronym().equalsIgnoreCase(PeriodicReportConstants.SINGULARITY_B_LOWER_CASE)){ // SUBSCRIPTIONS - Tranche B
                         for (String key : noalTrancheBSubscriptionsRecords.keySet()) {
                             GeneratedGeneralLedgerFormDto newRecordDto = new GeneratedGeneralLedgerFormDto(record);
                             newRecordDto.setSubscriptionRedemptionEntity(key);
                             newRecordDto.setGLAccountBalance(noalTrancheBSubscriptionsRecords.get(key));
                             setAccountNameAdditionalDescription(newRecordDto);
+
+                            NICReportingChartOfAccountsDto accountDto = getNICChartOfAccountsFromSingularityAccount(PeriodicReportConstants.GROSVENOR_ACCOUNT_NUMBER_1500, newRecordDto.getGLAccountBalance());
+                            if (accountDto != null) {
+                                newRecordDto.setNbAccountNumber(accountDto.getNBChartOfAccounts().getCode());
+                                if(hasOtherEntityName(accountDto)){
+                                    String fundName = StringUtils.isNotEmpty(newRecordDto.getSubscriptionRedemptionEntity()) ? " " + newRecordDto.getSubscriptionRedemptionEntity() : "";
+                                    newRecordDto.setNicAccountName(accountDto.getNameRu() + fundName);
+                                }else {
+                                    newRecordDto.setNicAccountName(accountDto.getNameRu());
+                                }
+                            }
                             records.add(newRecordDto);
                         }
                     }else{
-                        String errorMessage = "Invalid Acronym value: expected '" + PeriodicReportConstants.SINGULAR_CAPITAL_CASE +
-                                "' or '" + PeriodicReportConstants.SINGULAR_B_CAPITAL_CASE + "'";
+                        String errorMessage = "Invalid Acronym value: expected '" + PeriodicReportConstants.SINGULARITY_A_LOWER_CASE +
+                                "' or '" + PeriodicReportConstants.SINGULARITY_B_LOWER_CASE + "'";
                         logger.error(errorMessage);
                         responseDto.setErrorMessageEn(errorMessage);
                     }
                 }else if(record.getGLAccount().startsWith(PeriodicReportConstants.GROSVENOR_ACCOUNT_NUMBER_1550)){ // REDEMPTIONS - Tranche A
-                    if(record.getAcronym().equalsIgnoreCase(PeriodicReportConstants.SINGULAR_CAPITAL_CASE)){
+                    if(record.getAcronym().equalsIgnoreCase(PeriodicReportConstants.SINGULARITY_A_LOWER_CASE)){
                         for (String key : noalTrancheARedemptionsRecords.keySet()) {
                             GeneratedGeneralLedgerFormDto newRecordDto = new GeneratedGeneralLedgerFormDto(record);
                             newRecordDto.setSubscriptionRedemptionEntity(key);
                             newRecordDto.setGLAccountBalance(noalTrancheARedemptionsRecords.get(key));
                             setAccountNameAdditionalDescription(newRecordDto);
+
+                            NICReportingChartOfAccountsDto accountDto = getNICChartOfAccountsFromSingularityAccount(PeriodicReportConstants.GROSVENOR_ACCOUNT_NUMBER_1550, newRecordDto.getGLAccountBalance());
+                            if (accountDto != null) {
+                                newRecordDto.setNbAccountNumber(accountDto.getNBChartOfAccounts().getCode());
+                                if(hasOtherEntityName(accountDto)){
+                                    String fundName = StringUtils.isNotEmpty(newRecordDto.getSubscriptionRedemptionEntity()) ? " " + newRecordDto.getSubscriptionRedemptionEntity() : "";
+                                    newRecordDto.setNicAccountName(accountDto.getNameRu() + fundName);
+                                }else {
+                                    newRecordDto.setNicAccountName(accountDto.getNameRu());
+                                }
+                            }
                             records.add(newRecordDto);
                         }
 
-                    }else if(record.getAcronym().equalsIgnoreCase(PeriodicReportConstants.SINGULAR_B_CAPITAL_CASE)){ // REDEMPTIONS - Tranche B
+                    }else if(record.getAcronym().equalsIgnoreCase(PeriodicReportConstants.SINGULARITY_B_LOWER_CASE)){ // REDEMPTIONS - Tranche B
                         for (String key : noalTrancheBRedemptionsRecords.keySet()) {
                             GeneratedGeneralLedgerFormDto newRecordDto = new GeneratedGeneralLedgerFormDto(record);
                             newRecordDto.setSubscriptionRedemptionEntity(key);
                             newRecordDto.setGLAccountBalance(noalTrancheBRedemptionsRecords.get(key));
                             setAccountNameAdditionalDescription(newRecordDto);
+
+                            NICReportingChartOfAccountsDto accountDto = getNICChartOfAccountsFromSingularityAccount(PeriodicReportConstants.GROSVENOR_ACCOUNT_NUMBER_1550, newRecordDto.getGLAccountBalance());
+                            if (accountDto != null) {
+                                newRecordDto.setNbAccountNumber(accountDto.getNBChartOfAccounts().getCode());
+                                if(hasOtherEntityName(accountDto)){
+                                    String fundName = StringUtils.isNotEmpty(newRecordDto.getSubscriptionRedemptionEntity()) ? " " + newRecordDto.getSubscriptionRedemptionEntity() : "";
+                                    newRecordDto.setNicAccountName(accountDto.getNameRu() + fundName);
+                                }else {
+                                    newRecordDto.setNicAccountName(accountDto.getNameRu());
+                                }
+                            }
                             records.add(newRecordDto);
                         }
                     }else{
-                        String errorMessage = "Invalid Acronym value: expected '" + PeriodicReportConstants.SINGULAR_CAPITAL_CASE +
-                                "' or '" + PeriodicReportConstants.SINGULAR_B_CAPITAL_CASE + "'";
+                        String errorMessage = "Invalid Acronym value: expected '" + PeriodicReportConstants.SINGULARITY_A_LOWER_CASE +
+                                "' or '" + PeriodicReportConstants.SINGULARITY_B_LOWER_CASE + "'";
                         logger.error(errorMessage);
                         responseDto.setErrorMessageEn(errorMessage);
                     }
@@ -203,6 +256,17 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
         return responseDto;
     }
 
+    private boolean hasOtherEntityName(NICReportingChartOfAccountsDto accountDto){
+        return accountDto.getNBChartOfAccounts() != null && accountDto.getNBChartOfAccounts().getCode() != null &&
+                (accountDto.getNBChartOfAccounts().getCode().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_1123_010)
+                || accountDto.getNBChartOfAccounts().getCode().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_1283_020)
+                || accountDto.getNBChartOfAccounts().getCode().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_1183_040)
+                || accountDto.getNBChartOfAccounts().getCode().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_6113_030)
+                || accountDto.getNBChartOfAccounts().getCode().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_6280_010)
+                || accountDto.getNBChartOfAccounts().getCode().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_7470_010)
+                || accountDto.getNBChartOfAccounts().getCode().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_7330_010));
+    }
+
     @Override
     public boolean excludeIncludeSingularityRecord(ExcludeSingularityRecordDto excludeRecordDto, String username) {
         boolean result = this.generalLedgerBalanceService.excludeIncludeSingularityRecord(excludeRecordDto.getRecordId(), username);
@@ -213,21 +277,20 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
         if(record == null ||  record.getNbAccountNumber() == null){
             return;
         }
-        if(record.getNbAccountNumber().equalsIgnoreCase("2033.010")){
-//            String fundName = record.getChartAccountsLongDescription() != null && record.getChartAccountsLongDescription().startsWith("Investment in Portfolio Fund") ?
-//                    " " + record.getChartAccountsLongDescription().substring("Investment in Portfolio Fund".length()).trim() : "";
+        if(record.getNbAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_1123_010) ||
+                record.getNbAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_7330_030) ||
+                record.getNbAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_6280_010) ||
+                record.getNbAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_7470_010) ||
+                record.getNbAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_6150_010) ||
+                record.getNbAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_7330_010) ||
+                record.getNbAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_6150_030)){
             String fundName = record.getShortName() != null ? " " + record.getShortName() : "";
             record.setNicAccountName(record.getNicAccountName() + fundName);
-        }else if(record.getNbAccountNumber().equalsIgnoreCase("1283.020")){
+        }else if(record.getNbAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_1283_020) ||
+                record.getNbAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_1183_040) ||
+                record.getNbAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_6113_030)){
             String entityName = record.getSubscriptionRedemptionEntity() != null ? " " + record.getSubscriptionRedemptionEntity() : "";
             record.setNicAccountName(record.getNicAccountName() + entityName);
-        }else if(record.getNbAccountNumber().equalsIgnoreCase("7330.030") || record.getNbAccountNumber().equalsIgnoreCase("6150.030")){
-//            String fundName = record.getChartAccountsLongDescription() != null && record.getChartAccountsLongDescription().startsWith("Net Realized Gains/Losses from Portfolio Funds") ?
-//                    " " + record.getChartAccountsLongDescription().substring("Net Realized Gains/Losses from Portfolio Funds".length()).trim() : "";
-
-            String fundName = record.getShortName() != null ? " " + record.getShortName() : "";
-            record.setNicAccountName(record.getNicAccountName() + fundName);
-            //Net Realized Gains/Losses from Portfolio Fund
         }
     }
 
@@ -235,23 +298,29 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
         List<SingularityNICChartOfAccounts> entities = this.singularityNICChartOfAccountsRepository.findBySingularityAccountNumber(accountNumber);
         if(entities != null && !entities.isEmpty()){
             SingularityNICChartOfAccounts entity = entities.get(0);
+            boolean isPositiveOnly = entity.getChartAccountsType() != null &&
+                    entity.getChartAccountsType().getCode().equalsIgnoreCase(ChartAccountsTypeLookup.POSITIVE.getCode()) ? true : false;
+            boolean isNegativeOnly = entity.getChartAccountsType() != null &&
+                    entity.getChartAccountsType().getCode().equalsIgnoreCase(ChartAccountsTypeLookup.NEGATIVE.getCode()) ? true : false;
             if(entities.size() == 1) {
-                if (entity.getPositiveOnly() != null && entity.getPositiveOnly().booleanValue() && accountBalance < 0) {
+                if (isPositiveOnly && accountBalance < 0) {
                     return null;
-                } else if (entity.getNegativeOnly() != null && entity.getNegativeOnly().booleanValue() && accountBalance >= 0) {
+                } else if (isNegativeOnly && accountBalance >= 0) {
                     return null;
                 }
             }else if(entities.size() == 2){
                 boolean found = false;
                 for(SingularityNICChartOfAccounts anEntity: entities) {
                     if (accountBalance != null && accountBalance.doubleValue() < 0) {
-                        if (anEntity.getNegativeOnly() != null && anEntity.getNegativeOnly().booleanValue()) {
+                        if (anEntity.getChartAccountsType() != null &&
+                                anEntity.getChartAccountsType().getCode().equalsIgnoreCase(ChartAccountsTypeLookup.NEGATIVE.getCode()) ) {
                             entity = anEntity;
                             found = true;
                             break;
                         }
                     } else if (accountBalance != null && accountBalance.doubleValue() >= 0) {
-                        if (anEntity.getPositiveOnly() != null && anEntity.getPositiveOnly().booleanValue()) {
+                        if (anEntity.getChartAccountsType() != null &&
+                                anEntity.getChartAccountsType().getCode().equalsIgnoreCase(ChartAccountsTypeLookup.POSITIVE.getCode()) ) {
                             entity =anEntity;
                             found = true;
                             break;

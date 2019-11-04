@@ -10,6 +10,18 @@ public class TerraGeneratedGeneralLedgerFormDto extends GeneratedGeneralLedgerFo
     private Boolean excludeFromTerraCalculation;
     private String type;
 
+    public TerraGeneratedGeneralLedgerFormDto(){}
+
+    public TerraGeneratedGeneralLedgerFormDto(TerraGeneralLedgerBalanceRecordDto recordDto){
+        setAcronym(recordDto.getAcronym());
+        setBalanceDate(recordDto.getBalanceDate());
+        setFinancialStatementCategory(recordDto.getFinancialStatementCategory());
+        setChartAccountsLongDescription(recordDto.getGlSubclass());
+        setShortName(recordDto.getPortfolioFund());
+        setGLAccountBalance(recordDto.getAccountBalanceNICKMF());
+    }
+
+
 
     public Boolean getExcludeFromTerraCalculation() {
         return excludeFromTerraCalculation;

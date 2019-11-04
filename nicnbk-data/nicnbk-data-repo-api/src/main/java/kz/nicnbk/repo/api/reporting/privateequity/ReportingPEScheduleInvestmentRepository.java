@@ -2,6 +2,7 @@ package kz.nicnbk.repo.api.reporting.privateequity;
 
 import kz.nicnbk.repo.model.reporting.privateequity.ReportingPEScheduleInvestment;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -17,8 +18,15 @@ public interface ReportingPEScheduleInvestmentRepository extends PagingAndSortin
     @Query("SELECT e from ReportingPEScheduleInvestment e where e.report.id=?1 and e.tranche=?2")
     List<ReportingPEScheduleInvestment> getEntitiesByReportIdAndTranche(Long reportId, int tranche, Pageable pageable);
 
+    List<ReportingPEScheduleInvestment> getEntitiesByReportId(Long reportId);
+
+    List<ReportingPEScheduleInvestment> findByReportId(Long reportId, Sort sort);
+
     @Query("SELECT e from ReportingPEScheduleInvestment e where e.report.id=?1 and e.tranche=?2 and e.name=?3")
     ReportingPEScheduleInvestment getEntities(Long reportId, int tranche, String name);
+
+    @Query("SELECT e from ReportingPEScheduleInvestment e where e.report.id=?1 and e.trancheType.nameEn=?2 and e.name=?3")
+    ReportingPEScheduleInvestment getEntities(Long reportId, String trancheTypeCode, String name);
 
     @Modifying
     @Transactional

@@ -344,6 +344,14 @@ public class MathUtils {
         }
     }
 
+    public static Double getDouble(String value){
+        try{
+           return Double.parseDouble(value);
+        }catch (Exception ex){
+            return null;
+        }
+    }
+
     public static Double[] getCumulativeReturns(int scale, Double[] returns){
         if(returns == null){
             return null;
