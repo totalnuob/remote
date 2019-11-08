@@ -22,6 +22,7 @@ public class VersionServiceREST extends CommonServiceREST {
 
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     public ResponseEntity versionGetLatest() {
+        
         VersionResultDto resultDto = this.versionService.get();
 
         if (resultDto.getStatus().getCode().equals("SUCCESS")) {

@@ -20,11 +20,4 @@ export class VersionService extends CommonService {
             .catch(this.handleErrorResponse);
     }
 
-
-
-
-
-
-
-
 }
