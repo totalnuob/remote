@@ -86,7 +86,9 @@ import {VersionService} from "./common/version.service";
 })
 export class AppComponent {
 
-    version;
+    versionLatest;
+
+    versionList;
 
     busy: Subscription;
 
@@ -111,13 +113,13 @@ export class AppComponent {
         this.busy = this.versionService.getVersion()
             .subscribe(
                 (response) => {
-                    // this.version = response;
-                    this.version = '1.0.0';
+                    this.versionList = [];
+                    this.versionLatest = '1.0.0';
 
-                    console.log('Get version: ' + this.version);
+                    console.log('Get version: ' + this.versionLatest);
                 },
                 error => {
-                    this.version = '0.0.0';
+                    this.versionLatest = '0.0.0';
 
                     console.log('Get version: Error');
                 }

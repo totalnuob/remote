@@ -8,14 +8,14 @@ export class VersionService extends CommonService {
 
     private VERSION_BASE_URL = DATA_APP_URL + "version/";
 
-    private VERSION_GET_LATEST_URL = this.VERSION_BASE_URL + "getLatest/";
+    private VERSION_GET_URL = this.VERSION_BASE_URL + "get/";
 
     constructor(private http: Http){
         super();
     }
 
     getVersion() {
-        return this.http.get(this.VERSION_GET_LATEST_URL, this.getOptionsWithCredentials())
+        return this.http.get(this.VERSION_GET_URL, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }
