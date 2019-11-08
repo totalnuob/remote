@@ -41,6 +41,8 @@ import {HedgeFundScreeningService} from "./hf/hf.fund.screening.service";
 import {HedgeFundScoringService} from "./hf/hf.fund.scoring.service";
 import {HRService} from "./hr/hr.service";
 import {MonitoringHedgeFundService} from "./monitoring/monitoring-hf.service";
+import {Subscription} from "../../node_modules/rxjs";
+import {VersionService} from "./common/version.service";
 
 
 
@@ -75,13 +77,18 @@ import {MonitoringHedgeFundService} from "./monitoring/monitoring-hf.service";
         HedgeFundScoringService,
         HRService,
         HedgeFundScoringService,
-        MonitoringHedgeFundService
+        MonitoringHedgeFundService,
+        VersionService
     ]
 })
 @NgModule({
     imports: [TextareaAutosize]
 })
 export class AppComponent {
+
+    version;
+
+    busy: Subscription;
 
     activeMenu;
 
@@ -91,9 +98,30 @@ export class AppComponent {
 
     constructor(
         private authenticationService: AuthenticationService,
-        private _router: Router
+        private _router: Router,
+        private versionService: VersionService,
     ){
         this.moduleAccessChecker = new ModuleAccessCheckerService;
+        this.getVersion();
+    }
+
+    getVersion() {
+        console.log('Get version');
+
+        this.busy = this.versionService.getVersion()
+            .subscribe(
+                (response) => {
+                    // this.version = response;
+                    this.version = '1.0.0';
+
+                    console.log('Get version: ' + this.version);
+                },
+                error => {
+                    this.version = '0.0.0';
+
+                    console.log('Get version: Error');
+                }
+            )
     }
 
     logout() {
