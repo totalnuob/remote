@@ -118,8 +118,8 @@ export class AppComponent {
                     this.versionList = response.versionDtoList;
 
                     if(this.versionList.length > 0) {
-                        this.versionLatestVersion = this.versionList[this.versionList.length - 1].version;
-                        this.versionLatestDescription = this.versionList[this.versionList.length - 1].description;
+                        this.versionLatestVersion = this.versionList[0].version;
+                        this.versionLatestDescription = this.versionList[0].description;
                         console.log('Version: ' + this.versionLatestVersion);
                     } else {
                         this.versionLatestVersion = '0.0.0';

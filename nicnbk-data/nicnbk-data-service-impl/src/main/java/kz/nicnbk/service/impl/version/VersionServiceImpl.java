@@ -73,6 +73,7 @@ public class VersionServiceImpl implements VersionService {
 
             if(!versionDtoList.isEmpty()) {
                 Collections.sort(versionDtoList);
+                Collections.reverse(versionDtoList);
                 return new VersionResultDto(ResponseStatusType.SUCCESS, "", "Successfully loaded version files!", "", versionDtoList);
             } else {
                 logger.error("Failed to load versions: error parsing files!");

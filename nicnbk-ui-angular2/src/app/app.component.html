@@ -647,11 +647,15 @@
     <div class="modal-dialog" style="overflow-y: scroll; max-height:85%;  margin-top: 50px; margin-bottom:50px; width:65%;">
         <div class="modal-content" style="min-height: 500px">
             <div class="modal-header">
-                <h3 class="modal-title"  style="word-wrap: break-word">v{{versionLatestVersion}}</h3>
+                <h3 class="modal-title"  style="word-wrap: break-word">Version description</h3>
             </div>
             <div class="modal-body">
-                {{versionLatestDescription}}
+                <div *ngFor="let version of versionList">
+                    v{{version.version}}
+                    {{version.description}}
+                </div>
             </div>
+            <!--<a href="">View previous changes</a>-->
         </div>
     </div>
 </div>
