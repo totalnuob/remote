@@ -2,22 +2,21 @@ package kz.nicnbk.service.impl.version;
 
 import kz.nicnbk.service.api.version.VersionService;
 import kz.nicnbk.service.dto.common.ResponseStatusType;
+import kz.nicnbk.service.dto.version.VersionDto;
 import kz.nicnbk.service.dto.version.VersionResultDto;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
-import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -52,29 +51,21 @@ public class VersionServiceImpl implements VersionService {
                 return new VersionResultDto(ResponseStatusType.FAIL, "", "Failed to load versions: error finding version files!", "", null);
             }
 
+            List<VersionDto> versionDtoList = new ArrayList<>();
+
             for(String filePath : filePathList) {
-                Resource resource = new ClassPathResource(filePath);
-
-                InputStream wordFileToRead;
                 try {
-                    wordFileToRead = resource.getInputStream();
-                } catch (IOException e) {
-                    logger.error("Failed to load versions: error opening files, ", e);
-                    return new VersionResultDto(ResponseStatusType.FAIL, "", "Failed to load versions: error opening files!", "", null);
-                }
+                    File file = new File(filePath);
+                    FileInputStream fileInputStream = new FileInputStream(file.getAbsolutePath());
 
-                try {
-                    XWPFDocument document = new XWPFDocument(wordFileToRead);
+                    XWPFDocument document = new XWPFDocument(fileInputStream);
                     List<XWPFParagraph> paragraphs = document.getParagraphs();
-                    if(paragraphs != null) {
-                        for(XWPFParagraph paragraph: paragraphs) {
-                            List<XWPFRun> runs = paragraph.getRuns();
-                            if(runs != null) {
-                                for (XWPFRun r : runs) {
-                                    continue;
-                                }
-                            }
-                        }
+                    if(paragraphs != null && paragraphs.size() >= 2) {
+
+                        System.out.println(paragraphs.get(0).getText());
+                        System.out.println(paragraphs.get(1).getText());
+
+                        versionDtoList.add(new VersionDto(paragraphs.get(0).getText(), paragraphs.get(1).getText()));
                     }
                 } catch (Exception ex) {
                     logger.error("Failed to load versions: error parsing files, ", ex);
@@ -82,7 +73,7 @@ public class VersionServiceImpl implements VersionService {
                 }
             }
 
-            return new VersionResultDto(ResponseStatusType.SUCCESS, "", "Successfully loaded version files!", "", null);
+            return new VersionResultDto(ResponseStatusType.SUCCESS, "", "Successfully loaded version files!", "", versionDtoList);
 
         } catch (Exception ex) {
             logger.error("Failed to load versions, ", ex);

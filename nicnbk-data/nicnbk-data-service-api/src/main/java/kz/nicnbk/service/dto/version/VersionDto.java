@@ -9,6 +9,11 @@ public class VersionDto implements Comparable<VersionDto> {
     private String version;
     private String description;
 
+    public VersionDto(String version, String description) {
+        this.version = version;
+        this.description = description;
+    }
+
     public String getVersion() {
         return version;
     }
