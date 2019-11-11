@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -60,11 +61,8 @@ public class VersionServiceImpl implements VersionService {
 
                     XWPFDocument document = new XWPFDocument(fileInputStream);
                     List<XWPFParagraph> paragraphs = document.getParagraphs();
+
                     if(paragraphs != null && paragraphs.size() >= 2) {
-
-                        System.out.println(paragraphs.get(0).getText());
-                        System.out.println(paragraphs.get(1).getText());
-
                         versionDtoList.add(new VersionDto(paragraphs.get(0).getText(), paragraphs.get(1).getText()));
                     }
                 } catch (Exception ex) {
@@ -73,8 +71,13 @@ public class VersionServiceImpl implements VersionService {
                 }
             }
 
-            return new VersionResultDto(ResponseStatusType.SUCCESS, "", "Successfully loaded version files!", "", versionDtoList);
-
+            if(!versionDtoList.isEmpty()) {
+                Collections.sort(versionDtoList);
+                return new VersionResultDto(ResponseStatusType.SUCCESS, "", "Successfully loaded version files!", "", versionDtoList);
+            } else {
+                logger.error("Failed to load versions: error parsing files!");
+                return new VersionResultDto(ResponseStatusType.FAIL, "", "Failed to load versions: error parsing files!", "", null);
+            }
         } catch (Exception ex) {
             logger.error("Failed to load versions, ", ex);
             return new VersionResultDto(ResponseStatusType.FAIL, "", "Failed to load versions!", "", null);

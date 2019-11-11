@@ -43,6 +43,7 @@ import {HRService} from "./hr/hr.service";
 import {MonitoringHedgeFundService} from "./monitoring/monitoring-hf.service";
 import {Subscription} from "../../node_modules/rxjs";
 import {VersionService} from "./common/version.service";
+import {Version} from "./version/model/version";
 
 
 
@@ -88,7 +89,7 @@ export class AppComponent {
 
     versionLatest;
 
-    versionList;
+    versionList: Array<Version> = [];
 
     busy: Subscription;
 
@@ -113,14 +114,18 @@ export class AppComponent {
         this.busy = this.versionService.getVersion()
             .subscribe(
                 (response) => {
-                    this.versionList = [];
-                    this.versionLatest = '1.0.0';
+                    this.versionList = response.versionDtoList;
 
-                    console.log('Get version: ' + this.versionLatest);
+                    if(this.versionList.length > 0) {
+                        this.versionLatest = this.versionList[this.versionList.length - 1].version;
+                        console.log('Version: ' + this.versionLatest);
+                    } else {
+                        this.versionLatest = '0.0.0';
+                        console.log('Get version: Error');
+                    }
                 },
                 error => {
                     this.versionLatest = '0.0.0';
-
                     console.log('Get version: Error');
                 }
             )
