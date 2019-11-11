@@ -2286,7 +2286,7 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                     // takes first-in, i.e. most recent since it is sorted
                     currentFund = fundAUM.getFundId();
                     HedgeFundScreeningFundAUMDto fundAUMDto = new HedgeFundScreeningFundAUMDto(fundAUM.getFundId(), fundAUM.getValue(),
-                            null, null, fundAUM.getReturnsCurrency(), null, fundAUM.getDate(),
+                            null, parsedDataMapByFundId.get(fundAUM.getFundId()).getManagerAUM(), fundAUM.getReturnsCurrency(), null, fundAUM.getDate(),
                             parsedDataMapByFundId.get(fundAUM.getFundId()).getEditedFundAUM(),
                             parsedDataMapByFundId.get(fundAUM.getFundId()).getEditedFundAUMDate(),
                             parsedDataMapByFundId.get(fundAUM.getFundId()).getEditedFundAUMComment(), false);
@@ -2402,7 +2402,7 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                             return;
                         } else if (type == 2) { // UNDECIDED
                             HedgeFundScreeningFundAUMDto fundAUMDto = new HedgeFundScreeningFundAUMDto(value.getFundId(),
-                                    value.getFundAUM(), null, null, value.getFundAUMCurrency(), fundAUMValueUSD,
+                                    value.getFundAUM(), null, value.getManagerAUM(), value.getFundAUMCurrency(), fundAUMValueUSD,
                                     value.getFundAUMDate(),value.getEditedFundAUM(), value.getEditedFundAUMDate(), value.getEditedFundAUMComment(),
                                     missingCurrencyInvestors.contains(parsedDataMapByFundId.get(value.getFundId()).getInvestmentManager()));
                             fundAUMMap.put(value.getFundId(), fundAUMDto);
@@ -2431,7 +2431,7 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                         // QUALIFIED
                         if(fundAUMValue.doubleValue() >= params.getManagerAUM().doubleValue()) {
                             HedgeFundScreeningFundAUMDto fundAUMDto = new HedgeFundScreeningFundAUMDto(value.getFundId(),
-                                    value.getFundAUM(), strategyAUM, null, value.getFundAUMCurrency(), fundAUMValueUSD,
+                                    value.getFundAUM(), strategyAUM, value.getManagerAUM(), value.getFundAUMCurrency(), fundAUMValueUSD,
                                     value.getFundAUMDate(), value.getEditedFundAUM(), value.getEditedFundAUMDate(), value.getEditedFundAUMComment(),
                                     missingCurrencyInvestors.contains(parsedDataMapByFundId.get(value.getFundId()).getInvestmentManager()));
                             fundAUMMap.put(value.getFundId(), fundAUMDto);
@@ -2441,7 +2441,7 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                                     parsedDataMapByFundId.get(value.getFundId()).getManagerAUM() : null;
                             if(managerAUM != null && managerAUM.doubleValue() >= params.getManagerAUM().doubleValue()){
                                 HedgeFundScreeningFundAUMDto fundAUMDto = new HedgeFundScreeningFundAUMDto(value.getFundId(),
-                                        value.getFundAUM(), strategyAUM, null, value.getFundAUMCurrency(), fundAUMValueUSD, value.getFundAUMDate(),
+                                        value.getFundAUM(), strategyAUM, value.getManagerAUM(), value.getFundAUMCurrency(), fundAUMValueUSD, value.getFundAUMDate(),
                                         value.getEditedFundAUM(), value.getEditedFundAUMDate(), value.getEditedFundAUMComment(),
                                         missingCurrencyInvestors.contains(parsedDataMapByFundId.get(value.getFundId()).getInvestmentManager()));
                                 fundAUMMap.put(value.getFundId(), fundAUMDto);
@@ -2455,7 +2455,7 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                             if(managerAUM == null || managerAUM.doubleValue() < params.getManagerAUM().doubleValue() && strategyAUMHasMissingCurrencyRates) {
                                 //manager AUM missing, or manager AUM less that threshold but there are missing strategy AUM (by currency)
                                 HedgeFundScreeningFundAUMDto fundAUMDto = new HedgeFundScreeningFundAUMDto(value.getFundId(),
-                                        value.getFundAUM(), strategyAUM, null, value.getFundAUMCurrency(), fundAUMValueUSD, value.getFundAUMDate(),
+                                        value.getFundAUM(), strategyAUM, value.getManagerAUM(), value.getFundAUMCurrency(), fundAUMValueUSD, value.getFundAUMDate(),
                                         value.getEditedFundAUM(), value.getEditedFundAUMDate(), value.getEditedFundAUMComment(),
                                         missingCurrencyInvestors.contains(parsedDataMapByFundId.get(value.getFundId()).getInvestmentManager()));
                                 fundAUMMap.put(value.getFundId(), fundAUMDto);
@@ -2463,7 +2463,7 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
 
                         }else if(fundAUMValue.doubleValue() < params.getFundAUM().doubleValue() && strategyAUMHasMissingCurrencyRates){
                             HedgeFundScreeningFundAUMDto fundAUMDto = new HedgeFundScreeningFundAUMDto(value.getFundId(),
-                                    value.getFundAUM(), strategyAUM, null, value.getFundAUMCurrency(), fundAUMValueUSD, value.getFundAUMDate(),
+                                    value.getFundAUM(), strategyAUM, value.getManagerAUM(), value.getFundAUMCurrency(), fundAUMValueUSD, value.getFundAUMDate(),
                                     value.getEditedFundAUM(), value.getEditedFundAUMDate(),  value.getEditedFundAUMComment(),
                                     missingCurrencyInvestors.contains(parsedDataMapByFundId.get(value.getFundId()).getInvestmentManager()));
                             fundAUMMap.put(value.getFundId(), fundAUMDto);
@@ -3055,6 +3055,7 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                         if(fund.getEditedFundAUM() != null && fund.getEditedFundAUMDate() != null){
                             parsedDataDto.setEditedFundAUMDateMonthYear(DateUtils.getMonthYearDate(fund.getEditedFundAUMDate()));
                         }
+                        parsedDataDto.setManagerAUM(fund.getManagerAUM());
 
                         resultList.add(parsedDataDto);
                     }
