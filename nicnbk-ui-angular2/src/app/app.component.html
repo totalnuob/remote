@@ -641,7 +641,19 @@
 
 <div class="copyrightText">&copy; National Investment Corporation NBK </div>
 <div style="text-align: center">
-    <a>v{{versionLatest}}</a>
+    <a data-toggle="modal" data-target="#version" style="cursor: pointer">v{{versionLatestVersion}}</a>
+</div>
+<div class="modal fade" id="version" role="dialog">
+    <div class="modal-dialog" style="overflow-y: scroll; max-height:85%;  margin-top: 50px; margin-bottom:50px; width:65%;">
+        <div class="modal-content" style="min-height: 500px">
+            <div class="modal-header">
+                <h3 class="modal-title"  style="word-wrap: break-word">v{{versionLatestVersion}}</h3>
+            </div>
+            <div class="modal-body">
+                {{versionLatestDescription}}
+            </div>
+        </div>
+    </div>
 </div>
 <!--<div class="copyrightText">UNIC v.1.9.0 </div>-->
 <br/>

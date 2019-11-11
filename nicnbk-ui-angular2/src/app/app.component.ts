@@ -87,7 +87,8 @@ import {Version} from "./version/model/version";
 })
 export class AppComponent {
 
-    versionLatest;
+    versionLatestVersion;
+    versionLatestDescription;
 
     versionList: Array<Version> = [];
 
@@ -117,15 +118,16 @@ export class AppComponent {
                     this.versionList = response.versionDtoList;
 
                     if(this.versionList.length > 0) {
-                        this.versionLatest = this.versionList[this.versionList.length - 1].version;
-                        console.log('Version: ' + this.versionLatest);
+                        this.versionLatestVersion = this.versionList[this.versionList.length - 1].version;
+                        this.versionLatestDescription = this.versionList[this.versionList.length - 1].description;
+                        console.log('Version: ' + this.versionLatestVersion);
                     } else {
-                        this.versionLatest = '0.0.0';
+                        this.versionLatestVersion = '0.0.0';
                         console.log('Get version: Error');
                     }
                 },
                 error => {
-                    this.versionLatest = '0.0.0';
+                    this.versionLatestVersion = '0.0.0';
                     console.log('Get version: Error');
                 }
             )
