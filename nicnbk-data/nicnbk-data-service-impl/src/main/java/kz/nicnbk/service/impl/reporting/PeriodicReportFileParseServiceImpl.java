@@ -16,6 +16,7 @@ import kz.nicnbk.repo.model.reporting.realestate.ReportingREBalanceSheet;
 import kz.nicnbk.repo.model.reporting.realestate.ReportingREGeneralLedgerBalance;
 import kz.nicnbk.repo.model.reporting.realestate.ReportingREProfitLoss;
 import kz.nicnbk.repo.model.reporting.realestate.ReportingRESecuritiesCost;
+import kz.nicnbk.service.api.files.FileService;
 import kz.nicnbk.service.api.reporting.PeriodicDataService;
 import kz.nicnbk.service.api.reporting.PeriodicReportFileParseService;
 import kz.nicnbk.service.api.reporting.PeriodicReportService;
@@ -109,17 +110,6 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
     @Autowired
     private ConsolidatedKZTForm22Converter consolidatedKZTForm22Converter;
 
-
-
-
-
-
-
-
-
-
-
-
     @Autowired
     private PeriodicReportService periodicReportService;
 
@@ -156,10 +146,54 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
     @Autowired
     private LookupService lookupService;
 
-
-    // TODO: use service (LookupService, StrategyService etc) ?
     @Autowired
-    private StrategyRepository strategyRepository;
+    private FileService fileService;
+
+    @Override
+    public FileUploadResultDto handleFileUpload(FilesDto filesDto, Long reportId, String username){
+        if(filesDto != null){
+            // save file
+            FilesDto savedFile = this.periodicReportService.saveInputFile(reportId, filesDto);
+            if(savedFile == null){
+                // error occurred
+                logger.error("File upload failed: error saving file (no parsing yet) [user" + username + "]");
+                FileUploadResultDto result = new FileUploadResultDto(ResponseStatusType.FAIL, null,
+                        "File upload failed: error saving file (no parsing yet) [user" + username + "]", null);
+                return result;
+                //return new ResponseEntity<>(result, null, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
+            // parse file
+            FileUploadResultDto result = parseFile(filesDto.getType(), filesDto, reportId, username);
+            if(result != null && result.getStatus() != null && result.getStatus() == ResponseStatusType.SUCCESS){
+                result.setFileName(filesDto.getFileName());
+                result.setFileId(savedFile.getId());
+                logger.info("File successfully parsed: file type '" + filesDto.getType() + "', file name '" + filesDto.getFileName() + "' [user " + username + "]");
+                return result;
+                //return new ResponseEntity<>(result, null, HttpStatus.OK);
+            }else{
+                // error
+                // remove file
+                boolean deleted = periodicReportService.deletePeriodicReportFileAssociationById(savedFile.getId());
+                if(deleted){
+                    deleted = fileService.delete(savedFile.getId());
+                }
+
+                if(!deleted){
+                    logger.error("File upload and/or parse failed, error when deleting file from file system to undo actions: " +
+                            "file type '" + filesDto.getType() + "', file name '" + filesDto.getFileName() + "' [user " + username + "]");
+                }
+                return result;
+                //return new ResponseEntity<>(result, null, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }else {
+            logger.error("File upload failed: no file could be found, please check your files [user " + username + "]");
+            return new FileUploadResultDto(ResponseStatusType.FAIL, null,
+                    "File upload failed: no file could be found, please check your files", null);
+//            return new ResponseEntity<>(new FileUploadResultDto(ResponseStatusType.FAIL, null,
+//                    "File upload failed: no file could be found, please check your files", null), null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     /**
      * Parse specified file and save parsed data to database.
@@ -293,8 +327,15 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
     }
 
 
+    /**
+     * Parse SOI (Schedule of Investment) excel file for specified report id; save parsed data to database.
+     *
+     * @param filesDto - schedule of investments file
+     * @param reportId - report id
+     * @return - file parse result
+     * @throws ExcelFileParseException
+     */
     private FileUploadResultDto parseTarragonSOIReport(FilesDto filesDto, Long reportId) throws ExcelFileParseException {
-
         List<ScheduleInvestmentsDto> sheet1Records = new ArrayList<>();
         try {
 
@@ -303,17 +344,22 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
             Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
             sheet1Records = parseTarragonSOIReportSheetRaw(rowIterator);
 
+            if(sheet1Records == null || sheet1Records.isEmpty()){
+                logger.error("Error parsing 'SOI Report': empty records list found");
+                return new FileUploadResultDto(ResponseStatusType.FAIL, "", "Error parsing 'SOI Report': empty records list found. " +
+                        "Expected table header in the first row.", "");
+            }
+
             /* NORMALIZE TEXT FIELDS ********************************************************************************/
             normalizeTextFieldsSOIReport(sheet1Records);
-
-            /* CHECK ENTITIES AND ASSEMBLE **********************************************************************/
 
             /* SAVE TO DB **************************************************************************************/
             boolean saved = this.scheduleInvestmentService.save(sheet1Records, reportId);
 
             if(saved){
-                logger.info("Successfully parsed 'SOI Report' file");
-                return new FileUploadResultDto(ResponseStatusType.SUCCESS, "", "Successfully processed the file - SOI Report", "");
+                String successMessage = "Successfully processed the file - SOI Report";
+                logger.info(successMessage);
+                return new FileUploadResultDto(ResponseStatusType.SUCCESS, "", successMessage, "");
             }else{
                 logger.error("Error saving 'SOI Report' file parsed data into database");
                 return new FileUploadResultDto(ResponseStatusType.FAIL, "", "Error saving to database", "");
@@ -326,7 +372,6 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
             logger.error("Error parsing 'SOI Report' file with error. Stack trace: \n" + ExceptionUtils.getStackTrace(e));
             return new FileUploadResultDto(ResponseStatusType.FAIL, "", "Error when processing 'SOI Report' file", "");
         }
-
     }
 
     /**
@@ -476,12 +521,18 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
             while (rowIterator.hasNext()) { // each row
                 Row row = rowIterator.next();
                 if(rowNum == 0){
-                    // First row
+                    // First row, must contain table header
                     Iterator<Cell> cellIterator = row.cellIterator();
                     while(cellIterator != null && cellIterator.hasNext()){
                         Cell cell = cellIterator.next();
-                        headers.put(cell.getStringCellValue(), cell.getColumnIndex());
-                        //System.out.println(cell.getColumnIndex() + "-" + ExcelUtils.getTextValueFromAnyCell(cell));
+                        if(StringUtils.isNotEmpty(cell.getStringCellValue())) {
+                            headers.put(cell.getStringCellValue(), cell.getColumnIndex());
+                        }else{
+                            // skip empty cells
+                        }
+                    }
+                    if(headers.isEmpty()){
+                        return null;
                     }
                 }else{
                     ScheduleInvestmentsDto record = new ScheduleInvestmentsDto();
@@ -502,7 +553,7 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                     final String trancheHeader = PeriodicReportConstants.PARSE_SOI_REPORT_HEADER_TRANCHE;
                     if(headers.get(trancheHeader) != null){
                         String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(trancheHeader).intValue()));
-                        value = value.replaceAll("Tranche", "Tarragon");
+                        value = value.replaceAll(PeriodicReportConstants.TRANCHE_LOWER_CASE, PeriodicReportConstants.TARRAGON_LOWER_CASE);
                         record.setTrancheType(new BaseDictionaryDto(null, value, null, null));
                     }
                     final String typeHeader = PeriodicReportConstants.PARSE_SOI_REPORT_HEADER_TYPE;
@@ -556,56 +607,53 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                         Double doubleValue = MathUtils.getDouble(value);
                         record.setContributionsUSD(doubleValue);
                     }
-                    final String returnOfCapitalDistributionsUSDHeader =  PeriodicReportConstants.PARSE_SOI_REPORT_HEADER_RETURN_CAPITAL_DISTRIBUTIONS_USD;
+                    final String returnOfCapitalDistributionsUSDHeader = PeriodicReportConstants.PARSE_SOI_REPORT_HEADER_RETURN_CAPITAL_DISTRIBUTIONS_USD;
                     if(headers.get(returnOfCapitalDistributionsUSDHeader) != null){
                         String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(returnOfCapitalDistributionsUSDHeader).intValue()));
                         Double doubleValue = MathUtils.getDouble(value);
                         record.setReturnOfCapitalDistributionsUSD(doubleValue);
                     }
-                    final String netCostHeader =  PeriodicReportConstants.PARSE_SOI_REPORT_HEADER_NET_COST_USD;
+                    final String netCostHeader = PeriodicReportConstants.PARSE_SOI_REPORT_HEADER_NET_COST_USD;
                     if(headers.get(netCostHeader) != null){
                         String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(netCostHeader).intValue()));
                         Double doubleValue = MathUtils.getDouble(value);
                         record.setNetCost(doubleValue);
                     }
-                    final String fairValueUSDHeader =  PeriodicReportConstants.PARSE_SOI_REPORT_HEADER_FAIR_VALUE_USD;
+                    final String fairValueUSDHeader = PeriodicReportConstants.PARSE_SOI_REPORT_HEADER_FAIR_VALUE_USD;
                     if(headers.get(fairValueUSDHeader) != null){
                         String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(fairValueUSDHeader).intValue()));
                         Double doubleValue = MathUtils.getDouble(value);
                         record.setFairValue(doubleValue);
                     }
-                    final String unrealizedGainLossHeader =  PeriodicReportConstants.PARSE_SOI_REPORT_HEADER_UNREALIZED_GAIN_LOSS_SINCE_INCEPTION_USD;
+                    final String unrealizedGainLossHeader = PeriodicReportConstants.PARSE_SOI_REPORT_HEADER_UNREALIZED_GAIN_LOSS_SINCE_INCEPTION_USD;
                     if(headers.get(unrealizedGainLossHeader) != null){
                         String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(unrealizedGainLossHeader).intValue()));
                         Double doubleValue = MathUtils.getDouble(value);
                         record.setUnrealizedGainLossUSD(doubleValue);
                     }
-                    final String realizedGainLossHeader =  PeriodicReportConstants.PARSE_SOI_REPORT_HEADER_REALIZED_GAIN_LOSS_SINCE_INCEPTION_USD;
+                    final String realizedGainLossHeader = PeriodicReportConstants.PARSE_SOI_REPORT_HEADER_REALIZED_GAIN_LOSS_SINCE_INCEPTION_USD;
                     if(headers.get(realizedGainLossHeader) != null){
                         String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(realizedGainLossHeader).intValue()));
                         Double doubleValue = MathUtils.getDouble(value);
                         record.setRealizedGainLossUSD(doubleValue);
                     }
-                    final String operatingCompanyHeader =  PeriodicReportConstants.PARSE_SOI_REPORT_HEADER_OPERATING_COMPANY;
+                    final String operatingCompanyHeader = PeriodicReportConstants.PARSE_SOI_REPORT_HEADER_OPERATING_COMPANY;
                     if(headers.get(operatingCompanyHeader) != null){
                         String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(operatingCompanyHeader).intValue()));
                         record.setOperatingCompany(value);
                     }
-                    final String ownershipDetailsHeader =  PeriodicReportConstants.PARSE_SOI_REPORT_HEADER_OWNERSHIP_DETAILS;
+                    final String ownershipDetailsHeader = PeriodicReportConstants.PARSE_SOI_REPORT_HEADER_OWNERSHIP_DETAILS;
                     if(headers.get(ownershipDetailsHeader) != null){
                         String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(ownershipDetailsHeader).intValue()));
                         record.setOwnershipDetails(value);
                     }
-
                     if(!record.isEmpty()){
                         records.add(record);
                     }
                 }
                 rowNum++;
             }
-
         }
-
         return records;
     }
 
@@ -717,13 +765,13 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
             /* PARSE EXCEL (RAW) *******************************************************************************/
             List<BaseDictionaryDto> trancheTypes = this.lookupService.getTarragonTrancheTypes();
             if(trancheTypes == null || trancheTypes.isEmpty()){
-                String errorMessage = "Error parsing Tarragon Statement o f Assets, Liabilities and Partners Capital: missing tranche types in system database.";
+                String errorMessage = "Error parsing Tarragon Statement of Assets, Liabilities and Partners Capital: missing tranche types in system database.";
                 logger.error(errorMessage);
                 throw new ExcelFileParseException(errorMessage);
             }
             for(int i = 0; i < trancheTypes.size(); i++){
                 String trancheName = trancheTypes.get(i).getNameEn();
-                Iterator<Row> rowIterator = getRowIterator(filesDto, trancheName.replace("Tarragon", "Tranche"));
+                Iterator<Row> rowIterator = getRowIterator(filesDto, trancheName.replace(PeriodicReportConstants.TARRAGON_LOWER_CASE, PeriodicReportConstants.TRANCHE_LOWER_CASE));
                 if(rowIterator == null){
                     break;
                 }
@@ -733,18 +781,18 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                 List<ConsolidatedReportRecordDto> operationsRecordsSheet = new ArrayList<>();
                 for(ConsolidatedReportRecordDto recordDto: sheetRecords){
                     if(recordDto.getClassifications() != null &&
-                            (recordDto.getClassifications()[0].trim().equalsIgnoreCase("Consolidated Statement of Assets, Liabilities and Partners' Capital") ||
-                                    recordDto.getClassifications()[0].trim().equalsIgnoreCase("Consolidated Statement of Assets, Liabilities and Partner's Capital")) ||
-                            recordDto.getClassifications()[0].trim().equalsIgnoreCase("Consolidated Statement of Assets, Liabilities and Partners Capital")){
+                            (recordDto.getClassifications()[0].trim().equalsIgnoreCase(PeriodicReportConstants.STMT_ASST_LBLT_PC_BALANCE_HEADER_V1) ||
+                                    recordDto.getClassifications()[0].trim().equalsIgnoreCase(PeriodicReportConstants.STMT_ASST_LBLT_PC_BALANCE_HEADER_V2)) ||
+                            recordDto.getClassifications()[0].trim().equalsIgnoreCase(PeriodicReportConstants.STMT_ASST_LBLT_PC_BALANCE_HEADER_V3)){
                         recordDto.getClassifications()[0] = null;
                         balanceRecordsSheet.add(recordDto);
                     }else if(recordDto.getClassifications() != null &&
-                            recordDto.getClassifications()[0].trim().equalsIgnoreCase("Consolidated Statement of Operations")){
+                            recordDto.getClassifications()[0].trim().equalsIgnoreCase(PeriodicReportConstants.STMT_ASST_LBLT_PC_OPERATIONS_HEADER_V1)){
                         recordDto.getClassifications()[0] = null;
                         operationsRecordsSheet.add(recordDto);
                     }else{
                         String errorMessage = "[" + trancheName + "]" +" Record '" + recordDto.getName() + "' is missing type header: " +
-                                "'Consolidated Statement of Assets, Liabilities and Partners Capital' or 'Consolidated Statement of Operations'.";
+                                "Expected 'Consolidated Statement of Assets, Liabilities and Partners Capital', 'Consolidated Statement of Operations', etc.";
                         logger.error(errorMessage);
                         throw new ExcelFileParseException(errorMessage);
                     }
@@ -804,7 +852,7 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
             logger.error("Error parsing 'Statement of Assets, Liabilities and Partners Capital' file with error: " + e.getMessage());
             return new FileUploadResultDto(ResponseStatusType.FAIL, "", e.getMessage(), "");
         }catch (Exception e){
-            logger.error("Error parsing 'Statement of Assets, Liabilities and Partners Capital' file with error: " + e.getMessage());
+            logger.error("Error parsing 'Statement of Assets, Liabilities and Partners Capital' file with error: ", e);
             return new FileUploadResultDto(ResponseStatusType.FAIL, "", "Error processing 'Statement of Assets, Liabilities and Partners Capital' file'", "");
         }
     }
@@ -823,9 +871,9 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
 
     private boolean isStatementOperationsTotalRecordName(String name){
         return StringUtils.isNotEmpty(name) &&
-                (name.equalsIgnoreCase(PeriodicReportConstants.STMT_ASST_LBLT_PC_TOTAL_RECORD_NAME_V1) ||
-                        name.equalsIgnoreCase(PeriodicReportConstants.STMT_ASST_LBLT_PC_TOTAL_RECORD_NAME_V2) ||
-                        name.equalsIgnoreCase(PeriodicReportConstants.STMT_ASST_LBLT_PC_TOTAL_RECORD_NAME_V3));
+                (name.trim().equalsIgnoreCase(PeriodicReportConstants.STMT_ASST_LBLT_PC_TOTAL_RECORD_NAME_V1) ||
+                        name.trim().equalsIgnoreCase(PeriodicReportConstants.STMT_ASST_LBLT_PC_TOTAL_RECORD_NAME_V2) ||
+                        name.trim().equalsIgnoreCase(PeriodicReportConstants.STMT_ASST_LBLT_PC_TOTAL_RECORD_NAME_V3));
     }
 
     /**
@@ -939,14 +987,14 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
     }
 
     private boolean isTarragonTrancheA(String name){
-        return name.startsWith("Tarragon A") || name.startsWith("Tranche A");
+        return name.startsWith(PeriodicReportConstants.TARRAGON_A_LOWER_CASE) || name.startsWith(PeriodicReportConstants.TRANCHE_A_LOWER_CASE);
     }
 
     private List<ConsolidatedReportRecordDto> parseStatementAssetsLiabilitiesSheetRaw(Iterator<Row> rowIterator, String sheetName){
 
         List<ConsolidatedReportRecordDto> records = new ArrayList<>();
         int rowNum = 0;
-        String[] classifications = new String[5]; // TODO: size? dynamic?
+        String[] classifications = new String[5];
         while (rowIterator.hasNext()) { // each row
             Row row = rowIterator.next();
             if(isTarragonTrancheA(sheetName) && rowNum <= 5){
@@ -960,7 +1008,6 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                             cell.getStringCellValue().trim().equalsIgnoreCase(PeriodicReportConstants.STMT_ASST_LBLT_PC_BALANCE_HEADER_V2) ||
                             cell.getStringCellValue().trim().equalsIgnoreCase(PeriodicReportConstants.STMT_ASST_LBLT_PC_BALANCE_HEADER_V3) ||
                             cell.getStringCellValue().trim().equalsIgnoreCase(PeriodicReportConstants.STMT_ASST_LBLT_PC_OPERATIONS_HEADER_V1)){
-                        // TODO: ?
                         classifications = new String[5];
                     }
                     if(ExcelUtils.isEmptyCell(row.getCell(2)) && ExcelUtils.isEmptyCell(row.getCell(4)) &&
@@ -978,7 +1025,6 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                                 break;
                             }
                         }
-
                     }else{
                         // values
                         String name = cell.getStringCellValue();
@@ -1019,7 +1065,8 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                                             name.equalsIgnoreCase("net " + classifications[i]) ||
                                             (name + ":").equalsIgnoreCase("net " + classifications[i]) ||
                                             (name).equalsIgnoreCase("net " + classifications[i] + ":") ||
-                                            ((name.startsWith("Total") || name.startsWith("Net")) && name.equalsIgnoreCase(classifications[i])) ||
+                                            ((name.toUpperCase().startsWith("TOTAL") || name.toUpperCase().startsWith("NET")) &&
+                                                    name.equalsIgnoreCase(classifications[i])) ||
                                             isStatementOperationsTotalRecordName(name))){
                                 classifications[i] = null;
                                 reset = true;
@@ -1212,7 +1259,6 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
         }
     }
 
-    // TODO: move to PEStatementBalanceServiceImpl
     private boolean isPartnersCapital(ConsolidatedReportRecordDto recordDto){
         return recordDto.hasClassification(PeriodicReportConstants.STMT_ASST_LBLT_PC_PARTNERS_CAPITAL_CAPITAL_CASE_V1) ||
                 recordDto.hasClassification(PeriodicReportConstants.STMT_ASST_LBLT_PC_PARTNERS_CAPITAL_CAPITAL_CASE_V2) ||
@@ -1230,744 +1276,740 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                 recordDto.getName().equalsIgnoreCase(PeriodicReportConstants.STMT_ASST_LBLT_PC_LIABILITIES_AND_PARTNERS_CAPITAL_CAPITAL_CASE_V3);
     }
 
-
-    private boolean isHeader_9(Row row){
-        return ExcelUtils.getTextValueFromAnyCell(row.getCell(0)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(0)).equalsIgnoreCase("1.0") &&
-                ExcelUtils.getTextValueFromAnyCell(row.getCell(1)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(1)).equalsIgnoreCase("2.0") &&
-                ExcelUtils.getTextValueFromAnyCell(row.getCell(2)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(2)).equalsIgnoreCase("3.0") &&
-                ExcelUtils.getTextValueFromAnyCell(row.getCell(3)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(3)).equalsIgnoreCase("4.0") &&
-                ExcelUtils.getTextValueFromAnyCell(row.getCell(4)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(4)).equalsIgnoreCase("5.0") &&
-                ExcelUtils.getTextValueFromAnyCell(row.getCell(5)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(5)).equalsIgnoreCase("6.0") &&
-                ExcelUtils.getTextValueFromAnyCell(row.getCell(6)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(6)).equalsIgnoreCase("7.0") &&
-                ExcelUtils.getTextValueFromAnyCell(row.getCell(7)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(7)).equalsIgnoreCase("8.0") &&
-                ExcelUtils.getTextValueFromAnyCell(row.getCell(8)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(8)).equalsIgnoreCase("9.0");
-    }
-
-    private boolean isHeader_6(Row row){
-        return ExcelUtils.getTextValueFromAnyCell(row.getCell(0)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(0)).equalsIgnoreCase("1.0") &&
-                ExcelUtils.getTextValueFromAnyCell(row.getCell(1)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(1)).equalsIgnoreCase("2.0") &&
-                ExcelUtils.getTextValueFromAnyCell(row.getCell(2)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(2)).equalsIgnoreCase("3.0") &&
-                ExcelUtils.getTextValueFromAnyCell(row.getCell(3)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(3)).equalsIgnoreCase("4.0") &&
-                ExcelUtils.getTextValueFromAnyCell(row.getCell(4)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(4)).equalsIgnoreCase("5.0") &&
-                ExcelUtils.getTextValueFromAnyCell(row.getCell(5)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(5)).equalsIgnoreCase("6.0");
-    }
-
-    private boolean isHeader_4(Row row){
-        return ExcelUtils.getTextValueFromAnyCell(row.getCell(0)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(0)).equalsIgnoreCase("1.0") &&
-                ExcelUtils.getTextValueFromAnyCell(row.getCell(1)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(1)).equalsIgnoreCase("2.0") &&
-                ExcelUtils.getTextValueFromAnyCell(row.getCell(2)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(2)).equalsIgnoreCase("3.0") &&
-                ExcelUtils.getTextValueFromAnyCell(row.getCell(3)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(3)).equalsIgnoreCase("4.0");
-    }
-
-    private void form1(FilesDto filesDto, Long reportId){
-        try {
-            Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
-            boolean headerOk = false;
-            List<ConsolidatedBalanceFormRecordDto> records = new ArrayList<>();
-            Integer lineNumberPrevious = null;
-            while (rowIterator.hasNext()) { // each row
-                Row row = rowIterator.next();
-                if (isHeader_6(row)) {
-                    headerOk = true;
-                } else if (headerOk) {
-                    String accountNumber = ExcelUtils.getStringValueFromCell(row.getCell(0));
-                    String name = ExcelUtils.getStringValueFromCell(row.getCell(1));
-                    Double lineNumber = ExcelUtils.getDoubleValueFromCell(row.getCell(2));
-                    String otherEntity = ExcelUtils.getStringValueFromCell(row.getCell(3));
-                    Double currentValue = ExcelUtils.getDoubleValueFromCell(row.getCell(4));
-                    Double previousValue = ExcelUtils.getDoubleValueFromCell(row.getCell(5));
-
-
-                    ConsolidatedBalanceFormRecordDto record = new ConsolidatedBalanceFormRecordDto();
-                    record.setAccountNumber(accountNumber);
-                    record.setName(name);
-                    record.setOtherEntityName(otherEntity);
-
-                    if(lineNumber != null) {
-                        record.setLineNumber(lineNumber.intValue());
-                        lineNumberPrevious = record.getLineNumber();
-                    }else{
-                        record.setLineNumber(lineNumberPrevious);
-                    }
-                    record.setCurrentAccountBalance(currentValue);
-                    record.setPreviousAccountBalance(previousValue);
-                    records.add(record);
-
-                    if(record.getLineNumber() == 54){
-                        break;
-                    }
-                }
-            }
-            this.consolidatedReportKZTForm1Repository.deleteAllByReportId(reportId);
-
-            List<ConsolidatedReportKZTForm1> entities = this.consolidatedKZTForm1Converter.assembleList(records, reportId);
-            this.consolidatedReportKZTForm1Repository.save(entities);
-
-            System.out.println("OK");
-        }catch (Exception ex){
-            System.out.println("Error");
-        }
-    }
-
-    private void form2(FilesDto filesDto, Long reportId){
-        try {
-            Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
-            boolean headerOk = false;
-            List<ConsolidatedBalanceFormRecordDto> records = new ArrayList<>();
-            Integer lineNumberPrevious = null;
-            while (rowIterator.hasNext()) { // each row
-                Row row = rowIterator.next();
-                if (isHeader_6(row)) {
-                    headerOk = true;
-                } else if (headerOk) {
-                    String accountNumber = ExcelUtils.getStringValueFromCell(row.getCell(0));
-                    String name = ExcelUtils.getStringValueFromCell(row.getCell(1));
-                    Double lineNumber = ExcelUtils.getDoubleValueFromCell(row.getCell(2));
-                    String otherEntity = ExcelUtils.getStringValueFromCell(row.getCell(3));
-                    Double currentValue = ExcelUtils.getDoubleValueFromCell(row.getCell(4));
-                    Double previousValue = ExcelUtils.getDoubleValueFromCell(row.getCell(5));
-
-
-                    ConsolidatedBalanceFormRecordDto record = new ConsolidatedBalanceFormRecordDto();
-                    record.setAccountNumber(accountNumber);
-                    record.setName(name);
-                    record.setOtherEntityName(otherEntity);
-
-                    if(lineNumber != null) {
-                        record.setLineNumber(lineNumber.intValue());
-                        lineNumberPrevious = record.getLineNumber();
-                    }else{
-                        record.setLineNumber(lineNumberPrevious);
-                    }
-                    record.setCurrentAccountBalance(currentValue);
-                    record.setPreviousAccountBalance(previousValue);
-                    records.add(record);
-
-                    if(record.getLineNumber() == 21){
-                        break;
-                    }
-                }
-            }
-            this.consolidatedReportKZTForm2Repository.deleteAllByReportId(reportId);
-
-            List<ConsolidatedReportKZTForm2> entities = this.consolidatedKZTForm2Converter.assembleList(records, reportId);
-            this.consolidatedReportKZTForm2Repository.save(entities);
-
-            System.out.println("OK");
-        }catch (Exception ex){
-            System.out.println("Error");
-        }
-    }
-
-    private void form3(FilesDto filesDto, Long reportId){
-        try {
-            Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
-            boolean headerOk = false;
-            List<ConsolidatedBalanceFormRecordDto> records = new ArrayList<>();
-            Integer lineNumberPrevious = null;
-            while (rowIterator.hasNext()) { // each row
-                Row row = rowIterator.next();
-                if (isHeader_4(row)) {
-                    headerOk = true;
-                } else if (headerOk) {
-                    String name = ExcelUtils.getStringValueFromCell(row.getCell(0));
-                    Double lineNumber = ExcelUtils.getDoubleValueFromCell(row.getCell(1));
-                    Double currentValue = ExcelUtils.getDoubleValueFromCell(row.getCell(2));
-                    Double previousValue = ExcelUtils.getDoubleValueFromCell(row.getCell(3));
-
-
-                    ConsolidatedBalanceFormRecordDto record = new ConsolidatedBalanceFormRecordDto();
-                    record.setName(name);
-
-                    if(lineNumber != null) {
-                        record.setLineNumber(lineNumber.intValue());
-                        lineNumberPrevious = record.getLineNumber();
-                    }else{
-                        record.setLineNumber(lineNumberPrevious);
-                    }
-                    record.setCurrentAccountBalance(currentValue);
-                    record.setPreviousAccountBalance(previousValue);
-                    records.add(record);
-
-                    if(record.getLineNumber() == 13){
-                        break;
-                    }
-                }
-            }
-            this.consolidatedReportKZTForm3Repository.deleteAllByReportId(reportId);
-
-            List<ConsolidatedReportKZTForm3> entities = this.consolidatedKZTForm3Converter.assembleList(records, reportId);
-            this.consolidatedReportKZTForm3Repository.save(entities);
-
-            System.out.println("OK");
-        }catch (Exception ex){
-            System.out.println("Error");
-        }
-    }
-
-    private void form6(FilesDto filesDto, Long reportId){
-        try {
-            Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
-            boolean headerOk = false;
-            List<ConsolidatedKZTForm6RecordDto> records = new ArrayList<>();
-            Integer lineNumberPrevious = null;
-            while (rowIterator.hasNext()) { // each row
-                Row row = rowIterator.next();
-                if (isHeader_9(row)) {
-                    headerOk = true;
-                } else if (headerOk) {
-                    String name = ExcelUtils.getStringValueFromCell(row.getCell(0));
-                    Double lineNumber = ExcelUtils.getDoubleValueFromCell(row.getCell(1));
-                    Double shareholderEquity = ExcelUtils.getDoubleValueFromCell(row.getCell(2));
-                    Double additionalPaidinCapital = ExcelUtils.getDoubleValueFromCell(row.getCell(3));
-                    Double redeemedOwnEquityInstruments = ExcelUtils.getDoubleValueFromCell(row.getCell(4));
-                    Double reserveCapital = ExcelUtils.getDoubleValueFromCell(row.getCell(5));
-                    Double otherReserves = ExcelUtils.getDoubleValueFromCell(row.getCell(6));
-                    Double retainedEarnings = ExcelUtils.getDoubleValueFromCell(row.getCell(7));
-                    Double total = ExcelUtils.getDoubleValueFromCell(row.getCell(8));
-
-                    ConsolidatedKZTForm6RecordDto record = new ConsolidatedKZTForm6RecordDto();
-                    record.setName(name);
-                    if(lineNumber != null) {
-                        record.setLineNumber(lineNumber.intValue());
-                        lineNumberPrevious = record.getLineNumber();
-                    }else{
-                        record.setLineNumber(lineNumberPrevious);
-                    }
-                    record.setShareholderEquity(shareholderEquity);
-                    record.setAdditionalPaidinCapital(additionalPaidinCapital);
-                    record.setRedeemedOwnEquityInstruments(redeemedOwnEquityInstruments);
-                    record.setReserveCapital(reserveCapital);
-                    record.setOtherReserves(otherReserves);
-                    record.setRetainedEarnings(retainedEarnings);
-                    record.setTotal(total);
-                    records.add(record);
-
-                    if(record.getLineNumber() == 15){
-                        break;
-                    }
-                }
-            }
-            this.consolidatedReportKZTForm6Repository.deleteAllByReportId(reportId);
-
-            List<ConsolidatedReportKZTForm6> entities = this.consolidatedKZTForm6Converter.assembleList(records, reportId);
-            this.consolidatedReportKZTForm6Repository.save(entities);
-            System.out.println("OK");
-        }catch (Exception ex){
-            System.out.println("Error");
-        }
-    }
-
-    private void form7(FilesDto filesDto, Long reportId){
-        try {
-            Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
-            boolean headerOk = false;
-            List<ConsolidatedKZTForm7RecordDto> records = new ArrayList<>();
-            Integer lineNumberPrevious = null;
-            while (rowIterator.hasNext()) { // each row
-                Row row = rowIterator.next();
-                if (isHeader_9(row)) {
-                    // 9 is ok
-                    headerOk = true;
-                } else if (headerOk) {
-                    String accountNumber = ExcelUtils.getStringValueFromCell(row.getCell(0));
-                    String name = ExcelUtils.getStringValueFromCell(row.getCell(1));
-                    Double lineNumber = ExcelUtils.getDoubleValueFromCell(row.getCell(2));
-
-                    if(name == null && lineNumber.doubleValue() == 14.0){
-                        name = ExcelUtils.getStringValueFromCell(row.getCell(0));
-                        accountNumber = null;
-                    }
-                    String entityName = ExcelUtils.getStringValueFromCell(row.getCell(3));
-                    String otherName = ExcelUtils.getStringValueFromCell(row.getCell(4));
-                    Date purchaseDate = row.getCell(5).getDateCellValue();
-
-                    Double debtStartPeriod = ExcelUtils.getDoubleValueFromCell(row.getCell(11));
-                    Double interestStartPeriod = ExcelUtils.getDoubleValueFromCell(row.getCell(14));
-                    Double interestTurnover = ExcelUtils.getDoubleValueFromCell(row.getCell(23));
-                    Double interestEndPeriod = ExcelUtils.getDoubleValueFromCell(row.getCell(32));
-                    Double fairValueAdjustmentsStartPeriod = ExcelUtils.getDoubleValueFromCell(row.getCell(16));
-                    Double totalStartPeriod = ExcelUtils.getDoubleValueFromCell(row.getCell(18));
-
-                    Double debtTurnover = ExcelUtils.getDoubleValueFromCell(row.getCell(20));
-                    Double fairValueAdjustmentsTurnoverPositive = ExcelUtils.getDoubleValueFromCell(row.getCell(25));
-                    Double fairValueAdjustmentsTurnoverNegative = ExcelUtils.getDoubleValueFromCell(row.getCell(26));
-
-                    Double debtEndPeriod = ExcelUtils.getDoubleValueFromCell(row.getCell(29));
-                    Double fairValueAdjustmentsEndPeriod = ExcelUtils.getDoubleValueFromCell(row.getCell(34));
-                    Double totalEndPeriod = ExcelUtils.getDoubleValueFromCell(row.getCell(36));
-
-                    ConsolidatedKZTForm7RecordDto record = new ConsolidatedKZTForm7RecordDto();
-                    record.setAccountNumber(accountNumber);
-                    record.setName(name);
-                    if(lineNumber != null) {
-                        record.setLineNumber(lineNumber.intValue());
-                        lineNumberPrevious = record.getLineNumber();
-                    }else{
-                        record.setLineNumber(lineNumberPrevious);
-                    }
-                    record.setEntityName(entityName);
-                    record.setOtherName(otherName);
-                    record.setPurchaseDate(purchaseDate);
-
-                    record.setDebtStartPeriod(debtStartPeriod);
-                    record.setInterestStartPeriod(interestStartPeriod);
-                    record.setInterestTurnover(interestTurnover);
-                    record.setInterestEndPeriod(interestEndPeriod);
-                    record.setFairValueAdjustmentsStartPeriod(fairValueAdjustmentsStartPeriod);
-                    record.setTotalStartPeriod(totalStartPeriod);
-
-                    record.setDebtTurnover(debtTurnover);
-                    record.setFairValueAdjustmentsTurnoverPositive(fairValueAdjustmentsTurnoverPositive);
-                    record.setFairValueAdjustmentsTurnoverNegative(fairValueAdjustmentsTurnoverNegative);
-
-                    record.setDebtEndPeriod(debtEndPeriod);
-                    record.setFairValueAdjustmentsEndPeriod(fairValueAdjustmentsEndPeriod);
-                    record.setTotalEndPeriod(totalEndPeriod);
-                    records.add(record);
-
-                    if(record.getLineNumber() == 14){
-                        break;
-                    }
-                }
-            }
-            this.consolidatedReportKZTForm7Repository.deleteAllByReportId(reportId);
-
-            List<ConsolidatedReportKZTForm7> entities = this.consolidatedKZTForm7Converter.assembleList(records, reportId);
-            this.consolidatedReportKZTForm7Repository.save(entities);
-            System.out.println("OK");
-        }catch (Exception ex){
-            System.out.println("Error");
-        }
-    }
-
-    private void form8(FilesDto filesDto, Long reportId){
-        try {
-            Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
-            boolean headerOk = false;
-            List<ConsolidatedKZTForm8RecordDto> records = new ArrayList<>();
-            Integer lineNumberPrevious = null;
-            while (rowIterator.hasNext()) { // each row
-                Row row = rowIterator.next();
-                if (isHeader_9(row)) {
-                    headerOk = true;
-                } else if (headerOk) {
-                    String accountNumber = ExcelUtils.getStringValueFromCell(row.getCell(0));
-                    String name = ExcelUtils.getStringValueFromCell(row.getCell(1));
-                    Double lineNumber = ExcelUtils.getDoubleValueFromCell(row.getCell(2));
-
-                    if(name == null && lineNumber.doubleValue() == 13.0){
-                        name = ExcelUtils.getStringValueFromCell(row.getCell(0));
-                        accountNumber = null;
-                    }
-
-                    Double debtStartPeriod = ExcelUtils.getDoubleValueFromCell(row.getCell(3));
-                    Double debtEndPeriod = ExcelUtils.getDoubleValueFromCell(row.getCell(4));
-                    Double debtDifference = ExcelUtils.getDoubleValueFromCell(row.getCell(5));
-                    String agreementDescription = ExcelUtils.getStringValueFromCell(row.getCell(6));
-                    Date debtStartDate = row.getCell(7).getDateCellValue();
-                    Double startPeriodBalance = ExcelUtils.getDoubleValueFromCell(row.getCell(16));
-                    Double endPeriodBalance = ExcelUtils.getDoubleValueFromCell(row.getCell(17));
-
-                    ConsolidatedKZTForm8RecordDto record = new ConsolidatedKZTForm8RecordDto();
-                    record.setAccountNumber(accountNumber);
-                    record.setName(name);
-                    if(lineNumber != null) {
-                        record.setLineNumber(lineNumber.intValue());
-                        lineNumberPrevious = record.getLineNumber();
-                    }else{
-                        record.setLineNumber(lineNumberPrevious);
-                    }
-                    record.setDebtStartPeriod(debtStartPeriod);
-                    record.setDebtEndPeriod(debtEndPeriod);
-                    record.setDebtDifference(debtDifference);
-                    record.setAgreementDescription(agreementDescription);
-                    record.setDebtStartDate(debtStartDate);
-                    record.setStartPeriodBalance(startPeriodBalance);
-                    record.setEndPeriodBalance(endPeriodBalance);
-                    records.add(record);
-
-                    if(record.getLineNumber() == 13){
-                        break;
-                    }
-                }
-            }
-            this.consolidatedReportKZTForm8Repository.deleteAllByReportId(reportId);
-
-            List<ConsolidatedReportKZTForm8> entities = this.consolidatedKZTForm8Converter.assembleList(records, reportId);
-            this.consolidatedReportKZTForm8Repository.save(entities);
-            System.out.println("OK");
-        }catch (Exception ex){
-            System.out.println("Error");
-        }
-    }
-
-    private void form10(FilesDto filesDto, Long reportId){
-        try {
-            Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
-            boolean headerOk = false;
-            List<ConsolidatedKZTForm10RecordDto> records = new ArrayList<>();
-            Integer lineNumberPrevious = null;
-            while (rowIterator.hasNext()) { // each row
-                Row row = rowIterator.next();
-                if (isHeader_9(row)) {
-                    headerOk = true;
-                } else if (headerOk) {
-                    String accountNumber = ExcelUtils.getStringValueFromCell(row.getCell(0));
-                    String name = ExcelUtils.getStringValueFromCell(row.getCell(1));
-                    Double lineNumber = ExcelUtils.getDoubleValueFromCell(row.getCell(2));
-
-                    if(name == null && lineNumber.doubleValue() == 11.0){
-                        name = ExcelUtils.getStringValueFromCell(row.getCell(0));
-                        accountNumber = null;
-                    }
-
-                    Double startPeriodAssets = ExcelUtils.getDoubleValueFromCell(row.getCell(4));
-                    Double turnoverOther = ExcelUtils.getDoubleValueFromCell(row.getCell(14));
-                    Double endPeriodAssets = ExcelUtils.getDoubleValueFromCell(row.getCell(16));
-                    Double startPeriodBalance = ExcelUtils.getDoubleValueFromCell(row.getCell(24));
-                    Double endPeriodBalance = ExcelUtils.getDoubleValueFromCell(row.getCell(25));
-
-                    ConsolidatedKZTForm10RecordDto record = new ConsolidatedKZTForm10RecordDto();
-                    record.setAccountNumber(accountNumber);
-                    record.setName(name);
-                    if(lineNumber != null) {
-                        record.setLineNumber(lineNumber.intValue());
-                        lineNumberPrevious = record.getLineNumber();
-                    }else{
-                        record.setLineNumber(lineNumberPrevious);
-                    }
-
-                    record.setStartPeriodAssets(startPeriodAssets);
-                    record.setTurnoverOther(turnoverOther);
-                    record.setEndPeriodAssets(endPeriodAssets);
-                    record.setStartPeriodBalance(startPeriodBalance);
-                    record.setEndPeriodBalance(endPeriodBalance);
-                    records.add(record);
-
-                    if(record.getLineNumber() == 11){
-                        break;
-                    }
-                }
-            }
-            this.consolidatedReportKZTForm10Repository.deleteAllByReportId(reportId);
-
-            List<ConsolidatedReportKZTForm10> entities = this.consolidatedKZTForm10Converter.assembleList(records, reportId);
-            this.consolidatedReportKZTForm10Repository.save(entities);
-            System.out.println("OK");
-        }catch (Exception ex){
-            System.out.println("Error");
-        }
-    }
-
-    private void form13(FilesDto filesDto, Long reportId){
-        try {
-            Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
-            boolean headerOk = false;
-            List<ConsolidatedKZTForm13RecordDto> records = new ArrayList<>();
-            Integer lineNumberPrevious = null;
-            while (rowIterator.hasNext()) { // each row
-                Row row = rowIterator.next();
-                if (isHeader_9(row)) {
-                    headerOk = true;
-                } else if (headerOk) {
-                    String accountNumber = ExcelUtils.getStringValueFromCell(row.getCell(0));
-                    String name = ExcelUtils.getStringValueFromCell(row.getCell(1));
-                    Double lineNumber = ExcelUtils.getDoubleValueFromCell(row.getCell(2));
-
-                    if(name == null && lineNumber.doubleValue() == 7.0){
-                        name = ExcelUtils.getStringValueFromCell(row.getCell(0));
-                        accountNumber = null;
-                    }
-
-                    String entityName = ExcelUtils.getStringValueFromCell(row.getCell(3));
-                    Date startPeriod = row.getCell(4).getDateCellValue();
-                    Date endPeriod = row.getCell(5).getDateCellValue();
-                    Double interestRate = ExcelUtils.getDoubleValueFromCell(row.getCell(6));
-                    Double interestPaymentCount = ExcelUtils.getDoubleValueFromCell(row.getCell(7));
-                    String currency = ExcelUtils.getStringValueFromCell(row.getCell(8));
-
-
-                    Double debtStartPeriod = ExcelUtils.getDoubleValueFromCell(row.getCell(10));
-                    Double interestStartPeriod = ExcelUtils.getDoubleValueFromCell(row.getCell(13));
-                    Double totalStartPeriod = ExcelUtils.getDoubleValueFromCell(row.getCell(16));
-                    Double debtTurnover = ExcelUtils.getDoubleValueFromCell(row.getCell(18));
-                    Double interestTurnover = ExcelUtils.getDoubleValueFromCell(row.getCell(21));
-                    Double debtEndPeriod = ExcelUtils.getDoubleValueFromCell(row.getCell(25));
-                    Double interestEndPeriod = ExcelUtils.getDoubleValueFromCell(row.getCell(28));
-                    Double totalEndPeriod = ExcelUtils.getDoubleValueFromCell(row.getCell(31));
-
-
-                    ConsolidatedKZTForm13RecordDto record = new ConsolidatedKZTForm13RecordDto();
-                    record.setAccountNumber(accountNumber);
-                    record.setName(name);
-                    if(lineNumber != null) {
-                        record.setLineNumber(lineNumber.intValue());
-                        lineNumberPrevious = record.getLineNumber();
-                    }else{
-                        record.setLineNumber(lineNumberPrevious);
-                    }
-
-                    record.setEntityName(entityName);
-                    record.setStartPeriod(startPeriod);
-                    record.setEndPeriod(endPeriod);
-                    if(interestRate != null){
-                        String interestRateValue = (interestRate * 100.0) + " %";
-                        record.setInterestRate(interestRateValue.replace(".", ","));
-                    }
-                    if(interestPaymentCount != null) {
-                        record.setInterestPaymentCount(interestPaymentCount.intValue());
-                    }
-                    record.setCurrency(currency);
-                    record.setDebtStartPeriod(debtStartPeriod);
-                    record.setInterestStartPeriod(interestStartPeriod);
-                    record.setTotalStartPeriod(totalStartPeriod);
-                    record.setDebtTurnover(debtTurnover);
-                    record.setInterestTurnover(interestTurnover);
-                    record.setDebtEndPeriod(debtEndPeriod);
-                    record.setInterestEndPeriod(interestEndPeriod);
-                    record.setTotalEndPeriod(totalEndPeriod);
-                    records.add(record);
-
-                    if(record.getLineNumber() == 7){
-                        break;
-                    }
-                }
-            }
-            this.consolidatedReportKZTForm13Repository.deleteAllByReportId(reportId);
-
-            List<ConsolidatedReportKZTForm13> entities = this.consolidatedKZTForm13Converter.assembleList(records, reportId);
-            this.consolidatedReportKZTForm13Repository.save(entities);
-            System.out.println("OK");
-        }catch (Exception ex){
-            System.out.println("Error");
-        }
-    }
-
-    private void form14(FilesDto filesDto, Long reportId){
-        try {
-            Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
-            boolean headerOk = false;
-            List<ConsolidatedKZTForm14RecordDto> records = new ArrayList<>();
-            Integer lineNumberPrevious = null;
-            while (rowIterator.hasNext()) { // each row
-                Row row = rowIterator.next();
-                if (isHeader_9(row)) {
-                    headerOk = true;
-                } else if (headerOk) {
-                    String accountNumber = ExcelUtils.getStringValueFromCell(row.getCell(0));
-                    String name = ExcelUtils.getStringValueFromCell(row.getCell(1));
-                    Double lineNumber = ExcelUtils.getDoubleValueFromCell(row.getCell(2));
-
-                    if(name == null && lineNumber.doubleValue() == 11.0){
-                        name = ExcelUtils.getStringValueFromCell(row.getCell(0));
-                        accountNumber = null;
-                    }
-
-                    Double debtStartPeriod = ExcelUtils.getDoubleValueFromCell(row.getCell(3));
-                    Double debtEndPeriod = ExcelUtils.getDoubleValueFromCell(row.getCell(4));
-                    Double debtDifference = ExcelUtils.getDoubleValueFromCell(row.getCell(5));
-                    String agreementDescription = ExcelUtils.getStringValueFromCell(row.getCell(6));
-                    Date debtStartDate = row.getCell(7).getDateCellValue();
-
-
-                    ConsolidatedKZTForm14RecordDto record = new ConsolidatedKZTForm14RecordDto();
-                    record.setAccountNumber(accountNumber);
-                    record.setName(name);
-                    if(lineNumber != null) {
-                        record.setLineNumber(lineNumber.intValue());
-                        lineNumberPrevious = record.getLineNumber();
-                    }else{
-                        record.setLineNumber(lineNumberPrevious);
-                    }
-
-                    record.setDebtStartPeriod(debtStartPeriod);
-                    record.setDebtEndPeriod(debtEndPeriod);
-                    record.setDebtDifference(debtDifference);
-                    record.setAgreementDescription(agreementDescription);
-                    record.setDebtStartDate(debtStartDate);
-                    records.add(record);
-
-                    if(record.getLineNumber() == 11){
-                        break;
-                    }
-                }
-            }
-            this.consolidatedReportKZTForm14Repository.deleteAllByReportId(reportId);
-
-            List<ConsolidatedReportKZTForm14> entities = this.consolidatedKZTForm14Converter.assembleList(records, reportId);
-            this.consolidatedReportKZTForm14Repository.save(entities);
-            System.out.println("OK");
-        }catch (Exception ex){
-            System.out.println("Error");
-        }
-    }
-
-    private void form19(FilesDto filesDto, Long reportId){
-        try {
-            Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
-            boolean headerOk = false;
-            List<ConsolidatedKZTForm19RecordDto> records = new ArrayList<>();
-            Integer lineNumberPrevious = null;
-            while (rowIterator.hasNext()) { // each row
-                Row row = rowIterator.next();
-                if (isHeader_6(row)) {
-                    headerOk = true;
-                } else if (headerOk) {
-                    String accountNumber = ExcelUtils.getStringValueFromCell(row.getCell(0));
-                    String name = ExcelUtils.getStringValueFromCell(row.getCell(1));
-                    Double lineNumber = ExcelUtils.getDoubleValueFromCell(row.getCell(2));
-
-                    if(name == null && lineNumber.doubleValue() == 55.0){
-                        name = ExcelUtils.getStringValueFromCell(row.getCell(0));
-                        accountNumber = null;
-                    }
-
-                    String otherEntity = ExcelUtils.getStringValueFromCell(row.getCell(3));
-                    Double currentValue = ExcelUtils.getDoubleValueFromCell(row.getCell(6));
-                    Double turnover = ExcelUtils.getDoubleValueFromCell(row.getCell(5));
-                    Double previousValue = ExcelUtils.getDoubleValueFromCell(row.getCell(4));
-
-                    ConsolidatedKZTForm19RecordDto record = new ConsolidatedKZTForm19RecordDto();
-                    record.setAccountNumber(accountNumber);
-                    record.setName(name);
-                    record.setOtherEntityName(otherEntity);
-
-                    if(lineNumber != null) {
-                        record.setLineNumber(lineNumber.intValue());
-                        lineNumberPrevious = record.getLineNumber();
-                    }else{
-                        record.setLineNumber(lineNumberPrevious);
-                    }
-                    record.setCurrentAccountBalance(currentValue);
-                    record.setTurnover(turnover);
-                    record.setPreviousAccountBalance(previousValue);
-                    records.add(record);
-
-                    if(record.getLineNumber() == 55){
-                        break;
-                    }
-                }
-            }
-            this.consolidatedReportKZTForm19Repository.deleteAllByReportId(reportId);
-
-            List<ConsolidatedReportKZTForm19> entities = this.consolidatedKZTForm19Converter.assembleList(records, reportId);
-            this.consolidatedReportKZTForm19Repository.save(entities);
-            System.out.println("OK");
-        }catch (Exception ex){
-            System.out.println("Error");
-        }
-    }
-
-    private void form22(FilesDto filesDto, Long reportId){
-        try {
-            Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
-            boolean headerOk = false;
-            List<ConsolidatedKZTForm22RecordDto> records = new ArrayList<>();
-            Integer lineNumberPrevious = null;
-            while (rowIterator.hasNext()) { // each row
-                Row row = rowIterator.next();
-                if (isHeader_6(row)) {
-                    headerOk = true;
-                } else if (headerOk) {
-                    String accountNumber = ExcelUtils.getStringValueFromCell(row.getCell(0));
-                    String name = ExcelUtils.getStringValueFromCell(row.getCell(1));
-                    Double lineNumber = ExcelUtils.getDoubleValueFromCell(row.getCell(2));
-
-                    if(name == null && lineNumber.doubleValue() == 3.0){
-                        name = ExcelUtils.getStringValueFromCell(row.getCell(0));
-                        accountNumber = null;
-                    }
-
-                    //String otherEntity = ExcelUtils.getStringValueFromCell(row.getCell(3));
-                    Double currentValue = ExcelUtils.getDoubleValueFromCell(row.getCell(5));
-                    Double turnover = ExcelUtils.getDoubleValueFromCell(row.getCell(4));
-                    Double previousValue = ExcelUtils.getDoubleValueFromCell(row.getCell(3));
-
-                    ConsolidatedKZTForm22RecordDto record = new ConsolidatedKZTForm22RecordDto();
-                    record.setAccountNumber(accountNumber);
-                    record.setName(name);
-                    //record.setOtherEntityName(otherEntity);
-
-                    if(lineNumber != null) {
-                        record.setLineNumber(lineNumber.intValue());
-                        lineNumberPrevious = record.getLineNumber();
-                    }else{
-                        record.setLineNumber(lineNumberPrevious);
-                    }
-                    record.setCurrentAccountBalance(currentValue);
-                    record.setTurnover(turnover);
-                    record.setPreviousAccountBalance(previousValue);
-                    records.add(record);
-
-                    if(record.getLineNumber() == 3){
-                        break;
-                    }
-                }
-            }
-            this.consolidatedReportKZTForm22Repository.deleteAllByReportId(reportId);
-
-            List<ConsolidatedReportKZTForm22> entities = this.consolidatedKZTForm22Converter.assembleList(records, reportId);
-            this.consolidatedReportKZTForm22Repository.save(entities);
-            System.out.println("OK");
-        }catch (Exception ex){
-            System.out.println("Error");
-        }
-    }
-
-    private FileUploadResultDto parseStatementCashFlows(FilesDto filesDto, Long reportId){
-        //form22(filesDto, reportId);
-
-        return null;
-    }
-
-//    private FileUploadResultDto parseStatementCashFlows(FilesDto filesDto, Long reportId){
+//    private boolean isHeader_9(Row row){
+//        return ExcelUtils.getTextValueFromAnyCell(row.getCell(0)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(0)).equalsIgnoreCase("1.0") &&
+//                ExcelUtils.getTextValueFromAnyCell(row.getCell(1)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(1)).equalsIgnoreCase("2.0") &&
+//                ExcelUtils.getTextValueFromAnyCell(row.getCell(2)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(2)).equalsIgnoreCase("3.0") &&
+//                ExcelUtils.getTextValueFromAnyCell(row.getCell(3)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(3)).equalsIgnoreCase("4.0") &&
+//                ExcelUtils.getTextValueFromAnyCell(row.getCell(4)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(4)).equalsIgnoreCase("5.0") &&
+//                ExcelUtils.getTextValueFromAnyCell(row.getCell(5)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(5)).equalsIgnoreCase("6.0") &&
+//                ExcelUtils.getTextValueFromAnyCell(row.getCell(6)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(6)).equalsIgnoreCase("7.0") &&
+//                ExcelUtils.getTextValueFromAnyCell(row.getCell(7)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(7)).equalsIgnoreCase("8.0") &&
+//                ExcelUtils.getTextValueFromAnyCell(row.getCell(8)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(8)).equalsIgnoreCase("9.0");
+//    }
+//
+//    private boolean isHeader_6(Row row){
+//        return ExcelUtils.getTextValueFromAnyCell(row.getCell(0)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(0)).equalsIgnoreCase("1.0") &&
+//                ExcelUtils.getTextValueFromAnyCell(row.getCell(1)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(1)).equalsIgnoreCase("2.0") &&
+//                ExcelUtils.getTextValueFromAnyCell(row.getCell(2)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(2)).equalsIgnoreCase("3.0") &&
+//                ExcelUtils.getTextValueFromAnyCell(row.getCell(3)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(3)).equalsIgnoreCase("4.0") &&
+//                ExcelUtils.getTextValueFromAnyCell(row.getCell(4)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(4)).equalsIgnoreCase("5.0") &&
+//                ExcelUtils.getTextValueFromAnyCell(row.getCell(5)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(5)).equalsIgnoreCase("6.0");
+//    }
+//
+//    private boolean isHeader_4(Row row){
+//        return ExcelUtils.getTextValueFromAnyCell(row.getCell(0)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(0)).equalsIgnoreCase("1.0") &&
+//                ExcelUtils.getTextValueFromAnyCell(row.getCell(1)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(1)).equalsIgnoreCase("2.0") &&
+//                ExcelUtils.getTextValueFromAnyCell(row.getCell(2)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(2)).equalsIgnoreCase("3.0") &&
+//                ExcelUtils.getTextValueFromAnyCell(row.getCell(3)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(3)).equalsIgnoreCase("4.0");
+//    }
+//
+//    private void form1(FilesDto filesDto, Long reportId){
 //        try {
-//            /* PARSE EXCEL (RAW) *******************************************************************************/
 //            Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
-//            List<ConsolidatedReportRecordDto> records = parseStatementCashFlowsRaw(rowIterator);
-//            //printRecords(records);
+//            boolean headerOk = false;
+//            List<ConsolidatedBalanceFormRecordDto> records = new ArrayList<>();
+//            Integer lineNumberPrevious = null;
+//            while (rowIterator.hasNext()) { // each row
+//                Row row = rowIterator.next();
+//                if (isHeader_6(row)) {
+//                    headerOk = true;
+//                } else if (headerOk) {
+//                    String accountNumber = ExcelUtils.getStringValueFromCell(row.getCell(0));
+//                    String name = ExcelUtils.getStringValueFromCell(row.getCell(1));
+//                    Double lineNumber = ExcelUtils.getDoubleValueFromCell(row.getCell(2));
+//                    String otherEntity = ExcelUtils.getStringValueFromCell(row.getCell(3));
+//                    Double currentValue = ExcelUtils.getDoubleValueFromCell(row.getCell(4));
+//                    Double previousValue = ExcelUtils.getDoubleValueFromCell(row.getCell(5));
 //
-//            /* NORMALIZE TEXT FIELDS ********************************************************************************/
-//            normalizeTextFields(records);
 //
-//            /* CHECK FORMAT *****************************************************************************************/
-//            for(ConsolidatedReportRecordDto recordDto: records) {
-//                if (!isStatementCashFlowsSpecialName(recordDto.getName()) && !recordDto.hasNonEmptyClassification()) {
-//                    String errorMessage = "Record '" + recordDto.getName() + "' does not have any matching classification/header. Check for required indentations.";
-//                    logger.error(errorMessage);
-//                    throw new ExcelFileParseException(errorMessage);
+//                    ConsolidatedBalanceFormRecordDto record = new ConsolidatedBalanceFormRecordDto();
+//                    record.setAccountNumber(accountNumber);
+//                    record.setName(name);
+//                    record.setOtherEntityName(otherEntity);
+//
+//                    if(lineNumber != null) {
+//                        record.setLineNumber(lineNumber.intValue());
+//                        lineNumberPrevious = record.getLineNumber();
+//                    }else{
+//                        record.setLineNumber(lineNumberPrevious);
+//                    }
+//                    record.setCurrentAccountBalance(currentValue);
+//                    record.setPreviousAccountBalance(previousValue);
+//                    records.add(record);
+//
+//                    if(record.getLineNumber() == 54){
+//                        break;
+//                    }
 //                }
 //            }
+//            this.consolidatedReportKZTForm1Repository.deleteAllByReportId(reportId);
 //
-//            /* CHECK SUMS/TOTALS ***********************************************************************************/
-//            PeriodicReportDto report = this.periodicReportService.getPeriodicReport(reportId);
-//            checkTotalSumsGeneric(records, 3, "Net increase (decrease) in cash and cash equivalents", "Tarragon");
-//            checkSumsStatementCashFlows(records, report.getReportDate());
+//            List<ConsolidatedReportKZTForm1> entities = this.consolidatedKZTForm1Converter.assembleList(records, reportId);
+//            this.consolidatedReportKZTForm1Repository.save(entities);
 //
-//
-//            /* CHECK ENTITIES AND ASSEMBLE *************************************************************************/
-//            List<ReportingPEStatementCashflows> entities = this.statementCashflowsService.assembleList(records, reportId); // TODO: tranche type constant !!!
-//
-//            /* SAVE TO DB ******************************************************************************************/
-//            boolean saved = this.statementCashflowsService.save(entities);
-//
-//            if(saved){
-//                logger.info("Successfully parsed 'Statement of Cashflows' file");
-//                return new FileUploadResultDto(ResponseStatusType.SUCCESS, "", "Successfully processed the file - Statement of Cashflows", "");
-//            }else{
-//                logger.error("Error saving 'Statement of Cashflows' file parsed data into database");
-//                return new FileUploadResultDto(ResponseStatusType.FAIL, "", "Error saving to database", "");
-//            }
-//
-//        }catch (ExcelFileParseException e) {
-//            logger.error("Error parsing 'Statement of Cash flows' file with error: " + e.getMessage());
-//            return new FileUploadResultDto(ResponseStatusType.FAIL, "", e.getMessage(), "");
-//        }catch (Exception e){
-//            logger.error("Error parsing 'Statement of Cash flows' file with error: " + e.getMessage());
-//            return new FileUploadResultDto(ResponseStatusType.FAIL, "", "Error processing 'Statement of Cashflows' file'", "");
+//            System.out.println("OK");
+//        }catch (Exception ex){
+//            System.out.println("Error");
 //        }
 //    }
+//
+//    private void form2(FilesDto filesDto, Long reportId){
+//        try {
+//            Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
+//            boolean headerOk = false;
+//            List<ConsolidatedBalanceFormRecordDto> records = new ArrayList<>();
+//            Integer lineNumberPrevious = null;
+//            while (rowIterator.hasNext()) { // each row
+//                Row row = rowIterator.next();
+//                if (isHeader_6(row)) {
+//                    headerOk = true;
+//                } else if (headerOk) {
+//                    String accountNumber = ExcelUtils.getStringValueFromCell(row.getCell(0));
+//                    String name = ExcelUtils.getStringValueFromCell(row.getCell(1));
+//                    Double lineNumber = ExcelUtils.getDoubleValueFromCell(row.getCell(2));
+//                    String otherEntity = ExcelUtils.getStringValueFromCell(row.getCell(3));
+//                    Double currentValue = ExcelUtils.getDoubleValueFromCell(row.getCell(4));
+//                    Double previousValue = ExcelUtils.getDoubleValueFromCell(row.getCell(5));
+//
+//
+//                    ConsolidatedBalanceFormRecordDto record = new ConsolidatedBalanceFormRecordDto();
+//                    record.setAccountNumber(accountNumber);
+//                    record.setName(name);
+//                    record.setOtherEntityName(otherEntity);
+//
+//                    if(lineNumber != null) {
+//                        record.setLineNumber(lineNumber.intValue());
+//                        lineNumberPrevious = record.getLineNumber();
+//                    }else{
+//                        record.setLineNumber(lineNumberPrevious);
+//                    }
+//                    record.setCurrentAccountBalance(currentValue);
+//                    record.setPreviousAccountBalance(previousValue);
+//                    records.add(record);
+//
+//                    if(record.getLineNumber() == 21){
+//                        break;
+//                    }
+//                }
+//            }
+//            this.consolidatedReportKZTForm2Repository.deleteAllByReportId(reportId);
+//
+//            List<ConsolidatedReportKZTForm2> entities = this.consolidatedKZTForm2Converter.assembleList(records, reportId);
+//            this.consolidatedReportKZTForm2Repository.save(entities);
+//
+//            System.out.println("OK");
+//        }catch (Exception ex){
+//            System.out.println("Error");
+//        }
+//    }
+//
+//    private void form3(FilesDto filesDto, Long reportId){
+//        try {
+//            Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
+//            boolean headerOk = false;
+//            List<ConsolidatedBalanceFormRecordDto> records = new ArrayList<>();
+//            Integer lineNumberPrevious = null;
+//            while (rowIterator.hasNext()) { // each row
+//                Row row = rowIterator.next();
+//                if (isHeader_4(row)) {
+//                    headerOk = true;
+//                } else if (headerOk) {
+//                    String name = ExcelUtils.getStringValueFromCell(row.getCell(0));
+//                    Double lineNumber = ExcelUtils.getDoubleValueFromCell(row.getCell(1));
+//                    Double currentValue = ExcelUtils.getDoubleValueFromCell(row.getCell(2));
+//                    Double previousValue = ExcelUtils.getDoubleValueFromCell(row.getCell(3));
+//
+//
+//                    ConsolidatedBalanceFormRecordDto record = new ConsolidatedBalanceFormRecordDto();
+//                    record.setName(name);
+//
+//                    if(lineNumber != null) {
+//                        record.setLineNumber(lineNumber.intValue());
+//                        lineNumberPrevious = record.getLineNumber();
+//                    }else{
+//                        record.setLineNumber(lineNumberPrevious);
+//                    }
+//                    record.setCurrentAccountBalance(currentValue);
+//                    record.setPreviousAccountBalance(previousValue);
+//                    records.add(record);
+//
+//                    if(record.getLineNumber() == 13){
+//                        break;
+//                    }
+//                }
+//            }
+//            this.consolidatedReportKZTForm3Repository.deleteAllByReportId(reportId);
+//
+//            List<ConsolidatedReportKZTForm3> entities = this.consolidatedKZTForm3Converter.assembleList(records, reportId);
+//            this.consolidatedReportKZTForm3Repository.save(entities);
+//
+//            System.out.println("OK");
+//        }catch (Exception ex){
+//            System.out.println("Error");
+//        }
+//    }
+//
+//    private void form6(FilesDto filesDto, Long reportId){
+//        try {
+//            Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
+//            boolean headerOk = false;
+//            List<ConsolidatedKZTForm6RecordDto> records = new ArrayList<>();
+//            Integer lineNumberPrevious = null;
+//            while (rowIterator.hasNext()) { // each row
+//                Row row = rowIterator.next();
+//                if (isHeader_9(row)) {
+//                    headerOk = true;
+//                } else if (headerOk) {
+//                    String name = ExcelUtils.getStringValueFromCell(row.getCell(0));
+//                    Double lineNumber = ExcelUtils.getDoubleValueFromCell(row.getCell(1));
+//                    Double shareholderEquity = ExcelUtils.getDoubleValueFromCell(row.getCell(2));
+//                    Double additionalPaidinCapital = ExcelUtils.getDoubleValueFromCell(row.getCell(3));
+//                    Double redeemedOwnEquityInstruments = ExcelUtils.getDoubleValueFromCell(row.getCell(4));
+//                    Double reserveCapital = ExcelUtils.getDoubleValueFromCell(row.getCell(5));
+//                    Double otherReserves = ExcelUtils.getDoubleValueFromCell(row.getCell(6));
+//                    Double retainedEarnings = ExcelUtils.getDoubleValueFromCell(row.getCell(7));
+//                    Double total = ExcelUtils.getDoubleValueFromCell(row.getCell(8));
+//
+//                    ConsolidatedKZTForm6RecordDto record = new ConsolidatedKZTForm6RecordDto();
+//                    record.setName(name);
+//                    if(lineNumber != null) {
+//                        record.setLineNumber(lineNumber.intValue());
+//                        lineNumberPrevious = record.getLineNumber();
+//                    }else{
+//                        record.setLineNumber(lineNumberPrevious);
+//                    }
+//                    record.setShareholderEquity(shareholderEquity);
+//                    record.setAdditionalPaidinCapital(additionalPaidinCapital);
+//                    record.setRedeemedOwnEquityInstruments(redeemedOwnEquityInstruments);
+//                    record.setReserveCapital(reserveCapital);
+//                    record.setOtherReserves(otherReserves);
+//                    record.setRetainedEarnings(retainedEarnings);
+//                    record.setTotal(total);
+//                    records.add(record);
+//
+//                    if(record.getLineNumber() == 15){
+//                        break;
+//                    }
+//                }
+//            }
+//            this.consolidatedReportKZTForm6Repository.deleteAllByReportId(reportId);
+//
+//            List<ConsolidatedReportKZTForm6> entities = this.consolidatedKZTForm6Converter.assembleList(records, reportId);
+//            this.consolidatedReportKZTForm6Repository.save(entities);
+//            System.out.println("OK");
+//        }catch (Exception ex){
+//            System.out.println("Error");
+//        }
+//    }
+//
+//    private void form7(FilesDto filesDto, Long reportId){
+//        try {
+//            Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
+//            boolean headerOk = false;
+//            List<ConsolidatedKZTForm7RecordDto> records = new ArrayList<>();
+//            Integer lineNumberPrevious = null;
+//            while (rowIterator.hasNext()) { // each row
+//                Row row = rowIterator.next();
+//                if (isHeader_9(row)) {
+//                    // 9 is ok
+//                    headerOk = true;
+//                } else if (headerOk) {
+//                    String accountNumber = ExcelUtils.getStringValueFromCell(row.getCell(0));
+//                    String name = ExcelUtils.getStringValueFromCell(row.getCell(1));
+//                    Double lineNumber = ExcelUtils.getDoubleValueFromCell(row.getCell(2));
+//
+//                    if(name == null && lineNumber.doubleValue() == 14.0){
+//                        name = ExcelUtils.getStringValueFromCell(row.getCell(0));
+//                        accountNumber = null;
+//                    }
+//                    String entityName = ExcelUtils.getStringValueFromCell(row.getCell(3));
+//                    String otherName = ExcelUtils.getStringValueFromCell(row.getCell(4));
+//                    Date purchaseDate = row.getCell(5).getDateCellValue();
+//
+//                    Double debtStartPeriod = ExcelUtils.getDoubleValueFromCell(row.getCell(11));
+//                    Double interestStartPeriod = ExcelUtils.getDoubleValueFromCell(row.getCell(14));
+//                    Double interestTurnover = ExcelUtils.getDoubleValueFromCell(row.getCell(23));
+//                    Double interestEndPeriod = ExcelUtils.getDoubleValueFromCell(row.getCell(32));
+//                    Double fairValueAdjustmentsStartPeriod = ExcelUtils.getDoubleValueFromCell(row.getCell(16));
+//                    Double totalStartPeriod = ExcelUtils.getDoubleValueFromCell(row.getCell(18));
+//
+//                    Double debtTurnover = ExcelUtils.getDoubleValueFromCell(row.getCell(20));
+//                    Double fairValueAdjustmentsTurnoverPositive = ExcelUtils.getDoubleValueFromCell(row.getCell(25));
+//                    Double fairValueAdjustmentsTurnoverNegative = ExcelUtils.getDoubleValueFromCell(row.getCell(26));
+//
+//                    Double debtEndPeriod = ExcelUtils.getDoubleValueFromCell(row.getCell(29));
+//                    Double fairValueAdjustmentsEndPeriod = ExcelUtils.getDoubleValueFromCell(row.getCell(34));
+//                    Double totalEndPeriod = ExcelUtils.getDoubleValueFromCell(row.getCell(36));
+//
+//                    ConsolidatedKZTForm7RecordDto record = new ConsolidatedKZTForm7RecordDto();
+//                    record.setAccountNumber(accountNumber);
+//                    record.setName(name);
+//                    if(lineNumber != null) {
+//                        record.setLineNumber(lineNumber.intValue());
+//                        lineNumberPrevious = record.getLineNumber();
+//                    }else{
+//                        record.setLineNumber(lineNumberPrevious);
+//                    }
+//                    record.setEntityName(entityName);
+//                    record.setOtherName(otherName);
+//                    record.setPurchaseDate(purchaseDate);
+//
+//                    record.setDebtStartPeriod(debtStartPeriod);
+//                    record.setInterestStartPeriod(interestStartPeriod);
+//                    record.setInterestTurnover(interestTurnover);
+//                    record.setInterestEndPeriod(interestEndPeriod);
+//                    record.setFairValueAdjustmentsStartPeriod(fairValueAdjustmentsStartPeriod);
+//                    record.setTotalStartPeriod(totalStartPeriod);
+//
+//                    record.setDebtTurnover(debtTurnover);
+//                    record.setFairValueAdjustmentsTurnoverPositive(fairValueAdjustmentsTurnoverPositive);
+//                    record.setFairValueAdjustmentsTurnoverNegative(fairValueAdjustmentsTurnoverNegative);
+//
+//                    record.setDebtEndPeriod(debtEndPeriod);
+//                    record.setFairValueAdjustmentsEndPeriod(fairValueAdjustmentsEndPeriod);
+//                    record.setTotalEndPeriod(totalEndPeriod);
+//                    records.add(record);
+//
+//                    if(record.getLineNumber() == 14){
+//                        break;
+//                    }
+//                }
+//            }
+//            this.consolidatedReportKZTForm7Repository.deleteAllByReportId(reportId);
+//
+//            List<ConsolidatedReportKZTForm7> entities = this.consolidatedKZTForm7Converter.assembleList(records, reportId);
+//            this.consolidatedReportKZTForm7Repository.save(entities);
+//            System.out.println("OK");
+//        }catch (Exception ex){
+//            System.out.println("Error");
+//        }
+//    }
+//
+//    private void form8(FilesDto filesDto, Long reportId){
+//        try {
+//            Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
+//            boolean headerOk = false;
+//            List<ConsolidatedKZTForm8RecordDto> records = new ArrayList<>();
+//            Integer lineNumberPrevious = null;
+//            while (rowIterator.hasNext()) { // each row
+//                Row row = rowIterator.next();
+//                if (isHeader_9(row)) {
+//                    headerOk = true;
+//                } else if (headerOk) {
+//                    String accountNumber = ExcelUtils.getStringValueFromCell(row.getCell(0));
+//                    String name = ExcelUtils.getStringValueFromCell(row.getCell(1));
+//                    Double lineNumber = ExcelUtils.getDoubleValueFromCell(row.getCell(2));
+//
+//                    if(name == null && lineNumber.doubleValue() == 13.0){
+//                        name = ExcelUtils.getStringValueFromCell(row.getCell(0));
+//                        accountNumber = null;
+//                    }
+//
+//                    Double debtStartPeriod = ExcelUtils.getDoubleValueFromCell(row.getCell(3));
+//                    Double debtEndPeriod = ExcelUtils.getDoubleValueFromCell(row.getCell(4));
+//                    Double debtDifference = ExcelUtils.getDoubleValueFromCell(row.getCell(5));
+//                    String agreementDescription = ExcelUtils.getStringValueFromCell(row.getCell(6));
+//                    Date debtStartDate = row.getCell(7).getDateCellValue();
+//                    Double startPeriodBalance = ExcelUtils.getDoubleValueFromCell(row.getCell(16));
+//                    Double endPeriodBalance = ExcelUtils.getDoubleValueFromCell(row.getCell(17));
+//
+//                    ConsolidatedKZTForm8RecordDto record = new ConsolidatedKZTForm8RecordDto();
+//                    record.setAccountNumber(accountNumber);
+//                    record.setName(name);
+//                    if(lineNumber != null) {
+//                        record.setLineNumber(lineNumber.intValue());
+//                        lineNumberPrevious = record.getLineNumber();
+//                    }else{
+//                        record.setLineNumber(lineNumberPrevious);
+//                    }
+//                    record.setDebtStartPeriod(debtStartPeriod);
+//                    record.setDebtEndPeriod(debtEndPeriod);
+//                    record.setDebtDifference(debtDifference);
+//                    record.setAgreementDescription(agreementDescription);
+//                    record.setDebtStartDate(debtStartDate);
+//                    record.setStartPeriodBalance(startPeriodBalance);
+//                    record.setEndPeriodBalance(endPeriodBalance);
+//                    records.add(record);
+//
+//                    if(record.getLineNumber() == 13){
+//                        break;
+//                    }
+//                }
+//            }
+//            this.consolidatedReportKZTForm8Repository.deleteAllByReportId(reportId);
+//
+//            List<ConsolidatedReportKZTForm8> entities = this.consolidatedKZTForm8Converter.assembleList(records, reportId);
+//            this.consolidatedReportKZTForm8Repository.save(entities);
+//            System.out.println("OK");
+//        }catch (Exception ex){
+//            System.out.println("Error");
+//        }
+//    }
+//
+//    private void form10(FilesDto filesDto, Long reportId){
+//        try {
+//            Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
+//            boolean headerOk = false;
+//            List<ConsolidatedKZTForm10RecordDto> records = new ArrayList<>();
+//            Integer lineNumberPrevious = null;
+//            while (rowIterator.hasNext()) { // each row
+//                Row row = rowIterator.next();
+//                if (isHeader_9(row)) {
+//                    headerOk = true;
+//                } else if (headerOk) {
+//                    String accountNumber = ExcelUtils.getStringValueFromCell(row.getCell(0));
+//                    String name = ExcelUtils.getStringValueFromCell(row.getCell(1));
+//                    Double lineNumber = ExcelUtils.getDoubleValueFromCell(row.getCell(2));
+//
+//                    if(name == null && lineNumber.doubleValue() == 11.0){
+//                        name = ExcelUtils.getStringValueFromCell(row.getCell(0));
+//                        accountNumber = null;
+//                    }
+//
+//                    Double startPeriodAssets = ExcelUtils.getDoubleValueFromCell(row.getCell(4));
+//                    Double turnoverOther = ExcelUtils.getDoubleValueFromCell(row.getCell(14));
+//                    Double endPeriodAssets = ExcelUtils.getDoubleValueFromCell(row.getCell(16));
+//                    Double startPeriodBalance = ExcelUtils.getDoubleValueFromCell(row.getCell(24));
+//                    Double endPeriodBalance = ExcelUtils.getDoubleValueFromCell(row.getCell(25));
+//
+//                    ConsolidatedKZTForm10RecordDto record = new ConsolidatedKZTForm10RecordDto();
+//                    record.setAccountNumber(accountNumber);
+//                    record.setName(name);
+//                    if(lineNumber != null) {
+//                        record.setLineNumber(lineNumber.intValue());
+//                        lineNumberPrevious = record.getLineNumber();
+//                    }else{
+//                        record.setLineNumber(lineNumberPrevious);
+//                    }
+//
+//                    record.setStartPeriodAssets(startPeriodAssets);
+//                    record.setTurnoverOther(turnoverOther);
+//                    record.setEndPeriodAssets(endPeriodAssets);
+//                    record.setStartPeriodBalance(startPeriodBalance);
+//                    record.setEndPeriodBalance(endPeriodBalance);
+//                    records.add(record);
+//
+//                    if(record.getLineNumber() == 11){
+//                        break;
+//                    }
+//                }
+//            }
+//            this.consolidatedReportKZTForm10Repository.deleteAllByReportId(reportId);
+//
+//            List<ConsolidatedReportKZTForm10> entities = this.consolidatedKZTForm10Converter.assembleList(records, reportId);
+//            this.consolidatedReportKZTForm10Repository.save(entities);
+//            System.out.println("OK");
+//        }catch (Exception ex){
+//            System.out.println("Error");
+//        }
+//    }
+//
+//    private void form13(FilesDto filesDto, Long reportId){
+//        try {
+//            Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
+//            boolean headerOk = false;
+//            List<ConsolidatedKZTForm13RecordDto> records = new ArrayList<>();
+//            Integer lineNumberPrevious = null;
+//            while (rowIterator.hasNext()) { // each row
+//                Row row = rowIterator.next();
+//                if (isHeader_9(row)) {
+//                    headerOk = true;
+//                } else if (headerOk) {
+//                    String accountNumber = ExcelUtils.getStringValueFromCell(row.getCell(0));
+//                    String name = ExcelUtils.getStringValueFromCell(row.getCell(1));
+//                    Double lineNumber = ExcelUtils.getDoubleValueFromCell(row.getCell(2));
+//
+//                    if(name == null && lineNumber.doubleValue() == 7.0){
+//                        name = ExcelUtils.getStringValueFromCell(row.getCell(0));
+//                        accountNumber = null;
+//                    }
+//
+//                    String entityName = ExcelUtils.getStringValueFromCell(row.getCell(3));
+//                    Date startPeriod = row.getCell(4).getDateCellValue();
+//                    Date endPeriod = row.getCell(5).getDateCellValue();
+//                    Double interestRate = ExcelUtils.getDoubleValueFromCell(row.getCell(6));
+//                    Double interestPaymentCount = ExcelUtils.getDoubleValueFromCell(row.getCell(7));
+//                    String currency = ExcelUtils.getStringValueFromCell(row.getCell(8));
+//
+//
+//                    Double debtStartPeriod = ExcelUtils.getDoubleValueFromCell(row.getCell(10));
+//                    Double interestStartPeriod = ExcelUtils.getDoubleValueFromCell(row.getCell(13));
+//                    Double totalStartPeriod = ExcelUtils.getDoubleValueFromCell(row.getCell(16));
+//                    Double debtTurnover = ExcelUtils.getDoubleValueFromCell(row.getCell(18));
+//                    Double interestTurnover = ExcelUtils.getDoubleValueFromCell(row.getCell(21));
+//                    Double debtEndPeriod = ExcelUtils.getDoubleValueFromCell(row.getCell(25));
+//                    Double interestEndPeriod = ExcelUtils.getDoubleValueFromCell(row.getCell(28));
+//                    Double totalEndPeriod = ExcelUtils.getDoubleValueFromCell(row.getCell(31));
+//
+//
+//                    ConsolidatedKZTForm13RecordDto record = new ConsolidatedKZTForm13RecordDto();
+//                    record.setAccountNumber(accountNumber);
+//                    record.setName(name);
+//                    if(lineNumber != null) {
+//                        record.setLineNumber(lineNumber.intValue());
+//                        lineNumberPrevious = record.getLineNumber();
+//                    }else{
+//                        record.setLineNumber(lineNumberPrevious);
+//                    }
+//
+//                    record.setEntityName(entityName);
+//                    record.setStartPeriod(startPeriod);
+//                    record.setEndPeriod(endPeriod);
+//                    if(interestRate != null){
+//                        String interestRateValue = (interestRate * 100.0) + " %";
+//                        record.setInterestRate(interestRateValue.replace(".", ","));
+//                    }
+//                    if(interestPaymentCount != null) {
+//                        record.setInterestPaymentCount(interestPaymentCount.intValue());
+//                    }
+//                    record.setCurrency(currency);
+//                    record.setDebtStartPeriod(debtStartPeriod);
+//                    record.setInterestStartPeriod(interestStartPeriod);
+//                    record.setTotalStartPeriod(totalStartPeriod);
+//                    record.setDebtTurnover(debtTurnover);
+//                    record.setInterestTurnover(interestTurnover);
+//                    record.setDebtEndPeriod(debtEndPeriod);
+//                    record.setInterestEndPeriod(interestEndPeriod);
+//                    record.setTotalEndPeriod(totalEndPeriod);
+//                    records.add(record);
+//
+//                    if(record.getLineNumber() == 7){
+//                        break;
+//                    }
+//                }
+//            }
+//            this.consolidatedReportKZTForm13Repository.deleteAllByReportId(reportId);
+//
+//            List<ConsolidatedReportKZTForm13> entities = this.consolidatedKZTForm13Converter.assembleList(records, reportId);
+//            this.consolidatedReportKZTForm13Repository.save(entities);
+//            System.out.println("OK");
+//        }catch (Exception ex){
+//            System.out.println("Error");
+//        }
+//    }
+//
+//    private void form14(FilesDto filesDto, Long reportId){
+//        try {
+//            Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
+//            boolean headerOk = false;
+//            List<ConsolidatedKZTForm14RecordDto> records = new ArrayList<>();
+//            Integer lineNumberPrevious = null;
+//            while (rowIterator.hasNext()) { // each row
+//                Row row = rowIterator.next();
+//                if (isHeader_9(row)) {
+//                    headerOk = true;
+//                } else if (headerOk) {
+//                    String accountNumber = ExcelUtils.getStringValueFromCell(row.getCell(0));
+//                    String name = ExcelUtils.getStringValueFromCell(row.getCell(1));
+//                    Double lineNumber = ExcelUtils.getDoubleValueFromCell(row.getCell(2));
+//
+//                    if(name == null && lineNumber.doubleValue() == 11.0){
+//                        name = ExcelUtils.getStringValueFromCell(row.getCell(0));
+//                        accountNumber = null;
+//                    }
+//
+//                    Double debtStartPeriod = ExcelUtils.getDoubleValueFromCell(row.getCell(3));
+//                    Double debtEndPeriod = ExcelUtils.getDoubleValueFromCell(row.getCell(4));
+//                    Double debtDifference = ExcelUtils.getDoubleValueFromCell(row.getCell(5));
+//                    String agreementDescription = ExcelUtils.getStringValueFromCell(row.getCell(6));
+//                    Date debtStartDate = row.getCell(7).getDateCellValue();
+//
+//
+//                    ConsolidatedKZTForm14RecordDto record = new ConsolidatedKZTForm14RecordDto();
+//                    record.setAccountNumber(accountNumber);
+//                    record.setName(name);
+//                    if(lineNumber != null) {
+//                        record.setLineNumber(lineNumber.intValue());
+//                        lineNumberPrevious = record.getLineNumber();
+//                    }else{
+//                        record.setLineNumber(lineNumberPrevious);
+//                    }
+//
+//                    record.setDebtStartPeriod(debtStartPeriod);
+//                    record.setDebtEndPeriod(debtEndPeriod);
+//                    record.setDebtDifference(debtDifference);
+//                    record.setAgreementDescription(agreementDescription);
+//                    record.setDebtStartDate(debtStartDate);
+//                    records.add(record);
+//
+//                    if(record.getLineNumber() == 11){
+//                        break;
+//                    }
+//                }
+//            }
+//            this.consolidatedReportKZTForm14Repository.deleteAllByReportId(reportId);
+//
+//            List<ConsolidatedReportKZTForm14> entities = this.consolidatedKZTForm14Converter.assembleList(records, reportId);
+//            this.consolidatedReportKZTForm14Repository.save(entities);
+//            System.out.println("OK");
+//        }catch (Exception ex){
+//            System.out.println("Error");
+//        }
+//    }
+//
+//    private void form19(FilesDto filesDto, Long reportId){
+//        try {
+//            Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
+//            boolean headerOk = false;
+//            List<ConsolidatedKZTForm19RecordDto> records = new ArrayList<>();
+//            Integer lineNumberPrevious = null;
+//            while (rowIterator.hasNext()) { // each row
+//                Row row = rowIterator.next();
+//                if (isHeader_6(row)) {
+//                    headerOk = true;
+//                } else if (headerOk) {
+//                    String accountNumber = ExcelUtils.getStringValueFromCell(row.getCell(0));
+//                    String name = ExcelUtils.getStringValueFromCell(row.getCell(1));
+//                    Double lineNumber = ExcelUtils.getDoubleValueFromCell(row.getCell(2));
+//
+//                    if(name == null && lineNumber.doubleValue() == 55.0){
+//                        name = ExcelUtils.getStringValueFromCell(row.getCell(0));
+//                        accountNumber = null;
+//                    }
+//
+//                    String otherEntity = ExcelUtils.getStringValueFromCell(row.getCell(3));
+//                    Double currentValue = ExcelUtils.getDoubleValueFromCell(row.getCell(6));
+//                    Double turnover = ExcelUtils.getDoubleValueFromCell(row.getCell(5));
+//                    Double previousValue = ExcelUtils.getDoubleValueFromCell(row.getCell(4));
+//
+//                    ConsolidatedKZTForm19RecordDto record = new ConsolidatedKZTForm19RecordDto();
+//                    record.setAccountNumber(accountNumber);
+//                    record.setName(name);
+//                    record.setOtherEntityName(otherEntity);
+//
+//                    if(lineNumber != null) {
+//                        record.setLineNumber(lineNumber.intValue());
+//                        lineNumberPrevious = record.getLineNumber();
+//                    }else{
+//                        record.setLineNumber(lineNumberPrevious);
+//                    }
+//                    record.setCurrentAccountBalance(currentValue);
+//                    record.setTurnover(turnover);
+//                    record.setPreviousAccountBalance(previousValue);
+//                    records.add(record);
+//
+//                    if(record.getLineNumber() == 55){
+//                        break;
+//                    }
+//                }
+//            }
+//            this.consolidatedReportKZTForm19Repository.deleteAllByReportId(reportId);
+//
+//            List<ConsolidatedReportKZTForm19> entities = this.consolidatedKZTForm19Converter.assembleList(records, reportId);
+//            this.consolidatedReportKZTForm19Repository.save(entities);
+//            System.out.println("OK");
+//        }catch (Exception ex){
+//            System.out.println("Error");
+//        }
+//    }
+//
+//    private void form22(FilesDto filesDto, Long reportId){
+//        try {
+//            Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
+//            boolean headerOk = false;
+//            List<ConsolidatedKZTForm22RecordDto> records = new ArrayList<>();
+//            Integer lineNumberPrevious = null;
+//            while (rowIterator.hasNext()) { // each row
+//                Row row = rowIterator.next();
+//                if (isHeader_6(row)) {
+//                    headerOk = true;
+//                } else if (headerOk) {
+//                    String accountNumber = ExcelUtils.getStringValueFromCell(row.getCell(0));
+//                    String name = ExcelUtils.getStringValueFromCell(row.getCell(1));
+//                    Double lineNumber = ExcelUtils.getDoubleValueFromCell(row.getCell(2));
+//
+//                    if(name == null && lineNumber.doubleValue() == 3.0){
+//                        name = ExcelUtils.getStringValueFromCell(row.getCell(0));
+//                        accountNumber = null;
+//                    }
+//
+//                    //String otherEntity = ExcelUtils.getStringValueFromCell(row.getCell(3));
+//                    Double currentValue = ExcelUtils.getDoubleValueFromCell(row.getCell(5));
+//                    Double turnover = ExcelUtils.getDoubleValueFromCell(row.getCell(4));
+//                    Double previousValue = ExcelUtils.getDoubleValueFromCell(row.getCell(3));
+//
+//                    ConsolidatedKZTForm22RecordDto record = new ConsolidatedKZTForm22RecordDto();
+//                    record.setAccountNumber(accountNumber);
+//                    record.setName(name);
+//                    //record.setOtherEntityName(otherEntity);
+//
+//                    if(lineNumber != null) {
+//                        record.setLineNumber(lineNumber.intValue());
+//                        lineNumberPrevious = record.getLineNumber();
+//                    }else{
+//                        record.setLineNumber(lineNumberPrevious);
+//                    }
+//                    record.setCurrentAccountBalance(currentValue);
+//                    record.setTurnover(turnover);
+//                    record.setPreviousAccountBalance(previousValue);
+//                    records.add(record);
+//
+//                    if(record.getLineNumber() == 3){
+//                        break;
+//                    }
+//                }
+//            }
+//            this.consolidatedReportKZTForm22Repository.deleteAllByReportId(reportId);
+//
+//            List<ConsolidatedReportKZTForm22> entities = this.consolidatedKZTForm22Converter.assembleList(records, reportId);
+//            this.consolidatedReportKZTForm22Repository.save(entities);
+//            System.out.println("OK");
+//        }catch (Exception ex){
+//            System.out.println("Error");
+//        }
+//    }
+
+    private FileUploadResultDto parseStatementCashFlows(FilesDto filesDto, Long reportId){
+
+        //form22(filesDto, reportId);
+
+        try {
+            /* PARSE EXCEL (RAW) *******************************************************************************/
+            Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
+            List<ConsolidatedReportRecordDto> records = parseStatementCashFlowsRaw(rowIterator);
+            //printRecords(records);
+
+            /* NORMALIZE TEXT FIELDS ********************************************************************************/
+            normalizeTextFields(records);
+
+            /* CHECK FORMAT *****************************************************************************************/
+            for(ConsolidatedReportRecordDto recordDto: records) {
+                if (!isStatementCashFlowsSpecialName(recordDto.getName()) && !recordDto.hasNonEmptyClassification()) {
+                    String errorMessage = "Record '" + recordDto.getName() + "' does not have any matching classification/header. Check for required indentations.";
+                    logger.error(errorMessage);
+                    throw new ExcelFileParseException(errorMessage);
+                }
+            }
+
+            /* CHECK SUMS/TOTALS ***********************************************************************************/
+            PeriodicReportDto report = this.periodicReportService.getPeriodicReport(reportId);
+            checkTotalSumsGeneric(records, 3, "Net increase (decrease) in cash and cash equivalents", "Tarragon");
+            checkSumsStatementCashFlows(records, report.getReportDate());
+
+
+            /* CHECK ENTITIES AND ASSEMBLE *************************************************************************/
+            List<ReportingPEStatementCashflows> entities = this.statementCashflowsService.assembleList(records, reportId); // TODO: tranche type constant !!!
+
+            /* SAVE TO DB ******************************************************************************************/
+            boolean saved = this.statementCashflowsService.save(entities);
+
+            if(saved){
+                logger.info("Successfully parsed 'Statement of Cashflows' file");
+                return new FileUploadResultDto(ResponseStatusType.SUCCESS, "", "Successfully processed the file - Statement of Cashflows", "");
+            }else{
+                logger.error("Error saving 'Statement of Cashflows' file parsed data into database");
+                return new FileUploadResultDto(ResponseStatusType.FAIL, "", "Error saving to database", "");
+            }
+
+        }catch (ExcelFileParseException e) {
+            logger.error("Error parsing 'Statement of Cash flows' file with error: " + e.getMessage());
+            return new FileUploadResultDto(ResponseStatusType.FAIL, "", e.getMessage(), "");
+        }catch (Exception e){
+            logger.error("Error parsing 'Statement of Cash flows' file with error: " + e.getMessage());
+            return new FileUploadResultDto(ResponseStatusType.FAIL, "", "Error processing 'Statement of Cashflows' file'", "");
+        }
+    }
 
     private List<ConsolidatedReportRecordDto> parseStatementCashFlowsRaw(Iterator<Row> rowIterator){
         List<ConsolidatedReportRecordDto> records = new ArrayList<>();
@@ -2252,7 +2294,6 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
 
     private List<ConsolidatedReportRecordDto>  parseTarragonStatementChangesSheetRaw(Iterator<Row> rowIterator){
         List<ConsolidatedReportRecordDto> records = new ArrayList<>();
-        int rowNum = 0;
         String previousRowHeader = null;
         while (rowIterator.hasNext()) { // each row
             Row row = rowIterator.next();
@@ -2264,6 +2305,7 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                     ExcelUtils.isEmptyCell(row.getCell(10));
 
             if(ExcelUtils.getStringValueFromCell(cell) != null && isEmptyValuesRow){
+                // two-line names
                 previousRowHeader = ExcelUtils.getStringValueFromCell(cell);
                 continue;
             }else if(ExcelUtils.getStringValueFromCell(cell) != null ||
@@ -2281,30 +2323,24 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                 values[3] = ExcelUtils.getDoubleValueFromCell(row.getCell(8));
                 values[4] = ExcelUtils.getDoubleValueFromCell(row.getCell(10));
 
-
                 ConsolidatedReportRecordDto recordDto = new ConsolidatedReportRecordDto();
                 recordDto.setName(name);
                 recordDto.setValues(values);
                 // total sum
                 recordDto.setWithSumFormula(isSumFormulaCell(row.getCell(2)));
-
                 records.add(recordDto);
 
-
             }else if(!isEmptyValuesRow){
-                if(ExcelUtils.getStringValueFromCell(row.getCell(2)) != null && !ExcelUtils.getStringValueFromCell(row.getCell(2)).startsWith("Tranche") &&
-                        ExcelUtils.getStringValueFromCell(row.getCell(4)) != null && !ExcelUtils.getStringValueFromCell(row.getCell(4)).startsWith("Tranche") &&
-                        ExcelUtils.getStringValueFromCell(row.getCell(6)) != null && !ExcelUtils.getStringValueFromCell(row.getCell(6)).startsWith("Tranche") &&
-                        ExcelUtils.getStringValueFromCell(row.getCell(8)) != null && !ExcelUtils.getStringValueFromCell(row.getCell(8)).startsWith("Tranche") &&
-                        ExcelUtils.getStringValueFromCell(row.getCell(10)) != null && !ExcelUtils.getStringValueFromCell(row.getCell(10)).startsWith("Tranche")) {
+                if(ExcelUtils.getStringValueFromCell(row.getCell(2)) != null && !ExcelUtils.getStringValueFromCell(row.getCell(2)).startsWith(PeriodicReportConstants.TRANCHE_LOWER_CASE) &&
+                        ExcelUtils.getStringValueFromCell(row.getCell(4)) != null && !ExcelUtils.getStringValueFromCell(row.getCell(4)).startsWith(PeriodicReportConstants.TRANCHE_LOWER_CASE) &&
+                        ExcelUtils.getStringValueFromCell(row.getCell(6)) != null && !ExcelUtils.getStringValueFromCell(row.getCell(6)).startsWith(PeriodicReportConstants.TRANCHE_LOWER_CASE) &&
+                        ExcelUtils.getStringValueFromCell(row.getCell(8)) != null && !ExcelUtils.getStringValueFromCell(row.getCell(8)).startsWith(PeriodicReportConstants.TRANCHE_LOWER_CASE) &&
+                        ExcelUtils.getStringValueFromCell(row.getCell(10)) != null && !ExcelUtils.getStringValueFromCell(row.getCell(10)).startsWith(PeriodicReportConstants.TRANCHE_LOWER_CASE)) {
                     String errorMessage = "Expected text value for record name, found : '" + ExcelUtils.getTextValueFromAnyCell(cell) + "'";
                     logger.error(errorMessage);
                     throw new ExcelFileParseException(errorMessage);
                 }
-
             }
-
-            rowNum++;
             previousRowHeader = null;
         }
         return records;
@@ -2488,61 +2524,61 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                 if(ExcelUtils.getStringValueFromCell(row.getCell(0)) != null){
                     record.setAcronym(row.getCell(0).getStringCellValue());
                 }else{
-                    logger.error("Error parsing 'Singularity General Ledger Balance' file: could not set 'acronym' (cell #1)");
-                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: could not set 'acronym' (cell #1)");
+//                    logger.error("Error parsing 'Singularity General Ledger Balance' file: could not set 'acronym' (cell #1)");
+//                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: could not set 'acronym' (cell #1)");
                 }
                 /* Balance date */
                 if(ExcelUtils.isNotEmptyCell(row.getCell(1)) && row.getCell(1).getCellType() == Cell.CELL_TYPE_NUMERIC){
                     Date balanceDate = row.getCell(1).getDateCellValue();
                     if(balanceDate == null){
-                        logger.error("Error parsing 'Singularity General Ledger Balance' file: balance date is invalid - '" + row.getCell(1).getNumericCellValue() + "'");
-                        throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: balance date is invalid - '" + row.getCell(1).getNumericCellValue() + "'");
+//                        logger.error("Error parsing 'Singularity General Ledger Balance' file: balance date is invalid - '" + row.getCell(1).getNumericCellValue() + "'");
+//                        throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: balance date is invalid - '" + row.getCell(1).getNumericCellValue() + "'");
                     }else{
                         record.setBalanceDate(balanceDate);
                     }
-                }else{
-                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'balanceDate' is missing or invalid.");
-                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'balanceDate' is missing or invalid.");
+//                }else{
+//                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'balanceDate' is missing or invalid.");
+//                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'balanceDate' is missing or invalid.");
                 }
 
                 /* Financial statement category */
                 if(ExcelUtils.getStringValueFromCell(row.getCell(2)) != null){
                     record.setFinancialStatementCategory(row.getCell(2).getStringCellValue());
                 }else{
-                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'financial statement category' is missing or invalid");
-                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'financial statement category' is missing or invalid");
+//                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'financial statement category' is missing or invalid");
+//                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'financial statement category' is missing or invalid");
                 }
 
                 /* GL Account  */
                 if(ExcelUtils.getStringValueFromCell(row.getCell(3)) != null){
                     record.setGLAccount(row.getCell(3).getStringCellValue());
                 }else{
-                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'GL Account' is missing or invalid");
-                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'GL Account' is missing or invalid");
+//                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'GL Account' is missing or invalid");
+//                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'GL Account' is missing or invalid");
                 }
 
                 /* Financial statement category description */
                 if(ExcelUtils.getStringValueFromCell(row.getCell(4)) != null){
                     record.setFinancialStatementCategoryDescription(row.getCell(4).getStringCellValue());
                 }else{
-                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'financial statement category description' is missing or invalid");
-                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'financial statement category description' is missing or invalid");
+//                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'financial statement category description' is missing or invalid");
+//                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'financial statement category description' is missing or invalid");
                 }
 
                 /* Chart of Accounts Description */
                 if(ExcelUtils.getStringValueFromCell(row.getCell(5)) != null){
                     record.setChartAccountsDescription(row.getCell(5).getStringCellValue());
                 }else{
-                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'Chart of accounts description' is missing or invalid");
-                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'Chart of accounts description' is missing or invalid");
+//                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'Chart of accounts description' is missing or invalid");
+//                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'Chart of accounts description' is missing or invalid");
                 }
 
                 /* Chart of Accounts Long Description */
                 if(ExcelUtils.getStringValueFromCell(row.getCell(6)) != null){
                     record.setChartAccountsLongDescription(row.getCell(6).getStringCellValue());
                 }else{
-                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'Chart of accounts long description' is missing or invalid");
-                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'Chart of accounts long description' is missing or invalid");
+//                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'Chart of accounts long description' is missing or invalid");
+//                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'Chart of accounts long description' is missing or invalid");
                 }
 
                 /* Short name */
@@ -2554,24 +2590,24 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                 if(ExcelUtils.isNotEmptyCell(row.getCell(12)) && row.getCell(12).getCellType() == Cell.CELL_TYPE_NUMERIC){
                     record.setGLAccountBalance(row.getCell(12).getNumericCellValue());
                 }else{
-                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'GL Account Balance' is missing or invalid");
-                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'GL Account Balance' is missing or invalid");
+//                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'GL Account Balance' is missing or invalid");
+//                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'GL Account Balance' is missing or invalid");
                 }
 
                 /* Seg Val CCY */
                 if(ExcelUtils.getStringValueFromCell(row.getCell(13)) != null){
                     record.setSegValCCY(row.getCell(13).getStringCellValue());
-                }else{
-                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'Seg Val CCY' is missing or invalid");
-                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'Seg Val CCY' is missing or invalid");
+//                }else{
+//                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'Seg Val CCY' is missing or invalid");
+//                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'Seg Val CCY' is missing or invalid");
                 }
 
                 /* Fund CCY */
                 if(ExcelUtils.getStringValueFromCell(row.getCell(14)) != null){
                     record.setFundCCY(row.getCell(14).getStringCellValue());
-                }else{
-                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'Fund CCY' is missing or invalid");
-                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'Fund CCY' is missing or invalid");
+//                }else{
+//                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'Fund CCY' is missing or invalid");
+//                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'Fund CCY' is missing or invalid");
                 }
                 records.add(record);
             }else{
@@ -2655,10 +2691,6 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                     // skip repeating table headers
                     continue;
                 }else if(ExcelUtils.getStringValueFromCell(row.getCell(0)) != null){
-
-                    // TODO: account ??
-
-                    // TODO: REPORT TOTAL ???!!!
                     if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "REPORT TOTAL") ){
                         SingularityNOALRecordDto record = new SingularityNOALRecordDto();
                         record.setTransaction(row.getCell(0).getStringCellValue());
@@ -2670,18 +2702,15 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                         }
                         records.add(record);
                         break;
-                    }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "1500-XXXX-XXX-USD")){
+                    }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), PeriodicReportConstants.SINGULARITY_SUBSCRIPTION_ACCOUNT_NUMBER)){
                         // Subscriptions
-                        accountNumber = "1500-XXXX-XXX-USD";
-
-                    }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "1550-XXXX-XXX-USD")){
+                        accountNumber = PeriodicReportConstants.SINGULARITY_SUBSCRIPTION_ACCOUNT_NUMBER;
+                    }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), PeriodicReportConstants.SINGULARITY_REDEMPTION_ACCOUNT_NUMBER)){
                         // Redemptions
-                        accountNumber = "1550-XXXX-XXX-USD";
-
+                        accountNumber = PeriodicReportConstants.SINGULARITY_REDEMPTION_ACCOUNT_NUMBER;
                     }else{
                         accountNumber = ExcelUtils.getStringValueFromCell(row.getCell(0));
                     }
-
                 }else if(isSingularityNOALRecordNotEmpty(row)){
                     SingularityNOALRecordDto record = new SingularityNOALRecordDto();
                     /* Date */
@@ -2904,14 +2933,14 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                 if(ExcelUtils.isNotEmptyCell(row.getCell(1)) && row.getCell(1).getCellType() == Cell.CELL_TYPE_NUMERIC){
                     Date balanceDate = row.getCell(1).getDateCellValue();
                     if(balanceDate == null){
-                        logger.error("Error parsing 'Terra General Ledger Balance' file: balance date is invalid - '" + row.getCell(1).getNumericCellValue() + "'");
-                        throw new ExcelFileParseException("Error parsing 'Terra General Ledger Balance' file: balance date is invalid - '" + row.getCell(1).getNumericCellValue() + "'");
+//                        logger.error("Error parsing 'Terra General Ledger Balance' file: balance date is invalid - '" + row.getCell(1).getNumericCellValue() + "'");
+//                        throw new ExcelFileParseException("Error parsing 'Terra General Ledger Balance' file: balance date is invalid - '" + row.getCell(1).getNumericCellValue() + "'");
                     }else{
                         record.setBalanceDate(balanceDate);
                     }
                 }else{
-                    logger.error("Error parsing 'Terra General Ledger Balance' file: 'balanceDate' is missing or invalid.");
-                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'balanceDate' is missing or invalid.");
+//                    logger.error("Error parsing 'Terra General Ledger Balance' file: 'balanceDate' is missing or invalid.");
+//                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'balanceDate' is missing or invalid.");
                 }
 
                 /* Financial statement category */
@@ -3572,8 +3601,8 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                 HSSFWorkbook workbook = new HSSFWorkbook(inputFile);
                 HSSFSheet sheet = workbook.getSheet(sheetName);
                 if(sheet == null){
-                    logger.error("No sheet found with name '" + sheetName + "'");
-                    return null;
+                    logger.error("Could not find sheet with name '" + sheetName + "'");
+                    throw new ExcelFileParseException("Could not find sheet with name '" + sheetName + "'");
                 }
                 return sheet.iterator();
             } else if (extension.equalsIgnoreCase("xlsx")) {
@@ -3808,7 +3837,7 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                         "' starts with 'Total/Net' and contains formula, but it does not match any classification/header.");
             }
 
-            boolean isStrategy = strategyName != null && this.strategyRepository.findByNameEnAndGroupType(strategyName, Strategy.TYPE_PRIVATE_EQUITY) != null;
+            boolean isStrategy = strategyName != null && this.lookupService.getStrategyByNameEndAndType(strategyName, Strategy.TYPE_PRIVATE_EQUITY) != null;
             if(isStrategy) {
                 logger.error(trancheName + "Record '" + recordDto.getName() +
                         "' starts with 'Total/Net' and contains strategy name but it does not match any classification/header.");
@@ -3933,8 +3962,8 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
     }
 
 
+    @Deprecated
     /* BS Singularity Tranche A *************************************************************************/
-
     private FileUploadResultDto parseBS(FilesDto filesDto){
         List<ConsolidatedReportRecordDto> records = new ArrayList<>();
         try {
@@ -4002,14 +4031,17 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
         }
     }
 
+    @Deprecated
     private FileUploadResultDto parseBSTrancheA(FilesDto filesDto){
         return parseBS(filesDto);
     }
 
+    @Deprecated
     private FileUploadResultDto parseBSTrancheB(FilesDto filesDto){
         return parseBS(filesDto);
     }
 
+    @Deprecated
     /* IMDR Singularity Tranche A ***********************************************************************/
     private FileUploadResultDto parseIMDR(FilesDto filesDto){
 
@@ -4090,14 +4122,17 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
         }
     }
 
+    @Deprecated
     private FileUploadResultDto parseIMDRTrancheA(FilesDto filesDto){
         return parseIMDR(filesDto);
     }
 
+    @Deprecated
     private FileUploadResultDto parseIMDRTrancheB(FilesDto filesDto){
         return parseIMDR(filesDto);
     }
 
+    @Deprecated
     private void checkIMDRTableHeader(Row row, int rowNum){
         if(rowNum == 7){
             if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(5), "Month to Date")){
@@ -4222,8 +4257,8 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
 
     }
 
+    @Deprecated
     /* PAR Singularity Tranche A ************************************************************************/
-
     private FileUploadResultDto parsePAR(FilesDto filesDto){
 
         List<ConsolidatedReportRecordDto> records = new ArrayList<>();
@@ -4295,14 +4330,17 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
         }
     }
 
+    @Deprecated
     private FileUploadResultDto parsePARTrancheA(FilesDto filesDto){
         return parsePAR(filesDto);
     }
 
+    @Deprecated
     private FileUploadResultDto parsePARTrancheB(FilesDto filesDto){
         return parsePAR(filesDto);
     }
 
+    @Deprecated
     private void checkPARTableHeader(Row row, int rowNum){
         if(rowNum == 7){
             if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(7), "as Percentage")){
@@ -4434,6 +4472,7 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
 
     }
 
+    @Deprecated
     /* IS Singularity Tranche A *************************************************************************/
     private FileUploadResultDto parseIS(FilesDto filesDto){
         List<ConsolidatedReportRecordDto> records = new ArrayList<>();
@@ -4521,10 +4560,12 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
         }
     }
 
+    @Deprecated
     private FileUploadResultDto parseISTrancheA(FilesDto filesDto){
         return parseIS(filesDto);
     }
 
+    @Deprecated
     private FileUploadResultDto parseISTrancheB(FilesDto filesDto){
         return parseIS(filesDto);
     }

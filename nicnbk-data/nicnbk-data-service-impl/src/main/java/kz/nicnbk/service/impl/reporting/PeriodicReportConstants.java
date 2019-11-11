@@ -63,6 +63,11 @@ public final class PeriodicReportConstants {
     public static final String TARR_STATEMENT_CHANGES_CONTRIBUTIONS_RECEIVED = "Contributions received";
     public static final String TARR_STATEMENT_CHANGES_DISTRIBUTIONS_PAID = "Distributions paid";
 
+    /* NOAL ***********************************************************************************************************/
+
+    public static final String SINGULARITY_SUBSCRIPTION_ACCOUNT_NUMBER = "1500-XXXX-XXX-USD";
+    public static final String SINGULARITY_REDEMPTION_ACCOUNT_NUMBER = "1550-XXXX-XXX-USD";
+
     /* SPV NAMES *********************************************************************************************/
     public static final String SINGULAR_CAPITAL_CASE = "SINGULAR";
     public static final String SINGULAR_B_CAPITAL_CASE = "SINGULAR B";
@@ -77,9 +82,13 @@ public final class PeriodicReportConstants {
     public static final String TARRAGON_B_CAPITAL_CASE = "TARRAGON B";
     public static final String TARRAGON_LOWER_CASE = "Tarragon";
 
+    public static final String TARRAGON_A_LOWER_CASE ="Tarragon A";
+
     public static final String TERRA_CAPITAL_CASE = "TERRA";
     public static final String TERRA_LOWER_CASE = "Terra";
 
+    public static final String TRANCHE_LOWER_CASE = "Tranche";
+    public static final String TRANCHE_A_LOWER_CASE = "Tranche A";
 
     /* REPORT TYPE CODE ***********************************************************************************************/
     public static final String USD_FORM_1 = "CONS_BALANCE_USD";

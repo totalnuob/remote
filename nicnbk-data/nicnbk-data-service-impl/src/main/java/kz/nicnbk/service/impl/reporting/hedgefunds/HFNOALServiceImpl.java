@@ -12,6 +12,7 @@ import kz.nicnbk.service.converter.reporting.PeriodicReportConverter;
 import kz.nicnbk.service.datamanager.LookupService;
 import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordHolderDto;
 import kz.nicnbk.service.dto.reporting.SingularityNOALRecordDto;
+import kz.nicnbk.service.impl.reporting.PeriodicReportConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,8 +81,8 @@ public class HFNOALServiceImpl implements HFNOALService {
             SingularityNOALRecordDto previous = null;
             for(SingularityNOALRecordDto dto: dtoList){
                 ReportingHFNOAL entity = assemble(dto, reportId);
-                if(entity.getTransaction() != null && (entity.getTransaction().equalsIgnoreCase("Ending Balance") ||
-                        entity.getTransaction().equalsIgnoreCase("Ending"))){
+                if(entity.getTransaction() != null && (entity.getTransaction().equalsIgnoreCase(PeriodicReportConstants.GCM_NOAL_TRANSACTION_ENDING_BALANCE_NAME_V1) ||
+                        entity.getTransaction().equalsIgnoreCase(PeriodicReportConstants.GCM_NOAL_TRANSACTION_ENDING_BALANCE_NAME_V2))){
                     if(StringUtils.isEmpty(entity.getName())){
                         entity.setName(previous != null ? previous.getName() : null);
                     }

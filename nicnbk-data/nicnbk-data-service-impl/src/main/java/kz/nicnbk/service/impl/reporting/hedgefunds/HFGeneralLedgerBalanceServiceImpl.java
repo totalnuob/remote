@@ -59,21 +59,28 @@ public class HFGeneralLedgerBalanceServiceImpl implements HFGeneralLedgerBalance
 
         if(dto.getFinancialStatementCategory() != null) {
             entity.setFinancialStatementCategory(this.lookupService.findByTypeAndCode(FinancialStatementCategory.class, dto.getFinancialStatementCategory()));
-            if(entity.getFinancialStatementCategory() == null){
-                logger.error("Error parsing 'Singularity General Ledger Balance' file: financial statement type could not be determined - '" + dto.getFinancialStatementCategory() + "'");
-                throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: financial statement type could not be determined - '" + dto.getFinancialStatementCategory() + "'");
-            }
         }
+        if(entity.getFinancialStatementCategory() == null){
+            logger.error("Error parsing 'Singularity General Ledger Balance' file: financial statement type could not be determined - '" + dto.getFinancialStatementCategory() + "'");
+            throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: financial statement type could not be determined - '" + dto.getFinancialStatementCategory() + "'");
+        }
+
         if(dto.getFinancialStatementCategoryDescription() != null){
             entity.setChartAccountsType(this.chartOfAccountsTypeRepository.findByNameEnIgnoreCase(dto.getFinancialStatementCategoryDescription().trim()));
-            if(entity.getChartAccountsType() == null){
-                logger.error("Error parsing 'Singularity General Ledger Balance' file: chart of accounts type could not be determined - '" + dto.getFinancialStatementCategoryDescription() + "'");
-                throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: chart of accounts type could not be determined - '" + dto.getFinancialStatementCategoryDescription() + "'");
-            }
+        }
+        if(entity.getChartAccountsType() == null){
+            String errorMessage = "Error parsing 'Singularity General Ledger Balance' file: chart of accounts type could not be determined - '" + dto.getFinancialStatementCategoryDescription() + "'";
+            logger.error(errorMessage);
+            throw new ExcelFileParseException(errorMessage);
         }
 
         entity.setGLAccount(dto.getGLAccount());
         entity.setChartAccountsLongDescription(dto.getChartAccountsLongDescription());
+        if(StringUtils.isEmpty(entity.getChartAccountsLongDescription())){
+            String errorMessage = "Error parsing 'Singularity General Ledger Balance' file: chart of accounts Long description could not be determined - '" + dto.getChartAccountsLongDescription() + "'";
+            logger.error(errorMessage);
+            throw new ExcelFileParseException(errorMessage);
+        }
         entity.setShortName(dto.getShortName());
         entity.setGLAccountBalance(dto.getGLAccountBalance());
 

@@ -31,6 +31,7 @@ public interface LookupService extends BaseService {
     <T extends BaseTypeEntity> T findByTypeAndCode(Class<T> clazz, String code);
 
     List<StrategyDto> getAllStrategies();
+    StrategyDto getStrategyByNameEndAndType(String nameEn, int type);
     List<BaseDictionaryDto> getPrivateEquityStrategies();
     List<BaseDictionaryDto> getHedgeFundsStrategies();
     List<BaseDictionaryDto> getHedgeFundsSubStrategies(String strategy);
