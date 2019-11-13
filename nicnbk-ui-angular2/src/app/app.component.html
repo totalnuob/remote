@@ -655,7 +655,10 @@
                         <summary style="color:blue; text-decoration: underline">
                             {{version.description[0]}}
                         </summary>
-                        {{version.description[1]}}
+                        for i in $({{version.description.length}})
+                        <div *ngFor="let description of version.description">
+                            {{description}}
+                        </div>
                     </details>
                     <br/>
                 </div>

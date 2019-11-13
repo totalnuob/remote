@@ -114,7 +114,7 @@ export class AppComponent {
         this.busy = this.versionService.getVersion()
             .subscribe(
                 (response) => {
-                    this.versionList = response.versionDtoList;
+                    this.versionList = this.addNumeration(response.versionDtoList);
 
                     console.log(this.versionList);
 
@@ -132,6 +132,17 @@ export class AppComponent {
                     console.log('Get version: Error');
                 }
             )
+    }
+
+    addNumeration(versionList) {
+        for (var version in versionList) {
+            var numeration = 0;
+            for (var description in version.description) {
+                console.log(numeration++);
+                console.log(description);
+            }
+        }
+        return versionList;
     }
 
     logout() {
