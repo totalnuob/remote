@@ -134,10 +134,10 @@ export class AppComponent {
             )
     }
 
-    addNumeration(versionList) {
-        for (var version in versionList) {
+    addNumeration(versionList: Array<Version>) {
+        for (let version of versionList) {
             var numeration = 0;
-            for (var description in version.description) {
+            for (let description of version.description) {
                 console.log(numeration++);
                 console.log(description);
             }
