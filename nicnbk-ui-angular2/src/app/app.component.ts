@@ -88,7 +88,6 @@ import {Version} from "./version/model/version";
 export class AppComponent {
 
     versionLatestVersion;
-    versionLatestDescription;
 
     versionList: Array<Version> = [];
 
@@ -117,9 +116,10 @@ export class AppComponent {
                 (response) => {
                     this.versionList = response.versionDtoList;
 
+                    console.log(this.versionList);
+
                     if(this.versionList.length > 0) {
-                        this.versionLatestVersion = this.versionList[0].version;
-                        this.versionLatestDescription = this.versionList[0].description;
+                        this.versionLatestVersion = this.versionList[0].description[0];
                         console.log('Version: ' + this.versionLatestVersion);
                     } else {
                         this.versionLatestVersion = '0.0.0';
