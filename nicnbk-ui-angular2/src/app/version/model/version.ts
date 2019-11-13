@@ -1,6 +1,6 @@
 export class Version {
 
-    numFmt: string[];
-    description: string[];
+    numFmt: Array<string>;
+    description: Array<string>;
     
 }
