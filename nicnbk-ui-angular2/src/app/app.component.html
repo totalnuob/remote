@@ -651,8 +651,13 @@
             </div>
             <div class="modal-body">
                 <div *ngFor="let version of versionList">
-                    v{{version.version}}
-                    {{version.description}}
+                    <details>
+                        <summary style="color:blue; text-decoration: underline";>
+                            v{{version.version}}
+                        </summary>
+                        {{version.description}}
+                    </details>
+                    <br/>
                 </div>
             </div>
             <!--<a href="">View previous changes</a>-->
