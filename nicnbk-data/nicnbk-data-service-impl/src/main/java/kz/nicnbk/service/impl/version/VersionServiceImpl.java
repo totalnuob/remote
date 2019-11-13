@@ -43,7 +43,7 @@ public class VersionServiceImpl implements VersionService {
             try (Stream<Path> stream = Files.walk(path, Integer.MAX_VALUE)) {
                 filePathList = stream
                         .map(String::valueOf)
-                        .filter(f -> f.endsWith(".docx"))
+                        .filter(f -> (f.endsWith(".docx") && !f.contains("~$")))
                         .collect(Collectors.toList());
             }
 
@@ -62,9 +62,15 @@ public class VersionServiceImpl implements VersionService {
                     XWPFDocument document = new XWPFDocument(fileInputStream);
                     List<XWPFParagraph> paragraphs = document.getParagraphs();
 
-                    if(paragraphs != null && paragraphs.size() >= 2) {
-                        versionDtoList.add(new VersionDto(paragraphs.get(0).getText(), paragraphs.get(1).getText()));
+                    List<String> numFmt = new ArrayList<>();
+                    List<String> description = new ArrayList<>();
+
+                    for (XWPFParagraph paragraph : paragraphs) {
+                        numFmt.add(paragraph.getNumFmt());
+                        description.add(paragraph.getText());
                     }
+
+                    versionDtoList.add(new VersionDto(numFmt, description));
                 } catch (Exception ex) {
                     logger.error("Failed to load versions: error parsing files, ", ex);
                     return new VersionResultDto(ResponseStatusType.FAIL, "", "Failed to load versions: error parsing files!", "", null);
