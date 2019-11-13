@@ -119,7 +119,8 @@ export class AppComponent {
                     console.log(this.versionList);
 
                     if(this.versionList.length > 0) {
-                        this.versionLatestVersion = this.versionList[0].description[0];
+                        var a = this.versionList[0].description[0].split(" ");
+                        this.versionLatestVersion = a[a.length - 1];
                         console.log('Version: ' + this.versionLatestVersion);
                     } else {
                         this.versionLatestVersion = '0.0.0';
