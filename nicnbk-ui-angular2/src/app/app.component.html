@@ -655,9 +655,11 @@
                         <summary style="color:blue; text-decoration: underline">
                             {{version.description[0]}}
                         </summary>
-                        for i in $({{version.description.length}})
-                        <div *ngFor="let description of version.description">
-                            {{description}}
+                        <div *ngFor="let description of version.description; let numFmt of version.numFmt">
+                            <!--{{// description.trim()}}-->
+
+
+                            <!--{{description != null && description.trim() != '' ? description : '&nbsp;'}}-->
                         </div>
                     </details>
                     <br/>

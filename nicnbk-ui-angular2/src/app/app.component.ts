@@ -137,9 +137,14 @@ export class AppComponent {
     addNumeration(versionList: Array<Version>) {
         for (let version of versionList) {
             var numeration = 0;
-            for (let description of version.description) {
-                console.log(numeration++);
-                console.log(description);
+            for (var i = 0; i < version.description.length; i++) {
+                if (version.numFmt[i] == null) {
+                    numeration = 0;
+                } else if (version.numFmt[i] == "decimal") {
+                    version.description[i] = (++numeration) + ". " + version.description[i];
+                } else if (version.numFmt[i] == "bullet") {
+                    version.description[i] = "\u2022 " + version.description[i];
+                }
             }
         }
         return versionList;
