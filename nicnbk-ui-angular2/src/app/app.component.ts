@@ -141,11 +141,11 @@ export class AppComponent {
                 if (version.numFmt[i] == null) {
                     numeration = 0;
                 } else if (version.numFmt[i] == "decimal") {
-                    version.numFmt[i] = (++numeration).toString() + '.';
-                    // version.description[i] = (++numeration) + ". " + version.description[i];
+                    // version.numFmt[i] = (++numeration).toString() + '.';
+                    version.description[i] = (++numeration) + ". " + version.description[i];
                 } else if (version.numFmt[i] == "bullet") {
-                    version.numFmt[i] = "\u2022";
-                        // version.description[i] = "\u2022 " + version.description[i];
+                    // version.numFmt[i] = "\u2022";
+                        version.description[i] = "\u2022 " + version.description[i];
                 }
             }
         }

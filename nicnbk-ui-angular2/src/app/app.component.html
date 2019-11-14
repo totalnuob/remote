@@ -652,7 +652,7 @@
             <div class="modal-body">
                 <div *ngFor="let version of versionList">
                     <details>
-                        <summary style="color:blue; text-decoration: underline">
+                        <summary style="color:#3c8aee; text-decoration: underline">
                             {{version.description[0]}}
                         </summary>
                         <div *ngFor="let description of version.description; let i = index" [attr.data-index]="i">
@@ -664,23 +664,23 @@
                                     <div *ngIf="version.numFmt[i] == null">
                                         <b>{{description}}</b>
                                     </div>
-                                    <div *ngIf="version.numFmt[i] != null && version.numFmt[i] != '\u2022'">
+                                    <div *ngIf="version.numFmt[i] != null && version.numFmt[i] == 'decimal'">
                                         <div class="col-md-1">
                                         </div>
-                                        <div class="col-md-1">
-                                            {{version.numFmt[i]}}
-                                        </div>
-                                        <div class="col-md-10">
+                                        <!--<div class="col-md-1">-->
+                                            <!--{{version.numFmt[i]}}-->
+                                        <!--</div>-->
+                                        <div class="col-md-11">
                                             {{description}}
                                         </div>
                                     </div>
-                                    <div *ngIf="version.numFmt[i] != null && version.numFmt[i] == '\u2022'">
+                                    <div *ngIf="version.numFmt[i] != null && version.numFmt[i] == 'bullet'">
                                         <div class="col-md-2">
                                         </div>
-                                        <div class="col-md-1">
-                                            {{version.numFmt[i]}}
-                                        </div>
-                                        <div class="col-md-9">
+                                        <!--<div class="col-md-1">-->
+                                            <!--{{version.numFmt[i]}}-->
+                                        <!--</div>-->
+                                        <div class="col-md-10">
                                             {{description}}
                                         </div>
                                     </div>
