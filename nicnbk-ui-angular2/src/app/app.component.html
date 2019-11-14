@@ -656,33 +656,35 @@
                             {{version.description[0]}}
                         </summary>
                         <div *ngFor="let description of version.description; let i = index" [attr.data-index]="i">
-                            <div *ngIf="description == null || description.trim() == ''">
-                                &nbsp;
-                            </div>
-                            <div *ngIf="description != null && version.numFmt[i] == null">
-                                <b>{{description}}</b>
-                            </div>
-                            <div *ngIf="description != null && version.numFmt[i] != null && version.numFmt[i] != '\u2022'">
-                                <div class="col-md-1">
+                            <div *ngIf="i > 0">
+                                <div *ngIf="description == null || description.trim() == ''">
+                                    &nbsp;
                                 </div>
-                                <div class="col-md-1">
-                                    {{version.numFmt[i]}}
+                                <div *ngIf="description != null">
+                                    <div *ngIf="version.numFmt[i] == null">
+                                        <b>{{description}}</b>
+                                    </div>
+                                    <div *ngIf="version.numFmt[i] != null && version.numFmt[i] != '\u2022'">
+                                        <div class="col-md-1">
+                                        </div>
+                                        <div class="col-md-1">
+                                            {{version.numFmt[i]}}
+                                        </div>
+                                        <div class="col-md-10">
+                                            {{description}}
+                                        </div>
+                                    </div>
+                                    <div *ngIf="version.numFmt[i] != null && version.numFmt[i] == '\u2022'">
+                                        <div class="col-md-2">
+                                        </div>
+                                        <div class="col-md-1">
+                                            {{version.numFmt[i]}}
+                                        </div>
+                                        <div class="col-md-9">
+                                            {{description}}
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col-md-10">
-                                    {{description}}
-                                </div>
-                                <!--&nbsp;&nbsp;&nbsp;&nbsp; {{description}}-->
-                            </div>
-                            <div *ngIf="description != null && version.numFmt[i] != null && version.numFmt[i] == '\u2022'">
-                                <div class="col-md-2">
-                                </div>
-                                <div class="col-md-1">
-                                    {{version.numFmt[i]}}
-                                </div>
-                                <div class="col-md-9">
-                                    {{description}}
-                                </div>
-                                <!--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{description}}-->
                             </div>
                         </div>
                     </details>
