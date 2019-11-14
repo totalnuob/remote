@@ -655,11 +655,19 @@
                         <summary style="color:blue; text-decoration: underline">
                             {{version.description[0]}}
                         </summary>
-                        <div *ngFor="let description of version.description; let numFmt of version.numFmt">
-                            <!--{{// description.trim()}}-->
-
-
-                            <!--{{description != null && description.trim() != '' ? description : '&nbsp;'}}-->
+                        <div *ngFor="let description of version.description; let i = index" [attr.data-index]="i">
+                            <div *ngIf="description == null || description.trim() == ''">
+                                &nbsp;
+                            </div>
+                            <div *ngIf="description != null && version.numFmt[i] == null">
+                                {{description}}
+                            </div>
+                            <div *ngIf="description != null && version.numFmt[i] != null && version.numFmt[i] == 'decimal'">
+                                &nbsp;&nbsp;&nbsp;&nbsp; {{description}}
+                            </div>
+                            <div *ngIf="description != null && version.numFmt[i] != null && version.numFmt[i] == 'bullet'">
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{description}}
+                            </div>
                         </div>
                     </details>
                     <br/>
