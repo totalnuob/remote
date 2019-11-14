@@ -662,11 +662,27 @@
                             <div *ngIf="description != null && version.numFmt[i] == null">
                                 {{description}}
                             </div>
-                            <div *ngIf="description != null && version.numFmt[i] != null && version.numFmt[i] == 'decimal'">
-                                &nbsp;&nbsp;&nbsp;&nbsp; {{description}}
+                            <div *ngIf="description != null && version.numFmt[i] != null && version.numFmt[i] != '\u2022'">
+                                <div class="col-md-1">
+                                </div>
+                                <div class="col-md-1">
+                                    {{version.numFmt[i]}}
+                                </div>
+                                <div class="col-md-10">
+                                    {{description}}
+                                </div>
+                                <!--&nbsp;&nbsp;&nbsp;&nbsp; {{description}}-->
                             </div>
-                            <div *ngIf="description != null && version.numFmt[i] != null && version.numFmt[i] == 'bullet'">
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{description}}
+                            <div *ngIf="description != null && version.numFmt[i] != null && version.numFmt[i] == '\u2022'">
+                                <div class="col-md-2">
+                                </div>
+                                <div class="col-md-1">
+                                    {{version.numFmt[i]}}
+                                </div>
+                                <div class="col-md-9">
+                                    {{description}}
+                                </div>
+                                <!--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{description}}-->
                             </div>
                         </div>
                     </details>
