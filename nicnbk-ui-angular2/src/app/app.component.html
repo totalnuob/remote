@@ -660,7 +660,7 @@
                                 &nbsp;
                             </div>
                             <div *ngIf="description != null && version.numFmt[i] == null">
-                                {{description}}
+                                <b>{{description}}</b>
                             </div>
                             <div *ngIf="description != null && version.numFmt[i] != null && version.numFmt[i] != '\u2022'">
                                 <div class="col-md-1">
