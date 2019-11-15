@@ -116,6 +116,10 @@ export class AppComponent {
                 (response) => {
                     this.versionList = this.addNumeration(response.versionDtoList);
 
+                    for (var i = 0; i < this.versionList.length; i++) {
+                        this.versionList[i].collapsed = (i != 0);
+                    }
+
                     console.log(this.versionList);
 
                     if(this.versionList.length > 0) {
@@ -132,6 +136,10 @@ export class AppComponent {
                     console.log('Get version: Error');
                 }
             )
+    }
+
+    toggleVersion(i) {
+        this.versionList[i].collapsed = !this.versionList[i].collapsed;
     }
 
     addNumeration(versionList: Array<Version>) {

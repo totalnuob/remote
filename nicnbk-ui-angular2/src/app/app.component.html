@@ -650,11 +650,11 @@
                 <h3 class="modal-title"  style="word-wrap: break-word">Version description</h3>
             </div>
             <div class="modal-body">
-                <div *ngFor="let version of versionList">
-                    <details>
-                        <summary style="color:#3c8aee; text-decoration: underline">
-                            {{version.description[0]}}
-                        </summary>
+                <div *ngFor="let version of versionList; let j = index" [attr.data-index]="j">
+                    <a data-toggle="collapse" href="{{'#collapseVersion' + j}}" (click)="toggleVersion(j)">
+                        {{version.description[0] + (version.collapsed ? ' &#9658;' : ' &#9660;')}}
+                    </a>
+                    <div [attr.id]="'collapseVersion' + j" [ngClass]="{'collapse in': j == 0, 'collapse': j != 0}">
                         <div *ngFor="let description of version.description; let i = index" [attr.data-index]="i">
                             <div *ngIf="i > 0">
                                 <div *ngIf="description == null || description.trim() == ''">
@@ -667,9 +667,6 @@
                                     <div *ngIf="version.numFmt[i] != null && version.numFmt[i] == 'decimal'">
                                         <div class="col-md-1">
                                         </div>
-                                        <!--<div class="col-md-1">-->
-                                            <!--{{version.numFmt[i]}}-->
-                                        <!--</div>-->
                                         <div class="col-md-11">
                                             {{description}}
                                         </div>
@@ -677,9 +674,6 @@
                                     <div *ngIf="version.numFmt[i] != null && version.numFmt[i] == 'bullet'">
                                         <div class="col-md-2">
                                         </div>
-                                        <!--<div class="col-md-1">-->
-                                            <!--{{version.numFmt[i]}}-->
-                                        <!--</div>-->
                                         <div class="col-md-10">
                                             {{description}}
                                         </div>
@@ -687,9 +681,46 @@
                                 </div>
                             </div>
                         </div>
-                        <br/>
-                        <br/>
-                    </details>
+                    </div>
+                    <!--<details>-->
+                        <!--<summary style="color:#3c8aee; text-decoration: underline">-->
+                            <!--{{version.description[0]}}-->
+                        <!--</summary>-->
+                        <!--<div *ngFor="let description of version.description; let i = index" [attr.data-index]="i">-->
+                            <!--<div *ngIf="i > 0">-->
+                                <!--<div *ngIf="description == null || description.trim() == ''">-->
+                                    <!--&nbsp;-->
+                                <!--</div>-->
+                                <!--<div *ngIf="description != null">-->
+                                    <!--<div *ngIf="version.numFmt[i] == null">-->
+                                        <!--<b>{{description}}</b>-->
+                                    <!--</div>-->
+                                    <!--<div *ngIf="version.numFmt[i] != null && version.numFmt[i] == 'decimal'">-->
+                                        <!--<div class="col-md-1">-->
+                                        <!--</div>-->
+                                        <!--&lt;!&ndash;<div class="col-md-1">&ndash;&gt;-->
+                                            <!--&lt;!&ndash;{{version.numFmt[i]}}&ndash;&gt;-->
+                                        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                                        <!--<div class="col-md-11">-->
+                                            <!--{{description}}-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                    <!--<div *ngIf="version.numFmt[i] != null && version.numFmt[i] == 'bullet'">-->
+                                        <!--<div class="col-md-2">-->
+                                        <!--</div>-->
+                                        <!--&lt;!&ndash;<div class="col-md-1">&ndash;&gt;-->
+                                            <!--&lt;!&ndash;{{version.numFmt[i]}}&ndash;&gt;-->
+                                        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                                        <!--<div class="col-md-10">-->
+                                            <!--{{description}}-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--<br/>-->
+                        <!--<br/>-->
+                    <!--</details>-->
                     <br/>
                 </div>
             </div>
