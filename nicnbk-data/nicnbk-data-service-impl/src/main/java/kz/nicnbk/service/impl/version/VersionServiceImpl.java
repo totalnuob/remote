@@ -72,7 +72,7 @@ public class VersionServiceImpl implements VersionService {
 
                     while(true) {
                         String lastDescription = description.get(description.size() - 1);
-                        if (lastDescription != null && lastDescription != "") {
+                        if (lastDescription != null && !lastDescription.isEmpty()) {
                             break;
                         } else {
                             description.remove(description.size() - 1);
