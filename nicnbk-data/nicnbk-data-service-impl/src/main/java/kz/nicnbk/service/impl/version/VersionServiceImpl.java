@@ -70,6 +70,16 @@ public class VersionServiceImpl implements VersionService {
                         description.add(paragraph.getText());
                     }
 
+                    while(true) {
+                        String lastDescription = description.get(description.size() - 1);
+                        if (lastDescription != null && lastDescription != "") {
+                            break;
+                        } else {
+                            description.remove(description.size() - 1);
+                            numFmt.remove(numFmt.size() - 1);
+                        }
+                    }
+
                     versionDtoList.add(new VersionDto(numFmt, description));
                 } catch (Exception ex) {
                     logger.error("Failed to load versions: error parsing files, ", ex);
