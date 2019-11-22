@@ -165,7 +165,7 @@ public class MathUtils {
             }
 
         }
-        double divider = Math.max(0.01, multiply(scale, Math.sqrt(sumNegativeReturns.doubleValue()), Math.sqrt(12.0 / returns.length)));
+        double divider = Math.max(0.01, multiply(scale, Math.sqrt(sumNegativeReturns.doubleValue()), Math.sqrt(MathUtils.divide(scale, 12.0, returns.length + 0.0))));
         double value = divide(scale, subtract(scale, fundAnnualizedReturn, benchmarkAnnualizedReturn), divider);
         //return getRoundedValue(value);
         value = MathUtils.multiply(scale, value, 100.0);
@@ -260,9 +260,9 @@ public class MathUtils {
     }
 
     public static Double getOmega(int scale, double[] returns){
-        if(returns != null){
-            int totalPositive = 0;
-            int totalNegative = 0;
+        if(returns != null && returns.length > 0){
+            double totalPositive = 0.0;
+            double totalNegative = 0.0;
             for(int i = 0; i < returns.length; i++){
                 if(returns[i] > 0){
                     totalPositive++;
@@ -270,7 +270,9 @@ public class MathUtils {
                     totalNegative++;
                 }
             }
-            return divide(scale, new Double(totalPositive), totalNegative != 0 ? new Double(totalNegative) : 0.01);
+            double a = divide(scale, totalPositive, returns.length + 0.0);
+            double b = divide(scale, totalNegative, returns.length + 0.0);
+            return divide(scale, a, Math.max(b,0.0001));
         }
         return null;
     }
@@ -281,11 +283,6 @@ public class MathUtils {
         Double skew = getSkew(returns);
         Double kurtosis = getKurtosis(returns);
 
-        meanReturn = new BigDecimal(meanReturn).setScale(scale, RoundingMode.HALF_UP).doubleValue();
-        std = new BigDecimal(std).setScale(scale, RoundingMode.HALF_UP).doubleValue();
-        skew = new BigDecimal(skew).setScale(scale, RoundingMode.HALF_UP).doubleValue();
-        kurtosis = new BigDecimal(kurtosis).setScale(scale, RoundingMode.HALF_UP).doubleValue();
-
         if(skew == null){
             return null;
         }
@@ -293,9 +290,15 @@ public class MathUtils {
             return null;
         }
 
+        meanReturn = new BigDecimal(meanReturn).setScale(scale, RoundingMode.HALF_UP).doubleValue();
+        std = new BigDecimal(std).setScale(scale, RoundingMode.HALF_UP).doubleValue();
+        skew = new BigDecimal(skew).setScale(scale, RoundingMode.HALF_UP).doubleValue();
+        kurtosis = new BigDecimal(kurtosis).setScale(scale, RoundingMode.HALF_UP).doubleValue();
+
+
         Double part1 = divide(scale, multiply(scale, subtract(scale, Math.pow(zScore, 2), 1.0), skew), 6.0);
         Double part2 = divide(scale, multiply(scale, subtract(scale, Math.pow(zScore, 3), multiply(scale, 3.0, zScore)), kurtosis), 24.0);
-        Double part3 = divide(scale, multiply(scale, subtract(scale, multiply(2.0, multiply(scale, zScore, multiply(scale, zScore, zScore))), multiply(scale, 5.0, zScore)), multiply(scale, skew, skew)), -36.0);
+        Double part3 = divide(scale, multiply(scale, subtract(scale, multiply(2.0, Math.pow(zScore, 3)), multiply(scale, 5.0, zScore)), Math.pow(skew, 2)), -36.0);
         Double cfScore = add(scale, part1, part2, part3, zScore);
 
         return add(scale, meanReturn, multiply(scale, cfScore, multiply(scale, std, sqrt(new BigDecimal(12.0), scale).doubleValue())));

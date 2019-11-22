@@ -15,6 +15,8 @@ export class HedgeFundScreeningFilteredResult {
     filteredResultStatistics: HedgeFundScreeningFilteredResultStatistics;
 
     addedFunds: any[];
+    excludedFunds: any[];
+    autoExcludedFunds: any[];
 
     constructor(){}
 

@@ -14,6 +14,12 @@ public interface HedgeFundScreeningEditedFundRepository extends PagingAndSorting
     @Query("SELECT e FROM HedgeFundScreeningEditedFund e WHERE e.filteredResult.id=?1 AND (e.excluded=?2 OR (?2=false AND e.excluded IS NULL))")
     List<HedgeFundScreeningEditedFund> findByFilteredResultIdAndExcluded(Long filteredResultId, boolean excluded);
 
+    @Query("SELECT e FROM HedgeFundScreeningEditedFund e WHERE e.filteredResult.id=?1 AND e.excluded=false ")
+    List<HedgeFundScreeningEditedFund> findIncludedByFilteredResultId(Long filteredResultId);
+
+    @Query("SELECT e FROM HedgeFundScreeningEditedFund e WHERE e.filteredResult.id=?1")
+    List<HedgeFundScreeningEditedFund> findAllByFilteredResultId(Long filteredResultId);
+
     @Modifying
     @Transactional
     @Query("DELETE from HedgeFundScreeningEditedFund e WHERE e.filteredResult.id=?1")

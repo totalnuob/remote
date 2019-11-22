@@ -20,8 +20,11 @@ public class HedgeFundScreeningParsedDataDto extends BaseEntityDto implements Co
     private String fundName;
     private String investmentManager;
     private String mainStrategy;
+    private String fundStatus;
+
     private Double fundAUM;
     private Date fundAUMDate;
+    private String fundAUMComment;
 
     private Double managerAUM;
     private Double strategyAUM;
@@ -46,8 +49,10 @@ public class HedgeFundScreeningParsedDataDto extends BaseEntityDto implements Co
     private String editedFundAUMComment;
 
     private boolean added;
+
     private boolean excluded;
     private String excludeComment;
+    private boolean excludeFromStrategyAUM;
 
     private List<HedgeFundScreeningFundReturnDto> returns;
 
@@ -336,6 +341,30 @@ public class HedgeFundScreeningParsedDataDto extends BaseEntityDto implements Co
 
     public void setExcludeComment(String excludeComment) {
         this.excludeComment = excludeComment;
+    }
+
+    public String getFundStatus() {
+        return fundStatus;
+    }
+
+    public void setFundStatus(String fundStatus) {
+        this.fundStatus = fundStatus;
+    }
+
+    public String getFundAUMComment() {
+        return fundAUMComment;
+    }
+
+    public void setFundAUMComment(String fundAUMComment) {
+        this.fundAUMComment = fundAUMComment;
+    }
+
+    public boolean isExcludeFromStrategyAUM() {
+        return excludeFromStrategyAUM;
+    }
+
+    public void setExcludeFromStrategyAUM(boolean excludeFromStrategyAUM) {
+        this.excludeFromStrategyAUM = excludeFromStrategyAUM;
     }
 
     @Override

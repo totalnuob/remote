@@ -22,6 +22,7 @@ public class HedgeFundScreeningParsedData extends BaseEntity {
     private String fundName;
     private String investmentManager;
     private String mainStrategy;
+    private String fundStatus;
 
     private Double managerAUM;
 
@@ -109,5 +110,14 @@ public class HedgeFundScreeningParsedData extends BaseEntity {
 
     public void setEditedFundAUMDate(Date editedFundAUMDate) {
         this.editedFundAUMDate = editedFundAUMDate;
+    }
+
+    @Column(name="fund_status")
+    public String getFundStatus() {
+        return fundStatus;
+    }
+
+    public void setFundStatus(String fundStatus) {
+        this.fundStatus = fundStatus;
     }
 }

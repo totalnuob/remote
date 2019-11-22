@@ -12,8 +12,10 @@ import java.util.List;
 public class HedgeFundScreeningFilteredResultDto extends HedgeFundScreeningParamsDto {
 
     private HedgeFundScreeningFilteredResultStatisticsDto filteredResultStatistics;
+    private List<HedgeFundScreeningParsedDataDto> toCheckFunds;
     private List<HedgeFundScreeningParsedDataDto> addedFunds;
     private List<HedgeFundScreeningParsedDataDto> excludedFunds;
+    private List<HedgeFundScreeningParsedDataDto> autoExcludedFunds;
 
 
     public HedgeFundScreeningFilteredResultDto(){}
@@ -35,6 +37,14 @@ public class HedgeFundScreeningFilteredResultDto extends HedgeFundScreeningParam
         this.filteredResultStatistics = filteredResultStatistics;
     }
 
+    public List<HedgeFundScreeningParsedDataDto> getToCheckFunds() {
+        return toCheckFunds;
+    }
+
+    public void setToCheckFunds(List<HedgeFundScreeningParsedDataDto> toCheckFunds) {
+        this.toCheckFunds = toCheckFunds;
+    }
+
     public List<HedgeFundScreeningParsedDataDto> getAddedFunds() {
         return addedFunds;
     }
@@ -49,6 +59,14 @@ public class HedgeFundScreeningFilteredResultDto extends HedgeFundScreeningParam
 
     public void setExcludedFunds(List<HedgeFundScreeningParsedDataDto> excludedFunds) {
         this.excludedFunds = excludedFunds;
+    }
+
+    public List<HedgeFundScreeningParsedDataDto> getAutoExcludedFunds() {
+        return autoExcludedFunds;
+    }
+
+    public void setAutoExcludedFunds(List<HedgeFundScreeningParsedDataDto> autoExcludedFunds) {
+        this.autoExcludedFunds = autoExcludedFunds;
     }
 }
 

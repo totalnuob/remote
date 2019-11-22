@@ -163,6 +163,7 @@ INSERT INTO public.employee_roles(employee_id, role_id)VALUES (21, 56); -- Aldiy
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (21, 302); -- Aldiyar -- Macromonitor view
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (21, 303); -- Aldiyar -- Monitoring view
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (21, 305); -- Aldiyar -- Lookup view
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (21, 306); -- Aldiyar -- Lookup edit
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (21, 801); -- M2S2 Editor
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (21, 802); -- M2S2 Viewer
 
@@ -171,6 +172,7 @@ INSERT INTO public.employee_roles(employee_id, role_id)VALUES (8, 12); -- Dana -
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (8, 302); -- Dana -- Macromonitor view
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (8, 303); -- Dana -- Monitoring view
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (8, 305); -- Dana -- Lookup view
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (8, 306); -- Lookup edit
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (8, 801); -- M2S2 Editor
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (8, 802); -- M2S2 Viewer
 
@@ -179,6 +181,7 @@ INSERT INTO public.employee_roles(employee_id, role_id)VALUES (36, 12); -- Nurzh
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (36, 302); -- Nurzhan -- Macromonitor view
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (36, 303); -- Nurzhan -- Monitoring view
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (36, 305); -- Nurzhan -- Lookup view
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (36, 306); -- Lookup edit
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (36, 801); -- M2S2 Editor
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (36, 802); -- M2S2 Viewer
 
@@ -188,6 +191,7 @@ INSERT INTO public.employee_roles(employee_id, role_id)VALUES (63, 12); -- Almat
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (63, 302); -- Almat -- Macromonitor view
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (63, 303); -- Almat -- Monitoring view
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (63, 305); -- Almat -- Lookup view
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (63, 306); -- Lookup edit
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (63, 801); -- M2S2 Editor
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (63, 802); -- M2S2 Viewer
 
@@ -285,6 +289,7 @@ INSERT INTO public.employee_roles(employee_id, role_id)VALUES (14, 302); -- Macr
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (14, 303); -- Monitoring view
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (14, 304); -- Monitoring edit
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (14, 305); -- Lookup view
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (14, 306); -- Lookup edit
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (14, 801); -- M2S2 Editor
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (14, 802); -- M2S2 Viewer
 
@@ -295,18 +300,20 @@ INSERT INTO public.employee_roles(employee_id, role_id)VALUES (19, 302); -- Macr
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (19, 303); -- Monitoring view
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (19, 304); -- Monitoring edit
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (19, 305); -- Lookup view
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (19, 306); -- Lookup edit
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (19, 801); -- M2S2 Editor
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (19, 802); -- M2S2 Viewer
 
 -- Zhansaya
-INSERT INTO public.employee_roles(employee_id, role_id)VALUES (18, 41); -- Reporting Edit
-INSERT INTO public.employee_roles(employee_id, role_id)VALUES (18, 42); -- Reporting View
-INSERT INTO public.employee_roles(employee_id, role_id)VALUES (18, 302); -- Macromonitor view
-INSERT INTO public.employee_roles(employee_id, role_id)VALUES (18, 303); -- Monitoring view
-INSERT INTO public.employee_roles(employee_id, role_id)VALUES (18, 304); -- Monitoring edit
-INSERT INTO public.employee_roles(employee_id, role_id)VALUES (18, 305); -- Lookup view
-INSERT INTO public.employee_roles(employee_id, role_id)VALUES (18, 801); -- M2S2 Editor
-INSERT INTO public.employee_roles(employee_id, role_id)VALUES (18, 802); -- M2S2 Viewer
+--INSERT INTO public.employee_roles(employee_id, role_id)VALUES (18, 41); -- Reporting Edit
+--INSERT INTO public.employee_roles(employee_id, role_id)VALUES (18, 42); -- Reporting View
+--INSERT INTO public.employee_roles(employee_id, role_id)VALUES (18, 302); -- Macromonitor view
+--INSERT INTO public.employee_roles(employee_id, role_id)VALUES (18, 303); -- Monitoring view
+--INSERT INTO public.employee_roles(employee_id, role_id)VALUES (18, 304); -- Monitoring edit
+--INSERT INTO public.employee_roles(employee_id, role_id)VALUES (18, 305); -- Lookup view
+--INSERT INTO public.employee_roles(employee_id, role_id)VALUES (18, 306); -- Lookup edit
+--INSERT INTO public.employee_roles(employee_id, role_id)VALUES (18, 801); -- M2S2 Editor
+--INSERT INTO public.employee_roles(employee_id, role_id)VALUES (18, 802); -- M2S2 Viewer
 
 -- Lyassima
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (44, 41); -- Reporting Edit
@@ -315,6 +322,7 @@ INSERT INTO public.employee_roles(employee_id, role_id)VALUES (44, 302); -- Macr
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (44, 303); -- Monitoring view
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (44, 304); -- Monitoring edit
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (44, 305); -- Lookup view
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (44, 306); -- Lookup edit
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (44, 801); -- M2S2 Editor
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (44, 802); -- M2S2 Viewer
 
@@ -325,6 +333,7 @@ INSERT INTO public.employee_roles(employee_id, role_id)VALUES (61, 302); -- Macr
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (61, 303); -- Monitoring view
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (61, 304); -- Monitoring edit
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (61, 305); -- Lookup view
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (61, 306); -- Lookup edit
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (61, 801); -- M2S2 Editor
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (61, 802); -- M2S2 Viewer
 

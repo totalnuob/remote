@@ -26,6 +26,8 @@ public class HedgeFundScreeningAddedFund extends BaseEntity {
     private Double fundAUM;
     private Date fundAUMDate;
 
+    private String fundAUMComment;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="filtered_result_id")
     public HedgeFundScreeningFilteredResult getFilteredResult() {
@@ -98,5 +100,14 @@ public class HedgeFundScreeningAddedFund extends BaseEntity {
 
     public void setFundAUMDate(Date fundAUMDate) {
         this.fundAUMDate = fundAUMDate;
+    }
+
+    @Column(name="fund_aum_comment")
+    public String getFundAUMComment() {
+        return fundAUMComment;
+    }
+
+    public void setFundAUMComment(String fundAUMComment) {
+        this.fundAUMComment = fundAUMComment;
     }
 }

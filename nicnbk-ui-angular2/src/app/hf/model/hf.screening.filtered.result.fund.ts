@@ -33,6 +33,7 @@ export class HedgeFundScreeningFilteredResultFund {
     editedFundAUMComment;
 
     excludeComment: string;
+    excludeFromStrategyAUM: boolean;
 
     added: boolean;
 
@@ -58,10 +59,9 @@ export class HedgeFundScreeningFilteredResultFund {
         this.managerAUM = copy.managerAUM;
 
         this.excludeComment = copy.excludeComment;
+        this.fundAUMComment = copy.fundAUMComment;
 
         this.returns = copy.returns;
-
-
     }
 
 }
