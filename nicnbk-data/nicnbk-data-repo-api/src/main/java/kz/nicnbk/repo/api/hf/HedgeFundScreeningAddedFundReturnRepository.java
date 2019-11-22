@@ -21,6 +21,9 @@ public interface HedgeFundScreeningAddedFundReturnRepository extends PagingAndSo
     @Query("SELECT e FROM HedgeFundScreeningAddedFundReturn e WHERE e.addedFund.id=?1")
     List<HedgeFundScreeningAddedFundReturn> findByFundId(Long fundId, Sort sort);
 
+    @Query("SELECT e FROM HedgeFundScreeningAddedFundReturn e WHERE e.addedFund.filteredResult.id=?1")
+    List<HedgeFundScreeningAddedFundReturn> findByFilterResultId(Long filteredResultId);
+
     @Query("SELECT e FROM HedgeFundScreeningAddedFundReturn e WHERE e.addedFund.filteredResult.id=?1 AND e.addedFund.fundName=?2" +
             " AND e.date >= ?3 AND e.date <=?4")
     List<HedgeFundScreeningAddedFundReturn> findByFilteredResultIdAndFundName(Long filteredResultId, String fundName, Date dateFrom , Date dateTo, Sort sort);

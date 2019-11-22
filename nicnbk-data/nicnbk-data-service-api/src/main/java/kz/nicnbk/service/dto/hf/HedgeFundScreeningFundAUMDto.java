@@ -10,10 +10,14 @@ import java.util.Date;
 public class HedgeFundScreeningFundAUMDto implements BaseDto {
 
     private Long fundId;
+    private String fundName;
     private Date fundAUMDate;
     private Double fundAUM;
     private Double strategyAUM;
     private Double managerAUM;
+
+    private String investmentManager;
+    private String mainStrategy;
 
     private String fundAUMCurrency;
     private Double fundAUMValueUSD;
@@ -23,6 +27,8 @@ public class HedgeFundScreeningFundAUMDto implements BaseDto {
     private Double editedFundAUM;
     private Date editedFundAUMDate;
     private String editedFundAUMComment;
+
+    private boolean addedFund;
 
     public HedgeFundScreeningFundAUMDto(){}
 
@@ -48,6 +54,14 @@ public class HedgeFundScreeningFundAUMDto implements BaseDto {
 
     public void setFundId(Long fundId) {
         this.fundId = fundId;
+    }
+
+    public String getFundName() {
+        return fundName;
+    }
+
+    public void setFundName(String fundName) {
+        this.fundName = fundName;
     }
 
     public Date getFundAUMDate() {
@@ -128,6 +142,30 @@ public class HedgeFundScreeningFundAUMDto implements BaseDto {
 
     public void setEditedFundAUMComment(String editedFundAUMComment) {
         this.editedFundAUMComment = editedFundAUMComment;
+    }
+
+    public boolean isAddedFund() {
+        return addedFund;
+    }
+
+    public void setAddedFund(boolean addedFund) {
+        this.addedFund = addedFund;
+    }
+
+    public String getMainStrategy() {
+        return mainStrategy;
+    }
+
+    public void setMainStrategy(String mainStrategy) {
+        this.mainStrategy = mainStrategy;
+    }
+
+    public String getInvestmentManager() {
+        return investmentManager;
+    }
+
+    public void setInvestmentManager(String investmentManager) {
+        this.investmentManager = investmentManager;
     }
 }
 

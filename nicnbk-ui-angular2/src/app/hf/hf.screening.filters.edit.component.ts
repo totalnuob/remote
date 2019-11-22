@@ -54,6 +54,7 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
     busyFundEdit: Subscription;
 
     needUpdate = false;
+    excludeSource;
 
     uploadedReturns;
     returnUploadErrorMessage;
@@ -78,7 +79,6 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
         this.sub = this.route
             .params
             .subscribe(params => {
-
                 this.screeningId = +params['screeningId'];
                 this.id = +params['id'];
                 if(this.screeningId > 0) {
@@ -97,6 +97,7 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
             .subscribe(
                 result => {
                     this.filteredResult = result;
+                    //console.log(this.filteredResult);
                     this.onNumberChangeFundAUM();
                     this.onNumberChangeManagerAUM();
                 },
@@ -113,12 +114,6 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
             format: 'MM.YYYY'
         });
 
-        //$('#insideModal').on('hidden.bs.modal', function () {
-        //    $('#modalMessagesDiv').css("background-color", "white");
-        //    $('#closeFundEditModalButton').click();
-        //});
-
-
         $('#fundListModal').on('hidden.bs.modal', function () {
             $('#closeFundListModalButton').click();
         });
@@ -127,7 +122,12 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
         $('#fundEditModal').on('hidden.bs.modal', function () {
             $('#modalMessagesDiv').css("background-color", "white");
             $('#closeFundEditModalBtn').click();
+            $('#closeReturnsModalBtn').click();
         });
+
+//        $('#returnInputModal').on('hidden.bs.modal', function () {
+//            $('#closeReturnsModalBtn').click();
+//        });
 
         $('#excludeFundModal').on('hidden.bs.modal', function () {
             $('#modalMessagesDiv').css("background-color", "white");
@@ -183,6 +183,9 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
             return;
         }
 
+        this.loadFilteredResult();
+
+/*
         this.busyStats = this.screeningService.getFilteredResultStatistics(this.filteredResult)
             .subscribe(
                 result => {
@@ -195,6 +198,7 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
                     this.postAction(null, "Failed to load screening filtered results statistics");
                 }
             );
+*/
     }
 
     checkManagerAUM(fund){
@@ -524,9 +528,16 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
 
     closeFundExcludeModal(){
         if(this.needUpdate) {
-            this.showFunds(this.fundListLookbackReturn, this.fundListLookbackAUM, this.fundListType, null);
-            //this.needUpdate = false;
+            if(this.excludeSource != null && this.excludeSource === 'FUNDLIST'){
+                this.showFunds(this.fundListLookbackReturn, this.fundListLookbackAUM, this.fundListType, null);
+                //this.needUpdate = false;
+            }else if(this.excludeSource != null && this.excludeSource === 'CHECK'){
+                this.loadFilteredResult();
+            }
         }
+        this.excludeFundModalSuccessMessage = null;
+        this.excludeFundModalErrorMessage = null;
+        this.excludeSource = null;
         this.selectedFund = null;
     }
 
@@ -726,6 +737,11 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
                 this.selectedFundSuccessMessage = null;
                 return;
             }
+            if(this.selectedFund.investmentManager == null || this.selectedFund.investmentManager.trim() === ''){
+                            this.selectedFundErrorMessage = "Investment manager required";
+                            this.selectedFundSuccessMessage = null;
+                            return;
+                        }
             if((this.selectedFund.fundAUM == null || this.selectedFund.fundAUM.trim() === '') &&
                 (this.selectedFund.editedFundAUM == null || this.selectedFund.editedFundAUM.trim() === '')){
                 this.selectedFundErrorMessage = "Fund AUM required";
@@ -743,15 +759,14 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
                 }
             }
             this.selectedFund.returns = nonNullReturns;
-
+/*
             if(this.selectedFund.added && this.selectedFund.returns.length < this.filteredResult.trackRecord){
                 this.selectedFundErrorMessage = "Min required track record size is " + this.filteredResult.trackRecord +
                     " (" + this.selectedFund.returns.length + ")";
                 this.selectedFundSuccessMessage = null;
                 return;
             }
-
-
+*/
             this.selectedFund.fundAUM = this.selectedFund.fundAUM != null ? Number(this.selectedFund.fundAUM.toString().replace(/,/g, '')) : 0;
 
             // Added fund
@@ -759,11 +774,13 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
                 this.selectedFund.screening = {"id": this.filteredResult.screeningId};
                 // Check AUM
                 var minFundAUM = this.filteredResult.fundAUM != null ? Number(this.filteredResult.fundAUM.toString().replace(/,/g, '')) : 0;
-                if (this.selectedFund.fundAUM < minFundAUM) {
+
+/*                if (this.selectedFund.fundAUM < minFundAUM) {
                     this.selectedFundErrorMessage = "Qualified Fund AUM must be greater than min AUM parameter: " + super.getAmountShort(minFundAUM);
                     this.selectedFundSuccessMessage = null;
                     return;
                 }
+*/
 
                 // TODO: Check track record
             }
@@ -821,8 +838,7 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
                     }
                 }
             }
-
-            console.log(this.selectedFund);
+            //console.log(this.selectedFund);
             // Save fund info
             this.busyFundEdit = this.screeningService.updateFund(this.selectedFund)
                 .subscribe(
@@ -869,12 +885,16 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
             }
         }
     }
-    openExcludeFund(fund){
+
+    openExcludeFund(fund, source){
         $('#modalMessagesDiv').css("background-color", "grey");
         this.selectedFund = fund;
+        this.excludeSource = source;
+        //console.log(this.selectedFund);
     }
 
     excludeFund(){
+        //console.log(this.selectedFund);
         if(this.selectedFund.excludeComment == null || this.selectedFund.excludeComment.trim() === ''){
             this.excludeFundModalErrorMessage = "Comment required";
             this.excludeFundModalSuccessMessage = null;
@@ -887,6 +907,8 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
             fundShort.screening = new HedgeFundScreening();
             fundShort.screening.id = this.screeningId;
             fundShort.filteredResultId = this.filteredResult.id;
+            fundShort.excludeFromStrategyAUM = this.selectedFund.excludeFromStrategyAUM;
+            console.log(this.selectedFund);
             this.busyModal = this.screeningService.excludeFund(fundShort)
                 .subscribe(
                     result => {
@@ -904,7 +926,9 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
                         this.postAction(this.excludeFundModalSuccessMessage, this.excludeFundModalErrorMessage);
                     }
                 );
-            this.showFunds(this.fundListLookbackReturn, this.fundListLookbackAUM, this.fundListType, null);
+            if(this.excludeSource == null || this.excludeSource === 'FUNDLIST'){
+                this.showFunds(this.fundListLookbackReturn, this.fundListLookbackAUM, this.fundListType, null);
+            }
         }else{
 
         }
@@ -940,8 +964,8 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
 
         }
     }
-
     closeReturnsModal(){
+        //console.log("closeReturnsModal");
         this.uploadedReturns = "";
         this.returnUploadSuccessMessage = null;
         this.returnUploadErrorMessage = null;

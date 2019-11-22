@@ -21,6 +21,7 @@ public class HedgeFundScreeningEditedFund extends BaseEntity {
 
     private Boolean excluded;
     private String excludeComment;
+    private Boolean excludeFromStrategyAUM;
 
     private Double editedFundAUM;
     private String editedFundAUMComment;
@@ -101,5 +102,14 @@ public class HedgeFundScreeningEditedFund extends BaseEntity {
 
     public void setExcludeComment(String excludeComment) {
         this.excludeComment = excludeComment;
+    }
+
+    @Column(name="exclude_strategy_aum")
+    public Boolean getExcludeFromStrategyAUM() {
+        return excludeFromStrategyAUM;
+    }
+
+    public void setExcludeFromStrategyAUM(Boolean excludeFromStrategyAUM) {
+        this.excludeFromStrategyAUM = excludeFromStrategyAUM;
     }
 }

@@ -186,7 +186,7 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
 
     @PreAuthorize("hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/filteredResults/save", method = RequestMethod.POST)
-    public ResponseEntity<?>  saveFilteredResult(@RequestBody HedgeFundScreeningFilteredResultDto filteredResultDto) {
+    public ResponseEntity<?> saveFilteredResult(@RequestBody HedgeFundScreeningFilteredResultDto filteredResultDto) {
         // set creator
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
@@ -279,7 +279,7 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
-        boolean saved = this.screeningService.excludeParsedFund(fund.getFilteredResultId(), fund.getFundId(), fund.getExcludeComment(), username);
+        boolean saved = this.screeningService.excludeParsedFund(fund.getFilteredResultId(), fund.getFundId(), fund.getExcludeComment(), fund.isExcludeFromStrategyAUM(), username);
         return buildEntitySaveResponseEntity(saved);
     }
 

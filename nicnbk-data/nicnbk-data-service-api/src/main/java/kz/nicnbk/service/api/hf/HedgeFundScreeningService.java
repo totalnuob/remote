@@ -63,7 +63,7 @@ public interface HedgeFundScreeningService extends BaseService {
 
     boolean deleteAddedFund(String fundName, Long screeningId, String username);
 
-    boolean excludeParsedFund(Long filteredResultId, Long fundId, String excludeComment, String username);
+    boolean excludeParsedFund(Long filteredResultId, Long fundId, String excludeComment, boolean excludeFromStrategyAUM, String username);
 
     boolean includeParsedFund(Long filteredResultId, Long fundId, String username);
 

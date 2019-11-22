@@ -195,28 +195,20 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
 
             Collections.sort(screeningList);
 
-            for(HedgeFundScreeningParsedDataDto fund: screeningList){
-                double[] returns = null;
-                if(fund.isAdded()){
-                    returns = this.screeningService.getAddedFundReturns(fund.getFilteredResultId(), fund.getFundName(), filteredResultDto.getTrackRecord(), dateFrom, dateTo);
-                }else{
-                    try {
-                        returns = this.screeningService.getParsedFundReturns(filteredResultDto.getScreeningId(), fund.getFundId(), filteredResultDto.getTrackRecord().intValue(), dateFrom, dateTo);
-                    }catch (Exception ex){
-                        responseDto.setErrorMessageEn("Scoring failed. " + ex.getMessage());
-                        responseDto.setRecords(screeningList);
-                        return responseDto;
-                    }
-                }
-//                System.out.print(fund.getFundName() + "\t");
-//                for(int i = returns.length - 1; i >= 0; i--){
-//                    if(i == 0){
-//                        System.out.println(returns[i]);
-//                    }else {
-//                        System.out.print(returns[i] + "\t");
+//            for(HedgeFundScreeningParsedDataDto fund: screeningList){
+//                double[] returns = null;
+//                if(fund.isAdded()){
+//                    returns = this.screeningService.getAddedFundReturns(fund.getFilteredResultId(), fund.getFundName(), filteredResultDto.getTrackRecord(), dateFrom, dateTo);
+//                }else{
+//                    try {
+//                        returns = this.screeningService.getParsedFundReturns(filteredResultDto.getScreeningId(), fund.getFundId(), filteredResultDto.getTrackRecord().intValue(), dateFrom, dateTo);
+//                    }catch (Exception ex){
+//                        responseDto.setErrorMessageEn("Scoring failed. " + ex.getMessage());
+//                        responseDto.setRecords(screeningList);
+//                        return responseDto;
 //                    }
 //                }
-            }
+//            }
 
             for(HedgeFundScreeningParsedDataDto fund: screeningList){
                 // Fund returns
@@ -241,7 +233,7 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
                     //throw new IllegalStateException(errorMessage);
                 }
 
-                int scale = 18;
+                int scale = 16;
                 if(returns != null && returns.length == filteredResultDto.getTrackRecord().intValue()) {
                     // Annualized return
                     fund.setAnnualizedReturn(MathUtils.getAnnualizedReturn(returns, scale));
@@ -334,7 +326,7 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
 
                 // TODO: adjustable scale?
                 int scale = 18;
-                fund.setTotalScore(MathUtils.divide(18, totalScore + 0.0, 6.0));
+                fund.setTotalScore(MathUtils.divide(scale, totalScore + 0.0, 6.0));
             }
 
 //            for(int p = 10; p <= 90; p = p + 10){
