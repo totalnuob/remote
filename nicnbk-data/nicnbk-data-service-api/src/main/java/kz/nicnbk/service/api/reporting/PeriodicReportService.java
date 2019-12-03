@@ -37,6 +37,8 @@ public interface PeriodicReportService extends BaseService {
 
     ConsolidatedReportRecordHolderDto getNOAL(Long reportId, int tranche);
 
+    ConsolidatedReportRecordHolderDto getSingularityITD(Long reportId);
+
     ListResponseDto generateConsolidatedBalanceUSDForm(Long reportId);
 
     List<ConsolidatedBalanceFormRecordDto> generateConsolidatedIncomeExpenseUSDForm(Long reportId);

@@ -335,8 +335,6 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
                 }
             }
         }
-
-
         if(confirmed) {
             for (var i = 0; i < this.addedRecordsHolder.records.length; i++) {
                 if (this.addedRecordsHolder.records[i].financialStatementCategory === 'A') {
@@ -344,6 +342,7 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
                         if (this.addedRecordsHolder.records[i].glaccountBalance > 0) {
                             let record = new PEGeneralLedgerFormDataRecord();
                             record.tranche = this.addedRecordsHolder.records[i].tranche;
+                            record.trancheType = this.addedRecordsHolder.records[i].trancheType;
                             record.financialStatementCategory = 'E';
                             record.tarragonNICChartOfAccountsName = 'Capital call capital adjustment';
                             record.glaccountBalance = 0 - Number(this.addedRecordsHolder.records[i].glaccountBalance);
@@ -354,7 +353,6 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
                 }
             }
         }
-
         this.periodicReportService.savePEGeneralLedgerFormData(this.addedRecordsHolder)
             .subscribe(
                 response  => {

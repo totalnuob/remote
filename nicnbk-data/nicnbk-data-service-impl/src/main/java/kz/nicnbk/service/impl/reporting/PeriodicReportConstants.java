@@ -68,6 +68,15 @@ public final class PeriodicReportConstants {
     public static final String SINGULARITY_SUBSCRIPTION_ACCOUNT_NUMBER = "1500-XXXX-XXX-USD";
     public static final String SINGULARITY_REDEMPTION_ACCOUNT_NUMBER = "1550-XXXX-XXX-USD";
 
+    /* SINGULARITY ITD ******************************************************************************************************/
+    public static final String PARSE_SINGULAR_ITD_HEADER_INVESTMENT_NAME = "Investment Name";
+    public static final String PARSE_SINGULAR_ITD_HEADER_SUBSCRIPTIONS = "ITD Subs";
+    public static final String PARSE_SINGULAR_ITD_HEADER_PROFIT_LOSS = "ITD P&L";
+    public static final String PARSE_SINGULAR_ITD_HEADER_REDEMPTIONS = "ITD Reds";
+    public static final String PARSE_SINGULAR_ITD_HEADER_CLOSING_BALANCE = "Closing Balance";
+
+
+
     /* SPV NAMES *********************************************************************************************/
     public static final String SINGULAR_CAPITAL_CASE = "SINGULAR";
     public static final String SINGULAR_B_CAPITAL_CASE = "SINGULAR B";

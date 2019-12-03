@@ -614,6 +614,13 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
         return buildNonNullResponse(recordsHolder);
     }
 
+    @PreAuthorize(VIEWER_ROLE)
+    @RequestMapping(value = "/get/ITD/{id}", method = RequestMethod.GET)
+    public ResponseEntity getSingularityITD(@PathVariable Long id) {
+        ConsolidatedReportRecordHolderDto recordsHolder = this.periodicReportService.getSingularityITD(id);
+        return buildNonNullResponse(recordsHolder);
+    }
+
 //    @PreAuthorize(VIEWER_ROLE)
 //    @RequestMapping(value = "/get/re/generalLedgerBalance/{id}", method = RequestMethod.GET)
 //    public ResponseEntity getRealEstateGeneralLedgerBalance(@PathVariable Long id) {

@@ -280,9 +280,9 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
                                         if (entity.getNicReportingChartOfAccounts().getNbChartOfAccounts() != null) {
                                             record.setNbAccountNumber(entity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode());
                                         }
+                                        found = true;
+                                        break;
                                     }
-                                    found = true;
-                                    break;
                                 }
                             }
                             if(!found){

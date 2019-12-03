@@ -2393,9 +2393,19 @@ public class LookupServiceImpl implements LookupService {
                 if(nicReportingChartOfAccountsByCode != null && !nicReportingChartOfAccountsByCode.isEmpty()){
                     String maxCode = null;
                     for(NICReportingChartOfAccounts existingEntity: nicReportingChartOfAccountsByCode){
-                        if(maxCode == null || maxCode.compareTo(existingEntity.getCode()) < 0){
-                            maxCode = existingEntity.getCode();
+                        if(existingEntity.getCode().equals(existingEntity.getCode().toUpperCase())){
+                            // upper case
+                            if(maxCode == null || maxCode.equals(maxCode.toLowerCase()) ||
+                                    (maxCode.equals(maxCode.toUpperCase()) && maxCode.compareTo(existingEntity.getCode()) < 0)){
+                                maxCode = existingEntity.getCode();
+                            }
+                        }else{
+                            // lower case
+                            if(maxCode == null || (maxCode.equals(maxCode.toLowerCase()) && maxCode.compareTo(existingEntity.getCode()) < 0)){
+                                maxCode = existingEntity.getCode();
+                            }
                         }
+
                     }
                     // get last part
                     String[] maxCodeSplit = maxCode.split("\\.");

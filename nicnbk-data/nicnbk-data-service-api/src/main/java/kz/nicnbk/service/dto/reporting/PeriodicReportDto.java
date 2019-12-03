@@ -17,6 +17,10 @@ public class PeriodicReportDto extends CreateUpdateBaseEntityDto<PeriodicReport>
 
     public PeriodicReportDto(){}
 
+    public PeriodicReportDto(Long id){
+        this.id = id;
+    }
+
     public PeriodicReportDto(Long id, Date reportDate, String type, String status){
         this.id = id;
         this.reportDate = reportDate;
