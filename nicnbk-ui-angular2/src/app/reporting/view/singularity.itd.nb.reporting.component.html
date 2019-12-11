@@ -1,0 +1,79 @@
+<div class="container">
+    <div class="row top-buffer" >
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting']">Reports Main</a></span>
+                </li>
+                <li *ngIf="reportId != null && report != null && report.status != 'SUBMITTED'">
+                    <span><a [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">Input</a></span>
+                </li>
+                <li *ngIf="reportId != null && prevPageSource == 'REPORTS'"><span><a [routerLink]="['/reporting/NBReporting/GeneratedReports/', reportId, 'INPUT']">Generate report</a></span></li>
+                <li class="active">Singularity ITD</li>
+            </ol>
+        </div>
+    </div>
+    <div class="row top-buffer" *ngIf="errorMessage != null || successMessage != null">
+        <div class="col-md-12">
+            <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+            </div>
+            <div class="alert alert-info" *ngIf="!submitted && successMessage != null"><span>{{successMessage}}</span>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <br/>
+    <div class="row withpadding">
+        <h3 *ngIf="report != null">{{getReportDateShortFormatted(report.reportDate)}} - Singularity ITD</h3>
+    </div>
+    <ul class="nav nav-tabs">
+        <li class="active">
+            <a data-toggle="tab" href="#trancheA">Tranche A</a>
+        </li>
+        <li>
+            <a data-toggle="tab" href="#trancheB">Tranche B</a>
+        </li>
+    </ul>
+    <div class="tab-content" *ngIf="recordsHolder != null">
+        <div id="trancheA" class="tab-pane fade in active">
+            <div class="row withpadding">
+                <table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small">
+                    <tr bgcolor="#e7e7e7">
+                        <td>Investment name</td>
+                        <td>ITD Subs</td>
+                        <td>ITD P&L</td>
+                        <td>ITD Reds</td>
+                        <td>Closing Balance</td>
+                    </tr>
+                    <tr *ngFor="let record of recordsHolder.recordsITDTrancheA">
+                        <td>{{record.investmentName}}</td>
+                        <td>{{record.subscriptions != null ? (record.subscriptions | number:'1.2-2'): ''}}</td>
+                        <td>{{record.profitLoss != null ? (record.profitLoss | number:'1.2-2'): ''}}</td>
+                        <td>{{record.redemptions != null ? (record.redemptions | number:'1.2-2'): ''}}</td>
+                        <td>{{record.closingBalance != null ? (record.closingBalance | number:'1.2-2'): ''}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div id="trancheB" class="tab-pane fade">
+            <div class="row withpadding">
+                <table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small">
+                    <tr bgcolor="#e7e7e7">
+                        <td>Investment name</td>
+                        <td>ITD Subs</td>
+                        <td>ITD P&L</td>
+                        <td>ITD Reds</td>
+                        <td>Closing Balance</td>
+                    </tr>
+                    <tr *ngFor="let record of recordsHolder.recordsITDTrancheB">
+                        <td>{{record.investmentName}}</td>
+                        <td>{{record.subscriptions != null ? (record.subscriptions | number:'1.2-2'): ''}}</td>
+                        <td>{{record.profitLoss != null ? (record.profitLoss | number:'1.2-2'): ''}}</td>
+                        <td>{{record.redemptions != null ? (record.redemptions | number:'1.2-2'): ''}}</td>
+                        <td>{{record.closingBalance != null ? (record.closingBalance | number:'1.2-2'): ''}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

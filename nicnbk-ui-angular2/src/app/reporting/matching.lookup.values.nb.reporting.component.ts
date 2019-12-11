@@ -76,8 +76,10 @@ export class MatchingLookupValuesNBReportingComponent extends CommonNBReportingC
     }
 
     ngOnInit():void {
+        $('#editModal').on('hidden.bs.modal', function () {
+            $('#closeEditModalButton').click();
+        });
     }
-
 
     selectLookup(value, page){
         if(value){
@@ -187,9 +189,9 @@ export class MatchingLookupValuesNBReportingComponent extends CommonNBReportingC
     }
 
     closeEditModal(){
+        console.log("closeEditModal");
         this.selectedEditLookup = null;
     }
-
     save(){
         if(this.selectedEditLookup == null){
             this.errorMessageSaveLookup = "Error saving lookup";

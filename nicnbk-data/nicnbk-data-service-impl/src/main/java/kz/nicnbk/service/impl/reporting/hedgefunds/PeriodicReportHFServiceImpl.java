@@ -66,7 +66,8 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
                             noalTrancheASubscriptionsRecords.put(noalRecordDto.getName(), noalRecordDto.getFunctionalAmount());
                         }
 
-                    }else if (noalRecordDto.getAccountNumber().startsWith(PeriodicReportConstants.GROSVENOR_ACCOUNT_NUMBER_1550)) {
+                    }else if (noalRecordDto.getAccountNumber().startsWith(PeriodicReportConstants.GROSVENOR_ACCOUNT_NUMBER_1550) ||
+                            noalRecordDto.getAccountNumber().startsWith(PeriodicReportConstants.GROSVENOR_ACCOUNT_NUMBER_1210)) {
                         if(noalTrancheARedemptionsRecords.get(noalRecordDto.getName()) != null){
                             BigDecimal a = NumberUtils.getBigDecimal(noalTrancheARedemptionsRecords.get(noalRecordDto.getName()));
                             BigDecimal sum = a.add(NumberUtils.getBigDecimal(noalRecordDto.getFunctionalAmount()));
@@ -98,7 +99,8 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
                         }else{
                             noalTrancheBSubscriptionsRecords.put(noalRecordDto.getName(), noalRecordDto.getFunctionalAmount());
                         }
-                    }else if (noalRecordDto.getAccountNumber().startsWith(PeriodicReportConstants.GROSVENOR_ACCOUNT_NUMBER_1550)) {
+                    }else if (noalRecordDto.getAccountNumber().startsWith(PeriodicReportConstants.GROSVENOR_ACCOUNT_NUMBER_1550) ||
+                            noalRecordDto.getAccountNumber().startsWith(PeriodicReportConstants.GROSVENOR_ACCOUNT_NUMBER_1210)) {
                         if(noalTrancheBRedemptionsRecords.get(noalRecordDto.getName()) != null){
                             BigDecimal a = NumberUtils.getBigDecimal(noalTrancheBRedemptionsRecords.get(noalRecordDto.getName()));
                             BigDecimal sum = a.add(NumberUtils.getBigDecimal(noalRecordDto.getFunctionalAmount()));

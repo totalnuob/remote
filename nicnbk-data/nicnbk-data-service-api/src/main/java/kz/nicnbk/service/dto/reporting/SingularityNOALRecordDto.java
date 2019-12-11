@@ -20,6 +20,7 @@ public class SingularityNOALRecordDto implements BaseDto, Comparable {
     private String functionalAmountCCY;
     private int tranche;
     private String accountNumber;
+    private String notes;
 
     public Date getDate() {
         return date;
@@ -103,6 +104,14 @@ public class SingularityNOALRecordDto implements BaseDto, Comparable {
 
     public void setAccountNumber(String accountNumber) {
         this.accountNumber = accountNumber;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 
     @Override

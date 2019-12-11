@@ -4,22 +4,24 @@ import com.sun.org.apache.xalan.internal.xsltc.compiler.util.StringStack;
 import kz.nicnbk.common.service.exception.ExcelFileParseException;
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.common.service.util.*;
-import kz.nicnbk.repo.api.lookup.StrategyRepository;
 import kz.nicnbk.repo.api.reporting.*;
 import kz.nicnbk.repo.model.common.Strategy;
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.repo.model.reporting.*;
 import kz.nicnbk.repo.model.reporting.hedgefunds.ReportingHFGeneralLedgerBalance;
+import kz.nicnbk.repo.model.reporting.hedgefunds.ReportingHFITD;
 import kz.nicnbk.repo.model.reporting.hedgefunds.ReportingHFNOAL;
 import kz.nicnbk.repo.model.reporting.privateequity.*;
 import kz.nicnbk.repo.model.reporting.realestate.ReportingREBalanceSheet;
 import kz.nicnbk.repo.model.reporting.realestate.ReportingREGeneralLedgerBalance;
 import kz.nicnbk.repo.model.reporting.realestate.ReportingREProfitLoss;
 import kz.nicnbk.repo.model.reporting.realestate.ReportingRESecuritiesCost;
+import kz.nicnbk.service.api.files.FileService;
 import kz.nicnbk.service.api.reporting.PeriodicDataService;
 import kz.nicnbk.service.api.reporting.PeriodicReportFileParseService;
 import kz.nicnbk.service.api.reporting.PeriodicReportService;
 import kz.nicnbk.service.api.reporting.hedgefunds.HFGeneralLedgerBalanceService;
+import kz.nicnbk.service.api.reporting.hedgefunds.HFITDService;
 import kz.nicnbk.service.api.reporting.hedgefunds.HFNOALService;
 import kz.nicnbk.service.api.reporting.privateequity.*;
 import kz.nicnbk.service.api.reporting.realestate.PeriodicReportREService;
@@ -109,17 +111,6 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
     @Autowired
     private ConsolidatedKZTForm22Converter consolidatedKZTForm22Converter;
 
-
-
-
-
-
-
-
-
-
-
-
     @Autowired
     private PeriodicReportService periodicReportService;
 
@@ -145,6 +136,9 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
     private HFGeneralLedgerBalanceService generalLedgerBalanceService;
 
     @Autowired
+    private HFITDService hfITDService;
+
+    @Autowired
     private REGeneralLedgerBalanceService reGeneralLedgerBalanceService;
 
     @Autowired
@@ -156,10 +150,54 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
     @Autowired
     private LookupService lookupService;
 
-
-    // TODO: use service (LookupService, StrategyService etc) ?
     @Autowired
-    private StrategyRepository strategyRepository;
+    private FileService fileService;
+
+    @Override
+    public FileUploadResultDto handleFileUpload(FilesDto filesDto, Long reportId, String username){
+        if(filesDto != null){
+            // save file
+            FilesDto savedFile = this.periodicReportService.saveInputFile(reportId, filesDto);
+            if(savedFile == null){
+                // error occurred
+                logger.error("File upload failed: error saving file (no parsing yet) [user" + username + "]");
+                FileUploadResultDto result = new FileUploadResultDto(ResponseStatusType.FAIL, null,
+                        "File upload failed: error saving file (no parsing yet) [user" + username + "]", null);
+                return result;
+                //return new ResponseEntity<>(result, null, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
+            // parse file
+            FileUploadResultDto result = parseFile(filesDto.getType(), filesDto, reportId, username);
+            if(result != null && result.getStatus() != null && result.getStatus() == ResponseStatusType.SUCCESS){
+                result.setFileName(filesDto.getFileName());
+                result.setFileId(savedFile.getId());
+                logger.info("File successfully parsed: file type '" + filesDto.getType() + "', file name '" + filesDto.getFileName() + "' [user " + username + "]");
+                return result;
+                //return new ResponseEntity<>(result, null, HttpStatus.OK);
+            }else{
+                // error
+                // remove file
+                boolean deleted = periodicReportService.deletePeriodicReportFileAssociationById(savedFile.getId());
+                if(deleted){
+                    deleted = fileService.delete(savedFile.getId());
+                }
+
+                if(!deleted){
+                    logger.error("File upload and/or parse failed, error when deleting file from file system to undo actions: " +
+                            "file type '" + filesDto.getType() + "', file name '" + filesDto.getFileName() + "' [user " + username + "]");
+                }
+                return result;
+                //return new ResponseEntity<>(result, null, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }else {
+            logger.error("File upload failed: no file could be found, please check your files [user " + username + "]");
+            return new FileUploadResultDto(ResponseStatusType.FAIL, null,
+                    "File upload failed: no file could be found, please check your files", null);
+//            return new ResponseEntity<>(new FileUploadResultDto(ResponseStatusType.FAIL, null,
+//                    "File upload failed: no file could be found, please check your files", null), null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     /**
      * Parse specified file and save parsed data to database.
@@ -204,11 +242,13 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
         }else if(fileType.equals(FileTypeLookup.NB_REP_S4B.getCode())){
             return parseISTrancheB(filesDto);
         }else if(fileType.equals(FileTypeLookup.NB_REP_SINGULAR_GENERAL_LEDGER.getCode())){
-            return parseSingularGeneralLedger(filesDto, reportId);
+            return parseSingularGeneralLedgerV2(filesDto, reportId);
         }else if(fileType.equals(FileTypeLookup.NB_REP_SN_TRANCHE_A.getCode())){
             return parseSingularNOAL(filesDto, reportId, 1);
         }else if(fileType.equals(FileTypeLookup.NB_REP_SN_TRANCHE_B.getCode())){
             return parseSingularNOAL(filesDto, reportId, 2);
+        }else if(fileType.equals(FileTypeLookup.NB_REP_SN_ITD.getCode())){
+            return parseSingularITD(filesDto, reportId);
         }else if(fileType.equals(FileTypeLookup.NB_REP_TERRA_COMBINED.getCode())){
             return parseTerraCombined(filesDto, reportId, username);
         }else if(fileType.equals(FileTypeLookup.NB_REP_TERRA_GENERAL_LEDGER.getCode())){
@@ -293,8 +333,15 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
     }
 
 
+    /**
+     * Parse SOI (Schedule of Investment) excel file for specified report id; save parsed data to database.
+     *
+     * @param filesDto - schedule of investments file
+     * @param reportId - report id
+     * @return - file parse result
+     * @throws ExcelFileParseException
+     */
     private FileUploadResultDto parseTarragonSOIReport(FilesDto filesDto, Long reportId) throws ExcelFileParseException {
-
         List<ScheduleInvestmentsDto> sheet1Records = new ArrayList<>();
         try {
 
@@ -303,17 +350,22 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
             Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
             sheet1Records = parseTarragonSOIReportSheetRaw(rowIterator);
 
+            if(sheet1Records == null || sheet1Records.isEmpty()){
+                logger.error("Error parsing 'SOI Report': empty records list found");
+                return new FileUploadResultDto(ResponseStatusType.FAIL, "", "Error parsing 'SOI Report': empty records list found. " +
+                        "Expected table header in the first row.", "");
+            }
+
             /* NORMALIZE TEXT FIELDS ********************************************************************************/
             normalizeTextFieldsSOIReport(sheet1Records);
-
-            /* CHECK ENTITIES AND ASSEMBLE **********************************************************************/
 
             /* SAVE TO DB **************************************************************************************/
             boolean saved = this.scheduleInvestmentService.save(sheet1Records, reportId);
 
             if(saved){
-                logger.info("Successfully parsed 'SOI Report' file");
-                return new FileUploadResultDto(ResponseStatusType.SUCCESS, "", "Successfully processed the file - SOI Report", "");
+                String successMessage = "Successfully processed the file - SOI Report";
+                logger.info(successMessage);
+                return new FileUploadResultDto(ResponseStatusType.SUCCESS, "", successMessage, "");
             }else{
                 logger.error("Error saving 'SOI Report' file parsed data into database");
                 return new FileUploadResultDto(ResponseStatusType.FAIL, "", "Error saving to database", "");
@@ -326,7 +378,6 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
             logger.error("Error parsing 'SOI Report' file with error. Stack trace: \n" + ExceptionUtils.getStackTrace(e));
             return new FileUploadResultDto(ResponseStatusType.FAIL, "", "Error when processing 'SOI Report' file", "");
         }
-
     }
 
     /**
@@ -476,12 +527,18 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
             while (rowIterator.hasNext()) { // each row
                 Row row = rowIterator.next();
                 if(rowNum == 0){
-                    // First row
+                    // First row, must contain table header
                     Iterator<Cell> cellIterator = row.cellIterator();
                     while(cellIterator != null && cellIterator.hasNext()){
                         Cell cell = cellIterator.next();
-                        headers.put(cell.getStringCellValue(), cell.getColumnIndex());
-                        //System.out.println(cell.getColumnIndex() + "-" + ExcelUtils.getTextValueFromAnyCell(cell));
+                        if(StringUtils.isNotEmpty(cell.getStringCellValue())) {
+                            headers.put(cell.getStringCellValue(), cell.getColumnIndex());
+                        }else{
+                            // skip empty cells
+                        }
+                    }
+                    if(headers.isEmpty()){
+                        return null;
                     }
                 }else{
                     ScheduleInvestmentsDto record = new ScheduleInvestmentsDto();
@@ -502,7 +559,7 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                     final String trancheHeader = PeriodicReportConstants.PARSE_SOI_REPORT_HEADER_TRANCHE;
                     if(headers.get(trancheHeader) != null){
                         String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(trancheHeader).intValue()));
-                        value = value.replaceAll("Tranche", "Tarragon");
+                        value = value.replaceAll(PeriodicReportConstants.TRANCHE_LOWER_CASE, PeriodicReportConstants.TARRAGON_LOWER_CASE);
                         record.setTrancheType(new BaseDictionaryDto(null, value, null, null));
                     }
                     final String typeHeader = PeriodicReportConstants.PARSE_SOI_REPORT_HEADER_TYPE;
@@ -556,56 +613,53 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                         Double doubleValue = MathUtils.getDouble(value);
                         record.setContributionsUSD(doubleValue);
                     }
-                    final String returnOfCapitalDistributionsUSDHeader =  PeriodicReportConstants.PARSE_SOI_REPORT_HEADER_RETURN_CAPITAL_DISTRIBUTIONS_USD;
+                    final String returnOfCapitalDistributionsUSDHeader = PeriodicReportConstants.PARSE_SOI_REPORT_HEADER_RETURN_CAPITAL_DISTRIBUTIONS_USD;
                     if(headers.get(returnOfCapitalDistributionsUSDHeader) != null){
                         String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(returnOfCapitalDistributionsUSDHeader).intValue()));
                         Double doubleValue = MathUtils.getDouble(value);
                         record.setReturnOfCapitalDistributionsUSD(doubleValue);
                     }
-                    final String netCostHeader =  PeriodicReportConstants.PARSE_SOI_REPORT_HEADER_NET_COST_USD;
+                    final String netCostHeader = PeriodicReportConstants.PARSE_SOI_REPORT_HEADER_NET_COST_USD;
                     if(headers.get(netCostHeader) != null){
                         String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(netCostHeader).intValue()));
                         Double doubleValue = MathUtils.getDouble(value);
                         record.setNetCost(doubleValue);
                     }
-                    final String fairValueUSDHeader =  PeriodicReportConstants.PARSE_SOI_REPORT_HEADER_FAIR_VALUE_USD;
+                    final String fairValueUSDHeader = PeriodicReportConstants.PARSE_SOI_REPORT_HEADER_FAIR_VALUE_USD;
                     if(headers.get(fairValueUSDHeader) != null){
                         String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(fairValueUSDHeader).intValue()));
                         Double doubleValue = MathUtils.getDouble(value);
                         record.setFairValue(doubleValue);
                     }
-                    final String unrealizedGainLossHeader =  PeriodicReportConstants.PARSE_SOI_REPORT_HEADER_UNREALIZED_GAIN_LOSS_SINCE_INCEPTION_USD;
+                    final String unrealizedGainLossHeader = PeriodicReportConstants.PARSE_SOI_REPORT_HEADER_UNREALIZED_GAIN_LOSS_SINCE_INCEPTION_USD;
                     if(headers.get(unrealizedGainLossHeader) != null){
                         String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(unrealizedGainLossHeader).intValue()));
                         Double doubleValue = MathUtils.getDouble(value);
                         record.setUnrealizedGainLossUSD(doubleValue);
                     }
-                    final String realizedGainLossHeader =  PeriodicReportConstants.PARSE_SOI_REPORT_HEADER_REALIZED_GAIN_LOSS_SINCE_INCEPTION_USD;
+                    final String realizedGainLossHeader = PeriodicReportConstants.PARSE_SOI_REPORT_HEADER_REALIZED_GAIN_LOSS_SINCE_INCEPTION_USD;
                     if(headers.get(realizedGainLossHeader) != null){
                         String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(realizedGainLossHeader).intValue()));
                         Double doubleValue = MathUtils.getDouble(value);
                         record.setRealizedGainLossUSD(doubleValue);
                     }
-                    final String operatingCompanyHeader =  PeriodicReportConstants.PARSE_SOI_REPORT_HEADER_OPERATING_COMPANY;
+                    final String operatingCompanyHeader = PeriodicReportConstants.PARSE_SOI_REPORT_HEADER_OPERATING_COMPANY;
                     if(headers.get(operatingCompanyHeader) != null){
                         String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(operatingCompanyHeader).intValue()));
                         record.setOperatingCompany(value);
                     }
-                    final String ownershipDetailsHeader =  PeriodicReportConstants.PARSE_SOI_REPORT_HEADER_OWNERSHIP_DETAILS;
+                    final String ownershipDetailsHeader = PeriodicReportConstants.PARSE_SOI_REPORT_HEADER_OWNERSHIP_DETAILS;
                     if(headers.get(ownershipDetailsHeader) != null){
                         String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(ownershipDetailsHeader).intValue()));
                         record.setOwnershipDetails(value);
                     }
-
                     if(!record.isEmpty()){
                         records.add(record);
                     }
                 }
                 rowNum++;
             }
-
         }
-
         return records;
     }
 
@@ -717,13 +771,13 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
             /* PARSE EXCEL (RAW) *******************************************************************************/
             List<BaseDictionaryDto> trancheTypes = this.lookupService.getTarragonTrancheTypes();
             if(trancheTypes == null || trancheTypes.isEmpty()){
-                String errorMessage = "Error parsing Tarragon Statement o f Assets, Liabilities and Partners Capital: missing tranche types in system database.";
+                String errorMessage = "Error parsing Tarragon Statement of Assets, Liabilities and Partners Capital: missing tranche types in system database.";
                 logger.error(errorMessage);
                 throw new ExcelFileParseException(errorMessage);
             }
             for(int i = 0; i < trancheTypes.size(); i++){
                 String trancheName = trancheTypes.get(i).getNameEn();
-                Iterator<Row> rowIterator = getRowIterator(filesDto, trancheName.replace("Tarragon", "Tranche"));
+                Iterator<Row> rowIterator = getRowIterator(filesDto, trancheName.replace(PeriodicReportConstants.TARRAGON_LOWER_CASE, PeriodicReportConstants.TRANCHE_LOWER_CASE));
                 if(rowIterator == null){
                     break;
                 }
@@ -733,18 +787,18 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                 List<ConsolidatedReportRecordDto> operationsRecordsSheet = new ArrayList<>();
                 for(ConsolidatedReportRecordDto recordDto: sheetRecords){
                     if(recordDto.getClassifications() != null &&
-                            (recordDto.getClassifications()[0].trim().equalsIgnoreCase("Consolidated Statement of Assets, Liabilities and Partners' Capital") ||
-                                    recordDto.getClassifications()[0].trim().equalsIgnoreCase("Consolidated Statement of Assets, Liabilities and Partner's Capital")) ||
-                            recordDto.getClassifications()[0].trim().equalsIgnoreCase("Consolidated Statement of Assets, Liabilities and Partners Capital")){
+                            (recordDto.getClassifications()[0].trim().equalsIgnoreCase(PeriodicReportConstants.STMT_ASST_LBLT_PC_BALANCE_HEADER_V1) ||
+                                    recordDto.getClassifications()[0].trim().equalsIgnoreCase(PeriodicReportConstants.STMT_ASST_LBLT_PC_BALANCE_HEADER_V2)) ||
+                            recordDto.getClassifications()[0].trim().equalsIgnoreCase(PeriodicReportConstants.STMT_ASST_LBLT_PC_BALANCE_HEADER_V3)){
                         recordDto.getClassifications()[0] = null;
                         balanceRecordsSheet.add(recordDto);
                     }else if(recordDto.getClassifications() != null &&
-                            recordDto.getClassifications()[0].trim().equalsIgnoreCase("Consolidated Statement of Operations")){
+                            recordDto.getClassifications()[0].trim().equalsIgnoreCase(PeriodicReportConstants.STMT_ASST_LBLT_PC_OPERATIONS_HEADER_V1)){
                         recordDto.getClassifications()[0] = null;
                         operationsRecordsSheet.add(recordDto);
                     }else{
                         String errorMessage = "[" + trancheName + "]" +" Record '" + recordDto.getName() + "' is missing type header: " +
-                                "'Consolidated Statement of Assets, Liabilities and Partners Capital' or 'Consolidated Statement of Operations'.";
+                                "Expected 'Consolidated Statement of Assets, Liabilities and Partners Capital', 'Consolidated Statement of Operations', etc.";
                         logger.error(errorMessage);
                         throw new ExcelFileParseException(errorMessage);
                     }
@@ -804,7 +858,7 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
             logger.error("Error parsing 'Statement of Assets, Liabilities and Partners Capital' file with error: " + e.getMessage());
             return new FileUploadResultDto(ResponseStatusType.FAIL, "", e.getMessage(), "");
         }catch (Exception e){
-            logger.error("Error parsing 'Statement of Assets, Liabilities and Partners Capital' file with error: " + e.getMessage());
+            logger.error("Error parsing 'Statement of Assets, Liabilities and Partners Capital' file with error: ", e);
             return new FileUploadResultDto(ResponseStatusType.FAIL, "", "Error processing 'Statement of Assets, Liabilities and Partners Capital' file'", "");
         }
     }
@@ -823,9 +877,9 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
 
     private boolean isStatementOperationsTotalRecordName(String name){
         return StringUtils.isNotEmpty(name) &&
-                (name.equalsIgnoreCase(PeriodicReportConstants.STMT_ASST_LBLT_PC_TOTAL_RECORD_NAME_V1) ||
-                        name.equalsIgnoreCase(PeriodicReportConstants.STMT_ASST_LBLT_PC_TOTAL_RECORD_NAME_V2) ||
-                        name.equalsIgnoreCase(PeriodicReportConstants.STMT_ASST_LBLT_PC_TOTAL_RECORD_NAME_V3));
+                (name.trim().equalsIgnoreCase(PeriodicReportConstants.STMT_ASST_LBLT_PC_TOTAL_RECORD_NAME_V1) ||
+                        name.trim().equalsIgnoreCase(PeriodicReportConstants.STMT_ASST_LBLT_PC_TOTAL_RECORD_NAME_V2) ||
+                        name.trim().equalsIgnoreCase(PeriodicReportConstants.STMT_ASST_LBLT_PC_TOTAL_RECORD_NAME_V3));
     }
 
     /**
@@ -939,14 +993,14 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
     }
 
     private boolean isTarragonTrancheA(String name){
-        return name.startsWith("Tarragon A") || name.startsWith("Tranche A");
+        return name.startsWith(PeriodicReportConstants.TARRAGON_A_LOWER_CASE) || name.startsWith(PeriodicReportConstants.TRANCHE_A_LOWER_CASE);
     }
 
     private List<ConsolidatedReportRecordDto> parseStatementAssetsLiabilitiesSheetRaw(Iterator<Row> rowIterator, String sheetName){
 
         List<ConsolidatedReportRecordDto> records = new ArrayList<>();
         int rowNum = 0;
-        String[] classifications = new String[5]; // TODO: size? dynamic?
+        String[] classifications = new String[5];
         while (rowIterator.hasNext()) { // each row
             Row row = rowIterator.next();
             if(isTarragonTrancheA(sheetName) && rowNum <= 5){
@@ -960,7 +1014,6 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                             cell.getStringCellValue().trim().equalsIgnoreCase(PeriodicReportConstants.STMT_ASST_LBLT_PC_BALANCE_HEADER_V2) ||
                             cell.getStringCellValue().trim().equalsIgnoreCase(PeriodicReportConstants.STMT_ASST_LBLT_PC_BALANCE_HEADER_V3) ||
                             cell.getStringCellValue().trim().equalsIgnoreCase(PeriodicReportConstants.STMT_ASST_LBLT_PC_OPERATIONS_HEADER_V1)){
-                        // TODO: ?
                         classifications = new String[5];
                     }
                     if(ExcelUtils.isEmptyCell(row.getCell(2)) && ExcelUtils.isEmptyCell(row.getCell(4)) &&
@@ -978,7 +1031,6 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                                 break;
                             }
                         }
-
                     }else{
                         // values
                         String name = cell.getStringCellValue();
@@ -1019,7 +1071,8 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                                             name.equalsIgnoreCase("net " + classifications[i]) ||
                                             (name + ":").equalsIgnoreCase("net " + classifications[i]) ||
                                             (name).equalsIgnoreCase("net " + classifications[i] + ":") ||
-                                            ((name.startsWith("Total") || name.startsWith("Net")) && name.equalsIgnoreCase(classifications[i])) ||
+                                            ((name.toUpperCase().startsWith("TOTAL") || name.toUpperCase().startsWith("NET")) &&
+                                                    name.equalsIgnoreCase(classifications[i])) ||
                                             isStatementOperationsTotalRecordName(name))){
                                 classifications[i] = null;
                                 reset = true;
@@ -1212,7 +1265,6 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
         }
     }
 
-    // TODO: move to PEStatementBalanceServiceImpl
     private boolean isPartnersCapital(ConsolidatedReportRecordDto recordDto){
         return recordDto.hasClassification(PeriodicReportConstants.STMT_ASST_LBLT_PC_PARTNERS_CAPITAL_CAPITAL_CASE_V1) ||
                 recordDto.hasClassification(PeriodicReportConstants.STMT_ASST_LBLT_PC_PARTNERS_CAPITAL_CAPITAL_CASE_V2) ||
@@ -1230,7 +1282,6 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                 recordDto.getName().equalsIgnoreCase(PeriodicReportConstants.STMT_ASST_LBLT_PC_LIABILITIES_AND_PARTNERS_CAPITAL_CAPITAL_CASE_V3);
     }
 
-
     private boolean isHeader_9(Row row){
         return ExcelUtils.getTextValueFromAnyCell(row.getCell(0)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(0)).equalsIgnoreCase("1.0") &&
                 ExcelUtils.getTextValueFromAnyCell(row.getCell(1)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(1)).equalsIgnoreCase("2.0") &&
@@ -1242,7 +1293,6 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                 ExcelUtils.getTextValueFromAnyCell(row.getCell(7)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(7)).equalsIgnoreCase("8.0") &&
                 ExcelUtils.getTextValueFromAnyCell(row.getCell(8)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(8)).equalsIgnoreCase("9.0");
     }
-
     private boolean isHeader_6(Row row){
         return ExcelUtils.getTextValueFromAnyCell(row.getCell(0)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(0)).equalsIgnoreCase("1.0") &&
                 ExcelUtils.getTextValueFromAnyCell(row.getCell(1)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(1)).equalsIgnoreCase("2.0") &&
@@ -1251,14 +1301,12 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                 ExcelUtils.getTextValueFromAnyCell(row.getCell(4)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(4)).equalsIgnoreCase("5.0") &&
                 ExcelUtils.getTextValueFromAnyCell(row.getCell(5)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(5)).equalsIgnoreCase("6.0");
     }
-
     private boolean isHeader_4(Row row){
         return ExcelUtils.getTextValueFromAnyCell(row.getCell(0)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(0)).equalsIgnoreCase("1.0") &&
                 ExcelUtils.getTextValueFromAnyCell(row.getCell(1)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(1)).equalsIgnoreCase("2.0") &&
                 ExcelUtils.getTextValueFromAnyCell(row.getCell(2)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(2)).equalsIgnoreCase("3.0") &&
                 ExcelUtils.getTextValueFromAnyCell(row.getCell(3)) != null && ExcelUtils.getTextValueFromAnyCell(row.getCell(3)).equalsIgnoreCase("4.0");
     }
-
     private void form1(FilesDto filesDto, Long reportId){
         try {
             Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
@@ -1280,7 +1328,7 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
 
                     ConsolidatedBalanceFormRecordDto record = new ConsolidatedBalanceFormRecordDto();
                     record.setAccountNumber(accountNumber);
-                    record.setName(name);
+                    record.setName(name != null ? name.trim() : null);
                     record.setOtherEntityName(otherEntity);
 
                     if(lineNumber != null) {
@@ -1308,7 +1356,6 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
             System.out.println("Error");
         }
     }
-
     private void form2(FilesDto filesDto, Long reportId){
         try {
             Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
@@ -1330,7 +1377,7 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
 
                     ConsolidatedBalanceFormRecordDto record = new ConsolidatedBalanceFormRecordDto();
                     record.setAccountNumber(accountNumber);
-                    record.setName(name);
+                    record.setName(name != null ? name.trim() : null);
                     record.setOtherEntityName(otherEntity);
 
                     if(lineNumber != null) {
@@ -1358,7 +1405,6 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
             System.out.println("Error");
         }
     }
-
     private void form3(FilesDto filesDto, Long reportId){
         try {
             Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
@@ -1377,7 +1423,7 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
 
 
                     ConsolidatedBalanceFormRecordDto record = new ConsolidatedBalanceFormRecordDto();
-                    record.setName(name);
+                    record.setName(name != null ? name.trim() : null);
 
                     if(lineNumber != null) {
                         record.setLineNumber(lineNumber.intValue());
@@ -1404,7 +1450,6 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
             System.out.println("Error");
         }
     }
-
     private void form6(FilesDto filesDto, Long reportId){
         try {
             Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
@@ -1427,7 +1472,7 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                     Double total = ExcelUtils.getDoubleValueFromCell(row.getCell(8));
 
                     ConsolidatedKZTForm6RecordDto record = new ConsolidatedKZTForm6RecordDto();
-                    record.setName(name);
+                    record.setName(name != null ? name.trim() : null);
                     if(lineNumber != null) {
                         record.setLineNumber(lineNumber.intValue());
                         lineNumberPrevious = record.getLineNumber();
@@ -1457,7 +1502,6 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
             System.out.println("Error");
         }
     }
-
     private void form7(FilesDto filesDto, Long reportId){
         try {
             Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
@@ -1499,7 +1543,7 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
 
                     ConsolidatedKZTForm7RecordDto record = new ConsolidatedKZTForm7RecordDto();
                     record.setAccountNumber(accountNumber);
-                    record.setName(name);
+                    record.setName(name != null ? name.trim() : null);
                     if(lineNumber != null) {
                         record.setLineNumber(lineNumber.intValue());
                         lineNumberPrevious = record.getLineNumber();
@@ -1540,7 +1584,6 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
             System.out.println("Error");
         }
     }
-
     private void form8(FilesDto filesDto, Long reportId){
         try {
             Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
@@ -1571,7 +1614,7 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
 
                     ConsolidatedKZTForm8RecordDto record = new ConsolidatedKZTForm8RecordDto();
                     record.setAccountNumber(accountNumber);
-                    record.setName(name);
+                    record.setName(name != null ? name.trim() : null);
                     if(lineNumber != null) {
                         record.setLineNumber(lineNumber.intValue());
                         lineNumberPrevious = record.getLineNumber();
@@ -1601,7 +1644,6 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
             System.out.println("Error");
         }
     }
-
     private void form10(FilesDto filesDto, Long reportId){
         try {
             Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
@@ -1630,7 +1672,7 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
 
                     ConsolidatedKZTForm10RecordDto record = new ConsolidatedKZTForm10RecordDto();
                     record.setAccountNumber(accountNumber);
-                    record.setName(name);
+                    record.setName(name != null ? name.trim() : null);
                     if(lineNumber != null) {
                         record.setLineNumber(lineNumber.intValue());
                         lineNumberPrevious = record.getLineNumber();
@@ -1659,7 +1701,6 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
             System.out.println("Error");
         }
     }
-
     private void form13(FilesDto filesDto, Long reportId){
         try {
             Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
@@ -1700,7 +1741,7 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
 
                     ConsolidatedKZTForm13RecordDto record = new ConsolidatedKZTForm13RecordDto();
                     record.setAccountNumber(accountNumber);
-                    record.setName(name);
+                    record.setName(name != null ? name.trim() : null);
                     if(lineNumber != null) {
                         record.setLineNumber(lineNumber.intValue());
                         lineNumberPrevious = record.getLineNumber();
@@ -1743,7 +1784,6 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
             System.out.println("Error");
         }
     }
-
     private void form14(FilesDto filesDto, Long reportId){
         try {
             Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
@@ -1773,7 +1813,7 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
 
                     ConsolidatedKZTForm14RecordDto record = new ConsolidatedKZTForm14RecordDto();
                     record.setAccountNumber(accountNumber);
-                    record.setName(name);
+                    record.setName(name != null ? name.trim() : null);
                     if(lineNumber != null) {
                         record.setLineNumber(lineNumber.intValue());
                         lineNumberPrevious = record.getLineNumber();
@@ -1802,7 +1842,6 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
             System.out.println("Error");
         }
     }
-
     private void form19(FilesDto filesDto, Long reportId){
         try {
             Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
@@ -1830,7 +1869,7 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
 
                     ConsolidatedKZTForm19RecordDto record = new ConsolidatedKZTForm19RecordDto();
                     record.setAccountNumber(accountNumber);
-                    record.setName(name);
+                    record.setName(name != null ? name.trim() : null);
                     record.setOtherEntityName(otherEntity);
 
                     if(lineNumber != null) {
@@ -1858,7 +1897,6 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
             System.out.println("Error");
         }
     }
-
     private void form22(FilesDto filesDto, Long reportId){
         try {
             Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
@@ -1886,7 +1924,7 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
 
                     ConsolidatedKZTForm22RecordDto record = new ConsolidatedKZTForm22RecordDto();
                     record.setAccountNumber(accountNumber);
-                    record.setName(name);
+                    record.setName(name != null ? name.trim() : null);
                     //record.setOtherEntityName(otherEntity);
 
                     if(lineNumber != null) {
@@ -1916,58 +1954,56 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
     }
 
     private FileUploadResultDto parseStatementCashFlows(FilesDto filesDto, Long reportId){
-        //form22(filesDto, reportId);
 
-        return null;
+//        form22(filesDto, reportId);
+//        return null;
+
+        try {
+            /* PARSE EXCEL (RAW) *******************************************************************************/
+            Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
+            List<ConsolidatedReportRecordDto> records = parseStatementCashFlowsRaw(rowIterator);
+            //printRecords(records);
+
+            /* NORMALIZE TEXT FIELDS ********************************************************************************/
+            normalizeTextFields(records);
+
+            /* CHECK FORMAT *****************************************************************************************/
+            for(ConsolidatedReportRecordDto recordDto: records) {
+                if (!isStatementCashFlowsSpecialName(recordDto.getName()) && !recordDto.hasNonEmptyClassification()) {
+                    String errorMessage = "Record '" + recordDto.getName() + "' does not have any matching classification/header. Check for required indentations.";
+                    logger.error(errorMessage);
+                    throw new ExcelFileParseException(errorMessage);
+                }
+            }
+
+            /* CHECK SUMS/TOTALS ***********************************************************************************/
+            PeriodicReportDto report = this.periodicReportService.getPeriodicReport(reportId);
+            checkTotalSumsGeneric(records, 3, "Net increase (decrease) in cash and cash equivalents", "Tarragon");
+            checkSumsStatementCashFlows(records, report.getReportDate());
+
+
+            /* CHECK ENTITIES AND ASSEMBLE *************************************************************************/
+            List<ReportingPEStatementCashflows> entities = this.statementCashflowsService.assembleList(records, reportId); // TODO: tranche type constant !!!
+
+            /* SAVE TO DB ******************************************************************************************/
+            boolean saved = this.statementCashflowsService.save(entities);
+
+            if(saved){
+                logger.info("Successfully parsed 'Statement of Cashflows' file");
+                return new FileUploadResultDto(ResponseStatusType.SUCCESS, "", "Successfully processed the file - Statement of Cashflows", "");
+            }else{
+                logger.error("Error saving 'Statement of Cashflows' file parsed data into database");
+                return new FileUploadResultDto(ResponseStatusType.FAIL, "", "Error saving to database", "");
+            }
+
+        }catch (ExcelFileParseException e) {
+            logger.error("Error parsing 'Statement of Cash flows' file with error: " + e.getMessage());
+            return new FileUploadResultDto(ResponseStatusType.FAIL, "", e.getMessage(), "");
+        }catch (Exception e){
+            logger.error("Error parsing 'Statement of Cash flows' file with error: " + e.getMessage());
+            return new FileUploadResultDto(ResponseStatusType.FAIL, "", "Error processing 'Statement of Cashflows' file'", "");
+        }
     }
-
-//    private FileUploadResultDto parseStatementCashFlows(FilesDto filesDto, Long reportId){
-//        try {
-//            /* PARSE EXCEL (RAW) *******************************************************************************/
-//            Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
-//            List<ConsolidatedReportRecordDto> records = parseStatementCashFlowsRaw(rowIterator);
-//            //printRecords(records);
-//
-//            /* NORMALIZE TEXT FIELDS ********************************************************************************/
-//            normalizeTextFields(records);
-//
-//            /* CHECK FORMAT *****************************************************************************************/
-//            for(ConsolidatedReportRecordDto recordDto: records) {
-//                if (!isStatementCashFlowsSpecialName(recordDto.getName()) && !recordDto.hasNonEmptyClassification()) {
-//                    String errorMessage = "Record '" + recordDto.getName() + "' does not have any matching classification/header. Check for required indentations.";
-//                    logger.error(errorMessage);
-//                    throw new ExcelFileParseException(errorMessage);
-//                }
-//            }
-//
-//            /* CHECK SUMS/TOTALS ***********************************************************************************/
-//            PeriodicReportDto report = this.periodicReportService.getPeriodicReport(reportId);
-//            checkTotalSumsGeneric(records, 3, "Net increase (decrease) in cash and cash equivalents", "Tarragon");
-//            checkSumsStatementCashFlows(records, report.getReportDate());
-//
-//
-//            /* CHECK ENTITIES AND ASSEMBLE *************************************************************************/
-//            List<ReportingPEStatementCashflows> entities = this.statementCashflowsService.assembleList(records, reportId); // TODO: tranche type constant !!!
-//
-//            /* SAVE TO DB ******************************************************************************************/
-//            boolean saved = this.statementCashflowsService.save(entities);
-//
-//            if(saved){
-//                logger.info("Successfully parsed 'Statement of Cashflows' file");
-//                return new FileUploadResultDto(ResponseStatusType.SUCCESS, "", "Successfully processed the file - Statement of Cashflows", "");
-//            }else{
-//                logger.error("Error saving 'Statement of Cashflows' file parsed data into database");
-//                return new FileUploadResultDto(ResponseStatusType.FAIL, "", "Error saving to database", "");
-//            }
-//
-//        }catch (ExcelFileParseException e) {
-//            logger.error("Error parsing 'Statement of Cash flows' file with error: " + e.getMessage());
-//            return new FileUploadResultDto(ResponseStatusType.FAIL, "", e.getMessage(), "");
-//        }catch (Exception e){
-//            logger.error("Error parsing 'Statement of Cash flows' file with error: " + e.getMessage());
-//            return new FileUploadResultDto(ResponseStatusType.FAIL, "", "Error processing 'Statement of Cashflows' file'", "");
-//        }
-//    }
 
     private List<ConsolidatedReportRecordDto> parseStatementCashFlowsRaw(Iterator<Row> rowIterator){
         List<ConsolidatedReportRecordDto> records = new ArrayList<>();
@@ -2252,7 +2288,6 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
 
     private List<ConsolidatedReportRecordDto>  parseTarragonStatementChangesSheetRaw(Iterator<Row> rowIterator){
         List<ConsolidatedReportRecordDto> records = new ArrayList<>();
-        int rowNum = 0;
         String previousRowHeader = null;
         while (rowIterator.hasNext()) { // each row
             Row row = rowIterator.next();
@@ -2264,6 +2299,7 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                     ExcelUtils.isEmptyCell(row.getCell(10));
 
             if(ExcelUtils.getStringValueFromCell(cell) != null && isEmptyValuesRow){
+                // two-line names
                 previousRowHeader = ExcelUtils.getStringValueFromCell(cell);
                 continue;
             }else if(ExcelUtils.getStringValueFromCell(cell) != null ||
@@ -2281,30 +2317,24 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                 values[3] = ExcelUtils.getDoubleValueFromCell(row.getCell(8));
                 values[4] = ExcelUtils.getDoubleValueFromCell(row.getCell(10));
 
-
                 ConsolidatedReportRecordDto recordDto = new ConsolidatedReportRecordDto();
                 recordDto.setName(name);
                 recordDto.setValues(values);
                 // total sum
                 recordDto.setWithSumFormula(isSumFormulaCell(row.getCell(2)));
-
                 records.add(recordDto);
 
-
             }else if(!isEmptyValuesRow){
-                if(ExcelUtils.getStringValueFromCell(row.getCell(2)) != null && !ExcelUtils.getStringValueFromCell(row.getCell(2)).startsWith("Tranche") &&
-                        ExcelUtils.getStringValueFromCell(row.getCell(4)) != null && !ExcelUtils.getStringValueFromCell(row.getCell(4)).startsWith("Tranche") &&
-                        ExcelUtils.getStringValueFromCell(row.getCell(6)) != null && !ExcelUtils.getStringValueFromCell(row.getCell(6)).startsWith("Tranche") &&
-                        ExcelUtils.getStringValueFromCell(row.getCell(8)) != null && !ExcelUtils.getStringValueFromCell(row.getCell(8)).startsWith("Tranche") &&
-                        ExcelUtils.getStringValueFromCell(row.getCell(10)) != null && !ExcelUtils.getStringValueFromCell(row.getCell(10)).startsWith("Tranche")) {
+                if(ExcelUtils.getStringValueFromCell(row.getCell(2)) != null && !ExcelUtils.getStringValueFromCell(row.getCell(2)).startsWith(PeriodicReportConstants.TRANCHE_LOWER_CASE) &&
+                        ExcelUtils.getStringValueFromCell(row.getCell(4)) != null && !ExcelUtils.getStringValueFromCell(row.getCell(4)).startsWith(PeriodicReportConstants.TRANCHE_LOWER_CASE) &&
+                        ExcelUtils.getStringValueFromCell(row.getCell(6)) != null && !ExcelUtils.getStringValueFromCell(row.getCell(6)).startsWith(PeriodicReportConstants.TRANCHE_LOWER_CASE) &&
+                        ExcelUtils.getStringValueFromCell(row.getCell(8)) != null && !ExcelUtils.getStringValueFromCell(row.getCell(8)).startsWith(PeriodicReportConstants.TRANCHE_LOWER_CASE) &&
+                        ExcelUtils.getStringValueFromCell(row.getCell(10)) != null && !ExcelUtils.getStringValueFromCell(row.getCell(10)).startsWith(PeriodicReportConstants.TRANCHE_LOWER_CASE)) {
                     String errorMessage = "Expected text value for record name, found : '" + ExcelUtils.getTextValueFromAnyCell(cell) + "'";
                     logger.error(errorMessage);
                     throw new ExcelFileParseException(errorMessage);
                 }
-
             }
-
-            rowNum++;
             previousRowHeader = null;
         }
         return records;
@@ -2443,6 +2473,7 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
         return records;
     }
 
+    @Deprecated
     private FileUploadResultDto parseSingularGeneralLedger(FilesDto filesDto, Long reportId){
         try {
 
@@ -2474,6 +2505,7 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
         }
     }
 
+    @Deprecated
     private List<SingularityGeneralLedgerBalanceRecordDto> parseSingularGeneralLedgerRaw(Iterator<Row> rowIterator){
         List<SingularityGeneralLedgerBalanceRecordDto> records = new ArrayList<>();
         boolean tableHeaderChecked = false;
@@ -2488,61 +2520,61 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                 if(ExcelUtils.getStringValueFromCell(row.getCell(0)) != null){
                     record.setAcronym(row.getCell(0).getStringCellValue());
                 }else{
-                    logger.error("Error parsing 'Singularity General Ledger Balance' file: could not set 'acronym' (cell #1)");
-                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: could not set 'acronym' (cell #1)");
+//                    logger.error("Error parsing 'Singularity General Ledger Balance' file: could not set 'acronym' (cell #1)");
+//                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: could not set 'acronym' (cell #1)");
                 }
                 /* Balance date */
                 if(ExcelUtils.isNotEmptyCell(row.getCell(1)) && row.getCell(1).getCellType() == Cell.CELL_TYPE_NUMERIC){
                     Date balanceDate = row.getCell(1).getDateCellValue();
                     if(balanceDate == null){
-                        logger.error("Error parsing 'Singularity General Ledger Balance' file: balance date is invalid - '" + row.getCell(1).getNumericCellValue() + "'");
-                        throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: balance date is invalid - '" + row.getCell(1).getNumericCellValue() + "'");
+//                        logger.error("Error parsing 'Singularity General Ledger Balance' file: balance date is invalid - '" + row.getCell(1).getNumericCellValue() + "'");
+//                        throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: balance date is invalid - '" + row.getCell(1).getNumericCellValue() + "'");
                     }else{
                         record.setBalanceDate(balanceDate);
                     }
-                }else{
-                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'balanceDate' is missing or invalid.");
-                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'balanceDate' is missing or invalid.");
+//                }else{
+//                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'balanceDate' is missing or invalid.");
+//                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'balanceDate' is missing or invalid.");
                 }
 
                 /* Financial statement category */
                 if(ExcelUtils.getStringValueFromCell(row.getCell(2)) != null){
                     record.setFinancialStatementCategory(row.getCell(2).getStringCellValue());
                 }else{
-                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'financial statement category' is missing or invalid");
-                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'financial statement category' is missing or invalid");
+//                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'financial statement category' is missing or invalid");
+//                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'financial statement category' is missing or invalid");
                 }
 
                 /* GL Account  */
                 if(ExcelUtils.getStringValueFromCell(row.getCell(3)) != null){
                     record.setGLAccount(row.getCell(3).getStringCellValue());
                 }else{
-                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'GL Account' is missing or invalid");
-                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'GL Account' is missing or invalid");
+//                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'GL Account' is missing or invalid");
+//                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'GL Account' is missing or invalid");
                 }
 
                 /* Financial statement category description */
                 if(ExcelUtils.getStringValueFromCell(row.getCell(4)) != null){
                     record.setFinancialStatementCategoryDescription(row.getCell(4).getStringCellValue());
                 }else{
-                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'financial statement category description' is missing or invalid");
-                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'financial statement category description' is missing or invalid");
+//                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'financial statement category description' is missing or invalid");
+//                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'financial statement category description' is missing or invalid");
                 }
 
                 /* Chart of Accounts Description */
                 if(ExcelUtils.getStringValueFromCell(row.getCell(5)) != null){
                     record.setChartAccountsDescription(row.getCell(5).getStringCellValue());
                 }else{
-                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'Chart of accounts description' is missing or invalid");
-                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'Chart of accounts description' is missing or invalid");
+//                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'Chart of accounts description' is missing or invalid");
+//                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'Chart of accounts description' is missing or invalid");
                 }
 
                 /* Chart of Accounts Long Description */
                 if(ExcelUtils.getStringValueFromCell(row.getCell(6)) != null){
                     record.setChartAccountsLongDescription(row.getCell(6).getStringCellValue());
                 }else{
-                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'Chart of accounts long description' is missing or invalid");
-                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'Chart of accounts long description' is missing or invalid");
+//                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'Chart of accounts long description' is missing or invalid");
+//                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'Chart of accounts long description' is missing or invalid");
                 }
 
                 /* Short name */
@@ -2554,24 +2586,24 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                 if(ExcelUtils.isNotEmptyCell(row.getCell(12)) && row.getCell(12).getCellType() == Cell.CELL_TYPE_NUMERIC){
                     record.setGLAccountBalance(row.getCell(12).getNumericCellValue());
                 }else{
-                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'GL Account Balance' is missing or invalid");
-                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'GL Account Balance' is missing or invalid");
+//                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'GL Account Balance' is missing or invalid");
+//                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'GL Account Balance' is missing or invalid");
                 }
 
                 /* Seg Val CCY */
                 if(ExcelUtils.getStringValueFromCell(row.getCell(13)) != null){
                     record.setSegValCCY(row.getCell(13).getStringCellValue());
-                }else{
-                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'Seg Val CCY' is missing or invalid");
-                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'Seg Val CCY' is missing or invalid");
+//                }else{
+//                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'Seg Val CCY' is missing or invalid");
+//                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'Seg Val CCY' is missing or invalid");
                 }
 
                 /* Fund CCY */
                 if(ExcelUtils.getStringValueFromCell(row.getCell(14)) != null){
                     record.setFundCCY(row.getCell(14).getStringCellValue());
-                }else{
-                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'Fund CCY' is missing or invalid");
-                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'Fund CCY' is missing or invalid");
+//                }else{
+//                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'Fund CCY' is missing or invalid");
+//                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'Fund CCY' is missing or invalid");
                 }
                 records.add(record);
             }else{
@@ -2590,6 +2622,7 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
         return records;
     }
 
+    @Deprecated
     private boolean singularityGeneralLedgerBalanceTableHeaderCheck(Row row){
         return ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "Acronym") &&
                 ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(1), "Balance Date") &&
@@ -2608,18 +2641,141 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                 ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(14), "Fund CCY");
     }
 
+    private FileUploadResultDto parseSingularGeneralLedgerV2(FilesDto filesDto, Long reportId) throws ExcelFileParseException {
+        List<SingularityGeneralLedgerBalanceRecordDto> sheet1Records = new ArrayList<>();
+        try {
+
+            /* PARSE EXCEL (RAW) *******************************************************************************/
+            // Sheet 1 - Tranche A
+            Iterator<Row> rowIterator1 = getRowIterator(filesDto, 0);
+            sheet1Records = parseSingularGeneralLedgerV2SheetRaw(rowIterator1);
+
+            /* SAVE TO DB **************************************************************************************/
+            List<ReportingHFGeneralLedgerBalance> entities = this.generalLedgerBalanceService.assembleList(sheet1Records, reportId);
+            boolean saved = this.generalLedgerBalanceService.save(entities);
+
+            if(saved){
+                String successMessage = "Successfully processed the file - Singularity General Ledger";
+                logger.info(successMessage);
+                return new FileUploadResultDto(ResponseStatusType.SUCCESS, "", successMessage, "");
+            }else{
+                logger.error("Error saving 'Singularity General Ledger' file parsed data into database");
+                return new FileUploadResultDto(ResponseStatusType.FAIL, "", "Error saving to database", "");
+            }
+
+        }catch (ExcelFileParseException e) {
+            logger.error("Error parsing 'Singularity General Ledger' file with error: " + e.getMessage());
+            return new FileUploadResultDto(ResponseStatusType.FAIL, "", e.getMessage(), "");
+        }catch (Exception e){
+            logger.error("Error parsing 'Singularity General Ledger' file with error. Stack trace: \n" + ExceptionUtils.getStackTrace(e));
+            return new FileUploadResultDto(ResponseStatusType.FAIL, "", "Error when processing 'Singularity General Ledger' file", "");
+        }
+    }
+
+    private List<SingularityGeneralLedgerBalanceRecordDto> parseSingularGeneralLedgerV2SheetRaw(Iterator<Row> rowIterator){
+        List<SingularityGeneralLedgerBalanceRecordDto> records = new ArrayList<>();
+        if(rowIterator != null) {
+            int rowNum = 0;
+            Map<String, Integer> headers = new HashMap<>();
+            while (rowIterator.hasNext()) { // each row
+                Row row = rowIterator.next();
+                if(rowNum == 0){
+                    // First row, must contain table header
+                    Iterator<Cell> cellIterator = row.cellIterator();
+                    while(cellIterator != null && cellIterator.hasNext()){
+                        Cell cell = cellIterator.next();
+                        if(StringUtils.isNotEmpty(cell.getStringCellValue())) {
+                            headers.put(cell.getStringCellValue(), cell.getColumnIndex());
+                        }else{
+                            // skip empty cells
+                        }
+                    }
+                    if(headers.isEmpty()){
+                        return null;
+                    }
+                }else{
+                    SingularityGeneralLedgerBalanceRecordDto record = new SingularityGeneralLedgerBalanceRecordDto();
+
+                    final String portfolioAcronymHeader = PeriodicReportConstants.PARSE_SINGULAR_GL_V2_HEADER_PORTFOLIO_ACRONYM;
+                    if(headers.get(portfolioAcronymHeader) != null){
+                        String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(portfolioAcronymHeader).intValue()));
+                        record.setAcronym(value != null ? value.trim() : value);
+                    }
+                    final String groupCategoryHeader = PeriodicReportConstants.PARSE_SINGULAR_GL_V2_HEADER_GROUP_CATEGORY;
+                    if(headers.get(groupCategoryHeader) != null){
+                        String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(groupCategoryHeader).intValue()));
+                        record.setFinancialStatementCategory(value != null ? value.trim() : value);
+                    }
+                    final String groupDescriptionHeader = PeriodicReportConstants.PARSE_SINGULAR_GL_V2_HEADER_GROUP_DESCRIPTION;
+                    if(headers.get(groupDescriptionHeader) != null){
+                        String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(groupDescriptionHeader).intValue()));
+                        record.setFinancialStatementCategoryDescription(value != null ? value.trim() : value);
+                    }
+                    final String categoryNameHeader = PeriodicReportConstants.PARSE_SINGULAR_GL_V2_HEADER_CATEGORY_NAME;
+                    if(headers.get(categoryNameHeader) != null){
+                        String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(categoryNameHeader).intValue()));
+                        record.setChartAccountsDescription(value != null ? value.trim() : value);
+                    }
+                    final String categoryLongNameHeader = PeriodicReportConstants.PARSE_SINGULAR_GL_V2_HEADER_CATEGORY_LONG_NAME;
+                    if(headers.get(categoryLongNameHeader) != null){
+                        String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(categoryLongNameHeader).intValue()));
+                        record.setChartAccountsLongDescription(value != null ? value.trim() : value);
+                    }
+                    final String shortNameHeader = PeriodicReportConstants.PARSE_SINGULAR_GL_V2_HEADER_SHORT_NAME;
+                    if(headers.get(shortNameHeader) != null){
+                        String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(shortNameHeader).intValue()));
+                        record.setShortName(value != null ? value.trim() : value);
+                    }
+                    final String segValHeader = PeriodicReportConstants.PARSE_SINGULAR_GL_V2_HEADER_SEGVAL1;
+                    if(headers.get(segValHeader) != null){
+                        String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(segValHeader).intValue()));
+                        if(row.getCell(headers.get(segValHeader).intValue()).getCellType() == Cell.CELL_TYPE_NUMERIC){
+                            try {
+                                Double parsedValue = Double.parseDouble(value.trim());
+                                int intValue = (int) parsedValue.doubleValue();
+                                record.setGLAccount(intValue + "");
+                            }catch (Exception ex){
+                            }
+                        }else{
+                            record.setGLAccount(value);
+                        }
+                    }
+                    final String endingBalanceHeader = PeriodicReportConstants.PARSE_SINGULAR_GL_V2_HEADER_ENDING_BALANCE;
+                    if(headers.get(endingBalanceHeader) != null){
+                        String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(endingBalanceHeader).intValue()));
+                        Double doubleValue = MathUtils.getDouble(value);
+                        record.setGLAccountBalance(doubleValue);
+                    }
+                    final String segValCCYHeader = PeriodicReportConstants.PARSE_SINGULAR_GL_V2_HEADER_SEGVAL_CCY;
+                    if(headers.get(segValCCYHeader) != null){
+                        String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(segValCCYHeader).intValue()));
+                        record.setSegValCCY(value != null ? value.trim() : value);
+                        record.setFundCCY(value != null ? value.trim() : value);
+                    }
+                    if(!record.isEmpty()){
+                        records.add(record);
+                    }
+                }
+                rowNum++;
+            }
+        }
+        return records;
+    }
+
     private FileUploadResultDto parseSingularNOAL(FilesDto filesDto, Long reportId, int tranche){
         try {
 
             /* PARSE EXCEL (RAW) *******************************************************************************/
             Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
-            List<SingularityNOALRecordDto> records = parseSingularNOALRaw(rowIterator);
+            //List<SingularityNOALRecordDto> records = parseSingularNOALRaw(rowIterator);
+            List<SingularityNOALRecordDto> records = parseSingularNOALRawNEW(rowIterator);
             //printRecords(records);
 
             /* CHECK ENTITIES AND ASSEMBLE **********************************************************************/
 
             String trancheName = tranche == 1 ? "[Tranche A] " : tranche == 2 ? "[Tranche B] " : "";
-            checkNOALTotalSums(records, trancheName);
+            //checkNOALTotalSums(records, trancheName);
+            checkNOALTotalSumsNEW(records, trancheName);
 
             List<ReportingHFNOAL> entities = this.hfNOALService.assembleList(records, reportId, tranche);
 
@@ -2643,6 +2799,107 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
         }
     }
 
+    private FileUploadResultDto parseSingularITD(FilesDto filesDto, Long reportId) throws ExcelFileParseException {
+        List<SingularityITDRecordDto> sheet1Records = new ArrayList<>();
+        List<SingularityITDRecordDto> sheet2Records = new ArrayList<>();
+        try {
+
+            /* PARSE EXCEL (RAW) *******************************************************************************/
+            // Sheet 1 - Tranche A
+            Iterator<Row> rowIterator1 = getRowIterator(filesDto, 0);
+            sheet1Records = parseSingularITDSheetRaw(rowIterator1, 1);
+
+            Iterator<Row> rowIterator2 = getRowIterator(filesDto, 1);
+            sheet2Records = parseSingularITDSheetRaw(rowIterator2, 2);
+
+            sheet1Records.addAll(sheet2Records);
+
+            /* SAVE TO DB **************************************************************************************/
+            List<ReportingHFITD> entities = this.hfITDService.assembleList(sheet1Records, reportId);
+            boolean saved = this.hfITDService.save(entities);
+
+            if(saved){
+                String successMessage = "Successfully processed the file - Singularity ITD";
+                logger.info(successMessage);
+                return new FileUploadResultDto(ResponseStatusType.SUCCESS, "", successMessage, "");
+            }else{
+                logger.error("Error saving 'Singularity ITD' file parsed data into database");
+                return new FileUploadResultDto(ResponseStatusType.FAIL, "", "Error saving to database", "");
+            }
+
+        }catch (ExcelFileParseException e) {
+            logger.error("Error parsing 'Singularity ITD' file with error: " + e.getMessage());
+            return new FileUploadResultDto(ResponseStatusType.FAIL, "", e.getMessage(), "");
+        }catch (Exception e){
+            logger.error("Error parsing 'Singularity ITD' file with error. Stack trace: \n" + ExceptionUtils.getStackTrace(e));
+            return new FileUploadResultDto(ResponseStatusType.FAIL, "", "Error when processing 'Singularity ITD' file", "");
+        }
+    }
+
+    private List<SingularityITDRecordDto> parseSingularITDSheetRaw(Iterator<Row> rowIterator, int tranche){
+        List<SingularityITDRecordDto> records = new ArrayList<>();
+        if(rowIterator != null) {
+            int rowNum = 0;
+            Map<String, Integer> headers = new HashMap<>();
+            while (rowIterator.hasNext()) { // each row
+                Row row = rowIterator.next();
+                if(rowNum == 0){
+                    // First row, must contain table header
+                    Iterator<Cell> cellIterator = row.cellIterator();
+                    while(cellIterator != null && cellIterator.hasNext()){
+                        Cell cell = cellIterator.next();
+                        if(StringUtils.isNotEmpty(cell.getStringCellValue())) {
+                            headers.put(cell.getStringCellValue(), cell.getColumnIndex());
+                        }else{
+                            // skip empty cells
+                        }
+                    }
+                    if(headers.isEmpty()){
+                        return null;
+                    }
+                }else{
+                    SingularityITDRecordDto record = new SingularityITDRecordDto();
+
+                    final String investmentNameHeader = PeriodicReportConstants.PARSE_SINGULAR_ITD_HEADER_INVESTMENT_NAME;
+                    if(headers.get(investmentNameHeader) != null){
+                        String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(investmentNameHeader).intValue()));
+                        record.setInvestmentName(value != null ? value.trim() : value);
+                    }
+                    final String subscriptionsHeader = PeriodicReportConstants.PARSE_SINGULAR_ITD_HEADER_SUBSCRIPTIONS;
+                    if(headers.get(subscriptionsHeader) != null){
+                        String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(subscriptionsHeader).intValue()));
+                        Double doubleValue = MathUtils.getDouble(value);
+                        record.setSubscriptions(doubleValue);
+                    }
+                    final String profitLossHeader = PeriodicReportConstants.PARSE_SINGULAR_ITD_HEADER_PROFIT_LOSS;
+                    if(headers.get(profitLossHeader) != null){
+                        String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(profitLossHeader).intValue()));
+                        Double doubleValue = MathUtils.getDouble(value);
+                        record.setProfitLoss(doubleValue);
+                    }
+                    final String redemptionsHeader = PeriodicReportConstants.PARSE_SINGULAR_ITD_HEADER_REDEMPTIONS;
+                    if(headers.get(redemptionsHeader) != null){
+                        String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(redemptionsHeader).intValue()));
+                        Double doubleValue = MathUtils.getDouble(value);
+                        record.setRedemptions(doubleValue);
+                    }
+                    final String closingBalanceHeader = PeriodicReportConstants.PARSE_SINGULAR_ITD_HEADER_CLOSING_BALANCE;
+                    if(headers.get(closingBalanceHeader) != null){
+                        String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(closingBalanceHeader).intValue()));
+                        Double doubleValue = MathUtils.getDouble(value);
+                        record.setClosingBalance(doubleValue);
+                    }
+                    record.setTranche(tranche);
+                    if(!record.isEmpty()){
+                        records.add(record);
+                    }
+                }
+                rowNum++;
+            }
+        }
+        return records;
+    }
+
     private List<SingularityNOALRecordDto> parseSingularNOALRaw(Iterator<Row> rowIterator){
         List<SingularityNOALRecordDto> records = new ArrayList<>();
 
@@ -2655,10 +2912,6 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                     // skip repeating table headers
                     continue;
                 }else if(ExcelUtils.getStringValueFromCell(row.getCell(0)) != null){
-
-                    // TODO: account ??
-
-                    // TODO: REPORT TOTAL ???!!!
                     if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "REPORT TOTAL") ){
                         SingularityNOALRecordDto record = new SingularityNOALRecordDto();
                         record.setTransaction(row.getCell(0).getStringCellValue());
@@ -2670,18 +2923,15 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                         }
                         records.add(record);
                         break;
-                    }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "1500-XXXX-XXX-USD")){
+                    }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), PeriodicReportConstants.GROSVENOR_SUBSCRIPTION_ACCOUNT_NUMBER)){
                         // Subscriptions
-                        accountNumber = "1500-XXXX-XXX-USD";
-
-                    }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "1550-XXXX-XXX-USD")){
+                        accountNumber = PeriodicReportConstants.GROSVENOR_SUBSCRIPTION_ACCOUNT_NUMBER;
+                    }else if(ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), PeriodicReportConstants.GROSVENOR_REDEMPTION_ACCOUNT_NUMBER)){
                         // Redemptions
-                        accountNumber = "1550-XXXX-XXX-USD";
-
+                        accountNumber = PeriodicReportConstants.GROSVENOR_REDEMPTION_ACCOUNT_NUMBER;
                     }else{
                         accountNumber = ExcelUtils.getStringValueFromCell(row.getCell(0));
                     }
-
                 }else if(isSingularityNOALRecordNotEmpty(row)){
                     SingularityNOALRecordDto record = new SingularityNOALRecordDto();
                     /* Date */
@@ -2794,6 +3044,135 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
         return records;
     }
 
+    private List<SingularityNOALRecordDto> parseSingularNOALRawNEW(Iterator<Row> rowIterator){
+        List<SingularityNOALRecordDto> records = new ArrayList<>();
+
+        boolean tableHeaderChecked = false;
+        while(rowIterator.hasNext()){
+            Row row = rowIterator.next();
+            if(tableHeaderChecked){
+                if(singularityNOALTableHeaderCheckNEW(row)){
+                    // skip repeating table headers
+                    continue;
+                }
+                if(isSingularityNOALRecordNotEmptyNEW(row)){
+                    SingularityNOALRecordDto record = new SingularityNOALRecordDto();
+                    boolean isTotalRecord = false;
+                    if((ExcelUtils.getStringValueFromCell(row.getCell(6)) != null &&
+                            ExcelUtils.getStringValueFromCell(row.getCell(6)).equalsIgnoreCase(PeriodicReportConstants.BNY_MELON_NOAL_TOTAL_NAME)) ||
+                            (ExcelUtils.getStringValueFromCell(row.getCell(7)) != null &&
+                                    ExcelUtils.getStringValueFromCell(row.getCell(7)).equalsIgnoreCase(PeriodicReportConstants.BNY_MELON_NOAL_REPORT_TOTAL_NAME))){
+                        isTotalRecord = true;
+                    }
+
+                    /* Genera Ledger Account  */
+                    if(ExcelUtils.getStringValueFromCell(row.getCell(0)) != null){
+                        record.setAccountNumber(row.getCell(0).getStringCellValue());
+                    }
+
+                    /* Date */
+                    if(ExcelUtils.isNotEmptyCell(row.getCell(2)) && row.getCell(2).getCellType() == Cell.CELL_TYPE_NUMERIC){
+                        Date date = row.getCell(2).getDateCellValue();
+                        if(date == null && !isTotalRecord){
+                            logger.error("Error parsing 'Singularity NOAL' file: date is invalid '" + ExcelUtils.getTextValueFromAnyCell(row.getCell(2)) + "'. Expected format 'dd.MM.yyyy'.");
+                            throw new ExcelFileParseException("Error parsing 'Singularity NOAL' file: date is invalid '" + ExcelUtils.getTextValueFromAnyCell(row.getCell(2)) + "'. Expected format'dd.MM.yyyy'.");
+                        }else{
+                            record.setDate(date);
+                        }
+                    }else if(ExcelUtils.getStringValueFromCell(row.getCell(2)) != null){
+                        String dateText = row.getCell(2).getStringCellValue();
+                        if(DateUtils.getDate_MMddyyyy(dateText) == null && !isTotalRecord){
+                            logger.error("Error parsing 'Singularity NOAL' file: error parsing date - '" + dateText + "'. Expected format 'MM/dd/yyyy'.");
+                            throw new ExcelFileParseException("Error parsing 'Singularity NOAL' file: error parsing date - '" + dateText + "'. Expected format 'MM/dd/yyyy'.");
+                        }else{
+                            record.setDate(DateUtils.getDate_MMddyyyy(dateText));
+                        }
+                    }else{
+                        if(!isTotalRecord) {
+                            logger.error("Error parsing 'Singularity NOAL' file: 'date' is missing for record #" + (records.size() + 1));
+                            throw new ExcelFileParseException("Error parsing 'Singularity NOAL' file: 'date' is missing for record #" + (records.size() + 1));
+                        }
+                    }
+
+                    /* Transaction */
+                    if(ExcelUtils.getStringValueFromCell(row.getCell(3)) != null){
+                        record.setTransaction(row.getCell(3).getStringCellValue());
+                    }else{
+                        if(!ExcelUtils.isEmptyCell(row.getCell(7)) &&
+                                row.getCell(7).getCellType() == Cell.CELL_TYPE_NUMERIC && row.getCell(7).getNumericCellValue() != 0){
+                            // 'transaction' cannot be empty if transaction amount is present
+                            if(!isTotalRecord) {
+                                logger.error("Error parsing 'Singularity NOAL' file: 'transaction' is missing or invalid");
+                                throw new ExcelFileParseException("Error parsing 'Singularity NOAL' file: 'transaction' is missing or invalid");
+                            }
+                        }
+                    }
+
+                    /* Investor Account/Portfolio fund  */
+                    if(ExcelUtils.getStringValueFromCell(row.getCell(4)) != null){
+                        record.setName(row.getCell(4).getStringCellValue());
+                    }
+
+                    /* Effective Date */
+                    if(ExcelUtils.isNotEmptyCell(row.getCell(5)) && row.getCell(5).getCellType() == Cell.CELL_TYPE_NUMERIC){
+                        Date date = row.getCell(5).getDateCellValue();
+                        if(date == null){
+                        }else{
+                            record.setEffectiveDate(date);
+                        }
+                    }else if(ExcelUtils.getStringValueFromCell(row.getCell(5)) != null){
+                        String dateText = row.getCell(5).getStringCellValue();
+                        if(DateUtils.getDate_MMddyyyy(dateText) == null){
+                        }else{
+                            record.setEffectiveDate(DateUtils.getDate_MMddyyyy(dateText));
+                        }
+                    }
+
+                    /* Notes  */
+                    if(ExcelUtils.getStringValueFromCell(row.getCell(6)) != null){
+                        record.setNotes(row.getCell(6).getStringCellValue());
+                    }
+
+                    /* Functional Amount*/
+                    if(ExcelUtils.isNotEmptyCell(row.getCell(7)) && row.getCell(7).getCellType() == Cell.CELL_TYPE_NUMERIC) {
+                        record.setFunctionalAmount(row.getCell(7).getNumericCellValue());
+                    }
+
+                    /* Transaction Amount*/
+                    if(ExcelUtils.isNotEmptyCell(row.getCell(9)) && row.getCell(9).getCellType() == Cell.CELL_TYPE_NUMERIC){
+                        record.setTransactionAmount(row.getCell(9).getNumericCellValue());
+                    }
+
+                    /* Transaction Amount CCY  */
+                    record.setTransactionAmountCCY(null);
+                    /* Functional Amount CCY  */
+                    record.setFunctionalAmountCCY(null);
+
+                    /* TOTAL RECORDS */
+                    if(isTotalRecord){
+                        if(ExcelUtils.getStringValueFromCell(row.getCell(6)) != null &&
+                                ExcelUtils.getStringValueFromCell(row.getCell(6)).equalsIgnoreCase(PeriodicReportConstants.BNY_MELON_NOAL_TOTAL_NAME)) {
+                            record.setTransaction(ExcelUtils.getStringValueFromCell(row.getCell(6)));
+                        }else if(ExcelUtils.getStringValueFromCell(row.getCell(7)) != null &&
+                                ExcelUtils.getStringValueFromCell(row.getCell(7)).equalsIgnoreCase(PeriodicReportConstants.BNY_MELON_NOAL_REPORT_TOTAL_NAME)) {
+                            record.setTransaction(ExcelUtils.getStringValueFromCell(row.getCell(7)));
+                        }
+                    }
+
+                    records.add(record);
+                }
+            }else{
+                tableHeaderChecked = singularityNOALTableHeaderCheckNEW(row);
+            }
+
+        }
+        if(!tableHeaderChecked){
+            logger.error("Table header check failed for 'Singularity NOAL' file. Expected: Date, Transaction, Investor Account / Portfolio Fund, Effective Date, Amount, CCY, Amount, CCY");
+            throw new ExcelFileParseException("Table header check failed for 'Singularity NOsAL' file. Expected: Date, Transaction, Investor Account / Portfolio Fund, Effective Date, Amount, CCY, Amount, CCY");
+        }
+        return records;
+    }
+
     private void checkNOALTotalSums(List<SingularityNOALRecordDto> records, String trancheName){
         Double functionalSum = 0.0;
         Double endingBalanceSum = 0.0;
@@ -2828,6 +3207,50 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
         }
     }
 
+    private void checkNOALTotalSumsNEW(List<SingularityNOALRecordDto> records, String trancheName){
+        Double transactionalSum = 0.0;
+        Double endingBalanceSum = 0.0;
+        Double totalEndingBalanceSum = 0.0;
+        if(records != null){
+            for(SingularityNOALRecordDto record: records){
+                if(record.getTransaction() == null ){
+                    if(record.getTransactionAmount() != null && record.getTransactionAmount().doubleValue() != 0){
+                        logger.error(trancheName + "NOAL 'Transaction' value is missing");
+                        throw new ExcelFileParseException(trancheName + "NOAL 'Transaction' value is missing");
+                    }
+                } else if(record.getTransaction().equalsIgnoreCase("Ending Balance") || record.getTransaction().equalsIgnoreCase("Ending")){
+                    if(endingBalanceSum.doubleValue() != NumberUtils.getDouble(record.getFunctionalAmount())){
+                        String errorMessage = trancheName + "NOAL Ending Balance does not match for '" + record.getName() +
+                                "': found " + NumberUtils.getDouble(record.getFunctionalAmount()) + ", expected " + endingBalanceSum;
+                        logger.error(errorMessage);
+                        throw new ExcelFileParseException(errorMessage);
+                    }
+                    endingBalanceSum = 0.0;
+                    transactionalSum = MathUtils.add(transactionalSum, record.getTransactionAmount());
+                }else if(record.getTransaction().equalsIgnoreCase("TOTAL")){
+                    if(totalEndingBalanceSum.doubleValue() != NumberUtils.getDouble(record.getFunctionalAmount())){
+                        String errorMessage = trancheName + "NOAL 'Total' does not match: found " +
+                                NumberUtils.getDouble(record.getFunctionalAmount()) + ", expected " + totalEndingBalanceSum;
+                        logger.error(errorMessage);
+                        throw new ExcelFileParseException(errorMessage);
+                    }
+                    endingBalanceSum = 0.0;
+                }else if(record.getTransaction().equalsIgnoreCase("REPORT TOTAL")){
+                    if(transactionalSum.doubleValue() != NumberUtils.getDouble(record.getTransactionAmount())){
+                        logger.error(trancheName + "NOAL 'Report Total' does not match: found " +
+                                NumberUtils.getDouble(record.getTransactionAmount()) + ", expected " + transactionalSum);
+                        throw new ExcelFileParseException(trancheName + "NOAL 'Report Total' does not match: found " +
+                                NumberUtils.getDouble(record.getTransactionAmount()) + ", expected " + transactionalSum);
+                    }
+                    transactionalSum = 0.0;
+                }else{
+                    endingBalanceSum = MathUtils.add(endingBalanceSum, record.getFunctionalAmount());
+                    totalEndingBalanceSum = MathUtils.add(totalEndingBalanceSum, record.getFunctionalAmount());
+                }
+            }
+        }
+    }
+
     private boolean singularityNOALTableHeaderCheck(Row row){
         return ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(1), "Date") &&
                 ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(4), "Transaction") &&
@@ -2843,11 +3266,33 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
         //ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(18), "Functional")
     }
 
+    private boolean singularityNOALTableHeaderCheckNEW(Row row){
+        return ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0), "General Ledger Account") &&
+                ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2), "Date") &&
+                ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(3), "Transaction") &&
+                ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(4), "Investor/Manager") &&
+                ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(5), "Date") &&
+                ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(6), "Notes") &&
+                ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(7), "Currency") &&
+                ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(9), "Currency");
+
+        // TODO: Transaction and Functional headers
+        // (ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(12), "Transaction") &&
+        //ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(18), "Functional")
+    }
+
     private boolean isSingularityNOALRecordNotEmpty(Row row){
         return ExcelUtils.isNotEmptyCell(row.getCell(1)) || ExcelUtils.isNotEmptyCell(row.getCell(4)) ||
                 ExcelUtils.isNotEmptyCell(row.getCell(7)) || ExcelUtils.isNotEmptyCell(row.getCell(8)) ||
                 ExcelUtils.isNotEmptyCell(row.getCell(11)) || ExcelUtils.isNotEmptyCell(row.getCell(14)) ||
                 ExcelUtils.isNotEmptyCell(row.getCell(17)) || ExcelUtils.isNotEmptyCell(row.getCell(20));
+    }
+
+    private boolean isSingularityNOALRecordNotEmptyNEW(Row row){
+        return ExcelUtils.isNotEmptyCell(row.getCell(0)) || ExcelUtils.isNotEmptyCell(row.getCell(2)) ||
+                ExcelUtils.isNotEmptyCell(row.getCell(3)) || ExcelUtils.isNotEmptyCell(row.getCell(4)) ||
+                ExcelUtils.isNotEmptyCell(row.getCell(5)) || ExcelUtils.isNotEmptyCell(row.getCell(6)) ||
+                ExcelUtils.isNotEmptyCell(row.getCell(7)) || ExcelUtils.isNotEmptyCell(row.getCell(9));
     }
 
     private FileUploadResultDto parseTerraGeneralLedger(FilesDto filesDto, Long reportId){
@@ -2904,14 +3349,14 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                 if(ExcelUtils.isNotEmptyCell(row.getCell(1)) && row.getCell(1).getCellType() == Cell.CELL_TYPE_NUMERIC){
                     Date balanceDate = row.getCell(1).getDateCellValue();
                     if(balanceDate == null){
-                        logger.error("Error parsing 'Terra General Ledger Balance' file: balance date is invalid - '" + row.getCell(1).getNumericCellValue() + "'");
-                        throw new ExcelFileParseException("Error parsing 'Terra General Ledger Balance' file: balance date is invalid - '" + row.getCell(1).getNumericCellValue() + "'");
+//                        logger.error("Error parsing 'Terra General Ledger Balance' file: balance date is invalid - '" + row.getCell(1).getNumericCellValue() + "'");
+//                        throw new ExcelFileParseException("Error parsing 'Terra General Ledger Balance' file: balance date is invalid - '" + row.getCell(1).getNumericCellValue() + "'");
                     }else{
                         record.setBalanceDate(balanceDate);
                     }
                 }else{
-                    logger.error("Error parsing 'Terra General Ledger Balance' file: 'balanceDate' is missing or invalid.");
-                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'balanceDate' is missing or invalid.");
+//                    logger.error("Error parsing 'Terra General Ledger Balance' file: 'balanceDate' is missing or invalid.");
+//                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'balanceDate' is missing or invalid.");
                 }
 
                 /* Financial statement category */
@@ -2936,27 +3381,39 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                 }
 
                 /* Carlyle-MRE Terra GP, L.P. */
-                if(ExcelUtils.isNotEmptyCell(row.getCell(5)) && row.getCell(5).getCellType() == Cell.CELL_TYPE_NUMERIC){
+                if(ExcelUtils.isNotEmptyCell(row.getCell(5)) && (row.getCell(5).getCellType() == Cell.CELL_TYPE_NUMERIC) ||
+                        row.getCell(5).getCellType() == Cell.CELL_TYPE_FORMULA){
                     record.setAccountBalanceGP(row.getCell(5).getNumericCellValue());
                 }else{
-                    logger.error("Error parsing 'Terra General Ledger Balance' file: 'Carlyle MRE Terra GP, L.P.' value is missing or invalid");
-                    throw new ExcelFileParseException("Error parsing 'Terra General Ledger Balance' file: 'Carlyle MRE Terra GP, L.P.' value is missing or invalid");
+                    String errorMessage = "Error parsing 'Terra General Ledger Balance' file: 'Carlyle MRE Terra GP, L.P.' value is missing or invalid for record  '" +
+                            ExcelUtils.getTextValueFromAnyCell(row.getCell(2)) + " - " + ExcelUtils.getTextValueFromAnyCell(row.getCell(3)) + " - " +
+                            ExcelUtils.getTextValueFromAnyCell(row.getCell(4)) + "'";
+                    logger.error(errorMessage);
+                    throw new ExcelFileParseException(errorMessage);
                 }
 
                 /* NICK MF */
-                if(ExcelUtils.isNotEmptyCell(row.getCell(6)) && row.getCell(6).getCellType() == Cell.CELL_TYPE_NUMERIC){
+                if(ExcelUtils.isNotEmptyCell(row.getCell(6)) && (row.getCell(6).getCellType() == Cell.CELL_TYPE_NUMERIC ||
+                        row.getCell(6).getCellType() == Cell.CELL_TYPE_FORMULA)){
                     record.setAccountBalanceNICKMF(row.getCell(6).getNumericCellValue());
                 }else{
-                    logger.error("Error parsing 'Terra General Ledger Balance' file: 'NICK MF' is missing or invalid");
-                    throw new ExcelFileParseException("Error parsing 'Terra General Ledger Balance' file: 'NICK MF' is missing or invalid");
+                    String errorMessage = "Error parsing 'Terra General Ledger Balance' file: 'NICK MF' value is missing or invalid for record  '" +
+                            ExcelUtils.getTextValueFromAnyCell(row.getCell(2)) + " - " + ExcelUtils.getTextValueFromAnyCell(row.getCell(3)) + " - " +
+                            ExcelUtils.getTextValueFromAnyCell(row.getCell(4)) + "'";
+                    logger.error(errorMessage);
+                    throw new ExcelFileParseException(errorMessage);
                 }
 
                 /* Grand Total */
-                if(ExcelUtils.isNotEmptyCell(row.getCell(7)) && row.getCell(7).getCellType() == Cell.CELL_TYPE_NUMERIC){
+                if(ExcelUtils.isNotEmptyCell(row.getCell(7)) && (row.getCell(7).getCellType() == Cell.CELL_TYPE_NUMERIC ||
+                        row.getCell(7).getCellType() == Cell.CELL_TYPE_FORMULA)){
                     record.setAccountBalanceGrandTotal(row.getCell(7).getNumericCellValue());
                 }else{
-                    logger.error("Error parsing 'Terra General Ledger Balance' file: 'Grand Total' is missing or invalid");
-                    throw new ExcelFileParseException("Error parsing 'Terra General Ledger Balance' file: 'Grand Total' is missing or invalid");
+                    String errorMessage = "Error parsing 'Terra General Ledger Balance' file: 'Grand Total' value is missing or invalid for record  '" +
+                            ExcelUtils.getTextValueFromAnyCell(row.getCell(2)) + " - " + ExcelUtils.getTextValueFromAnyCell(row.getCell(3)) + " - " +
+                            ExcelUtils.getTextValueFromAnyCell(row.getCell(4)) + "'";
+                    logger.error(errorMessage);
+                    throw new ExcelFileParseException(errorMessage);
                 }
 
                 records.add(record);
@@ -3572,8 +4029,8 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                 HSSFWorkbook workbook = new HSSFWorkbook(inputFile);
                 HSSFSheet sheet = workbook.getSheet(sheetName);
                 if(sheet == null){
-                    logger.error("No sheet found with name '" + sheetName + "'");
-                    return null;
+                    logger.error("Could not find sheet with name '" + sheetName + "'");
+                    throw new ExcelFileParseException("Could not find sheet with name '" + sheetName + "'");
                 }
                 return sheet.iterator();
             } else if (extension.equalsIgnoreCase("xlsx")) {
@@ -3808,7 +4265,7 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                         "' starts with 'Total/Net' and contains formula, but it does not match any classification/header.");
             }
 
-            boolean isStrategy = strategyName != null && this.strategyRepository.findByNameEnAndGroupType(strategyName, Strategy.TYPE_PRIVATE_EQUITY) != null;
+            boolean isStrategy = strategyName != null && this.lookupService.getStrategyByNameEndAndType(strategyName, Strategy.TYPE_PRIVATE_EQUITY) != null;
             if(isStrategy) {
                 logger.error(trancheName + "Record '" + recordDto.getName() +
                         "' starts with 'Total/Net' and contains strategy name but it does not match any classification/header.");
@@ -3933,8 +4390,8 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
     }
 
 
+    @Deprecated
     /* BS Singularity Tranche A *************************************************************************/
-
     private FileUploadResultDto parseBS(FilesDto filesDto){
         List<ConsolidatedReportRecordDto> records = new ArrayList<>();
         try {
@@ -4002,14 +4459,17 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
         }
     }
 
+    @Deprecated
     private FileUploadResultDto parseBSTrancheA(FilesDto filesDto){
         return parseBS(filesDto);
     }
 
+    @Deprecated
     private FileUploadResultDto parseBSTrancheB(FilesDto filesDto){
         return parseBS(filesDto);
     }
 
+    @Deprecated
     /* IMDR Singularity Tranche A ***********************************************************************/
     private FileUploadResultDto parseIMDR(FilesDto filesDto){
 
@@ -4090,14 +4550,17 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
         }
     }
 
+    @Deprecated
     private FileUploadResultDto parseIMDRTrancheA(FilesDto filesDto){
         return parseIMDR(filesDto);
     }
 
+    @Deprecated
     private FileUploadResultDto parseIMDRTrancheB(FilesDto filesDto){
         return parseIMDR(filesDto);
     }
 
+    @Deprecated
     private void checkIMDRTableHeader(Row row, int rowNum){
         if(rowNum == 7){
             if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(5), "Month to Date")){
@@ -4222,8 +4685,8 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
 
     }
 
+    @Deprecated
     /* PAR Singularity Tranche A ************************************************************************/
-
     private FileUploadResultDto parsePAR(FilesDto filesDto){
 
         List<ConsolidatedReportRecordDto> records = new ArrayList<>();
@@ -4295,14 +4758,17 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
         }
     }
 
+    @Deprecated
     private FileUploadResultDto parsePARTrancheA(FilesDto filesDto){
         return parsePAR(filesDto);
     }
 
+    @Deprecated
     private FileUploadResultDto parsePARTrancheB(FilesDto filesDto){
         return parsePAR(filesDto);
     }
 
+    @Deprecated
     private void checkPARTableHeader(Row row, int rowNum){
         if(rowNum == 7){
             if(!ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(7), "as Percentage")){
@@ -4434,6 +4900,7 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
 
     }
 
+    @Deprecated
     /* IS Singularity Tranche A *************************************************************************/
     private FileUploadResultDto parseIS(FilesDto filesDto){
         List<ConsolidatedReportRecordDto> records = new ArrayList<>();
@@ -4521,10 +4988,12 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
         }
     }
 
+    @Deprecated
     private FileUploadResultDto parseISTrancheA(FilesDto filesDto){
         return parseIS(filesDto);
     }
 
+    @Deprecated
     private FileUploadResultDto parseISTrancheB(FilesDto filesDto){
         return parseIS(filesDto);
     }

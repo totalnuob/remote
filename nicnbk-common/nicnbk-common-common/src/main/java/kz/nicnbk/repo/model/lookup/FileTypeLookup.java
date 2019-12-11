@@ -23,6 +23,7 @@ public enum FileTypeLookup {
     NB_REP_SINGULAR_GENERAL_LEDGER("NB_REP_SGL", "reporting/nbrk"),
     NB_REP_SN_TRANCHE_A("NB_REP_SNA", "reporting/nbrk"),
     NB_REP_SN_TRANCHE_B("NB_REP_SNB", "reporting/nbrk"),
+    NB_REP_SN_ITD("NB_REP_ITD", "reporting/nbrk"),
     NB_REP_MONTHLY_CASH_STATEMENT("NB_REP_MCS", "reporting/nbrk"),
     NB_REP_TERRA_GENERAL_LEDGER("NB_REP_TGL", "reporting/nbrk"),
     NB_REP_TERRA_COMBINED("NB_REP_CMB", "reporting/nbrk"),

@@ -6,6 +6,7 @@ package kz.nicnbk.repo.model.lookup.reporting;
 public enum TerraNICChartAccountsLookup {
 
     SECURITY("Security"),
+    INTEREST_RECEIVABLE_BONDS("Interest receivable - bonds"),
     UNREALIZED_GAIN("Unrealised Gain");
 
 

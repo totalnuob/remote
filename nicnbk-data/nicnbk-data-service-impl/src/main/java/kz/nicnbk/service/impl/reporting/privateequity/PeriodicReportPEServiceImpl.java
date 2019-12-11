@@ -142,7 +142,7 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
     }
 
     private boolean isValidFinancialStatementCategory(String value){
-        return StringUtils.isNotEmpty(value) && (value.equalsIgnoreCase("A") || value.equalsIgnoreCase("L") ||
+        return StringUtils.isNotEmpty(value) && (value.equalsIgnoreCase(GeneralLedgerFinancialStatementCategoryLookup.ASSETS.getCode()) || value.equalsIgnoreCase("L") ||
                 value.equalsIgnoreCase("E") || value.equalsIgnoreCase("X") || value.equalsIgnoreCase("I"));
     }
 
@@ -280,9 +280,9 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
                                         if (entity.getNicReportingChartOfAccounts().getNbChartOfAccounts() != null) {
                                             record.setNbAccountNumber(entity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode());
                                         }
+                                        found = true;
+                                        break;
                                     }
-                                    found = true;
-                                    break;
                                 }
                             }
                             if(!found){
@@ -360,7 +360,7 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
             for (TarragonGeneratedGeneralLedgerFormDto record : records) {
                 if (record.getGLAccountBalance() != null && record.getGLAccountBalance().doubleValue() != 0.0) {
                     if (record.getGLAccountBalance() != null && record.getFinancialStatementCategory() != null &&
-                            !record.getFinancialStatementCategory().equalsIgnoreCase("A")) {
+                            !record.getFinancialStatementCategory().equalsIgnoreCase(GeneralLedgerFinancialStatementCategoryLookup.ASSETS.getCode())) {
                         if(record.getNbAccountNumber() != null && record.getNbAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_3053_060) &&
                                 record.getNicAccountName().equalsIgnoreCase(PeriodicReportConstants.RU_3053_060)){
                             // 3053.060 - Прочие краткосрочные финансовые обязательства
@@ -700,7 +700,7 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
                 }
                 TarragonGeneratedGeneralLedgerFormDto record = new TarragonGeneratedGeneralLedgerFormDto();
                 if(isAssets(balanceRecord)){
-                    record.setFinancialStatementCategory("A");
+                    record.setFinancialStatementCategory(GeneralLedgerFinancialStatementCategoryLookup.ASSETS.getCode());
                 }else if(isLiabilities(balanceRecord)){
                     record.setFinancialStatementCategory("L");
                 }else{
@@ -761,7 +761,7 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
                     TarragonGeneratedGeneralLedgerFormDto record = new TarragonGeneratedGeneralLedgerFormDto();
                     record.setAcronym(acronym);
                     record.setBalanceDate(investment.getReport().getReportDate());
-                    record.setFinancialStatementCategory("A");
+                    record.setFinancialStatementCategory(GeneralLedgerFinancialStatementCategoryLookup.ASSETS.getCode());
                     record.setChartAccountsLongDescription(investment.getName());
                     record.setSegVal1("1200");
                     //record.setNbAccountNumber(PeriodicReportConstants.ACC_NUM_2033_010);

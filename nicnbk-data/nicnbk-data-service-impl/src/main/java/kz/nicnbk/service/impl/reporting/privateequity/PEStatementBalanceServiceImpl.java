@@ -56,6 +56,11 @@ public class PEStatementBalanceServiceImpl implements PEStatementBalanceService 
 
         ReportingPEStatementBalance entity = new ReportingPEStatementBalance();
         entity.setName(dto.getName());
+        if(StringUtils.isEmpty(entity.getName())){
+            String errorMessage = "Statement Balance record name is missing.";
+            logger.error(errorMessage);
+            throw new ExcelFileParseException(errorMessage);
+        }
         entity.setTarragonMFTotal(dto.getValues()[0]);
         entity.setTarragonMFShareGP(dto.getValues()[1]);
         entity.setTarragonMFShareNICK(dto.getValues()[2]);

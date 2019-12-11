@@ -38,6 +38,9 @@ public class ConsolidatedReportRecordHolderDto implements BaseDto {
     private List<SingularityNOALRecordDto> noalTrancheAList;
     private List<SingularityNOALRecordDto> noalTrancheBList;
 
+    private List<SingularityITDRecordDto> recordsITDTrancheA;
+    private List<SingularityITDRecordDto> recordsITDTrancheB;
+
     private List<SingularityGeneralLedgerBalanceRecordDto> realEstateGeneralLedgerBalanceList;
 
     private PeriodicReportDto report;
@@ -154,6 +157,22 @@ public class ConsolidatedReportRecordHolderDto implements BaseDto {
         this.scheduleInvestments = scheduleInvestments;
     }
 
+    public List<SingularityITDRecordDto> getRecordsITDTrancheA() {
+        return recordsITDTrancheA;
+    }
+
+    public void setRecordsITDTrancheA(List<SingularityITDRecordDto> recordsITDTrancheA) {
+        this.recordsITDTrancheA = recordsITDTrancheA;
+    }
+
+    public List<SingularityITDRecordDto> getRecordsITDTrancheB() {
+        return recordsITDTrancheB;
+    }
+
+    public void setRecordsITDTrancheB(List<SingularityITDRecordDto> recordsITDTrancheB) {
+        this.recordsITDTrancheB = recordsITDTrancheB;
+    }
+
     public void merge(ConsolidatedReportRecordHolderDto other){
         if(other.trancheA != null && !other.trancheA.isEmpty()){
             this.trancheA = other.trancheA;
@@ -190,6 +209,12 @@ public class ConsolidatedReportRecordHolderDto implements BaseDto {
         }
         if(other.noalTrancheBList != null && !other.noalTrancheBList.isEmpty()){
             this.noalTrancheBList = other.noalTrancheBList;
+        }
+        if(other.recordsITDTrancheA != null && !other.recordsITDTrancheA.isEmpty()){
+            this.recordsITDTrancheA = other.recordsITDTrancheA;
+        }
+        if(other.recordsITDTrancheB != null && !other.recordsITDTrancheB.isEmpty()){
+            this.recordsITDTrancheB = other.recordsITDTrancheB;
         }
         if(other.realEstateGeneralLedgerBalanceList != null && !other.realEstateGeneralLedgerBalanceList.isEmpty()){
             this.realEstateGeneralLedgerBalanceList = other.realEstateGeneralLedgerBalanceList;

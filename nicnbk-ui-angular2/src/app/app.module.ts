@@ -68,6 +68,7 @@ import {StatementChangesNBReportingComponent} from "./reporting/statement.change
 import {SingularityGeneralLedgerBalanceNBReportingComponent} from "./reporting/singularity.general.ledger.balance.nb.reporting.component";
 import {SingularityNOALTrancheANBReportingComponent} from "./reporting/singularity.noal.tranchea.nb.reporting.component";
 import {SingularityNOALTrancheBNBReportingComponent} from "./reporting/singularity.noal.trancheb.nb.reporting.component";
+import {SingularityITDNBReportingComponent} from "./reporting/singularity.itd.nb.reporting.component";
 import {OtherInfoInputNBReportingComponent} from "./reporting/other.info.input.nb.reporting.component";
 import {FileAttachmentDownloaderComponent} from "./common/file-attachment-downloader.component";
 //import {GenerateReportsNBReportingComponent} from "./reporting/generate.reports.nb.reporting.component";
@@ -166,7 +167,7 @@ import {MonitoringHedgeFundsEditComponent} from "./monitoring/monitoring-hedge-f
         AccessDeniedComponent,NotFoundComponent,
         LookupValuesNBReportingComponent, CurrencyRatesLookupValuesNBReportingComponent, TypedLookupValuesNBReportingComponent,PeriodicDataNBReportingComponent,MatchingLookupValuesNBReportingComponent,
         ScheduleInvestmentsNBReportingComponent, SOIReportNBReportingComponent, StatementBalanceOperationsNBReportingComponent, StatementCashflowsNBReportingComponent, StatementChangesNBReportingComponent,
-        SingularityGeneralLedgerBalanceNBReportingComponent, SingularityNOALTrancheANBReportingComponent, SingularityNOALTrancheBNBReportingComponent,TerraGeneralLedgerBalanceNBReportingComponent,TerraCombinedNBReportingComponent,
+        SingularityGeneralLedgerBalanceNBReportingComponent, SingularityNOALTrancheANBReportingComponent, SingularityNOALTrancheBNBReportingComponent, SingularityITDNBReportingComponent, TerraGeneralLedgerBalanceNBReportingComponent,TerraCombinedNBReportingComponent,
         OtherInfoInputNBReportingComponent, /*GenerateReportsNBReportingComponent,*/ NICKMFInputNBReportingComponent, SingularGeneratedFormNBReportingComponent, TarragonGeneratedFormNBReportingComponent,
         GeneratedReportsNBReportingComponent, ConsolidatedBalanceUSDFormNBReportingComponent, PreviousYearInputNBReportingComponent, PreviousYearInputViewNBReportingComponent, ConsolidatedIncomeExpenseUSDFormNBReportingComponent,
         ConsolidatedTotalIncomeUSDFormNBReportingComponent, NICKMFInputViewNBReportingComponent, TarragonGeneratedFormViewNBReportingComponent,TerraGeneratedFormNBReportingComponent, TerraGeneratedFormViewNBReportingComponent,TerraGeneralLedgerFormNBReportingComponent,

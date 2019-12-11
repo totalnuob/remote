@@ -523,6 +523,22 @@ public class LookupServiceImpl implements LookupService {
         return null;
     }
 
+    @Override
+    public StrategyDto getStrategyByNameEndAndType(String nameEn, int type){
+        Strategy entity = this.strategyRepository.findByNameEnAndGroupType(nameEn, type);
+        if(entity != null) {
+            BaseDictionaryDto dto = disassemble(entity);
+            StrategyDto strategyDto = new StrategyDto(dto, entity.getGroupType());
+            if(entity.getParent() != null){
+                BaseDictionaryDto parentDto = disassemble(entity.getParent());
+                StrategyDto parentStrategyDto = new StrategyDto(parentDto, (entity.getParent().getGroupType()));
+                strategyDto.setParent(parentDto);
+            }
+            return strategyDto;
+        }
+        return null;
+    }
+
     private List<BaseDictionaryDto> getStrategies(int group){
         try {
             List<BaseDictionaryDto> dtoList = new ArrayList<>();
@@ -2377,9 +2393,19 @@ public class LookupServiceImpl implements LookupService {
                 if(nicReportingChartOfAccountsByCode != null && !nicReportingChartOfAccountsByCode.isEmpty()){
                     String maxCode = null;
                     for(NICReportingChartOfAccounts existingEntity: nicReportingChartOfAccountsByCode){
-                        if(maxCode == null || maxCode.compareTo(existingEntity.getCode()) < 0){
-                            maxCode = existingEntity.getCode();
+                        if(existingEntity.getCode().equals(existingEntity.getCode().toUpperCase())){
+                            // upper case
+                            if(maxCode == null || maxCode.equals(maxCode.toLowerCase()) ||
+                                    (maxCode.equals(maxCode.toUpperCase()) && maxCode.compareTo(existingEntity.getCode()) < 0)){
+                                maxCode = existingEntity.getCode();
+                            }
+                        }else{
+                            // lower case
+                            if(maxCode == null || (maxCode.equals(maxCode.toLowerCase()) && maxCode.compareTo(existingEntity.getCode()) < 0)){
+                                maxCode = existingEntity.getCode();
+                            }
                         }
+
                     }
                     // get last part
                     String[] maxCodeSplit = maxCode.split("\\.");

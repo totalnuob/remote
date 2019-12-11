@@ -194,6 +194,14 @@ public abstract class CommonServiceREST {
         }
     }
 
+    public ResponseEntity<?> buildFileUploadResultResponseEntity(FileUploadResultDto fileUploadResultDto){
+        if(fileUploadResultDto == null || fileUploadResultDto.getStatus() == null  || fileUploadResultDto.getStatus() == ResponseStatusType.FAIL){
+            return new ResponseEntity<>(fileUploadResultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }else{
+            return new ResponseEntity<>(fileUploadResultDto, null, HttpStatus.OK);
+        }
+    }
+
     /**
      * Returns ResponseEntity for delete request.
      * Returns status OK 200 if deleted is true, status 500 Error otherwise.

@@ -1,5 +1,7 @@
 package kz.nicnbk.service.impl.reporting.privateequity;
 
+import kz.nicnbk.common.service.exception.ExcelFileParseException;
+import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.api.reporting.privateequity.ReportingPEStatementChangesRepository;
 import kz.nicnbk.repo.model.reporting.PeriodicReport;
 import kz.nicnbk.repo.model.reporting.privateequity.ReportingPEStatementChanges;
@@ -39,6 +41,11 @@ public class PEStatementChangesServiceImpl implements PEStatementChangesService 
     @Override
     public ReportingPEStatementChanges assemble(ConsolidatedReportRecordDto dto, Long reportId) {
         ReportingPEStatementChanges entity = new ReportingPEStatementChanges();
+        if(StringUtils.isEmpty(dto.getName())){
+            String errorMessage = "Statement of Changes record name is missing. ";
+            logger.error(errorMessage);
+            throw new ExcelFileParseException(errorMessage);
+        }
         entity.setName(dto.getName());
 
         entity.setTrancheA(dto.getValues()[0]);

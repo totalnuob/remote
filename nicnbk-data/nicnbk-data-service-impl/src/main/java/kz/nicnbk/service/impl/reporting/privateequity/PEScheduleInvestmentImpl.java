@@ -249,9 +249,9 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
                     ReportingPEScheduleInvestment entity = this.scheduleInvestmentConverter.assemble(dto, reportId);
                     entities.add(entity);
                 }
-            }
-            if (entities != null) {
-                peScheduleInvestmentRepository.save(entities);
+                if (entities != null) {
+                    peScheduleInvestmentRepository.save(entities);
+                }
             }
             return true;
         }catch (ExcelFileParseException ex){
