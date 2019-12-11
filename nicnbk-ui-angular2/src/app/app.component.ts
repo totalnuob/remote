@@ -43,7 +43,6 @@ import {HRService} from "./hr/hr.service";
 import {MonitoringHedgeFundService} from "./monitoring/monitoring-hf.service";
 
 
-
 @Component({
     selector: 'app-main',
     templateUrl: './app.component.html',
@@ -141,10 +140,9 @@ export class AppComponent {
         }else if(menu === "CORP_MEETINGS"){
             return this.activeBlock === 'invest' && this.showCorpMeeting();
         }else if(menu === "LOOKUPS"){
-            return this.activeBlock === 'invest' && this.showLookups();;
+            return this.activeBlock === 'invest' && this.showLookups();
         }
     }
-
 
     getUsername(){
         return localStorage.getItem("authenticatedUser") != null ? "," + localStorage.getItem("authenticatedUser") : "";

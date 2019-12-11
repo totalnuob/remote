@@ -480,6 +480,8 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             return this.hfNOALService.deleteByReportId(reportId, 1);
         }else if(fileType.equalsIgnoreCase(FileTypeLookup.NB_REP_SN_TRANCHE_B.getCode())) {
             return this.hfNOALService.deleteByReportId(reportId, 2);
+        }else if(fileType.equalsIgnoreCase(FileTypeLookup.NB_REP_SN_ITD.getCode())) {
+            return this.hfITDService.deleteByReportId(reportId);
         }else if(fileType.equalsIgnoreCase(FileTypeLookup.NB_REP_TERRA_COMBINED.getCode())) {
             return this.realEstateService.deleteByReportId(reportId);
         }else if(fileType.equalsIgnoreCase(FileTypeLookup.NB_REP_TERRA_GENERAL_LEDGER.getCode())) {
@@ -3269,19 +3271,23 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                             (prevRecord.getTotalEndPeriod() == null || prevRecord.getTotalEndPeriod() == 0)){
                         continue;
                     }
+                    // start
                     prevRecord.setDebtStartPeriod(prevRecord.getDebtEndPeriod());
                     prevRecord.setFairValueAdjustmentsStartPeriod(prevRecord.getFairValueAdjustmentsEndPeriod());
                     prevRecord.setTotalStartPeriod(prevRecord.getTotalEndPeriod());
                     prevRecord.setInterestStartPeriod(prevRecord.getInterestEndPeriod());
-                    prevRecord.setDebtTurnover(null);
-                    prevRecord.setInterestTurnover(null);
-                    prevRecord.setFairValueAdjustmentsTurnoverPositive(null);
-                    prevRecord.setFairValueAdjustmentsTurnoverNegative(null);
+                    // end
                     prevRecord.setDebtEndPeriod(null);
                     prevRecord.setInterestEndPeriod(null);
                     prevRecord.setFairValueAdjustmentsEndPeriod(null);
                     prevRecord.setTotalEndPeriod(null);
                     prevRecord.setBecameZero(false);
+                    // turnover
+                    prevRecord.setDebtTurnover(MathUtils.subtract(prevRecord.getDebtEndPeriod(), prevRecord.getDebtStartPeriod()));
+                    prevRecord.setInterestTurnover(MathUtils.subtract(prevRecord.getInterestEndPeriod(), prevRecord.getInterestStartPeriod()));
+                    Double fairValueAdjustmentsTurnover = MathUtils.subtract(prevRecord.getFairValueAdjustmentsEndPeriod(), prevRecord.getFairValueAdjustmentsStartPeriod());
+                    prevRecord.setFairValueAdjustmentsTurnoverPositive(fairValueAdjustmentsTurnover.doubleValue() >= 0.0 ? fairValueAdjustmentsTurnover : null);
+                    prevRecord.setFairValueAdjustmentsTurnoverNegative(fairValueAdjustmentsTurnover.doubleValue() < 0.0 ? fairValueAdjustmentsTurnover : null);
                     records.add(prevRecord);
 
                     if(prevRecord.getAccountNumber() != null && (prevRecord.getName().equalsIgnoreCase(PeriodicReportConstants.RU_PE_FUND_INVESTMENT) ||
@@ -3359,7 +3365,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                     record.setFairValueAdjustmentsTurnoverPositive(fairValueAdjustmentTurnover != null && fairValueAdjustmentTurnover.doubleValue() >= 0 ? fairValueAdjustmentTurnover : null);
                     record.setFairValueAdjustmentsTurnoverNegative(fairValueAdjustmentTurnover != null && fairValueAdjustmentTurnover.doubleValue() < 0 ? fairValueAdjustmentTurnover : null);
                 }
-                if(newRecord && record.getTotalEndPeriod() != null && record.getTotalEndPeriod().doubleValue() != 0.0){
+                if(newRecord){
                     newRecords.add(record);
                 }
             }
@@ -3414,6 +3420,8 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                     nonEmptyRecords.add(record);
                 }
             }
+            // TODO: sort
+            //Collections.sort(nonEmptyRecords);
             responseDto.setRecords(nonEmptyRecords);
             return responseDto;
         }
@@ -3930,29 +3938,37 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         // Tarragon - SOI Report
         ConsolidatedReportRecordHolderDto soiReportHolder = this.scheduleInvestmentService.getSOIReport(reportId);
         Map<String, Double> tarragonNetCostByFundName = new HashMap<>();
+        Map<String, Double> tarragonFairValueByFundName = new HashMap<>();
         if(soiReportHolder != null && soiReportHolder.getScheduleInvestments() != null){
             for(ScheduleInvestmentsDto investment: soiReportHolder.getScheduleInvestments()){
                 Double value = MathUtils.multiply(investment.getNetCost(), endCurrencyRatesDto.getValue());
+                Double valueFairValue = investment.getEditedFairValue() != null ? investment.getEditedFairValue() : investment.getFairValue();
                 if(investment.isTrancheAType()){
                     // Tranche A
                     value = MathUtils.multiply(0.99, value);
+                    valueFairValue = MathUtils.multiply(0.99, valueFairValue);
                 }
                 tarragonNetCostByFundName.put(investment.getInvestment(), MathUtils.add(tarragonNetCostByFundName.get(investment.getInvestment()), value));
+                tarragonFairValueByFundName.put(investment.getInvestment(), MathUtils.add(tarragonFairValueByFundName.get(investment.getInvestment()), valueFairValue));
             }
         }
 
         // Terra - GL
         TerraGeneralLedgerDataHolderDto terraGLHolder = this.realEstateService.getTerraGeneralLedgerDataWithoutExcluded(reportId);
         Map<String, Double> terraNetCostByFundName = new HashMap<>();
-        Map<String, Double> interestMap = new HashMap<>();
+        Map<String, Double> terraUnrealizedGainsByFundName = new HashMap<>();
+        Map<String, Double> terraInterestByFundName = new HashMap<>();
         if(terraGLHolder != null && terraGLHolder.getRecords() != null){
             for(TerraGeneralLedgerBalanceRecordDto terraRecord: terraGLHolder.getRecords()){
                 if(terraRecord.getGlSubclass().equalsIgnoreCase(TerraNICChartAccountsLookup.SECURITY.getNameEn())){
                     Double value = MathUtils.multiply(terraRecord.getAccountBalanceNICKMF(), endCurrencyRatesDto.getValue());
                     terraNetCostByFundName.put(terraRecord.getPortfolioFund(), MathUtils.add(terraNetCostByFundName.get(terraRecord.getPortfolioFund()), value));
                 }else if(terraRecord.getGlSubclass() != null && terraRecord.getGlSubclass().equalsIgnoreCase(TerraNICChartAccountsLookup.INTEREST_RECEIVABLE_BONDS.getNameEn())){
-                    Double value = interestMap.get(terraRecord.getPortfolioFund());
-                    interestMap.put(terraRecord.getPortfolioFund().trim(), MathUtils.add(value, MathUtils.multiply(terraRecord.getAccountBalanceNICKMF(), endCurrencyRatesDto.getValue())));
+                    Double value = terraInterestByFundName.get(terraRecord.getPortfolioFund());
+                    terraInterestByFundName.put(terraRecord.getPortfolioFund().trim(), MathUtils.add(value, MathUtils.multiply(terraRecord.getAccountBalanceNICKMF(), endCurrencyRatesDto.getValue())));
+                }else if(terraRecord.getGlSubclass() != null && terraRecord.getGlSubclass().equalsIgnoreCase(TerraNICChartAccountsLookup.UNREALIZED_GAIN.getNameEn())){
+                    Double value = terraUnrealizedGainsByFundName.get(terraRecord.getPortfolioFund());
+                    terraUnrealizedGainsByFundName.put(terraRecord.getPortfolioFund().trim(), MathUtils.add(value, terraRecord.getAccountBalanceNICKMF()));
                 }
             }
         }
@@ -3980,7 +3996,8 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             List<ConsolidatedBalanceFormRecordDto> recordsUSD = balanceUSDReponse.getRecords();
             for(ConsolidatedBalanceFormRecordDto recordUSD: recordsUSD){
                 if(recordUSD.getLineNumber() == null || recordUSD.getLineNumber().intValue() != 4 ||
-                        recordUSD.getAccountNumber() == null || !recordUSD.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_1123_010)){
+                        recordUSD.getAccountNumber() == null || !recordUSD.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_1123_010) ||
+                        recordUSD.getCurrentAccountBalance() == null || recordUSD.getCurrentAccountBalance().doubleValue() == 0.0){
                     continue;
                 }
                 ConsolidatedKZTForm7RecordDto newRecord = new ConsolidatedKZTForm7RecordDto();
@@ -4012,7 +4029,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
                     newRecord.setDebtEndPeriod(terraNetCostByFundName.get(fundName));
                     terraNetCostByFundName.put(fundName, null);
-                    newRecord.setInterestEndPeriod(interestMap.get(fundName));
+                    newRecord.setInterestEndPeriod(terraInterestByFundName.get(fundName));
                 }else{
                     // skip
                     continue;
@@ -4029,22 +4046,23 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             }
         }
 
-        singularityNetCostByFundName.forEach((key, value)->{
-            if(value != null){
-                // need to add
-                ConsolidatedKZTForm7RecordDto newRecord = new ConsolidatedKZTForm7RecordDto();
-                newRecord.setAccountNumber(PeriodicReportConstants.ACC_NUM_1123_010);
-                newRecord.setName(PeriodicReportConstants.RU_HEDGE_FUND_INVESTMENT);
-                newRecord.setEntityName(key);
-                newRecord.setOtherName(PeriodicReportConstants.SINGULARITY_LOWER_CASE);
-                newRecord.setLineNumber(3);
-                newRecord.setDebtEndPeriod(value);
-                newRecord.setFairValueAdjustmentsEndPeriod(MathUtils.subtract(newRecord.getTotalEndPeriod(), newRecord.getDebtEndPeriod()));
-                records.add(newRecord);
-            }
-        });
+//        singularityNetCostByFundName.forEach((key, value)->{
+//            if(value != null){
+//                // need to add
+//                ConsolidatedKZTForm7RecordDto newRecord = new ConsolidatedKZTForm7RecordDto();
+//                newRecord.setAccountNumber(PeriodicReportConstants.ACC_NUM_1123_010);
+//                newRecord.setName(PeriodicReportConstants.RU_HEDGE_FUND_INVESTMENT);
+//                newRecord.setEntityName(key);
+//                newRecord.setOtherName(PeriodicReportConstants.SINGULARITY_LOWER_CASE);
+//                newRecord.setLineNumber(3);
+//                newRecord.setDebtEndPeriod(value);
+//                newRecord.setFairValueAdjustmentsEndPeriod(MathUtils.subtract(newRecord.getTotalEndPeriod(), newRecord.getDebtEndPeriod()));
+//                records.add(newRecord);
+//            }
+//        });
         tarragonNetCostByFundName.forEach((key, value)->{
-            if(value != null){
+            if(value != null && value.doubleValue() != 0.0 &&
+                    (tarragonFairValueByFundName.get(key) == null ||  tarragonFairValueByFundName.get(key).doubleValue() == 0.0)){
                 // need to add
                 ConsolidatedKZTForm7RecordDto newRecord = new ConsolidatedKZTForm7RecordDto();
                 newRecord.setAccountNumber(PeriodicReportConstants.ACC_NUM_1123_010);
@@ -4058,19 +4076,24 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             }
         });
         terraNetCostByFundName.forEach((key, value)->{
-            if(value != null){
-                // need to add
-                ConsolidatedKZTForm7RecordDto newRecord = new ConsolidatedKZTForm7RecordDto();
-                newRecord.setAccountNumber(PeriodicReportConstants.ACC_NUM_1123_010);
-                newRecord.setName(PeriodicReportConstants.RU_REAL_ESTATE_FUND_INVESTMENT);
-                newRecord.setEntityName(key);
-                newRecord.setOtherName(PeriodicReportConstants.TERRA_LOWER_CASE);
-                newRecord.setLineNumber(3);
-                newRecord.setDebtEndPeriod(value);
-                newRecord.setInterestEndPeriod(interestMap.get(key));
-                newRecord.setTotalEndPeriod(MathUtils.add(newRecord.getTotalEndPeriod(), newRecord.getInterestEndPeriod()));
-                newRecord.setFairValueAdjustmentsEndPeriod(MathUtils.subtract(newRecord.getTotalEndPeriod(), newRecord.getDebtEndPeriod()));
-                records.add(newRecord);
+            if(value != null && value.doubleValue() != 0.0){
+                Double unrealizedGain = MathUtils.multiply(terraUnrealizedGainsByFundName.get(key), endCurrencyRatesDto.getValue());
+                Double interest = MathUtils.multiply(terraInterestByFundName.get(key), endCurrencyRatesDto.getValue());
+                Double fairValue = MathUtils.add(value, unrealizedGain, interest);
+                if(fairValue == 0.0){
+                    // need to add
+                    ConsolidatedKZTForm7RecordDto newRecord = new ConsolidatedKZTForm7RecordDto();
+                    newRecord.setAccountNumber(PeriodicReportConstants.ACC_NUM_1123_010);
+                    newRecord.setName(PeriodicReportConstants.RU_REAL_ESTATE_FUND_INVESTMENT);
+                    newRecord.setEntityName(key);
+                    newRecord.setOtherName(PeriodicReportConstants.TERRA_LOWER_CASE);
+                    newRecord.setLineNumber(3);
+                    newRecord.setDebtEndPeriod(value);
+                    newRecord.setInterestEndPeriod(terraInterestByFundName.get(key));
+                    newRecord.setTotalEndPeriod(MathUtils.add(newRecord.getTotalEndPeriod(), newRecord.getInterestEndPeriod()));
+                    newRecord.setFairValueAdjustmentsEndPeriod(MathUtils.subtract(newRecord.getTotalEndPeriod(), newRecord.getDebtEndPeriod()));
+                    records.add(newRecord);
+                }
             }
         });
 

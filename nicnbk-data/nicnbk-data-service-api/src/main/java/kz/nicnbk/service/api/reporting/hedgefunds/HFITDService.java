@@ -21,5 +21,5 @@ public interface HFITDService extends BaseService {
 
     ConsolidatedReportRecordHolderDto get(Long reportId);
 
-    boolean deleteByReportIdAndTranche(Long reportId, int tranche);
+    boolean deleteByReportId(Long reportId);
 }

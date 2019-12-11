@@ -1,6 +1,7 @@
 package kz.nicnbk.service.impl.reporting.hedgefunds;
 
 import kz.nicnbk.common.service.exception.ExcelFileParseException;
+import kz.nicnbk.common.service.util.ExcelUtils;
 import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.api.lookup.HFChartOfAccountsTypeRepository;
 import kz.nicnbk.repo.api.lookup.HFFinancialStatementTypeRepository;
@@ -15,6 +16,7 @@ import kz.nicnbk.service.converter.reporting.PeriodicReportConverter;
 import kz.nicnbk.service.datamanager.LookupService;
 import kz.nicnbk.service.dto.reporting.*;
 import kz.nicnbk.service.impl.reporting.PeriodicReportConstants;
+import kz.nicnbk.service.impl.reporting.lookup.GeneralLedgerFinancialStatementCategoryLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +53,25 @@ public class HFGeneralLedgerBalanceServiceImpl implements HFGeneralLedgerBalance
     @Autowired
     private PeriodicReportService periodicReportService;
 
+    private String convertFinancialStatementCategory(String category){
+        if(StringUtils.isEmpty(category)){
+            return null;
+        }
+        if(category.equalsIgnoreCase(GeneralLedgerFinancialStatementCategoryLookup.ASSETS.getNameEn())){
+            return "A";
+        }else if(category.equalsIgnoreCase(GeneralLedgerFinancialStatementCategoryLookup.LIABILITY.getNameEn()) ||
+                category.equalsIgnoreCase("Liabilities")){
+            return "L";
+        }else if(category.equalsIgnoreCase(GeneralLedgerFinancialStatementCategoryLookup.EQUITY.getNameEn())){
+            return "E";
+        }else if(category.equalsIgnoreCase("Investment Expense")){
+            return "X";
+        }else if(category.equalsIgnoreCase("Investment Income")){
+            return "I";
+        }
+        return category;
+    }
+
     @Override
     public ReportingHFGeneralLedgerBalance assemble(SingularityGeneralLedgerBalanceRecordDto dto, Long reportId) {
         ReportingHFGeneralLedgerBalance entity = new ReportingHFGeneralLedgerBalance();
@@ -58,7 +79,8 @@ public class HFGeneralLedgerBalanceServiceImpl implements HFGeneralLedgerBalance
         entity.setBalanceDate(dto.getBalanceDate());
 
         if(dto.getFinancialStatementCategory() != null) {
-            entity.setFinancialStatementCategory(this.lookupService.findByTypeAndCode(FinancialStatementCategory.class, dto.getFinancialStatementCategory()));
+            String financialStatementCategory = convertFinancialStatementCategory(dto.getFinancialStatementCategory());
+            entity.setFinancialStatementCategory(this.lookupService.findByTypeAndCode(FinancialStatementCategory.class, financialStatementCategory));
         }
         if(entity.getFinancialStatementCategory() == null){
             logger.error("Error parsing 'Singularity General Ledger Balance' file: financial statement type could not be determined - '" + dto.getFinancialStatementCategory() + "'");

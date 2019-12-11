@@ -70,9 +70,9 @@ public class HFITDServiceImpl implements HFITDService {
     }
 
     @Override
-    public boolean deleteByReportIdAndTranche(Long reportId, int tranche) {
+    public boolean deleteByReportId(Long reportId) {
         try {
-            this.repository.deleteByReportIdAndTranche(reportId, tranche);
+            this.repository.deleteByReportId(reportId);
             return true;
         }catch (Exception ex){
             logger.error("Error deleting ReportingHFITD records with report id=" + reportId);

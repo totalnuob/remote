@@ -18,7 +18,7 @@ public interface ReportingHFITDRepository extends PagingAndSortingRepository<Rep
 
     @Modifying
     @Transactional
-    @Query("DELETE from ReportingHFITD e where e.report.id=?1 and e.tranche=?2")
-    void deleteByReportIdAndTranche(long reportId, int tranche);
+    @Query("DELETE from ReportingHFITD e where e.report.id=?1")
+    void deleteByReportId(long reportId);
 
 }

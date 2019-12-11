@@ -181,9 +181,8 @@
                 </tbody>
             </table>
         </div>
-
-        <div class="modal fade" id="editModal" role="dialog" *ngIf="selectedEditLookup != null">
-            <div class="modal-dialog" style="overflow-y: scroll; max-height:85%;  margin-top: 50px; margin-bottom:50px; width:65%;">
+        <div class="modal fade" id="editModal" role="dialog" tabindex="-1">
+            <div class="modal-dialog" style="overflow-y: scroll; max-height:85%;  margin-top: 50px; margin-bottom:50px; width:65%;" *ngIf="selectedEditLookup != null">
                 <div class="modal-content" style="min-height: 400px">
                     <div class="modal-header">
                         <h3 class="modal-title"  style="word-wrap: break-word">Enter new lookup value for '{{selectedLookupName}}'</h3>
@@ -268,7 +267,7 @@
                         <button type="button" class="btn btn-success" (click)="save()">Save</button>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" (click)="closeEditModal()" data-dismiss="modal">Close</button>
+                        <button type="button" style="display:none;" id="closeEditModalButton" class="btn btn-default" (click)="closeEditModal()" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>

@@ -62,6 +62,16 @@ public class DateUtils {
         return null;
     }
 
+    public static Date getDate_MMddyyyy(String date){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        try {
+            return simpleDateFormat.parse(date);
+        } catch (ParseException e) {
+            //e.printStackTrace();
+        }
+        return null;
+    }
+
     public static Date getMMMYYYYYFormatLastDayMonthDate(String date){
         if(date != null) {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM yyyy", Locale.ENGLISH);
