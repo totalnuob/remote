@@ -82,7 +82,12 @@ export class NICKMFInputNBReportingComponent extends CommonNBReportingComponent 
                                                         this.nbChartOfAccountsChanged(this.data.records[i], true);
                                                         this.onNumberChange(this.data.records[i]);
                                                     }
-
+                                                    if(!this.checkTotal(){
+                                                        this.postAction(this.successMessage, "Total sum is different from 0 (" + this.calculateTotal() + ")");
+                                                    }else{
+                                                        this.successMessage = null;
+                                                        this.errorMessage = null;
+                                                    }
                                                 }
                                                 //console.log(this.data);
                                             }
@@ -124,8 +129,11 @@ export class NICKMFInputNBReportingComponent extends CommonNBReportingComponent 
                     response => {
                         this.successMessage = response.message.nameEn != null ? response.message.nameEn : "Successfully saved NICK MF records";
                         this.errorMessage = null;
-
-                        this.postAction(this.successMessage, this.errorMessage);
+                        if(!this.checkTotal(){
+                            this.postAction(this.successMessage, "Total sum is different from 0 (" + this.calculateTotal() + ")");
+                        }else{
+                            this.postAction(this.successMessage, null);
+                        }
                     },
                     (error:ErrorResponse) => {
                         this.processErrorResponse(error);
@@ -133,6 +141,7 @@ export class NICKMFInputNBReportingComponent extends CommonNBReportingComponent 
                 )
         }
     }
+
 
     private checkRecords(){
         if(this.data.records){
@@ -287,10 +296,9 @@ export class NICKMFInputNBReportingComponent extends CommonNBReportingComponent 
             for(var i = 0; i < this.data.records.length; i++){
                 if(this.data.records[i].accountBalance && isNumeric(this.data.records[i].accountBalance.toString().replace(/,/g , ''))){
                     sum += Number(this.data.records[i].accountBalance.toString().replace(/,/g , ''));
-                }else{
+                }else{}
             }
-            }
-            return sum;
+            return sum.toFixed(2);
         }
         return 0;
     }

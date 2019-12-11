@@ -446,7 +446,12 @@ export class TerraGeneratedFormNBReportingComponent extends CommonNBReportingCom
 
     checkRecords(){
         if(this.records != null){
-            var assetsSum = 0.0;
+            this.totalAssetsSum = 0;
+            this.liabilitiesSum = 0;
+            this.equitySum = 0;
+            this.expenseSum = 0;
+            this.incomeSum = 0;
+            this.totalOtherSum = 0;
             //var otherSum = 0.0;
             for(var i = 0; i < this.records.length; i++){
                 if(this.records[i].nbAccountNumber == null){
@@ -456,7 +461,7 @@ export class TerraGeneratedFormNBReportingComponent extends CommonNBReportingCom
                 }
                 if(!this.isRecordExcluded(this.records[i])) {
                     if (isNumeric(this.records[i].glaccountBalance) && this.records[i].financialStatementCategory === 'A') {
-                        assetsSum += Number(this.records[i].glaccountBalance);
+                        this.totalAssetsSum += Number(this.records[i].glaccountBalance);
                     } else if (isNumeric(this.records[i].glaccountBalance) && this.records[i].financialStatementCategory === 'L') {
                         this.liabilitiesSum += Number(this.records[i].glaccountBalance);
                     }else if (isNumeric(this.records[i].glaccountBalance) && this.records[i].financialStatementCategory === 'E') {
@@ -477,12 +482,10 @@ export class TerraGeneratedFormNBReportingComponent extends CommonNBReportingCom
                 }
             }
 
-            this.totalAssetsSum = assetsSum;
             this.totalOtherSum = this.liabilitiesSum + this.equitySum + this.expenseSum + this.incomeSum;
-
-            var diff = assetsSum + this.liabilitiesSum + this.equitySum + this.expenseSum + this.incomeSum;
+            var diff = this.totalAssetsSum + this.totalOtherSum;
             if(diff > 2 || diff < -2){
-                this.postAction(this.successMessage, "Total Assets = " + assetsSum.toFixed(2) + ". total L, E, X, I = " + (this.liabilitiesSum + this.equitySum + this.expenseSum + this.incomeSum).toFixed(2) + ". Sum = " + diff.toFixed(2));
+                this.postAction(this.successMessage, "Total Assets = " + this.totalAssetsSum.toFixed(2) + ". total L, E, X, I = " + this.totalOtherSum.toFixed(2) + ". Sum = " + diff.toFixed(2));
                 this.recordsValid = false;
             }else{
                 this.errorMessage = null;

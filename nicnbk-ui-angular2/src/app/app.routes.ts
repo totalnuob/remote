@@ -57,6 +57,7 @@ import {StatementChangesNBReportingComponent} from "./reporting/statement.change
 import {SingularityGeneralLedgerBalanceNBReportingComponent} from "./reporting/singularity.general.ledger.balance.nb.reporting.component";
 import {SingularityNOALTrancheANBReportingComponent} from "./reporting/singularity.noal.tranchea.nb.reporting.component";
 import {SingularityNOALTrancheBNBReportingComponent} from "./reporting/singularity.noal.trancheb.nb.reporting.component";
+import {SingularityITDNBReportingComponent} from "./reporting/singularity.itd.nb.reporting.component";
 import {OtherInfoInputNBReportingComponent} from "./reporting/other.info.input.nb.reporting.component";
 import {NICKMFInputNBReportingComponent} from "./reporting/nick.mf.input.nb.reporting.component";
 import {SingularGeneratedFormNBReportingComponent} from "./reporting/singular.generated.form.nb.reporting.component";
@@ -474,6 +475,11 @@ const routes: Routes  = [
     {
         path: 'reporting/NBReporting/hf/noalB/:id/:prevPageSource',
         component: SingularityNOALTrancheBNBReportingComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'reporting/NBReporting/hf/ITD/:id/:prevPageSource',
+        component: SingularityITDNBReportingComponent,
         canActivate: [AuthGuard]
     },
     {

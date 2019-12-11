@@ -67,6 +67,7 @@ export class PeriodicReportService extends CommonService{
 
     private PERIODIC_REPORT_SINGULARITY_NOAL_A_URL = this.PERIODIC_REPORT_BASE_URL + "get/noalA/";
     private PERIODIC_REPORT_SINGULARITY_NOAL_B_URL = this.PERIODIC_REPORT_BASE_URL + "get/noalB/";
+    private PERIODIC_REPORT_SINGULARITY_ITD_URL = this.PERIODIC_REPORT_BASE_URL + "get/ITD/";
     private PERIODIC_REPORT_TERRA_COMBINED_URL = this.PERIODIC_REPORT_BASE_URL + "get/terraCombined/";
     private PERIODIC_REPORT_TERRA_GENERAL_LEDGER_URL = this.PERIODIC_REPORT_BASE_URL + "get/terraGeneralLedger/";
 
@@ -268,6 +269,11 @@ export class PeriodicReportService extends CommonService{
 
     getSingularityNOALTrancheB(reportId): Observable<PeriodicReportRecordHolder>{
         return this.http.get(this.PERIODIC_REPORT_SINGULARITY_NOAL_B_URL + reportId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+    getSingularityITD(reportId): Observable<PeriodicReportRecordHolder>{
+        return this.http.get(this.PERIODIC_REPORT_SINGULARITY_ITD_URL + reportId, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }

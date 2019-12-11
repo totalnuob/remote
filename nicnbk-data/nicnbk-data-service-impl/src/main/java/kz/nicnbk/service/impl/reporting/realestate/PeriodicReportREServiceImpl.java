@@ -849,7 +849,7 @@ public class PeriodicReportREServiceImpl implements PeriodicReportREService {
 
                 // TODO: decide what to do with 'Bank accounts'? Skipp ASSETS?
                 if(balanceRecord.getName().equalsIgnoreCase("Bank accounts")){
-                    record.setFinancialStatementCategory("A");
+                    record.setFinancialStatementCategory(GeneralLedgerFinancialStatementCategoryLookup.ASSETS.getCode());
                 }else if(balanceRecord.getType() != null && balanceRecord.getType().getCode().equalsIgnoreCase("ASSETS")){
                     // skip Assets
                     continue;
@@ -895,7 +895,7 @@ public class PeriodicReportREServiceImpl implements PeriodicReportREService {
 
                 TerraGeneratedGeneralLedgerFormDto record = new TerraGeneratedGeneralLedgerFormDto();
                 record.setId(balanceRecord.getId());
-                record.setFinancialStatementCategory("A");
+                record.setFinancialStatementCategory(GeneralLedgerFinancialStatementCategoryLookup.ASSETS.getCode());
 
                 record.setAcronym("TERRA");
                 record.setBalanceDate(balanceRecord.getReport().getReportDate());

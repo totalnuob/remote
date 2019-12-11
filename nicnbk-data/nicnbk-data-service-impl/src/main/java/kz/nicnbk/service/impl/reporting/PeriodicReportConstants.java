@@ -63,6 +63,40 @@ public final class PeriodicReportConstants {
     public static final String TARR_STATEMENT_CHANGES_CONTRIBUTIONS_RECEIVED = "Contributions received";
     public static final String TARR_STATEMENT_CHANGES_DISTRIBUTIONS_PAID = "Distributions paid";
 
+    /* NOAL ***********************************************************************************************************/
+
+    public static final String GROSVENOR_SUBSCRIPTION_ACCOUNT_NUMBER = "1500-XXXX-XXX-USD";
+    public static final String GROSVENOR_REDEMPTION_ACCOUNT_NUMBER = "1550-XXXX-XXX-USD";
+
+    public static final String BNY_MELLON_SUBSCRIPTION_ACCOUNT_NUMBER = null;
+    public static final String BNY_MELLON_REDEMPTION_ACCOUNT_NUMBER = "1210-XXXX-XXX-USD";
+
+    public static final String GCM_NOAL_TRANSACTION_ENDING_BALANCE_NAME_V1 = "Ending Balance";
+    public static final String GCM_NOAL_TRANSACTION_ENDING_BALANCE_NAME_V2 = "Ending";
+
+    public static final String BNY_MELON_NOAL_TOTAL_NAME = "Total";
+    public static final String BNY_MELON_NOAL_REPORT_TOTAL_NAME = "Report Total";
+
+    /* SINGULARITY ITD ******************************************************************************************************/
+    public static final String PARSE_SINGULAR_ITD_HEADER_INVESTMENT_NAME = "Investment Name";
+    public static final String PARSE_SINGULAR_ITD_HEADER_SUBSCRIPTIONS = "ITD Subs";
+    public static final String PARSE_SINGULAR_ITD_HEADER_PROFIT_LOSS = "ITD P&L";
+    public static final String PARSE_SINGULAR_ITD_HEADER_REDEMPTIONS = "ITD Reds";
+    public static final String PARSE_SINGULAR_ITD_HEADER_CLOSING_BALANCE = "Closing Balance";
+
+    /* SINGULARITY GENERAL LEDGER V2 ******************************************************************************************************/
+    public static final String PARSE_SINGULAR_GL_V2_HEADER_PORTFOLIO_ACRONYM = "Portfolio Acronym";
+    public static final String PARSE_SINGULAR_GL_V2_HEADER_GROUP_CATEGORY = "GL FS Group Category";
+    public static final String PARSE_SINGULAR_GL_V2_HEADER_GROUP_DESCRIPTION = "GL FS Group Description";
+    public static final String PARSE_SINGULAR_GL_V2_HEADER_CATEGORY_NAME = "GL Category Name";
+    public static final String PARSE_SINGULAR_GL_V2_HEADER_CATEGORY_LONG_NAME = "GL Category Long Name";
+    public static final String PARSE_SINGULAR_GL_V2_HEADER_SHORT_NAME = "Short Name";
+    public static final String PARSE_SINGULAR_GL_V2_HEADER_ENDING_BALANCE = "Ending Balance";
+    public static final String PARSE_SINGULAR_GL_V2_HEADER_SEGVAL1= "Segval1";
+    public static final String PARSE_SINGULAR_GL_V2_HEADER_SEGVAL_CCY = "Seg Val CCY";
+
+
+
     /* SPV NAMES *********************************************************************************************/
     public static final String SINGULAR_CAPITAL_CASE = "SINGULAR";
     public static final String SINGULAR_B_CAPITAL_CASE = "SINGULAR B";
@@ -77,9 +111,13 @@ public final class PeriodicReportConstants {
     public static final String TARRAGON_B_CAPITAL_CASE = "TARRAGON B";
     public static final String TARRAGON_LOWER_CASE = "Tarragon";
 
+    public static final String TARRAGON_A_LOWER_CASE ="Tarragon A";
+
     public static final String TERRA_CAPITAL_CASE = "TERRA";
     public static final String TERRA_LOWER_CASE = "Terra";
 
+    public static final String TRANCHE_LOWER_CASE = "Tranche";
+    public static final String TRANCHE_A_LOWER_CASE = "Tranche A";
 
     /* REPORT TYPE CODE ***********************************************************************************************/
     public static final String USD_FORM_1 = "CONS_BALANCE_USD";
@@ -97,10 +135,6 @@ public final class PeriodicReportConstants {
     public static final String KZT_FORM_19 = "KZT_FORM_19";
     public static final String KZT_FORM_22 = "KZT_FORM_22";
     /* ****************************************************************************************************************/
-
-    /* NOAL CONSTANTS *************************************************************************************************/
-    public static final String GCM_NOAL_TRANSACTION_ENDING_BALANCE_NAME_V1 = "Ending Balance";
-    public static final String GCM_NOAL_TRANSACTION_ENDING_BALANCE_NAME_V2 = "Ending";
 
     /* GENERATED REPORT KZT LITERALS **********************************************************************************/
     public static final String SUBACCOUNT_GROUP_NUMBER = "Номер группы субсчетов";
@@ -153,6 +187,9 @@ public final class PeriodicReportConstants {
     /* ACCOUNT NUMBERS AND NAMES **************************************************************************************/
     public static final String GROSVENOR_ACCOUNT_NUMBER_1500 = "1500"; // Subscriptions
     public static final String GROSVENOR_ACCOUNT_NUMBER_1550 = "1550"; // Redemptions
+    // TODO: ??? for NOAL
+    //public static final String GROSVENOR_ACCOUNT_NUMBER_1500 = "1500"; // Subscriptions
+    public static final String GROSVENOR_ACCOUNT_NUMBER_1210 = "1210"; // Redemptions
 
 
     public static final String ACC_NUM_5440_010 = "5440.010";

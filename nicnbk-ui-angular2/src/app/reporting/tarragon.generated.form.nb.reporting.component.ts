@@ -335,8 +335,6 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
                 }
             }
         }
-
-
         if(confirmed) {
             for (var i = 0; i < this.addedRecordsHolder.records.length; i++) {
                 if (this.addedRecordsHolder.records[i].financialStatementCategory === 'A') {
@@ -344,6 +342,7 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
                         if (this.addedRecordsHolder.records[i].glaccountBalance > 0) {
                             let record = new PEGeneralLedgerFormDataRecord();
                             record.tranche = this.addedRecordsHolder.records[i].tranche;
+                            record.trancheType = this.addedRecordsHolder.records[i].trancheType;
                             record.financialStatementCategory = 'E';
                             record.tarragonNICChartOfAccountsName = 'Capital call capital adjustment';
                             record.glaccountBalance = 0 - Number(this.addedRecordsHolder.records[i].glaccountBalance);
@@ -354,7 +353,6 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
                 }
             }
         }
-
         this.periodicReportService.savePEGeneralLedgerFormData(this.addedRecordsHolder)
             .subscribe(
                 response  => {
@@ -450,8 +448,14 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
     }
 
     checkRecords(){
+        this.totalAssetsSum = 0;
+        this.liabilitiesSum = 0;
+        this.equitySum = 0;
+        this.expenseSum = 0;
+        this.incomeSum = 0;
+        this.totalOtherSum = 0;
+
         if(this.records != null){
-            var assetsSum = 0.0;
             //var otherSum = 0.0;
             for(var i = 0; i < this.records.length; i++){
                 if(this.records[i].nbAccountNumber == null){
@@ -461,7 +465,7 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
                 }
                 if(!this.isRecordExcluded(this.records[i])) {
                     if (isNumeric(this.records[i].glaccountBalance) && this.records[i].financialStatementCategory === 'A') {
-                        assetsSum += Number(this.records[i].glaccountBalance);
+                         this.totalAssetsSum += Number(this.records[i].glaccountBalance);
                     } else if (isNumeric(this.records[i].glaccountBalance) && this.records[i].financialStatementCategory === 'L') {
                         this.liabilitiesSum += Number(this.records[i].glaccountBalance);
                     }else if (isNumeric(this.records[i].glaccountBalance) && this.records[i].financialStatementCategory === 'E') {
@@ -481,12 +485,10 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
                 }
             }
 
-            this.totalAssetsSum = assetsSum;
             this.totalOtherSum = this.liabilitiesSum + this.equitySum + this.expenseSum + this.incomeSum;
-
-            var diff = assetsSum + this.liabilitiesSum + this.equitySum + this.expenseSum + this.incomeSum;
+            var diff = this.totalAssetsSum + this.totalOtherSum;
             if(diff > 2 || diff < -2){
-                this.postAction(this.successMessage, "Total Assets = " + assetsSum.toFixed(2) + ". total L, E, X, I = " + (this.liabilitiesSum + this.equitySum + this.expenseSum + this.incomeSum).toFixed(2) + ". Sum = " + diff.toFixed(2));
+                this.postAction(this.successMessage, "Total Assets = " + this.totalAssetsSum.toFixed(2) + ". total L, E, X, I = " + this.totalOtherSum.toFixed(2) + ". Sum = " + diff.toFixed(2));
                 this.recordsValid = false;
             }else{
                 this.errorMessage = null;

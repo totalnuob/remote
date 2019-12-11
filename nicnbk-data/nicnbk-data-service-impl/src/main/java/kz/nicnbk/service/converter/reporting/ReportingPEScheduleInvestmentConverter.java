@@ -53,6 +53,25 @@ public class ReportingPEScheduleInvestmentConverter extends BaseDozerEntityConve
         // report
         entity.setReport(new PeriodicReport(reportId));
 
+        // investment
+        if(StringUtils.isEmpty(dto.getInvestment())){
+            String errorMessage = "SOI Report record 'Investment' name is missing.";
+            logger.error(errorMessage);
+            throw new ExcelFileParseException(errorMessage);
+        }
+        // net cost
+        if(dto.getNetCost() == null){
+            String errorMessage = "SOI Report record 'Net Cost USD' is missing.";
+            logger.error(errorMessage);
+            throw new ExcelFileParseException(errorMessage);
+        }
+        // fair value
+        if(dto.getFairValue() == null){
+            String errorMessage = "SOI Report record 'Fair Value USD' is missing.";
+            logger.error(errorMessage);
+            throw new ExcelFileParseException(errorMessage);
+        }
+
         // tranche
         if(dto.getTrancheType() != null){
             PETrancheType trancheType = this.trancheTypeRepository.findByNameEnIgnoreCase(dto.getTrancheType().getNameEn().trim());
@@ -75,7 +94,7 @@ public class ReportingPEScheduleInvestmentConverter extends BaseDozerEntityConve
 
         if(entity.getType() == null){
             String errorMessage = " SOI Report record type could not be determined for '" + entity.getInvestment() +
-                    "'. Expected values are 'Fund Investments', 'Co-Investments', etc.  Check for possible spaces in names.";
+                    "'. Expected values are 'Fund Investment', 'Co-Investment', etc.  Check for possible spaces in names.";
             logger.error(errorMessage);
             throw new ExcelFileParseException(errorMessage);
         }
@@ -103,4 +122,5 @@ public class ReportingPEScheduleInvestmentConverter extends BaseDozerEntityConve
 
         return entity;
     }
+
 }

@@ -549,6 +549,42 @@
                     <!--</a>-->
                 </td>
             </tr>
+            <tr>
+                <td>SINGULARITY - ITD Final</td>
+                <td>
+                    <label class="btn btn-xs btn-default" for="attachmentFileSITD" *ngIf="showUploadButton('singularity_itd')">
+                        <input type="file" id="attachmentFileSITD" (change)="onFileChange($event, 'singularity_itd')" name="attachmentFileSITD" style="display:none;"/>
+                        <span class="glyphicon glyphicon-circle-arrow-up"></span>
+                    </label>
+                    <label *ngIf="fileSingularityITD != null" class="label label-info">{{fileSingularityITD[0].name}}</label>
+
+                    <button *ngIf="showDownloadButton('singularity_itd')" class="btn btn-xs btn-default"
+                            (click)="download('NB_REP_ITD', report.singularityITDFileId, report.singularityITDFileName)">
+                        <span class="glyphicon glyphicon-download-alt"></span>
+                        <i class="glyphicon glyphicon-refresh" *ngIf="pending"></i>
+                    </button>
+
+                    <button *ngIf="showProcessButton('singularity_itd')" class="btn btn-xs btn-success"
+                            (click)="uploadFile('singularity_itd')">
+                        <span class="glyphicon glyphicon-play-circle"></span>
+                    </button>
+                    <button *ngIf="showProcessButton('singularity_itd')" class="btn btn-xs btn-danger"
+                            (click)="clearFile('singularity_itd')">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </button>
+                    <button *ngIf="showViewButton('singularity_itd')" class="btn btn-xs btn-primary"
+                            [routerLink]="['/reporting/NBReporting/hf/ITD/', periodicReport.id, 'INPUT']">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                    <button *ngIf="showDeleteButton('singularity_itd')" class="btn btn-xs btn-danger" (click)="deleteFile('singularity_itd')">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </button>
+
+                    <!--<a data-toggle="modal" data-target="#infoModal" (click)="getInfo('singularity_noal_b')" style="cursor: pointer">-->
+                    <!--<span class="glyphicon glyphicon-question-sign"></span>-->
+                    <!--</a>-->
+                </td>
+            </tr>
             <tr bgcolor="#e7e7e7">
                 <td colspan="2">Terra</td>
             </tr>

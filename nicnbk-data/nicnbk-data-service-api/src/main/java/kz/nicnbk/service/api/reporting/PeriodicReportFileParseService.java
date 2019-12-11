@@ -10,4 +10,6 @@ import kz.nicnbk.service.dto.files.FilesDto;
 public interface PeriodicReportFileParseService extends BaseService {
 
     FileUploadResultDto parseFile(String fileType, FilesDto filesDto, Long reportId, String username);
+
+    FileUploadResultDto handleFileUpload(FilesDto filesDto, Long reportId, String username);
 }

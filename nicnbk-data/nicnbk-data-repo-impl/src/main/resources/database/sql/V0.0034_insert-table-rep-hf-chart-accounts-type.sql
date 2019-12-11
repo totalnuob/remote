@@ -6,7 +6,7 @@ INSERT INTO rep_hf_chart_accounts_type(id, code, name_en, name_ru, name_kz, pare
 INSERT INTO rep_hf_chart_accounts_type(id, code, name_en, name_ru, name_kz, parent_id) VALUES(6, 'BANK_FEES', 'Banking Fees', '', '', null);
 INSERT INTO rep_hf_chart_accounts_type(id, code, name_en, name_ru, name_kz, parent_id) VALUES(7, 'FEES_PAY', 'Fees Payable', '', '', null);
 INSERT INTO rep_hf_chart_accounts_type(id, code, name_en, name_ru, name_kz, parent_id) VALUES(8, 'INTR_EXP', 'Interest Expense', '', '', null);
-INSERT INTO rep_hf_chart_accounts_type(id, code, name_en, name_ru, name_kz, parent_id) VALUES(9, 'INV_INCOME', 'Investment Income', '', '', null);
+INSERT INTO rep_hf_chart_accounts_type(id, code, name_en, name_ru, name_kz, parent_id) VALUES(9, 'INV_INCOME', 'Investment Income;', '', '', null);
 INSERT INTO rep_hf_chart_accounts_type(id, code, name_en, name_ru, name_kz, parent_id) VALUES(10, 'MNG_FEES', 'Management Fees', '', '', null);
 INSERT INTO rep_hf_chart_accounts_type(id, code, name_en, name_ru, name_kz, parent_id) VALUES(11, 'M_FUND_EXP', 'Miscellaneous Fund Specific Expense', '', '', null);
 INSERT INTO rep_hf_chart_accounts_type(id, code, name_en, name_ru, name_kz, parent_id) VALUES(12, 'NET_CHNG', 'Net Change in Unrealized Gains/Losses', '', '', null);

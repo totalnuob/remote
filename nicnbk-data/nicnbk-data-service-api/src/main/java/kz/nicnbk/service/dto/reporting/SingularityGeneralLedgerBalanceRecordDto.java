@@ -1,5 +1,7 @@
 package kz.nicnbk.service.dto.reporting;
 
+import kz.nicnbk.common.service.util.StringUtils;
+
 import java.util.Date;
 
 /**
@@ -24,5 +26,14 @@ public class SingularityGeneralLedgerBalanceRecordDto extends GeneratedGeneralLe
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public boolean isEmpty(){
+        return StringUtils.isEmpty(super.getAcronym()) && StringUtils.isEmpty(super.getFinancialStatementCategory())
+                && StringUtils.isEmpty(super.getFinancialStatementCategoryDescription())
+                && StringUtils.isEmpty(super.getChartAccountsDescription())
+                &&  StringUtils.isEmpty(super.getChartAccountsLongDescription())
+                && StringUtils.isEmpty(super.getShortName())
+                && (super.getGLAccountBalance() == null || super.getGLAccountBalance().doubleValue() == 0.0);
     }
 }

@@ -41,5 +41,8 @@ INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(34, 
 INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(35, 'HFSCRNDATA', 'HF Screeening Data File', '', '', 'hf_screening');
 INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(36, 'HFSCRNUCTS', 'HF Screeening Ucits File', '', '', 'hf_screening');
 
+INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(37, 'NB_REP_ITD', 'NBRK Reporting Singularity Investment Data Final', '', '', 'reporting/nbrk');
+
+
 
 
