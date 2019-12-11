@@ -41,6 +41,9 @@ import {HedgeFundScreeningService} from "./hf/hf.fund.screening.service";
 import {HedgeFundScoringService} from "./hf/hf.fund.scoring.service";
 import {HRService} from "./hr/hr.service";
 import {MonitoringHedgeFundService} from "./monitoring/monitoring-hf.service";
+import {Subscription} from "../../node_modules/rxjs";
+import {VersionService} from "./common/version.service";
+import {Version} from "./version/model/version";
 
 
 @Component({
@@ -74,13 +77,20 @@ import {MonitoringHedgeFundService} from "./monitoring/monitoring-hf.service";
         HedgeFundScoringService,
         HRService,
         HedgeFundScoringService,
-        MonitoringHedgeFundService
+        MonitoringHedgeFundService,
+        VersionService
     ]
 })
 @NgModule({
     imports: [TextareaAutosize]
 })
 export class AppComponent {
+
+    versionLatestVersion;
+
+    versionList: Array<Version> = [];
+
+    busy: Subscription;
 
     activeMenu;
 
@@ -90,9 +100,63 @@ export class AppComponent {
 
     constructor(
         private authenticationService: AuthenticationService,
-        private _router: Router
+        private _router: Router,
+        private versionService: VersionService,
     ){
         this.moduleAccessChecker = new ModuleAccessCheckerService;
+        this.getVersion();
+    }
+
+    getVersion() {
+        console.log('Get version');
+
+        this.busy = this.versionService.getVersion()
+            .subscribe(
+                (response) => {
+                    this.versionList = this.addNumeration(response.versionDtoList);
+
+                    for (var i = 0; i < this.versionList.length; i++) {
+                        this.versionList[i].collapsed = (i != 0);
+                    }
+
+                    console.log(this.versionList);
+
+                    if(this.versionList.length > 0) {
+                        var a = this.versionList[0].description[0].split(" ");
+                        this.versionLatestVersion = a[a.length - 1];
+                        console.log('Version: ' + this.versionLatestVersion);
+                    } else {
+                        this.versionLatestVersion = '0.0.0';
+                        console.log('Get version: Error');
+                    }
+                },
+                error => {
+                    this.versionLatestVersion = '0.0.0';
+                    console.log('Get version: Error');
+                }
+            )
+    }
+
+    toggleVersion(i) {
+        this.versionList[i].collapsed = !this.versionList[i].collapsed;
+    }
+
+    addNumeration(versionList: Array<Version>) {
+        for (let version of versionList) {
+            var numeration = 0;
+            for (var i = 0; i < version.description.length; i++) {
+                if (version.numFmt[i] == null) {
+                    numeration = 0;
+                } else if (version.numFmt[i] == "decimal") {
+                    // version.numFmt[i] = (++numeration).toString() + '.';
+                    version.description[i] = (++numeration) + ". " + version.description[i];
+                } else if (version.numFmt[i] == "bullet") {
+                    // version.numFmt[i] = "\u2022";
+                        version.description[i] = "\u2022 " + version.description[i];
+                }
+            }
+        }
+        return versionList;
     }
 
     logout() {
