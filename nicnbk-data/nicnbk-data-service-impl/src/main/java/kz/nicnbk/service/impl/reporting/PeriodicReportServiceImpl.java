@@ -5051,8 +5051,8 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                             if(record.getAccountNumber() != null && recordUSD.getAccountNumber().equalsIgnoreCase(record.getAccountNumber()) &&
                                     record.getName().equalsIgnoreCase(recordUSD.getName())){
 
-                                double currentValue = record.getDebtEndPeriod() != null ? record.getDebtEndPeriod() : 0.0;
-                                double newValue = MathUtils.multiply(recordUSD.getCurrentAccountBalance(), endCurrencyRatesDto.getValue());
+                                Double currentValue = record.getDebtEndPeriod() != null ? record.getDebtEndPeriod() : 0.0;
+                                Double newValue = MathUtils.multiply(recordUSD.getCurrentAccountBalance(), endCurrencyRatesDto.getValue());
                                 record.setDebtEndPeriod(MathUtils.add(currentValue, newValue));
 
                                 if(record.getDebtStartPeriod() != null && record.getDebtEndPeriod() != null) {

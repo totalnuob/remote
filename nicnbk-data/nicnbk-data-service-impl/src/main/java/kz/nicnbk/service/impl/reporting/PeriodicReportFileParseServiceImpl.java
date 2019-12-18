@@ -242,7 +242,8 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
         }else if(fileType.equals(FileTypeLookup.NB_REP_S4B.getCode())){
             return parseISTrancheB(filesDto);
         }else if(fileType.equals(FileTypeLookup.NB_REP_SINGULAR_GENERAL_LEDGER.getCode())){
-            return parseSingularGeneralLedgerV2(filesDto, reportId);
+            return parseSingularGeneralLedger(filesDto, reportId);
+            //return parseSingularGeneralLedgerV2(filesDto, reportId);
         }else if(fileType.equals(FileTypeLookup.NB_REP_SN_TRANCHE_A.getCode())){
             return parseSingularNOAL(filesDto, reportId, 1);
         }else if(fileType.equals(FileTypeLookup.NB_REP_SN_TRANCHE_B.getCode())){
@@ -2767,15 +2768,15 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
 
             /* PARSE EXCEL (RAW) *******************************************************************************/
             Iterator<Row> rowIterator = getRowIterator(filesDto, 0);
-            //List<SingularityNOALRecordDto> records = parseSingularNOALRaw(rowIterator);
-            List<SingularityNOALRecordDto> records = parseSingularNOALRawNEW(rowIterator);
+            List<SingularityNOALRecordDto> records = parseSingularNOALRaw(rowIterator);
+            //List<SingularityNOALRecordDto> records = parseSingularNOALRawNEW(rowIterator);
             //printRecords(records);
 
             /* CHECK ENTITIES AND ASSEMBLE **********************************************************************/
 
             String trancheName = tranche == 1 ? "[Tranche A] " : tranche == 2 ? "[Tranche B] " : "";
-            //checkNOALTotalSums(records, trancheName);
-            checkNOALTotalSumsNEW(records, trancheName);
+            checkNOALTotalSums(records, trancheName);
+            //checkNOALTotalSumsNEW(records, trancheName);
 
             List<ReportingHFNOAL> entities = this.hfNOALService.assembleList(records, reportId, tranche);
 
