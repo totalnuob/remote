@@ -43,6 +43,9 @@ public class MathUtils {
         return divide(2, a, b);
     }
     public static Double divide(int scale, Double a, Double b){
+        if(a == null || b == null || b.doubleValue() == 0.0){
+            return null;
+        }
         return divide(scale, new BigDecimal(a).setScale(scale, RoundingMode.HALF_UP),
                 new BigDecimal(b).setScale(scale, RoundingMode.HALF_UP)).doubleValue();
     }
