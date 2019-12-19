@@ -198,8 +198,13 @@ public class ConsolidatedKZTForm13RecordDto implements BaseDto {
     }
 
     public boolean isEmptyAmounts(){
-        return this.debtStartPeriod == null && this.interestStartPeriod == null && this.totalStartPeriod == null &&
-                this.debtTurnover == null && this.interestTurnover == null &&
-                this.debtEndPeriod == null && this.interestEndPeriod == null && this.totalEndPeriod == null;
+        return (this.debtStartPeriod == null || this.debtStartPeriod.doubleValue() == 0.0) &&
+                (this.interestStartPeriod == null || this.interestStartPeriod.doubleValue() == 0.0) &&
+                (this.totalStartPeriod == null || this.totalStartPeriod.doubleValue() == 0.0) &&
+                (this.debtTurnover == null || this.debtTurnover.doubleValue() == 0.0) &&
+                (this.interestTurnover == null || this.interestTurnover.doubleValue() == 0.0) &&
+                (this.debtEndPeriod == null || this.debtEndPeriod.doubleValue() == 0.0) &&
+                (this.interestEndPeriod == null || this.interestEndPeriod.doubleValue() == 0.0) &&
+                (this.totalEndPeriod == null || this.totalEndPeriod.doubleValue() == 0.0);
     }
 }
