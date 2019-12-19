@@ -1222,9 +1222,14 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                     recordDto.setOtherEntityName(singularRecord.getAcronym());
                 }
                 recordDto.setOtherEntityName(singularRecord.getAcronym());
+                if(recordDto.getAccountNumber() != null && recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_3053_060) &&
+                        recordDto.getName().equalsIgnoreCase(PeriodicReportConstants.RU_3053_060)){
+                    recordDto.setOtherEntityName(PeriodicReportConstants.SINGULARITY_LOWER_CASE + " - " + singularRecord.getSubscriptionRedemptionEntity());
+                }
                 recordDto.setCurrentAccountBalance(lineNumber == 32 || lineNumber == 47  || lineNumber == 51 ||
                         (recordDto.getAccountNumber() != null && (recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_3013_010) ||
-                                recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_3383_010)))
+                                recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_3383_010) ||
+                                recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_3053_060)))
                         ? 0 - singularRecord.getGLAccountBalance() : singularRecord.getGLAccountBalance());
                 //recordDto.setPreviousAccountBalance();
                 records.add(recordDto);
@@ -1317,6 +1322,10 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                     recordDto.setOtherEntityName(terraRecord.getAcronym());
                 }
                 recordDto.setOtherEntityName(terraRecord.getAcronym());
+                if(recordDto.getAccountNumber() != null && recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_3053_060) &&
+                        recordDto.getName().equalsIgnoreCase(PeriodicReportConstants.RU_3053_060)){
+                    recordDto.setOtherEntityName(PeriodicReportConstants.TERRA_LOWER_CASE + " - " + terraRecord.getShortName());
+                }
                 recordDto.setCurrentAccountBalance(lineNumber == 32 || lineNumber == 47  || lineNumber == 51 || lineNumber == 41 ||
                         (recordDto.getAccountNumber() != null && (recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_3013_010) ||
                                 recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_3383_010)))
@@ -4909,7 +4918,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
             List<ConsolidatedKZTForm13RecordDto> noEmptyRecords = new ArrayList<>();
             for(ConsolidatedKZTForm13RecordDto record: previousRecords){
-                if(StringUtils.isEmpty(record.getAccountNumber()) || !record.isEmptyAmounts()){
+                if(!record.isEmptyAmounts()){
                     noEmptyRecords.add(record);
                 }
             }
@@ -6487,7 +6496,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         record.setCurrentAccountBalance(null);
                     }
                 }else{
-                    if(record.getLineNumber() != 17 && record.getLineNumber() != 4 && record.getLineNumber() != 9){
+                    if(record.getLineNumber() != 29 && record.getLineNumber() != 17 && record.getLineNumber() != 4 && record.getLineNumber() != 9){
                         record.setOtherEntityName(null);
                     }
                 }
