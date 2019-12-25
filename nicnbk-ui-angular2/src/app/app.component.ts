@@ -96,6 +96,8 @@ export class AppComponent {
 
     activeBlock = 'corp';
 
+    snow = true;
+
     private moduleAccessChecker: ModuleAccessCheckerService;
 
     constructor(
@@ -182,6 +184,14 @@ export class AppComponent {
     // TODO: refactor
     showMenu(){
         return localStorage.getItem("authenticatedUser") != null;
+    }
+
+    showSnow(){
+        return this.snow;
+    }
+
+    changeSnow(){
+        this.snow = !this.snow;
     }
 
     checkAvailable(menu){
