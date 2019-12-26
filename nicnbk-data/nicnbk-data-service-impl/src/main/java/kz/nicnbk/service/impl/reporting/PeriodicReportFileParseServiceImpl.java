@@ -2868,26 +2868,30 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                     }
                     final String subscriptionsHeader = PeriodicReportConstants.PARSE_SINGULAR_ITD_HEADER_SUBSCRIPTIONS;
                     if(headers.get(subscriptionsHeader) != null){
-                        String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(subscriptionsHeader).intValue()));
-                        Double doubleValue = MathUtils.getDouble(value);
+                        //String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(subscriptionsHeader).intValue()));
+                        //Double doubleValue = MathUtils.getDouble(value);
+                        Double doubleValue = ExcelUtils.getDoubleValueFromCell(row.getCell(headers.get(subscriptionsHeader).intValue()));
                         record.setSubscriptions(doubleValue);
                     }
                     final String profitLossHeader = PeriodicReportConstants.PARSE_SINGULAR_ITD_HEADER_PROFIT_LOSS;
                     if(headers.get(profitLossHeader) != null){
-                        String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(profitLossHeader).intValue()));
-                        Double doubleValue = MathUtils.getDouble(value);
+                        //String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(profitLossHeader).intValue()));
+                        //Double doubleValue = MathUtils.getDouble(value);
+                        Double doubleValue = ExcelUtils.getDoubleValueFromCell(row.getCell(headers.get(profitLossHeader).intValue()));
                         record.setProfitLoss(doubleValue);
                     }
                     final String redemptionsHeader = PeriodicReportConstants.PARSE_SINGULAR_ITD_HEADER_REDEMPTIONS;
                     if(headers.get(redemptionsHeader) != null){
-                        String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(redemptionsHeader).intValue()));
-                        Double doubleValue = MathUtils.getDouble(value);
+                        //String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(redemptionsHeader).intValue()));
+                        //Double doubleValue = MathUtils.getDouble(value);
+                        Double doubleValue = ExcelUtils.getDoubleValueFromCell(row.getCell(headers.get(redemptionsHeader).intValue()));
                         record.setRedemptions(doubleValue);
                     }
                     final String closingBalanceHeader = PeriodicReportConstants.PARSE_SINGULAR_ITD_HEADER_CLOSING_BALANCE;
                     if(headers.get(closingBalanceHeader) != null){
-                        String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(closingBalanceHeader).intValue()));
-                        Double doubleValue = MathUtils.getDouble(value);
+                        //String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(closingBalanceHeader).intValue()));
+                        //Double doubleValue = MathUtils.getDouble(value);
+                        Double doubleValue = ExcelUtils.getDoubleValueFromCell(row.getCell(headers.get(closingBalanceHeader).intValue()));
                         record.setClosingBalance(doubleValue);
                     }
                     record.setTranche(tranche);

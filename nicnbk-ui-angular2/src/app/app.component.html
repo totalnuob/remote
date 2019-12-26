@@ -47,6 +47,7 @@
     </style>
 </head>
 <body>
+<!--<body [style.backgroundImage]="(snow) ? 'url(../../public/img/mountains-new-year-2020.png)': 'url(../../public/img/mountains.png)'">-->
 <!--<div class="header">-->
     <!--<div class="container">-->
         <!--<ul>-->
@@ -287,6 +288,68 @@
     <!--</div>-->
 <!--</div>-->
 <div id="app">
+    <div class="snowflakes" aria-hidden="true" *ngIf="showSnow()">
+        <div class="snowflake">
+            ❅
+        </div>
+        <div class="snowflake">
+            ❅
+        </div>
+        <div class="snowflake">
+            ❆
+        </div>
+        <div class="snowflake">
+            ❄
+        </div>
+        <div class="snowflake">
+            ❅
+        </div>
+        <div class="snowflake">
+            ❆
+        </div>
+        <div class="snowflake">
+            ❄
+        </div>
+        <div class="snowflake">
+            ❅
+        </div>
+        <div class="snowflake">
+            ❆
+        </div>
+        <div class="snowflake">
+            ❄
+        </div>
+        <div class="snowflake">
+            ❅
+        </div>
+        <div class="snowflake">
+            ❅
+        </div>
+        <div class="snowflake">
+            ❆
+        </div>
+        <div class="snowflake">
+            ❄
+        </div>
+        <div class="snowflake">
+            ❅
+        </div>
+        <div class="snowflake">
+            ❆
+        </div>
+        <div class="snowflake">
+            ❄
+        </div>
+        <div class="snowflake">
+            ❅
+        </div>
+        <div class="snowflake">
+            ❆
+        </div>
+        <div class="snowflake">
+            ❄
+        </div>
+    </div>
     <div class="layout" style="">
         <div class="layout__wrapper">
             <header class="menu_header">
@@ -309,11 +372,24 @@
                                 <a (click)="logout()">
                                     <span class="glyphicon glyphicon-off" style="color: grey"></span>
                                 </a>
+                                &nbsp;&nbsp;&nbsp;
+                                <div class="btn btn-info" (click)="changeSnow()" *ngIf="showSnow()">
+                                    SNOW OFF
+                                </div>
+                                <div class="btn btn-info" (click)="changeSnow()" *ngIf="!showSnow()">
+                                    SNOW ON
+                                </div>
+                                <!--<a (click)="changeSnow()">-->
+                                    <!--<span style="color: grey" *ngIf="showSnow()">SNOW OFF</span>-->
+                                    <!--<span style="color: grey" *ngIf="!showSnow()">SNOW ON</span>-->
+                                <!--</a>-->
                             </ul>
                         </nav>
                     </div>
                     <div class="menu_header__row" style="min-height: 88px">
                         <a [routerLink]="[getHomePageURLByType(activeBlock)]" title="NICNBK" class="menu_logo menu_header__logo -active" (click)="activeMenu = 'NEWS'">NICNBK</a>
+                        <img *ngIf="showSnow()" src="../../public/img/happy-new-year-2020.png" alt="Happy New Year" style="width:65px;height:88px;">
+                        <img *ngIf="showSnow()" src="../../public/img/happy-new-year-2020.png" alt="Happy New Year" style="width:160px;height:88px;">
                         <nav class="menu_navigation">
                         <ul class="navigation__menu" style="background-color: white">
                             <li class="navigation__item dropdown">&nbsp;</li>
