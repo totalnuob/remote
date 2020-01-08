@@ -126,6 +126,7 @@ import {HREmployeesListComponent} from "./hr/hr-employees-list.component";
 import {HRDocsListComponent} from "./hr/hr-docs-list.component";
 import {EmployeeProfileEditComponent} from "./employee/employee.profile.edit.component";
 import {HRNewsEditComponent} from "./hr/hr-news-edit.component";
+import {AdminMainComponent} from "./admin/admin.main.component";
 import {MonitoringHedgeFundsEditComponent} from "./monitoring/monitoring-hedge-funds-edit.component";
 //import {CorpMeetingEditComponent} from "./corpmeetings/ic-meeting-topic-edit.component";
 
@@ -177,7 +178,8 @@ import {MonitoringHedgeFundsEditComponent} from "./monitoring/monitoring-hedge-f
         AccessDeniedComponent, MMEditComponent, MMViewComponent,NotFoundComponent,
         CorpMeetingsListComponent, CorpMeetingEditComponent,
         LookupValuesComponent, CurrencyRatesLookupValuesComponent, BenchmarkLookupValuesComponent,
-        HRNewsListComponent, HRNewsEditComponent, HREmployeesListComponent, HRDocsListComponent
+        HRNewsListComponent, HRNewsEditComponent, HREmployeesListComponent, HRDocsListComponent,
+        AdminMainComponent
     ],
     bootstrap: [ AppComponent ]
 })

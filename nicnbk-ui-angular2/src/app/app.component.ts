@@ -215,6 +215,8 @@ export class AppComponent {
             return this.activeBlock === 'invest' && this.showCorpMeeting();
         }else if(menu === "LOOKUPS"){
             return this.activeBlock === 'invest' && this.showLookups();
+        }else if(menu === "ADMIN"){
+        return this.activeBlock === 'admin';
         }
     }
 
@@ -271,6 +273,10 @@ export class AppComponent {
         return this.moduleAccessChecker.checkAccessCorpMeetingsView();
     }
 
+    showAdmin(){
+        return this.moduleAccessChecker.checkAccessAdmin();
+    }
+
     getCurrentEmployeeId(){
         return localStorage.getItem('authenticatedUser');
     }
@@ -280,6 +286,8 @@ export class AppComponent {
             return 'hr/news';
         }else if(type === 'invest'){
             return "news";
+        }else if(type === 'admin'){
+            return "admin/main";
         }
         return null;
     }

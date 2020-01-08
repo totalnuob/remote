@@ -365,14 +365,16 @@
                                     <a [routerLink]="[getHomePageURLByType('corp')]" class="navigation__link" style="height: 25px; line-height: 25px"
                                        [style.background-color]="activeBlock === 'corp' ? '#D9A158' : 'white'" (click)="activeBlock = 'corp'; activeMenu = 'HR'">CORP</a>
                                 </li>
-                                &nbsp;&nbsp;&nbsp;
+                                <li class="navigation__item">
+                                    <a [routerLink]="[getHomePageURLByType('admin')]" class="navigation__link" style="height: 25px; line-height: 25px"
+                                       [style.background-color]="activeBlock === 'admin' ? '#D9A158' : 'white'" (click)="activeBlock = 'admin'; activeMenu = 'ADMIN'">ADMIN</a>
+                                </li>
                                 <a [routerLink]="['/profile/'  + getCurrentEmployeeId()]">
                                     <span class="glyphicon glyphicon-user" style="color: grey"></span>
                                 </a>&nbsp;&nbsp;&nbsp;
                                 <a (click)="logout()">
                                     <span class="glyphicon glyphicon-off" style="color: grey"></span>
                                 </a>
-                                &nbsp;&nbsp;&nbsp;
                                 <div class="btn btn-info" (click)="changeSnow()" *ngIf="showSnow()">
                                     SNOW OFF
                                 </div>
@@ -460,6 +462,10 @@
                             <li class="navigation__item dropdown" *ngIf="checkAvailable('LOOKUPS')">
                                 <a [routerLink]="['/lookups']" class="navigation__link"
                                    [style.border-bottom-color]="activeMenu === 'LOOKUPS' ? '#D9A158' : 'white'" (click)="activeMenu = 'LOOKUPS'">Lookups</a>
+                            </li>
+                            <li class="navigation__item dropdown" *ngIf="checkAvailable('ADMIN')">
+                                <a [routerLink]="['/admin/userManagement']" class="navigation__link"
+                                   [style.border-bottom-color]="activeMenu === 'ADMIN' ? '#D9A158' : 'white'" (click)="activeMenu = 'ADMIN'">User Management</a>
                             </li>
                         </ul>
 
