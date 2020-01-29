@@ -293,9 +293,10 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
         return buildEntitySaveResponseEntity(saved);
     }
 
-    @RequestMapping(value="/scoring/export/{filteredResultId}/{lookbackAUM}//{lookbackReturn}", method= RequestMethod.GET)
+    @RequestMapping(value="/scoring/export/{type}/{filteredResultId}/{lookbackAUM}//{lookbackReturn}", method= RequestMethod.GET)
     @ResponseBody
-    public void exportFundList(@PathVariable(value="filteredResultId") Long filteredResultId,
+    public void exportFundList(@PathVariable(value = "type") int type,
+                               @PathVariable(value="filteredResultId") Long filteredResultId,
                              @PathVariable(value = "lookbackAUM") int lookbackAUM,
                              @PathVariable(value = "lookbackReturn") int lookbackReturn,
                              HttpServletResponse response) {
@@ -305,7 +306,11 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
 
         FilesDto filesDto = null;
         try{
-            filesDto = this.screeningService.getQualifiedFundListAsStream(filteredResultId, lookbackAUM, lookbackReturn);
+            if(type == 1) {
+                filesDto = this.screeningService.getQualifiedFundListAsStream(filteredResultId, lookbackAUM, lookbackReturn);
+            }else if(type == 2){
+                filesDto = this.screeningService.getUnqualifiedFundListAsStream(filteredResultId, lookbackAUM, lookbackReturn);
+            }
         }catch (IllegalStateException ex){
             filesDto = null;
         }

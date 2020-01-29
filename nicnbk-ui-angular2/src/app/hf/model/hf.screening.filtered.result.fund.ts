@@ -39,6 +39,10 @@ export class HedgeFundScreeningFilteredResultFund {
 
     returns;
 
+    strategyAUMCheck: boolean;
+    managerAUMCheck: boolean;
+    trackRecordCheck: boolean;
+
     constructor(){}
 
     clone(copy: HedgeFundScreeningFilteredResultFund){

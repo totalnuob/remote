@@ -234,7 +234,8 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
 
     exportFundList() {
         //console.log(this.fundListLookbackAUM, this.fundListLookbackReturn, this.fundListType);
-        this.busyModal = this.screeningService.makeFileRequest(DATA_APP_URL + `hf/screening/scoring/export/${this.filteredResult.id}/${this.fundListLookbackAUM}/${this.fundListLookbackReturn}`)
+        console.log(this.fundListType);
+        this.busyModal = this.screeningService.makeFileRequest(DATA_APP_URL + `hf/screening/scoring/export/${this.fundListType}/${this.filteredResult.id}/${this.fundListLookbackAUM}/${this.fundListLookbackReturn}`)
             .subscribe(
                 response  => {
                     //console.log("ok");
@@ -990,15 +991,23 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
                 this.returnUploadErrorMessage = "Invalid return format - date";
                 return;
             }
+            var day = row[0].split(".")[0];
             var month = row[0].split(".")[1];
             var year = row[0].split(".")[2];
+            if(Number(month) < 1 || Number(month) > 12){
+                this.returnUploadErrorMessage = "Invalid return date format: month must be 1-12";
+                this.returnUploadSuccessMessage = null;
+                return;
+            }else if(Number(day) < 1 || Number(day) > 31){
+                this.returnUploadErrorMessage = "Invalid return date format: day must be 1-31";
+                this.returnUploadSuccessMessage = null;
+                return;
+            }
             var returnValue = row[1].replace(/,/g, '.');
             returnValue = returnValue.replace('%', '');
             fundReturns.push({"date": month + '.' + year, "value": parseFloat(Number(returnValue)/100).toFixed(12)});
         }
-
         //console.log(fundReturns);
-
         var returns = [];
         var datesByYear = this.generateTrackRecordMonthsYearList();
         for(var i = 0; i < datesByYear.length; i++){

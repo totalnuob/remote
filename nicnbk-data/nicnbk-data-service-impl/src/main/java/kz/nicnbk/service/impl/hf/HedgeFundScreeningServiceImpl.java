@@ -3062,6 +3062,9 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
 
         List<HedgeFundScreeningParsedDataDto> excludedFunds = getExcludedFunds(params.getId());
         for(HedgeFundScreeningParsedDataDto record: fundList) {
+            record.setStrategyAUMCheck(true);
+            record.setManagerAUMCheck(false);
+            record.setTrackRecordCheck(true);
             HedgeFundScreeningParsedDataAUM  fundAUM = this.parsedDataAUMRepository.getLastAUMByDatesAndFundId(params.getScreeningId(),
                     dateFrom, dateTo, record.getFundId());
             if(record.isAdded()){
@@ -3347,7 +3350,7 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
     public FilesDto getQualifiedFundListAsStream(Long filteredResultId, int lookbackAUM, int lookbackReturn){
         FilesDto filesDto = new FilesDto();
 
-        Resource resource = new ClassPathResource("export_template/hf_scoring/HF_SCORING_TEMPLATE.xlsx");
+        Resource resource = new ClassPathResource("export_template/hf_scoring/HF_SCORING_QUALIFIED_TEMPLATE.xlsx");
         InputStream excelFileToRead = null;
 
         HedgeFundScreeningFilteredResultDto filteredResultDto = getFilteredResultWithoutFundsInfo(filteredResultId);
@@ -3375,7 +3378,7 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
         try {
             excelFileToRead = resource.getInputStream();
         } catch (IOException e) {
-            logger.error("Reporting: Export file template not found: 'HF_SCORING_TEMPLATE.xlsx'");
+            logger.error("Reporting: Export file template not found: 'HF_SCORING_QUALIFIED_TEMPLATE.xlsx'");
             return null;
             //e.printStackTrace();
         }
@@ -3385,14 +3388,26 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
             XSSFWorkbook workbook = new XSSFWorkbook(excelFileToRead);
             XSSFSheet sheet = workbook.getSheetAt(0);
             if(responseDto != null && responseDto.getRecords() != null && !responseDto.getRecords().isEmpty()) {
+                Row row1 = sheet.getRow(1);
+                Row row2 = sheet.getRow(2);
+                Row row3 = sheet.getRow(3);
+                Row row4 = sheet.getRow(4);
+                Row row5 = sheet.getRow(5);
+                Row row6 = sheet.getRow(6);
+                row1.getCell(2).setCellValue(NumberUtils.truncateNumber(filteredResultDto.getFundAUM(), 1));
+                row2.getCell(2).setCellValue(NumberUtils.truncateNumber(filteredResultDto.getManagerAUM(), 1));
+                row3.getCell(2).setCellValue(filteredResultDto.getTrackRecord());
+                row4.getCell(2).setCellValue(lookbackAUM);
+                row5.getCell(2).setCellValue(lookbackReturn);
+                row6.getCell(2).setCellValue(DateUtils.getDateShortMonthYearEnglishTextualDate(filteredResultDto.getStartDate()));
                 for (int i = 0; i < responseDto.getRecords().size(); i++) {
                     HedgeFundScreeningParsedDataDto fund  = (HedgeFundScreeningParsedDataDto) responseDto.getRecords().get(i);
-                    Row row = sheet.getRow(i + 2);
+                    Row row = sheet.getRow(i + 9);
                     if(row == null){
-                        row = sheet.createRow(i + 2);
+                        row = sheet.createRow(i + 9);
                         for (int j = 0; j <= 8; j++) {
-                            Row prevStyleRow = sheet.getRow(i);
-                            if (prevStyleRow.getCell(j) != null && prevStyleRow.getCell(j).getCellStyle() != null) {
+                            Row prevStyleRow = sheet.getRow(i + 7);
+                            if (i > 0 && prevStyleRow.getCell(j) != null && prevStyleRow.getCell(j).getCellStyle() != null) {
                                 row.createCell(j).setCellStyle(prevStyleRow.getCell(j).getCellStyle());
                             }
                         }
@@ -3433,6 +3448,138 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
             return filesDto;
         } catch (IOException e) {
             logger.error("IO Exception when exporting HF Scoring fund list", e);
+        }
+
+        return null;
+    }
+
+
+    @Override
+    public FilesDto getUnqualifiedFundListAsStream(Long filteredResultId, int lookbackAUM, int lookbackReturn){
+        FilesDto filesDto = new FilesDto();
+
+        Resource resource = new ClassPathResource("export_template/hf_scoring/HF_SCORING_UNQUALIFIED_TEMPLATE.xlsx");
+        InputStream excelFileToRead = null;
+
+        HedgeFundScreeningFilteredResultDto filteredResultDto = getFilteredResultWithoutFundsInfo(filteredResultId);
+        if(filteredResultDto == null){
+            logger.error("HF Scoring fund list export failed: filter not found with id " + (filteredResultId != null ? filteredResultId.longValue() : null));
+            return null;
+        }
+
+        HedgeFundScreeningFilteredResultDto params = new HedgeFundScreeningFilteredResultDto();
+        params.setId(filteredResultId);
+        params.setScreeningId(filteredResultDto.getScreeningId());
+        params.setFundAUM(filteredResultDto.getFundAUM());
+        params.setManagerAUM(filteredResultDto.getManagerAUM());
+        params.setLookbackAUM(lookbackAUM);
+        params.setLookbackReturns(lookbackReturn);
+        params.setStartDate(filteredResultDto.getStartDate());
+        params.setStartDateMonth(DateUtils.getMM_YYYYYFormatDate(filteredResultDto.getStartDate()));
+        params.setTrackRecord(filteredResultDto.getTrackRecord());
+        List<HedgeFundScreeningParsedDataDto> fundList = getFilteredResultUnqualifiedFundList(params);
+        if(fundList == null){
+            logger.error("HF Scoring - Failed to export unqualified fund list: filter id=" + filteredResultId.longValue() + ", lookback AUM=" +
+                    lookbackAUM + ", lookback return=" + lookbackReturn);
+            //return null;
+        }
+        try {
+            excelFileToRead = resource.getInputStream();
+        } catch (IOException e) {
+            logger.error("Reporting: Export file template not found: 'HF_SCORING_UNQUALIFIED_TEMPLATE.xlsx'");
+            return null;
+            //e.printStackTrace();
+        }
+
+
+        try {
+            XSSFWorkbook workbook = new XSSFWorkbook(excelFileToRead);
+            XSSFSheet sheet = workbook.getSheetAt(0);
+            if(fundList != null && !fundList.isEmpty()) {
+                Row row1 = sheet.getRow(1);
+                Row row2 = sheet.getRow(2);
+                Row row3 = sheet.getRow(3);
+                Row row4 = sheet.getRow(4);
+                Row row5 = sheet.getRow(5);
+                Row row6 = sheet.getRow(6);
+                row1.getCell(2).setCellValue(NumberUtils.truncateNumber(filteredResultDto.getFundAUM(), 1));
+                row2.getCell(2).setCellValue(NumberUtils.truncateNumber(filteredResultDto.getManagerAUM(), 1));
+                row3.getCell(2).setCellValue(filteredResultDto.getTrackRecord());
+                row4.getCell(2).setCellValue(lookbackAUM);
+                row5.getCell(2).setCellValue(lookbackReturn);
+                row6.getCell(2).setCellValue(DateUtils.getDateShortMonthYearEnglishTextualDate(filteredResultDto.getStartDate()));
+                for (int i = 0; i < fundList.size(); i++) {
+                    HedgeFundScreeningParsedDataDto fund  = (HedgeFundScreeningParsedDataDto) fundList.get(i);
+                    Row row = sheet.getRow(i + 8);
+                    if(row == null){
+                        row = sheet.createRow(i + 8);
+                    }
+                    for (int j = 0; j <= 8; j++) {
+                        if(row.getCell(j) == null){
+                            row.createCell(j);
+                        }
+                        Row prevStyleRow = sheet.getRow(i + 6);
+                        if (i >= 2 && prevStyleRow.getCell(j) != null && prevStyleRow.getCell(j).getCellStyle() != null) {
+                            row.getCell(j).setCellStyle(prevStyleRow.getCell(j).getCellStyle());
+                        }
+                    }
+
+                    ExcelUtils.setCellValueSafe(row.getCell(0), (i+1));
+                    ExcelUtils.setCellValueSafe(row.getCell(1), (fund.getFundId() != null ? fund.getFundId().toString() : ""));
+                    ExcelUtils.setCellValueSafe(row.getCell(2), fund.getFundName());
+                    ExcelUtils.setCellValueSafe(row.getCell(3), fund.getInvestmentManager());
+                    ExcelUtils.setCellValueSafe(row.getCell(4), fund.getMainStrategy());
+                    if(fund.getFundAUM() != null){
+                        ExcelUtils.setCellValueSafe(row.getCell(5), NumberUtils.truncateNumber(fund.getFundAUM(), 1));
+                    }else if(fund.getRecentFundAUM() != null) {
+                        String recentFundAUM = NumberUtils.truncateNumber(fund.getRecentFundAUM(), 1);
+                        if(fund.getRecentFundAUMDate() != null){
+                            recentFundAUM += " (" + DateUtils.getDateShortMonthYearEnglishTextualDate(fund.getRecentFundAUMDate()) + ")";
+                        }
+                        ExcelUtils.setCellValueSafe(row.getCell(5), recentFundAUM);
+                    }
+
+                    if(fund.getStrategyAUM() != null){
+                        ExcelUtils.setCellValueSafe(row.getCell(6), NumberUtils.truncateNumber(fund.getStrategyAUM(), 1));
+                    }else if(fund.getRecentStrategyAUM() != null) {
+                        String recentStrategyAUM = NumberUtils.truncateNumber(fund.getRecentStrategyAUM(), 1);
+                        if(fund.getRecentStrategyAUMDate() != null){
+                            recentStrategyAUM += " (" + DateUtils.getDateShortMonthYearEnglishTextualDate(fund.getRecentStrategyAUMDate()) + ")";
+                        }
+                        ExcelUtils.setCellValueSafe(row.getCell(6), recentStrategyAUM);
+                    }
+                    //Double strategyAUM = fund.getStrategyAUM() != null ? fund.getStrategyAUM() : fund.getRecentStrategyAUM();
+                    //ExcelUtils.setCellValueSafe(row.getCell(6), strategyAUM);
+                    ExcelUtils.setCellValueSafe(row.getCell(7),
+                            (fund.getManagerAUM() != null ? NumberUtils.truncateNumber(fund.getManagerAUM(), 1) : ""));
+                    ExcelUtils.setCellValueSafe(row.getCell(8), (fund.getRecentTrackRecordDate() != null ?
+                            DateUtils.getDateShortMonthYearEnglishTextualDate(fund.getRecentTrackRecordDate()) : ""));
+                }
+            }
+
+            File tmpDir = new File(this.rootDirectory + "/tmp/hf_scoring");
+            if(!tmpDir.exists()){
+                tmpDir.mkdir();
+            }
+
+            // write to new
+            String filePath = tmpDir + "/HF_Scoring_UNQUAL_" + MathUtils.getRandomNumber(0, 10000) + ".xlsx";
+            try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
+                workbook.write(outputStream);
+            }
+
+            InputStream inputStream = new FileInputStream(filePath);
+            filesDto.setInputStream(inputStream);
+            filesDto.setFileName(filePath);
+
+            HedgeFundScreeningDto screeningDto = get(filteredResultDto.getScreeningId());
+            String fileName = "HF Scoring - " + screeningDto.getShortName() + " (" + DateUtils.getDay(screeningDto.getDate()) + "-" +
+                    (DateUtils.getMonth(screeningDto.getDate()) + 1 < 10 ? "0" : "") +
+                    (DateUtils.getMonth(screeningDto.getDate()) + 1) + "-" + DateUtils.getYear(screeningDto.getDate()) + ")";
+            filesDto.setOutputFileName(fileName);
+            return filesDto;
+        } catch (IOException e) {
+            logger.error("IO Exception when exporting HF Scoring unqualified fund list", e);
         }
 
         return null;

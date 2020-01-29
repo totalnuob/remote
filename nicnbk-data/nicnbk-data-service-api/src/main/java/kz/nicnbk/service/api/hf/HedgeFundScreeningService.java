@@ -72,5 +72,7 @@ public interface HedgeFundScreeningService extends BaseService {
     double[] getParsedFundReturns(Long screeningId, Long fundId, int trackRecord, Date dateFrom, Date dateTo);
 
     FilesDto getQualifiedFundListAsStream(Long filteredResultId, int lookbackAUM, int lookbackReturn);
+
+    FilesDto getUnqualifiedFundListAsStream(Long filteredResultId, int lookbackAUM, int lookbackReturn);
 }
 
