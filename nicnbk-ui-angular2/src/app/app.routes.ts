@@ -113,6 +113,7 @@ import {HRDocsListComponent} from "./hr/hr-docs-list.component";
 import {EmployeeProfileEditComponent} from "./employee/employee.profile.edit.component";
 import {HRNewsEditComponent} from "./hr/hr-news-edit.component";
 import {AdminMainComponent} from "./admin/admin.main.component";
+import {AdminUserManagementComponent} from "./admin/admin.user-management.component";
 import {MonitoringHedgeFundsEditComponent} from "./monitoring/monitoring-hedge-funds-edit.component";
 
 
@@ -698,6 +699,12 @@ const routes: Routes  = [
     {
         path: 'admin/main',
         component: AdminMainComponent,
+        canActivate: [AuthGuard]
+    },
+
+    {
+        path: 'admin/userManagement',
+        component: AdminUserManagementComponent,
         canActivate: [AuthGuard]
     },
 
