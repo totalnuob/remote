@@ -4,7 +4,7 @@ import {User} from "../authentication/authentication.service";
 import {EmployeeService} from "./employee.service";
 import {ErrorResponse} from "../common/error-response";
 import {CommonFormViewComponent} from "../common/common.component";
-import {Employee} from "../hr/model/employee";
+import {Employee} from "./model/employee";
 import {Subscription} from 'rxjs';
 import {cursorTo} from "readline";
 

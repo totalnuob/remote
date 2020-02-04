@@ -1,7 +1,7 @@
 import {Employee} from "./employee";
 
 export class EmployeesSearchResult {
-    showPageFrom : number;
+    showPageFrom: number;
     showPageTo: number;
     totalPages: number;
     totalElements: number;

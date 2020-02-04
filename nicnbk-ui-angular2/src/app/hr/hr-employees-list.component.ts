@@ -9,8 +9,8 @@ import {ModuleAccessCheckerService} from "../authentication/module.access.checke
 import {ErrorResponse} from "../common/error-response";
 import {CommonFormViewComponent} from "../common/common.component";
 import {EmployeeService} from "../employee/employee.service";
-import {EmployeesSearchParams} from "./model/employees-search-params";
-import {EmployeesSearchResult} from "./model/employees-search-result";
+import {EmployeesSearchParams} from "../employee/model/employees-search-params";
+import {EmployeesSearchResult} from "../employee/model/employees-search-result";
 
 
 declare var $: any

@@ -4,10 +4,10 @@ import {User} from "../authentication/authentication.service";
 import {EmployeeService} from "./employee.service";
 import {ErrorResponse} from "../common/error-response";
 import {CommonFormViewComponent} from "../common/common.component";
-import {Employee} from "../hr/model/employee";
+import {Employee} from "./model/employee";
 import {cursorTo} from "readline";
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
-import {EmployeesSearchParams} from "../hr/model/employees-search-params";
+import {EmployeesSearchParams} from "./model/employees-search-params";
 
 
 export class ChangePasswordCredentials {
