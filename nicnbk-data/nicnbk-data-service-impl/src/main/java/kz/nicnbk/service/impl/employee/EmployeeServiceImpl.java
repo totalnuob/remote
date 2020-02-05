@@ -6,16 +6,16 @@ import kz.nicnbk.common.service.util.PaginationUtils;
 import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.api.employee.EmployeeRepository;
 import kz.nicnbk.repo.api.employee.PositionRepository;
+import kz.nicnbk.repo.api.employee.RoleRepository;
 import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.employee.Position;
+import kz.nicnbk.repo.model.employee.Role;
 import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.converter.employee.EmployeeEntityConverter;
+import kz.nicnbk.service.converter.employee.RoleEntityConverter;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
 import kz.nicnbk.service.dto.common.ResponseStatusType;
-import kz.nicnbk.service.dto.employee.EmployeeDto;
-import kz.nicnbk.service.dto.employee.EmployeePagedSearchResult;
-import kz.nicnbk.service.dto.employee.EmployeeSearchParamsDto;
-import kz.nicnbk.service.dto.employee.PositionDto;
+import kz.nicnbk.service.dto.employee.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +48,12 @@ public class EmployeeServiceImpl implements EmployeeService{
 
     @Autowired
     private PositionRepository positionRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
+    private RoleEntityConverter roleEntityConverter;
 
     @Override
     public List<EmployeeDto> findAll(){
@@ -298,7 +304,7 @@ public class EmployeeServiceImpl implements EmployeeService{
     }
 
     @Override
-    public List<PositionDto> getALlPositions() {
+    public List<PositionDto> getAllPositions() {
         List<PositionDto> positions = new ArrayList<>();
         List<Position> entities = this.positionRepository.getAllPositions();
         if(positions != null){
@@ -314,6 +320,15 @@ public class EmployeeServiceImpl implements EmployeeService{
             }
         }
         return positions;
+    }
+
+    @Override
+    public List<RoleDto> getAllRoles() {
+        List<Role> roles = this.roleRepository.getAllRoles();
+        if(roles == null) {
+            return null;
+        }
+        return this.roleEntityConverter.disassembleList(roles);
     }
 
     private String generateSalt(){

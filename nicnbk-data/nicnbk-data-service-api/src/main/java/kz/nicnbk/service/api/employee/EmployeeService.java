@@ -3,10 +3,7 @@ package kz.nicnbk.service.api.employee;
 import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.service.api.base.BaseService;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
-import kz.nicnbk.service.dto.employee.EmployeeDto;
-import kz.nicnbk.service.dto.employee.EmployeePagedSearchResult;
-import kz.nicnbk.service.dto.employee.EmployeeSearchParamsDto;
-import kz.nicnbk.service.dto.employee.PositionDto;
+import kz.nicnbk.service.dto.employee.*;
 
 import java.util.List;
 
@@ -35,6 +32,7 @@ public interface EmployeeService extends BaseService {
 
     boolean activate(String username);
 
-    List<PositionDto> getALlPositions();
+    List<PositionDto> getAllPositions();
 
+    List<RoleDto> getAllRoles();
 }
