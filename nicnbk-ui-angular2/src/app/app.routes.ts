@@ -111,6 +111,7 @@ import {HRNewsListComponent} from "./hr/hr-news-list.component";
 import {HREmployeesListComponent} from "./hr/hr-employees-list.component";
 import {HRDocsListComponent} from "./hr/hr-docs-list.component";
 import {EmployeeProfileEditComponent} from "./employee/employee.profile.edit.component";
+import {EmployeeProfileAdminComponent} from "./employee/employee.profile.admin.component";
 import {HRNewsEditComponent} from "./hr/hr-news-edit.component";
 import {AdminMainComponent} from "./admin/admin.main.component";
 import {AdminUserManagementComponent} from "./admin/admin.user-management.component";
@@ -138,6 +139,11 @@ const routes: Routes  = [
     {
         path: 'profile/edit/:username',
         component: EmployeeProfileEditComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'profile/admin/:username',
+        component: EmployeeProfileAdminComponent,
         canActivate: [AuthGuard]
     },
 

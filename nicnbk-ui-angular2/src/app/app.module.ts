@@ -125,6 +125,7 @@ import {HRNewsListComponent} from "./hr/hr-news-list.component";
 import {HREmployeesListComponent} from "./hr/hr-employees-list.component";
 import {HRDocsListComponent} from "./hr/hr-docs-list.component";
 import {EmployeeProfileEditComponent} from "./employee/employee.profile.edit.component";
+import {EmployeeProfileAdminComponent} from "./employee/employee.profile.admin.component";
 import {HRNewsEditComponent} from "./hr/hr-news-edit.component";
 import {AdminMainComponent} from "./admin/admin.main.component";
 import {AdminUserManagementComponent} from "./admin/admin.user-management.component";
@@ -150,7 +151,7 @@ import {MonitoringHedgeFundsEditComponent} from "./monitoring/monitoring-hedge-f
         ],
     declarations: [
         AppComponent,
-        LoginComponent, EmployeeProfileComponent,EmployeeProfileEditComponent,
+        LoginComponent, EmployeeProfileComponent,EmployeeProfileEditComponent, EmployeeProfileAdminComponent,
         NewsListComponent, NewsEditComponent, NewsViewComponent,
         MemoListComponent,
         MemoAttachmentDownloaderComponent, FileAttachmentDownloaderComponent,
