@@ -64,9 +64,9 @@ export class AdminUserManagementComponent extends CommonFormViewComponent{
     }
 
     navigate(username){
-        // console.log(this.searchParams);
-        // this.searchParams.path = '/hr/employees';
-        // let params = JSON.stringify(this.searchParams);
-        // this.router.navigate(['/profile', username, { params }]);
+        console.log(this.searchParams);
+        this.searchParams.path = '/admin/userManagement';
+        let params = JSON.stringify(this.searchParams);
+        this.router.navigate(['/profile/admin', username, { params }]);
     }
 }
