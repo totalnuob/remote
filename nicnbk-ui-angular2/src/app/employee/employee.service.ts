@@ -20,6 +20,7 @@ export class EmployeeService extends CommonService{
     private EMPLOYEE_CHANGE_PASSWORD_URL = this.EMPLOYEE_BASE_URL + "changeSelfPassword/";
     private EMPLOYEE_POSITIONS_ALL_URL = this.EMPLOYEE_BASE_URL + "getAllPositions/";
     private EMPLOYEE_ROLES_ALL_URL = this.EMPLOYEE_BASE_URL + "getAllRoles/";
+    private EMPLOYEE_DEPARTMENTS_ALL_URL = this.EMPLOYEE_BASE_URL + "getAllDepartments/";
 
 
     findAll(): Observable<any[]> {
@@ -59,6 +60,12 @@ export class EmployeeService extends CommonService{
 
     getAllRoles(): Observable<any[]> {
         return this.http.get(this.EMPLOYEE_ROLES_ALL_URL, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+
+    getAllDepartments(): Observable<any[]> {
+        return this.http.get(this.EMPLOYEE_DEPARTMENTS_ALL_URL, this.getOptionsWithCredentials())
             .map(this.extractDataList)
             .catch(this.handleErrorResponse);
     }

@@ -186,4 +186,15 @@ public class EmployeeServiceREST extends CommonServiceREST{
             return new ResponseEntity<>(roles, null, HttpStatus.OK);
         }
     }
+
+    @RequestMapping(value = "/getAllDepartments", method = RequestMethod.GET)
+    public ResponseEntity getAllDepartments(){
+        List<DepartmentDto> departments = this.employeeService.getAllDepartments();
+        if(departments == null){
+            // error occurred
+            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        } else {
+            return new ResponseEntity<>(departments, null, HttpStatus.OK);
+        }
+    }
 }

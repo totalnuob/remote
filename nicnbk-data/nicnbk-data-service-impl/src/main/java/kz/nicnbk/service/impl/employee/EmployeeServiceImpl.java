@@ -4,13 +4,16 @@ import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.common.service.util.HashUtils;
 import kz.nicnbk.common.service.util.PaginationUtils;
 import kz.nicnbk.common.service.util.StringUtils;
+import kz.nicnbk.repo.api.employee.DepartmentRepository;
 import kz.nicnbk.repo.api.employee.EmployeeRepository;
 import kz.nicnbk.repo.api.employee.PositionRepository;
 import kz.nicnbk.repo.api.employee.RoleRepository;
+import kz.nicnbk.repo.model.employee.Department;
 import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.employee.Position;
 import kz.nicnbk.repo.model.employee.Role;
 import kz.nicnbk.service.api.employee.EmployeeService;
+import kz.nicnbk.service.converter.employee.DepartmentEntityConverter;
 import kz.nicnbk.service.converter.employee.EmployeeEntityConverter;
 import kz.nicnbk.service.converter.employee.RoleEntityConverter;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
@@ -54,6 +57,12 @@ public class EmployeeServiceImpl implements EmployeeService{
 
     @Autowired
     private RoleEntityConverter roleEntityConverter;
+
+    @Autowired
+    private DepartmentRepository departmentRepository;
+
+    @Autowired
+    private DepartmentEntityConverter departmentEntityConverter;
 
     @Override
     public List<EmployeeDto> findAll(){
@@ -329,6 +338,15 @@ public class EmployeeServiceImpl implements EmployeeService{
             return null;
         }
         return this.roleEntityConverter.disassembleList(roles);
+    }
+
+    @Override
+    public List<DepartmentDto> getAllDepartments() {
+        List<Department> departments = this.departmentRepository.getAllDepartments();
+        if(departments == null){
+            return null;
+        }
+        return this.departmentEntityConverter.disassembleList(departments);
     }
 
     private String generateSalt(){

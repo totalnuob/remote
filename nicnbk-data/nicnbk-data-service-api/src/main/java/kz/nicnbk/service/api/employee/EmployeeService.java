@@ -35,4 +35,6 @@ public interface EmployeeService extends BaseService {
     List<PositionDto> getAllPositions();
 
     List<RoleDto> getAllRoles();
+
+    List<DepartmentDto> getAllDepartments();
 }
