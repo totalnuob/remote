@@ -24,7 +24,7 @@
         <div class="row form-group">
             <label class="control-label col-sm-2">Username:</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" [(ngModel)]="employee.username" [disabled]="true" />
+                <input type="text" class="form-control" [(ngModel)]="employee.username" [disabled]="this.employee.id != null" />
             </div>
         </div>
         <div class="row form-group">

@@ -5,6 +5,7 @@ import {EmployeeService} from "./employee.service";
 import {Employee} from "./model/employee";
 import {ErrorResponse} from "../common/error-response";
 import {Observable} from "rxjs/Observable";
+import {Subscription} from "../../../node_modules/rxjs";
 
 declare var $:any;
 
@@ -16,6 +17,7 @@ declare var $:any;
 })
 export class EmployeeProfileAdminComponent extends CommonFormViewComponent{
 
+    busy: Subscription;
     private sub: any;
 
     private username: string;
@@ -24,12 +26,13 @@ export class EmployeeProfileAdminComponent extends CommonFormViewComponent{
 
     private employee = new Employee();
 
-    departments;
-    positions;
-    roles;
+    private departments;
+    private positions;
+    private roles;
 
-    chosenDepartment;
-    chosenPosition;
+    private chosenDepartment;
+    private chosenPosition;
+    private departmentPositions;
 
     constructor(
         private router: Router,
@@ -47,11 +50,12 @@ export class EmployeeProfileAdminComponent extends CommonFormViewComponent{
                 ([data1, data2, data3]) => {
 
                     this.departments = data1;
-                    this.departments.push({"code": "NONE", "nameEn": "-- no dept --", "nameRu": "-- без департамента --"});
+                    this.departments.push({"code": "NONE", "nameEn": "-- no department or unknown --", "nameRu": "-- без департамента или неизвестен --"});
                     console.log('All departments');
                     console.log(this.departments);
 
                     this.positions = data2;
+                    this.positions.push({"code": "NONE", "nameEn": "-- no position or unknown --", "nameRu": "-- без позиции или неизвестна --"});
                     console.log('All positions');
                     console.log(this.positions);
 
@@ -69,19 +73,24 @@ export class EmployeeProfileAdminComponent extends CommonFormViewComponent{
                             this.username = params['username'];
                             this.breadcrumbParams = params['params'];
                             this.breadcrumbParamsPath = JSON.parse(this.breadcrumbParams)['path'];
-                            if(this.username != 'newUser') {
+
+                            if(this.username != 'newEmployee') {
                                 this.employeeService.getEmployeeByUsername(this.username)
                                     .subscribe( response => {
                                             this.employee = response;
                                             console.log(this.employee);
 
-                                            if(this.employee.position) {
-                                                if(this.employee.position.department != null) {
-                                                    this.chosenDepartment = this.employee.position.department.code;
-                                                } else {
+                                            if(this.employee.position == null) {
+                                                this.chosenDepartment = "NONE";
+                                                this.departmentChanged(this.chosenDepartment);
+                                                this.chosenPosition = "NONE";
+                                            } else {
+                                                if(this.employee.position.department == null) {
                                                     this.chosenDepartment = "NONE";
+                                                } else {
+                                                    this.chosenDepartment = this.employee.position.department.code;
                                                 }
-
+                                                this.departmentChanged(this.chosenDepartment);
                                                 this.chosenPosition = this.employee.position.code;
                                             }
                                         },
@@ -96,9 +105,53 @@ export class EmployeeProfileAdminComponent extends CommonFormViewComponent{
                                         }
                                     );
                             } else {
+                                this.chosenDepartment = null;
+                                this.chosenPosition = null;
+                                this.employee.active = true;
+
                                 console.log('New User creation');
                             }
                         });
+                }
+            );
+    }
+
+    departmentChanged(value) {
+        console.log(value);
+        this.departmentPositions = [];
+
+        if(this.positions != null) {
+            for(var i = 0; i < this.positions.length; i++) {
+                if(value === "NONE" && this.positions[i].department == null) {
+                    this.departmentPositions.push(this.positions[i]);
+                } else if(this.positions[i].department != null && this.positions[i].department.code === value) {
+                    this.departmentPositions.push(this.positions[i]);
+                }
+            }
+        }
+
+        this.chosenPosition = null;
+    }
+
+    saveEmployeeProfile() {
+        this.employee.birthDate= $('#birthDate').val();
+        console.log(this.chosenPosition);
+
+        this.employee.position = {};
+        this.employee.position.code = this.chosenPosition;
+        this.busy = this.employeeService.save(this.employee)
+            .subscribe(
+                response => {
+                    this.employee.id = response.entityId;
+                    this.postAction("Successfully saved profile", null);
+                },
+                (error:ErrorResponse) => {
+                    if (error && !error.isEmpty()) {
+                        this.processErrorMessage(error);
+                        console.log(error);
+                    }else {
+                        this.postAction(null, "Error saving profile");
+                    }
                 }
             );
     }

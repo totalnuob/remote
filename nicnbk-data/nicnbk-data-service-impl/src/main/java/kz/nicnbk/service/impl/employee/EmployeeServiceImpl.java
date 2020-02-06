@@ -161,6 +161,8 @@ public class EmployeeServiceImpl implements EmployeeService{
                 entity.setFirstName(employeeDto.getFirstName());
                 entity.setLastName(employeeDto.getLastName());
                 entity.setBirthDate(employeeDto.getBirthDate());
+                entity.setPatronymic(employeeDto.getPatronymic());
+                entity.setActive(employeeDto.getActive());
 
             }
             Position position = null;
@@ -169,9 +171,10 @@ public class EmployeeServiceImpl implements EmployeeService{
             }
             entity.setPosition(position);
 
-            this.employeeRepository.save(entity);
+            Long id = this.employeeRepository.save(entity).getId();
             logger.info("Successfully saved employee profile: id= " + entity.getId().longValue() + ", username=" + employeeDto.getUsername() + " [updater=" + updater + "]");
             saveResponseDto.setSuccessMessageEn("Successfully saved employee profile");
+            saveResponseDto.setEntityId(id);
             return saveResponseDto;
         }catch (Exception ex){
             logger.error("Failed to save employee profile.", ex);
