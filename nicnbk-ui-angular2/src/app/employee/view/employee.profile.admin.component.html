@@ -77,6 +77,16 @@
                 <button *ngIf="employee.active != null && !employee.active" class="btn btn-xs btn-default" (click)="employee.active = true">IN-ACTIVE</button>
             </div>
         </div>
+        <div class="row form-group">
+            <label class="control-label col-sm-2">Password:</label>
+            <div class="col-sm-4">
+                <input type="password" class="form-control" [(ngModel)]="newPassword"/>
+            </div>
+            <label class="control-label col-sm-2">Confirm:</label>
+            <div class="col-sm-4">
+                <input type="password" class="form-control" [(ngModel)]="newPasswordConfirm"/>
+            </div>
+        </div>
         <br/>
         <div class="row form-group pull-right">
             <button class="btn btn-success" (click)="saveEmployeeProfile()">Save</button>

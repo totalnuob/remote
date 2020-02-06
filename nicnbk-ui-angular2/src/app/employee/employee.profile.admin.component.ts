@@ -34,6 +34,9 @@ export class EmployeeProfileAdminComponent extends CommonFormViewComponent{
     private chosenPosition;
     private departmentPositions;
 
+    newPassword = '';
+    newPasswordConfirm = '';
+
     constructor(
         private router: Router,
         private route: ActivatedRoute,
@@ -135,24 +138,68 @@ export class EmployeeProfileAdminComponent extends CommonFormViewComponent{
 
     saveEmployeeProfile() {
         this.employee.birthDate= $('#birthDate').val();
-        console.log(this.chosenPosition);
 
+        console.log(this.chosenPosition);
         this.employee.position = {};
         this.employee.position.code = this.chosenPosition;
-        this.busy = this.employeeService.save(this.employee)
-            .subscribe(
-                response => {
-                    this.employee.id = response.entityId;
-                    this.postAction("Successfully saved profile", null);
-                },
-                (error:ErrorResponse) => {
-                    if (error && !error.isEmpty()) {
-                        this.processErrorMessage(error);
-                        console.log(error);
-                    }else {
-                        this.postAction(null, "Error saving profile");
-                    }
-                }
-            );
+
+        if(this.newPassword == this.newPasswordConfirm) {
+            if(this.newPassword == '' || this.checkPassword()) {
+
+
+                this.employee.password = this.newPassword;
+
+
+
+
+
+
+                this.busy = this.employeeService.save(this.employee)
+                    .subscribe(
+                        response => {
+                            this.employee.id = response.entityId;
+                            this.postAction("Successfully saved profile", null);
+                        },
+                        (error:ErrorResponse) => {
+                            if (error && !error.isEmpty()) {
+                                this.processErrorMessage(error);
+                                console.log(error);
+                            }else {
+                                this.postAction(null, "Error saving profile");
+                            }
+                        }
+                    );
+
+
+
+
+
+
+                this.newPassword = '';
+                this.newPasswordConfirm = '';
+            }
+        } else {
+            this.postAction(null, "Passwords do not match");
+        }
+    }
+
+    public checkPassword(){
+        if (this.newPassword.length < 8) {
+            this.errorMessage = "Password too short (min 8)";
+            return false;
+        } else if (this.newPassword.length > 50) {
+            this.errorMessage = "Password too long (max 50)";
+            return false;
+        } else if (this.newPassword.search(/\d/) == -1) {
+            this.errorMessage = "Password must contain at least 1 digit";
+            return false;
+        } else if (this.newPassword.search(/[a-zA-Z]/) == -1) {
+            this.errorMessage = "Password must contain at least 1 character";
+            return false;
+        } else if (this.newPassword.search(/[A-Z]/) == -1) {
+            this.errorMessage = "Password must contain at least 1 capital letter";
+            return false;
+        }
+        return true;
     }
 }
