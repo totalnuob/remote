@@ -38,6 +38,9 @@
     <div>
         <label>Total found: <span>{{searchResult?.totalElements > 0 ?  searchResult?.totalElements : 0}}</span></label>
     </div>
+    <div class="row">
+        <button type="button" class="btn btn-primary pull-right" (click)="navigate('newEmployee')">New employee</button>
+    </div>
     <div class="row withpadding" style="position: relative; min-height: 80px;">
         <div class="row pull-right">
             <ul class="pagination" *ngIf="searchResult?.showPageFrom > 0">
