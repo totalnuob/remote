@@ -12,6 +12,7 @@ import kz.nicnbk.repo.model.employee.Department;
 import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.employee.Position;
 import kz.nicnbk.repo.model.employee.Role;
+import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.converter.employee.DepartmentEntityConverter;
 import kz.nicnbk.service.converter.employee.EmployeeEntityConverter;
@@ -61,6 +62,9 @@ public class EmployeeServiceImpl implements EmployeeService{
 
     @Autowired
     private DepartmentEntityConverter departmentEntityConverter;
+
+    @Autowired
+    private TokenService tokenService;
 
     @Override
     public List<EmployeeDto> findAll(){
@@ -156,6 +160,10 @@ public class EmployeeServiceImpl implements EmployeeService{
             }else{
                 entity = this.employeeRepository.findOne(employeeDto.getId());
 
+                if(entity.getActive() != employeeDto.getActive()) {
+                    this.tokenService.revokeUsername(entity.getUsername());
+                }
+
                 entity.setFirstName(employeeDto.getFirstName());
                 entity.setLastName(employeeDto.getLastName());
                 entity.setBirthDate(employeeDto.getBirthDate());
@@ -174,6 +182,9 @@ public class EmployeeServiceImpl implements EmployeeService{
                 for (BaseDictionaryDto dto: employeeDto.getRoles()) {
                     roles.add(this.roleRepository.findOne(dto.getId()));
                 }
+            }
+            if(!entity.getRoles().equals(roles)) {
+                this.tokenService.revokeUsername(entity.getUsername());
             }
             entity.setRoles(roles);
 
@@ -198,7 +209,7 @@ public class EmployeeServiceImpl implements EmployeeService{
         if(employeeDto == null || !this.setPassword(employeeDto.getUsername(), password, updater)) {
             saveResponseDto.setErrorMessageEn("Employee profile was saved without the new password");
         }
-            return saveResponseDto;
+        return saveResponseDto;
     }
 
     private EntitySaveResponseDto checkEmployeeProfile(EmployeeDto employeeDto){
@@ -211,6 +222,8 @@ public class EmployeeServiceImpl implements EmployeeService{
             saveResponseDto.setErrorMessageEn("First name cannot be empty");
         }else if(employeeDto.getBirthDate() == null){
             saveResponseDto.setErrorMessageEn("Date of birth cannot be empty");
+        }else if(StringUtils.isEmpty(employeeDto.getUsername())){
+            saveResponseDto.setErrorMessageEn("Username cannot be empty");
         }
 
         if(employeeDto.getId() != null) {
@@ -297,6 +310,7 @@ public class EmployeeServiceImpl implements EmployeeService{
 
                 this.employeeRepository.save(employee);
                 logger.info("Successfully changed password: username=" + username + ", by " + user);
+                this.tokenService.revokeUsername(username);
                 return true;
             }
         }catch(Exception ex){

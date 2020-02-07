@@ -6,6 +6,7 @@ import {Subscription} from "rxjs";
 import {EmployeeService} from "../employee/employee.service";
 import {EmployeesSearchResult} from "../employee/model/employees-search-result";
 import {ErrorResponse} from "../common/error-response";
+import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 
 @Component({
     selector: 'admin-user-management',
@@ -19,6 +20,8 @@ export class AdminUserManagementComponent extends CommonFormViewComponent{
     private searchParams = new EmployeesSearchParams();
     private searchResult: EmployeesSearchResult;
 
+    private moduleAccessChecker: ModuleAccessCheckerService;
+
     busy: Subscription;
 
     constructor(
@@ -27,6 +30,12 @@ export class AdminUserManagementComponent extends CommonFormViewComponent{
         private route: ActivatedRoute
     ){
         super(router);
+
+        this.moduleAccessChecker = new ModuleAccessCheckerService;
+
+        if(!this.moduleAccessChecker.checkAccessAdmin()) {
+            this.router.navigate(['accessDenied']);
+        }
 
         this.sub = this.route
             .params

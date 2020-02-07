@@ -29,6 +29,12 @@ export class AdminMainComponent extends CommonFormViewComponent implements OnIni
     ){
         super(router);
         this.moduleAccessChecker = new ModuleAccessCheckerService;
+
+        if(!this.moduleAccessChecker.checkAccessAdmin()) {
+            this.router.navigate(['accessDenied']);
+        }
+
+        this.router.navigate(['/admin/userManagement']);
 /*
         this.sub = this.route
             .params

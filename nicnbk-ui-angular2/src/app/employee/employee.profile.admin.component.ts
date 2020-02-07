@@ -6,6 +6,7 @@ import {Employee} from "./model/employee";
 import {ErrorResponse} from "../common/error-response";
 import {Observable} from "rxjs/Observable";
 import {Subscription} from "../../../node_modules/rxjs";
+import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 
 declare var $:any;
 
@@ -19,6 +20,7 @@ export class EmployeeProfileAdminComponent extends CommonFormViewComponent{
 
     busy: Subscription;
     private sub: any;
+    private moduleAccessChecker: ModuleAccessCheckerService;
 
     private username: string;
     private breadcrumbParams: string;
@@ -43,6 +45,12 @@ export class EmployeeProfileAdminComponent extends CommonFormViewComponent{
         private employeeService: EmployeeService
     ){
         super(router);
+
+        this.moduleAccessChecker = new ModuleAccessCheckerService;
+
+        if(!this.moduleAccessChecker.checkAccessAdmin()) {
+            this.router.navigate(['accessDenied']);
+        }
 
         Observable.forkJoin(
             this.employeeService.getAllDepartments(),

@@ -30,6 +30,21 @@
             </div>
             <div class="row">
                 <div class="col-md-12">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="status">Status</label>
+                            <select id="status" class="form-control" name="status" [(ngModel)]="searchParams.status">
+                                <option value="NONE">--</option>
+                                <option value="ACTIVE">ACTIVE</option>
+                                <option value="INACTIVE">IN-ACTIVE</option>
+                            </select>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
                     <button type="submit" class="btn btn-success pull-right">Search</button>
                 </div>
             </div>
