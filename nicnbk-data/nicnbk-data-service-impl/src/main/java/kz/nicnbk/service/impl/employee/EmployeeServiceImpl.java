@@ -170,8 +170,10 @@ public class EmployeeServiceImpl implements EmployeeService{
             entity.setPosition(position);
 
             Set<Role> roles = new HashSet<>();
-            for (BaseDictionaryDto dto: employeeDto.getRoles()) {
-                roles.add(this.roleRepository.findOne(dto.getId()));
+            if(employeeDto.getRoles() != null) {
+                for (BaseDictionaryDto dto: employeeDto.getRoles()) {
+                    roles.add(this.roleRepository.findOne(dto.getId()));
+                }
             }
             entity.setRoles(roles);
 
