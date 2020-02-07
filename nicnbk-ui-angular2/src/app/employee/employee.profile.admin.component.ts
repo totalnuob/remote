@@ -153,8 +153,11 @@ export class EmployeeProfileAdminComponent extends CommonFormViewComponent{
     }
 
     addRole(role) {
-        if(this.employee == null || this.employee.roles == null) {
+        if(this.employee == null) {
             return;
+        }
+        if(this.employee.roles == null) {
+            this.employee.roles = [];
         }
         this.employee.roles.push(role);
     }
