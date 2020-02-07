@@ -104,8 +104,12 @@ public class EmployeeServiceREST extends CommonServiceREST{
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(value = "/saveAndChangePassword/{password}", method = RequestMethod.POST)
-    public ResponseEntity<?> saveAndChangePassword(@RequestBody EmployeeDto employeeDto, @PathVariable String password) {
+    @RequestMapping(value = "/saveAndChangePassword", method = RequestMethod.POST)
+    public ResponseEntity<?> saveAndChangePassword(@RequestBody EmployeePasswordDto employeePasswordDto) {
+
+        EmployeeDto employeeDto = employeePasswordDto.getEmployeeDto();
+        String password = employeePasswordDto.getPassword();
+
         if(StringUtils.isEmpty(password)) {
             return new ResponseEntity<>(null, null, HttpStatus.BAD_REQUEST);
         }

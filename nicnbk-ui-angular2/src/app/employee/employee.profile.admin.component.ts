@@ -115,6 +115,15 @@ export class EmployeeProfileAdminComponent extends CommonFormViewComponent{
                                 console.log('New User creation');
                             }
                         });
+                },
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error getting lookups";
+                    console.log("Error getting lookups");
+                    if(error && !error.isEmpty()) {
+                        this.processErrorMessage(error);
+                        console.log(error);
+                    }
+                    this.postAction(null, this.errorMessage);
                 }
             );
     }
