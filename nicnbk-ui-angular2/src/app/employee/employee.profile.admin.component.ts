@@ -128,6 +128,37 @@ export class EmployeeProfileAdminComponent extends CommonFormViewComponent{
             );
     }
 
+    hasRole(value) {
+        if(this.employee == null || this.employee.roles == null || this.employee.roles.length == 0) {
+            return false;
+        }
+        for(var i = 0; i < this.employee.roles.length; i++) {
+            if(this.employee.roles[i].code == value) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    deleteRole(role) {
+        if(this.employee == null || this.employee.roles == null || this.employee.roles.length == 0) {
+            return;
+        }
+        for(var i = 0; i < this.employee.roles.length; i++) {
+            if(this.employee.roles[i].code === role.code) {
+                this.employee.roles.splice(i, 1)
+                break;
+            }
+        }
+    }
+
+    addRole(role) {
+        if(this.employee == null || this.employee.roles == null) {
+            return;
+        }
+        this.employee.roles.push(role);
+    }
+
     departmentChanged(value) {
         console.log(value);
         this.departmentPositions = [];

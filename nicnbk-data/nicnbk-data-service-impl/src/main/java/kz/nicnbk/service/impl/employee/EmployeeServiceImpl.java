@@ -27,9 +27,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by magzumov on 02.08.2016.
@@ -170,6 +168,12 @@ public class EmployeeServiceImpl implements EmployeeService{
                 position = this.positionRepository.findByCode(employeeDto.getPosition().getCode());
             }
             entity.setPosition(position);
+
+            Set<Role> roles = new HashSet<>();
+            for (BaseDictionaryDto dto: employeeDto.getRoles()) {
+                roles.add(this.roleRepository.findOne(dto.getId()));
+            }
+            entity.setRoles(roles);
 
             Long id = this.employeeRepository.save(entity).getId();
             logger.info("Successfully saved employee profile: id= " + entity.getId().longValue() + ", username=" + employeeDto.getUsername() + " [updater=" + updater + "]");

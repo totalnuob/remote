@@ -11,4 +11,5 @@ export class Employee {
     username: string;
     active: boolean;
 
+    roles: any[];
 }

@@ -87,6 +87,18 @@
                 <input type="password" class="form-control" [(ngModel)]="newPasswordConfirm"/>
             </div>
         </div>
+        <div class="row form-group">
+            <label class="control-label col-sm-2">Roles:</label>
+            <div class="col-sm-10 horizontal">
+                <ng-container *ngFor="let role of roles; let i = index;">
+                    <br *ngIf="i > 0 && i%6 == 0"/>
+                    <br *ngIf="i > 0 && i%6 == 0"/>
+                    <button style="width: 100px" *ngIf="hasRole(role.code)" class="btn btn-xs btn-success" (click)="deleteRole(role)">{{role.code}}</button>
+                    <button style="width: 100px" *ngIf="!hasRole(role.code)" class="btn btn-xs btn-default" (click)="addRole(role)">{{role.code}}</button>
+                    &nbsp;
+                </ng-container>
+            </div>
+        </div>
         <br/>
         <div class="row form-group pull-right">
             <button class="btn btn-success" (click)="saveEmployeeProfile()">Save</button>
