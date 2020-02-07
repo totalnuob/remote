@@ -16,6 +16,7 @@ export class EmployeeService extends CommonService{
     private EMPLOYEE_SEARCH_URL = this.EMPLOYEE_BASE_URL + "search/";
     private EMPLOYEE_GET_URL = this.EMPLOYEE_BASE_URL + "get/";
     private EMPLOYEE_SAVE_URL = this.EMPLOYEE_BASE_URL + "save/";
+    private EMPLOYEE_SAVE_AND_CHANGE_PASSWORD_URL = this.EMPLOYEE_BASE_URL + "saveAndChangePassword/";
     private EMPLOYEE_GET_BY_USERNAME_URL = this.EMPLOYEE_BASE_URL + "getByUsername/";
     private EMPLOYEE_CHANGE_PASSWORD_URL = this.EMPLOYEE_BASE_URL + "changeSelfPassword/";
     private EMPLOYEE_POSITIONS_ALL_URL = this.EMPLOYEE_BASE_URL + "getAllPositions/";
@@ -80,6 +81,13 @@ export class EmployeeService extends CommonService{
     save(profile): Observable<any> {
         var body = JSON.stringify(profile);
         return this.http.post(this.EMPLOYEE_SAVE_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    saveAndChangePassword(profile, password): Observable<any> {
+        var body = JSON.stringify(profile);
+        return this.http.post(this.EMPLOYEE_SAVE_AND_CHANGE_PASSWORD_URL + password + '/', body, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }

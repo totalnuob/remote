@@ -183,6 +183,18 @@ public class EmployeeServiceImpl implements EmployeeService{
         }
     }
 
+    @Override
+    public EntitySaveResponseDto saveAndChangePassword(EmployeeDto employeeDto, String password, String updater) {
+        EntitySaveResponseDto saveResponseDto = this.save(employeeDto, updater);
+        if(saveResponseDto.getStatus() == null || saveResponseDto.getStatus().getCode().equalsIgnoreCase(ResponseStatusType.FAIL.getCode())) {
+            return saveResponseDto;
+        }
+        if(employeeDto == null || !this.setPassword(employeeDto.getUsername(), password, updater)) {
+            saveResponseDto.setErrorMessageEn("Employee profile was saved without the new password");
+        }
+            return saveResponseDto;
+    }
+
     private EntitySaveResponseDto checkEmployeeProfile(EmployeeDto employeeDto){
         EntitySaveResponseDto saveResponseDto = new EntitySaveResponseDto();
         saveResponseDto.setStatus(ResponseStatusType.SUCCESS);

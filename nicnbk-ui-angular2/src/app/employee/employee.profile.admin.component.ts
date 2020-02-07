@@ -144,16 +144,7 @@ export class EmployeeProfileAdminComponent extends CommonFormViewComponent{
         this.employee.position.code = this.chosenPosition;
 
         if(this.newPassword == this.newPasswordConfirm) {
-            if(this.newPassword == '' || this.checkPassword()) {
-
-
-                this.employee.password = this.newPassword;
-
-
-
-
-
-
+            if(this.newPassword == '') {
                 this.busy = this.employeeService.save(this.employee)
                     .subscribe(
                         response => {
@@ -169,12 +160,22 @@ export class EmployeeProfileAdminComponent extends CommonFormViewComponent{
                             }
                         }
                     );
-
-
-
-
-
-
+            } else if(this.checkPassword()) {
+                this.busy = this.employeeService.saveAndChangePassword(this.employee, this.newPassword)
+                    .subscribe(
+                        response => {
+                            this.employee.id = response.entityId;
+                            this.postAction("Successfully saved profile", null);
+                        },
+                        (error:ErrorResponse) => {
+                            if (error && !error.isEmpty()) {
+                                this.processErrorMessage(error);
+                                console.log(error);
+                            }else {
+                                this.postAction(null, "Error saving profile");
+                            }
+                        }
+                    );
                 this.newPassword = '';
                 this.newPasswordConfirm = '';
             }

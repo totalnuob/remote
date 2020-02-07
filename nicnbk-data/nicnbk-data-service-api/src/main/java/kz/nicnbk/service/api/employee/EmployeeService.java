@@ -22,6 +22,8 @@ public interface EmployeeService extends BaseService {
 
     EntitySaveResponseDto save(EmployeeDto employeeDto, String updater);
 
+    EntitySaveResponseDto saveAndChangePassword(EmployeeDto employeeDto, String password, String updater);
+
     EmployeeDto findActiveByUsernamePassword(String username, String password);
 
     EmployeeDto findByUsername(String username);

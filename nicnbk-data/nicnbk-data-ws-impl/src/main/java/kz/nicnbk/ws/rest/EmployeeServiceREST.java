@@ -103,6 +103,20 @@ public class EmployeeServiceREST extends CommonServiceREST{
 
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/saveAndChangePassword/{password}", method = RequestMethod.POST)
+    public ResponseEntity<?> saveAndChangePassword(@RequestBody EmployeeDto employeeDto, @PathVariable String password) {
+        if(StringUtils.isEmpty(password)) {
+            return new ResponseEntity<>(null, null, HttpStatus.BAD_REQUEST);
+        }
+
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        EntitySaveResponseDto saveResponseDto = this.employeeService.saveAndChangePassword(employeeDto, password, username);
+        return buildEntitySaveResponse(saveResponseDto);
+    }
+
     @RequestMapping(value = "/changeSelfPassword", method = RequestMethod.POST)
     public ResponseEntity changeSelfPassword(@RequestBody ChangePasswordCredentialsDto credentials){
         // check request
