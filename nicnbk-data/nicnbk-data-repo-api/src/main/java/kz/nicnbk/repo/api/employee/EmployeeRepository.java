@@ -14,10 +14,11 @@ public interface EmployeeRepository extends PagingAndSortingRepository<Employee,
 
     Employee findByUsername(String username);
 
-    @Query("SELECT e FROM  Employee e WHERE " +
-            " (:status is null OR e.active=:status) " +
-            " AND (:firstName is null OR LOWER(e.firstName) LIKE LOWER(CONCAT('%', :firstName,'%'))) " +
-            " AND (:lastName is null OR LOWER(e.lastName) LIKE LOWER(CONCAT('%', :lastName,'%')))")
+    @Query("SELECT e FROM Employee e WHERE" +
+            " (:status is null OR e.active=:status)" +
+            " AND (:firstName is null OR ((e.firstName is null OR e.firstName='') AND :firstName='') OR LOWER(e.firstName) LIKE LOWER(CONCAT('%', :firstName,'%')))" +
+            " AND (:lastName is null OR ((e.lastName is null OR e.lastName='') AND :lastName='') OR LOWER(e.lastName) LIKE LOWER(CONCAT('%', :lastName,'%')))"
+    )
     Page<Employee> search(@Param("firstName")String firstName, @Param("lastName")String lastName,
                           @Param("status") Boolean status, Pageable pageable);
 

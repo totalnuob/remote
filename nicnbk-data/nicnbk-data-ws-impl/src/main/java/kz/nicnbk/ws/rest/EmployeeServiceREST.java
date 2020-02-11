@@ -1,17 +1,13 @@
 package kz.nicnbk.ws.rest;
 
 import kz.nicnbk.common.service.util.StringUtils;
-import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.dto.authentication.ChangePasswordCredentialsDto;
 import kz.nicnbk.service.dto.authentication.TokenUserInfo;
 import kz.nicnbk.service.dto.authentication.UserCredentialsDto;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
-import kz.nicnbk.service.dto.employee.EmployeeDto;
-import kz.nicnbk.service.dto.employee.EmployeePagedSearchResult;
-import kz.nicnbk.service.dto.employee.EmployeeSearchParamsDto;
-import kz.nicnbk.service.dto.employee.PositionDto;
+import kz.nicnbk.service.dto.employee.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -107,6 +103,24 @@ public class EmployeeServiceREST extends CommonServiceREST{
 
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/saveAndChangePassword", method = RequestMethod.POST)
+    public ResponseEntity<?> saveAndChangePassword(@RequestBody EmployeePasswordDto employeePasswordDto) {
+
+        EmployeeDto employeeDto = employeePasswordDto.getEmployeeDto();
+        String password = employeePasswordDto.getPassword();
+
+        if(StringUtils.isEmpty(password)) {
+            return new ResponseEntity<>(null, null, HttpStatus.BAD_REQUEST);
+        }
+
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        EntitySaveResponseDto saveResponseDto = this.employeeService.saveAndChangePassword(employeeDto, password, username);
+        return buildEntitySaveResponse(saveResponseDto);
+    }
+
     @RequestMapping(value = "/changeSelfPassword", method = RequestMethod.POST)
     public ResponseEntity changeSelfPassword(@RequestBody ChangePasswordCredentialsDto credentials){
         // check request
@@ -170,13 +184,35 @@ public class EmployeeServiceREST extends CommonServiceREST{
     }
 
     @RequestMapping(value = "/getAllPositions", method = RequestMethod.GET)
-    public ResponseEntity getALlPositions(){
-        List<PositionDto> positions = this.employeeService.getALlPositions();
+    public ResponseEntity getAllPositions(){
+        List<PositionDto> positions = this.employeeService.getAllPositions();
         if(positions == null){
             // error occurred
             return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
         }else{
             return new ResponseEntity<>(positions, null, HttpStatus.OK);
+        }
+    }
+
+    @RequestMapping(value = "/getAllRoles", method = RequestMethod.GET)
+    public ResponseEntity getAllRoles(){
+        List<RoleDto> roles = this.employeeService.getAllRoles();
+        if(roles == null){
+            // error occurred
+            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }else{
+            return new ResponseEntity<>(roles, null, HttpStatus.OK);
+        }
+    }
+
+    @RequestMapping(value = "/getAllDepartments", method = RequestMethod.GET)
+    public ResponseEntity getAllDepartments(){
+        List<DepartmentDto> departments = this.employeeService.getAllDepartments();
+        if(departments == null){
+            // error occurred
+            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        } else {
+            return new ResponseEntity<>(departments, null, HttpStatus.OK);
         }
     }
 }

@@ -111,8 +111,12 @@ import {HRNewsListComponent} from "./hr/hr-news-list.component";
 import {HREmployeesListComponent} from "./hr/hr-employees-list.component";
 import {HRDocsListComponent} from "./hr/hr-docs-list.component";
 import {EmployeeProfileEditComponent} from "./employee/employee.profile.edit.component";
+import {EmployeeProfileAdminComponent} from "./employee/employee.profile.admin.component";
 import {HRNewsEditComponent} from "./hr/hr-news-edit.component";
+import {AdminMainComponent} from "./admin/admin.main.component";
+import {AdminUserManagementComponent} from "./admin/admin.user-management.component";
 import {MonitoringHedgeFundsEditComponent} from "./monitoring/monitoring-hedge-funds-edit.component";
+
 
 
 const routes: Routes  = [
@@ -135,6 +139,11 @@ const routes: Routes  = [
     {
         path: 'profile/edit/:username',
         component: EmployeeProfileEditComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'profile/admin/:username',
+        component: EmployeeProfileAdminComponent,
         canActivate: [AuthGuard]
     },
 
@@ -690,6 +699,18 @@ const routes: Routes  = [
     {
         path: 'hr/docs',
         component: HRDocsListComponent,
+        canActivate: [AuthGuard]
+    },
+
+    {
+        path: 'admin/main',
+        component: AdminMainComponent,
+        canActivate: [AuthGuard]
+    },
+
+    {
+        path: 'admin/userManagement',
+        component: AdminUserManagementComponent,
         canActivate: [AuthGuard]
     },
 

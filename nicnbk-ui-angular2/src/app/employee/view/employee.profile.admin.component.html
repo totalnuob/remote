@@ -1,0 +1,119 @@
+<div class="container">
+    <div class="row top-buffer">
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li *ngIf="this.breadcrumbParams != null">
+                    <span><a [routerLink]="[this.breadcrumbParamsPath, {params: this.breadcrumbParams }]">EMPLOYEES</a></span>
+                </li>
+                <li class="active">PROFILE</li>
+            </ol>
+        </div>
+        <div class="col-md-12">
+            <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+            </div>
+            <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <h4>Profile Information</h4>
+    <div class="col-md-3 col-lg-3 " align="center">
+        <img alt="User Pic" src="../../../../public/img/noprofile.png" class="img-circle img-responsive">
+    </div>
+    <div class=" col-md-9 col-lg-9 ">
+        <div class="row form-group">
+            <label class="control-label col-sm-2">Username*:</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" [(ngModel)]="employee.username" required #userName="ngModel" [disabled]="this.employee.id != null"/>
+                <div [hidden]="userName.valid || userName.pristine" class="alert alert-danger col-md-3">Enter username</div>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label class="control-label col-sm-2">Last name*:</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" [(ngModel)]="employee.lastName" required #lastName="ngModel"/>
+                <div [hidden]="lastName.valid || lastName.pristine" class="alert alert-danger col-md-3">Enter last name</div>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label class="control-label col-sm-2">First name*:</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" [(ngModel)]="employee.firstName" required #firstName="ngModel"/>
+                <div [hidden]="firstName.valid || firstName.pristine" class="alert alert-danger col-md-3">Enter first name</div>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label class="control-label col-sm-2">Patronymic:</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" [(ngModel)]="employee.patronymic"/>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label class="control-label col-sm-2">Date of birth*:</label>
+            <div class="col-sm-3">
+                <div class='input-group date col-md-2' id='birthDatePicker' style="width: 100%">
+                    <input type="text" class="form-control" id="birthDate" name="birthDate" style="font-size: small" [(ngModel)]="employee.birthDate" required #birthDate="ngModel"/>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+            <div [hidden]="birthDate.valid || birthDate.pristine" class="alert alert-danger col-md-3">Enter date of birth3</div>
+        </div>
+        <div class="row form-group">
+            <label class="control-label col-sm-2">Position:</label>
+            <div class="col-sm-5">
+                <select id="department" class="form-control" name="department" [(ngModel)]="chosenDepartment"
+                        (change)="departmentChanged($event.target.value)">
+                    <option *ngFor = "let department of departments" [value]="department?.code">{{department?.nameEn}}</option>
+                </select>
+            </div>
+            <div class="col-sm-5">
+                <select [disabled] = "chosenDepartment == null" id="position" class="form-control" name="position" [(ngModel)]="chosenPosition">
+                    <option *ngFor = "let position of departmentPositions" [value]="position?.code">{{position?.nameEn}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label class="control-label col-sm-2">Status:</label>
+            <div class="col-sm-10">
+                <button *ngIf="employee.active == null || employee.active" class="btn btn-xs btn-success" (click)="employee.active = false">ACTIVE</button>
+                <button *ngIf="employee.active != null && !employee.active" class="btn btn-xs btn-default" (click)="employee.active = true">IN-ACTIVE</button>
+            </div>
+        </div>
+        <hr style="border-top: 1px solid #B5AEAE"/>
+        <div class="row form-group">
+            <label class="control-label col-sm-2">Password:</label>
+            <div class="col-sm-4">
+                <input type="password" class="form-control" [(ngModel)]="newPassword"/>
+            </div>
+            <label class="control-label col-sm-2">Confirm:</label>
+            <div class="col-sm-4">
+                <input type="password" class="form-control" [(ngModel)]="newPasswordConfirm"/>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label class="control-label col-sm-2"></label>
+            <div class="col-sm-4">
+                <button class="btn btn-xs btn-default" (click)="newPassword = 'Qwerty123'; newPasswordConfirm = 'Qwerty123'">Use 'Qwerty123'</button>
+            </div>
+        </div>
+        <hr style="border-top: 1px solid #B5AEAE"/>
+        <div class="row form-group">
+            <label class="control-label col-sm-2">Roles:</label>
+            <div class="col-sm-10 horizontal">
+                <ng-container *ngFor="let role of roles; let i = index;">
+                    <br *ngIf="i > 0 && i%6 == 0"/>
+                    <br *ngIf="i > 0 && i%6 == 0"/>
+                    <button style="width: 100px" *ngIf="hasRole(role.code)" class="btn btn-xs btn-success" (click)="deleteRole(role)">{{role.code}}</button>
+                    <button style="width: 100px" *ngIf="!hasRole(role.code)" class="btn btn-xs btn-default" (click)="addRole(role)">{{role.code}}</button>
+                    &nbsp;
+                </ng-container>
+            </div>
+        </div>
+        <br/>
+        <div class="row form-group pull-right">
+            <button class="btn btn-success" (click)="saveEmployeeProfile()">Save</button>
+        </div>
+    </div>
+</div>

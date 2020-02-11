@@ -1,5 +1,7 @@
 export class Employee {
 
+    id: any;
+
     firstName: string;
     lastName: string;
     patronymic: string;
@@ -9,4 +11,5 @@ export class Employee {
     username: string;
     active: boolean;
 
+    roles: any[];
 }
