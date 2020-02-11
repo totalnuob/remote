@@ -539,8 +539,8 @@ public class PeriodicReportREServiceImpl implements PeriodicReportREService {
                                 if (entity.getNicReportingChartOfAccounts().getNbChartOfAccounts() != null) {
                                     record.setNbAccountNumber(entity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode());
                                 }
+                                break;
                             }
-                            break;
                         }
                     }
                 }
